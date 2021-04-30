@@ -59,8 +59,8 @@ namespace Microsoft.PowerShell
             // Check startupInfo first to know if the current shell is interactive and owns a window before proceeding
             // This check is fast (less than 1ms) and allows for quick-exit
             GetStartupInfo(out StartUpInfo startupInfo);
-            var STARTF_USESHOWWINDOW = 0x00000001;
-            var SW_HIDE = 0;
+            const uint STARTF_USESHOWWINDOW = 0x00000001;
+            const ushort SW_HIDE = 0;
             if (((startupInfo.dwFlags & STARTF_USESHOWWINDOW) == 1) && (startupInfo.wShowWindow != SW_HIDE))
             {
                 string cmdPath = Assembly.GetEntryAssembly().Location.Replace(".dll", ".exe");
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell
                     flags |= 0x00002000; // SLDF_RUNAS_USER
                     shellLinkDataList.SetFlags(flags);
                     var PKEY_TITLE = new PropertyKey(new Guid("{F29F85E0-4FF9-1068-AB91-08002B27B3D9}"), 2);
-                    hResult = nativePropertyStore.SetValue(ref PKEY_TITLE, new PropVariant(title));
+                    hResult = nativePropertyStore.SetValue(in PKEY_TITLE, new PropVariant(title));
                     if (hResult < 0)
                     {
                         pCustDestList.AbortList();

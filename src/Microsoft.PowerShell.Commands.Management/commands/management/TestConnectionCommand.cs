@@ -4,7 +4,6 @@
 #nullable enable
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
@@ -58,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static byte[]? s_DefaultSendBuffer;
 
-        private readonly CancellationTokenSource _dnsLookupCancel = new CancellationTokenSource();
+        private readonly CancellationTokenSource _dnsLookupCancel = new();
 
         private bool _disposed;
 
@@ -294,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            TcpClient client = new TcpClient();
+            TcpClient client = new();
 
             try
             {
@@ -351,11 +350,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             int currentHop = 1;
-            PingOptions pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
+            PingOptions pingOptions = new(currentHop, DontFragment.IsPresent);
             PingReply reply;
             PingReply discoveryReply;
             int timeout = TimeoutSeconds * 1000;
-            Stopwatch timer = new Stopwatch();
+            Stopwatch timer = new();
 
             IPAddress hopAddress;
             do
@@ -437,7 +436,7 @@ namespace Microsoft.PowerShell.Commands
                             resolvedTargetName,
                             ex.Message);
                         Exception pingException = new PingException(message, ex.InnerException);
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        ErrorRecord errorRecord = new(
                             pingException,
                             TestConnectionExceptionId,
                             ErrorCategory.ResourceUnavailable,
@@ -500,7 +499,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                PingOptions pingOptions = new PingOptions(MaxHops, true);
+                PingOptions pingOptions = new(MaxHops, true);
                 int retry = 1;
 
                 while (LowMTUSize < (HighMTUSize - 1))
@@ -536,7 +535,7 @@ namespace Microsoft.PowerShell.Commands
                                 targetAddress,
                                 reply.Status.ToString());
                             Exception pingException = new PingException(message);
-                            ErrorRecord errorRecord = new ErrorRecord(
+                            ErrorRecord errorRecord = new(
                                 pingException,
                                 TestConnectionExceptionId,
                                 ErrorCategory.ResourceUnavailable,
@@ -561,7 +560,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string message = StringUtil.Format(TestConnectionResources.NoPingResult, targetAddress, ex.Message);
                 Exception pingException = new PingException(message, ex.InnerException);
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     pingException,
                     TestConnectionExceptionId,
                     ErrorCategory.ResourceUnavailable,
@@ -604,7 +603,7 @@ namespace Microsoft.PowerShell.Commands
             byte[] buffer = GetSendBuffer(BufferSize);
 
             PingReply reply;
-            PingOptions pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
+            PingOptions pingOptions = new(MaxHops, DontFragment.IsPresent);
             int timeout = TimeoutSeconds * 1000;
             int delay = Delay * 1000;
 
@@ -618,7 +617,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     string message = StringUtil.Format(TestConnectionResources.NoPingResult, resolvedTargetName, ex.Message);
                     Exception pingException = new PingException(message, ex.InnerException);
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         pingException,
                         TestConnectionExceptionId,
                         ErrorCategory.ResourceUnavailable,
@@ -679,7 +678,7 @@ namespace Microsoft.PowerShell.Commands
                         resolvedTargetName,
                         TestConnectionResources.TargetAddressAbsent);
                     Exception pingException = new PingException(message, null);
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         pingException,
                         TestConnectionExceptionId,
                         ErrorCategory.ResourceUnavailable,
@@ -723,7 +722,7 @@ namespace Microsoft.PowerShell.Commands
                             resolvedTargetName,
                             TestConnectionResources.CannotResolveTargetName);
                         Exception pingException = new PingException(message, ex);
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        ErrorRecord errorRecord = new(
                             pingException,
                             TestConnectionExceptionId,
                             ErrorCategory.ResourceUnavailable,
@@ -745,7 +744,7 @@ namespace Microsoft.PowerShell.Commands
                             resolvedTargetName,
                             TestConnectionResources.TargetAddressAbsent);
                         Exception pingException = new PingException(message, null);
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        ErrorRecord errorRecord = new(
                             pingException,
                             TestConnectionExceptionId,
                             ErrorCategory.ResourceUnavailable,
@@ -794,7 +793,7 @@ namespace Microsoft.PowerShell.Commands
 
         // Users most often use the default buffer size so we cache the buffer.
         // Creates and fills a send buffer. This follows the ping.exe and CoreFX model.
-        private byte[] GetSendBuffer(int bufferSize)
+        private static byte[] GetSendBuffer(int bufferSize)
         {
             if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer != null)
             {

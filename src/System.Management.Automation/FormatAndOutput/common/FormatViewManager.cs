@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("FormatViewBinding", "Format view binding")]
-        private static PSTraceSource s_formatViewBindingTracer = PSTraceSource.GetTracer("FormatViewBinding", "Format view binding", false);
+        private static readonly PSTraceSource s_formatViewBindingTracer = PSTraceSource.GetTracer("FormatViewBinding", "Format view binding", false);
         #endregion tracer
 
         private static string PSObjectTypeName(PSObject so)
@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string msg = null;
             bool foundValidViews = false;
             string formatTypeName = null;
-            string separator = ", ";
+            const string separator = ", ";
             StringBuilder validViewFormats = new StringBuilder();
 
             if (so != null && so.BaseObject != null &&
@@ -336,7 +336,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     // unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.UnknownViewNameError, viewName));
                     unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.UnknownViewNameErrorSuffix, viewName, formatTypeName));
-                    unKnowViewFormatStringBuilder.Append(validViewFormats.ToString());
+                    unKnowViewFormatStringBuilder.Append(validViewFormats);
                 }
                 else
                 {
@@ -677,12 +677,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return errorRecord;
         }
 
-        private FormatErrorPolicy _formatErrorPolicy;
+        private readonly FormatErrorPolicy _formatErrorPolicy;
 
         /// <summary>
         /// Current list of failed PSPropertyExpression evaluations.
         /// </summary>
-        private List<FormattingError> _formattingErrorList = new List<FormattingError>();
+        private readonly List<FormattingError> _formattingErrorList = new List<FormattingError>();
     }
 }
-

@@ -829,7 +829,7 @@ namespace System.Management.Automation.Runspaces
 
             lock (_pipelineListLock)
             {
-                if (ByPassRunspaceStateCheck == false && RunspaceState != RunspaceState.Opened)
+                if (!ByPassRunspaceStateCheck && RunspaceState != RunspaceState.Opened)
                 {
                     InvalidRunspaceStateException e =
                         new InvalidRunspaceStateException
@@ -924,12 +924,13 @@ namespace System.Management.Automation.Runspaces
                         Tuple<WaitHandle[], ManualResetEvent> stateInfo = new Tuple<WaitHandle[], ManualResetEvent>(waitHandles, waitAllIsDone);
 
                         ThreadPool.QueueUserWorkItem(new WaitCallback(
-                                                         delegate (object state)
-                                                         {
-                                                             var tuple = (Tuple<WaitHandle[], ManualResetEvent>)state;
-                                                             WaitHandle.WaitAll(tuple.Item1);
-                                                             tuple.Item2.Set();
-                                                         }), stateInfo);
+                            (object state) =>
+                            {
+                                var tuple = (Tuple<WaitHandle[], ManualResetEvent>)state;
+                                WaitHandle.WaitAll(tuple.Item1);
+                                tuple.Item2.Set();
+                            }),
+                            stateInfo);
                         return waitAllIsDone.WaitOne();
                     }
                 }
@@ -1002,7 +1003,7 @@ namespace System.Management.Automation.Runspaces
                 // first check if this pipeline is in the list of running
                 // pipelines. It is possible that pipeline has already
                 // completed.
-                if (RunningPipelines.Contains(pipeline) == false)
+                if (!RunningPipelines.Contains(pipeline))
                 {
                     return;
                 }
@@ -1573,7 +1574,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         internal override SessionStateProxy GetSessionStateProxy()
         {
-            return _sessionStateProxy ?? (_sessionStateProxy = new SessionStateProxy(this));
+            return _sessionStateProxy ??= new SessionStateProxy(this);
         }
 
         #endregion session state proxy

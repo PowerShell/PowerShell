@@ -174,7 +174,14 @@ Describe "Default enablement of Experimental Features" -Tags CI {
         (Join-Path -Path $PSHOME -ChildPath 'powershell.config.json') | Should -Exist
 
         foreach ($expFeature in Get-ExperimentalFeature) {
-            $expFeature.Enabled | Should -BeEnabled -Name $expFeature.Name
+            if ($expFeature.Name -ne "PS7DscSupport")
+            {
+                $expFeature.Enabled | Should -BeEnabled -Name $expFeature.Name
+            }
+            else
+            {
+                $expFeature.Enabled | Should -Not -BeEnabled -Name $expFeature.Name
+            }
         }
     }
 }

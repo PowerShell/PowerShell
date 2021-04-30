@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -141,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static string BuildName(List<ObjectCommandPropertyValue> propValues)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             foreach (ObjectCommandPropertyValue propValue in propValues)
             {
                 var propValuePropertyValue = propValue?.PropertyValue;
@@ -149,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (propValuePropertyValue is ICollection propertyValueItems)
                     {
-                        sb.Append("{");
+                        sb.Append('{');
                         var length = sb.Length;
 
                         foreach (object item in propertyValueItems)
@@ -177,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                ArrayList values = new ArrayList();
+                ArrayList values = new();
                 foreach (ObjectCommandPropertyValue propValue in GroupValue.orderValues)
                 {
                     values.Add(propValue.PropertyValue);
@@ -249,10 +248,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "HashTable")]
         public SwitchParameter AsString { get; set; }
 
-        private readonly List<GroupInfo> _groups = new List<GroupInfo>();
-        private readonly OrderByProperty _orderByProperty = new OrderByProperty();
-        private readonly Dictionary<object, GroupInfo> _tupleToGroupInfoMappingDictionary = new Dictionary<object, GroupInfo>();
-        private readonly List<OrderByPropertyEntry> _entriesToOrder = new List<OrderByPropertyEntry>();
+        private readonly List<GroupInfo> _groups = new();
+        private readonly OrderByProperty _orderByProperty = new();
+        private readonly Dictionary<object, GroupInfo> _tupleToGroupInfoMappingDictionary = new();
+        private readonly List<OrderByPropertyEntry> _entriesToOrder = new();
         private OrderByPropertyComparer _orderByPropertyComparer;
         private bool _hasProcessedFirstInputObject;
         private bool _hasDifferentValueTypes;
@@ -376,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteNonTerminatingError(Exception exception, string resourceIdAndErrorId, ErrorCategory category)
         {
-            Exception ex = new Exception(StringUtil.Format(resourceIdAndErrorId), exception);
+            Exception ex = new(StringUtil.Format(resourceIdAndErrorId), exception);
             WriteError(new ErrorRecord(ex, resourceIdAndErrorId, category, null));
         }
 
@@ -402,15 +401,15 @@ namespace Microsoft.PowerShell.Commands
 
                     if (AsString && !AsHashTable)
                     {
-                        ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectWithHashTable);
-                        ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, AsString);
+                        ArgumentException ex = new(UtilityCommonStrings.GroupObjectWithHashTable);
+                        ErrorRecord er = new(ex, "ArgumentException", ErrorCategory.InvalidArgument, AsString);
                         ThrowTerminatingError(er);
                     }
 
                     if (AsHashTable && !AsString && (Property != null && (Property.Length > 1 || _orderByProperty.MshParameterList.Count > 1)))
                     {
-                        ArgumentException ex = new ArgumentException(UtilityCommonStrings.GroupObjectSingleProperty);
-                        ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, Property);
+                        ArgumentException ex = new(UtilityCommonStrings.GroupObjectSingleProperty);
+                        ErrorRecord er = new(ex, "ArgumentException", ErrorCategory.InvalidArgument, Property);
                         ThrowTerminatingError(er);
                     }
 
@@ -444,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_propertyTypesCandidate == null)
             {
-                _propertyTypesCandidate = currentEntryOrderValues.Select(c => PSObject.Base(c.PropertyValue)?.GetType()).ToArray();
+                _propertyTypesCandidate = currentEntryOrderValues.Select(static c => PSObject.Base(c.PropertyValue)?.GetType()).ToArray();
                 return;
             }
 
@@ -492,7 +491,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // using OrderBy to get stable sort.
                 // fast path when we only have the same object types to group
-                foreach (var entry in _entriesToOrder.OrderBy(e => e, _orderByPropertyComparer))
+                foreach (var entry in _entriesToOrder.OrderBy(static e => e, _orderByPropertyComparer))
                 {
                     DoOrderedGrouping(entry, NoElement, _groups, _tupleToGroupInfoMappingDictionary, _orderByPropertyComparer);
                     if (Stopping)

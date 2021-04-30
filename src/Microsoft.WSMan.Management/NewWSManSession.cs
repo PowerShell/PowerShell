@@ -60,7 +60,10 @@ namespace Microsoft.WSMan.Management
         [ValidateNotNullOrEmpty]
         public ProxyAuthentication ProxyAuthentication
         {
-            get { return proxyauthentication; }
+            get
+            {
+                return proxyauthentication;
+            }
 
             set
             {
@@ -78,7 +81,10 @@ namespace Microsoft.WSMan.Management
         [Credential]
         public PSCredential ProxyCredential
         {
-            get { return _proxycredential; }
+            get
+            {
+                return _proxycredential;
+            }
 
             set
             {
@@ -99,7 +105,10 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         public SwitchParameter SkipCACheck
         {
-            get { return skipcacheck; }
+            get
+            {
+                return skipcacheck;
+            }
 
             set
             {
@@ -118,7 +127,10 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         public SwitchParameter SkipCNCheck
         {
-            get { return skipcncheck; }
+            get
+            {
+                return skipcncheck;
+            }
 
             set
             {
@@ -137,7 +149,10 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         public SwitchParameter SkipRevocationCheck
         {
-            get { return skiprevocationcheck; }
+            get
+            {
+                return skiprevocationcheck;
+            }
 
             set
             {
@@ -158,7 +173,10 @@ namespace Microsoft.WSMan.Management
         [ValidateRange(0, Int32.MaxValue)]
         public Int32 SPNPort
         {
-            get { return spnport; }
+            get
+            {
+                return spnport;
+            }
 
             set
             {
@@ -177,7 +195,10 @@ namespace Microsoft.WSMan.Management
         [ValidateRange(0, Int32.MaxValue)]
         public Int32 OperationTimeout
         {
-            get { return operationtimeout; }
+            get
+            {
+                return operationtimeout;
+            }
 
             set
             {
@@ -196,7 +217,10 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         public SwitchParameter NoEncryption
         {
-            get { return noencryption; }
+            get
+            {
+                return noencryption;
+            }
 
             set
             {
@@ -215,7 +239,10 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
         public SwitchParameter UseUTF16
         {
-            get { return useutf16; }
+            get
+            {
+                return useutf16;
+            }
 
             set
             {

@@ -191,8 +191,8 @@ namespace System.Management.Automation
 
             /// <summary>
             /// Child job can call <see cref="ThrottlingJob.AddChildJobWithoutBlocking"/> method
-            /// or <see cref="ThrottlingJob.AddChildJobAndPotentiallyBlock(StartableJob, ChildJobFlags)" />
-            /// or <see cref="ThrottlingJob.AddChildJobAndPotentiallyBlock(Cmdlet, StartableJob, ChildJobFlags)" />
+            /// or <see cref="ThrottlingJob.AddChildJobAndPotentiallyBlock(StartableJob, ChildJobFlags)"/>
+            /// or <see cref="ThrottlingJob.AddChildJobAndPotentiallyBlock(Cmdlet, StartableJob, ChildJobFlags)"/>
             /// method
             /// of the <see cref="ThrottlingJob"/> instance it belongs to.
             /// </summary>
@@ -269,12 +269,12 @@ namespace System.Management.Automation
         /// Passing 0 requests to turn off throttling (i.e. allow unlimited number of child jobs to run)
         /// </param>
         /// <param name="cmdletMode">
-        /// <c>true</c> if this <see cref="ThrottlingJob" /> is used from a cmdlet invoked without -AsJob switch.
-        /// <c>false</c> if this <see cref="ThrottlingJob" /> is used from a cmdlet invoked with -AsJob switch.
+        /// <see langword="true"/> if this <see cref="ThrottlingJob"/> is used from a cmdlet invoked without -AsJob switch.
+        /// <see langword="false"/> if this <see cref="ThrottlingJob"/> is used from a cmdlet invoked with -AsJob switch.
         ///
-        /// If <paramref name="cmdletMode"/> is <c>true</c>, then
+        /// If <paramref name="cmdletMode"/> is <see langword="true"/>, then
         /// memory can be managed more aggressively (for example ChildJobs can be discarded as soon as they complete)
-        /// because the <see cref="ThrottlingJob" /> is not exposed to the end user.
+        /// because the <see cref="ThrottlingJob"/> is not exposed to the end user.
         /// </param>
         internal ThrottlingJob(string command, string jobName, string jobTypeName, int maximumConcurrentChildJobs, bool cmdletMode)
             : base(command, jobName)
@@ -337,10 +337,7 @@ namespace System.Management.Automation
                 while (_actionsForUnblockingChildAdditions.Count > 0)
                 {
                     Action a = _actionsForUnblockingChildAdditions.Dequeue();
-                    if (a != null)
-                    {
-                        a();
-                    }
+                    a?.Invoke();
                 }
             }
         }
@@ -390,7 +387,7 @@ namespace System.Management.Automation
                     newJobStateInfo = new JobStateInfo(JobState.Running);
                 }
 
-                if (ChildJobFlags.CreatesChildJobs == (ChildJobFlags.CreatesChildJobs & flags))
+                if ((ChildJobFlags.CreatesChildJobs & flags) == ChildJobFlags.CreatesChildJobs)
                 {
                     _setOfChildJobsThatCanAddMoreChildJobs.Add(childJob.InstanceId);
                 }
@@ -406,10 +403,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    if (jobEnqueuedAction != null)
-                    {
-                        jobEnqueuedAction();
-                    }
+                    jobEnqueuedAction?.Invoke();
                 }
             }
 
@@ -746,10 +740,7 @@ namespace System.Management.Automation
                         if (_actionsForUnblockingChildAdditions.Count > 0)
                         {
                             Action a = _actionsForUnblockingChildAdditions.Dequeue();
-                            if (a != null)
-                            {
-                                a();
-                            }
+                            a?.Invoke();
                         }
 
                         if (_cmdletMode)
@@ -786,14 +777,14 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Indicates if job has more data available.
-        /// <c>true</c> if any of the child jobs have more data OR if <see cref="EndOfChildJobs"/> have not been called yet;
-        /// <c>false</c> otherwise.
+        /// <see langword="true"/> if any of the child jobs have more data OR if <see cref="EndOfChildJobs"/> have not been called yet;
+        /// <see langword="false"/> otherwise.
         /// </summary>
         public override bool HasMoreData
         {
             get
             {
-                return this.GetChildJobsSnapshot().Any(childJob => childJob.HasMoreData) || (this.Results.Count != 0);
+                return this.GetChildJobsSnapshot().Any(static childJob => childJob.HasMoreData) || (this.Results.Count != 0);
             }
         }
 

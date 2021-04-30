@@ -3,6 +3,7 @@
 
 name: PowerShell Daily
 on:
+    workflow_dispatch:
     schedule:
     # At 13:00 UTC every day.
     - cron:  '0 13 * * *'
@@ -30,17 +31,17 @@ jobs:
       - name: Execute Update .NET script
         run: |
           $currentVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
-          Write-Verbose "name=OLD_VERSION::$currentVersion" -Verbose
-          Write-Host "::set-env name=OLD_VERSION::$currentVersion"
+          Write-Verbose "OLD_VERSION=$currentVersion" -Verbose
+          "OLD_VERSION=$currentVersion" | Out-File $env:GITHUB_ENV -Append
 
           ./tools/UpdateDotnetRuntime.ps1 -UpdateMSIPackaging
           $newVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
-          Write-Verbose "name=NEW_VERSION::$newVersion" -Verbose
-          Write-Host "::set-env name=NEW_VERSION::$newVersion"
+          Write-Verbose "NEW_VERSION=$newVersion" -Verbose
+          "NEW_VERSION=$newVersion" | Out-File $env:GITHUB_ENV -Append
 
           if ($currentVersion -ne $newVersion) {
-            Write-Verbose "name=CREATE_PR::true" -Verbose
-            Write-Host "::set-env name=CREATE_PR::true"
+            Write-Verbose "CREATE_PR=true" -Verbose
+            "CREATE_PR=true" | Out-File $env:GITHUB_ENV -Append
           }
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v2

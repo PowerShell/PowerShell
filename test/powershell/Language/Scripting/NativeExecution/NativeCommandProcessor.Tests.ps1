@@ -43,6 +43,12 @@ Describe 'native commands with pipeline' -tags 'Feature' {
             $result[0] | Should -Match "pwsh"
         }
     }
+
+    It 'native command should be killed when pipeline is disposed' -Skip:($IsWindows) {
+        $yes = (Get-Process 'yes' -ErrorAction Ignore).Count
+        yes | Select-Object -First 2
+        (Get-Process 'yes' -ErrorAction Ignore).Count | Should -Be $yes
+    }
 }
 
 Describe "Native Command Processor" -tags "Feature" {
@@ -143,6 +149,15 @@ Describe "Native Command Processor" -tags "Feature" {
 
     It '$ErrorActionPreference does not apply to redirected stderr output' -Skip:(!$EnabledExperimentalFeatures.Contains('PSNotApplyErrorActionToStderr')) {
         pwsh -noprofile -command '$ErrorActionPreference = ''Stop''; testexe -stderr stop 2>$null; ''hello''; $error; $?' | Should -BeExactly 'hello','True'
+    }
+
+    It 'Can start an elevated associated process correctly' -Skip:(
+        !$IsWindows -or (!(Test-Path (Join-Path -Path $env:windir -ChildPath 'system32' -AdditionalChildPath 'diskmgmt.msc')))
+    ) {
+        # test bug https://github.com/PowerShell/PowerShell/issues/13744 where console is blocked
+        diskmgmt.msc
+        Wait-UntilTrue -sb { (Get-Process mmc).Count -gt 0 } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 1000 | Should -BeTrue
+        Get-Process mmc | Stop-Process
     }
 }
 

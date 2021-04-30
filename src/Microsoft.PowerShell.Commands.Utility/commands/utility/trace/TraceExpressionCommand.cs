@@ -10,8 +10,6 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Threading;
 
-using Dbg = System.Management.Automation.Diagnostics;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -27,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// The TraceSource parameter determines which TraceSource categories the
@@ -48,7 +46,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 2)]
         public PSTraceSourceOptions Option
         {
-            get { return base.OptionsInternal; }
+            get
+            {
+                return base.OptionsInternal;
+            }
 
             set
             {
@@ -84,7 +85,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public TraceOptions ListenerOption
         {
-            get { return base.ListenerOptionsInternal; }
+            get
+            {
+                return base.ListenerOptionsInternal;
+            }
 
             set
             {
@@ -540,9 +544,9 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private TraceListenerCommandBase _cmdlet;
-        private bool _writeError;
+        private readonly TraceListenerCommandBase _cmdlet;
+        private readonly bool _writeError;
         private bool _isOpen = true;
-        private Collection<PSTraceSource> _matchingSources = new Collection<PSTraceSource>();
+        private readonly Collection<PSTraceSource> _matchingSources = new();
     }
 }

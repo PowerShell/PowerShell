@@ -121,7 +121,7 @@ namespace System.Management.Automation
     {
         #region Private Data
 
-        private IList<T> _data;
+        private readonly IList<T> _data;
         private ManualResetEvent _readWaitHandle;
         private bool _isOpen = true;
         private bool _releaseOnEnumeration;
@@ -336,9 +336,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
-            IList<T> listToUse = info.GetValue("Data", typeof(IList<T>)) as IList<T>;
-
-            if (listToUse == null)
+            if (!(info.GetValue("Data", typeof(IList<T>)) is IList<T> listToUse))
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
@@ -392,7 +390,10 @@ namespace System.Management.Automation
         /// </summary>
         public int DataAddedCount
         {
-            get { return _dataAddedFrequency; }
+            get
+            {
+                return _dataAddedFrequency;
+            }
 
             set
             {
@@ -560,11 +561,7 @@ namespace System.Management.Automation
 
                     // A temporary variable is used as the Completed may
                     // reach null (because of -='s) after the null check
-                    EventHandler tempCompleted = Completed;
-                    if (tempCompleted != null)
-                    {
-                        tempCompleted(this, EventArgs.Empty);
-                    }
+                    Completed?.Invoke(this, EventArgs.Empty);
                 }
 
                 if (raiseDataAdded)
@@ -1405,22 +1402,14 @@ namespace System.Management.Automation
         {
             // A temporary variable is used as the DataAdding may
             // reach null (because of -='s) after the null check
-            EventHandler<DataAddingEventArgs> tempDataAdding = DataAdding;
-            if (tempDataAdding != null)
-            {
-                tempDataAdding(this, new DataAddingEventArgs(psInstanceId, itemAdded));
-            }
+            DataAdding?.Invoke(this, new DataAddingEventArgs(psInstanceId, itemAdded));
         }
 
         private void RaiseDataAddedEvent(Guid psInstanceId, int index)
         {
             // A temporary variable is used as the DataAdded may
             // reach null (because of -='s) after the null check
-            EventHandler<DataAddedEventArgs> tempDataAdded = DataAdded;
-            if (tempDataAdded != null)
-            {
-                tempDataAdded(this, new DataAddedEventArgs(psInstanceId, index));
-            }
+            DataAdded?.Invoke(this, new DataAddedEventArgs(psInstanceId, index));
         }
 
         /// <summary>
@@ -1643,7 +1632,7 @@ namespace System.Management.Automation
         }
 
         // Serializes an object, as long as it's not serialized.
-        private PSObject GetSerializedObject(object value)
+        private static PSObject GetSerializedObject(object value)
         {
             // This is a safe cast, as this method is only called with "SerializeInput" is set,
             // and that method throws if the collection type is not PSObject.
@@ -1668,7 +1657,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool SerializationWouldHaveNoEffect(PSObject result)
+        private static bool SerializationWouldHaveNoEffect(PSObject result)
         {
             if (result == null)
             {
@@ -1823,8 +1812,8 @@ namespace System.Management.Automation
     /// Needed to provide a way to get to the non-blocking
     /// MoveNext implementation.
     /// </summary>
-    /// <typeparam name="W"></typeparam>
-    internal interface IBlockingEnumerator<out W> : IEnumerator<W>
+    /// <typeparam name="T"></typeparam>
+    internal interface IBlockingEnumerator<out T> : IEnumerator<T>
     {
         bool MoveNext(bool block);
     }
@@ -1836,15 +1825,15 @@ namespace System.Management.Automation
     /// either all the PowerShell operations are completed or the
     /// PSDataCollection is closed.
     /// </summary>
-    /// <typeparam name="W"></typeparam>
-    internal sealed class PSDataCollectionEnumerator<W> : IBlockingEnumerator<W>
+    /// <typeparam name="T"></typeparam>
+    internal sealed class PSDataCollectionEnumerator<T> : IBlockingEnumerator<T>
     {
         #region Private Data
 
-        private W _currentElement;
+        private T _currentElement;
         private int _index;
-        private PSDataCollection<W> _collToEnumerate;
-        private bool _neverBlock;
+        private readonly PSDataCollection<T> _collToEnumerate;
+        private readonly bool _neverBlock;
 
         #endregion
 
@@ -1859,7 +1848,7 @@ namespace System.Management.Automation
         /// <param name="neverBlock">
         /// Controls if the enumerator is blocking by default or not.
         /// </param>
-        internal PSDataCollectionEnumerator(PSDataCollection<W> collection, bool neverBlock)
+        internal PSDataCollectionEnumerator(PSDataCollection<T> collection, bool neverBlock)
         {
             Dbg.Assert(collection != null,
                 "Collection cannot be null");
@@ -1868,7 +1857,7 @@ namespace System.Management.Automation
 
             _collToEnumerate = collection;
             _index = 0;
-            _currentElement = default(W);
+            _currentElement = default(T);
             _collToEnumerate.IsEnumerated = true;
             _neverBlock = neverBlock;
         }
@@ -1886,7 +1875,7 @@ namespace System.Management.Automation
         /// if the enumerator is positioned before the first element or after
         /// the last element; the value of the property is undefined.
         /// </remarks>
-        W IEnumerator<W>.Current
+        T IEnumerator<T>.Current
         {
             get
             {
@@ -1925,7 +1914,7 @@ namespace System.Management.Automation
         /// </remarks>
         public bool MoveNext()
         {
-            return MoveNext(_neverBlock == false);
+            return MoveNext(!_neverBlock);
         }
 
         /// <summary>
@@ -1947,7 +1936,7 @@ namespace System.Management.Automation
                         _currentElement = _collToEnumerate[_index];
                         if (_collToEnumerate.ReleaseOnEnumeration)
                         {
-                            _collToEnumerate[_index] = default(W);
+                            _collToEnumerate[_index] = default(T);
                         }
 
                         _index++;
@@ -1956,7 +1945,7 @@ namespace System.Management.Automation
 
                     // we have reached the end if either the collection is closed
                     // or no powershell instance is bound to this collection.
-                    if ((0 == _collToEnumerate.RefCount) || (!_collToEnumerate.IsOpen))
+                    if ((_collToEnumerate.RefCount == 0) || (!_collToEnumerate.IsOpen))
                     {
                         return false;
                     }
@@ -1989,7 +1978,7 @@ namespace System.Management.Automation
         /// </summary>
         public void Reset()
         {
-            _currentElement = default(W);
+            _currentElement = default(T);
             _index = 0;
         }
 
@@ -2010,7 +1999,7 @@ namespace System.Management.Automation
     /// </summary>
     internal sealed class PSInformationalBuffers
     {
-        private Guid _psInstanceId;
+        private readonly Guid _psInstanceId;
 
         /// <summary>
         /// Default constructor.
@@ -2042,7 +2031,10 @@ namespace System.Management.Automation
         /// </summary>
         internal PSDataCollection<ProgressRecord> Progress
         {
-            get { return progress; }
+            get
+            {
+                return progress;
+            }
 
             set
             {
@@ -2058,7 +2050,10 @@ namespace System.Management.Automation
         /// </summary>
         internal PSDataCollection<VerboseRecord> Verbose
         {
-            get { return verbose; }
+            get
+            {
+                return verbose;
+            }
 
             set
             {
@@ -2074,7 +2069,10 @@ namespace System.Management.Automation
         /// </summary>
         internal PSDataCollection<DebugRecord> Debug
         {
-            get { return debug; }
+            get
+            {
+                return debug;
+            }
 
             set
             {

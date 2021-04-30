@@ -58,7 +58,7 @@ namespace System.Management.Automation
     {
         #region tracer
         [TraceSource("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.");
 
         [TraceSource("ParameterBinding", "Traces the process of binding the arguments to the parameters of cmdlets, scripts, and applications.")]
         internal static readonly PSTraceSource bindingTracer =
@@ -172,10 +172,10 @@ namespace System.Management.Automation
         /// </summary>
         internal CommandLineParameters CommandLineParameters
         {
+            get { return _commandLineParameters ??= new CommandLineParameters(); }
+
             // Setter is needed to pass into RuntimeParameterBinder instances
             set { _commandLineParameters = value; }
-
-            get { return _commandLineParameters ?? (_commandLineParameters = new CommandLineParameters()); }
         }
 
         private CommandLineParameters _commandLineParameters;
@@ -439,7 +439,7 @@ namespace System.Management.Automation
                                             GetErrorExtent(parameter),
                                             parameterMetadata.Name,
                                             parameterMetadata.Type,
-                                            (parameterValue == null) ? null : parameterValue.GetType(),
+                                            parameterValue?.GetType(),
                                             ParameterBinderStrings.ParameterArgumentTransformationError,
                                             "ParameterArgumentTransformationError",
                                             e.Message);
@@ -522,7 +522,7 @@ namespace System.Management.Automation
                                             GetErrorExtent(parameter),
                                             parameterMetadata.Name,
                                             parameterMetadata.Type,
-                                            (parameterValue == null) ? null : parameterValue.GetType(),
+                                            parameterValue?.GetType(),
                                             ParameterBinderStrings.ParameterArgumentValidationError,
                                             "ParameterArgumentValidationError",
                                             e.Message);
@@ -586,7 +586,7 @@ namespace System.Management.Automation
 
                     if (bindError != null)
                     {
-                        Type specifiedType = (parameterValue == null) ? null : parameterValue.GetType();
+                        Type specifiedType = parameterValue?.GetType();
                         ParameterBindingException bindingException =
                             new ParameterBindingException(
                                 bindError,
@@ -736,7 +736,7 @@ namespace System.Management.Automation
                             GetErrorExtent(parameter),
                             parameterMetadata.Name,
                             parameterMetadata.Type,
-                            (parameterValue == null) ? null : parameterValue.GetType(),
+                            parameterValue?.GetType(),
                             ParameterBinderStrings.ParameterArgumentValidationErrorEmptyStringNotAllowed,
                             "ParameterArgumentValidationErrorEmptyStringNotAllowed");
                     throw bindingException;
@@ -813,7 +813,7 @@ namespace System.Management.Automation
                         GetErrorExtent(parameter),
                         parameterMetadata.Name,
                         parameterMetadata.Type,
-                        (parameterValue == null) ? null : parameterValue.GetType(),
+                        parameterValue?.GetType(),
                         resourceString,
                         errorId);
                 throw bindingException;
@@ -903,7 +903,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The invocation information for the code that is being bound.
         /// </summary>
-        private InvocationInfo _invocationInfo;
+        private readonly InvocationInfo _invocationInfo;
 
         internal InvocationInfo InvocationInfo
         {
@@ -916,7 +916,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The context of the currently running engine.
         /// </summary>
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
 
         internal ExecutionContext Context
         {
@@ -929,7 +929,7 @@ namespace System.Management.Automation
         /// <summary>
         /// An instance of InternalCommand that the binder is binding to.
         /// </summary>
-        private InternalCommand _command;
+        private readonly InternalCommand _command;
 
         internal InternalCommand Command
         {
@@ -942,9 +942,9 @@ namespace System.Management.Automation
         /// <summary>
         /// The engine APIs that need to be passed the attributes when evaluated.
         /// </summary>
-        private EngineIntrinsics _engine;
+        private readonly EngineIntrinsics _engine;
 
-        private bool _isTranscribing;
+        private readonly bool _isTranscribing;
 
         #endregion internal members
 
@@ -1559,7 +1559,7 @@ namespace System.Management.Automation
                                 toType,
                                 0,
                                 null,
-                                new object[] { },
+                                Array.Empty<object>(),
                                 System.Globalization.CultureInfo.InvariantCulture);
                         if (collectionTypeInformation.ParameterCollectionType == ParameterCollectionType.IList)
                             resultAsIList = (IList)resultCollection;
@@ -1781,7 +1781,7 @@ namespace System.Management.Automation
                                     GetErrorExtent(argument),
                                     parameterName,
                                     toType,
-                                    (currentValueElement == null) ? null : currentValueElement.GetType(),
+                                    currentValueElement?.GetType(),
                                     ParameterBinderStrings.CannotConvertArgument,
                                     "CannotConvertArgument",
                                     currentValueElement ?? "null",
@@ -1878,7 +1878,7 @@ namespace System.Management.Automation
                                 GetErrorExtent(argument),
                                 parameterName,
                                 toType,
-                                (currentValue == null) ? null : currentValue.GetType(),
+                                currentValue?.GetType(),
                                 ParameterBinderStrings.CannotConvertArgument,
                                 "CannotConvertArgument",
                                 currentValue ?? "null",
@@ -2066,4 +2066,3 @@ namespace System.Management.Automation
         }
     }
 }
-

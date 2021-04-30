@@ -194,7 +194,7 @@ namespace System.Management.Automation
                 if (commandInfos != null && commandInfos.Count > 1)
                 {
                     // OrderBy is using stable sorting
-                    var sortedCommandInfos = commandInfos.OrderBy(a => a, new CommandNameComparer());
+                    var sortedCommandInfos = commandInfos.OrderBy(static a => a, new CommandNameComparer());
                     completionResults = MakeCommandsUnique(sortedCommandInfos, useModulePrefix, addAmpersandIfNecessary, quote);
                 }
                 else
@@ -480,7 +480,7 @@ namespace System.Management.Automation
         #endregion Module Names
 
         #region Command Parameters
-        private static string[] s_parameterNamesOfImportDSCResource = { "Name", "ModuleName", "ModuleVersion" };
+        private static readonly string[] s_parameterNamesOfImportDSCResource = { "Name", "ModuleName", "ModuleVersion" };
 
         internal static List<CompletionResult> CompleteCommandParameter(CompletionContext context)
         {
@@ -511,9 +511,9 @@ namespace System.Management.Automation
                 && !string.IsNullOrWhiteSpace(context.WordToComplete) && context.WordToComplete.StartsWith('-'))
             {
                 var lastAst = context.RelatedAsts.Last();
-                var wordToMatch = context.WordToComplete.Substring(1) + "*";
+                var wordToMatch = string.Concat(context.WordToComplete.AsSpan(1), "*");
                 var pattern = WildcardPattern.Get(wordToMatch, WildcardOptions.IgnoreCase);
-                var parameterNames = keywordAst.CommandElements.Where(ast => ast is CommandParameterAst).Select(ast => (ast as CommandParameterAst).ParameterName);
+                var parameterNames = keywordAst.CommandElements.Where(static ast => ast is CommandParameterAst).Select(static ast => (ast as CommandParameterAst).ParameterName);
                 foreach (var parameterName in s_parameterNamesOfImportDSCResource)
                 {
                     if (pattern.IsMatch(parameterName) && !parameterNames.Contains(parameterName, StringComparer.OrdinalIgnoreCase))
@@ -542,8 +542,7 @@ namespace System.Management.Automation
             else
             {
                 // No CommandParameterAst is found. It could be a StringConstantExpressionAst "-"
-                var dashAst = (context.RelatedAsts[context.RelatedAsts.Count - 1] as StringConstantExpressionAst);
-                if (dashAst == null)
+                if (!(context.RelatedAsts[context.RelatedAsts.Count - 1] is StringConstantExpressionAst dashAst))
                     return result;
                 if (!dashAst.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
                     return result;
@@ -2031,19 +2030,17 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    if (argumentCompleterAttribute.Type != null)
+                    var completer = argumentCompleterAttribute.CreateArgumentCompleter();
+
+                    if (completer != null)
                     {
-                        var completer = Activator.CreateInstance(argumentCompleterAttribute.Type) as IArgumentCompleter;
-                        if (completer != null)
+                        var customResults = completer.CompleteArgument(commandName, parameterName,
+                            context.WordToComplete, commandAst, GetBoundArgumentsAsHashtable(context));
+                        if (customResults != null)
                         {
-                            var customResults = completer.CompleteArgument(commandName, parameterName,
-                                context.WordToComplete, commandAst, GetBoundArgumentsAsHashtable(context));
-                            if (customResults != null)
-                            {
-                                result.AddRange(customResults);
-                                result.Add(CompletionResult.Null);
-                                return;
-                            }
+                            result.AddRange(customResults);
+                            result.Add(CompletionResult.Null);
+                            return;
                         }
                     }
                     else
@@ -2570,7 +2567,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceAndClassNameToAssociationResultClassNames =
+        private static readonly ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceAndClassNameToAssociationResultClassNames =
             new ConcurrentDictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
 
         private static IEnumerable<string> NativeCompletionCimAssociationResultClassName_GetResultClassNames(
@@ -2599,7 +2596,7 @@ namespace System.Management.Automation
 
                     resultClassNames.AddRange(
                         cimSession.QueryInstances(cimNamespaceOfSource ?? "root/cimv2", "WQL", query)
-                            .Select(associationInstance => associationInstance.CimSystemProperties.ClassName));
+                            .Select(static associationInstance => associationInstance.CimSystemProperties.ClassName));
 
                     cimClass = cimClass.CimSuperClass;
                 }
@@ -2659,7 +2656,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                bool currentMethodIsStatic = methodDeclaration.Qualifiers.Any(q => q.Name.Equals("Static", StringComparison.OrdinalIgnoreCase));
+                bool currentMethodIsStatic = methodDeclaration.Qualifiers.Any(static q => q.Name.Equals("Static", StringComparison.OrdinalIgnoreCase));
                 if ((currentMethodIsStatic && !staticMethod) || (!currentMethodIsStatic && staticMethod))
                 {
                     continue;
@@ -2667,11 +2664,11 @@ namespace System.Management.Automation
 
                 StringBuilder tooltipText = new StringBuilder();
                 tooltipText.Append(methodName);
-                tooltipText.Append("(");
+                tooltipText.Append('(');
                 bool gotFirstParameter = false;
                 foreach (var methodParameter in methodDeclaration.Parameters)
                 {
-                    bool outParameter = methodParameter.Qualifiers.Any(q => q.Name.Equals("Out", StringComparison.OrdinalIgnoreCase));
+                    bool outParameter = methodParameter.Qualifiers.Any(static q => q.Name.Equals("Out", StringComparison.OrdinalIgnoreCase));
 
                     if (!gotFirstParameter)
                     {
@@ -2688,7 +2685,7 @@ namespace System.Management.Automation
                     }
 
                     tooltipText.Append(CimInstanceAdapter.CimTypeToTypeNameDisplayString(methodParameter.CimType));
-                    tooltipText.Append(" ");
+                    tooltipText.Append(' ');
                     tooltipText.Append(methodParameter.Name);
 
                     if (outParameter)
@@ -2697,15 +2694,15 @@ namespace System.Management.Automation
                     }
                 }
 
-                tooltipText.Append(")");
+                tooltipText.Append(')');
 
                 localResults.Add(new CompletionResult(methodName, methodName, CompletionResultType.Method, tooltipText.ToString()));
             }
 
-            result.AddRange(localResults.OrderBy(x => x.ListItemText, StringComparer.OrdinalIgnoreCase));
+            result.AddRange(localResults.OrderBy(static x => x.ListItemText, StringComparer.OrdinalIgnoreCase));
         }
 
-        private static ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceToClassNames =
+        private static readonly ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceToClassNames =
             new ConcurrentDictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
 
         private static IEnumerable<string> NativeCompletionCimClassName_GetClassNames(string targetNamespace)
@@ -2803,8 +2800,7 @@ namespace System.Management.Automation
                             continue;
                         }
 
-                        string childNamespace = namespaceNameProperty.Value as string;
-                        if (childNamespace == null)
+                        if (!(namespaceNameProperty.Value is string childNamespace))
                         {
                             continue;
                         }
@@ -2822,7 +2818,7 @@ namespace System.Management.Automation
                     }
             }
 
-            result.AddRange(namespaceResults.OrderBy(x => x.ListItemText, StringComparer.OrdinalIgnoreCase));
+            result.AddRange(namespaceResults.OrderBy(static x => x.ListItemText, StringComparer.OrdinalIgnoreCase));
         }
 
         private static void NativeCompletionGetCommand(CompletionContext context, string moduleName, string paramName, List<CompletionResult> result)
@@ -3630,7 +3626,7 @@ namespace System.Management.Automation
 
             RemoveLastNullCompletionResult(result);
 
-            context.WordToComplete = context.WordToComplete ?? string.Empty;
+            context.WordToComplete ??= string.Empty;
             var clearLiteralPath = false;
             if (paramName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))
             {
@@ -3736,7 +3732,7 @@ namespace System.Management.Automation
                 // The parameter Destination for Move-Item and Copy-Item takes literal path
                 RemoveLastNullCompletionResult(result);
 
-                context.WordToComplete = context.WordToComplete ?? string.Empty;
+                context.WordToComplete ??= string.Empty;
                 var clearLiteralPath = TurnOnLiteralPathOption(context);
 
                 try
@@ -3767,7 +3763,7 @@ namespace System.Management.Automation
 
             RemoveLastNullCompletionResult(result);
 
-            context.WordToComplete = context.WordToComplete ?? string.Empty;
+            context.WordToComplete ??= string.Empty;
             var clearLiteralPath = false;
             if (paramName.Equals("LiteralPath", StringComparison.OrdinalIgnoreCase))
             {
@@ -3793,8 +3789,7 @@ namespace System.Management.Automation
         {
             // Command is something like where-object/foreach-object/format-list/etc. where there is a parameter that is a property name
             // and we want member names based on the input object, which is either the parameter InputObject, or comes from the pipeline.
-            var pipelineAst = commandAst.Parent as PipelineAst;
-            if (pipelineAst == null)
+            if (!(commandAst.Parent is PipelineAst pipelineAst))
                 return;
 
             int i;
@@ -4089,7 +4084,9 @@ namespace System.Management.Automation
         private sealed class ArgumentLocation
         {
             internal bool IsPositional { get; set; }
+
             internal int Position { get; set; }
+
             internal AstParameterArgumentPair Argument { get; set; }
         }
 
@@ -4259,7 +4256,7 @@ namespace System.Management.Automation
 
                             if (leaf != null)
                             {
-                                leaf = leaf + "*";
+                                leaf += "*";
                                 var parentPath = Path.GetDirectoryName(providerPath);
 
                                 // ProviderPath should be absolute path for FileSystem entries
@@ -4325,7 +4322,7 @@ namespace System.Management.Automation
                     }
 
                     // Sorting the results by the path
-                    var sortedPsobjs = psobjs.OrderBy(a => a, new ItemPathComparer());
+                    var sortedPsobjs = psobjs.OrderBy(static a => a, new ItemPathComparer());
 
                     foreach (PSObject psobj in sortedPsobjs)
                     {
@@ -4507,7 +4504,7 @@ namespace System.Management.Automation
         private const int STYPE_DISKTREE = 0;
         private const int STYPE_MASK = 0x000000FF;
 
-        private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
+        private static readonly System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchCasing = MatchCasing.CaseInsensitive,
             AttributesToSkip = 0 // Default is to skip Hidden and System files, so we clear this to retain existing behavior
@@ -4708,7 +4705,7 @@ namespace System.Management.Automation
                 provider = wordToComplete.Substring(0, colon + 1);
                 if (s_variableScopes.Contains(provider, StringComparer.OrdinalIgnoreCase))
                 {
-                    pattern = "variable:" + wordToComplete.Substring(colon + 1) + "*";
+                    pattern = string.Concat("variable:", wordToComplete.AsSpan(colon + 1), "*");
                 }
                 else
                 {
@@ -4924,13 +4921,22 @@ namespace System.Management.Automation
 
         #region Comments
 
-        // Complete the history entries
-        internal static List<CompletionResult> CompleteComment(CompletionContext context)
+        internal static List<CompletionResult> CompleteComment(CompletionContext context, ref int replacementIndex, ref int replacementLength)
         {
-            List<CompletionResult> results = new List<CompletionResult>();
+            // Complete #requires statements
+            if (context.WordToComplete.StartsWith("#requires ", StringComparison.OrdinalIgnoreCase))
+            {
+                return CompleteRequires(context, ref replacementIndex, ref replacementLength);
+            }
 
+            var results = new List<CompletionResult>();
+
+            // Complete the history entries
             Match matchResult = Regex.Match(context.WordToComplete, @"^#([\w\-]*)$");
-            if (!matchResult.Success) { return results; }
+            if (!matchResult.Success)
+            {
+                return results;
+            }
 
             string wordToComplete = matchResult.Groups[1].Value;
             Collection<PSObject> psobjs;
@@ -4973,8 +4979,7 @@ namespace System.Management.Automation
                 for (int index = psobjs.Count - 1; index >= 0; index--)
                 {
                     var psobj = psobjs[index];
-                    var historyInfo = PSObject.Base(psobj) as HistoryInfo;
-                    if (historyInfo == null) continue;
+                    if (!(PSObject.Base(psobj) is HistoryInfo historyInfo)) continue;
 
                     var commandLine = historyInfo.CommandLine;
                     if (!string.IsNullOrEmpty(commandLine) && pattern.IsMatch(commandLine))
@@ -4992,6 +4997,197 @@ namespace System.Management.Automation
             return results;
         }
 
+        private static List<CompletionResult> CompleteRequires(CompletionContext context, ref int replacementIndex, ref int replacementLength)
+        {
+            var results = new List<CompletionResult>();
+
+            int cursorIndex = context.CursorPosition.ColumnNumber - 1;
+            string lineToCursor = context.CursorPosition.Line.Substring(0, cursorIndex);
+
+            // RunAsAdministrator must be the last parameter in a Requires statement so no completion if the cursor is after the parameter.
+            if (lineToCursor.Contains(" -RunAsAdministrator", StringComparison.OrdinalIgnoreCase))
+            {
+                return results;
+            }
+
+            // Regex to find parameter like " -Parameter1" or " -"
+            MatchCollection hashtableKeyMatches = Regex.Matches(lineToCursor, @"\s+-([A-Za-z]+|$)");
+            if (hashtableKeyMatches.Count == 0)
+            {
+                return results;
+            }
+
+            Group currentParameterMatch = hashtableKeyMatches[^1].Groups[1];
+
+            // Complete the parameter if the cursor is at a parameter
+            if (currentParameterMatch.Index + currentParameterMatch.Length == cursorIndex)
+            {
+                string currentParameterPrefix = currentParameterMatch.Value;
+
+                replacementIndex = context.CursorPosition.Offset - currentParameterPrefix.Length;
+                replacementLength = currentParameterPrefix.Length;
+
+                // Produce completions for all parameters that begin with the prefix we've found,
+                // but which haven't already been specified in the line we need to complete
+                foreach (KeyValuePair<string, string> parameter in s_requiresParameters)
+                {
+                    if (parameter.Key.StartsWith(currentParameterPrefix, StringComparison.OrdinalIgnoreCase)
+                        && !context.CursorPosition.Line.Contains($" -{parameter.Key}", StringComparison.OrdinalIgnoreCase))
+                    {
+                        results.Add(new CompletionResult(parameter.Key, parameter.Key, CompletionResultType.ParameterName, parameter.Value));
+                    }
+                }
+
+                return results;
+            }
+
+            // Regex to find parameter values (any text that appears after various delimiters)
+            hashtableKeyMatches = Regex.Matches(lineToCursor, @"(\s+|,|;|{|\""|'|=)(\w+|$)");
+            string currentValue;
+            if (hashtableKeyMatches.Count == 0)
+            {
+                currentValue = string.Empty;
+            }
+            else
+            {
+                currentValue = hashtableKeyMatches[^1].Groups[2].Value;
+            }
+
+            replacementIndex = context.CursorPosition.Offset - currentValue.Length;
+            replacementLength = currentValue.Length;
+
+            // Complete PSEdition parameter values
+            if (currentParameterMatch.Value.Equals("PSEdition", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (KeyValuePair<string, string> psEditionEntry in s_requiresPSEditions)
+                {
+                    if (psEditionEntry.Key.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase))
+                    {
+                        results.Add(new CompletionResult(psEditionEntry.Key, psEditionEntry.Key, CompletionResultType.ParameterValue, psEditionEntry.Value));
+                    }
+                }
+
+                return results;
+            }
+
+            // Complete Modules module specification values
+            if (currentParameterMatch.Value.Equals("Modules", StringComparison.OrdinalIgnoreCase))
+            {
+                int hashtableStart = lineToCursor.LastIndexOf("@{");
+                int hashtableEnd = lineToCursor.LastIndexOf('}');
+
+                bool insideHashtable = hashtableStart != -1 && (hashtableEnd == -1 || hashtableEnd < hashtableStart);
+
+                // If not inside a hashtable, try to complete a module simple name
+                if (!insideHashtable)
+                {
+                    context.WordToComplete = currentValue;
+                    return CompleteModuleName(context, true);
+                }
+
+                string hashtableString = lineToCursor.Substring(hashtableStart);
+
+                // Regex to find hashtable keys with or without quotes
+                hashtableKeyMatches = Regex.Matches(hashtableString, @"(@{|;)\s*(?:'|\""|\w*)\w*");
+
+                // Build the list of keys we might want to complete, based on what's already been provided
+                var moduleSpecKeysToComplete = new HashSet<string>(s_requiresModuleSpecKeys.Keys);
+                bool sawModuleNameLast = false;
+                foreach (Match existingHashtableKeyMatch in hashtableKeyMatches)
+                {
+                    string existingHashtableKey = existingHashtableKeyMatch.Value.TrimStart(s_hashtableKeyPrefixes);
+
+                    if (string.IsNullOrEmpty(existingHashtableKey))
+                    {
+                        continue;
+                    }
+
+                    // Remove the existing key we just saw
+                    moduleSpecKeysToComplete.Remove(existingHashtableKey);
+
+                    // We need to remember later if we saw "ModuleName" as the last hashtable key, for completions
+                    if (sawModuleNameLast = existingHashtableKey.Equals("ModuleName", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    // "RequiredVersion" is mutually exclusive with "ModuleVersion" and "MaximumVersion"
+                    if (existingHashtableKey.Equals("ModuleVersion", StringComparison.OrdinalIgnoreCase)
+                        || existingHashtableKey.Equals("MaximumVersion", StringComparison.OrdinalIgnoreCase))
+                    {
+                        moduleSpecKeysToComplete.Remove("RequiredVersion");
+                        continue;
+                    }
+
+                    if (existingHashtableKey.Equals("RequiredVersion", StringComparison.OrdinalIgnoreCase))
+                    {
+                        moduleSpecKeysToComplete.Remove("ModuleVersion");
+                        moduleSpecKeysToComplete.Remove("MaximumVersion");
+                        continue;
+                    }
+                }
+
+                Group lastHashtableKeyPrefixGroup = hashtableKeyMatches[^1].Groups[0];
+
+                // If we're not completing a key for the hashtable, try to complete module names, but nothing else
+                bool completingHashtableKey = lastHashtableKeyPrefixGroup.Index + lastHashtableKeyPrefixGroup.Length == hashtableString.Length;
+                if (!completingHashtableKey)
+                {
+                    if (sawModuleNameLast)
+                    {
+                        context.WordToComplete = currentValue;
+                        return CompleteModuleName(context, true);
+                    }
+
+                    return results;
+                }
+
+                // Now try to complete hashtable keys
+                foreach (string moduleSpecKey in moduleSpecKeysToComplete)
+                {
+                    if (moduleSpecKey.StartsWith(currentValue, StringComparison.OrdinalIgnoreCase))
+                    {
+                        results.Add(new CompletionResult(moduleSpecKey, moduleSpecKey, CompletionResultType.ParameterValue, s_requiresModuleSpecKeys[moduleSpecKey]));
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        private static readonly IReadOnlyDictionary<string, string> s_requiresParameters = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Modules", "Specifies PowerShell modules that the script requires." },
+            { "PSEdition", "Specifies a PowerShell edition that the script requires." },
+            { "RunAsAdministrator", "Specifies that PowerShell must be running as administrator on Windows." },
+            { "Version", "Specifies the minimum version of PowerShell that the script requires." },
+        };
+
+        private static readonly IReadOnlyDictionary<string, string> s_requiresPSEditions = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Core", "Specifies that the script requires PowerShell Core to run." },
+            { "Desktop", "Specifies that the script requires Windows PowerShell to run." },
+        };
+
+        private static readonly IReadOnlyDictionary<string, string> s_requiresModuleSpecKeys = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "ModuleName", "Required. Specifies the module name." },
+            { "GUID", "Optional. Specifies the GUID of the module." },
+            { "ModuleVersion", "Specifies a minimum acceptable version of the module." },
+            { "RequiredVersion", "Specifies an exact, required version of the module." },
+            { "MaximumVersion", "Specifies the maximum acceptable version of the module." },
+        };
+
+        private static readonly char[] s_hashtableKeyPrefixes = new[]
+        {
+            '@',
+            '{',
+            ';',
+            '"',
+            '\'',
+            ' ',
+        };
+
         #endregion Comments
 
         #region Members
@@ -5003,6 +5199,7 @@ namespace System.Management.Automation
                     new Tuple<string, string>("Where", "Where({ expression } [, mode [, numberToReturn]])"),
                     new Tuple<string, string>("ForEach", "ForEach(expression [, arguments...])")
                 };
+
         // List of DSC collection-value variables
         private static readonly HashSet<string> s_dscCollectionVariables =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "SelectedNodes", "AllNodes" };
@@ -5050,7 +5247,7 @@ namespace System.Management.Automation
                     memberName = memberNameAst.Value + "*";
                 }
             }
-            else if (!(lastAst is ErrorExpressionAst) && targetExpr == null)
+            else if (lastAst is not ErrorExpressionAst && targetExpr == null)
             {
                 // I don't think we can complete anything interesting
                 return results;
@@ -5284,7 +5481,7 @@ namespace System.Management.Automation
                 Exception unused;
                 var sortedResults = powerShellExecutionHelper.ExecuteCurrentPowerShell(out unused, results);
                 results.Clear();
-                results.AddRange(sortedResults.Select(psobj => PSObject.Base(psobj) as CompletionResult));
+                results.AddRange(sortedResults.Select(static psobj => PSObject.Base(psobj) as CompletionResult));
             }
         }
 
@@ -5314,7 +5511,7 @@ namespace System.Management.Automation
             {
                 memberName = methodCacheEntry[0].method.Name;
                 isMethod = true;
-                getToolTip = () => string.Join("\n", methodCacheEntry.methodInformationStructures.Select(m => m.methodDefinition));
+                getToolTip = () => string.Join("\n", methodCacheEntry.methodInformationStructures.Select(static m => m.methodDefinition));
             }
 
             var psMemberInfo = member as PSMemberInfo;
@@ -5371,7 +5568,7 @@ namespace System.Management.Automation
                     break;
             }
 
-            bool isReadOnly = (CimFlags.ReadOnly == (cimProperty.Flags & CimFlags.ReadOnly));
+            bool isReadOnly = ((cimProperty.Flags & CimFlags.ReadOnly) == CimFlags.ReadOnly);
             return type + " " + cimProperty.Name + " { get; " + (isReadOnly ? "}" : "set; }");
         }
 
@@ -5444,6 +5641,7 @@ namespace System.Management.Automation
         private abstract class TypeCompletionBase
         {
             internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix);
+
             internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove);
 
             internal static string RemoveBackTick(string typeName)
@@ -5824,7 +6022,7 @@ namespace System.Management.Automation
 
             #endregion Process_LoadedAssemblies
 
-            var grouping = entries.Values.GroupBy(t => t.Key.Count(c => c == '.')).OrderBy(g => g.Key).ToArray();
+            var grouping = entries.Values.GroupBy(static t => t.Key.Count(c => c == '.')).OrderBy(static g => g.Key).ToArray();
             var localTypeCache = new TypeCompletionMapping[grouping.Last().Key + 1][];
             foreach (var group in grouping)
             {
@@ -5941,7 +6139,7 @@ namespace System.Management.Automation
             var localTypeCache = s_typeCache ?? InitializeTypeCache();
             var results = new List<CompletionResult>();
             var wordToComplete = context.WordToComplete;
-            var dots = wordToComplete.Count(c => c == '.');
+            var dots = wordToComplete.Count(static c => c == '.');
             if (dots >= localTypeCache.Length || localTypeCache[dots] == null)
             {
                 return results;
@@ -5957,7 +6155,7 @@ namespace System.Management.Automation
                 }
             }
 
-            results.Sort((c1, c2) => string.Compare(c1.ListItemText, c2.ListItemText, StringComparison.OrdinalIgnoreCase));
+            results.Sort(static (c1, c2) => string.Compare(c1.ListItemText, c2.ListItemText, StringComparison.OrdinalIgnoreCase));
             return results;
         }
 
@@ -5985,7 +6183,7 @@ namespace System.Management.Automation
             var results = new List<CompletionResult>();
             var completionTextSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var wordToComplete = context.WordToComplete;
-            var dots = wordToComplete.Count(c => c == '.');
+            var dots = wordToComplete.Count(static c => c == '.');
             if (dots >= localTypeCache.Length || localTypeCache[dots] == null)
             {
                 return results;
@@ -6016,7 +6214,7 @@ namespace System.Management.Automation
             if (context.RelatedAsts != null && context.RelatedAsts.Count > 0)
             {
                 var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
-                var typeAsts = scriptBlockAst.FindAll(ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
+                var typeAsts = scriptBlockAst.FindAll(static ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
                 foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
                 {
                     string toolTipPrefix = string.Empty;
@@ -6031,7 +6229,7 @@ namespace System.Management.Automation
                 }
             }
 
-            results.Sort((c1, c2) => string.Compare(c1.ListItemText, c2.ListItemText, StringComparison.OrdinalIgnoreCase));
+            results.Sort(static (c1, c2) => string.Compare(c1.ListItemText, c2.ListItemText, StringComparison.OrdinalIgnoreCase));
             return results;
         }
 
@@ -6096,7 +6294,7 @@ namespace System.Management.Automation
 
                 foreach (var dir in searchPaths)
                 {
-                    foreach (var file in Directory.GetFiles(dir))
+                    foreach (var file in Directory.EnumerateFiles(dir))
                     {
                         if (wildcardPattern.IsMatch(Path.GetFileName(file)))
                         {
@@ -6438,7 +6636,7 @@ namespace System.Management.Automation
             // return keys.Select(key => new CompletionResult(key, key, CompletionResultType.Property,
             //    ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).Assembly,
             //                                           "TabCompletionStrings", key + "HashKeyDescription"))).ToList();
-            return keys.Select(key => new CompletionResult(key, key, CompletionResultType.Property, key)).ToList();
+            return keys.Select(static key => new CompletionResult(key, key, CompletionResultType.Property, key)).ToList();
         }
 
         #endregion Hashtable Keys
@@ -6460,8 +6658,7 @@ namespace System.Management.Automation
             var varValues = new List<string>();
             foreach (ExpressionAst nestedAst in expandableStringAst.NestedExpressions)
             {
-                var variableAst = nestedAst as VariableExpressionAst;
-                if (variableAst == null) { return false; }
+                if (!(nestedAst is VariableExpressionAst variableAst)) { return false; }
 
                 string strValue = CombineVariableWithPartialPath(variableAst, null, executionContext);
                 if (strValue != null)
@@ -6567,7 +6764,7 @@ namespace System.Management.Automation
             object value;
             if (SafeExprEvaluator.TrySafeEval(targetExpr, context.ExecutionContext, out value) && value != null)
             {
-                if (targetExpr is ArrayExpressionAst && !(value is object[]))
+                if (targetExpr is ArrayExpressionAst && value is not object[])
                 {
                     // When the array contains only one element, the evaluation result would be that element. We wrap it into an array
                     value = new[] { value };
@@ -6586,8 +6783,7 @@ namespace System.Management.Automation
                 IEnumerable members;
                 if (@static)
                 {
-                    var type = PSObject.Base(value) as Type;
-                    if (type == null)
+                    if (!(PSObject.Base(value) is Type type))
                     {
                         return;
                     }
@@ -6653,8 +6849,7 @@ namespace System.Management.Automation
                     var pattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
                     foreach (DictionaryEntry entry in dictionary)
                     {
-                        var key = entry.Key as string;
-                        if (key == null)
+                        if (!(entry.Key is string key))
                             continue;
 
                         if (pattern.IsMatch(key))
@@ -6963,6 +7158,7 @@ namespace System.Management.Automation
         public object VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) { return false; }
 
         public object VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst) { return false; }
+
         // REVIEW: we could relax this to allow specific commands
         public object VisitCommand(CommandAst commandAst) { return false; }
 

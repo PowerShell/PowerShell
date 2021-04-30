@@ -1,0 +1,35 @@
+parameters:
+  pool: 'Hosted VS2017'
+  jobName: 'win_packaging'
+  architecture: 'x64'
+  channel: 'preview'
+  parentJobs: []
+
+jobs:
+- job: ${{ parameters.jobName }}_${{ parameters.channel }}_${{ parameters.architecture }}
+  dependsOn:
+      ${{ parameters.parentJobs }}
+  pool:
+    name: ${{ parameters.pool }}
+
+  displayName: Windows Packaging - ${{ parameters.architecture }} - ${{ parameters.channel }}
+
+  steps:
+  - powershell: |
+      Get-ChildItem -Path env:
+    displayName: Capture environment
+    condition: succeededOrFailed()
+
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Invoke-CIInstall -SkipUser
+    displayName: Bootstrap
+    condition: succeeded()
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      New-CodeCoverageAndTestPackage
+      Invoke-CIFinish -Runtime win7-${{ parameters.architecture }} -channel ${{ parameters.channel }}
+    displayName: Build and Test Package

@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class ReadHostCommand : PSCmdlet
     {
         /// <summary>
-        /// Constructs a new instance.
+        /// Initializes a new instance of the <see cref="ReadHostCommand"/> class.
         /// </summary>
         public
         ReadHostCommand()
@@ -98,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                 IEnumerator e = LanguagePrimitives.GetEnumerator(_prompt);
                 if (e != null)
                 {
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new();
 
                     while (e.MoveNext())
                     {
@@ -126,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
                     promptString = (string)LanguagePrimitives.ConvertTo(_prompt, typeof(string), CultureInfo.InvariantCulture);
                 }
 
-                FieldDescription fd = new FieldDescription(promptString);
+                FieldDescription fd = new(promptString);
                 if (AsSecureString || MaskInput)
                 {
                     fd.SetParameterType(typeof(SecureString));
@@ -136,7 +135,7 @@ namespace Microsoft.PowerShell.Commands
                     fd.SetParameterType(typeof(string));
                 }
 
-                Collection<FieldDescription> fdc = new Collection<FieldDescription>();
+                Collection<FieldDescription> fdc = new();
                 fdc.Add(fd);
 
                 Dictionary<string, PSObject> result = Host.UI.Prompt(string.Empty, string.Empty, fdc);

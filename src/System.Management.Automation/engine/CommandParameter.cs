@@ -116,7 +116,7 @@ namespace System.Management.Automation
         /// </summary>
         internal bool ArgumentToBeSplatted
         {
-            get { return _argument != null ? _argument.splatted : false; }
+            get { return _argument != null && _argument.splatted; }
         }
 
         /// <summary>

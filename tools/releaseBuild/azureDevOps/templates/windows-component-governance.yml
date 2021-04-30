@@ -2,7 +2,10 @@
 jobs:
 - job: ComponentRegistrationJob
   variables:
-    runCodesignValidationInjection: false
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
   displayName: Component Registration
   condition: succeeded()
 
@@ -10,6 +13,8 @@ jobs:
     name: Package ES Standard Build
 
   steps:
+  - checkout: self
+    clean: true
 
   - template: SetVersionVariables.yml
     parameters:

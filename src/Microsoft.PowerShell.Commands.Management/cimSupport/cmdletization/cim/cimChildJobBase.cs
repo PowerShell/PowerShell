@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             _jobSpecificCustomOptions = new Lazy<CimCustomOptionsDictionary>(this.CalculateJobSpecificCustomOptions);
         }
 
-        private readonly CimSensitiveValueConverter _cimSensitiveValueConverter = new CimSensitiveValueConverter();
+        private readonly CimSensitiveValueConverter _cimSensitiveValueConverter = new();
 
         internal CimSensitiveValueConverter CimSensitiveValueConverter { get { return _cimSensitiveValueConverter; } }
 
@@ -84,8 +84,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private static bool IsWsManQuotaReached(Exception exception)
         {
-            var cimException = exception as CimException;
-            if (cimException == null)
+            if (!(exception is CimException cimException))
             {
                 return false;
             }
@@ -159,7 +158,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     });
         }
 
-        private static readonly Random s_globalRandom = new Random();
+        private static readonly Random s_globalRandom = new();
         private readonly Random _random;
         private int _sleepAndRetryDelayRangeMs = 1000;
         private int _sleepAndRetryExtraDelayMs = 0;
@@ -544,7 +543,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         #region Controlling job state
 
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationTokenSource = new();
 
         /// <summary>
         /// Stops this job.
@@ -579,7 +578,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             _cancellationTokenSource.Cancel();
         }
 
-        private readonly object _jobStateLock = new object();
+        private readonly object _jobStateLock = new();
         private bool _jobHadErrors;
         private bool _jobWasStarted;
         private bool _jobWasStopped;
@@ -731,7 +730,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         #region Support for progress reporting
 
-        private readonly ConcurrentDictionary<int, ProgressRecord> _activityIdToLastProgressRecord = new ConcurrentDictionary<int, ProgressRecord>();
+        private readonly ConcurrentDictionary<int, ProgressRecord> _activityIdToLastProgressRecord = new();
 
         internal override void WriteProgress(ProgressRecord progressRecord)
         {
@@ -1010,8 +1009,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         internal static bool IsShowComputerNameMarkerPresent(CimInstance cimInstance)
         {
             PSObject pso = PSObject.AsPSObject(cimInstance);
-            PSPropertyInfo psShowComputerNameProperty = pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] as PSPropertyInfo;
-            if (psShowComputerNameProperty == null)
+            if (!(pso.InstanceMembers[RemotingConstants.ShowComputerNameNoteProperty] is PSPropertyInfo psShowComputerNameProperty))
             {
                 return false;
             }

@@ -58,3 +58,23 @@ Describe "InvokeOnRunspace method on remote runspace" -tags "Feature","RequireAd
         $results[0] | Should -Be "Hello!"
     }
 }
+
+Describe 'PromptForCredential' -Tags "CI" {
+    BeforeAll {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('NoPromptForPassword', $true)
+    }
+
+    AfterAll {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('NoPromptForPassword', $false)
+    }
+
+    It 'Should accept no targetname' {
+        $out = $Host.UI.PromptForCredential('caption','message','myUser',$null)
+        $out.UserName | Should -BeExactly 'myUser'
+    }
+
+    It 'Should accept targetname as domain' {
+        $out = $Host.UI.PromptForCredential('caption','message','myUser','myDomain')
+        $out.UserName | Should -BeExactly 'myDomain\myUser'
+    }
+}

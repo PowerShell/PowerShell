@@ -217,7 +217,7 @@ namespace System.Management.Automation.Subsystem
                     nameof(proxy));
             }
 
-            if (subsystemInfo.RequiredCmdlets.Any() || subsystemInfo.RequiredFunctions.Any())
+            if (subsystemInfo.RequiredCmdlets.Count > 0 || subsystemInfo.RequiredFunctions.Count > 0)
             {
                 // Process 'proxy.CmdletImplementationAssembly' and 'proxy.FunctionsToDefine'
                 // Functions are added to global scope.
@@ -265,7 +265,7 @@ namespace System.Management.Automation.Subsystem
 
         private static void UnregisterSubsystem(SubsystemInfo subsystemInfo, Guid id)
         {
-            if (subsystemInfo.RequiredCmdlets.Any() || subsystemInfo.RequiredFunctions.Any())
+            if (subsystemInfo.RequiredCmdlets.Count > 0 || subsystemInfo.RequiredFunctions.Count > 0)
             {
                 throw new NotSupportedException("NotSupported yet: unregister subsystem that introduced new cmdlets/functions.");
             }

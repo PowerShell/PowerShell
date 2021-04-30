@@ -15,6 +15,9 @@ Describe "DSC MOF Compilation" -tags "CI" {
         if ($IsLinux) {
             Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShellGet/pull/529"
         }
+        if ($IsMacOs) {
+            Set-ItResult -Pending -Because "macOS is incompatible with libmi"
+        }
 
         Write-Verbose "DSC_HOME: ${env:DSC_HOME}" -Verbose
         [Scriptblock]::Create(@"

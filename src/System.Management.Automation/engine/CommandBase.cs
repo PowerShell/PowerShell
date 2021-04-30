@@ -76,7 +76,7 @@ namespace System.Management.Automation.Internal
         /// <value>The invocation object for this command.</value>
         internal InvocationInfo MyInvocation
         {
-            get { return _myInvocation ?? (_myInvocation = new InvocationInfo(this)); }
+            get { return _myInvocation ??= new InvocationInfo(this); }
         }
 
         /// <summary>
@@ -89,7 +89,10 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal PSObject CurrentPipelineObject
         {
-            get { return currentObjectInPipeline; }
+            get
+            {
+                return currentObjectInPipeline;
+            }
 
             set
             {
@@ -155,7 +158,10 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal ExecutionContext Context
         {
-            get { return _context; }
+            get
+            {
+                return _context;
+            }
 
             set
             {
@@ -266,6 +272,20 @@ namespace System.Management.Automation.Internal
 
 namespace System.Management.Automation
 {
+    #region NativeArgumentPassingStyle
+    /// <summary>
+    /// Defines the different native command argument parsing options.
+    /// </summary>
+    public enum NativeArgumentPassingStyle
+    {
+        /// <summary>Use legacy argument parsing via ProcessStartInfo.Arguments.</summary>
+        Legacy = 0,
+
+        /// <summary>Use new style argument parsing via ProcessStartInfo.ArgumentList.</summary>
+        Standard = 1
+    }
+    #endregion NativeArgumentPassingStyle
+
     #region ErrorView
     /// <summary>
     /// Defines the potential ErrorView options.
@@ -470,7 +490,7 @@ namespace System.Management.Automation
             {
                 using (PSTransactionManager.GetEngineProtectionScope())
                 {
-                    return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this));
+                    return _invokeProvider ??= new ProviderIntrinsics(this);
                 }
             }
         }
@@ -560,4 +580,3 @@ namespace System.Management.Automation
         #endregion public_methods
     }
 }
-

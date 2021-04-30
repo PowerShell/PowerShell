@@ -16,12 +16,16 @@ namespace System.Management.Automation.Tracing
     /// </summary>
     internal class PSSysLogProvider : LogProvider
     {
+<<<<<<< HEAD
         private static bool isBrowser;
 
         private static SysLogProvider s_provider;
+=======
+        private static readonly SysLogProvider s_provider;
+>>>>>>> upstream/master
 
         // by default, do not include channel bits
-        internal const PSKeyword DefaultKeywords = (PSKeyword) (0x00FFFFFFFFFFFFFF);
+        internal const PSKeyword DefaultKeywords = (PSKeyword)(0x00FFFFFFFFFFFFFF);
 
         // the default enabled channel(s)
         internal const PSChannel DefaultChannels = PSChannel.Operational;

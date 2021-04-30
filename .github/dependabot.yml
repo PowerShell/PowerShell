@@ -1,12 +1,10 @@
 version: 2
 
-# update_schedule: live is only supported on javascript, ruby:bundler, python, php:composer, dotnet:nuget, rust:cargo, elixir:hex
-
 updates:
-  - package-ecosystem: "dotnet:nuget"
+  - package-ecosystem: "nuget"
     directory: "/"
     schedule:
-      interval: "live"
+      interval: "daily"
     labels:
       - "CL-BuildPackaging"
     ignore:
@@ -14,42 +12,42 @@ updates:
       - dependency-name: "Microsoft.Win32.Registry.AccessControl"
       - dependency-name: "Microsoft.Windows.Compatibility"
 
-  - package-ecosystem: "dotnet:nuget"
+  - package-ecosystem: "nuget"
     directory: "/tools/packaging/projects/reference/Microsoft.PowerShell.Commands.Utility"
     schedule:
-      interval: "live"
+      interval: "daily"
     labels:
       - "CL-BuildPackaging"
-    ignored_updates:
+    ignore:
       - dependency-name: "System.*"
       - dependency-name: "Microsoft.Win32.Registry.AccessControl"
       - dependency-name: "Microsoft.Windows.Compatibility"
 
-  - package-ecosystem: "dotnet:nuget"
+  - package-ecosystem: "nuget"
     directory: "/tools/packaging/projects/reference/System.Management.Automation"
     schedule:
-      interval: "live"
+      interval: "daily"
     labels:
       - "CL-BuildPackaging"
-    ignored_updates:
+    ignore:
       - dependency-name: "System.*"
       - dependency-name: "Microsoft.Win32.Registry.AccessControl"
       - dependency-name: "Microsoft.Windows.Compatibility"
 
-  - package-ecosystem: "dotnet:nuget"
+  - package-ecosystem: "nuget"
     directory: "/test/tools/Modules"
     schedule:
-      interval: "live"
+      interval: "daily"
     labels:
       - "CL-BuildPackaging"
-    ignored_updates:
+    ignore:
       - dependency-name: "System.*"
       - dependency-name: "Microsoft.Win32.Registry.AccessControl"
       - dependency-name: "Microsoft.Windows.Compatibility"
 
-  - package_manager: "dotnet:nuget"
+  - package-ecosystem: "nuget"
     directory: "/src/Modules"
     schedule:
-      interval: "live"
+      interval: "daily"
     labels:
       - "CL-BuildPackaging"

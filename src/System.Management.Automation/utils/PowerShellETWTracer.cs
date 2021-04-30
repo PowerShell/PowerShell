@@ -866,7 +866,7 @@ namespace System.Management.Automation.Tracing
                 }
             }
 
-            return _provider.WriteEvent(ref ed, args);
+            return _provider.WriteEvent(in ed, args);
         }
 
         /// <summary>
@@ -988,7 +988,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public PowerShellTraceTask Task { get; set; } = PowerShellTraceTask.None;
 
-        private bool IsEtwSupported
+        private static bool IsEtwSupported
         {
             get
             {

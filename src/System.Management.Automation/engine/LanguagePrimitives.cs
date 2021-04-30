@@ -299,7 +299,7 @@ namespace System.Management.Automation
     public static class LanguagePrimitives
     {
         [TraceSource("ETS", "Extended Type System")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
 
         internal delegate void MemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType);
 
@@ -364,8 +364,8 @@ namespace System.Management.Automation
         /// </summary>
         private class EnumerableTWrapper : IEnumerable
         {
-            private object _enumerable;
-            private Type _enumerableType;
+            private readonly object _enumerable;
+            private readonly Type _enumerableType;
             private DynamicMethod _getEnumerator;
 
             internal EnumerableTWrapper(object enumerable, Type enumerableType)
@@ -384,7 +384,7 @@ namespace System.Management.Automation
 
                 emitter.Emit(OpCodes.Ldarg_0);
                 emitter.Emit(OpCodes.Castclass, _enumerableType);
-                MethodInfo methodInfo = _enumerableType.GetMethod("GetEnumerator", new Type[] { });
+                MethodInfo methodInfo = _enumerableType.GetMethod("GetEnumerator", Array.Empty<Type>());
                 emitter.Emit(OpCodes.Callvirt, methodInfo);
                 emitter.Emit(OpCodes.Ret);
             }
@@ -414,7 +414,7 @@ namespace System.Management.Automation
 
         private delegate IEnumerable GetEnumerableDelegate(object obj);
 
-        private static Dictionary<Type, GetEnumerableDelegate> s_getEnumerableCache = new Dictionary<Type, GetEnumerableDelegate>(32);
+        private static readonly Dictionary<Type, GetEnumerableDelegate> s_getEnumerableCache = new Dictionary<Type, GetEnumerableDelegate>(32);
 
         private static GetEnumerableDelegate GetOrCalculateEnumerable(Type type)
         {
@@ -637,8 +637,7 @@ namespace System.Management.Automation
                 formatProvider = CultureInfo.InvariantCulture;
             }
 
-            var culture = formatProvider as CultureInfo;
-            if (culture == null)
+            if (!(formatProvider is CultureInfo culture))
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -785,8 +784,7 @@ namespace System.Management.Automation
                 formatProvider = CultureInfo.InvariantCulture;
             }
 
-            var culture = formatProvider as CultureInfo;
-            if (culture == null)
+            if (!(formatProvider is CultureInfo culture))
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -1045,9 +1043,7 @@ namespace System.Management.Automation
                     // but since we don't want this to recurse indefinitely
                     // we explicitly check the case where it would recurse
                     // and deal with it.
-                    IList firstElement = PSObject.Base(objectArray[0]) as IList;
-
-                    if (firstElement == null)
+                    if (!(PSObject.Base(objectArray[0]) is IList firstElement))
                     {
                         return IsTrue(objectArray[0]);
                     }
@@ -1506,7 +1502,7 @@ namespace System.Management.Automation
 
         private static object NewConverterInstance(string assemblyQualifiedTypeName)
         {
-            if (assemblyQualifiedTypeName.IndexOf(',') == -1)
+            if (!assemblyQualifiedTypeName.Contains(','))
             {
                 typeConversion.WriteLine("Type name \"{0}\" should be assembly qualified.", assemblyQualifiedTypeName);
                 return null;
@@ -1579,7 +1575,7 @@ namespace System.Management.Automation
         // CIM name string to .NET namestring mapping table
         // (Considered using the MI routines but they didn't do quite the right thing.
         //
-        private static Dictionary<string, string> s_nameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+        private static readonly Dictionary<string, string> s_nameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
             { "SInt8",          "SByte" },
             { "UInt8",          "Byte" },
             { "SInt16",         "Int16" },
@@ -1599,8 +1595,8 @@ namespace System.Management.Automation
             { "BooleanArray",   "bool[]" },
             { "UInt8Array",     "byte[]" },
             { "SInt8Array",     "Sbyte[]" },
-            { "UInt16Array",    "uint16[]" },
-            { "SInt16Array",    "int64[]" },
+            { "UInt16Array",    "UInt16[]" },
+            { "SInt16Array",    "Int16[]" },
             { "UInt32Array",    "UInt32[]" },
             { "SInt32Array",    "Int32[]" },
             { "UInt64Array",    "UInt64[]" },
@@ -2095,8 +2091,7 @@ namespace System.Management.Automation
             protected static object BaseConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase, bool multipleValues)
             {
                 Diagnostics.Assert(sourceValue != null, "the type converter has a special case for null source values");
-                string sourceValueString = sourceValue as string;
-                if (sourceValueString == null)
+                if (!(sourceValue is string sourceValueString))
                 {
                     throw new PSInvalidCastException("InvalidCastEnumFromTypeNotAString", null,
                         ExtendedTypeSystem.InvalidCastException,
@@ -2138,7 +2133,7 @@ namespace System.Management.Automation
                 WildcardPattern[] fromValuePatterns;
                 if (!multipleValues)
                 {
-                    if (sourceValueString.Contains(","))
+                    if (sourceValueString.Contains(','))
                     {
                         throw new PSInvalidCastException("InvalidCastEnumCommaAndNoFlags", null,
                             ExtendedTypeSystem.InvalidCastExceptionEnumerationNoFlagAndComma,
@@ -4354,19 +4349,21 @@ namespace System.Management.Automation
 
         internal delegate object PSNullConverter(object nullOrAutomationNull);
 
+#nullable enable
         internal interface IConversionData
         {
             object Converter { get; }
 
             ConversionRank Rank { get; }
 
-            object Invoke(object valueToConvert,
+            object? Invoke(object? valueToConvert,
                           Type resultType,
                           bool recurse,
-                          PSObject originalValueToConvert,
-                          IFormatProvider formatProvider,
-                          TypeTable backupTable);
+                          PSObject? originalValueToConvert,
+                          IFormatProvider? formatProvider,
+                          TypeTable? backupTable);
         }
+#nullable restore
 
         [System.Diagnostics.DebuggerDisplay("{_converter.Method.Name}")]
         internal class ConversionData<T> : IConversionData
@@ -4392,7 +4389,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static Dictionary<ConversionTypePair, IConversionData> s_converterCache = new Dictionary<ConversionTypePair, IConversionData>(256);
+        private static readonly Dictionary<ConversionTypePair, IConversionData> s_converterCache = new Dictionary<ConversionTypePair, IConversionData>(256);
 
         private static IConversionData CacheConversion<T>(Type fromType, Type toType, PSConverter<T> converter, ConversionRank rank)
         {
@@ -4430,7 +4427,7 @@ namespace System.Management.Automation
             return FigureConversion(fromType, toType).Rank;
         }
 
-        private static Type[] s_numericTypes = new Type[] {
+        private static readonly Type[] s_numericTypes = new Type[] {
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
             typeof(sbyte), typeof(byte),
@@ -4438,17 +4435,17 @@ namespace System.Management.Automation
             typeof(BigInteger)
         };
 
-        private static Type[] s_integerTypes = new Type[] {
+        private static readonly Type[] s_integerTypes = new Type[] {
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
             typeof(sbyte), typeof(byte)
         };
 
         // Do not reorder the elements of these arrays, we depend on them being ordered by increasing size.
-        private static Type[] s_signedIntegerTypes = new Type[] { typeof(sbyte), typeof(Int16), typeof(Int32), typeof(Int64) };
-        private static Type[] s_unsignedIntegerTypes = new Type[] { typeof(byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
+        private static readonly Type[] s_signedIntegerTypes = new Type[] { typeof(sbyte), typeof(Int16), typeof(Int32), typeof(Int64) };
+        private static readonly Type[] s_unsignedIntegerTypes = new Type[] { typeof(byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
 
-        private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(double), typeof(decimal) };
+        private static readonly Type[] s_realTypes = new Type[] { typeof(Single), typeof(double), typeof(decimal) };
 
         internal static void RebuildConversionCache()
         {
@@ -4747,7 +4744,7 @@ namespace System.Management.Automation
             {
                 foreach (PSPropertyInfo p in pso.Properties)
                 {
-                    if (first == false)
+                    if (!first)
                     {
                         availableProperties.Append(" , ");
                     }
@@ -5109,7 +5106,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private struct SignatureComparator
+        private readonly struct SignatureComparator
         {
             private enum TypeMatchingContext
             {
@@ -5580,7 +5577,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static Dictionary<string, bool> s_possibleTypeConverter = new Dictionary<string, bool>(16);
+        private static readonly Dictionary<string, bool> s_possibleTypeConverter = new Dictionary<string, bool>(16);
 
         // This is the internal dummy type used when an IDictionary is converted to a pscustomobject
         // PS C:\> $ps = [pscustomobject]@{a=10;b=5}
@@ -5784,7 +5781,7 @@ namespace System.Management.Automation
             return CacheConversion(fromType, toType, converter, rank);
         }
 
-        internal class Null { };
+        internal class Null { }
 
         private static IConversionData FigureConversionFromNull(Type toType)
         {

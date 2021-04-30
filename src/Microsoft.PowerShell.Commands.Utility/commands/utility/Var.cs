@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
@@ -100,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
         {
             wasFiltered = false;
 
-            List<PSVariable> result = new List<PSVariable>();
+            List<PSVariable> result = new();
 
             if (string.IsNullOrEmpty(name))
             {
@@ -337,10 +336,7 @@ namespace Microsoft.PowerShell.Commands
                     GetMatchingVariables(varName, Scope, out wasFiltered, /*quiet*/ false);
 
                 matchingVariables.Sort(
-                    delegate (PSVariable left, PSVariable right)
-                    {
-                        return StringComparer.CurrentCultureIgnoreCase.Compare(left.Name, right.Name);
-                    });
+                    static (PSVariable left, PSVariable right) => StringComparer.CurrentCultureIgnoreCase.Compare(left.Name, right.Name));
 
                 bool matchFound = false;
                 foreach (PSVariable matchingVariable in matchingVariables)
@@ -359,7 +355,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!matchFound && !wasFiltered)
                 {
                     ItemNotFoundException itemNotFound =
-                        new ItemNotFoundException(
+                        new(
                             varName,
                             "VariableNotFound",
                             SessionStateStrings.VariableNotFound);
@@ -494,7 +490,7 @@ namespace Microsoft.PowerShell.Commands
                 if (varFound != null)
                 {
                     SessionStateException sessionStateException =
-                        new SessionStateException(
+                        new(
                             Name,
                             SessionStateCategory.Variable,
                             "VariableAlreadyExists",
@@ -518,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(target, action))
             {
-                PSVariable newVariable = new PSVariable(Name, Value, Option);
+                PSVariable newVariable = new(Name, Value, Option);
 
                 if (_visibility != null)
                 {
@@ -814,7 +810,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // First look for existing variables to set.
 
-                List<PSVariable> matchingVariables = new List<PSVariable>();
+                List<PSVariable> matchingVariables = new();
 
                 bool wasFiltered = false;
 
@@ -869,7 +865,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         PSVariable varToSet =
-                            new PSVariable(
+                            new(
                                 varName,
                                 newVarValue,
                                 newOptions);
@@ -1125,7 +1121,7 @@ namespace Microsoft.PowerShell.Commands
                     // characters were specified, write an error.
 
                     ItemNotFoundException itemNotFound =
-                        new ItemNotFoundException(
+                        new(
                             varName,
                             "VariableNotFound",
                             SessionStateStrings.VariableNotFound);
@@ -1287,7 +1283,7 @@ namespace Microsoft.PowerShell.Commands
                     // characters were specified, write an error.
 
                     ItemNotFoundException itemNotFound =
-                        new ItemNotFoundException(
+                        new(
                             varName,
                             "VariableNotFound",
                             SessionStateStrings.VariableNotFound);

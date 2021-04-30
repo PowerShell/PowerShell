@@ -14,7 +14,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     public class ShowCommandCommandInfo
     {
         /// <summary>
-        /// Creates an instance of the ShowCommandCommandInfo class based on a CommandInfo object.
+        /// Initializes a new instance of the <see cref="ShowCommandCommandInfo"/> class
+        /// with the specified <see cref="CommandInfo"/>.
         /// </summary>
         /// <param name="other">
         /// The object to wrap.
@@ -38,7 +39,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
             {
                 this.ParameterSets =
                     other.ParameterSets
-                        .Select(x => new ShowCommandParameterSetInfo(x))
+                        .Select(static x => new ShowCommandParameterSetInfo(x))
                         .ToList()
                         .AsReadOnly();
             }
@@ -62,7 +63,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
-        /// Creates an instance of the ShowCommandCommandInfo class based on a PSObject object.
+        /// Initializes a new instance of the <see cref="ShowCommandCommandInfo"/> class
+        /// with the specified <see cref="PSObject"/>.
         /// </summary>
         /// <param name="other">
         /// The object to wrap.
@@ -90,7 +92,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
                 this.CommandType = (CommandTypes)((other.Members["CommandType"].Value as PSObject).BaseObject);
 
                 var parameterSets = (other.Members["ParameterSets"].Value as PSObject).BaseObject as System.Collections.ArrayList;
-                this.ParameterSets = GetObjectEnumerable(parameterSets).Cast<PSObject>().Select(x => new ShowCommandParameterSetInfo(x)).ToList().AsReadOnly();
+                this.ParameterSets = GetObjectEnumerable(parameterSets).Cast<PSObject>().Select(static x => new ShowCommandParameterSetInfo(x)).ToList().AsReadOnly();
 
                 if (other.Members["Module"]?.Value is PSObject)
                 {

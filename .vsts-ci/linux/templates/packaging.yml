@@ -1,0 +1,92 @@
+parameters:
+  pool: 'ubuntu-16.04'
+  parentJobs: []
+  name: 'Linux'
+
+jobs:
+- job: ${{ parameters.name }}_packaging
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  pool:
+    vmImage: ${{ parameters.pool }}
+
+  displayName: ${{ parameters.name }} packaging
+
+  steps:
+  - pwsh: |
+      Get-ChildItem -Path env:
+    displayName: Capture Environment
+    condition: succeededOrFailed()
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download build artifacts'
+    inputs:
+      downloadType: specific
+      itemPattern: |
+        build/**/*
+      downloadPath: '$(System.ArtifactsDirectory)'
+
+  - pwsh: |
+      Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+    displayName: 'Capture Artifacts Directory'
+    continueOnError: true
+
+  - pwsh: |
+      Import-Module .\build.psm1
+      Start-PSBootstrap -Package
+    displayName: Bootstrap
+
+  - pwsh: |
+      Import-Module ./build.psm1
+    displayName: 'Capture Artifacts Directory'
+    continueOnError: true
+
+  - task: ExtractFiles@1
+    displayName: 'Extract Build ZIP'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/build/build.zip'
+      destinationFolder: '$(System.ArtifactsDirectory)/bins'
+
+  - bash: |
+      find "$(System.ArtifactsDirectory)/bins" -type d -exec chmod +rwx {} \;
+      find "$(System.ArtifactsDirectory)/bins" -type f -exec chmod +rw {} \;
+    displayName: 'Fix permissions'
+    continueOnError: true
+
+  - pwsh: |
+      Get-ChildItem "$(System.ArtifactsDirectory)\bins\*" -Recurse -ErrorAction SilentlyContinue
+    displayName: 'Capture Extracted Build ZIP'
+    continueOnError: true
+
+  - pwsh: |
+      Import-Module .\tools\ci.psm1
+      Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+      $options = (Get-PSOptions)
+      $rootPath = '$(System.ArtifactsDirectory)\bins'
+      $originalRootPath = Split-Path -path $options.Output
+      $path = Join-Path -path $rootPath -ChildPath (split-path -leaf -path $originalRootPath)
+      $pwshPath = Join-Path -path $path -ChildPath 'pwsh'
+      chmod a+x $pwshPath
+      $options.Output = $pwshPath
+      Set-PSOptions $options
+      Invoke-CIFinish
+    displayName: Packaging Tests
+    condition: succeeded()
+
+  - pwsh: |
+      Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}\*.deb" -Recurse | ForEach-Object {
+        $packagePath = $_.FullName
+        Write-Host "Uploading $packagePath"
+        Write-Host "##vso[artifact.upload containerfolder=deb;artifactname=deb]$packagePath"
+      }
+      Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}\*.rpm" -Recurse | ForEach-Object {
+        $packagePath = $_.FullName
+        Write-Host "Uploading $packagePath"
+        Write-Host "##vso[artifact.upload containerfolder=rpm;artifactname=rpm]$packagePath"
+      }
+      Get-ChildItem "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}\*.tar.gz" -Recurse | ForEach-Object {
+        $packagePath = $_.FullName
+        Write-Host "Uploading $packagePath"
+        Write-Host "##vso[artifact.upload containerfolder=rpm;artifactname=rpm]$packagePath"
+      }
+    displayName: Upload packages

@@ -14,7 +14,7 @@ Describe "Windows Installer" -Tags "Scenario" {
     }
 
     It "WiX (Windows Installer XML) file contains pre-requisites link $preRequisitesLink" -Skip:$skipTest {
-        $wixProductFile = Join-Path -Path $PSScriptRoot -ChildPath "..\..\..\assets\Product.wxs"
+        $wixProductFile = Join-Path -Path $PSScriptRoot -ChildPath "..\..\..\assets\wix\Product.wxs"
         (Get-Content $wixProductFile -Raw).Contains($preRequisitesLink) | Should -BeTrue
     }
 

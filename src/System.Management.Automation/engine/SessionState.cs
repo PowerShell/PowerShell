@@ -31,7 +31,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "SessionState",
              "SessionState Class")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("SessionState",
              "SessionState Class");
 
@@ -144,7 +144,7 @@ namespace System.Management.Automation
         /// </summary>
         internal LocationGlobber Globber
         {
-            get { return _globberPrivate ?? (_globberPrivate = ExecutionContext.LocationGlobber); }
+            get { return _globberPrivate ??= ExecutionContext.LocationGlobber; }
         }
 
         private LocationGlobber _globberPrivate;
@@ -159,7 +159,7 @@ namespace System.Management.Automation
         /// </summary>
         internal SessionState PublicSessionState
         {
-            get { return _publicSessionState ?? (_publicSessionState = new SessionState(this)); }
+            get { return _publicSessionState ??= new SessionState(this); }
 
             set { _publicSessionState = value; }
         }
@@ -171,7 +171,7 @@ namespace System.Management.Automation
         /// </summary>
         internal ProviderIntrinsics InvokeProvider
         {
-            get { return _invokeProvider ?? (_invokeProvider = new ProviderIntrinsics(this)); }
+            get { return _invokeProvider ??= new ProviderIntrinsics(this); }
         }
 
         private ProviderIntrinsics _invokeProvider;
@@ -389,7 +389,7 @@ namespace System.Management.Automation
             return checkPathVisibility(Applications, applicationPath);
         }
 
-        private SessionStateEntryVisibility checkPathVisibility(List<string> list, string path)
+        private static SessionStateEntryVisibility checkPathVisibility(List<string> list, string path)
         {
             if (list == null || list.Count == 0) return SessionStateEntryVisibility.Private;
             if (string.IsNullOrEmpty(path)) return SessionStateEntryVisibility.Private;

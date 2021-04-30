@@ -59,7 +59,10 @@ namespace System.Management.Automation
                 return _message;
             }
 
-            set { _message = value; }
+            set
+            {
+                _message = value;
+            }
         }
 
         /// <summary>
@@ -217,7 +220,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _fullyQualifiedWarningId;
+        private readonly string _fullyQualifiedWarningId;
     }
 
     /// <summary>

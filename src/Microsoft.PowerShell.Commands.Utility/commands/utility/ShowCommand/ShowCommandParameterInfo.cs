@@ -14,7 +14,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     public class ShowCommandParameterInfo
     {
         /// <summary>
-        /// Creates an instance of the ShowCommandParameterInfo class based on a CommandParameterInfo object.
+        /// Initializes a new instance of the <see cref="ShowCommandParameterInfo"/> class
+        /// with the specified <see cref="CommandParameterInfo"/>.
         /// </summary>
         /// <param name="other">
         /// The object to wrap.
@@ -32,7 +33,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
             this.ParameterType = new ShowCommandParameterType(other.ParameterType);
             this.Position = other.Position;
 
-            var validateSetAttribute = other.Attributes.Where(x => typeof(ValidateSetAttribute).IsAssignableFrom(x.GetType())).Cast<ValidateSetAttribute>().LastOrDefault();
+            var validateSetAttribute = other.Attributes.Where(static x => typeof(ValidateSetAttribute).IsAssignableFrom(x.GetType())).Cast<ValidateSetAttribute>().LastOrDefault();
             if (validateSetAttribute != null)
             {
                 this.HasParameterSet = true;
@@ -41,6 +42,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ShowCommandParameterInfo"/> class.
         /// Creates an instance of the ShowCommandParameterInfo class based on a PSObject object.
         /// </summary>
         /// <param name="other">

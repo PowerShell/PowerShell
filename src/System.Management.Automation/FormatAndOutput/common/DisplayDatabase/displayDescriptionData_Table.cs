@@ -263,7 +263,7 @@ namespace System.Management.Automation
             this.OutOfBand = viewDefinition.outOfBand;
             this.GroupBy = PSControlGroupBy.Get(viewDefinition.groupBy);
 
-            this.AutoSize = tcb.autosize.HasValue && tcb.autosize.Value;
+            this.AutoSize = tcb.autosize.GetValueOrDefault();
             this.HideTableHeaders = tcb.header.hideHeader;
 
             TableControlRow row = new TableControlRow(tcb.defaultDefinition);

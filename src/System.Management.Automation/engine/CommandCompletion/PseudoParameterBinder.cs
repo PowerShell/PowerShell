@@ -201,9 +201,9 @@ namespace System.Management.Automation.Language
             ParameterArgumentType = AstParameterArgumentType.AstPair;
             ParameterSpecified = parameterAst != null;
             ArgumentSpecified = argumentAst != null;
-            ParameterName = parameterAst != null ? parameterAst.ParameterName : null;
-            ParameterText = parameterAst != null ? parameterAst.ParameterName : null;
-            ArgumentType = argumentAst != null ? argumentAst.StaticType : null;
+            ParameterName = parameterAst?.ParameterName;
+            ParameterText = parameterAst?.ParameterName;
+            ArgumentType = argumentAst?.StaticType;
 
             ParameterContainsArgument = false;
             Argument = argumentAst;
@@ -261,8 +261,7 @@ namespace System.Management.Automation.Language
         /// <returns>The StaticBindingResult that represents the binding.</returns>
         public static StaticBindingResult BindCommand(CommandAst commandAst)
         {
-            bool resolve = true;
-            return BindCommand(commandAst, resolve);
+            return BindCommand(commandAst, resolve: true);
         }
 
         /// <summary>
@@ -729,7 +728,10 @@ namespace System.Management.Automation.Language
         /// </summary>
         public object ConstantValue
         {
-            get { return _constantValue; }
+            get
+            {
+                return _constantValue;
+            }
 
             internal set
             {
@@ -746,7 +748,10 @@ namespace System.Management.Automation.Language
         /// </summary>
         public CommandElementAst Value
         {
-            get { return _value; }
+            get
+            {
+                return _value;
+            }
 
             internal set
             {
@@ -1151,12 +1156,12 @@ namespace System.Management.Automation.Language
             _bindableParameters = null;
 
             // reuse the collections/dictionaries
-            _arguments = _arguments ?? new Collection<AstParameterArgumentPair>();
-            _boundParameters = _boundParameters ?? new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
-            _boundArguments = _boundArguments ?? new Dictionary<string, AstParameterArgumentPair>(StringComparer.OrdinalIgnoreCase);
-            _unboundParameters = _unboundParameters ?? new List<MergedCompiledCommandParameter>();
-            _boundPositionalParameter = _boundPositionalParameter ?? new Collection<string>();
-            _bindingExceptions = _bindingExceptions ?? new Dictionary<CommandParameterAst, ParameterBindingException>();
+            _arguments ??= new Collection<AstParameterArgumentPair>();
+            _boundParameters ??= new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
+            _boundArguments ??= new Dictionary<string, AstParameterArgumentPair>(StringComparer.OrdinalIgnoreCase);
+            _unboundParameters ??= new List<MergedCompiledCommandParameter>();
+            _boundPositionalParameter ??= new Collection<string>();
+            _bindingExceptions ??= new Dictionary<CommandParameterAst, ParameterBindingException>();
 
             _arguments.Clear();
             _boundParameters.Clear();
@@ -1171,9 +1176,9 @@ namespace System.Management.Automation.Language
             _isPipelineInputExpected = false;
 
             // reuse the collections
-            _parametersNotFound = _parametersNotFound ?? new Collection<CommandParameterAst>();
-            _ambiguousParameters = _ambiguousParameters ?? new Collection<CommandParameterAst>();
-            _duplicateParameters = _duplicateParameters ?? new Collection<AstParameterArgumentPair>();
+            _parametersNotFound ??= new Collection<CommandParameterAst>();
+            _ambiguousParameters ??= new Collection<CommandParameterAst>();
+            _duplicateParameters ??= new Collection<AstParameterArgumentPair>();
 
             _parametersNotFound.Clear();
             _ambiguousParameters.Clear();

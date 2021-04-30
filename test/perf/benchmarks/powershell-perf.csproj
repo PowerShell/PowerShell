@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- We are using a single TFM for this project, the drawback is that we cannot run benchmarks
+       targeting other .NET runtime versions, such as net5.0 (PS7.1) and netcoreapp3.1 (PS7.0) -->
+  <Import Project="../../Test.Common.props" />
+
+  <PropertyGroup>
+    <Description>PowerShell Performance Tests</Description>
+    <AssemblyName>powershell-perf</AssemblyName>
+    <OutputType>Exe</OutputType>
+
+    <NoWarn>$(NoWarn);CS8002</NoWarn>
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+
+    <!-- To run benchmarks targeting a specific package version, set the version to 'PERF_TARGET_VERSION' as an environment variable.
+         Do not try passing in the value using '/property:' at command line, because
+           1. 'dotnet run' doesn't respect '/property:' arguments;
+           2. BenchmarkDotnet generates temporary project files that reference to this .csproj file,
+              and '/property:' arguments won't be forwarded when building those temp projects. -->
+    <PerfTargetVersion>$(PERF_TARGET_VERSION)</PerfTargetVersion>
+
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>../../../src/signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../dotnet-tools/BenchmarkDotNet.Extensions/BenchmarkDotNet.Extensions.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(PerfTargetVersion)' == ''">
+    <ProjectReference Include="../../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj" />
+    <ProjectReference Include="../../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(PerfTargetVersion)' != ''">
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="$(PerfTargetVersion)" />
+  </ItemGroup>
+
+</Project>

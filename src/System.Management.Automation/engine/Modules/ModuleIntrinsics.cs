@@ -358,7 +358,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return modulesMatched.OrderBy(m => m.Name).ToList();
+            return modulesMatched.OrderBy(static m => m.Name).ToList();
         }
 
         internal List<PSModuleInfo> GetModules(ModuleSpecification[] fullyQualifiedName, bool all)
@@ -417,7 +417,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return modulesMatched.OrderBy(m => m.Name).ToList();
+            return modulesMatched.OrderBy(static m => m.Name).ToList();
         }
 
         /// <summary>
@@ -703,9 +703,9 @@ namespace System.Management.Automation
             }
 
 #if UNIX
-            StringComparison strcmp = StringComparison.Ordinal;
+            const StringComparison strcmp = StringComparison.Ordinal;
 #else
-            StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
+            const StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
 #endif
 
             // We must check modulePath (e.g. /path/to/module/module.psd1) against several possibilities:
@@ -1014,7 +1014,7 @@ namespace System.Management.Automation
         /// It's known as "Program Files" module path in windows powershell.
         /// </summary>
         /// <returns></returns>
-        private static string GetSharedModulePath()
+        internal static string GetSharedModulePath()
         {
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.SHARED_MODULES);
@@ -1450,7 +1450,7 @@ namespace System.Management.Automation
             Dbg.Assert(input != null, "Caller should verify that input != null");
 
             input.Sort(
-                delegate (T x, T y)
+                (T x, T y) =>
                 {
                     string kx = keyGetter(x);
                     string ky = keyGetter(y);
@@ -1527,7 +1527,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedFunctions, delegate (FunctionInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedFunctions, static (FunctionInfo ci) => ci.Name);
             }
 
             if (cmdletPatterns != null)
@@ -1582,7 +1582,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, delegate (CmdletInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, static (CmdletInfo ci) => ci.Name);
             }
 
             if (variablePatterns != null)
@@ -1605,7 +1605,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedVariables, delegate (PSVariable v) { return v.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedVariables, static (PSVariable v) => v.Name);
             }
 
             if (aliasPatterns != null)
@@ -1645,7 +1645,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedAliases, delegate (AliasInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedAliases, static (AliasInfo ci) => ci.Name);
             }
         }
 
@@ -1715,10 +1715,12 @@ namespace System.Management.Automation
         NullModuleSpecification,
     }
 
+#nullable enable
     /// <summary>
     /// Used by Modules/Snapins to provide a hook to the engine for startup initialization
     /// w.r.t compiled assembly loading.
     /// </summary>
+#nullable enable
     public interface IModuleAssemblyInitializer
     {
         /// <summary>

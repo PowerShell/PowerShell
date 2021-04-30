@@ -18,7 +18,8 @@ namespace Microsoft.PowerShell.Commands
     internal sealed class PSPropertyExpressionFilter
     {
         /// <summary>
-        /// Construct the class, using an array of patterns.
+        /// Initializes a new instance of the <see cref="PSPropertyExpressionFilter"/> class
+        /// with the specified array of patterns.
         /// </summary>
         /// <param name="wildcardPatternsStrings">Array of pattern strings to use.</param>
         internal PSPropertyExpressionFilter(string[] wildcardPatternsStrings)
@@ -52,7 +53,7 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        private WildcardPattern[] _wildcardPatterns;
+        private readonly WildcardPattern[] _wildcardPatterns;
     }
 
     internal class SelectObjectExpressionParameterDefinition : CommandParameterDefinition
@@ -76,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// </summary>
@@ -90,14 +91,14 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [Parameter(ParameterSetName = "SkipLastParameter")]
-        public string[] ExcludeProperty { get; set; } = null;
+        public string[] ExcludeProperty { get; set; }
 
         /// <summary>
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [Parameter(ParameterSetName = "SkipLastParameter")]
-        public string ExpandProperty { get; set; } = null;
+        public string ExpandProperty { get; set; }
 
         /// <summary>
         /// </summary>
@@ -151,14 +152,14 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(ParameterSetName = "DefaultParameter")]
         [ValidateRange(0, int.MaxValue)]
-        public int Skip { get; set; } = 0;
+        public int Skip { get; set; }
 
         /// <summary>
         /// Skip the specified number of items from end.
         /// </summary>
         [Parameter(ParameterSetName = "SkipLastParameter")]
         [ValidateRange(0, int.MaxValue)]
-        public int SkipLast { get; set; } = 0;
+        public int SkipLast { get; set; }
 
         /// <summary>
         /// With this switch present, the cmdlet won't "short-circuit"
@@ -304,8 +305,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             private int _streamedObjectCount;
-            private int _first, _last, _skip, _skipLast;
-            private bool _firstOrLastSpecified;
+            private readonly int _first;
+            private readonly int _last;
+            private int _skip;
+            private readonly int _skipLast;
+            private readonly bool _firstOrLastSpecified;
         }
 
         /// <summary>
@@ -337,9 +341,9 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessExpressionParameter()
         {
-            TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
+            TerminatingErrorContext invocationContext = new(this);
             ParameterProcessor processor =
-                new ParameterProcessor(new SelectObjectExpressionParameterDefinition());
+                new(new SelectObjectExpressionParameterDefinition());
             if ((Property != null) && (Property.Length != 0))
             {
                 // Build property list taking into account the wildcards and @{name=;expression=}
@@ -378,7 +382,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // If property parameter is mentioned
-            List<PSNoteProperty> matchedProperties = new List<PSNoteProperty>();
+            List<PSNoteProperty> matchedProperties = new();
             foreach (MshParameter p in _propertyMshParameterList)
             {
                 ProcessParameter(p, inputObject, matchedProperties);
@@ -386,10 +390,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(ExpandProperty))
             {
-                PSObject result = new PSObject();
+                PSObject result = new();
                 if (matchedProperties.Count != 0)
                 {
-                    HashSet<string> propertyNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    HashSet<string> propertyNames = new(StringComparer.OrdinalIgnoreCase);
 
                     foreach (PSNoteProperty noteProperty in matchedProperties)
                     {
@@ -427,7 +431,7 @@ namespace Microsoft.PowerShell.Commands
             string name = p.GetEntry(NameEntryDefinition.NameEntryKey) as string;
 
             PSPropertyExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as PSPropertyExpression;
-            List<PSPropertyExpressionResult> expressionResults = new List<PSPropertyExpressionResult>();
+            List<PSPropertyExpressionResult> expressionResults = new();
             foreach (PSPropertyExpression resolvedName in ex.ResolveNames(inputObject))
             {
                 if (_exclusionFilter == null || !_exclusionFilter.IsMatch(resolvedName))
@@ -452,7 +456,7 @@ namespace Microsoft.PowerShell.Commands
             else if (!string.IsNullOrEmpty(name) && expressionResults.Count > 1)
             {
                 string errorMsg = SelectObjectStrings.RenamingMultipleResults;
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new InvalidOperationException(errorMsg),
                     "RenamingMultipleResults",
                     ErrorCategory.InvalidOperation,
@@ -502,7 +506,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (expressionResults.Count == 0)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     PSTraceSource.NewArgumentException("ExpandProperty", SelectObjectStrings.PropertyNotFound, ExpandProperty),
                     "ExpandPropertyNotFound",
                      ErrorCategory.InvalidArgument,
@@ -512,7 +516,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (expressionResults.Count > 1)
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     PSTraceSource.NewArgumentException("ExpandProperty", SelectObjectStrings.MutlipleExpandProperties, ExpandProperty),
                     "MutlipleExpandProperties",
                     ErrorCategory.InvalidArgument,
@@ -559,7 +563,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     r.Exception,
                     "PropertyEvaluationExpand",
                     ErrorCategory.InvalidResult,
@@ -592,7 +596,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteAlreadyExistingPropertyError(string name, object inputObject, string errorId)
         {
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 PSTraceSource.NewArgumentException("Property", SelectObjectStrings.AlreadyExistingProperty, name),
                 errorId,
                 ErrorCategory.InvalidOperation,
@@ -620,7 +624,7 @@ namespace Microsoft.PowerShell.Commands
                 bool isObjUnique = true;
                 foreach (UniquePSObjectHelper uniqueObj in _uniques)
                 {
-                    ObjectCommandComparer comparer = new ObjectCommandComparer(true, CultureInfo.CurrentCulture, true);
+                    ObjectCommandComparer comparer = new(true, CultureInfo.CurrentCulture, true);
                     if ((comparer.Compare(obj.BaseObject, uniqueObj.WrittenObject.BaseObject) == 0) &&
                         (uniqueObj.NotePropertyCount == addedNoteProperties.Count))
                     {

@@ -50,7 +50,7 @@ namespace System.Management.Automation
             _helpSystem = helpSystem;
         }
 
-        private HelpSystem _helpSystem;
+        private readonly HelpSystem _helpSystem;
 
         internal HelpSystem HelpSystem
         {
@@ -175,7 +175,7 @@ namespace System.Management.Automation
         {
             // Win8: 508648. Remove the current provides category for resolving forward help as the current
             // help provider already process it.
-            helpInfo.ForwardHelpCategory = helpInfo.ForwardHelpCategory ^ this.HelpCategory;
+            helpInfo.ForwardHelpCategory ^= this.HelpCategory;
             yield return helpInfo;
         }
 

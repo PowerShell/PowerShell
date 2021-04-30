@@ -32,7 +32,7 @@ namespace System.Management.Automation
     {
         Text,
         Xml
-    };
+    }
 
     /// <summary>
     /// Different streams produced by minishell output.
@@ -141,7 +141,7 @@ namespace System.Management.Automation
         /// Information about application which is invoked by this instance of
         /// NativeCommandProcessor.
         /// </summary>
-        private ApplicationInfo _applicationInfo;
+        private readonly ApplicationInfo _applicationInfo;
 
         /// <summary>
         /// Initializes the new instance of NativeCommandProcessor class.
@@ -220,29 +220,6 @@ namespace System.Management.Automation
                 return path;
             }
         }
-
-        /// <summary>
-        /// Gets true if Path is Console Application.
-        /// </summary>
-        private bool IsConsoleApplication => !IsWindowsApplication;
-
-        /// <summary>
-        /// Gets true if Path is Windows Application.
-        /// </summary>
-        private bool IsWindowsApplication
-        {
-            get
-            {
-                if (!_isWindowsApplication.HasValue)
-                {
-                    _isWindowsApplication = CheckIfWindowsApplication(Path);
-                }
-
-                return _isWindowsApplication.Value;
-            }
-        }
-
-        private bool? _isWindowsApplication;
 
         #endregion ctor/native command properties
 
@@ -364,7 +341,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is used for writing input to the process.
         /// </summary>
-        private ProcessInputWriter _inputWriter = null;
+        private readonly ProcessInputWriter _inputWriter = null;
 
         /// <summary>
         /// Is true if this command is to be run "standalone" - that is, with
@@ -380,7 +357,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Indicate if we have called 'NotifyBeginApplication()' on the host, so that
-        /// we can call the counterpart 'NotifyEndApplication' as approriate.
+        /// we can call the counterpart 'NotifyEndApplication' as appropriate.
         /// </summary>
         private bool _hasNotifiedBeginApplication;
 
@@ -392,14 +369,14 @@ namespace System.Management.Automation
         private BlockingCollection<ProcessOutputObject> _nativeProcessOutputQueue;
 
         private static bool? s_supportScreenScrape = null;
-        private bool _isTranscribing;
+        private readonly bool _isTranscribing;
         private Host.Coordinates _startPosition;
 
         /// <summary>
         /// Object used for synchronization between StopProcessing thread and
         /// Pipeline thread.
         /// </summary>
-        private object _sync = new object();
+        private readonly object _sync = new object();
 
         /// <summary>
         /// Executes the native command once all of the input has been gathered.
@@ -423,7 +400,8 @@ namespace System.Management.Automation
 
             _startPosition = new Host.Coordinates();
 
-            CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
+            bool isWindowsApplication = IsWindowsApplication(this.Path);
+            CalculateIORedirection(isWindowsApplication, out redirectOutput, out redirectError, out redirectInput);
 
             // Find out if it's the only command in the pipeline.
             bool soloCommand = this.Command.MyInvocation.PipelineLength == 1;
@@ -462,7 +440,7 @@ namespace System.Management.Automation
 
                     // Also, store the Raw UI coordinates so that we can scrape the screen after
                     // if we are transcribing.
-                    if (_isTranscribing && (true == s_supportScreenScrape))
+                    if (_isTranscribing && (s_supportScreenScrape == true))
                     {
                         _startPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
                         _startPosition.X = 0;
@@ -498,7 +476,8 @@ namespace System.Management.Automation
                         bool notDone = true;
                         if (!string.IsNullOrEmpty(executable))
                         {
-                            if (CheckIfConsoleApplication(executable))
+                            isWindowsApplication = IsWindowsApplication(executable);
+                            if (!isWindowsApplication)
                             {
                                 // Allocate a console if there isn't one attached already...
                                 ConsoleVisibility.AllocateHiddenConsole();
@@ -525,7 +504,7 @@ namespace System.Management.Automation
                         // we will try launching one last time using ShellExecute...
                         if (notDone)
                         {
-                            if (soloCommand && startInfo.UseShellExecute == false)
+                            if (soloCommand && !startInfo.UseShellExecute)
                             {
                                 startInfo.UseShellExecute = true;
                                 startInfo.RedirectStandardInput = false;
@@ -552,9 +531,9 @@ namespace System.Management.Automation
                 else
                 {
                     _isRunningInBackground = true;
-                    if (startInfo.UseShellExecute == false)
+                    if (!startInfo.UseShellExecute)
                     {
-                        _isRunningInBackground = IsWindowsApplication;
+                        _isRunningInBackground = isWindowsApplication;
                     }
                 }
 
@@ -584,7 +563,7 @@ namespace System.Management.Automation
                     throw;
                 }
 
-                if (_isRunningInBackground == false)
+                if (!_isRunningInBackground)
                 {
                     InitOutputQueue();
                 }
@@ -675,7 +654,7 @@ namespace System.Management.Automation
         /// </summary>
         private void ConsumeAvailableNativeProcessOutput(bool blocking)
         {
-            if (_isRunningInBackground == false)
+            if (!_isRunningInBackground)
             {
                 if (_nativeProcess.StartInfo.RedirectStandardOutput || _nativeProcess.StartInfo.RedirectStandardError)
                 {
@@ -699,7 +678,7 @@ namespace System.Management.Automation
             Exception exceptionToRethrow = null;
             try
             {
-                if (_isRunningInBackground == false)
+                if (!_isRunningInBackground)
                 {
                     // Wait for input writer to finish.
                     _inputWriter.Done();
@@ -709,7 +688,7 @@ namespace System.Management.Automation
                     _nativeProcess.WaitForExit();
 
                     // Capture screen output if we are transcribing and running stand alone
-                    if (_isTranscribing && (true == s_supportScreenScrape) && _runStandAlone)
+                    if (_isTranscribing && (s_supportScreenScrape == true) && _runStandAlone)
                     {
                         Host.Coordinates endPosition = this.Command.Context.EngineHostInterface.UI.RawUI.CursorPosition;
                         endPosition.X = this.Command.Context.EngineHostInterface.UI.RawUI.BufferSize.Width - 1;
@@ -845,7 +824,7 @@ namespace System.Management.Automation
                 get
                 {
                     // Construct parent id only once.
-                    if (int.MinValue == _parentId)
+                    if (_parentId == int.MinValue)
                     {
                         ConstructParentId();
                     }
@@ -953,22 +932,12 @@ namespace System.Management.Automation
         #region checkForConsoleApplication
 
         /// <summary>
-        /// Return true if the passed in process is a console process.
-        /// </summary>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
-        private static bool CheckIfConsoleApplication(string fileName)
-        {
-            return !CheckIfWindowsApplication(fileName);
-        }
-
-        /// <summary>
         /// Check if the passed in process is a windows application.
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
         [ArchitectureSensitive]
-        private static bool CheckIfWindowsApplication(string fileName)
+        private static bool IsWindowsApplication(string fileName)
         {
 #if UNIX
             return false;
@@ -1049,9 +1018,21 @@ namespace System.Management.Automation
 
             try
             {
-                // Dispose the process if it's already created
                 if (_nativeProcess != null)
                 {
+                    // on Unix, we need to kill the process to ensure it terminates as Dispose() merely
+                    // closes the redirected streams and the processs does not exit on macOS.  However,
+                    // on Windows, a winexe like notepad should continue running so we don't want to kill it.
+#if UNIX
+                    try
+                    {
+                        _nativeProcess.Kill();
+                    }
+                    catch
+                    {
+                        // Ignore all exception since it is cleanup.
+                    }
+#endif
                     _nativeProcess.Dispose();
                 }
             }
@@ -1188,9 +1169,34 @@ namespace System.Management.Automation
                 startInfo.CreateNoWindow = mpc.NonInteractive;
             }
 
-            startInfo.Arguments = NativeParameterBinderController.Arguments;
-
             ExecutionContext context = this.Command.Context;
+
+            // We provide the user a way to select the new behavior via a new preference variable
+            using (ParameterBinderBase.bindingTracer.TraceScope("BIND NAMED native application line args [{0}]", this.Path))
+            {
+                if (!NativeParameterBinderController.UseArgumentList)
+                {
+                    using (ParameterBinderBase.bindingTracer.TraceScope("BIND argument [{0}]", NativeParameterBinderController.Arguments))
+                    {
+                        startInfo.Arguments = NativeParameterBinderController.Arguments;
+                    }
+                }
+                else
+                {
+                    // Use new API for running native application
+                    int position = 0;
+                    foreach (string nativeArgument in NativeParameterBinderController.ArgumentList)
+                    {
+                        if (nativeArgument != null)
+                        {
+                            using (ParameterBinderBase.bindingTracer.TraceScope("BIND cmd line arg [{0}] to position [{1}]", nativeArgument, position++))
+                            {
+                                startInfo.ArgumentList.Add(nativeArgument);
+                            }
+                        }
+                    }
+                }
+            }
 
             // Start command in the current filesystem directory
             string rawPath =
@@ -1200,7 +1206,7 @@ namespace System.Management.Automation
             return startInfo;
         }
 
-        private bool IsDownstreamOutDefault(Pipe downstreamPipe)
+        private static bool IsDownstreamOutDefault(Pipe downstreamPipe)
         {
             Diagnostics.Assert(downstreamPipe != null, "Caller makes sure the passed-in parameter is not null.");
 
@@ -1227,10 +1233,11 @@ namespace System.Management.Automation
         /// <summary>
         /// This method calculates if input and output of the process are redirected.
         /// </summary>
+        /// <param name="isWindowsApplication"></param>
         /// <param name="redirectOutput"></param>
         /// <param name="redirectError"></param>
         /// <param name="redirectInput"></param>
-        private void CalculateIORedirection(out bool redirectOutput, out bool redirectError, out bool redirectInput)
+        private void CalculateIORedirection(bool isWindowsApplication, out bool redirectOutput, out bool redirectError, out bool redirectInput)
         {
             redirectInput = this.Command.MyInvocation.ExpectingInput;
             redirectOutput = true;
@@ -1281,7 +1288,7 @@ namespace System.Management.Automation
 
             // In minishell scenario, if output is redirected
             // then error should also be redirected.
-            if (redirectError == false && redirectOutput && _isMiniShell)
+            if (!redirectError && redirectOutput && _isMiniShell)
             {
                 redirectError = true;
             }
@@ -1301,7 +1308,7 @@ namespace System.Management.Automation
                 redirectOutput = true;
                 redirectError = true;
             }
-            else if (Platform.IsWindowsDesktop && IsConsoleApplication)
+            else if (Platform.IsWindowsDesktop && !isWindowsApplication)
             {
                 // On Windows desktops, if the command to run is a console application,
                 // then allocate a console if there isn't one attached already...
@@ -1335,7 +1342,7 @@ namespace System.Management.Automation
 
                 // if screen scraping isn't supported, we enable redirection so that the output is still transcribed
                 // as redirected output is always transcribed
-                if (_isTranscribing && (false == s_supportScreenScrape))
+                if (_isTranscribing && (s_supportScreenScrape == false))
                 {
                     redirectOutput = true;
                     redirectError = true;
@@ -1346,6 +1353,10 @@ namespace System.Management.Automation
 
         // On Windows, check the extension list and see if we should try to execute this directly.
         // Otherwise, use the platform library to check executability
+        [SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "Accesses instance members in preprocessor branch.")]
         private bool IsExecutable(string path)
         {
 #if UNIX
@@ -1449,7 +1460,7 @@ namespace System.Management.Automation
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
             public string szTypeName;
-        };
+        }
 
         private const uint SHGFI_EXETYPE = 0x000002000; // flag used to ask to return exe type
 
@@ -1497,12 +1508,12 @@ namespace System.Management.Automation
         internal const string XmlCliTag = "#< CLIXML";
 
         private int _refCount;
-        private BlockingCollection<ProcessOutputObject> _queue;
+        private readonly BlockingCollection<ProcessOutputObject> _queue;
         private bool _isFirstOutput;
         private bool _isFirstError;
         private bool _isXmlCliOutput;
         private bool _isXmlCliError;
-        private string _processFileName;
+        private readonly string _processFileName;
 
         public ProcessOutputHandler(Process process, BlockingCollection<ProcessOutputObject> queue)
         {
@@ -1743,7 +1754,7 @@ namespace System.Management.Automation
     {
         #region constructor
 
-        private InternalCommand _command;
+        private readonly InternalCommand _command;
         /// <summary>
         /// Creates an instance of ProcessInputWriter.
         /// </summary>
@@ -2176,10 +2187,10 @@ namespace System.Management.Automation
         #endregion
 
         [NonSerialized]
-        private PSObject _serializedRemoteException;
+        private readonly PSObject _serializedRemoteException;
 
         [NonSerialized]
-        private PSObject _serializedRemoteInvocationInfo;
+        private readonly PSObject _serializedRemoteInvocationInfo;
 
         /// <summary>
         /// Original Serialized Exception from remote msh.

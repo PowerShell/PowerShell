@@ -4,8 +4,6 @@
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 
-using Dbg = System.Management.Automation;
-
 namespace System.Management.Automation.Provider
 {
     #region DriveCmdletProvider
@@ -238,4 +236,3 @@ namespace System.Management.Automation.Provider
 
     #endregion DriveCmdletProvider
 }
-

@@ -35,7 +35,10 @@ namespace System.Management.Automation.Interpreter
 
         public bool IsBoxed
         {
-            get { return (_flags & IsBoxedFlag) != 0; }
+            get
+            {
+                return (_flags & IsBoxedFlag) != 0;
+            }
 
             set
             {
@@ -78,7 +81,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal struct LocalDefinition
+    internal readonly struct LocalDefinition
     {
         private readonly int _index;
         private readonly ParameterExpression _parameter;
