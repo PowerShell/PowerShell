@@ -14,6 +14,7 @@ trigger:
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
     - /.dependabot/config.yml
+    - test/perf/*
 pr:
   branches:
     include:
@@ -30,6 +31,7 @@ pr:
     - .vsts-ci/windows.yml
     - .vsts-ci/windows/*
     - test/common/markdown/*
+    - test/perf/*
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
 

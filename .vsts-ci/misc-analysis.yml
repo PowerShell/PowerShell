@@ -85,7 +85,7 @@ jobs:
     condition: succeededOrFailed()
 
   - bash: |
-      mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report --en-us;
+      mdspell '**/*.md' '!**/Pester/**/*.md' '!**/dotnet-tools/**/*.md' --ignore-numbers --ignore-acronyms --report --en-us;
     displayName: Test Spelling in Markdown
     condition: succeededOrFailed()
     workingDirectory: '$(repoPath)'
