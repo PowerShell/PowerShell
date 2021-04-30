@@ -28,8 +28,8 @@ pr:
     - .github/ISSUE_TEMPLATE/*
     - .vsts-ci/misc-analysis.yml
     - test/common/markdown/*
+    - test/perf/*
     - tools/packaging/*
-    - tools/perf/*
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
 

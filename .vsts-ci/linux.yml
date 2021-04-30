@@ -30,7 +30,7 @@ pr:
     - .vsts-ci/windows.yml
     - .vsts-ci/windows/*
     - test/common/markdown/*
-    - tools/perf/*
+    - test/perf/*
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
 
