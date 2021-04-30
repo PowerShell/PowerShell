@@ -15,6 +15,7 @@ trigger:
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
     - /.dependabot/config.yml
+    - test/perf/*
 pr:
   branches:
     include:
