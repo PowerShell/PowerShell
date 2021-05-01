@@ -5228,7 +5228,7 @@ namespace System.Management.Automation
                 }
                 foreach (string keyword in validKeywords)
                 {
-                    if (keyword.StartsWith(lineKeyword.Value,StringComparison.OrdinalIgnoreCase))
+                    if (keyword.StartsWith(lineKeyword.Value, StringComparison.OrdinalIgnoreCase))
                     {
                         result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, s_commentHelpKeywords[keyword]));
                     }
@@ -5393,7 +5393,7 @@ namespace System.Management.Automation
             var usedParameters = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.parameter\s+)\w.*(?<=\S)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
             foreach (Match parameter in usedParameters)
             {
-                if (wordToComplete.Equals(parameter.Value,StringComparison.OrdinalIgnoreCase))
+                if (wordToComplete.Equals(parameter.Value, StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }
