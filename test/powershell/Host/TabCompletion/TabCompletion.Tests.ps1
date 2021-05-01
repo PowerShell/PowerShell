@@ -1373,7 +1373,7 @@ dir -Recurse `
         }
 
         It 'Should complete help keywords' {
-            $res = TabExpansion2 -cursorColumn 4 -inputScript @'
+            $res = TabExpansion2 -cursorColumn 5 -inputScript @'
 <#
 .
 #>
@@ -1381,7 +1381,7 @@ dir -Recurse `
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
         }
         It 'Should complete help keywords without duplicates' {
-            $res = TabExpansion2 -cursorColumn 15 -inputScript @'
+            $res = TabExpansion2 -cursorColumn 17 -inputScript @'
 <#
 .SYNOPSIS
 .S
@@ -1390,7 +1390,7 @@ dir -Recurse `
             $res.CompletionMatches.Count | Should -Be 0
         }
         It 'Should complete help keywords with allowed duplicates' {
-            $res = TabExpansion2 -cursorColumn 20 -inputScript @'
+            $res = TabExpansion2 -cursorColumn 22 -inputScript @'
 <#
 .PARAMETER
 .Paramet
@@ -1400,7 +1400,7 @@ dir -Recurse `
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'PARAMETER'
         }
         It 'Should complete help keyword FORWARDHELPTARGETNAME argument' {
-            $res = TabExpansion2 -cursorColumn 28 -inputScript @'
+            $res = TabExpansion2 -cursorColumn 29 -inputScript @'
 <#
 .FORWARDHELPTARGETNAME  Get-Child
 #>
@@ -1409,7 +1409,7 @@ dir -Recurse `
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Get-ChildItem'
         }
         It 'Should complete help keyword FORWARDHELPCATEGORY argument' {
-            $res = TabExpansion2 -cursorColumn 25 -inputScript @'
+            $res = TabExpansion2 -cursorColumn 26 -inputScript @'
 <#
 .FORWARDHELPCATEGORY C
 #>
@@ -1418,7 +1418,7 @@ dir -Recurse `
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Cmdlet'
         }
         It 'Should complete help keyword REMOTEHELPRUNSPACE argument' {
-            $res = TabExpansion2 -cursorColumn 25 -inputScript @'
+            $res = TabExpansion2 -cursorColumn 26 -inputScript @'
 <#
 .REMOTEHELPRUNSPACE PSEditi
 #>
@@ -1427,7 +1427,7 @@ dir -Recurse `
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'PSEdition'
         }
         It 'Should complete help keyword EXTERNALHELP argument' {
-            $res = TabExpansion2 -cursorColumn (18 + $PSHOME.Length) -inputScript @"
+            $res = TabExpansion2 -cursorColumn (19 + $PSHOME.Length) -inputScript @"
 <#
 .EXTERNALHELP $PSHOME\
 #>
@@ -1435,7 +1435,7 @@ dir -Recurse `
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
         }
         It 'Should complete help keyword PARAMETER argument for script' {
-            $res = TabExpansion2 -cursorColumn 14 -inputScript @'
+            $res = TabExpansion2 -cursorColumn 15 -inputScript @'
 <#
 .PARAMETER 
 #>
@@ -1445,7 +1445,7 @@ param($Param1)
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Param1'
         }
         It 'Should complete help keyword PARAMETER argument for function with help inside' {
-            $res = TabExpansion2 -cursorColumn 73 -inputScript @'
+            $res = TabExpansion2 -cursorColumn 78 -inputScript @'
 function MyFunction ($param1, $param2)
 {
 <#
@@ -1458,7 +1458,7 @@ function MyFunction ($param1, $param2)
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'param2'
         }
         It 'Should complete help keyword PARAMETER argument for function with help before it' {
-            $res = TabExpansion2 -cursorColumn 14 -inputScript @'
+            $res = TabExpansion2 -cursorColumn 15 -inputScript @'
 <#
 .PARAMETER 
 #>
@@ -1470,7 +1470,7 @@ function MyFunction ($param1, $param2)
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'param1'
         }
         It 'Should complete help keyword PARAMETER argument for advanced function with help inside' {
-            $res = TabExpansion2 -cursorColumn 35 -inputScript @'
+            $res = TabExpansion2 -cursorColumn 38 -inputScript @'
 function Verb-Noun
 {
 <#
@@ -1497,7 +1497,7 @@ function Verb-Noun
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Param1'
         }
         It 'Should complete help keyword PARAMETER argument for nested function with help before it' {
-            $res = TabExpansion2 -cursorColumn 63 -inputScript @'
+            $res = TabExpansion2 -cursorColumn 66 -inputScript @'
 function MyFunction ($param1, $param2)
 {
     <#
@@ -1512,7 +1512,7 @@ function MyFunction ($param1, $param2)
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'param3'
         }
         It 'Should not complete help keyword PARAMETER argument if following function is too far away' {
-            $res = TabExpansion2 -cursorColumn 14 -inputScript @'
+            $res = TabExpansion2 -cursorColumn 15 -inputScript @'
 <#
 .PARAMETER 
 #>
