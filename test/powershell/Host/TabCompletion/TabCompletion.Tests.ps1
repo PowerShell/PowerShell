@@ -1371,6 +1371,159 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount $expectedCompletions
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
         }
+
+        It 'Should complete help keywords' {
+            $res = TabExpansion2 -cursorColumn 4 -inputScript @'
+<#
+.
+#>
+'@
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+        }
+        It 'Should complete help keywords without duplicates' {
+            $res = TabExpansion2 -cursorColumn 15 -inputScript @'
+<#
+.SYNOPSIS
+.S
+#>
+'@
+            $res.CompletionMatches.Count | Should -Be 0
+        }
+        It 'Should complete help keywords with allowed duplicates' {
+            $res = TabExpansion2 -cursorColumn 20 -inputScript @'
+<#
+.PARAMETER
+.Paramet
+#>
+'@
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'PARAMETER'
+        }
+        It 'Should complete help keyword FORWARDHELPTARGETNAME argument' {
+            $res = TabExpansion2 -cursorColumn 28 -inputScript @'
+<#
+.FORWARDHELPTARGETNAME  Get-Child
+#>
+'@
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Get-ChildItem'
+        }
+        It 'Should complete help keyword FORWARDHELPCATEGORY argument' {
+            $res = TabExpansion2 -cursorColumn 25 -inputScript @'
+<#
+.FORWARDHELPCATEGORY C
+#>
+'@
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Cmdlet'
+        }
+        It 'Should complete help keyword REMOTEHELPRUNSPACE argument' {
+            $res = TabExpansion2 -cursorColumn 25 -inputScript @'
+<#
+.REMOTEHELPRUNSPACE PSEditi
+#>
+'@
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'PSEdition'
+        }
+        It 'Should complete help keyword EXTERNALHELP argument' {
+            $res = TabExpansion2 -cursorColumn (18 + $PSHOME.Length) -inputScript @"
+<#
+.EXTERNALHELP $PSHOME\
+#>
+"@
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+        }
+        It 'Should complete help keyword PARAMETER argument for script' {
+            $res = TabExpansion2 -cursorColumn 14 -inputScript @'
+<#
+.PARAMETER 
+#>
+param($Param1)
+'@
+            $res.CompletionMatches.Count | Should -BeExactly 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Param1'
+        }
+        It 'Should complete help keyword PARAMETER argument for function with help inside' {
+            $res = TabExpansion2 -cursorColumn 73 -inputScript @'
+function MyFunction ($param1, $param2)
+{
+<#
+.PARAMETER param1
+.PARAMETER 
+#>
+}
+'@
+            $res.CompletionMatches.Count | Should -BeExactly 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'param2'
+        }
+        It 'Should complete help keyword PARAMETER argument for function with help before it' {
+            $res = TabExpansion2 -cursorColumn 14 -inputScript @'
+<#
+.PARAMETER 
+#>
+function MyFunction ($param1, $param2)
+{
+}
+'@
+            $res.CompletionMatches.Count | Should -BeExactly 2
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'param1'
+        }
+        It 'Should complete help keyword PARAMETER argument for advanced function with help inside' {
+            $res = TabExpansion2 -cursorColumn 35 -inputScript @'
+function Verb-Noun
+{
+<#
+.PARAMETER 
+#>
+    [CmdletBinding()]
+    Param
+    (
+        $Param1
+    )
+
+    Begin
+    {
+    }
+    Process
+    {
+    }
+    End
+    {
+    }
+}
+'@
+            $res.CompletionMatches.Count | Should -BeExactly 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Param1'
+        }
+        It 'Should complete help keyword PARAMETER argument for nested function with help before it' {
+            $res = TabExpansion2 -cursorColumn 63 -inputScript @'
+function MyFunction ($param1, $param2)
+{
+    <#
+    .PARAMETER 
+    #>
+    function MyFunction2 ($param3, $param4)
+    {
+    }
+}
+'@
+            $res.CompletionMatches.Count | Should -BeExactly 2
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'param3'
+        }
+        It 'Should not complete help keyword PARAMETER argument if following function is too far away' {
+            $res = TabExpansion2 -cursorColumn 14 -inputScript @'
+<#
+.PARAMETER 
+#>
+
+
+function MyFunction ($param1, $param2)
+{
+}
+'@
+            $res.CompletionMatches.Count | Should -BeExactly 0
+        }
     }
 }
 
