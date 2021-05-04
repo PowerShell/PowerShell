@@ -75,6 +75,13 @@ namespace System.Management.Automation
         /// </summary>
         Configuration = 0x0100,
 
+#if UNIX
+        /// <summary>
+        /// A Unix Process
+        /// </summary>
+        Manpage = 0x0200,
+#endif
+
         /// <summary>
         /// All possible command types.
         /// </summary>

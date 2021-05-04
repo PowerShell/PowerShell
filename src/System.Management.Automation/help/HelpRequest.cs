@@ -155,7 +155,11 @@ namespace System.Management.Automation
             if ((!(Component == null && Role == null && Functionality == null)) &&
                 (HelpCategory == HelpCategory.None))
             {
-                HelpCategory = HelpCategory.Alias | HelpCategory.Cmdlet | HelpCategory.Function | HelpCategory.Filter | HelpCategory.ExternalScript | HelpCategory.ScriptCommand;
+                HelpCategory = HelpCategory.Alias | HelpCategory.Cmdlet | HelpCategory.Function | HelpCategory.Filter | 
+#if UNIX
+                HelpCategory.Manpage |
+#endif
+                HelpCategory.ExternalScript | HelpCategory.ScriptCommand;
 
                 return;
             }
@@ -163,6 +167,9 @@ namespace System.Management.Automation
             if ((HelpCategory & HelpCategory.Cmdlet) > 0)
             {
                 HelpCategory |= HelpCategory.Alias;
+#if UNIX
+                HelpCategory |= HelpCategory.Manpage;
+#endif
             }
 
             if (HelpCategory == HelpCategory.None)

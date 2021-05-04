@@ -192,6 +192,12 @@ else                 { '-{0}{1} ' }) -f $_.Name, $parameterValue")
                 "ExtendedCmdletHelpInfo",
                 ViewsOf_ExtendedCmdletHelpInfo(sharedControls));
 
+#if UNIX
+            yield return new ExtendedTypeDefinition(
+                "ExtendedManpageHelpInfo",
+                ViewsOf_ExtendedManpageHelpInfo(sharedControls));
+#endif
+
             yield return new ExtendedTypeDefinition(
                 "ExtendedCmdletHelpInfo#DetailedView",
                 ViewsOf_ExtendedCmdletHelpInfo_DetailedView(sharedControls));
@@ -312,6 +318,37 @@ else                 { '-{0}{1} ' }) -f $_.Name, $parameterValue")
                     .EndEntry()
                 .EndControl());
         }
+
+#if UNIX
+        private static IEnumerable<FormatViewDefinition> ViewsOf_ExtendedManpageHelpInfo(CustomControl[] sharedControls)
+        {
+            yield return new FormatViewDefinition("ReducedDefaultCommandHelp",
+                CustomControl.Create()
+                    .StartEntry()
+                        .AddText(HelpDisplayStrings.Name)
+                        .AddNewline()
+                        .StartFrame(leftIndent: 4)
+                            .AddPropertyExpressionBinding(@"Name")
+                            .AddNewline()
+                        .EndFrame()
+                        .AddNewline()
+                        .AddText(HelpDisplayStrings.ShortDescription)
+                        .AddNewline()
+                        .StartFrame(leftIndent: 4)
+                            .AddPropertyExpressionBinding(@"ShortDescription")
+                            .AddNewline()
+                        .EndFrame()
+                        .AddNewline()
+                        .AddText(HelpDisplayStrings.RemarksSection)
+                        .AddNewline()
+                        .StartFrame(leftIndent: 4)
+                            .AddPropertyExpressionBinding(@"Remarks")
+                            .AddNewline()
+                        .EndFrame()
+                    .EndEntry()
+                .EndControl());
+        }
+#endif
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_ExtendedCmdletHelpInfo_DetailedView(CustomControl[] sharedControls)
         {

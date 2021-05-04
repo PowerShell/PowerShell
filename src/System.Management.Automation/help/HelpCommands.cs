@@ -560,7 +560,11 @@ namespace Microsoft.PowerShell.Commands
                 // online help can be showed only if showFullHelp is true..
                 // showFullHelp will be false when the help tries to display multiple help topics..
                 // -Online should not work when multiple help topics are displayed.
+#if UNIX
+                if (showFullHelp && _showOnlineHelp && helpInfo.HelpCategory != HelpCategory.Manpage)
+#else
                 if (showFullHelp && _showOnlineHelp)
+#endif
                 {
                     bool onlineUriFound = false;
                     // show online help

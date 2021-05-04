@@ -75,6 +75,9 @@ namespace System.Management.Automation
             get
             {
                 return
+#if UNIX
+                    HelpCategory.Manpage |
+#endif
                     HelpCategory.Alias |
                     HelpCategory.Cmdlet;
             }
@@ -198,6 +201,10 @@ namespace System.Management.Automation
             CmdletInfo cmdletInfo = commandInfo as CmdletInfo;
             IScriptCommandInfo scriptCommandInfo = commandInfo as IScriptCommandInfo;
             FunctionInfo functionInfo = commandInfo as FunctionInfo;
+#if UNIX
+            ManpageInfo manpageInfo = commandInfo as ManpageInfo;
+            bool isManpage = manpageInfo != null;
+#endif
             bool isCmdlet = cmdletInfo != null;
             bool isScriptCommand = scriptCommandInfo != null;
             bool isFunction = functionInfo != null;
@@ -211,8 +218,12 @@ namespace System.Management.Automation
             // This means that we are not going to load the help content from the GetFromCommandCache and
             // we are not going to read the help file.
 
-            // Only gets help for Cmdlet or script command
+            // Only gets help for Cmdlet or script command or manpage
+#if UNIX
+            if (!isCmdlet && !isScriptCommand && !isManpage)
+#else
             if (!isCmdlet && !isScriptCommand)
+#endif
                 return null;
 
             // Check if the help of the command is already in the cache.
@@ -306,6 +317,14 @@ namespace System.Management.Automation
                     }
                 }
             }
+
+#if UNIX
+            // For manpage, retrieve help from the `commandInfo`
+            if (result == null && isManpage)
+            {
+                result = ManpageHelpInfo.GetHelpInfo(manpageInfo);
+            }            
+#endif
 
             // If the above fails to get help, try search for a file called <ModuleName>-Help.xml
             // in the appropriate UI culture subfolder of ModuleBase, and retrieve help
@@ -1107,7 +1126,11 @@ namespace System.Management.Automation
                     }
                 }
 
+#if UNIX
+                if (this.HelpCategory == (HelpCategory.Alias | HelpCategory.Cmdlet | HelpCategory.Manpage))
+#else
                 if (this.HelpCategory == (HelpCategory.Alias | HelpCategory.Cmdlet))
+#endif
                 {
                     foreach (CommandInfo current in ModuleUtils.GetMatchingCommands(pattern, _context, helpRequest.CommandOrigin))
                     {
@@ -1336,7 +1359,11 @@ namespace System.Management.Automation
                     new CommandSearcher(
                         pattern,
                         SearchResolutionOptions.CommandNameIsPattern,
+#if UNIX
+                        CommandTypes.Cmdlet | CommandTypes.Manpage,
+#else
                         CommandTypes.Cmdlet,
+#endif
                         context);
 
             return searcher;

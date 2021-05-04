@@ -126,8 +126,26 @@ namespace System.Management.Automation
                 }
 
                 // Advance the state
+#if UNIX
+                _currentState = SearchState.SearchingManpage;
+#else
+                _currentState = SearchState.StartSearchingForExternalCommands;
+#endif
+            }
+
+#if UNIX
+            if (_currentState == SearchState.SearchingManpage)
+            {
+                _currentMatch = SearchForManpage();
+                if (_currentMatch != null)
+                {
+                    return true;
+                }
+
+                // Advance the state
                 _currentState = SearchState.StartSearchingForExternalCommands;
             }
+#endif
 
             if (_currentState == SearchState.StartSearchingForExternalCommands)
             {
@@ -282,6 +300,20 @@ namespace System.Management.Automation
 
             return currentMatch;
         }
+
+#if UNIX
+        private CommandInfo? SearchForManpage()
+        {
+            CommandInfo? currentMatch = null;
+
+            if ((_commandTypes & CommandTypes.Manpage) != 0)
+            {
+                currentMatch = GetNextManpage();
+            }
+
+            return currentMatch;
+        }
+#endif
 
         private CommandInfo? ProcessBuiltinScriptState()
         {
@@ -1082,6 +1114,53 @@ namespace System.Management.Automation
             return result;
         }
 
+#if UNIX
+        /// <summary>
+        /// Gets the next Unix man page from the collection of matching man pages.
+        /// If the collection doesn't exist yet it is created and the
+        /// enumerator is moved to the first item in the collection.
+        /// </summary>
+        /// <returns>
+        /// A Unix ManpageInfo for the next matching Cmdlet or null if there are
+        /// no more matches.
+        /// </returns>
+        private ManpageInfo? GetNextManpage()
+        {
+            ManpageInfo? result = null;
+            bool useAbbreviationExpansion = _commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion);
+
+            if (_matchingManpage == null)
+            {
+                Collection<ManpageInfo> matchingManpageInfo = new Collection<ManpageInfo>();
+
+                string matchPattern = _commandName;
+
+                foreach (ManpageInfo manpageInfo in ManpageHelpProvider.ManpageSearch(matchPattern))
+                {
+                    matchingManpageInfo.Add(manpageInfo);
+                }
+
+                _matchingManpage = matchingManpageInfo.GetEnumerator();
+            }
+
+            if (!_matchingManpage.MoveNext())
+            {
+                // Advance the state
+                _currentState = SearchState.StartSearchingForExternalCommands;
+
+                _matchingManpage = null;
+            }
+            else
+            {
+                result = _matchingManpage.Current;
+            }
+
+            return result;
+        }
+
+        private IEnumerator<ManpageInfo>? _matchingManpage;
+#endif
+
         private string? DoPowerShellRelativePathLookup()
         {
             string? result = null;
@@ -1644,6 +1723,7 @@ namespace System.Management.Automation
             _currentState = SearchState.SearchingAliases;
             _matchingAlias = null;
             _matchingCmdlet = null;
+            _matchingManpage = null;
         }
 
         internal CommandOrigin CommandOrigin
@@ -1688,6 +1768,11 @@ namespace System.Management.Automation
 
             // the searcher has finished function resolution and is now searching for cmdlets
             SearchingCmdlets,
+
+#if UNIX
+           // the searcher has finished cmdlets resolution and is now searching Unix man pages
+            SearchingManpage,
+#endif
 
             // the search has finished builtin script resolution and is now searching for external commands
             StartSearchingForExternalCommands,

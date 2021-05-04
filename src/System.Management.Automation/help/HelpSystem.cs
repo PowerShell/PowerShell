@@ -579,6 +579,11 @@ namespace System.Management.Automation
             helpProvider = new PSClassHelpProvider(this);
             _helpProviders.Add(helpProvider);
 
+#if UNIX
+            helpProvider = new ManpageHelpProvider(this);
+            _helpProviders.Add(helpProvider);
+#endif
+
             /* TH Bug#3141590 - Disable DscResourceHelp for ClientRTM due to perf issue.
 #if !CORECLR // TODO:CORECLR Add this back in once we support Get-DscResource
             helpProvider = new DscResourceHelpProvider(this);
@@ -857,6 +862,11 @@ namespace System.Management.Automation
         /// Provider help.
         /// </summary>
         Provider = 0x04,
+
+        /// <summary>
+        /// Manpage help.
+        /// </summary>
+        Manpage = 0x08,
 
         /// <summary>
         /// General keyword help.
