@@ -220,44 +220,59 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            if (!string.IsNullOrEmpty(logElement))
+            if (NeedToLog() && !string.IsNullOrEmpty(logElement))
             {
+                _eventLogBuffer ??= new List<string>();
                 _eventLogBuffer.Add(logElement);
             }
         }
 
         internal void LogToEventLog()
         {
-            if (NeedToLog())
+            if (!NeedToLog())
             {
-                // We check to see if the command is needs writing (or if there is anything in the buffer)
-                // before we flush it. Flushing the empty buffer causes a measurable performance degradation.
-                if (_commands == null || _commands.Count == 0 || _eventLogBuffer.Count == 0)
-                    return;
+                return;
+            }
 
-                MshLog.LogPipelineExecutionDetailEvent(_commands[0].Command.Context,
-                                                       _eventLogBuffer,
-                                                       _commands[0].Command.MyInvocation);
+            // We check to see if the command is needs writing (or if there is anything in the buffer)
+            // before we flush it. Flushing the empty buffer causes a measurable performance degradation.
+            if (_commands?.Count > 0 && _eventLogBuffer?.Count > 0)
+            {
+                InternalCommand firstCmd = _commands[0].Command;
+                MshLog.LogPipelineExecutionDetailEvent(
+                    firstCmd.Context,
+                    _eventLogBuffer,
+                    firstCmd.MyInvocation);
             }
         }
 
         private bool NeedToLog()
         {
-            if (_commands == null)
-                return false;
-
-            foreach (CommandProcessorBase commandProcessor in _commands)
+            if (_commands is null)
             {
-                MshCommandRuntime cmdRuntime = commandProcessor.Command.commandRuntime as MshCommandRuntime;
-
-                if (cmdRuntime != null && cmdRuntime.LogPipelineExecutionDetail)
-                    return true;
+                return false;
             }
 
-            return false;
+            if (_needToLog is null)
+            {
+                _needToLog = false;
+                foreach (CommandProcessorBase commandProcessor in _commands)
+                {
+                    var cmdRuntime = commandProcessor.Command.commandRuntime as MshCommandRuntime;
+                    if (cmdRuntime?.LogPipelineExecutionDetail == true)
+                    {
+                        _needToLog = true;
+                        break;
+                    }
+                }
+            }
+
+            return _needToLog.Value;
         }
 
-        private List<string> _eventLogBuffer = new List<string>();
+        private bool? _needToLog;
+        private List<string> _eventLogBuffer;
+
         #endregion
 
         #region public_methods
