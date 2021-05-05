@@ -1371,6 +1371,23 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount $expectedCompletions
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
         }
+
+        It 'Should complete about help topic regardless of culture' {
+            try
+            {
+                ## Save original culture and temporarily set it to da-DK because there's no localized help for da-DK.
+                $OriginalCulture = [cultureinfo]::CurrentCulture
+                [cultureinfo]::CurrentCulture="da-DK"
+                
+                $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
+                $res.CompletionMatches | Should -HaveCount 1
+                $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+            }
+            finally
+            {
+                [cultureinfo]::CurrentCulture = $OriginalCulture
+            }
+        }
     }
 }
 
