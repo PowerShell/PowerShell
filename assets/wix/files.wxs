@@ -1678,9 +1678,6 @@
               <File Id="filD2DD9066D1A148EBB7AD542DAC529862" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSDesiredStateConfiguration\en-US\about_PSDesiredStateConfiguration.md" />
             </Component>
           </Directory>
-          <Component Id="cmp67C4A6FC5E48487BB31DE411CF38B0B2">
-            <File Id="fil747B2801746E4FFCB93000BBA1089F15" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSDesiredStateConfiguration\PSDesiredStateConfiguration.cat" />
-          </Component>
         </Directory>
         <Directory Id="dirECE37E3EC3637A365744D075BD8132E9" Name="Microsoft.PowerShell.Management">
           <Component Id="cmp6DAFD01CAA3A4C67185922F445EDE495">
@@ -3620,7 +3617,6 @@
       <ComponentRef Id="cmp3AF5C6350FE04033B037554EA5060135" />
       <ComponentRef Id="cmp0125D538DA2E4396BC1D595250B69263" />
       <ComponentRef Id="cmpAC685A1C6E354E228EB6A1DD95FF03D5" />
-      <ComponentRef Id="cmp67C4A6FC5E48487BB31DE411CF38B0B2" />
       <ComponentRef Id="cmp6DAFD01CAA3A4C67185922F445EDE495" />
       <ComponentRef Id="cmp4AF592F1EDC8794BF4A3CCC2DCB717DB" />
       <ComponentRef Id="cmpA65CEF99B64C1E95632B68EDFBF3739E" />
