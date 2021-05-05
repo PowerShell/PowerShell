@@ -22,6 +22,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _command = command;
         }
 
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         internal void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             _command.ThrowTerminatingError(errorRecord);

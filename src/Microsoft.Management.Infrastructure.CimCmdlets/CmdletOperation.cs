@@ -65,6 +65,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return cmdlet.ShouldProcess(verboseDescription, verboseWarning, caption, out shouldProcessReason);
         }
 
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         public virtual void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             cmdlet.ThrowTerminatingError(errorRecord);
@@ -115,6 +116,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Throw terminating error
         /// </para>
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         internal void ThrowTerminatingError(Exception exception, string operation)
         {
             ErrorRecord errorRecord = new(exception, operation, ErrorCategory.InvalidOperation, this);

@@ -1417,6 +1417,7 @@ namespace System.Management.Automation.Provider
 
         #region ThrowTerminatingError
         /// <Content contentref="System.Management.Automation.Cmdlet.ThrowTerminatingError" />
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
