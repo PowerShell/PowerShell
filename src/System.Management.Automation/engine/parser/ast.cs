@@ -36,8 +36,6 @@ namespace System.Management.Automation.Language
         IAssignableValue GetAssignableValue();
     }
 
-#nullable restore
-
     internal interface IAssignableValue
     {
         /// <summary>
@@ -45,7 +43,7 @@ namespace System.Management.Automation.Language
         /// It returns the expressions that holds the value of the ast.  It may append the exprs or temps lists if the return
         /// value relies on temps and other expressions.
         /// </summary>
-        Expression GetValue(Compiler compiler, List<Expression> exprs, List<ParameterExpression> temps);
+        Expression? GetValue(Compiler compiler, List<Expression> exprs, List<ParameterExpression> temps);
 
         /// <summary>
         /// SetValue is called to set the result of an assignment (=) or to write back the result of
@@ -53,6 +51,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         Expression SetValue(Compiler compiler, Expression rhs);
     }
+#nullable restore
 
     internal interface IParameterMetadataProvider
     {
