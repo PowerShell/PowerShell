@@ -3238,7 +3238,7 @@ namespace System.Management.Automation
         /// The running PowerShell pipeline was stopped.
         /// This occurs when <see cref="PowerShell.Stop"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
         /// To collect partial output in this scenario,
-        /// supply a <see cref="System.Management.Automation.PSDataCollection{T}"> for the <paramref name="output"/> parameter,
+        /// supply a <see cref="System.Management.Automation.PSDataCollection{T}" /> for the <paramref name="output"/> parameter,
         /// and either add a handler for the <see cref="System.Management.Automation.PSDataCollection{T}.DataAdding"/> event
         /// or catch the exception and enumerate the object supplied for <paramref name="output"/>.
         /// </exception>
@@ -3308,7 +3308,7 @@ namespace System.Management.Automation
         /// The running PowerShell pipeline was stopped.
         /// This occurs when <see cref="PowerShell.Stop"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
         /// To collect partial output in this scenario,
-        /// supply a <see cref="System.Management.Automation.PSDataCollection{T}"> for the <paramref name="output"/> parameter,
+        /// supply a <see cref="System.Management.Automation.PSDataCollection{T}" /> for the <paramref name="output"/> parameter,
         /// and either add a handler for the <see cref="System.Management.Automation.PSDataCollection{T}.DataAdding"/> event
         /// or catch the exception and use object supplied for <paramref name="output"/>.
         /// </exception>
@@ -3687,7 +3687,7 @@ namespace System.Management.Automation
         /// The running PowerShell pipeline was stopped.
         /// This occurs when <see cref="PowerShell.Stop"/> or <see cref="PowerShell.StopAsync(AsyncCallback, object)"/> is called.
         /// To collect partial output in this scenario,
-        /// supply a <see cref="System.Management.Automation.PSDataCollection{T}"> to <see cref="PowerShell.BeginInvoke"/> for the <paramref name="output"/> parameter
+        /// supply a <see cref="System.Management.Automation.PSDataCollection{T}" /> to <see cref="PowerShell.BeginInvoke"/> for the <paramref name="output"/> parameter
         /// and either add a handler for the <see cref="System.Management.Automation.PSDataCollection{T}.DataAdding"/> event
         /// or catch the exception and enumerate the object supplied.
         /// </exception>
