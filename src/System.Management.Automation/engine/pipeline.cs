@@ -220,7 +220,7 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            if (NeedToLog() && !string.IsNullOrEmpty(logElement))
+            if (_needToLog && !string.IsNullOrEmpty(logElement))
             {
                 _eventLogBuffer ??= new List<string>();
                 _eventLogBuffer.Add(logElement);
@@ -229,13 +229,8 @@ namespace System.Management.Automation.Internal
 
         internal void LogToEventLog()
         {
-            if (!NeedToLog())
-            {
-                return;
-            }
-
-            // We check to see if the command is needs writing (or if there is anything in the buffer)
-            // before we flush it. Flushing the empty buffer causes a measurable performance degradation.
+            // We check to see if there is anything in the buffer before we flush it.
+            // Flushing the empty buffer causes a measurable performance degradation.
             if (_commands?.Count > 0 && _eventLogBuffer?.Count > 0)
             {
                 InternalCommand firstCmd = _commands[0].Command;
@@ -244,33 +239,12 @@ namespace System.Management.Automation.Internal
                     _eventLogBuffer,
                     firstCmd.MyInvocation);
             }
+
+            // Clear the log buffer after writing the event.
+            _eventLogBuffer?.Clear();
         }
 
-        private bool NeedToLog()
-        {
-            if (_commands is null)
-            {
-                return false;
-            }
-
-            if (_needToLog is null)
-            {
-                _needToLog = false;
-                foreach (CommandProcessorBase commandProcessor in _commands)
-                {
-                    var cmdRuntime = commandProcessor.Command.commandRuntime as MshCommandRuntime;
-                    if (cmdRuntime?.LogPipelineExecutionDetail == true)
-                    {
-                        _needToLog = true;
-                        break;
-                    }
-                }
-            }
-
-            return _needToLog.Value;
-        }
-
-        private bool? _needToLog;
+        private bool _needToLog = false;
         private List<string> _eventLogBuffer;
 
         #endregion
@@ -288,7 +262,7 @@ namespace System.Management.Automation.Internal
         internal int Add(CommandProcessorBase commandProcessor)
         {
             commandProcessor.CommandRuntime.PipelineProcessor = this;
-            return AddCommand(commandProcessor, _commands.Count, false);
+            return AddCommand(commandProcessor, _commands.Count, readErrorQueue: false);
         }
 
         internal void AddRedirectionPipe(PipelineProcessor pipelineProcessor)
@@ -426,6 +400,9 @@ namespace System.Management.Automation.Internal
             }
 
             _commands.Add(commandProcessor);
+
+            // We will log event(s) about the pipeline execution details if any command in the pipeline requests that.
+            _needToLog |= commandProcessor.CommandRuntime.LogPipelineExecutionDetail;
 
             // We give the Command a pointer back to the
             // PipelineProcessor so that it can check whether the
