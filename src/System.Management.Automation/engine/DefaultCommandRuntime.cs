@@ -230,6 +230,7 @@ namespace System.Management.Automation
         /// if it exists, otherwise throw an invalid operation exception.
         /// </summary>
         /// <param name="errorRecord">The error record to throw.</param>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             if (errorRecord.Exception != null)

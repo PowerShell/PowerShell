@@ -1714,6 +1714,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.Cmdlet.ProcessRecord"/>.
         /// etc.
         /// </remarks>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
