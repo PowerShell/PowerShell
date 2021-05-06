@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class StopTranscriptCommand : PSCmdlet
     {
         /// <summary>
-        /// Starts the transcription.
+        /// Stops the transcription.
         /// </summary>
         protected override
         void
