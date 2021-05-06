@@ -227,7 +227,7 @@ namespace System.Management.Automation.Internal
             }
         }
 
-        internal void LogToEventLog()
+        private void LogToEventLog()
         {
             // We check to see if there is anything in the buffer before we flush it.
             // Flushing the empty buffer causes a measurable performance degradation.
@@ -295,7 +295,7 @@ namespace System.Management.Automation.Internal
         /// PipeAlreadyTaken: the downstream pipe of command <paramref name="readFromCommand"/>
         ///   is already taken
         /// </exception>
-        internal int AddCommand(CommandProcessorBase commandProcessor, int readFromCommand, bool readErrorQueue)
+        private int AddCommand(CommandProcessorBase commandProcessor, int readFromCommand, bool readErrorQueue)
         {
             if (commandProcessor == null)
             {
