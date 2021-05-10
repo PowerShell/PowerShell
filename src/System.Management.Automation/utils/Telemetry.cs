@@ -383,6 +383,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "Microsoft.PowerApps.Checker.PowerShell",
                         "Microsoft.PowerShell.Archive",
                         "Microsoft.PowerShell.Core",
+                        "Microsoft.PowerShell.Crescendo",
                         "Microsoft.PowerShell.Diagnostics",
                         "Microsoft.PowerShell.Host",
                         "Microsoft.PowerShell.LocalAccounts",
