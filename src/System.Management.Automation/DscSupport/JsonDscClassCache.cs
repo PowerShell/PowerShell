@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "MSFT_BaseConfigurationProviderRegistration", "MSFT_CimConfigurationProviderRegistration", "MSFT_PSConfigurationProviderRegistration" };
 
         /// <summary>
-        /// A collection to prevent circular importing case when Import-DscResource does not have a module specified
+        /// Gets a collection to prevent circular importing case when Import-DscResource does not have a module specified.
         /// </summary>
         private static HashSet<string> CurrentImportDscResourceInvocations
         {
