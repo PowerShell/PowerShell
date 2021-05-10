@@ -187,7 +187,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a value indicating whether to use an ArgumentList or string for arguments when invoking a native executable.
         /// </summary>
-        internal bool UseArgumentList
+        internal NativeArgumentPassingStyle ArgumentPassingStyle
         {
             get
             {
@@ -198,16 +198,16 @@ namespace System.Management.Automation
                         // This will default to the new behavior if it is set to anything other than Legacy
                         var preference = LanguagePrimitives.ConvertTo<NativeArgumentPassingStyle>(
                             Context.GetVariableValue(new VariablePath(SpecialVariables.NativeArgumentPassing), NativeArgumentPassingStyle.Standard));
-                        return preference != NativeArgumentPassingStyle.Legacy;
+                        return preference;
                     }
                     catch
                     {
-                        // The value is not convertable send back true
-                        return true;
+                        // The value is not convertable send back Legacy
+                        return NativeArgumentPassingStyle.Legacy;
                     }
                 }
 
-                return false;
+                return NativeArgumentPassingStyle.Legacy;
             }
         }
 
@@ -314,7 +314,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            if (argArrayAst != null && UseArgumentList)
+                            if (argArrayAst != null && ArgumentPassingStyle == NativeArgumentPassingStyle.Standard)
                             {
                                 // We have a literal array, so take the extent, break it on spaces and add them to the argument list.
                                 foreach (string element in argArrayAst.Extent.Text.Split(' ', StringSplitOptions.RemoveEmptyEntries))
@@ -331,7 +331,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
-                else if (UseArgumentList && currentObj != null)
+                else if (ArgumentPassingStyle == NativeArgumentPassingStyle.Standard && currentObj != null)
                 {
                     // add empty strings to arglist, but not nulls
                     AddToArgumentList(parameter, arg);

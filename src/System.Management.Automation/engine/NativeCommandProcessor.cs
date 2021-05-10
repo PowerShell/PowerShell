@@ -1174,7 +1174,13 @@ namespace System.Management.Automation
             // We provide the user a way to select the new behavior via a new preference variable
             using (ParameterBinderBase.bindingTracer.TraceScope("BIND NAMED native application line args [{0}]", this.Path))
             {
-                if (!NativeParameterBinderController.UseArgumentList)
+                // We need to check if we're using legacy argument passing or it's a special case.
+                bool useLegacy = NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Legacy;
+                bool windowsSpecialCase =
+                    NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Windows &&
+                    useLegacyPassingStyle(startInfo.FileName);
+
+                if (useLegacy || windowsSpecialCase)
                 {
                     using (ParameterBinderBase.bindingTracer.TraceScope("BIND argument [{0}]", NativeParameterBinderController.Arguments))
                     {
@@ -1204,6 +1210,38 @@ namespace System.Management.Automation
                     context.ProviderNames.FileSystem).ProviderPath;
             startInfo.WorkingDirectory = WildcardPattern.Unescape(rawPath);
             return startInfo;
+        }
+
+        /// <summary>
+        /// Determine if we have a special file which will change the way native argument passing
+        /// is done on Windows.
+        /// </summary>
+        /// <param name="filename">string</param>
+        /// <returns>bool</returns>
+        private static bool useLegacyPassingStyle(string filename)
+        {
+            if (filename == null || filename == string.Empty)
+            {
+                return false;
+            }
+            string commandPath = filename.ToLowerInvariant();
+            // This is the list of files which will trigger Legacy behavior if
+            // PSNativeCommandArgumentPassing is set to "Windows".
+            // The following native commands have non-standard behavior with regard to argument passing.
+            string[] exceptions = new string[]{
+                "cmd.exe",
+                "cscript.exe",
+                "wscript.exe",
+                ".bat",
+                ".cmd",
+                ".vbs"};
+            foreach (string exception in exceptions) {
+                if (filename.EndsWith(exception))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static bool IsDownstreamOutDefault(Pipe downstreamPipe)
