@@ -103,9 +103,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform
         /// Gets a collection to prevent circular importing case when Import-DscResource does not have a module specified.
         /// </summary>
         private static HashSet<string> CurrentImportDscResourceInvocations
-        {
-            get => t_currentImportDscResourceInvocations ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        }
+            => t_currentImportDscResourceInvocations ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         [ThreadStatic]
         private static HashSet<string> t_currentImportDscResourceInvocations;
