@@ -99,9 +99,16 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform
         private static readonly HashSet<string> s_hiddenResourceCache =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "MSFT_BaseConfigurationProviderRegistration", "MSFT_CimConfigurationProviderRegistration", "MSFT_PSConfigurationProviderRegistration" };
 
-        // A collection to prevent circular importing case when Import-DscResource does not have a module specified
+        /// <summary>
+        /// A collection to prevent circular importing case when Import-DscResource does not have a module specified
+        /// </summary>
+        private static HashSet<string> CurrentImportDscResourceInvocations
+        {
+            get => t_currentImportDscResourceInvocations ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        }
+
         [ThreadStatic]
-        private static readonly HashSet<string> t_currentImportDscResourceInvocations = new(StringComparer.OrdinalIgnoreCase);
+        private static HashSet<string> t_currentImportDscResourceInvocations;
 
         /// <summary>
         /// Gets DSC class cache for this runspace.
@@ -361,7 +368,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform
             ClassCache.Clear();
             ByClassModuleCache.Clear();
             CacheResourcesFromMultipleModuleVersions = false;
-            t_currentImportDscResourceInvocations.Clear();
+            CurrentImportDscResourceInvocations.Clear();
         }
 
         private static string GetModuleQualifiedResourceName(string moduleName, string moduleVersion, string className, string resourceName)
@@ -1140,9 +1147,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform
                 // Lookup the required resources under available PowerShell modules when modulename is not specified
                 // Make sure that this is not a circular import/parsing
                 var callLocation = string.Join(':', scriptExtent.File, scriptExtent.StartLineNumber, scriptExtent.StartColumnNumber, scriptExtent.Text);
-                if (!t_currentImportDscResourceInvocations.Contains(callLocation))
+                if (!CurrentImportDscResourceInvocations.Contains(callLocation))
                 {
-                    t_currentImportDscResourceInvocations.Add(callLocation);
+                    CurrentImportDscResourceInvocations.Add(callLocation);
                     using (var powerShell = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
                     {
                         powerShell.AddCommand("Get-Module");
