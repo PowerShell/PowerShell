@@ -290,28 +290,19 @@ namespace Microsoft.PowerShell.Commands
         #region Internal
 
         /// <summary>
-        /// Retrieve the master list of all services.
+        /// Gets an array of all services.
         /// </summary>
-        /// <value></value>
+        /// <value>
+        /// An array of <see cref="ServiceController"/> components that represents all the service resources.
+        /// </value>
         /// <exception cref="System.Security.SecurityException">
         /// MSDN does not document the list of exceptions,
         /// but it is reasonable to expect that SecurityException is
         /// among them.  Errors here will terminate the cmdlet.
         /// </exception>
-        internal ServiceController[] AllServices
-        {
-            get
-            {
-                if (_allServices == null)
-                {
-                    _allServices = ServiceController.GetServices();
-                }
+        internal ServiceController[] AllServices => _allServices ??= ServiceController.GetServices();
 
-                return _allServices;
-            }
-        }
-
-        private ServiceController[] _allServices = null;
+        private ServiceController[] _allServices;
 
         internal ServiceController GetOneService(string nameOfService)
         {
@@ -1087,7 +1078,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         private static bool HaveAllDependentServicesStopped(ServiceController[] dependentServices)
         {
-            return Array.TrueForAll(dependentServices, service => service.Status == ServiceControllerStatus.Stopped);
+            return Array.TrueForAll(dependentServices, static service => service.Status == ServiceControllerStatus.Stopped);
         }
 
         /// <summary>

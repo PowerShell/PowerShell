@@ -358,7 +358,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return modulesMatched.OrderBy(m => m.Name).ToList();
+            return modulesMatched.OrderBy(static m => m.Name).ToList();
         }
 
         internal List<PSModuleInfo> GetModules(ModuleSpecification[] fullyQualifiedName, bool all)
@@ -417,7 +417,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return modulesMatched.OrderBy(m => m.Name).ToList();
+            return modulesMatched.OrderBy(static m => m.Name).ToList();
         }
 
         /// <summary>
@@ -1527,7 +1527,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedFunctions, (FunctionInfo ci) => ci.Name);
+                SortAndRemoveDuplicates(sessionState.ExportedFunctions, static (FunctionInfo ci) => ci.Name);
             }
 
             if (cmdletPatterns != null)
@@ -1582,7 +1582,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, (CmdletInfo ci) => ci.Name);
+                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, static (CmdletInfo ci) => ci.Name);
             }
 
             if (variablePatterns != null)
@@ -1605,7 +1605,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedVariables, (PSVariable v) => v.Name);
+                SortAndRemoveDuplicates(sessionState.ExportedVariables, static (PSVariable v) => v.Name);
             }
 
             if (aliasPatterns != null)
@@ -1645,7 +1645,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedAliases, (AliasInfo ci) => ci.Name);
+                SortAndRemoveDuplicates(sessionState.ExportedAliases, static (AliasInfo ci) => ci.Name);
             }
         }
 
@@ -1715,6 +1715,7 @@ namespace System.Management.Automation
         NullModuleSpecification,
     }
 
+#nullable enable
     /// <summary>
     /// Used by Modules/Snapins to provide a hook to the engine for startup initialization
     /// w.r.t compiled assembly loading.

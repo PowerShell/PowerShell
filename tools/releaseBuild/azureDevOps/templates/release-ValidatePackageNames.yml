@@ -24,7 +24,7 @@ steps:
 - pwsh: |
     $message = @()
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.rpm | ForEach-Object {
-        if($_.Name -notmatch 'powershell\-(preview-|lts-)?\d\.\d\.\d(_[a-z]*\.\d+)?-1.(rhel|centos).\d+\.x86_64\.rpm')
+        if($_.Name -notmatch 'powershell\-(preview-|lts-)?\d\.\d\.\d(_[a-z]*\.\d+)?-1.rh.x86_64\.rpm')
         {
             $messageInstance = "$($_.Name) is not a valid package name"
             $message += $messageInstance
@@ -77,7 +77,7 @@ steps:
 - pwsh: |
     $message = @()
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.deb | ForEach-Object {
-        if($_.Name -notmatch 'powershell(-preview|-lts)?_\d\.\d\.\d([\-~][a-z]*.\d+)?-\d\.(debian|ubuntu){1}\.\d+(\.\d+)?_amd64\.deb')
+        if($_.Name -notmatch 'powershell(-preview|-lts)?_\d\.\d\.\d([\-~][a-z]*.\d+)?-\d\.deb_amd64\.deb')
         {
             $messageInstance = "$($_.Name) is not a valid package name"
             $message += $messageInstance

@@ -487,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
             if ((_names == null) || (_nameContainsWildcard))
             {
                 // Use the stable sorting to sort the result list
-                _accumulatedResults = _accumulatedResults.OrderBy(a => a, new CommandInfoComparer()).ToList();
+                _accumulatedResults = _accumulatedResults.OrderBy(static a => a, new CommandInfoComparer()).ToList();
             }
 
             OutputResultsHelper(_accumulatedResults);
@@ -518,7 +518,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (UseFuzzyMatching)
             {
-                results = _commandScores.OrderBy(x => x.Score).Select(x => x.Command).ToList();
+                results = _commandScores.OrderBy(static x => x.Score).Select(static x => x.Command).ToList();
             }
 
             int count = 0;
@@ -875,7 +875,7 @@ namespace Microsoft.PowerShell.Commands
                                         _commandScores.Add(commandScore);
                                     }
 
-                                    commands = _commandScores.Select(x => x.Command).ToList();
+                                    commands = _commandScores.Select(static x => x.Command).ToList();
                                 }
                                 else
                                 {
@@ -1695,7 +1695,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return nouns.OrderBy(noun => noun).Select(noun => new CompletionResult(noun, noun, CompletionResultType.Text, noun));
+            return nouns.OrderBy(static noun => noun).Select(static noun => new CompletionResult(noun, noun, CompletionResultType.Text, noun));
         }
     }
 }

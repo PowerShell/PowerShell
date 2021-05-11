@@ -1063,7 +1063,7 @@ namespace System.Management.Automation.Interpreter
             }
 
             // Test values must be constant
-            if (!node.Cases.All(c => c.TestValues.All(t => t is ConstantExpression)))
+            if (!node.Cases.All(static c => c.TestValues.All(t => t is ConstantExpression)))
             {
                 throw new NotImplementedException();
             }
@@ -1573,7 +1573,7 @@ namespace System.Management.Automation.Interpreter
             // also could be a mutable value type, Delegate.CreateDelegate and MethodInfo.Invoke both can't handle this, we
             // need to generate code.
             var declaringType = node.Method.DeclaringType;
-            if (!parameters.TrueForAll(p => !p.ParameterType.IsByRef) ||
+            if (!parameters.TrueForAll(static p => !p.ParameterType.IsByRef) ||
                 (!node.Method.IsStatic && declaringType.IsValueType && !declaringType.IsPrimitive))
             {
                 _forceCompile = true;
@@ -1600,7 +1600,7 @@ namespace System.Management.Automation.Interpreter
             if (node.Constructor != null)
             {
                 var parameters = node.Constructor.GetParameters();
-                if (!parameters.TrueForAll(p => !p.ParameterType.IsByRef))
+                if (!parameters.TrueForAll(static p => !p.ParameterType.IsByRef))
                 {
                     _forceCompile = true;
                 }

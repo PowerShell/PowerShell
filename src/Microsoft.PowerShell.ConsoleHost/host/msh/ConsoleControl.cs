@@ -2654,7 +2654,7 @@ namespace Microsoft.PowerShell
         //     CSI params? '#' [{}pq]        // XTPUSHSGR ('{'), XTPOPSGR ('}'), or their aliases ('p' and 'q')
         //
         // Where:
-        //     params: digit+ (';' params)?
+        //     params: digit+ ((';' | ':') params)?
         //     CSI:     C0_CSI | C1_CSI
         //     C0_CSI:  \x001b '['            // ESC '['
         //     C1_CSI:  \x009b
@@ -2699,7 +2699,7 @@ namespace Microsoft.PowerShell
             {
                 c = str[offset++];
             }
-            while ((offset < str.Length) && (char.IsDigit(c) || c == ';'));
+            while ((offset < str.Length) && (char.IsDigit(c) || (c == ';') || (c == ':')));
 
             // Finally, handle the command characters for the specific sequences we
             // handle:

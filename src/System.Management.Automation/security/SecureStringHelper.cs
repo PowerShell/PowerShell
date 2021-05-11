@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -385,6 +386,26 @@ namespace Microsoft.PowerShell
                 return s;
             }
         }
+
+#nullable enable
+        /// <summary>Creates a new <see cref="SecureString"/> from a <see cref="string"/>.</summary>
+        /// <param name="plainTextString">Plain text string. Must not be null.</param>
+        /// <returns>A new SecureString.</returns>
+        internal static unsafe SecureString FromPlainTextString(string plainTextString)
+        {
+            Debug.Assert(plainTextString is not null);
+
+            if (plainTextString.Length == 0)
+            {
+                return new SecureString();
+            }
+
+            fixed (char* charsPtr = plainTextString)
+            {
+                return new SecureString(charsPtr, plainTextString.Length);
+            }
+        }
+#nullable restore
     }
 
     /// <summary>

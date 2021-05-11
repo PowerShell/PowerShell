@@ -11,13 +11,14 @@ param (
     # Destination location of the package on docker host
     [string] $destination = '/mnt',
 
-    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
     [ValidateNotNullOrEmpty()]
     [string]$ReleaseTag,
 
     [switch]$TarX64,
     [switch]$TarArm,
     [switch]$TarArm64,
+    [switch]$TarMinSize,
     [switch]$FxDependent,
     [switch]$Alpine
 )
@@ -66,6 +67,7 @@ function BuildPackages {
         }
 
         Start-PSBuild @buildParams @releaseTagParam
+        $options = Get-PSOptions
 
         if ($FxDependent) {
             Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
@@ -76,6 +78,22 @@ function BuildPackages {
         }
 
         if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS }
+
+        if ($TarMinSize) {
+            Write-Verbose -Verbose "---- Min-Size ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+
+            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
+            Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
+            Remove-Item -Path $binDir -Recurse -Force
+
+            ## Build 'min-size' and create 'tar.gz' package for it.
+            $buildParams['Crossgen'] = $false
+            $buildParams['ForMinimalSize'] = $true
+            Start-PSBuild @buildParams @releaseTagParam
+            Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
+        }
 
         if ($TarArm) {
             ## Build 'linux-arm' and create 'tar.gz' package for it.

@@ -1105,7 +1105,8 @@ namespace System.Management.Automation.Runspaces
                                         $message = ''
                                         $prefix = ''
 
-                                        if ($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') {
+                                        # Don't show line information if script module
+                                        if (($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') -and !($myinv.ScriptName.EndsWith('.psm1', [System.StringComparison]::OrdinalIgnoreCase))) {
                                             $useTargetObject = $false
 
                                             # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
@@ -1687,8 +1688,8 @@ namespace System.Management.Automation.Runspaces
         }
 
         private const string PreReleaseStringScriptBlock = @"
-                            if ($_.PrivateData -and 
-                                $_.PrivateData.ContainsKey('PSData') -and 
+                            if ($_.PrivateData -and
+                                $_.PrivateData.ContainsKey('PSData') -and
                                 $_.PrivateData.PSData.ContainsKey('PreRelease'))
                             {
                                     $_.PrivateData.PSData.PreRelease
@@ -2055,6 +2056,7 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Progress.Style)$($_.Progress.Style.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Progress.Style")
                         .AddItemScriptBlock(@"""$($_.Progress.MaxWidth)""", label: "Progress.MaxWidth")
                         .AddItemScriptBlock(@"""$($_.Progress.View)""", label: "Progress.View")
+                        .AddItemScriptBlock(@"""$($_.Progress.UseOSCIndicator)""", label: "Progress.UseOSCIndicator")
                         .AddItemScriptBlock(@"""$($_.Foreground.Black)$($_.Foreground.Black.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.Black")
                         .AddItemScriptBlock(@"""$($_.Foreground.White)$($_.Foreground.White.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.White")
                         .AddItemScriptBlock(@"""$($_.Foreground.DarkGray)$($_.Foreground.DarkGray.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.DarkGray")
@@ -2114,6 +2116,7 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Style)$($_.Style.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Style")
                         .AddItemProperty(@"MaxWidth")
                         .AddItemProperty(@"View")
+                        .AddItemProperty(@"UseOSCIndicator")
                     .EndEntry()
                 .EndList());
         }

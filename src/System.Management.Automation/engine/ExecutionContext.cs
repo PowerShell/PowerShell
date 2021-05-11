@@ -430,7 +430,7 @@ namespace System.Management.Automation
             if (baseValue != null && baseValue != NullString.Value)
             {
                 // It's actually setting a key value pair when the key doesn't exist
-                UntrustedObjects.GetValue(baseValue, key => null);
+                UntrustedObjects.GetValue(baseValue, static key => null);
 
                 try
                 {

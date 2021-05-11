@@ -273,7 +273,7 @@ namespace System.Management.Automation.Interpreter
         static InstructionList() {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler((_, __) => {
                 PerfTrack.DumpHistogram(_executedInstructions);
-                Console.WriteLine("-- Total executed: {0}", _executedInstructions.Values.Aggregate(0, (sum, value) => sum + value));
+                Console.WriteLine("-- Total executed: {0}", _executedInstructions.Values.Aggregate(0, static (sum, value) => sum + value));
                 Console.WriteLine("-----");
 
                 var referenced = new Dictionary<string, int>();

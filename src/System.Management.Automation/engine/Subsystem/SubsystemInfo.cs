@@ -255,7 +255,7 @@ namespace System.Management.Automation.Subsystem
                 list.Add(impl);
 
                 _registeredImpls = new ReadOnlyCollection<TConcreteSubsystem>(list);
-                _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(list.ConvertAll(s => new ImplementationInfo(s)));
+                _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(list.ConvertAll(static s => new ImplementationInfo(s)));
             }
         }
 
@@ -326,7 +326,7 @@ namespace System.Management.Automation.Subsystem
                     }
 
                     _registeredImpls = new ReadOnlyCollection<TConcreteSubsystem>(list);
-                    _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(list.ConvertAll(s => new ImplementationInfo(s)));
+                    _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(list.ConvertAll(static s => new ImplementationInfo(s)));
                 }
 
                 return target;

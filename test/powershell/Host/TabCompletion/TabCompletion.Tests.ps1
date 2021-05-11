@@ -908,6 +908,75 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "Test history completion"
         }
 
+        It "Test #requires parameter completion" {
+            $res = TabExpansion2 -inputScript "#requires -" -cursorColumn 11
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "Modules"
+        }
+
+        It "Test #requires parameter value completion" {
+            $res = TabExpansion2 -inputScript "#requires -PSEdition " -cursorColumn 21
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "Core"
+        }
+
+        It "Test no completion after #requires -RunAsAdministrator" {
+            $res = TabExpansion2 -inputScript "#requires -RunAsAdministrator -" -cursorColumn 31
+            $res.CompletionMatches | Should -HaveCount 0
+        }
+
+        It "Test no suggestions for already existing parameters in #requires" {
+            $res = TabExpansion2 -inputScript "#requires -Modules -" -cursorColumn 20
+            $res.CompletionMatches.CompletionText | Should -Not -Contain "Modules"
+        }
+
+        It "Test module completion in #requires without quotes" {
+            $res = TabExpansion2 -inputScript "#requires -Modules P" -cursorColumn 20
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches.CompletionText | Should -Contain "Pester"
+        }
+
+        It "Test module completion in #requires with quotes" {
+            $res = TabExpansion2 -inputScript '#requires -Modules "' -cursorColumn 20
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches.CompletionText | Should -Contain "Pester"
+        }
+
+        It "Test module completion in #requires with multiple modules" {
+            $res = TabExpansion2 -inputScript "#requires -Modules Pester," -cursorColumn 26
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches.CompletionText | Should -Contain "Pester"
+        }
+
+        It "Test hashtable key completion in #requires statement for modules" {
+            $res = TabExpansion2 -inputScript "#requires -Modules @{" -cursorColumn 21
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "GUID"
+        }
+
+        It "Test no suggestions for already existing hashtable keys in #requires statement for modules" {
+            $res = TabExpansion2 -inputScript '#requires -Modules @{ModuleName="Pester";' -cursorColumn 41
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches.CompletionText | Should -Not -Contain "ModuleName"
+        }
+
+        It "Test no suggestions for mutually exclusive hashtable keys in #requires statement for modules" {
+            $res = TabExpansion2 -inputScript '#requires -Modules @{ModuleName="Pester";RequiredVersion="1.0";' -cursorColumn 63
+            $res.CompletionMatches.CompletionText | Should -BeExactly "GUID"
+        }
+
+        It "Test no suggestions for RequiredVersion key in #requires statement when ModuleVersion is specified" {
+            $res = TabExpansion2 -inputScript '#requires -Modules @{ModuleName="Pester";ModuleVersion="1.0";' -cursorColumn 61
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches.CompletionText | Should -Not -Contain "RequiredVersion"
+        }
+
+        It "Test module completion in #requires statement for hashtables" {
+            $res = TabExpansion2 -inputScript '#requires -Modules @{ModuleName="p' -cursorColumn 34
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches.CompletionText | Should -Contain "Pester"
+        }
+
         It "Test Attribute member completion" {
             $inputStr = "function bar { [parameter(]param() }"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn ($inputStr.IndexOf('(') + 1)
@@ -1301,6 +1370,23 @@ dir -Recurse `
             $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
             $res.CompletionMatches | Should -HaveCount $expectedCompletions
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+        }
+
+        It 'Should complete about help topic regardless of culture' {
+            try
+            {
+                ## Save original culture and temporarily set it to da-DK because there's no localized help for da-DK.
+                $OriginalCulture = [cultureinfo]::CurrentCulture
+                [cultureinfo]::CurrentCulture="da-DK"
+                
+                $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
+                $res.CompletionMatches | Should -HaveCount 1
+                $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+            }
+            finally
+            {
+                [cultureinfo]::CurrentCulture = $OriginalCulture
+            }
         }
     }
 }

@@ -51,12 +51,6 @@ namespace Microsoft.PowerShell.Commands
                                                      ISecurityDescriptorCmdletProvider,
                                                      ICmdletProviderSupportsHelp
     {
-#if UNIX
-        // This is the errno returned by the rename() syscall
-        // when an item is attempted to be renamed across filesystem mount boundaries.
-        private const int UNIX_ERRNO_EXDEV = 18;
-#endif
-
         // 4MB gives the best results without spiking the resources on the remote connection for file transfers between pssessions.
         // NOTE: The script used to copy file data from session (PSCopyFromSessionHelper) has a
         // maximum fragment size value for security.  If FILETRANSFERSIZE changes make sure the
@@ -1787,7 +1781,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (IEnumerable<FileSystemInfo> childList in target)
                 {
                     // On some systems, this is already sorted.  For consistency, always sort again.
-                    IEnumerable<FileSystemInfo> sortedChildList = childList.OrderBy(c => c.Name, StringComparer.CurrentCultureIgnoreCase);
+                    IEnumerable<FileSystemInfo> sortedChildList = childList.OrderBy(static c => c.Name, StringComparer.CurrentCultureIgnoreCase);
 
                     foreach (FileSystemInfo filesystemInfo in sortedChildList)
                     {
@@ -1896,9 +1890,14 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             bool hidden = false;
+                            bool checkReparsePoint = true;
                             if (!Force)
                             {
                                 hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
+
+                                // We've already taken the expense of initializing the Attributes property here,
+                                // so we can use that to avoid needing to call IsReparsePointLikeSymlink() later.
+                                checkReparsePoint = (recursiveDirectory.Attributes & FileAttributes.ReparsePoint) != 0;
                             }
 
                             // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
@@ -1912,7 +1911,7 @@ namespace Microsoft.PowerShell.Commands
                                 //  c) it is not a reparse point with a target (not OneDrive or an AppX link).
                                 if (tracker == null)
                                 {
-                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(recursiveDirectory))
+                                    if (checkReparsePoint && InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(recursiveDirectory))
                                     {
                                         continue;
                                     }
@@ -2064,7 +2063,7 @@ namespace Microsoft.PowerShell.Commands
         public static string NameString(PSObject instance)
         {
             return instance?.BaseObject is FileSystemInfo fileInfo
-                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo)
+                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo)
                     ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
                     : fileInfo.Name
                 : string.Empty;
@@ -3104,22 +3103,31 @@ namespace Microsoft.PowerShell.Commands
                 continueRemoval = ShouldProcess(directory.FullName, action);
             }
 
-            if (directory.Attributes.HasFlag(FileAttributes.ReparsePoint))
+            if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(directory))
             {
+                void WriteErrorHelper(Exception exception)
+                {
+                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                }
+
                 try
                 {
-                    // TODO:
-                    // Different symlinks seem to vary by behavior.
-                    // In particular, OneDrive symlinks won't remove without recurse,
-                    // but the .NET API here does not allow us to distinguish them.
-                    // We may need to revisit using p/Invokes here to get the right behavior
-                    directory.Delete();
+                    if (InternalTestHooks.OneDriveTestOn)
+                    {
+                        WriteErrorHelper(new IOException());
+                        return;
+                    }
+                    else
+                    {
+                        // Name surrogates should just be detached.
+                        directory.Delete();
+                    }
                 }
                 catch (Exception e)
                 {
                     string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName, e.Message);
                     var exception = new IOException(error, e);
-                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                    WriteErrorHelper(exception);
                 }
 
                 return;
@@ -6071,35 +6079,22 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="force">If true, force move the directory, overwriting anything at the destination.</param>
         private void MoveDirectoryInfoUnchecked(DirectoryInfo directory, string destinationPath, bool force)
         {
-#if UNIX
             try
             {
                 if (InternalTestHooks.ThrowExdevErrorOnMoveDirectory)
                 {
-                    throw new IOException("Invalid cross-device link", hresult: UNIX_ERRNO_EXDEV);
+                    throw new IOException("Invalid cross-device link");
                 }
 
                 directory.MoveTo(destinationPath);
             }
-            catch (IOException e) when (e.HResult == UNIX_ERRNO_EXDEV)
+            catch (IOException)
             {
                 // Rather than try to ascertain whether we can rename a directory ahead of time,
                 // it's both faster and more correct to try to rename it and fall back to copy/deleting it
                 // See also: https://github.com/coreutils/coreutils/blob/439741053256618eb651e6d43919df29625b8714/src/mv.c#L212-L216
                 CopyAndDelete(directory, destinationPath, force);
             }
-#else
-            // On Windows, being able to rename vs copy/delete a file
-            // is just a question of the drive
-            if (IsSameWindowsVolume(directory.FullName, destinationPath))
-            {
-                directory.MoveTo(destinationPath);
-            }
-            else
-            {
-                CopyAndDelete(directory, destinationPath, force);
-            }
-#endif
         }
 
         private void CopyAndDelete(DirectoryInfo directory, string destination, bool force)
@@ -6136,16 +6131,6 @@ namespace Microsoft.PowerShell.Commands
                 RemoveItem(directory.FullName, false);
             }
         }
-
-#if !UNIX
-        private static bool IsSameWindowsVolume(string source, string destination)
-        {
-            FileInfo src = new FileInfo(source);
-            FileInfo dest = new FileInfo(destination);
-
-            return (src.Directory.Root.Name == dest.Directory.Root.Name);
-        }
-#endif
 
         #endregion MoveItem
 
@@ -7546,7 +7531,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the filter directory flag.
         /// </summary>
         [Parameter]
-        [Alias("ad", "d")]
+        [Alias("ad")]
         public SwitchParameter Directory
         {
             get { return _attributeDirectory; }
@@ -8053,7 +8038,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // SetLastError is false as the use of this API doesn't not require GetLastError() to be called
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern SafeFindHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
 
         internal enum FINDEX_INFO_LEVELS : uint
@@ -8244,28 +8229,50 @@ namespace Microsoft.PowerShell.Commands
             return fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint);
         }
 
-        internal static bool IsReparsePointWithTarget(FileSystemInfo fileInfo)
+        internal static bool IsReparsePointLikeSymlink(FileSystemInfo fileInfo)
         {
-            if (!IsReparsePoint(fileInfo))
+#if UNIX
+            // Reparse point on Unix is a symlink.
+            return IsReparsePoint(fileInfo);
+#else
+            if (InternalTestHooks.OneDriveTestOn && fileInfo.Name == InternalTestHooks.OneDriveTestSymlinkName)
             {
-                return false;
+                return !InternalTestHooks.OneDriveTestRecurseOn;
             }
-#if !UNIX
-            // It is a reparse point and we should check some reparse point tags.
-            var data = new WIN32_FIND_DATA();
-            using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+
+            WIN32_FIND_DATA data = default;
+            string fullPath = Path.TrimEndingDirectorySeparator(fileInfo.FullName);
+            using (var handle = FindFirstFileEx(fullPath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
+                if (handle.IsInvalid)
+                {
+                    // Our handle could be invalidated by something else touching the filesystem,
+                    // so ensure we deal with that possibility here
+                    int lastError = Marshal.GetLastWin32Error();
+                    throw new Win32Exception(lastError);
+                }
+
+                // We already have the file attribute information from our Win32 call,
+                // so no need to take the expense of the FileInfo.FileAttributes call
+                const int FILE_ATTRIBUTE_REPARSE_POINT = 0x0400;
+                if ((data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) == 0)
+                {
+                    // Not a reparse point.
+                    return false;
+                }
+
                 // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/windows/win32/fileio/reparse-point-tags
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
                 // (like symlinks and mount points).
                 // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
-                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
+                if ((data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
                 {
                     return false;
                 }
             }
-#endif
+
             return true;
+#endif
         }
 
         internal static bool WinIsHardLink(FileSystemInfo fileInfo)

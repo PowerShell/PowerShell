@@ -155,39 +155,39 @@ namespace System.Management.Automation
         static ReflectionParameterBinder()
         {
             // Statically add delegates that we typically need on startup or every time we run PowerShell - this avoids the JIT
-            s_getterMethods.TryAdd(Tuple.Create(typeof(OutDefaultCommand), "InputObject"), o => ((OutDefaultCommand)o).InputObject);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(OutDefaultCommand), "InputObject"), (o, v) => ((OutDefaultCommand)o).InputObject = (PSObject)v);
+            s_getterMethods.TryAdd(Tuple.Create(typeof(OutDefaultCommand), "InputObject"), static o => ((OutDefaultCommand)o).InputObject);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(OutDefaultCommand), "InputObject"), static (o, v) => ((OutDefaultCommand)o).InputObject = (PSObject)v);
 
-            s_getterMethods.TryAdd(Tuple.Create(typeof(OutLineOutputCommand), "InputObject"), o => ((OutLineOutputCommand)o).InputObject);
-            s_getterMethods.TryAdd(Tuple.Create(typeof(OutLineOutputCommand), "LineOutput"), o => ((OutLineOutputCommand)o).LineOutput);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(OutLineOutputCommand), "InputObject"), (o, v) => ((OutLineOutputCommand)o).InputObject = (PSObject)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(OutLineOutputCommand), "LineOutput"), (o, v) => ((OutLineOutputCommand)o).LineOutput = v);
+            s_getterMethods.TryAdd(Tuple.Create(typeof(OutLineOutputCommand), "InputObject"), static o => ((OutLineOutputCommand)o).InputObject);
+            s_getterMethods.TryAdd(Tuple.Create(typeof(OutLineOutputCommand), "LineOutput"), static o => ((OutLineOutputCommand)o).LineOutput);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(OutLineOutputCommand), "InputObject"), static (o, v) => ((OutLineOutputCommand)o).InputObject = (PSObject)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(OutLineOutputCommand), "LineOutput"), static (o, v) => ((OutLineOutputCommand)o).LineOutput = v);
 
-            s_getterMethods.TryAdd(Tuple.Create(typeof(FormatDefaultCommand), "InputObject"), o => ((FormatDefaultCommand)o).InputObject);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(FormatDefaultCommand), "InputObject"), (o, v) => ((FormatDefaultCommand)o).InputObject = (PSObject)v);
+            s_getterMethods.TryAdd(Tuple.Create(typeof(FormatDefaultCommand), "InputObject"), static o => ((FormatDefaultCommand)o).InputObject);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(FormatDefaultCommand), "InputObject"), static (o, v) => ((FormatDefaultCommand)o).InputObject = (PSObject)v);
 
-            s_setterMethods.TryAdd(Tuple.Create(typeof(SetStrictModeCommand), "Off"), (o, v) => ((SetStrictModeCommand)o).Off = (SwitchParameter)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(SetStrictModeCommand), "Version"), (o, v) => ((SetStrictModeCommand)o).Version = (Version)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(SetStrictModeCommand), "Off"), static (o, v) => ((SetStrictModeCommand)o).Off = (SwitchParameter)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(SetStrictModeCommand), "Version"), static (o, v) => ((SetStrictModeCommand)o).Version = (Version)v);
 
-            s_getterMethods.TryAdd(Tuple.Create(typeof(ForEachObjectCommand), "InputObject"), o => ((ForEachObjectCommand)o).InputObject);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(ForEachObjectCommand), "InputObject"), (o, v) => ((ForEachObjectCommand)o).InputObject = (PSObject)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(ForEachObjectCommand), "Process"), (o, v) => ((ForEachObjectCommand)o).Process = (ScriptBlock[])v);
+            s_getterMethods.TryAdd(Tuple.Create(typeof(ForEachObjectCommand), "InputObject"), static o => ((ForEachObjectCommand)o).InputObject);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(ForEachObjectCommand), "InputObject"), static (o, v) => ((ForEachObjectCommand)o).InputObject = (PSObject)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(ForEachObjectCommand), "Process"), static (o, v) => ((ForEachObjectCommand)o).Process = (ScriptBlock[])v);
 
-            s_getterMethods.TryAdd(Tuple.Create(typeof(WhereObjectCommand), "InputObject"), o => ((WhereObjectCommand)o).InputObject);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(WhereObjectCommand), "InputObject"), (o, v) => ((WhereObjectCommand)o).InputObject = (PSObject)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(WhereObjectCommand), "FilterScript"), (o, v) => ((WhereObjectCommand)o).FilterScript = (ScriptBlock)v);
+            s_getterMethods.TryAdd(Tuple.Create(typeof(WhereObjectCommand), "InputObject"), static o => ((WhereObjectCommand)o).InputObject);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(WhereObjectCommand), "InputObject"), static (o, v) => ((WhereObjectCommand)o).InputObject = (PSObject)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(WhereObjectCommand), "FilterScript"), static (o, v) => ((WhereObjectCommand)o).FilterScript = (ScriptBlock)v);
 
-            s_setterMethods.TryAdd(Tuple.Create(typeof(ImportModuleCommand), "Name"), (o, v) => ((ImportModuleCommand)o).Name = (string[])v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(ImportModuleCommand), "ModuleInfo"), (o, v) => ((ImportModuleCommand)o).ModuleInfo = (PSModuleInfo[])v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(ImportModuleCommand), "Scope"), (o, v) => ((ImportModuleCommand)o).Scope = (string)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(ImportModuleCommand), "PassThru"), (o, v) => ((ImportModuleCommand)o).PassThru = (SwitchParameter)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(ImportModuleCommand), "Name"), static (o, v) => ((ImportModuleCommand)o).Name = (string[])v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(ImportModuleCommand), "ModuleInfo"), static (o, v) => ((ImportModuleCommand)o).ModuleInfo = (PSModuleInfo[])v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(ImportModuleCommand), "Scope"), static (o, v) => ((ImportModuleCommand)o).Scope = (string)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(ImportModuleCommand), "PassThru"), static (o, v) => ((ImportModuleCommand)o).PassThru = (SwitchParameter)v);
 
-            s_setterMethods.TryAdd(Tuple.Create(typeof(GetCommandCommand), "Name"), (o, v) => ((GetCommandCommand)o).Name = (string[])v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(GetCommandCommand), "Module"), (o, v) => ((GetCommandCommand)o).Module = (string[])v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(GetCommandCommand), "Name"), static (o, v) => ((GetCommandCommand)o).Name = (string[])v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(GetCommandCommand), "Module"), static (o, v) => ((GetCommandCommand)o).Module = (string[])v);
 
-            s_setterMethods.TryAdd(Tuple.Create(typeof(GetModuleCommand), "Name"), (o, v) => ((GetModuleCommand)o).Name = (string[])v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(GetModuleCommand), "ListAvailable"), (o, v) => ((GetModuleCommand)o).ListAvailable = (SwitchParameter)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(GetModuleCommand), "FullyQualifiedName"), (o, v) => ((GetModuleCommand)o).FullyQualifiedName = (ModuleSpecification[])v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(GetModuleCommand), "Name"), static (o, v) => ((GetModuleCommand)o).Name = (string[])v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(GetModuleCommand), "ListAvailable"), static (o, v) => ((GetModuleCommand)o).ListAvailable = (SwitchParameter)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(GetModuleCommand), "FullyQualifiedName"), static (o, v) => ((GetModuleCommand)o).FullyQualifiedName = (ModuleSpecification[])v);
 
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ErrorAction"),
                 (o, v) =>
@@ -207,14 +207,14 @@ namespace System.Management.Automation
                     v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
                     ((CommonParameters)o).InformationAction = (ActionPreference)v;
                 });
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "Verbose"), (o, v) => ((CommonParameters)o).Verbose = (SwitchParameter)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "Debug"), (o, v) => ((CommonParameters)o).Debug = (SwitchParameter)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ErrorVariable"), (o, v) => ((CommonParameters)o).ErrorVariable = (string)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "WarningVariable"), (o, v) => ((CommonParameters)o).WarningVariable = (string)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "InformationVariable"), (o, v) => ((CommonParameters)o).InformationVariable = (string)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "OutVariable"), (o, v) => ((CommonParameters)o).OutVariable = (string)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "OutBuffer"), (o, v) => ((CommonParameters)o).OutBuffer = (int)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "PipelineVariable"), (o, v) => ((CommonParameters)o).PipelineVariable = (string)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "Verbose"), static (o, v) => ((CommonParameters)o).Verbose = (SwitchParameter)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "Debug"), static (o, v) => ((CommonParameters)o).Debug = (SwitchParameter)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ErrorVariable"), static (o, v) => ((CommonParameters)o).ErrorVariable = (string)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "WarningVariable"), static (o, v) => ((CommonParameters)o).WarningVariable = (string)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "InformationVariable"), static (o, v) => ((CommonParameters)o).InformationVariable = (string)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "OutVariable"), static (o, v) => ((CommonParameters)o).OutVariable = (string)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "OutBuffer"), static (o, v) => ((CommonParameters)o).OutBuffer = (int)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "PipelineVariable"), static (o, v) => ((CommonParameters)o).PipelineVariable = (string)v);
         }
 
         private static readonly ConcurrentDictionary<Tuple<Type, string>, Func<object, object>> s_getterMethods

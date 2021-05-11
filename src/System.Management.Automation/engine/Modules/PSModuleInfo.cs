@@ -661,16 +661,16 @@ namespace System.Management.Automation
             else
             {
                 this._exportedTypeDefinitionsNoNested = new ReadOnlyDictionary<string, TypeDefinitionAst>(
-                    moduleContentScriptBlockAsts.FindAll(a => (a is TypeDefinitionAst), false)
+                    moduleContentScriptBlockAsts.FindAll(static a => (a is TypeDefinitionAst), false)
                         .OfType<TypeDefinitionAst>()
-                        .ToDictionary(a => a.Name, StringComparer.OrdinalIgnoreCase));
+                        .ToDictionary(static a => a.Name, StringComparer.OrdinalIgnoreCase));
             }
         }
 
         internal void AddDetectedTypeExports(List<TypeDefinitionAst> typeDefinitions)
         {
             this._exportedTypeDefinitionsNoNested = new ReadOnlyDictionary<string, TypeDefinitionAst>(
-                typeDefinitions.ToDictionary(a => a.Name, StringComparer.OrdinalIgnoreCase));
+                typeDefinitions.ToDictionary(static a => a.Name, StringComparer.OrdinalIgnoreCase));
         }
 
         /// <summary>

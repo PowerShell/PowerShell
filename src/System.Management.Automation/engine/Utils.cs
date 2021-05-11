@@ -1863,7 +1863,7 @@ namespace System.Management.Automation
 
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
             {
-                PSStyle psstyle = PSStyle.Instance;                
+                PSStyle psstyle = PSStyle.Instance;
                 switch (formatStyle)
                 {
                     case FormatStyle.Reset:
@@ -2072,6 +2072,7 @@ namespace System.Management.Automation.Internal
         internal static bool BypassOnlineHelpRetrieval;
         internal static bool ForcePromptForChoiceDefaultOption;
         internal static bool BypassOutputRedirectionCheck;
+        internal static bool NoPromptForPassword;
 
         // Stop/Restart/Rename Computer tests
         internal static bool TestStopComputer;
@@ -2098,6 +2099,13 @@ namespace System.Management.Automation.Internal
         internal static bool ShowMarkdownOutputBypass;
 
         internal static bool ThrowExdevErrorOnMoveDirectory;
+
+        // To emulate OneDrive behavior we use the hard-coded symlink.
+        // If OneDriveTestRecuseOn is false then the symlink works as regular symlink.
+        // If OneDriveTestRecuseOn is true then we resurce into the symlink as OneDrive should work.
+        internal static bool OneDriveTestOn;
+        internal static bool OneDriveTestRecurseOn;
+        internal static string OneDriveTestSymlinkName = "link-Beta";
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)

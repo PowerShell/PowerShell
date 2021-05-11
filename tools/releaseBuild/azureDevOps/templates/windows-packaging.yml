@@ -9,8 +9,8 @@ parameters:
     default: ''
 
 jobs:
-- job: sign_windows_${{ parameters.Architecture }}
-  displayName: Package Windows - ${{ parameters.Architecture }}
+- job: sign_windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
+  displayName: Package Windows - ${{ parameters.Architecture }} ${{ parameters.BuildConfiguration }}
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
@@ -40,12 +40,8 @@ jobs:
       ReleaseTagVar: $(ReleaseTagVar)
 
   - powershell: |
-      $pkgFilter = if ( '$(Architecture)' -eq 'arm' ) {
-        "arm32"
-      }
-      else {
-        '$(Architecture)'
-      }
+      $pkgFilter = if ( '$(Architecture)' -eq 'arm' ) { "arm32" } else { '$(Architecture)' }
+      if ($env:BuildConfiguration -eq 'minSize') { $pkgFilter += '-gc' }
 
       $vstsCommandString = "vso[task.setvariable variable=PkgFilter]$pkgFilter"
       Write-Host ("sending " + $vstsCommandString)
@@ -67,7 +63,7 @@ jobs:
       }
 
       $toolsDir = New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)\tools'
-      $wixUri = 'https://github.com/wixtoolset/wix3/releases/download/wix311rtm/wix311-binaries.zip'
+      $wixUri = 'https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip'
       Invoke-RestMethod -Uri $wixUri -OutFile '$(Build.ArtifactStagingDirectory)\tools\wix.zip' -MaximumRetryCount 5 -RetryIntervalSec 10
 
       Import-Module '$(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/wix.psm1'
@@ -80,8 +76,16 @@ jobs:
     displayName: Install packaging tools
 
   - powershell: |
-      $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\results\*$(PkgFilter).zip'
-      Write-Verbose -Verbose "Zip Path: $zipPath"
+      $zipPathString = '$(System.ArtifactsDirectory)\Symbols\results\*$(PkgFilter).zip'
+      Write-Verbose -Verbose "Zip Path: $zipPathString"
+      $zipPath = Get-Item $zipPathString
+      if(@($zipPath).Count -eq 0) {
+        throw "No files found at '$zipPathString'"
+      }
+      elseif(@($zipPath).Count -ne 1) {
+        $names = $zipPath.Name -join "', '"
+        throw "multiple files '${names}' found with '${zipPathString}'"
+      }
 
       $expandedFolder = $zipPath.BaseName
       Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
@@ -159,6 +163,7 @@ jobs:
           **\*.exe
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
+        displayName: Sign our binaries
 
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
@@ -202,10 +207,11 @@ jobs:
           **\*.dll
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
+        displayName: Sign ThirdParty binaries
 
   - powershell: |
       Get-ChildItem '$(System.ArtifactsDirectory)\thirdPartySigned\*'
-    displayName: Captrue ThirdParty Signed files
+    displayName: Capture ThirdParty Signed files
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
@@ -249,10 +255,14 @@ jobs:
         }
 
       $signedPkg = "$(BuildPackagePath)"
-
       Write-Verbose -Verbose -Message "signedPkg = $signedPkg"
 
-      $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -BuildZip $signedPkg -location '$(PowerShellRoot)' -destination '$(System.ArtifactsDirectory)\pkgSigned' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)'
+      $params = @{}
+      if ($env:BuildConfiguration -eq 'minSize') {
+        $params['ForMinimalSize'] = $true
+      }
+
+      $(PowerShellRoot)/tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -BuildZip $signedPkg -location '$(PowerShellRoot)' -destination '$(System.ArtifactsDirectory)\pkgSigned' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' @params
     displayName: 'Build Windows Universal - $(Architecture) Package'
 
   - powershell: |
@@ -261,7 +271,84 @@ jobs:
         Write-Host "Uploading $packagePath"
         Write-Host "##vso[artifact.upload containerfolder=signed;artifactname=signed]$packagePath"
       }
-    displayName: Upload packages
+    displayName: Upload unsigned packages
+
+  - ${{ if and(ne(variables['BuildConfiguration'],'minSize'), in(variables['Architecture'], 'x64', 'x86')) }}:
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+          buildOutputPath: $(System.ArtifactsDirectory)\pkgSigned
+          signOutputPath: $(Build.StagingDirectory)\signedPackages
+          certificateId: "CP-230012"
+          pattern: |
+            **\*.msi
+          useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
+          displayName: Sign MSI
+          alwaysCopy: true
+
+    - pwsh: |
+        Get-ChildItem '$(System.ArtifactsDirectory)\signedPackages' | ForEach-Object {
+          $packagePath = $_.FullName
+          Write-Host "Uploading $packagePath"
+          Write-Host "##vso[artifact.upload containerfolder=finalResults;artifactname=finalResults]$packagePath"
+        }
+      displayName: Upload signed MSI to finalResults
+
+    - task: AzureFileCopy@4
+      displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
+      inputs:
+        SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-$(version)-win-${{ parameters.architecture }}.msi'
+        azureSubscription: '$(AzureFileCopySubscription)'
+        Destination: AzureBlob
+        storage: '$(StorageAccount)'
+        ContainerName: '$(AzureVersion)'
+        resourceGroup: '$(StorageResourceGroup)'
+
+    - pwsh: |
+        cd $(PowerShellRoot)
+        Import-Module $(PowerShellRoot)/build.psm1 -Force
+        Import-Module $(PowerShellRoot)/tools/packaging -Force
+
+        $msiPath = '$(Build.StagingDirectory)\signedPackages\PowerShell-$(version)-win-${{ parameters.architecture }}.msi'
+
+        New-ExePackage -ProductVersion '$(version)' -MsiLocationPath $msiPath -ProductTargetArchitecture ${{ parameters.architecture }}
+        $exePath = Get-ChildItem '.\PowerShell-*.exe' | Select-Object -First 1 -ExpandProperty fullname
+        $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\unsignedEngine' -ChildPath engine.exe
+        # Expand Burn Engine so we can sign it.
+        Expand-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
+      displayName: Create exe wrapper
+
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+          buildOutputPath: $(System.ArtifactsDirectory)\unsignedEngine
+          signOutputPath: $(System.ArtifactsDirectory)\signedEngine
+          certificateId: "CP-230012"
+          pattern: |
+            **\*.exe
+          useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
+          displayName: Sign Burn Engine
+          alwaysCopy: true
+
+    - pwsh: |
+        cd '$(PowerShellRoot)'
+        Import-Module '$(PowerShellRoot)/build.psm1' -Force
+        Import-Module '$(PowerShellRoot)/tools/packaging' -Force
+
+        $exePath = Get-ChildItem '.\PowerShell-*.exe' | Select-Object -First 1 -ExpandProperty fullname
+        $enginePath = Join-Path -Path '$(System.ArtifactsDirectory)\signedEngine' -ChildPath engine.exe
+        $enginePath | Get-AuthenticodeSignature | out-string | Write-Verbose -verbose
+        Compress-ExePackageEngine -ExePath $exePath -EnginePath $enginePath
+      displayName: Re-attach the signed Burn engine in exe wrapper
+
+    - pwsh: |
+        cd '$(PowerShellRoot)'
+        Get-ChildItem '.\PowerShell-*.exe' | ForEach-Object {
+          $packagePath = $_.FullName
+          Write-Host "Uploading $packagePath"
+          Write-Host "##vso[artifact.upload containerfolder=signed;artifactname=signed]$packagePath"
+        }
+      displayName: Upload unsigned exe
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

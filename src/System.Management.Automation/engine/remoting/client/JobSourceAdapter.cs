@@ -361,7 +361,7 @@ namespace System.Management.Automation
                 return null;
             CommandParameterCollection paramCollection = new CommandParameterCollection();
             foreach (CommandParameter paramItem in
-                parameters.Select(param => new CommandParameter(param.Key, param.Value)))
+                parameters.Select(static param => new CommandParameter(param.Key, param.Value)))
             {
                 paramCollection.Add(paramItem);
             }

@@ -60,9 +60,44 @@ namespace Microsoft.PowerShell
 
             _parent = parent;
             _rawui = new ConsoleHostRawUserInterface(this);
-
-#if UNIX
             SupportsVirtualTerminal = true;
+            _isInteractiveTestToolListening = false;
+
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                // check if TERM env var is set
+                // `dumb` means explicitly don't use VT
+                // `xterm-mono` and `xtermm` means support VT, but emit plaintext
+                switch (Environment.GetEnvironmentVariable("TERM"))
+                {
+                    case "dumb":
+                        SupportsVirtualTerminal = false;
+                        break;
+                    case "xterm-mono":
+                    case "xtermm":
+                        PSStyle.Instance.OutputRendering = OutputRendering.PlainText;
+                        break;
+                    default:
+                        break;
+                }
+
+                // widely supported by CLI tools via https://no-color.org/
+                if (Environment.GetEnvironmentVariable("NO_COLOR") != null)
+                {
+                    PSStyle.Instance.OutputRendering = OutputRendering.PlainText;
+                }   
+            }
+
+            if (SupportsVirtualTerminal)
+            {
+                SupportsVirtualTerminal = TryTurnOnVtMode();
+            }
+        }
+
+        internal bool TryTurnOnVtMode()
+        {
+#if UNIX
+            return true;
 #else
             try
             {
@@ -76,15 +111,16 @@ namespace Microsoft.PowerShell
                     // We only know if vt100 is supported if the previous call actually set the new flag, older
                     // systems ignore the setting.
                     m = ConsoleControl.GetMode(handle);
-                    this.SupportsVirtualTerminal = (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
+                    return (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
                 }
             }
             catch
             {
+                // Do nothing if failed
             }
-#endif
 
-            _isInteractiveTestToolListening = false;
+            return false;
+#endif
         }
 
         /// <summary>

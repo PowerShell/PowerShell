@@ -4,6 +4,7 @@
 using System.Collections;
 using System.IO;
 
+#nullable enable
 namespace System.Management.Automation.Provider
 {
     #region IContentReader

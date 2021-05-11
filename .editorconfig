@@ -21,6 +21,7 @@ indent_size = 4
 
 # Shell scripts
 [*.sh]
+end_of_line = lf
 indent_size = 4
 
 # Xml project files

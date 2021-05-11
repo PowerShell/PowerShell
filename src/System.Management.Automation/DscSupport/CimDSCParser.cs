@@ -22,6 +22,8 @@ using Microsoft.Management.Infrastructure.Generic;
 using Microsoft.Management.Infrastructure.Serialization;
 using Microsoft.PowerShell.Commands;
 
+using static Microsoft.PowerShell.SecureStringHelper;
+
 namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 {
     /// <summary>
@@ -259,12 +261,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 throw invalidOperationException;
             }
 
-            // Extract the password into a SecureString.
-            var password = new SecureString();
-            foreach (char t in plainPassWord)
-            {
-                password.AppendChar(t);
-            }
+            SecureString password = SecureStringHelper.FromPlainTextString(plainPassWord);
 
             password.MakeReadOnly();
             return new PSCredential(userName, password);
@@ -724,7 +721,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         continue;
                     }
 
-                    foreach (var schemaFile in Directory.EnumerateDirectories(resources).SelectMany(d => Directory.EnumerateFiles(d, "*.schema.mof")))
+                    foreach (var schemaFile in Directory.EnumerateDirectories(resources).SelectMany(static d => Directory.EnumerateFiles(d, "*.schema.mof")))
                     {
                         ImportClasses(schemaFile, s_defaultModuleInfoForResource, errors);
                     }
@@ -776,7 +773,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         continue;
                     }
 
-                    foreach (var schemaFile in Directory.EnumerateDirectories(resources).SelectMany(d => Directory.EnumerateFiles(d, "*.schema.mof")))
+                    foreach (var schemaFile in Directory.EnumerateDirectories(resources).SelectMany(static d => Directory.EnumerateFiles(d, "*.schema.mof")))
                     {
                         ImportClasses(schemaFile, s_defaultModuleInfoForResource, errors);
                     }
@@ -2344,7 +2341,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (propTypeName._typeDefinitionAst.IsEnum)
             {
-                enumNames = propTypeName._typeDefinitionAst.Members.Select(m => m.Name).ToArray();
+                enumNames = propTypeName._typeDefinitionAst.Members.Select(static m => m.Name).ToArray();
                 isArrayType = false;
                 embeddedInstanceType = null;
                 return "string";
@@ -2366,7 +2363,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             var className = typeAst.Name;
             sb.AppendFormat(CultureInfo.InvariantCulture, "[ClassVersion(\"1.0.0\"), FriendlyName(\"{0}\")]\nclass {0}", className);
 
-            if (typeAst.Attributes.Any(a => a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)))
+            if (typeAst.Attributes.Any(static a => a.TypeName.GetReflectionAttributeType() == typeof(DscResourceAttribute)))
             {
                 sb.Append(" : OMI_BaseResource");
             }
@@ -2481,7 +2478,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (moduleInfo.NestedModules != null)
             {
-                foreach (var nestedModule in moduleInfo.NestedModules.Where(m => !string.IsNullOrEmpty(m.Path)))
+                foreach (var nestedModule in moduleInfo.NestedModules.Where(static m => !string.IsNullOrEmpty(m.Path)))
                 {
                     moduleFiles.Add(nestedModule.Path);
                 }
@@ -2715,16 +2712,16 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static readonly Dictionary<Type, string> s_mapPrimitiveDotNetTypeToMof = new()
         {
             { typeof(sbyte), "sint8" },
-            { typeof(byte) , "uint8"},
-            { typeof(short) , "sint16"},
-            { typeof(ushort) , "uint16"},
-            { typeof(int) , "sint32"},
-            { typeof(uint) , "uint32"},
-            { typeof(long) , "sint64"},
+            { typeof(byte), "uint8"},
+            { typeof(short), "sint16"},
+            { typeof(ushort), "uint16"},
+            { typeof(int), "sint32"},
+            { typeof(uint), "uint32"},
+            { typeof(long), "sint64"},
             { typeof(ulong), "uint64" },
-            { typeof(float) , "real32"},
-            { typeof(double) , "real64"},
-            { typeof(bool) , "boolean"},
+            { typeof(float), "real32"},
+            { typeof(double), "real64"},
+            { typeof(bool), "boolean"},
             { typeof(string), "string" },
             { typeof(DateTime), "datetime" },
             { typeof(PSCredential), "string" },
@@ -3087,9 +3084,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         private static void ProcessMembers(Type type, StringBuilder sb, List<object> embeddedInstanceTypes, string className)
         {
-            foreach (var member in type.GetMembers(BindingFlags.Instance | BindingFlags.Public).Where(m => m is PropertyInfo || m is FieldInfo))
+            foreach (var member in type.GetMembers(BindingFlags.Instance | BindingFlags.Public).Where(static m => m is PropertyInfo || m is FieldInfo))
             {
-                if (member.CustomAttributes.All(cad => cad.AttributeType != typeof(DscPropertyAttribute)))
+                if (member.CustomAttributes.All(static cad => cad.AttributeType != typeof(DscPropertyAttribute)))
                 {
                     continue;
                 }
@@ -3141,7 +3138,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
 
             IEnumerable<Type> resourceDefinitions =
-                assembly.GetTypes().Where(t => t.GetCustomAttributes<DscResourceAttribute>().Any());
+                assembly.GetTypes().Where(static t => t.GetCustomAttributes<DscResourceAttribute>().Any());
 
             foreach (var r in resourceDefinitions)
             {
@@ -3635,7 +3632,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             bool listKeyProperties = true;
             while (true)
             {
-                foreach (var prop in keyword.Properties.OrderBy(ob => ob.Key))
+                foreach (var prop in keyword.Properties.OrderBy(static ob => ob.Key))
                 {
                     if (string.Equals(prop.Key, "ResourceId", StringComparison.OrdinalIgnoreCase))
                     {
@@ -3702,7 +3699,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             // Do the property values map
             if (prop.ValueMap != null && prop.ValueMap.Count > 0)
             {
-                formattedTypeString.Append(" { " + string.Join(" | ", prop.ValueMap.Keys.OrderBy(x => x)) + " }");
+                formattedTypeString.Append(" { " + string.Join(" | ", prop.ValueMap.Keys.OrderBy(static x => x)) + " }");
             }
 
             // We prepend optional property with "[" so close out it here. This way it is shown with [ ] to indication optional

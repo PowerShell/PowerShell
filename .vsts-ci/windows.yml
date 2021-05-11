@@ -14,6 +14,7 @@ trigger:
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
     - /.dependabot/config.yml
+    - test/perf/*
 pr:
   branches:
     include:
@@ -24,12 +25,14 @@ pr:
     include:
     - '*'
     exclude:
-    - .vsts-ci/misc-analysis.yml
-    - .github/ISSUE_TEMPLATE/*
     - .dependabot/config.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .vsts-ci/misc-analysis.yml
+    - test/common/markdown/*
+    - test/perf/*
+    - tools/packaging/*
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
-    - test/common/markdown/*
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"

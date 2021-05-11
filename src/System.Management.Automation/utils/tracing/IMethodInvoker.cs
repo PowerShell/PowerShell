@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 #if !UNIX
 
 namespace System.Management.Automation.Tracing
@@ -11,7 +13,7 @@ namespace System.Management.Automation.Tracing
     {
         Delegate Invoker { get; }
 
-        object[] CreateInvokerArgs(Delegate methodToInvoke, object[] methodToInvokeArgs);
+        object[] CreateInvokerArgs(Delegate methodToInvoke, object?[]? methodToInvokeArgs);
     }
 }
 

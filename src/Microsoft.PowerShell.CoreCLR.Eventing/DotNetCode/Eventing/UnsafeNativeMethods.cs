@@ -404,15 +404,15 @@ namespace System.Diagnostics.Eventing
 
         internal enum EvtEventMetadataPropertyId
         {
-            EventMetadataEventID,       // EvtVarTypeUInt32
-            EventMetadataEventVersion,  // EvtVarTypeUInt32
-            EventMetadataEventChannel,  // EvtVarTypeUInt32
-            EventMetadataEventLevel,    // EvtVarTypeUInt32
-            EventMetadataEventOpcode,   // EvtVarTypeUInt32
-            EventMetadataEventTask,     // EvtVarTypeUInt32
-            EventMetadataEventKeyword,  // EvtVarTypeUInt64
-            EventMetadataEventMessageID,// EvtVarTypeUInt32
-            EventMetadataEventTemplate // EvtVarTypeString
+            EventMetadataEventID,        // EvtVarTypeUInt32
+            EventMetadataEventVersion,   // EvtVarTypeUInt32
+            EventMetadataEventChannel,   // EvtVarTypeUInt32
+            EventMetadataEventLevel,     // EvtVarTypeUInt32
+            EventMetadataEventOpcode,    // EvtVarTypeUInt32
+            EventMetadataEventTask,      // EvtVarTypeUInt32
+            EventMetadataEventKeyword,   // EvtVarTypeUInt64
+            EventMetadataEventMessageID, // EvtVarTypeUInt32
+            EventMetadataEventTemplate   // EvtVarTypeString
             // EvtEventMetadataPropertyIdEND
         }
 
@@ -824,7 +824,7 @@ namespace System.Diagnostics.Eventing
         [SecurityCritical]
         internal static extern EventLogHandle EvtCreateRenderContext(
                             Int32 valuePathsCount,
-                            [MarshalAs(UnmanagedType.LPArray,ArraySubType = UnmanagedType.LPWStr)]
+                            [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)]
                                 string[] valuePaths,
                             [MarshalAs(UnmanagedType.I4)] EvtRenderContextFlags flags
                                     );

@@ -15,6 +15,7 @@ trigger:
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
     - /.dependabot/config.yml
+    - test/perf/*
 pr:
   branches:
     include:
@@ -25,14 +26,16 @@ pr:
     include:
     - '*'
     exclude:
-    - test/common/markdown/*
-    - .vsts-ci/misc-analysis.yml
-    - .github/ISSUE_TEMPLATE/*
     - .dependabot/config.yml
-    - tools/releaseBuild/*
-    - tools/releaseBuild/azureDevOps/templates/*
+    - .github/ISSUE_TEMPLATE/*
+    - .vsts-ci/misc-analysis.yml
     - /.vsts-ci/windows.yml
     - /.vsts-ci/windows/*
+    - test/common/markdown/*
+    - test/perf/*
+    - tools/packaging/*
+    - tools/releaseBuild/*
+    - tools/releaseBuild/azureDevOps/templates/*
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1

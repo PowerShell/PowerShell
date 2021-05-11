@@ -46,16 +46,21 @@ jobs:
         signOutputPath: $(Build.StagingDirectory)\signedPackages
         certificateId: "CP-230012"
         pattern: |
-          **\*.msi
           **\*.msix
           **\*.exe
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
+        displayName: Sign exe and msix
 
   - powershell: |
       new-item -itemtype Directory -path '$(Build.StagingDirectory)\signedPackages'
       Get-ChildItem "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-*.msi*" | copy-item -Destination '$(Build.StagingDirectory)\signedPackages'
-    displayName: 'Fake Signing'
+    displayName: 'Fake msi* Signing'
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
+
+  - pwsh: |
+      Get-ChildItem "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-*.exe" | copy-item -Destination '$(Build.StagingDirectory)\signedPackages'
+    displayName: 'Fake exe Signing'
     condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
   - template: upload.yml

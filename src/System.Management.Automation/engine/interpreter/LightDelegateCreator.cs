@@ -196,7 +196,7 @@ namespace System.Management.Automation.Interpreter
             //    lambda.Parameters[0].IsByRef && lambda.Parameters[1].IsByRef) {
             //    return typeof(ActionRef<,>).MakeGenericType(lambda.Parameters.Map(p => p.Type));
             // } else {
-            Type[] types = lambda.Parameters.Map(p => p.IsByRef ? p.Type.MakeByRefType() : p.Type);
+            Type[] types = lambda.Parameters.Map(static p => p.IsByRef ? p.Type.MakeByRefType() : p.Type);
             if (isVoid)
             {
                 if (Expression.TryGetActionType(types, out delegateType))

@@ -2661,7 +2661,7 @@ namespace System.Management.Automation
 
             IEnumerable<ParameterSetSpecificMetadata> allParameterSetMetadatas = boundParameters.Values
                 .Concat(unboundParameters)
-                .SelectMany(p => p.Parameter.ParameterSetData.Values);
+                .SelectMany(static p => p.Parameter.ParameterSetData.Values);
             uint allParameterSetFlags = 0;
             foreach (ParameterSetSpecificMetadata parameterSetMetadata in allParameterSetMetadatas)
             {
@@ -2675,8 +2675,8 @@ namespace System.Management.Automation
                 "This method should only be called when there is an ambiguity wrt parameter sets");
 
             IEnumerable<ParameterSetSpecificMetadata> parameterSetMetadatasForUnboundMandatoryParameters = unboundParameters
-                .SelectMany(p => p.Parameter.ParameterSetData.Values)
-                .Where(p => p.IsMandatory);
+                .SelectMany(static p => p.Parameter.ParameterSetData.Values)
+                .Where(static p => p.IsMandatory);
             foreach (ParameterSetSpecificMetadata parameterSetMetadata in parameterSetMetadatasForUnboundMandatoryParameters)
             {
                 remainingParameterSetsWithNoMandatoryUnboundParameters &= (~parameterSetMetadata.ParameterSetFlag);

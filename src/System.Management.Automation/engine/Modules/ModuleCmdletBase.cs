@@ -1070,7 +1070,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         IEnumerable<PSModuleInfo> modulesFound = GetModulesFromOneModulePath(
-                            names, uniquePath, all, refresh).OrderBy(m => m.Name);
+                            names, uniquePath, all, refresh).OrderBy(static m => m.Name);
                         allModules = allModules == null ? modulesFound : allModules.Concat(modulesFound);
                     }
                     catch (Exception e) when (e is IOException || e is UnauthorizedAccessException)
@@ -1146,7 +1146,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     stringVersion = stringVersion.Substring(0, stringVersion.Length - 1);
                     stringVersion += maxRange;
-                    int starNum = stringVersion.Count(x => x == '.');
+                    int starNum = stringVersion.Count(static x => x == '.');
                     for (int i = 0; i < (3 - starNum); i++)
                     {
                         stringVersion = stringVersion + '.' + maxRange;

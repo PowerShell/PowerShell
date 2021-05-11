@@ -1262,7 +1262,7 @@ namespace Microsoft.PowerShell.Commands
         private RemoteRunspace GetRunspaceForSSHSession()
         {
             ParseSshHostName(HostName, out string host, out string userName, out int port);
-            var sshConnectionInfo = new SSHConnectionInfo(userName, host, this.KeyFilePath, port, this.Subsystem);
+            var sshConnectionInfo = new SSHConnectionInfo(userName, host, KeyFilePath, port, Subsystem, ConnectingTimeout);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
 
             // Use the class _tempRunspace field while the runspace is being opened so that StopProcessing can be handled at that time.

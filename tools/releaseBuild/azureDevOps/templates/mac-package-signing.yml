@@ -64,6 +64,7 @@ jobs:
           **\*.zip
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
+        displayName: Sign pkg
 
   - template: upload-final-results.yml
     parameters:

@@ -100,7 +100,7 @@ namespace System.Management.Automation.Language
                     }
 
                     var voidConstraint =
-                        parameter.Attributes.OfType<TypeConstraintAst>().FirstOrDefault(t => typeof(void) == t.TypeName.GetReflectionType());
+                        parameter.Attributes.OfType<TypeConstraintAst>().FirstOrDefault(static t => typeof(void) == t.TypeName.GetReflectionType());
 
                     if (voidConstraint != null)
                     {
@@ -1386,7 +1386,7 @@ namespace System.Management.Automation.Language
                     else if (!keyword.Properties.ContainsKey(propName.Value))
                     {
                         IOrderedEnumerable<string> tableKeys = keyword.Properties.Keys
-                            .OrderBy(key => key, StringComparer.OrdinalIgnoreCase);
+                            .OrderBy(static key => key, StringComparer.OrdinalIgnoreCase);
 
                         _parser.ReportError(propName.Extent,
                             nameof(ParserStrings.InvalidInstanceProperty),
