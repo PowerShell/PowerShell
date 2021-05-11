@@ -116,7 +116,6 @@ namespace System.Management.Automation
         internal const string PeekConsoleInputDllName = "api-ms-win-core-console-l2-1-0.dll";                /*103*/
         internal const string GetNumberOfConsoleInputEventsDllName = "api-ms-win-core-console-l1-1-0.dll";   /*104*/
         internal const string SetConsoleCtrlHandlerDllName = "api-ms-win-core-console-l1-1-0.dll";           /*105*/
-        internal const string SetConsoleCursorPositionDllName = "api-ms-win-core-console-l2-1-0.dll";        /*106*/
         internal const string SetConsoleModeDllName = "api-ms-win-core-console-l1-1-0.dll";                  /*107*/
         internal const string SetConsoleScreenBufferSizeDllName = "api-ms-win-core-console-l2-1-0.dll";      /*108*/
         internal const string SetConsoleTextAttributeDllName = "api-ms-win-core-console-l2-1-0.dll";         /*109*/

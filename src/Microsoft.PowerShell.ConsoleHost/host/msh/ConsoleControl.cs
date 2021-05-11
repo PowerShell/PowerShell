@@ -2819,40 +2819,6 @@ namespace Microsoft.PowerShell
         #region Cursor
 
         /// <summary>
-        /// Wraps Win32 SetConsoleCursorPosition.
-        /// </summary>
-        /// <param name="consoleHandle">
-        /// handle for the console where cursor position is set
-        /// </param>
-        /// <param name="cursorPosition">
-        /// location to which the cursor will be set
-        /// </param>
-        /// <exception cref="HostException">
-        /// If Win32's SetConsoleCursorPosition fails
-        /// </exception>
-        internal static void SetConsoleCursorPosition(ConsoleHandle consoleHandle, Coordinates cursorPosition)
-        {
-            Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
-            Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
-
-            ConsoleControl.COORD c;
-
-            c.X = (short)cursorPosition.X;
-            c.Y = (short)cursorPosition.Y;
-
-            bool result = NativeMethods.SetConsoleCursorPosition(consoleHandle.DangerousGetHandle(), c);
-
-            if (!result)
-            {
-                int err = Marshal.GetLastWin32Error();
-
-                HostException e = CreateHostException(err, "SetConsoleCursorPosition",
-                    ErrorCategory.ResourceUnavailable, ConsoleControlStrings.SetConsoleCursorPositionExceptionTemplate);
-                throw e;
-            }
-        }
-
-        /// <summary>
         /// Wraps Win32 GetConsoleCursorInfo.
         /// </summary>
         /// <param name="consoleHandle">
@@ -3158,10 +3124,6 @@ namespace Microsoft.PowerShell
             [DllImport(PinvokeDllNames.SetConsoleCtrlHandlerDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool SetConsoleCtrlHandler(BreakHandler handlerRoutine, bool add);
-
-            [DllImport(PinvokeDllNames.SetConsoleCursorPositionDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool SetConsoleCursorPosition(NakedWin32Handle consoleOutput, COORD cursorPosition);
 
             [DllImport(PinvokeDllNames.SetConsoleModeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.Bool)]
