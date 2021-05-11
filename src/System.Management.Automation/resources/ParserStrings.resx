@@ -1459,7 +1459,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>PS7DscSupport experimental feature is disabled; use Enable-ExperimentalFeature or update powershell.config.json to enable this feature.</value>
   </data>
   <data name="CrossPlatformDscSubsystemMissing" xml:space="preserve">
-    <value>Can not initialize cross platform DSC subsystem; please ensure PSDesiredStateConfiguration v3 module is installed and loaded.</value>
+    <value>Cannot initialize cross platform DSC subsystem; please ensure PSDesiredStateConfiguration v3 module is installed and loaded.</value>
   </data>
   <data name="ParserError" xml:space="preserve">
     <value>{0}</value>

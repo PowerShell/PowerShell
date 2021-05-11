@@ -22,7 +22,7 @@ namespace System.Management.Automation.Subsystem
         SubsystemKind ISubsystem.Kind => SubsystemKind.CrossPlatformDsc;
 
         /// <summary>
-        /// Dsc initializer function.
+        /// DSC initializer function.
         /// </summary>
         void LoadDefaultCimKeywords(Collection<Exception> errors);
 
