@@ -196,7 +196,7 @@ namespace Microsoft.PowerShell
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    // if screen buffer has changed, we can set it anywhere reasonable as the screen buffer
+                    // if screen buffer has changed, we cannot set it anywhere reasonable as the screen buffer
                     // might change again, so we ignore this
                 }
             }
