@@ -17,14 +17,35 @@ namespace System.Management.Automation.Subsystem
     public interface ICrossPlatformDsc : ISubsystem
     {
         /// <summary>
+        /// Possible API versions.
+        /// </summary>
+        public enum ApiVersion
+        {
+            /// <summary>
+            /// V2 API based on MOF/script resources and used by PSDesiredStateConfiguration v2.x module.
+            /// </summary>
+            V2,
+
+            /// <summary>
+            /// V3 API based on JSON/class resources and used by PSDesiredStateConfiguration v3.x module.
+            /// </summary>
+            V3
+        }
+
+        /// <summary>
         /// Subsystem kind.
         /// </summary>
         SubsystemKind ISubsystem.Kind => SubsystemKind.CrossPlatformDsc;
 
         /// <summary>
+        /// Default implementation. No function is required for this subsystem.
+        /// </summary>
+        Dictionary<string, string>? ISubsystem.FunctionsToDefine => null;
+
+        /// <summary>
         /// DSC initializer function.
         /// </summary>
-        void LoadDefaultCimKeywords(Collection<Exception> errors);
+        void LoadDefaultKeywords(Collection<Exception> errors);
 
         /// <summary>
         /// Clear internal class caches.
@@ -32,9 +53,9 @@ namespace System.Management.Automation.Subsystem
         void ClearCache();
 
         /// <summary>
-        /// Flag that shows whether v2 or v3 API was initialized.
+        /// Flag that shows what version of API was initialized.
         /// </summary>
-        bool NewApiIsUsed { get; }
+        ApiVersion InitializedApiVersion { get; }
 
         /// <summary>
         /// Returns resource usage string.

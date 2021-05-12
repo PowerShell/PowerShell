@@ -3026,7 +3026,7 @@ namespace System.Management.Automation.Language
                                     ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
                                     if (dscSubsystem != null)
                                     {
-                                        dscSubsystem.LoadDefaultCimKeywords(CIMKeywordErrors);
+                                        dscSubsystem.LoadDefaultKeywords(CIMKeywordErrors);
                                     }
                                     else
                                     {

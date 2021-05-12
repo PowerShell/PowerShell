@@ -1724,7 +1724,7 @@ namespace System.Management.Automation
                 {
                     string usageString = string.Empty;
                     ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
-                    if (dscSubsystem?.NewApiIsUsed ?? false)
+                    if (dscSubsystem?.InitializedApiVersion == ICrossPlatformDsc.ApiVersion.V3)
                     {
                         usageString = dscSubsystem.GetDSCResourceUsageString(keyword);
                     }
