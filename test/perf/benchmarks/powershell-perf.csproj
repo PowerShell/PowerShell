@@ -12,16 +12,22 @@
     <NoWarn>$(NoWarn);CS8002</NoWarn>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
 
-    <!-- To run benchmarks targeting a specific package version, set the version to 'PERF_TARGET_VERSION' as an environment variable.
-         Do not try passing in the value using '/property:' at command line, because
-           1. 'dotnet run' doesn't respect '/property:' arguments;
-           2. BenchmarkDotnet generates temporary project files that reference to this .csproj file,
-              and '/property:' arguments won't be forwarded when building those temp projects. -->
-    <PerfTargetVersion>$(PERF_TARGET_VERSION)</PerfTargetVersion>
-
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
+
+    <!-- Test.Common.props sets TargetFramework to net6.0, we need to clear this value to be able to target multiple TFMs -->
+    <TargetFramework></TargetFramework>
+    <TargetFrameworks>netcoreapp2.1;net5.0;net6.0</TargetFrameworks>
+    
+    <!-- To run benchmarks targeting a specific package version, set the version to 'PERF_TARGET_VERSION' as an environment variable.
+     Do not try passing in the value using '/property:' at command line, because
+       1. 'dotnet run' doesn't respect '/property:' arguments;
+       2. BenchmarkDotnet generates temporary project files that reference to this .csproj file,
+          and '/property:' arguments won't be forwarded when building those temp projects. -->
+    <PerfTargetVersion>$(PERF_TARGET_VERSION)</PerfTargetVersion>
+    <PerfTargetVersion Condition="'$(PerfTargetVersion)' == '' AND '$(TargetFramework)' == 'net5.0'">7.1.3</PerfTargetVersion>
+    <PerfTargetVersion Condition="'$(PerfTargetVersion)' == '' AND '$(TargetFramework)' == 'netcoreapp2.1'">6.2.7</PerfTargetVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -33,7 +39,7 @@
   <ItemGroup>
     <ProjectReference Include="../dotnet-tools/BenchmarkDotNet.Extensions/BenchmarkDotNet.Extensions.csproj" />
   </ItemGroup>
-
+  
   <ItemGroup Condition="'$(PerfTargetVersion)' == ''">
     <ProjectReference Include="../../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj" />
     <ProjectReference Include="../../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj" />
@@ -41,6 +47,13 @@
 
   <ItemGroup Condition="'$(PerfTargetVersion)' != ''">
     <PackageReference Include="Microsoft.PowerShell.SDK" Version="$(PerfTargetVersion)" />
+    <PackageReference Include="Microsoft.PowerShell.Commands.Diagnostics" Version="$(PerfTargetVersion)" />
+    <PackageReference Include="Microsoft.PowerShell.Commands.Management" Version="$(PerfTargetVersion)" />
+    <PackageReference Include="Microsoft.PowerShell.Commands.Utility" Version="$(PerfTargetVersion)" />
+    <PackageReference Include="Microsoft.PowerShell.Security" Version="$(PerfTargetVersion)" />
+    <PackageReference Include="System.Management.Automation" Version="$(PerfTargetVersion)" />
+    <PackageReference Include="Microsoft.PowerShell.ConsoleHost" Version="$(PerfTargetVersion)" />
+    <PackageReference Include="Microsoft.PowerShell.CoreCLR.Eventing" Version="$(PerfTargetVersion)" />
   </ItemGroup>
 
 </Project>

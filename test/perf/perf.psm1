@@ -36,6 +36,9 @@ function Start-Benchmarking
         [ValidateSet('flat', 'tree')]
         [string] $List,
 
+        [ValidateSet('netcoreapp2.1', 'net5.0', 'net6.0')]
+        [string] $TargetFramework = 'net6.0',
+
         [string[]] $Filter = '*',
         [string] $Artifacts,
         [switch] $KeepFiles
@@ -61,8 +64,10 @@ function Start-Benchmarking
             $savedOFS = $OFS; $OFS = $null
 
             if ($TargetPSVersion) {
-                Write-Log -message "Run benchmarks targeting the 'Microsoft.PowerShell.SDK' version $TargetPSVersion..."
+                Write-Log -message "Run benchmarks targeting $TargetFramework and the 'Microsoft.PowerShell.SDK' version $TargetPSVersion..."
                 $env:PERF_TARGET_VERSION = $TargetPSVersion
+            } elseif ($TargetFramework -ne "net6.0") {
+                Write-Log -message "Run benchmarks targeting $TargetFramework and the corresponding 'Microsoft.PowerShell.SDK' version..."
             } else {
                 Write-Log -message "Run benchmarks targeting the current PowerShell code base..."
             }
@@ -71,7 +76,7 @@ function Start-Benchmarking
             if ($List) { $runArgs += '--list', $List }
             if ($KeepFiles) { $runArgs += "--keepFiles" }
 
-            dotnet run -c release --filter $Filter --artifacts $Artifacts --envVars POWERSHELL_TELEMETRY_OPTOUT:1 $runArgs
+            dotnet run -c release -f $TargetFramework --filter $Filter --artifacts $Artifacts --envVars POWERSHELL_TELEMETRY_OPTOUT:1 $runArgs
 
             if (Test-Path $Artifacts) {
                 Write-Log -message "`nBenchmark artifacts can be found at $Artifacts"
