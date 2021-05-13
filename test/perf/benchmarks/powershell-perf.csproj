@@ -24,8 +24,8 @@
     <PerfTargetVersion>$(PERF_TARGET_VERSION)</PerfTargetVersion>
 
     <!-- Test.Common.props sets TargetFramework to net6.0, we need to clear this value to be able to target multiple TFMs.
-         But only when PERF_TARGET_VERSION was not specified. When it it is specified, a specific version is being benchmarked
-         And this version can be benchmarked only against single runtime version. -->
+         But only when PERF_TARGET_VERSION was not specified. When it is specified, a specific version is being benchmarked
+         and this version can be benchmarked only against single runtime version (because Microsoft.PowerShell.SDK targets a single TFM). -->
     <TargetFramework Condition="'$(PerfTargetVersion)' == ''"></TargetFramework>
     <TargetFrameworks Condition="'$(TargetFramework)' == ''">netcoreapp2.1;net5.0;net6.0</TargetFrameworks>
 
