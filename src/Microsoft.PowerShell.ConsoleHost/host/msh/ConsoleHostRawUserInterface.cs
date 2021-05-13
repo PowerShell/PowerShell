@@ -181,8 +181,11 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                var pos = Console.GetCursorPosition();
-                return new Coordinates(pos.Item1, pos.Item2);
+                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
+                GetBufferInfo(out bufferInfo);
+
+                Coordinates c = new Coordinates(bufferInfo.CursorPosition.X, bufferInfo.CursorPosition.Y);
+                return c;
             }
 
             set
