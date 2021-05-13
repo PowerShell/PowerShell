@@ -42,7 +42,7 @@
   <ItemGroup>
     <ProjectReference Include="../dotnet-tools/BenchmarkDotNet.Extensions/BenchmarkDotNet.Extensions.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="'$(PerfTargetVersion)' == ''">
     <ProjectReference Include="../../../src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj" />
     <ProjectReference Include="../../../src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj" />
