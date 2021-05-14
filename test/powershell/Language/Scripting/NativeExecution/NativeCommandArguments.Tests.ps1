@@ -2,6 +2,32 @@
 # Licensed under the MIT License.
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "")]
 param()
+
+Describe "Behavior is specific for each platform" {
+    BeforeAll {
+        $skipTests = $false
+        if ($EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing') {
+            $skipTests = $true
+        }
+    }
+    It "PSNativeCommandArgumentPassing is set to 'Windows' on Windows systems" -skip:(-not $IsWindows) {
+        $PSNativeCommandArgumentPassing | Should -Be "Windows"
+    }
+    It "PSNativeCommandArgumentPassing is set to 'Standarad' on non-Windows systems" -skip:($IsWindows) {
+        $PSNativeCommandArgumentPassing | Should -Be "Standard"
+    }
+    It "Has proper behavior on Windows" -skip:(-not $IsWindows) {
+        "@echo off`nSET V1=1" > "$TESTDRIVE\script 1.cmd"
+        "@echo off`nSET V2=a`necho %V1%" > "$TESTDRIVE\script 2.cmd"
+        "@echo off`necho %V1%`necho %V2%" > "$TESTDRIVE\script 3.cmd"
+        $result = cmd /c """${TESTDRIVE}\script 1.cmd"" && ""${TESTDRIVE}\script 2.cmd"" && ""${TESTDRIVE}\script 3.cmd"""
+        $result.Count | Should -Be 2
+        $result[0] | Should -Be 1
+        $result[1] | Should Be "a"
+    }
+    
+}
+
 Describe "Will error correctly if an attempt to set variable to improper value" {
     It "will error when setting variable incorrectly" {
         if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
