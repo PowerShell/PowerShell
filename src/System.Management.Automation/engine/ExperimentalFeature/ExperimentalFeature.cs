@@ -22,7 +22,6 @@ namespace System.Management.Automation
 
         internal const string EngineSource = "PSEngine";
         internal const string PSAnsiProgressFeatureName = "PSAnsiProgress";
-        internal const string DscExperimentalFeatureName = "PS7DscSupport";
         internal const string PSNativeCommandArgumentPassingFeatureName = "PSNativeCommandArgumentPassing";
 
         #endregion
@@ -126,9 +125,6 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSNotApplyErrorActionToStderr",
                     description: "Don't have $ErrorActionPreference affect stderr output"),
-                new ExperimentalFeature(
-                    name: "PS7DscSupport",
-                    description: "Support the cross-platform class-based DSC"),
                 new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),

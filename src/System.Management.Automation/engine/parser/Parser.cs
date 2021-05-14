@@ -2934,7 +2934,6 @@ namespace System.Management.Automation.Language
             //
             Runspaces.Runspace localRunspace = null;
             bool topLevel = false;
-            bool useCrossPlatformSchema = false;
             try
             {
                 // At this point, we'll need a runspace to use to hold the metadata for the parse. If there is no
@@ -2997,46 +2996,13 @@ namespace System.Management.Automation.Language
                         {
                             // Load the default CIM keywords
                             Collection<Exception> CIMKeywordErrors = new Collection<Exception>();
-                            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.DscExperimentalFeatureName))
+
+                            // DscSubsystem is auto-registered when PSDesiredStateConfiguration v3 module is loaded
+                            // so if DscSubsystem is registered that means user intention to use v3 APIs.
+                            ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                            if (dscSubsystem != null)
                             {
-                                // In addition to checking if experimental feature is enabled
-                                // also check if PSDesiredStateConfiguration is already loaded
-                                // if pre-v3 is already loaded then use old mof-based APIs
-                                // otherwise use json-based APIs
-
-                                p.AddCommand(new CmdletInfo("Get-Module", typeof(Microsoft.PowerShell.Commands.GetModuleCommand)));
-                                p.AddParameter("Name", "PSDesiredStateConfiguration");
-
-                                bool prev3IsLoaded = false;
-                                foreach (PSModuleInfo moduleInfo in p.Invoke<PSModuleInfo>())
-                                {
-                                    if (moduleInfo.Version.Major < 3)
-                                    {
-                                        prev3IsLoaded = true;
-                                        break;
-                                    }
-                                }
-
-                                p.Commands.Clear();
-
-                                useCrossPlatformSchema = !prev3IsLoaded;
-
-                                if (useCrossPlatformSchema)
-                                {
-                                    ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
-                                    if (dscSubsystem != null)
-                                    {
-                                        dscSubsystem.LoadDefaultKeywords(CIMKeywordErrors);
-                                    }
-                                    else
-                                    {
-                                        ReportError(new ParseError(configurationToken.Extent, "CrossPlatformDscSubsystemMissing", string.Format(CultureInfo.CurrentCulture, ParserStrings.CrossPlatformDscSubsystemMissing)));
-                                    }
-                                }
-                                else
-                                {
-                                    Dsc.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
-                                }
+                                dscSubsystem.LoadDefaultKeywords(CIMKeywordErrors);
                             }
                             else
                             {
@@ -3283,17 +3249,10 @@ namespace System.Management.Automation.Language
                     // Clear out all of the cached classes and keywords.
                     // They will need to be reloaded when the generated function is actually run.
                     //
-                    if (useCrossPlatformSchema)
+                    ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                    if (dscSubsystem != null)
                     {
-                        ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
-                        if (dscSubsystem != null)
-                        {
-                            dscSubsystem.ClearCache();
-                        }
-                        else
-                        {
-                            ReportError(new ParseError(configurationToken.Extent, "CrossPlatformDscSubsystemMissing", string.Format(CultureInfo.CurrentCulture, ParserStrings.CrossPlatformDscSubsystemMissing)));
-                        }
+                        dscSubsystem.ClearCache();
                     }
                     else
                     {
