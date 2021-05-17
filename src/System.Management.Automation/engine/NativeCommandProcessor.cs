@@ -1108,14 +1108,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the start info for process.
+        /// Gets the ProcessStartInfo for process.
         /// </summary>
         /// <param name="redirectOutput"></param>
         /// <param name="redirectError"></param>
         /// <param name="redirectInput"></param>
         /// <param name="soloCommand"></param>
-        /// <returns></returns>
-        private ProcessStartInfo GetProcessStartInfo(bool redirectOutput, bool redirectError, bool redirectInput, bool soloCommand)
+        /// <returns>A ProcessStartInfo object which is the base of the native invocation.</returns>
+        private ProcessStartInfo GetProcessStartInfoObject(bool redirectOutput, bool redirectError, bool redirectInput, bool soloCommand)
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = this.Path;
@@ -1159,6 +1159,20 @@ namespace System.Management.Automation
 
                 startInfo.UseShellExecute = true;
             }
+            return startInfo;
+        }
+
+        /// <summary>
+        /// Gets the start info for process.
+        /// </summary>
+        /// <param name="redirectOutput"></param>
+        /// <param name="redirectError"></param>
+        /// <param name="redirectInput"></param>
+        /// <param name="soloCommand"></param>
+        /// <returns></returns>
+        private ProcessStartInfo GetProcessStartInfo(bool redirectOutput, bool redirectError, bool redirectInput, bool soloCommand)
+        {
+            ProcessStartInfo startInfo = GetProcessStartInfoObject(redirectOutput, redirectError, redirectInput, soloCommand);
 
             // For minishell value of -outoutFormat parameter depends on value of redirectOutput.
             // So we delay the parameter binding. Do parameter binding for minishell now.
