@@ -13,7 +13,7 @@ Describe "Behavior is specific for each platform" {
     It "PSNativeCommandArgumentPassing is set to 'Windows' on Windows systems" -skip:(-not $IsWindows) {
         $PSNativeCommandArgumentPassing | Should -Be "Windows"
     }
-    It "PSNativeCommandArgumentPassing is set to 'Standarad' on non-Windows systems" -skip:($IsWindows) {
+    It "PSNativeCommandArgumentPassing is set to 'Standard' on non-Windows systems" -skip:($IsWindows) {
         $PSNativeCommandArgumentPassing | Should -Be "Standard"
     }
     It "Has proper behavior on Windows" -skip:(-not $IsWindows) {
