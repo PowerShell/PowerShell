@@ -5198,7 +5198,7 @@ namespace System.Management.Automation
             var result = new List<CompletionResult>();
 
             // Finds comment keywords like ".DESCRIPTION"
-            var usedKeywords = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.)\w*", RegexOptions.Multiline);
+            Match usedKeywords = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.)\w*", RegexOptions.Multiline);
             if (usedKeywords.Count == 0)
             {
                 return result;
@@ -5224,8 +5224,10 @@ namespace System.Management.Automation
                     {
                         continue;
                     }
+
                     validKeywords.Remove(keyword.Value);
                 }
+
                 foreach (string keyword in validKeywords)
                 {
                     if (keyword.StartsWith(lineKeyword.Value, StringComparison.OrdinalIgnoreCase))
@@ -5233,10 +5235,12 @@ namespace System.Management.Automation
                         result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, s_commentHelpKeywords[keyword]));
                     }
                 }
+
                 return result;
             }
+
             // Finds the argument for the keyword (any characters following the keyword, ignoring leading/trailing whitespace). For example "C:\New folder"
-            var keywordArgument = Regex.Match(context.CursorPosition.Line, @"(?<=^\s*\.\w+\s+)\S.*(?<=\S)");
+            Match keywordArgument = Regex.Match(context.CursorPosition.Line, @"(?<=^\s*\.\w+\s+)\S.*(?<=\S)");
             int lineStartIndex = lineKeyword.Index - context.CursorPosition.Line.IndexOf(lineKeyword.Value) + context.TokenAtCursor.Extent.StartOffset;
             int argumentIndex = keywordArgument.Success ? keywordArgument.Index : context.CursorPosition.ColumnNumber - 1;
 
@@ -5247,10 +5251,12 @@ namespace System.Management.Automation
             {
                 return CompleteCommentParameterValue(context, keywordArgument.Value);
             }
+
             if (lineKeyword.Value.Equals("FORWARDHELPTARGETNAME", StringComparison.OrdinalIgnoreCase))
             {
                 return CompleteCommand(keywordArgument.Value, "*", CommandTypes.All).ToList();
             }
+
             if (lineKeyword.Value.Equals("FORWARDHELPCATEGORY", StringComparison.OrdinalIgnoreCase))
             {
                 foreach (string category in s_commentHelpForwardCategories)
@@ -5262,20 +5268,23 @@ namespace System.Management.Automation
                 }
                 return result;
             }
+
             if (lineKeyword.Value.Equals("REMOTEHELPRUNSPACE", StringComparison.OrdinalIgnoreCase))
             {
-                foreach (var v in CompleteVariable(keywordArgument.Value))
+                foreach (CompletionResult variable in CompleteVariable(keywordArgument.Value))
                 {
                     // ListItemText is used because it excludes the "$" as expected by REMOTEHELPRUNSPACE.
                     result.Add(new CompletionResult(v.ListItemText, v.ListItemText, v.ResultType, v.ToolTip));
                 }
                 return result;
             }
+
             if (lineKeyword.Value.Equals("EXTERNALHELP", StringComparison.OrdinalIgnoreCase))
             {
                 context.WordToComplete = keywordArgument.Value;
                 return CompleteFilename(context, false, (new HashSet<string>() { ".xml" })).ToList();
             }
+
             return result;
         }
 
@@ -5327,35 +5336,43 @@ namespace System.Management.Automation
             {
                 return null;
             }
-            var lastAst = context.RelatedAsts[^1];
-            var firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= context.TokenAtCursor.Extent.EndOffset, false);
+
+            Ast lastAst = context.RelatedAsts[^1];
+            Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= context.TokenAtCursor.Extent.EndOffset, false);
             // comment based help can apply to a following function definition if it starts within 2 lines
             int commentEndLine = context.TokenAtCursor.Extent.EndLineNumber + 2;
 
             if (lastAst is NamedBlockAst)
             {
                 // Helpblock before function inside advanced function
-                if (firstAstAfterComment is FunctionDefinitionAst && firstAstAfterComment.Extent.StartLineNumber <= commentEndLine)
+                if (firstAstAfterComment.Extent.StartLineNumber <= commentEndLine
+                    && firstAstAfterComment is FunctionDefinitionAst outerHelpFunctionDefAst)
                 {
-                    return firstAstAfterComment as FunctionDefinitionAst;
+                    return outerHelpFunctionDefAst;
                 }
+
                 // Helpblock inside function
-                if (lastAst.Parent.Parent is FunctionDefinitionAst)
+                if (lastAst.Parent.Parent is FunctionDefinitionAst innerHelpFunctionDefAst)
                 {
-                    return lastAst.Parent.Parent as FunctionDefinitionAst;
+                    return innerHelpFunctionDefAst;
                 }
             }
             if (lastAst is ScriptBlockAst)
             {
                 // Helpblock before function
-                if (firstAstAfterComment is NamedBlockAst block && block.Statements[0] is FunctionDefinitionAst statement && block.Extent.StartLineNumber <= commentEndLine)
+                if (firstAstAfterComment.Extent.StartLineNumber <= commentEndLine
+                    && firstAstAfterComment is NamedBlockAst block
+                    && block.Statements is not null
+                    && block.Statements.Count > 0
+                    && block.Statements[0] is FunctionDefinitionAst statement)
                 {
                     return statement;
                 }
+
                 // Advanced function with help inside
-                if (lastAst.Parent is FunctionDefinitionAst)
+                if (lastAst.Parent is FunctionDefinitionAst advFuncDefAst)
                 {
-                    return lastAst.Parent as FunctionDefinitionAst;
+                    return advFuncDefAst;
                 }
             }
 
@@ -5364,33 +5381,34 @@ namespace System.Management.Automation
         
         private static List<CompletionResult> CompleteCommentParameterValue(CompletionContext context, string wordToComplete)
         {
-            var result = new List<CompletionResult>();
             FunctionDefinitionAst foundFunction = GetCommentHelpFunctionTarget(context);
+            
             ReadOnlyCollection<ParameterAst> foundParameters = null;
-
-            // Helpblock is for script
-            if (foundFunction is null && context.RelatedAsts[^1] is ScriptBlockAst lastAst)
-            {
-                foundParameters = lastAst.ParamBlock?.Parameters;
-            }
             if (foundFunction is not null)
             {
-                foundParameters = foundFunction.Parameters is not null ? foundFunction.Parameters : foundFunction.Body.ParamBlock?.Parameters;
+                foundParameters = foundFunction.Parameters ?? foundFunction.Body.ParamBlock?.Parameters;
             }
+            else if (context.RelatedAsts[^1] is ScriptBlockAst scriptAst)
+            {
+                // The helpblock is for a script file
+                foundParameters = scriptAst.ParamBlock?.Parameters;
+            }
+            
             if (foundParameters is null || foundParameters.Count == 0)
             {
                 return null;
             }
 
             var parametersToShow = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            foreach (var parameter in foundParameters)
+            foreach (ParameterAst parameter in foundParameters)
             {
                 if (parameter.Name.VariablePath.UserPath.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
                 {
                     parametersToShow.Add(parameter.Name.VariablePath.UserPath);
                 }
             }
-            var usedParameters = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.parameter\s+)\w.*(?<=\S)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+            MatchCollection usedParameters = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.parameter\s+)\w.*(?<=\S)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
             foreach (Match parameter in usedParameters)
             {
                 if (wordToComplete.Equals(parameter.Value, StringComparison.OrdinalIgnoreCase))
@@ -5399,6 +5417,7 @@ namespace System.Management.Automation
                 }
                 parametersToShow.Remove(parameter.Value);
             }
+
             foreach (string parameter in parametersToShow)
             {
                 result.Add(new CompletionResult(parameter));
