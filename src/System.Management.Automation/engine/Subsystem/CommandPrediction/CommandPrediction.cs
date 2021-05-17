@@ -171,9 +171,10 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Allow registered predictors to know the execution result (success/failure) of the last accepted command line.
         /// </summary>
-        /// <param name="client"></param>
-        /// <param name="status"></param>
-        public static void OnCommandLineExecuted(PredictionClient client, bool status)
+        /// <param name="client">Represents the client that initiates the call.</param>
+        /// <param name="commandLine">The last accepted command line.</param>
+        /// <param name="status">The execution status of the last command line. True for success, False for failure</param>
+        public static void OnCommandLineExecuted(PredictionClient client, string commandLine, bool status)
         {
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
@@ -186,16 +187,16 @@ namespace System.Management.Automation.Subsystem
             {
                 if (predictor.AcceptFeedback(client, PredictorFeedback.OnCommandLineExecuted))
                 {
-                    callBack ??= GetCallBack(client, status);
+                    callBack ??= GetCallBack(client, commandLine, status);
                     ThreadPool.QueueUserWorkItem<ICommandPredictor>(callBack, predictor, preferLocal: false);
                 }
             }
 
             // A local helper function to avoid creating an instance of the generated delegate helper class
             // when no predictor is registered, or no registered predictor accepts this feedback.
-            static Action<ICommandPredictor> GetCallBack(PredictionClient client, bool status)
+            static Action<ICommandPredictor> GetCallBack(PredictionClient client, string commandLine, bool status)
             {
-                return state => state.OnCommandLineExecuted(client, status);
+                return state => state.OnCommandLineExecuted(client, commandLine, status);
             }
         }
 

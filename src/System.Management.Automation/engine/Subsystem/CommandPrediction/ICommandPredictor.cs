@@ -74,8 +74,9 @@ namespace System.Management.Automation.Subsystem
         /// A command line was done execution.
         /// </summary>
         /// <param name="client">Represents the client that initiates the call.</param>
+        /// <param name="commandLine">The last accepted command line.</param>
         /// <param name="status">Shows whether the execution succeeded or failed.</param>
-        void OnCommandLineExecuted(PredictionClient client, bool status);
+        void OnCommandLineExecuted(PredictionClient client, string commandLine, bool status);
     }
 
     /// <summary>
@@ -105,7 +106,7 @@ namespace System.Management.Automation.Subsystem
     }
 
     /// <summary>
-    /// The type that represents a client that interacts with predictors.
+    /// The class represents a client that interacts with predictors.
     /// </summary>
     public class PredictionClient
     {
