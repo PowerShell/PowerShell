@@ -1178,7 +1178,7 @@ namespace System.Management.Automation
                 bool useLegacy = NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Legacy;
                 bool windowsSpecialCase =
                     NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Windows &&
-                    useLegacyPassingStyle(startInfo.FileName);
+                    UseLegacyPassingStyle(startInfo.FileName);
 
                 if (useLegacy || windowsSpecialCase)
                 {
@@ -1214,11 +1214,11 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Determine if we have a special file which will change the way native argument passing
-        /// is done on Windows.
+        /// is done on Windows. We use legacy behavior for cmd.exe, .bat, .cmd files.
         /// </summary>
-        /// <param name="filename">string</param>
+        /// <param name="filename">The file to use when checking how to pass arguments.</param>
         /// <returns>A boolean indicating what passing style should be used.</returns>
-        private static bool useLegacyPassingStyle(string filename)
+        private static bool UseLegacyPassingStyle(string filename)
         {
             if (filename == null || filename == string.Empty)
             {
@@ -1230,13 +1230,15 @@ namespace System.Management.Automation
             // This is the list of files which will trigger Legacy behavior if
             // PSNativeCommandArgumentPassing is set to "Windows".
             // The following native commands have non-standard behavior with regard to argument passing.
-            string[] exceptions = new string[] {
+            string[] exceptions = new string[]
+                {
                 "cmd.exe",
                 "cscript.exe",
                 "wscript.exe",
                 ".bat",
                 ".cmd",
-                ".vbs" };
+                ".vbs"
+                };
             foreach (string exception in exceptions)
             {
                 if (filename.EndsWith(exception))
@@ -1244,6 +1246,7 @@ namespace System.Management.Automation
                     return true;
                 }
             }
+
             return false;
         }
 
