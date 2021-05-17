@@ -5195,20 +5195,25 @@ namespace System.Management.Automation
 
         private static List<CompletionResult> CompleteCommentHelp(CompletionContext context, ref int replacementIndex, ref int replacementLength)
         {
-            var result = new List<CompletionResult>();
-
             // Finds comment keywords like ".DESCRIPTION"
-            Match usedKeywords = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.)\w*", RegexOptions.Multiline);
+            MatchCollection usedKeywords = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.)\w*", RegexOptions.Multiline);
             if (usedKeywords.Count == 0)
             {
-                return result;
+                return null;
             }
 
             // Last keyword at or before the cursor
-            var lineKeyword = usedKeywords.Where(keyword => context.CursorPosition.Offset >= keyword.Index + context.TokenAtCursor.Extent.StartOffset).LastOrDefault();
+            Match lineKeyword = null;
+            foreach (Match keyword in usedKeywords)
+            {
+                if (context.CursorPosition.Offset >= keyword.Index + context.TokenAtCursor.Extent.StartOffset)
+                {
+                    lineKeyword = keyword;
+                }
+            }
             if (lineKeyword is null)
             {
-                return result;
+                return null;
             }
 
             // Cursor is within or at the start/end of the keyword
@@ -5228,6 +5233,7 @@ namespace System.Management.Automation
                     validKeywords.Remove(keyword.Value);
                 }
 
+                var result = new List<CompletionResult>();
                 foreach (string keyword in validKeywords)
                 {
                     if (keyword.StartsWith(lineKeyword.Value, StringComparison.OrdinalIgnoreCase))
@@ -5254,11 +5260,12 @@ namespace System.Management.Automation
 
             if (lineKeyword.Value.Equals("FORWARDHELPTARGETNAME", StringComparison.OrdinalIgnoreCase))
             {
-                return CompleteCommand(keywordArgument.Value, "*", CommandTypes.All).ToList();
+                return new List<CompletionResult>(CompleteCommand(keywordArgument.Value, "*", CommandTypes.All));
             }
 
             if (lineKeyword.Value.Equals("FORWARDHELPCATEGORY", StringComparison.OrdinalIgnoreCase))
             {
+                var result = new List<CompletionResult>();
                 foreach (string category in s_commentHelpForwardCategories)
                 {
                     if (category.StartsWith(keywordArgument.Value, StringComparison.OrdinalIgnoreCase))
@@ -5271,10 +5278,11 @@ namespace System.Management.Automation
 
             if (lineKeyword.Value.Equals("REMOTEHELPRUNSPACE", StringComparison.OrdinalIgnoreCase))
             {
+                var result = new List<CompletionResult>();
                 foreach (CompletionResult variable in CompleteVariable(keywordArgument.Value))
                 {
                     // ListItemText is used because it excludes the "$" as expected by REMOTEHELPRUNSPACE.
-                    result.Add(new CompletionResult(v.ListItemText, v.ListItemText, v.ResultType, v.ToolTip));
+                    result.Add(new CompletionResult(variable.ListItemText, variable.ListItemText, variable.ResultType, variable.ToolTip));
                 }
                 return result;
             }
@@ -5282,10 +5290,10 @@ namespace System.Management.Automation
             if (lineKeyword.Value.Equals("EXTERNALHELP", StringComparison.OrdinalIgnoreCase))
             {
                 context.WordToComplete = keywordArgument.Value;
-                return CompleteFilename(context, false, (new HashSet<string>() { ".xml" })).ToList();
+                return new List<CompletionResult>(CompleteFilename(context, containerOnly:false, (new HashSet<string>() { ".xml" })));
             }
 
-            return result;
+            return null;
         }
 
         private static readonly IReadOnlyDictionary<string, string> s_commentHelpKeywords = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -5300,7 +5308,7 @@ namespace System.Management.Automation
             { "LINK", "The name of a related topic. Repeat the .LINK keyword for each related topic. The .Link keyword content can also include a URI to an online version of the same help topic." },
             { "COMPONENT", "The name of the technology or feature that the function or script uses, or to which it is related." },
             { "ROLE", "The name of the user role for the help topic." },
-            { "FUNCTIONALITY", "The keywords that describe the intended use of the function. " },
+            { "FUNCTIONALITY", "The keywords that describe the intended use of the function." },
             { "FORWARDHELPTARGETNAME", ".FORWARDHELPTARGETNAME <Command-Name>\nRedirects to the help topic for the specified command." },
             { "FORWARDHELPCATEGORY", ".FORWARDHELPCATEGORY <Category>\nSpecifies the help category of the item in .ForwardHelpTargetName" },
             { "REMOTEHELPRUNSPACE", ".REMOTEHELPRUNSPACE <PSSession-variable>\nSpecifies a session that contains the help topic. Enter a variable that contains a PSSession object." },
@@ -5345,7 +5353,8 @@ namespace System.Management.Automation
             if (lastAst is NamedBlockAst)
             {
                 // Helpblock before function inside advanced function
-                if (firstAstAfterComment.Extent.StartLineNumber <= commentEndLine
+                if (firstAstAfterComment is not null
+                    && firstAstAfterComment.Extent.StartLineNumber <= commentEndLine
                     && firstAstAfterComment is FunctionDefinitionAst outerHelpFunctionDefAst)
                 {
                     return outerHelpFunctionDefAst;
@@ -5360,7 +5369,8 @@ namespace System.Management.Automation
             if (lastAst is ScriptBlockAst)
             {
                 // Helpblock before function
-                if (firstAstAfterComment.Extent.StartLineNumber <= commentEndLine
+                if (firstAstAfterComment is not null
+                    && firstAstAfterComment.Extent.StartLineNumber <= commentEndLine
                     && firstAstAfterComment is NamedBlockAst block
                     && block.Statements is not null
                     && block.Statements.Count > 0
@@ -5418,6 +5428,7 @@ namespace System.Management.Automation
                 parametersToShow.Remove(parameter.Value);
             }
 
+            var result = new List<CompletionResult>();
             foreach (string parameter in parametersToShow)
             {
                 result.Add(new CompletionResult(parameter));
