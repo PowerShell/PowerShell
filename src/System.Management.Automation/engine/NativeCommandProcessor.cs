@@ -1110,10 +1110,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the ProcessStartInfo for process.
         /// </summary>
-        /// <param name="redirectOutput"></param>
-        /// <param name="redirectError"></param>
-        /// <param name="redirectInput"></param>
-        /// <param name="soloCommand"></param>
+        /// <param name="redirectOutput">A boolean which determines whether the output is to be redirected.</param>
+        /// <param name="redirectError">A boolean which determines whether errors are to be redirected.</param>
+        /// <param name="redirectInput">A boolean which determines whether the input is to be redirected.</param>
+        /// <param name="soloCommand">A boolean which determines whether this is a solo command.</param>
         /// <returns>A ProcessStartInfo object which is the base of the native invocation.</returns>
         private ProcessStartInfo GetProcessStartInfoObject(bool redirectOutput, bool redirectError, bool redirectInput, bool soloCommand)
         {
@@ -1146,19 +1146,30 @@ namespace System.Management.Automation
                 {
                     // Shell doesn't exist on headless SKUs, so documents cannot be associated with an application.
                     // Therefore, we cannot run document in this case.
-                    throw InterpreterError.NewInterpreterException(this.Path, typeof(RuntimeException),
-                        this.Command.InvocationExtent, "CantActivateDocumentInPowerShellCore", ParserStrings.CantActivateDocumentInPowerShellCore, this.Path);
+                    throw InterpreterError.NewInterpreterException(
+                        this.Path,
+                        typeof(RuntimeException),
+                        this.Command.InvocationExtent,
+                        "CantActivateDocumentInPowerShellCore",
+                        ParserStrings.CantActivateDocumentInPowerShellCore,
+                        this.Path);
                 }
 
                 // We only want to ShellExecute something that is standalone...
                 if (!soloCommand)
                 {
-                    throw InterpreterError.NewInterpreterException(this.Path, typeof(RuntimeException),
-                        this.Command.InvocationExtent, "CantActivateDocumentInPipeline", ParserStrings.CantActivateDocumentInPipeline, this.Path);
+                    throw InterpreterError.NewInterpreterException(
+                        this.Path,
+                        typeof(RuntimeException),
+                        this.Command.InvocationExtent,
+                        "CantActivateDocumentInPipeline",
+                        ParserStrings.CantActivateDocumentInPipeline,
+                        this.Path);
                 }
 
                 startInfo.UseShellExecute = true;
             }
+
             return startInfo;
         }
 
