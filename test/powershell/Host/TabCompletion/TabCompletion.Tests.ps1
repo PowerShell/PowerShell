@@ -1372,23 +1372,6 @@ dir -Recurse `
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         It 'Should complete help keywords' {
             $TestString = @'
 <#
