@@ -1217,25 +1217,28 @@ namespace System.Management.Automation
         /// is done on Windows.
         /// </summary>
         /// <param name="filename">string</param>
-        /// <returns>bool</returns>
+        /// <returns>A boolean indicating what passing style should be used.</returns>
         private static bool useLegacyPassingStyle(string filename)
         {
             if (filename == null || filename == string.Empty)
             {
                 return false;
             }
+
             string commandPath = filename.ToLowerInvariant();
+
             // This is the list of files which will trigger Legacy behavior if
             // PSNativeCommandArgumentPassing is set to "Windows".
             // The following native commands have non-standard behavior with regard to argument passing.
-            string[] exceptions = new string[]{
+            string[] exceptions = new string[] {
                 "cmd.exe",
                 "cscript.exe",
                 "wscript.exe",
                 ".bat",
                 ".cmd",
-                ".vbs"};
-            foreach (string exception in exceptions) {
+                ".vbs" };
+            foreach (string exception in exceptions)
+            {
                 if (filename.EndsWith(exception))
                 {
                     return true;
