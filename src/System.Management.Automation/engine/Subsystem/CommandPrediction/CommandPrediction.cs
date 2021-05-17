@@ -59,7 +59,7 @@ namespace System.Management.Automation.Subsystem
         /// <param name="ast">The <see cref="Ast"/> object from parsing the current command line input.</param>
         /// <param name="astTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         /// <returns>A list of <see cref="PredictionResult"/> objects.</returns>
-        public static Task<List<PredictionResult>?> PredictInput(string client, Ast ast, Token[] astTokens)
+        public static Task<List<PredictionResult>?> PredictInput(PredictionClient client, Ast ast, Token[] astTokens)
         {
             return PredictInput(client, ast, astTokens, millisecondsTimeout: 20);
         }
@@ -72,7 +72,7 @@ namespace System.Management.Automation.Subsystem
         /// <param name="astTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         /// <param name="millisecondsTimeout">The milliseconds to timeout.</param>
         /// <returns>A list of <see cref="PredictionResult"/> objects.</returns>
-        public static async Task<List<PredictionResult>?> PredictInput(string client, Ast ast, Token[] astTokens, int millisecondsTimeout)
+        public static async Task<List<PredictionResult>?> PredictInput(PredictionClient client, Ast ast, Token[] astTokens, int millisecondsTimeout)
         {
             Requires.Condition(millisecondsTimeout > 0, nameof(millisecondsTimeout));
 
@@ -86,17 +86,13 @@ namespace System.Management.Automation.Subsystem
             var tasks = new Task<PredictionResult?>[predictors.Count];
             using var cancellationSource = new CancellationTokenSource();
 
+            Func<object?, PredictionResult?> callBack = GetCallBack(client, context, cancellationSource);
+
             for (int i = 0; i < predictors.Count; i++)
             {
                 ICommandPredictor predictor = predictors[i];
-
                 tasks[i] = Task.Factory.StartNew(
-                    state =>
-                    {
-                        var predictor = (ICommandPredictor)state!;
-                        SuggestionPackage pkg = predictor.GetSuggestion(client, context, cancellationSource.Token);
-                        return pkg.SuggestionEntries?.Count > 0 ? new PredictionResult(predictor.Id, predictor.Name, pkg.Session, pkg.SuggestionEntries) : null;
-                    },
+                    callBack,
                     predictor,
                     cancellationSource.Token,
                     TaskCreationOptions.DenyChildAttach,
@@ -122,6 +118,21 @@ namespace System.Management.Automation.Subsystem
             }
 
             return resultList;
+
+            // A local helper function to avoid creating an instance of the generated delegate helper class
+            // when no predictor is registered.
+            static Func<object?, PredictionResult?> GetCallBack(
+                PredictionClient client,
+                PredictionContext context,
+                CancellationTokenSource cancellationSource)
+            {
+                return state =>
+                {
+                    var predictor = (ICommandPredictor)state!;
+                    SuggestionPackage pkg = predictor.GetSuggestion(client, context, cancellationSource.Token);
+                    return pkg.SuggestionEntries?.Count > 0 ? new PredictionResult(predictor.Id, predictor.Name, pkg.Session, pkg.SuggestionEntries) : null;
+                };
+            }
         }
 
         /// <summary>
@@ -129,7 +140,7 @@ namespace System.Management.Automation.Subsystem
         /// </summary>
         /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="history">History command lines provided as references for prediction.</param>
-        public static void OnCommandLineAccepted(string client, IReadOnlyList<string> history)
+        public static void OnCommandLineAccepted(PredictionClient client, IReadOnlyList<string> history)
         {
             Requires.NotNull(history, nameof(history));
 
@@ -139,15 +150,52 @@ namespace System.Management.Automation.Subsystem
                 return;
             }
 
+            Action<ICommandPredictor>? callBack = null;
             foreach (ICommandPredictor predictor in predictors)
             {
-                if (predictor.SupportEarlyProcessing)
+                if (predictor.AcceptFeedback(client, PredictorFeedback.OnCommandLineAccepted))
                 {
-                    ThreadPool.QueueUserWorkItem<ICommandPredictor>(
-                        state => state.StartEarlyProcessing(client, history),
-                        predictor,
-                        preferLocal: false);
+                    callBack ??= GetCallBack(client, history);
+                    ThreadPool.QueueUserWorkItem<ICommandPredictor>(callBack, predictor, preferLocal: false);
                 }
+            }
+
+            // A local helper function to avoid creating an instance of the generated delegate helper class
+            // when no predictor is registered, or no registered predictor accepts this feedback.
+            static Action<ICommandPredictor> GetCallBack(PredictionClient client, IReadOnlyList<string> history)
+            {
+                return state => state.OnCommandLineAccepted(client, history);
+            }
+        }
+
+        /// <summary>
+        /// Allow registered predictors to know the execution result (success/failure) of the last accepted command line.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="status"></param>
+        public static void OnCommandLineExecuted(PredictionClient client, bool status)
+        {
+            var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
+            if (predictors.Count == 0)
+            {
+                return;
+            }
+
+            Action<ICommandPredictor>? callBack = null;
+            foreach (ICommandPredictor predictor in predictors)
+            {
+                if (predictor.AcceptFeedback(client, PredictorFeedback.OnCommandLineExecuted))
+                {
+                    callBack ??= GetCallBack(client, status);
+                    ThreadPool.QueueUserWorkItem<ICommandPredictor>(callBack, predictor, preferLocal: false);
+                }
+            }
+
+            // A local helper function to avoid creating an instance of the generated delegate helper class
+            // when no predictor is registered, or no registered predictor accepts this feedback.
+            static Action<ICommandPredictor> GetCallBack(PredictionClient client, bool status)
+            {
+                return state => state.OnCommandLineExecuted(client, status);
             }
         }
 
@@ -161,7 +209,7 @@ namespace System.Management.Automation.Subsystem
         /// When the value is greater than 0, it's the number of displayed suggestions from the list returned in <paramref name="session"/>, starting from the index 0.
         /// When the value is less than or equal to 0, it means a single suggestion from the list got displayed, and the index is the absolute value.
         /// </param>
-        public static void OnSuggestionDisplayed(string client, Guid predictorId, uint session, int countOrIndex)
+        public static void OnSuggestionDisplayed(PredictionClient client, Guid predictorId, uint session, int countOrIndex)
         {
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
@@ -169,15 +217,21 @@ namespace System.Management.Automation.Subsystem
                 return;
             }
 
+            Action<ICommandPredictor>? callBack = null;
             foreach (ICommandPredictor predictor in predictors)
             {
-                if (predictor.AcceptFeedback && predictor.Id == predictorId)
+                if (predictor.Id == predictorId && predictor.AcceptFeedback(client, PredictorFeedback.OnSuggestionDisplayed))
                 {
-                    ThreadPool.QueueUserWorkItem<ICommandPredictor>(
-                        state => state.OnSuggestionDisplayed(client, session, countOrIndex),
-                        predictor,
-                        preferLocal: false);
+                    callBack ??= GetCallBack(client, session, countOrIndex);
+                    ThreadPool.QueueUserWorkItem<ICommandPredictor>(callBack, predictor, preferLocal: false);
                 }
+            }
+
+            // A local helper function to avoid creating an instance of the generated delegate helper class
+            // when no predictor is registered, or no registered predictor accepts this feedback.
+            static Action<ICommandPredictor> GetCallBack(PredictionClient client, uint session, int countOrIndex)
+            {
+                return state => state.OnSuggestionDisplayed(client, session, countOrIndex);
             }
         }
 
@@ -188,7 +242,7 @@ namespace System.Management.Automation.Subsystem
         /// <param name="predictorId">The identifier of the predictor whose prediction result was accepted.</param>
         /// <param name="session">The mini-session where the accepted suggestion came from.</param>
         /// <param name="suggestionText">The accepted suggestion text.</param>
-        public static void OnSuggestionAccepted(string client, Guid predictorId, uint session, string suggestionText)
+        public static void OnSuggestionAccepted(PredictionClient client, Guid predictorId, uint session, string suggestionText)
         {
             Requires.NotNullOrEmpty(suggestionText, nameof(suggestionText));
 
@@ -198,15 +252,21 @@ namespace System.Management.Automation.Subsystem
                 return;
             }
 
+            Action<ICommandPredictor>? callBack = null;
             foreach (ICommandPredictor predictor in predictors)
             {
-                if (predictor.AcceptFeedback && predictor.Id == predictorId)
+                if (predictor.Id == predictorId && predictor.AcceptFeedback(client, PredictorFeedback.OnSuggestionAccepted))
                 {
-                    ThreadPool.QueueUserWorkItem<ICommandPredictor>(
-                        state => state.OnSuggestionAccepted(client, session, suggestionText),
-                        predictor,
-                        preferLocal: false);
+                    callBack ??= GetCallBack(client, session, suggestionText);
+                    ThreadPool.QueueUserWorkItem<ICommandPredictor>(callBack, predictor, preferLocal: false);
                 }
+            }
+
+            // A local helper function to avoid creating an instance of the generated delegate helper class
+            // when no predictor is registered, or no registered predictor accepts this feedback.
+            static Action<ICommandPredictor> GetCallBack(PredictionClient client, uint session, string suggestionText)
+            {
+                return state => state.OnSuggestionAccepted(client, session, suggestionText);
             }
         }
     }
