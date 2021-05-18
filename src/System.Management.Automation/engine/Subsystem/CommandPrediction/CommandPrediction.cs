@@ -164,7 +164,7 @@ namespace System.Management.Automation.Subsystem
             // when no predictor is registered, or no registered predictor accepts this feedback.
             static Action<ICommandPredictor> GetCallBack(PredictionClient client, IReadOnlyList<string> history)
             {
-                return state => state.OnCommandLineAccepted(client, history);
+                return predictor => predictor.OnCommandLineAccepted(client, history);
             }
         }
 
@@ -196,7 +196,7 @@ namespace System.Management.Automation.Subsystem
             // when no predictor is registered, or no registered predictor accepts this feedback.
             static Action<ICommandPredictor> GetCallBack(PredictionClient client, string commandLine, bool status)
             {
-                return state => state.OnCommandLineExecuted(client, commandLine, status);
+                return predictor => predictor.OnCommandLineExecuted(client, commandLine, status);
             }
         }
 
@@ -232,7 +232,7 @@ namespace System.Management.Automation.Subsystem
             // when no predictor is registered, or no registered predictor accepts this feedback.
             static Action<ICommandPredictor> GetCallBack(PredictionClient client, uint session, int countOrIndex)
             {
-                return state => state.OnSuggestionDisplayed(client, session, countOrIndex);
+                return predictor => predictor.OnSuggestionDisplayed(client, session, countOrIndex);
             }
         }
 
@@ -267,7 +267,7 @@ namespace System.Management.Automation.Subsystem
             // when no predictor is registered, or no registered predictor accepts this feedback.
             static Action<ICommandPredictor> GetCallBack(PredictionClient client, uint session, string suggestionText)
             {
-                return state => state.OnSuggestionAccepted(client, session, suggestionText);
+                return predictor => predictor.OnSuggestionAccepted(client, session, suggestionText);
             }
         }
     }
