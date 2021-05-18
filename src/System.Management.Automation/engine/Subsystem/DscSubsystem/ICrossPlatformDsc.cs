@@ -6,7 +6,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 
 namespace System.Management.Automation.Subsystem
@@ -16,22 +15,6 @@ namespace System.Management.Automation.Subsystem
     /// </summary>
     public interface ICrossPlatformDsc : ISubsystem
     {
-        /// <summary>
-        /// Possible API versions.
-        /// </summary>
-        public enum ApiVersion
-        {
-            /// <summary>
-            /// V2 API based on MOF/script resources and used by PSDesiredStateConfiguration v2.x module.
-            /// </summary>
-            V2,
-
-            /// <summary>
-            /// V3 API based on JSON/class resources and used by PSDesiredStateConfiguration v3.x module.
-            /// </summary>
-            V3
-        }
-
         /// <summary>
         /// Subsystem kind.
         /// </summary>
@@ -53,13 +36,18 @@ namespace System.Management.Automation.Subsystem
         void ClearCache();
 
         /// <summary>
-        /// Flag that shows what version of API was initialized.
-        /// </summary>
-        ApiVersion InitializedApiVersion { get; }
-
-        /// <summary>
         /// Returns resource usage string.
         /// </summary>
         string GetDSCResourceUsageString(DynamicKeyword keyword);
+
+        /// <summary>
+        /// Checks if a string is one of dynamic keywords that can be used in both configuration and meta configuration.
+        /// </summary>
+        bool IsSystemResourceName(string name);
+
+        /// <summary>
+        /// Checks if a string matches default module name used for meta configuration resources.
+        /// </summary>
+        bool IsDefaultModuleNameForMetaConfigResource(string name);
     }
 }
