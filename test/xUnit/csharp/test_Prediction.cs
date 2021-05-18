@@ -110,9 +110,9 @@ namespace PSTests.Sequential
             }
         }
 
-        public void OnCommandLineExecuted(PredictionClient client, bool status)
+        public void OnCommandLineExecuted(PredictionClient client, string commandLine, bool status)
         {
-            Results.Add($"{client.Name}-{status}");
+            Results.Add($"{client.Name}-{commandLine}-{status}");
         }
 
         #endregion
@@ -202,7 +202,7 @@ namespace PSTests.Sequential
                 var ids = new HashSet<Guid> { slow.Id, fast.Id };
 
                 CommandPrediction.OnCommandLineAccepted(predClient, history);
-                CommandPrediction.OnCommandLineExecuted(predClient, true);
+                CommandPrediction.OnCommandLineExecuted(predClient, "last_input", true);
                 CommandPrediction.OnSuggestionDisplayed(predClient, slow.Id, Session, 2);
                 CommandPrediction.OnSuggestionDisplayed(predClient, fast.Id, Session, -1);
                 CommandPrediction.OnSuggestionAccepted(predClient, slow.Id, Session, "Yeah");
@@ -225,10 +225,10 @@ namespace PSTests.Sequential
                 Assert.Equal($"{Client}-{history[1]}", fast.History[1]);
 
                 Assert.Single(slow.Results);
-                Assert.Equal($"{Client}-True", slow.Results[0]);
+                Assert.Equal($"{Client}-last_input-True", slow.Results[0]);
 
                 Assert.Single(fast.Results);
-                Assert.Equal($"{Client}-True", fast.Results[0]);
+                Assert.Equal($"{Client}-last_input-True", fast.Results[0]);
 
                 Assert.Single(slow.DisplayedSuggestions);
                 Assert.Equal($"{Client}-{Session}-2", slow.DisplayedSuggestions[0]);
