@@ -15,12 +15,13 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Represents a single point in a script.  The script may come from a file or interactive input.
     /// </summary>
+#nullable enable
     public interface IScriptPosition
     {
         /// <summary>
         /// The name of the file, or if the script did not come from a file, then null.
         /// </summary>
-        string File { get; }
+        string? File { get; }
 
         /// <summary>
         /// The line number of the position, with the value 1 being the first line.
@@ -45,8 +46,9 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The complete script that this position is included in.
         /// </summary>
-        string GetFullScript();
+        string? GetFullScript();
     }
+#nullable restore
 
     /// <summary>
     /// Represents the a span of text in a script.
