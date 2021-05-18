@@ -5242,7 +5242,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                return result;
+                return result.Count > 0 ? result : null;
             }
 
             // Finds the argument for the keyword (any characters following the keyword, ignoring leading/trailing whitespace). For example "C:\New folder"
@@ -5260,7 +5260,8 @@ namespace System.Management.Automation
 
             if (lineKeyword.Value.Equals("FORWARDHELPTARGETNAME", StringComparison.OrdinalIgnoreCase))
             {
-                return new List<CompletionResult>(CompleteCommand(keywordArgument.Value, "*", CommandTypes.All));
+                var result = new List<CompletionResult>(CompleteCommand(keywordArgument.Value, "*", CommandTypes.All));
+                return result.Count > 0 ? result : null;
             }
 
             if (lineKeyword.Value.Equals("FORWARDHELPCATEGORY", StringComparison.OrdinalIgnoreCase))
@@ -5273,7 +5274,7 @@ namespace System.Management.Automation
                         result.Add(new CompletionResult(category));
                     }
                 }
-                return result;
+                return result.Count > 0 ? result : null;
             }
 
             if (lineKeyword.Value.Equals("REMOTEHELPRUNSPACE", StringComparison.OrdinalIgnoreCase))
@@ -5284,13 +5285,14 @@ namespace System.Management.Automation
                     // ListItemText is used because it excludes the "$" as expected by REMOTEHELPRUNSPACE.
                     result.Add(new CompletionResult(variable.ListItemText, variable.ListItemText, variable.ResultType, variable.ToolTip));
                 }
-                return result;
+                return result.Count > 0 ? result : null;
             }
 
             if (lineKeyword.Value.Equals("EXTERNALHELP", StringComparison.OrdinalIgnoreCase))
             {
                 context.WordToComplete = keywordArgument.Value;
-                return new List<CompletionResult>(CompleteFilename(context, containerOnly:false, (new HashSet<string>() { ".xml" })));
+                var result = new List<CompletionResult>(CompleteFilename(context, containerOnly: false, (new HashSet<string>() { ".xml" })));
+                return new List<CompletionResult>(CompleteFilename(context, containerOnly: false, (new HashSet<string>() { ".xml" })));
             }
 
             return null;
@@ -5434,7 +5436,7 @@ namespace System.Management.Automation
                 result.Add(new CompletionResult(parameter));
             }
 
-            return result;
+            return result.Count > 0 ? result : null;
         }
 
         #endregion Comments
