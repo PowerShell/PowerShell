@@ -29,9 +29,9 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Gets a value indicating whether the predictor accepts a specific feedback.
         /// </summary>
-        /// <param name="client"></param>
-        /// <param name="feedback"></param>
-        /// <returns></returns>
+        /// <param name="client">Represents the client that initiates the call.</param>
+        /// <param name="feedback">A specific type of feedback.</param>
+        /// <returns>True or false, to indicate whether the specific feedback is accepted.</returns>
         bool AcceptFeedback(PredictionClient client, PredictorFeedback feedback);
 
         /// <summary>

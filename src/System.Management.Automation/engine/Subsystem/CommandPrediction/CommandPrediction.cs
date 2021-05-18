@@ -173,7 +173,7 @@ namespace System.Management.Automation.Subsystem
         /// </summary>
         /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="commandLine">The last accepted command line.</param>
-        /// <param name="status">The execution status of the last command line. True for success, False for failure</param>
+        /// <param name="status">The execution status of the last command line. True for success, False for failure.</param>
         public static void OnCommandLineExecuted(PredictionClient client, string commandLine, bool status)
         {
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
