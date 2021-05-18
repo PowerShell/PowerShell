@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
 using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.Prediction;
 using System.Threading;
 using Xunit;
 
@@ -70,7 +71,7 @@ namespace PSTests.Sequential
 
         public string Description => _description;
 
-        bool ICommandPredictor.AcceptFeedback(PredictionClient client, PredictorFeedback feedback) => true;
+        bool ICommandPredictor.CanAcceptFeedback(PredictionClient client, PredictorFeedbackKind feedback) => true;
 
         public SuggestionPackage GetSuggestion(PredictionClient client, PredictionContext context, CancellationToken cancellationToken)
         {
@@ -110,9 +111,9 @@ namespace PSTests.Sequential
             }
         }
 
-        public void OnCommandLineExecuted(PredictionClient client, string commandLine, bool status)
+        public void OnCommandLineExecuted(PredictionClient client, string commandLine, bool success)
         {
-            Results.Add($"{client.Name}-{commandLine}-{status}");
+            Results.Add($"{client.Name}-{commandLine}-{success}");
         }
 
         #endregion
@@ -122,7 +123,7 @@ namespace PSTests.Sequential
     {
         private const string Client = "PredictionTest";
         private const uint Session = 56;
-        private static PredictionClient predClient = new(Client, PredictionClient.ClientKind.Terminal);
+        private static PredictionClient predClient = new(Client, PredictionClientKind.Terminal);
 
         [Fact]
         public static void PredictInput()

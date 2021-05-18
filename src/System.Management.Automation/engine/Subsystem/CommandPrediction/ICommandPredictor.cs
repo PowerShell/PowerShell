@@ -9,7 +9,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Threading;
 
-namespace System.Management.Automation.Subsystem
+namespace System.Management.Automation.Subsystem.Prediction
 {
     /// <summary>
     /// Interface for implementing a predictor plugin.
@@ -27,14 +27,6 @@ namespace System.Management.Automation.Subsystem
         SubsystemKind ISubsystem.Kind => SubsystemKind.CommandPredictor;
 
         /// <summary>
-        /// Gets a value indicating whether the predictor accepts a specific feedback.
-        /// </summary>
-        /// <param name="client">Represents the client that initiates the call.</param>
-        /// <param name="feedback">A specific type of feedback.</param>
-        /// <returns>True or false, to indicate whether the specific feedback is accepted.</returns>
-        bool AcceptFeedback(PredictionClient client, PredictorFeedback feedback);
-
-        /// <summary>
         /// Get the predictive suggestions. It indicates the start of a suggestion rendering session.
         /// </summary>
         /// <param name="client">Represents the client that initiates the call.</param>
@@ -42,6 +34,14 @@ namespace System.Management.Automation.Subsystem
         /// <param name="cancellationToken">The cancellation token to cancel the prediction.</param>
         /// <returns>An instance of <see cref="SuggestionPackage"/>.</returns>
         SuggestionPackage GetSuggestion(PredictionClient client, PredictionContext context, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets a value indicating whether the predictor accepts a specific kind of feedback.
+        /// </summary>
+        /// <param name="client">Represents the client that initiates the call.</param>
+        /// <param name="feedback">A specific type of feedback.</param>
+        /// <returns>True or false, to indicate whether the specific feedback is accepted.</returns>
+        bool CanAcceptFeedback(PredictionClient client, PredictorFeedbackKind feedback);
 
         /// <summary>
         /// One or more suggestions provided by the predictor were displayed to the user.
@@ -75,34 +75,50 @@ namespace System.Management.Automation.Subsystem
         /// </summary>
         /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="commandLine">The last accepted command line.</param>
-        /// <param name="status">Shows whether the execution succeeded or failed.</param>
-        void OnCommandLineExecuted(PredictionClient client, string commandLine, bool status);
+        /// <param name="success">Shows whether the execution was successful.</param>
+        void OnCommandLineExecuted(PredictionClient client, string commandLine, bool success);
     }
 
     /// <summary>
     /// Kinds of feedback a predictor can choose to accept.
     /// </summary>
-    public enum PredictorFeedback
+    public enum PredictorFeedbackKind
     {
         /// <summary>
         /// Feedback when one or more suggestions are displayed to the user.
         /// </summary>
-        OnSuggestionDisplayed,
+        SuggestionDisplayed,
 
         /// <summary>
         /// Feedback when a suggestion is accepted by the user.
         /// </summary>
-        OnSuggestionAccepted,
+        SuggestionAccepted,
 
         /// <summary>
         /// Feedback when a command line is accepted by the user.
         /// </summary>
-        OnCommandLineAccepted,
+        CommandLineAccepted,
 
         /// <summary>
         /// Feedback when the accepted command line finishes its execution.
         /// </summary>
-        OnCommandLineExecuted,
+        CommandLineExecuted,
+    }
+
+    /// <summary>
+    /// Kinds of prediction clients.
+    /// </summary>
+    public enum PredictionClientKind
+    {
+        /// <summary>
+        /// A terminal client, representing the command-line experience.
+        /// </summary>
+        Terminal,
+
+        /// <summary>
+        /// An editor client, representing the editor experience.
+        /// </summary>
+        Editor,
     }
 
     /// <summary>
@@ -111,22 +127,6 @@ namespace System.Management.Automation.Subsystem
     public class PredictionClient
     {
         /// <summary>
-        /// Kinds of the client.
-        /// </summary>
-        public enum ClientKind
-        {
-            /// <summary>
-            /// A terminal client, representing the command-line experience.
-            /// </summary>
-            Terminal,
-
-            /// <summary>
-            /// An editor client, representing the editor experience.
-            /// </summary>
-            Editor,
-        }
-
-        /// <summary>
         /// Gets the client name.
         /// </summary>
         public string Name { get; }
@@ -134,14 +134,14 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Gets the client kind.
         /// </summary>
-        public ClientKind Kind { get; }
+        public PredictionClientKind Kind { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PredictionClient"/> class.
         /// </summary>
         /// <param name="name">Name of the interactive client.</param>
         /// <param name="kind">Kind of the interactive client.</param>
-        public PredictionClient(string name, ClientKind kind)
+        public PredictionClient(string name, PredictionClientKind kind)
         {
             Name = name;
             Kind = kind;

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.Prediction;
 using System.Threading;
 using Xunit;
 
@@ -97,7 +98,7 @@ namespace PSTests.Sequential
 
                 const string Client = "SubsystemTest";
                 const string Input = "Hello world";
-                var predClient = new PredictionClient(Client, PredictionClient.ClientKind.Terminal);
+                var predClient = new PredictionClient(Client, PredictionClientKind.Terminal);
                 var predCxt = PredictionContext.Create(Input);
                 var results = impl.GetSuggestion(predClient, predCxt, CancellationToken.None);
                 Assert.Equal($"'{Input}' from '{Client}' - TEST-1 from {impl.Name}", results.SuggestionEntries[0].SuggestionText);

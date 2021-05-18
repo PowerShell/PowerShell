@@ -10,7 +10,7 @@ using System.Management.Automation.Language;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace System.Management.Automation.Subsystem
+namespace System.Management.Automation.Subsystem.Prediction
 {
     /// <summary>
     /// The class represents the prediction result from a predictor.
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Subsystem
             Action<ICommandPredictor>? callBack = null;
             foreach (ICommandPredictor predictor in predictors)
             {
-                if (predictor.AcceptFeedback(client, PredictorFeedback.OnCommandLineAccepted))
+                if (predictor.CanAcceptFeedback(client, PredictorFeedbackKind.CommandLineAccepted))
                 {
                     callBack ??= GetCallBack(client, history);
                     ThreadPool.QueueUserWorkItem<ICommandPredictor>(callBack, predictor, preferLocal: false);
@@ -173,8 +173,8 @@ namespace System.Management.Automation.Subsystem
         /// </summary>
         /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="commandLine">The last accepted command line.</param>
-        /// <param name="status">The execution status of the last command line. True for success, False for failure.</param>
-        public static void OnCommandLineExecuted(PredictionClient client, string commandLine, bool status)
+        /// <param name="success">Whether the execution of the last command line was successful.</param>
+        public static void OnCommandLineExecuted(PredictionClient client, string commandLine, bool success)
         {
             var predictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             if (predictors.Count == 0)
@@ -185,18 +185,18 @@ namespace System.Management.Automation.Subsystem
             Action<ICommandPredictor>? callBack = null;
             foreach (ICommandPredictor predictor in predictors)
             {
-                if (predictor.AcceptFeedback(client, PredictorFeedback.OnCommandLineExecuted))
+                if (predictor.CanAcceptFeedback(client, PredictorFeedbackKind.CommandLineExecuted))
                 {
-                    callBack ??= GetCallBack(client, commandLine, status);
+                    callBack ??= GetCallBack(client, commandLine, success);
                     ThreadPool.QueueUserWorkItem<ICommandPredictor>(callBack, predictor, preferLocal: false);
                 }
             }
 
             // A local helper function to avoid creating an instance of the generated delegate helper class
             // when no predictor is registered, or no registered predictor accepts this feedback.
-            static Action<ICommandPredictor> GetCallBack(PredictionClient client, string commandLine, bool status)
+            static Action<ICommandPredictor> GetCallBack(PredictionClient client, string commandLine, bool success)
             {
-                return predictor => predictor.OnCommandLineExecuted(client, commandLine, status);
+                return predictor => predictor.OnCommandLineExecuted(client, commandLine, success);
             }
         }
 
@@ -218,13 +218,17 @@ namespace System.Management.Automation.Subsystem
                 return;
             }
 
-            Action<ICommandPredictor>? callBack = null;
             foreach (ICommandPredictor predictor in predictors)
             {
-                if (predictor.Id == predictorId && predictor.AcceptFeedback(client, PredictorFeedback.OnSuggestionDisplayed))
+                if (predictor.Id == predictorId)
                 {
-                    callBack ??= GetCallBack(client, session, countOrIndex);
-                    ThreadPool.QueueUserWorkItem<ICommandPredictor>(callBack, predictor, preferLocal: false);
+                    if (predictor.CanAcceptFeedback(client, PredictorFeedbackKind.SuggestionDisplayed))
+                    {
+                        Action<ICommandPredictor> callBack = GetCallBack(client, session, countOrIndex);
+                        ThreadPool.QueueUserWorkItem<ICommandPredictor>(callBack, predictor, preferLocal: false);
+                    }
+
+                    break;
                 }
             }
 
@@ -253,13 +257,17 @@ namespace System.Management.Automation.Subsystem
                 return;
             }
 
-            Action<ICommandPredictor>? callBack = null;
             foreach (ICommandPredictor predictor in predictors)
             {
-                if (predictor.Id == predictorId && predictor.AcceptFeedback(client, PredictorFeedback.OnSuggestionAccepted))
+                if (predictor.Id == predictorId)
                 {
-                    callBack ??= GetCallBack(client, session, suggestionText);
-                    ThreadPool.QueueUserWorkItem<ICommandPredictor>(callBack, predictor, preferLocal: false);
+                    if (predictor.CanAcceptFeedback(client, PredictorFeedbackKind.SuggestionAccepted))
+                    {
+                        Action<ICommandPredictor> callBack = GetCallBack(client, session, suggestionText);
+                        ThreadPool.QueueUserWorkItem<ICommandPredictor>(callBack, predictor, preferLocal: false);
+                    }
+
+                    break;
                 }
             }
 
