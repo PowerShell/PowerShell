@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Subsystem.DSC;
 
 namespace System.Management.Automation.Subsystem
 {

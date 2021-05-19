@@ -39,23 +39,6 @@ namespace PSTests.Sequential
             Assert.Empty(ssInfo.RequiredFunctions);
         }
 
-        private static void VerifyAllSubsystemInfo(ReadOnlyCollection<SubsystemInfo> ssInfos, SubsystemInfo predictorInfo, SubsystemInfo crossPlatformDscInfo)
-        {
-            Assert.Equal(2, ssInfos.Count);
-            foreach (SubsystemInfo si in ssInfos)
-            {
-                if (si.SubsystemType == typeof(ICommandPredictor))
-                {
-                    Assert.Same(si, predictorInfo);
-                }
-
-                if (si.SubsystemType == typeof(ICrossPlatformDsc))
-                {
-                    Assert.Same(si, crossPlatformDscInfo);
-                }
-            }
-        }
-
         [Fact]
         public static void GetSubsystemInfo()
         {
@@ -78,7 +61,9 @@ namespace PSTests.Sequential
             Assert.Same(crossPlatformDscInfo2, crossPlatformDscInfo);
 
             ReadOnlyCollection<SubsystemInfo> ssInfos = SubsystemManager.GetAllSubsystemInfo();
-            VerifyAllSubsystemInfo(ssInfos, predictorInfo, crossPlatformDscInfo);
+            Assert.Equal(2, ssInfos.Count);
+            Assert.Same(ssInfos[0], predictorInfo);
+            Assert.Same(ssInfos[1], crossPlatformDscInfo);
 
             ICommandPredictor predictorImpl = SubsystemManager.GetSubsystem<ICommandPredictor>();
             Assert.Null(predictorImpl);
@@ -123,10 +108,6 @@ namespace PSTests.Sequential
                 Assert.Equal(predictor1.Description, implInfo.Description);
                 Assert.Equal(SubsystemKind.CommandPredictor, implInfo.Kind);
                 Assert.Same(typeof(MyPredictor), implInfo.ImplementationType);
-
-                // Now validate the all-subsystem-info collection.
-                ReadOnlyCollection<SubsystemInfo> ssInfos = SubsystemManager.GetAllSubsystemInfo();
-                VerifyAllSubsystemInfo(ssInfos, ssInfo, crossPlatformDscInfo);
 
                 // Now validate the subsystem implementation itself.
                 ICommandPredictor impl = SubsystemManager.GetSubsystem<ICommandPredictor>();

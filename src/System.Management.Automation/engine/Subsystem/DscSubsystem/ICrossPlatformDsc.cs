@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
 
-namespace System.Management.Automation.Subsystem
+namespace System.Management.Automation.Subsystem.DSC
 {
     /// <summary>
     /// Interface for implementing a cross platform desired state configuration component.

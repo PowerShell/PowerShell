@@ -13,6 +13,7 @@ using System.Text;
 
 using Microsoft.PowerShell.Commands;
 using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language

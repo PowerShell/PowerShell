@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
 
 namespace System.Management.Automation
 {
