@@ -59,9 +59,9 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="ast">The <see cref="Ast"/> object from parsing the current command line input.</param>
         /// <param name="astTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         /// <returns>A list of <see cref="PredictionResult"/> objects.</returns>
-        public static Task<List<PredictionResult>?> PredictInput(PredictionClient client, Ast ast, Token[] astTokens)
+        public static Task<List<PredictionResult>?> PredictInputAsync(PredictionClient client, Ast ast, Token[] astTokens)
         {
-            return PredictInput(client, ast, astTokens, millisecondsTimeout: 20);
+            return PredictInputAsync(client, ast, astTokens, millisecondsTimeout: 20);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace System.Management.Automation.Subsystem.Prediction
         /// <param name="astTokens">The <see cref="Token"/> objects from parsing the current command line input.</param>
         /// <param name="millisecondsTimeout">The milliseconds to timeout.</param>
         /// <returns>A list of <see cref="PredictionResult"/> objects.</returns>
-        public static async Task<List<PredictionResult>?> PredictInput(PredictionClient client, Ast ast, Token[] astTokens, int millisecondsTimeout)
+        public static async Task<List<PredictionResult>?> PredictInputAsync(PredictionClient client, Ast ast, Token[] astTokens, int millisecondsTimeout)
         {
             Requires.Condition(millisecondsTimeout > 0, nameof(millisecondsTimeout));
 

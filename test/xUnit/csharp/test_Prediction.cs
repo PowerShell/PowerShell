@@ -134,7 +134,7 @@ namespace PSTests.Sequential
             Ast ast = Parser.ParseInput(Input, out Token[] tokens, out _);
 
             // Returns null when no predictor implementation registered
-            List<PredictionResult> results = CommandPrediction.PredictInput(predClient, ast, tokens).Result;
+            List<PredictionResult> results = CommandPrediction.PredictInputAsync(predClient, ast, tokens).Result;
             Assert.Null(results);
 
             try
@@ -147,7 +147,7 @@ namespace PSTests.Sequential
                 // cannot finish before the specified timeout.
                 // The specified timeout is exaggerated to make the test reliable.
                 // xUnit must spin up a lot tasks, which makes the test unreliable when the time difference between 'delay' and 'timeout' is small.
-                results = CommandPrediction.PredictInput(predClient, ast, tokens, millisecondsTimeout: 1000).Result;
+                results = CommandPrediction.PredictInputAsync(predClient, ast, tokens, millisecondsTimeout: 1000).Result;
                 Assert.Single(results);
 
                 PredictionResult res = results[0];
@@ -160,7 +160,7 @@ namespace PSTests.Sequential
                 // Expect the results from both 'slow' and 'fast' predictors
                 // Same here -- the specified timeout is exaggerated to make the test reliable.
                 // xUnit must spin up a lot tasks, which makes the test unreliable when the time difference between 'delay' and 'timeout' is small.
-                results = CommandPrediction.PredictInput(predClient, ast, tokens, millisecondsTimeout: 4000).Result;
+                results = CommandPrediction.PredictInputAsync(predClient, ast, tokens, millisecondsTimeout: 4000).Result;
                 Assert.Equal(2, results.Count);
 
                 PredictionResult res1 = results[0];
