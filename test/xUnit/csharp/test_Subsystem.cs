@@ -42,7 +42,7 @@ namespace PSTests.Sequential
         private static void VerifyAllSubsystemInfo(ReadOnlyCollection<SubsystemInfo> ssInfos, SubsystemInfo predictorInfo, SubsystemInfo crossPlatformDscInfo)
         {
             Assert.Equal(2, ssInfos.Count);
-            foreach(SubsystemInfo si in ssInfos)
+            foreach (SubsystemInfo si in ssInfos)
             {
                 if (si.SubsystemType == typeof(ICommandPredictor))
                 {
@@ -85,7 +85,7 @@ namespace PSTests.Sequential
             ReadOnlyCollection<ICommandPredictor> predictorImpls = SubsystemManager.GetSubsystems<ICommandPredictor>();
             Assert.Empty(predictorImpls);
 
-            ICommandPredictor crossPlatformDscImpl = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+            ICrossPlatformDsc crossPlatformDscImpl = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
             Assert.Null(crossPlatformDscImpl);
             ReadOnlyCollection<ICrossPlatformDsc> crossPlatformDscImpls = SubsystemManager.GetSubsystems<ICrossPlatformDsc>();
             Assert.Empty(crossPlatformDscImpls);
