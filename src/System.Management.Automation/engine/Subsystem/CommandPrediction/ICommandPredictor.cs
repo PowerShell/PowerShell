@@ -124,7 +124,7 @@ namespace System.Management.Automation.Subsystem.Prediction
     /// <summary>
     /// The class represents a client that interacts with predictors.
     /// </summary>
-    public class PredictionClient
+    public sealed class PredictionClient
     {
         /// <summary>
         /// Gets the client name.
@@ -151,7 +151,7 @@ namespace System.Management.Automation.Subsystem.Prediction
     /// <summary>
     /// Context information about the user input.
     /// </summary>
-    public class PredictionContext
+    public sealed class PredictionContext
     {
         /// <summary>
         /// Gets the abstract syntax tree (AST) generated from parsing the user input.
