@@ -1834,7 +1834,7 @@ namespace System.Management.Automation
         /// <param name="baseName">The base resource name.</param>
         /// <param name="resourceId">The resource id.</param>
         /// <returns>The error message template string corresponding to baseName and resourceId.</returns>
-        string? GetResourceString(string baseName, string resourceId);
+        string GetResourceString(string baseName, string resourceId);
     }
 }
 
