@@ -21,9 +21,10 @@ Describe "Behavior is specific for each platform" {
         "@echo off`nSET V2=a`necho %V1%" > "$TESTDRIVE\script 2.cmd"
         "@echo off`necho %V1%`necho %V2%" > "$TESTDRIVE\script 3.cmd"
         $result = cmd /c """${TESTDRIVE}\script 1.cmd"" && ""${TESTDRIVE}\script 2.cmd"" && ""${TESTDRIVE}\script 3.cmd"""
-        $result.Count | Should -Be 2
+        $result.Count | Should -Be 3
         $result[0] | Should -Be 1
-        $result[1] | Should Be "a"
+        $result[1] | Should -Be 1
+        $result[2] | Should Be "a"
     }
     
 }
