@@ -4,6 +4,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
 using System.Threading;
 using Xunit;
 
