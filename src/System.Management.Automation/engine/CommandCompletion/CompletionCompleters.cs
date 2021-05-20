@@ -5211,6 +5211,7 @@ namespace System.Management.Automation
                     lineKeyword = keyword;
                 }
             }
+
             if (lineKeyword is null)
             {
                 return null;
@@ -5292,7 +5293,7 @@ namespace System.Management.Automation
             {
                 context.WordToComplete = keywordArgument.Value;
                 var result = new List<CompletionResult>(CompleteFilename(context, containerOnly: false, (new HashSet<string>() { ".xml" })));
-                return new List<CompletionResult>(CompleteFilename(context, containerOnly: false, (new HashSet<string>() { ".xml" })));
+                return result.Count > 0 ? result : null;
             }
 
             return null;
@@ -5348,7 +5349,7 @@ namespace System.Management.Automation
             }
 
             Ast lastAst = context.RelatedAsts[^1];
-            Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= context.TokenAtCursor.Extent.EndOffset, false);
+            Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= context.TokenAtCursor.Extent.EndOffset, searchNestedScriptBlocks: false);
             // comment based help can apply to a following function definition if it starts within 2 lines
             int commentEndLine = context.TokenAtCursor.Extent.EndLineNumber + 2;
 
@@ -5368,6 +5369,7 @@ namespace System.Management.Automation
                     return innerHelpFunctionDefAst;
                 }
             }
+
             if (lastAst is ScriptBlockAst)
             {
                 // Helpblock before function

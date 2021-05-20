@@ -1372,104 +1372,102 @@ dir -Recurse `
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
         }
 
-        It 'Should complete help keywords' {
-            $TestString = @'
+        It '<Intent>' -TestCases @(
+            @{
+                Intent = 'Complete help keywords with minimum input'
+                Expected = @(
+                    'COMPONENT'
+                    'DESCRIPTION'
+                    'EXAMPLE'
+                    'EXTERNALHELP'
+                    'FORWARDHELPCATEGORY'
+                    'FORWARDHELPTARGETNAME'
+                    'FUNCTIONALITY'
+                    'INPUTS'
+                    'LINK'
+                    'NOTES'
+                    'OUTPUTS'
+                    'PARAMETER'
+                    'REMOTEHELPRUNSPACE'
+                    'ROLE'
+                    'SYNOPSIS'
+                )
+                TestString = @'
 <#
 .^
 #>
 '@
-            $CursorIndex = $TestString.IndexOf('^')            
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches.Count | Should -BeGreaterThan 0
-        }
-
-        It 'Should complete help keywords without duplicates' {
-            $TestString = @'
+            }
+            @{
+                Intent = 'Complete help keywords without duplicates'
+                Expected = $null
+                TestString = @'
 <#
 .SYNOPSIS
 .S^
 #>
 '@
-            $CursorIndex = $TestString.IndexOf('^')            
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches.Count | Should -Be 0
-        }
-
-        It 'Should complete help keywords with allowed duplicates' {
-            $TestString = @'
+            }
+            @{
+                Intent = 'Complete help keywords with allowed duplicates'
+                Expected = 'PARAMETER'
+                TestString = @'
 <#
 .PARAMETER
 .Paramet^
 #>
 '@
-            $CursorIndex = $TestString.IndexOf('^')            
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches | Should -HaveCount 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'PARAMETER'
-        }
-
-        It 'Should complete help keyword FORWARDHELPTARGETNAME argument' {
-            $TestString = @'
+            }
+            @{
+                Intent = 'Complete help keyword FORWARDHELPTARGETNAME argument'
+                Expected = 'Get-ChildItem'
+                TestString = @'
 <#
 .FORWARDHELPTARGETNAME  Get-Child^
 #>
 '@
-            $CursorIndex = $TestString.IndexOf('^')            
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches | Should -HaveCount 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Get-ChildItem'
-        }
-
-        It 'Should complete help keyword FORWARDHELPCATEGORY argument' {
-            $TestString = @'
+            }
+            @{
+                Intent = 'Complete help keyword FORWARDHELPCATEGORY argument'
+                Expected = 'Cmdlet'
+                TestString = @'
 <#
 .FORWARDHELPCATEGORY C^
 #>
 '@
-            $CursorIndex = $TestString.IndexOf('^')            
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches | Should -HaveCount 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Cmdlet'
-        }
-
-        It 'Should complete help keyword REMOTEHELPRUNSPACE argument' {
-            $TestString = @'
+            }
+            @{
+                Intent = 'Complete help keyword REMOTEHELPRUNSPACE argument'
+                Expected = 'PSEdition'
+                TestString = @'
 <#
 .REMOTEHELPRUNSPACE PSEditi^
 #>
 '@
-            $CursorIndex = $TestString.IndexOf('^')            
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches | Should -HaveCount 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'PSEdition'
-        }
-
-        It 'Should complete help keyword EXTERNALHELP argument' {
-            $TestString = @"
+            }
+            @{
+                Intent = 'Complete help keyword EXTERNALHELP argument'
+                Expected = Join-Path $PSHOME "pwsh.xml"
+                TestString = @"
 <#
-.EXTERNALHELP $PSHOME\^
+.EXTERNALHELP $PSHOME\pwsh.^
 #>
 "@
-            $CursorIndex = $TestString.IndexOf('^')            
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches.Count | Should -BeGreaterThan 0
-        }
-
-        It 'Should complete help keyword PARAMETER argument for script' {
-            $TestString = @'
+            }
+            @{
+                Intent = 'Complete help keyword PARAMETER argument for script'
+                Expected = 'Param1'
+                TestString = @'
 <#
 .PARAMETER ^
 #>
 param($Param1)
 '@
-            $CursorIndex = $TestString.IndexOf('^')            
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches.Count | Should -BeExactly 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Param1'
-        }
-
-        It 'Should complete help keyword PARAMETER argument for function with help inside' {
-            $TestString = @'
+            }
+            @{
+                Intent = 'Complete help keyword PARAMETER argument for function with help inside'
+                Expected = 'param2'
+                TestString = @'
 function MyFunction ($param1, $param2)
 {
 <#
@@ -1478,14 +1476,11 @@ function MyFunction ($param1, $param2)
 #>
 }
 '@
-            $CursorIndex = $TestString.IndexOf('^')            
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches.Count | Should -BeExactly 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'param2'
-        }
-
-        It 'Should complete help keyword PARAMETER argument for function with help before it' {
-            $TestString = @'
+            }
+            @{
+                Intent = 'Complete help keyword PARAMETER argument for function with help before it'
+                Expected = 'param1','param2'
+                TestString = @'
 <#
 .PARAMETER ^
 #>
@@ -1493,14 +1488,11 @@ function MyFunction ($param1, $param2)
 {
 }
 '@
-            $CursorIndex = $TestString.IndexOf('^')            
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches.Count | Should -BeExactly 2
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'param1'
-        }
-        
-        It 'Should complete help keyword PARAMETER argument for advanced function with help inside' {
-            $TestString = @'
+            }
+            @{
+                Intent = 'Complete help keyword PARAMETER argument for advanced function with help inside'
+                Expected = 'Param1'
+                TestString = @'
 function Verb-Noun
 {
 <#
@@ -1523,14 +1515,11 @@ function Verb-Noun
     }
 }
 '@
-            $CursorIndex = $TestString.IndexOf('^')            
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches.Count | Should -BeExactly 1
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Param1'
-        }
-        
-        It 'Should complete help keyword PARAMETER argument for nested function with help before it' {
-            $TestString = @'
+            }
+            @{
+                Intent = 'Complete help keyword PARAMETER argument for nested function with help before it'
+                Expected = 'param3','param4'
+                TestString = @'
 function MyFunction ($param1, $param2)
 {
     <#
@@ -1541,14 +1530,11 @@ function MyFunction ($param1, $param2)
     }
 }
 '@
-            $CursorIndex = $TestString.IndexOf('^')            
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches.Count | Should -BeExactly 2
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'param3'
-        }
-
-        It 'Should not complete help keyword PARAMETER argument if following function is too far away' {
-            $TestString = @'
+            }
+            @{
+                Intent = 'Not complete help keyword PARAMETER argument if following function is too far away'
+                Expected = $null
+                TestString = @'
 <#
 .PARAMETER ^
 #>
@@ -1558,9 +1544,12 @@ function MyFunction ($param1, $param2)
 {
 }
 '@
-            $CursorIndex = $TestString.IndexOf('^')            
+            }
+        ){
+            param($Expected, $TestString)
+            $CursorIndex = $TestString.IndexOf('^')
             $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches.Count | Should -BeExactly 0
+            $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
         }
     }
 }
