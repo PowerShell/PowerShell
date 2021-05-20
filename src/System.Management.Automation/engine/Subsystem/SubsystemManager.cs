@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Subsystem.DSC;
+using System.Management.Automation.Subsystem.Prediction;
 
 namespace System.Management.Automation.Subsystem
 {

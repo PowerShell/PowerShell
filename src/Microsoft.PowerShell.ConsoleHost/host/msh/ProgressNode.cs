@@ -387,14 +387,26 @@ namespace Microsoft.PowerShell
                 maxWidth = PSStyle.Instance.Progress.MaxWidth;
             }
 
+            // if the activity is really long, only use up to half the width
+            string activity;
+            if (Activity.Length > maxWidth / 2)
+            {
+                activity = Activity.Substring(0, maxWidth / 2) + PSObjectHelper.Ellipsis;
+            }
+            else
+            {
+                activity = Activity;
+            }
+
             // 4 is for the extra space and square brackets below and one extra space
-            int barWidth = maxWidth - Activity.Length - indentation - 4;
+            int barWidth = maxWidth - activity.Length - indentation - 4;
 
             var sb = new StringBuilder();
             int padding = maxWidth + PSStyle.Instance.Progress.Style.Length + PSStyle.Instance.Reverse.Length + PSStyle.Instance.ReverseOff.Length;
             sb.Append(PSStyle.Instance.Reverse);
 
-            if (StatusDescription.Length > barWidth - secRemainLength)
+            int maxStatusLength = barWidth - secRemainLength - 1;
+            if (maxStatusLength > 0 && StatusDescription.Length > barWidth - secRemainLength)
             {
                 sb.Append(StatusDescription.Substring(0, barWidth - secRemainLength - 1));
                 sb.Append(PSObjectHelper.Ellipsis);
@@ -404,10 +416,15 @@ namespace Microsoft.PowerShell
                 sb.Append(StatusDescription);
             }
 
-            sb.Append(string.Empty.PadRight(barWidth + PSStyle.Instance.Reverse.Length - sb.Length - secRemainLength));
+            int emptyPadLength = barWidth + PSStyle.Instance.Reverse.Length - sb.Length - secRemainLength;
+            if (emptyPadLength > 0)
+            {
+                sb.Append(string.Empty.PadRight(emptyPadLength));
+            }
+
             sb.Append(secRemain);
 
-            if (PercentComplete > 0 && PercentComplete < 100)
+            if (PercentComplete > 0 && PercentComplete < 100 && barWidth > 0)
             {
                 int barLength = PercentComplete * barWidth / 100;
                 if (barLength >= barWidth)
@@ -415,7 +432,10 @@ namespace Microsoft.PowerShell
                     barLength = barWidth - 1;
                 }
 
-                sb.Insert(barLength + PSStyle.Instance.Reverse.Length, PSStyle.Instance.ReverseOff);
+                if (barLength < sb.Length)
+                {
+                    sb.Insert(barLength + PSStyle.Instance.Reverse.Length, PSStyle.Instance.ReverseOff);
+                }
             }
             else
             {
@@ -427,7 +447,7 @@ namespace Microsoft.PowerShell
                     "{0}{1}{2} [{3}]{4}",
                     indent,
                     PSStyle.Instance.Progress.Style,
-                    Activity,
+                    activity,
                     sb.ToString(),
                     PSStyle.Instance.Reset)
                 .PadRight(padding));
