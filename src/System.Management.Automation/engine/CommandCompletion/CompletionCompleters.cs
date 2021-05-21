@@ -5204,11 +5204,13 @@ namespace System.Management.Automation
 
             // Last keyword at or before the cursor
             Match lineKeyword = null;
-            foreach (Match keyword in usedKeywords)
+            for (int i = usedKeywords.Count - 1; i >= 0; i--)
             {
+                Match keyword = usedKeywords[i];
                 if (context.CursorPosition.Offset >= keyword.Index + context.TokenAtCursor.Extent.StartOffset)
                 {
                     lineKeyword = keyword;
+                    break;
                 }
             }
 
