@@ -1386,7 +1386,7 @@ dir -Recurse `
             {
                 [cultureinfo]::CurrentCulture = $OriginalCulture
             }
-
+        }
         It '<Intent>' -TestCases @(
             @{
                 Intent = 'Complete help keywords with minimum input'
