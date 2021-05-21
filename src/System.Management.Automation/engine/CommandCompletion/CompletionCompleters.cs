@@ -4923,7 +4923,7 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteComment(CompletionContext context, ref int replacementIndex, ref int replacementLength)
         {
-            if (context.WordToComplete.StartsWith("<#", StringComparison.OrdinalIgnoreCase))
+            if (context.WordToComplete.StartsWith("<#", StringComparison.Ordinal))
             {
                 return CompleteCommentHelp(context, ref replacementIndex, ref replacementLength);
             }
@@ -5350,6 +5350,7 @@ namespace System.Management.Automation
 
             Ast lastAst = context.RelatedAsts[^1];
             Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= context.TokenAtCursor.Extent.EndOffset, searchNestedScriptBlocks: false);
+
             // comment based help can apply to a following function definition if it starts within 2 lines
             int commentEndLine = context.TokenAtCursor.Extent.EndLineNumber + 2;
 
@@ -5376,7 +5377,6 @@ namespace System.Management.Automation
                 if (firstAstAfterComment is not null
                     && firstAstAfterComment.Extent.StartLineNumber <= commentEndLine
                     && firstAstAfterComment is NamedBlockAst block
-                    && block.Statements is not null
                     && block.Statements.Count > 0
                     && block.Statements[0] is FunctionDefinitionAst statement)
                 {
