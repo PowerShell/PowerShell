@@ -36,8 +36,6 @@ namespace System.Management.Automation.Language
         IAssignableValue GetAssignableValue();
     }
 
-#nullable restore
-
     internal interface IAssignableValue
     {
         /// <summary>
@@ -45,7 +43,7 @@ namespace System.Management.Automation.Language
         /// It returns the expressions that holds the value of the ast.  It may append the exprs or temps lists if the return
         /// value relies on temps and other expressions.
         /// </summary>
-        Expression GetValue(Compiler compiler, List<Expression> exprs, List<ParameterExpression> temps);
+        Expression? GetValue(Compiler compiler, List<Expression> exprs, List<ParameterExpression> temps);
 
         /// <summary>
         /// SetValue is called to set the result of an assignment (=) or to write back the result of
@@ -53,6 +51,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         Expression SetValue(Compiler compiler, Expression rhs);
     }
+#nullable restore
 
     internal interface IParameterMetadataProvider
     {
@@ -8139,6 +8138,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// The name and attributes of a type.
     /// </summary>
+#nullable enable
     public interface ITypeName
     {
         /// <summary>
@@ -8154,7 +8154,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The name of the assembly, if specified, otherwise null.
         /// </summary>
-        string AssemblyName { get; }
+        string? AssemblyName { get; }
 
         /// <summary>
         /// Returns true if the type names an array, false otherwise.
@@ -8169,20 +8169,21 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Returns the <see cref="System.Type"/> that this typename represents, if such a type exists, null otherwise.
         /// </summary>
-        Type GetReflectionType();
+        Type? GetReflectionType();
 
         /// <summary>
         /// Assuming the typename is an attribute, returns the <see cref="System.Type"/> that this typename represents.
         /// By convention, the typename may omit the suffix "Attribute".  Lookup will attempt to resolve the type as is,
         /// and if that fails, the suffix "Attribute" will be appended.
         /// </summary>
-        Type GetReflectionAttributeType();
+        Type? GetReflectionAttributeType();
 
         /// <summary>
         /// The extent of the typename.
         /// </summary>
         IScriptExtent Extent { get; }
     }
+#nullable restore
 
 #nullable enable
     internal interface ISupportsTypeCaching

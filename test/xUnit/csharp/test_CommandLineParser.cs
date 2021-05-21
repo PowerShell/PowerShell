@@ -48,7 +48,15 @@ namespace PSTests.Parallel
             Assert.False(cpp.SkipProfiles);
             Assert.False(cpp.SocketServerMode);
             Assert.False(cpp.SSHServerMode);
-            Assert.True(cpp.StaMode);
+            if (Platform.IsWindows)
+            {
+                Assert.True(cpp.StaMode);
+            }
+            else
+            {
+                Assert.False(cpp.StaMode);
+            }
+
             Assert.False(cpp.ThrowOnReadAndPrompt);
             Assert.False(cpp.WasInitialCommandEncoded);
             Assert.Null(cpp.WorkingDirectory);
@@ -1226,7 +1234,15 @@ namespace PSTests.Parallel
             Assert.False(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.True(cpp.StaMode);
+            if (Platform.IsWindows)
+            {
+                Assert.True(cpp.StaMode);
+            }
+            else
+            {
+                Assert.False(cpp.StaMode);
+            }
+
             Assert.Equal(CommandLineParameterParser.NormalizeFilePath(commandLine[commandLine.Length - 1]), cpp.File);
             Assert.Null(cpp.ErrorMessage);
         }

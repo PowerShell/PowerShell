@@ -16,8 +16,6 @@ namespace System.Management.Automation
     /// </summary>
     public static class Platform
     {
-        private static string _tempDirectory = null;
-
         /// <summary>
         /// True if the current platform is Linux.
         /// </summary>
@@ -140,6 +138,21 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the underlying system supports single-threaded apartment.
+        /// </summary>
+        public static bool IsStaSupported
+        {
+            get
+            {
+#if UNIX
+                return false;
+#else
+                return _isStaSupported.Value;
+#endif
+            }
+        }
+
 #if UNIX
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
@@ -148,6 +161,22 @@ namespace System.Management.Automation
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
         internal static readonly string ConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
+        private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
+        {
+            // See objbase.h
+            const int COINIT_APARTMENTTHREADED = 0x2;
+            const int E_NOTIMPL = unchecked((int)0X80004001);
+            int result = Windows.NativeMethods.CoInitializeEx(IntPtr.Zero, COINIT_APARTMENTTHREADED);
+
+            // If 0 is returned the thread has been initialized for the first time
+            // as an STA and thus supported and needs to be uninitialized.
+            if (result > 0)
+            {
+                Windows.NativeMethods.CoUninitialize();
+            }
+
+            return result != E_NOTIMPL;
+        });
 
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
@@ -169,6 +198,8 @@ namespace System.Management.Automation
             "Registry.format.ps1xml",
             "WSMan.format.ps1xml"
         };
+
+        private static string _tempDirectory = null;
 
         /// <summary>
         /// Some common environment variables used in PS have different
@@ -555,6 +586,21 @@ namespace System.Management.Automation
         internal static int NonWindowsGetProcessParentPid(int pid)
         {
             return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
+        }
+
+        internal static class Windows
+        {
+            /// <summary>The native methods class.</summary>
+            internal static class NativeMethods
+            {
+                private const string ole32Lib = "api-ms-win-core-com-l1-1-0.dll";
+
+                [DllImport(ole32Lib)]
+                internal static extern int CoInitializeEx(IntPtr reserve, int coinit);
+
+                [DllImport(ole32Lib)]
+                internal static extern void CoUninitialize();
+            }
         }
 
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
