@@ -5320,7 +5320,7 @@ namespace System.Management.Automation
             { "EXTERNALHELP", ".EXTERNALHELP <XML Help File>\nThe .ExternalHelp keyword is required when a function or script is documented in XML files." }
         };
 
-        private static readonly HashSet<string> s_commentHelpAllowedDuplicateKeywords = new (StringComparer.OrdinalIgnoreCase)
+        private static readonly HashSet<string> s_commentHelpAllowedDuplicateKeywords = new(StringComparer.OrdinalIgnoreCase)
         {
             "PARAMETER",
             "EXAMPLE",
