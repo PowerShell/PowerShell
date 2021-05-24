@@ -5228,7 +5228,7 @@ namespace System.Management.Automation
                 var validKeywords = new HashSet<String>(s_commentHelpKeywords.Keys, StringComparer.OrdinalIgnoreCase);
                 foreach (Match keyword in usedKeywords)
                 {
-                    if (s_commentHelpAllowedDuplicateKeywords.Contains(keyword.Value) || keyword == lineKeyword)
+                    if (keyword == lineKeyword || s_commentHelpAllowedDuplicateKeywords.Contains(keyword.Value))
                     {
                         continue;
                     }
@@ -5320,7 +5320,7 @@ namespace System.Management.Automation
             { "EXTERNALHELP", ".EXTERNALHELP <XML Help File>\nThe .ExternalHelp keyword is required when a function or script is documented in XML files." }
         };
 
-        private static readonly HashSet<string> s_commentHelpAllowedDuplicateKeywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly HashSet<string> s_commentHelpAllowedDuplicateKeywords = new (StringComparer.OrdinalIgnoreCase)
         {
             "PARAMETER",
             "EXAMPLE",
@@ -5353,7 +5353,7 @@ namespace System.Management.Automation
             Ast lastAst = context.RelatedAsts[^1];
             Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= context.TokenAtCursor.Extent.EndOffset, searchNestedScriptBlocks: false);
 
-            // comment based help can apply to a following function definition if it starts within 2 lines
+            // Comment-based help can apply to a following function definition if it starts within 2 lines
             int commentEndLine = context.TokenAtCursor.Extent.EndLineNumber + 2;
 
             if (lastAst is NamedBlockAst)
