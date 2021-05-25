@@ -344,6 +344,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// Creates a RowDefinition for MainGrid.
         /// </summary>
         /// <returns>Return a RowDefinition object.</returns>
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private RowDefinition CreateNewRow()
         {
             RowDefinition row = new RowDefinition();
@@ -382,6 +383,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="parameterViewModel">DataContext object.</param>
         /// <param name="rowNumber">Row number.</param>
         /// <returns>Return a Label control.</returns>
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private Label CreateLabel(ParameterViewModel parameterViewModel, int rowNumber)
         {
             Label label = new Label();

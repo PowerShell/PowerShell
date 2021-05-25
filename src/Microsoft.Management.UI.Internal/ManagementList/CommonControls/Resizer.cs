@@ -202,6 +202,7 @@ namespace Microsoft.Management.UI.Internal
             return this.GetConstrainedValue(newWidth, this.MaxWidth, this.MinWidth);
         }
 
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private double GetHorizontalDelta(ResizeGripLocation location, double horzDelta)
         {
             double realDelta;
@@ -219,6 +220,7 @@ namespace Microsoft.Management.UI.Internal
             return realDelta;
         }
 
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private double GetConstrainedValue(double value, double max, double min)
         {
             return Math.Min(max, Math.Max(value, min));

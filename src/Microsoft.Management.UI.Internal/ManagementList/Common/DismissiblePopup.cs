@@ -79,6 +79,7 @@ namespace Microsoft.Management.UI.Internal
             }
         }
 
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private void SetFocus(UIElement element)
         {
             if (element.Focusable)

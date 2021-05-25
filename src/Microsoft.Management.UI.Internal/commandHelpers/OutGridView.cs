@@ -246,6 +246,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="outputMode">Output mode of the out-gridview.</param>
         /// <returns>A new ManagementList.</returns>
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private ManagementList CreateManagementList(string outputMode)
         {
             ManagementList newList = new ManagementList();

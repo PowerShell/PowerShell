@@ -190,6 +190,7 @@ namespace Microsoft.Management.UI.Internal
             }
         }
 
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private bool TryGetEnumValue(object rawValue, out T castValue)
         {
             Debug.Assert(rawValue != null, "rawValue not null");

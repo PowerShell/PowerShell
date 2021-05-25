@@ -643,7 +643,7 @@ Function PSGetSerializedShowCommandInfo
             ModuleViewModel moduleToSelect = returnValue.Modules.Find(
                 new Predicate<ModuleViewModel>((module) =>
                 {
-                    return module.Name.Equals(selectedModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase) ? true : false;
+                    return module.Name.Equals(selectedModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase);
                 }));
 
             if (moduleToSelect == null)
@@ -657,7 +657,7 @@ Function PSGetSerializedShowCommandInfo
                 new Predicate<CommandViewModel>((command) =>
                 {
                     return command.ModuleName.Equals(parentModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase) &&
-                        command.Name.Equals(commandNeedingImportModule, StringComparison.OrdinalIgnoreCase) ? true : false;
+                        command.Name.Equals(commandNeedingImportModule, StringComparison.OrdinalIgnoreCase);
                 }));
 
             if (commandToSelect == null)
@@ -1244,6 +1244,7 @@ Function PSGetSerializedShowCommandInfo
         /// Showing a MessageBox when user type a invalidate command name.
         /// </summary>
         /// <param name="errorString">Error message.</param>
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private void ShowErrorString(string errorString)
         {
             if (errorString != null && errorString.Trim().Length > 0)

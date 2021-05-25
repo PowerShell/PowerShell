@@ -605,6 +605,7 @@ namespace Microsoft.Management.UI.Internal
             return entryText.ToString();
         }
 
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private void SetClipboardWithSelectedItemsText(string text)
         {
             if (string.IsNullOrEmpty(text))
