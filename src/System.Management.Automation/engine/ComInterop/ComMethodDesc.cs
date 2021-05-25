@@ -95,7 +95,9 @@ namespace System.Management.Automation.ComInterop
         }
 
         internal int ParamCount { get; }
+
         public Type ReturnType { get; set; }
+
         public Type InputType { get; set; }
 
         public ParameterInformation[] ParameterInformation
