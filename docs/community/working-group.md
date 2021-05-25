@@ -94,8 +94,10 @@ they can appeal to the PowerShell Committee by mentioning `@PowerShell/PowerShel
 upon which a maintainer will add the `Review-Committee` label to the issue and reopen it.
 Then, the PS Committee will discuss further with the Working Group and others to make a final call on
 whether or not the issue should be pursued further.
-**Note that the Committee has thus far tended to agree with Maintainers.**
-**Contributors are discouraged from launching unfounded appeals.**
+
+Be sure to enumerate your reasons for appeal, as unfounded appeals may be rejected for consideration
+by the Committee until reasons are given.
+
 
 ### Working groups believe the proposal has merit and/or potential
 
@@ -150,21 +152,20 @@ Going forward, an RFC will have three stages:
 1. A Draft PR, denoting that the RFC is still in the review period, openly soliciting comments,
    and that it may continue to be significantly iterated upon with revisions, edits, and responses to
    community feedback or concerns.
-1. After two months of discussion, the RFC/PR author marks the PR as
+1. After a minimum of two months of discussion, the RFC/PR author marks the PR as
    [ready for review](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/changing-the-stage-of-a-pull-request),
-   upon which the Committee will review the entirety of the RFC and RFC PR comments,
-   discuss the contents, and make a decision on whether it is reasonable to pursue.
+   upon which the RFC will enter the Committee's review queue to discuss the RFC contents and comments,
+   and make a decision on whether it is reasonable to pursue.
    If after this review, the Committee determines that the intent of the RFC is not reasonable
-   (e.g. there may be unreconcilable issues with the design,
+   (e.g. there may be irreconcilable issues with the design,
    or the intent may not fit with the principles of PowerShell),
    they will reject the PR and the process terminates.
-   should be merged as an accepted RFC.
 1. In most cases, the Committee will choose to wait for the code PR to be merged as experimental,
    and leverage user feedback or telemetry to determine if the RFC PR should be merged.
 1. Finally, the Committee will choose to either merge or close the RFC PR,
    marking the RFC as either accepted or rejected, respectively.
 
-#### Prototypes
+#### Experiments
 
 Often times, implementing an idea can demonstrate opportunities or challenges that were not well
 understood when the idea was formulated.
@@ -185,6 +186,6 @@ this enables us to use telemetry to understand if users are turning off the feat
 Note: today, this will be done on a case-by-case basis, but over time, the Committee will establish
 firmer guidelines around when PRs should be merged as experimental.
 
-Prototypes should be complete to the extent that they serve as reasonable indicators of the user experience.
+Experiments should be complete to the extent that they serve as reasonable indicators of the user experience.
 In the case that breaking changes are required of the feature, the break should be made in the prototype
 so that users can experiment with whether or not the break has a significant negative effect.

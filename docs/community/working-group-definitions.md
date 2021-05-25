@@ -13,9 +13,7 @@ The Desired State Configuration (DSC) WG manages all facets of DSC in PowerShell
 including language features (like the `Configuration` keyword)
 and the `PSDesiredStateConfiguration` module.
 
-Eventually, we would like to fully abstract all of DSC into a separate module
-(including the language features).
-However, today, DSC is integrated into the PowerShell language, and we need to manage it as such.
+Today, DSC is integrated into the PowerShell language, and we need to manage it as such.
 
 ### Members
 
@@ -116,11 +114,11 @@ Given the commonality of serialization boundaries, the Remoting WG should also f
 ## Modules
 
 For those core/inbox modules whose source code lives within the `PowerShell/PowerShell` repository,
-we should have some set of WGs responsible for their cmdlet design guidelines and enforcement,
+we may have some set of WGs responsible for their cmdlet design guidelines and enforcement,
 as well as to manage the proposal of new cmdlets or breaking changes.
 
 However, some modules that ship as part of the PowerShell package are managed in other source repositories.
-These modules should be owned by the maintainers of those individual repositories.
+These modules are owned by the maintainers of those individual repositories.
 These modules include:
 
 * [`Microsoft.PowerShell.Archive`](https://github.com/PowerShell/Microsoft.PowerShell.Archive)
@@ -132,13 +130,8 @@ These modules include:
 * [`PSReadLine`](https://github.com/PowerShell/PSReadLine)
 * [`ThreadJob`](https://github.com/PowerShell/Modules/tree/master/Modules/Microsoft.PowerShell.ThreadJob)
 
-In the long-term, our desire is to manage all modules using the "separate repo" approach,
-but we recognize that we may need WGs for many "inbox" modules,
-and that some modules may never be able to be abstracted out of `PowerShell/PowerShell`
-(e.g. `Microsoft.PowerShell.Core`).
-However, until it is determined how to handle these distribute these modules across WGs
-(or whether they should be moved out to other repos), the following modules will be owned
-by the Maintainers:
+Until it is determined how best to handle the remainder of modules that ship as part of PowerShell,
+the following modules will be owned by the Committee and Maintainers:
 
 * CimCmdlets
 * Microsoft.PowerShell.Diagnostics
