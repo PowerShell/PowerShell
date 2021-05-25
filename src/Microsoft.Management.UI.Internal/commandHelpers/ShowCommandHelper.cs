@@ -752,7 +752,7 @@ Function PSGetSerializedShowCommandInfo
 
             try
             {
-                return property.GetValue(obj, new object[] { });
+                return property.GetValue(obj, Array.Empty<object>());
             }
             catch (ArgumentException)
             {
@@ -796,7 +796,7 @@ Function PSGetSerializedShowCommandInfo
 
             try
             {
-                property.SetValue(obj, value, new object[] { });
+                property.SetValue(obj, value, Array.Empty<object>());
             }
             catch (ArgumentException)
             {
