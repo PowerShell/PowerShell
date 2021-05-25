@@ -6,7 +6,7 @@
   approving [RFCs][RFC-repo], and approving new maintainers/committee members
 * [**Repository maintainer**](#repository-maintainers): An individual responsible for merging pull requests (PRs) into `master` when all requirements are met (code review, tests, docs, and RFC approval as applicable).
   Repository Maintainers are the only people with write permissions for the `master` branch.
-* [**Working Groups (WGs)**](#working-groups-(wgs)) are collections of people responsible for
+* [**Working Groups (WGs)**](#working-groups-(wgs)) are collections of contributors responsible for
   providing expertise on a specific area of PowerShell in order to help establish consensus within
   the community and Committee.
 * **Corporation**: The Corporation owns the PowerShell repository and, under extreme circumstances,
@@ -95,7 +95,8 @@ For more information on Repository Maintainers--their responsibilities, who they
 [Working Groups (WGs)][wg] are collections of contributors with knowledge of specific components or
 technologies in the PowerShell domain.
 They are responsible for issue triage/acceptance, code reviews, and providing their expertise to
-others in issues, PRs, and RFC discussions.
+others in issues, PRs, and RFC discussions,
+as well as to the Committee when said expertise is helpful in broader discussions.
 
 They have [write access](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-organizations-and-teams/repository-permission-levels-for-an-organization) to the PowerShell repository which gives them the power to:
 
@@ -116,16 +117,18 @@ If you are a Working Group member:
    whether issues should move forward
 1. **DO** make decisions on whether or not issues should proceed forward with implementations or RFCs
 1. **DO** assign the [correct labels][issue-process] to issues
-1. **DO** assign yourself to issues labeled with your area of expertise when you plan to implement
-   them in a reasonable timeframe
+1. **DO** assign yourself to issues and PRs labeled with your area of expertise only when you are actively
+   working on or implementing them
 1. **DO** code reviews for PRs where you're assigned or in your WG
    (while reviewing PRs, leave your comment even if everything looks good - a simple "Looks good to me" or "LGTM" will suffice, so that we know someone has already taken a look at it).
-1. **DO** make sure contributors are following the [contributor guidelines](../../.github/CONTRIBUTING.md)
-1. **DO** ensure that contributors [write Pester tests][pester] for all new/changed functionality
-1. **DO** ensure that contributors [write documentation][docs-contributing] for all new-/changed functionality
-1. **DO** encourage contributors to refer to issues in their pull request description (e.g. `Resolves issue #123`)
-1. **DO** encourage contributors to create meaningful titles for all PRs, editing their title if necessary
-1. **DO** verify that all contributors are following the [Coding Guidelines](../dev-process/coding-guidelines.md)
+1. **DO** ensure that contributors are following the [contributor guidelines](../../.github/CONTRIBUTING.md)
+   and [Code of Conduct](https://github.com/PowerShell/PowerShell/blob/master/CODE_OF_CONDUCT.md)
+1. **DO** ensure that contributions [include Pester tests][pester] for all new/changed functionality
+1. **DO** ensure that contributions [include documentation][docs-contributing] for all new-/changed functionality
+1. **DO** encourage contributions to refer to issues in their pull request description (e.g. `Resolves issue #123`)
+1. **DO** encourage contributions to have meaningful titles for all PRs,
+   editing their title if necessary to ensure that changelogs convey useful and accurate information
+1. **DO** verify that all contributions are following the [Coding Guidelines](../dev-process/coding-guidelines.md)
 
 1. **DON'T** create new features, new designs, or change behaviors without following the [RFC][RFC-repo] or approval process
 
