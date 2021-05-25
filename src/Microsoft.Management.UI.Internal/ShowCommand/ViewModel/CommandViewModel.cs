@@ -438,12 +438,12 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 builder.Append(commandName);
             }
 
-            builder.Append(" ");
+            builder.Append(' ');
 
             if (this.SelectedParameterSet != null)
             {
                 builder.Append(this.SelectedParameterSet.GetScript());
-                builder.Append(" ");
+                builder.Append(' ');
             }
 
             if (this.CommonParameters != null)
