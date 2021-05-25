@@ -1288,7 +1288,9 @@ namespace System.Management.Automation
                 "wscript.exe",
                 ".bat",
                 ".cmd",
-                ".vbs"
+                ".vbs",
+                ".wsf",
+                ".js"
                 };
             foreach (string exception in exceptions)
             {
