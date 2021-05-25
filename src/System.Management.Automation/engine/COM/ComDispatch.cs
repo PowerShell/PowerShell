@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 using COM = System.Runtime.InteropServices.ComTypes;
