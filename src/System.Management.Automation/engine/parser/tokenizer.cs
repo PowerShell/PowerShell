@@ -12,6 +12,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 using Microsoft.PowerShell.Commands;
+using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
@@ -361,7 +363,15 @@ namespace System.Management.Automation.Language
             string implementingModule = keyword.ImplementingModule;
             if (implementingModule != null)
             {
-                return implementingModule.Equals(DscClassCache.DefaultModuleInfoForMetaConfigResource.Item1, StringComparison.OrdinalIgnoreCase);
+                ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                if (dscSubsystem != null)
+                {
+                    dscSubsystem.IsDefaultModuleNameForMetaConfigResource(implementingModule);
+                }
+                else
+                {
+                    return implementingModule.Equals(DscClassCache.DefaultModuleInfoForMetaConfigResource.Item1, StringComparison.OrdinalIgnoreCase);
+                }
             }
 
             return false;

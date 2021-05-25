@@ -549,6 +549,7 @@ namespace System.Management.Automation
         /// if any information is to be added. It should encapsulate the
         /// error record into an exception and then throw that exception.
         /// </remarks>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         void ThrowTerminatingError(ErrorRecord errorRecord);
         #endregion ThrowTerminatingError
         #endregion misc

@@ -17,11 +17,13 @@ using Microsoft.PowerShell.Commands.Internal;
 
 namespace Microsoft.PowerShell.Commands
 {
+
+#nullable enable
     internal interface IRegistryWrapper
     {
-        void SetValue(string name, object value);
+        void SetValue(string? name, object value);
 
-        void SetValue(string name, object value, RegistryValueKind valueKind);
+        void SetValue(string? name, object value, RegistryValueKind valueKind);
 
         string[] GetValueNames();
 
@@ -29,17 +31,17 @@ namespace Microsoft.PowerShell.Commands
 
         string[] GetSubKeyNames();
 
-        IRegistryWrapper CreateSubKey(string subkey);
+        IRegistryWrapper? CreateSubKey(string subkey);
 
-        IRegistryWrapper OpenSubKey(string name, bool writable);
+        IRegistryWrapper? OpenSubKey(string name, bool writable);
 
         void DeleteSubKeyTree(string subkey);
 
-        object GetValue(string name);
+        object? GetValue(string? name);
 
-        object GetValue(string name, object defaultValue, RegistryValueOptions options);
+        object? GetValue(string? name, object? defaultValue, RegistryValueOptions options);
 
-        RegistryValueKind GetValueKind(string name);
+        RegistryValueKind GetValueKind(string? name);
 
         object RegistryKey { get; }
 
@@ -53,6 +55,7 @@ namespace Microsoft.PowerShell.Commands
 
         int SubKeyCount { get; }
     }
+#nullable restore
 
     internal static class RegistryWrapperUtils
     {

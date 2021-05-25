@@ -1310,3 +1310,6 @@ codesign
 release-BuildJson
 yml
 centos-7
+ - test/perf/benchmarks/README.md
+benchmarked
+BenchmarkDotNet

@@ -6270,35 +6270,36 @@ namespace System.Management.Automation
         internal static List<CompletionResult> CompleteHelpTopics(CompletionContext context)
         {
             var results = new List<CompletionResult>();
-            var searchPaths = new List<string>();
-            var currentCulture = CultureInfo.CurrentCulture.Name;
+            string userHelpDir = HelpUtils.GetUserHomeHelpSearchPath();
+            string appHelpDir = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+            string currentCulture = CultureInfo.CurrentCulture.Name;
 
-            // Add the user scope path first, since it is searched in order.
-            var userHelpRoot = Path.Combine(HelpUtils.GetUserHomeHelpSearchPath(), currentCulture);
+            //search for help files for the current culture + en-US as fallback
+            var searchPaths = new string[]
+            { 
+                Path.Combine(userHelpDir, currentCulture),
+                Path.Combine(appHelpDir, currentCulture),
+                Path.Combine(userHelpDir, "en-US"),
+                Path.Combine(appHelpDir, "en-US")
+            }.Distinct();
 
-            if (Directory.Exists(userHelpRoot))
-            {
-                searchPaths.Add(userHelpRoot);
-            }
-
-            var dirPath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID), currentCulture);
-            searchPaths.Add(dirPath);
-
-            var wordToComplete = context.WordToComplete + "*";
-            var topicPattern = WildcardPattern.Get("about_*.help.txt", WildcardOptions.IgnoreCase);
-            List<string> files = new List<string>();
-
+            string wordToComplete = context.WordToComplete + "*";
             try
             {
                 var wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
 
                 foreach (var dir in searchPaths)
                 {
-                    foreach (var file in Directory.EnumerateFiles(dir))
+                    var currentDir = new DirectoryInfo(dir);
+                    if (currentDir.Exists)
                     {
-                        if (wildcardPattern.IsMatch(Path.GetFileName(file)))
+                        foreach (var file in currentDir.EnumerateFiles("about_*.help.txt"))
                         {
-                            files.Add(file);
+                            if (wildcardPattern.IsMatch(file.Name))
+                            {
+                                string topicName = file.Name.Substring(0, file.Name.LastIndexOf(".help.txt"));
+                                results.Add(new CompletionResult(topicName));
+                            }
                         }
                     }
                 }
@@ -6306,33 +6307,6 @@ namespace System.Management.Automation
             catch (Exception)
             {
             }
-
-            if (files != null)
-            {
-                foreach (string file in files)
-                {
-                    if (file == null)
-                    {
-                        continue;
-                    }
-
-                    try
-                    {
-                        var fileName = Path.GetFileName(file);
-                        if (fileName == null || !topicPattern.IsMatch(fileName))
-                            continue;
-
-                        // All topic files are ending with ".help.txt"
-                        var completionText = fileName.Substring(0, fileName.Length - 9);
-                        results.Add(new CompletionResult(completionText));
-                    }
-                    catch (Exception)
-                    {
-                        continue;
-                    }
-                }
-            }
-
             return results;
         }
 
