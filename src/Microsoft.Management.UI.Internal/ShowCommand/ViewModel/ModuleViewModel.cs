@@ -377,6 +377,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             }
         }
 
+        #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
+
         /// <summary>
         /// Callled in response to a GUI event that requires the command to be run.
         /// </summary>
@@ -532,5 +534,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #pragma warning restore IDE1005
     }
 }

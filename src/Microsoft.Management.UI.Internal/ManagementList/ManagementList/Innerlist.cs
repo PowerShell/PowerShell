@@ -402,12 +402,14 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The exception to be thrown when using Items.</returns>
         private static NotSupportedException GetItemsException()
         {
+            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             return new NotSupportedException(
                 string.Format(
                     CultureInfo.InvariantCulture,
                     InvariantResources.NotSupportAddingToItems,
                     typeof(InnerList).Name,
                     ItemsControl.ItemsSourceProperty.Name));
+            #pragma warning restore IDE1005s
         }
         #endregion static private methods
 

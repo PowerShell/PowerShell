@@ -5,6 +5,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Management.UI.Internal
 {
@@ -173,6 +174,8 @@ namespace Microsoft.Management.UI.Internal
 
         #region NotifyPropertyChanged
 
+        #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
+
         /// <summary>
         /// Notifies listeners that a property has changed.
         /// </summary>
@@ -213,6 +216,8 @@ namespace Microsoft.Management.UI.Internal
                 eh(this, new EventArgs());
             }
         }
+
+        #pragma warning restore IDE1005
 
         private void FilterProvider_FilterExpressionChanged(object sender, EventArgs e)
         {
