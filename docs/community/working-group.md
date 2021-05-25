@@ -11,7 +11,8 @@ The list, description, and membership of the existing Working Groups is availabl
 ## Terms
 
 * **Contributor** is used interchangeably within this doc as anyone participating in issues or
-  contributing code/RFCs/etc, regardless of their status with the PowerShell project.
+  contributing code, RFCs, documentations, tests, bug reports, etc.,
+  regardless of their status with the PowerShell project.
 * **Repository Maintainers** are trusted stewards of the PowerShell repository responsible for
   maintaining consistency and quality of PowerShell code.
   One of their primary responsibilities is merging pull requests after all requirements have been fulfilled.

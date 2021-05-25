@@ -1,4 +1,4 @@
-# Working Group Defintions
+# Working Group Definitions
 
 This document maintains a list of the current PowerShell [Working Groups (WG)](working-group.md),
 as well as their definitions, membership, and a non-exhaustive set of examples of topics that fall
@@ -40,7 +40,7 @@ Special consideration should be given to topics like **backwards compatibility**
 
 ## Engine
 
-The PowerShell engine is one of the largest and least well-defined aspects of the codebase.
+The PowerShell engine is one of the largest and most complex aspects of the codebase.
 The Engine WG should be focused on the
 **implementation and maintenance of core PowerShell engine code**.
 This includes (but is not limited to):
