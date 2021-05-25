@@ -474,6 +474,7 @@ namespace System.Management.Automation
                         // on Windows desktops, see if there is a file association for this command. If so then we'll use that.
                         string executable = FindExecutable(startInfo.FileName);
                         bool notDone = true;
+                        // check to see what mode we should be in for argument passing
                         if (!string.IsNullOrEmpty(executable))
                         {
                             isWindowsApplication = IsWindowsApplication(executable);
@@ -485,7 +486,16 @@ namespace System.Management.Automation
 
                             string oldArguments = startInfo.Arguments;
                             string oldFileName = startInfo.FileName;
-                            startInfo.Arguments = "\"" + startInfo.FileName + "\" " + startInfo.Arguments;
+                            bool useSpecialArgumentPassing = UseSpecialArgumentPassing(oldFileName);
+                            // Check to see whether we should be using Legacy mode
+                            if (useSpecialArgumentPassing)
+                            {
+                                startInfo.Arguments = "\"" + oldFileName + "\" " + startInfo.Arguments;
+                            }
+                            else
+                            {
+                                startInfo.ArgumentList.Insert(0, oldFileName);
+                            }
                             startInfo.FileName = executable;
                             try
                             {
@@ -495,7 +505,14 @@ namespace System.Management.Automation
                             catch (Win32Exception)
                             {
                                 // Restore the old filename and arguments to try shell execute last...
-                                startInfo.Arguments = oldArguments;
+                                if (useSpecialArgumentPassing)
+                                {
+                                    startInfo.Arguments = oldArguments;
+                                }
+                                else
+                                {
+                                    startInfo.ArgumentList.RemoveAt(0);
+                                }
                                 startInfo.FileName = oldFileName;
                             }
                         }
@@ -1174,6 +1191,20 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Get whether we should treat this executable with special handling and use the legacy passing style.
+        /// </summary>
+        /// <param name="filePath"></param>
+        private bool UseSpecialArgumentPassing(string filePath)
+        {
+            // We need to check if we're using legacy argument passing or it's a special case.
+            bool useLegacy = NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Legacy;
+            bool windowsSpecialCase =
+                NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Windows &&
+                UseLegacyPassingStyle(filePath);
+            return (useLegacy || windowsSpecialCase);
+        }
+
+        /// <summary>
         /// Gets the start info for process.
         /// </summary>
         /// <param name="redirectOutput"></param>
@@ -1200,12 +1231,7 @@ namespace System.Management.Automation
             using (ParameterBinderBase.bindingTracer.TraceScope("BIND NAMED native application line args [{0}]", this.Path))
             {
                 // We need to check if we're using legacy argument passing or it's a special case.
-                bool useLegacy = NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Legacy;
-                bool windowsSpecialCase =
-                    NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Windows &&
-                    UseLegacyPassingStyle(startInfo.FileName);
-
-                if (useLegacy || windowsSpecialCase)
+                if (UseSpecialArgumentPassing(startInfo.FileName))
                 {
                     using (ParameterBinderBase.bindingTracer.TraceScope("BIND argument [{0}]", NativeParameterBinderController.Arguments))
                     {
