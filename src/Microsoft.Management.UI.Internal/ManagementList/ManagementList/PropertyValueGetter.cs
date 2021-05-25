@@ -4,6 +4,7 @@
 using System;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace Microsoft.Management.UI.Internal
