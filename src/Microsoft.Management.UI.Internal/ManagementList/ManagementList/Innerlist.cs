@@ -355,7 +355,7 @@ namespace Microsoft.Management.UI.Internal
         {
             base.OnKeyDown(e);
 
-            if ((Key.Left == e.Key || Key.Right == e.Key) &&
+            if ((e.Key == Key.Left || e.Key == Key.Right) &&
                 Keyboard.Modifiers == ModifierKeys.None)
             {
                 // If pressing Left or Right on a column header, move the focus \\
