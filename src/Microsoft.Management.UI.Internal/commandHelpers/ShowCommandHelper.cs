@@ -643,7 +643,9 @@ Function PSGetSerializedShowCommandInfo
             ModuleViewModel moduleToSelect = returnValue.Modules.Find(
                 new Predicate<ModuleViewModel>((module) =>
                 {
+                    #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
                     return module.Name.Equals(selectedModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase);
+                    #pragma warning restore IDE0075
                 }));
 
             if (moduleToSelect == null)

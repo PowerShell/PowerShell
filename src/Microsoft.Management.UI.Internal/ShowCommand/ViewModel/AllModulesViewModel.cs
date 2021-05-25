@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
@@ -79,10 +80,12 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="commands">Commands to show.</param>
         public AllModulesViewModel(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands)
         {
+            #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
             if (commands == null || !commands.GetEnumerator().MoveNext())
             {
                 throw new ArgumentNullException("commands");
             }
+            #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
 
             this.Initialization(importedModules, commands, true);
         }
