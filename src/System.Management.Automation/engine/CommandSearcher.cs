@@ -1723,7 +1723,9 @@ namespace System.Management.Automation
             _currentState = SearchState.SearchingAliases;
             _matchingAlias = null;
             _matchingCmdlet = null;
+#if UNIX
             _matchingManpage = null;
+#endif
         }
 
         internal CommandOrigin CommandOrigin
