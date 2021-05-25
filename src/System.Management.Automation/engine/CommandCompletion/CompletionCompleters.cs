@@ -4923,6 +4923,11 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteComment(CompletionContext context, ref int replacementIndex, ref int replacementLength)
         {
+            if (context.WordToComplete.StartsWith("<#", StringComparison.Ordinal))
+            {
+                return CompleteCommentHelp(context, ref replacementIndex, ref replacementLength);
+            }
+
             // Complete #requires statements
             if (context.WordToComplete.StartsWith("#requires ", StringComparison.OrdinalIgnoreCase))
             {
@@ -5187,6 +5192,256 @@ namespace System.Management.Automation
             '\'',
             ' ',
         };
+
+        private static List<CompletionResult> CompleteCommentHelp(CompletionContext context, ref int replacementIndex, ref int replacementLength)
+        {
+            // Finds comment keywords like ".DESCRIPTION"
+            MatchCollection usedKeywords = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.)\w*", RegexOptions.Multiline);
+            if (usedKeywords.Count == 0)
+            {
+                return null;
+            }
+
+            // Last keyword at or before the cursor
+            Match lineKeyword = null;
+            for (int i = usedKeywords.Count - 1; i >= 0; i--)
+            {
+                Match keyword = usedKeywords[i];
+                if (context.CursorPosition.Offset >= keyword.Index + context.TokenAtCursor.Extent.StartOffset)
+                {
+                    lineKeyword = keyword;
+                    break;
+                }
+            }
+
+            if (lineKeyword is null)
+            {
+                return null;
+            }
+
+            // Cursor is within or at the start/end of the keyword
+            if (context.CursorPosition.Offset <= lineKeyword.Index + lineKeyword.Length + context.TokenAtCursor.Extent.StartOffset)
+            {
+                replacementIndex = context.TokenAtCursor.Extent.StartOffset + lineKeyword.Index;
+                replacementLength = lineKeyword.Value.Length;
+
+                var validKeywords = new HashSet<String>(s_commentHelpKeywords.Keys, StringComparer.OrdinalIgnoreCase);
+                foreach (Match keyword in usedKeywords)
+                {
+                    if (keyword == lineKeyword || s_commentHelpAllowedDuplicateKeywords.Contains(keyword.Value))
+                    {
+                        continue;
+                    }
+
+                    validKeywords.Remove(keyword.Value);
+                }
+
+                var result = new List<CompletionResult>();
+                foreach (string keyword in validKeywords)
+                {
+                    if (keyword.StartsWith(lineKeyword.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, s_commentHelpKeywords[keyword]));
+                    }
+                }
+
+                return result.Count > 0 ? result : null;
+            }
+
+            // Finds the argument for the keyword (any characters following the keyword, ignoring leading/trailing whitespace). For example "C:\New folder"
+            Match keywordArgument = Regex.Match(context.CursorPosition.Line, @"(?<=^\s*\.\w+\s+)\S.*(?<=\S)");
+            int lineStartIndex = lineKeyword.Index - context.CursorPosition.Line.IndexOf(lineKeyword.Value) + context.TokenAtCursor.Extent.StartOffset;
+            int argumentIndex = keywordArgument.Success ? keywordArgument.Index : context.CursorPosition.ColumnNumber - 1;
+
+            replacementIndex = lineStartIndex + argumentIndex;
+            replacementLength = keywordArgument.Value.Length;
+
+            if (lineKeyword.Value.Equals("PARAMETER", StringComparison.OrdinalIgnoreCase))
+            {
+                return CompleteCommentParameterValue(context, keywordArgument.Value);
+            }
+
+            if (lineKeyword.Value.Equals("FORWARDHELPTARGETNAME", StringComparison.OrdinalIgnoreCase))
+            {
+                var result = new List<CompletionResult>(CompleteCommand(keywordArgument.Value, "*", CommandTypes.All));
+                return result.Count > 0 ? result : null;
+            }
+
+            if (lineKeyword.Value.Equals("FORWARDHELPCATEGORY", StringComparison.OrdinalIgnoreCase))
+            {
+                var result = new List<CompletionResult>();
+                foreach (string category in s_commentHelpForwardCategories)
+                {
+                    if (category.StartsWith(keywordArgument.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(new CompletionResult(category));
+                    }
+                }
+                return result.Count > 0 ? result : null;
+            }
+
+            if (lineKeyword.Value.Equals("REMOTEHELPRUNSPACE", StringComparison.OrdinalIgnoreCase))
+            {
+                var result = new List<CompletionResult>();
+                foreach (CompletionResult variable in CompleteVariable(keywordArgument.Value))
+                {
+                    // ListItemText is used because it excludes the "$" as expected by REMOTEHELPRUNSPACE.
+                    result.Add(new CompletionResult(variable.ListItemText, variable.ListItemText, variable.ResultType, variable.ToolTip));
+                }
+                return result.Count > 0 ? result : null;
+            }
+
+            if (lineKeyword.Value.Equals("EXTERNALHELP", StringComparison.OrdinalIgnoreCase))
+            {
+                context.WordToComplete = keywordArgument.Value;
+                var result = new List<CompletionResult>(CompleteFilename(context, containerOnly: false, (new HashSet<string>() { ".xml" })));
+                return result.Count > 0 ? result : null;
+            }
+
+            return null;
+        }
+
+        private static readonly IReadOnlyDictionary<string, string> s_commentHelpKeywords = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "SYNOPSIS", "A brief description of the function or script. This keyword can be used only once in each topic." },
+            { "DESCRIPTION", "A detailed description of the function or script. This keyword can be used only once in each topic." },
+            { "PARAMETER", ".PARAMETER  <Parameter-Name>\nThe description of a parameter. Add a .PARAMETER keyword for each parameter in the function or script syntax." },
+            { "EXAMPLE", "A sample command that uses the function or script, optionally followed by sample output and a description. Repeat this keyword for each example." },
+            { "INPUTS", "The .NET types of objects that can be piped to the function or script. You can also include a description of the input objects." },
+            { "OUTPUTS", "The .NET type of the objects that the cmdlet returns. You can also include a description of the returned objects." },
+            { "NOTES", "Additional information about the function or script." },
+            { "LINK", "The name of a related topic. Repeat the .LINK keyword for each related topic. The .Link keyword content can also include a URI to an online version of the same help topic." },
+            { "COMPONENT", "The name of the technology or feature that the function or script uses, or to which it is related." },
+            { "ROLE", "The name of the user role for the help topic." },
+            { "FUNCTIONALITY", "The keywords that describe the intended use of the function." },
+            { "FORWARDHELPTARGETNAME", ".FORWARDHELPTARGETNAME <Command-Name>\nRedirects to the help topic for the specified command." },
+            { "FORWARDHELPCATEGORY", ".FORWARDHELPCATEGORY <Category>\nSpecifies the help category of the item in .ForwardHelpTargetName" },
+            { "REMOTEHELPRUNSPACE", ".REMOTEHELPRUNSPACE <PSSession-variable>\nSpecifies a session that contains the help topic. Enter a variable that contains a PSSession object." },
+            { "EXTERNALHELP", ".EXTERNALHELP <XML Help File>\nThe .ExternalHelp keyword is required when a function or script is documented in XML files." }
+        };
+
+        private static readonly HashSet<string> s_commentHelpAllowedDuplicateKeywords = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "PARAMETER",
+            "EXAMPLE",
+            "LINK"
+        };
+
+        private static readonly string[] s_commentHelpForwardCategories = new string[]
+        {
+            "Alias",
+            "Cmdlet",
+            "HelpFile",
+            "Function",
+            "Provider",
+            "General",
+            "FAQ",
+            "Glossary",
+            "ScriptCommand",
+            "ExternalScript",
+            "Filter",
+            "All"
+        };
+
+        private static FunctionDefinitionAst GetCommentHelpFunctionTarget(CompletionContext context)
+        {
+            if (context.TokenAtCursor.Kind != TokenKind.Comment)
+            {
+                return null;
+            }
+
+            Ast lastAst = context.RelatedAsts[^1];
+            Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= context.TokenAtCursor.Extent.EndOffset, searchNestedScriptBlocks: false);
+
+            // Comment-based help can apply to a following function definition if it starts within 2 lines
+            int commentEndLine = context.TokenAtCursor.Extent.EndLineNumber + 2;
+
+            if (lastAst is NamedBlockAst)
+            {
+                // Helpblock before function inside advanced function
+                if (firstAstAfterComment is not null
+                    && firstAstAfterComment.Extent.StartLineNumber <= commentEndLine
+                    && firstAstAfterComment is FunctionDefinitionAst outerHelpFunctionDefAst)
+                {
+                    return outerHelpFunctionDefAst;
+                }
+
+                // Helpblock inside function
+                if (lastAst.Parent.Parent is FunctionDefinitionAst innerHelpFunctionDefAst)
+                {
+                    return innerHelpFunctionDefAst;
+                }
+            }
+
+            if (lastAst is ScriptBlockAst)
+            {
+                // Helpblock before function
+                if (firstAstAfterComment is not null
+                    && firstAstAfterComment.Extent.StartLineNumber <= commentEndLine
+                    && firstAstAfterComment is NamedBlockAst block
+                    && block.Statements.Count > 0
+                    && block.Statements[0] is FunctionDefinitionAst statement)
+                {
+                    return statement;
+                }
+
+                // Advanced function with help inside
+                if (lastAst.Parent is FunctionDefinitionAst advFuncDefAst)
+                {
+                    return advFuncDefAst;
+                }
+            }
+
+            return null;
+        }
+        
+        private static List<CompletionResult> CompleteCommentParameterValue(CompletionContext context, string wordToComplete)
+        {
+            FunctionDefinitionAst foundFunction = GetCommentHelpFunctionTarget(context);
+            
+            ReadOnlyCollection<ParameterAst> foundParameters = null;
+            if (foundFunction is not null)
+            {
+                foundParameters = foundFunction.Parameters ?? foundFunction.Body.ParamBlock?.Parameters;
+            }
+            else if (context.RelatedAsts[^1] is ScriptBlockAst scriptAst)
+            {
+                // The helpblock is for a script file
+                foundParameters = scriptAst.ParamBlock?.Parameters;
+            }
+            
+            if (foundParameters is null || foundParameters.Count == 0)
+            {
+                return null;
+            }
+
+            var parametersToShow = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (ParameterAst parameter in foundParameters)
+            {
+                if (parameter.Name.VariablePath.UserPath.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                {
+                    parametersToShow.Add(parameter.Name.VariablePath.UserPath);
+                }
+            }
+
+            MatchCollection usedParameters = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.parameter\s+)\w.*(?<=\S)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+            foreach (Match parameter in usedParameters)
+            {
+                if (wordToComplete.Equals(parameter.Value, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+                parametersToShow.Remove(parameter.Value);
+            }
+
+            var result = new List<CompletionResult>();
+            foreach (string parameter in parametersToShow)
+            {
+                result.Add(new CompletionResult(parameter));
+            }
+
+            return result.Count > 0 ? result : null;
+        }
 
         #endregion Comments
 
