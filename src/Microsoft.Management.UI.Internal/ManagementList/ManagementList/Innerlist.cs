@@ -389,8 +389,8 @@ namespace Microsoft.Management.UI.Internal
                 throw new NotSupportedException(string.Format(
                     CultureInfo.InvariantCulture,
                    InvariantResources.ViewSetWithType,
-                   typeof(GridView).Name,
-                   typeof(InnerListGridView).Name));
+                   nameof(GridView),
+                   nameof(InnerListGridView)));
             }
 
             ((InnerList)obj).innerGrid = innerGrid;
@@ -407,7 +407,7 @@ namespace Microsoft.Management.UI.Internal
                 string.Format(
                     CultureInfo.InvariantCulture,
                     InvariantResources.NotSupportAddingToItems,
-                    typeof(InnerList).Name,
+                    nameof(InnerList),
                     ItemsControl.ItemsSourceProperty.Name));
             #pragma warning restore IDE1005s
         }
