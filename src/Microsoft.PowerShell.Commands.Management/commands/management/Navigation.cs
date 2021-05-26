@@ -2698,8 +2698,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            System.IO.DirectoryInfo di = new(providerPath);
-                            if (di != null && InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(di))
+                            var directoryInfo = new System.IO.DirectoryInfo(providerPath);
+                            if (directoryInfo.Exists
+                                && InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(directoryInfo))
                             {
                                 shouldRecurse = false;
                                 treatAsFile = true;
