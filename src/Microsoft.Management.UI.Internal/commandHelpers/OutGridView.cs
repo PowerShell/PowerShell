@@ -213,7 +213,7 @@ namespace Microsoft.Management.UI.Internal
 
             if (this.zoomLevel < ZOOM_MAX)
             {
-                this.zoomLevel = this.zoomLevel + ZOOM_INCREMENT;
+                this.zoomLevel += ZOOM_INCREMENT;
                 Grid g = this.gridViewWindow.Content as Grid;
 
                 if (g != null)
@@ -232,7 +232,7 @@ namespace Microsoft.Management.UI.Internal
         {
             if (this.zoomLevel >= ZOOM_MIN)
             {
-                this.zoomLevel = this.zoomLevel - ZOOM_INCREMENT;
+                this.zoomLevel -= ZOOM_INCREMENT;
                 Grid g = this.gridViewWindow.Content as Grid;
                 if (g != null)
                 {
@@ -246,6 +246,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="outputMode">Output mode of the out-gridview.</param>
         /// <returns>A new ManagementList.</returns>
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private ManagementList CreateManagementList(string outputMode)
         {
             ManagementList newList = new ManagementList();

@@ -470,10 +470,11 @@ namespace Microsoft.PowerShell.Commands
             // The placeholder mode management APIs Rtl(Set|Query)(Process|Thread)PlaceholderCompatibilityMode
             // are only supported starting with Windows 10 version 1803 (build 17134)
             Version minBuildForPlaceHolderAPIs = new Version(10, 0, 17134, 0);
+
             if (Environment.OSVersion.Version >= minBuildForPlaceHolderAPIs)
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
-                if (NativeMethods.PHCM_DISGUISE_PLACEHOLDER == NativeMethods.RtlQueryProcessPlaceholderCompatibilityMode())
+                if (NativeMethods.RtlQueryProcessPlaceholderCompatibilityMode() == NativeMethods.PHCM_DISGUISE_PLACEHOLDER)
                 {
                     NativeMethods.RtlSetProcessPlaceholderCompatibilityMode(NativeMethods.PHCM_EXPOSE_PLACEHOLDERS);
                 }
@@ -8387,9 +8388,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             inodeData = (0, 0);
+
             return false;
         }
 #endif
+
         internal static bool IsHardLink(ref IntPtr handle)
         {
 #if UNIX

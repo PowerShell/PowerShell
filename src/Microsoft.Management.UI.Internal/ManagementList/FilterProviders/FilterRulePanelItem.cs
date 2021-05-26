@@ -107,11 +107,15 @@ namespace Microsoft.Management.UI.Internal
         {
             Debug.Assert(!string.IsNullOrEmpty(propertyName), "not null");
 
+            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
+
             PropertyChangedEventHandler eh = this.PropertyChanged;
             if (eh != null)
             {
                 eh(this, new PropertyChangedEventArgs(propertyName));
             }
+
+            #pragma warning restore IDE1005s
         }
 
         #endregion Public Methods

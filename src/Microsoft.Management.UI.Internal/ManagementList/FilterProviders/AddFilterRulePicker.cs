@@ -4,6 +4,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows.Controls;
 
 namespace Microsoft.Management.UI.Internal
@@ -49,9 +50,11 @@ namespace Microsoft.Management.UI.Internal
 
         partial void OnOkAddFilterRulesCanExecuteImplementation(System.Windows.Input.CanExecuteRoutedEventArgs e)
         {
+            #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
             e.CanExecute = (this.AddFilterRulesCommand != null)
                 ? CommandHelper.CanExecuteCommand(this.AddFilterRulesCommand, null, this.AddFilterRulesCommandTarget)
                 : false;
+            #pragma warning restore IDE0075
         }
 
         partial void OnOkAddFilterRulesExecutedImplementation(System.Windows.Input.ExecutedRoutedEventArgs e)
