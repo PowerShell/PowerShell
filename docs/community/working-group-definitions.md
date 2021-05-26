@@ -77,7 +77,7 @@ These topics include (but are not limited to):
 
 ### Members
 
-* @daxian-dbw (PSReadline / Intellisense)
+* @daxian-dbw (PSReadline / IntelliSense)
 * @adityapatwardhan (Markdown / help system)
 * @JamesWTruher (cmdlet design)
 
