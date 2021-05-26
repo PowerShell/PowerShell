@@ -98,7 +98,6 @@ whether or not the issue should be pursued further.
 Be sure to enumerate your reasons for appeal, as unfounded appeals may be rejected for consideration
 by the Committee until reasons are given.
 
-
 ### Working groups believe the proposal has merit and/or potential
 
 If the idea passes the preliminary acceptance criteria for the Working Group,
