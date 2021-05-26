@@ -26,8 +26,123 @@ Describe "Behavior is specific for each platform" {
         $result[1] | Should -Be 1
         $result[2] | Should Be "a"
     }
-    
+
 }
+
+Describe "tests for multiple languages and extensions" {
+    BeforeAll {
+        if ($IsWindows) {
+            cscript  //h:cscript //nologo //s
+        }
+        $testCases = @(
+            @{
+                Command = ""
+                Filename = "test.wsf"
+                ExpectedResults = @(
+                    "Argument 0 is: <ab cd>"
+                    "Argument 1 is: <ab cd>"
+                    "Argument 2 is: <ab cd>"
+                    "Argument 3 is: <a'b c'd>"
+                )
+                Script = @'
+<?xml version="1.0" ?>
+<job id="test">
+   <script language="VBScript">
+     <![CDATA[
+for i = 0 to wScript.arguments.count-1
+    wscript.echo "Argument " & i & " is: <" & wScript.arguments(i) & ">"
+next
+     ]]>
+   </script>
+</job>
+'@
+            }
+            @{
+                Command = ""
+                Filename = "test.vbs"
+                ExpectedResults = @(
+                    "Argument 0 is: <ab cd>"
+                    "Argument 1 is: <ab cd>"
+                    "Argument 2 is: <ab cd>"
+                    "Argument 3 is: <a'b c'd>"
+                )
+                Script = @'
+for i = 0 to wScript.arguments.count - 1
+    wscript.echo "Argument " & i & " is: <" & (wScript.arguments(i)) & ">"
+next
+'@
+            }
+            @{
+                Command = "cscript"
+                Filename = "test.js"
+                ExpectedResults = @(
+                    "Argument 0 is: <ab cd>"
+                    "Argument 1 is: <ab cd>"
+                    "Argument 2 is: <ab cd>"
+                    "Argument 3 is: <a'b c'd>"
+                )
+                Script = @'
+for(i = 0; i < WScript.Arguments.Count(); i++) {
+    WScript.echo("Argument " + i + " is: <" + WScript.Arguments(i) + ">");
+}
+'@
+            }
+            @{
+                Command = ""
+                Filename = "test.bat"
+                ExpectedResults = @(
+                    "Argument 1 is: <a""b c""d>"
+                    "Argument 2 is: <a""b c""d>"
+                    "Argument 3 is: <""ab cd"">"
+                    "Argument 4 is: <""a'b c'd"">"
+                )
+                Script = @'
+@echo off
+echo Argument 1 is: ^<%1^>
+echo Argument 2 is: ^<%2^>
+echo Argument 3 is: ^<%3^>
+echo Argument 4 is: ^<%4^>
+'@
+            }
+            @{
+                Command = ""
+                Filename = "test.cmd"
+                ExpectedResults = @(
+                    "Argument 1 is: <a""b c""d>"
+                    "Argument 2 is: <a""b c""d>"
+                    "Argument 3 is: <""ab cd"">"
+                    "Argument 4 is: <""a'b c'd"">"
+                )
+                Script = @'
+@echo off
+echo Argument 1 is: ^<%1^>
+echo Argument 2 is: ^<%2^>
+echo Argument 3 is: ^<%3^>
+echo Argument 4 is: ^<%4^>
+'@
+            }
+        )
+    }
+
+    It "Invoking '<Filename>' is compatible with PowerShell 5" -TestCases $testCases -Skip:$(!$IsWindows) {
+        param ( $Command, $Arguments, $Filename, $Script, $ExpectedResults )
+        $a = 'a"b c"d'
+        $scriptPath = Join-Path $TESTDRIVE $Filename
+        $Script | out-file -encoding ASCII $scriptPath
+        if ($Command) {
+            $results = & $Command $scriptPath  $a 'a"b c"d' a"b c"d "a'b c'd"
+        }
+        else {
+            $results = & $scriptPath  $a 'a"b c"d' a"b c"d "a'b c'd"
+        }
+        $results.Count | Should -Be 4
+        $results[0] | Should -Be $ExpectedResults[0]
+        $results[1] | Should -Be $ExpectedResults[1]
+        $results[2] | Should -Be $ExpectedResults[2]
+        $results[3] | Should -Be $ExpectedResults[3]
+    }
+}
+
 
 Describe "Will error correctly if an attempt to set variable to improper value" {
     It "will error when setting variable incorrectly" {
