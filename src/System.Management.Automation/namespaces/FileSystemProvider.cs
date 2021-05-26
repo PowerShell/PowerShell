@@ -8243,6 +8243,12 @@ namespace Microsoft.PowerShell.Commands
 
             WIN32_FIND_DATA data = default;
             string fullPath = Path.TrimEndingDirectorySeparator(fileInfo.FullName);
+
+            if (fullPath.Length > MAX_PATH)
+            {
+                fullPath = "\\\\?\\" + fullPath;
+            }
+
             using (var handle = FindFirstFileEx(fullPath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
                 if (handle.IsInvalid)
