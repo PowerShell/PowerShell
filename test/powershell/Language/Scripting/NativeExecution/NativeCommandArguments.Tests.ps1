@@ -42,7 +42,7 @@ Describe "tests for multiple languages and extensions" -tags "CI" {
     BeforeAll {
         $testCases = @(
             @{
-                Command = ""
+                Command = "cscript.exe"
                 Filename = "test.wsf"
                 ExpectedResults = @(
                     "Argument 0 is: <ab cd>"
@@ -64,7 +64,7 @@ next
 '@
             }
             @{
-                Command = ""
+                Command = "cscript.exe"
                 Filename = "test.vbs"
                 ExpectedResults = @(
                     "Argument 0 is: <ab cd>"
