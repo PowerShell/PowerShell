@@ -1304,6 +1304,18 @@ powershell.config.json
 romero126
 boolean
 rtm.20526.5
+dbaileyut
+un-localized
+awakecoding
+bcwood
+ThrowTerminatingError
+DoesNotReturn
+GetValueOrDefault
+PSLanguageMode
+adamsitnik
+msixbundle
+PowerShell-Native#70
+AppxManifest.xml
 
  - CHANGELOG/7.0.md
 codesign
