@@ -3,7 +3,7 @@
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "")]
 param()
 
-Describe "Behavior is specific for each platform" {
+Describe "Behavior is specific for each platform" -tags "CI" {
     BeforeAll {
         $skipTests = $false
         if ($EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing') {
@@ -29,11 +29,17 @@ Describe "Behavior is specific for each platform" {
 
 }
 
-Describe "tests for multiple languages and extensions" {
-    BeforeAll {
-        if ($IsWindows) {
-            cscript  //h:cscript //nologo //s
+Describe "tests for multiple languages and extensions" -tags "CI" {
+    AfterAll {
+        if ($EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing') {
+            return
         }
+        if (! $IsWindows ) {
+            return
+        }
+        $PSNativeCommandArgumentPassing = $passingStyle
+    }
+    BeforeAll {
         $testCases = @(
             @{
                 Command = ""
@@ -122,10 +128,29 @@ echo Argument 4 is: ^<%4^>
 '@
             }
         )
+
+        # determine whether we should skip the tests we just defined
+        # doing it in this order ensures that the test output will show each skipped test
+        $skipTests = $false
+        if ($EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing') {
+            $skipTests = $true
+            return
+        }
+
+        if (! $IsWindows ) {
+            $skipTests = $true
+            return
+        }
+
+        # save the passing style
+        $passingStyle = $PSNativeCommandArgumentPassing
+        # explicitely set the passing style to Windows
+        $PSNativeCommandArgumentPassing = "Windows"
     }
 
-    It "Invoking '<Filename>' is compatible with PowerShell 5" -TestCases $testCases -Skip:$(!$IsWindows) {
+    It "Invoking '<Filename>' is compatible with PowerShell 5" -TestCases $testCases -Skip:$($skipTests) {
         param ( $Command, $Arguments, $Filename, $Script, $ExpectedResults )
+        cscript  //h:cscript //nologo //s
         $a = 'a"b c"d'
         $scriptPath = Join-Path $TESTDRIVE $Filename
         $Script | out-file -encoding ASCII $scriptPath
@@ -133,8 +158,10 @@ echo Argument 4 is: ^<%4^>
             $results = & $Command $scriptPath  $a 'a"b c"d' a"b c"d "a'b c'd"
         }
         else {
-            $results = & $scriptPath  $a 'a"b c"d' a"b c"d "a'b c'd"
+            $results = & $scriptPath  $a 'a"b c"d' a"b c"d "a'b c'd" 2> "${TESTDRIVE}/error.txt"
         }
+        $errorContent = Get-Content "${TESTDRIVE}/error.txt"
+        $errorContent | Should -BeNullOrEmpty
         $results.Count | Should -Be 4
         $results[0] | Should -Be $ExpectedResults[0]
         $results[1] | Should -Be $ExpectedResults[1]
@@ -144,7 +171,7 @@ echo Argument 4 is: ^<%4^>
 }
 
 
-Describe "Will error correctly if an attempt to set variable to improper value" {
+Describe "Will error correctly if an attempt to set variable to improper value" -tags "CI" {
     It "will error when setting variable incorrectly" {
         if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
             { $global:PSNativeCommandArgumentPassing = "zzz" } | Should -Throw -ExceptionType System.Management.Automation.ArgumentTransformationMetadataException
@@ -249,7 +276,7 @@ foreach ( $argumentListValue in "Standard","Legacy" ) {
         }
     }
 }
-Describe 'PSPath to native commands' {
+Describe 'PSPath to native commands' -tags "CI" {
     BeforeAll {
         $featureEnabled = $EnabledExperimentalFeatures.Contains('PSNativePSPathResolution')
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
