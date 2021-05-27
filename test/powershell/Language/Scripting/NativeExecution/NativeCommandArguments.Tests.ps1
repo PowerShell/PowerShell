@@ -155,12 +155,12 @@ echo Argument 4 is: ^<%4^>
         $scriptPath = Join-Path $TESTDRIVE $Filename
         $Script | out-file -encoding ASCII $scriptPath
         if ($Command) {
-            $results = & $Command $scriptPath  $a 'a"b c"d' a"b c"d "a'b c'd"
+            $results = & $Command $scriptPath  $a 'a"b c"d' a"b c"d "a'b c'd" 2> "${TESTDRIVE}/error.txt"
         }
         else {
             $results = & $scriptPath  $a 'a"b c"d' a"b c"d "a'b c'd" 2> "${TESTDRIVE}/error.txt"
         }
-        $errorContent = Get-Content "${TESTDRIVE}/error.txt"
+        $errorContent = Get-Content "${TESTDRIVE}/error.txt" -ErrorAction Ignore
         $errorContent | Should -BeNullOrEmpty
         $results.Count | Should -Be 4
         $results[0] | Should -Be $ExpectedResults[0]
