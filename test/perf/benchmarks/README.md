@@ -24,12 +24,12 @@ This folder contains micro benchmarks that test the performance of PowerShell En
 You can run the benchmarks directly using `dotnet run` in this directory:
 1. To run the benchmarks in Interactive Mode, where you will be asked which benchmark(s) to run:
    ```
-   dotnet run -c release
+   dotnet run -c Release
    ```
 
 2. To list all available benchmarks ([read more](https://github.com/dotnet/performance/blob/main/docs/benchmarkdotnet.md#Listing-the-Benchmarks)):
    ```
-   dotnet run -c release --list [flat/tree]
+   dotnet run -c Release --list [flat/tree]
    ```
 
 3. To filter the benchmarks using a glob pattern applied to `namespace.typeName.methodName` ([read more](https://github.com/dotnet/performance/blob/main/docs/benchmarkdotnet.md#Filtering-the-Benchmarks)]):

@@ -4,6 +4,8 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
+using System.Management.Automation.Subsystem.Prediction;
 using System.Threading;
 using Xunit;
 
@@ -19,8 +21,7 @@ namespace PSTests.Sequential
             predictor2 = MyPredictor.SlowPredictor;
         }
 
-        // This method needs to be updated when there are more than 1 subsystem defined.
-        private static void VerifySubsystemMetadata(SubsystemInfo ssInfo)
+        private static void VerifyCommandPredictorMetadata(SubsystemInfo ssInfo)
         {
             Assert.Equal(SubsystemKind.CommandPredictor, ssInfo.Kind);
             Assert.Equal(typeof(ICommandPredictor), ssInfo.SubsystemType);
@@ -30,26 +31,51 @@ namespace PSTests.Sequential
             Assert.Empty(ssInfo.RequiredFunctions);
         }
 
+        private static void VerifyCrossPlatformDscMetadata(SubsystemInfo ssInfo)
+        {
+            Assert.Equal(SubsystemKind.CrossPlatformDsc, ssInfo.Kind);
+            Assert.Equal(typeof(ICrossPlatformDsc), ssInfo.SubsystemType);
+            Assert.True(ssInfo.AllowUnregistration);
+            Assert.False(ssInfo.AllowMultipleRegistration);
+            Assert.Empty(ssInfo.RequiredCmdlets);
+            Assert.Empty(ssInfo.RequiredFunctions);
+        }
+
         [Fact]
         public static void GetSubsystemInfo()
         {
-            SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(typeof(ICommandPredictor));
+            SubsystemInfo predictorInfo = SubsystemManager.GetSubsystemInfo(typeof(ICommandPredictor));
 
-            VerifySubsystemMetadata(ssInfo);
-            Assert.False(ssInfo.IsRegistered);
-            Assert.Empty(ssInfo.Implementations);
+            VerifyCommandPredictorMetadata(predictorInfo);
+            Assert.False(predictorInfo.IsRegistered);
+            Assert.Empty(predictorInfo.Implementations);
 
-            SubsystemInfo ssInfo2 = SubsystemManager.GetSubsystemInfo(SubsystemKind.CommandPredictor);
-            Assert.Same(ssInfo2, ssInfo);
+            SubsystemInfo predictorInfo2 = SubsystemManager.GetSubsystemInfo(SubsystemKind.CommandPredictor);
+            Assert.Same(predictorInfo2, predictorInfo);
+
+            SubsystemInfo crossPlatformDscInfo = SubsystemManager.GetSubsystemInfo(typeof(ICrossPlatformDsc));
+
+            VerifyCrossPlatformDscMetadata(crossPlatformDscInfo);
+            Assert.False(crossPlatformDscInfo.IsRegistered);
+            Assert.Empty(crossPlatformDscInfo.Implementations);
+
+            SubsystemInfo crossPlatformDscInfo2 = SubsystemManager.GetSubsystemInfo(SubsystemKind.CrossPlatformDsc);
+            Assert.Same(crossPlatformDscInfo2, crossPlatformDscInfo);
 
             ReadOnlyCollection<SubsystemInfo> ssInfos = SubsystemManager.GetAllSubsystemInfo();
-            Assert.Single(ssInfos);
-            Assert.Same(ssInfos[0], ssInfo);
+            Assert.Equal(2, ssInfos.Count);
+            Assert.Same(ssInfos[0], predictorInfo);
+            Assert.Same(ssInfos[1], crossPlatformDscInfo);
 
-            ICommandPredictor impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
-            Assert.Null(impl);
-            ReadOnlyCollection<ICommandPredictor> impls = SubsystemManager.GetSubsystems<ICommandPredictor>();
-            Assert.Empty(impls);
+            ICommandPredictor predictorImpl = SubsystemManager.GetSubsystem<ICommandPredictor>();
+            Assert.Null(predictorImpl);
+            ReadOnlyCollection<ICommandPredictor> predictorImpls = SubsystemManager.GetSubsystems<ICommandPredictor>();
+            Assert.Empty(predictorImpls);
+
+            ICrossPlatformDsc crossPlatformDscImpl = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+            Assert.Null(crossPlatformDscImpl);
+            ReadOnlyCollection<ICrossPlatformDsc> crossPlatformDscImpls = SubsystemManager.GetSubsystems<ICrossPlatformDsc>();
+            Assert.Empty(crossPlatformDscImpls);
         }
 
         [Fact]
@@ -72,7 +98,8 @@ namespace PSTests.Sequential
 
                 // Now validate the SubsystemInfo of the 'ICommandPredictor' subsystem
                 SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(typeof(ICommandPredictor));
-                VerifySubsystemMetadata(ssInfo);
+                SubsystemInfo crossPlatformDscInfo = SubsystemManager.GetSubsystemInfo(typeof(ICrossPlatformDsc));
+                VerifyCommandPredictorMetadata(ssInfo);
                 Assert.True(ssInfo.IsRegistered);
                 Assert.Single(ssInfo.Implementations);
 
@@ -84,11 +111,6 @@ namespace PSTests.Sequential
                 Assert.Equal(SubsystemKind.CommandPredictor, implInfo.Kind);
                 Assert.Same(typeof(MyPredictor), implInfo.ImplementationType);
 
-                // Now validate the all-subsystem-info collection.
-                ReadOnlyCollection<SubsystemInfo> ssInfos = SubsystemManager.GetAllSubsystemInfo();
-                Assert.Single(ssInfos);
-                Assert.Same(ssInfos[0], ssInfo);
-
                 // Now validate the subsystem implementation itself.
                 ICommandPredictor impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
                 Assert.Same(impl, predictor1);
@@ -97,8 +119,9 @@ namespace PSTests.Sequential
 
                 const string Client = "SubsystemTest";
                 const string Input = "Hello world";
+                var predClient = new PredictionClient(Client, PredictionClientKind.Terminal);
                 var predCxt = PredictionContext.Create(Input);
-                var results = impl.GetSuggestion(Client, predCxt, CancellationToken.None);
+                var results = impl.GetSuggestion(predClient, predCxt, CancellationToken.None);
                 Assert.Equal($"'{Input}' from '{Client}' - TEST-1 from {impl.Name}", results.SuggestionEntries[0].SuggestionText);
                 Assert.Equal($"'{Input}' from '{Client}' - TeSt-2 from {impl.Name}", results.SuggestionEntries[1].SuggestionText);
 
@@ -111,7 +134,7 @@ namespace PSTests.Sequential
                 SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, predictor2);
 
                 // Now validate the SubsystemInfo of the 'ICommandPredictor' subsystem
-                VerifySubsystemMetadata(ssInfo);
+                VerifyCommandPredictorMetadata(ssInfo);
                 Assert.True(ssInfo.IsRegistered);
                 Assert.Equal(2, ssInfo.Implementations.Count);
 
@@ -156,7 +179,7 @@ namespace PSTests.Sequential
             SubsystemManager.UnregisterSubsystem<ICommandPredictor>(predictor1.Id);
 
             SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(SubsystemKind.CommandPredictor);
-            VerifySubsystemMetadata(ssInfo);
+            VerifyCommandPredictorMetadata(ssInfo);
             Assert.True(ssInfo.IsRegistered);
             Assert.Single(ssInfo.Implementations);
 
@@ -177,7 +200,7 @@ namespace PSTests.Sequential
             // Unregister 'predictor2'
             SubsystemManager.UnregisterSubsystem(SubsystemKind.CommandPredictor, predictor2.Id);
 
-            VerifySubsystemMetadata(ssInfo);
+            VerifyCommandPredictorMetadata(ssInfo);
             Assert.False(ssInfo.IsRegistered);
             Assert.Empty(ssInfo.Implementations);
 

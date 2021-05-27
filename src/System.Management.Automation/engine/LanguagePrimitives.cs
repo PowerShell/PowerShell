@@ -9,7 +9,6 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -339,12 +338,13 @@ namespace System.Management.Automation
         {
             lock (s_converterCache)
             {
-                var toRemove = s_converterCache.Keys.Where(
-                    conv => string.Equals(conv.to.FullName, typeName, StringComparison.OrdinalIgnoreCase) ||
-                            string.Equals(conv.from.FullName, typeName, StringComparison.OrdinalIgnoreCase)).ToArray();
-                foreach (var k in toRemove)
+                foreach (var key in s_converterCache.Keys)
                 {
-                    s_converterCache.Remove(k);
+                    if (string.Equals(key.to.FullName, typeName, StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(key.from.FullName, typeName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        s_converterCache.Remove(key);
+                    }
                 }
 
                 // Note we do not clear possibleTypeConverter even when removing.
