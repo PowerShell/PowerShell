@@ -1267,25 +1267,30 @@ namespace System.Management.Automation
         /// Determine if we have a special file which will change the way native argument passing
         /// is done on Windows. We use legacy behavior for cmd.exe, .bat, .cmd files.
         /// </summary>
-        /// <param name="filename">The file to use when checking how to pass arguments.</param>
+        /// <param name="filePath">The file to use when checking how to pass arguments.</param>
         /// <returns>A boolean indicating what passing style should be used.</returns>
-        private static bool UseLegacyPassingStyle(string filename)
+        private static bool UseLegacyPassingStyle(string filePath)
         {
-            if (filename == null || filename == string.Empty)
+            if (filePath == null || filePath == string.Empty)
             {
                 return false;
             }
 
-            string commandPath = filename.ToLowerInvariant();
+            string commandPath = filePath.ToLowerInvariant();
 
             // This is the list of files which will trigger Legacy behavior if
             // PSNativeCommandArgumentPassing is set to "Windows".
             // The following native commands have non-standard behavior with regard to argument passing.
+            // It's possible (but not likely) that one of the executables could have forward slashes,
+            // so we check for both.
             string[] exceptions = new string[]
                 {
-                "cmd.exe",
-                "cscript.exe",
-                "wscript.exe",
+                "\\cmd.exe",
+                "/cmd.exe",
+                "\\cscript.exe",
+                "/cscript.exe",
+                "\\wscript.exe",
+                "/wscript.exe",
                 ".bat",
                 ".cmd",
                 ".vbs",
@@ -1294,7 +1299,7 @@ namespace System.Management.Automation
                 };
             foreach (string exception in exceptions)
             {
-                if (filename.EndsWith(exception))
+                if (filePath.EndsWith(exception))
                 {
                     return true;
                 }
