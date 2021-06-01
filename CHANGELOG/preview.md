@@ -1,5 +1,91 @@
 # Current preview release
 
+## [7.2.0-preview.6] - 2021-05-27
+
+### Experimental Features
+
+- [Breaking Change] Update prediction interface to provide additional feedback to a predictor plugin (#15421)
+
+### Performance
+
+- Avoid collecting logs in buffer if a pipeline execution event is not going to be logged (#15350)
+- Avoid allocation in `LanguagePrimitives.UpdateTypeConvertFromTypeTable` (#15168) (Thanks @xtqqczze!)
+- Replace `Directory.GetDirectories` with `Directory.EnumerateDirectories` to avoid array allocations (#15167) (Thanks @xtqqczze!)
+- Use `List.ConvertAll` instead of `LINQ` (#15140) (Thanks @xtqqczze!)
+
+### General Cmdlet Updates and Fixes
+
+- Use `AllocConsole` before initializing CLR to ensure codepage is correct for WinRM remoting (PowerShell/PowerShell-Native#70) (Thanks @jborean93!)
+- Add completions for `#requires` statements (#14596) (Thanks @MartinGC94!)
+- Add completions for comment-based help keywords (#15337) (Thanks @MartinGC94!)
+- Move cross platform DSC code to a PowerShell engine subsystem (#15127)
+- Fix `Minimal` progress view to handle activity that is longer than console width (#15264)
+- Handle exception if ConsoleHost tries to set cursor out of bounds because screen buffer changed (#15380)
+- Fix `NullReferenceException` in DSC `ClearCache()` (#15373)
+- Update `ControlSequenceLength` to handle colon as a virtual terminal parameter separator (#14942)
+- Update the summary comment for `StopTranscriptCmdlet.cs` (#15349) (Thanks @dbaileyut!)
+- Remove the unusable alias `d` for the `-Directory` parameter from `Get-ChildItem` (#15171) (Thanks @kvprasoon!)
+- Fix tab completion for un-localized `about` topics (#15265) (Thanks @MartinGC94!)
+- Remove the unneeded SSH stdio handle workaround (#15308)
+- Add `LoadAssemblyFromNativeMemory` API to load assemblies from memory in a native PowerShell host (#14652) (Thanks @awakecoding!)
+- Re-implement `Remove-Item` OneDrive support (#15260) (Thanks @iSazonov!)
+- Kill native processes in pipeline when pipeline is disposed on Unix (#15287)
+- Default to MTA on Windows platforms where STA is not supported (#15106)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @powercode, @bcwood</p>
+
+</summary>
+
+<ul>
+<li>Enable <code>nullable</code> in some classes (#14185, #14177, #14159, #14191, #14162, #14150, #14156, #14161, #14155, #14163, #14181, #14157, #14151) (Thanks @powercode!)</li>
+<li>Annotate <code>ThrowTerminatingError</code> with <code>DoesNotReturn</code> attribute (#15352) (Thanks @powercode!)</li>
+<li>Use <code>GetValueOrDefault()</code> for nullable <code>PSLanguageMode</code> (#13849) (Thanks @bcwood!)</li>
+<li>Enable <code>SA1008</code>: Opening parenthesis should be spaced correctly (#14242) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Add `winget` release script (#15050)
+
+### Tests
+
+- Enable cross-runtime benchmarking to compare different .NET runtimes (#15387) (Thanks @adamsitnik!)
+- Add the performance benchmark project for PowerShell performance testing (#15242)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+Update .NET to version <code>v6.0.0-preview.4</code>
+</summary>
+
+<ul>
+<li>Suppress prompting when uploading the <code>msixbundle</code> package to blob (#15227)</li>
+<li>Update to .NET preview 4 SDK (#15452)</li>
+<li>Update <code>AppxManifest.xml</code> with newer OS version to allow PowerShell installed from Windows Store to make system-level changes (#15375)</li>
+<li>Ensure the build works when <code>PSDesiredStateConfiguration</code> module is pulled in from PSGallery (#15355)</li>
+<li>Make sure daily release tag does not change when retrying failures (#15286)</li>
+<li>Improve messages and behavior when there's a problem in finding zip files (#15284)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Add documentation comments section to coding guidelines (#14316) (Thanks @xtqqczze!)
+
+[7.2.0-preview.6]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.5...v7.2.0-preview.6
+
 ## [7.2.0-preview.5] - 2021-04-14
 
 ### Breaking Changes
