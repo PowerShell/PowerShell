@@ -280,7 +280,14 @@ namespace System.Management.Automation.Subsystem
             ISubsystem impl = subsystemInfo.UnregisterImplementation(id);
             if (impl is IDisposable disposable)
             {
-                disposable.Dispose();
+                try
+                {
+                    disposable.Dispose();
+                }
+                catch
+                {
+                    // It's OK to ignore all exceptions when disposing the object.
+                }
             }
         }
 
