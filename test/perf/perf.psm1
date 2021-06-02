@@ -32,19 +32,19 @@ function Start-Benchmarking
     .PARAMETER KeepFiles
     Indicates to keep all temporary files produced for running benchmarks.
     #>
-    [CmdletBinding(DefaultParameterSetName = 'Default')]
+    [CmdletBinding(DefaultParameterSetName = 'TargetFramework')]
     param(
-        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'TargetPSVersion')]
         [ValidatePattern(
             '^7\.(0|1|2)\.\d+(-preview\.\d{1,2})?$',
             ErrorMessage = 'The package version is invalid or not supported')]
         [string] $TargetPSVersion,
 
-        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'TargetFramework')]
         [ValidateSet('netcoreapp3.1', 'net5.0', 'net6.0')]
         [string] $TargetFramework = 'net6.0',
 
-        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'TargetFramework')]
         [ValidateSet('flat', 'tree')]
         [string] $List,
 
@@ -68,23 +68,6 @@ function Start-Benchmarking
 
         if (Test-Path -Path $Artifacts) {
             Remove-Item -Path $Artifacts -Recurse -Force -ErrorAction Stop
-        }
-
-        if ($TargetPSVersion) {
-            ## Validate the specified 'TargetPSVersion' and 'TargetFramework' are compatible.
-            $TargetFramework -match '\d.\d' > $null
-            $targetDotNetVersion = $Matches[0]
-
-            $minimalDotNetVersion = switch -Wildcard ($TargetPSVersion) {
-                '7.0.*' { '3.1' }
-                '7.1.*' { '5.0' }
-                '7.2.*' { '6.0' }
-            }
-
-            if ($targetDotNetVersion -lt $minimalDotNetVersion) {
-                $dotnetVer = $minimalDotNetVersion -eq '3.1' ? 'netcoreapp3.1' : "net$minimalDotNetVersion"
-                throw "The '$TargetPSVersion' version of 'Microsoft.PowerShell.SDK' requires '$dotnetVer' as the minimal target framework."
-            }
         }
 
         if ($Runtime) {
@@ -113,26 +96,35 @@ function Start-Benchmarking
             if ($List) { $runArgs += '--list', $List }
             if ($KeepFiles) { $runArgs += "--keepFiles" }
 
-            if ($PSCmdlet.ParameterSetName -eq 'Default') {
-                if ($TargetPSVersion) {
+            switch ($PSCmdlet.ParameterSetName) {
+                'TargetPSVersion' {
                     Write-Log -message "Run benchmarks targeting '$TargetFramework' and the 'Microsoft.PowerShell.SDK' version '$TargetPSVersion' ..."
                     $env:PERF_TARGET_VERSION = $TargetPSVersion
-                }
-                elseif ($TargetFramework -eq 'net6.0') {
-                    Write-Log -message "Run benchmarks targeting the current PowerShell code base ..."
-                }
-                else {
-                    Write-Log -message "Run benchmarks targeting '$TargetFramework' and the corresponding latest version of 'Microsoft.PowerShell.SDK' ..."
+
+                    ## Use 'Release' instead of 'release' (note the capital case) because BDN uses 'Release' when building the auto-generated
+                    ## project, and MSBuild somehow recognizes 'release' and 'Release' as two different configurations and thus will rebuild
+                    ## all dependencies unnecessarily.
+                    dotnet run -c Release -f $TargetFramework $runArgs
                 }
 
-                ## Use 'Release' instead of 'release' (note the capital case) because BDN uses 'Release' when building the auto-generated
-                ## project, and MSBuild somehow recognizes 'release' and 'Release' as two different configurations and thus will rebuild
-                ## all dependencies unnecessarily.
-                dotnet run -c Release -f $TargetFramework $runArgs
-            }
-            else {
-                Write-Log -message "Run benchmarks targeting multiple .NET runtimes: $Runtime ..."
-                dotnet run -c Release -f net6.0 --runtimes $Runtime $runArgs
+                'TargetFramework' {
+                    $message = if ($TargetFramework -eq 'net6.0') { 'the current PowerShell code base ...' } else { "the corresponding latest version of 'Microsoft.PowerShell.SDK' ..." }
+                    Write-Log -message "Run benchmarks targeting '$TargetFramework' and $message"
+
+                    ## Use 'Release' instead of 'release' (note the capital case) because BDN uses 'Release' when building the auto-generated
+                    ## project, and MSBuild somehow recognizes 'release' and 'Release' as two different configurations and thus will rebuild
+                    ## all dependencies unnecessarily.
+                    dotnet run -c Release -f $TargetFramework $runArgs
+                }
+
+                'Runtimes' {
+                    Write-Log -message "Run benchmarks targeting multiple .NET runtimes: $Runtime ..."
+
+                    ## Use 'Release' instead of 'release' (note the capital case) because BDN uses 'Release' when building the auto-generated
+                    ## project, and MSBuild somehow recognizes 'release' and 'Release' as two different configurations and thus will rebuild
+                    ## all dependencies unnecessarily.
+                    dotnet run -c Release -f net6.0 --runtimes $Runtime $runArgs
+                }
             }
 
             if (Test-Path $Artifacts) {
@@ -211,3 +203,5 @@ function Compare-BenchmarkResult
         Pop-Location
     }
 }
+
+Export-ModuleMember -Function 'Start-Benchmarking', 'Compare-BenchmarkResult'
