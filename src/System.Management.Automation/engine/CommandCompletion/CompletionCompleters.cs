@@ -5441,11 +5441,11 @@ namespace System.Management.Automation
 
             return null;
         }
-        
+
         private static List<CompletionResult> CompleteCommentParameterValue(CompletionContext context, string wordToComplete)
         {
             FunctionDefinitionAst foundFunction = GetCommentHelpFunctionTarget(context);
-            
+
             ReadOnlyCollection<ParameterAst> foundParameters = null;
             if (foundFunction is not null)
             {
@@ -5456,7 +5456,7 @@ namespace System.Management.Automation
                 // The helpblock is for a script file
                 foundParameters = scriptAst.ParamBlock?.Parameters;
             }
-            
+
             if (foundParameters is null || foundParameters.Count == 0)
             {
                 return null;
@@ -5746,9 +5746,9 @@ namespace System.Management.Automation
 
         private static void CompleteFormatViewByInferredType(TypeInferenceContext context, string[] inferredTypeNames, List<CompletionResult> results, string commandName)
         {
-            var db = context.ExecutionContext.FormatDBManager.GetTypeInfoDataBase();
+            var typeInfoDB = context.ExecutionContext.FormatDBManager.GetTypeInfoDataBase();
 
-            if (db is null)
+            if (typeInfoDB is null)
             {
                 return;
             }
@@ -5764,19 +5764,19 @@ namespace System.Management.Automation
 
             Diagnostics.Assert(controlBodyType is null, "This should never happen unless a new Format-* cmdlet is added");
 
-            HashSet<string> uniqueNames = new();
-            foreach (ViewDefinition vd in db.viewDefinitionsSection.viewDefinitionList)
+            var uniqueNames = new HashSet<string>();
+            foreach (ViewDefinition viewDefinition in typeInfoDB.viewDefinitionsSection.viewDefinitionList)
             {
-                if (vd is not null && controlBodyType == vd.mainControl.GetType() && vd.appliesTo is not null)
+                if (viewDefinition is not null && controlBodyType == viewDefinition.mainControl.GetType() && viewDefinition.appliesTo is not null)
                 {
-                    foreach (var applyTo in vd.appliesTo.referenceList)
+                    foreach (TypeOrGroupReference applyTo in viewDefinition.appliesTo.referenceList)
                     {
-                        foreach (var inferredTypeName in inferredTypeNames)
+                        foreach (string inferredTypeName in inferredTypeNames)
                         {
                             // We use 'StartsWith()' because 'applyTo.Name' can look like "System.Diagnostics.Process#IncludeUserName".
-                            if (applyTo.name.StartsWith(inferredTypeName, StringComparison.OrdinalIgnoreCase) && uniqueNames.Add(vd.name))
+                            if (applyTo.name.StartsWith(inferredTypeName, StringComparison.OrdinalIgnoreCase) && uniqueNames.Add(viewDefinition.name))
                             {
-                                results.Add(new CompletionResult(vd.name, vd.name, CompletionResultType.Text, vd.name));
+                                results.Add(new CompletionResult(viewDefinition.name, viewDefinition.name, CompletionResultType.Text, viewDefinition.name));
                             }
                         }
                     }
@@ -6618,7 +6618,7 @@ namespace System.Management.Automation
 
             //search for help files for the current culture + en-US as fallback
             var searchPaths = new string[]
-            { 
+            {
                 Path.Combine(userHelpDir, currentCulture),
                 Path.Combine(appHelpDir, currentCulture),
                 Path.Combine(userHelpDir, "en-US"),
