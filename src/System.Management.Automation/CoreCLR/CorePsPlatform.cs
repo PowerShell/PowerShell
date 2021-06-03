@@ -588,6 +588,16 @@ namespace System.Management.Automation
             return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
+        internal static bool NonWindowsKillProcess(int pid)
+        {
+            return Unix.NativeMethods.KillProcess(pid);
+        }
+
+        internal static int NonWindowsWaitPid(int pid, bool nohang)
+        {
+            return Unix.NativeMethods.WaitPid(pid, nohang);
+        }
+
         internal static class Windows
         {
             /// <summary>The native methods class.</summary>
@@ -1062,6 +1072,13 @@ namespace System.Management.Automation
 
                 [DllImport(psLib, CharSet = CharSet.Ansi)]
                 internal static extern uint GetCurrentThreadId();
+
+                [DllImport(psLib)]
+                [return: MarshalAs(UnmanagedType.Bool)]
+                internal static extern bool KillProcess(int pid);
+
+                [DllImport(psLib)]
+                internal static extern int WaitPid(int pid, bool nohang);
 
                 // This is a struct tm from <time.h>.
                 [StructLayout(LayoutKind.Sequential)]
