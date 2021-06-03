@@ -20,62 +20,6 @@ namespace System.Management.Automation
     /// </summary>
     internal static class PsUtils
     {
-        /// <summary>
-        /// Safely retrieves the MainModule property of a
-        /// process. Version 2.0 and below of the .NET Framework are
-        /// impacted by a Win32 API usability knot that throws an
-        /// exception if API tries to enumerate the process' modules
-        /// while it is still loading them. This generates the error
-        /// message: Only part of a ReadProcessMemory or
-        /// WriteProcessMemory request was completed.
-        /// The BCL fix in V3 was to just try more, so we do the same
-        /// thing.
-        ///
-        /// Note: If you attempt to retrieve the MainModule of a 64-bit
-        /// process from a WOW64 (32-bit) process, the Win32 API has a fatal
-        /// flaw that causes this to return the same error.
-        ///
-        /// If you need the MainModule of a 64-bit process from a WOW64
-        /// process, you will need to write the P/Invoke yourself.
-        /// </summary>
-        /// <param name="targetProcess">The process from which to
-        /// retrieve the MainModule</param>
-        /// <exception cref="NotSupportedException">
-        /// You are trying to access the MainModule property for a process that is running
-        /// on a remote computer. This property is available only for processes that are
-        /// running on the local computer.
-        /// </exception>
-        /// <exception cref="InvalidOperationException">
-        /// The process Id is not available (or) The process has exited.
-        /// </exception>
-        /// <exception cref="System.ComponentModel.Win32Exception">
-        /// </exception>
-        internal static ProcessModule GetMainModule(Process targetProcess)
-        {
-            int caughtCount = 0;
-
-            while (true)
-            {
-                try
-                {
-                    return targetProcess.MainModule;
-                }
-                catch (System.ComponentModel.Win32Exception e)
-                {
-                    // If this is an Access Denied error (which can happen with thread impersonation)
-                    // then re-throw immediately.
-                    if (e.NativeErrorCode == 5)
-                        throw;
-
-                    // Otherwise retry to ensure module is loaded.
-                    caughtCount++;
-                    System.Threading.Thread.Sleep(100);
-                    if (caughtCount == 5)
-                        throw;
-                }
-            }
-        }
-
         // Cache of the current process' parentId
         private static int? s_currentParentProcessId;
         private static readonly int s_currentProcessId = Environment.ProcessId;

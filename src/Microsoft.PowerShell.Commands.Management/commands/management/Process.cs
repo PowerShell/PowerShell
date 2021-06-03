@@ -649,7 +649,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        ProcessModule mainModule = PsUtils.GetMainModule(process);
+                        ProcessModule mainModule = process.MainModule;
                         if (mainModule != null)
                         {
                             WriteObject(mainModule.FileVersionInfo, true);
@@ -669,7 +669,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (exception.HResult == 299)
                             {
-                                WriteObject(PsUtils.GetMainModule(process).FileVersionInfo, true);
+                                WriteObject(process.MainModule?.FileVersionInfo, true);
                             }
                             else
                             {
