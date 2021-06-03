@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         // 4MB gives the best results without spiking the resources on the remote connection for file transfers between pssessions.
         // NOTE: The script used to copy file data from session (PSCopyFromSessionHelper) has a
         // maximum fragment size value for security.  If FILETRANSFERSIZE changes make sure the
-        // copy script will accomodate the new value.
+        // copy script will accommodate the new value.
         private const int FILETRANSFERSIZE = 4 * 1024 * 1024;
 
         // The name of the key in an exception's Data dictionary when attempting
@@ -4430,7 +4430,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    // To accomodate empty files
+                    // To accommodate empty files
                     string content = string.Empty;
                     if (op["b64Fragment"] != null)
                     {
