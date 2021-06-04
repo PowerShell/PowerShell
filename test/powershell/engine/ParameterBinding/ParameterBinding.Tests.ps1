@@ -256,6 +256,11 @@ Describe "Parameter Binding Tests" -Tags "CI" {
         DynamicParamTest -PipelineVariable bar | ForEach-Object { $bar } | Should -Be "hi"
     }
 
+    It 'Dynamic parameter is found even if globbed path does not exist' {
+        $guid = New-Guid
+        { Copy-Item "~\$guid*" -Destination ~ -ToSession $null } | Should -Throw -ErrorId 'ParameterArgumentValidationError'
+    }
+
     Context "PipelineVariable Behaviour" {
 
         BeforeAll {
