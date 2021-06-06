@@ -856,7 +856,6 @@ namespace Microsoft.PowerShell.Commands
 
 namespace System.Management.Automation
 {
-    using System.Reflection;
     using System.Security.Cryptography.Pkcs;
 
     /// <summary>
@@ -1343,9 +1342,7 @@ namespace System.Management.Automation
 
             lock (s_amsiLockObject)
             {
-                Assembly currentAssembly = typeof(AmsiUtils).Assembly;
-                string productVersion = currentAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
-                string hostname = string.Concat("PowerShell_", Environment.ProcessPath, "_", productVersion);
+                string hostname = string.Concat("PowerShell_", Environment.ProcessPath, "_", PSVersionInfo.ProductVersion);
 
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
