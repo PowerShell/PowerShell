@@ -173,6 +173,8 @@ Describe "Default enablement of Experimental Features" -Tags CI {
     It "On preview builds, Experimental Features are enabled" -Skip:(!$isPreview) {
         (Join-Path -Path $PSHOME -ChildPath 'powershell.config.json') | Should -Exist
 
+        Get-ExperimentalFeature | fl *  | Out-String | Write-Verbose -Verbose
+
         foreach ($expFeature in Get-ExperimentalFeature) {
             if ($expFeature.Name -ne "PS7DscSupport")
             {
