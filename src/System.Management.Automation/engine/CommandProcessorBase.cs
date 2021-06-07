@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -358,6 +359,52 @@ namespace System.Management.Automation
             // Set the current scope to the pipeline execution scope
             CommandSessionState.CurrentScope = CommandScope;
 
+            // For REad Line Add previous scope local variables and aliases to CommandScope,
+            // so they be accecible by the command.
+            // Required in nested shell for tab completion and Get-Aliases (issue #3810).
+            // Note: "TabExpansion2" is included since it seems it is being used for read line
+            //       when PS "Cannot load PSReadline module.  Console is running without PSReadline". 
+            if (_command.CommandInfo.Name == "PSConsoleHostReadLine" || _command.CommandInfo.Name == "TabExpansion2")
+            {
+                SessionStateScope localScope = _previousCommandSessionState.CurrentScope;
+                if (localScope != null)
+                {
+                    if (localScope != CommandSessionState.CurrentScope)
+                    {
+                        // Add local variables from previous scope.
+                        foreach (KeyValuePair<string, PSVariable> entry in localScope.Variables)
+                        {
+                            // No need to re-include all-scope or non simple mutable variables...
+                            if (!entry.Value.IsAllScope && entry.Value.Options == ScopedItemOptions.None && entry.Value is not NullVariable)
+                            {
+                                CommandSessionState.CurrentScope.SetVariable(entry.Key, entry.Value, false, false, _previousCommandSessionState);
+                            }
+                        }
+
+                        // Add first local tuple from previous scope.
+                        if (localScope.LocalsTuple != null)
+                        {
+                            _pushedScopesCount++;
+                            CommandSessionState.CurrentScope.DottedScopes.Push(localScope.LocalsTuple);
+                        }
+
+                        // Add aliases from previous scope.
+                        if (localScope.AliasTable != null)
+                        {
+                            foreach (AliasInfo entry in localScope.AliasTable)
+                            {
+                                // Make sure the alias isn't private.
+                                if ((entry.Options & ScopedItemOptions.Private) == 0)
+                                {
+                                    // `force` parameter is set to `true` since otherise SetAliasItem throws an exception.
+                                    CommandSessionState.CurrentScope.SetAliasItem(entry, true);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             OnSetCurrentScope();
         }
 
@@ -373,6 +420,13 @@ namespace System.Management.Automation
 
             if (_previousScope != null)
             {
+                // Remove pushed local tuples from previous scope.
+                while (_pushedScopesCount > 0)
+                {
+                    _pushedScopesCount--;
+                    CommandSessionState.CurrentScope.DottedScopes.Pop();
+                }
+
                 // Restore the scope but use the same session state instance we
                 // got it from because the command may have changed the execution context
                 // session state...
@@ -382,6 +436,7 @@ namespace System.Management.Automation
 
         private SessionStateScope _previousScope;
         private SessionStateInternal _previousCommandSessionState;
+        private int _pushedScopesCount;
 
         /// <summary>
         /// A collection of arguments that have been added by the parser or
