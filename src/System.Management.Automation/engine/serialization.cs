@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -3670,7 +3671,7 @@ namespace System.Management.Automation
                     else if (IsKnownContainerTag(out ct))
                     {
                         s_trace.WriteLine("Found container node {0}", ct);
-                        baseObject = ReadKnownContainer(ct);
+                        baseObject = ReadKnownContainer(ct, dso.InternalTypeNames);
                     }
                     else if (IsNextElement(SerializationStrings.PSObjectTag))
                     {
@@ -3934,12 +3935,12 @@ namespace System.Management.Automation
             return ct != ContainerType.None;
         }
 
-        private object ReadKnownContainer(ContainerType ct)
+        private object ReadKnownContainer(ContainerType ct, ConsolidatedString InternalTypeNames)
         {
             switch (ct)
             {
                 case ContainerType.Dictionary:
-                    return ReadDictionary(ct);
+                    return ReadDictionary(ct, InternalTypeNames);
 
                 case ContainerType.Enumerable:
                 case ContainerType.List:
@@ -3992,7 +3993,7 @@ namespace System.Management.Automation
         /// Deserialize Dictionary.
         /// </summary>
         /// <returns></returns>
-        private object ReadDictionary(ContainerType ct)
+        private object ReadDictionary(ContainerType ct, ConsolidatedString InternalTypeNames)
         {
             Dbg.Assert(ct == ContainerType.Dictionary, "Unrecognized ContainerType enum");
 
@@ -4000,6 +4001,19 @@ namespace System.Management.Automation
             // a case insensitive string comparer.  If we discover a key collision,
             // we'll revert back to the default comparer.
             Hashtable table = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+            OrderedDictionary tableOrdered = new OrderedDictionary(StringComparer.CurrentCultureIgnoreCase);
+
+            // Find whether original directory was odered or not
+            bool isOrdered = false;
+            if (InternalTypeNames.Count > 0)
+            {
+                string originalDictTypeName = Deserializer.MaskDeserializationPrefix(InternalTypeNames[0]);
+                if (originalDictTypeName == tableOrdered.GetType().FullName)
+                {
+                    isOrdered = true;
+                }
+            }
+
             int keyClashFoundIteration = 0;
             if (ReadStartElementAndHandleEmpty(SerializationStrings.DictionaryTag))
             {
@@ -4039,38 +4053,78 @@ namespace System.Management.Automation
 
                     object value = ReadOneObject();
 
-                    // On the first collision, copy the hash table to one that uses the default comparer.
-                    if (table.ContainsKey(key) && (keyClashFoundIteration == 0))
+                    if (!isOrdered)
                     {
-                        keyClashFoundIteration++;
-                        Hashtable newHashTable = new Hashtable();
-                        foreach (DictionaryEntry entry in table)
+                        // On the first collision, copy the hash table to one that uses the default comparer.
+                        if (table.ContainsKey(key) && (keyClashFoundIteration == 0))
                         {
-                            newHashTable.Add(entry.Key, entry.Value);
+                            keyClashFoundIteration++;
+                            Hashtable newHashTable = new Hashtable();
+                            foreach (DictionaryEntry entry in table)
+                            {
+                                newHashTable.Add(entry.Key, entry.Value);
+                            }
+
+                            table = newHashTable;
                         }
 
-                        table = newHashTable;
+                        // win8: 389060. If there are still collisions even with case-sensitive default comparer,
+                        // use an IEqualityComparer that does object ref equality.
+                        if (table.ContainsKey(key) && (keyClashFoundIteration == 1))
+                        {
+                            keyClashFoundIteration++;
+                            IEqualityComparer equalityComparer = new ReferenceEqualityComparer();
+                            Hashtable newHashTable = new Hashtable(equalityComparer);
+                            foreach (DictionaryEntry entry in table)
+                            {
+                                newHashTable.Add(entry.Key, entry.Value);
+                            }
+
+                            table = newHashTable;
+                        }
                     }
-
-                    // win8: 389060. If there are still collisions even with case-sensitive default comparer,
-                    // use an IEqualityComparer that does object ref equality.
-                    if (table.ContainsKey(key) && (keyClashFoundIteration == 1))
+                    else    // isOrdered
                     {
-                        keyClashFoundIteration++;
-                        IEqualityComparer equalityComparer = new ReferenceEqualityComparer();
-                        Hashtable newHashTable = new Hashtable(equalityComparer);
-                        foreach (DictionaryEntry entry in table)
+                        // On the first collision, copy the hash table to one that uses the default comparer.
+                        if (tableOrdered.Contains(key) && (keyClashFoundIteration == 0))
                         {
-                            newHashTable.Add(entry.Key, entry.Value);
+                            keyClashFoundIteration++;
+                            OrderedDictionary newOrderedTable = new OrderedDictionary();
+                            foreach (DictionaryEntry entry in tableOrdered)
+                            {
+                                tableOrdered.Add(entry.Key, entry.Value);
+                            }
+
+                            tableOrdered = newOrderedTable;
                         }
 
-                        table = newHashTable;
+                        // win8: 389060. If there are still collisions even with case-sensitive default comparer,
+                        // use an IEqualityComparer that does object ref equality.
+                        if (tableOrdered.Contains(key) && (keyClashFoundIteration == 1))
+                        {
+                            keyClashFoundIteration++;
+                            IEqualityComparer equalityComparer = new ReferenceEqualityComparer();
+                            OrderedDictionary newOrderedTable = new OrderedDictionary(equalityComparer);
+                            foreach (DictionaryEntry entry in tableOrdered)
+                            {
+                                newOrderedTable.Add(entry.Key, entry.Value);
+                            }
+
+                            tableOrdered = newOrderedTable;
+                        }
                     }
 
                     try
                     {
                         // Add entry to hashtable
-                        table.Add(key, value);
+                        if (isOrdered)
+                        {
+                            tableOrdered.Add(key, value);
+                        }
+                        else
+                        {
+                            table.Add(key, value);
+                        }
                     }
                     catch (ArgumentException e)
                     {
@@ -4083,7 +4137,14 @@ namespace System.Management.Automation
                 ReadEndElement();
             }
 
-            return table;
+            if (isOrdered)
+            {
+                return tableOrdered;
+            }
+            else
+            {
+                return table;
+            }
         }
 
         #endregion known containers

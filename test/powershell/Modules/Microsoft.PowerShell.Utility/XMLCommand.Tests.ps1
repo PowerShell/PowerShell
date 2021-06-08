@@ -52,6 +52,31 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$results.Property2 | Should -Be $property2
     }
 
+	It "Import from exported non-ordered dictionary object should create non-ordered dictionary object" {
+		$dict = @{}
+		$dict['Larry'] = 'Poik!'
+		$dict['Curly'] = 'Nyuk!'
+		$dict['Moe'] = 'Wise guy!'
+		$dict | Export-Clixml $testfile
+		$results = Import-Clixml $testfile
+		$results.GetType().Name | Should -Be "Hashtable"
+		$results.Count | Should -Be 3
+    }
+
+	It "Import from exported ordered dictionary object should create ordered dictionary object" {
+		$dict = [ordered]@{}
+		$dict['Larry'] = 'Poik!'
+		$dict['Curly'] = 'Nyuk!'
+		$dict['Moe'] = 'Wise guy!'
+		$dict | Export-Clixml $testfile
+		$results = Import-Clixml $testfile
+		$results.GetType().Name | Should -Be "OrderedDictionary"
+		$results.Count | Should -Be 3
+		$results[0] | Should -Be $dict[0]
+		$results[1] | Should -Be $dict[1]
+		$results[2] | Should -Be $dict[2]
+    }
+
 	It "Export-Clixml StopProcessing should succeed" {
         $ps = [PowerShell]::Create()
         $null = $ps.AddScript("1..10")
