@@ -1689,7 +1689,7 @@ function Start-PSxUnit {
 }
 
 function Install-Dotnet {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param(
         [string]$Channel = $dotnetCLIChannel,
         [string]$Version = $dotnetCLIRequiredVersion,
@@ -1711,32 +1711,55 @@ function Install-Dotnet {
         $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
 
         # Uninstall all previous dotnet packages
-        $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
+        $uninstallScriptName = if ($environment.IsLinux -and $environment.IsUbuntu) {
             "dotnet-uninstall-debian-packages.sh"
         } elseif ($environment.IsMacOS) {
             "dotnet-uninstall-pkgs.sh"
         }
 
-        if ($uninstallScript) {
+        $fullUninstallScriptUrl = "$uninstallObtainUrl/uninstall/$uninstallScriptName"
+
+        if ($uninstallScriptName) {
             Start-NativeExecution {
-                & $wget $uninstallObtainUrl/uninstall/$uninstallScript
-                Invoke-Expression "$sudo bash ./$uninstallScript"
+                $Reason = $null
+                if ($PSCmdlet.ShouldProcess(
+                    "Downloading install script from $fullUninstallScriptUrl to $uninstallScriptName, to run later",
+                    "Do you want to download this script? You can choose to not run it afterwards. $fullUninstallScriptUrl",
+                    "Download file?",
+                    [ref]$Reason))
+                {
+                    & $wget $uninstallObtainUrl/uninstall/$uninstallScriptName
+                    if ($PSCmdlet.ShouldProcess(
+                        "Running install script $uninstallScriptName",
+                        "Do you want to run $uninstallScriptName (from $fullUninstallScriptUrl)?",
+                        "Run script?"))
+                    {
+                        Invoke-Expression "$sudo bash ./$uninstallScriptName"
+                    }
+                } else {
+                    Write-Debug "Skipped running install script because of $Reason."
+                }
             }
         } else {
             Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
         }
 
         # Install new dotnet 1.1.0 preview packages
-        $installScript = "dotnet-install.sh"
+        $installScriptName = "dotnet-install.sh"
         Start-NativeExecution {
-            Write-Verbose -Message "downloading install script from $installObtainUrl/$installScript ..." -Verbose
-            & $wget $installObtainUrl/$installScript
-
-            if ((Get-ChildItem "./$installScript").Length -eq 0) {
-                throw "./$installScript was 0 length"
+            if ($PSCmdlet.ShouldProcess(
+                    "Downloading install script from $installObtainUrl/$installScriptName to $installScriptName",
+                    "Do you want to download this script? It would be used in a native command later. $installObtainUrl/$installScriptName",
+                    "Download file?"))
+            {
+                & $wget $installObtainUrl/$installScriptName
             }
 
-            $bashArgs = @("./$installScript", '-c', $Channel, '-v', $Version)
+            if ((Get-ChildItem "./$installScriptName").Length -eq 0) {
+                throw "./$installScriptName was 0 length"
+            }
+
+            $bashArgs = @("./$installScriptName", '-c', $Channel, '-v', $Version)
 
             if ($InstallDir) {
                 $bashArgs += @('-i', $InstallDir)
@@ -1746,12 +1769,28 @@ function Install-Dotnet {
                 $bashArgs += @('-AzureFeed', $AzureFeed, '-FeedCredential', $FeedCredential)
             }
 
-            bash @bashArgs
+
+
+            if ($PSCmdlet.ShouldProcess(
+                "Running native command: bash $bashArgs",
+                "Do you want to run this command? This is to run $installScriptName. bash $bashArgs",
+                "Run command & execute script?"))
+            {
+                bash @bashArgs
+            }
+
         }
     } elseif ($environment.IsWindows) {
-        Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
-        $installScript = "dotnet-install.ps1"
-        Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
+        Remove-Item -Recurse -Force ~\AppData\Local\Microsoft\dotnet -WhatIf:$WhatIfPreference -ErrorAction SilentlyContinue
+        $installScriptName = "dotnet-install.ps1"
+        if ($PSCmdlet.ShouldProcess(
+            "Downloading install script from $installObtainUrl/$installScriptName to $installScriptName",
+            "Do you want to download this script? You can choose not to run it later. $installObtainUrl/$installScriptName",
+            "Download file?"))
+        {
+            Invoke-WebRequest -Uri $installObtainUrl/$installScriptName -OutFile $installScriptName
+        }
+
         if (-not $environment.IsCoreCLR) {
             $installArgs = @{
                 Channel = $Channel
@@ -1769,12 +1808,21 @@ function Install-Dotnet {
                 }
             }
 
-            & ./$installScript @installArgs
+
+
+            if ($PSCmdlet.ShouldProcess(
+                "Launching additional script (with arguments): $installScriptName $installArgs",
+                "Do you want to run this script? $installScriptName $installArgs",
+                "Run script?"))
+            {
+                & ./$installScriptName @installArgs
+            }
+
         }
         else {
             # dotnet-install.ps1 uses APIs that are not supported in .NET Core, so we run it with Windows PowerShell
             $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
-            $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
+            $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScriptName
             Start-NativeExecution {
                 $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Channel', $Channel, '-Version', $Version)
 
@@ -1786,7 +1834,16 @@ function Install-Dotnet {
                     $psArgs += @('-AzureFeed', $AzureFeed, '-FeedCredential', $FeedCredential)
                 }
 
-                & $fullPSPath @psArgs
+
+
+                if ($PSCmdlet.ShouldProcess(
+                    "Launching additional script using Windows PowerShell: $fullPSPath $psArgs",
+                    "Do you want to run this script using this command? $fullPSPath $psArgs",
+                    "Run script?"
+                )) {
+                    & $fullPSPath @psArgs
+                }
+
             }
         }
     }
@@ -1854,10 +1911,24 @@ function Start-PSBootstrap {
                 # change the fontend from apt-get to noninteractive
                 $originalDebianFrontEnd=$env:DEBIAN_FRONTEND
                 $env:DEBIAN_FRONTEND='noninteractive'
+                $debianUpdateCommand="$sudo apt-get update -qq"
+                $debianInstallCommand="$sudo apt-get install -y -qq $Deps"
                 try {
                     Start-NativeExecution {
-                        Invoke-Expression "$sudo apt-get update -qq"
-                        Invoke-Expression "$sudo apt-get install -y -qq $Deps"
+                        if ($PSCmdlet.ShouldProcess(
+                            "Running native command: $debianUpdateCommand",
+                            "Do you want to run this command? $debianUpdateCommand",
+                            "Run command?"))
+                        {
+                            Invoke-Expression $debianUpdateCommand
+                        }
+                        if ($PSCmdlet.ShouldProcess(
+                            "Running native command: $debianInstallCommand",
+                            "Do you want to run this command? $debianInstallCommand",
+                            "Run command?"))
+                        {
+                            Invoke-Expression $debianInstallCommand
+                        }
                     }
                 }
                 finally {
@@ -1884,9 +1955,17 @@ function Start-PSBootstrap {
                     $baseCommand = $PackageManager
                 }
 
+                $redHatCommand = "$baseCommand $Deps"
+
                 # Install dependencies
                 Start-NativeExecution {
-                    Invoke-Expression "$baseCommand $Deps"
+                    if ($PSCmdlet.ShouldProcess(
+                        "Running native command: $redHatCommand",
+                        "Do you want to run this command? $redHatCommand",
+                        "Run command?"))
+                    {
+                        Invoke-Expression $redHatCommand
+                    }
                 }
             } elseif ($environment.IsLinux -and $environment.IsSUSEFamily) {
                 # Build tools
@@ -1904,9 +1983,17 @@ function Start-PSBootstrap {
                     $baseCommand = $PackageManager
                 }
 
+                $suseCommand = "$baseCommand $Deps"
+
                 # Install dependencies
                 Start-NativeExecution {
-                    Invoke-Expression "$baseCommand $Deps"
+                    if ($PSCmdlet.ShouldProcess(
+                        "Running native command: $suseCommand",
+                        "Do you want to run this command? $suseCommand",
+                        "Run command?"))
+                    {
+                        Invoke-Expression $suseCommand
+                    }
                 }
             } elseif ($environment.IsMacOS) {
                 if ($environment.UsingHomebrew) {
@@ -1921,14 +2008,32 @@ function Start-PSBootstrap {
                 # .NET Core required runtime libraries
                 $Deps += "openssl"
 
+                $macOSCommand
+
                 # Install dependencies
                 # ignore exitcode, because they may be already installed
-                Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
+                Start-NativeExecution {
+                    if ($PSCmdlet.ShouldProcess(
+                        "Running native command: $macOSCommand",
+                        "Do you want to run this command? $macOSCommand",
+                        "Run command?"))
+                    {
+                        Invoke-Expression $macOSCommand
+                    }
+                } -IgnoreExitcode
             } elseif ($environment.IsLinux -and $environment.IsAlpine) {
                 $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
 
+                $alpineCommand = "apk add $Deps"
+
                 Start-NativeExecution {
-                    Invoke-Expression "apk add $Deps"
+                    if ($PSCmdlet.ShouldProcess(
+                        "Running native command: $alpineCommand",
+                        "Do you want to run this command? $alpineCommand",
+                        "Run command?"))
+                    {
+                        Invoke-Expression $alpineCommand
+                    }
                 }
             }
 
@@ -1941,9 +2046,26 @@ function Start-PSBootstrap {
                     if($environment.IsMacOS -or $env:TF_BUILD) {
                         $gemsudo = $sudo
                     }
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ffi -v 1.12.0 --no-document"))
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.11.0 --no-document"))
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document"))
+
+                    $gemTable = (
+                        ("ffi", "1.12.0"),
+                        ("fpm", "1.11.0"),
+                        ("ronn", "0.7.3")
+                    )
+                    foreach ($gem in $gemTable) {
+                        $gemName = $gem[0]
+                        $gemVersion = $gem[1]
+                        $currentGemCommand = "$gemsudo gem install $gemName -v $gemVersion --no-document"
+                        Start-NativeExecution {
+                            if ($PSCmdlet.ShouldProcess(
+                                "Running native command: $currentGemCommand",
+                                "Do you want to run this command? $currentGemCommand",
+                                "Run command?"))
+                            {
+                                Invoke-Expression $currentGemCommand
+                            }
+                        }
+                    }
                 } catch {
                     Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
                 }
@@ -1957,7 +2079,15 @@ function Start-PSBootstrap {
         $dotNetExists = precheck 'dotnet' $null
         $dotNetVersion = [string]::Empty
         if($dotNetExists) {
-            $dotNetVersion = Start-NativeExecution -sb { dotnet --version } -IgnoreExitcode
+            $dotNetVersion = if ($PSCmdlet.ShouldProcess(
+                "Running native command: dotnet --version",
+                "Do you want to run this command? Assuming version is correct if not. dotnet --version",
+                "Run command?"))
+            {
+                Start-NativeExecution -sb { dotnet --version } -IgnoreExitcode
+            } else {
+                $dotnetCLIRequiredVersion
+            }
         }
 
         if(!$dotNetExists -or $dotNetVersion -ne $dotnetCLIRequiredVersion -or $Force.IsPresent) {
@@ -1972,7 +2102,7 @@ function Start-PSBootstrap {
             }
 
             $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
-            Install-Dotnet @DotnetArguments
+            Install-Dotnet @DotnetArguments -WhatIf:$WhatIfPreference
         }
         else {
             Write-Log -message "dotnet is already installed.  Skipping installation."
@@ -1985,7 +2115,13 @@ function Start-PSBootstrap {
             {
                 Write-Log -message "pwsh.exe not found. Install latest PowerShell release and add it to Path"
                 $psInstallFile = [System.IO.Path]::Combine($PSScriptRoot, "tools", "install-powershell.ps1")
-                & $psInstallFile -AddToPath
+                if ($PSCmdlet.ShouldProcess(
+                    "Launching additional script: $psInstallFile",
+                    "Do you want to run this script? $psInstallFile",
+                    "Run script?"))
+                {
+                    & $psInstallFile -AddToPath
+                }
             }
         }
     } finally {
