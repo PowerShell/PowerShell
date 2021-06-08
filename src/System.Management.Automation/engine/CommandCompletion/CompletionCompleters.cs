@@ -3798,7 +3798,7 @@ namespace System.Management.Automation
             result.Add(CompletionResult.Null);
         }
 
-        private static IEnumerable<PSTypeName> GetInferenceTypes(CompletionContext context, List<CompletionResult> result, CommandAst commandAst)
+        private static IEnumerable<PSTypeName> GetInferenceTypes(CompletionContext context, CommandAst commandAst)
         {
             // Command is something like where-object/foreach-object/format-list/etc. where there is a parameter that is a property name
             // and we want member names based on the input object, which is either the parameter InputObject, or comes from the pipeline.
@@ -3846,7 +3846,7 @@ namespace System.Management.Automation
 
         private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst)
         {
-            IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, result, commandAst);
+            IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
             if (prevType is not null)
             {
                 CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
@@ -5767,7 +5767,7 @@ namespace System.Management.Automation
             var uniqueNames = new HashSet<string>();
             foreach (ViewDefinition viewDefinition in typeInfoDB.viewDefinitionsSection.viewDefinitionList)
             {
-                if (viewDefinition is not null && controlBodyType == viewDefinition.mainControl.GetType() && viewDefinition.appliesTo is not null)
+                if (viewDefinition?.appliesTo is not null && controlBodyType == viewDefinition.mainControl.GetType())
                 {
                     foreach (TypeOrGroupReference applyTo in viewDefinition.appliesTo.referenceList)
                     {
