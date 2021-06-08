@@ -153,14 +153,12 @@ Create or join a [discussion](https://github.com/PowerShell/PowerShell/discussio
 
 Want to chat with other members of the PowerShell community?
 
-We have a Gitter Room which you can join below.
+There are dozens of topic specific channels on our community-driven PowerShell Virtual User Group, which you can join on:
 
-[![Join the chat](https://img.shields.io/static/v1.svg?label=chat&message=on%20gitter&color=informational&logo=gitter)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-There is also the community-driven PowerShell Virtual User Group, which you can join on:
-
+* [Gitter](https://gitter.im/PowerShell/PowerShell)
+* [Discord](https://discord.gg/PowerShell)
+* [IRC](https://web.libera.chat/#powershell) on Libera.Chat
 * [Slack](https://aka.ms/psslack)
-* [Discord](https://aka.ms/psdiscord)
 
 ## Add-ons and libraries
 
