@@ -570,7 +570,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $omegaFile1 = Join-Path $omegaDir "OmegaFile1"
             $omegaFile2 = Join-Path $omegaDir "OmegaFile2"
             $betaDir = Join-Path $alphaDir "sub-Beta"
-            $betaLink = Join-Path $alphaDir "link-Beta" # Don't change! The name is hard-coded in PowerShell for OneDrive tests.
+            $betaLink = Join-Path $alphaDir "link-Beta"
             $betaFile1 = Join-Path $betaDir "BetaFile1.txt"
             $betaFile2 = Join-Path $betaDir "BetaFile2.txt"
             $betaFile3 = Join-Path $betaDir "BetaFile3.txt"
@@ -622,31 +622,6 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             #New-Item -ItemType SymbolicLink -Path $betaLink -Value $betaDir
             $ci = Get-ChildItem $alphaLink -Recurse -Name
             $ci.Count | Should -BeExactly 7 # returns 10 - unexpectly recurce in link-alpha\link-Beta. See https://github.com/PowerShell/PowerShell/issues/11614
-        }
-        It "Get-ChildItem will recurse into emulated OneDrive directory" -Skip:(-not $IsWindows) {
-            # The test depends on the files created in previous test:
-            #New-Item -ItemType SymbolicLink -Path $alphaLink -Value $alphaDir
-            #New-Item -ItemType SymbolicLink -Path $betaLink -Value $betaDir
-
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('OneDriveTestOn', $true)
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('OneDriveTestRecurseOn', $false)
-            try
-            {
-                # '$betaDir' is a symlink - we don't follow symlinks
-                # This emulates PowerShell 6.2 and below behavior.
-                $ci = Get-ChildItem -Path $alphaDir -Recurse
-                $ci.Count | Should -BeExactly 7
-
-                # Now we follow the symlink like on OneDrive.
-                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('OneDriveTestRecurseOn', $true)
-                $ci = Get-ChildItem -Path $alphaDir -Recurse
-                $ci.Count | Should -BeExactly 10
-            }
-            finally
-            {
-                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('OneDriveTestRecurseOn', $false)
-                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('OneDriveTestOn', $false)
-            }
         }
         It "Get-ChildItem will recurse into symlinks given -FollowSymlink, avoiding link loops" {
             New-Item -ItemType Directory -Path $gammaDir
@@ -769,42 +744,6 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $childB.Count | Should -BeExactly $childA.Count
             $childB.Name | Should -BeExactly $childA.Name
         }
-        It "Remove-Item will recurse into emulated OneDrive directory" -Skip:(-not $IsWindows) {
-            $alphaDir = Join-Path $TestDrive "sub-alpha2"
-            $alphaLink = Join-Path $TestDrive "link-alpha2"
-            $alphaFile1 = Join-Path $alphaDir "AlphaFile1.txt"
-            $betaDir = Join-Path $alphaDir "sub-Beta"
-            $betaLink = Join-Path $alphaDir "link-Beta"
-            $betaFile1 = Join-Path $betaDir "BetaFile1.txt"
-
-            New-Item -ItemType Directory -Path $alphaDir > $null
-            New-Item -ItemType File -Path $alphaFile1 > $null
-            New-Item -ItemType Directory -Path $betaDir > $null
-            New-Item -ItemType File -Path $betaFile1 > $null
-
-            New-Item -ItemType SymbolicLink -Path $alphaLink -Value $alphaDir > $null
-            New-Item -ItemType SymbolicLink -Path $betaLink -Value $betaDir > $null
-
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('OneDriveTestOn', $true)
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('OneDriveTestRecurseOn', $false)
-            try
-            {
-                # With the test hook turned on we don't remove '$betaDir' symlink.
-                # This emulates PowerShell 7.1 and below behavior.
-                { Remove-Item -Path $betaLink -Recurse -ErrorAction Stop } | Should -Throw -ErrorId "DeleteSymbolicLinkFailed,Microsoft.PowerShell.Commands.RemoveItemCommand"
-
-                # Now we emulate OneDrive and follow the symlink like on OneDrive.
-                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('OneDriveTestRecurseOn', $true)
-                Remove-Item -Path $betaLink -Recurse
-                Test-Path -Path $betaLink | Should -BeFalse
-            }
-            finally
-            {
-                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('OneDriveTestRecurseOn', $false)
-                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('OneDriveTestOn', $false)
-            }
-        }
-
     }
 }
 
