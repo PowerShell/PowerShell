@@ -618,7 +618,8 @@ Fix steps:
 
             # Make sure ExperimentalFeatures from modules in PSHome are added
             # https://github.com/PowerShell/PowerShell/issues/10550
-            @("PSDesiredStateConfiguration.InvokeDscResource") | ForEach-Object {
+            $ExperimentalFeaturesFromGalleryModulesInPSHome = @()
+            $ExperimentalFeaturesFromGalleryModulesInPSHome | ForEach-Object {
                 if (!$expFeatures.Contains($_)) {
                     $null = $expFeatures.Add($_)
                 }
