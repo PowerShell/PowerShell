@@ -1342,11 +1342,11 @@ namespace System.Management.Automation
 
             lock (s_amsiLockObject)
             {
-                string hostname = string.Concat("PowerShell_", Environment.ProcessPath, "_", PSVersionInfo.ProductVersion);
+                string appName = string.Concat("PowerShell_", Environment.ProcessPath, "_", PSVersionInfo.ProductVersion);
 
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
-                var hr = AmsiNativeMethods.AmsiInitialize(hostname, ref s_amsiContext);
+                var hr = AmsiNativeMethods.AmsiInitialize(appName, ref s_amsiContext);
                 if (!Utils.Succeeded(hr))
                 {
                     s_amsiInitFailed = true;
