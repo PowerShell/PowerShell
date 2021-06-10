@@ -98,11 +98,11 @@ jobs:
       packageSources: 'https://nuget.org/api/v2'
       installRoot: '$(GenAPIToolPath)'
 
-  - template: shouldSign.yml
-
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: shouldSign.yml
 
   - task: NuGetToolInstaller@1
     displayName: 'Install NuGet.exe'

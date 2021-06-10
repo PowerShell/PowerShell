@@ -22,11 +22,11 @@ jobs:
     - checkout: ComplianceRepo
       clean: true
 
-    - template: shouldSign.yml
-
     - template: SetVersionVariables.yml
       parameters:
         ReleaseTagVar: $(ReleaseTagVar)
+
+    - template: shouldSign.yml
 
     - task: DownloadBuildArtifacts@0
       inputs:
