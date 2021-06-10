@@ -59,7 +59,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$dict['Moe'] = 'Wise guy!'
 		$dict | Export-Clixml $testfile
 		$results = Import-Clixml $testfile
-		$results.GetType().Name | Should -Be "Hashtable"
+		$results.GetType().Name | Should -BeExactly  "Hashtable"
 		$results.Count | Should -Be 3
     }
 
@@ -70,11 +70,11 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$dict['Moe'] = 'Wise guy!'
 		$dict | Export-Clixml $testfile
 		$results = Import-Clixml $testfile
-		$results.GetType().Name | Should -Be "OrderedDictionary"
+		$results.GetType().Name | Should -BeExactly  "OrderedDictionary"
 		$results.Count | Should -Be 3
-		$results[0] | Should -Be $dict[0]
-		$results[1] | Should -Be $dict[1]
-		$results[2] | Should -Be $dict[2]
+		$results[0] | Should -BeExactly  $dict[0]
+		$results[1] | Should -BeExactly  $dict[1]
+		$results[2] | Should -BeExactly  $dict[2]
     }
 
 	It "Export-Clixml StopProcessing should succeed" {
