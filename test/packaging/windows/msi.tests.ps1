@@ -86,6 +86,8 @@ Describe -Name "Windows MSI" -Fixture {
         BeforeAll {
             Write-Verbose "cr-$channel-$runtime" -Verbose
             $pwshPath = Join-Path $env:ProgramFiles -ChildPath "PowerShell"
+            $pwshx86Path = Join-Path ${env:ProgramFiles(x86)} -ChildPath "PowerShell"
+
             switch ("$channel-$runtime") {
                 "preview-win7-x64" {
                     $versionPath = Join-Path -Path $pwshPath -ChildPath '7-preview'
@@ -98,12 +100,12 @@ Describe -Name "Windows MSI" -Fixture {
                     $msiUpgradeCode = '31ab5147-9a97-4452-8443-d9709f0516e1'
                 }
                 "preview-win7-x86" {
-                    $versionPath = Join-Path -Path $pwshPath -ChildPath '7-preview'
+                    $versionPath = Join-Path -Path $pwshx86Path -ChildPath '7-preview'
                     $revisionRange = 0, 99
                     $msiUpgradeCode = '86abcfbd-1ccc-4a88-b8b2-0facfde29094'
                 }
                 "stable-win7-x86" {
-                    $versionPath = Join-Path -Path $pwshPath -ChildPath '7'
+                    $versionPath = Join-Path -Path $pwshx86Path -ChildPath '7'
                     $revisionRange = 500, 500
                     $msiUpgradeCode = '1d00683b-0f84-4db8-a64f-2f98ad42fe06'
                 }
@@ -132,6 +134,7 @@ Describe -Name "Windows MSI" -Fixture {
         It "Revision should be in correct range" -Skip:(!(Test-Elevated)) {
             $pwshDllPath = Join-Path -Path $versionPath -ChildPath "pwsh.dll"
             [version] $version = (Get-ChildItem $pwshDllPath).VersionInfo.FileVersion
+            Write-Verbose "pwsh.dll version: $version" -Verbose
             $version.Revision | Should -BeGreaterOrEqual $revisionRange[0] -Because "$channel revision should between $($revisionRange[0]) and $($revisionRange[1])"
             $version.Revision | Should -BeLessOrEqual $revisionRange[1] -Because "$channel revision should between $($revisionRange[0]) and $($revisionRange[1])"
         }
