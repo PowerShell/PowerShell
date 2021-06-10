@@ -878,7 +878,6 @@ namespace Microsoft.PowerShell.Commands
                             // At this point, we are already exhaust all possible ways to load the nested module. The last option is to load it as a binary module/snapin.
                             module = LoadBinaryModule(
                                 parentModule,
-                                trySnapInName: true,
                                 moduleSpecification.Name,
                                 fileName: null,
                                 assemblyToLoad: null,
@@ -1056,35 +1055,27 @@ namespace Microsoft.PowerShell.Commands
         {
             IEnumerable<PSModuleInfo> allModules = null;
             HashSet<string> modulePathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            bool cleanupModuleAnalysisAppDomain = Context.TakeResponsibilityForModuleAnalysisAppDomain();
 
-            try
+            foreach (string path in ModuleIntrinsics.GetModulePath(false, Context))
             {
-                foreach (string path in ModuleIntrinsics.GetModulePath(false, Context))
+                string uniquePath = path.TrimEnd(Utils.Separators.Directory);
+
+                // Ignore repeated module path.
+                if (!modulePathSet.Add(uniquePath))
                 {
-                    string uniquePath = path.TrimEnd(Utils.Separators.Directory);
-
-                    // Ignore repeated module path.
-                    if (!modulePathSet.Add(uniquePath)) { continue; }
-
-                    try
-                    {
-                        IEnumerable<PSModuleInfo> modulesFound = GetModulesFromOneModulePath(
-                            names, uniquePath, all, refresh).OrderBy(static m => m.Name);
-                        allModules = allModules == null ? modulesFound : allModules.Concat(modulesFound);
-                    }
-                    catch (Exception e) when (e is IOException || e is UnauthorizedAccessException)
-                    {
-                        // ignore directories that can't be accessed
-                        continue;
-                    }
+                    continue;
                 }
-            }
-            finally
-            {
-                if (cleanupModuleAnalysisAppDomain)
+
+                try
                 {
-                    Context.ReleaseResponsibilityForModuleAnalysisAppDomain();
+                    IEnumerable<PSModuleInfo> modulesFound = GetModulesFromOneModulePath(
+                        names, uniquePath, all, refresh).OrderBy(static m => m.Name);
+                    allModules = allModules == null ? modulesFound : allModules.Concat(modulesFound);
+                }
+                catch (Exception e) when (e is IOException || e is UnauthorizedAccessException)
+                {
+                    // ignore directories that can't be accessed
+                    continue;
                 }
             }
 
@@ -5892,7 +5883,6 @@ namespace Microsoft.PowerShell.Commands
                          ext.Equals(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase))
                 {
                     module = LoadBinaryModule(
-                        trySnapInName: false,
                         ModuleIntrinsics.GetModuleName(fileName),
                         fileName,
                         assemblyToLoad: null,
@@ -6117,7 +6107,6 @@ namespace Microsoft.PowerShell.Commands
         private static readonly Dictionary<string, Tuple<BinaryAnalysisResult, Version>> s_binaryAnalysisCache =
             new Dictionary<string, Tuple<BinaryAnalysisResult, Version>>();
 
-#if CORECLR
         /// <summary>
         /// Analyze the module assembly to find out all cmdlets and aliases defined in that assembly.
         /// </summary>
@@ -6157,155 +6146,6 @@ namespace Microsoft.PowerShell.Commands
 
             return resultToReturn;
         }
-#else
-        /// <summary>
-        /// Analyze the module assembly to find out all cmdlets and aliases defined in that assembly.
-        /// </summary>
-        private BinaryAnalysisResult GetCmdletsFromBinaryModuleImplementation(string path, ManifestProcessingFlags manifestProcessingFlags, out Version assemblyVersion)
-        {
-            Tuple<BinaryAnalysisResult, Version> tuple = null;
-
-            lock (s_lockObject)
-            {
-                s_binaryAnalysisCache.TryGetValue(path, out tuple);
-            }
-
-            if (tuple != null)
-            {
-                assemblyVersion = tuple.Item2;
-                return tuple.Item1;
-            }
-
-            assemblyVersion = new Version("0.0.0.0");
-
-            bool cleanupModuleAnalysisAppDomain = false;
-            AppDomain tempDomain = Context.AppDomainForModuleAnalysis;
-            if (tempDomain == null)
-            {
-                cleanupModuleAnalysisAppDomain = Context.TakeResponsibilityForModuleAnalysisAppDomain();
-                tempDomain = Context.AppDomainForModuleAnalysis = AppDomain.CreateDomain("ReflectionDomain");
-            }
-
-            try
-            {
-                // create temp appdomain if one is not passed in
-                tempDomain.SetData("PathToProcess", path);
-                tempDomain.SetData("IsModuleLoad", 0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements));
-
-                // reset DetectedCmdlets and AssemblyVersion from previous invocation
-                tempDomain.SetData("DetectedCmdlets", null);
-                tempDomain.SetData("DetectedAliases", null);
-                tempDomain.SetData("AssemblyVersion", assemblyVersion);
-
-                tempDomain.DoCallBack(AnalyzeSnapinDomainHelper);
-                List<string> detectedCmdlets = (List<string>)tempDomain.GetData("DetectedCmdlets");
-                List<Tuple<string, string>> detectedAliases = (List<Tuple<string, string>>)tempDomain.GetData("DetectedAliases");
-                assemblyVersion = (Version)tempDomain.GetData("AssemblyVersion");
-
-                if ((detectedCmdlets.Count == 0) && (System.IO.Path.IsPathRooted(path)))
-                {
-                    // If we couldn't load it from a file, try loading from the GAC
-                    string assemblyname = Path.GetFileName(path);
-                    BinaryAnalysisResult gacResult = GetCmdletsFromBinaryModuleImplementation(assemblyname, manifestProcessingFlags, out assemblyVersion);
-                    detectedCmdlets = gacResult.DetectedCmdlets;
-                    detectedAliases = gacResult.DetectedAliases;
-                }
-
-                BinaryAnalysisResult result = new BinaryAnalysisResult();
-                result.DetectedCmdlets = detectedCmdlets;
-                result.DetectedAliases = detectedAliases;
-
-                lock (s_lockObject)
-                {
-                    s_binaryAnalysisCache[path] = Tuple.Create(result, assemblyVersion);
-                }
-
-                return result;
-            }
-            finally
-            {
-                if (cleanupModuleAnalysisAppDomain)
-                {
-                    Context.ReleaseResponsibilityForModuleAnalysisAppDomain();
-                }
-            }
-        }
-
-        private static void AnalyzeSnapinDomainHelper()
-        {
-            string path = (string)AppDomain.CurrentDomain.GetData("PathToProcess");
-            bool isModuleLoad = (bool)AppDomain.CurrentDomain.GetData("IsModuleLoad");
-            Dictionary<string, SessionStateCmdletEntry> cmdlets = null;
-            Dictionary<string, List<SessionStateAliasEntry>> aliases = null;
-            Dictionary<string, SessionStateProviderEntry> providers = null;
-            string throwAwayHelpFile = null;
-            Version assemblyVersion = new Version("0.0.0.0");
-
-            try
-            {
-                Assembly assembly = null;
-
-                try
-                {
-                    // If this is a fully-qualified search, load it from the file
-                    if (Path.IsPathRooted(path))
-                    {
-                        assembly = InitialSessionState.LoadAssemblyFromFile(path);
-                    }
-                    else
-                    {
-                        // Otherwise, load it from the GAC
-                        Exception ignored = null;
-                        assembly = ExecutionContext.LoadAssembly(path, null, out ignored);
-                    }
-
-                    if (assembly != null)
-                    {
-                        assemblyVersion = GetAssemblyVersionNumber(assembly);
-                    }
-                }
-                // Catch-all OK, analyzing user code.
-                catch (Exception)
-                {
-                }
-
-                if (assembly != null)
-                {
-                    PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, assembly.Location, null, null, isModuleLoad, out cmdlets, out aliases, out providers, out throwAwayHelpFile);
-                }
-            }
-            // Catch-all OK, analyzing user code.
-            catch (Exception)
-            {
-            }
-
-            List<string> detectedCmdlets = new List<string>();
-            List<Tuple<string, string>> detectedAliases = new List<Tuple<string, string>>();
-
-            if (cmdlets != null)
-            {
-                foreach (SessionStateCmdletEntry cmdlet in cmdlets.Values)
-                {
-                    detectedCmdlets.Add(cmdlet.Name);
-                }
-            }
-
-            if (aliases != null)
-            {
-                foreach (List<SessionStateAliasEntry> aliasList in aliases.Values)
-                {
-                    foreach (SessionStateAliasEntry alias in aliasList)
-                    {
-                        detectedAliases.Add(new Tuple<string, string>(alias.Name, alias.Definition));
-                    }
-                }
-            }
-
-            AppDomain.CurrentDomain.SetData("DetectedCmdlets", detectedCmdlets);
-            AppDomain.CurrentDomain.SetData("DetectedAliases", detectedAliases);
-            AppDomain.CurrentDomain.SetData("AssemblyVersion", assemblyVersion);
-        }
-#endif
 
         // Analyzes a script module implementation for its exports.
         private static readonly Dictionary<string, PSModuleInfo> s_scriptAnalysisCache = new Dictionary<string, PSModuleInfo>();
@@ -6524,7 +6364,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Load a binary module. A binary module is an assembly that should contain cmdlets.
         /// </summary>
-        /// <param name="trySnapInName">If true, then the registered snapins will also be searched when loading.</param>
         /// <param name="moduleName">The name of the snapin or assembly to load.</param>
         /// <param name="fileName">The path to the assembly to load.</param>
         /// <param name="assemblyToLoad">The assembly to load so no lookup need be done.</param>
@@ -6542,7 +6381,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="found">Sets this to true if an assembly was found.</param>
         /// <returns>THe module info object that was created...</returns>
         internal PSModuleInfo LoadBinaryModule(
-            bool trySnapInName,
             string moduleName,
             string fileName,
             Assembly assemblyToLoad,
@@ -6557,7 +6395,6 @@ namespace Microsoft.PowerShell.Commands
         {
             return LoadBinaryModule(
                 parentModule: null,
-                trySnapInName,
                 moduleName,
                 fileName,
                 assemblyToLoad,
@@ -6577,7 +6414,6 @@ namespace Microsoft.PowerShell.Commands
         /// Load a binary module. A binary module is an assembly that should contain cmdlets.
         /// </summary>
         /// <param name="parentModule">The parent module for which this module is a nested module.</param>
-        /// <param name="trySnapInName">If true, then the registered snapins will also be searched when loading.</param>
         /// <param name="moduleName">The name of the snapin or assembly to load.</param>
         /// <param name="fileName">The path to the assembly to load.</param>
         /// <param name="assemblyToLoad">The assembly to load so no lookup need be done.</param>
@@ -6598,7 +6434,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>THe module info object that was created...</returns>
         internal PSModuleInfo LoadBinaryModule(
             PSModuleInfo parentModule,
-            bool trySnapInName,
             string moduleName,
             string fileName,
             Assembly assemblyToLoad,
@@ -6624,7 +6459,6 @@ namespace Microsoft.PowerShell.Commands
             List<Tuple<string, string>> detectedAliases = null;
             Assembly assembly = null;
             Exception error = null;
-            bool importSuccessful = false;
             string modulePath = string.Empty;
             Version assemblyVersion = new Version(0, 0, 0, 0);
             var importingModule = (manifestProcessingFlags & ManifestProcessingFlags.LoadElements) != 0;
@@ -6675,114 +6509,50 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+            else if (importingModule)
+            {
+                assembly = Context.AddAssembly(moduleName, fileName, out error);
+
+                if (assembly == null)
+                {
+                    if (error != null)
+                        throw error;
+
+                    found = false;
+                    return null;
+                }
+
+                assemblyVersion = GetAssemblyVersionNumber(assembly);
+
+                if (string.IsNullOrEmpty(fileName))
+                    modulePath = assembly.Location;
+                else
+                    modulePath = fileName;
+
+                // Passing module as a parameter here so that the providers can have the module property populated.
+                // For engine providers, the module should point to top-level module name
+                // For FileSystem, the module is Microsoft.PowerShell.Core and not System.Management.Automation
+                if (parentModule != null && InitialSessionState.IsEngineModule(parentModule.Name))
+                {
+                    iss.ImportCmdletsFromAssembly(assembly, parentModule);
+                }
+                else
+                {
+                    iss.ImportCmdletsFromAssembly(assembly, null);
+                }
+            }
             else
             {
-                // Avoid trying to import a PowerShell assembly as Snapin as it results in PSArgumentException
-                if ((moduleName != null) && Utils.IsPowerShellAssembly(moduleName))
+                string binaryPath = fileName;
+                modulePath = fileName;
+                if (binaryPath == null)
                 {
-                    trySnapInName = false;
+                    binaryPath = System.IO.Path.Combine(moduleBase, moduleName);
                 }
 
-                if (trySnapInName && PSSnapInInfo.IsPSSnapinIdValid(moduleName))
-                {
-                    PSSnapInInfo snapin = null;
-
-#if !CORECLR
-                    // Avoid trying to load SnapIns with Import-Module
-                    PSSnapInException warning;
-                    try
-                    {
-                        if (importingModule)
-                        {
-                            snapin = iss.ImportPSSnapIn(moduleName, out warning);
-                        }
-                    }
-                    catch (PSArgumentException)
-                    {
-                        // BUGBUG - brucepay - probably want to have a verbose message here...
-                    }
-#endif
-
-                    if (snapin != null)
-                    {
-                        importSuccessful = true;
-                        if (string.IsNullOrEmpty(fileName))
-                            modulePath = snapin.AbsoluteModulePath;
-                        else
-                            modulePath = fileName;
-                        assemblyVersion = snapin.Version;
-                        // If we're not supposed to load the types files from the snapin
-                        // clear the iss member
-                        if (!loadTypes)
-                        {
-                            iss.Types.Reset();
-                        }
-                        // If we're not supposed to load the format files from the snapin,
-                        // clear the iss member
-                        if (!loadFormats)
-                        {
-                            iss.Formats.Reset();
-                        }
-
-                        foreach (var a in ClrFacade.GetAssemblies())
-                        {
-                            if (a.GetName().FullName.Equals(snapin.AssemblyName, StringComparison.Ordinal))
-                            {
-                                assembly = a;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (!importSuccessful)
-                {
-                    if (importingModule)
-                    {
-                        assembly = Context.AddAssembly(moduleName, fileName, out error);
-
-                        if (assembly == null)
-                        {
-                            if (error != null)
-                                throw error;
-
-                            found = false;
-                            return null;
-                        }
-
-                        assemblyVersion = GetAssemblyVersionNumber(assembly);
-
-                        if (string.IsNullOrEmpty(fileName))
-                            modulePath = assembly.Location;
-                        else
-                            modulePath = fileName;
-
-                        // Passing module as a parameter here so that the providers can have the module property populated.
-                        // For engine providers, the module should point to top-level module name
-                        // For FileSystem, the module is Microsoft.PowerShell.Core and not System.Management.Automation
-                        if (parentModule != null && InitialSessionState.IsEngineModule(parentModule.Name))
-                        {
-                            iss.ImportCmdletsFromAssembly(assembly, parentModule);
-                        }
-                        else
-                        {
-                            iss.ImportCmdletsFromAssembly(assembly, null);
-                        }
-                    }
-                    else
-                    {
-                        string binaryPath = fileName;
-                        modulePath = fileName;
-                        if (binaryPath == null)
-                        {
-                            binaryPath = System.IO.Path.Combine(moduleBase, moduleName);
-                        }
-
-                        BinaryAnalysisResult analysisResult = GetCmdletsFromBinaryModuleImplementation(binaryPath, manifestProcessingFlags, out assemblyVersion);
-                        detectedCmdlets = analysisResult.DetectedCmdlets;
-                        detectedAliases = analysisResult.DetectedAliases;
-                    }
-                }
+                BinaryAnalysisResult analysisResult = GetCmdletsFromBinaryModuleImplementation(binaryPath, manifestProcessingFlags, out assemblyVersion);
+                detectedCmdlets = analysisResult.DetectedCmdlets;
+                detectedAliases = analysisResult.DetectedAliases;
             }
 
             found = true;

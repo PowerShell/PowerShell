@@ -1053,7 +1053,6 @@ namespace System.Management.Automation
             if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleAutoDiscoveryStart(commandName);
 
             CommandInfo result = null;
-            bool cleanupModuleAnalysisAppDomain = false;
             try
             {
                 // If commandName had a slash, it was module-qualified or path-qualified.
@@ -1075,8 +1074,6 @@ namespace System.Management.Automation
                     {
                         discoveryTracer.WriteLine("Executing non module-qualified search: {0}", commandName);
                         context.CommandDiscovery.RegisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
-
-                        cleanupModuleAnalysisAppDomain = context.TakeResponsibilityForModuleAnalysisAppDomain();
 
                         // Get the available module files, preferring modules from $PSHOME so that user modules don't
                         // override system modules during auto-loading
@@ -1142,10 +1139,6 @@ namespace System.Management.Automation
             finally
             {
                 context.CommandDiscovery.UnregisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
-                if (cleanupModuleAnalysisAppDomain)
-                {
-                    context.ReleaseResponsibilityForModuleAnalysisAppDomain();
-                }
             }
 
             if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleAutoDiscoveryStop(commandName);
