@@ -61,6 +61,8 @@ However, it's expected that many issues will require input from both WGs.
 * @daxian-dbw
 * @rjmholt
 * @BrucePay
+* @vexx32
+* @rkeithhill
 
 ## Interactive UX
 
@@ -111,11 +113,12 @@ Given the commonality of serialization boundaries, the Remoting WG should also f
 * @TravisEz13
 * @anmenaga
 
-## Modules
+## Cmdlets and Modules
 
-For those core/inbox modules whose source code lives within the `PowerShell/PowerShell` repository,
-we may have some set of WGs responsible for their cmdlet design guidelines and enforcement,
-as well as to manage the proposal of new cmdlets or breaking changes.
+The Cmdlet WG should focus on core/inbox modules whose source code lives within the
+`PowerShell/PowerShell` repository,
+including the proposal of new cmdlets and parameters, improvements and bug fixes to existing
+cmdlets/parameters, and breaking changes.
 
 However, some modules that ship as part of the PowerShell package are managed in other source repositories.
 These modules are owned by the maintainers of those individual repositories.
@@ -130,18 +133,11 @@ These modules include:
 * [`PSReadLine`](https://github.com/PowerShell/PSReadLine)
 * [`ThreadJob`](https://github.com/PowerShell/Modules/tree/master/Modules/Microsoft.PowerShell.ThreadJob)
 
-Until it is determined how best to handle the remainder of modules that ship as part of PowerShell,
-the following modules will be owned by the Committee and Maintainers:
+### Members
 
-* CimCmdlets
-* Microsoft.PowerShell.Diagnostics
-* Microsoft.PowerShell.Host
-* Microsoft.PowerShell.Management
-* Microsoft.PowerShell.Security
-* Microsoft.PowerShell.Utility
-* Microsoft.WSMan.Management
-* PSDiagnostics
-* Web/JSON Cmdlets
+* PowerShell Committee as interim members
+* @TobiasPSP
+* @jdhitsolutions
 
 ## Security
 
