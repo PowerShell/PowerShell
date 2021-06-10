@@ -589,7 +589,6 @@ namespace Microsoft.PowerShell.Commands
             if (!moduleLoaded)
             {
                 PSModuleInfo module = LoadBinaryModule(
-                    trySnapInName: false,
                     moduleName: null,
                     fileName: null,
                     suppliedAssembly,
