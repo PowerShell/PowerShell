@@ -1803,7 +1803,7 @@ function Get-RedHatPackageManager {
 }
 
 function Start-PSBootstrap {
-    [CmdletBinding(ConfirmImpact="High")]
+    [CmdletBinding()]
     param(
         [string]$Channel = $dotnetCLIChannel,
         # we currently pin dotnet-cli version, and will
