@@ -5762,7 +5762,7 @@ namespace System.Management.Automation
                 _ => null
             };
 
-            Diagnostics.Assert(controlBodyType is null, "This should never happen unless a new Format-* cmdlet is added");
+            Diagnostics.Assert(controlBodyType is not null, "This should never happen unless a new Format-* cmdlet is added");
 
             var uniqueNames = new HashSet<string>();
             foreach (ViewDefinition viewDefinition in typeInfoDB.viewDefinitionsSection.viewDefinitionList)
@@ -5776,7 +5776,11 @@ namespace System.Management.Automation
                             // We use 'StartsWith()' because 'applyTo.Name' can look like "System.Diagnostics.Process#IncludeUserName".
                             if (applyTo.name.StartsWith(inferredTypeName, StringComparison.OrdinalIgnoreCase) && uniqueNames.Add(viewDefinition.name))
                             {
-                                results.Add(new CompletionResult(viewDefinition.name, viewDefinition.name, CompletionResultType.Text, viewDefinition.name));
+                                string completionText = viewDefinition.name.IndexOfAny(s_charactersRequiringQuotes) != -1
+                                    ? "'" + viewDefinition.name + "'"
+                                    : viewDefinition.name;
+
+                                results.Add(new CompletionResult(completionText, viewDefinition.name, CompletionResultType.Text, viewDefinition.name));
                             }
                         }
                     }
