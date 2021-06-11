@@ -386,7 +386,7 @@ Describe "TabCompletion" -Tags CI {
 
             # The completion is based on a type of the argument which is binded to 'InputObject' parameter.
             $processList = Get-Process
-            $res = TabExpansion2 -inputScript "`$processList | $cmd" -cursorColumn "`$processList | $cmd -View ".Length
+            $res = TabExpansion2 -inputScript "`$processList | $cmd" -cursorColumn "`$processList | $cmd".Length
             $completionText = $res.CompletionMatches.CompletionText | Sort-Object
             $completionText -join ' ' | Should -BeExactly $expected
         }
