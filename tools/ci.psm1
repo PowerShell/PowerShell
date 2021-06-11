@@ -171,7 +171,7 @@ function Invoke-CIInstall
     }
 
     Set-BuildVariable -Name TestPassed -Value False
-    Start-PSBootstrap -Confirm:$false
+    Start-PSBootstrap
 }
 
 function Invoke-CIxUnit
