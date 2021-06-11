@@ -1342,7 +1342,16 @@ namespace System.Management.Automation
 
             lock (s_amsiLockObject)
             {
-                string appName = string.Concat("PowerShell_", Environment.ProcessPath, "_", PSVersionInfo.ProductVersion);
+                string appName;
+                try
+                {
+                    appName = string.Concat("PowerShell_", Environment.ProcessPath, "_", PSVersionInfo.ProductVersion);
+                }
+                catch (Exception)
+                {
+                    Process currentProcess = Process.GetCurrentProcess();
+                    appName = string.Concat("PowerShell_", currentProcess.ProcessName, ".exe_", PSVersionInfo.ProductVersion);
+                }
 
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
