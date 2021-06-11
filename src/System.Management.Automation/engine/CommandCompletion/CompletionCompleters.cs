@@ -3867,7 +3867,7 @@ namespace System.Management.Automation
             if (prevType is not null)
             {
                 string[] inferTypeNames = prevType.Select(t => t.Name).ToArray();
-                CompleteFormatViewByInferredType(context.TypeInferenceContext, inferTypeNames, result, commandName);
+                CompleteFormatViewByInferredType(context, inferTypeNames, result, commandName);
             }
 
             result.Add(CompletionResult.Null);
@@ -5744,9 +5744,9 @@ namespace System.Management.Automation
             return Ast.GetAncestorAst<ConfigurationDefinitionAst>(expression) != null;
         }
 
-        private static void CompleteFormatViewByInferredType(TypeInferenceContext context, string[] inferredTypeNames, List<CompletionResult> results, string commandName)
+        private static void CompleteFormatViewByInferredType(CompletionContext context, string[] inferredTypeNames, List<CompletionResult> results, string commandName)
         {
-            var typeInfoDB = context.ExecutionContext.FormatDBManager.GetTypeInfoDataBase();
+            var typeInfoDB = context.TypeInferenceContext.ExecutionContext.FormatDBManager.GetTypeInfoDataBase();
 
             if (typeInfoDB is null)
             {
@@ -5764,6 +5764,10 @@ namespace System.Management.Automation
 
             Diagnostics.Assert(controlBodyType is not null, "This should never happen unless a new Format-* cmdlet is added");
 
+            var wordToComplete = context.WordToComplete;
+            var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            WildcardPattern viewPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
             var uniqueNames = new HashSet<string>();
             foreach (ViewDefinition viewDefinition in typeInfoDB.viewDefinitionsSection.viewDefinitionList)
             {
@@ -5774,11 +5778,15 @@ namespace System.Management.Automation
                         foreach (string inferredTypeName in inferredTypeNames)
                         {
                             // We use 'StartsWith()' because 'applyTo.Name' can look like "System.Diagnostics.Process#IncludeUserName".
-                            if (applyTo.name.StartsWith(inferredTypeName, StringComparison.OrdinalIgnoreCase) && uniqueNames.Add(viewDefinition.name))
+                            if (applyTo.name.StartsWith(inferredTypeName, StringComparison.OrdinalIgnoreCase)
+                                && uniqueNames.Add(viewDefinition.name)
+                                && viewPattern.IsMatch(viewDefinition.name))
                             {
-                                string completionText = viewDefinition.name.IndexOfAny(s_charactersRequiringQuotes) != -1
-                                    ? "'" + viewDefinition.name + "'"
-                                    : viewDefinition.name;
+                                string completionText = quote != string.Empty
+                                    ? quote + viewDefinition.name + quote
+                                    : viewDefinition.name.IndexOfAny(s_charactersRequiringQuotes) != -1
+                                        ? "'" + viewDefinition.name + "'"
+                                        : viewDefinition.name;
 
                                 results.Add(new CompletionResult(completionText, viewDefinition.name, CompletionResultType.Text, viewDefinition.name));
                             }

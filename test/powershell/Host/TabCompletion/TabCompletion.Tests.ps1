@@ -374,16 +374,19 @@ Describe "TabCompletion" -Tags CI {
         }
 
         It 'Should complete $processList = Get-Process; $processList | <cmd> -View' -TestCases (
-            @{ cmd = 'Format-Table'; expected = "'R A M' Priority process ProcessModule ProcessWithUserName StartTime" },
-            @{ cmd = 'Format-List'; expected = '' },
-            @{ cmd = 'Format-Wide'; expected = 'process' },
-            @{ cmd = 'Format-Custom'; expected = '' }
+            @{ cmd = 'Format-Table -View '; expected = "'R A M' Priority process ProcessModule ProcessWithUserName StartTime" },
+            @{ cmd = 'Format-List -View '; expected = '' },
+            @{ cmd = 'Format-Wide -View '; expected = 'process' },
+            @{ cmd = 'Format-Custom -View '; expected = '' },
+            @{ cmd = 'Format-Table -View S'; expected = "StartTime" },
+            @{ cmd = "Format-Table -View 'S"; expected = "'StartTime'" },
+            @{ cmd = "Format-Table -View R"; expected = "'R A M'" }
         ) {
             param($cmd, $expected)
 
             # The completion is based on a type of the argument which is binded to 'InputObject' parameter.
             $processList = Get-Process
-            $res = TabExpansion2 -inputScript "`$processList | $cmd -View " -cursorColumn "`$processList | $cmd -View ".Length
+            $res = TabExpansion2 -inputScript "`$processList | $cmd" -cursorColumn "`$processList | $cmd -View ".Length
             $completionText = $res.CompletionMatches.CompletionText | Sort-Object
             $completionText -join ' ' | Should -BeExactly $expected
         }
