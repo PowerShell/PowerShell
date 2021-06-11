@@ -356,9 +356,28 @@ Describe "TabCompletion" -Tags CI {
 
             $tempViewFile = Join-Path -Path $TestDrive -ChildPath 'processViewDefinition.ps1xml'
             Set-Content -LiteralPath $tempViewFile -Value $viewDefinition -Force
-            Update-FormatData -AppendPath $tempViewFile
+
+            $ps = [PowerShell]::Create()
+            $null = $ps.AddScript("Update-FormatData -AppendPath $tempViewFile")
+            $ps.Invoke()
+            $ps.HadErrors | Should -BeFalse
+            $ps.Commands.Clear()
 
             Remove-Item -LiteralPath $tempViewFile -Force -ErrorAction SilentlyContinue
+        }
+
+        It 'Should complete Get-ChildItem | <cmd> -View' -TestCases (
+            @{ cmd = 'Format-Table'; expected = "children childrenWithHardlink$(if ($EnabledExperimentalFeatures.Contains('PSUnixFileStat')) { ' childrenWithUnixStat' })" },
+            @{ cmd = 'Format-List'; expected = 'children' },
+            @{ cmd = 'Format-Wide'; expected = 'children' },
+            @{ cmd = 'Format-Custom'; expected = '' }
+        ) {
+            param($cmd, $expected)
+
+            # The completion is based on OutputTypeAttribute() of the cmdlet.
+            $res = TabExpansion2 -inputScript "Get-ChildItem | $cmd -View " -cursorColumn "Get-ChildItem | $cmd -View ".Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $expected
         }
 
         It 'Should complete Get-ChildItem | <cmd> -View' -TestCases (
@@ -386,11 +405,18 @@ Describe "TabCompletion" -Tags CI {
         ) {
             param($cmd, $expected)
 
-            # The completion is based on a type of the argument which is binded to 'InputObject' parameter.
-            $processList = Get-Process
-            $res = TabExpansion2 -inputScript "`$processList | $cmd" -cursorColumn "`$processList | $cmd".Length
-            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-            $completionText -join ' ' | Should -BeExactly $expected
+            $ps.AddScript({
+                param ($cmd)
+                $processList=Get-Process
+                $res = TabExpansion2 -inputScript "`$processList | $cmd" -cursorColumn "`$processList | $cmd".Length
+                $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+                $completionText -join ' '
+            }).AddArgument($cmd)
+
+            $result = $ps.Invoke()
+            $ps.Commands.Clear()
+
+            $result | Should -BeExactly $expected
         }
     }
 
