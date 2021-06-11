@@ -357,6 +357,8 @@ Describe "TabCompletion" -Tags CI {
             $tempViewFile = Join-Path -Path $TestDrive -ChildPath 'processViewDefinition.ps1xml'
             Set-Content -LiteralPath $tempViewFile -Value $viewDefinition -Force
             Update-FormatData -AppendPath $tempViewFile
+
+            Remove-Item -LiteralPath $tempViewFile -Force -ErrorAction SilentlyContinue
         }
 
         It 'Should complete Get-ChildItem | <cmd> -View' -TestCases (
