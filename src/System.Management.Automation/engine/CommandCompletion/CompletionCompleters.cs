@@ -5782,11 +5782,13 @@ namespace System.Management.Automation
                                 && uniqueNames.Add(viewDefinition.name)
                                 && viewPattern.IsMatch(viewDefinition.name))
                             {
-                                string completionText = quote != string.Empty
-                                    ? quote + viewDefinition.name + quote
-                                    : viewDefinition.name.IndexOfAny(s_charactersRequiringQuotes) != -1
-                                        ? "'" + viewDefinition.name + "'"
-                                        : viewDefinition.name;
+                                string completionText = viewDefinition.name;
+                                var quoteInUse = quote == string.Empty ? "'" : quote;
+                                if (quoteInUse == "'")
+                                {
+                                    completionText = completionText.Replace("'", "''");
+                                }
+                                completionText = quoteInUse + completionText + quoteInUse;
 
                                 results.Add(new CompletionResult(completionText, viewDefinition.name, CompletionResultType.Text, viewDefinition.name));
                             }
