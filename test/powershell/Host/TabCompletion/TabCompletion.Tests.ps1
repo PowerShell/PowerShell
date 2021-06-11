@@ -380,21 +380,7 @@ Describe "TabCompletion" -Tags CI {
             $completionText -join ' ' | Should -BeExactly $expected
         }
 
-        It 'Should complete Get-ChildItem | <cmd> -View' -TestCases (
-            @{ cmd = 'Format-Table'; expected = "children childrenWithHardlink$(if ($EnabledExperimentalFeatures.Contains('PSUnixFileStat')) { ' childrenWithUnixStat' })" },
-            @{ cmd = 'Format-List'; expected = 'children' },
-            @{ cmd = 'Format-Wide'; expected = 'children' },
-            @{ cmd = 'Format-Custom'; expected = '' }
-        ) {
-            param($cmd, $expected)
-
-            # The completion is based on OutputTypeAttribute() of the cmdlet.
-            $res = TabExpansion2 -inputScript "Get-ChildItem | $cmd -View " -cursorColumn "Get-ChildItem | $cmd -View ".Length
-            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-            $completionText -join ' ' | Should -BeExactly $expected
-        }
-
-        It 'Should complete $processList = Get-Process; $processList | <cmd> -View' -TestCases (
+        It 'Should complete $processList = Get-Process; $processList | <cmd>' -TestCases (
             @{ cmd = 'Format-Table -View '; expected = "'R A M' Priority process ProcessModule ProcessWithUserName StartTime" },
             @{ cmd = 'Format-List -View '; expected = '' },
             @{ cmd = 'Format-Wide -View '; expected = 'process' },
@@ -407,7 +393,7 @@ Describe "TabCompletion" -Tags CI {
 
             $ps.AddScript({
                 param ($cmd)
-                $processList=Get-Process
+                $processList = Get-Process
                 $res = TabExpansion2 -inputScript "`$processList | $cmd" -cursorColumn "`$processList | $cmd".Length
                 $completionText = $res.CompletionMatches.CompletionText | Sort-Object
                 $completionText -join ' '
