@@ -403,8 +403,9 @@ Describe "TabCompletion" -Tags CI {
             $ps.Commands.Clear()
 $VerbosePreference = "Continue"
 $result | out-string | write-verbose
-$result | Sort-Object | out-string | write-verbose
-$result | out-string | Sort-Object | write-verbose
+$result | Sort-Object -Culture "en-US" | out-string | write-verbose
+$result | out-string | Sort-Object -Culture "en-US" | write-verbose
+Get-Culture | write-verbose
 
             $result -join ' ' | Should -BeExactly $expected
         }
