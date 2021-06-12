@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System.Management.Automation.Host;
 
 namespace System.Management.Automation
@@ -21,7 +23,6 @@ namespace System.Management.Automation
     /// implementation of this class and pass it to cmdlets before calling the Cmdlet Invoke() or
     /// Execute() methods.
     /// </remarks>
-#nullable enable
     public interface ICommandRuntime
     {
         /// <summary>
