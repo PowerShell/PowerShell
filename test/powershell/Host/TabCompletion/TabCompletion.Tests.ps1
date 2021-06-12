@@ -396,13 +396,14 @@ Describe "TabCompletion" -Tags CI {
                 $processList = Get-Process
                 $res = TabExpansion2 -inputScript "`$processList | $cmd" -cursorColumn "`$processList | $cmd".Length
                 $completionText = $res.CompletionMatches.CompletionText | Sort-Object
-                $completionText -join ' '
+                $completionText
             }).AddArgument($cmd)
 
             $result = $ps.Invoke()
             $ps.Commands.Clear()
-Write-Verbose -Message $result[0]
-            $result | Should -BeExactly $expected
+$VerbosePreference = "Continue"
+$result | out-string | write-verbose
+            $result -join ' ' | Should -BeExactly $expected
         }
     }
 
