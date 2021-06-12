@@ -391,7 +391,7 @@ Describe "TabCompletion" -Tags CI {
         ) {
             param($cmd, $expected)
 
-            $ps.AddScript({
+            $null = $ps.AddScript({
                 param ($cmd)
                 $processList = Get-Process
                 $res = TabExpansion2 -inputScript "`$processList | $cmd" -cursorColumn "`$processList | $cmd".Length
@@ -401,7 +401,7 @@ Describe "TabCompletion" -Tags CI {
 
             $result = $ps.Invoke()
             $ps.Commands.Clear()
-
+Write-Verbose -Message $result
             $result | Should -BeExactly $expected
         }
     }
