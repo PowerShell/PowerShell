@@ -401,7 +401,7 @@ Describe "TabCompletion" -Tags CI {
 
             $result = $ps.Invoke()
             $ps.Commands.Clear()
-Write-Verbose -Message $result
+Write-Verbose -Message $result[0]
             $result | Should -BeExactly $expected
         }
     }
