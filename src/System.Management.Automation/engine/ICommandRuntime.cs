@@ -21,12 +21,13 @@ namespace System.Management.Automation
     /// implementation of this class and pass it to cmdlets before calling the Cmdlet Invoke() or
     /// Execute() methods.
     /// </remarks>
+#nullable enable
     public interface ICommandRuntime
     {
         /// <summary>
         /// Returns an instance of the PSHost implementation for this environment.
         /// </summary>
-        PSHost Host { get; }
+        PSHost? Host { get; }
         #region Write
         /// <summary>
         /// Display debug information.
@@ -65,7 +66,7 @@ namespace System.Management.Automation
         /// When the cmdlet wants to write a single object out, it will call this
         /// API. It is up to the implementation to decide what to do with these objects.
         /// </remarks>
-        void WriteObject(object sendToPipeline);
+        void WriteObject(object? sendToPipeline);
 
         /// <summary>
         /// Called to write one or more objects to the output pipe.
@@ -83,7 +84,7 @@ namespace System.Management.Automation
         ///  When the cmdlet wants to write multiple objects out, it will call this
         /// API. It is up to the implementation to decide what to do with these objects.
         /// </remarks>
-        void WriteObject(object sendToPipeline, bool enumerateCollection);
+        void WriteObject(object? sendToPipeline, bool enumerateCollection);
 
         /// <summary>
         /// Called by the cmdlet to display progress information.
@@ -219,7 +220,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string, out ShouldProcessReason)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string,ref bool,ref bool)"/>
-        bool ShouldProcess(string target);
+        bool ShouldProcess(string? target);
 
         /// <summary>
         /// Called by a cmdlet to confirm the operation with the user.  Cmdlets which make changes
@@ -265,7 +266,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string, out ShouldProcessReason)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string,ref bool,ref bool)"/>
-        bool ShouldProcess(string target, string action);
+        bool ShouldProcess(string? target, string? action);
 
         /// <summary>
         /// Called by a cmdlet to confirm the operation with the user.  Cmdlets which make changes
@@ -319,7 +320,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string, out ShouldProcessReason)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string,ref bool,ref bool)"/>
-        bool ShouldProcess(string verboseDescription, string verboseWarning, string caption);
+        bool ShouldProcess(string? verboseDescription, string? verboseWarning, string? caption);
 
         /// <summary>
         /// Called by a cmdlet to confirm the operation with the user.  Cmdlets which make changes
@@ -379,7 +380,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldContinue(string,string,ref bool,ref bool)"/>
-        bool ShouldProcess(string verboseDescription, string verboseWarning, string caption, out ShouldProcessReason shouldProcessReason);
+        bool ShouldProcess(string? verboseDescription, string? verboseWarning, string? caption, out ShouldProcessReason shouldProcessReason);
 
         /// <summary>
         /// Called by a cmdlet to confirm an operation or grouping of operations with the user.
@@ -436,7 +437,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string)"/>
-        bool ShouldContinue(string query, string caption);
+        bool ShouldContinue(string? query, string? caption);
 
         /// <summary>
         /// Called to confirm an operation or grouping of operations with the user.
@@ -501,7 +502,7 @@ namespace System.Management.Automation
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.ShouldProcess(string,string,string)"/>
-        bool ShouldContinue(string query, string caption, ref bool yesToAll, ref bool noToAll);
+        bool ShouldContinue(string? query, string? caption, ref bool yesToAll, ref bool noToAll);
 
         #endregion Should
 
@@ -515,7 +516,7 @@ namespace System.Management.Automation
         /// Gets an object that surfaces the current PowerShell transaction.
         /// When this object is disposed, PowerShell resets the active transaction.
         /// </summary>
-        PSTransactionContext CurrentPSTransaction { get; }
+        PSTransactionContext? CurrentPSTransaction { get; }
         #endregion Transaction Support
 
         #region Misc
@@ -561,7 +562,6 @@ namespace System.Management.Automation
     /// execute an instance of a Cmdlet. ICommandRuntime2 extends the ICommandRuntime interface
     /// by adding support for the informational data stream.
     /// </summary>
-#nullable enable
     public interface ICommandRuntime2 : ICommandRuntime
     {
         /// <summary>
