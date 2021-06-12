@@ -407,7 +407,8 @@ $result | ForEach-Object { $_ } | Sort-Object -Culture "en-US" | out-string | wr
 [array]::Sort($result)
 $result | write-verbose
 Get-Culture | write-verbose
-
+$a="'R A M'", "Priority", "process", "ProcessModule", "ProcessWithUserName", "StartTime"
+$a | sort | write-verbose
             $result -join ' ' | Should -BeExactly $expected
         }
     }
