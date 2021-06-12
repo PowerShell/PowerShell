@@ -395,7 +395,7 @@ Describe "TabCompletion" -Tags CI {
                 param ($cmd)
                 $processList = Get-Process
                 $res = TabExpansion2 -inputScript "`$processList | $cmd" -cursorColumn "`$processList | $cmd".Length
-                $completionText = $res.CompletionMatches | Select-Object -ExpandProperty CompletionText | Sort-Object
+                $completionText = $res.CompletionMatches.CompletionText
                 $completionText
             }).AddArgument($cmd)
 
@@ -403,8 +403,9 @@ Describe "TabCompletion" -Tags CI {
             $ps.Commands.Clear()
 $VerbosePreference = "Continue"
 $result | out-string | write-verbose
-$result | Sort-Object -Culture "en-US" | out-string | write-verbose
-$result | out-string | Sort-Object -Culture "en-US" | write-verbose
+$result | ForEach-Object { $_ } | Sort-Object -Culture "en-US" | out-string | write-verbose
+[array]::Sort($result)
+$result | write-verbose
 Get-Culture | write-verbose
 
             $result -join ' ' | Should -BeExactly $expected
