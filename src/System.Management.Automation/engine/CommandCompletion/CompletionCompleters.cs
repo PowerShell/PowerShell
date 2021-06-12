@@ -5783,7 +5783,7 @@ namespace System.Management.Automation
                                 && viewPattern.IsMatch(viewDefinition.name))
                             {
                                 string completionText = viewDefinition.name;
-                                var quoteInUse = quote == string.Empty ? "'" : quote;
+                                var quoteInUse = quote == string.Empty && viewDefinition.name.IndexOfAny(s_charactersRequiringQuotes) != -1 ? "'" : quote;
                                 if (quoteInUse == "'")
                                 {
                                     completionText = completionText.Replace("'", "''");
