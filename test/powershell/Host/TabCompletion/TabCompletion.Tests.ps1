@@ -395,7 +395,7 @@ Describe "TabCompletion" -Tags CI {
                 param ($cmd)
                 $processList = Get-Process
                 $res = TabExpansion2 -inputScript "`$processList | $cmd" -cursorColumn "`$processList | $cmd".Length
-                $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+                $completionText = $res.CompletionMatches | Select-Object -ExpandProperty CompletionText | Sort-Object
                 $completionText
             }).AddArgument($cmd)
 
