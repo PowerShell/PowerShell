@@ -4,10 +4,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Management.Automation.Internal;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
