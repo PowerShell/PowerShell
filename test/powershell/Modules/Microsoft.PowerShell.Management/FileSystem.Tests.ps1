@@ -1546,7 +1546,7 @@ Describe "Windows admin tests" -Tag 'RequireAdminOnWindows' {
     }
 }
 
-Describe "OneDrive filesystem manipulation" -Tags "CI" {
+Describe "OneDrive filesystem manipulation" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
         # on macOS, the /tmp directory is a symlink, so we'll resolve it here
         $TestPath = $TestDrive
