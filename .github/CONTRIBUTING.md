@@ -85,7 +85,7 @@ To run the spellchecker, follow these steps:
 * install [Node.js](https://nodejs.org/en/) (v10 or up)
 * install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
   `npm install -g markdown-spellcheck` (v0.11.0 or up)
-* run `mdspell "**/*.md" "!**/Pester/**/*.md" "!**/perf/**/*.md" --ignore-numbers --ignore-acronyms --en-us`
+* run `mdspell "**/*.md" "!**/perf/**/*.md" --ignore-numbers --ignore-acronyms --en-us`
 * if the `.spelling` file is updated, commit and push it
 
 #### Checking links in documentation
