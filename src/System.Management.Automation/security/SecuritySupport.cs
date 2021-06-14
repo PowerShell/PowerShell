@@ -1349,6 +1349,7 @@ namespace System.Management.Automation
                 }
                 catch (Exception)
                 {
+                    // Fall back to 'Process.ProcessName' in case 'Environment.ProcessPath' throws exception.
                     Process currentProcess = Process.GetCurrentProcess();
                     appName = string.Concat("PowerShell_", currentProcess.ProcessName, ".exe_", PSVersionInfo.ProductVersion);
                 }
