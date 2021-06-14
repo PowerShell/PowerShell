@@ -11,10 +11,10 @@ It includes a command-line shell, an associated scripting language and a framewo
 
 Although this repository started as a fork of the Windows PowerShell code base, changes made in this repository do not make their way back to Windows PowerShell 5.1 automatically.
 This also means that [issues tracked here][issues] are only for PowerShell Core 6 and higher.
-Windows PowerShell specific issues should be opened on [UserVoice][].
+Windows PowerShell specific issues should be reported with the [Feedback Hub app][feedback-hub], by choosing "Apps > PowerShell" in category.
 
 [issues]: https://github.com/PowerShell/PowerShell/issues
-[UserVoice]: https://windowsserver.uservoice.com/forums/301869-powershell
+[feedback-hub]: https://support.microsoft.com/windows/send-feedback-to-microsoft-with-the-feedback-hub-app-f59187f8-8739-22d6-ba93-f66612949332
 
 ## New to PowerShell?
 
