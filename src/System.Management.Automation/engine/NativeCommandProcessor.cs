@@ -1194,15 +1194,9 @@ namespace System.Management.Automation
         /// Get whether we should treat this executable with special handling and use the legacy passing style.
         /// </summary>
         /// <param name="filePath"></param>
-        private bool UseSpecialArgumentPassing(string filePath)
-        {
-            // We need to check if we're using legacy argument passing or it's a special case.
-            bool useLegacy = NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Legacy;
-            bool windowsSpecialCase =
-                NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Windows &&
-                UseLegacyPassingStyle(filePath);
-            return (useLegacy || windowsSpecialCase);
-        }
+        private bool UseSpecialArgumentPassing(string filePath) =>
+            NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Legacy
+            || (NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Windows && UseLegacyPassingStyle(filePath));
 
         /// <summary>
         /// Gets the start info for process.
@@ -1271,12 +1265,10 @@ namespace System.Management.Automation
         /// <returns>A boolean indicating what passing style should be used.</returns>
         private static bool UseLegacyPassingStyle(string filePath)
         {
-            if (filePath == null || filePath == string.Empty)
+            if (string.IsNullOrEmpty(filePath))
             {
                 return false;
             }
-
-            string commandPath = filePath.ToLowerInvariant();
 
             // This is the list of files which will trigger Legacy behavior if
             // PSNativeCommandArgumentPassing is set to "Windows".
@@ -1299,7 +1291,7 @@ namespace System.Management.Automation
                 };
             foreach (string exception in exceptions)
             {
-                if (filePath.EndsWith(exception))
+                if (filePath.EndsWith(exception, StringComparison.OrdinalIgnoreCase))
                 {
                     return true;
                 }
