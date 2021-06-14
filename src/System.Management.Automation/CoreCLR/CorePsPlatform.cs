@@ -565,11 +565,11 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
         {
-            UInt64 device = 0UL;
+            UInt64 ice = 0UL;
             UInt64 inode = 0UL;
-            var result = Unix.NativeMethods.GetInodeData(path, out device, out inode);
+            var result = Unix.NativeMethods.GetInodeData(path, out ice, out inode);
 
-            inodeData = (device, inode);
+            inodeData = (ice, inode);
             return result == 0;
         }
 
@@ -637,11 +637,11 @@ namespace System.Management.Automation
                 /// <summary>The item is a Symbolic Link.</summary>
                 SymbolicLink,
 
-                /// <summary>The item is a Block Device.</summary>
-                BlockDevice,
+                /// <summary>The item is a Block ice.</summary>
+                Blockice,
 
-                /// <summary>The item is a Character Device.</summary>
-                CharacterDevice,
+                /// <summary>The item is a Character ice.</summary>
+                Characterice,
 
                 /// <summary>The item is a Named Pipe.</summary>
                 NamedPipe,
@@ -732,8 +732,8 @@ namespace System.Management.Automation
                 /// <summary>The block size of the filesystem.</summary>
                 public long BlockSize;
 
-                /// <summary>The device id of the filesystem item.</summary>
-                public int DeviceId;
+                /// <summary>The ice id of the filesystem item.</summary>
+                public int iceId;
 
                 /// <summary>The number of blocks used by the filesystem item.</summary>
                 public int NumberOfBlocks;
@@ -784,8 +784,8 @@ namespace System.Management.Automation
                 // The item type and the character representation for the first element in the stat string
                 private Dictionary<ItemType, char> itemTypeTable = new()
                 {
-                    { ItemType.BlockDevice, 'b' },
-                    { ItemType.CharacterDevice, 'c' },
+                    { ItemType.Blockice, 'b' },
+                    { ItemType.Characterice, 'c' },
                     { ItemType.Directory, 'd' },
                     { ItemType.File, '-' },
                     { ItemType.NamedPipe, 'p' },
@@ -954,7 +954,7 @@ namespace System.Management.Automation
                 }
 
                 cs.BlockSize = css.BlockSize;
-                cs.DeviceId = css.DeviceId;
+                cs.iceId = css.iceId;
                 cs.NumberOfBlocks = css.NumberOfBlocks;
 
                 if (css.IsDirectory == 1)
@@ -969,13 +969,13 @@ namespace System.Management.Automation
                 {
                     cs.ItemType = ItemType.SymbolicLink;
                 }
-                else if (css.IsBlockDevice == 1)
+                else if (css.IsBlockice == 1)
                 {
-                    cs.ItemType = ItemType.BlockDevice;
+                    cs.ItemType = ItemType.Blockice;
                 }
-                else if (css.IsCharacterDevice == 1)
+                else if (css.IsCharacterice == 1)
                 {
-                    cs.ItemType = ItemType.CharacterDevice;
+                    cs.ItemType = ItemType.Characterice;
                 }
                 else if (css.IsNamedPipe == 1)
                 {
@@ -1154,7 +1154,7 @@ namespace System.Management.Automation
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 internal static extern int GetInodeData([MarshalAs(UnmanagedType.LPStr)] string path,
-                                                        out UInt64 device, out UInt64 inode);
+                                                        out UInt64 ice, out UInt64 inode);
 
                 /// <summary>
                 /// This is a struct from getcommonstat.h in the native library.
@@ -1195,8 +1195,8 @@ namespace System.Management.Automation
                     /// <summary>The size in bytes of the file system.</summary>
                     internal long BlockSize;
 
-                    /// <summary>The device id for the filesystem item.</summary>
-                    internal int DeviceId;
+                    /// <summary>The ice id for the filesystem item.</summary>
+                    internal int iceId;
 
                     /// <summary>The number of filesystem blocks that the filesystem item uses.</summary>
                     internal int NumberOfBlocks;
@@ -1210,11 +1210,11 @@ namespace System.Management.Automation
                     /// <summary>This filesystem item is a symbolic link.</summary>
                     internal int IsSymbolicLink;
 
-                    /// <summary>This filesystem item is a block device.</summary>
-                    internal int IsBlockDevice;
+                    /// <summary>This filesystem item is a block ice.</summary>
+                    internal int IsBlockice;
 
-                    /// <summary>This filesystem item is a character device.</summary>
-                    internal int IsCharacterDevice;
+                    /// <summary>This filesystem item is a character ice.</summary>
+                    internal int IsCharacterice;
 
                     /// <summary>This filesystem item is a named pipe.</summary>
                     internal int IsNamedPipe;
