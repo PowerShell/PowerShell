@@ -1,0 +1,83 @@
+Source: https://code.google.com/p/google-security-research/issues/detail?id=623
+
+The following crash was encountered in pdfium (the Chrome PDF renderer) during PDF fuzzing:
+
+--- cut ---
+$ ./pdfium_test asan_heap-oob_b4a7e0_7134_a91748c99d169425fc39c76197d7cd74 
+Rendering PDF file asan_heap-oob_b4a7e0_7134_a91748c99d169425fc39c76197d7cd74.
+Non-linearized path...
+=================================================================
+==27153==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x60700000794c at pc 0x000000cfaaef bp 0x7ffd89a11070 sp 0x7ffd89a11068
+READ of size 4 at 0x60700000794c thread T0
+    #0 0xcfaaee in CPDF_TextObject::CalcPositionData(float*, float*, float, int) core/src/fpdfapi/fpdf_page/fpdf_page.cpp:411:17
+    #1 0xda18a4 in CPDF_StreamContentParser::AddTextObject(CFX_ByteString*, float, float*, int) core/src/fpdfapi/fpdf_page/fpdf_page_parser.cpp:1301:3
+    #2 0xd919e7 in CPDF_StreamContentParser::Handle_ShowText() core/src/fpdfapi/fpdf_page/fpdf_page_parser.cpp:1330:3
+    #3 0xd979e1 in CPDF_StreamContentParser::OnOperator(char const*) core/src/fpdfapi/fpdf_page/fpdf_page_parser.cpp:369:7
+    #4 0xda3491 in CPDF_StreamContentParser::Parse(unsigned char const*, unsigned int, unsigned int) core/src/fpdfapi/fpdf_page/fpdf_page_parser_old.cpp:56:9
+    #5 0xdb7d0f in CPDF_ContentParser::Continue(IFX_Pause*) core/src/fpdfapi/fpdf_page/fpdf_page_parser_old.cpp:1096:13
+    #6 0xd01db4 in CPDF_PageObjects::ContinueParse(IFX_Pause*) core/src/fpdfapi/fpdf_page/fpdf_page.cpp:693:3
+    #7 0xd0568d in CPDF_Page::ParseContent(CPDF_ParseOptions*, int) core/src/fpdfapi/fpdf_page/fpdf_page.cpp:874:3
+    #8 0x63bbe7 in FPDF_LoadPage fpdfsdk/src/fpdfview.cpp:291:3
+    #9 0x4edcd1 in RenderPage(std::string const&, void* const&, void* const&, int, Options const&) samples/pdfium_test.cc:352:20
+    #10 0x4f0af8 in RenderPdf(std::string const&, char const*, unsigned long, Options const&) samples/pdfium_test.cc:531:9
+    #11 0x4f16e9 in main samples/pdfium_test.cc:608:5
+
+0x60700000794c is located 4 bytes to the left of 72-byte region [0x607000007950,0x607000007998)
+allocated by thread T0 here:
+    #0 0x4be96c in calloc llvm/projects/compiler-rt/lib/asan/asan_malloc_linux.cc:56
+    #1 0x67da0f in FX_AllocOrDie(unsigned long, unsigned long) fpdfsdk/src/../include/../../core/include/fpdfapi/../fxcrt/fx_memory.h:37:22
+    #2 0xcf6db6 in CPDF_TextObject::SetSegments(CFX_ByteString const*, float*, int) core/src/fpdfapi/fpdf_page/fpdf_page.cpp:233:18
+    #3 0xda150f in CPDF_StreamContentParser::AddTextObject(CFX_ByteString*, float, float*, int) core/src/fpdfapi/fpdf_page/fpdf_page_parser.cpp:1296:3
+    #4 0xd919e7 in CPDF_StreamContentParser::Handle_ShowText() core/src/fpdfapi/fpdf_page/fpdf_page_parser.cpp:1330:3
+    #5 0xd979e1 in CPDF_StreamContentParser::OnOperator(char const*) core/src/fpdfapi/fpdf_page/fpdf_page_parser.cpp:369:7
+    #6 0xda3491 in CPDF_StreamContentParser::Parse(unsigned char const*, unsigned int, unsigned int) core/src/fpdfapi/fpdf_page/fpdf_page_parser_old.cpp:56:9
+    #7 0xdb7d0f in CPDF_ContentParser::Continue(IFX_Pause*) core/src/fpdfapi/fpdf_page/fpdf_page_parser_old.cpp:1096:13
+    #8 0xd01db4 in CPDF_PageObjects::ContinueParse(IFX_Pause*) core/src/fpdfapi/fpdf_page/fpdf_page.cpp:693:3
+    #9 0xd0568d in CPDF_Page::ParseContent(CPDF_ParseOptions*, int) core/src/fpdfapi/fpdf_page/fpdf_page.cpp:874:3
+    #10 0x63bbe7 in FPDF_LoadPage fpdfsdk/src/fpdfview.cpp:291:3
+    #11 0x4edcd1 in RenderPage(std::string const&, void* const&, void* const&, int, Options const&) samples/pdfium_test.cc:352:20
+    #12 0x4f0af8 in RenderPdf(std::string const&, char const*, unsigned long, Options const&) samples/pdfium_test.cc:531:9
+    #13 0x4f16e9 in main samples/pdfium_test.cc:608:5
+
+SUMMARY: AddressSanitizer: heap-buffer-overflow core/src/fpdfapi/fpdf_page/fpdf_page.cpp:411:17 in CPDF_TextObject::CalcPositionData(float*, float*, float, int)
+Shadow bytes around the buggy address:
+  0x0c0e7fff8ed0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c0e7fff8ee0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c0e7fff8ef0: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c0e7fff8f00: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+  0x0c0e7fff8f10: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa
+=>0x0c0e7fff8f20: fa fa fa fa fa fa fa fa fa[fa]00 00 00 00 00 00
+  0x0c0e7fff8f30: 00 00 00 fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x0c0e7fff8f40: 00 04 fa fa fa fa 00 00 00 00 00 00 00 00 00 fa
+  0x0c0e7fff8f50: fa fa fa fa 00 00 00 00 00 00 00 00 00 00 fa fa
+  0x0c0e7fff8f60: fa fa 00 00 00 00 00 00 00 00 00 00 fa fa fa fa
+  0x0c0e7fff8f70: 00 00 00 00 00 00 00 00 00 00 fa fa fa fa fd fd
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Heap right redzone:      fb
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack partial redzone:   f4
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==27153==ABORTING
+--- cut ---
+
+The crash was reported at https://code.google.com/p/chromium/issues/detail?id=554115. Attached is the PDF file which triggers the crash.
+
+
+Proof of Concept:
+https://github.com/offensive-security/exploitdb-bin-sploits/raw/master/bin-sploits/39163.zip
