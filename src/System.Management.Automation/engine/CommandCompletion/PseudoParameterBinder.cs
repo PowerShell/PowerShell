@@ -1862,14 +1862,16 @@ namespace System.Management.Automation.Language
             while (unboundArgumentsIndex < unboundArgumentsCollection.Count)
             {
                 AstParameterArgumentPair argument = unboundArgumentsCollection[unboundArgumentsIndex++];
-                bool splatted = (argument is AstPair a) && (a.Argument is VariableExpressionAst v) && v.Splatted;
-                if (!argument.ParameterSpecified && splatted == false)
+                bool splatted = argument is AstPair astPair
+                    && astPair.Argument is VariableExpressionAst argumentVariable
+                    && argumentVariable.Splatted;
+                if (!splatted && !argument.ParameterSpecified)
                 {
                     result = argument;
                     break;
                 }
 
-                if (splatted == false)
+                if (!splatted)
                 {
                     nonPositionalArguments.Add(argument);
                 } 
