@@ -1688,8 +1688,8 @@ function Start-PSxUnit {
         Pop-Location
     }
 }
-
-function Install-Dotnet {
+Install-Dotnet {
+function
     [CmdletBinding()]
     param(
         [string]$Channel = $dotnetCLIChannel,
