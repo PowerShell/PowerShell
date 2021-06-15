@@ -1,7 +1,7 @@
 {
   "sdk": {
-    "channel": "release/6.0.1xx-preview4",
-    "packageVersionPattern": "6.0.0-preview.4",
+    "channel": "release/6.0.1xx-preview5",
+    "packageVersionPattern": "6.0.0-preview.5",
     "sdkImageVersion": "6.0.100",
     "nextChannel": "6.0.1xx-preview5/daily"
   },
