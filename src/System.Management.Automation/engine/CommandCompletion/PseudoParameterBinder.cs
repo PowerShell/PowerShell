@@ -1869,6 +1869,7 @@ namespace System.Management.Automation.Language
                 {
                     continue;
                 }
+
                 if (!argument.ParameterSpecified)
                 {
                     result = argument;
