@@ -1330,7 +1330,6 @@ adamsitnik
 msixbundle
 PowerShell-Native#70
 AppxManifest.xml
-
  - CHANGELOG/7.0.md
 codesign
 release-BuildJson
@@ -1339,5 +1338,6 @@ centos-7
  - test/perf/benchmarks/README.md
 benchmarked
 BenchmarkDotNet
+ - docs/community/working-group-definitions.md
 TobiasPSP
 jdhitsolutions
