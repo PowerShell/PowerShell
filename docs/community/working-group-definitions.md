@@ -60,7 +60,7 @@ However, it's expected that many issues will require input from both WGs.
 
 * @daxian-dbw
 * @rjmholt
-* @BrucePay
+* @JamesWTruher
 * @vexx32
 * @rkeithhill
 
