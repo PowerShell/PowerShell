@@ -104,6 +104,13 @@
 
     </PropertyGroup>
 
+    <ItemGroup>
+      <!-- These properties are used by Source Code Generators. -->
+      <CompilerVisibleProperty Include="ProductVersion" />
+      <CompilerVisibleProperty Include="PowerShellVersion" />
+      <CompilerVisibleProperty Include="PSCoreBuildVersion" />
+    </ItemGroup>                                          
+
     <!-- Output For Debugging
       <WriteLinesToFile File="targetfile1.txt"
         Lines="ReleaseTag=$(ReleaseTag);

@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+   <ProjectReference Include="..\SourceGenerators\PSVersionInfoGenerator\PSVersionInfoGenerator.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <!-- the Application Insights package -->
@@ -34,10 +38,25 @@
   </ItemGroup>
 
   <PropertyGroup>
+    <!--
+        Source Code Generators use following lines to write the generated files to disk.
+        We change the output path from obj/ to gen/ so that Visual Studio Code IntelliSense can find these files.
+    -->
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>gen\SourceGeneratedFiles</CompilerGeneratedFilesOutputPath> 
+  </PropertyGroup>
+
+  <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
+    <!--
+        These files are included in the compilation by Source Code Generators
+        so remove them here to avoid "already contains" errors.
+    -->
+    <Compile Remove="$(CompilerGeneratedFilesOutputPath)\**\*.cs" />
+
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
     <Compile Remove="engine\TransactedString.cs" />
