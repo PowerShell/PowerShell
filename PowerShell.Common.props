@@ -49,13 +49,15 @@
       <ReleaseTagSemVersionPrereleaseNamePart>$([System.Text.RegularExpressions.Regex]::Match($(ReleaseTag), $(RegexReleaseTag)).Groups[6].Value)</ReleaseTagSemVersionPrereleaseNamePart>
       <!-- Increment revision 100 for rc releases -->
       <RCIncrementValue>100</RCIncrementValue>
+      <!-- Increment revision 500 for GA releases -->
+      <GAIncrementValue>500</GAIncrementValue>
       <ReleaseTagSemVersionPart Condition = "'$(ReleaseTagSemVersionPrereleaseNamePart)' == 'rc'">$([MSBuild]::Add($(ReleaseTagSemVersionPart), $(RCIncrementValue)))</ReleaseTagSemVersionPart>
       <!-- Create the internal version -->
       <PSCoreBuildVersion>$(ReleaseTag)</PSCoreBuildVersion>
       <!-- Create the version if we have a pre-release -->
       <PSCoreFileVersion Condition = "'$(ReleaseTagSemVersionPart)' != ''">$(ReleaseTagVersionPart).$(ReleaseTagSemVersionPart)</PSCoreFileVersion>
       <!-- Create the version if we have a release build -->
-      <PSCoreFileVersion Condition = "'$(PSCoreFileVersion)' == ''">$(ReleaseTagVersionPart)</PSCoreFileVersion>
+      <PSCoreFileVersion Condition = "'$(PSCoreFileVersion)' == ''">$(ReleaseTagVersionPart).$(GAIncrementValue)</PSCoreFileVersion>
     </PropertyGroup>
 
     <PropertyGroup>
