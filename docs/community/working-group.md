@@ -1,6 +1,6 @@
 # Working Groups
 
-[Working Groups (WGs)][wg] are collections of contributors with knowledge of specific components or
+Working Groups (WGs) are collections of contributors with knowledge of specific components or
 technologies in the PowerShell domain.
 They are responsible for issue triage/acceptance, code reviews, and providing their expertise to
 others in issues, PRs, and RFC discussions.
