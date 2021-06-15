@@ -58,11 +58,12 @@ However, it's expected that many issues will require input from both WGs.
 
 ### Members
 
+* @BrucePay
 * @daxian-dbw
-* @rjmholt
 * @JamesWTruher
-* @vexx32
+* @rjmholt
 * @rkeithhill
+* @vexx32
 
 ## Interactive UX
 
@@ -136,8 +137,8 @@ These modules include:
 ### Members
 
 * PowerShell Committee as interim members
-* @TobiasPSP
 * @jdhitsolutions
+* @TobiasPSP
 
 ## Security
 
