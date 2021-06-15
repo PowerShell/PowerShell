@@ -1874,7 +1874,7 @@ namespace System.Management.Automation.Language
                     result = argument;
                     break;
                 }
-                
+
                 nonPositionalArguments.Add(argument);
             }
 
