@@ -1865,16 +1865,17 @@ namespace System.Management.Automation.Language
                 bool splatted = argument is AstPair astPair
                     && astPair.Argument is VariableExpressionAst argumentVariable
                     && argumentVariable.Splatted;
-                if (!splatted && !argument.ParameterSpecified)
+                if (splatted)
+                {
+                    continue;
+                }
+                if (!argument.ParameterSpecified)
                 {
                     result = argument;
                     break;
                 }
-
-                if (!splatted)
-                {
-                    nonPositionalArguments.Add(argument);
-                } 
+                
+                nonPositionalArguments.Add(argument);
             }
 
             return result;
