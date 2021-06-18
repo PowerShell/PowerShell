@@ -24,7 +24,7 @@ namespace System.Management.Automation.Internal.Generators
             var result = CreatePSVersionInfoPartialClass(context);
 
             // We must use specific file name suffix (*.g.cs,*.g, *.i.cs, *.generated.cs, *.designer.cs)
-            // so that Roslyng analizers skip the file.
+            // so that Roslyn analyzers skip the file.
             context.AddSource("PSVersionInfo.generated.cs", result);
         }
 
