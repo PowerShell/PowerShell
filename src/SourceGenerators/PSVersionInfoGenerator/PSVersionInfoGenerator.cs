@@ -70,10 +70,15 @@ namespace System.Management.Automation.Internal.Generators
 }}";
 
             context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.ProductVersion", out var productVersion);
-            context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.PowerShellVersion", out var powerShellVersion);
+            context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.PowerShellVersion", out var rawGitCommitId);
             context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.PSCoreBuildVersion", out var mainVersion);
 
-            return string.Format(CultureInfo.InvariantCulture, SourceTemplate, productVersion, powerShellVersion, mainVersion);
+            if (rawGitCommitId.StartsWith("v"))
+            {
+                rawGitCommitId = rawGitCommitId.Substring(1);
+            }
+
+            return string.Format(CultureInfo.InvariantCulture, SourceTemplate, productVersion, rawGitCommitId, mainVersion);
         }
     }
 }
