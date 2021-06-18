@@ -758,6 +758,7 @@ pssessionconfiguration
 pssnapinloadunload
 pssnapins
 psversion
+PSVersionInfoGenerator
 psversiontable
 PSWindowsPowerShellCompatibility
 PublishReadyToRun
