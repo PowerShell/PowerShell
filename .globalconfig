@@ -181,6 +181,9 @@ dotnet_diagnostic.CA1416.severity = warning
 # CA1417: Do not use 'OutAttribute' on string parameters for P/Invokes
 dotnet_diagnostic.CA1417.severity = warning
 
+# CA1418: Use valid platform string
+dotnet_diagnostic.CA1418.severity = silent
+
 # CA1501: Avoid excessive inheritance
 dotnet_diagnostic.CA1501.severity = none
 
@@ -332,6 +335,30 @@ dotnet_diagnostic.CA1837.severity = warning
 # CA1838: Avoid 'StringBuilder' parameters for P/Invokes
 dotnet_diagnostic.CA1838.severity = silent
 
+# CA1839: Use 'Environment.ProcessPath'
+dotnet_diagnostic.CA1839.severity = silent
+
+# CA1840: Use 'Environment.CurrentManagedThreadId'
+dotnet_diagnostic.CA1840.severity = silent
+
+# CA1841: Prefer Dictionary.Contains methods
+dotnet_diagnostic.CA1841.severity = silent
+
+# CA1842: Do not use 'WhenAll' with a single task
+dotnet_diagnostic.CA1842.severity = silent
+
+# CA1843: Do not use 'WaitAll' with a single task
+dotnet_diagnostic.CA1843.severity = silent
+
+# CA1844: Provide memory-based overrides of async methods when subclassing 'Stream'
+dotnet_diagnostic.CA1844.severity = silent
+
+# CA1845: Use span-based 'string.Concat'
+dotnet_diagnostic.CA1845.severity = silent
+
+# CA1846: Prefer 'AsSpan' over 'Substring'
+dotnet_diagnostic.CA1846.severity = silent
+
 # CA2000: Dispose objects before losing scope
 dotnet_diagnostic.CA2000.severity = none
 
@@ -469,6 +496,12 @@ dotnet_diagnostic.CA2248.severity = suggestion
 
 # CA2249: Consider using 'string.Contains' instead of 'string.IndexOf'
 dotnet_diagnostic.CA2249.severity = warning
+
+# CA2250: Use 'ThrowIfCancellationRequested'
+dotnet_diagnostic.CA2250.severity = silent
+
+# CA2251: Use 'string.Equals'
+dotnet_diagnostic.CA2251.severity = silent
 
 # CA2300: Do not use insecure deserializer BinaryFormatter
 dotnet_diagnostic.CA2300.severity = none
@@ -743,6 +776,9 @@ dotnet_diagnostic.IL3000.severity = warning
 # IL3001: Avoid using accessing Assembly file path when publishing as a single-file
 dotnet_diagnostic.IL3001.severity = warning
 
+# IL3002: Using member with RequiresAssemblyFilesAttribute can break functionality when embedded in a single-file app
+dotnet_diagnostic.IL3002.severity = silent
+
 # IDE0001: SimplifyNames
 dotnet_diagnostic.IDE0001.severity = silent
 
@@ -983,6 +1019,21 @@ dotnet_diagnostic.IDE0083.severity = silent
 # IDE0084: UseIsNotExpression
 dotnet_diagnostic.IDE0084.severity = silent
 
+# IDE0090: UseNew
+dotnet_diagnostic.IDE0090.severity = silent
+
+# IDE0100: RemoveRedundantEquality
+dotnet_diagnostic.IDE0100.severity = silent
+
+# IDE0110: RemoveUnnecessaryDiscard
+dotnet_diagnostic.IDE0110.severity = silent
+
+# IDE0120: SimplifyLINQExpression
+dotnet_diagnostic.IDE0120.severity = silent
+
+# IDE0130: NamespaceDoesNotMatchFolderStructure
+dotnet_diagnostic.IDE0130.severity = silent
+
 # IDE1001: AnalyzerChanged
 dotnet_diagnostic.IDE1001.severity = silent
 
@@ -1006,6 +1057,21 @@ dotnet_diagnostic.IDE1007.severity = silent
 
 # IDE1008: UnboundConstructor
 dotnet_diagnostic.IDE1008.severity = silent
+
+# IDE2000: MultipleBlankLines
+dotnet_diagnostic.IDE2000.severity = silent
+
+# IDE2001: EmbeddedStatementsMustBeOnTheirOwnLine
+dotnet_diagnostic.IDE2001.severity = silent
+
+# IDE2002: ConsecutiveBracesMustNotHaveBlankLinesBetweenThem
+dotnet_diagnostic.IDE2002.severity = silent
+
+# IDE2003: ConsecutiveStatementPlacement
+dotnet_diagnostic.IDE2003.severity = silent
+
+# IDE2004: BlankLineNotAllowedAfterConstructorInitializerColon
+dotnet_diagnostic.IDE2004.severity = silent
 
 # SA0001: XML comment analysis disabled
 dotnet_diagnostic.SA0001.severity = none
