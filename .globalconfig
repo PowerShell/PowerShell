@@ -2,7 +2,7 @@ is_global = true
 
 # CA1000: Do not declare static members on generic types
 dotnet_diagnostic.CA1000.severity = warning
-dotnet_code_quality.ca1000.api_surface = all
+dotnet_code_quality.CA1000.api_surface = all
 
 # CA1001: Types that own disposable fields should be disposable
 dotnet_diagnostic.CA1001.severity = silent
@@ -12,7 +12,7 @@ dotnet_diagnostic.CA1002.severity = none
 
 # CA1003: Use generic event handler instances
 dotnet_diagnostic.CA1003.severity = warning
-dotnet_code_quality.ca1003.api_surface = private, internal
+dotnet_code_quality.CA1003.api_surface = private, internal
 
 # CA1005: Avoid excessive parameters on generic types
 dotnet_diagnostic.CA1005.severity = none
@@ -25,7 +25,7 @@ dotnet_diagnostic.CA1010.severity = silent
 
 # CA1012: Abstract types should not have public constructors
 dotnet_diagnostic.CA1012.severity = warning
-dotnet_code_quality.ca1012.api_surface = all
+dotnet_code_quality.CA1012.api_surface = all
 
 # CA1014: Mark assemblies with CLSCompliant
 dotnet_diagnostic.CA1014.severity = none
@@ -101,7 +101,7 @@ dotnet_diagnostic.CA1051.severity = silent
 
 # CA1052: Static holder types should be Static or NotInheritable
 dotnet_diagnostic.CA1052.severity = warning
-dotnet_code_quality.ca1052.api_surface = private, internal
+dotnet_code_quality.CA1052.api_surface = private, internal
 
 # CA1054: URI-like parameters should not be strings
 dotnet_diagnostic.CA1054.severity = none
@@ -282,7 +282,7 @@ dotnet_diagnostic.CA1821.severity = warning
 
 # CA1822: Mark members as static
 dotnet_diagnostic.CA1822.severity = warning
-dotnet_code_quality.ca1822.api_surface = private
+dotnet_code_quality.CA1822.api_surface = private
 
 # CA1823: Avoid unused private fields
 dotnet_diagnostic.CA1823.severity = none
