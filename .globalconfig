@@ -498,7 +498,7 @@ dotnet_diagnostic.CA2248.severity = suggestion
 dotnet_diagnostic.CA2249.severity = warning
 
 # CA2250: Use 'ThrowIfCancellationRequested'
-dotnet_diagnostic.CA2250.severity = silent
+dotnet_diagnostic.CA2250.severity = warning
 
 # CA2251: Use 'string.Equals'
 dotnet_diagnostic.CA2251.severity = silent
