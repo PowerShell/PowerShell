@@ -1026,7 +1026,7 @@ dotnet_diagnostic.IDE0090.severity = suggestion
 dotnet_diagnostic.IDE0100.severity = warning
 
 # IDE0110: RemoveUnnecessaryDiscard
-dotnet_diagnostic.IDE0110.severity = silent
+dotnet_diagnostic.IDE0110.severity = suggestion
 
 # IDE0120: SimplifyLINQExpression
 dotnet_diagnostic.IDE0120.severity = silent
