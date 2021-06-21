@@ -777,7 +777,7 @@ dotnet_diagnostic.IL3000.severity = warning
 dotnet_diagnostic.IL3001.severity = warning
 
 # IL3002: Using member with RequiresAssemblyFilesAttribute can break functionality when embedded in a single-file app
-dotnet_diagnostic.IL3002.severity = silent
+dotnet_diagnostic.IL3002.severity = warning
 
 # IDE0001: SimplifyNames
 dotnet_diagnostic.IDE0001.severity = silent
