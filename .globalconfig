@@ -1065,7 +1065,7 @@ dotnet_diagnostic.IDE2000.severity = warning
 dotnet_diagnostic.IDE2001.severity = warning
 
 # IDE2002: ConsecutiveBracesMustNotHaveBlankLinesBetweenThem
-dotnet_diagnostic.IDE2002.severity = silent
+dotnet_diagnostic.IDE2002.severity = warning
 
 # IDE2003: ConsecutiveStatementPlacement
 dotnet_diagnostic.IDE2003.severity = silent
