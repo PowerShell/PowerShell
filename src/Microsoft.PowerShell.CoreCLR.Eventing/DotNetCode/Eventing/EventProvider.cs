@@ -510,7 +510,7 @@ namespace System.Diagnostics.Eventing
 
             if (data == null)
             {
-                throw new ArgumentNullException("dataString");
+                throw new ArgumentNullException(nameof(data));
             }
 
             if (IsEnabled(eventDescriptor.Level, eventDescriptor.Keywords))
