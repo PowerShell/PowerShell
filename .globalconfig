@@ -1020,7 +1020,7 @@ dotnet_diagnostic.IDE0083.severity = silent
 dotnet_diagnostic.IDE0084.severity = silent
 
 # IDE0090: UseNew
-dotnet_diagnostic.IDE0090.severity = silent
+dotnet_diagnostic.IDE0090.severity = suggestion
 
 # IDE0100: RemoveRedundantEquality
 dotnet_diagnostic.IDE0100.severity = silent
