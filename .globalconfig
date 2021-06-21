@@ -357,7 +357,7 @@ dotnet_diagnostic.CA1844.severity = warning
 dotnet_diagnostic.CA1845.severity = warning
 
 # CA1846: Prefer 'AsSpan' over 'Substring'
-dotnet_diagnostic.CA1846.severity = silent
+dotnet_diagnostic.CA1846.severity = warning
 
 # CA2000: Dispose objects before losing scope
 dotnet_diagnostic.CA2000.severity = none
