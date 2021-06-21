@@ -1059,7 +1059,7 @@ dotnet_diagnostic.IDE1007.severity = silent
 dotnet_diagnostic.IDE1008.severity = silent
 
 # IDE2000: MultipleBlankLines
-dotnet_diagnostic.IDE2000.severity = silent
+dotnet_diagnostic.IDE2000.severity = warning
 
 # IDE2001: EmbeddedStatementsMustBeOnTheirOwnLine
 dotnet_diagnostic.IDE2001.severity = silent
