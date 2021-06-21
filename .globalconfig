@@ -1023,7 +1023,7 @@ dotnet_diagnostic.IDE0084.severity = silent
 dotnet_diagnostic.IDE0090.severity = suggestion
 
 # IDE0100: RemoveRedundantEquality
-dotnet_diagnostic.IDE0100.severity = silent
+dotnet_diagnostic.IDE0100.severity = warning
 
 # IDE0110: RemoveUnnecessaryDiscard
 dotnet_diagnostic.IDE0110.severity = silent
