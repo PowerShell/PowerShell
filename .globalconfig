@@ -345,7 +345,7 @@ dotnet_diagnostic.CA1840.severity = warning
 dotnet_diagnostic.CA1841.severity = warning
 
 # CA1842: Do not use 'WhenAll' with a single task
-dotnet_diagnostic.CA1842.severity = silent
+dotnet_diagnostic.CA1842.severity = warning
 
 # CA1843: Do not use 'WaitAll' with a single task
 dotnet_diagnostic.CA1843.severity = silent
