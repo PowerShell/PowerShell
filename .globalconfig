@@ -339,7 +339,7 @@ dotnet_diagnostic.CA1838.severity = silent
 dotnet_diagnostic.CA1839.severity = suggestion
 
 # CA1840: Use 'Environment.CurrentManagedThreadId'
-dotnet_diagnostic.CA1840.severity = silent
+dotnet_diagnostic.CA1840.severity = warning
 
 # CA1841: Prefer Dictionary.Contains methods
 dotnet_diagnostic.CA1841.severity = silent
