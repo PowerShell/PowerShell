@@ -1068,7 +1068,7 @@ dotnet_diagnostic.IDE2001.severity = warning
 dotnet_diagnostic.IDE2002.severity = warning
 
 # IDE2003: ConsecutiveStatementPlacement
-dotnet_diagnostic.IDE2003.severity = silent
+dotnet_diagnostic.IDE2003.severity = warning
 
 # IDE2004: BlankLineNotAllowedAfterConstructorInitializerColon
 dotnet_diagnostic.IDE2004.severity = silent
