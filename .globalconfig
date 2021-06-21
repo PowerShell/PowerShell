@@ -342,7 +342,7 @@ dotnet_diagnostic.CA1839.severity = suggestion
 dotnet_diagnostic.CA1840.severity = warning
 
 # CA1841: Prefer Dictionary.Contains methods
-dotnet_diagnostic.CA1841.severity = silent
+dotnet_diagnostic.CA1841.severity = warning
 
 # CA1842: Do not use 'WhenAll' with a single task
 dotnet_diagnostic.CA1842.severity = silent
