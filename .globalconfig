@@ -336,7 +336,7 @@ dotnet_diagnostic.CA1837.severity = warning
 dotnet_diagnostic.CA1838.severity = silent
 
 # CA1839: Use 'Environment.ProcessPath'
-dotnet_diagnostic.CA1839.severity = silent
+dotnet_diagnostic.CA1839.severity = suggestion
 
 # CA1840: Use 'Environment.CurrentManagedThreadId'
 dotnet_diagnostic.CA1840.severity = silent
