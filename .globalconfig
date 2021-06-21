@@ -1029,7 +1029,7 @@ dotnet_diagnostic.IDE0100.severity = warning
 dotnet_diagnostic.IDE0110.severity = suggestion
 
 # IDE0120: SimplifyLINQExpression
-dotnet_diagnostic.IDE0120.severity = silent
+dotnet_diagnostic.IDE0120.severity = warning
 
 # IDE0130: NamespaceDoesNotMatchFolderStructure
 dotnet_diagnostic.IDE0130.severity = silent
