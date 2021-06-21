@@ -1071,7 +1071,7 @@ dotnet_diagnostic.IDE2002.severity = warning
 dotnet_diagnostic.IDE2003.severity = warning
 
 # IDE2004: BlankLineNotAllowedAfterConstructorInitializerColon
-dotnet_diagnostic.IDE2004.severity = silent
+dotnet_diagnostic.IDE2004.severity = warning
 
 # SA0001: XML comment analysis disabled
 dotnet_diagnostic.SA0001.severity = none
