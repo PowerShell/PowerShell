@@ -182,7 +182,7 @@ dotnet_diagnostic.CA1416.severity = warning
 dotnet_diagnostic.CA1417.severity = warning
 
 # CA1418: Use valid platform string
-dotnet_diagnostic.CA1418.severity = silent
+dotnet_diagnostic.CA1418.severity = warning
 
 # CA1501: Avoid excessive inheritance
 dotnet_diagnostic.CA1501.severity = none
