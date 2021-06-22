@@ -996,7 +996,7 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
-                                    if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView') -notcontains $ErrorView)
+                                    if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView','DetailedView') -notcontains $ErrorView)
                                     {
                                         $myinv = $_.InvocationInfo
                                         if ($myinv -and $myinv.MyCommand)
@@ -1286,7 +1286,10 @@ namespace System.Management.Automation.Runspaces
                                     else
                                     {
                                         $myinv = $err.InvocationInfo
-                                        if ($ErrorView -eq 'ConciseView') {
+                                        if ($ErrorView -eq 'DetailedView') {
+                                            return (Get-Error | Out-String)
+                                        }
+                                        elseif ($ErrorView -eq 'ConciseView') {
                                             $posmsg = Get-ConciseViewPositionMessage
                                         }
                                         elseif ($myinv -and ($myinv.MyCommand -or ($err.CategoryInfo.Category -ne 'ParserError'))) {
