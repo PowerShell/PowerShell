@@ -1301,8 +1301,8 @@ namespace System.Management.Automation
         {
             if (_pipeline.Commands is null)
             {
-                // The pipeline commands have been disposed. In this case,
-                // 'Clean' should have already been called.
+                // The pipeline commands have been disposed. In this case, 'Clean'
+                // should have already been called on the pipeline processor.
                 return;
             }
 

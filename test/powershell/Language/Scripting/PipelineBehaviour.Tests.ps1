@@ -3,13 +3,14 @@
 
 Describe 'Function Pipeline Behaviour' -Tag 'CI' {
 
-    Context "'Clean' block runs when any other named blocks run" {
-        BeforeAll {
-            $filePath = 'TestDrive:\output.txt'
-            if (Test-Path $filePath) {
-                Remove-Item $filePath -Force
-            }
+    BeforeAll {
+        $filePath = "$TestDrive\output.txt"
+        if (Test-Path $filePath) {
+            Remove-Item $filePath -Force
         }
+    }
+
+    Context "'Clean' block runs when any other named blocks run" {
 
         AfterEach {
             if (Test-Path $filePath) {
@@ -335,6 +336,149 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
 
             $results = & $Script 3>&1
             $results | Should -Be @( "BEGIN", "PROCESS", "END", "clean-warning" )
+        }
+    }
+
+    Context "Steppable pipeline" {
+
+        AfterEach {
+            if (Test-Path $filePath) {
+                Remove-Item $filePath -Force
+            }
+        }
+
+        It "'Clean' runs when steppable pipeline runs to the end successfully (<Block> block)" -TestCases @(
+            @{ Script = { begin { 'BEGIN' } cleanup { 'clean is hit' > $filePath } }; Block = 'Begin'; ProcessResult = @('BEGIN'); EndResult = $null }
+            @{ Script = { process { 'PROCESS' } cleanup { 'clean is hit' > $filePath } }; Block = 'Process'; ProcessResult = @('PROCESS'); EndResult = $null }
+            @{ Script = { end { 'END' } cleanup { 'clean is hit' > $filePath } }; Block = 'End'; ProcessResult = $null; EndResult = @('END') }
+            @{ Script = { begin { 'BEGIN' } process { 'PROCESS' } end { 'END' } cleanup { 'clean is hit' > $filePath } }; Block = 'All'; ProcessResult = @('BEGIN', 'PROCESS'); EndResult = @('END') }
+        ) {
+            param($Script, $ProcessResult, $EndResult)
+
+            try {
+                $step = { & $Script }.GetSteppablePipeline()
+                $step.Begin($false)
+                $step.Process() | Should -Be $ProcessResult
+                $step.End() | Should -Be $EndResult
+            }
+            finally {
+                $step.Dispose()
+            }
+
+            Test-Path $filePath | Should -BeTrue
+            Get-Content $filePath | Should -BeExactly 'clean is hit'
+        }
+
+        It "'Clean' runs when exception thrown from '<Block>' block" -TestCases @(
+            @{ Script = { begin { throw 'begin-error' } cleanup { 'clean is hit' > $filePath } }; Block = 'Process'; ErrorMessage = 'begin-error' }
+            @{ Script = { process { throw 'process-error' } cleanup { 'clean is hit' > $filePath } }; Block = 'Process'; ErrorMessage = 'process-error' }
+            @{ Script = { end { throw 'end-error' } cleanup { 'clean is hit' > $filePath } }; Block = 'End'; ErrorMessage = 'end-error' }
+        ) {
+            param($Script, $ErrorMessage)
+
+            $failure = $null
+            $step = { & $Script }.GetSteppablePipeline()
+
+            try {
+                $step.Begin($false)
+                $step.Process()
+                $step.End()
+            } catch {
+                $failure = $_
+            }
+            finally {
+                $step.Dispose()
+            }
+
+            $failure | Should -Not -BeNullOrEmpty
+            $failure.Exception.Message | Should -BeExactly $ErrorMessage
+
+            Test-Path $filePath | Should -BeTrue
+            Get-Content $filePath | Should -BeExactly 'clean is hit'
+        }
+
+        It "'Clean' runs when we explicitly call it on a steppable pipeline" {
+            $script = { begin { 'begin' > $filePath } cleanup { 'clean is hit' >> $filePath } }
+            $step = { & $script }.GetSteppablePipeline()
+
+            try {
+                $step.Begin($false)
+                $step.Clean()
+            }
+            finally {
+                $step.Dispose()
+            }
+
+            Test-Path $filePath | Should -BeTrue
+            Get-Content $filePath | Should -BeExactly @('begin', 'clean is hit')
+        }
+
+        It "Calling 'Clean' on steppable pipeline after it has run automatically upon Exception won't trigger the 'Clean' block to run again" {
+            $script = { begin { throw 'begin-error' } cleanup { 'clean is hit' > $filePath } }
+            $step = { & $script }.GetSteppablePipeline()
+            $failure = $null
+
+            try {
+                $step.Begin($false)
+                $step.Process()
+                $step.End()
+            }
+            catch {
+                $failure = $_
+            }
+
+            $failure | Should -Not -BeNullOrEmpty
+            $failure.Exception.Message | Should -BeExactly 'begin-error'
+
+            Test-Path $filePath | Should -BeTrue
+            Get-Content $filePath | Should -BeExactly 'clean is hit'
+
+            Remove-Item $filePath -Force -ErrorAction Stop
+            ## The 'Clean' block has already run automatically after the exception was thrown from 'Begin',
+            ## and it won't run again when calling it explicitly.
+            $step.Clean()
+            Test-Path $filePath | Should -BeFalse
+
+            ## Dispose the steppable pipeline.
+            $step.Dispose()
+        }
+
+        It "Calling 'Clean' on steppable pipeline after it has run automatically upon success won't trigger the 'Clean' block to run again" {
+            $script = { end { 'END' } cleanup { 'clean is hit' > $filePath } }
+            $step = { & $script }.GetSteppablePipeline()
+
+            $step.Begin($false)
+            $step.Process()
+            $step.End()
+
+            Test-Path $filePath | Should -BeTrue
+            Get-Content $filePath | Should -BeExactly 'clean is hit'
+
+            Remove-Item $filePath -Force -ErrorAction Stop
+            ## The 'Clean' block has already run automatically after the exception was thrown from 'Begin',
+            ## and it won't run again when calling it explicitly.
+            $step.Clean()
+            Test-Path $filePath | Should -BeFalse
+
+            ## Dispose the steppable pipeline.
+            $step.Dispose()
+        }
+    }
+
+    Context "'exit' statement in command" {
+
+        AfterEach {
+            if (Test-Path $filePath) {
+                Remove-Item $filePath -Force
+            }
+        }
+
+        It "'Clean' block runs when 'exit' is used in other named blocks" {
+            pwsh -c "& { process { exit 122 } cleanup { 'Clean block is hit' > $filePath } }"
+
+            $LASTEXITCODE | Should -BeExactly 122
+            Test-Path $filePath | Should -BeTrue
+            Get-Content $filePath | Should -BeExactly 'Clean block is hit'
         }
     }
 
