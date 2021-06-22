@@ -93,15 +93,15 @@ namespace Microsoft.PowerShell.Commands
         //
         // MaxSamples parameter
         //
-        private const long KEEP_ON_SAMPLING = -1;
+        private const Int64 KEEP_ON_SAMPLING = -1;
 
         [Parameter(
                 ParameterSetName = "GetCounterSet",
                 ValueFromPipeline = false,
                 ValueFromPipelineByPropertyName = false,
                 HelpMessageBaseName = "GetEventResources")]
-        [ValidateRange((long)1, long.MaxValue)]
-        public long MaxSamples
+        [ValidateRange((Int64)1, Int64.MaxValue)]
+        public Int64 MaxSamples
         {
             get
             {
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private long _maxSamples = 1;
+        private Int64 _maxSamples = 1;
         private bool _maxSamplesSpecified = false;
 
         //
