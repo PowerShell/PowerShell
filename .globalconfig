@@ -743,51 +743,67 @@ dotnet_diagnostic.IL3000.severity = warning
 dotnet_diagnostic.IL3001.severity = warning
 
 # DOC100: PlaceTextInParagraphs
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC100.md
 dotnet_diagnostic.DOC100.severity = none
 
 # DOC101: UseChildBlocksConsistently
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC101.md
 dotnet_diagnostic.DOC101.severity = none
 
 # DOC102: UseChildBlocksConsistentlyAcrossElementsOfTheSameKind
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC102.md
 dotnet_diagnostic.DOC102.severity = none
 
 # DOC103: UseUnicodeCharacters
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC103.md
 dotnet_diagnostic.DOC103.severity = none
 
 # DOC104: UseSeeLangword
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC104.md
 dotnet_diagnostic.DOC104.severity = warning
 
 # DOC105: UseParamref
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC105.md
 dotnet_diagnostic.DOC105.severity = none
 
 # DOC106: UseTypeparamref
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC106.md
 dotnet_diagnostic.DOC106.severity = none
 
 # DOC107: UseSeeCref
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC107.md
 dotnet_diagnostic.DOC107.severity = none
 
 # DOC108: AvoidEmptyParagraphs
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC108.md
 dotnet_diagnostic.DOC108.severity = none
 
 # DOC200: UseXmlDocumentationSyntax
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC200.md
 dotnet_diagnostic.DOC200.severity = none
 
 # DOC201: ItemShouldHaveDescription
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC201.md
 dotnet_diagnostic.DOC201.severity = none
 
 # DOC202: UseSectionElementsCorrectly
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC202.md
 dotnet_diagnostic.DOC202.severity = none
 
 # DOC203: UseBlockElementsCorrectly
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC203.md
 dotnet_diagnostic.DOC203.severity = none
 
 # DOC204: UseInlineElementsCorrectly
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC204.md
 dotnet_diagnostic.DOC204.severity = none
 
 # DOC207: UseSeeLangwordCorrectly
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC207.md
 dotnet_diagnostic.DOC207.severity = none
 
 # DOC209: UseSeeHrefCorrectly
+# https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC209.md
 dotnet_diagnostic.DOC209.severity = none
 
 # IDE0001: SimplifyNames
