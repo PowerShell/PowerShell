@@ -760,7 +760,7 @@ dotnet_diagnostic.DOC103.severity = none
 
 # DOC104: UseSeeLangword
 # https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC104.md
-dotnet_diagnostic.DOC104.severity = warning
+dotnet_diagnostic.DOC104.severity = suggestion
 
 # DOC105: UseParamref
 # https://github.com/DotNetAnalyzers/DocumentationAnalyzers/blob/master/docs/DOC105.md
