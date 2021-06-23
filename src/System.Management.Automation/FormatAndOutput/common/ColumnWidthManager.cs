@@ -83,12 +83,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we have columns with no width assigned
             // remember the columns we are trying to size
             // assign them the minimum column size
-            bool[] fixedColumn = new bool[columnWidths.Length];
+            int unfixedColumnCount = 0;
+            Span<bool> fixedColumn = stackalloc bool[columnWidths.Length];
             for (int k = 0; k < columnWidths.Length; k++)
             {
-                fixedColumn[k] = columnWidths[k] > 0;
                 if (columnWidths[k] == 0)
+                {
                     columnWidths[k] = _minimumColumnWidth;
+                    unfixedColumnCount++;
+                }
+                else
+                {
+                    fixedColumn[k] = true;
+                }
             }
 
             // see if we fit
@@ -107,15 +114,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // we still have room and we want to add more width
-            int unfixedColumnCount = 0;
-            foreach (bool columnIsFixed in fixedColumn)
-            {
-                if (!columnIsFixed)
-                {
-                    unfixedColumnCount++;
-                }
-            }
-
             if (unfixedColumnCount > 0)
             {
                 int extraSpace = availableWidth / unfixedColumnCount;
@@ -123,15 +121,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 for (int k = 0; k < columnWidths.Length; k++)
                 {
-                    if (fixedColumn[k])
-                        continue;
-
-                    if (remainder > 0 && k <= remainder - 1)
+                    if (!fixedColumn[k])
                     {
-                        columnWidths[k] += extraSpace + 1;
-                        continue;
+                        columnWidths[k] += extraSpace;
+                        if (remainder-- > 0) columnWidths[k]++;
                     }
-                    columnWidths[k] += extraSpace;
                 }
             }
 
