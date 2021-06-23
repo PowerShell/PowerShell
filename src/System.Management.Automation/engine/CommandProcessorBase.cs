@@ -121,7 +121,10 @@ namespace System.Management.Automation
         /// </summary>
         internal InternalCommand Command
         {
-            get { return _command; }
+            get
+            {
+                return _command;
+            }
 
             set
             {

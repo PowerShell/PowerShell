@@ -83,7 +83,10 @@ namespace System.Management.Automation
                 return IgnoreScriptDebug ? 0 : _debugTraceLevel;
             }
 
-            set { _debugTraceLevel = value; }
+            set
+            {
+                _debugTraceLevel = value;
+            }
         }
 
         private int _debugTraceLevel;
@@ -100,7 +103,10 @@ namespace System.Management.Automation
                 return !IgnoreScriptDebug && _debugTraceStep;
             }
 
-            set { _debugTraceStep = value; }
+            set
+            {
+                _debugTraceStep = value;
+            }
         }
 
         private bool _debugTraceStep;
@@ -198,40 +204,6 @@ namespace System.Management.Automation
         /// allows you to skip this module when doing a lookup.
         /// </summary>
         internal string ModuleBeingProcessed { get; set; }
-
-        private bool _responsibilityForModuleAnalysisAppDomainOwned;
-
-        internal bool TakeResponsibilityForModuleAnalysisAppDomain()
-        {
-            if (_responsibilityForModuleAnalysisAppDomainOwned)
-            {
-                return false;
-            }
-
-            Diagnostics.Assert(AppDomainForModuleAnalysis == null, "Invalid module analysis app domain state");
-            _responsibilityForModuleAnalysisAppDomainOwned = true;
-            return true;
-        }
-
-        internal void ReleaseResponsibilityForModuleAnalysisAppDomain()
-        {
-            Diagnostics.Assert(_responsibilityForModuleAnalysisAppDomainOwned, "Invalid module analysis app domain state");
-
-            if (AppDomainForModuleAnalysis != null)
-            {
-                AppDomain.Unload(AppDomainForModuleAnalysis);
-                AppDomainForModuleAnalysis = null;
-            }
-
-            _responsibilityForModuleAnalysisAppDomainOwned = false;
-        }
-
-        /// <summary>
-        /// The AppDomain currently being used for module analysis.  It should only be created if needed,
-        /// but various callers need to take responsibility for unloading the domain via
-        /// the TakeResponsibilityForModuleAnalysisAppDomain.
-        /// </summary>
-        internal AppDomain AppDomainForModuleAnalysis { get; set; }
 
         /// <summary>
         /// Authorization manager for this runspace.
@@ -424,7 +396,7 @@ namespace System.Management.Automation
             if (baseValue != null && baseValue != NullString.Value)
             {
                 // It's actually setting a key value pair when the key doesn't exist
-                UntrustedObjects.GetValue(baseValue, key => null);
+                UntrustedObjects.GetValue(baseValue, static key => null);
 
                 try
                 {

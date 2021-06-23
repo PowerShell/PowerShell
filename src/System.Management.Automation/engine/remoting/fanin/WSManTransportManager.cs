@@ -558,9 +558,12 @@ namespace System.Management.Automation.Remoting.Client
         /// <exception cref="PSInvalidOperationException">
         /// 1. Create Session failed with a non-zero error code.
         /// </exception>
-        internal WSManClientSessionTransportManager(Guid runspacePoolInstanceId,
+        internal WSManClientSessionTransportManager(
+            Guid runspacePoolInstanceId,
             WSManConnectionInfo connectionInfo,
-            PSRemotingCryptoHelper cryptoHelper, string sessionName) : base(runspacePoolInstanceId, cryptoHelper)
+            PSRemotingCryptoHelper cryptoHelper,
+            string sessionName)
+            : base(runspacePoolInstanceId, cryptoHelper)
         {
             // Initialize WSMan instance
             WSManAPIData = new WSManAPIDataCommon();
@@ -2912,12 +2915,13 @@ namespace System.Management.Automation.Remoting.Client
         /// Session transport manager creating this command transport manager instance.
         /// Used by Command TM to apply session specific properties
         /// </param>
-        internal WSManClientCommandTransportManager(WSManConnectionInfo connectionInfo,
+        internal WSManClientCommandTransportManager(
+            WSManConnectionInfo connectionInfo,
             IntPtr wsManShellOperationHandle,
             ClientRemotePowerShell shell,
             bool noInput,
-            WSManClientSessionTransportManager sessnTM) :
-            base(shell, sessnTM.CryptoHelper, sessnTM)
+            WSManClientSessionTransportManager sessnTM)
+            : base(shell, sessnTM.CryptoHelper, sessnTM)
         {
             Dbg.Assert(wsManShellOperationHandle != IntPtr.Zero, "Shell operation handle cannot be IntPtr.Zero.");
             Dbg.Assert(connectionInfo != null, "connectionInfo cannot be null");

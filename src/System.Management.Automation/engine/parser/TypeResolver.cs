@@ -671,7 +671,7 @@ namespace System.Management.Automation.Language
         }
     }
 
-    internal class TypeCache
+    internal static class TypeCache
     {
         private class KeyComparer : IEqualityComparer<Tuple<ITypeName, TypeResolutionState>>
         {

@@ -266,30 +266,17 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Retrieve the master list of all processes.
+        /// Gets an array of all processes.
         /// </summary>
-        /// <value></value>
+        /// <value>An array of <see cref="Process"/> components that represents all the process resources.</value>
         /// <exception cref="System.Security.SecurityException">
         /// MSDN does not document the list of exceptions,
         /// but it is reasonable to expect that SecurityException is
         /// among them.  Errors here will terminate the cmdlet.
         /// </exception>
-        internal Process[] AllProcesses
-        {
-            get
-            {
-                if (_allProcesses == null)
-                {
-                    List<Process> processes = new();
-                    processes.AddRange(Process.GetProcesses());
-                    _allProcesses = processes.ToArray();
-                }
+        internal Process[] AllProcesses => _allProcesses ??= Process.GetProcesses();
 
-                return _allProcesses;
-            }
-        }
-
-        private Process[] _allProcesses = null;
+        private Process[] _allProcesses;
 
         /// <summary>
         /// Add <paramref name="process"/> to <see cref="_matchingProcesses"/>,
@@ -476,7 +463,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] Name
         {
-            get { return processNames; }
+            get
+            {
+                return processNames;
+            }
 
             set
             {
@@ -659,7 +649,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        ProcessModule mainModule = PsUtils.GetMainModule(process);
+                        ProcessModule mainModule = process.MainModule;
                         if (mainModule != null)
                         {
                             WriteObject(mainModule.FileVersionInfo, true);
@@ -679,7 +669,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (exception.HResult == 299)
                             {
-                                WriteObject(PsUtils.GetMainModule(process).FileVersionInfo, true);
+                                WriteObject(process.MainModule?.FileVersionInfo, true);
                             }
                             else
                             {
@@ -878,7 +868,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
-            get { return processNames; }
+            get
+            {
+                return processNames;
+            }
 
             set
             {
@@ -1472,7 +1465,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
-            get { return processNames; }
+            get
+            {
+                return processNames;
+            }
 
             set
             {
@@ -1635,7 +1631,10 @@ namespace Microsoft.PowerShell.Commands
         [Credential]
         public PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {
@@ -1660,7 +1659,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Lup")]
         public SwitchParameter LoadUserProfile
         {
-            get { return _loaduserprofile; }
+            get
+            {
+                return _loaduserprofile;
+            }
 
             set
             {
@@ -1678,7 +1680,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("nnw")]
         public SwitchParameter NoNewWindow
         {
-            get { return _nonewwindow; }
+            get
+            {
+                return _nonewwindow;
+            }
 
             set
             {
@@ -1703,7 +1708,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string RedirectStandardError
         {
-            get { return _redirectstandarderror; }
+            get
+            {
+                return _redirectstandarderror;
+            }
 
             set
             {
@@ -1722,7 +1730,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string RedirectStandardInput
         {
-            get { return _redirectstandardinput; }
+            get
+            {
+                return _redirectstandardinput;
+            }
 
             set
             {
@@ -1741,7 +1752,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string RedirectStandardOutput
         {
-            get { return _redirectstandardoutput; }
+            get
+            {
+                return _redirectstandardoutput;
+            }
 
             set
             {
@@ -1769,7 +1783,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public ProcessWindowStyle WindowStyle
         {
-            get { return _windowstyle; }
+            get
+            {
+                return _windowstyle;
+            }
 
             set
             {
@@ -1793,7 +1810,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Default")]
         public SwitchParameter UseNewEnvironment
         {
-            get { return _UseNewEnvironment; }
+            get
+            {
+                return _UseNewEnvironment;
+            }
 
             set
             {
@@ -2337,10 +2357,6 @@ namespace Microsoft.PowerShell.Commands
 
             // Use Unicode encoding
             bytes = Encoding.Unicode.GetBytes(builder.ToString());
-            if (bytes.Length > 0xffff)
-            {
-                throw new InvalidOperationException("EnvironmentBlockTooLong");
-            }
 
             return bytes;
         }

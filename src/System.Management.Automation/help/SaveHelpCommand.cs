@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (_credential != null)
                     {
-                        if (path.Contains("*"))
+                        if (path.Contains('*'))
                         {
                             // Deal with wildcards
 

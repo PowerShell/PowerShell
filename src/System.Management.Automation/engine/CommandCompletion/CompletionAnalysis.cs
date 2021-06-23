@@ -9,6 +9,8 @@ using System.Management.Automation.Language;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
 
 namespace System.Management.Automation
 {
@@ -473,7 +475,7 @@ namespace System.Management.Automation
                             break;
 
                         completionContext.WordToComplete = tokenAtCursor.Text;
-                        result = CompletionCompleters.CompleteComment(completionContext);
+                        result = CompletionCompleters.CompleteComment(completionContext, ref replacementIndex, ref replacementLength);
                         break;
 
                     case TokenKind.StringExpandable:
@@ -525,6 +527,12 @@ namespace System.Management.Automation
                             replacementLength = 0;
 
                             result = CompletionCompleters.CompleteCommandArgument(completionContext);
+                        }
+                        else if (lastAst is AttributeAst)
+                        {
+                            completionContext.ReplacementIndex = replacementIndex += tokenAtCursor.Text.Length;
+                            completionContext.ReplacementLength = replacementLength = 0;
+                            result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                         }
                         else
                         {
@@ -820,6 +828,7 @@ namespace System.Management.Automation
                                 case TokenKind.Equals:
                                 case TokenKind.Comma:
                                 case TokenKind.AtParen:
+                                case TokenKind.LParen:
                                     {
                                         if (lastAst is AssignmentStatementAst assignmentAst)
                                         {
@@ -830,24 +839,17 @@ namespace System.Management.Automation
                                             }
                                         }
 
+                                        if (lastAst is AttributeAst)
+                                        {
+                                            completionContext.ReplacementLength = replacementLength = 0;
+                                            result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                                            break;
+                                        }
+
                                         bool unused;
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                                         break;
                                     }
-                                case TokenKind.LParen:
-                                    if (lastAst is AttributeAst)
-                                    {
-                                        completionContext.ReplacementLength = replacementLength = 0;
-                                        result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
-                                    }
-                                    else
-                                    {
-                                        bool unused;
-                                        result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty,
-                                            ref replacementIndex, ref replacementLength, out unused);
-                                    }
-
-                                    break;
                                 default:
                                     break;
                             }
@@ -1441,7 +1443,7 @@ namespace System.Management.Automation
                                 Diagnostics.Assert(isCursorInString || (!hasNewLine), "hasNoQuote and hasNewLine cannot be true at the same time");
                                 if (property.ValueMap != null && property.ValueMap.Count > 0)
                                 {
-                                    IEnumerable<string> orderedValues = property.ValueMap.Keys.OrderBy(x => x).Where(v => !existingValues.Contains(v, StringComparer.OrdinalIgnoreCase));
+                                    IEnumerable<string> orderedValues = property.ValueMap.Keys.OrderBy(static x => x).Where(v => !existingValues.Contains(v, StringComparer.OrdinalIgnoreCase));
                                     var matchedResults = orderedValues.Where(v => wildcardPattern.IsMatch(v));
                                     if (matchedResults == null || !matchedResults.Any())
                                     {
@@ -1721,7 +1723,17 @@ namespace System.Management.Automation
 
                 foreach (var keyword in matchedResults)
                 {
-                    string usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
+                    string usageString = string.Empty;
+                    ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                    if (dscSubsystem != null)
+                    {
+                        usageString = dscSubsystem.GetDSCResourceUsageString(keyword);
+                    }
+                    else
+                    {
+                        usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
+                    }
+
                     if (results == null)
                     {
                         results = new List<CompletionResult>();
@@ -2098,7 +2110,7 @@ namespace System.Management.Automation
             // Attribute member arguments
             Type attributeType = null;
             string argName = string.Empty;
-            Ast argAst = completionContext.RelatedAsts.Find(ast => ast is NamedAttributeArgumentAst);
+            Ast argAst = completionContext.RelatedAsts.Find(static ast => ast is NamedAttributeArgumentAst);
             NamedAttributeArgumentAst namedArgAst = argAst as NamedAttributeArgumentAst;
             if (argAst != null && namedArgAst != null)
             {
@@ -2109,7 +2121,7 @@ namespace System.Management.Automation
             }
             else
             {
-                Ast astAtt = completionContext.RelatedAsts.Find(ast => ast is AttributeAst);
+                Ast astAtt = completionContext.RelatedAsts.Find(static ast => ast is AttributeAst);
                 AttributeAst attAst = astAtt as AttributeAst;
                 if (astAtt != null && attAst != null)
                 {

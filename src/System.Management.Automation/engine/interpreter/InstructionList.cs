@@ -273,7 +273,7 @@ namespace System.Management.Automation.Interpreter
         static InstructionList() {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler((_, __) => {
                 PerfTrack.DumpHistogram(_executedInstructions);
-                Console.WriteLine("-- Total executed: {0}", _executedInstructions.Values.Aggregate(0, (sum, value) => sum + value));
+                Console.WriteLine("-- Total executed: {0}", _executedInstructions.Values.Aggregate(0, static (sum, value) => sum + value));
                 Console.WriteLine("-----");
 
                 var referenced = new Dictionary<string, int>();
@@ -1086,9 +1086,9 @@ namespace System.Management.Automation.Interpreter
                         return new DynamicInstructionN(delegateType, CallSite.Create(delegateType, binder));
                     }
 
-                    factory =
-                        (Func<CallSiteBinder, Instruction>)
-                        instructionType.GetMethod("Factory").CreateDelegate(typeof(Func<CallSiteBinder, Instruction>));
+                    factory = (Func<CallSiteBinder, Instruction>)instructionType
+                        .GetMethod("Factory")
+                        .CreateDelegate(typeof(Func<CallSiteBinder, Instruction>));
 
                     s_factories[delegateType] = factory;
                 }

@@ -52,6 +52,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Runtime.Serialization.Primitives.dll'
             'System.Security.AccessControl.dll'
             'System.Security.Cryptography.Encoding.dll'
+            'System.Security.Cryptography.Primitives.dll'
             'System.Security.Cryptography.X509Certificates.dll'
             'System.Security.Principal.Windows.dll'
             'System.Text.Encoding.Extensions.dll'
@@ -66,11 +67,9 @@ Describe "Validate start of console host" -Tag CI {
         if ($IsWindows) {
             $allowedAssemblies += @(
                 'Microsoft.PowerShell.CoreCLR.Eventing.dll'
-                'System.Diagnostics.FileVersionInfo.dll'
                 'System.DirectoryServices.dll'
                 'System.Management.dll'
                 'System.Security.Claims.dll'
-                'System.Security.Cryptography.Primitives.dll'
                 'System.Threading.Overlapped.dll'
             )
         }
@@ -90,7 +89,7 @@ Describe "Validate start of console host" -Tag CI {
             Remove-Item $profileDataFile -Force
         }
 
-        $loadedAssemblies = & "$PSHOME/pwsh" -noprofile -command '([System.AppDomain]::CurrentDomain.GetAssemblies()).manifestmodule | Where-Object { $_.Name -notlike ""<*>"" } | ForEach-Object { $_.Name }'
+        $loadedAssemblies = & "$PSHOME/pwsh" -noprofile -command '([System.AppDomain]::CurrentDomain.GetAssemblies()).manifestmodule | Where-Object { $_.Name -notlike "<*>" } | ForEach-Object { $_.Name }'
     }
 
     It "No new assemblies are loaded" {

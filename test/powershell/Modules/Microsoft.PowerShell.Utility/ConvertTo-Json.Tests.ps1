@@ -40,6 +40,34 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $ps.Dispose()
     }
 
+    It "Should accept minimum depth as 0." {
+        $ComplexObject = [PSCustomObject] @{
+            FirstLevel1  = @{
+                Child1_1 = 0
+                Bool = $True
+            }
+            FirstLevel2 = @{
+                Child2_1 = 'Child_2_1_Value'
+                Child2_2 = @{
+                     ChildOfChild2_2= @(1,2,3)
+                    }
+                    Float = 1.2
+                }
+                Integer = 10
+                Bool = $False
+            }
+
+        $ExpectedOutput = '{
+  "FirstLevel1": "System.Collections.Hashtable",
+  "FirstLevel2": "System.Collections.Hashtable",
+  "Integer": 10,
+  "Bool": false
+}'
+
+        $output = $ComplexObject | ConvertTo-Json -Depth 0
+        $output | Should -Be $ExpectedOutput
+    }
+
     It "The result string is packed in an array symbols when AsArray parameter is used." {
         $output = 1 | ConvertTo-Json -AsArray
         $output | Should -BeLike "``[*1*]"

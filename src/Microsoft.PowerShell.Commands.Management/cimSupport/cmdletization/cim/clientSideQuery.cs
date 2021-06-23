@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     case BehaviorOnNoMatch.Default:
                     default:
                         return this.PropertyValueFilters
-                                   .Any(f => !f.HadMatch && f.BehaviorOnNoMatch == BehaviorOnNoMatch.ReportErrors);
+                                   .Any(static f => !f.HadMatch && f.BehaviorOnNoMatch == BehaviorOnNoMatch.ReportErrors);
                 }
             }
 
@@ -656,7 +656,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     return Enumerable.Empty<NotFoundError>();
                 }
 
-                if (_filters.All(f => !f.ShouldReportErrorOnNoMatches_IfMultipleFilters()))
+                if (_filters.All(static f => !f.ShouldReportErrorOnNoMatches_IfMultipleFilters()))
                 {
                     return Enumerable.Empty<NotFoundError>();
                 }

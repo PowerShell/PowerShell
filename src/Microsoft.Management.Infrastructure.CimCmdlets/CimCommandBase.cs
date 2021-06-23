@@ -672,6 +672,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Throw terminating error
         /// </para>
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         internal void ThrowTerminatingError(Exception exception, string operation)
         {
             ErrorRecord errorRecord = new(exception, operation, ErrorCategory.InvalidOperation, this);

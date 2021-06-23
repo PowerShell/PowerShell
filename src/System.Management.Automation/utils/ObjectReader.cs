@@ -483,12 +483,12 @@ namespace System.Management.Automation.Internal
     /// commands concurrently.
     /// Only Read() operation is supported currently.
     /// </remarks>
-    internal class PSDataCollectionReader<DataStoreType, ReturnType>
-        : ObjectReaderBase<ReturnType>
+    internal class PSDataCollectionReader<T, TResult>
+        : ObjectReaderBase<TResult>
     {
         #region Private Data
 
-        private readonly PSDataCollectionEnumerator<DataStoreType> _enumerator;
+        private readonly PSDataCollectionEnumerator<T> _enumerator;
 
         #endregion
 
@@ -498,12 +498,12 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">The stream to read.</param>
         /// <exception cref="ArgumentNullException">Thrown if the specified stream is null.</exception>
-        public PSDataCollectionReader(PSDataCollectionStream<DataStoreType> stream)
+        public PSDataCollectionReader(PSDataCollectionStream<T> stream)
             : base(stream)
         {
             System.Management.Automation.Diagnostics.Assert(stream.ObjectStore != null,
                 "Stream should have a valid data store");
-            _enumerator = (PSDataCollectionEnumerator<DataStoreType>)stream.ObjectStore.GetEnumerator();
+            _enumerator = (PSDataCollectionEnumerator<T>)stream.ObjectStore.GetEnumerator();
         }
 
         #endregion ctor
@@ -513,7 +513,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="count">The maximum number of objects to read.</param>
         /// <returns>The objects read.</returns>
-        public override Collection<ReturnType> Read(int count)
+        public override Collection<TResult> Read(int count)
         {
             throw new NotSupportedException();
         }
@@ -528,7 +528,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This method blocks if the buffer is empty.
         /// </remarks>
-        public override ReturnType Read()
+        public override TResult Read()
         {
             object result = AutomationNull.Value;
             if (_enumerator.MoveNext())
@@ -544,7 +544,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <returns></returns>
         /// <remarks></remarks>
-        public override Collection<ReturnType> ReadToEnd()
+        public override Collection<TResult> ReadToEnd()
         {
             throw new NotSupportedException();
         }
@@ -554,7 +554,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <returns></returns>
         /// <remarks></remarks>
-        public override Collection<ReturnType> NonBlockingRead()
+        public override Collection<TResult> NonBlockingRead()
         {
             return NonBlockingRead(Int32.MaxValue);
         }
@@ -567,7 +567,7 @@ namespace System.Management.Automation.Internal
         /// <param name="maxRequested">
         /// Return no more than maxRequested objects.
         /// </param>
-        public override Collection<ReturnType> NonBlockingRead(int maxRequested)
+        public override Collection<TResult> NonBlockingRead(int maxRequested)
         {
             if (maxRequested < 0)
             {
@@ -576,31 +576,31 @@ namespace System.Management.Automation.Internal
 
             if (maxRequested == 0)
             {
-                return new Collection<ReturnType>();
+                return new Collection<TResult>();
             }
 
-            Collection<ReturnType> results = new Collection<ReturnType>();
+            Collection<TResult> result = new Collection<TResult>();
             int readCount = maxRequested;
 
             while (readCount > 0)
             {
                 if (_enumerator.MoveNext(false))
                 {
-                    results.Add(ConvertToReturnType(_enumerator.Current));
+                    result.Add(ConvertToReturnType(_enumerator.Current));
                     continue;
                 }
 
                 break;
             }
 
-            return results;
+            return result;
         }
 
         /// <summary>
         /// This method is not supported.
         /// </summary>
         /// <returns></returns>
-        public override ReturnType Peek()
+        public override TResult Peek()
         {
             throw new NotSupportedException();
         }
@@ -617,12 +617,12 @@ namespace System.Management.Automation.Internal
             }
         }
 
-        private static ReturnType ConvertToReturnType(object inputObject)
+        private static TResult ConvertToReturnType(object inputObject)
         {
-            Type resultType = typeof(ReturnType);
+            Type resultType = typeof(TResult);
             if (typeof(PSObject) == resultType || typeof(object) == resultType)
             {
-                ReturnType result;
+                TResult result;
                 LanguagePrimitives.TryConvertTo(inputObject, out result);
                 return result;
             }
@@ -642,12 +642,12 @@ namespace System.Management.Automation.Internal
     /// commands concurrently.
     /// Only Read() operation is supported currently.
     /// </remarks>
-    internal class PSDataCollectionPipelineReader<DataStoreType, ReturnType>
-        : ObjectReaderBase<ReturnType>
+    internal class PSDataCollectionPipelineReader<T, TReturn>
+        : ObjectReaderBase<TReturn>
     {
         #region Private Data
 
-        private readonly PSDataCollection<DataStoreType> _datastore;
+        private readonly PSDataCollection<T> _datastore;
 
         #endregion Private Data
 
@@ -658,7 +658,7 @@ namespace System.Management.Automation.Internal
         /// <param name="stream">The stream to read.</param>
         /// <param name="computerName"></param>
         /// <param name="runspaceId"></param>
-        internal PSDataCollectionPipelineReader(PSDataCollectionStream<DataStoreType> stream,
+        internal PSDataCollectionPipelineReader(PSDataCollectionStream<T> stream,
             string computerName, Guid runspaceId)
             : base(stream)
         {
@@ -688,7 +688,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="count">The maximum number of objects to read.</param>
         /// <returns>The objects read.</returns>
-        public override Collection<ReturnType> Read(int count)
+        public override Collection<TReturn> Read(int count)
         {
             throw new NotSupportedException();
         }
@@ -703,14 +703,14 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This method blocks if the buffer is empty.
         /// </remarks>
-        public override ReturnType Read()
+        public override TReturn Read()
         {
             object result = AutomationNull.Value;
             if (_datastore.Count > 0)
             {
-                Collection<DataStoreType> resultCollection = _datastore.ReadAndRemove(1);
+                Collection<T> resultCollection = _datastore.ReadAndRemove(1);
 
-                // ReadAndRemove returns a Collection<DataStoreType> type but we
+                // ReadAndRemove returns a Collection<T> type but we
                 // just want the single object contained in the collection.
                 if (resultCollection.Count == 1)
                 {
@@ -726,7 +726,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <returns></returns>
         /// <remarks></remarks>
-        public override Collection<ReturnType> ReadToEnd()
+        public override Collection<TReturn> ReadToEnd()
         {
             throw new NotSupportedException();
         }
@@ -736,7 +736,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <returns></returns>
         /// <remarks></remarks>
-        public override Collection<ReturnType> NonBlockingRead()
+        public override Collection<TReturn> NonBlockingRead()
         {
             return NonBlockingRead(Int32.MaxValue);
         }
@@ -749,7 +749,7 @@ namespace System.Management.Automation.Internal
         /// <param name="maxRequested">
         /// Return no more than maxRequested objects.
         /// </param>
-        public override Collection<ReturnType> NonBlockingRead(int maxRequested)
+        public override Collection<TReturn> NonBlockingRead(int maxRequested)
         {
             if (maxRequested < 0)
             {
@@ -758,10 +758,10 @@ namespace System.Management.Automation.Internal
 
             if (maxRequested == 0)
             {
-                return new Collection<ReturnType>();
+                return new Collection<TReturn>();
             }
 
-            Collection<ReturnType> results = new Collection<ReturnType>();
+            Collection<TReturn> results = new Collection<TReturn>();
             int readCount = maxRequested;
 
             while (readCount > 0)
@@ -783,7 +783,7 @@ namespace System.Management.Automation.Internal
         /// This method is not supported.
         /// </summary>
         /// <returns></returns>
-        public override ReturnType Peek()
+        public override TReturn Peek()
         {
             throw new NotSupportedException();
         }
@@ -793,12 +793,12 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="inputObject">Input object to convert.</param>
         /// <returns>Input object converted to the specified return type.</returns>
-        private static ReturnType ConvertToReturnType(object inputObject)
+        private static TReturn ConvertToReturnType(object inputObject)
         {
-            Type resultType = typeof(ReturnType);
+            Type resultType = typeof(TReturn);
             if (typeof(PSObject) == resultType || typeof(object) == resultType)
             {
-                ReturnType result;
+                TReturn result;
                 LanguagePrimitives.TryConvertTo(inputObject, out result);
                 return result;
             }

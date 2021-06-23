@@ -64,7 +64,10 @@ namespace System.Management.Automation
         /// </exception>
         internal SessionStateScope ScriptScope
         {
-            get { return _scriptScope; }
+            get
+            {
+                return _scriptScope;
+            }
 
             set
             {
@@ -1615,7 +1618,10 @@ namespace System.Management.Automation
                 return Parent != null ? Parent.TypeResolutionState : Language.TypeResolutionState.UsingSystem;
             }
 
-            set { _typeResolutionState = value; }
+            set
+            {
+                _typeResolutionState = value;
+            }
         }
 
         internal IDictionary<string, Type> TypeTable { get; private set; }

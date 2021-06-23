@@ -87,8 +87,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal override int Length(string str, int offset)
         {
-            Dbg.Assert(offset >= 0, "offset >= 0");
-            Dbg.Assert(string.IsNullOrEmpty(str) || (offset < str.Length), "offset < str.Length");
+            if (string.IsNullOrEmpty(str))
+            {
+                return 0;
+            }
+
+            if (offset < 0 || offset >= str.Length)
+            {
+                throw PSTraceSource.NewArgumentException(nameof(offset));
+            }
 
             try
             {
@@ -100,7 +107,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we will fallback to the default value.
             }
 
-            return string.IsNullOrEmpty(str) ? 0 : str.Length - offset;
+            return str.Length - offset;
         }
 
         internal override int Length(string str)

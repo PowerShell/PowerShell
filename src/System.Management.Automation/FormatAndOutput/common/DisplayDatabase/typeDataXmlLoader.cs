@@ -1122,9 +1122,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 frameInfoDefinition =
                 {
-                    leftIndentation = (int) frame.LeftIndent,
-                    rightIndentation = (int) frame.RightIndent,
-                    firstLine = frame.FirstLineHanging != 0 ? -(int) frame.FirstLineHanging : (int) frame.FirstLineIndent
+                    leftIndentation = (int)frame.LeftIndent,
+                    rightIndentation = (int)frame.RightIndent,
+                    firstLine = frame.FirstLineHanging != 0 ? -(int)frame.FirstLineHanging : (int)frame.FirstLineIndent
                 }
             };
 

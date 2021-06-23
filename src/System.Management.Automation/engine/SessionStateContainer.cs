@@ -4681,7 +4681,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (providerPath != null)
+            if (providerInstance != null)
             {
                 // Get the dynamic parameters for the first resolved path
                 return CopyItemDynamicParameters(providerInstance, providerPath, destination, recurse, newContext);
@@ -4732,10 +4732,6 @@ namespace System.Management.Automation
             Dbg.Diagnostics.Assert(
                 providerInstance != null,
                 "Caller should validate providerInstance before calling this method");
-
-            Dbg.Diagnostics.Assert(
-                path != null,
-                "Caller should validate path before calling this method");
 
             Dbg.Diagnostics.Assert(
                 context != null,

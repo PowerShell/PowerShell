@@ -59,7 +59,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("Last")]
         public int Tail
         {
-            get { return _backCount; }
+            get
+            {
+                return _backCount;
+            }
 
             set
             {

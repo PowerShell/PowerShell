@@ -32,7 +32,8 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// This is the default constructor.
         /// </summary>
-        public FormatTableLoadException() : base()
+        public FormatTableLoadException()
+            : base()
         {
             SetDefaultErrorRecord();
         }
@@ -43,7 +44,8 @@ namespace System.Management.Automation.Runspaces
         /// <param name="message">
         /// A localized error message.
         /// </param>
-        public FormatTableLoadException(string message) : base(message)
+        public FormatTableLoadException(string message)
+            : base(message)
         {
             SetDefaultErrorRecord();
         }
@@ -70,8 +72,8 @@ namespace System.Management.Automation.Runspaces
         /// <param name="loadErrors">
         /// The errors that occured
         /// </param>
-        internal FormatTableLoadException(ConcurrentBag<string> loadErrors) :
-            base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))
+        internal FormatTableLoadException(ConcurrentBag<string> loadErrors)
+            : base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))
         {
             _errors = new Collection<string>(loadErrors.ToArray());
             SetDefaultErrorRecord();

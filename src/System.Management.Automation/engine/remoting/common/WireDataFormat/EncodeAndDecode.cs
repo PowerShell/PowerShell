@@ -1803,7 +1803,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static IEnumerable<KeyValuePair<KeyType, ValueType>> EnumerateHashtableProperty<KeyType, ValueType>(PSObject psObject, string propertyName)
+        internal static IEnumerable<KeyValuePair<TKey, TValue>> EnumerateHashtableProperty<TKey, TValue>(PSObject psObject, string propertyName)
         {
             if (psObject == null)
             {
@@ -1820,9 +1820,9 @@ namespace System.Management.Automation
             {
                 foreach (DictionaryEntry e in h)
                 {
-                    KeyType key = ConvertPropertyValueTo<KeyType>(propertyName, e.Key);
-                    ValueType value = ConvertPropertyValueTo<ValueType>(propertyName, e.Value);
-                    yield return new KeyValuePair<KeyType, ValueType>(key, value);
+                    TKey key = ConvertPropertyValueTo<TKey>(propertyName, e.Key);
+                    TValue value = ConvertPropertyValueTo<TValue>(propertyName, e.Value);
+                    yield return new KeyValuePair<TKey, TValue>(key, value);
                 }
             }
         }

@@ -9,7 +9,6 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -339,12 +338,13 @@ namespace System.Management.Automation
         {
             lock (s_converterCache)
             {
-                var toRemove = s_converterCache.Keys.Where(
-                    conv => string.Equals(conv.to.FullName, typeName, StringComparison.OrdinalIgnoreCase) ||
-                            string.Equals(conv.from.FullName, typeName, StringComparison.OrdinalIgnoreCase)).ToArray();
-                foreach (var k in toRemove)
+                foreach (var key in s_converterCache.Keys)
                 {
-                    s_converterCache.Remove(k);
+                    if (string.Equals(key.to.FullName, typeName, StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(key.from.FullName, typeName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        s_converterCache.Remove(key);
+                    }
                 }
 
                 // Note we do not clear possibleTypeConverter even when removing.
@@ -1502,7 +1502,7 @@ namespace System.Management.Automation
 
         private static object NewConverterInstance(string assemblyQualifiedTypeName)
         {
-            if (assemblyQualifiedTypeName.IndexOf(',') == -1)
+            if (!assemblyQualifiedTypeName.Contains(','))
             {
                 typeConversion.WriteLine("Type name \"{0}\" should be assembly qualified.", assemblyQualifiedTypeName);
                 return null;
@@ -1595,8 +1595,8 @@ namespace System.Management.Automation
             { "BooleanArray",   "bool[]" },
             { "UInt8Array",     "byte[]" },
             { "SInt8Array",     "Sbyte[]" },
-            { "UInt16Array",    "uint16[]" },
-            { "SInt16Array",    "int64[]" },
+            { "UInt16Array",    "UInt16[]" },
+            { "SInt16Array",    "Int16[]" },
             { "UInt32Array",    "UInt32[]" },
             { "SInt32Array",    "Int32[]" },
             { "UInt64Array",    "UInt64[]" },
@@ -2133,7 +2133,7 @@ namespace System.Management.Automation
                 WildcardPattern[] fromValuePatterns;
                 if (!multipleValues)
                 {
-                    if (sourceValueString.Contains(","))
+                    if (sourceValueString.Contains(','))
                     {
                         throw new PSInvalidCastException("InvalidCastEnumCommaAndNoFlags", null,
                             ExtendedTypeSystem.InvalidCastExceptionEnumerationNoFlagAndComma,

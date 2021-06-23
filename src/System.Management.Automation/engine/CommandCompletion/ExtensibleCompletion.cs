@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// <param name="type">The type must implement <see cref="IArgumentCompleter"/> and have a default constructor.</param>
         public ArgumentCompleterAttribute(Type type)
         {
-            if (type == null || (type.GetInterfaces().All(t => t != typeof(IArgumentCompleter))))
+            if (type == null || (type.GetInterfaces().All(static t => t != typeof(IArgumentCompleter))))
             {
                 throw PSTraceSource.NewArgumentException(nameof(type));
             }
@@ -41,17 +41,38 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ArgumentCompleterAttribute"/> class.
+        /// This constructor is used by derived attributes implementing <see cref="IArgumentCompleterFactory"/>.
+        /// </summary>
+        protected ArgumentCompleterAttribute()
+        {
+            if (this is not IArgumentCompleterFactory)
+            {
+                throw PSTraceSource.NewInvalidOperationException();
+            }
+        }
+
+        /// <summary>
         /// This constructor is used primarily via PowerShell scripts.
         /// </summary>
         /// <param name="scriptBlock"></param>
         public ArgumentCompleterAttribute(ScriptBlock scriptBlock)
         {
-            if (scriptBlock == null)
+            if (scriptBlock is null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
 
             ScriptBlock = scriptBlock;
+        }
+
+        internal IArgumentCompleter CreateArgumentCompleter()
+        {
+            return Type != null
+                ? Activator.CreateInstance(Type) as IArgumentCompleter
+                : this is IArgumentCompleterFactory factory
+                    ? factory.Create()
+                    : null;
         }
     }
 
@@ -84,6 +105,67 @@ namespace System.Management.Automation
             IDictionary fakeBoundParameters);
     }
 #nullable restore
+
+    /// <summary>
+    /// Creates a new argument completer.
+    /// </summary>
+    /// <para>
+    /// If an attribute that derives from <see cref="ArgumentCompleterAttribute"/> implements this interface,
+    /// it will be used to create the <see cref="IArgumentCompleter"/>, thus giving a way to parameterize a completer.
+    /// The derived attribute can have properties or constructor arguments that are used when creating the completer.
+    /// </para>
+    /// <example>
+    /// This example shows the intended usage of <see cref="IArgumentCompleterFactory"/> to pass arguments to an argument completer.
+    /// <code>
+    /// public class NumberCompleterAttribute : ArgumentCompleterAttribute, IArgumentCompleterFactory {
+    ///    private readonly int _from;
+    ///    private readonly int _to;
+    ///
+    ///    public NumberCompleterAttribute(int from, int to){
+    ///       _from = from;
+    ///       _to = to;
+    ///    }
+    ///
+    ///    // use the attribute parameters to create a parameterized completer
+    ///    IArgumentCompleter Create() => new NumberCompleter(_from, _to);
+    /// }
+    ///
+    /// class NumberCompleter : IArgumentCompleter {
+    ///    private readonly int _from;
+    ///    private readonly int _to;
+    ///
+    ///    public NumberCompleter(int from, int to){
+    ///       _from = from;
+    ///       _to = to;
+    ///    }
+    ///
+    ///    IEnumerable{CompletionResult} CompleteArgument(string commandName, string parameterName, string wordToComplete,
+    ///       CommandAst commandAst, IDictionary fakeBoundParameters) {
+    ///       for(int i = _from; i &lt; _to; i++) {
+    ///           yield return new CompletionResult(i.ToString());
+    ///       }
+    ///    }
+    /// }
+    /// </code>
+    /// </example>
+    public interface IArgumentCompleterFactory
+    {
+        /// <summary>
+        /// Creates an instance of a class implementing the <see cref="IArgumentCompleter"/> interface.
+        /// </summary>
+        /// <returns>An IArgumentCompleter instance.</returns>
+        IArgumentCompleter Create();
+    }
+
+    /// <summary>
+    /// Base class for parameterized argument completer attributes.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public abstract class ArgumentCompleterFactoryAttribute : ArgumentCompleterAttribute, IArgumentCompleterFactory
+    {
+        /// <inheritdoc />
+        public abstract IArgumentCompleter Create();
+    }
 
     /// <summary>
     /// </summary>

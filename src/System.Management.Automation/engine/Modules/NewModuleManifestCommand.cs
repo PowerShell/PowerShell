@@ -662,8 +662,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    ModuleSpecification moduleSpecification = (ModuleSpecification)
-                        LanguagePrimitives.ConvertTo(
+                    ModuleSpecification moduleSpecification = (ModuleSpecification)LanguagePrimitives.ConvertTo(
                             spec,
                             typeof(ModuleSpecification),
                             CultureInfo.InvariantCulture);

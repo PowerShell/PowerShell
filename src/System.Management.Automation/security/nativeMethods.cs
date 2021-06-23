@@ -13,7 +13,7 @@ using BOOL = System.UInt32;
 namespace System.Management.Automation.Security
 {
     // Crypto API native constants
-    internal partial class NativeConstants
+    internal static partial class NativeConstants
     {
         internal const int CRYPT_OID_INFO_OID_KEY = 1;
         internal const int CRYPT_OID_INFO_NAME_KEY = 2;

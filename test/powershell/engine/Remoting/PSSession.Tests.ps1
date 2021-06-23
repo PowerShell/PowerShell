@@ -5,6 +5,11 @@
 # PSSession tests for non-Windows platforms
 #
 
+function GetRandomString()
+{
+    return [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName())
+}
+
 Describe "New-PSSessionOption parameters for non-Windows platforms" -Tag "CI" {
 
     BeforeAll {
@@ -36,12 +41,13 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        if ($IsWindows)  {
+        # Skip this test for macOS because the latest OS release is incompatible with our shipped libmi for WinRM/OMI.
+        if ($IsWindows -or $IsMacOS)  {
             $PSDefaultParameterValues['it:skip'] = $true
         }
         else {
             $userName = "User_$(Get-Random -Maximum 99999)"
-            $userPassword = "Password_$(Get-Random -Maximum 99999)"
+            $userPassword = GetRandomString
             $cred = [pscredential]::new($userName, (ConvertTo-SecureString -String $userPassword -AsPlainText -Force))
             $soSkipCA = New-PSSessionOption -SkipCACheck
             $soSkipCN = New-PSSessionOption -SkipCNCheck
@@ -54,7 +60,7 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
 
     $testCases = @(
         @{
-            Name = 'Verifies expected error when session options is missing'
+            Name = 'Verifies expected error when session option is missing'
             ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL }
             ExpectedErrorCode = 825
         },

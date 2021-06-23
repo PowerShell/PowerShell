@@ -175,7 +175,7 @@ else                 { '-{0}{1} ' }) -f $_.Name, $parameterValue")
                 .EndControl();
 
             var sharedControls = new CustomControl[] {
-                null,//MamlParameterValueGroupControl,
+                null, //MamlParameterValueGroupControl,
                 MamlParameterControl,
                 MamlTypeControl,
                 MamlParameterValueControl,

@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Subsystem.DSC;
+using System.Management.Automation.Subsystem.Prediction;
 
 namespace System.Management.Automation.Subsystem
 {
@@ -28,6 +30,11 @@ namespace System.Management.Automation.Subsystem
                     SubsystemKind.CommandPredictor,
                     allowUnregistration: true,
                     allowMultipleRegistration: true),
+
+                SubsystemInfo.Create<ICrossPlatformDsc>(
+                    SubsystemKind.CrossPlatformDsc,
+                    allowUnregistration: true,
+                    allowMultipleRegistration: false),
             };
 
             var subSystemTypeMap = new Dictionary<Type, SubsystemInfo>(subsystems.Length);
@@ -273,7 +280,14 @@ namespace System.Management.Automation.Subsystem
             ISubsystem impl = subsystemInfo.UnregisterImplementation(id);
             if (impl is IDisposable disposable)
             {
-                disposable.Dispose();
+                try
+                {
+                    disposable.Dispose();
+                }
+                catch
+                {
+                    // It's OK to ignore all exceptions when disposing the object.
+                }
             }
         }
 

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -70,65 +71,89 @@ namespace Microsoft.PowerShell
                 int rows = tempProgressRegion.GetLength(0);
                 int cols = tempProgressRegion.GetLength(1);
 
+                if (ProgressNode.IsMinimalProgressRenderingEnabled())
+                {
+                    rows = _content.Length;
+                    cols = PSStyle.Instance.Progress.MaxWidth;
+                    if (cols > _bufSize.Width)
+                    {
+                        cols = _bufSize.Width;
+                    }
+                }
+
                 _savedCursor = _rawui.CursorPosition;
                 _location.X = 0;
 
-#if UNIX
-                _location.Y = _rawui.CursorPosition.Y;
-
-                // if cursor is not on left edge already move down one line
-                if (_rawui.CursorPosition.X != 0)
+                if (!Platform.IsWindows || ProgressNode.IsMinimalProgressRenderingEnabled())
                 {
-                    _location.Y++;
+                    _location.Y = _rawui.CursorPosition.Y;
+
+                    // if cursor is not on left edge already move down one line
+                    if (_rawui.CursorPosition.X != 0)
+                    {
+                        _location.Y++;
+                        _rawui.CursorPosition = _location;
+                    }
+
+                    // if the cursor is at the bottom, create screen buffer space by scrolling
+                    int scrollRows = rows - ((_rawui.BufferSize.Height - 1) - _location.Y);
+                    if (scrollRows > 0)
+                    {
+                        // Scroll the console screen up by 'scrollRows'
+                        var bottomLocation = _location;
+                        bottomLocation.Y = _rawui.BufferSize.Height - 1;
+
+                        _rawui.CursorPosition = bottomLocation;
+                        for (int i = 0; i < scrollRows; i++)
+                        {
+                            Console.Out.Write('\n');
+                        }
+
+                        _location.Y -= scrollRows;
+                        _savedCursor.Y -= scrollRows;
+                    }
+
+                    // create cleared region to clear progress bar later
+                    _savedRegion = tempProgressRegion;
+                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAnsiProgressFeatureName) && PSStyle.Instance.Progress.View != ProgressView.Minimal)
+                    {
+                        for (int row = 0; row < rows; row++)
+                        {
+                            for (int col = 0; col < cols; col++)
+                            {
+                                _savedRegion[row, col].Character = ' ';
+                            }
+                        }
+                    }
+
+                    // put cursor back to where output should be
                     _rawui.CursorPosition = _location;
                 }
-
-                // if the cursor is at the bottom, create screen buffer space by scrolling
-                int scrollRows = rows - ((_rawui.BufferSize.Height - 1) - _location.Y);
-                if (scrollRows > 0)
+                else
                 {
-                    // Scroll the console screen up by 'scrollRows'
-                    var bottomLocation = _location;
-                    bottomLocation.Y = _rawui.BufferSize.Height;
-                    _rawui.CursorPosition = bottomLocation;
-                    for (int i = 0; i < scrollRows; i++)
-                    {
-                        Console.Out.Write('\n');
-                    }
+                    _location = _rawui.WindowPosition;
 
-                    _location.Y -= scrollRows;
-                    _savedCursor.Y -= scrollRows;
+                    // We have to show the progress pane in the first column, as the screen buffer at any point might contain
+                    // a CJK double-cell characters, which makes it impractical to try to find a position where the pane would
+                    // not slice a character.  Column 0 is the only place where we know for sure we can place the pane.
+
+                    _location.Y = Math.Min(_location.Y + 2, _bufSize.Height);
+
+                    // Save off the current contents of the screen buffer in the region that we will occupy
+                    _savedRegion =
+                        _rawui.GetBufferContents(
+                            new Rectangle(_location.X, _location.Y, _location.X + cols - 1, _location.Y + rows - 1));
                 }
 
-                // create cleared region to clear progress bar later
-                _savedRegion = tempProgressRegion;
-                for (int row = 0; row < rows; row++)
+                if (ProgressNode.IsMinimalProgressRenderingEnabled())
                 {
-                    for (int col = 0; col < cols; col++)
-                    {
-                        _savedRegion[row, col].Character = ' ';
-                    }
+                    WriteContent();
                 }
-
-                // put cursor back to where output should be
-                _rawui.CursorPosition = _location;
-#else
-                _location = _rawui.WindowPosition;
-
-                // We have to show the progress pane in the first column, as the screen buffer at any point might contain
-                // a CJK double-cell characters, which makes it impractical to try to find a position where the pane would
-                // not slice a character.  Column 0 is the only place where we know for sure we can place the pane.
-
-                _location.Y = Math.Min(_location.Y + 2, _bufSize.Height);
-
-                // Save off the current contents of the screen buffer in the region that we will occupy
-                _savedRegion =
-                    _rawui.GetBufferContents(
-                        new Rectangle(_location.X, _location.Y, _location.X + cols - 1, _location.Y + rows - 1));
-#endif
-
-                // replace the saved region in the screen buffer with our progress display
-                _rawui.SetBufferContents(_location, tempProgressRegion);
+                else
+                {
+                    // replace the saved region in the screen buffer with our progress display
+                    _rawui.SetBufferContents(_location, tempProgressRegion);
+                }
             }
         }
 
@@ -142,12 +167,37 @@ namespace Microsoft.PowerShell
         {
             if (IsShowing)
             {
-                // It would be nice if we knew that the saved region could be kept for the next time Show is called, but alas,
-                // we have no way of knowing if the screen buffer has changed since we were hidden.  By "no good way" I mean that
-                // detecting a change would be at least as expensive as chucking the savedRegion and rebuilding it.  And it would
-                // be very complicated.
+                if (ProgressNode.IsMinimalProgressRenderingEnabled())
+                {
+                    _rawui.CursorPosition = _location;
+                    int maxWidth = PSStyle.Instance.Progress.MaxWidth;
+                    if (maxWidth > _bufSize.Width)
+                    {
+                        maxWidth = _bufSize.Width;
+                    }
 
-                _rawui.SetBufferContents(_location, _savedRegion);
+                    for (int i = 0; i < _savedRegion.GetLength(1); i++)
+                    {
+                        if (i < _savedRegion.GetLength(1) - 1)
+                        {
+                            Console.Out.WriteLine(string.Empty.PadRight(maxWidth));
+                        }
+                        else
+                        {
+                            Console.Out.Write(string.Empty.PadRight(maxWidth));
+                        }
+                    }
+                }
+                else
+                {
+                    // It would be nice if we knew that the saved region could be kept for the next time Show is called, but alas,
+                    // we have no way of knowing if the screen buffer has changed since we were hidden.  By "no good way" I mean that
+                    // detecting a change would be at least as expensive as chucking the savedRegion and rebuilding it.  And it would
+                    // be very complicated.
+
+                    _rawui.SetBufferContents(_location, _savedRegion);
+                }
+
                 _savedRegion = null;
                 _rawui.CursorPosition = _savedCursor;
             }
@@ -173,8 +223,8 @@ namespace Microsoft.PowerShell
             int maxWidth = _bufSize.Width;
             int maxHeight = Math.Max(5, _rawui.WindowSize.Height / 3);
 
-            string[] contents = pendingProgress.Render(maxWidth, maxHeight, _rawui);
-            if (contents == null)
+            _content = pendingProgress.Render(maxWidth, maxHeight, _rawui);
+            if (_content == null)
             {
                 // There's nothing to show.
 
@@ -183,9 +233,21 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...
+            BufferCell[,] newRegion;
+            if (ProgressNode.IsMinimalProgressRenderingEnabled())
+            {
+                // Legacy progress rendering relies on a BufferCell which defines a character, foreground color, and background color
+                // per cell.  This model doesn't work with ANSI escape sequences.  However, there is existing logic on rendering that
+                // relies on the existence of the BufferCell to know if something has been rendered previously.  Here we are creating
+                // an empty BufferCell, but using the second dimension to capture the number of rows so that we can clear that many
+                // elsewhere in Hide().
+                newRegion = new BufferCell[0, _content.Length];
+            }
+            else
+            {
+                newRegion = _rawui.NewBufferCellArray(_content, _ui.ProgressForegroundColor, _ui.ProgressBackgroundColor);
+            }
 
-            BufferCell[,] newRegion = _rawui.NewBufferCellArray(contents, _ui.ProgressForegroundColor, _ui.ProgressBackgroundColor);
             Dbg.Assert(newRegion != null, "NewBufferCellArray has failed!");
 
             if (_progressRegion == null)
@@ -223,8 +285,41 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    _rawui.SetBufferContents(_location, _progressRegion);
+                    if (ProgressNode.IsMinimalProgressRenderingEnabled())
+                    {
+                        WriteContent();
+                    }
+                    else
+                    {
+                        _rawui.SetBufferContents(_location, _progressRegion);
+                    }
                 }
+            }
+        }
+
+        private void WriteContent()
+        {
+            if (_content is not null)
+            {
+                Console.CursorVisible = false;
+
+                var currentPosition = _rawui.CursorPosition;
+                _rawui.CursorPosition = _location;
+
+                for (int i = 0; i < _content.Length; i++)
+                {
+                    if (i < _content.Length - 1)
+                    {
+                        Console.Out.WriteLine(_content[i]);
+                    }
+                    else
+                    {
+                        Console.Out.Write(_content[i]);
+                    }
+                }
+
+                _rawui.CursorPosition = currentPosition;
+                Console.CursorVisible = true;
             }
         }
 
@@ -233,6 +328,7 @@ namespace Microsoft.PowerShell
         private Size _bufSize;
         private BufferCell[,] _savedRegion;
         private BufferCell[,] _progressRegion;
+        private string[] _content;
         private readonly PSHostRawUserInterface _rawui;
         private readonly ConsoleHostUserInterface _ui;
     }

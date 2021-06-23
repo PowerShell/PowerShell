@@ -35,7 +35,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath", "LP")]
         public string[] LiteralPath
         {
-            get { return paths; }
+            get
+            {
+                return paths;
+            }
 
             set
             {
@@ -51,7 +54,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSProperty")]
         public string[] Name
         {
-            get { return _property; }
+            get
+            {
+                return _property;
+            }
 
             set
             {

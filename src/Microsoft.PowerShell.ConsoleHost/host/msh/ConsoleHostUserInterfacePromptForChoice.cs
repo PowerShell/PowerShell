@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell
                         // choices to be picked.
 
                         // user did not pick up any choices..choose the default
-                        if ((result.Count == 0) && (defaultChoiceKeys.Keys.Count >= 0))
+                        if (result.Count == 0)
                         {
                             // if there's a default, pick that one.
                             foreach (int defaultChoice in defaultChoiceKeys.Keys)

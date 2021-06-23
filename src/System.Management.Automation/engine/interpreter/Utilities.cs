@@ -147,7 +147,7 @@ namespace System.Management.Automation.Interpreter
 
             // Can only used predefined delegates if we have no byref types and
             // the arity is small enough to fit in Func<...> or Action<...>
-            if (types.Length > MaximumArity || types.Any(t => t.IsByRef))
+            if (types.Length > MaximumArity || types.Any(static t => t.IsByRef))
             {
                 throw Assert.Unreachable;
                 // return MakeCustomDelegate(types);
@@ -224,7 +224,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal class ScriptingRuntimeHelpers
+    internal static class ScriptingRuntimeHelpers
     {
         internal static object Int32ToObject(int i)
         {
@@ -1084,14 +1084,14 @@ namespace System.Management.Automation.Interpreter
             return true;
         }
 
-        internal static U[] Map<T, U>(this ICollection<T> collection, Func<T, U> select)
+        internal static TResult[] Map<TSource, TResult>(this ICollection<TSource> source, Func<TSource, TResult> selector)
         {
-            int count = collection.Count;
-            U[] result = new U[count];
+            int count = source.Count;
+            TResult[] result = new TResult[count];
             count = 0;
-            foreach (T t in collection)
+            foreach (TSource t in source)
             {
-                result[count++] = select(t);
+                result[count++] = selector(t);
             }
 
             return result;

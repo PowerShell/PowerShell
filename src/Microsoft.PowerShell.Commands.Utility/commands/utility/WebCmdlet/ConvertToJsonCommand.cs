@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the Depth property.
         /// </summary>
         [Parameter]
-        [ValidateRange(1, int.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public int Depth
         {
             get { return _depth; }

@@ -1,7 +1,10 @@
 jobs:
 - job: build_testartifacts
   variables:
-    runCodesignValidationInjection: false
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
   displayName: Build test artifacts
   condition: succeeded()
   pool: 'Hosted Ubuntu 1604'
@@ -31,7 +34,8 @@ jobs:
 
         switch ($runtime)
         {
-          win7-x64 { $packageName = "TestPackage-win.zip" }
+          win7-x64 { $packageName = "TestPackage-win-x64.zip" }
+          win7-x86 { $packageName = "TestPackage-win-x86.zip" }
           linux-x64 { $packageName = "TestPackage-linux-x64.zip" }
           linux-arm { $packageName = "TestPackage-linux-arm.zip" }
           linux-arm64 { $packageName = "TestPackage-linux-arm64.zip" }
@@ -44,6 +48,7 @@ jobs:
       }
 
       BuildTestPackage -runtime win7-x64
+      BuildTestPackage -runtime win7-x86
       BuildTestPackage -runtime linux-x64
       BuildTestPackage -runtime linux-arm
       BuildTestPackage -runtime linux-arm64

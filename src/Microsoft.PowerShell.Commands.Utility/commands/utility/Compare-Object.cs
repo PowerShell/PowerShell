@@ -72,7 +72,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter IncludeEqual
         {
-            get { return _includeEqual; }
+            get
+            {
+                return _includeEqual;
+            }
 
             set
             {

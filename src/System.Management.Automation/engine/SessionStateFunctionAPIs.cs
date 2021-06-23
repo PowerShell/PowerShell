@@ -116,7 +116,10 @@ namespace System.Management.Automation
         /// </summary>
         internal bool FunctionsExportedWithWildcard
         {
-            get { return _functionsExportedWithWildcard; }
+            get
+            {
+                return _functionsExportedWithWildcard;
+            }
 
             set
             {

@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 
 using COM = System.Runtime.InteropServices.ComTypes;
 
+#nullable enable
 namespace System.Management.Automation
 {
     /// <summary>
@@ -19,7 +20,7 @@ namespace System.Management.Automation
         int GetTypeInfoCount(out int info);
 
         [PreserveSig]
-        int GetTypeInfo(int iTInfo, int lcid, out COM.ITypeInfo ppTInfo);
+        int GetTypeInfo(int iTInfo, int lcid, out COM.ITypeInfo? ppTInfo);
 
         void GetIDsOfNames(
             [MarshalAs(UnmanagedType.LPStruct)] Guid iid,
@@ -34,7 +35,7 @@ namespace System.Management.Automation
             int lcid,
             COM.INVOKEKIND wFlags,
             [In, Out][MarshalAs(UnmanagedType.LPArray)] COM.DISPPARAMS[] paramArray,
-            out object pVarResult,
+            out object? pVarResult,
             out ComInvoker.EXCEPINFO pExcepInfo,
             out uint puArgErr);
     }

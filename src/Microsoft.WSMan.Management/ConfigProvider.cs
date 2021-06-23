@@ -3573,7 +3573,7 @@ namespace Microsoft.WSMan.Management
             string result = ChildName;
             if (ChildName != null)
             {
-                if (!ChildName.Contains("_"))
+                if (!ChildName.Contains('_'))
                 {
                     if (ChildName.Equals(WSManStringLiterals.containerQuotasParameters, StringComparison.OrdinalIgnoreCase))
                         result = WSManStringLiterals.containerQuotasParameters;

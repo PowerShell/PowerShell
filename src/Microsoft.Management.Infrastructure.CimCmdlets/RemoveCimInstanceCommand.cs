@@ -53,7 +53,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public CimSession[] CimSession
         {
-            get { return cimSession; }
+            get
+            {
+                return cimSession;
+            }
 
             set
             {
@@ -76,7 +79,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = CimBaseCommand.CimInstanceSessionSet)]
         public Uri ResourceUri
         {
-            get { return resourceUri; }
+            get
+            {
+                return resourceUri;
+            }
 
             set
             {
@@ -99,7 +105,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -124,7 +133,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CimBaseCommand.QueryComputerSet)]
         public string Namespace
         {
-            get { return nameSpace; }
+            get
+            {
+                return nameSpace;
+            }
 
             set
             {
@@ -161,7 +173,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Alias(CimBaseCommand.AliasCimInstance)]
         public CimInstance InputObject
         {
-            get { return CimInstance; }
+            get
+            {
+                return CimInstance;
+            }
 
             set
             {
@@ -190,7 +205,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CimBaseCommand.QuerySessionSet)]
         public string Query
         {
-            get { return query; }
+            get
+            {
+                return query;
+            }
 
             set
             {
@@ -212,7 +230,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = CimBaseCommand.QueryComputerSet)]
         public string QueryDialect
         {
-            get { return querydialect; }
+            get
+            {
+                return querydialect;
+            }
 
             set
             {
@@ -273,7 +294,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private CimRemoveCimInstance GetOperationAgent()
         {
-            return (this.AsyncOperation as CimRemoveCimInstance);
+            return this.AsyncOperation as CimRemoveCimInstance;
         }
 
         /// <summary>
