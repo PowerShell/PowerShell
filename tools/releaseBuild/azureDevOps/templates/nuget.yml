@@ -54,11 +54,19 @@ jobs:
       version: '$(SDKVersion)'
 
   - task: DownloadBuildArtifacts@0
-    displayName: 'Download PowerShell build artifacts'
+    displayName: 'Download PowerShell build artifacts - finalResults'
     inputs:
       buildType: current
       downloadType: single
       artifactName: finalResults
+      downloadPath: '$(System.ArtifactsDirectory)'
+
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download PowerShell build artifacts - macosPkgResults'
+    inputs:
+      buildType: current
+      downloadType: single
+      artifactName: macosPkgResults
       downloadPath: '$(System.ArtifactsDirectory)'
 
   - powershell: 'Get-ChildItem $(System.ArtifactsDirectory) -recurse'
@@ -182,6 +190,40 @@ jobs:
       Get-ChildItem "$(System.ArtifactsDirectory)\signed\globaltool" -Recurse
     displayName: Move global tool packages to subfolder and capture
 
+  - pwsh: |
+      $packagePath = (Join-Path $(System.ArtifactsDirectory) checksum)
+      New-Item $packagePath -ItemType Directory -Force > $null
+      $srcPaths = @("$(System.ArtifactsDirectory)\finalResults", "$(System.ArtifactsDirectory)\macosPkgResults", "$(System.ArtifactsDirectory)\signed")
+
+      $packages  = Get-ChildItem -Path $srcPaths -Include *.zip, *.tar.gz, *.msi*, *.pkg, *.deb, *.rpm -Exclude "PowerShell-Symbols*" -Recurse
+      $packages | ForEach-Object { Copy-Item $_.FullName -Destination $packagePath -Verbose }
+
+      $message = Get-ChildItem $packagePath -Recurse | Select-Object -ExpandProperty FullName | Out-String
+      Write-Verbose -Verbose $message
+
+      $hashFileContent = [System.Text.StringBuilder]::new()
+
+      Get-ChildItem -Path $packagePath | ForEach-Object {
+        Write-Verbose -Verbose "Generating checksum file for $_"
+        $packageName = Split-Path $_ -Leaf
+        $hash = (Get-FileHash -Path $packagePath -Algorithm SHA512).Hash
+
+        # the '*' before the packagename signifies it is a binary
+        $hashLine = "$hash *$packageName"
+        $.AppendLine($hashLine) > $null
+      }
+
+      $hashFileContent.ToString() | Out-File -FilePath "$packagePath\SHA512SUMS" -Force
+
+      $fileContent = Get-Content -Path "$packagePath\SHA512SUMS" -Raw | Out-String
+      Write-Verbose -Verbose -Message $fileContent
+    displayName: Generate checksum file
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: '$(System.ArtifactsDirectory)\checksum'
+      artifactFilter: SHA512SUMS
+
   - task: AzureFileCopy@4
     displayName: 'Upload NuGet packages to Azure'
     inputs:
@@ -193,9 +235,30 @@ jobs:
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - task: AzureFileCopy@4
+    displayName: 'Upload CheckSum file to Azure'
+    inputs:
+      SourcePath: '$(System.ArtifactsDirectory)\checksum\SHA512SUMS'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)-nuget'
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - task: AzureFileCopy@4
     displayName: 'Upload global tool packages to Azure'
     inputs:
       sourcePath: '$(System.ArtifactsDirectory)\signed\globaltool\*'
+      azureSubscription: '$(GlobalToolSubscription)'
+      Destination: AzureBlob
+      storage: '$(GlobalToolStorageAccount)'
+      ContainerName: 'tool'
+      blobPrefix: '$(Version)'
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - task: AzureFileCopy@4
+    displayName: 'Upload checksum file to Global Tool packages on Azure'
+    inputs:
+      sourcePath: '$(System.ArtifactsDirectory)\checksum\SHA512SUMS'
       azureSubscription: '$(GlobalToolSubscription)'
       Destination: AzureBlob
       storage: '$(GlobalToolStorageAccount)'
