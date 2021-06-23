@@ -107,18 +107,31 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // we still have room and we want to add more width
-
-            while (availableWidth > 0)
+            int unfixedColumnCount = 0;
+            foreach (bool columnIsFixed in fixedColumn)
             {
+                if (!columnIsFixed)
+                {
+                    unfixedColumnCount++;
+                }
+            }
+
+            if (unfixedColumnCount > 0)
+            {
+                int extraSpace = availableWidth / unfixedColumnCount;
+                int remainder = availableWidth % unfixedColumnCount;
+
                 for (int k = 0; k < columnWidths.Length; k++)
                 {
                     if (fixedColumn[k])
                         continue;
 
-                    columnWidths[k]++;
-                    availableWidth--;
-                    if (availableWidth == 0)
-                        break;
+                    if (remainder > 0 && k <= remainder - 1)
+                    {
+                        columnWidths[k] += extraSpace + 1;
+                        continue;
+                    }
+                    columnWidths[k] += extraSpace;
                 }
             }
 
