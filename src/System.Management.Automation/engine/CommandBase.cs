@@ -300,6 +300,9 @@ namespace System.Management.Automation
 
         /// <summary>Concise shows more information on the context of the error or just the message if not a script or parser error.</summary>
         ConciseView = 2,
+
+        /// <summary>Detailed will leverage Get-Error to get much more detailed information for the error.</summary>
+        DetailedView = 3,
     }
     #endregion ErrorView
 
