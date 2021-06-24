@@ -144,12 +144,19 @@ namespace System.Management.Automation.Remoting
         #region Packet Processing Helper Methods / Delegates
 
         internal delegate void DataPacketReceived(byte[] rawData, string stream, Guid psGuid);
+
         internal delegate void DataAckPacketReceived(Guid psGuid);
+
         internal delegate void CommandCreationPacketReceived(Guid psGuid);
+
         internal delegate void CommandCreationAckReceived(Guid psGuid);
+
         internal delegate void ClosePacketReceived(Guid psGuid);
+
         internal delegate void CloseAckPacketReceived(Guid psGuid);
+
         internal delegate void SignalPacketReceived(Guid psGuid);
+
         internal delegate void SignalAckPacketReceived(Guid psGuid);
 
         internal struct DataProcessingDelegates
@@ -196,8 +203,8 @@ namespace System.Management.Automation.Remoting
                     default:
                         throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownNodeType, RemotingErrorIdStrings.IPCUnknownNodeType,
                             reader.NodeType.ToString(),
-                            XmlNodeType.Element.ToString(),
-                            XmlNodeType.EndElement.ToString());
+                            nameof(XmlNodeType.Element),
+                            nameof(XmlNodeType.EndElement));
                 }
             }
         }
@@ -402,9 +409,9 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Data
 
-        private TextWriter _writer;
+        private readonly TextWriter _writer;
         private bool _isStopped;
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
 
         #endregion
 
@@ -466,10 +473,10 @@ namespace System.Management.Automation.Remoting.Client
 
         private readonly BlockingCollection<string> _sessionMessageQueue;
         private readonly BlockingCollection<string> _commandMessageQueue;
-        private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
+        private readonly PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
         private OutOfProcessUtils.DataProcessingDelegates _dataProcessingCallbacks;
-        private Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
-        private Timer _closeTimeOutTimer;
+        private readonly Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
+        private readonly Timer _closeTimeOutTimer;
 
         protected OutOfProcessTextWriter stdInWriter;
         protected PowerShellTraceSource _tracer;
@@ -544,7 +551,7 @@ namespace System.Management.Automation.Remoting.Client
             bool shouldRaiseCloseCompleted = false;
             lock (syncObject)
             {
-                if (isClosed == true)
+                if (isClosed)
                 {
                     return;
                 }
@@ -584,7 +591,7 @@ namespace System.Management.Automation.Remoting.Client
                 // start the timer..so client can fail deterministically
                 _closeTimeOutTimer.Change(60 * 1000, Timeout.Infinite);
             }
-            catch (IOException)
+            catch (Exception ex) when (ex is IOException || ex is ObjectDisposedException)
             {
                 // Cannot communicate with server.  Allow client to complete close operation.
                 shouldRaiseCloseCompleted = true;
@@ -628,30 +635,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 _cmdTransportManagers.Clear();
                 _closeTimeOutTimer.Dispose();
-
-                // Stop session processing thread.
-                try
-                {
-                    _sessionMessageQueue.CompleteAdding();
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Object already disposed.
-                }
-
-                _sessionMessageQueue.Dispose();
-
-                // Stop command processing thread.
-                try
-                {
-                    _commandMessageQueue.CompleteAdding();
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Object already disposed.
-                }
-
-                _commandMessageQueue.Dispose();
+                DisposeMessageQueue();
             }
         }
 
@@ -903,7 +887,7 @@ namespace System.Management.Automation.Remoting.Client
         private void OnDataPacketReceived(byte[] rawData, string stream, Guid psGuid)
         {
             string streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_STDOUT;
-            if (stream.Equals(DataPriorityType.PromptResponse.ToString(), StringComparison.OrdinalIgnoreCase))
+            if (stream.Equals(nameof(DataPriorityType.PromptResponse), StringComparison.OrdinalIgnoreCase))
             {
                 streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE;
             }
@@ -1048,6 +1032,37 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         #endregion
+    
+        #region Protected Methods
+
+        protected void DisposeMessageQueue()
+        {
+            // Stop session processing thread.
+            try
+            {
+                _sessionMessageQueue.CompleteAdding();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Object already disposed.
+            }
+
+            _sessionMessageQueue.Dispose();
+
+            // Stop command processing thread.
+            try
+            {
+                _commandMessageQueue.CompleteAdding();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Object already disposed.
+            }
+
+            _commandMessageQueue.Dispose();
+        }
+
+        #endregion
     }
 
     internal class OutOfProcessClientSessionTransportManager : OutOfProcessClientSessionTransportManagerBase
@@ -1055,7 +1070,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private Process _serverProcess;
-        private NewProcessConnectionInfo _connectionInfo;
+        private readonly NewProcessConnectionInfo _connectionInfo;
         private bool _processCreated = true;
         private PowerShellProcessInstance _processInstance;
 
@@ -1122,7 +1137,7 @@ namespace System.Management.Automation.Remoting.Client
                         _processInstance.RunspacePool.Dispose();
                     }
 
-                    _serverProcess.Exited += new EventHandler(OnExited);
+                    _serverProcess.Exited += OnExited;
                     _processInstance.Start();
 
                     StartRedirectionReaderThreads(_serverProcess);
@@ -1309,6 +1324,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Data
 
         protected RemoteSessionHyperVSocketClient _client;
+
         private const string _threadName = "HyperVSocketTransport Reader Thread";
 
         #endregion
@@ -1425,10 +1441,10 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Private Data
 
-        private Guid _vmGuid;
-        private string _configurationName;
-        private VMConnectionInfo _connectionInfo;
-        private NetworkCredential _networkCredential;
+        private readonly Guid _vmGuid;
+        private readonly string _configurationName;
+        private readonly VMConnectionInfo _connectionInfo;
+        private readonly NetworkCredential _networkCredential;
 
         #endregion
 
@@ -1444,7 +1460,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -1478,7 +1494,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.VMSessionConnectFailed),
                     null,
-                    PSRemotingErrorId.VMSessionConnectFailed.ToString(),
+                    nameof(PSRemotingErrorId.VMSessionConnectFailed),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -1492,7 +1508,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.VMSessionConnectFailed),
                     null,
-                    PSRemotingErrorId.VMSessionConnectFailed.ToString(),
+                    nameof(PSRemotingErrorId.VMSessionConnectFailed),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -1511,8 +1527,8 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Private Data
 
-        private Guid _targetGuid; // currently this is the utility vm guid in HyperV container scenario
-        private ContainerConnectionInfo _connectionInfo;
+        private readonly Guid _targetGuid; // currently this is the utility vm guid in HyperV container scenario
+        private readonly ContainerConnectionInfo _connectionInfo;
 
         #endregion
 
@@ -1527,7 +1543,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -1551,7 +1567,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ContainerSessionConnectFailed),
                     null,
-                    PSRemotingErrorId.ContainerSessionConnectFailed.ToString(),
+                    nameof(PSRemotingErrorId.ContainerSessionConnectFailed),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -1570,12 +1586,14 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Data
 
-        private SSHConnectionInfo _connectionInfo;
+        private readonly SSHConnectionInfo _connectionInfo;
         private int _sshProcessId;
         private StreamWriter _stdInWriter;
         private StreamReader _stdOutReader;
         private StreamReader _stdErrReader;
         private bool _connectionEstablished;
+        private Timer _connectionTimer;
+
         private const string _threadName = "SSHTransport Reader Thread";
 
         #endregion
@@ -1632,6 +1650,49 @@ namespace System.Management.Automation.Remoting.Client
 
             // Create reader thread and send first PSRP message.
             StartReaderThread(_stdOutReader);
+
+            if (_connectionInfo.ConnectingTimeout < 0)
+            {
+                return;
+            }
+
+            // Start connection timeout timer if requested.
+            // Timer callback occurs only once after timeout time.
+            _connectionTimer = new Timer(
+                callback: (_) => 
+                {
+                    if (_connectionEstablished)
+                    {
+                        return;
+                    }
+
+                    // Detect if SSH client process terminates prematurely.
+                    bool sshTerminated = false;
+                    try
+                    {
+                        using (var sshProcess = System.Diagnostics.Process.GetProcessById(_sshProcessId))
+                        {
+                            sshTerminated = sshProcess == null || sshProcess.Handle == IntPtr.Zero || sshProcess.HasExited;
+                        }
+                    }
+                    catch
+                    {
+                        sshTerminated = true;
+                    }
+
+                    var errorMessage = StringUtil.Format(RemotingErrorIdStrings.SSHClientConnectTimeout, _connectionInfo.ConnectingTimeout / 1000);
+                    if (sshTerminated)
+                    {
+                        errorMessage += RemotingErrorIdStrings.SSHClientConnectProcessTerminated;
+                    }
+
+                    // Report error and terminate connection attempt.
+                    HandleSSHError(
+                        new PSRemotingTransportException(errorMessage));
+                },
+                state: null,
+                dueTime: _connectionInfo.ConnectingTimeout,
+                period: Timeout.Infinite);
         }
 
         internal override void CloseAsync()
@@ -1651,14 +1712,20 @@ namespace System.Management.Automation.Remoting.Client
 
         private void CloseConnection()
         {
+            // Ensure message queue is disposed.
+            DisposeMessageQueue();
+
+            var connectionTimer = Interlocked.Exchange(ref _connectionTimer, null);
+            connectionTimer?.Dispose();
+
             var stdInWriter = Interlocked.Exchange(ref _stdInWriter, null);
-            if (stdInWriter != null) { stdInWriter.Dispose(); }
+            stdInWriter?.Dispose();
 
             var stdOutReader = Interlocked.Exchange(ref _stdOutReader, null);
-            if (stdOutReader != null) { stdOutReader.Dispose(); }
+            stdOutReader?.Dispose();
 
             var stdErrReader = Interlocked.Exchange(ref _stdErrReader, null);
-            if (stdErrReader != null) { stdErrReader.Dispose(); }
+            stdErrReader?.Dispose();
 
             // The CloseConnection() method can be called multiple times from multiple places.
             // Set the _sshProcessId to zero here so that we go through the work of finding
@@ -1668,11 +1735,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 try
                 {
-                    var sshProcess = System.Diagnostics.Process.GetProcessById(sshProcessId);
-                    if ((sshProcess != null) && (sshProcess.Handle != IntPtr.Zero) && !sshProcess.HasExited)
-                    {
-                        sshProcess.Kill();
-                    }
+                    _connectionInfo.KillSSHProcess(sshProcessId);
                 }
                 catch (ArgumentException) { }
                 catch (InvalidOperationException) { }
@@ -1858,9 +1921,9 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Data
 
-        private RunspaceConnectionInfo _connectionInfo;
+        private readonly RunspaceConnectionInfo _connectionInfo;
         protected NamedPipeClientBase _clientPipe = new NamedPipeClientBase();
-        private string _threadName;
+        private readonly string _threadName;
 
         #endregion
 
@@ -1875,7 +1938,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -1985,7 +2048,8 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Private Data
 
-        private NamedPipeConnectionInfo _connectionInfo;
+        private readonly NamedPipeConnectionInfo _connectionInfo;
+
         private const string _threadName = "NamedPipeTransport Reader Thread";
 
         #endregion
@@ -2000,7 +2064,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -2052,7 +2116,8 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Private Data
 
-        private ContainerConnectionInfo _connectionInfo;
+        private readonly ContainerConnectionInfo _connectionInfo;
+
         private const string _threadName = "ContainerNamedPipeTransport Reader Thread";
 
         #endregion
@@ -2067,7 +2132,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -2120,9 +2185,9 @@ namespace System.Management.Automation.Remoting.Client
     {
         #region Private Data
 
-        private OutOfProcessTextWriter _stdInWriter;
-        private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
-        private Timer _signalTimeOutTimer;
+        private readonly OutOfProcessTextWriter _stdInWriter;
+        private readonly PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
+        private readonly Timer _signalTimeOutTimer;
 
         #endregion
 
@@ -2163,7 +2228,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             lock (syncObject)
             {
-                if (isClosed == true)
+                if (isClosed)
                 {
                     return;
                 }
@@ -2421,10 +2486,10 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private OutOfProcessTextWriter _stdOutWriter;
-        private OutOfProcessTextWriter _stdErrWriter;
-        private Dictionary<Guid, OutOfProcessServerTransportManager> _cmdTransportManagers;
-        private object _syncObject = new object();
+        private readonly OutOfProcessTextWriter _stdOutWriter;
+        private readonly OutOfProcessTextWriter _stdErrWriter;
+        private readonly Dictionary<Guid, OutOfProcessServerTransportManager> _cmdTransportManagers;
+        private readonly object _syncObject = new object();
 
         #endregion
 
@@ -2519,9 +2584,9 @@ namespace System.Management.Automation.Remoting.Server
     {
         #region Private Data
 
-        private OutOfProcessTextWriter _stdOutWriter;
-        private OutOfProcessTextWriter _stdErrWriter;
-        private Guid _powershellInstanceId;
+        private readonly OutOfProcessTextWriter _stdOutWriter;
+        private readonly OutOfProcessTextWriter _stdErrWriter;
+        private readonly Guid _powershellInstanceId;
         private bool _isDataAckSendPending;
 
         #endregion
@@ -2600,4 +2665,3 @@ namespace System.Management.Automation.Remoting.Server
         #endregion
     }
 }
-

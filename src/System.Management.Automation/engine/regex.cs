@@ -43,7 +43,7 @@ namespace System.Management.Automation
         /// Specifies culture-invariant matching.
         /// </summary>
         CultureInvariant = 4
-    };
+    }
 
     /// <summary>
     /// Represents a wildcard pattern.
@@ -125,7 +125,7 @@ namespace System.Management.Automation
         public static WildcardPattern Get(string pattern, WildcardOptions options)
         {
             if (pattern == null)
-                throw PSTraceSource.NewArgumentNullException("pattern");
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
 
             if (pattern.Length == 1 && pattern[0] == '*')
                 return s_matchAllIgnoreCasePattern;
@@ -184,7 +184,7 @@ namespace System.Management.Automation
             if (index == Pattern.Length - 1 && Pattern[index] == '*')
             {
                 // No special characters present in the pattern before last position and last character is asterisk.
-                var patternWithoutAsterisk = Pattern.AsMemory().Slice(0, index);
+                var patternWithoutAsterisk = Pattern.AsMemory(0, index);
                 _isMatch = str => str.AsSpan().StartsWith(patternWithoutAsterisk.Span, GetStringComparison());
                 return;
             }
@@ -325,7 +325,7 @@ namespace System.Management.Automation
         /// converted to their unescaped form.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// If <paramref name="pattern" /> is null.
+        /// If <paramref name="pattern"/> is null.
         /// </exception>
         public static string Unescape(string pattern)
         {
@@ -449,14 +449,14 @@ namespace System.Management.Automation
         {
             if (errorRecord == null)
             {
-                throw new ArgumentNullException("errorRecord");
+                throw new ArgumentNullException(nameof(errorRecord));
             }
 
             _errorRecord = errorRecord;
         }
 
         [NonSerialized]
-        private ErrorRecord _errorRecord;
+        private readonly ErrorRecord _errorRecord;
 
         /// <summary>
         /// Constructs an instance of the WildcardPatternException object.
@@ -729,7 +729,7 @@ namespace System.Management.Automation
 
             return e;
         }
-    };
+    }
 
     /// <summary>
     /// Convert a string with wild cards into its equivalent regex.
@@ -752,6 +752,7 @@ namespace System.Management.Automation
         private RegexOptions _regexOptions;
 
         private const string regexChars = "()[.?*{}^$+|\\"; // ']' is missing on purpose
+
         private static bool IsRegexChar(char ch)
         {
             for (int i = 0; i < regexChars.Length; i++)
@@ -1263,17 +1264,17 @@ namespace System.Management.Automation
             }
         }
 
-        private struct CharacterNormalizer
+        private readonly struct CharacterNormalizer
         {
             private readonly CultureInfo _cultureInfo;
             private readonly bool _caseInsensitive;
 
             public CharacterNormalizer(WildcardOptions options)
             {
-                _caseInsensitive = 0 != (options & WildcardOptions.IgnoreCase);
+                _caseInsensitive = (options & WildcardOptions.IgnoreCase) != 0;
                 if (_caseInsensitive)
                 {
-                    _cultureInfo = 0 != (options & WildcardOptions.CultureInvariant)
+                    _cultureInfo = (options & WildcardOptions.CultureInvariant) != 0
                         ? CultureInfo.InvariantCulture
                         : CultureInfo.CurrentCulture;
                 }
@@ -1347,4 +1348,3 @@ namespace System.Management.Automation
         }
     }
 }
-

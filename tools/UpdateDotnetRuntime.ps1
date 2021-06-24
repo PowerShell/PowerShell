@@ -4,7 +4,25 @@
 [CmdletBinding()]
 param (
     [Parameter()]
-    [string]$SDKVersionOverride
+    [string]$SDKVersionOverride,
+
+    [Parameter()]
+    [switch]$UseNuGetOrg,
+
+    [Parameter()]
+    [switch]$UpdateMSIPackaging,
+
+    [Parameter()]
+    [string]$RuntimeSourceFeed,
+
+    [Parameter()]
+    [string]$RuntimeSourceFeedKey,
+
+    [Parameter()]
+    [switch]$InteractiveAuth,
+
+    [Parameter()]
+    [switch]$UseInternalFeed
 )
 
 <#
@@ -50,6 +68,7 @@ function Update-PackageVersion {
         "Microsoft.Management.Infrastructure"
         "Microsoft.PowerShell.Native"
         "Microsoft.NETCore.Windows.ApiSets"
+        "Microsoft.PowerShell.MarkdownRender"
     )
 
     $packages = [System.Collections.Generic.Dictionary[[string], [PkgVer[]] ]]::new()
@@ -61,7 +80,7 @@ function Update-PackageVersion {
         "$PSScriptRoot/../test/tools/"
     )
 
-    Get-ChildItem -Path $paths -Recurse -Filter "*.csproj" -Exclude 'PSGalleryModules.csproj','PSGalleryTestModules.csproj' | ForEach-Object {
+    Get-ChildItem -Path $paths -Recurse -Filter "*.csproj" -Exclude 'PSGalleryModules.csproj', 'PSGalleryTestModules.csproj' | ForEach-Object {
         Write-Verbose -Message "Reading - $($_.FullName)" -Verbose
         $prj = [xml] (Get-Content $_.FullName -Raw)
         $pkgRef = $prj.Project.ItemGroup.PackageReference
@@ -70,8 +89,7 @@ function Update-PackageVersion {
             if ($null -ne $p -and -not $skipModules.Contains($p.Include)) {
                 if (-not $packages.ContainsKey($p.Include)) {
                     $packages.Add($p.Include, @([PkgVer]::new($p.Include, $p.Version, $null, $_.FullName)))
-                }
-                else {
+                } else {
                     $packages[$p.Include] += [PkgVer]::new($p.Include, $p.Version, $null, $_.FullName)
                 }
             }
@@ -80,14 +98,22 @@ function Update-PackageVersion {
 
     $versionPattern = (Get-Content "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.packageVersionPattern
 
+    $source = if ($UseNuGetOrg) { 'nuget.org' } elseif ($UseInternalFeed) { 'dotnet-internal' } else { 'dotnet' }
+
+    # Always add nuget.org as some packages are only found there.
+    $source = if ($source -ne 'nuget.org') {
+        @($source, "nuget.org")
+    }
+
     $packages.GetEnumerator() | ForEach-Object {
-        $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPrereleaseVersions -Source 'dotnet5'
+        $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPrereleaseVersions -Source $source
 
         foreach ($v in $_.Value) {
             $version = $v.Version
 
             foreach ($p in $pkgs) {
-                if ($p.Version -like "$versionPattern*") {
+                # some packages are directly updated on nuget.org so need to check that too.
+                if ($p.Version -like "$versionPattern*" -or $p.Source -eq 'nuget.org') {
                     if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
                         $v.NewVersion = $p.Version
                         break
@@ -127,49 +153,150 @@ function Update-CsprojFile([string] $path, $values) {
     }
 }
 
-$dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
-$dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
+function Get-DotnetUpdate {
+    $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
+    $metataJson = (Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json)
+    $nextChannel = $metataJson.sdk.nextChannel
+    $feedUrl = $metataJson.internalfeed.url
 
-# Channel is like: $Channel = "5.0.1xx-preview2"
-$Channel = $dotnetMetadataJson.sdk.channel
+    if ($SDKVersionOverride) {
+        return @{
+            ShouldUpdate = $true
+            NewVersion   = $SDKVersionOverride
+            Message      = $null
+            FeedUrl      = $feedUrl
+        }
+    }
 
-Import-Module "$PSScriptRoot/../build.psm1" -Force
+    try {
+        $latestSDKversion = [System.Management.Automation.SemanticVersion] (Invoke-RestMethod -Uri "http://aka.ms/dotnet/$nextChannel/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() })
+        $currentVersion = [System.Management.Automation.SemanticVersion] (( Get-Content -Path "$PSScriptRoot/../global.json" -Raw | ConvertFrom-Json).sdk.version)
 
-Find-Dotnet
+        if ($latestSDKversion -gt $currentVersion) {
+            $shouldUpdate = $true
+            $newVersion = $latestSDKversion
+        } else {
+            $shouldUpdate = $false
+            $newVersion = $null
+        }
+    } catch {
+        Write-Verbose -Verbose "Error occured: $_.message"
+        $shouldUpdate = $false
+        $newVersion = $null
+        Write-Error "Error while checking .NET SDK update: $($_.message)"
+    }
 
-if(-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue))
-{
-    $nugetFeed = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
-    Register-PackageSource -Name 'dotnet5' -Location $nugetFeed -ProviderName NuGet
-    Write-Verbose -Message "Register new package source 'dotnet5'" -Verbose
+    return @{
+        ShouldUpdate = $shouldUpdate
+        NewVersion   = $newVersion
+        Message      = $Message
+        FeedUrl      = $feedUrl
+    }
 }
 
-## Install latest version from the channel
+function Update-DevContainer {
+    $dockerFilePath = "$PSScriptRoot/../.devcontainer/Dockerfile"
+    $sdkImageVersion = (Get-Content -Raw "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.sdkImageVersion
 
-$sdkVersion = if ($SDKVersionOverride) { $SDKVersionOverride } else { "latest" }
+    $devContainerDocker = (Get-Content $dockerFilePath) -replace 'FROM mcr\.microsoft\.com/dotnet.*', "FROM mcr.microsoft.com/dotnet/nightly/sdk:$sdkImageVersion"
 
-Install-Dotnet -Channel "$Channel" -Version $sdkVersion
-
-Write-Verbose -Message "Installing .NET SDK completed." -Verbose
-
-$isWindowsEnv = [System.Environment]::OSVersion.Platform -eq [System.PlatformID]::Win32NT
-
-$dotnetPath = if ($IsWindowsEnv) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
-
-$pathSep = [System.IO.Path]::PathSeparator
-
-if (-not (($ENV:PATH -split $pathSep) -contains "$dotnetPath")) {
-    $env:PATH = "$dotnetPath" + $pathSep + "$ENV:PATH"
+    $devContainerDocker | Out-File -FilePath $dockerFilePath -Force
 }
 
-$latestSdkVersion = (dotnet --list-sdks | Select-Object -Last 1 ).Split() | Select-Object -First 1
+$dotnetUpdate = Get-DotnetUpdate
 
-Write-Verbose -Message "Installing .NET SDK completed, version - $latestSdkVersion" -Verbose
+if ($dotnetUpdate.ShouldUpdate) {
 
-Update-GlobalJson -Version $latestSdkVersion
+    $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
+    $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
 
-Write-Verbose -Message "Updating global.json completed." -Verbose
+    # Channel is like: $Channel = "5.0.1xx-preview2"
+    $Channel = $dotnetMetadataJson.sdk.channel
 
-Update-PackageVersion
+    Import-Module "$PSScriptRoot/../build.psm1" -Force
 
-Write-Verbose -Message "Updating project files completed." -Verbose
+    Find-Dotnet
+
+    $feedname = if ($UseNuGetOrg) { 'nuget.org' } elseif ($UseInternalFeed) { 'dotnet-internal' } else { 'dotnet' }
+
+    $addDotnetSource = (-not (Get-PackageSource -Name $feedname -ErrorAction SilentlyContinue))
+
+    if (!$UseNuGetOrg -and $addDotnetSource) {
+        $nugetFileContent = Get-Content "$PSScriptRoot/../nuget.config" -Raw
+        $nugetFileSources = ([xml]($nugetFileContent)).Configuration.packagesources.add
+
+        if ($feedname -ne 'dotnet-internal') {
+            $dotnetFeed = $nugetFileSources | Where-Object { $_.Key -eq $feedname } | Select-Object -ExpandProperty Value
+            Register-PackageSource -Name $feedname -Location $dotnetFeed -ProviderName NuGet
+            Write-Verbose -Message "Register new package source $feedname" -verbose
+        }
+
+        if ($feedname -eq 'dotnet-internal') {
+            # This NuGet feed is for internal to Microsoft use only.
+            $dotnetInternalFeed = $dotnetMetadataJson.internalfeed.url
+            $updatedNugetFile = $nugetFileContent -replace "</packageSources>", "  <add key=`"dotnet-internal`" value=`"$dotnetInternalFeed`" />`r`n  </packageSources>"
+            $updatedNugetFile | Out-File "$PSScriptRoot/../nuget.config" -Force
+            Register-PackageSource -Name 'dotnet-internal' -Location $dotnetInternalFeed -ProviderName NuGet
+            Write-Verbose -Message "Register new package source 'dotnet-internal'" -verbose
+        }
+    }
+
+    ## Install latest version from the channel
+
+    $sdkVersion = if ($SDKVersionOverride) { $SDKVersionOverride } else { $dotnetUpdate.NewVersion }
+
+    if (-not $RuntimeSourceFeed) {
+        Install-Dotnet -Channel "$Channel" -Version $sdkVersion
+    }
+    else {
+        Install-Dotnet -Channel "$Channel" -Version $sdkVersion -AzureFeed $RuntimeSourceFeed -FeedCredential $RuntimeSourceFeedKey
+    }
+
+    Write-Verbose -Message "Installing .NET SDK completed." -Verbose
+
+    $environment = Get-EnvironmentInformation
+
+    $dotnetPath = if ($environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
+
+    $pathSep = [System.IO.Path]::PathSeparator
+
+    if (-not (($ENV:PATH -split $pathSep) -contains "$dotnetPath")) {
+        $env:PATH = "$dotnetPath" + $pathSep + "$ENV:PATH"
+    }
+
+    $latestSdkVersion = (dotnet --list-sdks | Select-Object -Last 1 ).Split() | Select-Object -First 1
+
+    Write-Verbose -Message "Installing .NET SDK completed, version - $latestSdkVersion" -Verbose
+
+    Update-GlobalJson -Version $latestSdkVersion
+
+    Write-Verbose -Message "Updating global.json completed." -Verbose
+
+    Update-PackageVersion
+
+    Write-Verbose -Message "Updating project files completed." -Verbose
+
+    if ($UpdateMSIPackaging) {
+        if (-not $environment.IsWindows) {
+            throw "UpdateMSIPackaging can only be done on Windows"
+        }
+
+        Import-Module "$PSScriptRoot/../build.psm1" -Force
+        Import-Module "$PSScriptRoot/packaging" -Force
+        Start-PSBootstrap -Package
+        Start-PSBuild -Clean -Configuration Release -CrossGen -InteractiveAuth:$InteractiveAuth
+
+        try {
+            Start-PSPackage -Type msi -SkipReleaseChecks -InformationVariable wxsData
+        } catch {
+            if ($_.Exception.Message -like "Current files to not match *") {
+                Copy-Item -Path $($wxsData.MessageData.NewFile) -Destination ($wxsData.MessageData.FilesWxsPath)
+                Write-Verbose -Message "Updating files.wxs file completed." -Verbose
+            } else {
+                throw $_
+            }
+        }
+    }
+
+    Update-DevContainer
+}

@@ -4,6 +4,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Management.Automation;
 using System.Windows.Documents;
@@ -61,7 +62,7 @@ namespace Microsoft.Management.UI.Internal
             this.helpBuilder = new HelpParagraphBuilder(documentParagraph, psObj);
             this.helpBuilder.BuildParagraph();
             this.searcher = new ParagraphSearcher();
-            this.helpBuilder.PropertyChanged += new PropertyChangedEventHandler(this.HelpBuilder_PropertyChanged);
+            this.helpBuilder.PropertyChanged += this.HelpBuilder_PropertyChanged;
             this.helpTitle = string.Format(
                 CultureInfo.CurrentCulture,
                 HelpWindowResources.HelpTitleFormat,
@@ -273,11 +274,13 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="propertyName">Property name.</param>
         private void OnNotifyPropertyChanged(string propertyName)
         {
+            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             PropertyChangedEventHandler handler = this.PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+            #pragma warning restore IDE1005s
         }
     }
 }

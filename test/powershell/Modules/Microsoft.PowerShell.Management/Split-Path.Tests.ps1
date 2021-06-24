@@ -29,6 +29,10 @@ Describe "Split-Path" -Tags "CI" {
 	{ Split-Path -Qualifier -ErrorAction Stop abcdef } | Should -Throw
     }
 
+    It "Should error given positional parameter #2" {
+	    { Split-Path env: $NULL } | Should -Throw  -ErrorId 'PositionalParameterNotFound,Microsoft.PowerShell.Commands.SplitPathCommand'
+    }
+
     It "Should return the path when the noqualifier switch is used" {
 	Split-Path env:PATH -NoQualifier | Should -BeExactly "PATH"
     }

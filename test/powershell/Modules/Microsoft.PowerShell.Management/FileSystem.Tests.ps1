@@ -28,6 +28,8 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 @{ deviceName = 'AUX' }
                 @{ deviceName = 'CLOCK$' }
                 @{ deviceName = 'NUL' }
+                @{ deviceName = 'CONIN$' }
+                @{ deviceName = 'CONOUT$' }
                 @{ deviceName = 'COM0' }
                 @{ deviceName = 'COM1' }
                 @{ deviceName = 'COM2' }
@@ -131,10 +133,34 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             "$destDir/$testDir/$testFile" | Should -Exist
         }
 
+        It "Verify Move-Item across devices for directory" {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ThrowExdevErrorOnMoveDirectory', $true)
+            try
+            {
+                $dir = (New-Item -Path TestDrive:/dir -ItemType Directory -ErrorAction Stop).FullName
+                $file = (New-Item -Path "$dir/file.txt" -Value "HELLO" -ErrorAction Stop).Name
+                $destination = "$TestDrive/destination"
+
+                Move-Item -Path $dir -Destination $destination -ErrorAction Stop
+
+                $dir | Should -Not -Exist
+                $destination | Should -Exist
+                "$destination/$file" | Should -Exist
+            }
+            finally
+            {
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ThrowExdevErrorOnMoveDirectory', $false)
+            }
+        }
+
         It "Verify Move-Item will not move to an existing file" {
-            { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
+            { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId 'DirectoryExist,Microsoft.PowerShell.Commands.MoveItemCommand'
             $error[0].Exception | Should -BeOfType System.IO.IOException
             $testDir | Should -Exist
+        }
+
+        It "Verify Move-Item throws correct error for non-existent source" {
+            { Move-Item -Path /does/not/exist -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.MoveItemCommand'
         }
 
         It "Verify Move-Item as substitute for Rename-Item" {
@@ -261,6 +287,13 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 $newItemPath = Join-Path $protectedPath "foo"
                 $shouldSkip = -not (Test-Path $protectedPath)
             }
+
+            if ($IsWindows) {
+                $fqaccessdenied = "MoveDirectoryItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.MoveItemCommand"
+            }
+            else {
+                $fqaccessdenied = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
+            }
         }
 
         It "Access-denied test for <cmdline>" -Skip:(-not $IsWindows -or $shouldSkip) -TestCases @(
@@ -270,7 +303,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             # @{cmdline = "New-Item -Type File -Path $newItemPath -ErrorAction Stop"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"}
             @{cmdline = "Get-ChildItem $protectedPath -ErrorAction Stop"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"}
             @{cmdline = "Rename-Item -Path $protectedPath -NewName bar -ErrorAction Stop"; expectedError = "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"},
-            @{cmdline = "Move-Item -Path $protectedPath -Destination bar -ErrorAction Stop"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"}
+            @{cmdline = "Move-Item -Path $protectedPath -Destination bar -ErrorAction Stop"; expectedError = $fqaccessdenied}
         ) {
             param ($cmdline, $expectedError)
 
@@ -1465,5 +1498,34 @@ Describe "Verify sub-directory creation under root" -Tag 'CI','RequireSudoOnUnix
     It "Can create a sub directory under root path" -Skip:$IsMacOs {
         New-Item -Path $dirPath -ItemType Directory -Force > $null
         $dirPath | Should -Exist
+    }
+}
+
+Describe "Windows admin tests" -Tag 'RequireAdminOnWindows' {
+    It "Verify Move-Item for directory across drives on Windows" -Skip:(!$IsWindows) {
+        try {
+            # find first available drive letter, unfortunately need to use both function: and Win32_LogicalDisk to cover
+            # both subst drives and bitlocker drives
+            $drive = Get-ChildItem function:[h-z]: -Name | Where-Object { !(Test-Path -Path $_) -and !(Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$_'") } | Select-Object -First 1
+            if ($null -eq $drive) {
+                throw "Test cannot continue as no drive letter available"
+            }
+
+            $dest = (Resolve-Path -Path $TestDrive).ProviderPath
+            $null = New-Item -ItemType Directory -Path $dest -Name test
+            $out = subst $drive $dest 2>&1
+            if ($LASTEXITCODE -ne 0) {
+                throw "subst failed with exit code ${LASTEXITCODE} for drive '$drive': $out"
+            }
+
+            $testdir = New-Item -ItemType Directory -Path $drive -Name testmovedir -Force
+            1 > $testdir\test.txt
+            Move-Item $drive\testmovedir $dest\test
+            "$drive\testmovedir" | Should -Not -Exist
+            "$dest\test\testmovedir\test.txt" | Should -FileContentMatchExactly 1
+        }
+        finally {
+            subst $drive /d
+        }
     }
 }

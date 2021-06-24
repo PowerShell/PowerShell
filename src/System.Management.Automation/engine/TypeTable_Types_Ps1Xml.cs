@@ -12,6 +12,7 @@ namespace System.Management.Automation.Runspaces
     public sealed partial class TypeTable
     {
         private const int ValueFactoryCacheCount = 6;
+
         private static readonly Func<string, PSMemberInfoInternalCollection<PSMemberInfo>>[] s_valueFactoryCache;
 
         private static Func<string, PSMemberInfoInternalCollection<PSMemberInfo>> GetValueFactoryBasedOnInitCapacity(int capacity)
@@ -36,7 +37,6 @@ namespace System.Management.Automation.Runspaces
             }
 
             return s_valueFactoryCache[cacheIndex];
-
 
             // Local helper function to avoid creating an instance of the generated delegate helper class
             // every time 'GetValueFactoryBasedOnInitCapacity' is invoked.
@@ -639,7 +639,7 @@ namespace System.Management.Automation.Runspaces
             #region System.IO.DirectoryInfo
 
             typeName = @"System.IO.DirectoryInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 9));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, static key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 9));
 
             // Process regular members.
             newMembers.Add(@"Mode");
@@ -755,7 +755,7 @@ namespace System.Management.Automation.Runspaces
             #region System.IO.FileInfo
 
             typeName = @"System.IO.FileInfo";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 10));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, static key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 10));
 
             // Process regular members.
             newMembers.Add(@"Mode");
@@ -1047,7 +1047,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Diagnostics.Process
 
             typeName = @"System.Diagnostics.Process";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 19));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, static key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 19));
 
             // Process regular members.
             newMembers.Add(@"PSConfiguration");
@@ -1133,6 +1133,24 @@ namespace System.Management.Automation.Runspaces
                 new PSScriptProperty(
                     @"Path",
                     GetScriptBlock(@"$this.Mainmodule.FileName"),
+                    setterScript: null,
+                    shouldCloneOnAccess: true),
+                typeMembers,
+                isOverride: false);
+
+            newMembers.Add(@"CommandLine");
+            AddMember(
+                errors,
+                typeName,
+                new PSScriptProperty(
+                    @"CommandLine",
+                    GetScriptBlock(@"
+                        if ($IsWindows) {
+                            (Get-CimInstance Win32_Process -Filter ""ProcessId = $($this.Id)"").CommandLine
+                        } elseif ($IsLinux) {
+                            Get-Content -LiteralPath ""/proc/$($this.Id)/cmdline""
+                        }
+                    "),
                     setterScript: null,
                     shouldCloneOnAccess: true),
                 typeMembers,
@@ -4050,7 +4068,7 @@ namespace System.Management.Automation.Runspaces
             #region System.Security.AccessControl.ObjectSecurity
 
             typeName = @"System.Security.AccessControl.ObjectSecurity";
-            typeMembers = _extendedMembers.GetOrAdd(typeName, key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 7));
+            typeMembers = _extendedMembers.GetOrAdd(typeName, static key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 7));
             Type securityDescriptorCommandsBaseType = TypeResolver.ResolveType("Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase", exception: out _);
 
             // Process regular members.
@@ -9208,7 +9226,6 @@ namespace System.Management.Automation.Runspaces
 
 #if UNIX
             #region UnixStat
-
 
             if (ExperimentalFeature.IsEnabled("PSUnixFileStat"))
             {

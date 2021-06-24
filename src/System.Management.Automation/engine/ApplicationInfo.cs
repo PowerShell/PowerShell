@@ -39,12 +39,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             Path = path;
@@ -52,7 +52,7 @@ namespace System.Management.Automation
             _context = context;
         }
 
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
         #endregion ctor
 
         /// <summary>
@@ -113,7 +113,10 @@ namespace System.Management.Automation
                 return _context.EngineSessionState.CheckApplicationVisibility(Path);
             }
 
-            set { throw PSTraceSource.NewNotImplementedException(); }
+            set
+            {
+                throw PSTraceSource.NewNotImplementedException();
+            }
         }
 
         /// <summary>

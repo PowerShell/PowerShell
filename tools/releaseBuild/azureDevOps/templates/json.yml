@@ -3,6 +3,11 @@ parameters:
 
 jobs:
 - job: json
+  variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
   displayName: Create Json for Blob
   dependsOn:
     ${{ parameters.parentJobs }}
@@ -15,12 +20,15 @@ jobs:
   #  inputs:
   #    <task specific inputs>
   #  displayName: '<display name of task>'
+  - checkout: self
+    clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
       CreateJson: yes
 
-  - task: AzureFileCopy@3
+  - task: AzureFileCopy@4
     displayName: 'upload daily-build-info JSON file to Azure - ${{ parameters.architecture }}'
     inputs:
       SourcePath: '$(BuildInfoPath)'

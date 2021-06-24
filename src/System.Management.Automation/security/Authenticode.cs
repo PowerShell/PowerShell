@@ -112,7 +112,7 @@ namespace System.Management.Automation
                     (timeStampServerUrl.IndexOf("http://", StringComparison.OrdinalIgnoreCase) != 0))
                 {
                     throw PSTraceSource.NewArgumentException(
-                        "certificate",
+                        nameof(certificate),
                         Authenticode.TimeStampUrlRequired);
                 }
             }
@@ -131,7 +131,7 @@ namespace System.Management.Automation
                 if (oidPtr == IntPtr.Zero)
                 {
                     throw PSTraceSource.NewArgumentException(
-                        "certificate",
+                        nameof(certificate),
                         Authenticode.InvalidHashAlgorithm);
                 }
                 else
@@ -146,7 +146,7 @@ namespace System.Management.Automation
             if (!SecuritySupport.CertIsGoodForSigning(certificate))
             {
                 throw PSTraceSource.NewArgumentException(
-                        "certificate",
+                        nameof(certificate),
                         Authenticode.CertNotGoodForSigning);
             }
 
@@ -192,7 +192,7 @@ namespace System.Management.Automation
                     IntPtr.Zero);
 #pragma warning restore 56523
 
-                if (si.pSignExtInfo != null)
+                if (si.pSignExtInfo != IntPtr.Zero)
                 {
                     Marshal.DestroyStructure<NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO>(si.pSignExtInfo);
                     Marshal.FreeCoTaskMem(si.pSignExtInfo);
@@ -226,7 +226,7 @@ namespace System.Management.Automation
                         if (error == Win32Errors.NTE_BAD_ALGID)
                         {
                             throw PSTraceSource.NewArgumentException(
-                                "certificate",
+                                nameof(certificate),
                                 Authenticode.InvalidHashAlgorithm);
                         }
 
@@ -543,7 +543,6 @@ namespace System.Management.Automation
             if (pCert != IntPtr.Zero)
             {
                 NativeMethods.CRYPT_PROVIDER_CERT provCert =
-                    (NativeMethods.CRYPT_PROVIDER_CERT)
                     Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_CERT>(pCert);
                 signerCert = new X509Certificate2(provCert.pCert);
             }
@@ -618,7 +617,6 @@ namespace System.Management.Automation
                 if (pProvSigner != IntPtr.Zero)
                 {
                     NativeMethods.CRYPT_PROVIDER_SGNR provSigner =
-                        (NativeMethods.CRYPT_PROVIDER_SGNR)
                         Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_SGNR>(pProvSigner);
                     if (provSigner.csCounterSigners == 1)
                     {

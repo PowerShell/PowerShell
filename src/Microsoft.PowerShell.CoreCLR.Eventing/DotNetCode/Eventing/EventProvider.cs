@@ -14,16 +14,18 @@ namespace System.Diagnostics.Eventing
     {
         [SecurityCritical]
         private UnsafeNativeMethods.EtwEnableCallback _etwCallback;  // Trace Callback function
+
         private long _regHandle;                       // Trace Registration Handle
         private byte _level;                            // Tracing Level
         private long _anyKeywordMask;                  // Trace Enable Flags
         private long _allKeywordMask;                  // Match all keyword
         private int _enabled;                           // Enabled flag from Trace callback
-        private Guid _providerId;                       // Control Guid
+        private readonly Guid _providerId;              // Control Guid
         private int _disposed;                          // when 1, provider has unregister
 
         [ThreadStatic]
         private static WriteEventErrorCode t_returnCode; // thread slot to keep last error
+
         [ThreadStatic]
         private static Guid t_activityId;
 
@@ -48,8 +50,10 @@ namespace System.Diagnostics.Eventing
         {
             [FieldOffset(0)]
             internal ulong DataPointer;
+
             [FieldOffset(8)]
             internal uint Size;
+
             [FieldOffset(12)]
             internal int Reserved;
         }
@@ -95,7 +99,7 @@ namespace System.Diagnostics.Eventing
 
             _etwCallback = new UnsafeNativeMethods.EtwEnableCallback(EtwEnableCallBack);
 
-            status = UnsafeNativeMethods.EventRegister(ref _providerId, _etwCallback, null, ref _regHandle);
+            status = UnsafeNativeMethods.EventRegister(in _providerId, _etwCallback, null, ref _regHandle);
             if (status != 0)
             {
                 throw new Win32Exception((int)status);
@@ -198,7 +202,7 @@ namespace System.Diagnostics.Eventing
         /// </summary>
         public bool IsEnabled()
         {
-            return (_enabled != 0) ? true : false;
+            return _enabled != 0;
         }
 
         /// <summary>
@@ -435,7 +439,7 @@ namespace System.Diagnostics.Eventing
 
             if (eventMessage == null)
             {
-                throw new ArgumentNullException("eventMessage");
+                throw new ArgumentNullException(nameof(eventMessage));
             }
 
             if (IsEnabled(eventLevel, eventKeywords))
@@ -484,9 +488,9 @@ namespace System.Diagnostics.Eventing
         /// </param>
         /// <param name="eventPayload">
         /// </param>
-        public bool WriteEvent(ref EventDescriptor eventDescriptor, params object[] eventPayload)
+        public bool WriteEvent(in EventDescriptor eventDescriptor, params object[] eventPayload)
         {
-            return WriteTransferEvent(ref eventDescriptor, Guid.Empty, eventPayload);
+            return WriteTransferEvent(in eventDescriptor, Guid.Empty, eventPayload);
         }
 
         /// <summary>
@@ -500,7 +504,7 @@ namespace System.Diagnostics.Eventing
         /// </param>
         [System.Security.SecurityCritical]
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
-        public bool WriteEvent(ref EventDescriptor eventDescriptor, string data)
+        public bool WriteEvent(in EventDescriptor eventDescriptor, string data)
         {
             uint status = 0;
 
@@ -530,7 +534,7 @@ namespace System.Diagnostics.Eventing
                         userData.DataPointer = (ulong)pdata;
 
                         status = UnsafeNativeMethods.EventWriteTransfer(_regHandle,
-                                                                        ref eventDescriptor,
+                                                                        in eventDescriptor,
                                                                         (activityId == Guid.Empty) ? null : &activityId,
                                                                         null,
                                                                         1,
@@ -561,7 +565,7 @@ namespace System.Diagnostics.Eventing
         /// pointer do the event data
         /// </param>
         [System.Security.SecurityCritical]
-        protected bool WriteEvent(ref EventDescriptor eventDescriptor, int dataCount, IntPtr data)
+        protected bool WriteEvent(in EventDescriptor eventDescriptor, int dataCount, IntPtr data)
         {
             uint status = 0;
 
@@ -571,7 +575,7 @@ namespace System.Diagnostics.Eventing
 
                 status = UnsafeNativeMethods.EventWriteTransfer(
                                     _regHandle,
-                                    ref eventDescriptor,
+                                    in eventDescriptor,
                                     (activityId == Guid.Empty) ? null : &activityId,
                                     null,
                                     (uint)dataCount,
@@ -598,7 +602,7 @@ namespace System.Diagnostics.Eventing
         /// <param name="eventPayload">
         /// </param>
         [System.Security.SecurityCritical]
-        public bool WriteTransferEvent(ref EventDescriptor eventDescriptor, Guid relatedActivityId, params object[] eventPayload)
+        public bool WriteTransferEvent(in EventDescriptor eventDescriptor, Guid relatedActivityId, params object[] eventPayload)
         {
             uint status = 0;
 
@@ -619,7 +623,7 @@ namespace System.Diagnostics.Eventing
                             //
                             // too many arguments to log
                             //
-                            throw new ArgumentOutOfRangeException("eventPayload",
+                            throw new ArgumentOutOfRangeException(nameof(eventPayload),
                                 string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxArgExceeded, s_etwMaxNumberArguments));
                         }
 
@@ -656,7 +660,7 @@ namespace System.Diagnostics.Eventing
                                 }
                                 else
                                 {
-                                    throw new ArgumentOutOfRangeException("eventPayload",
+                                    throw new ArgumentOutOfRangeException(nameof(eventPayload),
                                         string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxStringsExceeded, s_etwAPIMaxStringCount));
                                 }
                             }
@@ -715,7 +719,7 @@ namespace System.Diagnostics.Eventing
                     }
 
                     status = UnsafeNativeMethods.EventWriteTransfer(_regHandle,
-                                                                    ref eventDescriptor,
+                                                                    in eventDescriptor,
                                                                     (activityId == Guid.Empty) ? null : &activityId,
                                                                     (relatedActivityId == Guid.Empty) ? null : &relatedActivityId,
                                                                     (uint)argCount,
@@ -733,7 +737,7 @@ namespace System.Diagnostics.Eventing
         }
 
         [System.Security.SecurityCritical]
-        protected bool WriteTransferEvent(ref EventDescriptor eventDescriptor, Guid relatedActivityId, int dataCount, IntPtr data)
+        protected bool WriteTransferEvent(in EventDescriptor eventDescriptor, Guid relatedActivityId, int dataCount, IntPtr data)
         {
             uint status = 0;
 
@@ -743,7 +747,7 @@ namespace System.Diagnostics.Eventing
             {
                 status = UnsafeNativeMethods.EventWriteTransfer(
                                                 _regHandle,
-                                                ref eventDescriptor,
+                                                in eventDescriptor,
                                                 (activityId == Guid.Empty) ? null : &activityId,
                                                 &relatedActivityId,
                                                 (uint)dataCount,
@@ -775,7 +779,7 @@ namespace System.Diagnostics.Eventing
         [System.Security.SecurityCritical]
         public static Guid CreateActivityId()
         {
-            Guid newId = new Guid();
+            Guid newId = new();
             UnsafeNativeMethods.EventActivityIdControl((int)ActivityControl.EVENT_ACTIVITY_CTRL_CREATE_ID, ref newId);
             return newId;
         }

@@ -55,11 +55,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 }
             }
 
-            public string PropertyName { get; private set; }
+            public string PropertyName { get; }
 
-            public object PropertyValue { get; private set; }
+            public object PropertyValue { get; }
 
-            public Func<string, string, string> ErrorMessageGenerator { get; private set; }
+            public Func<string, string, string> ErrorMessageGenerator { get; }
 
             private static string GetErrorMessageForNotFound(string queryDescription, string className)
             {
@@ -153,7 +153,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private abstract class CimInstancePropertyBasedFilter : CimInstanceFilterBase
         {
-            private readonly List<PropertyValueFilter> _propertyValueFilters = new List<PropertyValueFilter>();
+            private readonly List<PropertyValueFilter> _propertyValueFilters = new();
+
             protected IEnumerable<PropertyValueFilter> PropertyValueFilters { get { return _propertyValueFilters; } }
 
             protected void AddPropertyValueFilter(PropertyValueFilter propertyValueFilter)
@@ -222,7 +223,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     case BehaviorOnNoMatch.Default:
                     default:
                         return this.PropertyValueFilters
-                                   .Where(f => !f.HadMatch).Any(f => f.BehaviorOnNoMatch == BehaviorOnNoMatch.ReportErrors);
+                                   .Any(static f => !f.HadMatch && f.BehaviorOnNoMatch == BehaviorOnNoMatch.ReportErrors);
                 }
             }
 
@@ -357,6 +358,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             protected abstract BehaviorOnNoMatch GetDefaultBehaviorWhenNoMatchesFound(object cimTypedExpectedPropertyValue);
+
             private BehaviorOnNoMatch _behaviorOnNoMatch;
 
             public string PropertyName { get; }
@@ -403,7 +405,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             private object ConvertActualValueToExpectedType(object actualPropertyValue, object expectedPropertyValue)
             {
-                if ((actualPropertyValue is string) && (!(expectedPropertyValue is string)))
+                if (actualPropertyValue is string && expectedPropertyValue is not string)
                 {
                     actualPropertyValue = LanguagePrimitives.ConvertTo(actualPropertyValue, expectedPropertyValue.GetType(), CultureInfo.InvariantCulture);
                 }
@@ -570,8 +572,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    var expectedComparable = expectedPropertyValue as IComparable;
-                    if (expectedComparable == null)
+                    if (!(expectedPropertyValue is IComparable expectedComparable))
                     {
                         return false;
                     }
@@ -606,8 +607,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    var actualComparable = actualPropertyValue as IComparable;
-                    if (actualComparable == null)
+                    if (!(actualPropertyValue is IComparable actualComparable))
                     {
                         return false;
                     }
@@ -624,8 +624,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private int _numberOfResultsFromMi;
         private int _numberOfMatchingResults;
 
-        private readonly List<CimInstanceFilterBase> _filters = new List<CimInstanceFilterBase>();
-        private readonly object _myLock = new object();
+        private readonly List<CimInstanceFilterBase> _filters = new();
+        private readonly object _myLock = new();
 
         #region "Public" interface for client-side filtering
 
@@ -656,7 +656,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     return Enumerable.Empty<NotFoundError>();
                 }
 
-                if (_filters.All(f => !f.ShouldReportErrorOnNoMatches_IfMultipleFilters()))
+                if (_filters.All(static f => !f.ShouldReportErrorOnNoMatches_IfMultipleFilters()))
                 {
                     return Enumerable.Empty<NotFoundError>();
                 }

@@ -663,8 +663,8 @@
   <data name="RemoveDriveRoot" xml:space="preserve">
     <value>Cannot remove the drive root in this way. Use "Remove-PSDrive" to remove this drive.</value>
   </data>
-  <data name="NewItemValueNotSpecified" xml:space="preserve">
-    <value>Item '{0}' cannot be created because the value was not specified.</value>
+  <data name="NewLinkTargetNotSpecified" xml:space="preserve">
+    <value>Link '{0}' cannot be created because Target was not specified.</value>
   </data>
   <data name="DollarNullDescription" xml:space="preserve">
     <value>References to the null variable always return the null value. Assignments have no effect.</value>

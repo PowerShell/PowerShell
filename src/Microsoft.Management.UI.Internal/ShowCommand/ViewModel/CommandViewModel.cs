@@ -168,13 +168,13 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 {
                     if (this.selectedParameterSet != null)
                     {
-                        this.selectedParameterSet.PropertyChanged -= new PropertyChangedEventHandler(this.SelectedParameterSet_PropertyChanged);
+                        this.selectedParameterSet.PropertyChanged -= this.SelectedParameterSet_PropertyChanged;
                     }
 
                     this.selectedParameterSet = value;
                     if (this.selectedParameterSet != null)
                     {
-                        this.selectedParameterSet.PropertyChanged += new PropertyChangedEventHandler(this.SelectedParameterSet_PropertyChanged);
+                        this.selectedParameterSet.PropertyChanged += this.SelectedParameterSet_PropertyChanged;
                         this.SelectedParameterSetAllMandatoryParametersHaveValues = this.SelectedParameterSet.AllMandatoryParametersHaveValues;
                     }
                     else
@@ -438,12 +438,12 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 builder.Append(commandName);
             }
 
-            builder.Append(" ");
+            builder.Append(' ');
 
             if (this.SelectedParameterSet != null)
             {
                 builder.Append(this.SelectedParameterSet.GetScript());
-                builder.Append(" ");
+                builder.Append(' ');
             }
 
             if (this.CommonParameters != null)
@@ -553,6 +553,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             return returnValue;
         }
 
+        #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
+
         /// <summary>
         /// Called to trigger the event fired when help is needed for the command.
         /// </summary>
@@ -612,7 +614,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 }
             }
 
-            return string.Compare(source.Name, target.Name, StringComparison.Ordinal);
+            return string.CompareOrdinal(source.Name, target.Name);
         }
 
         /// <summary>
@@ -627,6 +629,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #pragma warning restore IDE1005
 
         /// <summary>
         /// Called when the PropertyChanged event is triggered on the SelectedParameterSet.

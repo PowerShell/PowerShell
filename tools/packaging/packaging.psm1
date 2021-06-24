@@ -6,9 +6,11 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
-$DebianDistributions = @("ubuntu.16.04", "ubuntu.18.04", "debian.9", "debian.10", "debian.11")
-$RedhatDistributions = @("rhel.7","centos.8")
-$script:netCoreRuntime = 'net5.0'
+$DebianDistributions = @("deb")
+$RedhatDistributions = @("rh")
+$script:netCoreRuntime = 'net6.0'
+$script:iconFileName = "Powershell_black_64.png"
+$script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -18,7 +20,7 @@ function Start-PSPackage {
         [string]$Version,
 
         [Parameter(ParameterSetName = "ReleaseTag")]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
 
@@ -27,7 +29,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -45,7 +47,7 @@ function Start-PSPackage {
     )
 
     DynamicParam {
-        if ("zip" -eq $Type -or "fxdependent" -eq $Type -or "fxdependent-win-desktop" -eq $Type) {
+        if ($Type -in ('zip', 'min-size') -or $Type -like 'fxdependent*') {
             # Add a dynamic parameter '-IncludeSymbols' when the specified package type is 'zip' only.
             # The '-IncludeSymbols' parameter can be used to indicate that the package should only contain powershell binaries and symbols.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
@@ -103,8 +105,9 @@ function Start-PSPackage {
         $actualParams = @()
 
         $crossGenCorrect = $false
-        if ($Runtime -match "arm") {
-            # crossgen doesn't support arm32/64
+        if ($Runtime -match "arm" -or $Type -eq 'min-size') {
+            ## crossgen doesn't support arm32/64;
+            ## For the min-size package, we intentionally avoid crossgen.
             $crossGenCorrect = $true
         }
         elseif ($Script:Options.CrossGen) {
@@ -191,7 +194,7 @@ function Start-PSPackage {
             throw $Script:Options.RootInfo.Warning
         }
 
-        # If ReleaseTag is specified, use the given tag to calculate Vesrion
+        # If ReleaseTag is specified, use the given tag to calculate Version
         if ($PSCmdlet.ParameterSetName -eq "ReleaseTag") {
             $Version = $ReleaseTag -Replace '^v'
         }
@@ -205,6 +208,9 @@ function Start-PSPackage {
 
         # Copy the ThirdPartyNotices.txt so it's part of the package
         Copy-Item "$RepoRoot/ThirdPartyNotices.txt" -Destination $Source -Force
+
+        # Copy the default.help.txt so it's part of the package
+        Copy-Item "$RepoRoot/assets/default.help.txt" -Destination "$Source/en-US" -Force
 
         # If building a symbols package, we add a zip of the parent to publish
         if ($IncludeSymbols.IsPresent)
@@ -294,7 +300,37 @@ function Start-PSPackage {
                     New-PdbZipPackage @Arguments
                 }
             }
+            "min-size" {
+                # Remove symbol files, xml document files.
+                Remove-Item "$Source\*.pdb", "$Source\*.xml" -Force
 
+                # Add suffix '-gc' because this package is for the Guest Config team.
+                if ($Environment.IsWindows) {
+                    $Arguments = @{
+                        PackageNameSuffix = "$NameSuffix-gc"
+                        PackageSourcePath = $Source
+                        PackageVersion = $Version
+                        Force = $Force
+                    }
+
+                    if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
+                        New-ZipPackage @Arguments
+                    }
+                }
+                elseif ($Environment.IsLinux) {
+                    $Arguments = @{
+                        PackageSourcePath = $Source
+                        Name = $Name
+                        PackageNameSuffix = 'gc'
+                        Version = $Version
+                        Force = $Force
+                    }
+
+                    if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
+                        New-TarballPackage @Arguments
+                    }
+                }
+            }
             { $_ -like "fxdependent*" } {
                 ## Remove PDBs from package to reduce size.
                 if(-not $IncludeSymbols.IsPresent) {
@@ -312,7 +348,7 @@ function Start-PSPackage {
                     if ($PSCmdlet.ShouldProcess("Create Zip Package")) {
                         New-ZipPackage @Arguments
                     }
-                } elseif ($IsLinux) {
+                } elseif ($Environment.IsLinux) {
                     $Arguments = @{
                         PackageSourcePath = $Source
                         Name = $Name
@@ -331,15 +367,13 @@ function Start-PSPackage {
                 if ($Runtime -match "-x86") {
                     $TargetArchitecture = "x86"
                 }
+                Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
 
                 $Arguments = @{
                     ProductNameSuffix = $NameSuffix
                     ProductSourcePath = $Source
                     ProductVersion = $Version
                     AssetsPath = "$RepoRoot\assets"
-                    LicenseFilePath = "$RepoRoot\assets\license.rtf"
-                    # Product Code needs to be unique for every PowerShell version since it is a unique identifier for the particular product release
-                    ProductCode = New-Guid
                     ProductTargetArchitecture = $TargetArchitecture
                     Force = $Force
                 }
@@ -510,7 +544,9 @@ function New-TarballPackage {
 
         [switch] $Force,
 
-        [switch] $ExcludeSymbolicLinks
+        [switch] $ExcludeSymbolicLinks,
+
+        [string] $CurrentLocation = (Get-Location)
     )
 
     if ($PackageNameSuffix) {
@@ -527,7 +563,7 @@ function New-TarballPackage {
         $packageName = $packageName -f "osx"
     }
 
-    $packagePath = Join-Path -Path $PWD -ChildPath $packageName
+    $packagePath = Join-Path -Path $CurrentLocation -ChildPath $packageName
     Write-Verbose "Create package $packageName"
     Write-Verbose "Package destination path: $packagePath"
 
@@ -540,10 +576,6 @@ function New-TarballPackage {
 
     $Staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
-
-    if (-not $ExcludeSymbolicLinks.IsPresent) {
-        New-PSSymbolicLinks -Distribution 'ubuntu.16.04' -Staging $Staging
-    }
 
     if (Get-Command -Name tar -CommandType Application -ErrorAction Ignore) {
         if ($Force -or $PSCmdlet.ShouldProcess("Create tarball package")) {
@@ -674,13 +706,14 @@ function Expand-PSSignedBuild
     # That zip file is used for compliance scan.
     Remove-Item -Path (Join-Path -Path $buildPath -ChildPath '*.zip') -Recurse
 
-    if ($SkipPwshExeCheck)
-    {
-        $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.dll')
-    }
-    else
-    {
-        $windowsExecutablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
+    if ($SkipPwshExeCheck) {
+        $executablePath = (Join-Path $buildPath -ChildPath 'pwsh.dll')
+    } else {
+        if ($IsMacOS -or $IsLinux) {
+            $executablePath = (Join-Path $buildPath -ChildPath 'pwsh')
+        } else {
+            $executablePath = (Join-Path $buildPath -ChildPath 'pwsh.exe')
+        }
     }
 
     Restore-PSModuleToBuild -PublishPath $buildPath
@@ -692,12 +725,9 @@ function Expand-PSSignedBuild
 
     $options.PSModuleRestore = $true
 
-    if (Test-Path -Path $windowsExecutablePath)
-    {
-        $options.Output = $windowsExecutablePath
-    }
-    else
-    {
+    if (Test-Path -Path $executablePath) {
+        $options.Output = $executablePath
+    } else {
         throw 'Could not find pwsh'
     }
 
@@ -733,7 +763,10 @@ function New-UnixPackage {
         $NoSudo,
 
         [switch]
-        $LTS
+        $LTS,
+
+        [string]
+        $CurrentLocation = (Get-Location)
     )
 
     DynamicParam {
@@ -780,6 +813,8 @@ function New-UnixPackage {
                     $DebDistro = "ubuntu.16.04"
                 } elseif ($Environment.IsUbuntu18) {
                     $DebDistro = "ubuntu.18.04"
+                } elseif ($Environment.IsUbuntu20) {
+                    $DebDistro = "ubuntu.20.04"
                 } elseif ($Environment.IsDebian9) {
                     $DebDistro = "debian.9"
                 } else {
@@ -801,9 +836,6 @@ function New-UnixPackage {
                 }
 
                 $packageVersion = Get-LinuxPackageSemanticVersion -Version $Version
-                if (!$Environment.IsRedHatFamily -and !$Environment.IsSUSEFamily) {
-                    throw ($ErrorMessage -f "Redhat or SUSE Family")
-                }
             }
             "osxpkg" {
                 $packageVersion = $Version
@@ -865,8 +897,7 @@ function New-UnixPackage {
         if ($PSCmdlet.ShouldProcess("Create package file system"))
         {
             # Generate After Install and After Remove scripts
-            $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro
-            New-PSSymbolicLinks -Distribution $DebDistro -Staging $Staging
+            $AfterScriptInfo = New-AfterScripts -Link $Link -Distribution $DebDistro -Destination $Destination
 
             # there is a weird bug in fpm
             # if the target of the powershell symlink exists, `fpm` aborts
@@ -964,7 +995,7 @@ function New-UnixPackage {
         }
 
         # Magic to get path output
-        $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
+        $createdPackage = Get-Item (Join-Path $CurrentLocation (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
         if ($Environment.IsMacOS) {
             if ($PSCmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
@@ -1226,66 +1257,31 @@ function Get-FpmArguments
     return $Arguments
 }
 
-function Test-Distribution
-{
-    param(
-        [String]
-        $Distribution
-    )
-
-    if ( $Environment.IsDebianFamily -and !$Distribution )
-    {
-        throw "$Distribution is required for a Debian based distribution."
-    }
-
-    if ( $Environment.IsDebianFamily -and $Script:DebianDistributions -notcontains $Distribution)
-    {
-        throw "$Distribution should be one of the following: $Script:DebianDistributions"
-    }
-
-    if ( $Environment.IsRedHatFamily -and $Script:RedHatDistributions -notcontains $Distribution)
-    {
-        throw "$Distribution should be one of the following: $Script:RedHatDistributions"
-    }
-
-    return $true
-}
 function Get-PackageDependencies
 {
     param(
         [String]
-        [ValidateScript({Test-Distribution -Distribution $_})]
+        [ValidateSet('rh','deb','macOS')]
         $Distribution
     )
 
     End {
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
-        if ($Environment.IsDebianFamily) {
+        if ($Distribution -eq 'deb') {
             $Dependencies = @(
                 "libc6",
                 "libgcc1",
                 "libgssapi-krb5-2",
-                "liblttng-ust0",
                 "libstdc++6",
-                "zlib1g"
+                "zlib1g",
+                "libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
+                "libssl1.1|libssl1.0.2|libssl1.0.0"
             )
 
-            switch -regex ($Distribution) {
-                "ubuntu\.16\.04" { $Dependencies += @("libssl1.0.0", "libicu55") }
-                "ubuntu\.18\.04" { $Dependencies += @("libssl1.0.0", "libicu60") }
-                "debian\.9" { $Dependencies += @("libssl1.0.2", "libicu57") }
-                "debian\.(10|11)" { $Dependencies += @("libssl1.1", "libicu63") }
-                default { throw "Debian distro '$Distribution' is not supported." }
-            }
-        } elseif ($Environment.IsRedHatFamily) {
+        } elseif ($Distribution -eq 'rh') {
             $Dependencies = @(
                 "openssl-libs",
-                "libicu"
-            )
-        } elseif ($Environment.IsSUSEFamily) {
-            $Dependencies = @(
-                "libopenssl1_0_0",
                 "libicu"
             )
         }
@@ -1329,7 +1325,11 @@ function New-AfterScripts
 
         [Parameter(Mandatory)]
         [string]
-        $Distribution
+        $Distribution,
+
+        [Parameter(Mandatory)]
+        [string]
+        $Destination
     )
 
     Write-Verbose -Message "AfterScript Distribution: $Distribution" -Verbose
@@ -1337,14 +1337,14 @@ function New-AfterScripts
     if ($Environment.IsRedHatFamily) {
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
-        $packagingStrings.RedHatAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-        $packagingStrings.RedHatAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+        $packagingStrings.RedHatAfterInstallScript -f "$Link", $Destination  | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.RedHatAfterRemoveScript -f "$Link", $Destination | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
     elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
-        $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-        $packagingStrings.UbuntuAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+        $packagingStrings.UbuntuAfterInstallScript -f "$Link", $Destination | Out-File -FilePath $AfterInstallScript -Encoding ascii
+        $packagingStrings.UbuntuAfterRemoveScript -f "$Link", $Destination | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
     elseif ($Environment.IsMacOS) {
         # NOTE: The macos pkgutil doesn't support uninstall actions so we did not implement it.
@@ -1356,60 +1356,6 @@ function New-AfterScripts
     return [PSCustomObject] @{
         AfterInstallScript = $AfterInstallScript
         AfterRemoveScript = $AfterRemoveScript
-    }
-}
-
-function New-PSSymbolicLinks
-{
-    param(
-        [Parameter(Mandatory)]
-        [string]
-        $Distribution,
-
-        [Parameter(Mandatory)]
-        [string]
-        $Staging
-    )
-
-    Write-Verbose -Message "PSSymLinks-Distribution: $Distribution" -Verbose
-
-    if ($Environment.IsRedHatFamily) {
-        switch -regex ($Distribution)
-        {
-            # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
-            # platform specific changes. This is the only set of platforms needed for this currently
-            # as Ubuntu has these specific library files in the platform and macOS builds for itself
-            # against the correct versions.
-            'centos\.8' {
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.1.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
-            }
-            default {
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
-            }
-        }
-    }
-    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
-         switch -regex ($Distribution)
-        {
-            # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
-            # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
-            # symlinks.
-            'debian\.9' {
-                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
-                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
-            }
-            'debian\.(10|11)' {
-                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
-                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
-            }
-            default {
-                # Default to old behavior before this change
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
-            }
-        }
     }
 }
 
@@ -1613,7 +1559,9 @@ function New-ZipPackage
         [ValidateNotNullOrEmpty()]
         [string] $PackageSourcePath,
 
-        [switch] $Force
+        [switch] $Force,
+
+        [string] $CurrentLocation = (Get-Location)
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
@@ -1625,7 +1573,7 @@ function New-ZipPackage
 
     Write-Verbose "Create Zip for Product $zipPackageName"
 
-    $zipLocationPath = Join-Path $PWD "$zipPackageName.zip"
+    $zipLocationPath = Join-Path $CurrentLocation "$zipPackageName.zip"
 
     if ($Force.IsPresent)
     {
@@ -1685,7 +1633,9 @@ function New-PdbZipPackage
         [Parameter(Mandatory = $true)]
         [string] $PackageSourcePath,
 
-        [switch] $Force
+        [switch] $Force,
+
+        [string] $CurrentLocation = (Get-Location)
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
@@ -1697,7 +1647,7 @@ function New-PdbZipPackage
 
     Write-Verbose "Create Symbols Zip for Product $zipPackageName"
 
-    $zipLocationPath = Join-Path $PWD "$zipPackageName.zip"
+    $zipLocationPath = Join-Path $CurrentLocation "$zipPackageName.zip"
 
     if ($Force.IsPresent)
     {
@@ -1822,8 +1772,7 @@ function New-ILNugetPackage
         "Microsoft.PowerShell.SDK.dll",
         "Microsoft.WSMan.Management.dll",
         "Microsoft.WSMan.Runtime.dll",
-        "System.Management.Automation.dll",
-        "Microsoft.PowerShell.MarkdownRender.dll")
+        "System.Management.Automation.dll")
 
     $linuxExceptionList = @(
         "Microsoft.Management.Infrastructure.CimCmdlets.dll",
@@ -1931,7 +1880,6 @@ function New-ILNugetPackage
 
                 'Microsoft.PowerShell.Commands.Utility' {
                     $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.MarkdownRender'), [tuple]::Create('version', $PackageVersion))) > $null
 
                     foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
                     {
@@ -1993,17 +1941,13 @@ function New-ILNugetPackage
                         $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
                     }
                 }
-
-                'Microsoft.PowerShell.MarkdownRender' {
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-                    {
-                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-                    }
-                }
             }
 
             New-NuSpec -PackageId $fileBaseName -PackageVersion $PackageVersion -Dependency $deps -FilePath (Join-Path $filePackageFolder.FullName "$fileBaseName.nuspec")
+
+            # Copy icon file to package
+            Copy-Item -Path $iconPath -Destination "$($filePackageFolder.Fullname)/$iconFileName" -Verbose
+
             New-NugetPackage -NuSpecPath $filePackageFolder.FullName -PackageDestinationPath $PackagePath
         }
 
@@ -2020,7 +1964,7 @@ function New-ILNugetPackage
 }
 
 <#
-  Copy the generated reference assemblies to the 'ref/net5.0' folder properly.
+  Copy the generated reference assemblies to the 'ref/net6.0' folder properly.
   This is a helper function used by 'New-ILNugetPackage'
 #>
 function CopyReferenceAssemblies
@@ -2039,24 +1983,27 @@ function CopyReferenceAssemblies
     switch ($assemblyName) {
         { $_ -in $supportedRefList } {
             $refDll = Join-Path -Path $refBinPath -ChildPath "$assemblyName.dll"
-            Copy-Item $refDll -Destination $refNugetPath -Force
-            Write-Log "Copied file $refDll to $refNugetPath"
+            $refDoc = Join-Path -Path $refBinPath -ChildPath "$assemblyName.xml"
+            Copy-Item $refDll, $refDoc -Destination $refNugetPath -Force
+            Write-Log "Copied file '$refDll' and '$refDoc' to '$refNugetPath'"
         }
 
         "Microsoft.PowerShell.SDK" {
             foreach ($asmFileName in $assemblyFileList) {
                 $refFile = Join-Path -Path $refBinPath -ChildPath $asmFileName
                 if (Test-Path -Path $refFile) {
-                    Copy-Item $refFile -Destination $refNugetPath -Force
-                    Write-Log "Copied file $refFile to $refNugetPath"
+                    $refDoc = Join-Path -Path $refBinPath -ChildPath ([System.IO.Path]::ChangeExtension($asmFileName, "xml"))
+                    Copy-Item $refFile, $refDoc -Destination $refNugetPath -Force
+                    Write-Log "Copied file '$refFile' and '$refDoc' to '$refNugetPath'"
                 }
             }
         }
 
         default {
             $ref_SMA = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.dll
-            Copy-Item $ref_SMA -Destination $refNugetPath -Force
-            Write-Log "Copied file $ref_SMA to $refNugetPath"
+            $ref_doc = Join-Path -Path $refBinPath -ChildPath System.Management.Automation.xml
+            Copy-Item $ref_SMA, $ref_doc -Destination $refNugetPath -Force
+            Write-Log "Copied file '$ref_SMA' and '$ref_doc' to '$refNugetPath'"
         }
     }
 }
@@ -2137,7 +2084,7 @@ function New-NuSpec {
         throw "New-NuSpec can be only executed on Windows platform."
     }
 
-    $nuspecTemplate = $packagingStrings.NuspecTemplate -f $PackageId,$PackageVersion
+    $nuspecTemplate = $packagingStrings.NuspecTemplate -f $PackageId,$PackageVersion,$iconFileName
     $nuspecObj = [xml] $nuspecTemplate
 
     if ( ($null -ne $Dependency) -and $Dependency.Count -gt 0 ) {
@@ -2238,8 +2185,13 @@ function New-ReferenceAssembly
             throw "$assemblyName.dll was not found at: $Linux64BinPath"
         }
 
+        $dllXmlDoc = Join-Path $Linux64BinPath "$assemblyName.xml"
+        if (-not (Test-Path $dllXmlDoc)) {
+            throw "$assemblyName.xml was not found at: $Linux64BinPath"
+        }
+
         $genAPIArgs = "$linuxDllPath","-libPath:$Linux64BinPath,$Linux64BinPath\ref"
-        Write-Log "GenAPI cmd: $genAPIExe $genAPIArgsString"
+        Write-Log "GenAPI cmd: $genAPIExe $genAPIArgs"
 
         Start-NativeExecution { & $genAPIExe $genAPIArgs } | Out-File $generatedSource -Force
         Write-Log "Reference assembly file generated at: $generatedSource"
@@ -2270,6 +2222,9 @@ function New-ReferenceAssembly
 
             Copy-Item $refBinPath $RefAssemblyDestinationPath -Force
             Write-Log "Reference assembly '$assemblyName.dll' built and copied to $RefAssemblyDestinationPath"
+
+            Copy-Item $dllXmlDoc $RefAssemblyDestinationPath -Force
+            Write-Log "Xml document '$assemblyName.xml' copied to $RefAssemblyDestinationPath"
 
             if ($assemblyName -eq "System.Management.Automation") {
                 $SMAReferenceAssembly = $refBinPath
@@ -2314,43 +2269,76 @@ function CleanupGeneratedSourceCode
         '[Microsoft.PowerShell.Commands.AddMemberCommand'
         '[System.Management.Automation.ArgumentCompleterAttribute(typeof(Microsoft.PowerShell.Commands.Utility.JoinItemCompleter))]'
         '[System.Management.Automation.ArgumentCompleterAttribute(typeof(System.Management.Automation.PropertyNameCompleter))]'
-        '[System.Management.Automation.OutputTypeAttribute(typeof(Microsoft.PowerShell.MarkdownRender'
         '[Microsoft.PowerShell.Commands.ArgumentToTypeNameTransformationAttribute]'
         '[System.Management.Automation.Internal.ArchitectureSensitiveAttribute]'
         '[Microsoft.PowerShell.Commands.SelectStringCommand.FileinfoToStringAttribute]'
         '[System.Runtime.CompilerServices.IsReadOnlyAttribute]'
+        '[System.Runtime.CompilerServices.NullableContextAttribute('
+        '[System.Runtime.CompilerServices.NullableAttribute((byte)0)]'
+        '[System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)2, (byte)1, (byte)1})]'
+        '[System.Runtime.CompilerServices.AsyncStateMachineAttribute'
         )
 
     $patternsToReplace = @(
         @{
-            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            ApplyTo = @("Microsoft.PowerShell.Commands.Utility")
             Pattern = "[System.Runtime.CompilerServices.IsReadOnlyAttribute]ref Microsoft.PowerShell.Commands.JsonObject.ConvertToJsonContext"
             Replacement = "in Microsoft.PowerShell.Commands.JsonObject.ConvertToJsonContext"
         },
         @{
-            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            ApplyTo = @("Microsoft.PowerShell.Commands.Utility")
             Pattern = "public partial struct ConvertToJsonContext"
             Replacement = "public readonly struct ConvertToJsonContext"
         },
         @{
-            ApplyTo = "Microsoft.PowerShell.Commands.Utility"
+            ApplyTo = @("Microsoft.PowerShell.Commands.Utility")
             Pattern = "Unable to resolve assembly 'Assembly(Name=Newtonsoft.Json"
             Replacement = "// Unable to resolve assembly 'Assembly(Name=Newtonsoft.Json"
         },
         @{
-            ApplyTo = "System.Management.Automation"
+            ApplyTo = @("System.Management.Automation")
             Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.Principal.Windows"
             Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.Principal.Windows"
         },
         @{
-            ApplyTo = "System.Management.Automation"
+            ApplyTo = @("System.Management.Automation")
             Pattern = "Unable to resolve assembly 'Assembly(Name=Microsoft.Management.Infrastructure"
             Replacement = "// Unable to resolve assembly 'Assembly(Name=Microsoft.Management.Infrastructure"
         },
         @{
-            ApplyTo = "System.Management.Automation"
+            ApplyTo = @("System.Management.Automation")
             Pattern = "Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
             Replacement = "// Unable to resolve assembly 'Assembly(Name=System.Security.AccessControl"
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)1, (byte)2, (byte)1})]"
+            Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)1, (byte)2, (byte)1})] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)2, (byte)1})]"
+            Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)2, (byte)1})] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)2)]"
+            Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.NullableContextAttribute((byte)2)] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation")
+            Pattern = "[System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.IsReadOnlyAttribute]"
+            Replacement = "/* [System.Runtime.CompilerServices.CompilerGeneratedAttribute, System.Runtime.CompilerServices.IsReadOnlyAttribute] */ "
+        },
+        @{
+            ApplyTo = @("System.Management.Automation", "Microsoft.PowerShell.ConsoleHost")
+            Pattern = "[System.Runtime.CompilerServices.NullableAttribute((byte)2)]"
+            Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute((byte)2)] */"
+        },
+        @{
+            ApplyTo = @("System.Management.Automation", "Microsoft.PowerShell.ConsoleHost")
+            Pattern = "[System.Runtime.CompilerServices.NullableAttribute((byte)1)]"
+            Replacement = "/* [System.Runtime.CompilerServices.NullableAttribute((byte)1)] */"
         }
     )
 
@@ -2362,10 +2350,9 @@ function CleanupGeneratedSourceCode
         $lineWasProcessed = $false
         foreach ($patternToReplace in $patternsToReplace)
         {
-            if ($assemblyName -eq $patternToReplace.ApplyTo -and $line.Contains($patternToReplace.Pattern)) {
+            if ($assemblyName -in $patternToReplace.ApplyTo -and $line.Contains($patternToReplace.Pattern)) {
                 $line = $line.Replace($patternToReplace.Pattern, $patternToReplace.Replacement)
                 $lineWasProcessed = $true
-                break
             }
         }
 
@@ -2570,7 +2557,6 @@ function New-NugetContentPackage
     $arguments = @('pack')
     $arguments += @('--output',$nugetFolder)
     $arguments += @('--configuration',$PackageConfiguration)
-    $arguments += @('--runtime',$PackageRuntime)
     $arguments += "/p:StagingPath=$stagingRoot"
     $arguments += "/p:RID=$PackageRuntime"
     $arguments += "/p:SemVer=$nugetSemanticVersion"
@@ -2759,14 +2745,16 @@ function Get-WixPath
     $wixPyroExePath = Join-Path $wixToolsetBinPath "pyro.exe"
     $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
     $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
+    $wixInsigniaExePath = Join-Path $wixToolsetBinPath "Insignia.exe"
 
     return [PSCustomObject] @{
-        WixHeatExePath = $wixHeatExePath
-        WixMeltExePath = $wixMeltExePath
-        WixTorchExePath = $wixTorchExePath
-        WixPyroExePath = $wixPyroExePath
-        WixCandleExePath = $wixCandleExePath
-        WixLightExePath = $wixLightExePath
+        WixHeatExePath     = $wixHeatExePath
+        WixMeltExePath     = $wixMeltExePath
+        WixTorchExePath    = $wixTorchExePath
+        WixPyroExePath     = $wixPyroExePath
+        WixCandleExePath   = $wixCandleExePath
+        WixLightExePath    = $wixLightExePath
+        WixInsigniaExePath = $wixInsigniaExePath
     }
 
 }
@@ -2811,7 +2799,7 @@ function New-MSIPatch
         [Parameter(HelpMessage='Path to the patch template WXS.  Usually you do not need to specify this')]
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $PatchWxsPath = "$RepoRoot\assets\patch-template.wxs",
+        [string] $PatchWxsPath = "$RepoRoot\assets\wix\patch-template.wxs",
 
         [Parameter(HelpMessage='Produce a delta patch instead of a full patch.  Usually not worth it.')]
         [switch] $Delta
@@ -2851,7 +2839,7 @@ function New-MSIPatch
     Copy-Item -Path $BaselineWixPdbPath -Destination $wixBaselineOriginalPdbPath -Force
     Copy-Item -Path $PatchWixPdbPath -Destination $wixPatchOriginalPdbPath -Force
 
-    [xml] $filesAssetXml = Get-Content -Raw -Path "$RepoRoot\assets\files.wxs"
+    [xml] $filesAssetXml = Get-Content -Raw -Path "$RepoRoot\assets\wix\files.wxs"
     [xml] $patchTemplateXml = Get-Content -Raw -Path $PatchWxsPath
 
     # Update the patch version
@@ -2915,7 +2903,7 @@ function New-MSIPatch
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net5.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net6.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIPackage
 {
@@ -2934,11 +2922,6 @@ function New-MSIPackage
         [ValidateNotNullOrEmpty()]
         [string] $ProductVersion,
 
-        # The ProductCode property is a unique identifier for the particular product release
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductCode,
-
         # Source Path to the Product Files - required to package the contents into an MSI
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -2947,22 +2930,22 @@ function New-MSIPackage
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $ProductWxsPath = "$RepoRoot\assets\Product.wxs",
+        [string] $ProductWxsPath = "$RepoRoot\assets\wix\Product.wxs",
 
         # File describing the MSI file components
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $FilesWxsPath = "$RepoRoot\assets\Files.wxs",
+        [string] $FilesWxsPath = "$RepoRoot\assets\wix\Files.wxs",
+
+        # File describing the MSI Package creation semantics
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({Test-Path $_})]
+        [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
 
         # Path to Assets folder containing artifacts such as icons, images
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
         [string] $AssetsPath = "$RepoRoot\assets",
-
-        # Path to license.rtf file - for the EULA
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $LicenseFilePath = "$RepoRoot\assets\license.rtf",
 
         # Architecture to use when creating the MSI
         [Parameter(Mandatory = $true)]
@@ -2971,65 +2954,44 @@ function New-MSIPackage
         [string] $ProductTargetArchitecture,
 
         # Force overwrite of package
-        [Switch] $Force
+        [Switch] $Force,
+
+        [string] $CurrentLocation = (Get-Location)
     )
 
     $wixPaths = Get-WixPath
 
-    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $simpleProductVersion = '7'
+    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $ProductNameSuffix -ProductVersion $ProductVersion
+    $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
+    $ProductSemanticVersion = $windowsNames.ProductSemanticVersion
+    $packageName = $windowsNames.PackageName
+    $ProductVersion = $windowsNames.ProductVersion
+    Write-Verbose "Create MSI for Product $productSemanticVersionWithName" -Verbose
+    Write-Verbose "ProductSemanticVersion =  $productSemanticVersion" -Verbose
+    Write-Verbose "packageName =  $packageName" -Verbose
+    Write-Verbose "ProductVersion =  $ProductVersion" -Verbose
+
+    $simpleProductVersion = [string]([Version]$ProductVersion).Major
     $isPreview = Test-IsPreview -Version $ProductSemanticVersion
     if ($isPreview)
     {
         $simpleProductVersion += '-preview'
     }
 
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
-
-    $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
-
     $staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath
 
     Get-ChildItem $staging -Filter *.pdb -Recurse | Remove-Item -Force
+
+    $assetsInSourcePath = Join-Path $staging 'assets'
 
     New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
 
     Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
     Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
 
-    $productVersionWithName = $ProductName + '_' + $ProductVersion
-    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
-    $productDirectoryName = 'PowerShell_6'
 
-    Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
-    [Environment]::SetEnvironmentVariable("ProductSourcePath", $staging, "Process")
-    # These variables are used by Product.wxs in assets directory
-    [Environment]::SetEnvironmentVariable("ProductDirectoryName", $productDirectoryName, "Process")
-    [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
-    [Environment]::SetEnvironmentVariable("ProductCode", $ProductCode, "Process")
-    [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
-    [Environment]::SetEnvironmentVariable("SimpleProductVersion", $simpleProductVersion, "Process")
-    [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
-    [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
-    if (!$isPreview)
-    {
-        [Environment]::SetEnvironmentVariable("PwshPath", "[$productDirectoryName]", "Process")
-        [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '31ab5147-9a97-4452-8443-d9709f0516e1', "Process")
-        [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '1d00683b-0f84-4db8-a64f-2f98ad42fe06', "Process")
-        [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_black.ico', "Process")
-        # The ApplicationProgramsMenuShortcut GUID should be changed when bumping the major version because the installation directory changes
-        [Environment]::SetEnvironmentVariable("ApplicationProgramsMenuShortcut", '6a69de6c-183d-4bf4-a40e-83007d6293bf', "Process")
-    }
-    else
-    {
-        [Environment]::SetEnvironmentVariable("PwshPath", "[$productDirectoryName]preview", "Process")
-        [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '39243d76-adaf-42b1-94fb-16ecf83237c8', "Process")
-        [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '86abcfbd-1ccc-4a88-b8b2-0facfde29094', "Process")
-        [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_av_colors.ico', "Process")
-        [Environment]::SetEnvironmentVariable("ApplicationProgramsMenuShortcut", 'ab727c4f-2311-474c-9ade-f2c6fd7f7322', "Process")
-    }
     $fileArchitecture = 'amd64'
     $ProductProgFilesDir = "ProgramFiles64Folder"
     if ($ProductTargetArchitecture -eq "x86")
@@ -3037,35 +2999,38 @@ function New-MSIPackage
         $fileArchitecture = 'x86'
         $ProductProgFilesDir = "ProgramFilesFolder"
     }
-    [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
-    [Environment]::SetEnvironmentVariable("FileArchitecture", $fileArchitecture, "Process")
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
-    $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
-    $wixObjFragmentPath = Join-Path $env:Temp "files.wixobj"
 
     # cleanup any garbage on the system
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-    Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
-    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
 
-    $packageName = $productSemanticVersionWithName
-    if ($ProductNameSuffix) {
-        $packageName += "-$ProductNameSuffix"
-    }
-    $msiLocationPath = Join-Path $PWD "$packageName.msi"
-    $msiPdbLocationPath = Join-Path $PWD "$packageName.wixpdb"
+    $msiLocationPath = Join-Path $CurrentLocation "$packageName.msi"
+    $msiPdbLocationPath = Join-Path $CurrentLocation "$packageName.wixpdb"
 
-    if (!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
-    {
+    if (!$Force.IsPresent -and (Test-Path -Path $msiLocationPath)) {
         Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
     }
 
     Write-Log "verifying no new files have been added or removed..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+    $arguments = @{
+        IsPreview              = $isPreview
+        ProductSourcePath      = $staging
+        ProductName            = $ProductName
+        ProductVersion         = $ProductVersion
+        SimpleProductVersion   = $simpleProductVersion
+        ProductSemanticVersion = $ProductSemanticVersion
+        ProductVersionWithName = $productVersionWithName
+        ProductProgFilesDir    = $ProductProgFilesDir
+        FileArchitecture       = $fileArchitecture
+    }
+
+    $buildArguments = New-MsiArgsArray -Argument $arguments
+
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var var.ProductSourcePath $buildArguments -v}
 
     # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
-    Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
+    Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath -FileArchitecture $fileArchitecture
 
     if ($isPreview)
     {
@@ -3081,17 +3046,9 @@ function New-MSIPackage
         Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
     }
 
-    Write-Log "running candle..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath  "$ProductWxsPath"  "$FilesWxsPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v}
-
-    Write-Log "running light..."
-    # suppress ICE61, because we allow same version upgrades
-    # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath"}
+    Start-MsiBuild -WxsFile $ProductWxsPath, $FilesWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument $arguments -MsiLocationPath $msiLocationPath -MsiPdbLocationPath $msiPdbLocationPath
 
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-    Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
-    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
 
     if ((Test-Path $msiLocationPath) -and (Test-Path $msiPdbLocationPath))
     {
@@ -3109,6 +3066,227 @@ function New-MSIPackage
     }
 }
 
+function Get-WindowsNames {
+    param(
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductVersion
+    )
+
+    Write-Verbose -Message "Getting Windows Names for ProductName: $ProductName; ProductNameSuffix: $ProductNameSuffix; ProductVersion: $ProductVersion" -Verbose
+
+    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+
+    $productVersionWithName = $ProductName + '_' + $ProductVersion
+    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
+
+    $packageName = $productSemanticVersionWithName
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
+
+    return [PSCustomObject]@{
+        PackageName                    = $packageName
+        ProductVersionWithName         = $productVersionWithName
+        ProductSemanticVersion         = $ProductSemanticVersion
+        ProductSemanticVersionWithName = $productSemanticVersionWithName
+        ProductVersion                 = $ProductVersion
+    }
+}
+
+function New-ExePackage {
+    param(
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductName = 'PowerShell',
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+
+        [string] $ProductVersion,
+
+        # File describing the MSI Package creation semantics
+        [ValidateNotNullOrEmpty()]
+        [ValidateScript({Test-Path $_})]
+        [string] $BundleWxsPath = "$RepoRoot\assets\wix\bundle.wxs",
+
+        # Architecture to use when creating the MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture,
+
+        # Location of the signed MSI
+        [Parameter(Mandatory = $true)]
+        [string]
+        $MsiLocationPath,
+
+        [string] $CurrentLocation = (Get-Location)
+    )
+
+    $productNameSuffix = "win-$ProductTargetArchitecture"
+
+    $windowsNames = Get-WindowsNames -ProductName $ProductName -ProductNameSuffix $productNameSuffix -ProductVersion $ProductVersion
+    $productSemanticVersionWithName = $windowsNames.ProductSemanticVersionWithName
+    $packageName = $windowsNames.PackageName
+    $isPreview = Test-IsPreview -Version $windowsNames.ProductSemanticVersion
+
+    Write-Verbose "Create EXE for Product $productSemanticVersionWithName" -verbose
+    Write-Verbose "packageName =  $packageName" -Verbose
+
+    $exeLocationPath = Join-Path $CurrentLocation "$packageName.exe"
+    $exePdbLocationPath = Join-Path $CurrentLocation "$packageName.exe.wixpdb"
+    $windowsVersion = Get-WindowsVersion -packageName $packageName
+
+    Start-MsiBuild -WxsFile $BundleWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
+        IsPreview      = $isPreview
+        TargetPath     = $MsiLocationPath
+        WindowsVersion = $windowsVersion
+    }  -MsiLocationPath $exeLocationPath -MsiPdbLocationPath $exePdbLocationPath
+
+    return $exeLocationPath
+}
+
+<#
+Allows you to extract the engine of exe package, mainly for signing
+Any existing signature will be removed.
+ #>
+function Expand-ExePackageEngine {
+    param(
+        # Location of the unsigned EXE
+        [Parameter(Mandatory = $true)]
+        [string]
+        $ExePath,
+
+        # Location to put the expanded engine.
+        [Parameter(Mandatory = $true)]
+        [string]
+        $EnginePath
+    )
+
+    <#
+    2. detach the engine from TestInstaller.exe:
+    insignia -ib TestInstaller.exe -o engine.exe
+    #>
+
+    $wixPaths = Get-WixPath
+
+    $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
+    $resolvedEnginePath = [System.IO.Path]::GetFullPath($EnginePath)
+
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ib $resolvedExePath -o $resolvedEnginePath}
+}
+
+<#
+Allows you to replace the engine (installer) in the exe package.
+Used to replace the engine with a signed version
+#>
+function Compress-ExePackageEngine {
+    param(
+        # Location of the unsigned EXE
+        [Parameter(Mandatory = $true)]
+        [string]
+        $ExePath,
+
+        # Location of the signed engine
+        [Parameter(Mandatory = $true)]
+        [string]
+        $EnginePath
+    )
+
+
+    <#
+    4. re-attach the signed engine.exe to the bundle:
+    insignia -ab engine.exe TestInstaller.exe -o TestInstaller.exe
+    #>
+
+    $wixPaths = Get-WixPath
+
+    $resolvedEnginePath = (Resolve-Path -Path $EnginePath).ProviderPath
+    $resolvedExePath = (Resolve-Path -Path $ExePath).ProviderPath
+
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixInsigniaExePath -ab $resolvedEnginePath $resolvedExePath -o $resolvedExePath}
+}
+
+function New-MsiArgsArray {
+    param(
+        [Parameter(Mandatory)]
+        [Hashtable]$Argument
+    )
+
+    $buildArguments = @()
+    foreach ($key in $Argument.Keys) {
+        $buildArguments += "-d$key=`"$($Argument.$key)`""
+    }
+
+    return $buildArguments
+}
+
+function Start-MsiBuild {
+    param(
+        [string[]] $WxsFile,
+        [string[]] $Extension = @('WixUIExtension', 'WixUtilExtension', 'WixBalExtension'),
+        [string] $ProductTargetArchitecture,
+        [Hashtable] $Argument,
+        [string] $MsiLocationPath,
+        [string] $MsiPdbLocationPath
+    )
+
+    $outDir = $env:Temp
+
+    $wixPaths = Get-WixPath
+
+    $extensionArgs = @()
+    foreach ($extensionName in $Extension) {
+        $extensionArgs += '-ext'
+        $extensionArgs += $extensionName
+    }
+
+    $buildArguments = New-MsiArgsArray -Argument $Argument
+
+    $objectPaths = @()
+    foreach ($file in $WxsFile) {
+        $fileName = [system.io.path]::GetFileNameWithoutExtension($file)
+        $objectPaths += Join-Path $outDir -ChildPath "${filename}.wixobj"
+    }
+
+    foreach ($file in $objectPaths) {
+        Remove-Item -ErrorAction SilentlyContinue $file -Force
+        Remove-Item -ErrorAction SilentlyContinue $file -Force
+    }
+
+    $resolvedWxsFiles = @()
+    foreach ($file in $WxsFile) {
+        $resolvedWxsFiles += (Resolve-Path -Path $file).ProviderPath
+    }
+
+    Write-Verbose "$resolvedWxsFiles" -Verbose
+
+    Write-Log "running candle..."
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath $resolvedWxsFiles -out "$outDir\\" $extensionArgs -arch $ProductTargetArchitecture $buildArguments -v}
+
+    Write-Log "running light..."
+    # suppress ICE61, because we allow same version upgrades
+    # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $objectPaths $extensionArgs }
+
+    foreach($file in $objectPaths)
+    {
+        Remove-Item -ErrorAction SilentlyContinue $file -Force
+        Remove-Item -ErrorAction SilentlyContinue $file -Force
+    }
+}
+
 <#
     .Synopsis
         Creates a Windows AppX MSIX package and assumes that the binaries are already built using 'Start-PSBuild'.
@@ -3117,7 +3295,7 @@ function New-MSIPackage
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net5.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net6.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIXPackage
 {
@@ -3147,7 +3325,9 @@ function New-MSIXPackage
         [string] $Architecture,
 
         # Force overwrite of package
-        [Switch] $Force
+        [Switch] $Force,
+
+        [string] $CurrentLocation = (Get-Location)
     )
 
     $makeappx = Get-Command makeappx -CommandType Application -ErrorAction Ignore
@@ -3186,31 +3366,20 @@ function New-MSIXPackage
     Write-Verbose -Verbose "ProductName: $productName"
     Write-Verbose -Verbose "DisplayName: $displayName"
 
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
-    if (([Version]$ProductVersion).Revision -eq -1) {
-        $ProductVersion += ".0"
+    $ProductVersion = Get-WindowsVersion -PackageName $packageName
+
+    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
+    if ($isPreview) {
+        Write-Verbose "Using Preview assets" -Verbose
     }
-
-    # The Store requires the last digit of the version to be 0 so we swap the build and revision
-    # This only affects Preview versions where the last digit is the preview number
-    # For stable versions, the last digit is already zero so no changes
-    $pversion = [version]$ProductVersion
-    if ($pversion.Revision -ne 0) {
-        $revision = $pversion.Revision
-        if ($packageName.Contains('-rc')) {
-            # For Release Candidates, we use numbers in the 100 range
-            $revision += 100
-        }
-
-        $pversion = [version]::new($pversion.Major, $pversion.Minor, $revision, 0)
-        $ProductVersion = $pversion.ToString()
-    }
-
-    Write-Verbose "Version: $productversion" -Verbose
 
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
+    # cp-459155 is 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    # authenticodeFormer is 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    $releasePublisher = 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
-    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName)
+    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName).Replace('$PUBLISHER$', $releasePublisher)
     Set-Content -Path "$ProductSourcePath\AppxManifest.xml" -Value $appxManifest -Force
     # Necessary image assets need to be in source assets folder
     $assets = @(
@@ -3223,11 +3392,6 @@ function New-MSIXPackage
 
     if (!(Test-Path "$ProductSourcePath\assets")) {
         $null = New-Item -ItemType Directory -Path "$ProductSourcePath\assets"
-    }
-
-    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
-    if ($isPreview) {
-        Write-Verbose "Using Preview assets" -Verbose
     }
 
     $assets | ForEach-Object {
@@ -3248,7 +3412,7 @@ function New-MSIXPackage
         Start-NativeExecution -VerboseOutputOnError { & $makepri new /v /o /pr $ProductSourcePath /cf (Join-Path $ProductSourcePath "priconfig.xml") }
         Pop-Location
         Write-Verbose "Creating msix package" -Verbose
-        Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $PWD -ChildPath "$packageName.msix") }
+        Start-NativeExecution -VerboseOutputOnError { & $makeappx pack /o /v /h SHA256 /d $ProductSourcePath /p (Join-Path -Path $CurrentLocation -ChildPath "$packageName.msix") }
         Write-Verbose "Created $packageName.msix" -Verbose
     }
 }
@@ -3262,17 +3426,19 @@ function Test-FileWxs
         # File describing the MSI file components from the asset folder
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $FilesWxsPath = "$RepoRoot\assets\Files.wxs",
+        [string] $FilesWxsPath = "$RepoRoot\assets\wix\Files.wxs",
 
         # File describing the MSI file components generated by heat
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {Test-Path $_})]
-        [string] $HeatFilesWxsPath
+        [string] $HeatFilesWxsPath,
+
+        [string] $FileArchitecture
     )
 
     # Update the fileArchitecture in our file to the actual value.  Since, the heat file will have the actual value.
     # Wix will update this automaticaly, but the output is not the same xml
-    $filesAssetString = (Get-Content -Raw -Path $FilesWxsPath).Replace('$(var.FileArchitecture)',$env:FileArchitecture)
+    $filesAssetString = (Get-Content -Raw -Path $FilesWxsPath).Replace('$(var.FileArchitecture)', $FileArchitecture)
 
     [xml] $filesAssetXml = $filesAssetString
     [xml] $newFilesAssetXml = $filesAssetString
@@ -3333,7 +3499,6 @@ function Test-FileWxs
             $newComponent = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'Component' -Node $filesNode -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
             $componentId = New-WixId -Prefix 'cmp'
             New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponent -Name 'Id' -Value $componentId
-            New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newComponent -Name 'Guid' -Value "{$(New-Guid)}"
             # Crete new File in Component
             $newFile = New-XmlElement -XmlDoc $newFilesAssetXml -LocalName 'File' -Node $newComponent -PassThru -NamespaceUri 'http://schemas.microsoft.com/wix/2006/wi'
             New-XmlAttribute -XmlDoc $newFilesAssetXml -Element $newFile -Name 'Id' -Value (New-WixId -Prefix 'fil')
@@ -3357,7 +3522,7 @@ function Test-FileWxs
         Write-Verbose "Rebuilding componentRefs" -Verbose
 
         # add all the file components to the patch
-        foreach($component in $components)
+        foreach($component in $componentRefs)
         {
             $componentId = $component.Id
             Write-Verbose "Removing $componentId" -Verbose
@@ -3389,6 +3554,7 @@ function Test-FileWxs
         $newXml | Out-File -FilePath $newXmlFileName -Encoding ascii
         Write-Log -message "Updated xml saved to $newXmlFileName."
         Write-Log -message "If component files were intentionally changed, such as due to moving to a newer .NET Core runtime, update '$FilesWxsPath' with the content from '$newXmlFileName'."
+        Write-Information -MessageData @{FilesWxsPath = $FilesWxsPath; NewFile = $newXmlFileName} -Tags 'PackagingWxs'
         if ($env:TF_BUILD)
         {
             Write-Host "##vso[artifact.upload containerfolder=wix;artifactname=wix]$newXmlFileName"
@@ -3530,6 +3696,36 @@ function New-WixId
     "$Prefix$guidPortion"
 }
 
+function Get-WindowsVersion {
+    param (
+        [parameter(Mandatory)]
+        [string]$PackageName
+    )
+
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+    if (([Version]$ProductVersion).Revision -eq -1) {
+        $ProductVersion += ".0"
+    }
+
+    # The Store requires the last digit of the version to be 0 so we swap the build and revision
+    # This only affects Preview versions where the last digit is the preview number
+    # For stable versions, the last digit is already zero so no changes
+    $pversion = [version]$ProductVersion
+    if ($pversion.Revision -ne 0) {
+        $revision = $pversion.Revision
+        if ($packageName.Contains('-rc')) {
+            # For Release Candidates, we use numbers in the 100 range
+            $revision += 100
+        }
+
+        $pversion = [version]::new($pversion.Major, $pversion.Minor, $revision, 0)
+        $ProductVersion = $pversion.ToString()
+    }
+
+    Write-Verbose "Version: $productversion" -Verbose
+    return $productversion
+}
+
 # Builds coming out of this project can have version number as 'a.b.c' OR 'a.b.c-d-f'
 # This function converts the above version into major.minor[.build[.revision]] format
 function Get-PackageVersionAsMajorMinorBuildRevision
@@ -3546,7 +3742,7 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     $packageVersionTokens = $Version.Split('-')
     $packageVersion = ([regex]::matches($Version, "\d+(\.\d+)+"))[0].value
 
-    if (1 -eq $packageVersionTokens.Count) {
+    if (1 -eq $packageVersionTokens.Count -and ([Version]$packageVersion).Revision -eq -1) {
         # In case the input is of the form a.b.c, add a '0' at the end for revision field
         $packageVersion = $packageVersion + '.0'
     } elseif (1 -lt $packageVersionTokens.Count) {
@@ -3709,6 +3905,9 @@ function New-GlobalToolNupkg
     $packageInfo | ForEach-Object {
         $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
 
+        # Add the icon file to the package
+        Copy-Item -Path $iconPath -Destination "$($_.RootFolder)/$iconFileName" -Verbose
+
         $packageType = $_.Type
 
         switch ($packageType)
@@ -3795,7 +3994,7 @@ function New-GlobalToolNupkg
         }
 
         $packageName = $_.PackageName
-        $nuSpec = $packagingStrings.GlobalToolNuSpec -f $packageName, $PackageVersion
+        $nuSpec = $packagingStrings.GlobalToolNuSpec -f $packageName, $PackageVersion, $iconFileName
         $nuSpec | Out-File -FilePath (Join-Path $_.RootFolder "$packageName.nuspec") -Encoding ascii
         $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml") -Encoding ascii
 

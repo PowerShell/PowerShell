@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         #region Virtual Method Overrides
 
         /// <summary>
-        /// Default constructor for InvokeWebRequestCommand.
+        /// Initializes a new instance of the <see cref="InvokeWebRequestCommand"/> class.
         /// </summary>
         public InvokeWebRequestCommand() : base()
         {
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="response"></param>
         internal override void ProcessResponse(HttpResponseMessage response)
         {
-            if (response == null) { throw new ArgumentNullException("response"); }
+            if (response == null) { throw new ArgumentNullException(nameof(response)); }
 
             Stream responseStream = StreamHelper.GetResponseStream(response);
             if (ShouldWriteToPipeline)

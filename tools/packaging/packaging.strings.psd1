@@ -11,6 +11,14 @@ if [ ! -f /etc/shells ] ; then
 else
     grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
 fi
+if [ -f /lib64/libssl.so.1.1 ] ; then
+    ln -f -s /lib64/libssl.so.1.1 {1}/libssl.so.1.0.0
+    ln -f -s /lib64/libcrypto.so.1.1.1 {1}/libcrypto.so.1.0.0
+else
+    ln -f -s /lib64/libssl.so.10 {1}/libssl.so.1.0.0
+    ln -f -s /lib64/libcrypto.so.10 {1}/libcrypto.so.1.0.0
+fi
+
 '@
 
     RedHatAfterRemoveScript = @'
@@ -20,6 +28,8 @@ if [ "$1" = 0 ] ; then
         grep -v '^{0}$' /etc/shells > $TmpFile
         cp -f $TmpFile /etc/shells
         rm -f $TmpFile
+        rm -f {1}/libssl.so.1.0.0
+        rm -f {1}/libcrypto.so.1.0.0
     fi
 fi
 '@
@@ -38,6 +48,18 @@ case "$1" in
         exit 0
     ;;
 esac
+
+if [ -f /usr/lib/x86_64-linux-gnu/libssl.so.1.1 ] ; then
+    ln -f -s /usr/lib/x86_64-linux-gnu/libssl.so.1.1 {1}/libssl.so.1.0.0
+    ln -f -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 {1}/libcrypto.so.1.0.0
+elif [ -f /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 ] ; then
+    ln -f -s /usr/lib/x86_64-linux-gnu/libssl.so.1.0.2 {1}/libssl.so.1.0.0
+    ln -f -s /usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2 {1}/libcrypto.so.1.0.0
+else
+    ln -f -s /lib64/libssl.so.10 {1}/libssl.so.1.0.0
+    ln -f -s /lib64/libcrypto.so.10 {1}/libcrypto.so.1.0.0
+fi
+
 '@
 
     UbuntuAfterRemoveScript = @'
@@ -46,6 +68,8 @@ set -e
 case "$1" in
         (remove)
         remove-shell "{0}"
+        rm -f {1}/libssl.so.1.0.0
+        rm -f {1}/libcrypto.so.1.0.0
         ;;
 esac
 '@
@@ -130,11 +154,11 @@ open {0}
         <version>{1}</version>
         <authors>Microsoft</authors>
         <owners>Microsoft,PowerShell</owners>
-        <requireLicenseAcceptance>true</requireLicenseAcceptance>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Runtime for hosting PowerShell</description>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
-        <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
-        <licenseUrl>https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt</licenseUrl>
+        <icon>{2}</icon>
+        <license type="expression">MIT</license>
         <tags>PowerShell</tags>
         <language>en-US</language>
         <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
@@ -142,7 +166,7 @@ open {0}
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework="net5.0"></group>
+            <group targetFramework="net6.0"></group>
         </dependencies>
     </metadata>
 </package>
@@ -167,7 +191,7 @@ open {0}
         <authors>Microsoft</authors>
         <owners>Microsoft,PowerShell</owners>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
-        <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
+        <icon>{2}</icon>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>PowerShell global tool</description>
         <license type="expression">MIT</license>

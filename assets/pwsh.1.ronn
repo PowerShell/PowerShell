@@ -120,4 +120,3 @@ These are automatically defined PowerShell-language variables.
 ## COPYRIGHT
 
 Copyright (c) Microsoft Corporation.
-All rights reserved.

@@ -153,7 +153,7 @@ namespace System.Management.Automation
         {
             if (collection == null)
             {
-                throw new ArgumentNullException("collection");
+                throw new ArgumentNullException(nameof(collection));
             }
 
             bool result = false;
@@ -325,4 +325,3 @@ namespace Microsoft.PowerShell.Commands
         Overwrite
     }
 }
-

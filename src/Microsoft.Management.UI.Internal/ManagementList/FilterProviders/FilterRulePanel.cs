@@ -133,7 +133,7 @@ namespace Microsoft.Management.UI.Internal
         {
             this.InitializeTemplates();
 
-            this.Controller.FilterExpressionChanged += new EventHandler(this.Controller_FilterExpressionChanged);
+            this.Controller.FilterExpressionChanged += this.Controller_FilterExpressionChanged;
         }
 
         #endregion Ctor
@@ -213,11 +213,13 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         protected virtual void NotifyFilterExpressionChanged()
         {
+            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             EventHandler eh = this.FilterExpressionChanged;
             if (eh != null)
             {
                 eh(this, new EventArgs());
             }
+            #pragma warning restore IDE1005
         }
 
         private void Controller_FilterExpressionChanged(object sender, EventArgs e)

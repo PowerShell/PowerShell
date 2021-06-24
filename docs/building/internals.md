@@ -19,7 +19,7 @@ We use dummy dependencies between projects to leverage `dotnet` build functional
 For example, `src\powershell-win-core\powershell-win-core.csproj` has dependency on `Microsoft.PowerShell.Commands.Diagnostics.csproj`,
 but in reality, there is no build dependency.
 
-Dummy dependencies allows us to build just `$Top` folder, instead of building several folders.
+Dummy dependencies allow us to build just `$Top` folder, instead of building several folders.
 
 ### Dummy dependencies rules
 
@@ -106,7 +106,7 @@ On Linux/macOS, PowerShell Core depends on the binary `libpsl-native.so/libpsl-n
 
 Building those native components requires setting up additional dependencies,
 which could be a burden to those who don't seek to make changes to the native components.
-At the meantime, the native component code seldom changes,
+In the meantime, the native component code seldom changes,
 so it doesn't make sense to always build them with `Start-PSBuild`.
 Therefore, we decided to wrap the native components into NuGet packages,
 so that we only need to build them once when changes are made,
@@ -178,12 +178,12 @@ The layout of files should look like this:
 Have the DLLs signed with `authenticode dual` certificate and run `nuget pack` from the parent of the `runtimes` folder where `psrp.windows.nuspec` resides.
 Be sure to use the latest recommended version of [nuget.exe](https://www.nuget.org/downloads).
 
-Publish latest nupkg to https://powershell.myget.org/feed/powershell-core/package/nuget/psrp.windows.
+Publish the latest nupkg to https://powershell.myget.org/feed/powershell-core/package/nuget/psrp.windows.
 
 `PowerShell.Core.Instrumentation.dll` NuGet package is created the same way, but in a separate directory following the same layout above.
 To create a new NuGet package for `PowerShell.Core.Instrumentation.dll`, you will need the `PowerShell.Core.Instrumentation.nuspec` found in the repo under `src\PowerShell.Core.Instrumentation`.
 
-Publish latest nupkg to https://powershell.myget.org/feed/powershell-core/package/nuget/PowerShell.Core.Instrumentation.
+Publish the latest nupkg to https://powershell.myget.org/feed/powershell-core/package/nuget/PowerShell.Core.Instrumentation.
 
 ### libpsl
 

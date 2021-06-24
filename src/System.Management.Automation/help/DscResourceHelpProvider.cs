@@ -317,7 +317,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < doc.ChildNodes.Count; i++)
                 {
                     XmlNode node = doc.ChildNodes[i];
-                    if (node.NodeType == XmlNodeType.Element && string.Compare(node.LocalName, "helpItems", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (node.NodeType == XmlNodeType.Element && string.Equals(node.LocalName, "helpItems", StringComparison.OrdinalIgnoreCase))
                     {
                         helpItemsNode = node;
                         break;
@@ -343,7 +343,7 @@ namespace System.Management.Automation
 
                         string nodeLocalName = node.LocalName;
 
-                        bool isDscResource = (string.Compare(nodeLocalName, "dscResource", StringComparison.OrdinalIgnoreCase) == 0);
+                        bool isDscResource = (string.Equals(nodeLocalName, "dscResource", StringComparison.OrdinalIgnoreCase));
 
                         if (node.NodeType == XmlNodeType.Element && isDscResource)
                         {

@@ -135,10 +135,10 @@ namespace Microsoft.Management.UI.Internal
                    {
                        this.gridViewWindow = new Window();
                        this.managementList = CreateManagementList(outputModeOptions);
-                       this.gridViewWindow.Loaded += new RoutedEventHandler(this.GridViewWindowLoaded);
+                       this.gridViewWindow.Loaded += this.GridViewWindowLoaded;
                        this.gridViewWindow.Content = CreateMainGrid(outputModeOptions);
                        this.gridViewWindow.Title = invocation;
-                       this.gridViewWindow.Closed += new EventHandler(this.GridViewWindowClosed);
+                       this.gridViewWindow.Closed += this.GridViewWindowClosed;
 
                        RoutedCommand plusSettings = new RoutedCommand();
                        KeyGestureConverter keyGestureConverter = new KeyGestureConverter();
@@ -213,7 +213,7 @@ namespace Microsoft.Management.UI.Internal
 
             if (this.zoomLevel < ZOOM_MAX)
             {
-                this.zoomLevel = this.zoomLevel + ZOOM_INCREMENT;
+                this.zoomLevel += ZOOM_INCREMENT;
                 Grid g = this.gridViewWindow.Content as Grid;
 
                 if (g != null)
@@ -232,7 +232,7 @@ namespace Microsoft.Management.UI.Internal
         {
             if (this.zoomLevel >= ZOOM_MIN)
             {
-                this.zoomLevel = this.zoomLevel - ZOOM_INCREMENT;
+                this.zoomLevel -= ZOOM_INCREMENT;
                 Grid g = this.gridViewWindow.Content as Grid;
                 if (g != null)
                 {
@@ -246,6 +246,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="outputMode">Output mode of the out-gridview.</param>
         /// <returns>A new ManagementList.</returns>
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private ManagementList CreateManagementList(string outputMode)
         {
             ManagementList newList = new ManagementList();
@@ -323,7 +324,7 @@ namespace Microsoft.Management.UI.Internal
             ok.SetValue(Grid.ColumnProperty, 0);
             ok.IsDefault = true;
             ok.SetValue(AutomationProperties.AutomationIdProperty, "OGVOK");
-            ok.Click += new RoutedEventHandler(OK_Click);
+            ok.Click += OK_Click;
             return ok;
         }
 
@@ -340,7 +341,7 @@ namespace Microsoft.Management.UI.Internal
             cancel.SetValue(Grid.ColumnProperty, 1);
             cancel.IsCancel = true;
             cancel.SetValue(AutomationProperties.AutomationIdProperty, "OGVCancel");
-            cancel.Click += new RoutedEventHandler(Cancel_Click);
+            cancel.Click += Cancel_Click;
             return cancel;
         }
 

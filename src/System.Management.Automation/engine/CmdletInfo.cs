@@ -44,7 +44,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             // Get the verb and noun from the name
@@ -52,7 +52,7 @@ namespace System.Management.Automation
             {
                 throw
                     PSTraceSource.NewArgumentException(
-                        "name",
+                        nameof(name),
                         DiscoveryExceptions.InvalidCmdletNameFormat,
                         name);
             }
@@ -105,12 +105,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             if (implementingType == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             if (!typeof(Cmdlet).IsAssignableFrom(implementingType))
@@ -123,7 +123,7 @@ namespace System.Management.Automation
             {
                 throw
                     PSTraceSource.NewArgumentException(
-                        "name",
+                        nameof(name),
                         DiscoveryExceptions.InvalidCmdletNameFormat,
                         name);
             }
@@ -149,7 +149,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _verb = string.Empty;
+        private readonly string _verb = string.Empty;
 
         /// <summary>
         /// Gets the noun of the cmdlet.
@@ -162,7 +162,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _noun = string.Empty;
+        private readonly string _noun = string.Empty;
 
         internal static bool SplitCmdletName(string name, out string verb, out string noun)
         {
@@ -224,7 +224,7 @@ namespace System.Management.Automation
             }
         }
 
-        private PSSnapInInfo _PSSnapin;
+        private readonly PSSnapInInfo _PSSnapin;
 
         /// <summary>
         /// Gets the name of the PSSnapin the cmdlet is implemented in.
@@ -279,7 +279,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Type _implementingType = null;
+        private readonly Type _implementingType = null;
 
         /// <summary>
         /// Gets the synopsis of the cmdlet.
@@ -535,8 +535,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _cmdletMetadata ??
-                       (_cmdletMetadata = CommandMetadata.Get(this.Name, this.ImplementingType, Context));
+                return _cmdletMetadata ??= CommandMetadata.Get(this.Name, this.ImplementingType, Context);
             }
         }
 
@@ -548,7 +547,7 @@ namespace System.Management.Automation
             {
                 if (ImplementingType != null)
                 {
-                    return (ImplementingType.GetInterface(typeof(IDynamicParameters).Name, true) != null);
+                    return (ImplementingType.GetInterface(nameof(IDynamicParameters), true) != null);
                 }
                 else
                 {

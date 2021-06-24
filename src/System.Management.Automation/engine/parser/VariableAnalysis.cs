@@ -25,18 +25,26 @@ namespace System.Management.Automation.Language
         }
 
         public int BitIndex { get; set; }
+
         public int LocalTupleIndex { get; set; }
+
         public Type Type { get; set; }
+
         public string Name { get; set; }
+
         public bool Automatic { get; set; }
+
         public bool PreferenceVariable { get; set; }
+
         public bool Assigned { get; set; }
-        public List<Ast> AssociatedAsts { get; private set; }
+
+        public List<Ast> AssociatedAsts { get; }
     }
 
     internal class FindAllVariablesVisitor : AstVisitor
     {
         private static readonly HashSet<string> s_hashOfPessimizingCmdlets = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         private static readonly string[] s_pessimizingCmdlets = new string[]
                                                           {
                                                               "New-Variable",
@@ -102,11 +110,12 @@ namespace System.Management.Automation.Language
                 visitor.VisitParameters(ast.Parameters);
             }
 
-            localsAllocated = visitor._variables.Where(details => details.Value.LocalTupleIndex != VariableAnalysis.Unanalyzed).Count();
+            localsAllocated = visitor._variables.Count(static details => details.Value.LocalTupleIndex != VariableAnalysis.Unanalyzed);
             return visitor._variables;
         }
 
         private bool _disableOptimizations;
+
         private readonly Dictionary<string, VariableAnalysisDetails> _variables
             = new Dictionary<string, VariableAnalysisDetails>(StringComparer.OrdinalIgnoreCase);
 
@@ -251,6 +260,7 @@ namespace System.Management.Automation.Language
         }
 
         private int _runtimeUsingIndex;
+
         public override AstVisitAction VisitUsingExpression(UsingExpressionAst usingExpressionAst)
         {
             // On the local machine, we may have set the index because of a call to ScriptBlockToPowerShell or Invoke-Command.
@@ -337,11 +347,11 @@ namespace System.Management.Automation.Language
                 this.ContinueTarget = continueTarget;
             }
 
-            internal string Label { get; private set; }
+            internal string Label { get; }
 
-            internal Block BreakTarget { get; private set; }
+            internal Block BreakTarget { get; }
 
-            internal Block ContinueTarget { get; private set; }
+            internal Block ContinueTarget { get; }
         }
 
         private class Block
@@ -353,6 +363,7 @@ namespace System.Management.Automation.Language
             internal object _visitData;
             internal bool _throws;
             internal bool _returns;
+
             internal bool _unreachable { get; private set; }
 
             // Only Entry block, that can be constructed via NewEntryBlock() is reachable initially.
@@ -491,7 +502,7 @@ namespace System.Management.Automation.Language
 
         internal static bool AnyVariablesCouldBeAllScope(Dictionary<string, int> variableNames)
         {
-            return variableNames.Any(keyValuePair => s_allScopeVariables.ContainsKey(keyValuePair.Key));
+            return variableNames.Any(static keyValuePair => s_allScopeVariables.ContainsKey(keyValuePair.Key));
         }
 
         private Dictionary<string, VariableAnalysisDetails> _variables;
@@ -570,7 +581,7 @@ namespace System.Management.Automation.Language
         {
             VariableAnalysis va = (new VariableAnalysis());
             va.AnalyzeImpl(ast, false, false);
-            return va._exitBlock._predecessors.All(b => b._returns || b._throws || b._unreachable);
+            return va._exitBlock._predecessors.All(static b => b._returns || b._throws || b._unreachable);
         }
 
         private Tuple<Type, Dictionary<string, int>> AnalyzeImpl(IParameterMetadataProvider ast, bool disableOptimizations, bool scriptCmdlet)
@@ -622,7 +633,7 @@ namespace System.Management.Automation.Language
                         var varName = GetUnaliasedVariableName(variablePath);
                         var details = _variables[varName];
                         details.Assigned = true;
-                        type = type ?? details.Type ?? typeof(object);
+                        type ??= details.Type ?? typeof(object);
 
                         // automatic and preference variables are pre-allocated, so they can't be unallocated
                         // and forced to be dynamic.
@@ -1412,7 +1423,7 @@ namespace System.Management.Automation.Language
             if (label != null)
             {
                 label.Accept(this);
-                if (_loopTargets.Any())
+                if (_loopTargets.Count > 0)
                 {
                     var labelStrAst = label as StringConstantExpressionAst;
                     if (labelStrAst != null)
@@ -1445,13 +1456,13 @@ namespace System.Management.Automation.Language
 
         public object VisitBreakStatement(BreakStatementAst breakStatementAst)
         {
-            BreakOrContinue(breakStatementAst.Label, t => t.BreakTarget);
+            BreakOrContinue(breakStatementAst.Label, static t => t.BreakTarget);
             return null;
         }
 
         public object VisitContinueStatement(ContinueStatementAst continueStatementAst)
         {
-            BreakOrContinue(continueStatementAst.Label, t => t.ContinueTarget);
+            BreakOrContinue(continueStatementAst.Label, static t => t.ContinueTarget);
             return null;
         }
 
@@ -1596,7 +1607,7 @@ namespace System.Management.Automation.Language
             // break or continue, so add the appropriate edges to our graph.  These edges occur after visiting
             // the command elements because command arguments could create new blocks, and we won't have executed
             // the command yet.
-            if (invokesCommand && _loopTargets.Any())
+            if (invokesCommand && _loopTargets.Count > 0)
             {
                 foreach (var loopTarget in _loopTargets)
                 {

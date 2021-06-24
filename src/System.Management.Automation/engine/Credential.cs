@@ -177,8 +177,8 @@ namespace System.Management.Automation
             }
         }
 
-        private string _userName;
-        private SecureString _password;
+        private readonly string _userName;
+        private readonly SecureString _password;
 
         /// <summary>
         /// User's name.
@@ -219,7 +219,7 @@ namespace System.Management.Automation
         public PSCredential(PSObject pso)
         {
             if (pso == null)
-                throw PSTraceSource.NewArgumentNullException("pso");
+                throw PSTraceSource.NewArgumentNullException(nameof(pso));
 
             if (pso.Properties["UserName"] != null)
             {
@@ -405,4 +405,3 @@ namespace System.Management.Automation
         }
     }
 }
-

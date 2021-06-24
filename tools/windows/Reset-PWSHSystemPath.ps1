@@ -32,11 +32,13 @@
 
   Removes ALL PowerShell paths from the Machine level path.
   Good for running right before upgrading PowerShell.
+
 .EXAMPLE
   .\Reset-PWSHSystemPath.ps1 -PathScope Machine, User, Process
 
   Removes all paths but the very last one when sorted in ascending order.
   Processes all path scopes including current process.
+
 .EXAMPLE
   .\Reset-PWSHSystemPath.ps1 -PathScope Machine, User, Process -RemoveAllOccurencs
 
@@ -53,7 +55,7 @@ ForEach ($PathScopeItem in $PathScope)
 {
   $AssembledNewPath = $NewPath = ''
   #From the current path scope. retrieve the array of paths that match the pathspec of PowerShell (to use as a filter)
-  $pathstoremove = @([Environment]::GetEnvironmentVariable("PATH","$PathScopeItem").split(';') | where { $_ -ilike "*\Program Files\Powershell\6*"})
+  $pathstoremove = @([Environment]::GetEnvironmentVariable("PATH","$PathScopeItem").split(';') | Where-Object { $_ -ilike "*\Program Files\Powershell\6*"})
   If (!$RemoveAllOccurences)
   {
     #If we are not removing all occurances of PowerShell paths, then remove the highest sorted path from the filter

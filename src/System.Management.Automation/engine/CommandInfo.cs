@@ -112,7 +112,7 @@ namespace System.Management.Automation
 
             if (name == null)
             {
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             }
 
             Name = name;
@@ -230,7 +230,10 @@ namespace System.Management.Automation
         /// </summary>
         internal ExecutionContext Context
         {
-            get { return _context; }
+            get
+            {
+                return _context;
+            }
 
             set
             {
@@ -287,7 +290,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(newName))
             {
-                throw new ArgumentNullException("newName");
+                throw new ArgumentNullException(nameof(newName));
             }
 
             Name = newName;
@@ -583,7 +586,7 @@ namespace System.Management.Automation
 
         internal CommandMetadata ExternalCommandMetadata
         {
-            get { return _externalCommandMetadata ?? (_externalCommandMetadata = new CommandMetadata(this, true)); }
+            get { return _externalCommandMetadata ??= new CommandMetadata(this, true); }
 
             set { _externalCommandMetadata = value; }
         }
@@ -800,7 +803,7 @@ namespace System.Management.Automation
         {
             if (typeDefinitionAst == null)
             {
-                throw PSTraceSource.NewArgumentNullException("typeDefinitionAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeDefinitionAst));
             }
 
             TypeDefinitionAst = typeDefinitionAst;
@@ -814,7 +817,7 @@ namespace System.Management.Automation
         {
             if (typeName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("typeName");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeName));
             }
 
             _type = typeName.GetReflectionType();
@@ -889,7 +892,7 @@ namespace System.Management.Automation
         /// <summary>
         /// When a type is defined by PowerShell, the ast for that type.
         /// </summary>
-        public TypeDefinitionAst TypeDefinitionAst { get; private set; }
+        public TypeDefinitionAst TypeDefinitionAst { get; }
 
         private bool _typeWasCalculated;
 
@@ -904,7 +907,7 @@ namespace System.Management.Automation
     }
 
     [DebuggerDisplay("{PSTypeName} {Name}")]
-    internal struct PSMemberNameAndType
+    internal readonly struct PSMemberNameAndType
     {
         public readonly string Name;
 
@@ -936,7 +939,7 @@ namespace System.Management.Automation
             var typeName = GetMemberTypeProjection(typename.Name, membersTypes);
             var members = new List<PSMemberNameAndType>();
             members.AddRange(membersTypes);
-            members.Sort((c1, c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
+            members.Sort(static (c1, c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
             return new PSSyntheticTypeName(typeName, typename.Type, members);
         }
 
@@ -960,7 +963,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static bool IsPSTypeName(PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
+        private static bool IsPSTypeName(in PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
 
         private static string GetMemberTypeProjection(string typename, IList<PSMemberNameAndType> members)
         {
@@ -977,11 +980,11 @@ namespace System.Management.Automation
 
             var builder = new StringBuilder(typename, members.Count * 7);
             builder.Append('#');
-            foreach (var m in members.OrderBy(m => m.Name))
+            foreach (var m in members.OrderBy(static m => m.Name))
             {
                 if (!IsPSTypeName(m))
                 {
-                    builder.Append(m.Name).Append(":");
+                    builder.Append(m.Name).Append(':');
                 }
             }
 
@@ -992,6 +995,7 @@ namespace System.Management.Automation
         public IList<PSMemberNameAndType> Members { get; }
     }
 
+#nullable enable
     internal interface IScriptCommandInfo
     {
         ScriptBlock ScriptBlock { get; }

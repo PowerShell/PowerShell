@@ -32,11 +32,11 @@ namespace System.Management.Automation
     {
         #region Private Members
 
-        private List<RemotePipeline> _runningPipelines = new List<RemotePipeline>();
-        private object _syncRoot = new object();
+        private readonly List<RemotePipeline> _runningPipelines = new List<RemotePipeline>();
+        private readonly object _syncRoot = new object();
         private RunspaceStateInfo _runspaceStateInfo = new RunspaceStateInfo(RunspaceState.BeforeOpen);
-        private bool _bSessionStateProxyCallInProgress = false;
-        private RunspaceConnectionInfo _connectionInfo;
+        private readonly bool _bSessionStateProxyCallInProgress = false;
+        private readonly RunspaceConnectionInfo _connectionInfo;
         private RemoteDebugger _remoteDebugger;
         private PSPrimitiveDictionary _applicationPrivateData;
 
@@ -156,8 +156,8 @@ namespace System.Management.Automation
         {
             // The RemoteRunspace object can only be constructed this way with a RunspacePool that
             // is in the disconnected state.
-            if ((runspacePool.RunspacePoolStateInfo.State != RunspacePoolState.Disconnected) ||
-                 !(runspacePool.ConnectionInfo is WSManConnectionInfo))
+            if (runspacePool.RunspacePoolStateInfo.State != RunspacePoolState.Disconnected
+                || runspacePool.ConnectionInfo is not WSManConnectionInfo)
             {
                 throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.InvalidRunspacePool);
             }
@@ -203,17 +203,11 @@ namespace System.Management.Automation
 
             _eventManager = new PSRemoteEventManager(_connectionInfo.ComputerName, this.InstanceId);
 
-            RunspacePool.StateChanged +=
-                new EventHandler<RunspacePoolStateChangedEventArgs>(HandleRunspacePoolStateChanged);
-            RunspacePool.RemoteRunspacePoolInternal.HostCallReceived +=
-                new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
-            RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported +=
-                new EventHandler<RemoteDataEventArgs<Uri>>(HandleURIDirectionReported);
-            RunspacePool.ForwardEvent +=
-                new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
-
-            RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted +=
-                new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
+            RunspacePool.StateChanged += HandleRunspacePoolStateChanged;
+            RunspacePool.RemoteRunspacePoolInternal.HostCallReceived += HandleHostCallReceived;
+            RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported += HandleURIDirectionReported;
+            RunspacePool.ForwardEvent += HandleRunspacePoolForwardEvent;
+            RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted += HandleSessionCreateCompleted;
         }
 
         #endregion Constructors
@@ -656,17 +650,11 @@ namespace System.Management.Automation
 
                     try
                     {
-                        RunspacePool.StateChanged -=
-                                        new EventHandler<RunspacePoolStateChangedEventArgs>(HandleRunspacePoolStateChanged);
-                        RunspacePool.RemoteRunspacePoolInternal.HostCallReceived -=
-                            new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
-                        RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported -=
-                            new EventHandler<RemoteDataEventArgs<Uri>>(HandleURIDirectionReported);
-                        RunspacePool.ForwardEvent -=
-                            new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
-
-                        RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted -=
-                            new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
+                        RunspacePool.StateChanged -= HandleRunspacePoolStateChanged;
+                        RunspacePool.RemoteRunspacePoolInternal.HostCallReceived -= HandleHostCallReceived;
+                        RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported -= HandleURIDirectionReported;
+                        RunspacePool.ForwardEvent -= HandleRunspacePoolForwardEvent;
+                        RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted -= HandleSessionCreateCompleted;
 
                         _eventManager = null;
 
@@ -1041,7 +1029,7 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             return CoreCreatePipeline(command, false, false);
@@ -1062,7 +1050,7 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             return CoreCreatePipeline(command, addToHistory, false);
@@ -1097,7 +1085,7 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             return CoreCreatePipeline(command, addToHistory, true);
@@ -1125,7 +1113,7 @@ namespace System.Management.Automation
 
             lock (_syncRoot)
             {
-                if (_bypassRunspaceStateCheck == false &&
+                if (!_bypassRunspaceStateCheck &&
                     _runspaceStateInfo.State != RunspaceState.Opened &&
                     _runspaceStateInfo.State != RunspaceState.Disconnected) // Disconnected runspaces can have running pipelines.
                 {
@@ -1190,7 +1178,7 @@ namespace System.Management.Automation
             // Concurrency check should be done under runspace lock
             lock (_syncRoot)
             {
-                if (_bSessionStateProxyCallInProgress == true)
+                if (_bSessionStateProxyCallInProgress)
                 {
                     throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.NoPipelineWhenSessionStateProxyInProgress);
                 }
@@ -1213,7 +1201,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal override SessionStateProxy GetSessionStateProxy()
         {
-            return _sessionStateProxy ?? (_sessionStateProxy = new RemoteSessionStateProxy(this));
+            return _sessionStateProxy ??= new RemoteSessionStateProxy(this);
         }
 
         private RemoteSessionStateProxy _sessionStateProxy = null;
@@ -1804,7 +1792,7 @@ namespace System.Management.Automation
     {
         #region Members
 
-        private RemoteRunspace _runspace;
+        private readonly RemoteRunspace _runspace;
         private PowerShell _psDebuggerCommand;
         private bool _remoteDebugSupported;
         private bool _isActive;
@@ -1853,7 +1841,7 @@ namespace System.Management.Automation
         {
             if (runspace == null)
             {
-                throw new PSArgumentNullException("runspace");
+                throw new PSArgumentNullException(nameof(runspace));
             }
 
             _runspace = runspace;
@@ -1882,12 +1870,12 @@ namespace System.Management.Automation
 
             if (command == null)
             {
-                throw new PSArgumentNullException("command");
+                throw new PSArgumentNullException(nameof(command));
             }
 
             if (output == null)
             {
-                throw new PSArgumentNullException("output");
+                throw new PSArgumentNullException(nameof(output));
             }
 
             if (!DebuggerStopped)
@@ -1948,17 +1936,17 @@ namespace System.Management.Automation
                     {
                         // Allow the IncompleteParseException to throw so that the console
                         // can handle here strings and continued parsing.
-                        if (re.ErrorRecord.CategoryInfo.Reason == typeof(IncompleteParseException).Name)
+                        if (re.ErrorRecord.CategoryInfo.Reason == nameof(IncompleteParseException))
                         {
                             throw new IncompleteParseException(
-                                (re.ErrorRecord.Exception != null) ? re.ErrorRecord.Exception.Message : null,
+                                re.ErrorRecord.Exception?.Message,
                                 re.ErrorRecord.FullyQualifiedErrorId);
                         }
 
                         // Allow the RemoteException and InvalidRunspacePoolStateException to propagate so that the host can
                         // clean up the debug session.
-                        if ((re.ErrorRecord.CategoryInfo.Reason == typeof(InvalidRunspacePoolStateException).Name) ||
-                            (re.ErrorRecord.CategoryInfo.Reason == typeof(RemoteException).Name))
+                        if ((re.ErrorRecord.CategoryInfo.Reason == nameof(InvalidRunspacePoolStateException)) ||
+                            (re.ErrorRecord.CategoryInfo.Reason == nameof(RemoteException)))
                         {
                             throw new PSRemotingTransportException(
                                 (re.ErrorRecord.Exception != null) ? re.ErrorRecord.Exception.Message : string.Empty);
@@ -2503,8 +2491,8 @@ namespace System.Management.Automation
         /// </summary>
         internal bool IsRemoteDebug
         {
-            private set;
             get;
+            private set;
         }
 
         /// <summary>
@@ -2672,7 +2660,7 @@ namespace System.Management.Automation
             // Attempt to process debugger stop event on original thread if it
             // is available (i.e., if it is blocked by EndInvoke).
             PowerShell powershell = _runspace.RunspacePool.RemoteRunspacePoolInternal.GetCurrentRunningPowerShell();
-            AsyncResult invokeAsyncResult = (powershell != null) ? powershell.EndInvokeAsyncResult : null;
+            AsyncResult invokeAsyncResult = powershell?.EndInvokeAsyncResult;
 
             bool invokedOnBlockedThread = false;
             if ((invokeAsyncResult != null) && (!invokeAsyncResult.IsCompleted))
@@ -2945,7 +2933,8 @@ namespace System.Management.Automation
 
     internal class RemoteSessionStateProxy : SessionStateProxy
     {
-        private RemoteRunspace _runspace;
+        private readonly RemoteRunspace _runspace;
+
         internal RemoteSessionStateProxy(RemoteRunspace runspace)
         {
             Dbg.Assert(runspace != null, "Caller should validate the parameter");
@@ -2978,7 +2967,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             // Verify the runspace has the Set-Variable command. For performance, throw if we got an error
@@ -3038,7 +3027,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             // Verify the runspace has the Get-Variable command. For performance, throw if we got an error

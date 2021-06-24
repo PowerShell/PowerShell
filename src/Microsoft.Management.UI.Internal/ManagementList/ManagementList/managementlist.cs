@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -128,16 +129,16 @@ namespace Microsoft.Management.UI.Internal
             {
                 e.OldValue.RemoveFilterExpressionProvider(this.SearchBox);
                 e.OldValue.RemoveFilterExpressionProvider(this.FilterRulePanel);
-                e.OldValue.FilterExpressionChanged -= new EventHandler(this.Evaluator_FilterExpressionChanged);
-                e.NewValue.PropertyChanged -= new PropertyChangedEventHandler(this.Evaluator_PropertyChanged);
+                e.OldValue.FilterExpressionChanged -= this.Evaluator_FilterExpressionChanged;
+                e.NewValue.PropertyChanged -= this.Evaluator_PropertyChanged;
             }
 
             // Register the new evaluator \\
             e.NewValue.FilterTarget = this.List;
             e.NewValue.AddFilterExpressionProvider(this.SearchBox);
             e.NewValue.AddFilterExpressionProvider(this.FilterRulePanel);
-            e.NewValue.FilterExpressionChanged += new EventHandler(this.Evaluator_FilterExpressionChanged);
-            e.NewValue.PropertyChanged += new PropertyChangedEventHandler(this.Evaluator_PropertyChanged);
+            e.NewValue.FilterExpressionChanged += this.Evaluator_FilterExpressionChanged;
+            e.NewValue.PropertyChanged += this.Evaluator_PropertyChanged;
         }
 
         private void Evaluator_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -308,6 +309,7 @@ namespace Microsoft.Management.UI.Internal
 
         #region View Manager Callbacks
 
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         partial void OnSaveViewCanExecuteImplementation(CanExecuteRoutedEventArgs e)
         {
             string viewName = (string)e.Parameter;

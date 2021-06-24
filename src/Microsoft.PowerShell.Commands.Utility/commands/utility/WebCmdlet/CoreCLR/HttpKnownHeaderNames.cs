@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal static partial class HttpKnownHeaderNames
+    internal static class HttpKnownHeaderNames
     {
         #region Known_HTTP_Header_Names
 
@@ -79,6 +79,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Known_HTTP_Header_Names
 
         private static HashSet<string> s_contentHeaderSet = null;
+
         internal static HashSet<string> ContentHeaders
         {
             get

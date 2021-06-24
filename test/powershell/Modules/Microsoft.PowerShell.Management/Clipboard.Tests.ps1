@@ -13,7 +13,7 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
         }
 
         AfterAll {
-            $PSDefaultParameterValues = $defaultParamValues
+            $global:PSDefaultParameterValues = $defaultParamValues
         }
 
         It 'Get-Clipboard returns what is in Set-Clipboard' {
@@ -40,6 +40,16 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
             'hello' | Set-Clipboard
             'world' | Set-Clipboard -Append
             Get-Clipboard -Raw | Should -BeExactly "hello$([Environment]::NewLine)world"
+        }
+
+        It 'Set-Clipboard accepts <value> string' -TestCases @(
+            @{ value = 'empty'; text = "" }
+            @{ value = 'null' ; text = $null }
+        ){
+            param ($text)
+
+            $text | Set-Clipboard
+            Get-Clipboard -Raw | Should -BeNullOrEmpty
         }
     }
 }

@@ -11,6 +11,7 @@ namespace System.Management.Automation
     internal sealed class NativeCommand : InternalCommand
     {
         private NativeCommandProcessor _myCommandProcessor;
+
         internal NativeCommandProcessor MyCommandProcessor
         {
             get { return _myCommandProcessor; }

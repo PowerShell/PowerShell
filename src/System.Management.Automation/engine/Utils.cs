@@ -49,7 +49,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out byte b)
         {
-            if (value < byte.MinValue || byte.MaxValue < value)
+            if (value < byte.MinValue || value > byte.MaxValue)
             {
                 b = 0;
                 return false;
@@ -61,7 +61,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out sbyte sb)
         {
-            if (value < sbyte.MinValue || sbyte.MaxValue < value)
+            if (value < sbyte.MinValue || value > sbyte.MaxValue)
             {
                 sb = 0;
                 return false;
@@ -73,7 +73,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out short s)
         {
-            if (value < short.MinValue || short.MaxValue < value)
+            if (value < short.MinValue || value > short.MaxValue)
             {
                 s = 0;
                 return false;
@@ -85,7 +85,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out ushort us)
         {
-            if (value < ushort.MinValue || ushort.MaxValue < value)
+            if (value < ushort.MinValue || value > ushort.MaxValue)
             {
                 us = 0;
                 return false;
@@ -97,7 +97,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out int i)
         {
-            if (value < int.MinValue || int.MaxValue < value)
+            if (value < int.MinValue || value > int.MaxValue)
             {
                 i = 0;
                 return false;
@@ -109,7 +109,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out uint u)
         {
-            if (value < uint.MinValue || uint.MaxValue < value)
+            if (value < uint.MinValue || value > uint.MaxValue)
             {
                 u = 0;
                 return false;
@@ -121,7 +121,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out long l)
         {
-            if (value < long.MinValue || long.MaxValue < value)
+            if (value < long.MinValue || value > long.MaxValue)
             {
                 l = 0;
                 return false;
@@ -133,7 +133,7 @@ namespace System.Management.Automation
 
         internal static bool TryCast(BigInteger value, out ulong ul)
         {
-            if (value < ulong.MinValue || ulong.MaxValue < value)
+            if (value < ulong.MinValue || value > ulong.MaxValue)
             {
                 ul = 0;
                 return false;
@@ -302,7 +302,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Allowed PowerShell Editions.
         /// </summary>
-        internal static string[] AllowedEditionValues = { "Desktop", "Core" };
+        internal static readonly string[] AllowedEditionValues = { "Desktop", "Core" };
 
         /// <summary>
         /// Helper fn to check byte[] arg for null.
@@ -485,6 +485,7 @@ namespace System.Management.Automation
 #endif
 
         internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
+
         internal static string GetApplicationBase(string shellId)
         {
             // Use the location of SMA.dll as the application base.
@@ -732,10 +733,15 @@ namespace System.Management.Automation
         internal const string ProductNameForDirectory = "PowerShell";
 
         /// <summary>
+        /// WSL introduces a new filesystem path to access the Linux filesystem from Windows, like '\\wsl$\ubuntu'.
+        /// </summary>
+        internal const string WslRootPath = @"\\wsl$";
+
+        /// <summary>
         /// The subdirectory of module paths
         /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules.
         /// </summary>
-        internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
+        internal static readonly string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
         internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
@@ -1252,14 +1258,14 @@ namespace System.Management.Automation
         internal static bool IsReservedDeviceName(string destinationPath)
         {
 #if !UNIX
-            string[] reservedDeviceNames = { "CON", "PRN", "AUX", "CLOCK$", "NUL",
+            string[] reservedDeviceNames = { "CON", "PRN", "AUX", "CLOCK$", "NUL", "CONIN$", "CONOUT$",
                                              "COM0", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
                                              "LPT0", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
             string compareName = Path.GetFileName(destinationPath);
             string noExtensionCompareName = Path.GetFileNameWithoutExtension(destinationPath);
 
-            if (((compareName.Length < 3) || (compareName.Length > 6)) &&
-                ((noExtensionCompareName.Length < 3) || (noExtensionCompareName.Length > 6)))
+            if (((compareName.Length < 3) || (compareName.Length > 7)) &&
+                ((noExtensionCompareName.Length < 3) || (noExtensionCompareName.Length > 7)))
             {
                 return false;
             }
@@ -1288,7 +1294,7 @@ namespace System.Management.Automation
             }
 
             // handle special cases like \\wsl$\ubuntu which isn't a UNC path, but we can say it is so the filesystemprovider can use it
-            if (path.StartsWith(@"\\wsl$", StringComparison.OrdinalIgnoreCase))
+            if (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -1385,96 +1391,11 @@ namespace System.Management.Automation
             return hresult >= 0;
         }
 
-        // Attempt to determine the existing encoding
-        internal static Encoding GetEncoding(string path)
-        {
-            if (!File.Exists(path))
-            {
-                return ClrFacade.GetDefaultEncoding();
-            }
-
-            byte[] initialBytes = new byte[100];
-            int bytesRead = 0;
-
-            try
-            {
-                using (FileStream stream = System.IO.File.OpenRead(path))
-                {
-                    using (BinaryReader reader = new BinaryReader(stream))
-                    {
-                        bytesRead = reader.Read(initialBytes, 0, 100);
-                    }
-                }
-            }
-            catch (IOException)
-            {
-                return ClrFacade.GetDefaultEncoding();
-            }
-
-            // Test for four-byte preambles
-            string preamble = null;
-            Encoding foundEncoding = ClrFacade.GetDefaultEncoding();
-
-            if (bytesRead > 3)
-            {
-                preamble = string.Join("-", initialBytes[0], initialBytes[1], initialBytes[2], initialBytes[3]);
-
-                if (encodingMap.TryGetValue(preamble, out foundEncoding))
-                {
-                    return foundEncoding;
-                }
-            }
-
-            // Test for three-byte preambles
-            if (bytesRead > 2)
-            {
-                preamble = string.Join("-", initialBytes[0], initialBytes[1], initialBytes[2]);
-                if (encodingMap.TryGetValue(preamble, out foundEncoding))
-                {
-                    return foundEncoding;
-                }
-            }
-
-            // Test for two-byte preambles
-            if (bytesRead > 1)
-            {
-                preamble = string.Join("-", initialBytes[0], initialBytes[1]);
-                if (encodingMap.TryGetValue(preamble, out foundEncoding))
-                {
-                    return foundEncoding;
-                }
-            }
-
-            // Check for binary
-            string initialBytesAsAscii = System.Text.Encoding.ASCII.GetString(initialBytes, 0, bytesRead);
-            if (initialBytesAsAscii.IndexOfAny(nonPrintableCharacters) >= 0)
-            {
-                return Encoding.Unicode;
-            }
-
-            return Encoding.ASCII;
-        }
-
         // BigEndianUTF32 encoding is possible, but requires creation
-        internal static Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
+        internal static readonly Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
         // [System.Text.Encoding]::GetEncodings() | Where-Object { $_.GetEncoding().GetPreamble() } |
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
-        internal static Dictionary<string, Encoding> encodingMap =
-            new Dictionary<string, Encoding>()
-            {
-                { "255-254", Encoding.Unicode },
-                { "254-255", Encoding.BigEndianUnicode },
-                { "255-254-0-0", Encoding.UTF32 },
-                { "0-0-254-255", BigEndianUTF32Encoding },
-                { "239-187-191", Encoding.UTF8 },
-            };
-
-        internal static char[] nonPrintableCharacters = {
-            (char) 0, (char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7, (char) 8,
-            (char) 11, (char) 12, (char) 14, (char) 15, (char) 16, (char) 17, (char) 18, (char) 19, (char) 20,
-            (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 28, (char) 29, (char) 30,
-            (char) 31, (char) 127, (char) 129, (char) 141, (char) 143, (char) 144, (char) 157 };
 
         internal static readonly UTF8Encoding utf8NoBom =
             new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
@@ -1668,8 +1589,7 @@ namespace System.Management.Automation
                 try
                 {
                     var scriptBlock = ScriptBlock.Create(command);
-                    var scriptBlockAst = scriptBlock.Ast as ScriptBlockAst;
-                    if (scriptBlockAst == null)
+                    if (!(scriptBlock.Ast is ScriptBlockAst scriptBlockAst))
                     {
                         return false;
                     }
@@ -1826,6 +1746,7 @@ namespace System.Management.Automation
         }
 
         private const string WhereObjectCommandAlias = "?";
+
         private static bool TryGetCommandInfoList(PowerShell ps, HashSet<string> commandNames, out Collection<CommandInfo> cmdInfoList)
         {
             if (commandNames.Count == 0)
@@ -1866,6 +1787,107 @@ namespace System.Management.Automation
             return true;
         }
 
+        internal static bool ShouldOutputPlainText(bool isHost, bool? supportsVirtualTerminal)
+        {
+            var outputRendering = OutputRendering.Ansi;
+
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                if (supportsVirtualTerminal != false)
+                {
+                    switch (PSStyle.Instance.OutputRendering)
+                    {
+                        case OutputRendering.Automatic:
+                            outputRendering = OutputRendering.Ansi;
+                            break;
+                        case OutputRendering.Host:
+                            outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
+                            break;
+                        default:
+                            outputRendering = PSStyle.Instance.OutputRendering;
+                            break;
+                    }
+                }
+            }
+
+            return outputRendering == OutputRendering.PlainText;
+        }
+
+        internal static string GetOutputString(string s, bool isHost, bool? supportsVirtualTerminal = null, bool isOutputRedirected = false)
+        {
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                var sd = new ValueStringDecorated(s);
+
+                if (sd.IsDecorated)
+                {
+                    var outputRendering = OutputRendering.Ansi;
+                    if (InternalTestHooks.BypassOutputRedirectionCheck)
+                    {
+                        isOutputRedirected = false;
+                    }
+
+                    if (isOutputRedirected || ShouldOutputPlainText(isHost, supportsVirtualTerminal))
+                    {
+                        outputRendering = OutputRendering.PlainText;
+                    }
+
+                    s = sd.ToString(outputRendering);
+                }
+            }
+
+            return s;
+        }
+
+        internal enum FormatStyle
+        {
+            Reset,
+            FormatAccent,
+            ErrorAccent,
+            Error,
+            Warning,
+            Verbose,
+            Debug,
+        }
+
+        internal static string GetFormatStyleString(FormatStyle formatStyle)
+        {
+            // redirected console gets plaintext output to preserve existing behavior
+            if (!InternalTestHooks.BypassOutputRedirectionCheck &&
+                ((PSStyle.Instance.OutputRendering == OutputRendering.PlainText) ||
+                (formatStyle == FormatStyle.Error && Console.IsErrorRedirected) ||
+                (formatStyle != FormatStyle.Error && Console.IsOutputRedirected)))
+            {
+                return string.Empty;
+            }
+
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            {
+                PSStyle psstyle = PSStyle.Instance;                
+                switch (formatStyle)
+                {
+                    case FormatStyle.Reset:
+                        return psstyle.Reset;
+                    case FormatStyle.FormatAccent:
+                        return psstyle.Formatting.FormatAccent;
+                    case FormatStyle.ErrorAccent:
+                        return psstyle.Formatting.ErrorAccent;
+                    case FormatStyle.Error:
+                        return psstyle.Formatting.Error;
+                    case FormatStyle.Warning:
+                        return psstyle.Formatting.Warning;
+                    case FormatStyle.Verbose:
+                        return psstyle.Formatting.Verbose;
+                    case FormatStyle.Debug:
+                        return psstyle.Formatting.Debug;
+                    default:
+                        return string.Empty;
+                }
+            }
+
+            return string.Empty;
+        }
+
         #endregion
     }
 
@@ -1877,6 +1899,7 @@ namespace System.Management.Automation
     {
         internal readonly HashSet<string> ValidVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         internal readonly HashSet<string> Commands = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         internal ScriptBlockAst ScriptBeingConverted { get; set; }
 
         public override AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst)
@@ -2024,11 +2047,7 @@ namespace System.Management.Automation
 
     internal class ImplicitRemotingBatchingNotSupportedException : Exception
     {
-        internal string ErrorId
-        {
-            get;
-            private set;
-        }
+        internal string ErrorId { get; }
 
         internal ImplicitRemotingBatchingNotSupportedException(string errorId) : base(
             ParserStrings.ImplicitRemotingPipelineBatchingNotSupported)
@@ -2052,6 +2071,8 @@ namespace System.Management.Automation.Internal
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
         internal static bool ForcePromptForChoiceDefaultOption;
+        internal static bool BypassOutputRedirectionCheck;
+        internal static bool NoPromptForPassword;
 
         // Stop/Restart/Rename Computer tests
         internal static bool TestStopComputer;
@@ -2076,6 +2097,8 @@ namespace System.Management.Automation.Internal
         internal static string TestWindowsPowerShellVersionString;
 
         internal static bool ShowMarkdownOutputBypass;
+
+        internal static bool ThrowExdevErrorOnMoveDirectory;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
@@ -2128,7 +2151,7 @@ namespace System.Management.Automation.Internal
         private readonly BoundedStack<T> _boundedUndoStack;
         private readonly BoundedStack<T> _boundedRedoStack;
 
-        internal HistoryStack(uint capacity)
+        internal HistoryStack(int capacity)
         {
             _boundedUndoStack = new BoundedStack<T>(capacity);
             _boundedRedoStack = new BoundedStack<T>(capacity);
@@ -2173,13 +2196,13 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal class BoundedStack<T> : LinkedList<T>
     {
-        private readonly uint _capacity;
+        private readonly int _capacity;
 
         /// <summary>
         /// Lazy initialisation, i.e. it sets only its limit but does not allocate the memory for the given capacity.
         /// </summary>
         /// <param name="capacity"></param>
-        internal BoundedStack(uint capacity)
+        internal BoundedStack(int capacity)
         {
             _capacity = capacity;
         }
@@ -2228,7 +2251,7 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal sealed class ReadOnlyBag<T> : IEnumerable
     {
-        private HashSet<T> _hashset;
+        private readonly HashSet<T> _hashset;
 
         /// <summary>
         /// Constructor for the readonly Hashset.
@@ -2267,5 +2290,43 @@ namespace System.Management.Automation.Internal
         /// Get an empty singleton.
         /// </summary>
         internal static readonly ReadOnlyBag<T> Empty = new ReadOnlyBag<T>(new HashSet<T>(capacity: 0));
+    }
+
+    /// <summary>
+    /// Helper class for simple argument validations.
+    /// </summary>
+    internal static class Requires
+    {
+        internal static void NotNull(object value, string paramName)
+        {
+            if (value == null)
+            {
+                throw new ArgumentNullException(paramName);
+            }
+        }
+
+        internal static void NotNullOrEmpty(string value, string paramName)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                throw new ArgumentNullException(paramName);
+            }
+        }
+
+        internal static void NotNullOrEmpty(ICollection value, string paramName)
+        {
+            if (value == null || value.Count == 0)
+            {
+                throw new ArgumentNullException(paramName);
+            }
+        }
+
+        internal static void Condition([DoesNotReturnIf(false)] bool precondition, string paramName)
+        {
+            if (!precondition)
+            {
+                throw new ArgumentException(paramName);
+            }
+        }
     }
 }

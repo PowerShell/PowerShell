@@ -125,7 +125,10 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ReceivePSSessionCommand.ComputerInstanceIdParameterSet)]
         public string ApplicationName
         {
-            get { return _appName; }
+            get
+            {
+                return _appName;
+            }
 
             set
             {
@@ -150,7 +153,10 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
         public string ConfigurationName
         {
-            get { return _shell; }
+            get
+            {
+                return _shell;
+            }
 
             set
             {
@@ -257,7 +263,10 @@ namespace Microsoft.PowerShell.Commands
         [Credential()]
         public PSCredential Credential
         {
-            get { return _psCredential; }
+            get
+            {
+                return _psCredential;
+            }
 
             set
             {
@@ -278,7 +287,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
         public AuthenticationMechanism Authentication
         {
-            get { return _authentication; }
+            get
+            {
+                return _authentication;
+            }
 
             set
             {
@@ -300,7 +312,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ConnectionUriInstanceIdParameterSet)]
         public string CertificateThumbprint
         {
-            get { return _thumbprint; }
+            get
+            {
+                return _thumbprint;
+            }
 
             set
             {
@@ -467,7 +482,7 @@ namespace Microsoft.PowerShell.Commands
                 // Find specified session.
                 bool haveMatch = false;
                 if (!string.IsNullOrEmpty(name) &&
-                    string.Compare(name, ((RemoteRunspace)runspace).RunspacePool.RemoteRunspacePoolInternal.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                    string.Equals(name, ((RemoteRunspace)runspace).RunspacePool.RemoteRunspacePoolInternal.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     // Selected by friendly name.
                     haveMatch = true;
@@ -1115,7 +1130,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="session">Session to connect.</param>
         /// <param name="ex">Optional exception object.</param>
         /// <returns>Connected session or null.</returns>
-        private PSSession ConnectSession(PSSession session, out Exception ex)
+        private static PSSession ConnectSession(PSSession session, out Exception ex)
         {
             ex = null;
 
@@ -1158,8 +1173,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>PSSession disconnected runspace object.</returns>
         private PSSession TryGetSessionFromServer(PSSession session)
         {
-            RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
-            if (remoteRunspace == null)
+            if (!(session.Runspace is RemoteRunspace remoteRunspace))
             {
                 return null;
             }
@@ -1303,7 +1317,7 @@ namespace Microsoft.PowerShell.Commands
         private RemotePipeline _remotePipeline;
         private Job _job;
         private ManualResetEvent _stopPipelineReceive;
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
 
         #endregion
     }

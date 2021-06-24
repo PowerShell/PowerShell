@@ -123,9 +123,9 @@ namespace Microsoft.PowerShell.Commands
                             badKeys.Append(", ");
                         }
 
-                        badKeys.Append("'");
+                        badKeys.Append('\'');
                         badKeys.Append(entry.Key.ToString());
-                        badKeys.Append("'");
+                        badKeys.Append('\'');
                     }
                 }
             }
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
 
             var moduleSpecBuilder = new StringBuilder();
 
-            moduleSpecBuilder.Append("@{ ModuleName = '").Append(Name).Append("'");
+            moduleSpecBuilder.Append("@{ ModuleName = '").Append(Name).Append('\'');
 
             if (Guid != null)
             {
@@ -206,18 +206,18 @@ namespace Microsoft.PowerShell.Commands
 
             if (RequiredVersion != null)
             {
-                moduleSpecBuilder.Append("; RequiredVersion = '").Append(RequiredVersion).Append("'");
+                moduleSpecBuilder.Append("; RequiredVersion = '").Append(RequiredVersion).Append('\'');
             }
             else
             {
                 if (Version != null)
                 {
-                    moduleSpecBuilder.Append("; ModuleVersion = '").Append(Version).Append("'");
+                    moduleSpecBuilder.Append("; ModuleVersion = '").Append(Version).Append('\'');
                 }
 
                 if (MaximumVersion != null)
                 {
-                    moduleSpecBuilder.Append("; MaximumVersion = '").Append(MaximumVersion).Append("'");
+                    moduleSpecBuilder.Append("; MaximumVersion = '").Append(MaximumVersion).Append('\'');
                 }
             }
 

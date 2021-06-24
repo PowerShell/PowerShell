@@ -91,14 +91,6 @@ namespace System.Management.Automation.Internal
             _disposed = true;
         }
 
-        /// <summary>
-        /// Finalizer for class PipelineProcessor.
-        /// </summary>
-        ~PipelineProcessor()
-        {
-            Dispose(false);
-        }
-
         #endregion IDispose
 
         #region Execution Logging
@@ -156,6 +148,7 @@ namespace System.Management.Automation.Internal
         }
 
         private bool _terminatingErrorLogged = false;
+
         internal void LogExecutionException(Exception exception)
         {
             _executionFailed = true;
@@ -173,7 +166,7 @@ namespace System.Management.Automation.Internal
             Log(message, null, PipelineExecutionStatus.Error);
         }
 
-        private string GetCommand(InvocationInfo invocationInfo)
+        private static string GetCommand(InvocationInfo invocationInfo)
         {
             if (invocationInfo == null)
                 return string.Empty;
@@ -186,7 +179,7 @@ namespace System.Management.Automation.Internal
             return string.Empty;
         }
 
-        private string GetCommand(Exception exception)
+        private static string GetCommand(Exception exception)
         {
             IContainsErrorRecord icer = exception as IContainsErrorRecord;
             if (icer != null && icer.ErrorRecord != null)
@@ -227,44 +220,33 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            if (!string.IsNullOrEmpty(logElement))
+            if (_needToLog && !string.IsNullOrEmpty(logElement))
             {
+                _eventLogBuffer ??= new List<string>();
                 _eventLogBuffer.Add(logElement);
             }
         }
 
-        internal void LogToEventLog()
+        private void LogToEventLog()
         {
-            if (NeedToLog())
+            // We check to see if there is anything in the buffer before we flush it.
+            // Flushing the empty buffer causes a measurable performance degradation.
+            if (_commands?.Count > 0 && _eventLogBuffer?.Count > 0)
             {
-                // We check to see if the command is needs writing (or if there is anything in the buffer)
-                // before we flush it. Flushing the empty buffer causes a measurable performance degradation.
-                if (_commands == null || _commands.Count <= 0 || _eventLogBuffer.Count == 0)
-                    return;
-
-                MshLog.LogPipelineExecutionDetailEvent(_commands[0].Command.Context,
-                                                       _eventLogBuffer,
-                                                       _commands[0].Command.MyInvocation);
-            }
-        }
-
-        private bool NeedToLog()
-        {
-            if (_commands == null)
-                return false;
-
-            foreach (CommandProcessorBase commandProcessor in _commands)
-            {
-                MshCommandRuntime cmdRuntime = commandProcessor.Command.commandRuntime as MshCommandRuntime;
-
-                if (cmdRuntime != null && cmdRuntime.LogPipelineExecutionDetail)
-                    return true;
+                InternalCommand firstCmd = _commands[0].Command;
+                MshLog.LogPipelineExecutionDetailEvent(
+                    firstCmd.Context,
+                    _eventLogBuffer,
+                    firstCmd.MyInvocation);
             }
 
-            return false;
+            // Clear the log buffer after writing the event.
+            _eventLogBuffer?.Clear();
         }
 
-        private List<string> _eventLogBuffer = new List<string>();
+        private bool _needToLog = false;
+        private List<string> _eventLogBuffer;
+
         #endregion
 
         #region public_methods
@@ -280,12 +262,12 @@ namespace System.Management.Automation.Internal
         internal int Add(CommandProcessorBase commandProcessor)
         {
             commandProcessor.CommandRuntime.PipelineProcessor = this;
-            return AddCommand(commandProcessor, _commands.Count, false);
+            return AddCommand(commandProcessor, _commands.Count, readErrorQueue: false);
         }
 
         internal void AddRedirectionPipe(PipelineProcessor pipelineProcessor)
         {
-            if (pipelineProcessor == null) throw PSTraceSource.NewArgumentNullException("pipelineProcessor");
+            if (pipelineProcessor == null) throw PSTraceSource.NewArgumentNullException(nameof(pipelineProcessor));
             if (_redirectionPipes == null)
                 _redirectionPipes = new List<PipelineProcessor>();
             _redirectionPipes.Add(pipelineProcessor);
@@ -313,11 +295,11 @@ namespace System.Management.Automation.Internal
         /// PipeAlreadyTaken: the downstream pipe of command <paramref name="readFromCommand"/>
         ///   is already taken
         /// </exception>
-        internal int AddCommand(CommandProcessorBase commandProcessor, int readFromCommand, bool readErrorQueue)
+        private int AddCommand(CommandProcessorBase commandProcessor, int readFromCommand, bool readErrorQueue)
         {
             if (commandProcessor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandProcessor");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandProcessor));
             }
 
             if (_commands == null)
@@ -343,13 +325,13 @@ namespace System.Management.Automation.Internal
                     PipelineStrings.CommandProcessorAlreadyUsed);
             }
 
-            if (0 == _commands.Count)
+            if (_commands.Count == 0)
             {
-                if (0 != readFromCommand)
+                if (readFromCommand != 0)
                 {
                     // "First command cannot have input"
                     throw PSTraceSource.NewArgumentException(
-                        "readFromCommand",
+                        nameof(readFromCommand),
                         PipelineStrings.FirstCommandCannotHaveInput);
                 }
 
@@ -360,7 +342,7 @@ namespace System.Management.Automation.Internal
             {
                 // "invalid command number"
                 throw PSTraceSource.NewArgumentException(
-                    "readFromCommand",
+                    nameof(readFromCommand),
                     PipelineStrings.InvalidCommandNumber);
             }
             else
@@ -418,6 +400,9 @@ namespace System.Management.Automation.Internal
             }
 
             _commands.Add(commandProcessor);
+
+            // We will log event(s) about the pipeline execution details if any command in the pipeline requests that.
+            _needToLog |= commandProcessor.CommandRuntime.LogPipelineExecutionDetail;
 
             // We give the Command a pointer back to the
             // PipelineProcessor so that it can check whether the
@@ -944,7 +929,7 @@ namespace System.Management.Automation.Internal
             if (_executionStarted)
                 return;
 
-            if (_commands == null || 0 == _commands.Count)
+            if (_commands == null || _commands.Count == 0)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
@@ -1383,7 +1368,7 @@ namespace System.Management.Automation.Internal
             _redirectionPipes = null;
         }
 
-        private object _stopReasonLock = new object();
+        private readonly object _stopReasonLock = new object();
         /// <summary>
         /// Makes an internal note of the exception, but only if this is
         /// the first error.
@@ -1405,8 +1390,8 @@ namespace System.Management.Automation.Internal
                 // Note that the pipeline could have been stopped asynchronously
                 // before hitting the error, therefore we check whether
                 // firstTerminatingError is PipelineStoppedException.
-                else if ((!(_firstTerminatingError.SourceException is PipelineStoppedException))
-                    && command != null && command.Context != null)
+                else if (_firstTerminatingError.SourceException is not PipelineStoppedException
+                    && command?.Context != null)
                 {
                     Exception ex = e;
                     while ((ex is TargetInvocationException || ex is CmdletInvocationException)
@@ -1415,7 +1400,7 @@ namespace System.Management.Automation.Internal
                         ex = ex.InnerException;
                     }
 
-                    if (!(ex is PipelineStoppedException))
+                    if (ex is not PipelineStoppedException)
                     {
                         string message = StringUtil.Format(PipelineStrings.SecondFailure,
                             _firstTerminatingError.GetType().Name,
@@ -1474,7 +1459,10 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PipelineReader<object> ExternalInput
         {
-            get { return _externalInputPipe; }
+            get
+            {
+                return _externalInputPipe;
+            }
 
             set
             {
@@ -1500,7 +1488,10 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PipelineWriter ExternalSuccessOutput
         {
-            get { return _externalSuccessOutput; }
+            get
+            {
+                return _externalSuccessOutput;
+            }
 
             set
             {
@@ -1527,7 +1518,10 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal PipelineWriter ExternalErrorOutput
         {
-            get { return _externalErrorOutput; }
+            get
+            {
+                return _externalErrorOutput;
+            }
 
             set
             {
@@ -1559,6 +1553,7 @@ namespace System.Management.Automation.Internal
         }
 
         private LocalPipeline _localPipeline;
+
         internal LocalPipeline LocalPipeline
         {
             get { return _localPipeline; }
@@ -1573,7 +1568,10 @@ namespace System.Management.Automation.Internal
         /// </summary>
         internal SessionStateScope ExecutionScope
         {
-            get { return _executionScope; }
+            get
+            {
+                return _executionScope;
+            }
 
             set
             {
@@ -1595,4 +1593,3 @@ namespace System.Management.Automation.Internal
         }
     }
 }
-

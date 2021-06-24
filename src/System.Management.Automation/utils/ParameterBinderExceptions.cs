@@ -4,7 +4,6 @@
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace System.Management.Automation
 {
@@ -86,12 +85,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw PSTraceSource.NewArgumentException("resourceString");
+                throw PSTraceSource.NewArgumentException(nameof(resourceString));
             }
 
             if (string.IsNullOrEmpty(errorId))
             {
-                throw PSTraceSource.NewArgumentException("errorId");
+                throw PSTraceSource.NewArgumentException(nameof(errorId));
             }
 
             _invocationInfo = invocationInfo;
@@ -194,17 +193,17 @@ namespace System.Management.Automation
         {
             if (invocationInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("invocationInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(invocationInfo));
             }
 
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw PSTraceSource.NewArgumentException("resourceString");
+                throw PSTraceSource.NewArgumentException(nameof(resourceString));
             }
 
             if (string.IsNullOrEmpty(errorId))
             {
-                throw PSTraceSource.NewArgumentException("errorId");
+                throw PSTraceSource.NewArgumentException(nameof(errorId));
             }
 
             _invocationInfo = invocationInfo;
@@ -248,12 +247,12 @@ namespace System.Management.Automation
         {
             if (pbex == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pbex");
+                throw PSTraceSource.NewArgumentNullException(nameof(pbex));
             }
 
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw PSTraceSource.NewArgumentException("resourceString");
+                throw PSTraceSource.NewArgumentException(nameof(resourceString));
             }
 
             _invocationInfo = pbex.CommandInvocation;
@@ -322,12 +321,11 @@ namespace System.Management.Automation
         /// <param name="context">
         /// streaming context
         /// </param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -346,7 +344,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// DO NOT USE!!!
         /// </remarks>
-        public ParameterBindingException() : base() {; }
+        public ParameterBindingException() : base() { }
 
         /// <summary>
         /// Constructors a ParameterBindingException.
@@ -386,7 +384,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string Message
         {
-            get { return _message ?? (_message = BuildMessage()); }
+            get { return _message ??= BuildMessage(); }
         }
 
         private string _message;
@@ -403,7 +401,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _parameterName = string.Empty;
+        private readonly string _parameterName = string.Empty;
 
         /// <summary>
         /// Gets the type the parameter is expecting.
@@ -416,7 +414,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Type _parameterType;
+        private readonly Type _parameterType;
 
         /// <summary>
         /// Gets the Type that was specified as the parameter value.
@@ -429,7 +427,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Type _typeSpecified;
+        private readonly Type _typeSpecified;
 
         /// <summary>
         /// Gets the errorId of this ParameterBindingException.
@@ -442,7 +440,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _errorId;
+        private readonly string _errorId;
 
         /// <summary>
         /// Gets the line in the script at which the error occurred.
@@ -455,7 +453,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Int64 _line = Int64.MinValue;
+        private readonly Int64 _line = Int64.MinValue;
 
         /// <summary>
         /// Gets the offset on the line in the script at which the error occurred.
@@ -468,7 +466,7 @@ namespace System.Management.Automation
             }
         }
 
-        private Int64 _offset = Int64.MinValue;
+        private readonly Int64 _offset = Int64.MinValue;
 
         /// <summary>
         /// Gets the invocation information about the command.
@@ -481,14 +479,14 @@ namespace System.Management.Automation
             }
         }
 
-        private InvocationInfo _invocationInfo;
+        private readonly InvocationInfo _invocationInfo;
         #endregion Properties
 
         #region private
 
-        private string _resourceString;
-        private object[] _args = Array.Empty<object>();
-        private string _commandName;
+        private readonly string _resourceString;
+        private readonly object[] _args = Array.Empty<object>();
+        private readonly string _commandName;
 
         private string BuildMessage()
         {
@@ -1062,4 +1060,3 @@ namespace System.Management.Automation
         #endregion serialization
     }
 }
-

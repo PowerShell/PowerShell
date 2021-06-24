@@ -30,7 +30,7 @@ namespace System.Management.Automation
     /// task, extending the Cmdlet or PSCmdlet classes only as a thin management layer.
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Internal.InternalCommand"/>
-    public abstract partial class Cmdlet : InternalCommand
+    public abstract class Cmdlet : InternalCommand
     {
         #region public_properties
 
@@ -46,7 +46,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
+        private static readonly Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
             () =>
             {
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
@@ -68,7 +68,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static Lazy<HashSet<string>> s_optionalCommonParameters = new Lazy<HashSet<string>>(
+        private static readonly Lazy<HashSet<string>> s_optionalCommonParameters = new Lazy<HashSet<string>>(
             () =>
             {
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
@@ -252,10 +252,10 @@ namespace System.Management.Automation
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 if (string.IsNullOrEmpty(baseName))
-                    throw PSTraceSource.NewArgumentNullException("baseName");
+                    throw PSTraceSource.NewArgumentNullException(nameof(baseName));
 
                 if (string.IsNullOrEmpty(resourceId))
-                    throw PSTraceSource.NewArgumentNullException("resourceId");
+                    throw PSTraceSource.NewArgumentNullException(nameof(resourceId));
 
                 ResourceManager manager = ResourceManagerCache.GetResourceManager(this.GetType().Assembly, baseName);
                 string retValue = null;
@@ -266,12 +266,12 @@ namespace System.Management.Automation
                 }
                 catch (MissingManifestResourceException)
                 {
-                    throw PSTraceSource.NewArgumentException("baseName", GetErrorText.ResourceBaseNameFailure, baseName);
+                    throw PSTraceSource.NewArgumentException(nameof(baseName), GetErrorText.ResourceBaseNameFailure, baseName);
                 }
 
                 if (retValue == null)
                 {
-                    throw PSTraceSource.NewArgumentException("resourceId", GetErrorText.ResourceIdFailure, resourceId);
+                    throw PSTraceSource.NewArgumentException(nameof(resourceId), GetErrorText.ResourceIdFailure, resourceId);
                 }
 
                 return retValue;
@@ -1714,12 +1714,13 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.Cmdlet.ProcessRecord"/>.
         /// etc.
         /// </remarks>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 if (errorRecord == null)
-                    throw new ArgumentNullException("errorRecord");
+                    throw new ArgumentNullException(nameof(errorRecord));
 
                 if (commandRuntime != null)
                 {
@@ -1831,4 +1832,3 @@ namespace System.Management.Automation
         WhatIf = 0x1,
     }
 }
-

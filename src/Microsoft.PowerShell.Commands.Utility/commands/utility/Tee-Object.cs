@@ -111,6 +111,7 @@ namespace Microsoft.PowerShell.Commands
                 // the values to be written
             }
         }
+
         /// <summary>
         /// </summary>
         protected override void ProcessRecord()
@@ -148,13 +149,6 @@ namespace Microsoft.PowerShell.Commands
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Finalizer.
-        /// </summary>
-        ~TeeObjectCommand()
-        {
-            Dispose(false);
-        }
         #region private
         private CommandWrapper _commandWrapper;
         private bool _alreadyDisposed;

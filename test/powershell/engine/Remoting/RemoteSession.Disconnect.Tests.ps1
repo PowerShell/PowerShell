@@ -72,7 +72,7 @@ Describe "WinRM based remoting session abrupt disconnect" -Tags 'Feature','Requi
         } -ErrorAction SilentlyContinue
 
         # Session should be disconnected.
-        $session.State | Should -BeExactly 'Disconnected'
+        $session.State | Should -BeLikeExactly 'Disconnect*'
 
         # A disconnected job should have been created for reconnect.
         $script:job = Get-Job | Where-Object { $_.ChildJobs[0].Runspace.Id -eq $session.Runspace.Id }

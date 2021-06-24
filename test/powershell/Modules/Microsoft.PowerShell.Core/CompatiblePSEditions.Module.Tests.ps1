@@ -473,8 +473,8 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
         It "Verify that Warning is generated with default WarningAction" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
-            & $pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
-            $LogPath | Should -FileContentMatch 'loaded in Windows PowerShell'
+            & $pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName;Get-Error" *> $LogPath
+            $LogPath | Should -FileContentMatch 'loaded in Windows PowerShell' -Because (Get-Content $LogPath)
         }
 
         It "Verify that Error is Not generated with -ErrorAction Ignore" {
@@ -502,7 +502,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
             '{"DisableImplicitWinCompat" : "True","Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
             & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`'); Test-$ModuleName2" *> $LogPath
-            $LogPath | Should -FileContentMatch 'not recognized as the name of a cmdlet'
+            $LogPath | Should -FileContentMatch 'not recognized as a name of a cmdlet'
         }
 
         It "Successfully auto-imports incompatible module during CommandDiscovery\ModuleAutoload if implicit WinCompat is Enabled in config" {

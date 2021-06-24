@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         private bool CheckForDebuggableJob()
         {
             // Check passed in job object.
-            bool debuggableJobFound = GetJobDebuggable(_job); ;
+            bool debuggableJobFound = GetJobDebuggable(_job);
 
             if (!debuggableJobFound)
             {
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
             return debuggableJobFound;
         }
 
-        private bool GetJobDebuggable(Job job)
+        private static bool GetJobDebuggable(Job job)
         {
             if (job is IJobDebugger)
             {

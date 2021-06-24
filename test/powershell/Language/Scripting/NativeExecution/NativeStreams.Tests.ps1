@@ -12,17 +12,16 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
         $error.Clear()
 
         $command = [string]::Join('', @(
-            '[Console]::Error.Write(\"foo`n`nbar`n`nbaz\"); ',
-            '[Console]::Error.Write(\"middle\"); ',
-            '[Console]::Error.Write(\"foo`n`nbar`n`nbaz\")'
+            '[Console]::Error.Write("foo`n`nbar`n`nbaz"); ',
+            '[Console]::Error.Write("middle"); ',
+            '[Console]::Error.Write("foo`n`nbar`n`nbaz")'
         ))
 
         $out = & $powershell -noprofile -command $command 2>&1
 
         # this check should be the first one, because $error is a global shared variable
         It 'should not add records to $error variable' {
-            # we are keeping existing Windows PS v5.1 behavior for $error variable
-            $error.Count | Should -Be 9
+            $error.Count | Should -Be 0
         }
 
         It 'uses ErrorRecord object to return stderr output' {

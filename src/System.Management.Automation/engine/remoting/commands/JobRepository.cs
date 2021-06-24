@@ -132,9 +132,9 @@ namespace System.Management.Automation
 
         #region Private Members
 
-        private Dictionary<Guid, T> _repository = new Dictionary<Guid, T>();
-        private object _syncObject = new object();      // object for synchronization
-        private string _identifier;
+        private readonly Dictionary<Guid, T> _repository = new Dictionary<Guid, T>();
+        private readonly object _syncObject = new object();      // object for synchronization
+        private readonly string _identifier;
 
         #endregion Private Members
     }

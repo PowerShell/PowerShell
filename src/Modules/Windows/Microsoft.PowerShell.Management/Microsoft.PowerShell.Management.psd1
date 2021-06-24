@@ -7,7 +7,7 @@ ModuleVersion="7.0.0.0"
 CompatiblePSEditions = @("Core")
 PowerShellVersion="3.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
-HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=2113632'
+HelpInfoURI = 'https://aka.ms/powershell71-help'
 FunctionsToExport = @()
 AliasesToExport = @("gcb", "gin", "gtz", "scb", "stz")
 CmdletsToExport=@("Add-Content",

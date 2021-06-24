@@ -28,7 +28,7 @@ namespace System.Management.Automation.Help
         internal UpdatableHelpModuleInfo(string name, Guid guid, string path, string uri)
         {
             Debug.Assert(!string.IsNullOrEmpty(name));
-            Debug.Assert(guid != null);
+            Debug.Assert(guid != Guid.Empty);
             Debug.Assert(!string.IsNullOrEmpty(path));
             Debug.Assert(!string.IsNullOrEmpty(uri));
 
@@ -54,7 +54,7 @@ namespace System.Management.Automation.Help
             }
         }
 
-        private Guid _moduleGuid;
+        private readonly Guid _moduleGuid;
 
         /// <summary>
         /// Module path.

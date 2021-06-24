@@ -28,7 +28,7 @@ namespace System.Management.Automation.Internal
         {
             if (commandRuntime == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandRuntime");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandRuntime));
             }
 
             _commandRuntime = commandRuntime;
@@ -234,7 +234,7 @@ namespace System.Management.Automation.Internal
 
         #endregion parameters
 
-        private MshCommandRuntime _commandRuntime;
+        private readonly MshCommandRuntime _commandRuntime;
 
         internal class ValidateVariableName : ValidateArgumentsAttribute
         {
@@ -261,4 +261,3 @@ namespace System.Management.Automation.Internal
         }
     }
 }
-

@@ -35,7 +35,9 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
+                #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
                 return (this.renameButton != null) ? this.renameButton.IsChecked.Value : false;
+                #pragma warning restore IDE0075
             }
         }
 
@@ -46,7 +48,7 @@ namespace Microsoft.Management.UI.Internal
         {
             if (!this.IsLoaded)
             {
-                this.Loaded += new RoutedEventHandler(this.ListOrganizerItem_Loaded_SelectItem);
+                this.Loaded += this.ListOrganizerItem_Loaded_SelectItem;
                 this.ApplyTemplate();
                 return;
             }
@@ -189,7 +191,7 @@ namespace Microsoft.Management.UI.Internal
         {
             if (!this.IsLoaded)
             {
-                this.Loaded += new RoutedEventHandler(this.ListOrganizerItem_Loaded_UpdateTextContentBindings);
+                this.Loaded += this.ListOrganizerItem_Loaded_UpdateTextContentBindings;
                 this.ApplyTemplate();
                 return;
             }
@@ -230,13 +232,13 @@ namespace Microsoft.Management.UI.Internal
         private void AttachToVisualTree()
         {
             this.editBox.IsVisibleChanged += new DependencyPropertyChangedEventHandler(this.EditBox_IsVisibleChanged);
-            this.editBox.KeyDown += new KeyEventHandler(this.EditBox_KeyDown);
-            this.editBox.LostFocus += new RoutedEventHandler(this.EditBox_LostFocus);
+            this.editBox.KeyDown += this.EditBox_KeyDown;
+            this.editBox.LostFocus += this.EditBox_LostFocus;
 
             this.templatedParent = this.TemplatedParent as FrameworkElement;
             if (this.templatedParent != null)
             {
-                this.templatedParent.KeyDown += new KeyEventHandler(this.TemplatedParent_OnKeyDown);
+                this.templatedParent.KeyDown += this.TemplatedParent_OnKeyDown;
             }
         }
 

@@ -228,7 +228,7 @@ namespace System.Management.Automation
         // Estimated length of all Strings.* values
         // Rough estimate of values
         // max path for Command path
-        const int LogContextInitialSize = 30 * 16 + 13 * 20 + 255;
+        private const int LogContextInitialSize = 30 * 16 + 13 * 20 + 255;
 
         /// <summary>
         /// Converts log context to string.

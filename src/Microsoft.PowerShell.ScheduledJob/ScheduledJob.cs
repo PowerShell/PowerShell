@@ -387,7 +387,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="info">SerializationInfo.</param>
         /// <param name="context">StreamingContext.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private ScheduledJob(
             SerializationInfo info,
             StreamingContext context)
@@ -407,7 +406,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// </summary>
         /// <param name="info">SerializationInfo.</param>
         /// <param name="context">StreamingContext.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(
             SerializationInfo info,
             StreamingContext context)
@@ -1058,7 +1056,6 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
 
             // ISerializable
-            [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
             private ResultsInfo(
                 SerializationInfo info,
                 StreamingContext context)
@@ -1086,7 +1083,6 @@ namespace Microsoft.PowerShell.ScheduledJob
                 }
             }
 
-            [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
             public void GetObjectData(
                 SerializationInfo info,
                 StreamingContext context)
@@ -1208,7 +1204,6 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         // ISerializable
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         private StatusInfo(
             SerializationInfo info,
             StreamingContext context)
@@ -1248,7 +1243,6 @@ namespace Microsoft.PowerShell.ScheduledJob
             }
         }
 
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public void GetObjectData(
             SerializationInfo info,
             StreamingContext context)

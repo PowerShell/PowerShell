@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoCompression { get; set; }
 
         /// <summary>
-        /// If <c>true</c> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
+        /// If <see langword="true"/> then Operating System won't load the user profile (i.e. registry keys under HKCU) on the remote server
         /// which can result in a faster session creation time.  This option won't have any effect if the remote machine has
         /// already loaded the profile (i.e. in another session).
         /// </summary>
@@ -140,7 +140,10 @@ namespace Microsoft.PowerShell.Commands
                     RunspaceConnectionInfo.DefaultOpenTimeout;
             }
 
-            set { _openTimeout = value; }
+            set
+            {
+                _openTimeout = value;
+            }
         }
 
         private int? _openTimeout;
@@ -165,7 +168,10 @@ namespace Microsoft.PowerShell.Commands
                     BaseTransportManager.ClientCloseTimeoutMs;
             }
 
-            set { _cancelTimeout = value; }
+            set
+            {
+                _cancelTimeout = value;
+            }
         }
 
         private int? _cancelTimeout;
@@ -187,7 +193,10 @@ namespace Microsoft.PowerShell.Commands
                     : RunspaceConnectionInfo.DefaultIdleTimeout;
             }
 
-            set { _idleTimeout = value; }
+            set
+            {
+                _idleTimeout = value;
+            }
         }
 
         private int? _idleTimeout;
@@ -294,7 +303,10 @@ namespace Microsoft.PowerShell.Commands
                     BaseTransportManager.ClientDefaultOperationTimeoutMs);
             }
 
-            set { _operationtimeout = value; }
+            set
+            {
+                _operationtimeout = value;
+            }
         }
 
         private int? _operationtimeout;
@@ -308,7 +320,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter NoEncryption
         {
-            get { return _noencryption; }
+            get
+            {
+                return _noencryption;
+            }
 
             set
             {
@@ -327,7 +342,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
         public SwitchParameter UseUTF16
         {
-            get { return _useutf16; }
+            get
+            {
+                return _useutf16;
+            }
 
             set
             {

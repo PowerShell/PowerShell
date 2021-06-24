@@ -585,6 +585,9 @@ namespace System.Management.Automation.Language
         /// <summary>The 'base' keyword</summary>
         Base = 168,
 
+        /// <summary>The 'default' keyword</summary>
+        Default = 169,
+
         #endregion Keywords
     }
 
@@ -944,6 +947,7 @@ namespace System.Management.Automation.Language
             /*              Command */ TokenFlags.Keyword,
             /*               Hidden */ TokenFlags.Keyword,
             /*                 Base */ TokenFlags.Keyword,
+            /*              Default */ TokenFlags.Keyword,
 
             #endregion Flags for keywords
         };
@@ -1142,6 +1146,7 @@ namespace System.Management.Automation.Language
             /*              Command */ "command",
             /*               Hidden */ "hidden",
             /*                 Base */ "base",
+            /*              Default */ "default",
 
             #endregion Text for keywords
         };
@@ -1149,9 +1154,9 @@ namespace System.Management.Automation.Language
 #if DEBUG
         static TokenTraits()
         {
-            Diagnostics.Assert(s_staticTokenFlags.Length == ((int)TokenKind.Base + 1),
+            Diagnostics.Assert(s_staticTokenFlags.Length == ((int)TokenKind.Default + 1),
                                "Table size out of sync with enum - _staticTokenFlags");
-            Diagnostics.Assert(s_tokenText.Length == ((int)TokenKind.Base + 1),
+            Diagnostics.Assert(s_tokenText.Length == ((int)TokenKind.Default + 1),
                                "Table size out of sync with enum - _tokenText");
             // Some random assertions to make sure the enum and the traits are in sync
             Diagnostics.Assert(GetTraits(TokenKind.Begin) == (TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName),
@@ -1344,7 +1349,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The full details of the variable path.
         /// </summary>
-        public VariablePath VariablePath { get; private set; }
+        public VariablePath VariablePath { get; }
 
         internal override string ToDebugString(int indent)
         {
@@ -1498,12 +1503,12 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The stream being redirected.
         /// </summary>
-        public RedirectionStream FromStream { get; private set; }
+        public RedirectionStream FromStream { get; }
 
         /// <summary>
         /// The stream being written to.
         /// </summary>
-        public RedirectionStream ToStream { get; private set; }
+        public RedirectionStream ToStream { get; }
     }
 
     /// <summary>
@@ -1521,12 +1526,12 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The stream being redirected.
         /// </summary>
-        public RedirectionStream FromStream { get; private set; }
+        public RedirectionStream FromStream { get; }
 
         /// <summary>
         /// True if the redirection should append the file rather than create a new file.
         /// </summary>
-        public bool Append { get; private set; }
+        public bool Append { get; }
     }
 
     internal class UnscannedSubExprToken : StringLiteralToken
@@ -1537,6 +1542,6 @@ namespace System.Management.Automation.Language
             this.SkippedCharOffsets = skippedCharOffsets;
         }
 
-        internal BitArray SkippedCharOffsets { get; private set; }
+        internal BitArray SkippedCharOffsets { get; }
     }
 }

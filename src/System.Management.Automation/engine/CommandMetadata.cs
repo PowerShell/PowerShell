@@ -105,7 +105,7 @@ namespace System.Management.Automation
         {
             if (commandInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
             while (commandInfo is AliasInfo)
             {
@@ -162,7 +162,7 @@ namespace System.Management.Automation
         {
             if (other == null)
             {
-                throw PSTraceSource.NewArgumentNullException("other");
+                throw PSTraceSource.NewArgumentNullException(nameof(other));
             }
 
             Name = other.Name;
@@ -315,7 +315,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(commandName))
             {
-                throw PSTraceSource.NewArgumentException("commandName");
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             CommandMetadata result = null;
@@ -369,7 +369,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(commandName))
             {
-                throw PSTraceSource.NewArgumentException("commandName");
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             Name = commandName;
@@ -412,7 +412,7 @@ namespace System.Management.Automation
         {
             if (scriptblock == null)
             {
-                throw PSTraceSource.NewArgumentException("scriptblock");
+                throw PSTraceSource.NewArgumentException(nameof(scriptblock));
             }
 
             CmdletBindingAttribute cmdletBindingAttribute = scriptblock.CmdletBindingAttribute;
@@ -464,7 +464,10 @@ namespace System.Management.Automation
         /// </summary>
         public string DefaultParameterSetName
         {
-            get { return _defaultParameterSetName; }
+            get
+            {
+                return _defaultParameterSetName;
+            }
 
             set
             {
@@ -528,7 +531,10 @@ namespace System.Management.Automation
                 return _remotingCapability;
             }
 
-            set { _remotingCapability = value; }
+            set
+            {
+                _remotingCapability = value;
+            }
         }
 
         private RemotingCapability _remotingCapability = RemotingCapability.PowerShell;
@@ -647,6 +653,7 @@ namespace System.Management.Automation
         // The CommandType for a script cmdlet is not CommandTypes.Cmdlet, yet
         // proxy generation needs to know the difference between script and script cmdlet.
         private bool _wrappedAnyCmdlet;
+
         internal bool WrappedAnyCmdlet
         {
             get { return _wrappedAnyCmdlet; }
@@ -679,7 +686,7 @@ namespace System.Management.Automation
 
             // Determine if the cmdlet implements dynamic parameters by looking for the interface
 
-            Type dynamicParametersType = CommandType.GetInterface(typeof(IDynamicParameters).Name, true);
+            Type dynamicParametersType = CommandType.GetInterface(nameof(IDynamicParameters), true);
 
             if (dynamicParametersType != null)
             {
@@ -725,7 +732,7 @@ namespace System.Management.Automation
         {
             if (attribute == null)
             {
-                throw PSTraceSource.NewArgumentNullException("attribute");
+                throw PSTraceSource.NewArgumentNullException(nameof(attribute));
             }
 
             // Process the default parameter set name
@@ -896,7 +903,7 @@ end
                     decl.Append(separator);
                     decl.Append("DefaultParameterSetName='");
                     decl.Append(CodeGeneration.EscapeSingleQuotedStringContent(_defaultParameterSetName));
-                    decl.Append("'");
+                    decl.Append('\'');
                     separator = ", ";
                 }
 
@@ -908,7 +915,7 @@ end
                     decl.Append(separator);
                     decl.Append("ConfirmImpact='");
                     decl.Append(ConfirmImpact);
-                    decl.Append("'");
+                    decl.Append('\'');
                 }
 
                 if (SupportsPaging)
@@ -925,7 +932,7 @@ end
                     separator = ", ";
                 }
 
-                if (PositionalBinding == false)
+                if (!PositionalBinding)
                 {
                     decl.Append(separator);
                     decl.Append("PositionalBinding=$false");
@@ -937,7 +944,7 @@ end
                     decl.Append(separator);
                     decl.Append("HelpUri='");
                     decl.Append(CodeGeneration.EscapeSingleQuotedStringContent(HelpUri));
-                    decl.Append("'");
+                    decl.Append('\'');
                     separator = ", ";
                 }
 
@@ -946,7 +953,7 @@ end
                     decl.Append(separator);
                     decl.Append("RemotingCapability='");
                     decl.Append(_remotingCapability);
-                    decl.Append("'");
+                    decl.Append('\'');
                     separator = ", ";
                 }
 
@@ -1315,7 +1322,7 @@ end
             List<CommandMetadata> restrictedCommands = new List<CommandMetadata>();
 
             // all remoting cmdlets need to be included for workflow scenarios as wel
-            if (SessionCapabilities.RemoteServer == (sessionCapabilities & SessionCapabilities.RemoteServer))
+            if ((sessionCapabilities & SessionCapabilities.RemoteServer) == SessionCapabilities.RemoteServer)
             {
                 restrictedCommands.AddRange(GetRestrictedRemotingCommands());
             }
@@ -1532,7 +1539,7 @@ end
         /// The command metadata cache. This is separate from the parameterMetadata cache
         /// because it is specific to cmdlets.
         /// </summary>
-        private static System.Collections.Concurrent.ConcurrentDictionary<string, CommandMetadata> s_commandMetadataCache =
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, CommandMetadata> s_commandMetadataCache =
             new System.Collections.Concurrent.ConcurrentDictionary<string, CommandMetadata>(StringComparer.OrdinalIgnoreCase);
 
         #endregion

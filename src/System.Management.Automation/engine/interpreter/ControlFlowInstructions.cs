@@ -69,7 +69,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
+            get { return s_cache ??= new Instruction[CacheSize]; }
         }
 
         internal BranchFalseInstruction()
@@ -97,7 +97,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
+            get { return s_cache ??= new Instruction[CacheSize]; }
         }
 
         internal BranchTrueInstruction()
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Interpreter
 
         public override Instruction[] Cache
         {
-            get { return s_cache ?? (s_cache = new Instruction[CacheSize]); }
+            get { return s_cache ??= new Instruction[CacheSize]; }
         }
 
         internal CoalescingBranchInstruction()
@@ -204,7 +204,7 @@ namespace System.Management.Automation.Interpreter
 
         internal readonly int _labelIndex;
 
-        public IndexedBranchInstruction(int labelIndex)
+        protected IndexedBranchInstruction(int labelIndex)
         {
             _labelIndex = labelIndex;
         }
@@ -253,6 +253,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed class GotoInstruction : IndexedBranchInstruction
     {
         private const int Variants = 4;
+
         private static readonly GotoInstruction[] s_cache = new GotoInstruction[Variants * CacheSize];
 
         private readonly bool _hasResult;
@@ -553,7 +554,7 @@ namespace System.Management.Automation.Interpreter
     /// </summary>
     internal sealed class LeaveExceptionHandlerInstruction : IndexedBranchInstruction
     {
-        private static LeaveExceptionHandlerInstruction[] s_cache = new LeaveExceptionHandlerInstruction[2 * CacheSize];
+        private static readonly LeaveExceptionHandlerInstruction[] s_cache = new LeaveExceptionHandlerInstruction[2 * CacheSize];
 
         private readonly bool _hasValue;
 

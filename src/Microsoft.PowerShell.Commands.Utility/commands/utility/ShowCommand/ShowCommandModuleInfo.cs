@@ -12,7 +12,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
     public class ShowCommandModuleInfo
     {
         /// <summary>
-        /// Creates an instance of the ShowCommandModuleInfo class based on a CommandInfo object.
+        /// Initializes a new instance of the <see cref="ShowCommandModuleInfo"/> class
+        /// with the specified <see cref="CommandInfo"/>.
         /// </summary>
         /// <param name="other">
         /// The object to wrap.
@@ -21,14 +22,15 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             this.Name = other.Name;
         }
 
         /// <summary>
-        /// Creates an instance of the ShowCommandModuleInfo class based on a PSObject object.
+        /// Initializes a new instance of the <see cref="ShowCommandModuleInfo"/> class
+        /// with the specified <see cref="PSObject"/>.
         /// </summary>
         /// <param name="other">
         /// The object to wrap.
@@ -37,7 +39,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             this.Name = other.Members["Name"].Value as string;
@@ -46,6 +48,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Gets the name of this module.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
     }
 }

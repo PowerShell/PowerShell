@@ -3,7 +3,6 @@
 
 using System.Management.Automation.Language;
 using System.Runtime.Serialization;
-using System.Security.Permissions;
 
 namespace System.Management.Automation
 {
@@ -55,12 +54,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -226,7 +224,7 @@ namespace System.Management.Automation
         {
             if (errorRecord == null)
                 return string.Empty;
-            if (null != errorRecord.ErrorDetails &&
+            if (errorRecord.ErrorDetails != null &&
                 !string.IsNullOrEmpty(errorRecord.ErrorDetails.Message))
             {
                 return errorRecord.ErrorDetails.Message;
@@ -242,8 +240,7 @@ namespace System.Management.Automation
             if (e == null)
                 return string.Empty;
 
-            IContainsErrorRecord icer = e as IContainsErrorRecord;
-            if (icer == null)
+            if (!(e is IContainsErrorRecord icer))
                 return e.Message;
             ErrorRecord er = icer.ErrorRecord;
             if (er == null)
@@ -266,7 +263,10 @@ namespace System.Management.Automation
         /// </summary>
         public bool WasThrownFromThrowStatement
         {
-            get { return _thrownByThrowStatement; }
+            get
+            {
+                return _thrownByThrowStatement;
+            }
 
             set
             {
@@ -305,6 +305,7 @@ namespace System.Management.Automation
         #endregion Internal
 
         private Token _errorToken;
+
         internal Token ErrorToken
         {
             get

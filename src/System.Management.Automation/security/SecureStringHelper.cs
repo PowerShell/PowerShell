@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -20,7 +21,7 @@ namespace Microsoft.PowerShell
     {
         // Some random hex characters to identify the beginning of a
         // V2-exported SecureString.
-        internal static string SecureStringExportHeader = "76492d1116743f0423413b16050a5345";
+        internal static readonly string SecureStringExportHeader = "76492d1116743f0423413b16050a5345";
 
         /// <summary>
         /// Create a new SecureString based on the specified binary data.
@@ -185,7 +186,7 @@ namespace Microsoft.PowerShell
             Utils.CheckArgForNullOrEmpty(input, "input");
             if ((input.Length % 2) != 0)
             {
-                throw PSTraceSource.NewArgumentException("input", Serialization.InvalidEncryptedString, input);
+                throw PSTraceSource.NewArgumentException(nameof(input), Serialization.InvalidEncryptedString, input);
             }
 
             byte[] data = null;
@@ -385,6 +386,26 @@ namespace Microsoft.PowerShell
                 return s;
             }
         }
+
+#nullable enable
+        /// <summary>Creates a new <see cref="SecureString"/> from a <see cref="string"/>.</summary>
+        /// <param name="plainTextString">Plain text string. Must not be null.</param>
+        /// <returns>A new SecureString.</returns>
+        internal static unsafe SecureString FromPlainTextString(string plainTextString)
+        {
+            Debug.Assert(plainTextString is not null);
+
+            if (plainTextString.Length == 0)
+            {
+                return new SecureString();
+            }
+
+            fixed (char* charsPtr = plainTextString)
+            {
+                return new SecureString(charsPtr, plainTextString.Length);
+            }
+        }
+#nullable restore
     }
 
     /// <summary>
@@ -432,7 +453,7 @@ namespace Microsoft.PowerShell
         {
             if (userData == null)
             {
-                throw new ArgumentNullException("userData");
+                throw new ArgumentNullException(nameof(userData));
             }
 
             GCHandle pbDataIn = new GCHandle();
@@ -520,7 +541,7 @@ namespace Microsoft.PowerShell
         {
             if (encryptedData == null)
             {
-                throw new ArgumentNullException("encryptedData");
+                throw new ArgumentNullException(nameof(encryptedData));
             }
 
             GCHandle pbDataIn = new GCHandle();
@@ -617,23 +638,23 @@ namespace Microsoft.PowerShell
         [DllImport("CRYPT32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptProtectData(
-                [In]     IntPtr pDataIn,
-                [In]     string szDataDescr,
-                [In]     IntPtr pOptionalEntropy,
-                [In]     IntPtr pvReserved,
-                [In]     IntPtr pPromptStruct,
-                [In]     uint dwFlags,
+                [In] IntPtr pDataIn,
+                [In] string szDataDescr,
+                [In] IntPtr pOptionalEntropy,
+                [In] IntPtr pvReserved,
+                [In] IntPtr pPromptStruct,
+                [In] uint dwFlags,
                 [In, Out] IntPtr pDataBlob);
 
         [DllImport("CRYPT32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool CryptUnprotectData(
-                [In]     IntPtr pDataIn,
-                [In]     IntPtr ppszDataDescr,
-                [In]     IntPtr pOptionalEntropy,
-                [In]     IntPtr pvReserved,
-                [In]     IntPtr pPromptStruct,
-                [In]     uint dwFlags,
+                [In] IntPtr pDataIn,
+                [In] IntPtr ppszDataDescr,
+                [In] IntPtr pOptionalEntropy,
+                [In] IntPtr pvReserved,
+                [In] IntPtr pPromptStruct,
+                [In] uint dwFlags,
                 [In, Out] IntPtr pDataBlob);
 
         [DllImport("ntdll.dll", EntryPoint = "RtlZeroMemory", SetLastError = true)]
@@ -647,4 +668,3 @@ namespace Microsoft.PowerShell
 
 #endif
 }
-

@@ -56,6 +56,7 @@ namespace System.Management.Automation
         public Collection<CompletionResult> CompletionMatches { get; set; }
 
         internal static readonly IList<CompletionResult> EmptyCompletionResult = Array.Empty<CompletionResult>();
+
         private static readonly CommandCompletion s_emptyCommandCompletion = new CommandCompletion(
             new Collection<CompletionResult>(EmptyCompletionResult), -1, -1, -1);
 
@@ -72,7 +73,7 @@ namespace System.Management.Automation
         {
             if (cursorIndex > input.Length)
             {
-                throw PSTraceSource.NewArgumentException("cursorIndex");
+                throw PSTraceSource.NewArgumentException(nameof(cursorIndex));
             }
 
             Token[] tokens;
@@ -112,17 +113,17 @@ namespace System.Management.Automation
         {
             if (ast == null)
             {
-                throw PSTraceSource.NewArgumentNullException("ast");
+                throw PSTraceSource.NewArgumentNullException(nameof(ast));
             }
 
             if (tokens == null)
             {
-                throw PSTraceSource.NewArgumentNullException("tokens");
+                throw PSTraceSource.NewArgumentNullException(nameof(tokens));
             }
 
             if (positionOfCursor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("positionOfCursor");
+                throw PSTraceSource.NewArgumentNullException(nameof(positionOfCursor));
             }
 
             return CompleteInputImpl(ast, tokens, positionOfCursor, options);
@@ -147,16 +148,16 @@ namespace System.Management.Automation
 
             if (cursorIndex > input.Length)
             {
-                throw PSTraceSource.NewArgumentException("cursorIndex");
+                throw PSTraceSource.NewArgumentException(nameof(cursorIndex));
             }
 
             if (powershell == null)
             {
-                throw PSTraceSource.NewArgumentNullException("powershell");
+                throw PSTraceSource.NewArgumentNullException(nameof(powershell));
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
-            var debugger = (powershell.Runspace != null) ? powershell.Runspace.Debugger : null;
+            var debugger = powershell.Runspace?.Debugger;
             if ((debugger != null) && debugger.InBreakpoint)
             {
                 return CompleteInputInDebugger(input, cursorIndex, options, debugger);
@@ -216,26 +217,26 @@ namespace System.Management.Automation
         {
             if (ast == null)
             {
-                throw PSTraceSource.NewArgumentNullException("ast");
+                throw PSTraceSource.NewArgumentNullException(nameof(ast));
             }
 
             if (tokens == null)
             {
-                throw PSTraceSource.NewArgumentNullException("tokens");
+                throw PSTraceSource.NewArgumentNullException(nameof(tokens));
             }
 
             if (cursorPosition == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cursorPosition");
+                throw PSTraceSource.NewArgumentNullException(nameof(cursorPosition));
             }
 
             if (powershell == null)
             {
-                throw PSTraceSource.NewArgumentNullException("powershell");
+                throw PSTraceSource.NewArgumentNullException(nameof(powershell));
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
-            var debugger = (powershell.Runspace != null) ? powershell.Runspace.Debugger : null;
+            var debugger = powershell.Runspace?.Debugger;
             if ((debugger != null) && debugger.InBreakpoint)
             {
                 return CompleteInputInDebugger(ast, tokens, cursorPosition, options, debugger);
@@ -334,12 +335,12 @@ namespace System.Management.Automation
 
             if (cursorIndex > input.Length)
             {
-                throw PSTraceSource.NewArgumentException("cursorIndex");
+                throw PSTraceSource.NewArgumentException(nameof(cursorIndex));
             }
 
             if (debugger == null)
             {
-                throw PSTraceSource.NewArgumentNullException("debugger");
+                throw PSTraceSource.NewArgumentNullException(nameof(debugger));
             }
 
             Command cmd = new Command("TabExpansion2");
@@ -363,22 +364,22 @@ namespace System.Management.Automation
         {
             if (ast == null)
             {
-                throw PSTraceSource.NewArgumentNullException("ast");
+                throw PSTraceSource.NewArgumentNullException(nameof(ast));
             }
 
             if (tokens == null)
             {
-                throw PSTraceSource.NewArgumentNullException("tokens");
+                throw PSTraceSource.NewArgumentNullException(nameof(tokens));
             }
 
             if (cursorPosition == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cursorPosition");
+                throw PSTraceSource.NewArgumentNullException(nameof(cursorPosition));
             }
 
             if (debugger == null)
             {
-                throw PSTraceSource.NewArgumentNullException("debugger");
+                throw PSTraceSource.NewArgumentNullException(nameof(debugger));
             }
 
             // For remote debugging just pass string input.
@@ -525,74 +526,70 @@ namespace System.Management.Automation
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
 
-                bool cleanupModuleAnalysisAppDomain = context.TakeResponsibilityForModuleAnalysisAppDomain();
+                // First, check if a V1/V2 implementation of TabExpansion exists.  If so, the user had overridden
+                // the built-in version, so we should continue to use theirs.
+                int replacementIndex = -1;
+                int replacementLength = -1;
+                List<CompletionResult> results = null;
 
-                try
+                if (NeedToInvokeLegacyTabExpansion(powershell))
                 {
-                    // First, check if a V1/V2 implementation of TabExpansion exists.  If so, the user had overridden
-                    // the built-in version, so we should continue to use theirs.
-                    int replacementIndex = -1;
-                    int replacementLength = -1;
-                    List<CompletionResult> results = null;
+                    var inputAndCursor = GetInputAndCursorFromAst(positionOfCursor);
+                    results = InvokeLegacyTabExpansion(powershell, inputAndCursor.Item1, inputAndCursor.Item2, false, out replacementIndex, out replacementLength);
+                    replacementIndex += inputAndCursor.Item3;
+                }
 
-                    if (NeedToInvokeLegacyTabExpansion(powershell))
+                if (results == null || results.Count == 0)
+                {
+                    /* BROKEN code commented out, fix sometime
+                    // If we were invoked from TabExpansion2, we want to "remove" TabExpansion2 and anything it calls
+                    // from our results.  We do this by faking out the session so that TabExpansion2 isn't anywhere to be found.
+                    MutableTuple tupleForFrameToSkipPast = null;
+                    foreach (var stackEntry in context.Debugger.GetCallStack())
                     {
-                        var inputAndCursor = GetInputAndCursorFromAst(positionOfCursor);
-                        results = InvokeLegacyTabExpansion(powershell, inputAndCursor.Item1, inputAndCursor.Item2, false, out replacementIndex, out replacementLength);
-                        replacementIndex += inputAndCursor.Item3;
+                        dynamic stackEntryAsPSObj = PSObject.AsPSObject(stackEntry);
+                        if (stackEntryAsPSObj.Command.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase))
+                        {
+                            tupleForFrameToSkipPast = stackEntry.FunctionContext._localsTuple;
+                            break;
+                        }
                     }
 
-                    if (results == null || results.Count == 0)
+                    SessionStateScope scopeToRestore = null;
+                    if (tupleForFrameToSkipPast != null)
                     {
-                        /* BROKEN code commented out, fix sometime
-                        // If we were invoked from TabExpansion2, we want to "remove" TabExpansion2 and anything it calls
-                        // from our results.  We do this by faking out the session so that TabExpansion2 isn't anywhere to be found.
-                        MutableTuple tupleForFrameToSkipPast = null;
-                        foreach (var stackEntry in context.Debugger.GetCallStack())
+                        // Find this tuple in the scope stack.
+                        scopeToRestore = context.EngineSessionState.CurrentScope;
+                        var scope = context.EngineSessionState.CurrentScope;
+                        while (scope != null && scope.LocalsTuple != tupleForFrameToSkipPast)
                         {
-                            dynamic stackEntryAsPSObj = PSObject.AsPSObject(stackEntry);
-                            if (stackEntryAsPSObj.Command.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase))
-                            {
-                                tupleForFrameToSkipPast = stackEntry.FunctionContext._localsTuple;
-                                break;
-                            }
+                            scope = scope.Parent;
                         }
 
-                        SessionStateScope scopeToRestore = null;
-                        if (tupleForFrameToSkipPast != null)
+                        if (scope != null)
                         {
-                            // Find this tuple in the scope stack.
-                            scopeToRestore = context.EngineSessionState.CurrentScope;
-                            var scope = context.EngineSessionState.CurrentScope;
-                            while (scope != null && scope.LocalsTuple != tupleForFrameToSkipPast)
-                            {
-                                scope = scope.Parent;
-                            }
-
-                            if (scope != null)
-                            {
-                                context.EngineSessionState.CurrentScope = scope.Parent;
-                            }
+                            context.EngineSessionState.CurrentScope = scope.Parent;
                         }
-
-                        try
-                        {
-                        */
-                        var completionAnalysis = new CompletionAnalysis(ast, tokens, positionOfCursor, options);
-                        results = completionAnalysis.GetResults(powershell, out replacementIndex, out replacementLength);
-                        /*
-                        }
-                        finally
-                        {
-                            if (scopeToRestore != null)
-                            {
-                                context.EngineSessionState.CurrentScope = scopeToRestore;
-                            }
-                        }
-                        */
                     }
 
-                    var completionResults = results ?? EmptyCompletionResult;
+                    try
+                    {
+                    */
+                    var completionAnalysis = new CompletionAnalysis(ast, tokens, positionOfCursor, options);
+                    results = completionAnalysis.GetResults(powershell, out replacementIndex, out replacementLength);
+                    /*
+                    }
+                    finally
+                    {
+                        if (scopeToRestore != null)
+                        {
+                            context.EngineSessionState.CurrentScope = scopeToRestore;
+                        }
+                    }
+                    */
+                }
+
+                var completionResults = results ?? EmptyCompletionResult;
 
 #if LEGACYTELEMETRY
                     // no telemetry here. We don't capture tab completion performance.
@@ -600,19 +597,11 @@ namespace System.Management.Automation
                     TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
                         completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);
 #endif
-                    return new CommandCompletion(
-                        new Collection<CompletionResult>(completionResults),
-                        -1,
-                        replacementIndex,
-                        replacementLength);
-                }
-                finally
-                {
-                    if (cleanupModuleAnalysisAppDomain)
-                    {
-                        context.ReleaseResponsibilityForModuleAnalysisAppDomain();
-                    }
-                }
+                return new CommandCompletion(
+                    new Collection<CompletionResult>(completionResults),
+                    -1,
+                    replacementIndex,
+                    replacementLength);
             }
         }
 
@@ -739,7 +728,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            private struct CommandAndName
+            private readonly struct CommandAndName
             {
                 internal readonly PSObject Command;
                 internal readonly PSSnapinQualifiedName CommandName;
@@ -853,10 +842,10 @@ namespace System.Management.Automation
 
                     CommandAndName nextCommandAndName = cmdlets[lookAhead];
 
-                    if (string.Compare(
+                    if (string.Equals(
                             commandAndName.CommandName.ShortName,
                             nextCommandAndName.CommandName.ShortName,
-                            StringComparison.OrdinalIgnoreCase) == 0)
+                            StringComparison.OrdinalIgnoreCase))
                     {
                         AddCommandResult(commandAndName, true, completingAtStartOfLine, quote, results);
                         previousMatched = true;
@@ -890,7 +879,7 @@ namespace System.Management.Automation
 
                 // Determine if we need to quote the paths we parse
 
-                lastWord = lastWord ?? string.Empty;
+                lastWord ??= string.Empty;
                 bool isLastWordEmpty = string.IsNullOrEmpty(lastWord);
                 bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith('*');
                 bool containsGlobChars = WildcardPattern.ContainsWildcardCharacters(lastWord);
@@ -997,7 +986,7 @@ namespace System.Management.Automation
                 result.AddRange(s1);
                 for (int i = 0, j = 0; i < s2.Count; ++i)
                 {
-                    if (j < s1.Count && string.Compare(s2[i].Path, s1[j].Path, StringComparison.CurrentCultureIgnoreCase) == 0)
+                    if (j < s1.Count && string.Equals(s2[i].Path, s1[j].Path, StringComparison.CurrentCultureIgnoreCase))
                     {
                         ++j;
                         continue;
@@ -1066,7 +1055,7 @@ namespace System.Management.Automation
                 return isAbsolute;
             }
 
-            private struct PathItemAndConvertedPath
+            private readonly struct PathItemAndConvertedPath
             {
                 internal readonly string Path;
                 internal readonly PSObject Item;
@@ -1136,11 +1125,11 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                result.Sort(delegate (PathItemAndConvertedPath x, PathItemAndConvertedPath y)
-                                {
-                                    Diagnostics.Assert(x.Path != null && y.Path != null, "SafeToString always returns a non-null string");
-                                    return string.Compare(x.Path, y.Path, StringComparison.CurrentCultureIgnoreCase);
-                                });
+                result.Sort((PathItemAndConvertedPath x, PathItemAndConvertedPath y) =>
+                {
+                    Diagnostics.Assert(x.Path != null && y.Path != null, "SafeToString always returns a non-null string");
+                    return string.Compare(x.Path, y.Path, StringComparison.CurrentCultureIgnoreCase);
+                });
 
                 return result;
             }
@@ -1300,7 +1289,10 @@ namespace System.Management.Automation
 
             private int ReplacementIndex
             {
-                get { return _replacementIndex; }
+                get
+                {
+                    return _replacementIndex;
+                }
 
                 set
                 {

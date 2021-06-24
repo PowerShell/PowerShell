@@ -15,7 +15,8 @@ namespace System.Management.Automation
     public class ParseException : RuntimeException
     {
         private const string errorIdString = "Parse";
-        private ParseError[] _errors;
+
+        private readonly ParseError[] _errors;
 
         /// <summary>
         /// The list of parser errors.
@@ -47,7 +48,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -132,7 +133,7 @@ namespace System.Management.Automation
         {
             if ((errors == null) || (errors.Length == 0))
             {
-                throw new ArgumentNullException("errors");
+                throw new ArgumentNullException(nameof(errors));
             }
 
             _errors = errors;
@@ -160,8 +161,8 @@ namespace System.Management.Automation
 
                 // Report at most the first 10 errors
                 var errorsToReport = (_errors.Length > 10)
-                    ? _errors.Take(10).Select(e => e.ToString()).Append(ParserStrings.TooManyErrors)
-                    : _errors.Select(e => e.ToString());
+                    ? _errors.Take(10).Select(static e => e.ToString()).Append(ParserStrings.TooManyErrors)
+                    : _errors.Select(static e => e.ToString());
 
                 return string.Join(Environment.NewLine + Environment.NewLine, errorsToReport);
             }

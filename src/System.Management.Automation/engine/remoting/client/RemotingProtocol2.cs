@@ -43,16 +43,11 @@ namespace System.Management.Automation.Internal
             // TODO: Assign remote session name.. should be passed from clientRunspacePool
             _transportManager = RemoteSession.SessionDataStructureHandler.TransportManager;
             _transportManager.TypeTable = typeTable;
-            RemoteSession.StateChanged +=
-                new EventHandler<RemoteSessionStateEventArgs>(
-                    HandleClientRemoteSessionStateChanged);
+            RemoteSession.StateChanged += HandleClientRemoteSessionStateChanged;
             _reconnecting = false;
 
-            _transportManager.RobustConnectionNotification +=
-                new EventHandler<ConnectionStatusEventArgs>(HandleRobustConnectionNotification);
-
-            _transportManager.CreateCompleted +=
-                new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
+            _transportManager.RobustConnectionNotification += HandleRobustConnectionNotification;
+            _transportManager.CreateCompleted += HandleSessionCreateCompleted;
         }
 
         #endregion Constructors
@@ -234,12 +229,11 @@ namespace System.Management.Automation.Internal
                 _associatedPowerShellDSHandlers.Add(shell.InstanceId, shell.DataStructureHandler);
             }
 
-            shell.DataStructureHandler.RemoveAssociation +=
-                new EventHandler(HandleRemoveAssociation);
+            shell.DataStructureHandler.RemoveAssociation += HandleRemoveAssociation;
 
             // Find out if this is an invoke and disconnect operation and if so whether the endpoint
             // supports disconnect.  Throw exception if disconnect is not supported.
-            bool invokeAndDisconnect = (shell.Settings != null) ? shell.Settings.InvokeAndDisconnect : false;
+            bool invokeAndDisconnect = shell.Settings != null && shell.Settings.InvokeAndDisconnect;
             if (invokeAndDisconnect && !EndpointSupportsDisconnect)
             {
                 throw new PSRemotingDataStructureException(RemotingErrorIdStrings.EndpointDoesNotSupportDisconnect);
@@ -266,7 +260,7 @@ namespace System.Management.Automation.Internal
                 _associatedPowerShellDSHandlers[psShellInstanceId] = psDSHandler;
             }
 
-            psDSHandler.RemoveAssociation += new EventHandler(HandleRemoveAssociation);
+            psDSHandler.RemoveAssociation += HandleRemoveAssociation;
         }
 
         /// <summary>
@@ -868,21 +862,23 @@ namespace System.Management.Automation.Internal
 
         #region Private Members
 
-        private Guid _clientRunspacePoolId;
-        private object _syncObject = new object();
+        private readonly Guid _clientRunspacePoolId;
+        private readonly object _syncObject = new object();
         private bool _createRunspaceCalled = false;
         private Exception _closingReason;
-        private int _minRunspaces;
-        private int _maxRunspaces;
-        private PSHost _host;
-        private PSPrimitiveDictionary _applicationArguments;
-        private Dictionary<Guid, ClientPowerShellDataStructureHandler> _associatedPowerShellDSHandlers
+        private readonly int _minRunspaces;
+        private readonly int _maxRunspaces;
+        private readonly PSHost _host;
+        private readonly PSPrimitiveDictionary _applicationArguments;
+
+        private readonly Dictionary<Guid, ClientPowerShellDataStructureHandler> _associatedPowerShellDSHandlers
             = new Dictionary<Guid, ClientPowerShellDataStructureHandler>();
+
         // data structure handlers of all ClientRemotePowerShell which are
         // associated with this runspace pool
-        private object _associationSyncObject = new object();
+        private readonly object _associationSyncObject = new object();
         // object to synchronize operations to above
-        private BaseClientSessionTransportManager _transportManager;
+        private readonly BaseClientSessionTransportManager _transportManager;
         // session transport manager associated with this runspace
 
         private List<BaseClientCommandTransportManager> _preparingForDisconnectList;
@@ -942,7 +938,7 @@ namespace System.Management.Automation.Internal
             get
             {
                 WSManClientSessionTransportManager wsmanTransportManager = _transportManager as WSManClientSessionTransportManager;
-                return (wsmanTransportManager != null) ? wsmanTransportManager.SupportsDisconnect : false;
+                return wsmanTransportManager != null && wsmanTransportManager.SupportsDisconnect;
             }
         }
 
@@ -1192,7 +1188,7 @@ namespace System.Management.Automation.Internal
                 // registered
                 lock (_inputSyncObject)
                 {
-                    inputstream.DataReady += new EventHandler(HandleInputDataReady);
+                    inputstream.DataReady += HandleInputDataReady;
                     WriteInput(inputstream);
                 }
             }
@@ -1378,7 +1374,7 @@ namespace System.Management.Automation.Internal
             _sessionClosedReason = sessionCloseReason;
 
             // wait for the close to complete and then dispose the transport manager
-            TransportManager.CloseCompleted += delegate (object source, EventArgs args)
+            TransportManager.CloseCompleted += (object source, EventArgs args) =>
             {
                 if (CloseCompleted != null)
                 {
@@ -1417,7 +1413,7 @@ namespace System.Management.Automation.Internal
             // disconnect may be called on a pipeline that is already disconnected.
             PSInvocationStateInfo stateInfo =
                             new PSInvocationStateInfo(PSInvocationState.Disconnected,
-                                (rsStateInfo != null) ? rsStateInfo.Reason : null);
+                                rsStateInfo?.Reason);
 
             Dbg.Assert(InvocationStateInfoReceived != null,
                 "ClientRemotePowerShell should subscribe to all data structure handler events");
@@ -1497,7 +1493,7 @@ namespace System.Management.Automation.Internal
             TransportManager = transportManager;
             this.clientRunspacePoolId = clientRunspacePoolId;
             this.clientPowerShellId = clientPowerShellId;
-            transportManager.SignalCompleted += new EventHandler<EventArgs>(OnSignalCompleted);
+            transportManager.SignalCompleted += OnSignalCompleted;
         }
 
         #endregion Constructors
@@ -1609,7 +1605,7 @@ namespace System.Management.Automation.Internal
 
         // object for synchronizing input to be sent
         // to server powershell
-        private object _inputSyncObject = new object();
+        private readonly object _inputSyncObject = new object();
 
         private enum connectionStates
         {

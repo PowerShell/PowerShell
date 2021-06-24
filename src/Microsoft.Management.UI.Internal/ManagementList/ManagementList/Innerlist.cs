@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Windows;
@@ -355,7 +356,7 @@ namespace Microsoft.Management.UI.Internal
         {
             base.OnKeyDown(e);
 
-            if ((Key.Left == e.Key || Key.Right == e.Key) &&
+            if ((e.Key == Key.Left || e.Key == Key.Right) &&
                 Keyboard.Modifiers == ModifierKeys.None)
             {
                 // If pressing Left or Right on a column header, move the focus \\
@@ -388,8 +389,8 @@ namespace Microsoft.Management.UI.Internal
                 throw new NotSupportedException(string.Format(
                     CultureInfo.InvariantCulture,
                    InvariantResources.ViewSetWithType,
-                   typeof(GridView).Name,
-                   typeof(InnerListGridView).Name));
+                   nameof(GridView),
+                   nameof(InnerListGridView)));
             }
 
             ((InnerList)obj).innerGrid = innerGrid;
@@ -401,12 +402,14 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The exception to be thrown when using Items.</returns>
         private static NotSupportedException GetItemsException()
         {
+            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             return new NotSupportedException(
                 string.Format(
                     CultureInfo.InvariantCulture,
                     InvariantResources.NotSupportAddingToItems,
-                    typeof(InnerList).Name,
+                    nameof(InnerList),
                     ItemsControl.ItemsSourceProperty.Name));
+            #pragma warning restore IDE1005s
         }
         #endregion static private methods
 
@@ -543,8 +546,8 @@ namespace Microsoft.Management.UI.Internal
                 if (header != null)
                 {
                     // header Click
-                    header.Click += new RoutedEventHandler(this.Header_Click);
-                    header.PreviewKeyDown += new KeyEventHandler(this.Header_KeyDown);
+                    header.Click += this.Header_Click;
+                    header.PreviewKeyDown += this.Header_KeyDown;
                 }
 
                 // If it is a GridViewColumnHeader we will not have the same nice sorting and grouping
@@ -605,6 +608,7 @@ namespace Microsoft.Management.UI.Internal
             return entryText.ToString();
         }
 
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private void SetClipboardWithSelectedItemsText(string text)
         {
             if (string.IsNullOrEmpty(text))
@@ -695,7 +699,7 @@ namespace Microsoft.Management.UI.Internal
             MenuItem columnPicker = new MenuItem();
             AutomationProperties.SetAutomationId(columnPicker, "ChooseColumns");
             columnPicker.Header = UICultureResources.ColumnPicker;
-            columnPicker.Click += new RoutedEventHandler(this.innerGrid.OnColumnPicker);
+            columnPicker.Click += this.innerGrid.OnColumnPicker;
 
             this.contextMenu.Items.Add(columnPicker);
 

@@ -1,0 +1,77 @@
+steps:
+- task: DownloadPipelineArtifact@2
+  inputs:
+    source: specific
+    project: PowerShellCore
+    pipeline: '696'
+    preferTriggeringPipeline: true
+    runVersion: latestFromBranch
+    runBranch: '$(Build.SourceBranch)'
+    artifact: BuildInfoJson
+    path: '$(Pipeline.Workspace)/releasePipeline/BuildInfoJson'
+
+- pwsh: |
+    $jsonFile = Get-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/BuildInfoJson/*.json"
+    $fileName = Split-Path $jsonFile -Leaf
+
+    $dateTime = [datetime]::UtcNow
+    $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
+
+    $buildInfo = Get-Content $jsonFile | ConvertFrom-Json
+    $buildInfo.ReleaseDate = $dateTime
+
+    $targetFile = "$ENV:PIPELINE_WORKSPACE/$fileName"
+    ConvertTo-Json -InputObject $buildInfo | Out-File $targetFile -Encoding ascii
+
+    $vstsCommandString = "vso[task.setvariable variable=BuildInfoJsonFile]$targetFile"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+
+
+    ## Create 'lts.json' if it's the latest stable and also a LTS release.
+
+    $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]NO"
+
+    if ($fileName -eq "stable.json")
+    {
+        $releaseTag = $buildInfo.ReleaseTag
+        $version = $releaseTag -replace '^v'
+        $semVersion = [System.Management.Automation.SemanticVersion] $version
+
+        if ($semVersion.PreReleaseLabel -eq $null -and $semVersion.Minor % 2 -eq 0 -and $semVersion.Major -ge 7)
+        {
+            $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
+            Copy-Item -Path $targetFile -Destination $ltsFile -Force
+            $vstsCommandLtsJsonFile = "vso[task.setvariable variable=LtsBuildInfoJsonFile]$ltsFile"
+            $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]YES"
+        }
+    }
+
+    Write-Host "sending " + $vstsCommandCopyLTSBuildInfo
+    Write-Host "##$vstsCommandCopyLTSBuildInfo"
+
+    if ($vstsCommandLtsJsonFile)
+    {
+        Write-Host "sending " + $vstsCommandLtsJsonFile
+        Write-Host "##$vstsCommandLtsJsonFile"
+    }
+  displayName: Download and Capture NuPkgs
+
+- task: AzureFileCopy@2
+  displayName: 'AzureBlob build info JSON file Copy'
+  inputs:
+    SourcePath: '$(BuildInfoJsonFile)'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: BuildInfo
+
+- task: AzureFileCopy@2
+  displayName: 'AzureBlob build info ''lts.json'' Copy when needed'
+  inputs:
+    SourcePath: '$(LtsBuildInfoJsonFile)'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: BuildInfo
+  condition: and(succeeded(), eq(variables['CopyLTSBuildInfo'], 'YES'))

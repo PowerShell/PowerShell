@@ -78,7 +78,7 @@ namespace System.Management.Automation.Runspaces
             {
                 foreach (PSSnapInException e in PSSnapInExceptions)
                 {
-                    sb.Append("\n");
+                    sb.Append('\n');
                     sb.Append(e.Message);
                 }
             }
@@ -87,6 +87,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         private Collection<PSSnapInException> _PSSnapInExceptions = new Collection<PSSnapInException>();
+
         internal Collection<PSSnapInException> PSSnapInExceptions
         {
             get
@@ -114,4 +115,3 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-

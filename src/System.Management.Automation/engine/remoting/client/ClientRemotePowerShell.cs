@@ -20,7 +20,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Tracer
 
         [TraceSourceAttribute("CRPS", "ClientRemotePowerShell")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("CRPS", "ClientRemotePowerShellBase");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("CRPS", "ClientRemotePowerShellBase");
 
         #endregion Tracer
 
@@ -251,24 +251,17 @@ namespace System.Management.Automation.Runspaces.Internal
             dataStructureHandler = runspacePool.DataStructureHandler.CreatePowerShellDataStructureHandler(this);
 
             // register for events from the data structure handler
-            dataStructureHandler.InvocationStateInfoReceived +=
-                new EventHandler<RemoteDataEventArgs<PSInvocationStateInfo>>(HandleInvocationStateInfoReceived);
-            dataStructureHandler.OutputReceived += new EventHandler<RemoteDataEventArgs<object>>(HandleOutputReceived);
-            dataStructureHandler.ErrorReceived += new EventHandler<RemoteDataEventArgs<ErrorRecord>>(HandleErrorReceived);
-            dataStructureHandler.InformationalMessageReceived +=
-                new EventHandler<RemoteDataEventArgs<InformationalMessage>>(HandleInformationalMessageReceived);
-            dataStructureHandler.HostCallReceived +=
-                new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
-            dataStructureHandler.ClosedNotificationFromRunspacePool +=
-                new EventHandler<RemoteDataEventArgs<Exception>>(HandleCloseNotificationFromRunspacePool);
-            dataStructureHandler.BrokenNotificationFromRunspacePool +=
-                new EventHandler<RemoteDataEventArgs<Exception>>(HandleBrokenNotificationFromRunspacePool);
-            dataStructureHandler.ConnectCompleted += new EventHandler<RemoteDataEventArgs<Exception>>(HandleConnectCompleted);
-            dataStructureHandler.ReconnectCompleted += new EventHandler<RemoteDataEventArgs<Exception>>(HandleConnectCompleted);
-            dataStructureHandler.RobustConnectionNotification +=
-                new EventHandler<ConnectionStatusEventArgs>(HandleRobustConnectionNotification);
-            dataStructureHandler.CloseCompleted +=
-                new EventHandler<EventArgs>(HandleCloseCompleted);
+            dataStructureHandler.InvocationStateInfoReceived += HandleInvocationStateInfoReceived;
+            dataStructureHandler.OutputReceived += HandleOutputReceived;
+            dataStructureHandler.ErrorReceived += HandleErrorReceived;
+            dataStructureHandler.InformationalMessageReceived += HandleInformationalMessageReceived;
+            dataStructureHandler.HostCallReceived += HandleHostCallReceived;
+            dataStructureHandler.ClosedNotificationFromRunspacePool += HandleCloseNotificationFromRunspacePool;
+            dataStructureHandler.BrokenNotificationFromRunspacePool += HandleBrokenNotificationFromRunspacePool;
+            dataStructureHandler.ConnectCompleted += HandleConnectCompleted;
+            dataStructureHandler.ReconnectCompleted += HandleConnectCompleted;
+            dataStructureHandler.RobustConnectionNotification += HandleRobustConnectionNotification;
+            dataStructureHandler.CloseCompleted += HandleCloseCompleted;
         }
 
         /// <summary>
@@ -652,7 +645,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     // If RemoteSessionStateEventArgs are provided then use them to set the
                     // session close reason when setting finished state.
                     RemoteSessionStateEventArgs sessionEventArgs = args as RemoteSessionStateEventArgs;
-                    Exception closeReason = (sessionEventArgs != null) ? sessionEventArgs.SessionStateInfo.Reason : null;
+                    Exception closeReason = sessionEventArgs?.SessionStateInfo.Reason;
                     PSInvocationState finishedState = (shell.InvocationStateInfo.State == PSInvocationState.Disconnected) ?
                         PSInvocationState.Failed : PSInvocationState.Stopped;
 
@@ -670,7 +663,7 @@ namespace System.Management.Automation.Runspaces.Internal
             }
         }
 
-        private bool IsFinished(PSInvocationState state)
+        private static bool IsFinished(PSInvocationState state)
         {
             return (state == PSInvocationState.Completed ||
                     state == PSInvocationState.Failed ||
@@ -924,17 +917,19 @@ namespace System.Management.Automation.Runspaces.Internal
         protected bool stopCalled = false;
         protected PSHost hostToUse;
         protected RemoteRunspacePoolInternal runspacePool;
+
         protected const string WRITE_DEBUG_LINE = "WriteDebugLine";
         protected const string WRITE_VERBOSE_LINE = "WriteVerboseLine";
         protected const string WRITE_WARNING_LINE = "WriteWarningLine";
         protected const string WRITE_PROGRESS = "WriteProgress";
+
         protected bool initialized = false;
         /// <summary>
         /// This queue is for the state change events that resulted in closing the underlying
         /// datastructure handler. We cannot send the state back to the upper layers until
         /// close is completed from the datastructure/transport layer.
         /// </summary>
-        private Queue<PSInvocationStateInfo> _stateInfoQueue = new Queue<PSInvocationStateInfo>();
+        private readonly Queue<PSInvocationStateInfo> _stateInfoQueue = new Queue<PSInvocationStateInfo>();
 
         private PSConnectionRetryStatus _connectionRetryStatus = PSConnectionRetryStatus.None;
 
@@ -982,7 +977,7 @@ namespace System.Management.Automation.Runspaces.Internal
         AutoDisconnectStarting = 4,
         AutoDisconnectSucceeded = 5,
         InternalErrorAbort = 6
-    };
+    }
 
     /// <summary>
     /// PSConnectionRetryStatusEventArgs.

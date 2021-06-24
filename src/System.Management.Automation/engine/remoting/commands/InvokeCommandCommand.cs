@@ -347,14 +347,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
         public override int ThrottleLimit
         {
-            set
-            {
-                base.ThrottleLimit = value;
-            }
-
             get
             {
                 return base.ThrottleLimit;
+            }
+
+            set
+            {
+                base.ThrottleLimit = value;
             }
         }
 
@@ -738,6 +738,30 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets and sets a value for the SSH subsystem to use for the remote connection.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        public override string Subsystem
+        {
+            get { return base.Subsystem; }
+
+            set { base.Subsystem = value; }
+        }
+
+        /// <summary>
+        /// Gets and sets a value in milliseconds that limits the time allowed for an SSH connection to be established.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        public override int ConnectingTimeout
+        {
+            get { return base.ConnectingTimeout; }
+            
+            set { base.ConnectingTimeout = value; }
+        }
+
+        /// <summary>
         /// This parameter specifies that SSH is used to establish the remote
         /// connection and act as the remoting transport.  By default WinRM is used
         /// as the remoting transport.  Using the SSH transport requires that SSH is
@@ -972,7 +996,7 @@ namespace Microsoft.PowerShell.Commands
                         // of this bug in Win8 where not responding can occur during data piping.
                         // We are reverting to Win7 behavior for {icm | icm} and {proxycommand | proxycommand}
                         // cases. For ICM | % ICM case, we are using remote steppable pipeline.
-                        if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && (MyInvocation.ExpectingInput == false))
+                        if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && !MyInvocation.ExpectingInput)
                         {
                             PSPrimitiveDictionary table = (object)runspaceInfo.ApplicationPrivateData[PSVersionInfo.PSVersionTableName] as PSPrimitiveDictionary;
                             if (table != null)
@@ -1007,8 +1031,7 @@ namespace Microsoft.PowerShell.Commands
                 // create collection of input writers here
                 foreach (IThrottleOperation operation in Operations)
                 {
-                    ExecutionCmdletHelperRunspace ecHelper = operation as ExecutionCmdletHelperRunspace;
-                    if (ecHelper == null)
+                    if (!(operation is ExecutionCmdletHelperRunspace ecHelper))
                     {
                         // either all the operations will be of type ExecutionCmdletHelperRunspace
                         // or not...there is no mix.
@@ -1359,7 +1382,7 @@ namespace Microsoft.PowerShell.Commands
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {
             _operationsComplete.Set();
-            _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
+            _throttleManager.ThrottleComplete -= HandleThrottleComplete;
         }
 
         /// <summary>
@@ -1389,14 +1412,14 @@ namespace Microsoft.PowerShell.Commands
                 if (!_nojob)
                 {
                     _throttleManager.ThrottleLimit = ThrottleLimit;
-                    _throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleComplete);
+                    _throttleManager.ThrottleComplete += HandleThrottleComplete;
 
                     _operationsComplete.Reset();
                     Dbg.Assert(_disconnectComplete == null, "disconnectComplete event should only be used once.");
                     _disconnectComplete = new ManualResetEvent(false);
                     _job = new PSInvokeExpressionSyncJob(Operations, _throttleManager);
                     _job.HideComputerName = _hideComputerName;
-                    _job.StateChanged += new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
+                    _job.StateChanged += HandleJobStateChanged;
 
                     // Add robust connection retry notification handler.
                     AddConnectionRetryHandler(_job);
@@ -1435,7 +1458,7 @@ namespace Microsoft.PowerShell.Commands
                 state == JobState.Stopped ||
                 state == JobState.Failed)
             {
-                _job.StateChanged -= new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
+                _job.StateChanged -= HandleJobStateChanged;
                 RemoveConnectionRetryHandler(sender as PSInvokeExpressionSyncJob);
 
                 // Signal that this job has been disconnected, or has ended.
@@ -1461,8 +1484,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ps.RemotePowerShell != null)
                 {
-                    ps.RemotePowerShell.RCConnectionNotification +=
-                        new EventHandler<PSConnectionRetryStatusEventArgs>(RCConnectionNotificationHandler);
+                    ps.RemotePowerShell.RCConnectionNotification += RCConnectionNotificationHandler;
                 }
             }
         }
@@ -1482,8 +1504,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ps.RemotePowerShell != null)
                 {
-                    ps.RemotePowerShell.RCConnectionNotification -=
-                        new EventHandler<PSConnectionRetryStatusEventArgs>(RCConnectionNotificationHandler);
+                    ps.RemotePowerShell.RCConnectionNotification -= RCConnectionNotificationHandler;
                 }
             }
         }
@@ -1878,7 +1899,7 @@ namespace Microsoft.PowerShell.Commands
                 this.Host);
         }
 
-        private void StopProgressBar(
+        private static void StopProgressBar(
             long sourceId)
         {
             s_RCProgress.StopProgress(sourceId);
@@ -1957,7 +1978,7 @@ namespace Microsoft.PowerShell.Commands
         /// Process the stream object before writing it in the specified collection.
         /// </summary>
         /// <param name="streamObject">Stream object to process.</param>
-        private void PreProcessStreamObject(PSStreamObject streamObject)
+        private static void PreProcessStreamObject(PSStreamObject streamObject)
         {
             ErrorRecord errorRecord = streamObject.Value as ErrorRecord;
 
@@ -1986,7 +2007,7 @@ namespace Microsoft.PowerShell.Commands
 
         private ThrottleManager _throttleManager = new ThrottleManager();
         // throttle manager for handling all throttling operations
-        private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
+        private readonly ManualResetEvent _operationsComplete = new ManualResetEvent(true);
         private ManualResetEvent _disconnectComplete;
         // the initial state is true because when no
         // operations actually take place as in case of a
@@ -2003,17 +2024,18 @@ namespace Microsoft.PowerShell.Commands
         private bool _inputStreamClosed = false;
 
         private const string InProcParameterSet = "InProcess";
-        private PSDataCollection<object> _input = new PSDataCollection<object>();
+
+        private readonly PSDataCollection<object> _input = new PSDataCollection<object>();
         private bool _needToCollect = false;
         private bool _needToStartSteppablePipelineOnServer = false;
         private bool _clearInvokeCommandOnRunspace = false;
-        private List<PipelineWriter> _inputWriters = new List<PipelineWriter>();
-        private object _jobSyncObject = new object();
+        private readonly List<PipelineWriter> _inputWriters = new List<PipelineWriter>();
+        private readonly object _jobSyncObject = new object();
         private bool _nojob = false;
-        private Guid _instanceId = Guid.NewGuid();
+        private readonly Guid _instanceId = Guid.NewGuid();
         private bool _propagateErrors = false;
 
-        private static RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
+        private static readonly RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
 
         internal static readonly string RemoteJobType = "RemoteJob";
 
@@ -2055,7 +2077,7 @@ namespace Microsoft.PowerShell.Commands
                         _job.Dispose();
                     }
 
-                    _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
+                    _throttleManager.ThrottleComplete -= HandleThrottleComplete;
                     _throttleManager.Dispose();
                     _throttleManager = null;
                 }
@@ -2093,14 +2115,14 @@ namespace System.Management.Automation.Internal
     internal class RobustConnectionProgress
     {
         private System.Management.Automation.Host.PSHost _psHost;
-        private string _activity;
+        private readonly string _activity;
         private string _status;
         private int _secondsTotal;
         private int _secondsRemaining;
         private ProgressRecord _progressRecord;
         private long _sourceId;
         private bool _progressIsRunning;
-        private object _syncObject;
+        private readonly object _syncObject;
         private Timer _updateTimer;
 
         /// <summary>
@@ -2137,7 +2159,7 @@ namespace System.Management.Automation.Internal
 
             if (string.IsNullOrEmpty(computerName))
             {
-                throw new ArgumentNullException("computerName");
+                throw new ArgumentNullException(nameof(computerName));
             }
 
             lock (_syncObject)

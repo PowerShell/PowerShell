@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-
-#nullable enable
 
 namespace System.Management.Automation
 {
@@ -18,7 +18,7 @@ namespace System.Management.Automation
     internal class CommandPathSearch : IEnumerable<string>, IEnumerator<string>
     {
         [TraceSource("CommandSearch", "CommandSearch")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("CommandSearch", "CommandSearch");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("CommandSearch", "CommandSearch");
 
         /// <summary>
         /// Constructs a command searching enumerator that resolves the location
@@ -44,7 +44,7 @@ namespace System.Management.Automation
             string commandName,
             LookupPathCollection lookupPaths,
             ExecutionContext context,
-            Collection<string> acceptableCommandNames,
+            Collection<string>? acceptableCommandNames,
             bool useFuzzyMatch)
         {
             _useFuzzyMatch = useFuzzyMatch;
@@ -278,9 +278,9 @@ namespace System.Management.Automation
                 GetNewDirectoryResults(_patternEnumerator.Current, _lookupPathsEnumerator.Current);
             }
 
-            do // while lookupPathsEnumerator is valid
+            while (true) // while lookupPathsEnumerator is valid
             {
-                do // while patternEnumerator is valid
+                while (true) // while patternEnumerator is valid
                 {
                     // Try moving to the next path in the current results
 
@@ -309,7 +309,7 @@ namespace System.Management.Automation
                     }
 
                     // Since we have reset the results, loop again to find the next result.
-                } while (true);
+                }
 
                 if (result)
                 {
@@ -336,7 +336,7 @@ namespace System.Management.Automation
                 }
 
                 GetNewDirectoryResults(_patternEnumerator.Current, _lookupPathsEnumerator.Current);
-            } while (true);
+            }
 
             return result;
         }
@@ -531,7 +531,7 @@ namespace System.Management.Automation
         /// The directory paths in which to look for commands.
         /// This is derived from the PATH environment variable.
         /// </summary>
-        private LookupPathCollection _lookupPaths;
+        private readonly LookupPathCollection _lookupPaths;
 
         /// <summary>
         /// The enumerator for the lookup paths.
@@ -552,7 +552,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The command name to search for.
         /// </summary>
-        private IEnumerable<string> _patterns;
+        private readonly IEnumerable<string> _patterns;
 
         /// <summary>
         /// The enumerator for the patterns.
@@ -562,7 +562,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A reference to the execution context for this runspace.
         /// </summary>
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
 
         /// <summary>
         /// When reset is called, this gets set to true. Once MoveNext
@@ -573,14 +573,13 @@ namespace System.Management.Automation
         /// <summary>
         /// If not null, called with the enumerated files for further processing.
         /// </summary>
-        private Func<string[], IEnumerable<string>?> _postProcessEnumeratedFiles;
+        private readonly Func<string[], IEnumerable<string>?> _postProcessEnumeratedFiles;
 
-        private string[] _orderedPathExt;
-        private Collection<string>? _acceptableCommandNames;
+        private readonly string[] _orderedPathExt;
+        private readonly Collection<string>? _acceptableCommandNames;
 
-        private bool _useFuzzyMatch = false;
+        private readonly bool _useFuzzyMatch = false;
 
         #endregion private members
     }
 }
-

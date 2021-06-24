@@ -52,12 +52,12 @@ namespace System.Management.Automation
         internal sealed class TraceFrame : IDisposable
         {
             // Following are help context information
-            private string _helpFile = string.Empty;
+            private readonly string _helpFile = string.Empty;
 
             // ErrorRecords accumulated during the help content loading.
-            private Collection<ErrorRecord> _errors = new Collection<ErrorRecord>();
+            private readonly Collection<ErrorRecord> _errors = new Collection<ErrorRecord>();
 
-            private HelpErrorTracer _helpTracer;
+            private readonly HelpErrorTracer _helpTracer;
             /// <summary>
             /// Constructor. Here help context information will be collected.
             /// </summary>
@@ -156,7 +156,7 @@ namespace System.Management.Automation
         /// <param name="errorRecord"></param>
         internal void TraceError(ErrorRecord errorRecord)
         {
-            if (_traceFrames.Count <= 0)
+            if (_traceFrames.Count == 0)
                 return;
 
             TraceFrame traceFrame = _traceFrames[_traceFrames.Count - 1];
@@ -171,7 +171,7 @@ namespace System.Management.Automation
         /// <param name="errorRecords"></param>
         internal void TraceErrors(Collection<ErrorRecord> errorRecords)
         {
-            if (_traceFrames.Count <= 0)
+            if (_traceFrames.Count == 0)
                 return;
 
             TraceFrame traceFrame = _traceFrames[_traceFrames.Count - 1];
@@ -181,7 +181,7 @@ namespace System.Management.Automation
 
         internal void PopFrame(TraceFrame traceFrame)
         {
-            if (_traceFrames.Count <= 0)
+            if (_traceFrames.Count == 0)
                 return;
 
             TraceFrame lastFrame = _traceFrames[_traceFrames.Count - 1];

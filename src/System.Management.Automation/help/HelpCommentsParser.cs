@@ -61,15 +61,16 @@ namespace System.Management.Automation
         private readonly List<string> _links = new List<string>();
         internal bool isExternalHelpSet = false;
 
-        private ScriptBlock _scriptBlock;
-        private CommandMetadata _commandMetadata;
-        private string _commandName;
-        private List<string> _parameterDescriptions;
+        private readonly ScriptBlock _scriptBlock;
+        private readonly CommandMetadata _commandMetadata;
+        private readonly string _commandName;
+        private readonly List<string> _parameterDescriptions;
         private XmlDocument _doc;
         internal static readonly string mshURI = "http://msh";
         internal static readonly string mamlURI = "http://schemas.microsoft.com/maml/2004/10";
         internal static readonly string commandURI = "http://schemas.microsoft.com/maml/dev/command/2004/10";
         internal static readonly string devURI = "http://schemas.microsoft.com/maml/dev/2004/10";
+
         private const string directive = @"^\s*\.(\w+)(\s+(\S.*))?\s*$";
         private const string blankline = @"^\s*$";
         // Although "http://msh" is the default namespace, it still must be explicitly qualified with non-empty prefix,
@@ -447,7 +448,7 @@ namespace System.Management.Automation
                 foreach (string link in _links)
                 {
                     XmlElement navigationLink = _doc.CreateElement("maml:navigationLink", mamlURI);
-                    bool isOnlineHelp = Uri.IsWellFormedUriString(Uri.EscapeUriString(link), UriKind.Absolute);
+                    bool isOnlineHelp = Uri.IsWellFormedUriString(link, UriKind.Absolute);
                     string nodeName = isOnlineHelp ? "maml:uri" : "maml:linkText";
                     XmlElement linkText = _doc.CreateElement(nodeName, mamlURI);
                     XmlText linkText_text = _doc.CreateTextNode(link);
@@ -481,7 +482,7 @@ namespace System.Management.Automation
                 CompiledCommandParameter parameter = mergedParameter.Parameter;
                 ParameterSetSpecificMetadata parameterSetData = parameter.GetParameterSetData(1u << i);
                 string description = GetParameterDescription(parameter.Name);
-                bool supportsWildcards = parameter.CompiledAttributes.Any(attribute => attribute is SupportsWildcardsAttribute);
+                bool supportsWildcards = parameter.CompiledAttributes.Any(static attribute => attribute is SupportsWildcardsAttribute);
                 XmlElement parameterElement = BuildXmlForParameter(parameter.Name,
                     parameterSetData.IsMandatory, parameterSetData.ValueFromPipeline,
                     parameterSetData.ValueFromPipelineByPropertyName,
@@ -495,7 +496,7 @@ namespace System.Management.Automation
 
         private static void GetExampleSections(string content, out string prompt_str, out string code_str, out string remarks_str)
         {
-            string default_prompt_str = "PS > ";
+            const string default_prompt_str = "PS > ";
 
             var promptMatch = Regex.Match(content, "^.*?>");
             prompt_str = promptMatch.Success ? promptMatch.Value : default_prompt_str;

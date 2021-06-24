@@ -77,17 +77,17 @@ namespace System.Management.Automation
         /// <param name="dotnetBaseType"></param>
         /// <param name="shouldIncludeNamespace"></param>
         /// <returns></returns>
-        private IEnumerable<string> GetTypeNameHierarchyFromDerivation(ManagementBaseObject managementObj,
+        private static IEnumerable<string> GetTypeNameHierarchyFromDerivation(ManagementBaseObject managementObj,
             string dotnetBaseType, bool shouldIncludeNamespace)
         {
             StringBuilder type = new StringBuilder(200);
             // give the typename based on NameSpace and Class
             type.Append(dotnetBaseType);
-            type.Append("#");
+            type.Append('#');
             if (shouldIncludeNamespace)
             {
                 type.Append(managementObj.SystemProperties["__NAMESPACE"].Value);
-                type.Append("\\");
+                type.Append('\\');
             }
 
             type.Append(managementObj.SystemProperties["__CLASS"].Value);
@@ -112,11 +112,11 @@ namespace System.Management.Automation
                     {
                         type.Clear();
                         type.Append(dotnetBaseType);
-                        type.Append("#");
+                        type.Append('#');
                         if (shouldIncludeNamespace)
                         {
                             type.Append(managementObj.SystemProperties["__NAMESPACE"].Value);
-                            type.Append("\\");
+                            type.Append('\\');
                         }
 
                         type.Append(t);
@@ -172,9 +172,7 @@ namespace System.Management.Automation
         {
             tracer.WriteLine("Getting member with name {0}", memberName);
 
-            ManagementBaseObject mgmtObject = obj as ManagementBaseObject;
-
-            if (mgmtObject == null)
+            if (!(obj is ManagementBaseObject mgmtObject))
             {
                 return null;
             }
@@ -366,8 +364,7 @@ namespace System.Management.Automation
         /// <param name="convertIfPossible">Instructs the adapter to convert before setting, if the adapter supports conversion.</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            ManagementBaseObject mObj = property.baseObject as ManagementBaseObject;
-            if (mObj == null)
+            if (!(property.baseObject is ManagementBaseObject mObj))
             {
                 throw new SetValueInvocationException("CannotSetNonManagementObjectMsg",
                     null,
@@ -412,7 +409,7 @@ namespace System.Management.Automation
             // }
 
             returnValue.Append(PropertyType(property, forDisplay: true));
-            returnValue.Append(" ");
+            returnValue.Append(' ');
             returnValue.Append(property.Name);
             returnValue.Append(" {");
             if (PropertyIsGettable(property))
@@ -425,7 +422,7 @@ namespace System.Management.Automation
                 returnValue.Append("set;");
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -763,7 +760,7 @@ namespace System.Management.Automation
         /// Should not throw exceptions
         /// </remarks>
         internal static void UpdateParameters(ManagementBaseObject parameters,
-            SortedList parametersList)
+            SortedList<int, WMIParameterInformation> parametersList)
         {
             // ManagementObject class do not populate parameters when there are none.
             if (parameters == null)
@@ -812,7 +809,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(mData != null, "MethodData should not be null");
 
             // Get Method parameters
-            SortedList parameters = new SortedList();
+            var parameters = new SortedList<int, WMIParameterInformation>();
             UpdateParameters(mData.InParameters, parameters);
 
             // parameters is never null
@@ -832,15 +829,16 @@ namespace System.Management.Automation
             // gather parameter information for this method.
             // input and output parameters reside in 2 different groups..
             // we dont know the order they appear on the arguments line..
-            SortedList parameters = new SortedList();
+            var parameters = new SortedList<int, WMIParameterInformation>();
             UpdateParameters(mData.InParameters, parameters);
 
             StringBuilder inParameterString = new StringBuilder();
 
             if (parameters.Count > 0)
             {
-                foreach (WMIParameterInformation parameter in parameters.Values)
+                for (int i = 0; i < parameters.Values.Count; i++)
                 {
+                    WMIParameterInformation parameter = parameters.Values[i];
                     string typeName = parameter.parameterType.ToString();
 
                     PropertyData pData = mData.InParameters.Properties[parameter.Name];
@@ -855,7 +853,7 @@ namespace System.Management.Automation
                     }
 
                     inParameterString.Append(typeName);
-                    inParameterString.Append(" ");
+                    inParameterString.Append(' ');
                     inParameterString.Append(parameter.Name);
                     inParameterString.Append(", ");
                 }
@@ -871,9 +869,9 @@ namespace System.Management.Automation
 
             builder.Append("System.Management.ManagementBaseObject ");
             builder.Append(mData.Name);
-            builder.Append("(");
-            builder.Append(inParameterString.ToString());
-            builder.Append(")");
+            builder.Append('(');
+            builder.Append(inParameterString);
+            builder.Append(')');
 
             string returnValue = builder.ToString();
             tracer.WriteLine("Definition constructed: {0}", returnValue);
@@ -945,7 +943,7 @@ namespace System.Management.Automation
 
         #region Private Data
 
-        private static HybridDictionary s_instanceMethodCacheTable = new HybridDictionary();
+        private static readonly HybridDictionary s_instanceMethodCacheTable = new HybridDictionary();
 
         #endregion
     }

@@ -34,7 +34,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The instance of session state the provider belongs to.
         /// </summary>
-        private SessionState _sessionState;
+        private readonly SessionState _sessionState;
 
         private string _fullName;
         private string _cachedModuleName;
@@ -51,7 +51,7 @@ namespace System.Management.Automation
         {
             get
             {
-                string GetFullName(string name, string psSnapInName, string moduleName)
+                static string GetFullName(string name, string psSnapInName, string moduleName)
                 {
                     string result = name;
                     if (!string.IsNullOrEmpty(psSnapInName))
@@ -221,7 +221,7 @@ namespace System.Management.Automation
         /// A hidden drive for the provider that is used for setting
         /// the location to a provider-qualified path.
         /// </summary>
-        private PSDriveInfo _hiddenDrive;
+        private readonly PSDriveInfo _hiddenDrive;
 
         /// <summary>
         /// Gets the hidden drive for the provider that is used
@@ -297,7 +297,7 @@ namespace System.Management.Automation
         {
             if (providerInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerInfo));
             }
 
             Name = providerInfo.Name;
@@ -394,17 +394,17 @@ namespace System.Management.Automation
             // Verify parameters
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             if (implementingType == null)
             {
-                throw PSTraceSource.NewArgumentNullException("implementingType");
+                throw PSTraceSource.NewArgumentNullException(nameof(implementingType));
             }
 
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             _sessionState = sessionState;
@@ -673,6 +673,7 @@ namespace System.Management.Automation
         private Dictionary<string, List<PSTypeName>> _providerOutputType;
 
         private PSNoteProperty _noteProperty;
+
         internal PSNoteProperty GetNotePropertyForProviderCmdlets(string name)
         {
             if (_noteProperty == null)
@@ -685,4 +686,3 @@ namespace System.Management.Automation
         }
     }
 }
-

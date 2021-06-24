@@ -120,12 +120,12 @@ namespace System.Management.Automation.Remoting.Server
         protected void OnDataPacketReceived(byte[] rawData, string stream, Guid psGuid)
         {
             string streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_STDIN;
-            if (stream.Equals(DataPriorityType.PromptResponse.ToString(), StringComparison.OrdinalIgnoreCase))
+            if (stream.Equals(nameof(DataPriorityType.PromptResponse), StringComparison.OrdinalIgnoreCase))
             {
                 streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE;
             }
 
-            if (Guid.Empty == psGuid)
+            if (psGuid == Guid.Empty)
             {
                 lock (_syncObject)
                 {
@@ -343,7 +343,7 @@ namespace System.Management.Automation.Remoting.Server
 
             try
             {
-                do
+                while (true)
                 {
                     string data = originalStdIn.ReadLine();
                     lock (_syncObject)
@@ -381,7 +381,6 @@ namespace System.Management.Automation.Remoting.Server
                     ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
 #endif
                 }
-                while (true);
             }
             catch (Exception e)
             {
@@ -526,27 +525,16 @@ namespace System.Management.Automation.Remoting.Server
 
         private SSHProcessMediator() : base(true)
         {
-#if !UNIX
-            var inputHandle = PlatformInvokes.GetStdHandle((uint)PlatformInvokes.StandardHandleId.Input);
-            originalStdIn = new StreamReader(
-                new FileStream(new SafeFileHandle(inputHandle, false), FileAccess.Read));
-
-            var outputHandle = PlatformInvokes.GetStdHandle((uint)PlatformInvokes.StandardHandleId.Output);
-            originalStdOut = new OutOfProcessTextWriter(
-                new StreamWriter(
-                    new FileStream(new SafeFileHandle(outputHandle, false), FileAccess.Write)));
-
-            var errorHandle = PlatformInvokes.GetStdHandle((uint)PlatformInvokes.StandardHandleId.Error);
-            originalStdErr = new OutOfProcessTextWriter(
-                new StreamWriter(
-                    new FileStream(new SafeFileHandle(errorHandle, false), FileAccess.Write)));
-#else
             originalStdIn = new StreamReader(Console.OpenStandardInput(), true);
             originalStdOut = new OutOfProcessTextWriter(
                 new StreamWriter(Console.OpenStandardOutput()));
             originalStdErr = new OutOfProcessTextWriter(
                 new StreamWriter(Console.OpenStandardError()));
-#endif
+
+            // Disable console from writing to the PSRP streams.
+            Console.SetIn(TextReader.Null);
+            Console.SetOut(TextWriter.Null);
+            Console.SetError(TextWriter.Null);
         }
 
         #endregion
@@ -603,7 +591,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             if (namedPipeServer == null)
             {
-                throw new PSArgumentNullException("namedPipeServer");
+                throw new PSArgumentNullException(nameof(namedPipeServer));
             }
 
             _namedPipeServer = namedPipeServer;

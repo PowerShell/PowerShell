@@ -24,7 +24,7 @@ class CommitNode {
         $this.Body = $body
         $this.IsBreakingChange = $body -match "\[breaking change\]"
 
-        if ($subject -match "\(#(\d+)\)") {
+        if ($subject -match "\(#(\d+)\)$") {
             $this.PullRequest = $Matches[1]
         }
     }
@@ -37,6 +37,8 @@ $Script:powershell_team = @(
     "Travis Plunk"
     "dependabot-preview[bot]"
     "Joey Aiello"
+    "Tyler James Leonhardt"
+    "Anam Navied"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -351,7 +353,7 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements' -Compress
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
 
-    Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${$LastReleaseTag}...${ThisReleaseTag}`n"
+    Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${LastReleaseTag}...${ThisReleaseTag}`n"
 }
 
 function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {
@@ -361,7 +363,7 @@ function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {
         if ($Compress) {
             $items = $clSection.ChangeLogMessage -join "`n"
             $thankYou = "We thank the following contributors!`n`n"
-            $thankYou += ($clSection.ThankYouMessage | Where-Object { if($_) { return $true} return $false}) -join ", "
+            $thankYou += ($clSection.ThankYouMessage | Select-Object -Unique | Where-Object { if($_) { return $true} return $false}) -join ", "
 
             "<details>`n"
             "<summary>`n"
@@ -592,12 +594,12 @@ function Update-PsVersionInCode
 {
     param(
         [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
         [String]
         $NewReleaseTag,
 
         [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
         [String]
         $NextReleaseTag,
 
