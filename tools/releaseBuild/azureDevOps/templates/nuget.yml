@@ -210,7 +210,7 @@ jobs:
 
         # the '*' before the packagename signifies it is a binary
         $hashLine = "$hash *$packageName"
-        $.AppendLine($hashLine) > $null
+        $hashFileContent.AppendLine($hashLine) > $null
       }
 
       $hashFileContent.ToString() | Out-File -FilePath "$packagePath\SHA512SUMS" -Force
