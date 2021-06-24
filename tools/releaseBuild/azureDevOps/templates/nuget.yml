@@ -206,7 +206,7 @@ jobs:
       Get-ChildItem -Path $packagePath | ForEach-Object {
         Write-Verbose -Verbose "Generating checksum file for $_"
         $packageName = Split-Path $_ -Leaf
-        $hash = (Get-FileHash -Path $packagePath -Algorithm SHA512).Hash
+        $hash = (Get-FileHash -Path $_ -Algorithm SHA512).Hash
 
         # the '*' before the packagename signifies it is a binary
         $hashLine = "$hash *$packageName"
