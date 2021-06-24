@@ -20,7 +20,7 @@ $powershellCoreModules = @(
     "Microsoft.PowerShell.Security"
     "Microsoft.PowerShell.Utility"
     "Microsoft.WsMan.Management"
-    # "PackageManagement" - tracking issue https://github.com/PowerShell/PowerShell/issues/15654
+    "PackageManagement"
 #    "PowershellGet"
 )
 
