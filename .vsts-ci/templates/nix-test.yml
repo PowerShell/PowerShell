@@ -63,6 +63,18 @@ jobs:
     continueOnError: true
 
   - pwsh: |
+      Import-Module .\build.psm1 -Force
+      $environment = Get-EnvironmentInformation
+      $isUbuntu20 = $environment.IsUbuntu -and $environment.IsUbuntu20
+      if ($isUbuntu20) {
+        $env:LC_ALL='en_US.UTF-8'
+        $env:LANG='en_US.UTF-8'
+        sudo locale-gen $LANG
+        sudo update-locale
+      }
+
+      locale
+
       Import-Module .\tools\ci.psm1
       Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
       $options = (Get-PSOptions)

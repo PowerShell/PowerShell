@@ -52,7 +52,7 @@ stages:
   jobs:
   - template: templates/ci-build.yml
     parameters:
-      pool: ubuntu-16.04
+      pool: ubuntu-20.04
       jobName: linux_build
       displayName: linux Build
 
@@ -62,34 +62,34 @@ stages:
   - template: templates/nix-test.yml
     parameters:
       name: Linux
-      pool: ubuntu-16.04
+      pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: CI
 
   - template: templates/nix-test.yml
     parameters:
       name: Linux
-      pool: ubuntu-16.04
+      pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: CI
 
   - template: templates/nix-test.yml
     parameters:
       name: Linux
-      pool: ubuntu-16.04
+      pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: Others
 
   - template: templates/nix-test.yml
     parameters:
       name: Linux
-      pool: ubuntu-16.04
+      pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: Others
 
   - template: templates/verify-xunit.yml
     parameters:
-      pool: ubuntu-16.04
+      pool: ubuntu-20.04
 
 - stage: PackageLinux
   displayName: Package Linux
@@ -97,7 +97,7 @@ stages:
   jobs:
   - template: linux/templates/packaging.yml
     parameters:
-      pool: ubuntu-16.04
+      pool: ubuntu-20.04
 
 - stage: CodeCovTestPackage
   displayName: CodeCoverage and Test Packages
@@ -106,7 +106,7 @@ stages:
   - job: CodeCovTestPackage
     displayName: CodeCoverage and Test Packages
     pool:
-      vmImage: ubuntu-16.04
+      vmImage: ubuntu-20.04
     steps:
     - pwsh: |
         Import-Module .\tools\ci.psm1
