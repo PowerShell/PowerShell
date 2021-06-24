@@ -28,15 +28,11 @@ jobs:
       sudo chown $env:USER /PowerShell
     displayName: 'Create /PowerShell'
 
-  - template: shouldSign.yml
-
-  #- task: <task type name>@<version>
-  #  inputs:
-  #    <task specific inputs>
-  #  displayName: '<display name of task>'
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: shouldSign.yml
 
   - template: cloneToOfficialPath.yml
 

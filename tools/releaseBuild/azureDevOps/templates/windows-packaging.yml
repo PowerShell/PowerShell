@@ -34,10 +34,11 @@ jobs:
   - checkout: ComplianceRepo
     clean: true
 
-  - template: shouldSign.yml
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: shouldSign.yml
 
   - powershell: |
       $pkgFilter = if ( '$(Architecture)' -eq 'arm' ) { "arm32" } else { '$(Architecture)' }
@@ -153,7 +154,7 @@ jobs:
     parameters:
         buildOutputPath: $(System.ArtifactsDirectory)\toBeSigned
         signOutputPath: $(System.ArtifactsDirectory)\signed
-        certificateId: "CP-230012"
+        certificateId: "$(AUTHENTICODE_CERT)"
         pattern: |
           **\*.dll
           **\*.psd1
@@ -278,7 +279,7 @@ jobs:
       parameters:
           buildOutputPath: $(System.ArtifactsDirectory)\pkgSigned
           signOutputPath: $(Build.StagingDirectory)\signedPackages
-          certificateId: "CP-230012"
+          certificateId: "$(AUTHENTICODE_CERT)"
           pattern: |
             **\*.msi
           useMinimatch: true
@@ -322,7 +323,7 @@ jobs:
       parameters:
           buildOutputPath: $(System.ArtifactsDirectory)\unsignedEngine
           signOutputPath: $(System.ArtifactsDirectory)\signedEngine
-          certificateId: "CP-230012"
+          certificateId: "$(AUTHENTICODE_CERT)"
           pattern: |
             **\*.exe
           useMinimatch: true
