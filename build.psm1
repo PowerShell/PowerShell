@@ -1195,7 +1195,7 @@ function Start-PSPester {
 
     if ($Unelevate)
     {
-        $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
+        $outputBufferFilePath = (Join-Path '~' $([System.IO.Path]::GetRandomFileName()))
     }
 
     $command += "Invoke-Pester "
@@ -1277,7 +1277,7 @@ function Start-PSPester {
 
     $PSFlags = @("-noprofile")
     if (-not [string]::IsNullOrEmpty($ExperimentalFeatureName)) {
-        $configFile = [System.IO.Path]::GetTempFileName()
+        $configFile = (Join-Path '~' $([System.IO.Path]::GetRandomFileName()))
         $configFile = [System.IO.Path]::ChangeExtension($configFile, ".json")
 
         ## Create the config.json file to enable the given experimental feature.
@@ -1356,7 +1356,7 @@ function Start-PSPester {
         {
             if ($PassThru.IsPresent)
             {
-                $passThruFile = [System.IO.Path]::GetTempFileName()
+                $passThruFile = Join-Path '~' $([System.IO.Path]::GetRandomFileName())
                 try
                 {
                     $command += "| Export-Clixml -Path '$passThruFile' -Force"

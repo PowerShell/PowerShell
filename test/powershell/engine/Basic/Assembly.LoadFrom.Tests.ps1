@@ -35,7 +35,7 @@ Describe "Assembly.LoadFrom Validation Test" -Tags "CI" {
 
         ## The assembly files cannot be removed once they are loaded, unless the current PowerShell session exits.
         ## If we use $TestDrive here, then Pester will try to remove them afterward and result in errors.
-        $TempPath = [System.IO.Path]::GetTempFileName()
+        $TempPath = (Join-Path '~' $([System.IO.Path]::GetRandomFileName()))
         if (Test-Path $TempPath) { Remove-Item -Path $TempPath -Force -Recurse }
         New-Item -Path $TempPath -ItemType Directory -Force > $null
 

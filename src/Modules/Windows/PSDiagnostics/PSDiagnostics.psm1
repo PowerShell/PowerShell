@@ -167,7 +167,7 @@ function Enable-PSWSManCombinedTrace
         [switch] $DoNotOverwriteExistingTrace
     )
 
-    $provfile = [io.path]::GetTempFilename()
+    $provfile = (Join-Path '~' $([System.IO.Path]::GetRandomFileName()))
 
     $traceFileName = [string][Guid]::NewGuid()
     if ($DoNotOverwriteExistingTrace) {

@@ -180,7 +180,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
 Describe 'get-help file' -Tags "CI" {
     BeforeAll {
         try {
-            $tmpfile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+            $tmpfile = Join-Path '~' $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), "ps1"))
         } catch {
             return
         }
@@ -233,7 +233,7 @@ Describe 'get-help file' -Tags "CI" {
 Describe 'get-help other tests' -Tags "CI" {
     BeforeAll {
         try {
-            $tempFile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+            $tempFile = Join-Path '~' $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), "ps1"))
         } catch {
             return
         }
