@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+=======
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+>>>>>>> origin/source-depot
 
 #if !UNIX
 
@@ -3208,7 +3214,14 @@ namespace Microsoft.PowerShell
         }
 
         [TraceSourceAttribute("ConsoleControl", "Console control methods")]
+<<<<<<< HEAD
         private static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleControl", "Console control methods");
 #endif
     }
 }
+=======
+        private static PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleControl", "Console control methods");
+    }
+}   // namespace 
+
+>>>>>>> origin/source-depot

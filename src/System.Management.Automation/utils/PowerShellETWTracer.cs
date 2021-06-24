@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
 
+=======
+//
+//    Copyright (C) Microsoft.  All rights reserved.
+//
+﻿using System;
+using System.Collections.Generic;
+>>>>>>> origin/source-depot
 using System.Globalization;
 using System.Management.Automation.Runspaces;
 using System.Text;
@@ -1534,7 +1542,12 @@ namespace System.Management.Automation.Tracing
             return new PowerShellTraceSource(task, keywords);
         }
     }
+<<<<<<< HEAD
     // pragma warning restore 16001,16003
 }
 
 #endif
+=======
+    //pragma warning restore 16001,16003
+}
+>>>>>>> origin/source-depot

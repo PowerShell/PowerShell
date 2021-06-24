@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #nullable enable
 #if !UNIX
+=======
+﻿//-----------------------------------------------------------------------
+// <copyright file="EtwActivityReverter.cs" company="Microsoft">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+>>>>>>> origin/source-depot
 
 namespace System.Management.Automation.Tracing
 {
@@ -58,5 +66,8 @@ namespace System.Management.Automation.Tracing
         }
     }
 }
+<<<<<<< HEAD
 
 #endif
+=======
+>>>>>>> origin/source-depot

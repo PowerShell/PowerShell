@@ -84,6 +84,27 @@ namespace System.Management.Automation.Runspaces
             }
 
             _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(this), "ConsoleLoadFailure", ErrorCategory.ResourceUnavailable, null);
+<<<<<<< HEAD
+=======
+            _errorRecord.ErrorDetails = new ErrorDetails(typeof(PSConsoleLoadException).GetTypeInfo().Assembly, "ConsoleInfoErrorStrings", "ConsoleLoadFailure", _consoleFileName, sb.ToString());
+        }
+
+        private ErrorRecord _errorRecord;
+
+        /// <summary>
+        /// Gets error record embedded in this exception. 
+        /// </summary>
+        /// <!--
+        /// This property is required as part of IErrorRecordContainer
+        /// interface.
+        /// -->
+        public ErrorRecord ErrorRecord
+        {
+            get
+            {
+                return _errorRecord;
+            }
+>>>>>>> origin/source-depot
         }
 
         private Collection<PSSnapInException> _PSSnapInExceptions = new Collection<PSSnapInException>();

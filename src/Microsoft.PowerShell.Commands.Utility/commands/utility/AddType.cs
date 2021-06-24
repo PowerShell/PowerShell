@@ -696,6 +696,7 @@ namespace Microsoft.PowerShell.Commands
             // Add System.Management.Automation.dll
             defaultRefAssemblies.Add(MetadataReference.CreateFromFile(typeof(PSObject).Assembly.Location));
 
+<<<<<<< HEAD
             // We want to avoid reallocating the internal array, so we assert if the list capacity has increased.
             Diagnostics.Assert(
                 defaultRefAssemblies.Capacity <= capacity,
@@ -732,6 +733,37 @@ namespace Microsoft.PowerShell.Commands
                 MetadataReference.CreateFromFile(GetReferenceAssemblyPathBasedOnType(typeof(SecureString)))
             };
         }
+=======
+        // there are two different assemblies: framework contract and framework implementation.
+        // Version 1.1.1 of Microsoft.CodeAnalysis doesn't provide a good way to handle contract separetely from implementation.
+        // To simplify user expirience we always add both of them to references.
+        // 1) It's a legitimate scenario, when user provides a custom referenced assembly that was built against the contract assembly 
+        // (i.e. System.Management.Automation), so we need the contract one.
+        // 2) We have to provide implementation assembly explicitly, Roslyn doesn't have a way to figure out implementation by itself.
+        // So we are adding both.
+        private static PortableExecutableReference ObjectImplementationAssemblyReference =
+            MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location);
+
+        private static PortableExecutableReference ObjectDeclaredAssemblyReference =
+            MetadataReference.CreateFromFile(System.IO.Path.Combine(FrameworkFolder, "System.Runtime.dll"));
+
+        // CoreCLR RC2 bits don't have SecureString. We are using a separate assembly with SecureString implementation.
+        // This fact is an implementation detail and should not require the user to specify one more assembly, 
+        // if they want to use SecureString in Add-Type -TypeDefinition.
+        // So this assembly should be in the default assemblies list to provide the best experience.
+        //
+        // TODO: This reference should be removed, if we take CoreCLR version that has SecureString implementation.
+        private static PortableExecutableReference SecureStringAssemblyReference =
+            MetadataReference.CreateFromFile(typeof(System.Security.SecureString).GetTypeInfo().Assembly.Location);
+
+        private static MetadataReference[] defaultAssemblies = new MetadataReference[]
+        {
+            ObjectImplementationAssemblyReference,
+            ObjectDeclaredAssemblyReference,
+            SecureStringAssemblyReference,
+            MetadataReference.CreateFromFile(typeof(PSObject).GetTypeInfo().Assembly.Location)
+        };
+>>>>>>> origin/source-depot
 
         /// <summary>
         /// Get the path of reference assembly where the type is declared.
@@ -850,7 +882,7 @@ namespace Microsoft.PowerShell.Commands
             // First try by strong name
             try
             {
-                loadedAssembly = Assembly.Load(new AssemblyName(assemblyName));
+                loadedAssembly = System.Reflection.Assembly.Load(new AssemblyName(assemblyName));
             }
             // Generates a FileNotFoundException if you can't load the strong type.
             // So we'll try from the short name.
@@ -869,9 +901,60 @@ namespace Microsoft.PowerShell.Commands
                 var tempReferences = new List<PortableExecutableReference>(s_autoReferencedAssemblies.Value);
                 foreach (string assembly in ReferencedAssemblies)
                 {
+<<<<<<< HEAD
                     if (string.IsNullOrWhiteSpace(assembly)) { continue; }
 
                     string resolvedAssemblyPath = ResolveAssemblyName(assembly, true);
+=======
+                    case Language.CSharpVersion1:
+                        parseOptions = new CSharpParseOptions(LanguageVersion.CSharp1);
+                        break;
+                    case Language.CSharpVersion2:
+                        parseOptions = new CSharpParseOptions(LanguageVersion.CSharp2);
+                        break;
+                    case Language.CSharpVersion3:
+                        parseOptions = new CSharpParseOptions(LanguageVersion.CSharp3);
+                        break;
+                    case Language.CSharpVersion4:
+                        parseOptions = new CSharpParseOptions(LanguageVersion.CSharp4);
+                        break;
+                    case Language.CSharpVersion5:
+                        parseOptions = new CSharpParseOptions(LanguageVersion.CSharp5);
+                        break;
+                    case Language.CSharpVersion6:
+                        parseOptions = new CSharpParseOptions(LanguageVersion.CSharp6);
+                        break;
+                    case Language.CSharp:
+                        parseOptions = new CSharpParseOptions();
+                        break;
+                    default:
+                        parseOptions = null;
+                        break;
+                }
+            }
+            else
+            {
+                ErrorRecord errorRecord = new ErrorRecord(
+                    new Exception(String.Format(CultureInfo.CurrentCulture, AddTypeStrings.SpecialNetVersionRequired, language.ToString(), string.Empty)),
+                    "LANGUAGE_NOT_SUPPORTED",
+                    ErrorCategory.InvalidArgument,
+                    language);
+
+                ThrowTerminatingError(errorRecord);
+                parseOptions = null;
+            }
+
+            SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source, parseOptions);
+            var references = defaultAssemblies;
+            if (referencedAssembliesSpecified)
+            {
+                var tempReferences = ReferencedAssemblies.Select(a => MetadataReference.CreateFromFile(ResolveReferencedAssembly(a))).ToList();
+                tempReferences.Add(ObjectImplementationAssemblyReference);
+                tempReferences.Add(ObjectDeclaredAssemblyReference);
+                tempReferences.Add(SecureStringAssemblyReference);
+                references = tempReferences.ToArray();
+            }
+>>>>>>> origin/source-depot
 
                     // Ignore some specified reference assemblies
                     string fileName = PathType.GetFileName(resolvedAssemblyPath);
@@ -1274,8 +1357,15 @@ namespace Microsoft.PowerShell.Commands
 
             if (location.SourceTree == null)
             {
+<<<<<<< HEAD
                 // For some error types (linker?) we don't have related source code.
                 return diagnisticRecord.ToString();
+=======
+                foreach(string path in paths)
+                {
+                    generatedTypes.AddRange(System.Reflection.Assembly.LoadFrom(path).GetTypes());
+                }
+>>>>>>> origin/source-depot
             }
             else
             {
@@ -1328,13 +1418,33 @@ namespace Microsoft.PowerShell.Commands
 
         private static int SyntaxTreeGetHashCode(SyntaxTree st)
         {
+<<<<<<< HEAD
             int hash;
+=======
+            Assembly loadedAssembly = null;
+
+            // First try by strong name
+            try
+            {
+                loadedAssembly = System.Reflection.Assembly.Load(assemblyName);
+            }
+            // Generates a FileNotFoundException if you can't load the strong type.
+            // So we'll try from the short name.
+            catch (System.IO.FileNotFoundException) { }
+
+            if(loadedAssembly != null)
+                return loadedAssembly;
+>>>>>>> origin/source-depot
 
             if (string.IsNullOrEmpty(st.FilePath))
             {
+<<<<<<< HEAD
                 // If the file name does not exist, the source text is set by the user using parameters.
                 // In this case, we assume that the source text is of a small size and we can re-allocate by ToString().
                 hash = st.ToString().GetHashCode();
+=======
+                return System.Reflection.Assembly.Load(StrongNames.Value[assemblyName]);
+>>>>>>> origin/source-depot
             }
             else
             {
@@ -1344,7 +1454,45 @@ namespace Microsoft.PowerShell.Commands
                 hash = Utils.CombineHashCodes(st.FilePath.GetHashCode(), updateTime.GetHashCode());
             }
 
+<<<<<<< HEAD
             return hash;
+=======
+            // Now try by wildcard
+            string matchedStrongName = null;
+
+            WildcardPattern pattern = WildcardPattern.Get(assemblyName, WildcardOptions.IgnoreCase);
+            foreach(string strongNameShortcut in StrongNames.Value.Keys)
+            {
+                if (pattern.IsMatch(strongNameShortcut))
+                {
+                    // If we've already found a matching type, throw an error.
+                    if(matchedStrongName != null)
+                    {
+                        ErrorRecord errorRecord = new ErrorRecord(
+                            new Exception(
+                                String.Format(
+                                    Thread.CurrentThread.CurrentCulture,
+                                    AddTypeStrings.AmbiguousAssemblyName,
+                                    assemblyName, matchedStrongName, StrongNames.Value[strongNameShortcut])),
+                            "AMBIGUOUS_ASSEMBLY_NAME",
+                            ErrorCategory.InvalidArgument,
+                            assemblyName);
+
+                        ThrowTerminatingError(errorRecord);
+                        return null;
+                    }
+
+                    matchedStrongName = StrongNames.Value[strongNameShortcut];
+                }
+            }
+
+            // Return NULL if we couldn't find one. The caller generates an error here.
+            if(matchedStrongName == null)
+                return null;
+
+            // Otherwise, load the assembly.
+            return System.Reflection.Assembly.Load(matchedStrongName);
+>>>>>>> origin/source-depot
         }
 
         #endregion SourceCodeProcessing

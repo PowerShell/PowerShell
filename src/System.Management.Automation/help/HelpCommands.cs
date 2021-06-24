@@ -649,6 +649,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.WriteVerbose(string.Format(CultureInfo.InvariantCulture, HelpDisplayStrings.OnlineHelpUri, uriToLaunch.OriginalString));
                 System.Diagnostics.Process browserProcess = new System.Diagnostics.Process();
+<<<<<<< HEAD
 
                 if (Platform.IsNanoServer || Platform.IsIoT)
                 {
@@ -662,6 +663,11 @@ namespace Microsoft.PowerShell.Commands
                     browserProcess.StartInfo.UseShellExecute = true;
                     browserProcess.Start();
                 }
+=======
+                browserProcess.StartInfo.UseShellExecute = true;
+                browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
+                browserProcess.Start();
+>>>>>>> origin/source-depot
             }
             catch (InvalidOperationException ioe)
             {

@@ -96,6 +96,7 @@ namespace System.Management.Automation
             }
             while (Directory.Exists(tempDir));
 
+<<<<<<< HEAD
             try
             {
                 Directory.CreateDirectory(tempDir);
@@ -111,6 +112,12 @@ namespace System.Management.Automation
         internal static string GetHostName()
         {
             IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
+=======
+        internal static string GetHostName()
+        {
+            System.Net.NetworkInformation.IPGlobalProperties ipProperties = 
+                System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties();
+>>>>>>> origin/source-depot
 
             string hostname = ipProperties.HostName;
             string domainName = ipProperties.DomainName;
@@ -127,9 +134,12 @@ namespace System.Management.Automation
 
         internal static uint GetNativeThreadId()
         {
+<<<<<<< HEAD
 #if UNIX
             return Platform.NonWindowsGetThreadId();
 #else
+=======
+>>>>>>> origin/source-depot
             return NativeMethods.GetCurrentThreadId();
 #endif
         }

@@ -159,7 +159,11 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter UseSsl { get; set; }
 
         /// <summary>
+<<<<<<< HEAD
         /// Gets or sets the Port to be used on the server. <see cref="SmtpServer"/>
+=======
+        /// Specifies the Port to be used on <paramref name="SmtpServer"/>
+>>>>>>> origin/source-depot
         /// </summary>
         /// <remarks>
         /// Value must be greater than zero.

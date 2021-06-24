@@ -548,7 +548,10 @@ namespace System.Management.Automation.Remoting
             // All PowerShell instances will start with the named pipe
             // and listener created and running.
             IPCNamedPipeServerEnabled = true;
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/source-depot
             CreateIPCNamedPipeServerSingleton();
 
             CreateProcessExitHandler();

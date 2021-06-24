@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+=======
+//
+//    Copyright (C) Microsoft.  All rights reserved.
+//
+>>>>>>> origin/source-depot
 using System.Globalization;
 using System.Management.Automation.Internal;
 

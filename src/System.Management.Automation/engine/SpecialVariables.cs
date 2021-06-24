@@ -203,6 +203,7 @@ namespace System.Management.Automation
 
         internal static readonly VariablePath PSModuleAutoLoadingPreferenceVarPath = new VariablePath("global:" + PSModuleAutoLoading);
 
+<<<<<<< HEAD
         #region Platform Variables
         internal const string IsLinux = "IsLinux";
 
@@ -221,6 +222,8 @@ namespace System.Management.Automation
         internal static readonly VariablePath IsCoreCLRPath = new VariablePath("IsCoreCLR");
 
         #endregion
+=======
+>>>>>>> origin/source-depot
         #region Preference Variables
 
         internal const string DebugPreference = "DebugPreference";

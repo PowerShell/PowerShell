@@ -738,11 +738,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             // Load the latest valid version if it is a multi-version module directory
-                            foundModule = LoadUsingMultiVersionModuleBase(rootedPath,
-                                                                            ManifestProcessingFlags.LoadElements |
-                                                                            ManifestProcessingFlags.WriteErrors |
-                                                                            ManifestProcessingFlags.NullOnFirstError,
-                                                                            importModuleOptions, out found);
+                            foundModule = LoadUsingMultiVersionModuleBase(rootedPath, importModuleOptions, out found);
 
                             if (!found)
                             {

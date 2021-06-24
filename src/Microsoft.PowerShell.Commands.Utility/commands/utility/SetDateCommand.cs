@@ -70,6 +70,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(dateToUse.ToString()))
             {
+<<<<<<< HEAD
 #if UNIX
                 if (!Platform.NonWindowsSetDate(dateToUse))
                 {
@@ -86,6 +87,10 @@ namespace Microsoft.PowerShell.Commands
                 systemTime.Second = (UInt16)dateToUse.Second;
                 systemTime.Milliseconds = (UInt16)dateToUse.Millisecond;
 #pragma warning disable 56523
+=======
+	        #pragma warning disable 56523
+
+>>>>>>> origin/source-depot
                 if (!NativeMethods.SetLocalTime(ref systemTime))
                 {
                     throw new Win32Exception(Marshal.GetLastWin32Error());
@@ -97,8 +102,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
+<<<<<<< HEAD
 #pragma warning restore 56523
 #endif
+=======
+
+                #pragma warning restore 56523
+>>>>>>> origin/source-depot
             }
 
             // output DateTime object wrapped in an PSObject with DisplayHint attached

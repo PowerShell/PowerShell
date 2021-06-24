@@ -130,8 +130,11 @@ namespace System.Management.Automation
         private static Collection<LogProvider> CreateLogProvider(string shellId)
         {
             Collection<LogProvider> providers = new Collection<LogProvider>();
+<<<<<<< HEAD
             // Porting note: Linux does not support ETW
 
+=======
+>>>>>>> origin/source-depot
             try
             {
 #if !CORECLR    // TODO:CORECLR EventLogLogProvider not handled yet

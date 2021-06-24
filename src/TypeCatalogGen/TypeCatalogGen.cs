@@ -105,6 +105,7 @@ Usage: TypeCatalogGen.exe <{0}> <{1}> [{2}]
                         }
 
                         string fullName = GetTypeFullName(metadataReader, typeDefinition);
+<<<<<<< HEAD
                         bool isTypeObsolete = IsTypeObsolete(metadataReader, typeDefinition);
 
                         if (!typeNameToAssemblyMap.ContainsKey(fullName))
@@ -137,6 +138,9 @@ REPLACE '{fullName}' from '{existingTypeMetadata.AssemblyName}' (IsObsolete? {ex
 DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsolete}).
   -- Already exist in '{existingTypeMetadata.AssemblyName}' (IsObsolete? {existingTypeMetadata.IsObsolete})");
                         }
+=======
+                        typeNameToAssemblyMap.Add(fullName, strongAssemblyName);
+>>>>>>> origin/source-depot
                     }
                 }
             }
@@ -229,19 +233,19 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
             switch (hashAlgorithm)
             {
                 case AssemblyHashAlgorithm.Sha1:
-                    hashImpl = SHA1.Create();
+                    hashImpl = HashAlgorithm.Create("SHA1");
                     break;
                 case AssemblyHashAlgorithm.MD5:
-                    hashImpl = MD5.Create();
+                    hashImpl = HashAlgorithm.Create("MD5");
                     break;
                 case AssemblyHashAlgorithm.Sha256:
-                    hashImpl = SHA256.Create();
+                    hashImpl = HashAlgorithm.Create("SHA256");
                     break;
                 case AssemblyHashAlgorithm.Sha384:
-                    hashImpl = SHA384.Create();
+                    hashImpl = HashAlgorithm.Create("SHA384");
                     break;
                 case AssemblyHashAlgorithm.Sha512:
-                    hashImpl = SHA512.Create();
+                    hashImpl = HashAlgorithm.Create("SHA512");
                     break;
                 default:
                     throw new NotSupportedException();

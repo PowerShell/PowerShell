@@ -40,12 +40,21 @@ namespace Microsoft.PowerShell.Commands.Internal
                 throw new InvalidOperationException(RegistryProviderStrings.InvalidOperation_NeedTransaction);
             }
 
+<<<<<<< HEAD
             // MSDTC is not available on WinPE machine.
             // CommitableTransaction will use DTC APIs under the covers to get KTM transaction manager interface.
             // KTM is kernel Transaction Manager to handle file, registry etc and MSDTC provides an integration support
             // with KTM to handle transaction across kernel resources and MSDTC resources like SQL, MSMQ etc.
             // We need KTMRM service as well. WinPE doesn't have these services installed
             if (Utils.IsWinPEHost() || PsUtils.IsRunningOnProcessorArchitectureARM())
+=======
+            // MSDTC is not avaliable on WinPE machine.
+            // CommitableTransaction will use DTC APIs under the covers to get KTM transaction manager interface. 
+            // KTM is kernel Transaction Manager to handle file, registry etc and MSDTC provides an integration support 
+            // with KTM to handle transaction across kernel resources and MSDTC resources like SQL, MSMQ etc. 
+            // We need KTMRM service as well. WinPE doesn’t have these services installed 
+            if (RemotingCommandUtil.IsWinPEHost() || PsUtils.IsRunningOnProcessorArchitectureARM())
+>>>>>>> origin/source-depot
             {
                 throw new NotSupportedException(RegistryProviderStrings.NotSupported_KernelTransactions);
             }

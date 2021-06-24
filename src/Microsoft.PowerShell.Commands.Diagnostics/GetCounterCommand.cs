@@ -177,7 +177,27 @@ namespace Microsoft.PowerShell.Commands
                                                 new Tuple<char, char>((char)0x275C, (char)0x2019),
                                             }
                    }
+<<<<<<< HEAD
                 };
+=======
+              };
+
+    //
+    // BeginProcessing() is invoked once per pipeline
+    //
+    protected override void BeginProcessing()
+    {
+        _resourceMgr = new ResourceManager("GetEventResources", Assembly.GetExecutingAssembly());
+     
+        _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
+        uint res = _pdhHelper.ConnectToDataSource();              
+        if (res != 0)
+        {
+            ReportPdhError(res, true);
+            return;
+        }
+
+>>>>>>> origin/source-depot
 
         //
         // BeginProcessing() is invoked once per pipeline

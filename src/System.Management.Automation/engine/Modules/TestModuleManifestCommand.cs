@@ -189,7 +189,11 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (ModuleSpecification requiredModule in requiredModules)
                             {
+<<<<<<< HEAD
                                 var modules = GetModule(new[] { requiredModule.Name }, all: false, refresh: true);
+=======
+                                var modules = GetModule(new[] { requiredModule.Name }, true, true);
+>>>>>>> origin/source-depot
                                 if (modules.Count == 0)
                                 {
                                     string errorMsg = StringUtil.Format(Modules.InvalidRequiredModulesinModuleManifest, requiredModule.Name, filePath);
@@ -256,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
                 DirectoryInfo parent = null;
                 try
                 {
-                    parent = Directory.GetParent(filePath);
+                    parent = ClrFacade.GetParent(filePath);
                 }
                 catch (IOException) { }
                 catch (UnauthorizedAccessException) { }

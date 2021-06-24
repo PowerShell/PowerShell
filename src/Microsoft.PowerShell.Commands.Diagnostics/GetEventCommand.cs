@@ -20,11 +20,38 @@ using System.Xml;
 
 namespace Microsoft.PowerShell.Commands
 {
+<<<<<<< HEAD
     /// <summary>
     /// Class that implements the Get-WinEvent cmdlet.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "WinEvent", DefaultParameterSetName = "GetLogSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096581")]
     public sealed class GetWinEventCommand : PSCmdlet
+=======
+  /// 
+  /// Class that implements the Get-WinEvent cmdlet.
+  /// 
+  [Cmdlet(VerbsCommon.Get, "WinEvent" , DefaultParameterSetName = "GetLogSet", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=138336")]
+  public sealed class GetWinEventCommand : PSCmdlet
+  {
+    //
+    // ListLog parameter
+    //  
+    [Parameter(
+            Position = 0, 
+            Mandatory = true,
+            ParameterSetName="ListLogSet", 
+            ValueFromPipeline = false,  
+            ValueFromPipelineByPropertyName = false,
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "ListLogParamHelp")] 
+    [AllowEmptyCollection]
+    [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
+                        Scope = "member",
+                        Target = "Microsoft.PowerShell.Commands.GetEvent.ListLog",
+                        Justification="A string[] is required here because that is the type Powershell supports")]
+
+    public string[] ListLog
+>>>>>>> origin/source-depot
     {
         /// <summary>
         /// ListLog parameter.
@@ -270,6 +297,7 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _oldest = false;
 
+<<<<<<< HEAD
         //
         // Query builder constant strings
         //
@@ -293,6 +321,28 @@ namespace Microsoft.PowerShell.Commands
         private const string SystemEventIDTemplate = "(System/EventID=";
         private const string SystemSecurityTemplate = "(System/Security[@UserID='{0}'])";
         private const string SystemKeywordsTemplate = "System[band(Keywords,{0})]";
+=======
+    //
+    // GetLog parameter
+    //  
+    [Parameter(
+            Position = 0,
+            ParameterSetName="GetLogSet", 
+            ValueFromPipeline = true,  
+            ValueFromPipelineByPropertyName = true,
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "GetLogParamHelp")] 
+    [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
+                        Scope = "member",
+                        Target = "Microsoft.PowerShell.Commands.GetEvent.LogName",
+                        Justification="A string[] is required here because that is the type Powershell supports")]
+    public string[] LogName
+    {
+        get {return _logName;}
+        set {_logName = value;}
+    }
+    private string[] _logName = {"*"};
+>>>>>>> origin/source-depot
 
         //
         // Other private members and constants
@@ -300,14 +350,66 @@ namespace Microsoft.PowerShell.Commands
         private ResourceManager _resourceMgr = null;
         private readonly Dictionary<string, StringCollection> _providersByLogMap = new();
 
+<<<<<<< HEAD
         private StringCollection _logNamesMatchingWildcard = null;
         private readonly StringCollection _resolvedPaths = new();
+=======
+    //
+    // ListProvider parameter
+    //  
+    [Parameter(
+            Position = 0, 
+            Mandatory = true,
+            ParameterSetName="ListProviderSet", 
+            ValueFromPipeline = false,  
+            ValueFromPipelineByPropertyName = false,
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "ListProviderParamHelp")] 
+    [AllowEmptyCollection]
+
+    [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
+                        Scope = "member",
+                        Target = "Microsoft.PowerShell.Commands.GetEvent.ListProvider",
+                        Justification="A string[] is required here because that is the type Powershell supports")]
+
+    public string[] ListProvider
+    {
+        get {return _listProvider;}
+        set {_listProvider = value;}
+    }
+    private string[] _listProvider = {"*"};
+>>>>>>> origin/source-depot
 
         private readonly List<string> _accumulatedLogNames = new();
         private readonly List<string> _accumulatedProviderNames = new();
         private readonly List<string> _accumulatedFileNames = new();
 
+<<<<<<< HEAD
         private const uint MAX_EVENT_BATCH = 100;
+=======
+    //
+    // ProviderName parameter
+    //  
+    [Parameter(
+            Position = 0, 
+            Mandatory = true,
+            ParameterSetName="GetProviderSet", 
+            ValueFromPipelineByPropertyName = true,
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "GetProviderParamHelp")] 
+
+    [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
+                        Scope = "member",
+                        Target = "Microsoft.PowerShell.Commands.GetEvent.ProviderName",
+                        Justification="A string[] is required here because that is the type Powershell supports")]
+
+    public string[] ProviderName
+    {
+        get {return _providerName;}
+        set {_providerName = value;}
+    }
+    private string[] _providerName;
+>>>>>>> origin/source-depot
 
         //
         // Hashtable query key names
@@ -343,6 +445,7 @@ namespace Microsoft.PowerShell.Commands
                     ProcessGetLog();
                     break;
 
+<<<<<<< HEAD
                 case "FileSet":
                     ProcessFile();
                     break;
@@ -367,11 +470,133 @@ namespace Microsoft.PowerShell.Commands
                 case "ListLogSet":
                     ProcessListLog();
                     break;
+=======
+    //
+    // Path parameter
+    //  
+    [Parameter(
+            Position = 0, 
+            Mandatory = true,
+            ParameterSetName="FileSet", 
+            ValueFromPipelineByPropertyName = true,
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "PathParamHelp")] 
+            
+    [Alias("PSPath")]            
+    [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
+                        Scope = "member",
+                        Target = "Microsoft.PowerShell.Commands.GetEvent.Path",
+                        Justification="A string[] is required here because that is the type Powershell supports")]
+    public string[] Path
+    {
+        get {return _path;}
+        set {_path = value;}
+    }
+    private string[] _path;
+    
+
+    //
+    // MaxEvents parameter
+    //
+    [Parameter(
+            ParameterSetName="FileSet",
+            ValueFromPipeline = false,  
+            ValueFromPipelineByPropertyName = false,
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "MaxEventsParamHelp")]   
+    [Parameter(
+            ParameterSetName="GetProviderSet",
+            ValueFromPipeline = false,  
+            ValueFromPipelineByPropertyName = false,
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "MaxEventsParamHelp")]
+    [Parameter(
+            ParameterSetName="GetLogSet",
+            ValueFromPipeline = false,  
+            ValueFromPipelineByPropertyName = false,
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "MaxEventsParamHelp")]
+    [Parameter(
+            ParameterSetName="HashQuerySet",
+            ValueFromPipeline = false,  
+            ValueFromPipelineByPropertyName = false,
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "MaxEventsParamHelp")]
+    [Parameter(
+            ParameterSetName="XmlQuerySet",
+            ValueFromPipeline = false,  
+            ValueFromPipelineByPropertyName = false,
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "MaxEventsParamHelp")]
+    [ValidateRange((Int64)1, Int64.MaxValue)]  
+    public Int64 MaxEvents
+    {
+        get {return _maxEvents;}
+        set {_maxEvents = value;}
+    }
+    private Int64 _maxEvents = -1;
+
+    //
+    // ComputerName parameter
+    //
+    [Parameter(
+            ParameterSetName="ListProviderSet",
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "ComputerNameParamHelp")]
+    [Parameter(
+            ParameterSetName="GetProviderSet",
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "ComputerNameParamHelp")]
+    [Parameter(
+            ParameterSetName="ListLogSet",
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "ComputerNameParamHelp")]
+    [Parameter(
+            ParameterSetName="GetLogSet",
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "ComputerNameParamHelp")]
+    [Parameter(
+            ParameterSetName="HashQuerySet",
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "ComputerNameParamHelp")]
+    [Parameter(
+            ParameterSetName="XmlQuerySet",
+            HelpMessageBaseName = "GetEventResources",
+            HelpMessageResourceId = "ComputerNameParamHelp")] 
+
+    [ValidateNotNull]
+    [Alias("Cn")]
+    public string ComputerName
+    {
+        get {return _computerName;}
+        set {_computerName = value;}
+    }
+    private string _computerName = string.Empty;
+
+    //
+    // Credential parameter
+    //    
+    [Parameter(ParameterSetName="ListProviderSet")]
+    [Parameter(ParameterSetName="GetProviderSet")]
+    [Parameter(ParameterSetName="ListLogSet")]
+    [Parameter(ParameterSetName="GetLogSet")]
+    [Parameter(ParameterSetName="HashQuerySet")]
+    [Parameter(ParameterSetName="XmlQuerySet")]
+    [Parameter(ParameterSetName="FileSet")]
+    [Credential]
+    public PSCredential Credential 
+    {
+        get {return _credential;}
+        set {_credential = value;}
+    }
+    private PSCredential _credential = PSCredential.Empty;
+>>>>>>> origin/source-depot
 
                 case "ListProviderSet":
                     ProcessListProvider();
                     break;
 
+<<<<<<< HEAD
                 case "GetLogSet":
                     AccumulatePipelineLogNames();
                     break;
@@ -383,14 +608,104 @@ namespace Microsoft.PowerShell.Commands
                 case "HashQuerySet":
                     ProcessHashQuery();
                     break;
+=======
+    //
+    // FilterXPath parameter
+    //
+    [Parameter(
+            ParameterSetName="FileSet",
+            ValueFromPipeline = false,  
+            ValueFromPipelineByPropertyName = false,
+            HelpMessageBaseName = "GetEventResources")]
+    [Parameter(
+            ParameterSetName="GetProviderSet",
+            ValueFromPipeline = false,  
+            ValueFromPipelineByPropertyName = false,
+            HelpMessageBaseName = "GetEventResources")]
+    [Parameter(
+            ParameterSetName="GetLogSet",
+            ValueFromPipeline = false,  
+            ValueFromPipelineByPropertyName = false,
+            HelpMessageBaseName = "GetEventResources")]
+    [ValidateNotNull]
+    public string FilterXPath
+    {
+        get {return _filter;}
+        set {_filter = value;}
+    }
+    private string _filter = "*";
+    
+    //
+    // FilterXml parameter
+    //
+    [Parameter(
+            Position = 0, 
+            Mandatory = true,
+            ValueFromPipeline = false,  
+            ValueFromPipelineByPropertyName = false,
+            ParameterSetName = "XmlQuerySet",
+            HelpMessageBaseName = "GetEventResources")]
+            
+    [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes",
+                        Scope = "member",
+                        Target = "Microsoft.PowerShell.Commands.GetEvent.FilterXml",
+                        Justification="An XmlDocument is required here because that is the type Powershell supports")]
+                        
+    public XmlDocument FilterXml  
+    {
+        get {return _xmlQuery;}
+        set {_xmlQuery = value;}
+    }
+    private XmlDocument _xmlQuery = null;
+
+    
+    //
+    // FilterHashtable parameter
+    //
+    [Parameter(
+            Position = 0, 
+            Mandatory = true,
+            ValueFromPipeline = false,  
+            ValueFromPipelineByPropertyName = false,
+            ParameterSetName = "HashQuerySet",
+            HelpMessageBaseName = "GetEventResources")]
+
+    [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
+                        Scope = "member",
+                        Target = "Microsoft.PowerShell.Commands.GetEvent.FilterHashtable",
+                        Justification="A string[] is required here because that is the type Powershell supports")]
+
+    public Hashtable[] FilterHashtable  
+    {
+        get {return _selector;}
+        set {_selector = value;}
+    }
+    private Hashtable[] _selector;
+
+    //
+    // Force switch
+    //
+    [Parameter(ParameterSetName="ListLogSet")]
+    [Parameter(ParameterSetName="GetProviderSet")]
+    [Parameter(ParameterSetName="GetLogSet")]
+>>>>>>> origin/source-depot
 
                 case "GetProviderSet":
                     AccumulatePipelineProviderNames();
                     break;
 
+<<<<<<< HEAD
                 case "XmlQuerySet":
                     ProcessFilterXml();
                     break;
+=======
+    //
+    // Oldest switch
+    //
+    [Parameter(ParameterSetName="FileSet")]
+    [Parameter(ParameterSetName="GetProviderSet")]
+    [Parameter(ParameterSetName="GetLogSet")]
+>>>>>>> origin/source-depot
 
                 default:
                     WriteDebug(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
@@ -407,6 +722,7 @@ namespace Microsoft.PowerShell.Commands
             _accumulatedLogNames.AddRange(LogName);
         }
 
+<<<<<<< HEAD
         //
         // AccumulatePipelineProviderNames() accumulates provider names in the pipeline scenario:
         // we do not want to construct a query until all the provider names are supplied.
@@ -421,6 +737,24 @@ namespace Microsoft.PowerShell.Commands
         // we do not want to construct a query until all the file names are supplied.
         //
         private void AccumulatePipelineFileNames()
+=======
+    //
+    // BeginProcessing() is invoked once per pipeline: we will load System.Core.dll here
+    //
+    protected override void BeginProcessing()
+    {
+        _resourceMgr = new ResourceManager("GetEventResources", typeof(GetWinEventCommand).GetTypeInfo().Assembly);
+    }
+
+        
+    //
+    // EndProcessing() is invoked once per pipeline
+    //
+    protected override void EndProcessing()
+    {
+       
+        switch (ParameterSetName)
+>>>>>>> origin/source-depot
         {
             _accumulatedFileNames.AddRange(LogName);
         }
@@ -438,6 +772,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
+<<<<<<< HEAD
                 EventLogQuery logQuery;
                 if (_logNamesMatchingWildcard.Count > 1)
                 {
@@ -449,6 +784,50 @@ namespace Microsoft.PowerShell.Commands
                 {
                     logQuery = new EventLogQuery(_logNamesMatchingWildcard[0], PathType.LogName, FilterXPath);
                 }
+=======
+    //
+    // ProcessRecord() override.
+    // This is the main entry point for the cmdlet.
+    //       
+    protected override void ProcessRecord()
+    {
+          switch (ParameterSetName)
+          {
+            case "ListLogSet":        
+                ProcessListLog();
+                break;
+
+            case "ListProviderSet":
+                ProcessListProvider();
+                break;
+
+            case "GetLogSet":
+                AccumulatePipelineLogNames(); 
+                break;
+
+            case "FileSet":
+                AccumulatePipelineFileNames();
+                break;
+
+            case "HashQuerySet":
+                ProcessHashQuery();
+                break;
+
+            case "GetProviderSet":
+                AccumulatePipelineProviderNames();
+                break;
+                
+            case "XmlQuerySet":
+                ProcessFilterXml();
+                break;
+                
+            default:
+                WriteDebug(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
+                break;
+          }
+        
+    }
+>>>>>>> origin/source-depot
 
                 logQuery.Session = eventLogSession;
                 logQuery.ReverseDirection = !_oldest;

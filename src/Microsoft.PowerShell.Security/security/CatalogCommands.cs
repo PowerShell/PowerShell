@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
+=======
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+>>>>>>> origin/source-depot
 
 using System;
 using System.Collections.ObjectModel;
@@ -290,6 +296,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
     }
+<<<<<<< HEAD
 }
 
 #endif
+=======
+
+}
+>>>>>>> origin/source-depot

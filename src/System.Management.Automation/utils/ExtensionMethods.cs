@@ -109,6 +109,19 @@ namespace System.Management.Automation
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+<<<<<<< HEAD
+=======
+        internal static bool IsComObject(this Type type)
+        {
+#if CORECLR // Type.IsComObject(Type) is not in CoreCLR
+            return ComObjectType.IsAssignableFrom(type);
+#else
+            return type.IsCOMObject;
+#endif
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+>>>>>>> origin/source-depot
         internal static TypeCode GetTypeCode(this Type type)
         {
             return Type.GetTypeCode(type);

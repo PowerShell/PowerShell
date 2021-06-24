@@ -2,9 +2,18 @@
 // Licensed under the MIT License.
 
 using System;
+<<<<<<< HEAD
+=======
+using System.IO;
+using System.Security.Permissions;
+using System.Text;
+>>>>>>> origin/source-depot
 using System.Management.Automation;
 using System.Management.Automation.Internal.Host;
+<<<<<<< HEAD
 using System.Text;
+=======
+>>>>>>> origin/source-depot
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -64,6 +73,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 base.Dispose(disposing);
             }
+<<<<<<< HEAD
+=======
+        }                
+
+        /// <summary>
+        /// Closes the dialog and then calls the base class Close
+        /// </summary>
+        [SecurityPermission(SecurityAction.LinkDemand)]
+        public override void Close()
+        {
+            // Call the base class close
+
+            base.Close();
+>>>>>>> origin/source-depot
         }
 
         #endregion TraceListener constructors and disposer
@@ -115,6 +138,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The host interface to write the debug line to.
         /// </summary>
+<<<<<<< HEAD
         private readonly InternalHostUserInterface _ui;
     }
 }
+=======
+        private InternalHostUserInterface ui;
+
+    } // class PSHostTraceListener
+} // namespace System.Management.Automation
+
+>>>>>>> origin/source-depot

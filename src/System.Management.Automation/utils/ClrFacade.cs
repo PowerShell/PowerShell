@@ -31,9 +31,159 @@ namespace System.Management.Automation
             {
                 PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty);
             }
+<<<<<<< HEAD
         }
 
         #region Assembly
+=======
+#else
+            return process.Handle;
+#endif
+        }
+
+#if CORECLR
+        /// <summary>
+        /// Facade for ProcessStartInfo.Environment
+        /// </summary>
+        internal static IDictionary<string, string> GetProcessEnvironment(ProcessStartInfo startInfo)
+        {
+            return startInfo.Environment;
+        }
+#else
+        /// <summary>
+        /// Facade for ProcessStartInfo.EnvironmentVariables
+        /// </summary>
+        internal static System.Collections.Specialized.StringDictionary GetProcessEnvironment(ProcessStartInfo startInfo)
+        {
+            return startInfo.EnvironmentVariables;
+        }
+#endif
+#if CORECLR
+        /// <summary>
+        /// Converts the given SecureString to a string
+        /// </summary>
+        /// <param name="secureString"></param>
+        /// <returns></returns>
+        internal static string ConvertSecureStringToString(SecureString secureString)
+        {
+            string passwordInClearText;
+            IntPtr unmanagedMemory = IntPtr.Zero;
+
+            try
+            {
+                unmanagedMemory = SecureStringToCoTaskMemUnicode(secureString);
+                passwordInClearText = Marshal.PtrToStringUni(unmanagedMemory);
+            }
+            finally
+            {
+                if (unmanagedMemory != IntPtr.Zero)
+                {
+                    ZeroFreeCoTaskMemUnicode(unmanagedMemory);
+                }
+            }
+            return passwordInClearText;
+        }
+#endif
+
+        #endregion Process
+
+        #region Marshal
+
+        /// <summary>
+        /// Facade for Marshal.SizeOf
+        /// </summary>
+        internal static int SizeOf<T>()
+        {
+#if CORECLR
+            // Marshal.SizeOf(Type) is obsolete in CoreCLR
+            return Marshal.SizeOf<T>();
+#else
+            return Marshal.SizeOf(typeof(T));
+#endif
+        }
+
+        /// <summary>
+        /// Facade for Marshal.DestroyStructure
+        /// </summary>
+        internal static void DestroyStructure<T>(IntPtr ptr)
+        {
+#if CORECLR
+            // Marshal.DestroyStructure(IntPtr, Type) is obsolete in CoreCLR
+            Marshal.DestroyStructure<T>(ptr);
+#else
+            Marshal.DestroyStructure(ptr, typeof(T));
+#endif
+        }
+
+        /// <summary>
+        /// Facade for Marshal.PtrToStructure
+        /// </summary>
+        internal static T PtrToStructure<T>(IntPtr ptr)
+        {
+#if CORECLR
+            // Marshal.PtrToStructure(IntPtr, Type) is obsolete in CoreCLR
+            return Marshal.PtrToStructure<T>(ptr);
+#else
+            return (T)Marshal.PtrToStructure(ptr, typeof(T));
+#endif
+        }
+
+        /// <summary>
+        /// Wraps Marshal.StructureToPtr to hide differences between the CLRs.
+        /// </summary>
+        internal static void StructureToPtr<T>(
+            T structure,
+            IntPtr ptr,
+            bool deleteOld)
+        {
+#if CORECLR
+            Marshal.StructureToPtr<T>( structure, ptr, deleteOld );
+#else
+            Marshal.StructureToPtr(structure, ptr, deleteOld);
+#endif
+        }
+
+        /// <summary>
+        /// Needed to pair with the  SecureStringToCoTaskMemUnicode method which is member of 
+        /// 'SecureStringMarshal' on CORE CLR, and member of 'Marshal' on Full CLR.
+        /// </summary>
+        internal static void ZeroFreeCoTaskMemUnicode(IntPtr unmanagedStr)
+        {
+#if CORECLR
+            SecureStringMarshal.ZeroFreeCoTaskMemUnicode(unmanagedStr);
+#else
+            Marshal.ZeroFreeCoTaskMemUnicode(unmanagedStr);
+#endif
+        }
+
+        /// <summary>
+        /// Facade for SecureStringToCoTaskMemUnicode
+        /// </summary>
+        internal static IntPtr SecureStringToCoTaskMemUnicode(SecureString s)
+        {
+#if CORECLR
+            return SecureStringMarshal.SecureStringToCoTaskMemUnicode(s);
+#else
+            return Marshal.SecureStringToCoTaskMemUnicode(s);
+#endif
+        }
+
+        #endregion Marshal
+
+        #region Assembly
+        
+        /// <summary>
+        /// Facade for AssemblyName.GetAssemblyName(string)
+        /// </summary>
+        internal static AssemblyName GetAssemblyName(string assemblyPath)
+        {
+#if CORECLR // AssemblyName.GetAssemblyName(assemblyPath) is not in CoreCLR
+            return AssemblyLoadContext.GetAssemblyName(assemblyPath);
+#else
+            return AssemblyName.GetAssemblyName(assemblyPath);
+#endif
+        }
+>>>>>>> origin/source-depot
 
         internal static IEnumerable<Assembly> GetAssemblies(TypeResolutionState typeResolutionState, TypeName typeName)
         {
@@ -69,6 +219,7 @@ namespace System.Management.Automation
                     yield return assembly;
                 }
             }
+<<<<<<< HEAD
 
             foreach (AssemblyLoadContext context in AssemblyLoadContext.All)
             {
@@ -80,6 +231,10 @@ namespace System.Management.Automation
                     }
                 }
             }
+=======
+            
+            return PSAssemblyLoadContext.ProbeAssemblyFileForMetadataAnalysis(assemblyShortName, additionalSearchPath);
+>>>>>>> origin/source-depot
         }
 
         /// <summary>
@@ -94,7 +249,47 @@ namespace System.Management.Automation
         /// </summary>
         internal static HashSet<string> AvailableDotNetAssemblyNames => PSAssemblyLoadContext.AvailableDotNetAssemblyNames;
 
+<<<<<<< HEAD
         private static PowerShellAssemblyLoadContext PSAssemblyLoadContext => PowerShellAssemblyLoadContext.Instance;
+=======
+        /// <summary>
+        /// Add the AssemblyLoad handler
+        /// </summary>
+        internal static void AddAssemblyLoadHandler(Action<Assembly> handler)
+        {
+            PSAssemblyLoadContext.AssemblyLoad += handler;
+        }
+
+        private static volatile PowerShellAssemblyLoadContext _psLoadContext;
+        private static PowerShellAssemblyLoadContext PSAssemblyLoadContext
+        {
+            get
+            {
+                if (_psLoadContext == null)
+                {
+                    _psLoadContext = AssemblyLoadContext.Default as PowerShellAssemblyLoadContext;
+                    if (_psLoadContext == null)
+                    {
+                        throw new InvalidOperationException(ParserStrings.InvalidAssemblyLoadContextInUse);
+                    }
+                }
+                return _psLoadContext;
+            }
+        }
+#endif
+
+        /// <summary>
+        /// Facade for Assembly.GetCustomAttributes
+        /// </summary>
+        internal static object[] GetCustomAttributes<T>(Assembly assembly)
+        {
+#if CORECLR // Assembly.GetCustomAttributes(Type, Boolean) is not in CORE CLR
+            return assembly.GetCustomAttributes(typeof(T)).ToArray();
+#else
+            return assembly.GetCustomAttributes(typeof(T), false);
+#endif
+        }
+>>>>>>> origin/source-depot
 
         #endregion Assembly
 
@@ -311,6 +506,27 @@ namespace System.Management.Automation
         #region Misc
 
         /// <summary>
+        /// Facade for Directory.GetParent(string)
+        /// </summary>
+        internal static DirectoryInfo GetParent(string path)
+        {
+#if CORECLR
+            // Implementation copied from .NET source code.
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentNullException("path");
+
+            string fullPath = Path.GetFullPath(path);
+
+            string s = Path.GetDirectoryName(fullPath);
+            if (s == null)
+                return null;
+            return new DirectoryInfo(s);
+#else
+            return Directory.GetParent(path);
+#endif
+        }
+
+        /// <summary>
         /// Facade for ManagementDateTimeConverter.ToDmtfDateTime(DateTime)
         /// </summary>
         internal static string ToDmtfDateTime(DateTime date)
@@ -378,6 +594,101 @@ namespace System.Management.Automation
 #endif
         }
 
+<<<<<<< HEAD
+=======
+        /// <summary>
+        /// Manual implementation of the is 64bit processor check
+        /// </summary>
+        /// <returns></returns>
+        internal static bool Is64BitOperatingSystem()
+        {
+#if CORECLR
+            return (8 == IntPtr.Size); // Pointers are 8 bytes on 64-bit machines
+#else
+            return Environment.Is64BitOperatingSystem;
+#endif
+        }
+
+        /// <summary>
+        /// Facade for FormatterServices.GetUninitializedObject.
+        /// 
+        /// In CORECLR, there are two peculiarities with its implementation that affect our own:
+        /// 1. Structures cannot be instantiated using GetConstructor, so they must be filtered out.
+        /// 2. Classes must have a default constructor implemented for GetContructor to work.
+        /// 
+        /// See RemoteHostEncoder.IsEncodingAllowedForClassOrStruct for a list of the required types.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        internal static object GetUninitializedObject(Type type)
+        {
+#if CORECLR
+            switch (type.Name)
+            {
+                case "KeyInfo"://typeof(KeyInfo).Name:
+                    return new KeyInfo(0, ' ', ControlKeyStates.RightAltPressed, false);
+                case "Coordinates"://typeof(Coordinates).Name:
+                    return new Coordinates(0, 0);
+                case "Size"://typeof(Size).Name:
+                    return new Size(0, 0);
+                case "BufferCell"://typeof(BufferCell).Name:
+                    return new BufferCell(' ', ConsoleColor.Black, ConsoleColor.Black, BufferCellType.Complete);
+                case "Rectangle"://typeof(Rectangle).Name:
+                    return new Rectangle(0, 0, 0, 0);
+                default:
+                    ConstructorInfo constructorInfoObj = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { }, null);
+                    if (constructorInfoObj != null)
+                    {
+                        return constructorInfoObj.Invoke(new object[] { });
+                    }
+                    return new object();
+            }
+#else
+            return FormatterServices.GetUninitializedObject(type);
+#endif
+        }
+
+        /// <summary>
+        /// Facade for setting WaitHandle.SafeWaitHandle.
+        /// </summary>
+        /// <param name="waitHandle"></param>
+        /// <param name="value"></param>
+        internal static void SetSafeWaitHandle(WaitHandle waitHandle, SafeWaitHandle value)
+        {
+#if CORECLR
+            waitHandle.SetSafeWaitHandle(value);
+#else
+            waitHandle.SafeWaitHandle = value;
+#endif
+        }
+
+        /// <summary>
+        /// Facade for ProfileOptimization.SetProfileRoot
+        /// </summary>
+        /// <param name="directoryPath">The full path to the folder where profile files are stored for the current application domain.</param>
+        internal static void SetProfileOptimizationRoot(string directoryPath)
+        {
+#if CORECLR
+            System.Runtime.Loader.AssemblyLoadContext.Default.SetProfileOptimizationRoot(directoryPath);
+#else
+            System.Runtime.ProfileOptimization.SetProfileRoot(directoryPath);
+#endif
+        }
+
+        /// <summary>
+        /// Facade for ProfileOptimization.StartProfile
+        /// </summary>
+        /// <param name="profile">The file name of the profile to use.</param>
+        internal static void StartProfileOptimization(string profile)
+        {
+#if CORECLR
+            System.Runtime.Loader.AssemblyLoadContext.Default.StartProfileOptimization(profile);
+#else
+            System.Runtime.ProfileOptimization.StartProfile(profile);
+#endif
+        }
+
+>>>>>>> origin/source-depot
         #endregion Misc
 
         /// <summary>

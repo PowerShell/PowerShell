@@ -377,8 +377,13 @@ namespace System.Management.Automation.Remoting.Client
             {
                 if (_cred.password != IntPtr.Zero)
                 {
+<<<<<<< HEAD
                     Marshal.ZeroFreeCoTaskMemUnicode(_cred.password);
                     _cred.password = IntPtr.Zero;
+=======
+                    ClrFacade.ZeroFreeCoTaskMemUnicode(cred.password);
+                    cred.password = IntPtr.Zero;
+>>>>>>> origin/source-depot
                 }
 
                 _data.Dispose();
@@ -2332,6 +2337,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region DllImports ClientAPI
 
+<<<<<<< HEAD
 #if !UNIX
         internal const string WSManClientApiDll = @"WsmSvc.dll";
         internal const string WSManProviderApiDll = @"WsmSvc.dll";
@@ -2339,6 +2345,9 @@ namespace System.Management.Automation.Remoting.Client
         internal const string WSManClientApiDll = @"libpsrpclient";
         internal const string WSManProviderApiDll = @"libpsrpomiprov";
 #endif
+=======
+        internal const string WSManApiDll = @"WsmSvc.dll";
+>>>>>>> origin/source-depot
 
         /// <summary>
         /// This API is used to initialize the WinRM client;
@@ -2575,7 +2584,11 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr optionSet,
             IntPtr connectXml,
             IntPtr asyncCallback,
+<<<<<<< HEAD
             [In, Out] ref IntPtr shellOperationHandle);
+=======
+            [In, Out]  ref IntPtr shellOperationHandle);
+>>>>>>> origin/source-depot
 
         /// <summary>
         /// </summary>
@@ -2929,7 +2942,11 @@ namespace System.Management.Automation.Remoting.Client
             int flags,
             int errorCode,
             [MarshalAs(UnmanagedType.LPWStr)] string extendedInformation);
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> origin/source-depot
         internal enum WSManFlagReceive : int
         {
             /// <summary>
@@ -2993,6 +3010,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr requestDetails,
             int flags,
             IntPtr context);
+<<<<<<< HEAD
 #if UNIX
         /// <summary>
         /// Registers the shutdown callback.
@@ -3007,6 +3025,9 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr shutdownCallback,
             IntPtr shutdownContext);
 #endif
+=======
+
+>>>>>>> origin/source-depot
         #endregion
     }
 
@@ -3043,11 +3064,6 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr requestDetails,
             int flags,
             IntPtr context);
-
-        void WSManPluginRegisterShutdownCallback(
-            IntPtr requestDetails,
-            IntPtr shutdownCallback,
-            IntPtr shutdownContext);
     }
 #nullable restore
 
@@ -3091,6 +3107,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             return WSManNativeApi.WSManPluginReportContext(requestDetails, flags, context);
         }
+<<<<<<< HEAD
 
         void IWSManNativeApiFacade.WSManPluginRegisterShutdownCallback(
             IntPtr requestDetails,
@@ -3101,5 +3118,7 @@ namespace System.Management.Automation.Remoting.Client
             WSManNativeApi.WSManPluginRegisterShutdownCallback(requestDetails, shutdownCallback, shutdownContext);
 #endif
         }
+=======
+>>>>>>> origin/source-depot
     }
 }

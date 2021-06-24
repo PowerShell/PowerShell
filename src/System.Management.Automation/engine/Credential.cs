@@ -263,6 +263,28 @@ namespace System.Management.Automation
 
                 if (IsValidUserName(_userName, out user, out domain))
                 {
+<<<<<<< HEAD
+=======
+#if CORECLR
+                    // NetworkCredential constructor only accepts plain string password in CoreCLR
+                    // Since user can already access the plain text password via PSCredential.GetNetworkCredential().Password,
+                    // this change won't be a security issue for PS on CSS.
+                    IntPtr unmanagedPtr = IntPtr.Zero;
+                    try
+                    {
+                        unmanagedPtr = ClrFacade.SecureStringToCoTaskMemUnicode(_password);
+                        string pwdInPlainText = System.Runtime.InteropServices.Marshal.PtrToStringUni(unmanagedPtr);
+                        _netCred = new NetworkCredential(user, pwdInPlainText, domain);
+                    }
+                    finally
+                    {
+                        if (unmanagedPtr != IntPtr.Zero)
+                        {
+                            ClrFacade.ZeroFreeCoTaskMemUnicode(unmanagedPtr);
+                        }
+                    }
+#else
+>>>>>>> origin/source-depot
                     _netCred = new NetworkCredential(user, _password, domain);
                 }
             }

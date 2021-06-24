@@ -355,10 +355,18 @@ namespace System.Management.Automation.Provider
                     }
                     else
                     {
+<<<<<<< HEAD
                         // Normalize the path so that only the default path separator is used as a
                         // separator even if the user types the alternate slash.
                         parent = NormalizePath(parent);
                         child = NormalizePath(child);
+=======
+                        // Normalize the path so that only the backslash is used as a separator even if the
+                        // user types a forward slash.
+
+                        parent = parent.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+                        child = child.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+>>>>>>> origin/source-depot
                     }
 
                     ReadOnlySpan<char> appendChild = child.AsSpan();

@@ -204,6 +204,7 @@ namespace System.Management.Automation
         /// </summary>
         public string DisplayRoot { get; internal set; } = null;
 
+<<<<<<< HEAD
         /// <summary>
         /// Gets or sets if the drive-root relative paths on this drive are separated by a
         /// colon or not.
@@ -249,6 +250,8 @@ namespace System.Management.Automation
         /// </summary>
         public bool VolumeSeparatedByColon { get; internal set; } = true;
 
+=======
+>>>>>>> origin/source-depot
         #region ctor
 
         /// <summary>

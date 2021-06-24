@@ -449,8 +449,13 @@ namespace Microsoft.PowerShell.Commands
 
             if (SessionState.Path.IsProviderQualified(path))
             {
+<<<<<<< HEAD
                 int index = path.IndexOf("::", StringComparison.Ordinal);
 
+=======
+                int index = path.IndexOf("::", StringComparison.CurrentCulture);
+                
+>>>>>>> origin/source-depot
                 if (index != -1)
                 {
                     // remove the qualifier
@@ -463,12 +468,9 @@ namespace Microsoft.PowerShell.Commands
 
                 if (SessionState.Path.IsPSAbsolute(path, out driveName))
                 {
-                    var driveNameLength = driveName.Length;
-                    if (path.Length > (driveNameLength + 1) && path[driveNameLength] == ':')
-                    {
-                        // Remove the drive name and colon
-                        result = path.Substring(driveNameLength + 1);
-                    }
+                    // Remove the drive name and colon
+
+                    result = path.Substring(driveName.Length + 1);
                 }
             }
 

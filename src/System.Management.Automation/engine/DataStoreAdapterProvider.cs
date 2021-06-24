@@ -259,6 +259,7 @@ namespace System.Management.Automation
 #endif
 
         /// <summary>
+<<<<<<< HEAD
         /// Gets or sets if the drive-root relative paths on drives of this provider
         ///  are separated by a colon or not.
         ///
@@ -278,6 +279,8 @@ namespace System.Management.Automation
         public char AltItemSeparator { get; private set; }
 
         /// <summary>
+=======
+>>>>>>> origin/source-depot
         /// Constructs an instance of the class using an existing reference
         /// as a template.
         /// </summary>
@@ -297,6 +300,7 @@ namespace System.Management.Automation
         {
             if (providerInfo == null)
             {
+<<<<<<< HEAD
                 throw PSTraceSource.NewArgumentNullException(nameof(providerInfo));
             }
 
@@ -312,6 +316,20 @@ namespace System.Management.Automation
             VolumeSeparatedByColon = providerInfo.VolumeSeparatedByColon;
             ItemSeparator = providerInfo.ItemSeparator;
             AltItemSeparator = providerInfo.AltItemSeparator;
+=======
+                throw PSTraceSource.NewArgumentNullException ("providerInfo");
+            }
+
+            this.name = providerInfo.Name;
+            this.implementingType = providerInfo.ImplementingType;
+            this.capabilities = providerInfo.capabilities;
+            this.description = providerInfo.description;
+            this.hiddenDrive = providerInfo.hiddenDrive;
+            this.home = providerInfo.home;
+            this.helpFile = providerInfo.helpFile;
+            this.pssnapin = providerInfo.pssnapin;
+            this.sessionState = providerInfo.sessionState;
+>>>>>>> origin/source-depot
         }
 
         /// <summary>
@@ -427,6 +445,7 @@ namespace System.Management.Automation
                     string.Empty,
                     null);
 
+<<<<<<< HEAD
             _hiddenDrive.Hidden = true;
 
             // TODO:PSL
@@ -435,6 +454,9 @@ namespace System.Management.Automation
             {
                 VolumeSeparatedByColon = false;
             }
+=======
+            hiddenDrive.Hidden = true;
+>>>>>>> origin/source-depot
         }
 
         /// <summary>

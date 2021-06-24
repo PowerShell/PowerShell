@@ -484,6 +484,7 @@ namespace System.Management.Automation
         {
             return null;
         }
+<<<<<<< HEAD
 
         private static IEnumerable DataTableEnumerable(object obj)
         {
@@ -491,6 +492,15 @@ namespace System.Management.Automation
         }
 
         private static IEnumerable TypicalEnumerable(object obj)
+=======
+#if !CORECLR
+        static IEnumerable DataTableEnumerable(object obj)
+        {
+            return (((DataTable)obj).Rows);
+        }
+#endif
+        static IEnumerable TypicalEnumerable(object obj)
+>>>>>>> origin/source-depot
         {
             IEnumerable e = (IEnumerable)obj;
             try
@@ -528,7 +538,11 @@ namespace System.Management.Automation
             {
                 return LanguagePrimitives.DataTableEnumerable;
             }
+<<<<<<< HEAD
 
+=======
+#endif
+>>>>>>> origin/source-depot
             // Don't treat IDictionary or XmlNode as enumerable...
             if (typeof(IEnumerable).IsAssignableFrom(objectType)
                 && !typeof(IDictionary).IsAssignableFrom(objectType)

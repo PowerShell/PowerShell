@@ -109,7 +109,11 @@ namespace Microsoft.PowerShell.Commands
             set { _counterSampleSets = value; }
         }
 
+<<<<<<< HEAD
         private PerformanceCounterSampleSet[] _counterSampleSets = new PerformanceCounterSampleSet[0];
+=======
+        _resourceMgr = new ResourceManager("GetEventResources", Assembly.GetExecutingAssembly());
+>>>>>>> origin/source-depot
 
         //
         // Force switch

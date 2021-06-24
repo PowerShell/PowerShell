@@ -608,7 +608,12 @@ namespace System.Management.Automation.Language
             {
                 return (errorSuggestion ?? NullResult(target)).WriteToDebugLog(this);
             }
+<<<<<<< HEAD
 
+=======
+#if !CORECLR
+            // In CORECLR System.Data.DataTable does not have the DataRowCollection IEnumerable, so disabling code.
+>>>>>>> origin/source-depot
             if (targetValue is DataTable)
             {
                 // Generate:
@@ -635,8 +640,13 @@ namespace System.Management.Automation.Language
                         target),
                     GetRestrictions(target))).WriteToDebugLog(this);
             }
+<<<<<<< HEAD
 
             if (Marshal.IsComObject(targetValue))
+=======
+#endif
+            if (IsComObject(targetValue))
+>>>>>>> origin/source-depot
             {
                 // Pretend that all com objects are enumerable, even if they aren't.  We do this because it's technically impossible
                 // to know if a com object is enumerable without just trying to cast it to IEnumerable.  We could generate a rule like:
@@ -723,6 +733,18 @@ namespace System.Management.Automation.Language
             return (result == DynamicMetaObjectExtensions.FakeError) ? null : result;
         }
 
+<<<<<<< HEAD
+=======
+        private static readonly TypeInfo ComObjectTypeInfo = typeof(object).GetTypeInfo().Assembly.GetType("System.__ComObject").GetTypeInfo();
+
+        internal static bool IsComObject(object obj)
+        {
+            // we can't use System.Runtime.InteropServices.Marshal.IsComObject(obj) since it doesn't work in partial trust
+            obj = PSObject.Base(obj);
+            return obj != null && ComObjectTypeInfo.IsAssignableFrom(obj.GetType().GetTypeInfo());
+        }
+
+>>>>>>> origin/source-depot
         private static IEnumerator AutomationNullRule(CallSite site, object obj)
         {
             return obj == AutomationNull.Value

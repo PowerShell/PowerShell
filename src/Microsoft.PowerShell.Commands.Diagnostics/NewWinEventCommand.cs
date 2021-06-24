@@ -11,6 +11,10 @@ using System.IO;
 using System.Management.Automation;
 using System.Resources;
 using System.Xml;
+<<<<<<< HEAD
+=======
+using System.IO;
+>>>>>>> origin/source-depot
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -26,6 +30,10 @@ namespace Microsoft.PowerShell.Commands
 
         private const string TemplateTag = "template";
         private const string DataTag = "data";
+<<<<<<< HEAD
+=======
+        private ResourceManager _resourceMgr = new ResourceManager("GetEventResources", typeof(NewWinEventCommand).GetTypeInfo().Assembly);
+>>>>>>> origin/source-depot
 
         private readonly ResourceManager _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 

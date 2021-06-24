@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+=======
+>>>>>>> origin/source-depot
 
 #if !UNIX
 
@@ -832,4 +835,3 @@ namespace System.Management.Automation
     }
 }
 
-#endif

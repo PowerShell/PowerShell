@@ -729,9 +729,6 @@ namespace Microsoft.PowerShell.Commands
         private static string RetrieveProcessUserName(Process process)
         {
             string userName = null;
-#if UNIX
-            userName = Platform.NonWindowsGetUserFromPid(process.Id);
-#else
             IntPtr tokenUserInfo = IntPtr.Zero;
             IntPtr processTokenHandler = IntPtr.Zero;
 
@@ -814,7 +811,6 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-#endif
             return userName;
         }
 
@@ -1213,7 +1209,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    if (Platform.IsWindows && !Force)
+                    if (!Force)
                     {
                         if (!IsProcessOwnedByCurrentUser(process))
                         {
@@ -1822,8 +1818,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+<<<<<<< HEAD
         private SwitchParameter _UseNewEnvironment;
 
+=======
+>>>>>>> origin/source-depot
         #endregion
 
         #region overrides
@@ -1936,9 +1935,16 @@ namespace Microsoft.PowerShell.Commands
                 {
                     startInfo.CreateNoWindow = _nonewwindow;
                 }
+<<<<<<< HEAD
 #if !UNIX
                 startInfo.LoadUserProfile = _loaduserprofile;
 #endif
+=======
+
+                //LoadUserProfile.
+                startInfo.LoadUserProfile = _loaduserprofile;
+
+>>>>>>> origin/source-depot
                 if (_credential != null)
                 {
                     NetworkCredential nwcredential = _credential.GetNetworkCredential();
@@ -2016,6 +2022,14 @@ namespace Microsoft.PowerShell.Commands
 
                 startInfo.WindowStyle = _windowstyle;
             }
+<<<<<<< HEAD
+=======
+#endif
+            //Starts the Process
+            Process process = start(startInfo);
+
+            //Wait and Passthru Implementation.
+>>>>>>> origin/source-depot
 
             string targetMessage = StringUtil.Format(ProcessResources.StartProcessTarget, startInfo.FileName, startInfo.Arguments.Trim());
             if (!ShouldProcess(targetMessage)) { return; }
@@ -2042,6 +2056,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!process.HasExited)
                     {
+<<<<<<< HEAD
 #if UNIX
                         process.WaitForExit();
 #else
@@ -2053,11 +2068,25 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Wait for the job object to finish
                             jobObject.WaitOne(_waithandle);
+=======
+                        waithandle = new ManualResetEvent(false);
+                        
+                        // Create and start the job object
+                        ProcessCollection jobObject = new ProcessCollection();
+                        if (jobObject.AssignProcessToJobObject(process))
+                        {
+                            // Wait for the job object to finish
+                            jobObject.WaitOne(waithandle);
+>>>>>>> origin/source-depot
                         }
                         else if (!process.HasExited)
                         {
                             // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
+<<<<<<< HEAD
                             process.Exited += myProcess_Exited;
+=======
+                            process.Exited += new EventHandler(myProcess_Exited);
+>>>>>>> origin/source-depot
                             process.EnableRaisingEvents = true;
                             process.WaitForExit();
                         }
@@ -2147,6 +2176,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+<<<<<<< HEAD
         private Process Start(ProcessStartInfo startInfo)
         {
             Process process = null;
@@ -2312,6 +2342,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private static StringBuilder BuildCommandLine(string executableFileName, string arguments)
+=======
+        private Process StartWithCreateProcess(ProcessStartInfo startinfo)
+>>>>>>> origin/source-depot
         {
             StringBuilder builder = new();
             string str = executableFileName.Trim();
@@ -2527,7 +2560,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (password != IntPtr.Zero)
                         {
-                            Marshal.ZeroFreeCoTaskMemUnicode(password);
+                            ClrFacade.ZeroFreeCoTaskMemUnicode(password);
                         }
                     }
                 }

@@ -2,11 +2,14 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+<<<<<<< HEAD
 using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
+=======
+>>>>>>> origin/source-depot
 using Microsoft.Win32;
 
 namespace System.Management.Automation
@@ -53,6 +56,7 @@ namespace System.Management.Automation
         /// For each later release of PowerShell, this constant needs to
         /// be updated to reflect the right version.
         /// </remarks>
+<<<<<<< HEAD
         private static readonly Version s_psV1Version = new Version(1, 0);
         private static readonly Version s_psV2Version = new Version(2, 0);
         private static readonly Version s_psV3Version = new Version(3, 0);
@@ -66,15 +70,39 @@ namespace System.Management.Automation
         private static readonly SemanticVersion s_psV71Version = new SemanticVersion(7, 1, 0, preReleaseLabel: null, buildLabel: null);
         private static readonly SemanticVersion s_psSemVersion;
         private static readonly Version s_psVersion;
+=======
+        static Version _psV1Version  = new Version(1, 0);
+        static Version _psV2Version  = new Version(2, 0);
+        static Version _psV3Version  = new Version(3, 0);
+        static Version _psV4Version  = new Version(4, 0);
+        static Version _psV5Version  = new Version(5, 0);
+        static Version _psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
+>>>>>>> origin/source-depot
 
         /// <summary>
         /// A constant to track current PowerShell Edition.
         /// </summary>
+<<<<<<< HEAD
         internal const string PSEditionValue = "Core";
+=======
+        /// <remarks>
+        /// Desktop -- "full" PowerShell that runs on Server and Desktop SKUs. Contains all features.
+        /// Core -- Covers Nano Server and IoT SKUs since they are identical from a built-in feature and CLR perspective.
+        /// Linux -- All PS on Linux flavors. This may need to be subdivided based on compatibility between distros.
+        /// </remarks>
+#if !CORECLR
+        internal const string PSEditionValue = "Desktop";
+#elif LINUX
+        internal const string PSEditionValue = "Linux";
+#else
+        internal const string PSEditionValue = "Core";
+#endif
+>>>>>>> origin/source-depot
 
         // Static Constructor.
         static PSVersionInfo()
         {
+<<<<<<< HEAD
             s_psVersionTable = new PSVersionHashTable(StringComparer.OrdinalIgnoreCase);
 
             Assembly currentAssembly = typeof(PSVersionInfo).Assembly;
@@ -103,6 +131,23 @@ namespace System.Management.Automation
             {
                 rawGitCommitId = mainVersion;
             }
+=======
+            _psVersionTable = new Hashtable(StringComparer.OrdinalIgnoreCase);
+
+            _psVersionTable[PSVersionInfo.PSVersionName] = _psV51Version;
+            _psVersionTable["PSEdition"] = PSEditionValue;
+            _psVersionTable["BuildVersion"] = GetBuildVersion();
+            _psVersionTable["PSCompatibleVersions"] = new Version[] { _psV1Version, _psV2Version, _psV3Version, _psV4Version, _psV5Version, _psV51Version };
+            _psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
+            _psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
+            _psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
+#if CORECLR
+            _psVersionTable["CLRVersion"] = null;
+#else
+            _psVersionTable["CLRVersion"] = Environment.Version;
+#endif
+        }
+>>>>>>> origin/source-depot
 
             s_psSemVersion = new SemanticVersion(mainVersion);
             s_psVersion = (Version)s_psSemVersion;
@@ -123,6 +168,7 @@ namespace System.Management.Automation
             return s_psVersionTable;
         }
 
+<<<<<<< HEAD
         internal static Hashtable GetPSVersionTableForDownLevel()
         {
             var result = (Hashtable)s_psVersionTable.Clone();
@@ -131,6 +177,8 @@ namespace System.Management.Automation
             return result;
         }
 
+=======
+>>>>>>> origin/source-depot
         #region Private helper methods
 
         // Gets the current WSMan stack version from the registry.
@@ -138,7 +186,6 @@ namespace System.Management.Automation
         {
             Version version = null;
 
-#if !UNIX
             try
             {
                 using (RegistryKey wsManStackVersionKey = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\WSMAN"))
@@ -162,7 +209,6 @@ namespace System.Management.Automation
             catch (FormatException) { }
             catch (OverflowException) { }
             catch (InvalidCastException) { }
-#endif
 
             return version ?? System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STACK_VERSION;
         }
@@ -178,7 +224,11 @@ namespace System.Management.Automation
         {
             get
             {
+<<<<<<< HEAD
                 return s_psVersion;
+=======
+                return (Version) GetPSVersionTable()[PSVersionInfo.PSVersionName];
+>>>>>>> origin/source-depot
             }
         }
 
@@ -279,6 +329,7 @@ namespace System.Management.Automation
 
         internal static bool IsValidPSVersion(Version version)
         {
+<<<<<<< HEAD
             if (version.Major == s_psSemVersion.Major)
             {
                 return version.Minor == s_psSemVersion.Minor;
@@ -290,6 +341,9 @@ namespace System.Management.Automation
             }
 
             if (version.Major == s_psV5Version.Major)
+=======
+            if (version.Major == _psV5Version.Major)
+>>>>>>> origin/source-depot
             {
                 return (version.Minor == s_psV5Version.Minor || version.Minor == s_psV51Version.Minor);
             }
@@ -334,6 +388,7 @@ namespace System.Management.Automation
             get { return s_psV6Version; }
         }
 
+<<<<<<< HEAD
         internal static SemanticVersion PSV7Version
         {
             get { return s_psV7Version; }
@@ -344,6 +399,8 @@ namespace System.Management.Automation
             get { return s_psSemVersion; }
         }
 
+=======
+>>>>>>> origin/source-depot
         #endregion
     }
 
@@ -417,6 +474,7 @@ namespace System.Management.Automation
             }
         }
     }
+<<<<<<< HEAD
 
     /// <summary>
     /// An implementation of semantic versioning (https://semver.org)
@@ -1069,4 +1127,6 @@ namespace System.Management.Automation
             }
         }
     }
+=======
+>>>>>>> origin/source-depot
 }

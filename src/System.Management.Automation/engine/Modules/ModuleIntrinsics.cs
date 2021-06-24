@@ -959,16 +959,30 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+<<<<<<< HEAD
         /// Gets the personal module path.
+=======
+        /// Gets the personal module path (i.e. C:\Users\lukasza\Documents\WindowsPowerShell\modules)
+>>>>>>> origin/source-depot
         /// </summary>
         /// <returns>Personal module path.</returns>
         internal static string GetPersonalModulePath()
         {
+<<<<<<< HEAD
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Utils.ModuleDirectory);
 #endif
+=======
+            string personalModuleRoot = Path.Combine(
+                    Path.Combine(
+                        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                            Utils.ProductNameForDirectory),
+                    Utils.ModuleDirectory);
+
+            return personalModuleRoot;
+>>>>>>> origin/source-depot
         }
 
         /// <summary>
@@ -984,6 +998,7 @@ namespace System.Management.Automation
 
             try
             {
+<<<<<<< HEAD
                 string psHome = Utils.DefaultPowerShellAppBase;
                 if (!string.IsNullOrEmpty(psHome))
                 {
@@ -1002,6 +1017,17 @@ namespace System.Management.Automation
             }
             catch (System.Security.SecurityException)
             {
+=======
+                // Win8: 584267 Powershell Modules are listed twice in x86, and cannot be removed
+                // This happens because ModuleTable uses Path as the key and CBS installer 
+                // expands the path to include "SysWOW64" (for 
+                // HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\PowerShell\3\PowerShellEngine ApplicationBase).
+                // Because of this, the module that is getting loaded during startup (through LocalRunspace)
+                // is using "SysWow64" in the key. Later, when Import-Module is called, it loads the 
+                // module using ""System32" in the key.
+                psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
+                Interlocked.CompareExchange(ref SystemWideModulePath, Path.Combine(psHome, Utils.ModuleDirectory), null);
+>>>>>>> origin/source-depot
             }
 
             return s_psHomeModulePath;
@@ -1016,6 +1042,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static string GetSharedModulePath()
         {
+<<<<<<< HEAD
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.SHARED_MODULES);
 #else
@@ -1039,6 +1066,11 @@ namespace System.Management.Automation
         internal static string GetWindowsPowerShellPSHomeModulePath()
         {
             if (!string.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellPSHomeLocation))
+=======
+            string dscModulePath = null;
+            string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            if (!string.IsNullOrEmpty(programFilesPath))
+>>>>>>> origin/source-depot
             {
                 return InternalTestHooks.TestWindowsPowerShellPSHomeLocation;
             }
@@ -1180,7 +1212,11 @@ namespace System.Management.Automation
             if (currentProcessModulePath == null)  // EVT.Process does Not exist - really corner case
             {
                 // Handle the default case...
+<<<<<<< HEAD
                 if (string.IsNullOrEmpty(hkcuUserModulePath)) // EVT.User does Not exist -> set to <SpecialFolder.MyDocuments> location
+=======
+                if (hkcuUserModulePath == null) // EVT.User does Not exist -> set to <SpecialFolder.MyDocuments> location
+>>>>>>> origin/source-depot
                 {
                     currentProcessModulePath = personalModulePath; // = SpecialFolder.MyDocuments + Utils.ProductNameForDirectory + Utils.ModuleDirectory
                 }
@@ -1189,8 +1225,13 @@ namespace System.Management.Automation
                     currentProcessModulePath = hkcuUserModulePath; // = EVT.User
                 }
 
+<<<<<<< HEAD
                 currentProcessModulePath += Path.PathSeparator;
                 if (string.IsNullOrEmpty(hklmMachineModulePath)) // EVT.Machine does Not exist
+=======
+                currentProcessModulePath += ';';
+                if (hklmMachineModulePath == null) // EVT.Machine does Not exist
+>>>>>>> origin/source-depot
                 {
                     currentProcessModulePath += CombineSystemModulePaths(); // += (SharedModulePath + $PSHome\Modules)
                 }
@@ -1203,6 +1244,7 @@ namespace System.Management.Automation
             // Now handle the case where the environment variable is already set.
             else
             {
+<<<<<<< HEAD
                 string personalModulePathToUse = string.IsNullOrEmpty(hkcuUserModulePath) ? personalModulePath : hkcuUserModulePath;
                 string systemModulePathToUse = string.IsNullOrEmpty(hklmMachineModulePath) ? psHomeModulePath : hklmMachineModulePath;
 
@@ -1215,6 +1257,93 @@ namespace System.Management.Automation
                 currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
                 insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath) + sharedModulePath.Length + 1;
                 currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
+=======
+                // Now handle the case where the environment variable is already set.
+
+                // If there is no personal path key, then if the env variable doesn't match the system variable,
+                // the user modified it somewhere, else prepend the default personel module path
+                if (hklmMachineModulePath != null) // EVT.Machine exists
+                {
+                    if (hkcuUserModulePath == null) // EVT.User does Not exist
+                    {
+                        if (!(hklmMachineModulePath).Equals(currentProcessModulePath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            // before returning, use <presence of Windows module path> heuristic to conditionally add programFilesModulePath
+                            int psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath); // index of $PSHome\Modules in currentProcessModulePath
+                            if (psHomePosition >= 0) // if $PSHome\Modules IS found - insert <Program Files> location before $PSHome\Modules
+                            {
+#if !CORECLR
+                                // for bug 6678623, if we are running wow64 process (x86 32-bit process on 64-bit (amd64) OS), then ensure that <SpecialFolder.MyDocuments> exists in currentProcessModulePath / return value                             
+                                if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
+                                {
+                                    string userModulePath = GetPersonalModulePath();
+                                    currentProcessModulePath = AddToPath(currentProcessModulePath, userModulePath, psHomePosition);
+                                    psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath);
+                                }
+#endif
+                                return AddToPath(currentProcessModulePath, programFilesModulePath, psHomePosition);
+                            } // if $PSHome\Modules NOT found = <scenario 4> = 'PSModulePath has been constrained by a user to create a sand boxed environment without including System Modules'
+
+                            return null;
+                        }
+                        currentProcessModulePath = GetPersonalModulePath() + ';' + hklmMachineModulePath; // <SpecialFolder.MyDocuments> + EVT.Machine + inserted <ProgramFiles> later in this function
+                    }
+                    else // EVT.User exists
+                    {
+                        // PSModulePath is designed to have behaviour like 'Path' var in a sense that EVT.User + EVT.Machine are merged to get final value of PSModulePath
+                        string combined = string.Concat(hkcuUserModulePath, ';', hklmMachineModulePath); // EVT.User + EVT.Machine
+                        if (!((combined).Equals(currentProcessModulePath, StringComparison.OrdinalIgnoreCase) ||
+                            (hklmMachineModulePath).Equals(currentProcessModulePath, StringComparison.OrdinalIgnoreCase) ||
+                            (hkcuUserModulePath).Equals(currentProcessModulePath, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            // before returning, use <presence of Windows module path> heuristic to conditionally add programFilesModulePath
+                            int psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath); // index of $PSHome\Modules in currentProcessModulePath
+                            if (psHomePosition >= 0) // if $PSHome\Modules IS found - insert <Program Files> location before $PSHome\Modules
+                            {
+                                return AddToPath(currentProcessModulePath, programFilesModulePath, psHomePosition);
+                            } // if $PSHome\Modules NOT found = <scenario 4> = 'PSModulePath has been constrained by a user to create a sand boxed environment without including System Modules'
+
+                            return null;
+                        }
+                        currentProcessModulePath = combined; // = EVT.User + EVT.Machine + inserted <ProgramFiles> later in this function
+                    }
+                }
+                else // EVT.Machine does Not exist
+                {
+                    // If there is no system path key, then if the env variable doesn't match the user variable,
+                    // the user modified it somewhere, otherwise append the default system path
+                    if (hkcuUserModulePath != null) // EVT.User exists
+                    {
+                        if (hkcuUserModulePath.Equals(currentProcessModulePath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            currentProcessModulePath = hkcuUserModulePath + ';' + CombineSystemModulePaths(); // = EVT.User + (DscModulePath + $PSHome\Modules)
+                        }
+                        else
+                        {
+                            // before returning, use <presence of Windows module path> heuristic to conditionally add programFilesModulePath
+                            int psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath); // index of $PSHome\Modules in currentProcessModulePath
+                            if (psHomePosition >= 0) // if $PSHome\Modules IS found - insert <Program Files> location before $PSHome\Modules
+                            {
+                                return AddToPath(currentProcessModulePath, programFilesModulePath, psHomePosition);
+                            } // if $PSHome\Modules NOT found = <scenario 4> = 'PSModulePath has been constrained by a user to create a sand boxed environment without including System Modules'
+
+                            return null;
+                        }
+                    }
+                    else // EVT.User does Not exist
+                    {
+                        // before returning, use <presence of Windows module path> heuristic to conditionally add programFilesModulePath
+                        int psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath); // index of $PSHome\Modules in currentProcessModulePath
+                        if (psHomePosition >= 0) // if $PSHome\Modules IS found - insert <Program Files> location before $PSHome\Modules
+                        {
+                            return AddToPath(currentProcessModulePath, programFilesModulePath, psHomePosition);
+                        } // if $PSHome\Modules NOT found = <scenario 4> = 'PSModulePath has been constrained by a user to create a sand boxed environment without including System Modules'
+
+                        // Neither key is set so go with what the environment variable is already set to
+                        return null;
+                    }
+                }
+>>>>>>> origin/source-depot
             }
 
             return currentProcessModulePath;
@@ -1305,10 +1434,18 @@ namespace System.Management.Automation
             string personalModulePath = PowerShellConfig.Instance.GetModulePath(ConfigScope.CurrentUser);
             string newModulePathString = GetModulePath(currentModulePath, allUsersModulePath, personalModulePath);
 
+<<<<<<< HEAD
             if (!string.IsNullOrEmpty(newModulePathString))
             {
                 Environment.SetEnvironmentVariable(Constants.PSModulePathEnvVar, newModulePathString);
             }
+=======
+			if(!string.IsNullOrEmpty(newModulePathString))
+			{
+	            // Set the environment variable...
+                Environment.SetEnvironmentVariable("PSMODULEPATH", newModulePathString);
+			}
+>>>>>>> origin/source-depot
 
             return newModulePathString;
         }
@@ -1336,7 +1473,11 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrWhiteSpace(modulePathString))
             {
+<<<<<<< HEAD
                 foreach (string envPath in modulePathString.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+=======
+                foreach (string envPath in modulePathString.Split(Utils.Separators.Semicolon, StringSplitOptions.RemoveEmptyEntries))
+>>>>>>> origin/source-depot
                 {
                     var processedPath = ProcessOneModulePath(context, envPath, processedPathSet);
                     if (processedPath != null)
@@ -1401,8 +1542,7 @@ namespace System.Management.Automation
                 catch (NotSupportedException)
                 {
                     // silently skip invalid path
-                    // NotSupportedException is thrown if path contains a colon (":") that is not part of a
-                    // volume identifier (for example, "c:\" is Supported but not "c:\temp\Z:\invalidPath")
+                    // NotSupportedException is thrown if path contains a colon (":") that is not part of a volume identifier (for example, "c:\" is Supported but not "c:\temp\Z:\invalidPath")
                 }
 
                 if (provider != null && resolvedPaths != null && provider.NameEquals(context.ProviderNames.FileSystem))

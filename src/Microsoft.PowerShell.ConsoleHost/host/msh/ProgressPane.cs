@@ -81,6 +81,7 @@ namespace Microsoft.PowerShell
                     }
                 }
 
+<<<<<<< HEAD
                 _savedCursor = _rawui.CursorPosition;
                 _location.X = 0;
 
@@ -138,6 +139,19 @@ namespace Microsoft.PowerShell
                     // not slice a character.  Column 0 is the only place where we know for sure we can place the pane.
 
                     _location.Y = Math.Min(_location.Y + 2, _bufSize.Height);
+=======
+                // Save off the current contents of the screen buffer in the region that we will occupy
+
+                savedRegion =
+                    rawui.GetBufferContents(
+                        new Rectangle(location.X, location.Y, location.X + cols - 1, location.Y + rows - 1));
+
+                // replace the saved region in the screen buffer with our progress display
+
+                rawui.SetBufferContents(location, tempProgressRegion);
+            }
+        }
+>>>>>>> origin/source-depot
 
                     // Save off the current contents of the screen buffer in the region that we will occupy
                     _savedRegion =

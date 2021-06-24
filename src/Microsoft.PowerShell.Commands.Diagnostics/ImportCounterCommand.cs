@@ -83,7 +83,24 @@ namespace Microsoft.PowerShell.Commands
             set { _listSet = value; }
         }
 
+<<<<<<< HEAD
         private string[] _listSet = Array.Empty<string>();
+=======
+    //
+    // BeginProcessing() is invoked once per pipeline
+    //
+    protected override void BeginProcessing()
+    {
+        _resourceMgr = new ResourceManager("GetEventResources", Assembly.GetExecutingAssembly());
+        _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
+    }    
+
+    //
+    // EndProcessing() is invoked once per pipeline
+    //
+    protected override void EndProcessing()
+    {
+>>>>>>> origin/source-depot
 
         //
         // StartTime parameter

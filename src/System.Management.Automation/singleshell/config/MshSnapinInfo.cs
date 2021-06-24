@@ -877,7 +877,7 @@ namespace System.Management.Automation
             return v;
         }
 
-        internal static void ReadRegistryInfo(out Version assemblyVersion, out string publicKeyToken, out string culture, out string architecture, out string applicationBase, out Version psVersion)
+        private static void ReadRegistryInfo(out Version assemblyVersion, out string publicKeyToken, out string culture, out string architecture, out string applicationBase, out Version psVersion)
         {
             applicationBase = Utils.DefaultPowerShellAppBase;
             Dbg.Assert(
@@ -1040,7 +1040,11 @@ namespace System.Management.Automation
                 else if (defaultMshSnapinInfo.AssemblyName.Equals("Microsoft.PowerShell.Commands.Diagnostics", StringComparison.OrdinalIgnoreCase))
                 {
                     types = new Collection<string>(new string[] { "GetEvent.types.ps1xml" });
+<<<<<<< HEAD
                     formats = new Collection<string>(new string[] { "Event.format.ps1xml", "Diagnostics.format.ps1xml" });
+=======
+                    formats = new Collection<string>(new string[] { "Event.Format.ps1xml","Diagnostics.Format.ps1xml" });
+>>>>>>> origin/source-depot
                 }
                 else if (defaultMshSnapinInfo.AssemblyName.Equals("Microsoft.WSMan.Management", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1300,10 +1304,13 @@ namespace System.Management.Automation
                         {
                             s_defaultMshSnapins = new List<DefaultPSSnapInInformation>()
                             {
+<<<<<<< HEAD
 #if !UNIX
+=======
+>>>>>>> origin/source-depot
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Diagnostics", "Microsoft.PowerShell.Commands.Diagnostics", null,
                                     "GetEventResources,Description", "GetEventResources,Vendor"),
-#endif
+
                                 new DefaultPSSnapInInformation("Microsoft.PowerShell.Host", "Microsoft.PowerShell.ConsoleHost", null,
                                     "HostMshSnapInResources,Description", "HostMshSnapInResources,Vendor"),
 
@@ -1319,13 +1326,16 @@ namespace System.Management.Automation
                                     "SecurityMshSnapInResources,Description", "SecurityMshSnapInResources,Vendor")
                             };
 
+<<<<<<< HEAD
 #if !UNIX
                             if (!Utils.IsWinPEHost())
+=======
+                            if (!RemotingCommandUtil.IsWinPEHost())
+>>>>>>> origin/source-depot
                             {
                                 s_defaultMshSnapins.Add(new DefaultPSSnapInInformation("Microsoft.WSMan.Management", "Microsoft.WSMan.Management", null,
                                     "WsManResources,Description", "WsManResources,Vendor"));
                             }
-#endif
                         }
                     }
                 }

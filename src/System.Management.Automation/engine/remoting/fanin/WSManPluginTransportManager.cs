@@ -332,8 +332,20 @@ namespace System.Management.Automation.Remoting
                 _isRequestPending = true;
                 _requestDetails = requestDetails;
 
-                if (Platform.IsWindows)
+                // Wrap the provided handle so it can be passed to the registration function
+                SafeWaitHandle safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM
+                EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+                ClrFacade.SetSafeWaitHandle(eventWaitHandle, safeWaitHandle);
+
+                this.registeredShutDownWaitHandle = ThreadPool.RegisterWaitForSingleObject(
+                    eventWaitHandle,
+                    new WaitOrTimerCallback(WSManPluginManagedEntryWrapper.PSPluginOperationShutdownCallback), 
+                    shutDownContext, 
+                    -1, // INFINITE
+                    true); // TODO: Do I need to worry not being able to set missing WT_TRANSFER_IMPERSONATION?
+                if (null == this.registeredShutDownWaitHandle)
                 {
+<<<<<<< HEAD
                     // Wrap the provided handle so it can be passed to the registration function
                     SafeWaitHandle safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM
                     EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
@@ -349,7 +361,11 @@ namespace System.Management.Automation.Remoting
                     {
                         isRegisterWaitForSingleObjectSucceeded = false;
                     }
+=======
+                    isRegisterWaitForSingleObjectSucceeded = false;
+>>>>>>> origin/source-depot
                 }
+
                 // release thread waiting to send data to the client.
                 _waitHandle.Set();
             }

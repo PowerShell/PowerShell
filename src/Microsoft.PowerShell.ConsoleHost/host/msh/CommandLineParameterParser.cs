@@ -748,6 +748,7 @@ namespace Microsoft.PowerShell
 
                 string switchKey = switchKeyResults.switchKey;
 
+<<<<<<< HEAD
                 // If version is in the commandline, don't continue to look at any other parameters
                 if (MatchSwitch(switchKey, "version", "v"))
                 {
@@ -759,6 +760,8 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
+=======
+>>>>>>> origin/source-depot
                 if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
                     _showHelp = true;
@@ -884,6 +887,114 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
+<<<<<<< HEAD
+=======
+
+                    // Don't show the startup banner unless -noexit has been specified.
+                    if (!noexitSeen)
+                        showBanner = false;
+
+                    // Process interactive input...
+                    if (args[i] == "-")
+                    {
+                        // the arg to -file is -, which is secret code for "read the commands from stdin with prompts"
+
+                        explicitReadCommandsFromStdin = true;
+                        noPrompt = false;
+                    }
+                    else
+                    {
+                        // Exit on script completion unless -noexit was specified...
+                        if (!noexitSeen)
+                            noExit = false;
+
+                        // We need to get the full path to the script because it will be
+                        // executed after the profiles are run and they may change the current
+                        // directory.
+                        string exceptionMessage = null;
+                        try
+                        {
+                            file = Path.GetFullPath(args[i]);
+                        }
+                        catch (Exception e)
+                        {
+                            // Catch all exceptions - we're just going to exit anyway so there's
+                            // no issue of the system begin destablized. We'll still
+                            // Watson on "severe" exceptions to get the reports.
+                            ConsoleHost.CheckForSevereException(e);
+                            exceptionMessage = e.Message;
+                        }
+
+                        if (exceptionMessage != null)
+                        {
+                            WriteCommandLineError(
+                                string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgument, args[i], exceptionMessage),
+                                showBanner: true);
+                            break;
+                        }
+
+                        if (!Path.GetExtension(file).Equals(".ps1", StringComparison.OrdinalIgnoreCase))
+                        {
+                            WriteCommandLineError(
+                                string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgumentExtension, args[i]),
+                                showBanner: true);
+                            break;
+                        }
+
+                        if (!System.IO.File.Exists(file))
+                        {
+                            WriteCommandLineError(
+                                string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.ArgumentFileDoesNotExist, args[i]),
+                                showBanner: true);
+                            break;
+                        }
+
+                        i++;
+
+                        Regex argPattern = new Regex(@"^.\w+\:", RegexOptions.CultureInvariant);
+                        string pendingParameter = null;
+
+                        // Accumulate the arguments to this script...
+                        while (i < args.Length)
+                        {
+                            string arg = args[i];
+
+                            // If there was a pending parameter, add a named parameter
+                            // using the pending parameter and current argument
+                            if (pendingParameter != null)
+                            {
+                                collectedArgs.Add(new CommandParameter(pendingParameter, arg));
+                                pendingParameter = null;
+                            }
+                            else if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]))
+                            {
+                                Match m = argPattern.Match(arg);
+                                if (m.Success)
+                                {
+                                    int offset = arg.IndexOf(':');
+                                    if (offset == arg.Length - 1)
+                                    {
+                                        pendingParameter = arg.TrimEnd(':');
+                                    }
+                                    else
+                                    {
+                                        collectedArgs.Add(new CommandParameter(arg.Substring(0, offset), arg.Substring(offset + 1)));
+                                    }
+                                }
+                                else
+                                {
+                                    collectedArgs.Add(new CommandParameter(arg));
+                                }
+                            }
+                            else
+                            {
+                                collectedArgs.Add(new CommandParameter(null, arg));
+                            }
+                            ++i;
+                        }
+                    }
+                    break;
+>>>>>>> origin/source-depot
                 }
 #if DEBUG
                 else if (MatchSwitch(switchKey, "isswait", "isswait"))

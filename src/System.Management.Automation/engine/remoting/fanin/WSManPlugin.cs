@@ -164,11 +164,11 @@ namespace System.Management.Automation.Remoting
 #if !CORECLR
             // Register our remoting handler for crashes
             AppDomain currentDomain = AppDomain.CurrentDomain;
-            currentDomain.UnhandledException +=
+            currentDomain.UnhandledException += 
                 new UnhandledExceptionEventHandler(WSManPluginInstance.UnhandledExceptionHandler);
 #endif
         }
-
+        
         #endregion
 
         /// <summary>
@@ -287,9 +287,10 @@ namespace System.Management.Automation.Remoting
             try
             {
                 PSSenderInfo senderInfo = GetPSSenderInfo(requestDetails.senderDetails);
-
+        
                 // inbound shell information is already verified by pwrshplugin.dll.. so no need
                 // to verify here.
+<<<<<<< HEAD
                 WSManPluginServerTransportManager serverTransportMgr;
 
                 if (Platform.IsWindows)
@@ -300,6 +301,9 @@ namespace System.Management.Automation.Remoting
                 {
                     serverTransportMgr = new WSManPluginServerTransportManager(BaseTransportManager.DefaultFragmentSize, null);
                 }
+=======
+                WSManPluginServerTransportManager serverTransportMgr = new WSManPluginServerTransportManager(BaseTransportManager.DefaultFragmentSize, new PSRemotingCryptoHelperServer());
+>>>>>>> origin/source-depot
 
                 PSEtwLog.LogAnalyticInformational(
                     PSEventId.ServerCreateRemoteSession,
@@ -324,7 +328,7 @@ namespace System.Management.Automation.Remoting
                 {
                     ReportOperationComplete(requestDetails, WSManPluginErrorCodes.OutOfMemory);
                     return;
-                }
+                }          
 
                 // Create a shell session wrapper to track and service future interactions.
                 mgdShellSession = new WSManPluginShellSession(requestDetails, serverTransportMgr, remoteShellSession, context);
@@ -389,14 +393,21 @@ namespace System.Management.Automation.Remoting
             }
 
             bool isRegisterWaitForSingleObjectSucceeded = true;
+<<<<<<< HEAD
 
             // always synchronize calls to OperationComplete once notification handle is registered.. else duplicate OperationComplete calls are bound to happen
+=======
+        
+            //always synchronize calls to OperationComplete once notification handle is registered.. else duplicate OperationComplete calls are bound to happen
+>>>>>>> origin/source-depot
             lock (mgdShellSession.shellSyncObject)
             {
                 mgdShellSession.registeredShutdownNotification = 1;
 
                 // Wrap the provided handle so it can be passed to the registration function
+                SafeWaitHandle safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM
                 EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
+<<<<<<< HEAD
 
                 if (Platform.IsWindows)
                 {
@@ -425,16 +436,27 @@ namespace System.Management.Automation.Remoting
                                  -1, // INFINITE
                                  true); // TODO: Do I need to worry not being able to set missing WT_TRANSFER_IMPERSONATION?
                 if (mgdShellSession.registeredShutDownWaitHandle == null)
+=======
+                ClrFacade.SetSafeWaitHandle(eventWaitHandle, safeWaitHandle);
+
+                mgdShellSession.registeredShutDownWaitHandle = ThreadPool.RegisterWaitForSingleObject(
+                    eventWaitHandle,
+                    new WaitOrTimerCallback(WSManPluginManagedEntryWrapper.PSPluginOperationShutdownCallback), 
+                    context, 
+                    -1, // INFINITE
+                    true); // TODO: Do I need to worry not being able to set missing WT_TRANSFER_IMPERSONATION?
+                if (null == mgdShellSession.registeredShutDownWaitHandle)
+>>>>>>> origin/source-depot
                 {
                     isRegisterWaitForSingleObjectSucceeded = false;
                 }
             }
-
+    
             if (!isRegisterWaitForSingleObjectSucceeded)
             {
                 mgdShellSession.registeredShutdownNotification = 0;
                 WSManPluginInstance.ReportWSManOperationComplete(
-                    requestDetails,
+                    requestDetails, 
                     WSManPluginErrorCodes.ShutdownRegistrationFailed);
                 DeleteFromActiveShellSessions(requestDetails.unmanagedHandle);
                 return;
@@ -484,6 +506,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="context"></param>
         internal void CloseShellOperation(
             WSManPluginOperationShutdownContext context)
+<<<<<<< HEAD
         {
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.ServerCloseOperation,
@@ -492,6 +515,14 @@ namespace System.Management.Automation.Remoting
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 ((IntPtr)context.shellContext).ToString(),
                 ((IntPtr)context.commandContext).ToString(),
+=======
+        {            
+            PSEtwLog.LogAnalyticInformational(PSEventId.ServerCloseOperation,
+                    PSOpcode.Disconnect, PSTask.None,
+                    PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
+                ((IntPtr)context.shellContext).ToString(), 
+                ((IntPtr)context.commandContext).ToString(), 
+>>>>>>> origin/source-depot
                 context.isReceiveOperation.ToString());
 
             WSManPluginShellSession mgdShellSession = GetFromActiveShellSessions(context.shellContext);

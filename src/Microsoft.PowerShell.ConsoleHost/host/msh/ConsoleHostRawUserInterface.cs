@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+=======
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+
+>>>>>>> origin/source-depot
 
 #if !UNIX
 
@@ -1312,6 +1319,7 @@ namespace Microsoft.PowerShell
     }
 }   // namespace
 
+<<<<<<< HEAD
 #else
 
 // Managed code only implementation for portability
@@ -1702,3 +1710,5 @@ namespace Microsoft.PowerShell
     }
 }
 #endif
+=======
+>>>>>>> origin/source-depot

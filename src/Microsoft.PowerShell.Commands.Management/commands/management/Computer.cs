@@ -1,8 +1,14 @@
+<<<<<<< HEAD
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
 
+=======
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+>>>>>>> origin/source-depot
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -2273,6 +2279,21 @@ $result
         }
     }
     #endregion Helper
+<<<<<<< HEAD
 }
 
 #endif
+=======
+
+    #region Internal Enums
+
+    internal enum TransportProtocol
+    {
+        DCOM = 1,
+        WSMan = 2
+    }
+
+    #endregion
+
+}//End namespace
+>>>>>>> origin/source-depot

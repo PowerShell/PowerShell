@@ -118,6 +118,7 @@ namespace Microsoft.PowerShell
             // we also don't handle the edge case where PATH only contains $PSHOME
             if (string.IsNullOrEmpty(path))
             {
+<<<<<<< HEAD
                 Environment.SetEnvironmentVariable("PATH", pshome);
             }
             else if (!path.StartsWith(pshome, StringComparison.Ordinal))
@@ -129,12 +130,21 @@ namespace Microsoft.PowerShell
             {
                 string profileDir = Platform.CacheDirectory;
 #if !UNIX
+=======
+                var profileDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) +
+                                 @"\Microsoft\Windows\PowerShell";
+
+>>>>>>> origin/source-depot
                 if (!Directory.Exists(profileDir))
                 {
                     Directory.CreateDirectory(profileDir);
                 }
+<<<<<<< HEAD
 #endif
                 ProfileOptimization.SetProfileRoot(profileDir);
+=======
+                ClrFacade.SetProfileOptimizationRoot(profileDir);
+>>>>>>> origin/source-depot
             }
             catch
             {
@@ -251,6 +261,7 @@ namespace Microsoft.PowerShell
 
                     exitCode = s_theConsoleHost.Run(s_cpp, false);
                 }
+
             }
             finally
             {
@@ -301,6 +312,7 @@ namespace Microsoft.PowerShell
 
         private static readonly CommandLineParameterParser s_cpp = new CommandLineParameterParser();
 
+<<<<<<< HEAD
 #if UNIX
         /// <summary>
         /// The break handler for the program.  Dispatches a break event to the current Executor.
@@ -332,6 +344,12 @@ namespace Microsoft.PowerShell
 #else
         /// <summary>
         /// The break handler for the program.  Dispatches a break event to the current Executor.
+=======
+        /// <summary>
+        /// 
+        /// The break handler for the program.  Dispatches a break event to the current Executor.
+        /// 
+>>>>>>> origin/source-depot
         /// </summary>
         /// <param name="signal"></param>
         /// <returns></returns>
@@ -376,7 +394,6 @@ namespace Microsoft.PowerShell
                     return false;
             }
         }
-#endif
 
         private static bool BreakIntoDebugger()
         {
@@ -487,10 +504,8 @@ namespace Microsoft.PowerShell
             // call the console APIs directly, instead of ui.rawui.FlushInputHandle, as ui may be finalized
             // already if this thread is lagging behind the main thread.
 
-#if !UNIX
             ConsoleHandle handle = ConsoleControl.GetConioDeviceHandle();
             ConsoleControl.FlushConsoleInputBuffer(handle);
-#endif
 
             ConsoleHost.SingletonInstance._breakHandlerThread = null;
         }
@@ -1174,12 +1189,8 @@ namespace Microsoft.PowerShell
             Justification = "Accesses instance members in preprocessor branch.")]
         private void BindBreakHandler()
         {
-#if UNIX
-            Console.CancelKeyPress += new ConsoleCancelEventHandler(MyBreakHandler);
-#else
             breakHandlerGcHandle = GCHandle.Alloc(new ConsoleControl.BreakHandler(MyBreakHandler));
             ConsoleControl.AddBreakHandler((ConsoleControl.BreakHandler)breakHandlerGcHandle.Target);
-#endif
         }
 
         private void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs args)
@@ -1219,6 +1230,7 @@ namespace Microsoft.PowerShell
         {
             if (!_isDisposed)
             {
+<<<<<<< HEAD
 #if !UNIX
                 ConsoleControl.RemoveBreakHandler();
                 if (breakHandlerGcHandle.IsAllocated)
@@ -1226,6 +1238,11 @@ namespace Microsoft.PowerShell
                     breakHandlerGcHandle.Free();
                 }
 #endif
+=======
+                Dbg.Assert(breakHandlerGcHandle != null, "break handler should be set");
+                ConsoleControl.RemoveBreakHandler();
+                breakHandlerGcHandle.Free();
+>>>>>>> origin/source-depot
 
                 if (isDisposingNotFinalizing)
                 {
@@ -1663,7 +1680,7 @@ namespace Microsoft.PowerShell
                     {
                         // Create and open Runspace with PSReadline.
                         defaultImportModulesList = DefaultInitialSessionState.Modules;
-                        DefaultInitialSessionState.ImportPSModule(new[] { "PSReadLine" });
+                        DefaultInitialSessionState.ImportPSModule(new[] { "PSReadline" });
                         consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
                         try
                         {
@@ -2942,8 +2959,8 @@ namespace Microsoft.PowerShell
         /// </summary>
         private RunspaceRef _runspaceRef;
 
-#if !UNIX
         private GCHandle breakHandlerGcHandle;
+<<<<<<< HEAD
 
         // Set to Unknown so that we avoid saving/restoring the console mode if we don't have a console.
         private ConsoleControl.ConsoleModes _savedConsoleMode = ConsoleControl.ConsoleModes.Unknown;
@@ -2951,6 +2968,10 @@ namespace Microsoft.PowerShell
 #endif
         private Thread _breakHandlerThread;
         private bool _isDisposed;
+=======
+        private System.Threading.Thread breakHandlerThread;
+        private bool isDisposed;
+>>>>>>> origin/source-depot
         internal ConsoleHostUserInterface ui;
 
         internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(static () => Console.In);

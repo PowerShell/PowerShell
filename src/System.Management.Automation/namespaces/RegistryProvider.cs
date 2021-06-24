@@ -142,7 +142,10 @@ namespace Microsoft.PowerShell.Commands
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/source-depot
             drives.Add(
                 new PSDriveInfo(
                     "HKLM",
@@ -2944,7 +2947,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!string.IsNullOrEmpty(path))
             {
-                result = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+                result = path.Replace('/', '\\');
 
                 // Remove relative path tokens
                 if (HasRelativePathTokens(path))

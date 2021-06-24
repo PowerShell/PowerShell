@@ -438,7 +438,7 @@ namespace Microsoft.PowerShell.Commands
                             true))
                     {
                         listenerToRemove.Flush();
-                        listenerToRemove.Dispose();
+                        listenerToRemove.Close();
                         source.Listeners.RemoveAt(index);
                     }
                 }
@@ -594,7 +594,7 @@ namespace Microsoft.PowerShell.Commands
                 foreach (TraceListener listener in pair.Value)
                 {
                     listener.Flush();
-                    listener.Dispose();
+                    listener.Close();
                 }
             }
 
@@ -607,3 +607,4 @@ namespace Microsoft.PowerShell.Commands
         #endregion stored state
     }
 }
+

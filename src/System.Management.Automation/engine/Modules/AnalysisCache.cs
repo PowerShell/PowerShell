@@ -1079,6 +1079,7 @@ namespace System.Management.Automation
 
         static AnalysisCacheData()
         {
+<<<<<<< HEAD
             // If user defines a custom cache path, then use that.
             string userDefinedCachePath = Environment.GetEnvironmentVariable("PSModuleAnalysisCachePath");
             if (!string.IsNullOrEmpty(userDefinedCachePath))
@@ -1122,6 +1123,12 @@ namespace System.Management.Automation
             }
 
             s_cacheStoreLocation = Path.Combine(Platform.CacheDirectory, cacheFileName);
+=======
+            cacheStoreLocation = 
+                Environment.GetEnvironmentVariable("PSModuleAnalysisCachePath") ??
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                             @"Microsoft\Windows\PowerShell\ModuleAnalysisCache");
+>>>>>>> origin/source-depot
         }
     }
 

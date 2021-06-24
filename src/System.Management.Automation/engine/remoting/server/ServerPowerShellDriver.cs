@@ -239,6 +239,7 @@ namespace System.Management.Automation
             // Flow the impersonation policy to pipeline execution thread
             // only if the current thread is impersonated (Delegation is
             // also a kind of impersonation).
+<<<<<<< HEAD
             if (Platform.IsWindows)
             {
                 WindowsIdentity currentThreadIdentity = WindowsIdentity.GetCurrent();
@@ -256,6 +257,19 @@ namespace System.Management.Automation
             else
             {
                 settings.FlowImpersonationPolicy = false;
+=======
+            WindowsIdentity currentThreadIdentity = WindowsIdentity.GetCurrent();
+            switch (currentThreadIdentity.ImpersonationLevel)
+            {
+
+                case TokenImpersonationLevel.Impersonation:
+                case TokenImpersonationLevel.Delegation:
+                    settings.FlowImpersonationPolicy = true;
+                    break;
+                default:
+                    settings.FlowImpersonationPolicy = false;
+                    break;
+>>>>>>> origin/source-depot
             }
 
             settings.AddToHistory = _addToHistory;

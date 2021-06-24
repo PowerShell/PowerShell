@@ -1120,7 +1120,10 @@ namespace System.Management.Automation
                             }
                         }
 
+<<<<<<< HEAD
 #if !CORECLR
+=======
+>>>>>>> origin/source-depot
                         // Close the progress pane that may have popped up from analyzing UNC paths.
                         if (context.CurrentCommandProcessor != null)
                         {
@@ -1128,7 +1131,6 @@ namespace System.Management.Automation
                             analysisProgress.RecordType = ProgressRecordType.Completed;
                             context.CurrentCommandProcessor.CommandRuntime.WriteProgress(analysisProgress);
                         }
-#endif
                     }
                 }
             }
@@ -1287,7 +1289,8 @@ namespace System.Management.Automation
         /// variable.
         /// </summary>
         /// <returns>
-        /// The contents of the PATH environment variable split on System.IO.Path.PathSeparator.
+        /// The contents of the PATH environment variable split using a semi-colon
+        /// as a delimiter.
         /// </returns>
         /// <remarks>
         /// The result is an ordered list of paths with paths starting with "." unresolved until lookup time.
@@ -1318,8 +1321,13 @@ namespace System.Management.Automation
 
                 if (_pathCacheKey != null)
                 {
+<<<<<<< HEAD
                     string[] tokenizedPath = _pathCacheKey.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries);
                     _cachedPath = new Collection<string>();
+=======
+                    string[] tokenizedPath = pathCacheKey.Split(Utils.Separators.Semicolon, StringSplitOptions.RemoveEmptyEntries);
+                    cachedPath = new Collection<string>();
+>>>>>>> origin/source-depot
 
                     foreach (string directory in tokenizedPath)
                     {
@@ -1409,12 +1417,21 @@ namespace System.Management.Automation
         {
             lock (s_lockObject)
             {
+<<<<<<< HEAD
                 s_cachedPathExtCollection = pathExt != null
                     ? pathExt.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
                     : Array.Empty<string>();
                 s_cachedPathExtCollectionWithPs1 = new string[s_cachedPathExtCollection.Length + 1];
                 s_cachedPathExtCollectionWithPs1[0] = StringLiterals.PowerShellScriptFileExtension;
                 Array.Copy(s_cachedPathExtCollection, 0, s_cachedPathExtCollectionWithPs1, 1, s_cachedPathExtCollection.Length);
+=======
+                cachedPathExtCollection = pathExt != null
+                    ? pathExt.Split(Utils.Separators.Semicolon, StringSplitOptions.RemoveEmptyEntries)
+                    : Utils.EmptyArray<string>();
+                cachedPathExtCollectionWithPs1 = new string[cachedPathExtCollection.Length + 1];
+                cachedPathExtCollectionWithPs1[0] = StringLiterals.PowerShellScriptFileExtension;
+                Array.Copy(cachedPathExtCollection, 0, cachedPathExtCollectionWithPs1, 1, cachedPathExtCollection.Length);
+>>>>>>> origin/source-depot
 
                 s_pathExtCacheKey = pathExt;
             }
@@ -1511,7 +1528,120 @@ namespace System.Management.Automation
             }
         }
 
+<<<<<<< HEAD
         internal ExecutionContext Context { get; }
+=======
+        private int GetCmdletRemovalIndex(List<CmdletInfo> cacheEntry, string PSSnapin)
+        {
+            int removalIndex = -1;
+            for (int index = 0; index < cacheEntry.Count; ++index)
+            {
+                if (String.Equals(cacheEntry[index].ModuleName, PSSnapin, StringComparison.OrdinalIgnoreCase))
+                {
+                    removalIndex = index;
+                    break;
+                }
+            }
+            return removalIndex;
+        }
+
+
+        /// <summary>
+        /// Gets the cached ScriptInfo for a command using the script name.
+        /// </summary>
+        /// 
+        /// <param name="name">
+        /// The name of the script.
+        /// </param>
+        /// 
+        /// <returns>
+        /// A reference to the ScriptInfo for the command if its in the cache, 
+        /// or null otherwise.
+        /// </returns>
+        /// 
+        internal ScriptInfo GetScriptInfo(string name)
+        {
+            Dbg.Assert(
+                !String.IsNullOrEmpty(name),
+                "The caller should verify the name");
+
+            ScriptInfo result;
+            cachedScriptInfo.TryGetValue(name, out result);
+            return result;
+        } // GetScriptInfo
+
+        /// <summary>
+        /// Gets the script cache
+        /// </summary>
+        /// 
+        internal Dictionary<string, ScriptInfo> ScriptCache
+        {
+            get { return cachedScriptInfo; }
+        }
+
+        /// <summary>
+        /// The cache for the ScriptInfo.
+        /// </summary>
+        /// 
+        private Dictionary<string, ScriptInfo> cachedScriptInfo;
+
+        internal ExecutionContext Context
+        {
+            get { return _context; }
+        }
+        private ExecutionContext _context;
+
+        /// <summary>
+        /// Reads the path for the appropriate shellID from the registry.
+        /// </summary>
+        /// 
+        /// <param name="shellID">
+        /// The ID of the shell to retrieve the path for.
+        /// </param>
+        /// 
+        /// <returns>
+        /// The path to the shell represented by the shellID.
+        /// </returns>
+        /// 
+        /// <remarks>
+        /// The shellID must be registered in the Windows Registry in either
+        /// the HKEY_CURRENT_USER or HKEY_LOCAL_MACHINE hive under 
+        /// Software/Microsoft/MSH/&lt;ShellID&gt; and are searched in that order.
+        /// </remarks>
+        /// 
+        internal static string GetShellPathFromRegistry(string shellID)
+        {
+            string result = null;
+
+            try
+            {
+                RegistryKey shellKey = Registry.LocalMachine.OpenSubKey(Utils.GetRegistryConfigurationPath(shellID));
+                if (shellKey != null)
+                {
+                    // verify the value kind as a string
+                    RegistryValueKind kind = shellKey.GetValueKind("path");
+
+                    if (kind == RegistryValueKind.ExpandString ||
+                        kind == RegistryValueKind.String)
+                    {
+                        result = shellKey.GetValue("path") as string;
+                    }
+                }
+            }
+            // Ignore these exceptions and return an empty or null result
+            catch (SecurityException)
+            {
+            }
+            catch (IOException)
+            {
+            }
+            catch (ArgumentException)
+            {
+            }
+
+            return result;
+        }
+>>>>>>> origin/source-depot
 
         internal static PSModuleAutoLoadingPreference GetCommandDiscoveryPreference(ExecutionContext context, VariablePath variablePath, string environmentVariable)
         {

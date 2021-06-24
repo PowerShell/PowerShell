@@ -47,13 +47,17 @@ namespace System.Management.Automation
             Collection<string>? acceptableCommandNames,
             bool useFuzzyMatch)
         {
+<<<<<<< HEAD
             _useFuzzyMatch = useFuzzyMatch;
             string[] commandPatterns;
+=======
+>>>>>>> origin/source-depot
             if (acceptableCommandNames != null)
             {
                 // The name passed in is not a pattern. To minimize enumerating the file system, we
                 // turn the command name into a pattern and then match against extensions in PATHEXT.
                 // The old code would enumerate the file system many more times, once per possible extension.
+<<<<<<< HEAD
                 if (Platform.IsWindows)
                 {
                     commandPatterns = new[] { commandName + ".*" };
@@ -75,6 +79,23 @@ namespace System.Management.Automation
                 _postProcessEnumeratedFiles = JustCheckExtensions;
             }
 
+=======
+                commandName = commandName + ".*";
+                this.postProcessEnumeratedFiles = CheckAgainstAcceptableCommandNames;
+                this.acceptableCommandNames = acceptableCommandNames;
+            }
+            else
+            {
+                postProcessEnumeratedFiles = JustCheckExtensions;
+            }
+            
+            Init(new [] { commandName }, lookupPaths, context);
+            this.orderedPathExt = CommandDiscovery.PathExtensionsWithPs1Prepended;
+        }
+
+        private void Init(IEnumerable<string> commandPatterns, IEnumerable<string> searchPath, ExecutionContext context)
+        {
+>>>>>>> origin/source-depot
             // Note, discovery must be set before resolving the current directory
             _context = context;
             _patterns = commandPatterns;
@@ -475,10 +496,15 @@ namespace System.Management.Automation
         {
             var baseNames = fileNames.Select(Path.GetFileName).ToArray();
 
+<<<<<<< HEAD
             // Result must be ordered by PATHEXT order of precedence.
             // acceptableCommandNames is in this order, so
 
             // Porting note: allow files with executable bit on non-Windows platforms
+=======
+            // Result must be ordered by PATHEXT order of precdence.
+            // accpetableCommandNames is in this order, so 
+>>>>>>> origin/source-depot
 
             Collection<string>? result = null;
             if (baseNames.Length > 0 && _acceptableCommandNames != null)
@@ -487,8 +513,7 @@ namespace System.Management.Automation
                 {
                     for (int i = 0; i < baseNames.Length; i++)
                     {
-                        if (name.Equals(baseNames[i], StringComparison.OrdinalIgnoreCase)
-                            || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(name)))
+                        if (name.Equals(baseNames[i], StringComparison.OrdinalIgnoreCase))
                         {
                             if (result == null)
                                 result = new Collection<string>();
@@ -504,18 +529,14 @@ namespace System.Management.Automation
 
         private IEnumerable<string>? JustCheckExtensions(string[] fileNames)
         {
-            // Warning: pretty duplicated code
-            // Result must be ordered by PATHEXT order of precedence.
-
-            // Porting note: allow files with executable bit on non-Windows platforms
+            // Result must be ordered by PATHEXT order of precdence.
 
             Collection<string>? result = null;
             foreach (var allowedExt in _orderedPathExt)
             {
                 foreach (var fileName in fileNames)
                 {
-                    if (fileName.EndsWith(allowedExt, StringComparison.OrdinalIgnoreCase)
-                        || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileName)))
+                    if (fileName.EndsWith(allowedExt, StringComparison.OrdinalIgnoreCase))
                     {
                         if (result == null)
                             result = new Collection<string>();

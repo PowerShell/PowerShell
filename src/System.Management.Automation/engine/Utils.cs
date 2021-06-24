@@ -302,7 +302,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Allowed PowerShell Editions.
         /// </summary>
+<<<<<<< HEAD
         internal static readonly string[] AllowedEditionValues = { "Desktop", "Core" };
+=======
+        internal static string[] AllowedEditionValues = { "Desktop", "Core" };
+>>>>>>> origin/source-depot
 
         /// <summary>
         /// Helper fn to check byte[] arg for null.
@@ -393,7 +397,7 @@ namespace System.Management.Automation
             {
                 if (p != IntPtr.Zero)
                 {
-                    Marshal.ZeroFreeCoTaskMemUnicode(p);
+                    ClrFacade.ZeroFreeCoTaskMemUnicode(p);
                 }
             }
 
@@ -421,9 +425,21 @@ namespace System.Management.Automation
         private static string s_pshome = null;
 
         /// <summary>
+<<<<<<< HEAD
         /// Get the application base path of the shell from registry.
         /// </summary>
         internal static string GetApplicationBaseFromRegistry(string shellId)
+=======
+        /// Gets the application base for current monad version
+        /// </summary>
+        /// <returns>
+        /// applicationbase path for current monad version installation
+        /// </returns>
+        /// <exception cref="SecurityException">
+        /// if caller doesn't have permission to read the key
+        /// </exception>
+        internal static string GetApplicationBase(string shellId)
+>>>>>>> origin/source-depot
         {
             bool wantPsHome = (object)shellId == (object)DefaultPowerShellShellID;
             if (wantPsHome && s_pshome != null)
@@ -445,6 +461,7 @@ namespace System.Management.Automation
                 }
             }
 
+<<<<<<< HEAD
             return null;
         }
 
@@ -464,6 +481,17 @@ namespace System.Management.Automation
             }
 
             if (s_windowsPowerShellVersion != null)
+=======
+#if CORECLR // Use the location of SMA.dll as the application base
+            // Assembly.GetEntryAssembly is not in CoreCLR. GAC is not in CoreCLR.
+            Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
+            return Path.GetDirectoryName(assembly.Location);
+#else
+            // The default keys aren't installed, so try and use the entry assembly to
+            // get the application base. This works for managed apps like minishells...
+            Assembly assem = Assembly.GetEntryAssembly();
+            if (assem != null)
+>>>>>>> origin/source-depot
             {
                 return s_windowsPowerShellVersion;
             }
@@ -515,8 +543,26 @@ namespace System.Management.Automation
                 {
                     baseDirectories.Add(systemX86);
                 }
+<<<<<<< HEAD
 #endif
                 Interlocked.CompareExchange(ref s_productFolderDirectories, baseDirectories.ToArray(), null);
+=======
+
+                // And built-in modules
+                string progFileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell", "Modules");
+                if (!string.IsNullOrEmpty(progFileDir))
+                {
+                    baseDirectories.Add(Path.Combine(progFileDir, "PackageManagement"));
+                    baseDirectories.Add(Path.Combine(progFileDir, "PowerShellGet"));
+                    baseDirectories.Add(Path.Combine(progFileDir, "Pester"));
+#if CORECLR
+                    baseDirectories.Add(Path.Combine(progFileDir, "Json.Net"));
+#else
+                    baseDirectories.Add(Path.Combine(progFileDir, "PSReadline"));
+#endif // CORECLR
+                }
+                Interlocked.CompareExchange(ref _productFolderDirectories, baseDirectories.ToArray(), null);
+>>>>>>> origin/source-depot
             }
 
             return s_productFolderDirectories;
@@ -560,7 +606,6 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsWinPEHost()
         {
-#if !UNIX
             RegistryKey winPEKey = null;
 
             try
@@ -581,7 +626,7 @@ namespace System.Management.Automation
                     winPEKey.Dispose();
                 }
             }
-#endif
+
             return false;
         }
 
@@ -730,7 +775,14 @@ namespace System.Management.Automation
         /// <summary>
         /// This is used to construct the profile path.
         /// </summary>
+<<<<<<< HEAD
         internal const string ProductNameForDirectory = "PowerShell";
+=======
+        /// <remarks>
+        /// Profile uses this to control profile loading.
+        /// </remarks>
+        internal static string ProductNameForDirectory = "WindowsPowerShell";
+>>>>>>> origin/source-depot
 
         /// <summary>
         /// WSL introduces a new filesystem path to access the Linux filesystem from Windows, like '\\wsl$\ubuntu'.
@@ -741,7 +793,11 @@ namespace System.Management.Automation
         /// The subdirectory of module paths
         /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules.
         /// </summary>
+<<<<<<< HEAD
         internal static readonly string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
+=======
+        internal static string DscModuleDirectory = "WindowsPowerShell\\Modules";
+>>>>>>> origin/source-depot
 
         internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
@@ -761,6 +817,7 @@ namespace System.Management.Automation
             return policy;
         }
 
+<<<<<<< HEAD
         private static readonly ConcurrentDictionary<ConfigScope, PowerShellPolicies> s_cachedPoliciesFromConfigFile =
             new ConcurrentDictionary<ConfigScope, PowerShellPolicies>();
 
@@ -770,6 +827,11 @@ namespace System.Management.Automation
         private static T GetPolicySettingFromConfigFile<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
             foreach (ConfigScope scope in preferenceOrder)
+=======
+        internal static Dictionary<string, object> GetGroupPolicySetting(string groupPolicyBase, string settingName, RegistryKey[] preferenceOrder)
+        {
+            lock (cachedGroupPolicySettings)
+>>>>>>> origin/source-depot
             {
                 PowerShellPolicies policies;
                 if (InternalTestHooks.BypassGroupPolicyCaching)
@@ -947,8 +1009,11 @@ namespace System.Management.Automation
                     }
                 }
             }
+<<<<<<< HEAD
 
             return isAnyPropertySet;
+=======
+>>>>>>> origin/source-depot
         }
 
         /// <summary>
@@ -1199,10 +1264,42 @@ namespace System.Management.Automation
             return result;
         }
 
+<<<<<<< HEAD
 #if !UNIX
         private static bool TryGetWindowsCurrentIdentity(out WindowsIdentity currentIdentity)
         {
             try
+=======
+        internal static bool IsAdministrator()
+        {
+            System.Security.Principal.WindowsIdentity currentIdentity = System.Security.Principal.WindowsIdentity.GetCurrent();
+            System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
+
+            return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+        }
+
+        internal static bool NativeItemExists(string path)
+        {
+            bool unusedIsDirectory;
+            Exception unusedException;
+
+            return NativeItemExists(path, out unusedIsDirectory, out unusedException);
+        }
+
+        // This is done through P/Invoke since File.Exists and Directory.Exists pay 13% performance degradation
+        // through the CAS checks, and are terribly slow for network paths.
+        internal static bool NativeItemExists(string path, out bool isDirectory, out Exception exception)
+        {
+            exception = null;
+
+            if (String.IsNullOrEmpty(path))
+            {
+                isDirectory = false;
+                return false;
+            }
+
+            if (IsReservedDeviceName(path))
+>>>>>>> origin/source-depot
             {
                 currentIdentity = WindowsIdentity.GetCurrent();
             }
@@ -1211,7 +1308,14 @@ namespace System.Management.Automation
                 currentIdentity = null;
             }
 
+<<<<<<< HEAD
             return (currentIdentity != null);
+=======
+            isDirectory = (result & ((int)NativeMethods.FileAttributes.Directory)) ==
+                ((int)NativeMethods.FileAttributes.Directory);
+
+            return true;
+>>>>>>> origin/source-depot
         }
 
         /// <summary>
@@ -1285,10 +1389,24 @@ namespace System.Management.Automation
 
         internal static bool PathIsUnc(string path)
         {
+<<<<<<< HEAD
 #if UNIX
             return false;
 #else
             if (string.IsNullOrEmpty(path) || !path.StartsWith('\\'))
+=======
+            Uri uri;
+            return !string.IsNullOrEmpty(path) && Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
+        }
+
+        internal class NativeMethods
+        {
+            [DllImport(PinvokeDllNames.GetFileAttributesDllName, CharSet = CharSet.Unicode, SetLastError = true)]
+            internal static extern int GetFileAttributes(string lpFileName);
+
+            [Flags]
+            internal enum FileAttributes
+>>>>>>> origin/source-depot
             {
                 return false;
             }

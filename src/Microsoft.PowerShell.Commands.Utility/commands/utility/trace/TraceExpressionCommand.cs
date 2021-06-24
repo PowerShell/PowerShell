@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (FileStream fileStream in this.FileStreams)
                     {
                         fileStream.Flush();
-                        fileStream.Dispose();
+                        fileStream.Close();
                     }
                 }
 
@@ -550,3 +550,4 @@ namespace Microsoft.PowerShell.Commands
         private readonly Collection<PSTraceSource> _matchingSources = new();
     }
 }
+

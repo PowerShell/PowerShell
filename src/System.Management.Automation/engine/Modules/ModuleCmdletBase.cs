@@ -339,7 +339,14 @@ namespace Microsoft.PowerShell.Commands
                         fileBaseName = moduleName;
 #endif
                 string qualifiedPath = Path.Combine(path, fileBaseName);
+<<<<<<< HEAD
                 module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
+=======
+
+                // Load the latest valid version if it is a multi-version module directory
+                module = LoadUsingMultiVersionModuleBase(qualifiedPath, options, out found);
+
+>>>>>>> origin/source-depot
                 if (!found)
                 {
                     if (name.IndexOfAny(Utils.Separators.Directory) == -1)
@@ -385,12 +392,18 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Loads the latest valid version if moduleBase is a multi-versioned module directory.
         /// </summary>
+<<<<<<< HEAD
         /// <param name="moduleBase">Module directory path.</param>
         /// <param name="manifestProcessingFlags">The flag that indicate manifest processing option.</param>
         /// <param name="importModuleOptions">The set of options that are used while importing a module.</param>
         /// <param name="found">True if a module was found.</param>
+=======
+        /// <param name="moduleBase">module directory path</param>
+        /// <param name="importModuleOptions">The set of options that are used while importing a module</param>
+        /// <param name="found">True if a module was found</param>
+>>>>>>> origin/source-depot
         /// <returns></returns>
-        internal PSModuleInfo LoadUsingMultiVersionModuleBase(string moduleBase, ManifestProcessingFlags manifestProcessingFlags, ImportModuleOptions importModuleOptions, out bool found)
+        internal PSModuleInfo LoadUsingMultiVersionModuleBase(string moduleBase, ImportModuleOptions importModuleOptions, out bool found)
         {
             PSModuleInfo foundModule = null;
             found = false;
@@ -418,7 +431,9 @@ namespace Microsoft.PowerShell.Commands
                                                             null,
                                                             this.BasePrefix, /*SessionState*/ null,
                                                             importModuleOptions,
-                                                            manifestProcessingFlags,
+                                                            ManifestProcessingFlags.LoadElements |
+                                                            ManifestProcessingFlags.WriteErrors |
+                                                            ManifestProcessingFlags.NullOnFirstError,
                                                             out found);
                         if (found)
                         {
@@ -1110,7 +1125,16 @@ namespace Microsoft.PowerShell.Commands
 
                     if (all || !ModuleUtils.IsModuleInVersionSubdirectory(file, out Version directoryVersion) || directoryVersion == module.Version)
                     {
+<<<<<<< HEAD
                         yield return module;
+=======
+                        Version directoryVersion;
+                        if (!ModuleUtils.IsModuleInVersionSubdirectory(file, out directoryVersion)
+                            || directoryVersion == module.Version)
+                        {
+                            availableModules.Add(module);
+                        }
+>>>>>>> origin/source-depot
                     }
                 }
             }
@@ -1696,7 +1720,7 @@ namespace Microsoft.PowerShell.Commands
                 DirectoryInfo parent = null;
                 try
                 {
-                    parent = Directory.GetParent(moduleManifestPath);
+                    parent = ClrFacade.GetParent(moduleManifestPath);
                 }
                 catch (IOException)
                 {
@@ -6457,6 +6481,7 @@ namespace Microsoft.PowerShell.Commands
             InitialSessionState iss = InitialSessionState.Create();
             List<string> detectedCmdlets = null;
             List<Tuple<string, string>> detectedAliases = null;
+            PSSnapInException warning;
             Assembly assembly = null;
             Exception error = null;
             string modulePath = string.Empty;
@@ -6503,7 +6528,31 @@ namespace Microsoft.PowerShell.Commands
                 // it isn't already there.
                 if (string.IsNullOrEmpty(assembly.Location))
                 {
+<<<<<<< HEAD
                     if (!Context.AssemblyCache.ContainsKey(assembly.FullName))
+=======
+                    trySnapInName = false;
+                }
+
+                if (trySnapInName && PSSnapInInfo.IsPSSnapinIdValid(moduleName))
+                {
+                    PSSnapInInfo snapin = null;
+
+                    try
+                    {
+                        if (importingModule)
+                        {
+                            snapin = iss.ImportPSSnapIn(moduleName, out warning);
+                        }
+                    }
+                    catch (PSArgumentException)
+                    {
+                        //BUGBUG - brucepay - probably want to have a verbose message here...
+                        ;
+                    }
+
+                    if (snapin != null)
+>>>>>>> origin/source-depot
                     {
                         Context.AssemblyCache.Add(assembly.FullName, assembly);
                     }

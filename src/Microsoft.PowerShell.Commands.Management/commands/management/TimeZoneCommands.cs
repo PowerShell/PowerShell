@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+=======
+>>>>>>> origin/source-depot
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

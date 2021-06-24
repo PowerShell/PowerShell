@@ -15,11 +15,16 @@ using System.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+<<<<<<< HEAD
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+=======
+using mshtml;
+using Microsoft.Win32;
+>>>>>>> origin/source-depot
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -715,7 +720,75 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal bool ShouldResume
         {
+<<<<<<< HEAD
             get { return (Resume.IsPresent && _resumeSuccess); }
+=======
+            bool isInternetExplorerConfigurationComplete = false;
+
+#if !LINUX  // Check for IE for both PS Full and PS Core on windows.
+            // The registry key DisableFirstRunCustomize can exits at one of the following path.
+            // IE uses the same decending orider (as mentioned) to check for the presence of this key.
+            // If the value of DisableFirstRunCustomize key is set to greater than zero then Run first
+            // is disabled.
+            string[] disableFirstRunCustomizePaths = new string[] {
+                     @"HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\Internet Explorer\Main",
+                     @"HKEY_CURRENT_USER\Software\Policies\Microsoft\Internet Explorer\Main",
+                     @"HKEY_CURRENT_USER\Software\Microsoft\Internet Explorer\Main",
+                     @"HKEY_LOCAL_MACHINE\Software\Microsoft\Internet Explorer\Main"  };
+
+            foreach (string currentRegPath in disableFirstRunCustomizePaths)
+            {
+                object val = Registry.GetValue(currentRegPath, "DisableFirstRunCustomize", string.Empty);
+                if (val != null && !string.Empty.Equals(val) && Convert.ToInt32(val, CultureInfo.InvariantCulture) > 0)
+                {
+                    isInternetExplorerConfigurationComplete = true;
+                    break;
+                }
+            }
+
+            if (!isInternetExplorerConfigurationComplete)
+            {
+                // Verify that if IE is installed, it has been through the RunOnce check.
+                // Otherwise, the call will hang waiting for users to go through First Run
+                // personalization.
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Internet Explorer\\Main"))
+                {
+                    if (key != null)
+                    {
+                        foreach (string setting in key.GetValueNames())
+                        {
+                            if (setting.IndexOf("RunOnce", StringComparison.OrdinalIgnoreCase) > -1)
+                            {
+                                isInternetExplorerConfigurationComplete = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (isInternetExplorerConfigurationComplete && checkComObject)
+            {
+                try
+                {
+                    IHTMLDocument2 ieCheck = (IHTMLDocument2)new HTMLDocument();
+                    System.Runtime.InteropServices.Marshal.ReleaseComObject(ieCheck);
+                }
+                catch (System.Runtime.InteropServices.COMException)
+                {
+                    isInternetExplorerConfigurationComplete = false;
+                }
+            }
+#endif
+
+#if !CORECLR
+            // Throw exception in PS Full only
+            if (!isInternetExplorerConfigurationComplete)
+                throw new NotSupportedException(WebCmdletStrings.IEDomNotSupported);
+#endif
+
+            return isInternetExplorerConfigurationComplete;
+>>>>>>> origin/source-depot
         }
 
         #endregion Helper Properties

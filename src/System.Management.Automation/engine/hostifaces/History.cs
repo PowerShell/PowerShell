@@ -1130,6 +1130,10 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteObject(results, true);
                     }
+<<<<<<< HEAD
+=======
+                    pipeline.RemoveFromInvokeHistoryEntryList(entry);
+>>>>>>> origin/source-depot
                 }
                 finally
                 {

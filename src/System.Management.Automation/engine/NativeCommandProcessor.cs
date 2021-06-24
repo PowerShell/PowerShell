@@ -1120,7 +1120,12 @@ namespace System.Management.Automation
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = this.Path;
 
+<<<<<<< HEAD
             if (IsExecutable(this.Path))
+=======
+            // Check the extension list and see if we should try to execute this directly.
+            if (ValidateExtension(this.Path))
+>>>>>>> origin/source-depot
             {
                 startInfo.UseShellExecute = false;
                 if (redirectInput)

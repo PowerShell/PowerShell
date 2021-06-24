@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
+=======
+﻿//-----------------------------------------------------------------------
+// <copyright file="EtwEventCorrelator.cs" company="Microsoft">
+//     Copyright (c) Microsoft Corporation.  All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+>>>>>>> origin/source-depot
 
 namespace System.Management.Automation.Tracing
 {
@@ -115,5 +123,8 @@ namespace System.Management.Automation.Tracing
         }
     }
 }
+<<<<<<< HEAD
 
 #endif
+=======
+>>>>>>> origin/source-depot

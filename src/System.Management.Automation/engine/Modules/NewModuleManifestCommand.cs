@@ -408,6 +408,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [AllowEmptyCollection]
         [ValidateSet("Desktop", "Core")]
+<<<<<<< HEAD
+=======
+        [SuppressMessage("Microsoft.Performance",
+            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
+>>>>>>> origin/source-depot
         public string[] CompatiblePSEditions
         {
             get { return _compatiblePSEditions; }

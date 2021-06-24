@@ -173,13 +173,13 @@ namespace System.Management.Automation
                 bool isProviderQualified = false;
                 bool isDriveQualified = false;
                 string qualifier = null;
-                string pathNoQualifier = RemoveQualifier(path, provider, out qualifier, out isProviderQualified, out isDriveQualified);
+                string pathNoQualifier = RemoveQualifier(path, out qualifier, out isProviderQualified, out isDriveQualified);
 
                 string result = GetParentPath(provider, pathNoQualifier, root, context);
 
                 if (!string.IsNullOrEmpty(qualifier) && !string.IsNullOrEmpty(result))
                 {
-                    result = AddQualifier(result, provider, qualifier, isProviderQualified, isDriveQualified);
+                    result = AddQualifier(result, qualifier, isProviderQualified, isDriveQualified);
                 }
 
                 return result;
@@ -190,7 +190,11 @@ namespace System.Management.Automation
             }
         }
 
+<<<<<<< HEAD
         private static string AddQualifier(string path, ProviderInfo provider, string qualifier, bool isProviderQualified, bool isDriveQualified)
+=======
+        private string AddQualifier(string path, string qualifier, bool isProviderQualified, bool isDriveQualified)
+>>>>>>> origin/source-depot
         {
             string result = path;
 
@@ -201,15 +205,7 @@ namespace System.Management.Automation
             }
             else if (isDriveQualified)
             {
-                // Porting note: on non-windows filesystem paths, there should be no colon in the path
-                if (provider.VolumeSeparatedByColon)
-                {
-                    formatString = "{0}:{1}";
-                }
-                else
-                {
-                    formatString = "{0}{1}";
-                }
+                formatString = "{0}:{1}";
             }
 
             result =
@@ -228,9 +224,13 @@ namespace System.Management.Automation
         /// <param name="path">
         /// The path to strip the provider qualifier from.
         /// </param>
+<<<<<<< HEAD
         /// <param name="provider">
         /// The provider that should handle the RemoveQualifier call.
         /// </param>
+=======
+        /// 
+>>>>>>> origin/source-depot
         /// <param name="qualifier">
         /// Returns the qualifier of the path.
         /// </param>
@@ -243,7 +243,12 @@ namespace System.Management.Automation
         /// <returns>
         /// The path without the qualifier.
         /// </returns>
+<<<<<<< HEAD
         private string RemoveQualifier(string path, ProviderInfo provider, out string qualifier, out bool isProviderQualified, out bool isDriveQualified)
+=======
+        /// 
+        private string RemoveQualifier(string path, out string qualifier, out bool isProviderQualified, out bool isDriveQualified)
+>>>>>>> origin/source-depot
         {
             Dbg.Diagnostics.Assert(
                 path != null,
@@ -272,17 +277,9 @@ namespace System.Management.Automation
                 {
                     isDriveQualified = true;
 
-                    // Remove the drive name and colon, or just the drive name
+                    // Remove the drive name and colon
 
-                    // Porting note: on non-windows there is no colon for qualified paths
-                    if (provider.VolumeSeparatedByColon)
-                    {
-                        result = path.Substring(qualifier.Length + 1);
-                    }
-                    else
-                    {
-                        result = path.Substring(qualifier.Length);
-                    }
+                    result = path.Substring(qualifier.Length + 1);
                 }
             }
 

@@ -28,6 +28,13 @@ namespace System.Management.Automation
             this.Source = source;
 
             this.TimeGenerated = DateTime.Now;
+<<<<<<< HEAD
+=======
+            this.Tags = new List<string>();
+            this.User = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            this.Computer = PsUtils.GetHostName();
+            this.ProcessId = (uint) System.Diagnostics.Process.GetCurrentProcess().Id;
+>>>>>>> origin/source-depot
             this.NativeThreadId = PsUtils.GetNativeThreadId();
             this.ManagedThreadId = (uint)Environment.CurrentManagedThreadId;
         }

@@ -135,6 +135,7 @@ namespace System.Management.Automation.Remoting
             _cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
             _cryptoHelper.Session = this;
 
+<<<<<<< HEAD
             Context = new ServerRemoteSessionContext();
             SessionDataStructureHandler = new ServerRemoteSessionDSHandlerImpl(this, transportManager);
             BaseSessionDataStructureHandler = SessionDataStructureHandler;
@@ -142,6 +143,16 @@ namespace System.Management.Automation.Remoting
             SessionDataStructureHandler.NegotiationReceived += HandleNegotiationReceived;
             SessionDataStructureHandler.SessionClosing += HandleSessionDSHandlerClosing;
             SessionDataStructureHandler.PublicKeyReceived += HandlePublicKeyReceived;
+=======
+            _context = new ServerRemoteSessionContext();
+            _sessionDSHandler = new ServerRemoteSessionDSHandlerlImpl(this, transportManager);
+            BaseSessionDataStructureHandler = _sessionDSHandler;
+            _sessionDSHandler.CreateRunspacePoolReceived += HandleCreateRunspacePool;
+            _sessionDSHandler.NegotiationReceived += HandleNegotiationReceived;
+            _sessionDSHandler.SessionClosing += HandleSessionDSHandlerClosing;
+            _sessionDSHandler.PublicKeyReceived += 
+                new EventHandler<RemoteDataEventArgs<string>>(HandlePublicKeyReceived);      
+>>>>>>> origin/source-depot
             transportManager.Closing += HandleResourceClosing;
 
             // update the quotas from sessionState..start with default size..and

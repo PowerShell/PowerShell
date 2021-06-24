@@ -722,6 +722,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         // Change the current working directory
+<<<<<<< HEAD
                         if (string.IsNullOrEmpty(Path))
                         {
                             // If user just typed 'cd', go to FileSystem provider home directory
@@ -729,6 +730,9 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         result = SessionState.Path.SetLocation(Path, CmdletProviderContext, ParameterSetName == LiteralPathParameterSet);
+=======
+                        result = SessionState.Path.SetLocation(Path, CmdletProviderContext);
+>>>>>>> origin/source-depot
                     }
                     catch (PSNotSupportedException notSupported)
                     {
@@ -2691,6 +2695,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     bool shouldRecurse = Recurse;
+<<<<<<< HEAD
                     bool treatAsFile = false;
 
                     // only check if path is a directory using DirectoryInfo if using FileSystemProvider
@@ -2712,6 +2717,9 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     if (!treatAsFile && !Recurse && hasChildren)
+=======
+                    if (!Recurse && hasChildren)
+>>>>>>> origin/source-depot
                     {
                         // Get the localized prompt string
 

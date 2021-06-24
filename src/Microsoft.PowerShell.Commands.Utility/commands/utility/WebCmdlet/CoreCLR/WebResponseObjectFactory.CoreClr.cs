@@ -14,7 +14,18 @@ namespace Microsoft.PowerShell.Commands
             WebResponseObject output;
             if (WebResponseHelper.IsText(response))
             {
+<<<<<<< HEAD
                 output = new BasicHtmlWebResponseObject(response, responseStream);
+=======
+                if (useBasicParsing)
+                {
+                    output = new BasicHtmlWebResponseObject(response, responseStream);
+                }
+                else
+                {
+                    output = new HtmlWebResponseObject(response, responseStream, executionContext);
+                }
+>>>>>>> origin/source-depot
             }
             else
             {

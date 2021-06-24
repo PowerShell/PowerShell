@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
+=======
+using System;
+using System.Collections;
+using System.Diagnostics.Eventing;
+using System.Diagnostics;
+>>>>>>> origin/source-depot
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Eventing;
 
@@ -984,6 +991,9 @@ namespace System.Management.Automation.Tracing
     }
 }
 
+<<<<<<< HEAD
 // This code was generated on 02/01/2012 19:52:32
 
 #endif
+=======
+>>>>>>> origin/source-depot

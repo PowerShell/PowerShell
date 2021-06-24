@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell
                 {
                     object userInput = ReadLineSafe(false, null);
                     string userInputString = userInput as string;
-                    System.Management.Automation.Diagnostics.Assert(userInputString != null, "ReadLineSafe did not return a string");
+                    Diagnostics.Assert(userInputString != null, "ReadLineSafe did not return a string");
                     rawInputString = userInputString;
                 }
 
