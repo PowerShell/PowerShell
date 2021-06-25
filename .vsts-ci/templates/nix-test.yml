@@ -21,7 +21,7 @@ jobs:
     condition: succeededOrFailed()
 
   - script: |
-      isUbuntu20=$(pwsh -c 'cd powershell; ipmo ./build.psm1; $environment = Get-EnvironmentInformation; $environment.IsUbuntu -and $environment.IsUbuntu20')
+      isUbuntu20=$(pwsh -c 'Import-Module ./build.psm1 -Force; $environment = Get-EnvironmentInformation; $environment.IsUbuntu -and $environment.IsUbuntu20')
       if [ "$isUbuntu20" == "True" ]; then
         export LC_ALL=en_US.UTF-8
         export LANG=en_US.UTF-8
