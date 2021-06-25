@@ -3253,10 +3253,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     foreach (var directory in Directory.EnumerateDirectories(dscResourcesPath))
                     {
                         var schemaFiles = Directory.EnumerateFiles(directory, "*.schema.mof", SearchOption.TopDirectoryOnly);
+                        var tempSchemaFilepath = schemaFiles.FirstOrDefault();
 
                         Debug.Assert(!schemaFiles.Skip(1).Any(), "A valid DSCResource module can have only one schema mof file");
-
-                        var tempSchemaFilepath = schemaFiles.FirstOrDefault();
+                        
                         if (tempSchemaFilepath is not null)
                         {
                             var classes = GetCachedClassByFileName(tempSchemaFilepath) ?? ImportClasses(tempSchemaFilepath, new Tuple<string, Version>(module.Name, module.Version), errors);
