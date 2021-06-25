@@ -1107,17 +1107,24 @@ function Start-PSPester {
     )
 
     if ($environment.IsUbuntu20) {
+        Write-Verbose -Verbose "Starting to change locale"
+
         $setLocaleScript = @'
         export LC_ALL=en_US.UTF-8
         export LANG=en_US.UTF-8
         locale-gen $LANG
         update-locale
+        locale
 '@
 
         $updateLocaleScript = (Join-Path '~' 'updateLocale.sh')
         $setLocaleScript | Out-File -FilePath $updateLocaleScript
 
         Start-NativeExecution -sb { sudo sh ~/updateLocale.sh }
+
+        locale | out-string | Write-Verbose -Verbose
+
+        Write-Verbose -Verbose "Ending change locale"
     }
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))

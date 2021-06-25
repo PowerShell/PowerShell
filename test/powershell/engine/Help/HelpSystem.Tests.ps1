@@ -228,6 +228,8 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
 
         $aboutHelpPath = Join-Path (GetCurrentUserHelpRoot) (Get-Culture).Name
 
+        Write-Verbose -Verbose "About help Path: $aboutHelpPath"
+
         ## If help content does not exist, update it first.
         if (-not (Test-Path (Join-Path $aboutHelpPath "about_Variables.help.txt"))) {
             UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Scope 'CurrentUser'
