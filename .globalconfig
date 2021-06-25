@@ -447,7 +447,7 @@ dotnet_diagnostic.CA1838.severity = silent
 
 # CA1839: Use 'Environment.ProcessPath'
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1839
-dotnet_diagnostic.CA1839.severity = suggestion
+dotnet_diagnostic.CA1839.severity = warning
 
 # CA1840: Use 'Environment.CurrentManagedThreadId'
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1840
