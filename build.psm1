@@ -1106,6 +1106,20 @@ function Start-PSPester {
         [switch]$SkipTestToolBuild
     )
 
+    if ($environment.IsUbuntu20) {
+        $setLocaleScript = @'
+        export LC_ALL=en_US.UTF-8
+        export LANG=en_US.UTF-8
+        locale-gen $LANG
+        update-locale
+'@
+
+        $updateLocaleScript = (Join-Path '~' 'updateLocale.sh')
+        $setLocaleScript | Out-File -FilePath $updateLocaleScript
+
+        Start-NativeExecution -sb { sh ~/updateLocale.sh }
+    }
+
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
     {
         Restore-PSPester
