@@ -109,6 +109,7 @@
       <CompilerVisibleProperty Include="ProductVersion" />
       <CompilerVisibleProperty Include="PowerShellVersion" />
       <CompilerVisibleProperty Include="PSCoreBuildVersion" />
+      <CompilerVisibleProperty Include="ReleaseTag" />
     </ItemGroup>                                          
 
     <!-- Output For Debugging

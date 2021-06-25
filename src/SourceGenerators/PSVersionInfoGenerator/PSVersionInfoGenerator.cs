@@ -72,13 +72,15 @@ namespace System.Management.Automation.Internal.Generators
             context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.ProductVersion", out var productVersion);
             context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.PowerShellVersion", out var rawGitCommitId);
             context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.PSCoreBuildVersion", out var mainVersion);
+            context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.ReleaseTag", out var releaseTag);
 
-            if (rawGitCommitId.StartsWith("v"))
+            string gitCommitId = string.IsNullOrEmpty(releaseTag) ? rawGitCommitId : releaseTag;
+            if (gitCommitId.StartsWith("v"))
             {
-                rawGitCommitId = rawGitCommitId.Substring(1);
+                gitCommitId = gitCommitId.Substring(1);
             }
 
-            return string.Format(CultureInfo.InvariantCulture, SourceTemplate, productVersion, rawGitCommitId, mainVersion);
+            return string.Format(CultureInfo.InvariantCulture, SourceTemplate, productVersion, gitCommitId, mainVersion);
         }
     }
 }
