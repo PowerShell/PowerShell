@@ -230,7 +230,7 @@ dotnet_diagnostic.CA1310.severity = silent
 
 # CA1401: P/Invokes should not be visible
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1401
-dotnet_diagnostic.CA1401.severity = suggestion
+dotnet_diagnostic.CA1401.severity = warning
 
 # CA1416: Validate platform compatibility
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1416
