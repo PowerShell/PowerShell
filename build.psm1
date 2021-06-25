@@ -1117,7 +1117,7 @@ function Start-PSPester {
         $updateLocaleScript = (Join-Path '~' 'updateLocale.sh')
         $setLocaleScript | Out-File -FilePath $updateLocaleScript
 
-        Start-NativeExecution -sb { sh ~/updateLocale.sh }
+        Start-NativeExecution -sb { sudo sh ~/updateLocale.sh }
     }
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
