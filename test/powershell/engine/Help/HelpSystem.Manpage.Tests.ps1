@@ -8,9 +8,9 @@ Import-Module HelpersCommon
 Describe "Get-Help should find *nix manpage" -Tags "CI" {
     BeforeAll {
         $isManpageSupported = $IsLinux
-        $command1 = "whatis"
-        $command1NoEnd = "whati"
-        $command1NIXName = "whatis (1)"
+        $command1 = "touch"
+        $command1NoEnd = "touc"
+        $command1NIXName = "touch (1)"
     }
 
     AfterAll {

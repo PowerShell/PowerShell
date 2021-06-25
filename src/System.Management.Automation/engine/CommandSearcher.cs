@@ -1145,7 +1145,6 @@ namespace System.Management.Automation
 
             if (!_matchingManpage.MoveNext())
             {
-                // Advance the state
                 _currentState = SearchState.StartSearchingForExternalCommands;
 
                 _matchingManpage = null;

@@ -1,7 +1,8 @@
-#if UNIX
-
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
+#if UNIX
+#nullable enable
 
 using System.Diagnostics.CodeAnalysis;      // for fxcop
 using System.Management.Automation.Help;    // for DefaultCommandHelpObjectBuilder
@@ -65,10 +66,7 @@ namespace System.Management.Automation
         /// <value>Help category for manpage help.</value>
         internal override HelpCategory HelpCategory
         {
-            get
-            {
-                return HelpCategory.Manpage;
-            }
+            get => HelpCategory.Manpage;
         }
 
         private readonly PSObject _fullHelpObject;
@@ -79,10 +77,7 @@ namespace System.Management.Automation
         /// <value>Full help object of manpage help.</value>
         internal override PSObject FullHelp
         {
-            get
-            {
-                return _fullHelpObject;
-            }
+            get => _fullHelpObject;
         }
 
         /// <summary>
@@ -90,10 +85,10 @@ namespace System.Management.Automation
         /// This is the only way to create ManpageHelpInfo object from outside this class.
         /// </summary>
         /// <param name="manpageInfo">ManpageInfo object for which to create ManpageHelpInfo object.</param>
-        /// <returns>ManpageHelpInfo object.</returns>
-        internal static ManpageHelpInfo GetHelpInfo(ManpageInfo manpageInfo)
+        /// <returns>ManpageHelpInfo? object.</returns>
+        internal static ManpageHelpInfo? GetHelpInfo(ManpageInfo manpageInfo)
         {
-            if (manpageInfo == null)
+            if (manpageInfo is null)
             {
                 return null;
             }

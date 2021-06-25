@@ -320,7 +320,7 @@ namespace System.Management.Automation
 
 #if UNIX
             // For manpage, retrieve help from the `commandInfo`
-            if (result == null && isManpage)
+            if (result is null && isManpage)
             {
                 result = ManpageHelpInfo.GetHelpInfo(manpageInfo);
             }            
@@ -330,7 +330,7 @@ namespace System.Management.Automation
             // in the appropriate UI culture subfolder of ModuleBase, and retrieve help
             // If still not able to get help, try search for a file called <NestedModuleName>-Help.xml
             // under the ModuleBase and the NestedModule's directory, and retrieve help
-            if (result == null && !InternalTestHooks.BypassOnlineHelpRetrieval)
+            if (result is null && !InternalTestHooks.BypassOnlineHelpRetrieval)
             {
                 // Get the name and ModuleBase directory of the command's module
                 // and the nested module that implements the command

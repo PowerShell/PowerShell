@@ -1,7 +1,8 @@
-#if UNIX
-
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
+#if UNIX
+#nullable enable
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -64,10 +65,7 @@ namespace System.Management.Automation
         /// </summary>
         public string ManSectionNum
         {
-            get
-            {
-                return _manSectionNum;
-            }
+            get => _manSectionNum;
         }
 
         private readonly string _manSectionNum = string.Empty;
@@ -77,28 +75,22 @@ namespace System.Management.Automation
         /// </summary>
         public string ShortDescription
         {
-            get
-            {
-                return _shortDescription;
-            }
+            get => _shortDescription;
         }
 
         private readonly string _shortDescription = string.Empty;
 
         internal override HelpCategory HelpCategory
         {
-            get { return HelpCategory.Manpage; }
+            get => HelpCategory.Manpage;
         }
 
         /// <summary>
         /// No output type is referred to Manpage.
         /// </summary>
-        public override ReadOnlyCollection<PSTypeName> OutputType
+        public override ReadOnlyCollection<PSTypeName>? OutputType
         {
-            get
-            {
-                return null;
-            }
+            get => null;
         }
 
         /// <summary>
@@ -106,10 +98,7 @@ namespace System.Management.Automation
         /// </summary>
         public override string Definition
         {
-            get
-            {
-                return _shortDescription;
-            }
+            get => _shortDescription;
         }
 
         #endregion public members

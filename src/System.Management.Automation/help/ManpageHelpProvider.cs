@@ -1,7 +1,8 @@
-#if UNIX
-
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
+#if UNIX
+#nullable enable
 
 using System.Collections;
 using System.Collections.Generic;
@@ -12,8 +13,6 @@ using System.Reflection;
 using System.Xml;
 
 using System.Diagnostics;
-
-#nullable enable
 
 namespace System.Management.Automation
 {
@@ -32,6 +31,9 @@ namespace System.Management.Automation
 
         private readonly SessionState _sessionState;
 
+        [TraceSource("ManpageHelpProvider", "ManpageHelpProvider")]
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ManpageHelpProvider", "ManpageHelpProvider");
+
         #region Common Properties
 
         /// <summary>
@@ -40,22 +42,16 @@ namespace System.Management.Automation
         /// <value>Name of this help provider.</value>
         internal override string Name
         {
-            get
-            {
-                return "Manpage Help Provider";
-            }
+            get =>  "Manpage Help Provider";
         }
 
         /// <summary>
         /// Help category of this provider.
         /// </summary>
-        /// <value>Help category of this provider</value>
+        /// <value>Help category of this provider.</value>
         internal override HelpCategory HelpCategory
         {
-            get
-            {
-                return HelpCategory.Manpage;
-            }
+            get => HelpCategory.Manpage;
         }
 
         #endregion
@@ -66,7 +62,7 @@ namespace System.Management.Automation
         /// Do exact match help based on the target.
         /// </summary>
         /// <param name="helpRequest">Help request object.</param>
-        internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
+        internal override IEnumerable<HelpInfo?> ExactMatchHelp(HelpRequest helpRequest)
         {
             foreach (ManpageInfo manpage in ManpageSearch(helpRequest.Target))
             {
@@ -78,7 +74,7 @@ namespace System.Management.Automation
         /// Return manpage info that sutistfies a given target pattern one by one.
         /// </summary>
         /// <param name="pattern">Manpage search eacrh patter.</param>
-        public static IEnumerable<ManpageInfo> ManpageSearch(string pattern)
+        internal static Collection<ManpageInfo> ManpageSearch(string pattern)
         {
             Collection<ManpageInfo> matchingManpageInfo = new Collection<ManpageInfo>();
 
@@ -141,16 +137,13 @@ namespace System.Management.Automation
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // If getting help from man pages failed, do nothing
-                // ????? Should write error using WriteLog()? Similar to Cmdlet.WriteError()? ??????
+                // If getting help from man pages failed, just log an error
+                s_tracer.WriteLine("Failed to get *nix manpage data for '{0}' - {1}", pattern, e.Message);
             }
 
-            foreach (ManpageInfo manpageInfo in matchingManpageInfo)
-            {
-                yield return manpageInfo;
-            }
+            return matchingManpageInfo;
         }
 
         #endregion
