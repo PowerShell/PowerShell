@@ -1983,7 +1983,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             }
             else if (queryParameterSets.Count == 1)
             {
-                commandMetadata.DefaultParameterSetName = queryParameterSets.Single();
+                commandMetadata.DefaultParameterSetName = queryParameterSets[0];
             }
 
             AddPassThruParameter(commonParameters, instanceCmdlet);
