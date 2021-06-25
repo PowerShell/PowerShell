@@ -20,6 +20,18 @@ jobs:
     displayName: Capture Environment
     condition: succeededOrFailed()
 
+  - script: |
+      isUbuntu20=$(pwsh -c 'cd powershell; ipmo ./build.psm1; $environment = Get-EnvironmentInformation; $environment.IsUbuntu -and $environment.IsUbuntu20')
+      if [ "$isUbuntu20" == "True"]; then
+        export LC_ALL=en_US.UTF-8
+        export LANG=en_US.UTF-8
+        locale-gen $LANG
+        update-locale
+      fi
+
+      locale
+    displayName: Setup Language
+
   - task: DownloadBuildArtifacts@0
     displayName: 'Download build artifacts'
     inputs:
