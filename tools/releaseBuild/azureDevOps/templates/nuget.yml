@@ -217,6 +217,9 @@ jobs:
 
       $fileContent = Get-Content -Path "$packagePath\SHA512SUMS" -Raw | Out-String
       Write-Verbose -Verbose -Message $fileContent
+
+      Copy-Item -Path "$packagePath\SHA512SUMS" -Destination '$(System.ArtifactsDirectory)\signed\' -verbose
+      Copy-Item -Path "$packagePath\SHA512SUMS" -Destination '$(System.ArtifactsDirectory)\signed\globaltool\' -verbose
     displayName: Generate checksum file
 
   - template: upload-final-results.yml
@@ -235,30 +238,9 @@ jobs:
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - task: AzureFileCopy@4
-    displayName: 'Upload CheckSum file to Azure'
-    inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\checksum\SHA512SUMS'
-      azureSubscription: '$(AzureFileCopySubscription)'
-      Destination: AzureBlob
-      storage: '$(StorageAccount)'
-      ContainerName: '$(AzureVersion)-nuget'
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
-
-  - task: AzureFileCopy@4
     displayName: 'Upload global tool packages to Azure'
     inputs:
       sourcePath: '$(System.ArtifactsDirectory)\signed\globaltool\*'
-      azureSubscription: '$(GlobalToolSubscription)'
-      Destination: AzureBlob
-      storage: '$(GlobalToolStorageAccount)'
-      ContainerName: 'tool'
-      blobPrefix: '$(Version)'
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
-
-  - task: AzureFileCopy@4
-    displayName: 'Upload checksum file to Global Tool packages on Azure'
-    inputs:
-      sourcePath: '$(System.ArtifactsDirectory)\checksum\SHA512SUMS'
       azureSubscription: '$(GlobalToolSubscription)'
       Destination: AzureBlob
       storage: '$(GlobalToolStorageAccount)'
