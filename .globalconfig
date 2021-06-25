@@ -635,7 +635,7 @@ dotnet_diagnostic.CA2242.severity = suggestion
 
 # CA2243: Attribute string literals should parse correctly
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2243
-dotnet_diagnostic.CA2243.severity = none
+dotnet_diagnostic.CA2243.severity = warning
 
 # CA2244: Do not duplicate indexed element initializations
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2244
