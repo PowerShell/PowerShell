@@ -25,8 +25,8 @@ jobs:
       if [ "$isUbuntu20" == "True" ]; then
         export LC_ALL=en_US.UTF-8
         export LANG=en_US.UTF-8
-        locale-gen $LANG
-        update-locale
+        sudo locale-gen $LANG
+        sudo update-locale
       fi
 
       locale
