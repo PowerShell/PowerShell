@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 using System.Diagnostics;
 
@@ -78,23 +79,60 @@ namespace System.Management.Automation
         {
             Collection<ManpageInfo> matchingManpageInfo = new Collection<ManpageInfo>();
 
-            // Get short help from commands using whatis(1)
+            // Try first to find the exact command name
+            matchingManpageInfo = ManpageSearchByProc(pattern, true);
+
+            // If exact command not found, find all commands names that include `pattern`
+            if (matchingManpageInfo.Count is 0) {
+                matchingManpageInfo = ManpageSearchByProc(pattern, false);
+            }
+
+            return matchingManpageInfo;
+        }
+
+        // Get short help for `pattern` from commands using `proc`;
+        // `exact` indicates whether exact `pattern` should be found.
+        private static Collection<ManpageInfo> ManpageSearchByProc(string pattern, bool exact)
+        {
+            Collection<ManpageInfo> matchingManpageInfo = new Collection<ManpageInfo>();
+
             try
             {
                 using var manProc = new Process();
                 manProc.StartInfo.UseShellExecute = false;
                 manProc.StartInfo.RedirectStandardInput = false;
                 manProc.StartInfo.RedirectStandardOutput = true;
-                manProc.StartInfo.RedirectStandardError = false;
+                manProc.StartInfo.RedirectStandardError = true;
                 manProc.StartInfo.UseShellExecute = false;
                 manProc.StartInfo.CreateNoWindow = true;
-                manProc.StartInfo.FileName = "whatis";
-                manProc.StartInfo.Arguments = "-w " + pattern;
+
+                // Choose get help line depending on whether exact pattern should be matched.
+                // `whatis` is used for exact matching as MacOs does not support `apropos -e`);
+                // `apropos` is used to find all commands including `pattern` as MacOs does not support `whatis -w`)
+                string specificCommandPattern;
+                if (exact)
+                {
+                    manProc.StartInfo.FileName = "whatis";
+                    manProc.StartInfo.Arguments = pattern;
+                    specificCommandPattern = pattern;
+                }
+                else
+                {
+                    manProc.StartInfo.FileName = "apropos";
+                    // Convert the PS wildcards pattern into RegEx required by `apropos`
+                    string re  = psWildcardsToRegEx(pattern);
+                    manProc.StartInfo.Arguments = "^" + re;     // Oneline help that start with the `pattern`
+                    specificCommandPattern = '^' + re + '$';    // Comamnd name that match `pattern` from start to end
+                }
+
+                var patternRegEx = new Regex(specificCommandPattern, RegexOptions.IgnoreCase);
 
                 manProc.Start();
                 while (!manProc.StandardOutput.EndOfStream)
                 {
                     string? line = manProc.StandardOutput.ReadLine();
+                    
+                    // Ensure that entry is not empty 
                     if (!string.IsNullOrEmpty(line) && line.Trim().Length > 0)
                     {
                         // `whatis` line is: "name (section)  - short deswcription"
@@ -104,11 +142,7 @@ namespace System.Management.Automation
                         char[] delim = {'(', ')'};
                         string[] nameParts = lineParts[0].Trim().Split(delim);
                         string? manSectionNum = null;
-                        if (nameParts.Length == 1)
-                        {
-                            manSectionNum = string.Empty;   // No section - assume execultable
-                        }
-                        else if (nameParts.Length > 1)
+                        if (nameParts.Length > 1)   // If section part is available
                         {
                             string sec = nameParts[1].Trim();
                             if (sec.Length > 0)
@@ -125,17 +159,21 @@ namespace System.Management.Automation
                         if (manSectionNum != null)
                         {
                             string commandName = nameParts[0].Trim();
-                            string commandShortDescription = string.Empty;
-                            if (lineParts.Length > 1)
-                            {
-                                commandShortDescription = lineParts[1].Trim();
-                            }
+                            // Ensur that `pattern` is included in the name, as `apropos` searchs also the description line
+                            if (patternRegEx.IsMatch(commandName)) {
+                                string commandShortDescription = string.Empty;
+                                if (lineParts.Length > 1)
+                                {
+                                    commandShortDescription = lineParts[1].Trim();
+                                }
 
-                            ManpageInfo manpageInfo = new ManpageInfo(commandName, manSectionNum, commandShortDescription);
-                            matchingManpageInfo.Add(manpageInfo);
+                                ManpageInfo manpageInfo = new ManpageInfo(commandName, manSectionNum, commandShortDescription);
+                                matchingManpageInfo.Add(manpageInfo);
+                            }
                         }
                     }
                 }
+                manProc.Close();
             }
             catch (Exception e)
             {
@@ -144,6 +182,20 @@ namespace System.Management.Automation
             }
 
             return matchingManpageInfo;
+        }
+
+        // Convert powershell string with wildcards to RexEx
+        private static string psWildcardsToRegEx(string pattern)
+        {
+            string s = string.Empty;     // start pattern from line start as PS does not search for patterns "included"
+            foreach (char c in pattern) {
+                if (c == '*' || c == '?') {
+                    s += '.';
+                }
+                s += c;
+            }
+
+            return s;
         }
 
         #endregion
