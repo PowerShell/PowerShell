@@ -1106,13 +1106,12 @@ function Start-PSPester {
         [switch]$SkipTestToolBuild
     )
 
-    if ($environment.IsUbuntu20) {
+    if ($environment.IsLinux -and $environment.IsUbuntu20) {
         Write-Verbose -Verbose "Starting to change locale"
 
-        export LC_ALL=en_US.UTF-8
-        export LANG=en_US.UTF-8
-        locale-gen `$LANG
-        update-locale
+        $localeCmd = 'export LC_ALL=en_US.UTF-8; export LANG=en_US.UTF-8; locale-gen $LANG; update-locale'
+
+        Start-NativeExecution -sb { sudo bash -c $localeCmd }
 
         locale | out-string | Write-Verbose -Verbose
 
