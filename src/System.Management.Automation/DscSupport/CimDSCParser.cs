@@ -3255,7 +3255,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         var schemaFiles = Directory.EnumerateFiles(directory, "*.schema.mof", SearchOption.TopDirectoryOnly);
                         var tempSchemaFilepath = schemaFiles.FirstOrDefault();
 
-                        Debug.Assert(!schemaFiles.Skip(1).Any(), "A valid DSCResource module can have only one schema mof file");
+                        Debug.Assert(schemaFiles.Count() == 1, "A valid DSCResource module can have only one schema mof file");
                         
                         if (tempSchemaFilepath is not null)
                         {
