@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 if (valueBehaviors.Count == 1)
                 {
-                    this.BehaviorOnNoMatch = valueBehaviors.Single();
+                    this.BehaviorOnNoMatch = valueBehaviors.First();
                 }
                 else
                 {
