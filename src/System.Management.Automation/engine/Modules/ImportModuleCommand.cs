@@ -589,7 +589,6 @@ namespace Microsoft.PowerShell.Commands
             if (!moduleLoaded)
             {
                 PSModuleInfo module = LoadBinaryModule(
-                    trySnapInName: false,
                     moduleName: null,
                     fileName: null,
                     suppliedAssembly,
@@ -1308,8 +1307,8 @@ namespace Microsoft.PowerShell.Commands
                 this,
                 this.CancellationToken).ToList();
 
-            IEnumerable<RemoteDiscoveryHelper.CimModule> remotePsCimModules = remoteModules.Where(cimModule => cimModule.IsPsCimModule);
-            IEnumerable<string> remotePsrpModuleNames = remoteModules.Where(cimModule => !cimModule.IsPsCimModule).Select(cimModule => cimModule.ModuleName);
+            IEnumerable<RemoteDiscoveryHelper.CimModule> remotePsCimModules = remoteModules.Where(static cimModule => cimModule.IsPsCimModule);
+            IEnumerable<string> remotePsrpModuleNames = remoteModules.Where(static cimModule => !cimModule.IsPsCimModule).Select(static cimModule => cimModule.ModuleName);
             foreach (string psrpModuleName in remotePsrpModuleNames)
             {
                 string errorMessage = string.Format(
@@ -1327,7 +1326,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // report an error if some modules were not found
             //
-            IEnumerable<string> allFoundModuleNames = remoteModules.Select(cimModule => cimModule.ModuleName).ToList();
+            IEnumerable<string> allFoundModuleNames = remoteModules.Select(static cimModule => cimModule.ModuleName).ToList();
             foreach (string requestedModuleName in moduleNames)
             {
                 var wildcardPattern = WildcardPattern.Get(requestedModuleName, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);

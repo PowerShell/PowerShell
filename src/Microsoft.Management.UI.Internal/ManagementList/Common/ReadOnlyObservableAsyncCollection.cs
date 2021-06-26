@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.Management.UI.Internal
 {
@@ -97,6 +98,8 @@ namespace Microsoft.Management.UI.Internal
         #endregion IAsyncProgress
 
         #region Private Methods
+
+        #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
         private void OnCollectionChanged(NotifyCollectionChangedEventArgs args)
         {
             NotifyCollectionChangedEventHandler eh = this.CollectionChanged;
@@ -116,6 +119,8 @@ namespace Microsoft.Management.UI.Internal
                 eh(this, args);
             }
         }
+
+        #pragma warning restore IDE1005
 
         // forward CollectionChanged events from the base list to our listeners
         private void HandleCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

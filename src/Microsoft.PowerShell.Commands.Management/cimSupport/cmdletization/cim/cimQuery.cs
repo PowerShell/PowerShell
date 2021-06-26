@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 .Select(propertyValue => wildcardsEnabled
                                              ? GetMatchConditionForLikeOperator(propertyName, propertyValue)
                                              : GetMatchConditionForEqualityOperator(propertyName, propertyValue))
-                .Where(individualCondition => !string.IsNullOrWhiteSpace(individualCondition))
+                .Where(static individualCondition => !string.IsNullOrWhiteSpace(individualCondition))
                 .ToList();
             if (individualConditions.Count == 0)
             {

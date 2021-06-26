@@ -526,74 +526,70 @@ namespace System.Management.Automation
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
 
-                bool cleanupModuleAnalysisAppDomain = context.TakeResponsibilityForModuleAnalysisAppDomain();
+                // First, check if a V1/V2 implementation of TabExpansion exists.  If so, the user had overridden
+                // the built-in version, so we should continue to use theirs.
+                int replacementIndex = -1;
+                int replacementLength = -1;
+                List<CompletionResult> results = null;
 
-                try
+                if (NeedToInvokeLegacyTabExpansion(powershell))
                 {
-                    // First, check if a V1/V2 implementation of TabExpansion exists.  If so, the user had overridden
-                    // the built-in version, so we should continue to use theirs.
-                    int replacementIndex = -1;
-                    int replacementLength = -1;
-                    List<CompletionResult> results = null;
+                    var inputAndCursor = GetInputAndCursorFromAst(positionOfCursor);
+                    results = InvokeLegacyTabExpansion(powershell, inputAndCursor.Item1, inputAndCursor.Item2, false, out replacementIndex, out replacementLength);
+                    replacementIndex += inputAndCursor.Item3;
+                }
 
-                    if (NeedToInvokeLegacyTabExpansion(powershell))
+                if (results == null || results.Count == 0)
+                {
+                    /* BROKEN code commented out, fix sometime
+                    // If we were invoked from TabExpansion2, we want to "remove" TabExpansion2 and anything it calls
+                    // from our results.  We do this by faking out the session so that TabExpansion2 isn't anywhere to be found.
+                    MutableTuple tupleForFrameToSkipPast = null;
+                    foreach (var stackEntry in context.Debugger.GetCallStack())
                     {
-                        var inputAndCursor = GetInputAndCursorFromAst(positionOfCursor);
-                        results = InvokeLegacyTabExpansion(powershell, inputAndCursor.Item1, inputAndCursor.Item2, false, out replacementIndex, out replacementLength);
-                        replacementIndex += inputAndCursor.Item3;
+                        dynamic stackEntryAsPSObj = PSObject.AsPSObject(stackEntry);
+                        if (stackEntryAsPSObj.Command.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase))
+                        {
+                            tupleForFrameToSkipPast = stackEntry.FunctionContext._localsTuple;
+                            break;
+                        }
                     }
 
-                    if (results == null || results.Count == 0)
+                    SessionStateScope scopeToRestore = null;
+                    if (tupleForFrameToSkipPast != null)
                     {
-                        /* BROKEN code commented out, fix sometime
-                        // If we were invoked from TabExpansion2, we want to "remove" TabExpansion2 and anything it calls
-                        // from our results.  We do this by faking out the session so that TabExpansion2 isn't anywhere to be found.
-                        MutableTuple tupleForFrameToSkipPast = null;
-                        foreach (var stackEntry in context.Debugger.GetCallStack())
+                        // Find this tuple in the scope stack.
+                        scopeToRestore = context.EngineSessionState.CurrentScope;
+                        var scope = context.EngineSessionState.CurrentScope;
+                        while (scope != null && scope.LocalsTuple != tupleForFrameToSkipPast)
                         {
-                            dynamic stackEntryAsPSObj = PSObject.AsPSObject(stackEntry);
-                            if (stackEntryAsPSObj.Command.Equals("TabExpansion2", StringComparison.OrdinalIgnoreCase))
-                            {
-                                tupleForFrameToSkipPast = stackEntry.FunctionContext._localsTuple;
-                                break;
-                            }
+                            scope = scope.Parent;
                         }
 
-                        SessionStateScope scopeToRestore = null;
-                        if (tupleForFrameToSkipPast != null)
+                        if (scope != null)
                         {
-                            // Find this tuple in the scope stack.
-                            scopeToRestore = context.EngineSessionState.CurrentScope;
-                            var scope = context.EngineSessionState.CurrentScope;
-                            while (scope != null && scope.LocalsTuple != tupleForFrameToSkipPast)
-                            {
-                                scope = scope.Parent;
-                            }
-
-                            if (scope != null)
-                            {
-                                context.EngineSessionState.CurrentScope = scope.Parent;
-                            }
+                            context.EngineSessionState.CurrentScope = scope.Parent;
                         }
-
-                        try
-                        {
-                        */
-                        var completionAnalysis = new CompletionAnalysis(ast, tokens, positionOfCursor, options);
-                        results = completionAnalysis.GetResults(powershell, out replacementIndex, out replacementLength);
-                        /*
-                        }
-                        finally
-                        {
-                            if (scopeToRestore != null)
-                            {
-                                context.EngineSessionState.CurrentScope = scopeToRestore;
-                            }
-                        }
-                        */
                     }
 
-                    var completionResults = results ?? EmptyCompletionResult;
+                    try
+                    {
+                    */
+                    var completionAnalysis = new CompletionAnalysis(ast, tokens, positionOfCursor, options);
+                    results = completionAnalysis.GetResults(powershell, out replacementIndex, out replacementLength);
+                    /*
+                    }
+                    finally
+                    {
+                        if (scopeToRestore != null)
+                        {
+                            context.EngineSessionState.CurrentScope = scopeToRestore;
+                        }
+                    }
+                    */
+                }
+
+                var completionResults = results ?? EmptyCompletionResult;
 
 #if LEGACYTELEMETRY
                     // no telemetry here. We don't capture tab completion performance.
@@ -601,19 +597,11 @@ namespace System.Management.Automation
                     TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
                         completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);
 #endif
-                    return new CommandCompletion(
-                        new Collection<CompletionResult>(completionResults),
-                        -1,
-                        replacementIndex,
-                        replacementLength);
-                }
-                finally
-                {
-                    if (cleanupModuleAnalysisAppDomain)
-                    {
-                        context.ReleaseResponsibilityForModuleAnalysisAppDomain();
-                    }
-                }
+                return new CommandCompletion(
+                    new Collection<CompletionResult>(completionResults),
+                    -1,
+                    replacementIndex,
+                    replacementLength);
             }
         }
 

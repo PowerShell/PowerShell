@@ -13,9 +13,18 @@ resources:
       - release/*
 
 variables:
-  runCodesignValidationInjection: false
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
 
 stages:
+- stage: MSIXBundle
+  displayName: Create MSIX Bundle package
+  dependsOn: []
+  jobs:
+  - template: templates/release-MsixBundle.yml
+
 - stage: ValidateSDK
   displayName: Validate SDK
   dependsOn: []
@@ -115,6 +124,7 @@ stages:
   displayName: Create GitHub draft release
   # do not include stages that are likely to fail in dependency as there is no way to force deploy.
   dependsOn:
+  - MSIXBundle
   - ValidateSDK
   - PRCreation
   - ValidatePkgNames
@@ -239,7 +249,7 @@ stages:
   displayName: Publish MSIX to store
   jobs:
   - deployment: PublishMsix
-    displayName: Publish MSIX to store
+    displayName: Publish the MSIX Bundle package to store
     pool: server
     environment: PSReleasePublishMsix
 

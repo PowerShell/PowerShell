@@ -79,7 +79,9 @@ Describe 'OutputRendering tests' {
             $switch = "-$stream"
         }
 
-        $out = pwsh -noprofile -command "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassOutputRedirectionCheck', `$true); write-$stream $switch 'hello'"
-        $out | Should -BeExactly "$($PSStyle.Formatting.$stream)$($stream.ToUpper()): hello"
+        $out = pwsh -noprofile -command "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassOutputRedirectionCheck', `$true); write-$stream $switch 'hello';'bye'"
+        $out.Count | Should -Be 2
+        $out[0] | Should -BeExactly "$($PSStyle.Formatting.$stream)$($stream.ToUpper()): hello$($PSStyle.Reset)" -Because ($out[0] | Out-String | Format-hex)
+        $out[1] | Should -BeExactly "bye"
     }
 }

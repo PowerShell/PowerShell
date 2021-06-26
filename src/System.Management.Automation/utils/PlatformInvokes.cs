@@ -691,23 +691,5 @@ namespace System.Management.Automation
 #endif
 
         #endregion
-
-        #region GetStdHandle
-
-#if !UNIX
-
-        internal enum StandardHandleId : uint
-        {
-            Error = unchecked((uint)-12),
-            Output = unchecked((uint)-11),
-            Input = unchecked((uint)-10),
-        }
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern IntPtr GetStdHandle(uint handleId);
-
-#endif
-
-        #endregion
     }
 }

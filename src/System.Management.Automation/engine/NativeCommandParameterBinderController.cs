@@ -39,6 +39,28 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Gets the value of the command arguments as an array of strings.
+        /// </summary>
+        internal string[] ArgumentList
+        {
+            get
+            {
+                return ((NativeCommandParameterBinder)DefaultParameterBinder).ArgumentList;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether to use the new API for StartInfo.
+        /// </summary>
+        internal bool UseArgumentList
+        {
+            get
+            {
+                return ((NativeCommandParameterBinder)DefaultParameterBinder).UseArgumentList;
+            }
+        }
+
+        /// <summary>
         /// Passes the binding directly through to the parameter binder.
         /// It does no verification against metadata.
         /// </summary>
@@ -49,8 +71,7 @@ namespace System.Management.Automation
         /// Ignored.
         /// </param>
         /// <returns>
-        /// True if the parameter was successfully bound. Any error condition
-        /// produces an exception.
+        /// True if the parameter was successfully bound. Any error condition produces an exception.
         /// </returns>
         internal override bool BindParameter(
             CommandParameterInternal argument,

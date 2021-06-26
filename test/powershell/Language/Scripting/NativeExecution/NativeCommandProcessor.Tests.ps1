@@ -43,6 +43,12 @@ Describe 'native commands with pipeline' -tags 'Feature' {
             $result[0] | Should -Match "pwsh"
         }
     }
+
+    It 'native command should be killed when pipeline is disposed' -Skip:($IsWindows) {
+        $yes = (Get-Process 'yes' -ErrorAction Ignore).Count
+        yes | Select-Object -First 2
+        (Get-Process 'yes' -ErrorAction Ignore).Count | Should -Be $yes
+    }
 }
 
 Describe "Native Command Processor" -tags "Feature" {

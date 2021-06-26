@@ -1610,8 +1610,8 @@ namespace System.Management.Automation
             // ATTACH INSTANCE METADATA TO THE OBJECT BEING SERIALIZED
             List<string> namesOfModifiedProperties = cimInstance
                 .CimInstanceProperties
-                .Where(p => p.IsValueModified)
-                .Select(p => p.Name)
+                .Where(static p => p.IsValueModified)
+                .Select(static p => p.Name)
                 .ToList();
             if (namesOfModifiedProperties.Count != 0)
             {

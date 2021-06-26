@@ -1729,7 +1729,7 @@ namespace System.Management.Automation
             // Add a valid values generator to the cache.
             // We don't cache valid values; we expect that valid values will be cached in the generator.
             validValuesGenerator = s_ValidValuesGeneratorCache.GetOrAdd(
-                valuesGeneratorType, (key) => (IValidateSetValuesGenerator)Activator.CreateInstance(key));
+                valuesGeneratorType, static (key) => (IValidateSetValuesGenerator)Activator.CreateInstance(key));
         }
     }
 

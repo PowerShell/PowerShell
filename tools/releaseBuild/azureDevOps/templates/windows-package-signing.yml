@@ -21,10 +21,11 @@ jobs:
   - checkout: ComplianceRepo
     clean: true
 
-  - template: shouldSign.yml
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: shouldSign.yml
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download artifacts'
@@ -44,17 +45,33 @@ jobs:
     parameters:
         buildOutputPath: $(System.ArtifactsDirectory)\signed
         signOutputPath: $(Build.StagingDirectory)\signedPackages
-        certificateId: "CP-230012"
+        certificateId: $(MSIX_CERT)
         pattern: |
-          **\*.msi
           **\*.msix
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
+        displayName: Sign msix
+
+  - template: EsrpSign.yml@ComplianceRepo
+    parameters:
+        buildOutputPath: $(System.ArtifactsDirectory)\signed
+        signOutputPath: $(Build.StagingDirectory)\signedPackages
+        certificateId: $(AUTHENTICODE_CERT)
+        pattern: |
+          **\*.exe
+        useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
+        displayName: Sign exe
 
   - powershell: |
       new-item -itemtype Directory -path '$(Build.StagingDirectory)\signedPackages'
       Get-ChildItem "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-*.msi*" | copy-item -Destination '$(Build.StagingDirectory)\signedPackages'
-    displayName: 'Fake Signing'
+    displayName: 'Fake msi* Signing'
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
+
+  - pwsh: |
+      Get-ChildItem "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-*.exe" | copy-item -Destination '$(Build.StagingDirectory)\signedPackages'
+    displayName: 'Fake exe Signing'
     condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
   - template: upload.yml

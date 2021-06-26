@@ -587,13 +587,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (string machine in ComputerName)
                     {
+                        string slashBeforePath = path.Length > 0 && path[0] == '\\' ? string.Empty : "\\";
                         if (machine.StartsWith("\\\\", StringComparison.OrdinalIgnoreCase))
                         {
-                            retColl.Add(machine + "\\" + path);
+                            retColl.Add(machine + slashBeforePath + path);
                         }
                         else
                         {
-                            retColl.Add("\\\\" + machine + "\\" + path);
+                            retColl.Add("\\\\" + machine + slashBeforePath + path);
                         }
                     }
                 }

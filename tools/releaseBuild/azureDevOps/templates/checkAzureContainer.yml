@@ -1,16 +1,23 @@
 jobs:
 - job: DeleteBlob
   variables:
-    runCodesignValidationInjection: false
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: Azure Blob variable group
   displayName: Delete blob is exists
   pool:
     vmImage: windows-latest
   steps:
   - checkout: self
     clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: yes
+      UseJson: no
 
   - task: AzurePowerShell@4
     inputs:

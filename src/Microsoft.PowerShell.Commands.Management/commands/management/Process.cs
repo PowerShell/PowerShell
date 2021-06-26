@@ -266,30 +266,17 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Retrieve the master list of all processes.
+        /// Gets an array of all processes.
         /// </summary>
-        /// <value></value>
+        /// <value>An array of <see cref="Process"/> components that represents all the process resources.</value>
         /// <exception cref="System.Security.SecurityException">
         /// MSDN does not document the list of exceptions,
         /// but it is reasonable to expect that SecurityException is
         /// among them.  Errors here will terminate the cmdlet.
         /// </exception>
-        internal Process[] AllProcesses
-        {
-            get
-            {
-                if (_allProcesses == null)
-                {
-                    List<Process> processes = new();
-                    processes.AddRange(Process.GetProcesses());
-                    _allProcesses = processes.ToArray();
-                }
+        internal Process[] AllProcesses => _allProcesses ??= Process.GetProcesses();
 
-                return _allProcesses;
-            }
-        }
-
-        private Process[] _allProcesses = null;
+        private Process[] _allProcesses;
 
         /// <summary>
         /// Add <paramref name="process"/> to <see cref="_matchingProcesses"/>,
@@ -662,7 +649,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        ProcessModule mainModule = PsUtils.GetMainModule(process);
+                        ProcessModule mainModule = process.MainModule;
                         if (mainModule != null)
                         {
                             WriteObject(mainModule.FileVersionInfo, true);
@@ -682,7 +669,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (exception.HResult == 299)
                             {
-                                WriteObject(PsUtils.GetMainModule(process).FileVersionInfo, true);
+                                WriteObject(process.MainModule?.FileVersionInfo, true);
                             }
                             else
                             {
@@ -2370,10 +2357,6 @@ namespace Microsoft.PowerShell.Commands
 
             // Use Unicode encoding
             bytes = Encoding.Unicode.GetBytes(builder.ToString());
-            if (bytes.Length > 0xffff)
-            {
-                throw new InvalidOperationException("EnvironmentBlockTooLong");
-            }
 
             return bytes;
         }

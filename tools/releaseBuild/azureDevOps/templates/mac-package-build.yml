@@ -10,8 +10,12 @@ jobs:
   pool: Hosted Mac Internal
   variables:
     # Turn off Homebrew analytics
-    HOMEBREW_NO_ANALYTICS: 1
-    runCodesignValidationInjection: false
+    - name: HOMEBREW_NO_ANALYTICS
+      value: 1
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
   steps:
   - checkout: self
     clean: true
@@ -24,15 +28,11 @@ jobs:
       sudo chown $env:USER /PowerShell
     displayName: 'Create /PowerShell'
 
-  - template: shouldSign.yml
-
-  #- task: <task type name>@<version>
-  #  inputs:
-  #    <task specific inputs>
-  #  displayName: '<display name of task>'
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: shouldSign.yml
 
   - template: cloneToOfficialPath.yml
 

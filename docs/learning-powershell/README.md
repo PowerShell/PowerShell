@@ -115,7 +115,7 @@ Note that all bash commands should continue working on PowerShell session.
 [powershell-intro]: https://www.pluralsight.com/courses/powershell-intro
 [lynda-training]: https://www.lynda.com/PowerShell-training-tutorials/5779-0.html
 [learn-win-powershell]: https://www.amazon.com/Learn-Windows-PowerShell-Month-Lunches/dp/1617294160
-[learn-powershell]: https://www.manning.com/books/learn-powershell-in-a-month-of-lunches-linux-and-macos-edition
+[learn-powershell]: https://www.manning.com/books/learn-powershell-in-a-month-of-lunches
 
 [getstarted-with-powershell]: https://channel9.msdn.com/Series/GetStartedPowerShell3
 [why-learn-powershell]: https://blogs.technet.microsoft.com/heyscriptingguy/2014/10/18/weekend-scripter-why-learn-powershell/

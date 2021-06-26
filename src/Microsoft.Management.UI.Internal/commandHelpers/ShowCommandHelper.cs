@@ -289,7 +289,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Finalizes an instance of the ShowCommandHelper class.
+        /// Finalizes an instance of the <see cref="ShowCommandHelper"/> class.
         /// </summary>
         ~ShowCommandHelper()
         {
@@ -643,7 +643,9 @@ Function PSGetSerializedShowCommandInfo
             ModuleViewModel moduleToSelect = returnValue.Modules.Find(
                 new Predicate<ModuleViewModel>((module) =>
                 {
-                    return module.Name.Equals(selectedModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase) ? true : false;
+                    #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
+                    return module.Name.Equals(selectedModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase);
+                    #pragma warning restore IDE0075
                 }));
 
             if (moduleToSelect == null)
@@ -657,7 +659,7 @@ Function PSGetSerializedShowCommandInfo
                 new Predicate<CommandViewModel>((command) =>
                 {
                     return command.ModuleName.Equals(parentModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase) &&
-                        command.Name.Equals(commandNeedingImportModule, StringComparison.OrdinalIgnoreCase) ? true : false;
+                        command.Name.Equals(commandNeedingImportModule, StringComparison.OrdinalIgnoreCase);
                 }));
 
             if (commandToSelect == null)
@@ -750,7 +752,7 @@ Function PSGetSerializedShowCommandInfo
 
             try
             {
-                return property.GetValue(obj, new object[] { });
+                return property.GetValue(obj, Array.Empty<object>());
             }
             catch (ArgumentException)
             {
@@ -794,7 +796,7 @@ Function PSGetSerializedShowCommandInfo
 
             try
             {
-                property.SetValue(obj, value, new object[] { });
+                property.SetValue(obj, value, Array.Empty<object>());
             }
             catch (ArgumentException)
             {
@@ -1000,7 +1002,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate (object ignored)
+                        delegate(object ignored)
                         {
                             this.allModulesViewModel = ShowCommandHelper.GetNewAllModulesViewModel(
                                 this.allModulesViewModel,
@@ -1050,7 +1052,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate (object ignored)
+                        delegate(object ignored)
                         {
                             HelpWindow help = new HelpWindow(getHelpResults[0]);
                             help.Owner = this.window;
@@ -1244,6 +1246,7 @@ Function PSGetSerializedShowCommandInfo
         /// Showing a MessageBox when user type a invalidate command name.
         /// </summary>
         /// <param name="errorString">Error message.</param>
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private void ShowErrorString(string errorString)
         {
             if (errorString != null && errorString.Trim().Length > 0)

@@ -43,9 +43,9 @@ namespace System.Management.Automation
                 List<string> list = hashtable
                     .Keys
                     .Cast<object>()
-                    .Where(k => k != null)
-                    .Select(k => k.ToString())
-                    .Where(s => s != null)
+                    .Where(static k => k != null)
+                    .Select(static k => k.ToString())
+                    .Where(static s => s != null)
                     .ToList();
                 return new Collection<string>(list);
             }
@@ -683,7 +683,7 @@ namespace System.Management.Automation
                     "Dependent",
                     operationOptions);
 
-                IEnumerable<CimModuleFile> associatedFiles = associatedInstances.Select(i => new CimModuleImplementationFile(i));
+                IEnumerable<CimModuleFile> associatedFiles = associatedInstances.Select(static i => new CimModuleImplementationFile(i));
                 _moduleFiles = associatedFiles.ToList();
             }
 
@@ -795,7 +795,7 @@ namespace System.Management.Automation
                 options);
             // TODO/FIXME: ETW for method results
             IEnumerable<CimModule> cimModules = syncResults
-                .Select(cimInstance => new CimModule(cimInstance))
+                .Select(static cimInstance => new CimModule(cimInstance))
                 .Where(cimModule => wildcardPattern.IsMatch(cimModule.ModuleName));
 
             if (!onlyManifests)

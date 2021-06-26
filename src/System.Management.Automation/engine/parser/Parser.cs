@@ -12,6 +12,9 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
+using Dsc = Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
 {
@@ -139,6 +142,11 @@ namespace System.Management.Automation.Language
         /// <returns>The <see cref="ScriptBlockAst"/> that represents the input script file.</returns>
         public static ScriptBlockAst ParseInput(string input, string fileName, out Token[] tokens, out ParseError[] errors)
         {
+            if (input is null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
             Parser parser = new Parser();
             List<Token> tokenList = new List<Token>();
             ScriptBlockAst result;
@@ -1971,7 +1979,7 @@ namespace System.Management.Automation.Language
                     }
                     else if ((token.TokenFlags & TokenFlags.Keyword) != 0)
                     {
-                        foreach (var attr in attributes.Where(attr => attr is not AttributeAst))
+                        foreach (var attr in attributes.Where(static attr => attr is not AttributeAst))
                         {
                             ReportError(attr.Extent,
                                 nameof(ParserStrings.TypeNotAllowedBeforeStatement),
@@ -2967,7 +2975,6 @@ namespace System.Management.Automation.Language
 
                 ExpressionAst configurationBodyScriptBlock = null;
 
-                // Automatically import the PSDesiredStateConfiguration module at this point.
                 PowerShell p = null;
 
                 // Save the parser we're using so we can resume the current parse when we're done.
@@ -2995,7 +3002,18 @@ namespace System.Management.Automation.Language
                         {
                             // Load the default CIM keywords
                             Collection<Exception> CIMKeywordErrors = new Collection<Exception>();
-                            Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+
+                            // DscSubsystem is auto-registered when PSDesiredStateConfiguration v3 module is loaded
+                            // so if DscSubsystem is registered that means user intention to use v3 APIs.
+                            ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                            if (dscSubsystem != null)
+                            {
+                                dscSubsystem.LoadDefaultKeywords(CIMKeywordErrors);
+                            }
+                            else
+                            {
+                                Dsc.DscClassCache.LoadDefaultCimKeywords(CIMKeywordErrors);
+                            }
 
                             // Report any errors encountered while loading CIM dynamic keywords.
                             if (CIMKeywordErrors.Count > 0)
@@ -3237,7 +3255,16 @@ namespace System.Management.Automation.Language
                     // Clear out all of the cached classes and keywords.
                     // They will need to be reloaded when the generated function is actually run.
                     //
-                    Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.ClearCache();
+                    ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                    if (dscSubsystem != null)
+                    {
+                        dscSubsystem.ClearCache();
+                    }
+                    else
+                    {
+                        Dsc.DscClassCache.ClearCache();
+                    }
+
                     System.Management.Automation.Language.DynamicKeyword.Reset();
                 }
 
@@ -4642,19 +4669,19 @@ namespace System.Management.Automation.Language
 
         private StatementAst EnumDefinitionRule(List<AttributeBaseAst> customAttributes, Token enumToken)
         {
-            //G  enum-statement:
-            //G      'enum'   new-lines:opt   enum-name   '{'   enum-member-list   '}'
-            //G      'enum'   new-lines:opt   enum-name   ':'  enum-underlying-type  '{'   enum-member-list   '}'
-            //G
-            //G  enum-name:
-            //G      simple-name
-            //G
-            //G  enum-underlying-type:
-            //G      new-lines:opt   valid-type-name   new-lines:opt
-            //G
-            //G  enum-member-list:
-            //G      enum-member  new-lines:opt
-            //G      enum-member-list   enum-member
+            // G  enum-statement:
+            // G      'enum'   new-lines:opt   enum-name   '{'   enum-member-list   '}'
+            // G      'enum'   new-lines:opt   enum-name   ':'  enum-underlying-type  '{'   enum-member-list   '}'
+            // G
+            // G  enum-name:
+            // G      simple-name
+            // G
+            // G  enum-underlying-type:
+            // G      new-lines:opt   valid-type-name   new-lines:opt
+            // G
+            // G  enum-member-list:
+            // G      enum-member  new-lines:opt
+            // G      enum-member-list   enum-member
 
             const TypeCode ValidUnderlyingTypeCodes = TypeCode.Byte | TypeCode.Int16 | TypeCode.Int32 | TypeCode.Int64 | TypeCode.SByte | TypeCode.UInt16 | TypeCode.UInt32 | TypeCode.UInt64;
 
@@ -5998,7 +6025,7 @@ namespace System.Management.Automation.Language
                     commandAst = new CommandExpressionAst(
                         exprExtent,
                         expr,
-                        redirections?.Where(r => r != null));
+                        redirections?.Where(static r => r != null));
                 }
                 else
                 {
@@ -6629,7 +6656,7 @@ namespace System.Management.Automation.Language
 
             return new CommandAst(ExtentOf(firstToken, endExtent), elements,
                                   dotSource || ampersand ? firstToken.Kind : TokenKind.Unknown,
-                                  redirections?.Where(r => r != null));
+                                  redirections?.Where(static r => r != null));
         }
 
         #endregion Pipelines

@@ -939,7 +939,7 @@ namespace System.Management.Automation
             var typeName = GetMemberTypeProjection(typename.Name, membersTypes);
             var members = new List<PSMemberNameAndType>();
             members.AddRange(membersTypes);
-            members.Sort((c1, c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
+            members.Sort(static (c1, c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
             return new PSSyntheticTypeName(typeName, typename.Type, members);
         }
 
@@ -980,7 +980,7 @@ namespace System.Management.Automation
 
             var builder = new StringBuilder(typename, members.Count * 7);
             builder.Append('#');
-            foreach (var m in members.OrderBy(m => m.Name))
+            foreach (var m in members.OrderBy(static m => m.Name))
             {
                 if (!IsPSTypeName(m))
                 {

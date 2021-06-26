@@ -41,7 +41,7 @@ namespace mvc.Controllers
             }
 
             StringValues responsePhrase;
-            if ( Request.Query.TryGetValue("responsephrase", out responsePhrase))
+            if (Request.Query.TryGetValue("responsephrase", out responsePhrase))
             {
                 Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = responsePhrase.FirstOrDefault();
             }
@@ -69,7 +69,7 @@ namespace mvc.Controllers
 
                         foreach (string entry in GetSingleOrArray<string>(property.Value))
                         {
-                            Response.Headers.Append(property.Name,entry);
+                            Response.Headers.Append(property.Name, entry);
                         }
                     }
                 }

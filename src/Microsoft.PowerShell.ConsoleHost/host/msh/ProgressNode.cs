@@ -6,6 +6,9 @@ using System.Collections;
 using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
+using System.Text;
+
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -20,7 +23,7 @@ namespace Microsoft.PowerShell
     ProgressNode : ProgressRecord
     {
         /// <summary>
-        /// Indicates the various layouts for rendering a particular node.  Each style is progressively less terse.
+        /// Indicates the various layouts for rendering a particular node.
         /// </summary>
         internal
         enum
@@ -40,6 +43,11 @@ namespace Microsoft.PowerShell
             /// The node will be displayed the same as Full, plus, the whole StatusDescription and CurrentOperation will be displayed (in multiple lines if needed).
             /// </summary>
             FullPlus = 4,
+
+            /// <summary>
+            /// The node will be displayed using ANSI escape sequences.
+            /// </summary>
+            Ansi = 5,
         }
 
         /// <summary>
@@ -56,7 +64,11 @@ namespace Microsoft.PowerShell
             this.PercentComplete = Math.Min(record.PercentComplete, 100);
             this.SecondsRemaining = record.SecondsRemaining;
             this.RecordType = record.RecordType;
-            this.Style = RenderStyle.FullPlus;
+
+            this.Style = IsMinimalProgressRenderingEnabled()
+                ? RenderStyle.Ansi
+                : this.Style = RenderStyle.FullPlus;
+
             this.SourceId = sourceId;
         }
 
@@ -97,6 +109,9 @@ namespace Microsoft.PowerShell
                     break;
                 case RenderStyle.Minimal:
                     RenderMinimal(strCollection, indentation, maxWidth, rawUI);
+                    break;
+                case RenderStyle.Ansi:
+                    RenderAnsi(strCollection, indentation, maxWidth);
                     break;
                 case RenderStyle.Invisible:
                     // do nothing
@@ -336,6 +351,108 @@ namespace Microsoft.PowerShell
                     maxWidth));
         }
 
+        internal static bool IsMinimalProgressRenderingEnabled()
+        {
+            return ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAnsiProgressFeatureName) && PSStyle.Instance.Progress.View == ProgressView.Minimal;
+        }
+
+        /// <summary>
+        /// Renders a node in the "ANSI" style.
+        /// </summary>
+        /// <param name="strCollection">
+        /// List of strings to which the node's rendering will be appended.
+        /// </param>
+        /// <param name="indentation">
+        /// The indentation level in chars at which the node should be rendered.
+        /// </param>
+        /// <param name="maxWidth">
+        /// The maximum number of chars that the rendering is allowed to consume.
+        /// </param>
+        private
+        void
+        RenderAnsi(ArrayList strCollection, int indentation, int maxWidth)
+        {
+            string indent = StringUtil.Padding(indentation);
+            string secRemain = string.Empty;
+            if (SecondsRemaining >= 0)
+            {
+                secRemain = SecondsRemaining.ToString() + "s";
+            }
+
+            int secRemainLength = secRemain.Length + 1;
+
+            // limit progress bar to 120 chars as no need to render full width
+            if (PSStyle.Instance.Progress.MaxWidth > 0 && maxWidth > PSStyle.Instance.Progress.MaxWidth)
+            {
+                maxWidth = PSStyle.Instance.Progress.MaxWidth;
+            }
+
+            // if the activity is really long, only use up to half the width
+            string activity;
+            if (Activity.Length > maxWidth / 2)
+            {
+                activity = Activity.Substring(0, maxWidth / 2) + PSObjectHelper.Ellipsis;
+            }
+            else
+            {
+                activity = Activity;
+            }
+
+            // 4 is for the extra space and square brackets below and one extra space
+            int barWidth = maxWidth - activity.Length - indentation - 4;
+
+            var sb = new StringBuilder();
+            int padding = maxWidth + PSStyle.Instance.Progress.Style.Length + PSStyle.Instance.Reverse.Length + PSStyle.Instance.ReverseOff.Length;
+            sb.Append(PSStyle.Instance.Reverse);
+
+            int maxStatusLength = barWidth - secRemainLength - 1;
+            if (maxStatusLength > 0 && StatusDescription.Length > barWidth - secRemainLength)
+            {
+                sb.Append(StatusDescription.Substring(0, barWidth - secRemainLength - 1));
+                sb.Append(PSObjectHelper.Ellipsis);
+            }
+            else
+            {
+                sb.Append(StatusDescription);
+            }
+
+            int emptyPadLength = barWidth + PSStyle.Instance.Reverse.Length - sb.Length - secRemainLength;
+            if (emptyPadLength > 0)
+            {
+                sb.Append(string.Empty.PadRight(emptyPadLength));
+            }
+
+            sb.Append(secRemain);
+
+            if (PercentComplete > 0 && PercentComplete < 100 && barWidth > 0)
+            {
+                int barLength = PercentComplete * barWidth / 100;
+                if (barLength >= barWidth)
+                {
+                    barLength = barWidth - 1;
+                }
+
+                if (barLength < sb.Length)
+                {
+                    sb.Insert(barLength + PSStyle.Instance.Reverse.Length, PSStyle.Instance.ReverseOff);
+                }
+            }
+            else
+            {
+                sb.Append(PSStyle.Instance.ReverseOff);
+            }
+
+            strCollection.Add(
+                StringUtil.Format(
+                    "{0}{1}{2} [{3}]{4}",
+                    indent,
+                    PSStyle.Instance.Progress.Style,
+                    activity,
+                    sb.ToString(),
+                    PSStyle.Instance.Reset)
+                .PadRight(padding));
+        }
+
         /// <summary>
         /// The nodes that have this node as their parent.
         /// </summary>
@@ -395,6 +512,9 @@ namespace Microsoft.PowerShell
 
                 case RenderStyle.Invisible:
                     return 0;
+
+                case RenderStyle.Ansi:
+                    return 1;
 
                 default:
                     Dbg.Assert(false, "Unknown RenderStyle value");

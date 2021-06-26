@@ -26,6 +26,67 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $result[1] | Should -BeExactly $varArray[1]
     }
 
+    It 'Verifies in scope using variables in nested calls' {
+
+        $Test = "Test1"
+        $results = 1..2 | ForEach-Object -Parallel {
+            $using:Test
+            $Test = "Test2"
+            1..2 | ForEach-Object -Parallel {
+                $using:Test
+                $Test = "Test3"
+                1..2 | ForEach-Object -Parallel {
+                    $using:Test
+                }
+            }
+        }
+        $results.Count | Should -BeExactly 14
+        $groups = $results | Group-Object -AsHashTable
+        $groups['Test1'].Count | Should -BeExactly 2
+        $groups['Test2'].Count | Should -BeExactly 4
+        $groups['Test3'].Count | Should -BeExactly 8
+    }
+
+    It 'Verifies in scope using variables with different names in nested calls' {
+        $Test1 = "TestA"
+        $results = 1..2 | ForEach-Object -parallel {
+            $using:Test1
+            $Test2 = "TestB"
+            1..2 | ForEach-Object -parallel {
+                $using:Test2
+            }
+        }
+        $results.Count | Should -BeExactly 6
+        $groups = $results | Group-Object -AsHashTable
+        $groups['TestA'].Count | Should -BeExactly 2
+        $groups['TestB'].Count | Should -BeExactly 4
+    }
+
+    It 'Verifies using variable in nested scriptblock' {
+
+        $test = 'testC'
+        $results = 1..2 | ForEach-Object -parallel {
+            & { $using:test }
+        }
+        $results.Count | Should -BeExactly 2
+        $groups = $results | Group-Object -AsHashTable
+        $groups['TestC'].Count | Should -BeExactly 2
+    }
+
+    It 'Verifies expected error for out of scope using variable in nested calls' {
+
+        $Test = "TestZ"
+        1..1 | ForEach-Object -Parallel {
+            $using:Test
+            # Variable '$Test' is not defined in this scope.
+            1..1 | ForEach-Object -Parallel {
+                $using:Test
+            }
+        } -ErrorVariable usingErrors 2>$null
+
+        $usingErrors[0].FullyQualifiedErrorId | Should -BeExactly 'UsingVariableIsUndefined,Microsoft.PowerShell.Commands.ForEachObjectCommand'
+    }
+
     It 'Verifies terminating error streaming' {
 
         $result = 1..1 | ForEach-Object -Parallel { throw 'Terminating Error!'; "Hello" } 2>&1

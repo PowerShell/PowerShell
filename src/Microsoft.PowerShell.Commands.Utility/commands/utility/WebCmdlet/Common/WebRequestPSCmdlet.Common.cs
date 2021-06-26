@@ -815,12 +815,12 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsStandardMethodSet()
         {
-            return (ParameterSetName == "StandardMethod");
+            return (ParameterSetName == "StandardMethod" || ParameterSetName == "StandardMethodNoProxy");
         }
 
         private bool IsCustomMethodSet()
         {
-            return (ParameterSetName == "CustomMethod");
+            return (ParameterSetName == "CustomMethod" || ParameterSetName == "CustomMethodNoProxy");
         }
 
         private string GetBasicAuthorizationHeader()
@@ -1508,7 +1508,6 @@ namespace Microsoft.PowerShell.Commands
                                 string reqVerboseMsg = string.Format(CultureInfo.CurrentCulture,
                                     WebCmdletStrings.WebMethodInvocationVerboseMsg,
                                     request.Method,
-                                    request.RequestUri,
                                     requestContentLength);
                                 WriteVerbose(reqVerboseMsg);
 

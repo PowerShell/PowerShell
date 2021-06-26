@@ -357,7 +357,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Indicate if we have called 'NotifyBeginApplication()' on the host, so that
-        /// we can call the counterpart 'NotifyEndApplication' as approriate.
+        /// we can call the counterpart 'NotifyEndApplication' as appropriate.
         /// </summary>
         private bool _hasNotifiedBeginApplication;
 
@@ -1018,9 +1018,21 @@ namespace System.Management.Automation
 
             try
             {
-                // Dispose the process if it's already created
                 if (_nativeProcess != null)
                 {
+                    // on Unix, we need to kill the process to ensure it terminates as Dispose() merely
+                    // closes the redirected streams and the processs does not exit on macOS.  However,
+                    // on Windows, a winexe like notepad should continue running so we don't want to kill it.
+#if UNIX
+                    try
+                    {
+                        _nativeProcess.Kill();
+                    }
+                    catch
+                    {
+                        // Ignore all exception since it is cleanup.
+                    }
+#endif
                     _nativeProcess.Dispose();
                 }
             }
@@ -1157,9 +1169,34 @@ namespace System.Management.Automation
                 startInfo.CreateNoWindow = mpc.NonInteractive;
             }
 
-            startInfo.Arguments = NativeParameterBinderController.Arguments;
-
             ExecutionContext context = this.Command.Context;
+
+            // We provide the user a way to select the new behavior via a new preference variable
+            using (ParameterBinderBase.bindingTracer.TraceScope("BIND NAMED native application line args [{0}]", this.Path))
+            {
+                if (!NativeParameterBinderController.UseArgumentList)
+                {
+                    using (ParameterBinderBase.bindingTracer.TraceScope("BIND argument [{0}]", NativeParameterBinderController.Arguments))
+                    {
+                        startInfo.Arguments = NativeParameterBinderController.Arguments;
+                    }
+                }
+                else
+                {
+                    // Use new API for running native application
+                    int position = 0;
+                    foreach (string nativeArgument in NativeParameterBinderController.ArgumentList)
+                    {
+                        if (nativeArgument != null)
+                        {
+                            using (ParameterBinderBase.bindingTracer.TraceScope("BIND cmd line arg [{0}] to position [{1}]", nativeArgument, position++))
+                            {
+                                startInfo.ArgumentList.Add(nativeArgument);
+                            }
+                        }
+                    }
+                }
+            }
 
             // Start command in the current filesystem directory
             string rawPath =

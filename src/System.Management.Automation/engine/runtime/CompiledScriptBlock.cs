@@ -440,7 +440,7 @@ namespace System.Management.Automation
                 }
 
                 return _usesCmdletBinding
-                    ? (CmdletBindingAttribute)Array.Find(_attributes, attr => attr is CmdletBindingAttribute)
+                    ? (CmdletBindingAttribute)Array.Find(_attributes, static attr => attr is CmdletBindingAttribute)
                     : null;
             }
         }
@@ -454,7 +454,7 @@ namespace System.Management.Automation
                     InitializeMetadata();
                 }
 
-                return (ObsoleteAttribute)Array.Find(_attributes, attr => attr is ObsoleteAttribute);
+                return (ObsoleteAttribute)Array.Find(_attributes, static attr => attr is ObsoleteAttribute);
             }
         }
 
@@ -612,8 +612,8 @@ namespace System.Management.Automation
             // TODO(sevoroby): we can optimize it to ignore 'using' if there are no actual type usage in locally defined types.
 
             // using is always a top-level statements in scriptBlock, we don't need to search in child blocks.
-            if (scriptBlock.Ast.Find(ast => IsUsingTypes(ast), false) != null
-                || scriptBlock.Ast.Find(ast => IsDynamicKeyword(ast), true) != null)
+            if (scriptBlock.Ast.Find(static ast => IsUsingTypes(ast), false) != null
+                || scriptBlock.Ast.Find(static ast => IsDynamicKeyword(ast), true) != null)
             {
                 return;
             }
@@ -751,7 +751,7 @@ namespace System.Management.Automation
 
         private PipelineAst GetSimplePipeline(Func<string, PipelineAst> errorHandler)
         {
-            errorHandler ??= (_ => null);
+            errorHandler ??= (static _ => null);
 
             if (HasBeginBlock || HasProcessBlock)
             {
@@ -1733,7 +1733,7 @@ namespace System.Management.Automation
         private static CmsMessageRecipient[] s_encryptionRecipients = null;
 
         private static readonly Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
-            () => Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig),
+            static () => Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);
 
         // Reset any static caches if the certificate has changed

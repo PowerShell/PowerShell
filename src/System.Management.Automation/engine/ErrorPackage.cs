@@ -1815,6 +1815,7 @@ namespace System.Management.Automation
     /// since the improved
     /// information about the error may help enable future scenarios.
     /// </remarks>
+#nullable enable
     public interface IResourceSupplier
     {
         /// <summary>

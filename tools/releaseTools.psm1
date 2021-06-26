@@ -38,6 +38,7 @@ $Script:powershell_team = @(
     "dependabot-preview[bot]"
     "Joey Aiello"
     "Tyler James Leonhardt"
+    "Anam Navied"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -593,12 +594,12 @@ function Update-PsVersionInCode
 {
     param(
         [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
         [String]
         $NewReleaseTag,
 
         [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
         [String]
         $NextReleaseTag,
 
