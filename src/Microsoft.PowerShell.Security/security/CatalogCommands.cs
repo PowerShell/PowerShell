@@ -4,14 +4,10 @@
 #if !UNIX
 
 using System;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Management.Automation;
 using Dbg = System.Management.Automation.Diagnostics;
-using System.Collections;
-using System.IO;
-using System.Management.Automation.Provider;
-using System.Runtime.InteropServices;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -60,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // name of this command
         //
-        private string commandName;
+        private readonly string commandName;
 
         /// <summary>
         /// Initializes a new instance of the CatalogCommandsBase class,
@@ -90,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert((CatalogFilePath != null) && (CatalogFilePath.Length > 0),
                        "CatalogCommands: Param binder did not bind catalogFilePath");
 
-            Collection<string> paths = new Collection<string>();
+            Collection<string> paths = new();
 
             if (Path != null)
             {
@@ -186,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
                 path.Add(SessionState.Path.CurrentFileSystemLocation.Path);
             }
 
-            FileInfo catalogFileInfo = new FileInfo(catalogFilePath);
+            FileInfo catalogFileInfo = new(catalogFilePath);
 
             // If Path points to the expected cat file make sure
             // parent Directory exists other wise CryptoAPI fails to create a .cat file

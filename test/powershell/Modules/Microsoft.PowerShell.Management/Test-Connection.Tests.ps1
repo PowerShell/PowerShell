@@ -44,6 +44,7 @@ Describe "Test-Connection" -tags "CI" {
         $targetAddress = "127.0.0.1"
         $targetAddressIPv6 = "::1"
         $UnreachableAddress = "10.11.12.13"
+
         # under some environments, we can't round trip this and retrieve the real name from the address
         # in this case we will simply use the hostname
         $jobContinues = Start-Job { Test-Connection $using:targetAddress -Repeat }
@@ -105,7 +106,7 @@ Describe "Test-Connection" -tags "CI" {
             $error[0].Exception.InnerException.ErrorCode | Should -Be $code
         }
 
-        It "Force IPv4 with implicit PingOptions" -Pending {
+        It "Force IPv4 with implicit PingOptions" {
             $result = Test-Connection $testAddress -Count 1 -IPv4
 
             $result[0].Address | Should -BeExactly $testAddress
@@ -116,6 +117,7 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         # In VSTS, address is 0.0.0.0
+        # This test is marked as PENDING as .NET Core does not return correct PingOptions from ping request
         It "Force IPv4 with explicit PingOptions" -Pending {
             $result1 = Test-Connection $testAddress -Count 1 -IPv4 -MaxHops 10 -DontFragment
 
@@ -259,7 +261,7 @@ Describe "Test-Connection" -tags "CI" {
     Context "MTUSizeDetect" {
         # We skip the MtuSize detection tests when in containers, as the environments throw raw exceptions
         # instead of returning a PacketTooBig response cleanly.
-        It "MTUSizeDetect works" -Pending:($true -or $env:__INCONTAINER -eq 1) {
+        It "MTUSizeDetect works" -Pending:($env:__INCONTAINER -eq 1) {
             $result = Test-Connection $testAddress -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
@@ -282,7 +284,7 @@ Describe "Test-Connection" -tags "CI" {
             $result = Test-Connection $testAddress -TraceRoute -IPv4
 
             $result[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus
-            $result[0].Source | Should -BeExactly $hostName
+            $result[0].Source | Should -BeExactly $testAddress
             $result[0].TargetAddress | Should -BeExactly $testAddress
             $result[0].Target | Should -BeExactly $testAddress
             $result[0].Hop | Should -Be 1

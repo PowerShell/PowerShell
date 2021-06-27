@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            List<string> pathsToProcess = new List<string>();
+            List<string> pathsToProcess = new();
             ProviderInfo provider = null;
 
             switch (ParameterSetName)
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (!WildcardPattern.ContainsWildcardCharacters(path))
                             {
-                                ErrorRecord errorRecord = new ErrorRecord(e,
+                                ErrorRecord errorRecord = new(e,
                                     "FileNotFound",
                                     ErrorCategory.ObjectNotFound,
                                     path);
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteHashResult(string Algorithm, string hash, string path)
         {
-            FileHashInfo result = new FileHashInfo();
+            FileHashInfo result = new();
             result.Algorithm = Algorithm;
             result.Hash = hash;
             result.Path = path;

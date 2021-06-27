@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         return false;
                     }
 
-                    if (!(view.mainControl is ComplexControlBody) && !(view.mainControl is ListControlBody))
+                    if (view.mainControl is not ComplexControlBody && view.mainControl is not ListControlBody)
                     {
                         // Error at XPath {0} in file {1}: Out Of Band views can only have CustomControl or ListControl.
                         ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidControlForOutOfBandView, ComputeCurrentXPath(), FilePath));

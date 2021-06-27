@@ -87,7 +87,6 @@ namespace Microsoft.PowerShell
         /// If the converting the user input to the prompt field type fails unless it is caused by
         ///     OverflowException or FormatException
         /// </exception>
-
         public override
         Dictionary<string, PSObject>
         Prompt(string caption, string message, Collection<FieldDescription> descriptions)
@@ -148,8 +147,6 @@ namespace Microsoft.PowerShell
                     string fieldPrompt = null;
                     fieldPrompt = desc.Name;
 
-                    bool fieldEchoOnPrompt = true;
-
                     // FieldDescription.ParameterAssemblyFullName never returns null. But this is
                     // defense in depth.
                     if (string.IsNullOrEmpty(desc.ParameterAssemblyFullName))
@@ -202,18 +199,28 @@ namespace Microsoft.PowerShell
 
                         StringBuilder fieldPromptList = new StringBuilder(fieldPrompt);
                         // fieldPromptList = fieldPrompt + "[i] :"
-                        fieldPromptList.Append("[");
+                        fieldPromptList.Append('[');
 
                         while (true)
                         {
                             fieldPromptList.Append(
                                 string.Format(CultureInfo.InvariantCulture, "{0}]: ", inputList.Count));
-                            bool inputListEnd = false;
+                            bool endListInput = false;
                             object convertedObj = null;
-                            string inputString = PromptForSingleItem(elementType, fieldPromptList.ToString(), fieldPrompt, caption, message,
-                                desc, fieldEchoOnPrompt, true, out inputListEnd, out cancelInput, out convertedObj);
+                            _ = PromptForSingleItem(
+                                elementType,
+                                fieldPromptList.ToString(),
+                                fieldPrompt,
+                                caption,
+                                message,
+                                desc,
+                                fieldEchoOnPrompt: true,
+                                listInput: true,
+                                out endListInput,
+                                out cancelInput,
+                                out convertedObj);
 
-                            if (cancelInput || inputListEnd)
+                            if (cancelInput || endListInput)
                             {
                                 break;
                             }
@@ -244,10 +251,20 @@ namespace Microsoft.PowerShell
                             fieldPrompt);
                         // field is not a list
                         object convertedObj = null;
-                        bool dummy = false;
 
-                        PromptForSingleItem(fieldType, printFieldPrompt, fieldPrompt, caption, message, desc,
-                                            fieldEchoOnPrompt, false, out dummy, out cancelInput, out convertedObj);
+                        _ = PromptForSingleItem(
+                            fieldType,
+                            printFieldPrompt,
+                            fieldPrompt,
+                            caption,
+                            message,
+                            desc,
+                            fieldEchoOnPrompt: true,
+                            listInput: false,
+                            endListInput: out _,
+                            out cancelInput,
+                            out convertedObj);
+
                         if (!cancelInput)
                         {
                             inputPSObject = PSObject.AsPSObject(convertedObj);
@@ -475,7 +492,6 @@ namespace Microsoft.PowerShell
         /// <param name="desc"></param>
         /// <param name="inputDone"></param>
         /// <returns></returns>
-
         private string PromptCommandMode(string input, FieldDescription desc, out bool inputDone)
         {
             Dbg.Assert(input != null && input.StartsWith(PromptCommandPrefix, StringComparison.OrdinalIgnoreCase),
@@ -544,4 +560,3 @@ namespace Microsoft.PowerShell
         private const string PromptCommandPrefix = "!";
     }
 }   // namespace
-

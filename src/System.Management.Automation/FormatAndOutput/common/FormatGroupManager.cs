@@ -121,4 +121,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private object _currentGroupingKeyPropertyValue = AutomationNull.Value;
     }
 }
-

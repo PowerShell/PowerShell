@@ -38,7 +38,7 @@ namespace System.Management.Automation.InteropServices
 
             public Delegate Delegate { get; set; }
 
-            public bool WrapArgs { get; private set; }
+            public bool WrapArgs { get; }
 
             public object? Invoke(object[] args)
             {

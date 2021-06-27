@@ -30,6 +30,7 @@ namespace System.Management.Automation.Language
         }
 
         public TypeDefinitionAst Type { get; set; }
+
         public List<string> ExternalNamespaces { get; set; }
 
         public bool IsAmbiguous()
@@ -178,7 +179,7 @@ namespace System.Management.Automation.Language
             //     class C1 { [C2]$x }
             //     class C2 { [C1]$c1 }
 
-            var types = ast.FindAll(x => x is TypeDefinitionAst, searchNestedScriptBlocks: false);
+            var types = ast.FindAll(static x => x is TypeDefinitionAst, searchNestedScriptBlocks: false);
             foreach (var type in types)
             {
                 AddType((TypeDefinitionAst)type);
@@ -301,7 +302,7 @@ namespace System.Management.Automation.Language
                         InitialSessionState iss = InitialSessionState.Create();
                         iss.Commands.Add(new SessionStateCmdletEntry("Get-Module", typeof(GetModuleCommand), null));
                         var sessionStateProviderEntry = new SessionStateProviderEntry(FileSystemProvider.ProviderName, typeof(FileSystemProvider), null);
-                        var snapin = PSSnapInReader.ReadEnginePSSnapIns().FirstOrDefault(snapIn => snapIn.Name.Equals("Microsoft.PowerShell.Core", StringComparison.OrdinalIgnoreCase));
+                        var snapin = PSSnapInReader.ReadEnginePSSnapIns().FirstOrDefault(static snapIn => snapIn.Name.Equals("Microsoft.PowerShell.Core", StringComparison.OrdinalIgnoreCase));
                         sessionStateProviderEntry.SetPSSnapIn(snapin);
                         iss.Providers.Add(sessionStateProviderEntry);
                         t_usingStatementResolvePowerShell = PowerShell.Create(iss);

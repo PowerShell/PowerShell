@@ -540,7 +540,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="matches"></param>
         /// <param name="jobsToSearch"></param>
         /// <returns></returns>
-        private bool FindJobsMatchingByFilterHelper(List<Job> matches, List<Job> jobsToSearch)
+        private static bool FindJobsMatchingByFilterHelper(List<Job> matches, List<Job> jobsToSearch)
         {
             // check that filter only has job properties
             // if so, filter on one at a time using helpers.
@@ -1011,7 +1011,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Members
 
-        private HashSet<Guid> _pendingJobs = new HashSet<Guid>();
+        private readonly HashSet<Guid> _pendingJobs = new HashSet<Guid>();
         private readonly ManualResetEvent _waitForJobs = new ManualResetEvent(false);
 
         private readonly Dictionary<Job2, EventHandler<AsyncCompletedEventArgs>> _cleanUpActions =

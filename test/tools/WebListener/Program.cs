@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,9 +21,9 @@ namespace mvc
     {
         public static void Main(string[] args)
         {
-            if (args.Count() != 6)
+            if (args.Length != 7)
             {
-                System.Console.WriteLine("Required: <CertificatePath> <CertificatePassword> <HTTPPortNumber> <HTTPSPortNumberTls2> <HTTPSPortNumberTls11> <HTTPSPortNumberTls>");
+                System.Console.WriteLine("Required: <CertificatePath> <CertificatePassword> <HTTPPortNumber> <HTTPSPortNumberTls12> <HTTPSPortNumberTls11> <HTTPSPortNumberTls> <HTTPSPortNumberTls12>");
                 Environment.Exit(1);
             }
 
@@ -41,7 +42,7 @@ namespace mvc
                        HttpsConnectionAdapterOptions httpsOption = new HttpsConnectionAdapterOptions();
                        httpsOption.SslProtocols = SslProtocols.Tls12;
                        httpsOption.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
-                       httpsOption.ClientCertificateValidation = (inCertificate, inChain, inPolicy) => {return true;};
+                       httpsOption.ClientCertificateValidation = (inCertificate, inChain, inPolicy) => { return true; };
                        httpsOption.CheckCertificateRevocation = false;
                        httpsOption.ServerCertificate = certificate;
                        listenOptions.UseHttps(httpsOption);
@@ -52,7 +53,7 @@ namespace mvc
                        HttpsConnectionAdapterOptions httpsOption = new HttpsConnectionAdapterOptions();
                        httpsOption.SslProtocols = SslProtocols.Tls11;
                        httpsOption.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
-                       httpsOption.ClientCertificateValidation = (inCertificate, inChain, inPolicy) => {return true;};
+                       httpsOption.ClientCertificateValidation = (inCertificate, inChain, inPolicy) => { return true; };
                        httpsOption.CheckCertificateRevocation = false;
                        httpsOption.ServerCertificate = certificate;
                        listenOptions.UseHttps(httpsOption);
@@ -63,7 +64,18 @@ namespace mvc
                        HttpsConnectionAdapterOptions httpsOption = new HttpsConnectionAdapterOptions();
                        httpsOption.SslProtocols = SslProtocols.Tls;
                        httpsOption.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
-                       httpsOption.ClientCertificateValidation = (inCertificate, inChain, inPolicy) => {return true;};
+                       httpsOption.ClientCertificateValidation = (inCertificate, inChain, inPolicy) => { return true; };
+                       httpsOption.CheckCertificateRevocation = false;
+                       httpsOption.ServerCertificate = certificate;
+                       listenOptions.UseHttps(httpsOption);
+                   });
+                   options.Listen(IPAddress.Loopback, int.Parse(args[6]), listenOptions =>
+                   {
+                       var certificate = new X509Certificate2(args[0], args[1]);
+                       HttpsConnectionAdapterOptions httpsOption = new HttpsConnectionAdapterOptions();
+                       httpsOption.SslProtocols = SslProtocols.Tls13;
+                       httpsOption.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
+                       httpsOption.ClientCertificateValidation = (inCertificate, inChain, inPolicy) => { return true; };
                        httpsOption.CheckCertificateRevocation = false;
                        httpsOption.ServerCertificate = certificate;
                        listenOptions.UseHttps(httpsOption);

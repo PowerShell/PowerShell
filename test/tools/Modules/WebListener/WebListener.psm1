@@ -108,7 +108,10 @@ function Start-WebListener
         [int]$Tls11Port = 8085,
 
         [ValidateRange(1,65535)]
-        [int]$TlsPort = 8086
+        [int]$TlsPort = 8086,
+
+        [ValidateRange(1,65535)]
+        [int]$Tls13Port = 8087
     )
 
     process
@@ -141,10 +144,11 @@ function Start-WebListener
             'serverPfxPassword: {0}' -f $using:serverPfxPassword
             'HttpPort: {0}' -f $using:HttpPort
             'Https: {0}' -f $using:HttpsPort
+            'Tls13Port: {0}' -f $using:Tls13Port
             'Tls11Port: {0}' -f $using:Tls11Port
             'TlsPort: {0}' -f $using:TlsPort
             $env:ASPNETCORE_ENVIRONMENT = 'Development'
-            & $using:appExe $using:serverPfxPath $using:serverPfxPassword $using:HttpPort $using:HttpsPort $using:Tls11Port $using:TlsPort
+            & $using:appExe $using:serverPfxPath $using:serverPfxPassword $using:HttpPort $using:HttpsPort $using:Tls11Port $using:TlsPort $using:Tls13Port
         }
 
         $Script:WebListener = [WebListener]@{
@@ -208,7 +212,7 @@ function Get-WebListenerUrl {
     param (
         [switch]$Https,
 
-        [ValidateSet('Default', 'Tls12', 'Tls11', 'Tls')]
+        [ValidateSet('Default', 'Tls13', 'Tls12', 'Tls11', 'Tls')]
         [string]$SslProtocol = 'Default',
 
         [ValidateSet(

@@ -45,7 +45,7 @@ Add another package source with name `powershell-core` and source `https://power
             [Parameter(Mandatory = true)]
             public string Name { get; set; }
 
-            // Overide the ProcessRecord method to process
+            // Override the ProcessRecord method to process
             // the supplied user name and write out a
             // greeting to the user by calling the WriteObject
             // method.
@@ -107,7 +107,7 @@ It should find `PowerShellStandard.Library` package, select it and it will show 
             [Parameter(Mandatory = true)]
             public string Name { get; set; }
 
-            // Overide the ProcessRecord method to process
+            // Override the ProcessRecord method to process
             // the supplied user name and write out a
             // greeting to the user by calling the WriteObject
             // method.

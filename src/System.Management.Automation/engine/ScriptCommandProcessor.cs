@@ -131,7 +131,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="helpTarget">Help target to request.</param>
         /// <param name="helpCategory">Help category to request.</param>
-        /// <returns><c>true</c> if user requested help; <c>false</c> otherwise.</returns>
+        /// <returns><see langword="true"/> if user requested help; <see langword="false"/> otherwise.</returns>
         internal override bool IsHelpRequested(out string helpTarget, out HelpCategory helpCategory)
         {
             if (arguments != null && CommandInfo != null && !string.IsNullOrEmpty(CommandInfo.Name) && _scriptBlock != null)
@@ -274,7 +274,7 @@ namespace System.Management.Automation
         {
             _scriptBlock = base._scriptBlock;
             _obsoleteAttribute = _scriptBlock.ObsoleteAttribute;
-            _runOptimizedCode = _scriptBlock.Compile(optimized: _context._debuggingMode > 0 ? false : UseLocalScope);
+            _runOptimizedCode = _scriptBlock.Compile(optimized: _context._debuggingMode <= 0 && UseLocalScope);
             _localsTuple = _scriptBlock.MakeLocalsTuple(_runOptimizedCode);
 
             if (UseLocalScope)

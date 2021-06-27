@@ -387,9 +387,8 @@ namespace System.Management.Automation
         #region private data
 
         // A private reference to the internal session state of the engine.
-        private SessionStateInternal _sessionState;
+        private readonly SessionStateInternal _sessionState;
 
         #endregion private data
     }
 }
-

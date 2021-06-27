@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace mvc.Controllers
             }
             else
             {
-                Response.Headers.Add("WWW-Authenticate","Basic realm=\"WebListener\"");
+                Response.Headers.Add("WWW-Authenticate", "Basic realm=\"WebListener\"");
                 Response.StatusCode = 401;
                 return Json("401 Unauthorized");
             }
@@ -44,7 +45,7 @@ namespace mvc.Controllers
             }
             else
             {
-                Response.Headers.Add("WWW-Authenticate","Negotiate");
+                Response.Headers.Add("WWW-Authenticate", "Negotiate");
                 Response.StatusCode = 401;
                 return Json("401 Unauthorized");
             }
@@ -61,7 +62,7 @@ namespace mvc.Controllers
             }
             else
             {
-                Response.Headers.Add("WWW-Authenticate","NTLM");
+                Response.Headers.Add("WWW-Authenticate", "NTLM");
                 Response.StatusCode = 401;
                 return Json("401 Unauthorized");
             }

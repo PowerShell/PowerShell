@@ -315,7 +315,7 @@ namespace Microsoft.PowerShell
             int dateStartIndex = updateFileName.LastIndexOf('_') + 1;
 
             if (!DateTime.TryParse(
-                    updateFileName.AsSpan().Slice(dateStartIndex),
+                    updateFileName.AsSpan(dateStartIndex),
                     CultureInfo.InvariantCulture,
                     DateTimeStyles.AssumeLocal,
                     out lastUpdateDate))

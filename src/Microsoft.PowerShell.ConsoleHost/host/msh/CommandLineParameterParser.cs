@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell
             return maxLength - Path.GetTempPath().Length;
         }
 
-        internal bool? TestHookConsoleInputRedirected;
+        internal bool? InputRedirectedTestHook;
 
         private static readonly string[] s_validParameters = {
             "sta",
@@ -209,6 +209,7 @@ namespace Microsoft.PowerShell
         }
 
         #region Internal properties
+
         internal bool AbortStartup
         {
             get
@@ -244,6 +245,17 @@ namespace Microsoft.PowerShell
                 return _wasCommandEncoded;
             }
         }
+
+#if !UNIX
+        internal ProcessWindowStyle? WindowStyle
+        {
+            get
+            {
+                AssertArgumentsParsed();
+                return _windowStyle;
+            }
+        }
+#endif
 
         internal bool ShowBanner
         {
@@ -315,6 +327,7 @@ namespace Microsoft.PowerShell
                 AssertArgumentsParsed();
                 return _configurationName;
             }
+
             set
             {
                 if (!string.IsNullOrEmpty(value))
@@ -464,7 +477,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    return true;
+                    return Platform.IsStaSupported;
                 }
             }
         }
@@ -589,13 +602,14 @@ namespace Microsoft.PowerShell
         /// </returns>
         private (string switchKey, bool shouldBreak) GetSwitchKey(string[] args, ref int argIndex, ref bool noexitSeen)
         {
-            string switchKey = args[argIndex].Trim().ToLowerInvariant();
+            string switchKey = args[argIndex].Trim();
             if (string.IsNullOrEmpty(switchKey))
             {
                 return (switchKey: string.Empty, shouldBreak: false);
             }
 
-            if (!CharExtensions.IsDash(switchKey[0]) && switchKey[0] != '/')
+            char firstChar = switchKey[0];
+            if (!CharExtensions.IsDash(firstChar) && firstChar != '/')
             {
                 // then it's a file
                 --argIndex;
@@ -609,7 +623,7 @@ namespace Microsoft.PowerShell
             switchKey = switchKey.Substring(1);
 
             // chop off the second dash so we're agnostic wrt specifying - or --
-            if (!string.IsNullOrEmpty(switchKey) && CharExtensions.IsDash(switchKey[0]))
+            if (!string.IsNullOrEmpty(switchKey) && CharExtensions.IsDash(firstChar) && switchKey[0] == firstChar)
             {
                 switchKey = switchKey.Substring(1);
             }
@@ -635,7 +649,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(match.Contains(smallestUnambiguousMatch), "sUM should be a substring of match");
 
             return (switchKey.Length >= smallestUnambiguousMatch.Length
-                    && match.IndexOf(switchKey, StringComparison.Ordinal) == 0);
+                    && match.StartsWith(switchKey, StringComparison.OrdinalIgnoreCase));
         }
 
         #endregion
@@ -700,6 +714,14 @@ namespace Microsoft.PowerShell
                 throw new InvalidOperationException("This instance has already been used. Create a new instance.");
             }
 
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] is null)
+                {
+                    throw new ArgumentNullException(nameof(args), CommandLineParameterParserStrings.NullElementInArgs);
+                }
+            }
+
             // Indicates that we've called this method on this instance, and that when it's done, the state variables
             // will reflect the parse.
             _dirty = true;
@@ -745,8 +767,8 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "login", "l"))
                 {
-                    // This handles -Login on Windows only, where it does nothing.
-                    // On *nix, -Login is handled much earlier to improve startup performance.
+                    // On Windows, '-Login' does nothing.
+                    // On *nix, '-Login' is already handled much earlier to improve startup performance, so we do nothing here.
                 }
                 else if (MatchSwitch(switchKey, "noexit", "noe"))
                 {
@@ -846,9 +868,7 @@ namespace Microsoft.PowerShell
 
                     try
                     {
-                        ProcessWindowStyle style = (ProcessWindowStyle)LanguagePrimitives.ConvertTo(
-                            args[i], typeof(ProcessWindowStyle), CultureInfo.InvariantCulture);
-                        ConsoleControl.SetConsoleMode(style);
+                        _windowStyle = LanguagePrimitives.ConvertTo<ProcessWindowStyle>(args[i]);
                     }
                     catch (PSInvalidCastException e)
                     {
@@ -909,7 +929,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "sta", "sta"))
                 {
-                    if (!Platform.IsWindowsDesktop)
+                    if (!Platform.IsWindowsDesktop || !Platform.IsStaSupported)
                     {
                         SetCommandLineError(
                             CommandLineParameterParserStrings.STANotImplemented);
@@ -1055,10 +1075,10 @@ namespace Microsoft.PowerShell
         private bool ParseFile(string[] args, ref int i, bool noexitSeen)
         {
             // Try parse '$true', 'true', '$false' and 'false' values.
-            object ConvertToBoolIfPossible(string arg)
+            static object ConvertToBoolIfPossible(string arg)
             {
                 // Before parsing we skip '$' if present.
-                return arg.Length > 0 && bool.TryParse(arg.AsSpan().Slice(arg[0] == '$' ? 1 : 0), out bool boolValue)
+                return arg.Length > 0 && bool.TryParse(arg.AsSpan(arg[0] == '$' ? 1 : 0), out bool boolValue)
                     ? (object)boolValue
                     : (object)arg;
             }
@@ -1112,11 +1132,11 @@ namespace Microsoft.PowerShell
                 {
                     if (args[i].StartsWith('-') && args[i].Length > 1)
                     {
-                        string param = args[i].Substring(1, args[i].Length - 1).ToLower();
+                        string param = args[i].Substring(1, args[i].Length - 1);
                         StringBuilder possibleParameters = new StringBuilder();
                         foreach (string validParameter in s_validParameters)
                         {
-                            if (validParameter.Contains(param))
+                            if (validParameter.Contains(param, StringComparison.OrdinalIgnoreCase))
                             {
                                 possibleParameters.Append("\n  -");
                                 possibleParameters.Append(validParameter);
@@ -1234,7 +1254,7 @@ namespace Microsoft.PowerShell
                     return false;
                 }
 
-                if (TestHookConsoleInputRedirected.HasValue ? !TestHookConsoleInputRedirected.Value : !Console.IsInputRedirected)
+                if (InputRedirectedTestHook.HasValue ? !InputRedirectedTestHook.Value : !Console.IsInputRedirected)
                 {
                     SetCommandLineError(CommandLineParameterParserStrings.StdinNotRedirected, showHelp: true);
                     return false;
@@ -1333,13 +1353,14 @@ namespace Microsoft.PowerShell
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
         private bool _outputFormatSpecified = false;
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;
-        private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
+        private readonly Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
         private string? _file;
         private string? _executionPolicy;
         private string? _settingsFile;
         private string? _workingDirectory;
 
 #if !UNIX
+        private ProcessWindowStyle? _windowStyle;
         private bool _removeWorkingDirectoryTrailingCharacter = false;
 #endif
     }

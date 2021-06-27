@@ -1349,7 +1349,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The full details of the variable path.
         /// </summary>
-        public VariablePath VariablePath { get; private set; }
+        public VariablePath VariablePath { get; }
 
         internal override string ToDebugString(int indent)
         {
@@ -1503,12 +1503,12 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The stream being redirected.
         /// </summary>
-        public RedirectionStream FromStream { get; private set; }
+        public RedirectionStream FromStream { get; }
 
         /// <summary>
         /// The stream being written to.
         /// </summary>
-        public RedirectionStream ToStream { get; private set; }
+        public RedirectionStream ToStream { get; }
     }
 
     /// <summary>
@@ -1526,12 +1526,12 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The stream being redirected.
         /// </summary>
-        public RedirectionStream FromStream { get; private set; }
+        public RedirectionStream FromStream { get; }
 
         /// <summary>
         /// True if the redirection should append the file rather than create a new file.
         /// </summary>
-        public bool Append { get; private set; }
+        public bool Append { get; }
     }
 
     internal class UnscannedSubExprToken : StringLiteralToken
@@ -1542,6 +1542,6 @@ namespace System.Management.Automation.Language
             this.SkippedCharOffsets = skippedCharOffsets;
         }
 
-        internal BitArray SkippedCharOffsets { get; private set; }
+        internal BitArray SkippedCharOffsets { get; }
     }
 }

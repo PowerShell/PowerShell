@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
                         error = EventingStrings.EventIdentifierNotFound;
                     }
 
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         new ArgumentException(string.Format(System.Globalization.CultureInfo.CurrentCulture, error, identifier)),
                         "INVALID_SOURCE_IDENTIFIER",
                         ErrorCategory.InvalidArgument,

@@ -17,7 +17,7 @@ namespace System.Management.Automation.Remoting
     {
         private readonly HashSet<string> _supportedCommands = new HashSet<string>();
 
-        internal Version PSVersion { get; private set; }
+        internal Version PSVersion { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoteDebuggingCapability"/> class.

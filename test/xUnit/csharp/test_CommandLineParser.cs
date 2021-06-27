@@ -19,7 +19,7 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.Parse(new string[0]);
+            cpp.Parse(System.Array.Empty<string>());
 
             Assert.False(cpp.AbortStartup);
             Assert.Empty(cpp.Args);
@@ -48,7 +48,15 @@ namespace PSTests.Parallel
             Assert.False(cpp.SkipProfiles);
             Assert.False(cpp.SocketServerMode);
             Assert.False(cpp.SSHServerMode);
-            Assert.True(cpp.StaMode);
+            if (Platform.IsWindows)
+            {
+                Assert.True(cpp.StaMode);
+            }
+            else
+            {
+                Assert.False(cpp.StaMode);
+            }
+
             Assert.False(cpp.ThrowOnReadAndPrompt);
             Assert.False(cpp.WasInitialCommandEncoded);
             Assert.Null(cpp.WorkingDirectory);
@@ -60,9 +68,18 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.Parse(new string[0]);
+            cpp.Parse(System.Array.Empty<string>());
 
-            Assert.Throws<System.InvalidOperationException>(() => cpp.Parse(new string[0]));
+            Assert.Throws<System.InvalidOperationException>(() => cpp.Parse(System.Array.Empty<string>()));
+        }
+
+        [Theory]
+        [InlineData("arg1", null, "arg3")]
+        public static void Test_ARGS_With_Null(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            Assert.Throws<System.ArgumentNullException>(() => cpp.Parse(commandLine));
         }
 
         [Theory]
@@ -132,6 +149,47 @@ namespace PSTests.Parallel
             Assert.False(cpp.NoPrompt);
             Assert.Contains(commandLine[0], cpp.ErrorMessage);
             Assert.Contains("-noprofile", cpp.ErrorMessage);
+        }
+
+        [Theory]
+        [InlineData("-Version")]
+        [InlineData("--Version")]
+        [InlineData("/Version")]
+        public static void TestParameter_Dash_Or_Slash(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.False(cpp.AbortStartup);
+            Assert.False(cpp.NoExit);
+            Assert.True(cpp.NonInteractive);
+            Assert.False(cpp.ShowBanner);
+            Assert.False(cpp.ShowShortHelp);
+            Assert.False(cpp.NoPrompt);
+            Assert.True(cpp.ShowVersion);
+            Assert.True(cpp.SkipProfiles);
+            Assert.Null(cpp.ErrorMessage);
+        }
+
+        [Theory]
+        [InlineData("/-Version")]
+        [InlineData("-/Version")]
+        public static void TestParameter_Wrong_Dash_And_Slash(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.True(cpp.AbortStartup);
+            Assert.False(cpp.NoExit);
+            Assert.False(cpp.NonInteractive);
+            Assert.False(cpp.ShowBanner);
+            Assert.True(cpp.ShowShortHelp);
+            Assert.False(cpp.NoPrompt);
+            Assert.False(cpp.ShowVersion);
+            Assert.False(cpp.SkipProfiles);
+            Assert.Contains(commandLine[0], cpp.ErrorMessage);
         }
 
         [Theory]
@@ -475,7 +533,7 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.TestHookConsoleInputRedirected = false;
+            cpp.InputRedirectedTestHook = false;
 
             cpp.Parse(commandLine);
 
@@ -512,7 +570,7 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.TestHookConsoleInputRedirected = true;
+            cpp.InputRedirectedTestHook = true;
 
             cpp.Parse(commandLine);
 
@@ -855,7 +913,7 @@ namespace PSTests.Parallel
         {
             var cpp = new CommandLineParameterParser();
 
-            cpp.TestHookConsoleInputRedirected = true;
+            cpp.InputRedirectedTestHook = true;
 
             cpp.Parse(commandLine);
 
@@ -960,13 +1018,14 @@ namespace PSTests.Parallel
 
         public class TestDataSettingsFile : IEnumerable<object[]>
         {
-            private string _fileName = Path.GetTempFileName();
+            private readonly string _fileName = Path.GetTempFileName();
 
             public IEnumerator<object[]> GetEnumerator()
             {
                 yield return new object[] { "-settingsfile", _fileName };
                 yield return new object[] { "-settings", _fileName };
             }
+
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
@@ -1153,7 +1212,7 @@ namespace PSTests.Parallel
 
         public class TestDataLastFile : IEnumerable<object[]>
         {
-            private string _fileName = Path.GetTempFileName();
+            private readonly string _fileName = Path.GetTempFileName();
 
             public IEnumerator<object[]> GetEnumerator()
             {
@@ -1175,7 +1234,15 @@ namespace PSTests.Parallel
             Assert.False(cpp.NoExit);
             Assert.False(cpp.ShowShortHelp);
             Assert.False(cpp.ShowBanner);
-            Assert.True(cpp.StaMode);
+            if (Platform.IsWindows)
+            {
+                Assert.True(cpp.StaMode);
+            }
+            else
+            {
+                Assert.False(cpp.StaMode);
+            }
+
             Assert.Equal(CommandLineParameterParser.NormalizeFilePath(commandLine[commandLine.Length - 1]), cpp.File);
             Assert.Null(cpp.ErrorMessage);
         }

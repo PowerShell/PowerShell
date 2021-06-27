@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 
 namespace Microsoft.Management.UI.Internal
@@ -88,6 +89,7 @@ namespace Microsoft.Management.UI.Internal
             }
         }
 
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private int CompareData(object firstValue, object secondValue, StringComparison stringComparison)
         {
             // If both values are null, do nothing; otherwise, if one is null promote the other \\

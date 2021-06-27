@@ -72,6 +72,39 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             $result[1]     | Should -BeExactly "world"
         }
     }
+    Context "Set-Content should work with alternate data streams on Windows" {
+        BeforeAll {
+            if ( -Not $IsWindows )
+            {
+                return
+            }
+            $altStreamPath = "$TESTDRIVE/altStream.txt"
+            $altStreamPath2 = "$TESTDRIVE/altStream2.txt"
+            $altStreamDirectory = "$TESTDRIVE/altstreamdir"
+            $altStreamDirectory2 = "$TESTDRIVE/altstream2dir"
+            $stringData = "test data"
+            $streamName = "test"
+            $absentStreamName = "noExist"
+            $item = New-Item -type file $altStreamPath
+            $altstreamdiritem = New-Item -type directory $altStreamDirectory
+        }
+        It "Should create a new data stream on a file" -Skip:(-Not $IsWindows) {
+            Set-Content -Path $altStreamPath -Stream $streamName -Value $stringData
+            Get-Content -Path $altStreamPath -Stream $streamName | Should -BeExactly $stringData
+        }
+        It "Should create a new data stream on a file using colon syntax" -Skip:(-Not $IsWindows) {
+            Set-Content -Path ${altStreamPath2}:${streamName} -Value $stringData
+            Get-Content -Path ${altStreamPath2} -Stream $streamName | Should -BeExactly $stringData
+        }
+        It "Should create a new data stream on a directory" -Skip:(-Not $IsWindows) {
+            Set-Content -Path $altStreamDirectory -Stream $streamName -Value $stringData
+            Get-Content -Path $altStreamDirectory -Stream $streamName | Should -BeExactly $stringData
+        }
+        It "Should create a new data stream on a directory using colon syntax" -Skip:(-Not $IsWindows) {
+            Set-Content -Path ${altStreamDirectory2}:${streamName} -Value $stringData
+            Get-Content -Path ${altStreamDirectory2} -Stream ${streamName} | Should -BeExactly $stringData
+        }
+    }
 }
 
 Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI', 'RequireAdminOnWindows') {

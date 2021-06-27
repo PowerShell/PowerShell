@@ -31,7 +31,6 @@ namespace System.Management.Automation.ComInterop
         internal ComMethodDesc(ITypeInfo typeInfo, FUNCDESC funcDesc)
             : this(funcDesc.memid)
         {
-
             InvokeKind = funcDesc.invkind;
 
             string[] rgNames = new string[1 + funcDesc.cParams];
@@ -96,7 +95,9 @@ namespace System.Management.Automation.ComInterop
         }
 
         internal int ParamCount { get; }
+
         public Type ReturnType { get; set; }
+
         public Type InputType { get; set; }
 
         public ParameterInformation[] ParameterInformation

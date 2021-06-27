@@ -24,7 +24,6 @@ namespace Microsoft.PowerShell
     /// This class uses lots of nearly identical helper functions to recursively traverse the tree. If I weren't so pressed
     /// for time, I would see if generic methods could be used to collapse the number of traversers.
     /// </summary>
-
     internal
     class PendingProgress
     {
@@ -42,7 +41,6 @@ namespace Microsoft.PowerShell
         /// The ProgressRecord received that will either update the status of an activity which we are already tracking, or
         /// represent a new activity that we need to track.
         /// </param>
-
         internal
         void
         Update(Int64 sourceId, ProgressRecord record)
@@ -179,7 +177,6 @@ namespace Microsoft.PowerShell
         /// <param name="indexToRemove">
         /// Index into the list of the node to be removed.
         /// </param>
-
         private
         void
         RemoveNode(ArrayList nodes, int indexToRemove)
@@ -255,7 +252,6 @@ namespace Microsoft.PowerShell
         /// <param name="nodeToAdd">
         /// Node to be added.
         /// </param>
-
         private
         void
         AddNode(ArrayList nodes, ProgressNode nodeToAdd)
@@ -302,6 +298,10 @@ namespace Microsoft.PowerShell
             private int _oldestSoFar;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "Accesses instance members in preprocessor branch.")]
         private
         ProgressNode
         FindOldestLeafmostNodeHelper(ArrayList treeToSearch, out ArrayList listWhereFound, out int indexWhereFound)
@@ -356,7 +356,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Convenience overload.
         /// </summary>
-
         private
         ProgressNode
         FindNodeById(Int64 sourceId, int activityId)
@@ -404,8 +403,8 @@ namespace Microsoft.PowerShell
             int
             IndexWhereFound = -1;
 
-            private int _idToFind = -1;
-            private Int64 _sourceIdToFind;
+            private readonly int _idToFind = -1;
+            private readonly Int64 _sourceIdToFind;
         }
 
         /// <summary>
@@ -427,7 +426,6 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The found node, or null if no suitable node was located.
         /// </returns>
-
         private
         ProgressNode
         FindNodeById(Int64 sourceId, int activityId, out ArrayList listWhereFound, out int indexWhereFound)
@@ -465,7 +463,6 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The found node, or null if no suitable node was located.
         /// </returns>
-
         private
         ProgressNode
         FindOldestNodeOfGivenStyle(ArrayList nodes, int oldestSoFar, ProgressNode.RenderStyle style)
@@ -519,7 +516,11 @@ namespace Microsoft.PowerShell
             Visit(ProgressNode node, ArrayList unused, int unusedToo)
             {
                 node.Age = Math.Min(node.Age + 1, Int32.MaxValue - 1);
-                node.Style = ProgressNode.RenderStyle.FullPlus;
+
+                node.Style = ProgressNode.IsMinimalProgressRenderingEnabled()
+                    ? ProgressNode.RenderStyle.Ansi
+                    : node.Style = ProgressNode.RenderStyle.FullPlus;
+
                 return true;
             }
         }
@@ -530,7 +531,6 @@ namespace Microsoft.PowerShell
         ///
         /// All nodes are aged every time a new ProgressRecord is received.
         /// </summary>
-
         private
         void
         AgeNodesAndResetStyle()
@@ -561,7 +561,6 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// An array of strings containing the textual representation of the outstanding progress activities.
         /// </returns>
-
         internal
         string[]
         Render(int maxWidth, int maxHeight, PSHostRawUserInterface rawUI)
@@ -587,6 +586,13 @@ namespace Microsoft.PowerShell
             }
 
             ArrayList result = new ArrayList();
+
+            if (ProgressNode.IsMinimalProgressRenderingEnabled())
+            {
+                RenderHelper(result, _topLevelNodes, indentation: 0, maxWidth, rawUI);
+                return (string[])result.ToArray(typeof(string));
+            }
+
             string border = StringUtil.Padding(maxWidth);
 
             result.Add(border);
@@ -631,7 +637,6 @@ namespace Microsoft.PowerShell
         /// <param name="rawUI">
         /// The PSHostRawUserInterface used to gauge string widths in the rendering.
         /// </param>
-
         private
         void
         RenderHelper(ArrayList strings, ArrayList nodes, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
@@ -686,9 +691,9 @@ namespace Microsoft.PowerShell
                 return true;
             }
 
-            private PSHostRawUserInterface _rawUi;
-            private int _maxHeight;
-            private int _maxWidth;
+            private readonly PSHostRawUserInterface _rawUi;
+            private readonly int _maxHeight;
+            private readonly int _maxWidth;
 
             internal int Tally;
         }
@@ -708,7 +713,6 @@ namespace Microsoft.PowerShell
         /// </returns>
         /// <param name="maxWidth">
         /// </param>
-
         private int TallyHeight(PSHostRawUserInterface rawUi, int maxHeight, int maxWidth)
         {
             HeightTallyer ht = new HeightTallyer(rawUi, maxHeight, maxWidth);
@@ -724,7 +728,6 @@ namespace Microsoft.PowerShell
         /// <param name="nodes"></param>
         /// <param name="style"></param>
         /// <returns></returns>
-
         private
         bool
         AllNodesHaveGivenStyle(ArrayList nodes, ProgressNode.RenderStyle style)
@@ -759,7 +762,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Debugging code. NodeVisitor that counts up the number of nodes in the tree.
         /// </summary>
-
         private
         class
         CountingNodeVisitor : NodeVisitor
@@ -783,7 +785,6 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The number of nodes in the tree.
         /// </returns>
-
         private
         int
         CountNodes()
@@ -823,7 +824,6 @@ namespace Microsoft.PowerShell
         /// false to indicate that all of the nodes are compressed to a given level, but that the rendering still can't fit
         /// within the constraint.
         /// </returns>
-
         private
         bool
         CompressToFitHelper(
@@ -836,11 +836,9 @@ namespace Microsoft.PowerShell
         {
             nodesCompressed = 0;
 
-            int age = 0;
-
             while (true)
             {
-                ProgressNode node = FindOldestNodeOfGivenStyle(_topLevelNodes, age, priorStyle);
+                ProgressNode node = FindOldestNodeOfGivenStyle(_topLevelNodes, oldestSoFar: 0, priorStyle);
                 if (node == null)
                 {
                     // We've compressed every node of the prior style already.
@@ -894,7 +892,6 @@ namespace Microsoft.PowerShell
         /// The number of nodes that were made invisible during the compression.
         ///
         ///</returns>
-
         private
         int
         CompressToFit(PSHostRawUserInterface rawUi, int maxHeight, int maxWidth)
@@ -983,7 +980,6 @@ namespace Microsoft.PowerShell
             /// <returns>
             /// true to continue visiting nodes, false if not.
             /// </returns>
-
             internal abstract
             bool
             Visit(ProgressNode node, ArrayList listWhereFound, int indexWhereFound);
@@ -1017,10 +1013,9 @@ namespace Microsoft.PowerShell
 
         #endregion
 
-        private ArrayList _topLevelNodes = new ArrayList();
+        private readonly ArrayList _topLevelNodes = new ArrayList();
         private int _nodeCount;
 
         private const int maxNodeCount = 128;
     }
 }   // namespace
-

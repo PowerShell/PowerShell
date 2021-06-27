@@ -12,9 +12,9 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
         $error.Clear()
 
         $command = [string]::Join('', @(
-            '[Console]::Error.Write(\"foo`n`nbar`n`nbaz\"); ',
-            '[Console]::Error.Write(\"middle\"); ',
-            '[Console]::Error.Write(\"foo`n`nbar`n`nbaz\")'
+            '[Console]::Error.Write("foo`n`nbar`n`nbaz"); ',
+            '[Console]::Error.Write("middle"); ',
+            '[Console]::Error.Write("foo`n`nbar`n`nbaz")'
         ))
 
         $out = & $powershell -noprofile -command $command 2>&1

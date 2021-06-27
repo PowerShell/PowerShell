@@ -281,7 +281,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter WriteEvents
         {
-            get { return _writeStateChangedEvents; }
+            get
+            {
+                return _writeStateChangedEvents;
+            }
 
             set
             {
@@ -294,7 +297,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter()]
         public SwitchParameter WriteJobInResults
         {
-            get { return _outputJobFirst; }
+            get
+            {
+                return _outputJobFirst;
+            }
 
             set
             {
@@ -768,7 +774,7 @@ namespace Microsoft.PowerShell.Commands
             // There is a bug in V2 that only remoting jobs work
             // with Receive-Job. This is being fixed
 
-            if (!(job is Job2) && job.UsesResultsCollection)
+            if (job is not Job2 && job.UsesResultsCollection)
             {
                 // extract results and handle them
                 Collection<PSStreamObject> results = ReadAll<PSStreamObject>(job.Results);

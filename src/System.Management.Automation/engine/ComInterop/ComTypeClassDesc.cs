@@ -24,8 +24,7 @@ namespace System.Management.Automation.ComInterop
             return Activator.CreateInstance(Type.GetTypeFromCLSID(Guid));
         }
 
-        internal ComTypeClassDesc(ComTypes.ITypeInfo typeInfo, ComTypeLibDesc typeLibDesc) :
-            base(typeInfo, typeLibDesc)
+        internal ComTypeClassDesc(ComTypes.ITypeInfo typeInfo, ComTypeLibDesc typeLibDesc) : base(typeInfo, typeLibDesc)
         {
             ComTypes.TYPEATTR typeAttr = ComRuntimeHelpers.GetTypeAttrForTypeInfo(typeInfo);
             Guid = typeAttr.guid;

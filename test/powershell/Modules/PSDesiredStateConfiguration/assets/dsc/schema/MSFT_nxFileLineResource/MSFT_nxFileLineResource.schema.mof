@@ -1,8 +1,0 @@
-[ClassVersion("1.0.0"), FriendlyName("nxFileLine")] 
-class MSFT_nxFileLineResource : OMI_BaseResource
-{
-[key,required] string FilePath;
-[write] string DoesNotContainPattern;
-[key,write] string ContainsLine;
-};
-

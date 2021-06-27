@@ -193,7 +193,10 @@ namespace System.Management.Automation
                 return Context.EngineSessionState.CheckScriptVisibility(_path);
             }
 
-            set { throw PSTraceSource.NewNotImplementedException(); }
+            set
+            {
+                throw PSTraceSource.NewNotImplementedException();
+            }
         }
 
         /// <summary>
@@ -239,7 +242,7 @@ namespace System.Management.Automation
             // If we are in ConstrainedLanguage mode but the defining language mode is FullLanguage, then we need
             // to parse the script contents in FullLanguage mode context.  Otherwise we will get bogus parsing errors
             // such as "Configuration keyword not allowed".
-            if (definingLanguageMode.HasValue && (definingLanguageMode == PSLanguageMode.FullLanguage))
+            if (definingLanguageMode.GetValueOrDefault() == PSLanguageMode.FullLanguage)
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
                 if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
@@ -358,9 +361,8 @@ namespace System.Management.Automation
         {
             get
             {
-                return _commandMetadata ??
-                       (_commandMetadata =
-                        new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
+                return _commandMetadata ??=
+                    new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS());
             }
         }
 
@@ -403,7 +405,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredApplicationId;
+                return data?.RequiredApplicationId;
             }
         }
 
@@ -417,7 +419,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredPSVersion;
+                return data?.RequiredPSVersion;
             }
         }
 
@@ -426,7 +428,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredPSEditions;
+                return data?.RequiredPSEditions;
             }
         }
 
@@ -435,7 +437,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiredModules;
+                return data?.RequiredModules;
             }
         }
 
@@ -444,7 +446,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? false : data.IsElevationRequired;
+                return data != null && data.IsElevationRequired;
             }
         }
 
@@ -458,7 +460,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? null : data.RequiresPSSnapIns;
+                return data?.RequiresPSSnapIns;
             }
         }
 
@@ -608,4 +610,3 @@ namespace System.Management.Automation
         public Version Version { get; internal set; }
     }
 }
-

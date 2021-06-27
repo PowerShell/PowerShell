@@ -235,9 +235,14 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should -BeExactly "h-llo"
         }
 
-        It "Empty command should fail" {
-            & $powershell -noprofile -c ''
+        It "Missing command should fail" {
+            & $powershell -noprofile -c
             $LASTEXITCODE | Should -Be 64
+        }
+
+        It "Empty space command should succeed" {
+            & $powershell -noprofile -c '' | Should -BeNullOrEmpty
+            $LASTEXITCODE | Should -Be 0
         }
 
         It "Whitespace command should succeed" {
@@ -1001,5 +1006,42 @@ Describe 'Console host name' -Tag CI {
     It 'Name is pwsh' -Pending {
         # waiting on https://github.com/dotnet/runtime/issues/33673
         (Get-Process -Id $PID).Name | Should -BeExactly 'pwsh'
+    }
+}
+
+Describe 'TERM env var' -Tag CI {
+    BeforeAll {
+        $oldTERM = $env:TERM
+        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRendering')))
+    }
+
+    AfterAll {
+        $env:TERM = $oldTERM
+        $PSDefaultParameterValues.Remove('It:Skip')
+    }
+
+    It 'TERM = "dumb"' {
+        $env:TERM = 'dumb'
+        pwsh -noprofile -command '$Host.UI.SupportsVirtualTerminal' | Should -BeExactly 'False'
+    }
+
+    It 'TERM = "<term>"' -TestCases @(
+        @{ term = "xterm-mono" }
+        @{ term = "xtermm" }
+    ) {
+        param ($term)
+
+        $env:TERM = $term
+        pwsh -noprofile -command '$PSStyle.OutputRendering' | Should -BeExactly 'PlainText'
+    }
+
+    It 'NO_COLOR' {
+        try {
+            $env:NO_COLOR = 1
+            pwsh -noprofile -command '$PSStyle.OutputRendering' | Should -BeExactly 'PlainText'
+        }
+        finally {
+            $env:NO_COLOR = $null
+        }
     }
 }

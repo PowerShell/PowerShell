@@ -4,7 +4,10 @@ parameters:
 jobs:
 - job: json
   variables:
-    runCodesignValidationInjection: false
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
   displayName: Create Json for Blob
   dependsOn:
     ${{ parameters.parentJobs }}
@@ -17,6 +20,9 @@ jobs:
   #  inputs:
   #    <task specific inputs>
   #  displayName: '<display name of task>'
+  - checkout: self
+    clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)

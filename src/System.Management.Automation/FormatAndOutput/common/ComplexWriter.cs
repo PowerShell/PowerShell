@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Helper object to manage the frame-based indentation and margins.
         /// </summary>
-        private IndentationManager _indentationManager = new IndentationManager();
+        private readonly IndentationManager _indentationManager = new IndentationManager();
 
         /// <summary>
         /// Buffer to accumulate partially constructed text.
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            private IndentationManager _mgr;
+            private readonly IndentationManager _mgr;
         }
 
         internal void Clear()
@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return val;
         }
 
-        private Stack<FrameInfo> _frameInfoStack = new Stack<FrameInfo>();
+        private readonly Stack<FrameInfo> _frameInfoStack = new Stack<FrameInfo>();
     }
 
     /// <summary>
@@ -331,7 +331,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static readonly char s_softHyphen = '\u00AD';
         private static readonly char s_hardHyphen = '\u2011';
         private static readonly char s_nonBreakingSpace = '\u00A0';
-        private static Collection<string> s_cultureCollection = new Collection<string>();
+        private static readonly Collection<string> s_cultureCollection = new Collection<string>();
 
         static StringManipulationHelper()
         {
@@ -416,10 +416,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             for (int k = 0; k < lines.Length; k++)
             {
-                if (lines[k] == null || displayCells.Length(lines[k]) <= firstLineLen)
+                string currentLine = lines[k];
+
+                if (currentLine == null || displayCells.Length(currentLine) <= firstLineLen)
                 {
                     // we do not need to split further, just add
-                    retVal.Add(lines[k]);
+                    retVal.Add(currentLine);
                     continue;
                 }
 
@@ -432,7 +434,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 int offset = 0; // offset into the line we are splitting
 
-                while (true)
+                while (offset < currentLine.Length)
                 {
                     // acquire the current active display line length (it can very from call to call)
                     int currentDisplayLen = accumulator.ActiveLen;
@@ -440,7 +442,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // determine if the current tail would fit or not
 
                     // for the remaining part of the string, determine its display cell count
-                    int currentCellsToFit = displayCells.Length(lines[k], offset);
+                    int currentCellsToFit = displayCells.Length(currentLine, offset);
 
                     // determine if we fit into the line
                     int excessCells = currentCellsToFit - currentDisplayLen;
@@ -449,7 +451,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         // we are not at the end of the string, select a sub string
                         // that would fit in the remaining display length
-                        int charactersToAdd = displayCells.GetHeadSplitLength(lines[k], offset, currentDisplayLen);
+                        int charactersToAdd = displayCells.GetHeadSplitLength(currentLine, offset, currentDisplayLen);
 
                         if (charactersToAdd <= 0)
                         {
@@ -463,7 +465,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         else
                         {
                             // of the given length, add it to the accumulator
-                            accumulator.AddLine(lines[k].Substring(offset, charactersToAdd));
+                            accumulator.AddLine(currentLine.Substring(offset, charactersToAdd));
                         }
 
                         // increase the offset by the # of characters added
@@ -472,7 +474,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     else
                     {
                         // we reached the last (partial) line, we add it all
-                        accumulator.AddLine(lines[k].Substring(offset));
+                        accumulator.AddLine(currentLine.Substring(offset));
                         break;
                     }
                 }
@@ -510,10 +512,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            private StringCollection _retVal;
+            private readonly StringCollection _retVal;
             private bool _addedFirstLine;
-            private int _firstLineLen;
-            private int _followingLinesLen;
+            private readonly int _firstLineLen;
+            private readonly int _followingLinesLen;
         }
 
         private static StringCollection GenerateLinesWithWordWrap(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
@@ -730,4 +732,3 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static readonly char[] s_lineBreakChars = new char[] { '\n', '\r' };
     }
 }
-

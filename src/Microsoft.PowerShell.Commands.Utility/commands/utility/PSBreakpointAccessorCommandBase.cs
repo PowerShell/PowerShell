@@ -1,9 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>

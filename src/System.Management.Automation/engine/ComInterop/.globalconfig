@@ -1,0 +1,3 @@
+is_global = true
+
+dotnet_analyzer_diagnostic.severity = none
