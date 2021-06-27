@@ -182,7 +182,7 @@ namespace System.Management.Automation
             }
         }
 
-        private List<string> _argumentList = new List<string>();
+        private readonly List<string> _argumentList = new List<string>();
 
         /// <summary>
         /// Gets a value indicating whether to use an ArgumentList or string for arguments when invoking a native executable.
