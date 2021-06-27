@@ -196,7 +196,7 @@
     <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
   </data>
   <data name="ProxyUriNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or UseDefaultProxyCredentials parameters, then retry.</value>
+    <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or ProxyUseDefaultCredentials parameters, then retry.</value>
   </data>
   <data name="ReadResponseComplete" xml:space="preserve">
     <value>Reading web response completed. (Number of bytes read: {0})</value>
@@ -250,7 +250,7 @@
     <value>Following rel link {0}</value>
   </data>
   <data name="WebMethodInvocationVerboseMsg" xml:space="preserve">
-    <value>{0} {1} with {2}-byte payload</value>
+    <value>{0} with {1}-byte payload</value>
   </data>
   <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
     <value>The remote server indicated it could not resume downloading. The local file will be overwritten.</value>

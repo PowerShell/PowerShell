@@ -277,7 +277,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private bool CheckStandardPropertySet(TypeMemberData member, TypeData typeData, Action<TypeData, PropertySetData> setter)
+        private static bool CheckStandardPropertySet(TypeMemberData member, TypeData typeData, Action<TypeData, PropertySetData> setter)
         {
             var propertySet = member as PropertySetData;
             if (propertySet != null)
@@ -459,7 +459,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     if (m.Name.Equals(TypeTable.DefaultDisplayProperty, StringComparison.OrdinalIgnoreCase))
                     {
-                        CheckStandardNote(m, typeData, (t, v) => t.DefaultDisplayProperty = v, Converter<string>);
+                        CheckStandardNote(m, typeData, static (t, v) => t.DefaultDisplayProperty = v, Converter<string>);
                     }
                     else if (m.Name.Equals(TypeTable.DefaultDisplayPropertySet, StringComparison.OrdinalIgnoreCase))
                     {
@@ -477,11 +477,11 @@ namespace System.Management.Automation.Runspaces
                     }
                     else if (m.Name.Equals(TypeTable.SerializationMethodNode, StringComparison.OrdinalIgnoreCase))
                     {
-                        CheckStandardNote(m, typeData, (t, v) => t.SerializationMethod = v, Converter<string>);
+                        CheckStandardNote(m, typeData, static (t, v) => t.SerializationMethod = v, Converter<string>);
                     }
                     else if (m.Name.Equals(TypeTable.SerializationDepth, StringComparison.OrdinalIgnoreCase))
                     {
-                        CheckStandardNote(m, typeData, (t, v) => t.SerializationDepth = v, Converter<uint>);
+                        CheckStandardNote(m, typeData, static (t, v) => t.SerializationDepth = v, Converter<uint>);
                     }
                     else if (m.Name.Equals(TypeTable.StringSerializationSource, StringComparison.OrdinalIgnoreCase))
                     {
@@ -504,11 +504,11 @@ namespace System.Management.Automation.Runspaces
                     }
                     else if (m.Name.Equals(TypeTable.InheritPropertySerializationSet, StringComparison.OrdinalIgnoreCase))
                     {
-                        CheckStandardNote(m, typeData, (t, v) => t.InheritPropertySerializationSet = v, BoolConverter);
+                        CheckStandardNote(m, typeData, static (t, v) => t.InheritPropertySerializationSet = v, BoolConverter);
                     }
                     else if (m.Name.Equals(TypeTable.TargetTypeForDeserialization, StringComparison.OrdinalIgnoreCase))
                     {
-                        CheckStandardNote(m, typeData, (t, v) => t.TargetTypeForDeserialization = v, Converter<Type>);
+                        CheckStandardNote(m, typeData, static (t, v) => t.TargetTypeForDeserialization = v, Converter<Type>);
                     }
                     else
                     {
@@ -4567,7 +4567,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Helper method to load content for a module.
         /// </summary>
-        private string GetModuleContents(
+        private static string GetModuleContents(
             string moduleName,
             string fileToLoad,
             ConcurrentBag<string> errors,

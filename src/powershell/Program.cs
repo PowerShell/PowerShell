@@ -266,8 +266,8 @@ namespace Microsoft.PowerShell
             // Check arg chars in order and allow prefixes
             for (int i = 1; i < arg.Length; i++)
             {
-                if (arg[i] != paramToCheck[i-1]
-                    && arg[i] != paramToCheckUpper[i-1])
+                if (arg[i] != paramToCheck[i - 1]
+                    && arg[i] != paramToCheckUpper[i - 1])
                 {
                     return false;
                 }

@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097109", RemotingCapability = RemotingCapability.None)]
     public class AddMemberCommand : PSCmdlet
     {
-        private static readonly object s_notSpecified = new object();
+        private static readonly object s_notSpecified = new();
 
         private static bool HasBeenSpecified(object obj)
         {
@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!HasBeenSpecified(_value1))
             {
-                Collection<FieldDescription> fdc = new Collection<FieldDescription>();
+                Collection<FieldDescription> fdc = new();
                 fdc.Add(new FieldDescription("Value"));
                 string prompt = StringUtil.Format(AddMember.Value1Prompt, _memberType);
                 Dictionary<string, PSObject> result = this.Host.UI.Prompt(prompt, null, fdc);
@@ -531,9 +531,9 @@ namespace Microsoft.PowerShell.Commands
 
         private ErrorRecord NewError(string errorId, string resourceId, object targetObject, params object[] args)
         {
-            ErrorDetails details = new ErrorDetails(this.GetType().GetTypeInfo().Assembly,
+            ErrorDetails details = new(this.GetType().GetTypeInfo().Assembly,
                 "Microsoft.PowerShell.Commands.Utility.resources.AddMember", resourceId, args);
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new InvalidOperationException(details.Message),
                 errorId,
                 ErrorCategory.InvalidOperation,

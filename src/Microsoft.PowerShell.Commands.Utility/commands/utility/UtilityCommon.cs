@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Text;
 
-[module: SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Scope = "type", Target = "Microsoft.PowerShell.Commands.ByteCollection")]
+[module: SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix", Scope = "type", Target = "~T:Microsoft.PowerShell.Commands.ByteCollection")]
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_hexBytes == string.Empty)
                 {
-                    StringBuilder line = new StringBuilder(BytesPerLine * 3);
+                    StringBuilder line = new(BytesPerLine * 3);
 
                     foreach (var currentByte in Bytes)
                     {
@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_ascii == string.Empty)
                 {
-                    StringBuilder ascii = new StringBuilder(BytesPerLine);
+                    StringBuilder ascii = new(BytesPerLine);
 
                     foreach (var currentByte in Bytes)
                     {
@@ -304,11 +304,11 @@ namespace Microsoft.PowerShell.Commands
 
             // '16 + 3' comes from format "{0:X16}   ".
             // '16' comes from '[Uint64]::MaxValue.ToString("X").Length'.
-            StringBuilder nextLine = new StringBuilder(16 + 3 + (BytesPerLine * 3));
-            StringBuilder asciiEnd = new StringBuilder(BytesPerLine);
+            StringBuilder nextLine = new(16 + 3 + (BytesPerLine * 3));
+            StringBuilder asciiEnd = new(BytesPerLine);
 
             // '+1' comes from 'result.Append(nextLine.ToString() + " " + asciiEnd.ToString());' below.
-            StringBuilder result = new StringBuilder(nextLine.Capacity + asciiEnd.Capacity + 1);
+            StringBuilder result = new(nextLine.Capacity + asciiEnd.Capacity + 1);
 
             if (Bytes.Length > 0)
             {

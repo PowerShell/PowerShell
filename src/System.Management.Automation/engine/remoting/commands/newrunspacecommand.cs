@@ -91,7 +91,10 @@ namespace Microsoft.PowerShell.Commands
         [Credential()]
         public override PSCredential Credential
         {
-            get { return base.Credential; }
+            get
+            {
+                return base.Credential;
+            }
 
             set
             {
@@ -661,7 +664,7 @@ namespace Microsoft.PowerShell.Commands
                             if (originalWSManConnectionInfo != null)
                             {
                                 newWSManConnectionInfo = originalWSManConnectionInfo.Copy();
-                                newWSManConnectionInfo.EnableNetworkAccess = (newWSManConnectionInfo.EnableNetworkAccess || EnableNetworkAccess) ? true : false;
+                                newWSManConnectionInfo.EnableNetworkAccess = newWSManConnectionInfo.EnableNetworkAccess || EnableNetworkAccess;
                                 newConnectionInfo = newWSManConnectionInfo;
                             }
                             else
@@ -1089,7 +1092,8 @@ namespace Microsoft.PowerShell.Commands
                     host,
                     this.KeyFilePath,
                     port,
-                    Subsystem);
+                    Subsystem,
+                    ConnectingTimeout);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;
@@ -1115,7 +1119,8 @@ namespace Microsoft.PowerShell.Commands
                     sshConnection.ComputerName,
                     sshConnection.KeyFilePath,
                     sshConnection.Port,
-                    sshConnection.Subsystem);
+                    sshConnection.Subsystem,
+                    sshConnection.ConnectingTimeout);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;

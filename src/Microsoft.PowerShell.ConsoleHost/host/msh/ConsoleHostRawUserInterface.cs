@@ -190,14 +190,15 @@ namespace Microsoft.PowerShell
 
             set
             {
-                // cursor position can't be outside the buffer area
-
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
-
-                ConsoleHandle handle = GetBufferInfo(out bufferInfo);
-
-                CheckCoordinateWithinBuffer(ref value, ref bufferInfo, "value");
-                ConsoleControl.SetConsoleCursorPosition(handle, value);
+                try
+                {
+                    Console.SetCursorPosition(value.X, value.Y);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    // if screen buffer has changed, we cannot set it anywhere reasonable as the screen buffer
+                    // might change again, so we ignore this
+                }
             }
         }
 
@@ -1369,7 +1370,10 @@ namespace Microsoft.PowerShell
                     : new Size(Console.BufferWidth, Console.BufferHeight);
             }
 
-            set { Console.SetBufferSize(value.Width, value.Height); }
+            set
+            {
+                Console.SetBufferSize(value.Width, value.Height);
+            }
         }
 
         /// <summary>
@@ -1377,7 +1381,10 @@ namespace Microsoft.PowerShell
         /// </summary>
         public override Coordinates CursorPosition
         {
-            get { return new Coordinates(Console.CursorLeft, Console.CursorTop); }
+            get
+            {
+                return new Coordinates(Console.CursorLeft, Console.CursorTop);
+            }
 
             set
             {
@@ -1475,7 +1482,10 @@ namespace Microsoft.PowerShell
                     : new Size(Console.WindowWidth, Console.WindowHeight);
             }
 
-            set { Console.SetWindowSize(value.Width, value.Height); }
+            set
+            {
+                Console.SetWindowSize(value.Width, value.Height);
+            }
         }
 
         /// <summary>

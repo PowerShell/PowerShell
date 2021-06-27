@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace System.Diagnostics.Eventing
 {
     [StructLayout(LayoutKind.Explicit, Size = 16)]
-    public struct EventDescriptor
+    public readonly struct EventDescriptor
     {
         [FieldOffset(0)]
         private readonly ushort _id;

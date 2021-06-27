@@ -10,9 +10,7 @@ using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
-#if !UNIX
 using System.Management.Automation.Security;
-#endif
 using System.Reflection;
 using System.Runtime.InteropServices;
 #if !UNIX
@@ -34,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary> the number</summary>
         [Parameter(ParameterSetName = netSetName, Mandatory = true, Position = 0)]
         [ValidateTrustedData]
-        public string TypeName { get; set; } = null;
+        public string TypeName { get; set; }
 
 #if !UNIX
         private Guid _comObjectClsId = Guid.Empty;
@@ -43,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "Com", Mandatory = true, Position = 0)]
         [ValidateTrustedData]
-        public string ComObject { get; set; } = null;
+        public string ComObject { get; set; }
 #endif
 
         /// <summary>
@@ -53,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = netSetName, Mandatory = false, Position = 1)]
         [ValidateTrustedData]
         [Alias("Args")]
-        public object[] ArgumentList { get; set; } = null;
+        public object[] ArgumentList { get; set; }
 
         /// <summary>
         /// True if we should have an error when Com objects will use an interop assembly.
@@ -106,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void CreateMemberSetValueError(SetValueException e)
         {
-            Exception ex = new Exception(StringUtil.Format(NewObjectStrings.InvalidValue, e));
+            Exception ex = new(StringUtil.Format(NewObjectStrings.InvalidValue, e));
             ThrowTerminatingError(
                 new ErrorRecord(ex, "SetValueException", ErrorCategory.InvalidData, null));
         }
@@ -197,6 +195,25 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 new PSNotSupportedException(NewObjectStrings.CannotCreateTypeConstrainedLanguage), "CannotCreateTypeConstrainedLanguage", ErrorCategory.PermissionDenied, null));
                     }
+                }
+
+                switch (Context.LanguageMode)
+                {
+                    case PSLanguageMode.NoLanguage:
+                    case PSLanguageMode.RestrictedLanguage:
+                        if (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce
+                            && !CoreTypes.Contains(type))
+                        {
+                            ThrowTerminatingError(
+                                new ErrorRecord(
+                                    new PSNotSupportedException(
+                                        string.Format(NewObjectStrings.CannotCreateTypeLanguageMode, Context.LanguageMode.ToString())),
+                                    nameof(NewObjectStrings.CannotCreateTypeLanguageMode),
+                                    ErrorCategory.PermissionDenied,
+                                    targetObject: null));
+                        }
+
+                    break;
                 }
 
                 // WinRT does not support creating instances of attribute & delegate WinRT types.
@@ -463,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     createInfo = new ComCreateInfo();
 
-                    Thread thread = new Thread(new ParameterizedThreadStart(STAComCreateThreadProc));
+                    Thread thread = new(new ParameterizedThreadStart(STAComCreateThreadProc));
                     thread.SetApartmentState(ApartmentState.STA);
                     thread.Start(createInfo);
 
@@ -502,12 +519,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Native methods for dealing with COM objects.
     /// </summary>
-    internal class NewObjectNativeMethods
+    internal static class NewObjectNativeMethods
     {
-        private NewObjectNativeMethods()
-        {
-        }
-
         /// Return Type: HRESULT->LONG->int
         [DllImport(PinvokeDllNames.CLSIDFromProgIDDllName)]
         internal static extern int CLSIDFromProgID([MarshalAs(UnmanagedType.LPWStr)] string lpszProgID, out Guid pclsid);

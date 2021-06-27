@@ -58,12 +58,12 @@ namespace Microsoft.PowerShell.Commands
 
         internal override FormattingCommandLineParameters GetCommandLineParameters()
         {
-            FormattingCommandLineParameters parameters = new FormattingCommandLineParameters();
+            FormattingCommandLineParameters parameters = new();
 
             if (_props != null)
             {
-                ParameterProcessor processor = new ParameterProcessor(new FormatObjectParameterDefinition());
-                TerminatingErrorContext invocationContext = new TerminatingErrorContext(this);
+                ParameterProcessor processor = new(new FormatObjectParameterDefinition());
+                TerminatingErrorContext invocationContext = new(this);
                 parameters.mshParameterList = processor.ProcessParameters(_props, invocationContext);
             }
 
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
 
             parameters.expansion = ProcessExpandParameter();
 
-            ComplexSpecificParameters csp = new ComplexSpecificParameters();
+            ComplexSpecificParameters csp = new();
             csp.maxDepth = _depth;
             parameters.shapeParameters = csp;
 

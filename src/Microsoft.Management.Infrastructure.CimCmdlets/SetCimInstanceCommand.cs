@@ -29,7 +29,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="SetCimInstanceCommand"/> class.
         /// </summary>
         public SetCimInstanceCommand()
             : base(parameters, parameterSets)
@@ -54,7 +54,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public CimSession[] CimSession
         {
-            get { return cimSession; }
+            get
+            {
+                return cimSession;
+            }
 
             set
             {
@@ -77,7 +80,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -100,7 +106,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = CimBaseCommand.CimInstanceSessionSet)]
         public Uri ResourceUri
         {
-            get { return resourceUri; }
+            get
+            {
+                return resourceUri;
+            }
 
             set
             {
@@ -121,7 +130,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CimBaseCommand.QueryComputerSet)]
         public string Namespace
         {
-            get { return nameSpace; }
+            get
+            {
+                return nameSpace;
+            }
 
             set
             {
@@ -158,7 +170,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Alias(CimBaseCommand.AliasCimInstance)]
         public CimInstance InputObject
         {
-            get { return CimInstance; }
+            get
+            {
+                return CimInstance;
+            }
 
             set
             {
@@ -187,7 +202,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CimBaseCommand.QuerySessionSet)]
         public string Query
         {
-            get { return query; }
+            get
+            {
+                return query;
+            }
 
             set
             {
@@ -209,7 +227,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = CimBaseCommand.QueryComputerSet)]
         public string QueryDialect
         {
-            get { return querydialect; }
+            get
+            {
+                return querydialect;
+            }
 
             set
             {
@@ -244,7 +265,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Alias("Arguments")]
         public IDictionary Property
         {
-            get { return property; }
+            get
+            {
+                return property;
+            }
 
             set
             {
@@ -256,8 +280,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private IDictionary property;
 
         /// <summary>
+        /// <para>
         /// The following is the definition of the input parameter "PassThru",
         /// indicate whether Set-CimInstance should output modified result instance or not.
+        /// </para>
         /// <para>
         /// True indicates output the result instance, otherwise output nothing as by default
         /// behavior.
@@ -317,7 +343,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         private CimSetCimInstance GetOperationAgent()
         {
-            return (this.AsyncOperation as CimSetCimInstance);
+            return this.AsyncOperation as CimSetCimInstance;
         }
 
         /// <summary>

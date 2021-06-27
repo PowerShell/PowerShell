@@ -75,7 +75,10 @@ namespace Microsoft.PowerShell.Cmdletization
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         protected TSession[] Session
         {
-            get { return _session ?? (_session = new TSession[] { this.DefaultSession }); }
+            get
+            {
+                return _session ??= new TSession[] { this.DefaultSession };
+            }
 
             set
             {
@@ -126,9 +129,9 @@ namespace Microsoft.PowerShell.Cmdletization
         /// Doing so will interfere with ThrottleLimit functionality.
         /// </para>
         /// <para>
-        /// <see cref="Job.WriteObject" /> (and other methods returning job results) will block to support throttling and flow-control.
+        /// <see cref="Job.WriteObject"/> (and other methods returning job results) will block to support throttling and flow-control.
         /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further processing,
-        /// until calls from <see cref="Job.WriteObject" /> (and other methods returning job results) return.
+        /// until calls from <see cref="Job.WriteObject"/> (and other methods returning job results) return.
         /// </para>
         /// </remarks>
         internal abstract StartableJob CreateQueryJob(TSession session, QueryBuilder query);
@@ -178,9 +181,9 @@ namespace Microsoft.PowerShell.Cmdletization
         /// Doing so will interfere with ThrottleLimit functionality.
         /// </para>
         /// <para>
-        /// <see cref="Job.WriteObject" /> (and other methods returning job results) will block to support throttling and flow-control.
+        /// <see cref="Job.WriteObject"/> (and other methods returning job results) will block to support throttling and flow-control.
         /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further processing,
-        /// until calls from <see cref="Job.WriteObject" /> (and other methods returning job results) return.
+        /// until calls from <see cref="Job.WriteObject"/> (and other methods returning job results) return.
         /// </para>
         /// </remarks>
         internal abstract StartableJob CreateInstanceMethodInvocationJob(TSession session, TObjectInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru);
@@ -213,9 +216,9 @@ namespace Microsoft.PowerShell.Cmdletization
         /// Doing so will interfere with ThrottleLimit functionality.
         /// </para>
         /// <para>
-        /// <see cref="Job.WriteObject" /> (and other methods returning job results) will block to support throttling and flow-control.
+        /// <see cref="Job.WriteObject"/> (and other methods returning job results) will block to support throttling and flow-control.
         /// Implementations of Job instance returned from this method should make sure that implementation-specific flow-control mechanism pauses further processing,
-        /// until calls from <see cref="Job.WriteObject" /> (and other methods returning job results) return.
+        /// until calls from <see cref="Job.WriteObject"/> (and other methods returning job results) return.
         /// </para>
         /// </remarks>
         internal abstract StartableJob CreateStaticMethodInvocationJob(TSession session, MethodInvocationInfo methodInvocationInfo);

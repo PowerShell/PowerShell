@@ -40,7 +40,7 @@ namespace System.Management.Automation.Help
     /// is present in the box. This class mimics the exact same structure as that of a MAML
     /// node, so that the default UX does not introduce regressions.
     /// </summary>
-    internal class DefaultCommandHelpObjectBuilder
+    internal static class DefaultCommandHelpObjectBuilder
     {
         internal static readonly string TypeNameForDefaultHelp = "ExtendedCmdletHelpInfo";
         /// <summary>

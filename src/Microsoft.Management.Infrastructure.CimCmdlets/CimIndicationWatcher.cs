@@ -48,9 +48,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public Exception Exception { get; }
 
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimIndicationEventExceptionEventArgs"/> class.
         /// </summary>
         /// <param name="result"></param>
         public CimIndicationEventExceptionEventArgs(Exception theException)
@@ -100,9 +98,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimIndicationEventInstanceEventArgs"/> class.
         /// </summary>
         /// <param name="result"></param>
         public CimIndicationEventInstanceEventArgs(CimSubscriptionResult result)
@@ -146,9 +142,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public event EventHandler<CimIndicationEventArgs> CimIndicationArrived;
 
         /// <summary>
-        /// <para>
-        /// Constructor with given computerName, namespace, queryExpression and timeout
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimIndicationWatcher"/> class.
         /// </summary>
         /// <param name="computerName"></param>
         /// <param name="nameSpace"></param>
@@ -168,9 +162,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>
-        /// Constructor with given cimsession, namespace, queryExpression and timeout
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimIndicationWatcher"/> class.
         /// </summary>
         /// <param name="cimSession"></param>
         /// <param name="nameSpace"></param>

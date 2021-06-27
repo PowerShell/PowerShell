@@ -50,7 +50,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public CimSubscriptionResult Result { get; }
 
         /// <summary>
-        /// <para>Constructor</para>
+        /// Initializes a new instance of the <see cref="CimSubscriptionResultEventArgs"/> class.
         /// </summary>
         /// <param name="theResult"></param>
         public CimSubscriptionResultEventArgs(
@@ -76,7 +76,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public Exception Exception { get; }
 
         /// <summary>
-        /// <para>Constructor</para>
+        /// Initializes a new instance of the <see cref="CimSubscriptionExceptionEventArgs"/> class.
         /// </summary>
         /// <param name="theResult"></param>
         public CimSubscriptionExceptionEventArgs(
@@ -102,9 +102,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public event EventHandler<CimSubscriptionEventArgs> OnNewSubscriptionResult;
 
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimRegisterCimIndication"/> class.
         /// </summary>
         public CimRegisterCimIndication()
             : base()

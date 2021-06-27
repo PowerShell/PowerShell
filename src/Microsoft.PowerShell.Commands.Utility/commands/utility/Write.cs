@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
         [Alias("Msg")]
-        public string Message { get; set; } = null;
+        public string Message { get; set; }
 
         /// <summary>
         /// This method implements the ProcessRecord method for Write-Debug command.
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (mshCommandRuntime != null)
             {
-                DebugRecord record = new DebugRecord(Message);
+                DebugRecord record = new(Message);
 
                 InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
         [Alias("Msg")]
-        public string Message { get; set; } = null;
+        public string Message { get; set; }
 
         /// <summary>
         /// This method implements the ProcessRecord method for Write-verbose command.
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (mshCommandRuntime != null)
             {
-                VerboseRecord record = new VerboseRecord(Message);
+                VerboseRecord record = new(Message);
 
                 InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         [AllowEmptyString]
         [Alias("Msg")]
-        public string Message { get; set; } = null;
+        public string Message { get; set; }
 
         /// <summary>
         /// This method implements the ProcessRecord method for Write-Warning command.
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (mshCommandRuntime != null)
             {
-                WarningRecord record = new WarningRecord(Message);
+                WarningRecord record = new(Message);
 
                 InvocationInfo invocationInfo = GetVariableValue(SpecialVariables.MyInvocation) as InvocationInfo;
 
@@ -184,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (tag.StartsWith("PS", StringComparison.OrdinalIgnoreCase))
                     {
-                        ErrorRecord er = new ErrorRecord(
+                        ErrorRecord er = new(
                             new InvalidOperationException(StringUtil.Format(UtilityCommonStrings.PSPrefixReservedInInformationTag, tag)),
                             "PSPrefixReservedInInformationTag", ErrorCategory.InvalidArgument, tag);
                         ThrowTerminatingError(er);
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
         /// ErrorRecord.Exception -- if not specified, ErrorRecord.Exception is System.Exception.
         /// </summary>
         [Parameter(ParameterSetName = "WithException", Mandatory = true)]
-        public Exception Exception { get; set; } = null;
+        public Exception Exception { get; set; }
 
         /// <summary>
         /// If Exception is specified, this is ErrorRecord.ErrorDetails.Message;
@@ -226,14 +226,14 @@ namespace Microsoft.PowerShell.Commands
         [AllowNull]
         [AllowEmptyString]
         [Alias("Msg")]
-        public string Message { get; set; } = null;
+        public string Message { get; set; }
 
         /// <summary>
         /// If Exception is specified, this is ErrorRecord.ErrorDetails.Message;
         /// otherwise, the Exception is System.Exception, and this is Exception.Message.
         /// </summary>
         [Parameter(ParameterSetName = "ErrorRecord", Mandatory = true)]
-        public ErrorRecord ErrorRecord { get; set; } = null;
+        public ErrorRecord ErrorRecord { get; set; }
 
         /// <summary>
         /// ErrorRecord.CategoryInfo.Category.
@@ -254,7 +254,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "NoException")]
         [Parameter(ParameterSetName = "WithException")]
-        public object TargetObject { get; set; } = null;
+        public object TargetObject { get; set; }
 
         /// <summary>
         /// ErrorRecord.ErrorDetails.RecommendedAction.

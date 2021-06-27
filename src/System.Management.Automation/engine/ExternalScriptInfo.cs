@@ -193,7 +193,10 @@ namespace System.Management.Automation
                 return Context.EngineSessionState.CheckScriptVisibility(_path);
             }
 
-            set { throw PSTraceSource.NewNotImplementedException(); }
+            set
+            {
+                throw PSTraceSource.NewNotImplementedException();
+            }
         }
 
         /// <summary>
@@ -239,7 +242,7 @@ namespace System.Management.Automation
             // If we are in ConstrainedLanguage mode but the defining language mode is FullLanguage, then we need
             // to parse the script contents in FullLanguage mode context.  Otherwise we will get bogus parsing errors
             // such as "Configuration keyword not allowed".
-            if (definingLanguageMode.HasValue && (definingLanguageMode == PSLanguageMode.FullLanguage))
+            if (definingLanguageMode.GetValueOrDefault() == PSLanguageMode.FullLanguage)
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
                 if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
@@ -358,9 +361,8 @@ namespace System.Management.Automation
         {
             get
             {
-                return _commandMetadata ??
-                       (_commandMetadata =
-                        new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS()));
+                return _commandMetadata ??=
+                    new CommandMetadata(this.ScriptBlock, this.Name, LocalPipeline.GetExecutionContextFromTLS());
             }
         }
 
@@ -444,7 +446,7 @@ namespace System.Management.Automation
             get
             {
                 var data = GetRequiresData();
-                return data == null ? false : data.IsElevationRequired;
+                return data != null && data.IsElevationRequired;
             }
         }
 

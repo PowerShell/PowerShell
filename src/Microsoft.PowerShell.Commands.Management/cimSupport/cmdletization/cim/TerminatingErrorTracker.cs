@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         #region Getting tracker for a given cmdlet invocation
 
         private static readonly ConditionalWeakTable<InvocationInfo, TerminatingErrorTracker> s_invocationToTracker =
-            new ConditionalWeakTable<InvocationInfo, TerminatingErrorTracker>();
+            new();
 
         private static int GetNumberOfSessions(InvocationInfo invocationInfo)
         {
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         #region Tracking session's "connectivity" status
 
-        private readonly ConcurrentDictionary<CimSession, bool> _sessionToIsConnected = new ConcurrentDictionary<CimSession, bool>();
+        private readonly ConcurrentDictionary<CimSession, bool> _sessionToIsConnected = new();
 
         internal void MarkSessionAsConnected(CimSession connectedSession)
         {
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         #region Tracking session's "terminated" status
 
-        private readonly ConcurrentDictionary<CimSession, bool> _sessionToIsTerminated = new ConcurrentDictionary<CimSession, bool>();
+        private readonly ConcurrentDictionary<CimSession, bool> _sessionToIsTerminated = new();
 
         internal void MarkSessionAsTerminated(CimSession terminatedSession, out bool sessionWasAlreadyTerminated)
         {
@@ -196,8 +196,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal CmdletMethodInvoker<bool> GetErrorReportingDelegate(ErrorRecord errorRecord)
         {
-            ManualResetEventSlim manualResetEventSlim = new ManualResetEventSlim();
-            object lockObject = new object();
+            ManualResetEventSlim manualResetEventSlim = new();
+            object lockObject = new();
             Func<Cmdlet, bool> action = (Cmdlet cmdlet) =>
             {
                 _numberOfReportedSessionTerminatingErrors++;

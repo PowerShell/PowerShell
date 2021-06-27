@@ -2061,7 +2061,7 @@ namespace System.Management.Automation
         }
 
         // Detect if the GetChildItemDynamicParameters has been overridden.
-        private bool HasGetChildItemDynamicParameters(ProviderInfo providerInfo)
+        private static bool HasGetChildItemDynamicParameters(ProviderInfo providerInfo)
         {
             Type providerType = providerInfo.ImplementingType;
 
@@ -4038,7 +4038,7 @@ namespace System.Management.Automation
         #region CopyItem
 
         /// <summary>
-        /// Copies an item at the specified path to an item at the <paramref name="copyPath" />.
+        /// Copies an item at the specified path to an item at the <paramref name="copyPath"/>.
         /// </summary>
         /// <param name="paths">
         /// The path(s) of the item(s) to copy.
@@ -4106,7 +4106,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copies an item at the specified path to an item at the <paramref name="copyPath" />.
+        /// Copies an item at the specified path to an item at the <paramref name="copyPath"/>.
         /// </summary>
         /// <param name="paths">
         /// The path(s) of the item(s) to copy.
@@ -4681,7 +4681,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (providerPath != null)
+            if (providerInstance != null)
             {
                 // Get the dynamic parameters for the first resolved path
                 return CopyItemDynamicParameters(providerInstance, providerPath, destination, recurse, newContext);
@@ -4734,10 +4734,6 @@ namespace System.Management.Automation
                 "Caller should validate providerInstance before calling this method");
 
             Dbg.Diagnostics.Assert(
-                path != null,
-                "Caller should validate path before calling this method");
-
-            Dbg.Diagnostics.Assert(
                 context != null,
                 "Caller should validate context before calling this method");
 
@@ -4776,7 +4772,7 @@ namespace System.Management.Automation
 
         // This function validates a remote path, and if it exists, it returns the root path.
         //
-        private string ValidateRemotePathAndGetRoot(string path, Runspaces.PSSession session, CmdletProviderContext context, PSLanguageMode? languageMode, bool sourceIsRemote)
+        private static string ValidateRemotePathAndGetRoot(string path, Runspaces.PSSession session, CmdletProviderContext context, PSLanguageMode? languageMode, bool sourceIsRemote)
         {
             Hashtable op = null;
 
@@ -4892,7 +4888,7 @@ namespace System.Management.Automation
             return root;
         }
 
-        private bool isValidSession(PSSession session, CmdletProviderContext context, out PSLanguageMode? languageMode)
+        private static bool isValidSession(PSSession session, CmdletProviderContext context, out PSLanguageMode? languageMode)
         {
             // session == null is validated by the parameter binding
             if (session.Availability != RunspaceAvailability.Available)

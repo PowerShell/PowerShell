@@ -53,7 +53,7 @@ namespace PSTests.Parallel
             }
         }
 
-        private ExecutionContext GetExecutionContext()
+        private static ExecutionContext GetExecutionContext()
         {
             CultureInfo currentCulture = CultureInfo.CurrentCulture;
             PSHost hostInterface = new DefaultHost(currentCulture, currentCulture);
@@ -63,7 +63,7 @@ namespace PSTests.Parallel
             return executionContext;
         }
 
-        private ProviderInfo GetProvider()
+        private static ProviderInfo GetProvider()
         {
             ExecutionContext executionContext = GetExecutionContext();
             SessionStateInternal sessionState = new SessionStateInternal(executionContext);
@@ -115,7 +115,7 @@ namespace PSTests.Parallel
             {
                 directoryObject = new DirectoryInfo(System.Environment.CurrentDirectory);
                 fileObject = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-                executableObject = new FileInfo(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName);
+                executableObject = new FileInfo(Environment.ProcessPath);
             }
 
             Assert.Equal("d----", FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r", "-"));

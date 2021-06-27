@@ -646,7 +646,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="nodes"></param>
         /// <returns></returns>
-        private int GetParaMamlNodeCount(XmlNodeList nodes)
+        private static int GetParaMamlNodeCount(XmlNodeList nodes)
         {
             int i = 0;
 

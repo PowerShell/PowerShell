@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 WriteToTracer(entry);
         }
 
-        private void WriteToTracer(XmlLoaderLoggerEntry entry)
+        private static void WriteToTracer(XmlLoaderLoggerEntry entry)
         {
             if (entry.entryType == XmlLoaderLoggerEntry.EntryType.Error)
             {

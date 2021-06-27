@@ -972,7 +972,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Clean up
 
         /// <summary>
-        /// Finalizer.
+        /// Finalizes an instance of the <see cref="BaseClientTransportManager"/> class.
         /// </summary>
         ~BaseClientTransportManager()
         {

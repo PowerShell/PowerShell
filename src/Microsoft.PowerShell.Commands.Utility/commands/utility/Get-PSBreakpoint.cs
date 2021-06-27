@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
                 breakpoints = Filter(
                     breakpoints,
                     Id,
-                    (Breakpoint breakpoint, int id) => breakpoint.Id == id);
+                    static (Breakpoint breakpoint, int id) => breakpoint.Id == id);
             }
             else if (ParameterSetName.Equals(CommandParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static List<Breakpoint> Filter<T>(List<Breakpoint> input, T[] filter, FilterSelector<T> selector)
         {
-            List<Breakpoint> output = new List<Breakpoint>();
+            List<Breakpoint> output = new();
 
             for (int i = 0; i < input.Count; i++)
             {

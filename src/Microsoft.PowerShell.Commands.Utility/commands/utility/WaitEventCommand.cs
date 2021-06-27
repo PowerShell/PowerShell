@@ -60,9 +60,9 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion parameters
 
-        private readonly AutoResetEvent _eventArrived = new AutoResetEvent(false);
+        private readonly AutoResetEvent _eventArrived = new(false);
         private PSEventArgs _receivedEvent = null;
-        private readonly object _receivedEventLock = new object();
+        private readonly object _receivedEventLock = new();
         private WildcardPattern _matchPattern;
 
         /// <summary>

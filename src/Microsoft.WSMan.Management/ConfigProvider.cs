@@ -3573,7 +3573,7 @@ namespace Microsoft.WSMan.Management
             string result = ChildName;
             if (ChildName != null)
             {
-                if (!ChildName.Contains("_"))
+                if (!ChildName.Contains('_'))
                 {
                     if (ChildName.Equals(WSManStringLiterals.containerQuotasParameters, StringComparison.OrdinalIgnoreCase))
                         result = WSManStringLiterals.containerQuotasParameters;
@@ -3647,13 +3647,13 @@ namespace Microsoft.WSMan.Management
                 else
                 {
                     if (ChildName.StartsWith(WSManStringLiterals.containerListener, StringComparison.OrdinalIgnoreCase))
-                        result = string.Concat(WSManStringLiterals.containerListener, "_", ChildName.AsSpan().Slice(ChildName.IndexOf('_') + 1));
+                        result = string.Concat(WSManStringLiterals.containerListener, "_", ChildName.AsSpan(ChildName.IndexOf('_') + 1));
                     if (ChildName.StartsWith(WSManStringLiterals.containerSingleResource, StringComparison.OrdinalIgnoreCase))
-                        result = string.Concat(WSManStringLiterals.containerSingleResource, "_", ChildName.AsSpan().Slice(ChildName.IndexOf('_') + 1));
+                        result = string.Concat(WSManStringLiterals.containerSingleResource, "_", ChildName.AsSpan(ChildName.IndexOf('_') + 1));
                     if (ChildName.StartsWith(WSManStringLiterals.containerSecurity, StringComparison.OrdinalIgnoreCase))
-                        result = string.Concat(WSManStringLiterals.containerSecurity, "_", ChildName.AsSpan().Slice(ChildName.IndexOf('_') + 1));
+                        result = string.Concat(WSManStringLiterals.containerSecurity, "_", ChildName.AsSpan(ChildName.IndexOf('_') + 1));
                     if (ChildName.StartsWith(WSManStringLiterals.containerClientCertificate, StringComparison.OrdinalIgnoreCase))
-                        result = string.Concat(WSManStringLiterals.containerClientCertificate, "_", ChildName.AsSpan().Slice(ChildName.IndexOf('_') + 1));
+                        result = string.Concat(WSManStringLiterals.containerClientCertificate, "_", ChildName.AsSpan(ChildName.IndexOf('_') + 1));
                 }
             }
 

@@ -54,7 +54,7 @@ The `Start-PSBootstrap` function does the following:
 
 If you want to use `dotnet` outside of `Start-PSBuild`, add `~/.dotnet` to your `PATH` environment variable.
 
-[dotnet-cli]: https://github.com/dotnet/cli
+[dotnet-cli]: https://docs.microsoft.com/dotnet/core/tools/
 [CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
 
 ## Build using our module

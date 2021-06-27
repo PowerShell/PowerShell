@@ -9,11 +9,16 @@ jobs:
   pool:
     name: Package ES Standard Build
   variables:
-    BuildConfiguration: release
-    BuildPlatform: any cpu
-
+    - group: ESRP
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
   steps:
   - checkout: self
+    clean: true
+
+  - checkout: ComplianceRepo
     clean: true
 
   - template: shouldSign.yml
@@ -50,27 +55,16 @@ jobs:
       }
     displayName: 'Compress macOS Package'
 
-  - pwsh: |
-      $pkgFiles = "$(Build.StagingDirectory)\macos\powershell-$(Version)-osx-x64.zip", "$(Build.StagingDirectory)\macos\powershell-lts-$(Version)-osx-x64.zip"
-      tools/releaseBuild/generatePackgeSigning.ps1 -MacDeveloperFiles $pkgFiles -path "$(System.ArtifactsDirectory)\package.xml"
-    displayName: 'Generate macOS Package Signing Xml'
-
-  - pwsh: |
-      Get-Content "$(System.ArtifactsDirectory)\package.xml"
-    displayName: 'Capture macOS signing xml'
-    # Diagnostics is not critical it passes every time it runs
-    continueOnError: true
-
-  - task: PkgESCodeSign@10
-    displayName: 'CodeSign $(System.ArtifactsDirectory)\package.xml'
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    inputs:
-      signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
-      outPathRoot: '$(Build.StagingDirectory)\signedMacOSPackages'
-      binVersion: $(SigingVersion)
-      binVersionOverride: $(SigningVersionOverride)
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+  - template: EsrpSign.yml@ComplianceRepo
+    parameters:
+        buildOutputPath: $(Build.StagingDirectory)\macos
+        signOutputPath: $(Build.StagingDirectory)\signedMacOSPackages
+        certificateId: "CP-401337-Apple"
+        pattern: |
+          **\*.zip
+        useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
+        displayName: Sign pkg
 
   - template: upload-final-results.yml
     parameters:
@@ -119,9 +113,6 @@ jobs:
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
-
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
-    displayName: 'Run Defender Scan'
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

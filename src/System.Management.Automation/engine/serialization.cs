@@ -1610,8 +1610,8 @@ namespace System.Management.Automation
             // ATTACH INSTANCE METADATA TO THE OBJECT BEING SERIALIZED
             List<string> namesOfModifiedProperties = cimInstance
                 .CimInstanceProperties
-                .Where(p => p.IsValueModified)
-                .Select(p => p.Name)
+                .Where(static p => p.IsValueModified)
+                .Select(static p => p.Name)
                 .ToList();
             if (namesOfModifiedProperties.Count != 0)
             {
@@ -1893,9 +1893,8 @@ namespace System.Management.Automation
         {
             get
             {
-                return _extendedMembersCollection ??
-                       (_extendedMembersCollection =
-                           PSObject.GetMemberCollection(PSMemberViewTypes.Extended, _typeTable));
+                return _extendedMembersCollection ??=
+                    PSObject.GetMemberCollection(PSMemberViewTypes.Extended, _typeTable);
             }
         }
 
@@ -1905,8 +1904,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _allPropertiesCollection ??
-                       (_allPropertiesCollection = PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable));
+                return _allPropertiesCollection ??= PSObject.GetPropertyCollection(PSMemberViewTypes.All, _typeTable);
             }
         }
 
@@ -2828,7 +2826,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is the real workhorse that encodes strings.
-        /// See <see cref="EncodeString(string)" /> for more information.
+        /// See <see cref="EncodeString(string)"/> for more information.
         /// </summary>
         /// <param name="s">String to encode.</param>
         /// <param name="indexOfFirstEncodableCharacter">IndexOfFirstEncodableCharacter.</param>
@@ -2957,6 +2955,10 @@ namespace System.Management.Automation
             }
         }
 
+        [SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "Accesses instance members in preprocessor branch.")]
         private bool DuplicateRefIdsAllowed
         {
             get
@@ -3196,7 +3198,7 @@ namespace System.Management.Automation
         internal const string CimHashCodeProperty = "Hash";
         internal const string CimMiXmlProperty = "MiXml";
 
-        private bool RehydrateCimInstanceProperty(
+        private static bool RehydrateCimInstanceProperty(
             CimInstance cimInstance,
             PSPropertyInfo deserializedProperty,
             HashSet<string> namesOfModifiedProperties)
@@ -5930,7 +5932,7 @@ namespace System.Management.Automation
 
         #region Plumbing to make Hashtable reject all non-primitive types
 
-        private string VerifyKey(object key)
+        private static string VerifyKey(object key)
         {
             key = PSObject.Base(key);
             string keyAsString = key as string;
@@ -6030,7 +6032,7 @@ namespace System.Management.Automation
         /// </exception>
         public override void Add(object key, object value)
         {
-            string keyAsString = this.VerifyKey(key);
+            string keyAsString = VerifyKey(key);
             this.VerifyValue(value);
             base.Add(keyAsString, value);
         }
@@ -6058,7 +6060,7 @@ namespace System.Management.Automation
 
             set
             {
-                string keyAsString = this.VerifyKey(key);
+                string keyAsString = VerifyKey(key);
                 this.VerifyValue(value);
                 base[keyAsString] = value;
             }
@@ -6869,27 +6871,27 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private static ListType RehydrateList<ListType, ItemType>(PSObject pso, string propertyName, RehydrationFlags flags)
-            where ListType : IList, new()
+        private static TList RehydrateList<TList, TItem>(PSObject pso, string propertyName, RehydrationFlags flags)
+            where TList : IList, new()
         {
             ArrayList deserializedList = GetPropertyValue<ArrayList>(pso, propertyName, flags);
             if (deserializedList == null)
             {
                 if ((flags & RehydrationFlags.NullValueMeansEmptyList) == RehydrationFlags.NullValueMeansEmptyList)
                 {
-                    return new ListType();
+                    return new TList();
                 }
                 else
                 {
-                    return default(ListType);
+                    return default(TList);
                 }
             }
             else
             {
-                ListType newList = new ListType();
+                TList newList = new TList();
                 foreach (object deserializedItem in deserializedList)
                 {
-                    ItemType item = (ItemType)LanguagePrimitives.ConvertTo(deserializedItem, typeof(ItemType), CultureInfo.InvariantCulture);
+                    TItem item = (TItem)LanguagePrimitives.ConvertTo(deserializedItem, typeof(TItem), CultureInfo.InvariantCulture);
                     newList.Add(item);
                 }
 

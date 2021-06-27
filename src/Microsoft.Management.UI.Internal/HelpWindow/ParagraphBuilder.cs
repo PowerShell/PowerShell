@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -107,10 +108,15 @@ namespace Microsoft.Management.UI.Internal
                 bool newHighlighted = false;
 
                 ParagraphBuilder.MoveSpanToPosition(ref currentBoldIndex, ref currentBoldSpan, i, this.boldSpans);
+
+                #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
                 newBold = currentBoldSpan == null ? false : currentBoldSpan.Value.Contains(i);
+                #pragma warning restore IDE0075
 
                 ParagraphBuilder.MoveSpanToPosition(ref currentHighlightedIndex, ref currentHighlightedSpan, i, this.highlightedSpans);
+                #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
                 newHighlighted = currentHighlightedSpan == null ? false : currentHighlightedSpan.Value.Contains(i);
+                #pragma warning restore IDE0075
 
                 if (newBold != currentBold || newHighlighted != currentHighlighted)
                 {
@@ -301,11 +307,13 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="propertyName">Property name.</param>
         private void OnNotifyPropertyChanged(string propertyName)
         {
+            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.s
             PropertyChangedEventHandler handler = this.PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+            #pragma warning restore IDE1005
         }
 
         /// <summary>

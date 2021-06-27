@@ -1157,8 +1157,8 @@ namespace System.Management.Automation
                 return 0;
             }
 
-            Type[] params1 = GetGenericMethodDefinitionIfPossible(candidate1.method.method).GetParameters().Select(p => p.ParameterType).ToArray();
-            Type[] params2 = GetGenericMethodDefinitionIfPossible(candidate2.method.method).GetParameters().Select(p => p.ParameterType).ToArray();
+            Type[] params1 = GetGenericMethodDefinitionIfPossible(candidate1.method.method).GetParameters().Select(static p => p.ParameterType).ToArray();
+            Type[] params2 = GetGenericMethodDefinitionIfPossible(candidate2.method.method).GetParameters().Select(static p => p.ParameterType).ToArray();
             return CompareTypeSpecificity(params1, params2);
         }
 
@@ -1363,7 +1363,7 @@ namespace System.Management.Automation
                 Type targetType = methodInfo.method.DeclaringType;
                 if (targetType != invocationConstraints.MethodTargetType && targetType.IsSubclassOf(invocationConstraints.MethodTargetType))
                 {
-                    var parameterTypes = methodInfo.method.GetParameters().Select(parameter => parameter.ParameterType).ToArray();
+                    var parameterTypes = methodInfo.method.GetParameters().Select(static parameter => parameter.ParameterType).ToArray();
                     var targetTypeMethod = invocationConstraints.MethodTargetType.GetMethod(methodInfo.method.Name, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, parameterTypes, null);
 
                     if (targetTypeMethod != null && (targetTypeMethod.IsPublic || targetTypeMethod.IsFamily || targetTypeMethod.IsFamilyOrAssembly))
@@ -1581,7 +1581,7 @@ namespace System.Management.Automation
 
             if (candidates.Count == 0)
             {
-                if ((methods.Length > 0) && (methods.All(m => m.method != null && m.method.DeclaringType.IsGenericTypeDefinition && m.method.IsStatic)))
+                if ((methods.Length > 0) && (methods.All(static m => m.method != null && m.method.DeclaringType.IsGenericTypeDefinition && m.method.IsStatic)))
                 {
                     errorId = "CannotInvokeStaticMethodOnUninstantiatedGenericType";
                     errorMsg = string.Format(
@@ -3439,9 +3439,11 @@ namespace System.Management.Automation
             }
             else
             {
+                #pragma warning disable SYSLIB0015
                 // Check for 'DisablePrivateReflectionAttribute'. It's applied at the assembly level, and allow an assembly to opt-out of private/internal reflection.
                 var disablePrivateReflectionAttribute = assembly.GetCustomAttribute<System.Runtime.CompilerServices.DisablePrivateReflectionAttribute>();
                 disallowReflection = disablePrivateReflectionAttribute != null;
+                #pragma warning restore SYSLIB0015
             }
 
             s_disallowReflectionCache.TryAdd(assembly.FullName, disallowReflection);
@@ -4533,7 +4535,7 @@ namespace System.Management.Automation
             MethodCacheEntry methodEntry = (MethodCacheEntry)method.adapterData;
             IList<string> uniqueValues = methodEntry
                 .methodInformationStructures
-                .Select(m => m.methodDefinition)
+                .Select(static m => m.methodDefinition)
                 .Distinct(StringComparer.Ordinal)
                 .ToList();
             return new Collection<string>(uniqueValues);
@@ -5903,7 +5905,7 @@ namespace System.Management.Automation
             }
 
             Type[] typeParameters = genericMethod.GetGenericArguments();
-            Type[] typesOfMethodParameters = genericMethod.GetParameters().Select(p => p.ParameterType).ToArray();
+            Type[] typesOfMethodParameters = genericMethod.GetParameters().Select(static p => p.ParameterType).ToArray();
 
             MethodInfo inferredMethod = Infer(genericMethod, typeParameters, typesOfMethodParameters, typesOfMethodArguments);
 
@@ -5944,7 +5946,7 @@ namespace System.Management.Automation
                 {
                     s_tracer.WriteLine(
                         "Types of method arguments: {0}",
-                        string.Join(", ", typesOfMethodArguments.Select(t => t.ToString()).ToArray()));
+                        string.Join(", ", typesOfMethodArguments.Select(static t => t.ToString()).ToArray()));
                 }
 
                 var typeInference = new TypeInference(typeParameters);
@@ -5954,7 +5956,7 @@ namespace System.Management.Automation
                 }
 
                 IEnumerable<Type> inferredTypeParameters = typeParameters.Select(typeInference.GetInferredType);
-                if (inferredTypeParameters.Any(inferredType => inferredType == null))
+                if (inferredTypeParameters.Any(static inferredType => inferredType == null))
                 {
                     return null;
                 }
@@ -5990,7 +5992,7 @@ namespace System.Management.Automation
 #endif
             _typeParameterIndexToSetOfInferenceCandidates = new HashSet<Type>[typeParameters.Count];
 #if DEBUG
-            List<int> listOfTypeParameterPositions = typeParameters.Select(t => t.GenericParameterPosition).ToList();
+            List<int> listOfTypeParameterPositions = typeParameters.Select(static t => t.GenericParameterPosition).ToList();
             listOfTypeParameterPositions.Sort();
             Dbg.Assert(
                 listOfTypeParameterPositions.Count == listOfTypeParameterPositions.Distinct().Count(),
@@ -6022,9 +6024,9 @@ namespace System.Management.Automation
             ICollection<Type> inferenceCandidates =
                 _typeParameterIndexToSetOfInferenceCandidates[typeParameter.GenericParameterPosition];
 
-            if ((inferenceCandidates != null) && (inferenceCandidates.Any(t => t == typeof(LanguagePrimitives.Null))))
+            if ((inferenceCandidates != null) && (inferenceCandidates.Any(static t => t == typeof(LanguagePrimitives.Null))))
             {
-                Type firstValueType = inferenceCandidates.FirstOrDefault(t => t.IsValueType);
+                Type firstValueType = inferenceCandidates.FirstOrDefault(static t => t.IsValueType);
                 if (firstValueType != null)
                 {
                     s_tracer.WriteLine("Cannot reconcile null and {0} (a value type)", firstValueType);
@@ -6033,7 +6035,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    inferenceCandidates = inferenceCandidates.Where(t => t != typeof(LanguagePrimitives.Null)).ToList();
+                    inferenceCandidates = inferenceCandidates.Where(static t => t != typeof(LanguagePrimitives.Null)).ToList();
                     if (inferenceCandidates.Count == 0)
                     {
                         inferenceCandidates = null;

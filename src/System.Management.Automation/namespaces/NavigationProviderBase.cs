@@ -1036,8 +1036,7 @@ namespace System.Management.Automation.Provider
                         if (!allowNonExistingPaths)
                         {
                             PSArgumentException e =
-                                (PSArgumentException)
-                                PSTraceSource.NewArgumentException(
+                                (PSArgumentException)PSTraceSource.NewArgumentException(
                                     nameof(path),
                                     SessionStateStrings.NormalizeRelativePathOutsideBase,
                                     path,

@@ -29,13 +29,13 @@ namespace Microsoft.PowerShell.Commands
 
         private const int maxDepthAllowed = 100;
 
-        private readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancellationSource = new();
 
         /// <summary>
         /// Gets or sets the Depth property.
         /// </summary>
         [Parameter]
-        [ValidateRange(1, int.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public int Depth
         {
             get { return _depth; }
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies how strings are escaped when writing JSON text.
         /// If the EscapeHandling property is set to EscapeHtml, the result JSON string will
-        /// be returned with HTML (<, >, &, ', ") and control characters (e.g. newline) are escaped.
+        /// be returned with HTML (&lt;, &gt;, &amp;, ', ") and control characters (e.g. newline) are escaped.
         /// </summary>
         [Parameter]
         public StringEscapeHandling EscapeHandling { get; set; } = StringEscapeHandling.Default;
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private readonly List<object> _inputObjects = new List<object>();
+        private readonly List<object> _inputObjects = new();
 
         /// <summary>
         /// Caching the input objects for the command.

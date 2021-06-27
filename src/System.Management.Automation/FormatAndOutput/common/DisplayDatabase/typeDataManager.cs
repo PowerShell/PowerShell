@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
         /// </param>
-        /// <exception cref="ArgumentNullException" />
+        /// <exception cref="ArgumentNullException"/>
         /// <exception cref="ArgumentException">
         /// 1. FormatFile is not rooted.
         /// </exception>

@@ -14,7 +14,7 @@ using Microsoft.PowerShell;
 
 namespace System.Management.Automation.Language
 {
-    internal class TypeDefiner
+    internal static class TypeDefiner
     {
         internal const string DynamicClassAssemblyName = "PowerShell Class Assembly";
         internal const string DynamicClassAssemblyFullNamePrefix = "PowerShell Class Assembly,";
@@ -921,7 +921,7 @@ namespace System.Management.Automation.Language
                     (i, n) => ctor.DefineParameter(i, ParameterAttributes.None, n));
             }
 
-            private string GetMetaDataName(string name, int numberOfParameters)
+            private static string GetMetaDataName(string name, int numberOfParameters)
             {
                 int currentId = Interlocked.Increment(ref s_globalCounter);
                 string metaDataName = name + "_" + numberOfParameters + "_" + currentId;
@@ -1082,7 +1082,7 @@ namespace System.Management.Automation.Language
                         }
 
                         // The expression may have multiple member expressions, e.g. [E]::e1 + [E]::e2
-                        foreach (var memberExpr in initExpr.FindAll(ast => ast is MemberExpressionAst, false))
+                        foreach (var memberExpr in initExpr.FindAll(static ast => ast is MemberExpressionAst, false))
                         {
                             var typeExpr = ((MemberExpressionAst)memberExpr).Expression as TypeExpressionAst;
                             if (typeExpr != null)

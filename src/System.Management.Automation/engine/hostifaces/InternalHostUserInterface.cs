@@ -49,8 +49,7 @@ namespace System.Management.Automation.Internal.Host
             _internalRawUI.ThrowNotInteractive();
         }
 
-        private
-        void
+        private static void
         ThrowPromptNotInteractive(string promptMessage)
         {
             string message = StringUtil.Format(HostInterfaceExceptionsStrings.HostFunctionPromptNotImplemented, promptMessage);
@@ -79,7 +78,7 @@ namespace System.Management.Automation.Internal.Host
 
         public override bool SupportsVirtualTerminal
         {
-            get { return (_externalUI != null) ? _externalUI.SupportsVirtualTerminal : false; }
+            get { return _externalUI != null && _externalUI.SupportsVirtualTerminal; }
         }
 
         /// <summary>
@@ -994,7 +993,7 @@ namespace System.Management.Automation.Internal.Host
                     // choices to be picked.
 
                     // user did not pick up any choices..choose the default
-                    if ((result.Count == 0) && (defaultChoiceKeys.Keys.Count >= 0))
+                    if (result.Count == 0)
                     {
                         // if there's a default, pick that one.
                         foreach (int defaultChoice in defaultChoiceKeys.Keys)

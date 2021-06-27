@@ -248,7 +248,7 @@ namespace System.Management.Automation.Internal
                 while (currentProcess != null)
                 {
                     if (string.Equals(gpScriptPath,
-                            PsUtils.GetMainModule(currentProcess).FileName, StringComparison.OrdinalIgnoreCase))
+                            currentProcess.MainModule.FileName, StringComparison.OrdinalIgnoreCase))
                     {
                         foundGpScriptParent = true;
                         break;
@@ -704,7 +704,6 @@ namespace System.Management.Automation.Internal
                                                                   out structSize))
                         {
                             Security.NativeMethods.CERT_ENHKEY_USAGE ekuStruct =
-                                (Security.NativeMethods.CERT_ENHKEY_USAGE)
                                 Marshal.PtrToStructure<Security.NativeMethods.CERT_ENHKEY_USAGE>(ekuBuffer);
                             IntPtr ep = ekuStruct.rgpszUsageIdentifier;
                             IntPtr ekuptr;
@@ -1335,42 +1334,29 @@ namespace System.Management.Automation
         Decryption
     }
 
-    internal class AmsiUtils
+    internal static class AmsiUtils
     {
-        private static string GetProcessHostName(string processName)
-        {
-            return string.Concat("PowerShell_", processName, ".exe_0.0.0.0");
-        }
-
         internal static int Init()
         {
             Diagnostics.Assert(s_amsiContext == IntPtr.Zero, "Init should be called just once");
 
             lock (s_amsiLockObject)
             {
-                Process currentProcess = Process.GetCurrentProcess();
-                string hostname;
+                string appName;
                 try
                 {
-                    var processModule = PsUtils.GetMainModule(currentProcess);
-                    hostname = string.Concat("PowerShell_", processModule.FileName, "_",
-                        processModule.FileVersionInfo.ProductVersion);
+                    appName = string.Concat("PowerShell_", Environment.ProcessPath, "_", PSVersionInfo.ProductVersion);
                 }
-                catch (ComponentModel.Win32Exception)
+                catch (Exception)
                 {
-                    // This exception can be thrown during thread impersonation (Access Denied for process module access).
-                    hostname = GetProcessHostName(currentProcess.ProcessName);
-                }
-                catch (FileNotFoundException)
-                {
-                    // This exception can occur if the file is renamed or moved to some other folder
-                    // (This has occurred during Exchange set up).
-                    hostname = GetProcessHostName(currentProcess.ProcessName);
+                    // Fall back to 'Process.ProcessName' in case 'Environment.ProcessPath' throws exception.
+                    Process currentProcess = Process.GetCurrentProcess();
+                    appName = string.Concat("PowerShell_", currentProcess.ProcessName, ".exe_", PSVersionInfo.ProductVersion);
                 }
 
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
-                var hr = AmsiNativeMethods.AmsiInitialize(hostname, ref s_amsiContext);
+                var hr = AmsiNativeMethods.AmsiInitialize(appName, ref s_amsiContext);
                 if (!Utils.Succeeded(hr))
                 {
                     s_amsiInitFailed = true;
@@ -1407,7 +1393,7 @@ namespace System.Management.Automation
             const string EICAR_STRING = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*";
             if (InternalTestHooks.UseDebugAmsiImplementation)
             {
-                if (content.IndexOf(EICAR_STRING, StringComparison.Ordinal) >= 0)
+                if (content.Contains(EICAR_STRING, StringComparison.Ordinal))
                 {
                     return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED;
                 }
@@ -1581,7 +1567,7 @@ namespace System.Management.Automation
         public static bool AmsiInitialized = false;
         public static bool AmsiCleanedUp = false;
 
-        internal class AmsiNativeMethods
+        internal static class AmsiNativeMethods
         {
             internal enum AMSI_RESULT
             {

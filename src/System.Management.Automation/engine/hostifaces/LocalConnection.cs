@@ -941,7 +941,7 @@ namespace System.Management.Automation.Runspaces
         /// function.  If a remote runspace supports disconnect then it will be disconnected
         /// rather than closed.
         /// </summary>
-        private void CloseOrDisconnectAllRemoteRunspaces(Func<List<RemoteRunspace>> getRunspaces)
+        private static void CloseOrDisconnectAllRemoteRunspaces(Func<List<RemoteRunspace>> getRunspaces)
         {
             List<RemoteRunspace> runspaces = getRunspaces();
             if (runspaces.Count == 0) { return; }

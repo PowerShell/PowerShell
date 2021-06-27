@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         string errorMessage = StringUtil.Format(ConvertMarkdownStrings.InvalidInputObjectType, baseObj.GetType());
-                        ErrorRecord errorRecord = new ErrorRecord(
+                        ErrorRecord errorRecord = new(
                             new InvalidDataException(errorMessage),
                             "InvalidInputObject",
                             ErrorCategory.InvalidData,
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                using (StreamReader reader = new StreamReader(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
+                using (StreamReader reader = new(new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)))
                 {
                     string mdContent = await reader.ReadToEndAsync();
                     return mdContent;
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Commands
         {
             ProviderInfo provider = null;
             PSDriveInfo drive = null;
-            List<string> resolvedPaths = new List<string>();
+            List<string> resolvedPaths = new();
 
             try
             {
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
             if (!provider.Name.Equals("FileSystem", StringComparison.OrdinalIgnoreCase))
             {
                 string errorMessage = StringUtil.Format(ConvertMarkdownStrings.FileSystemPathsOnly, path);
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new ArgumentException(),
                     "OnlyFileSystemPathsSupported",
                     ErrorCategory.InvalidArgument,

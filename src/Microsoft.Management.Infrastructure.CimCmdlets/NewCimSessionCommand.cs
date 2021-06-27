@@ -33,7 +33,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CredentialParameterSet)]
         public PasswordAuthenticationMechanism Authentication
         {
-            get { return authentication; }
+            get
+            {
+                return authentication;
+            }
 
             set
             {
@@ -97,13 +100,16 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// <para>
         /// The unit is Second.
-        /// <para>
+        /// </para>
         /// </summary>
         [Alias(AliasOT)]
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public UInt32 OperationTimeoutSec
         {
-            get { return operationTimeout; }
+            get
+            {
+                return operationTimeout;
+            }
 
             set
             {
@@ -132,7 +138,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public UInt32 Port
         {
-            get { return port; }
+            get
+            {
+                return port;
+            }
 
             set
             {
@@ -153,9 +162,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// If the argument is not given, a default SessionOption will be created for
         /// the session in .NET API layer.
         /// </para>
+        /// <para>
         /// If a <see cref="DCOMSessionOption"/> object is passed, then
         /// connection is made using DCOM. If a <see cref="WsManSessionOption"/>
         /// object is passed, then connection is made using WsMan.
+        /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public Microsoft.Management.Infrastructure.Options.CimSessionOptions SessionOption { get; set; }
@@ -223,7 +234,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             outputCredential = null;
             if (options != null)
             {
-                DComSessionOptions dcomOptions = (options as DComSessionOptions);
+                DComSessionOptions dcomOptions = options as DComSessionOptions;
                 if (dcomOptions != null)
                 {
                     bool conflict = false;

@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return BestMatchIndexUndefined;
         }
 
-        private bool MatchCondition(PSObject currentObject, PSPropertyExpression ex)
+        private static bool MatchCondition(PSObject currentObject, PSPropertyExpression ex)
         {
             if (ex == null)
                 return true;

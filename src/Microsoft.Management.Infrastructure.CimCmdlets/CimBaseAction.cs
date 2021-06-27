@@ -17,7 +17,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal abstract class CimBaseAction
     {
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CimBaseAction"/> class.
         /// </summary>
         protected CimBaseAction()
         {
@@ -56,7 +56,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimSyncAction : CimBaseAction, IDisposable
     {
         /// <summary>
-        /// The constructor.
+        /// Initializes a new instance of the <see cref="CimSyncAction"/> class.
         /// </summary>
         public CimSyncAction()
         {

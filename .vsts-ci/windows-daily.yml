@@ -99,6 +99,17 @@ stages:
 
     # must be run frow Windows PowerShell
     - powershell: |
+        # Remove "Program Files\dotnet" from the env variable PATH, so old SDKs won't affect us.
+        Write-Host "Old Path:"
+        Write-Host $env:Path
+
+        $dotnetPath = Join-Path $env:SystemDrive 'Program Files\dotnet'
+        $paths = $env:Path -split ";" | Where-Object { -not $_.StartsWith($dotnetPath) }
+        $env:Path = $paths -join ";"
+
+        Write-Host "New Path:"
+        Write-Host $env:Path
+
         Import-Module .\tools\ci.psm1
         Invoke-CIInstall
       displayName: Bootstrap
@@ -165,9 +176,3 @@ stages:
         }
       displayName: 'Upload CLR Trace'
       condition: always()
-
-- stage: PackagingWin
-  displayName: Packaging for Windows
-  jobs:
-  # Unlike daily builds, we do not upload nuget package to MyGet so we do not wait on tests to finish.
-  - template: templates/windows-packaging.yml

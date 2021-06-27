@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private string _resultRole;
         private string _sourceRole;
 
-        internal readonly Dictionary<string, object> queryOptions = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        internal readonly Dictionary<string, object> queryOptions = new(StringComparer.OrdinalIgnoreCase);
 
         internal ClientSideQuery ClientSideQuery { get; }
 
@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 .Select(propertyValue => wildcardsEnabled
                                              ? GetMatchConditionForLikeOperator(propertyName, propertyValue)
                                              : GetMatchConditionForEqualityOperator(propertyName, propertyValue))
-                .Where(individualCondition => !string.IsNullOrWhiteSpace(individualCondition))
+                .Where(static individualCondition => !string.IsNullOrWhiteSpace(individualCondition))
                 .ToList();
             if (individualConditions.Count == 0)
             {

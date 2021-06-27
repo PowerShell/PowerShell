@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromRemainingArguments = true, ValueFromPipeline = true)]
         [Alias("Msg", "Message")]
-        public object Object { get; set; } = null;
+        public object Object { get; set; }
 
         /// <summary>
         /// False to add a newline to the end of the output string, true if not.
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
                     // unroll enumerables, including arrays.
 
                     bool printSeparator = false;
-                    StringBuilder result = new StringBuilder();
+                    StringBuilder result = new();
 
                     foreach (object element in enumerable)
                     {
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string result = ProcessObject(Object) ?? string.Empty;
 
-            HostInformationMessage informationMessage = new HostInformationMessage();
+            HostInformationMessage informationMessage = new();
             informationMessage.Message = result;
             informationMessage.NoNewLine = NoNewline.IsPresent;
 

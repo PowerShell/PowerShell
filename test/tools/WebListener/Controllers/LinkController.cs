@@ -109,7 +109,7 @@ namespace mvc.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private string GetLink(string baseUri, int maxLinks, int linkNumber, string whitespace, string type, string rel)
+        private static string GetLink(string baseUri, int maxLinks, int linkNumber, string whitespace, string type, string rel)
         {
             return string.Format(Constants.LinkUriTemplate, baseUri, maxLinks, linkNumber, type, whitespace, rel);
         }

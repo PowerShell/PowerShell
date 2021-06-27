@@ -15,12 +15,13 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Represents a single point in a script.  The script may come from a file or interactive input.
     /// </summary>
+#nullable enable
     public interface IScriptPosition
     {
         /// <summary>
         /// The name of the file, or if the script did not come from a file, then null.
         /// </summary>
-        string File { get; }
+        string? File { get; }
 
         /// <summary>
         /// The line number of the position, with the value 1 being the first line.
@@ -45,18 +46,20 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The complete script that this position is included in.
         /// </summary>
-        string GetFullScript();
+        string? GetFullScript();
     }
+#nullable restore
 
     /// <summary>
     /// Represents the a span of text in a script.
     /// </summary>
+#nullable enable
     public interface IScriptExtent
     {
         /// <summary>
         /// The filename the extent includes, or null if the extent is not included in any file.
         /// </summary>
-        string File { get; }
+        string? File { get; }
 
         /// <summary>
         /// The starting position of the extent.
@@ -103,6 +106,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         int EndOffset { get; }
     }
+#nullable restore
 
     /// <summary>
     /// A few utility functions for script positions.
@@ -644,8 +648,8 @@ namespace System.Management.Automation.Language
             int scriptLineNumber,
             int offsetInLine,
             string line,
-            string fullScript) :
-            this(scriptName, scriptLineNumber, offsetInLine, line)
+            string fullScript)
+            : this(scriptName, scriptLineNumber, offsetInLine, line)
         {
             _fullScript = fullScript;
         }

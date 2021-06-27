@@ -35,7 +35,9 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
+                #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
                 return (this.renameButton != null) ? this.renameButton.IsChecked.Value : false;
+                #pragma warning restore IDE0075
             }
         }
 

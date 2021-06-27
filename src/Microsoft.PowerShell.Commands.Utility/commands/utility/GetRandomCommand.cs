@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentNullException("max");
             }
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 new ArgumentException(string.Format(
                     CultureInfo.InvariantCulture, GetRandomCommandStrings.MinGreaterThanOrEqualMax, minValue, maxValue)),
                 "MinGreaterThanOrEqualMax",
@@ -109,10 +109,10 @@ namespace Microsoft.PowerShell.Commands
 
         #region Random generator state
 
-        private static readonly ReaderWriterLockSlim s_runspaceGeneratorMapLock = new ReaderWriterLockSlim();
+        private static readonly ReaderWriterLockSlim s_runspaceGeneratorMapLock = new();
 
         // 1-to-1 mapping of runspaces and random number generators
-        private static readonly Dictionary<Guid, PolymorphicRandomNumberGenerator> s_runspaceGeneratorMap = new Dictionary<Guid, PolymorphicRandomNumberGenerator>();
+        private static readonly Dictionary<Guid, PolymorphicRandomNumberGenerator> s_runspaceGeneratorMap = new();
 
         private static void CurrentRunspace_StateChanged(object sender, RunspaceStateEventArgs e)
         {

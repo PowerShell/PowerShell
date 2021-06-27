@@ -17,9 +17,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimGetCimClassContext : XOperationContextBase
     {
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimGetCimClassContext"/> class.
         /// </summary>
         /// <param name="methodName"></param>
         /// <param name="propertyName"></param>
@@ -82,9 +80,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimGetCimClass : CimAsyncOperation
     {
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimGetCimClass"/> class.
         /// </summary>
         public CimGetCimClass()
             : base()

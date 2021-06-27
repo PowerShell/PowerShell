@@ -576,7 +576,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            set { showErrorsAsMessages = value; }
+            set
+            {
+                showErrorsAsMessages = value;
+            }
         }
 
         internal bool? showErrorsAsMessages = null;
@@ -595,7 +598,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            set { showErrorsInFormattedOutput = value; }
+            set
+            {
+                showErrorsInFormattedOutput = value;
+            }
         }
 
         internal bool? showErrorsInFormattedOutput = null;
@@ -792,7 +798,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            set { _autosize = value; }
+            set
+            {
+                _autosize = value;
+            }
         }
 
         private bool? _autosize = null;
@@ -817,7 +826,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            set { _hideHeaders = value; }
+            set
+            {
+                _hideHeaders = value;
+            }
         }
 
         private bool? _hideHeaders = null;
@@ -836,7 +848,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            set { _multiLine = value; }
+            set
+            {
+                _multiLine = value;
+            }
         }
 
         private bool? _multiLine = null;

@@ -328,7 +328,7 @@ namespace System.Management.Automation.Tracing
             if (parentActivityId != Guid.Empty)
             {
                 EventDescriptor transferEvent = TransferEvent;
-                provider.WriteTransferEvent(ref transferEvent, parentActivityId, activityId, parentActivityId);
+                provider.WriteTransferEvent(in transferEvent, parentActivityId, activityId, parentActivityId);
             }
         }
 
@@ -473,7 +473,7 @@ namespace System.Management.Automation.Tracing
                 }
             }
 
-            bool success = provider.WriteEvent(ref ed, payload);
+            bool success = provider.WriteEvent(in ed, payload);
             if (EventWritten != null)
             {
                 EventWritten.Invoke(this, new EtwEventArgs(ed, success, payload));

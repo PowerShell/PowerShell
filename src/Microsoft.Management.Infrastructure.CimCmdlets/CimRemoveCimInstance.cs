@@ -17,9 +17,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimRemoveCimInstanceContext : XOperationContextBase
     {
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimRemoveCimInstanceContext"/> class.
         /// </summary>
         /// <param name="theNamespace"></param>
         /// <param name="theProxy"></param>
@@ -39,9 +37,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimRemoveCimInstance : CimGetInstance
     {
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimRemoveCimInstance"/> class.
         /// </summary>
         public CimRemoveCimInstance()
             : base()

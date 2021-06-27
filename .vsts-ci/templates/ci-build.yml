@@ -20,13 +20,21 @@ jobs:
     displayName: Set Build Name for Non-PR
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
-  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+  - ${{ if ne(variables['AzDevOpsFeed'], '') }}:
+    - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+
+  - pwsh: |
+      if (Test-Path -Path $HOME/.dotnet) {
+          Remove-Item $HOME/.dotnet -Recurse -Force
+      }
+    displayName: Remove Old .NET SDKs
+    condition: succeededOrFailed()
 
   - pwsh: |
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall -SkipUser
     displayName: Bootstrap
-    condition: succeededOrFailed()
+    condition: succeeded()
 
   - powershell: |
       Import-Module .\tools\ci.psm1

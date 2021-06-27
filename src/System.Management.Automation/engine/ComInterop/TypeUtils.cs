@@ -38,6 +38,7 @@ namespace System.Management.Automation.ComInterop
             }
             return false;
         }
+
         //CONFORMING
         internal static bool AreAssignable(Type dest, Type src)
         {

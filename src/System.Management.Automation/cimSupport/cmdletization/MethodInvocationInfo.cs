@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
         internal IEnumerable<T> GetArgumentsOfType<T>() where T : class
         {
-            List<T> result = new List<T>();
+            List<T> result = new();
             foreach (var methodParameter in this.Parameters)
             {
                 if ((methodParameter.Bindings & MethodParameterBindings.In) != MethodParameterBindings.In)

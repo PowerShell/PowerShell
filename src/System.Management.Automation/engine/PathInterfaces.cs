@@ -1402,7 +1402,7 @@ namespace System.Management.Automation
                     _sessionState != null,
                     "The only constructor for this class should always set the sessionState field");
 
-                return _pathResolver ?? (_pathResolver = _sessionState.ExecutionContext.LocationGlobber);
+                return _pathResolver ??= _sessionState.ExecutionContext.LocationGlobber;
             }
         }
 

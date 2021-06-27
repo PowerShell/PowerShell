@@ -462,7 +462,7 @@ namespace System.Management.Automation
         //
         // It also only populates the bound parameters for a limited set of parameters needed
         // for module analysis.
-        private Hashtable DoPsuedoParameterBinding(CommandAst commandAst, string commandName)
+        private static Hashtable DoPsuedoParameterBinding(CommandAst commandAst, string commandName)
         {
             var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
 

@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
 
             this.Name = other.Name;
             this.IsDefault = other.IsDefault;
-            this.Parameters = other.Parameters.Select(x => new ShowCommandParameterInfo(x)).ToArray();
+            this.Parameters = other.Parameters.Select(static x => new ShowCommandParameterInfo(x)).ToArray();
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
             this.Name = other.Members["Name"].Value as string;
             this.IsDefault = (bool)(other.Members["IsDefault"].Value);
             var parameters = (other.Members["Parameters"].Value as PSObject).BaseObject as System.Collections.ArrayList;
-            this.Parameters = ShowCommandCommandInfo.GetObjectEnumerable(parameters).Cast<PSObject>().Select(x => new ShowCommandParameterInfo(x)).ToArray();
+            this.Parameters = ShowCommandCommandInfo.GetObjectEnumerable(parameters).Cast<PSObject>().Select(static x => new ShowCommandParameterInfo(x)).ToArray();
         }
 
         /// <summary>

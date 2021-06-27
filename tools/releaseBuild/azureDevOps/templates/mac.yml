@@ -8,8 +8,12 @@ jobs:
   pool: Hosted Mac Internal
   variables:
     # Turn off Homebrew analytics
-    HOMEBREW_NO_ANALYTICS: 1
-    runCodesignValidationInjection: false
+    - name: HOMEBREW_NO_ANALYTICS
+      value: 1
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
   steps:
   #- task: <task type name>@<version>
   #  inputs:
@@ -35,20 +39,14 @@ jobs:
       tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
     displayName: 'Bootstrap VM'
 
-  - pwsh: |
-      Import-Module $(Build.SourcesDirectory)/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT) -FeedName AzDevOpsFeed -Destination "$(PowerShellRoot)/src/Modules"
-
-      if(-not (Test-Path "$(PowerShellRoot)/src/Modules/nuget.config"))
-      {
-          throw "nuget.config is not created"
-      }
-    displayName: 'Add nuget.config for AzDevOps feed for PSGallery modules '
+  - template: /tools/releaseBuild/azureDevOps/templates/insert-nuget-config-azfeed.yml
+    parameters:
+      repoRoot: $(PowerShellRoot)
 
   - pwsh: |
-      $env:AZDEVOPSFEEDPAT = '$(AzDevOpsFeedPAT)'
+      $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
       $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults
-      $env:AZDEVOPSFEEDPAT = $null
+      $env:AzDevOpsFeedPAT2 = $null
     displayName: 'Build'
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0

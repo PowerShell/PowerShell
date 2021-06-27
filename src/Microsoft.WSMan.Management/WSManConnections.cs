@@ -38,7 +38,10 @@ namespace Microsoft.WSMan.Management
         [Alias("cred", "c")]
         public virtual PSCredential Credential
         {
-            get { return credential; }
+            get
+            {
+                return credential;
+            }
 
             set
             {
@@ -69,7 +72,10 @@ namespace Microsoft.WSMan.Management
         [Alias("auth", "am")]
         public virtual AuthenticationMechanism Authentication
         {
-            get { return authentication; }
+            get
+            {
+                return authentication;
+            }
 
             set
             {
@@ -88,7 +94,10 @@ namespace Microsoft.WSMan.Management
         [ValidateNotNullOrEmpty]
         public virtual string CertificateThumbprint
         {
-            get { return thumbPrint; }
+            get
+            {
+                return thumbPrint;
+            }
 
             set
             {
@@ -144,7 +153,10 @@ namespace Microsoft.WSMan.Management
         [Alias("cn")]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -300,7 +312,10 @@ namespace Microsoft.WSMan.Management
         [Parameter(Position = 0)]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {

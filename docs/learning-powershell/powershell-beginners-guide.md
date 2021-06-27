@@ -325,7 +325,7 @@ For more details, see [Create and Run PowerShell Script Guide][create-run-script
 [in-action]: https://www.amazon.com/Windows-PowerShell-Action-Bruce-Payette/dp/1633430294
 [cookbook]: http://shop.oreilly.com/product/9780596801519.do
 [ebook-list]: https://martin77s.wordpress.com/2014/05/26/free-powershell-ebooks/
-[tutorial]: https://www.computerperformance.co.uk/powershell/index.htm
+[tutorial]: https://www.computerperformance.co.uk/powershell/index-13/
 [to-learn]:https://blogs.technet.microsoft.com/heyscriptingguy/2015/01/04/weekend-scripter-the-best-ways-to-learn-powershell/
 [ps-module]:https://docs.microsoft.com/powershell/scripting/developer/module/understanding-a-windows-powershell-module
 [create-ps-module]:https://www.business.com/articles/powershell-modules/

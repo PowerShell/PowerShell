@@ -105,7 +105,7 @@ namespace System.Management.Automation
 
         #region Fields
 
-        private static readonly object s_syncObj = new object();
+        private static readonly object s_syncObj = new();
         private readonly string[] _probingPaths;
         private readonly string[] _extensions = new string[] { ".ni.dll", ".dll" };
         // CoreCLR type catalog dictionary
@@ -114,9 +114,8 @@ namespace System.Management.Automation
         private readonly Dictionary<string, string> _coreClrTypeCatalog;
         private readonly Lazy<HashSet<string>> _availableDotNetAssemblyNames;
 
-        private readonly HashSet<string> _denyListedAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase){
-                "System.Windows.Forms"
-            };
+        private readonly HashSet<string> _denyListedAssemblies =
+            new(StringComparer.OrdinalIgnoreCase) { "System.Windows.Forms" };
 
 #if !UNIX
         private string _winDir;
@@ -140,7 +139,7 @@ namespace System.Management.Automation
         /// Therefore, there is no need to use the full assembly name as the key. Short assembly name is sufficient.
         /// </remarks>
         private static readonly ConcurrentDictionary<string, Assembly> s_assemblyCache =
-            new ConcurrentDictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
+            new(StringComparer.OrdinalIgnoreCase);
 
         #endregion Fields
 
@@ -393,7 +392,7 @@ namespace System.Management.Automation
         }
 
         // Find the assembly under 'gacRoot' and select the latest version.
-        private bool FindInGac(string gacRoot, AssemblyName assemblyName, out string assemblyPath)
+        private static bool FindInGac(string gacRoot, AssemblyName assemblyName, out string assemblyPath)
         {
             bool assemblyFound = false;
             assemblyPath = null;
@@ -404,12 +403,12 @@ namespace System.Management.Automation
             if (Directory.Exists(tempAssemblyDirPath))
             {
                 // Enumerate all directories, sort by name and select the last. This selects the latest version.
-                var chosenVersionDirectory = Directory.GetDirectories(tempAssemblyDirPath).OrderBy(d => d).LastOrDefault();
+                var chosenVersionDirectory = Directory.EnumerateDirectories(tempAssemblyDirPath).OrderBy(static d => d).LastOrDefault();
 
                 if (!string.IsNullOrEmpty(chosenVersionDirectory))
                 {
                     // Select first or default as the directory will contain only one assembly. If nothing then default is null;
-                    var foundAssemblyPath = Directory.GetFiles(chosenVersionDirectory, $"{assemblyName.Name}*").FirstOrDefault();
+                    var foundAssemblyPath = Directory.EnumerateFiles(chosenVersionDirectory, $"{assemblyName.Name}*").FirstOrDefault();
 
                     if (!string.IsNullOrEmpty(foundAssemblyPath))
                     {
@@ -430,7 +429,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Try to get the specified assembly from cache.
         /// </summary>
-        private bool TryGetAssemblyFromCache(AssemblyName assemblyName, out Assembly asmLoaded)
+        private static bool TryGetAssemblyFromCache(AssemblyName assemblyName, out Assembly asmLoaded)
         {
             if (s_assemblyCache.TryGetValue(assemblyName.Name, out asmLoaded))
             {
@@ -454,7 +453,7 @@ namespace System.Management.Automation
         /// <param name="requestedAssembly">AssemblyName of the requested assembly.</param>
         /// <param name="loadedAssembly">AssemblyName of the loaded assembly.</param>
         /// <returns></returns>
-        private bool IsAssemblyMatching(AssemblyName requestedAssembly, AssemblyName loadedAssembly)
+        private static bool IsAssemblyMatching(AssemblyName requestedAssembly, AssemblyName loadedAssembly)
         {
             //
             // We use the same rules as CoreCLR loader to compare the requested assembly and loaded assembly:
@@ -501,7 +500,7 @@ namespace System.Management.Automation
         /// <param name="tpaStrongName">
         /// The assembly strong name of a CoreCLR Trusted_Platform_Assembly
         /// </param>
-        private Assembly GetTrustedPlatformAssembly(string tpaStrongName)
+        private static Assembly GetTrustedPlatformAssembly(string tpaStrongName)
         {
             // We always depend on the default context to load the TPAs that are recorded in
             // the type catalog.
@@ -509,7 +508,7 @@ namespace System.Management.Automation
             //     it back from the cache of default context.
             //   - If the requested TPA is not loaded yet, then 'Assembly.Load' will make the
             //     default context to load it
-            AssemblyName assemblyName = new AssemblyName(tpaStrongName);
+            AssemblyName assemblyName = new(tpaStrongName);
             Assembly asmLoaded = Assembly.Load(assemblyName);
             return asmLoaded;
         }
@@ -517,7 +516,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Throw FileLoadException.
         /// </summary>
-        private void ThrowFileLoadException(string errorTemplate, params object[] args)
+        private static void ThrowFileLoadException(string errorTemplate, params object[] args)
         {
             string message = string.Format(CultureInfo.CurrentCulture, errorTemplate, args);
             throw new FileLoadException(message);
@@ -526,7 +525,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Throw FileNotFoundException.
         /// </summary>
-        private void ThrowFileNotFoundException(string errorTemplate, params object[] args)
+        private static void ThrowFileNotFoundException(string errorTemplate, params object[] args)
         {
             string message = string.Format(CultureInfo.CurrentCulture, errorTemplate, args);
             throw new FileNotFoundException(message);
@@ -586,6 +585,37 @@ namespace System.Management.Automation
                 throw new ArgumentNullException(nameof(basePaths));
 
             PowerShellAssemblyLoadContext.InitializeSingleton(basePaths);
+        }
+    }
+
+    /// <summary>
+    /// Provides helper functions to faciliate calling managed code from a native PowerShell host.
+    /// </summary>
+    public static unsafe class PowerShellUnsafeAssemblyLoad
+    {
+        /// <summary>
+        /// Load an assembly in memory from unmanaged code.
+        /// </summary>
+        /// <remarks>
+        /// This API is covered by the experimental feature 'PSLoadAssemblyFromNativeCode',
+        /// and it may be deprecated and removed in future.
+        /// </remarks>
+        /// <param name="data">Unmanaged pointer to assembly data buffer.</param>
+        /// <param name="size">Size in bytes of the assembly data buffer.</param>
+        /// <returns>Returns zero on success and non-zero on failure.</returns>
+        [UnmanagedCallersOnly]
+        public static int LoadAssemblyFromNativeMemory(IntPtr data, int size)
+        {
+            try
+            {
+                using var stream = new UnmanagedMemoryStream((byte*)data, size);
+                AssemblyLoadContext.Default.LoadFromStream(stream);
+                return 0;
+            }
+            catch
+            {
+                return -1;
+            }
         }
     }
 }

@@ -84,7 +84,7 @@ namespace System.Diagnostics.Eventing
 
         private void InitProvider(string providerId)
         {
-            Guid controlGuid = new Guid(providerId);
+            Guid controlGuid = new(providerId);
             //
             // Create The ETW TraceProvider
             //
@@ -148,7 +148,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
+            StringBuilder dataString = new(s_defaultPayloadSize);
 
             if (data != null)
             {
@@ -177,7 +177,7 @@ namespace System.Diagnostics.Eventing
             }
 
             int index;
-            StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
+            StringBuilder dataString = new(s_defaultPayloadSize);
 
             if ((data != null) && (data.Length > 0))
             {
@@ -242,7 +242,7 @@ namespace System.Diagnostics.Eventing
                 return;
             }
 
-            StringBuilder dataString = new StringBuilder(s_defaultPayloadSize);
+            StringBuilder dataString = new(s_defaultPayloadSize);
             dataString.Append(message);
 
             _provider.WriteMessageEvent(dataString.ToString(),
@@ -278,7 +278,7 @@ namespace System.Diagnostics.Eventing
 
         public override void Fail(string message, string detailMessage)
         {
-            StringBuilder failMessage = new StringBuilder(message);
+            StringBuilder failMessage = new(message);
             if (detailMessage != null)
             {
                 failMessage.Append(' ');

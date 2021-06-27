@@ -240,7 +240,9 @@ namespace System.Management.Automation.Help
         private readonly UpdatableHelpCommandBase _cmdlet;
         private readonly CancellationTokenSource _cancelTokenSource;
 
-        internal WebClient WebClient { get; }
+        internal HttpClient HttpClient { get; }
+
+        internal bool UseDefaultCredentials;
 
         internal string CurrentModule { get; set; }
 
@@ -249,7 +251,7 @@ namespace System.Management.Automation.Help
         /// </summary>
         internal UpdatableHelpSystem(UpdatableHelpCommandBase cmdlet, bool useDefaultCredentials)
         {
-            WebClient = new WebClient();
+            HttpClient = new HttpClient();
             _defaultTimeout = new TimeSpan(0, 0, 30);
             _progressEvents = new Collection<UpdatableHelpProgressEventArgs>();
             Errors = new Collection<Exception>();
@@ -258,7 +260,7 @@ namespace System.Management.Automation.Help
             _cmdlet = cmdlet;
             _cancelTokenSource = new CancellationTokenSource();
 
-            WebClient.UseDefaultCredentials = useDefaultCredentials;
+            UseDefaultCredentials = useDefaultCredentials;
 
 #if !CORECLR
             WebClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(HandleDownloadProgressChanged);
@@ -275,7 +277,7 @@ namespace System.Management.Automation.Help
             _completionEvent.Dispose();
 #endif
             _cancelTokenSource.Dispose();
-            WebClient.Dispose();
+            HttpClient.Dispose();
             GC.SuppressFinalize(this);
         }
 
@@ -339,7 +341,7 @@ namespace System.Management.Automation.Help
                 string xml;
                 using (HttpClientHandler handler = new HttpClientHandler())
                 {
-                    handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
+                    handler.UseDefaultCredentials = UseDefaultCredentials;
                     using (HttpClient client = new HttpClient(handler))
                     {
                         client.Timeout = _defaultTimeout;
@@ -420,7 +422,7 @@ namespace System.Management.Automation.Help
                     using (HttpClientHandler handler = new HttpClientHandler())
                     {
                         handler.AllowAutoRedirect = false;
-                        handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
+                        handler.UseDefaultCredentials = UseDefaultCredentials;
                         using (HttpClient client = new HttpClient(handler))
                         {
                             client.Timeout = new TimeSpan(0, 0, 30); // Set 30 second timeout
@@ -621,7 +623,7 @@ namespace System.Management.Automation.Help
         /// <param name="schema">Xml schema.</param>
         /// <param name="handler">Validation event handler.</param>
         /// <param name="helpInfo">HelpInfo or HelpContent?</param>
-        private XmlDocument CreateValidXmlDocument(string xml, string ns, string schema, ValidationEventHandler handler,
+        private static XmlDocument CreateValidXmlDocument(string xml, string ns, string schema, ValidationEventHandler handler,
             bool helpInfo)
         {
             XmlReaderSettings settings = new XmlReaderSettings();
@@ -785,7 +787,7 @@ namespace System.Management.Automation.Help
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 handler.AllowAutoRedirect = false;
-                handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
+                handler.UseDefaultCredentials = UseDefaultCredentials;
                 using (HttpClient client = new HttpClient(handler))
                 {
                     client.Timeout = _defaultTimeout;
@@ -998,7 +1000,7 @@ namespace System.Management.Automation.Help
         /// Removes the read only attribute.
         /// </summary>
         /// <param name="path"></param>
-        private void RemoveReadOnly(string path)
+        private static void RemoveReadOnly(string path)
         {
             if (File.Exists(path))
             {
@@ -1093,7 +1095,7 @@ namespace System.Management.Automation.Help
         }
 
 #if UNIX
-        private bool ExpandArchive(string source, string destination)
+        private static bool ExpandArchive(string source, string destination)
         {
             bool sucessfulDecompression = false;
 
@@ -1125,7 +1127,7 @@ namespace System.Management.Automation.Help
         /// <param name="srcPath">Source path.</param>
         /// <param name="destPath">Destination path.</param>
         /// <param name="needToCopy">Is set to false if we find a single file placeholder.txt in cab. This means we no longer need to install help files.</param>
-        private void UnzipHelpContent(ExecutionContext context, string srcPath, string destPath, out bool needToCopy)
+        private static void UnzipHelpContent(ExecutionContext context, string srcPath, string destPath, out bool needToCopy)
         {
             needToCopy = true;
 

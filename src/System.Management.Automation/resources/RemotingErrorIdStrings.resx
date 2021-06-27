@@ -1625,6 +1625,13 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="SSHClientEndWithErrorMessage" xml:space="preserve">
     <value>The SSH client session has ended with error message: {0}</value>
   </data>
+  <data name="SSHClientConnectTimeout" xml:space="preserve">
+    <value>SSH connection attempt failed after time out: {0} seconds.</value>
+  </data>
+  <data name="SSHClientConnectProcessTerminated" xml:space="preserve">
+    <value>
+SSH client process terminated before connection could be established.</value>
+  </data>
   <data name="MissingRequiredSSHParameter" xml:space="preserve">
     <value>The provided SSHConnection hashtable is missing the required ComputerName or HostName parameter.</value>
   </data>

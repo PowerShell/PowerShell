@@ -55,7 +55,10 @@ namespace Microsoft.PowerShell.Commands
         [Alias("PSPath", "LP")]
         public string LiteralPath
         {
-            get { return _path; }
+            get
+            {
+                return _path;
+            }
 
             set
             {
@@ -244,7 +247,7 @@ namespace Microsoft.PowerShell.Commands
                     // that doesn't exist and they are not globbing.
 
                     ItemNotFoundException itemNotFound =
-                        new ItemNotFoundException(
+                        new(
                             aliasName,
                             "AliasNotFound",
                             SessionStateStrings.AliasNotFound);
@@ -310,7 +313,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Holds all the matching aliases for writing to the file.
         /// </summary>
-        private readonly Collection<AliasInfo> _matchingAliases = new Collection<AliasInfo>();
+        private readonly Collection<AliasInfo> _matchingAliases = new();
 
         private static string GetAliasLine(AliasInfo alias, string formatString)
         {
@@ -406,7 +409,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string message = StringUtil.Format(AliasCommandStrings.ExportAliasFileOpenFailed, pathWithError, e.Message);
 
-            ErrorRecord errorRecord = new ErrorRecord(
+            ErrorRecord errorRecord = new(
                 e,
                 "FileOpenFailure",
                 ErrorCategory.OpenError,

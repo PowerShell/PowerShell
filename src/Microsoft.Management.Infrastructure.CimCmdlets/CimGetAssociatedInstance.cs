@@ -17,9 +17,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal sealed class CimGetAssociatedInstance : CimAsyncOperation
     {
         /// <summary>
-        /// <para>
-        /// Constructor
-        /// </para>
+        /// Initializes a new instance of the <see cref="CimGetAssociatedInstance"/> class.
         /// </summary>
         public CimGetAssociatedInstance()
             : base()

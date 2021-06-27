@@ -274,7 +274,7 @@ namespace System.Management.Automation
         {
             _scriptBlock = base._scriptBlock;
             _obsoleteAttribute = _scriptBlock.ObsoleteAttribute;
-            _runOptimizedCode = _scriptBlock.Compile(optimized: _context._debuggingMode > 0 ? false : UseLocalScope);
+            _runOptimizedCode = _scriptBlock.Compile(optimized: _context._debuggingMode <= 0 && UseLocalScope);
             _localsTuple = _scriptBlock.MakeLocalsTuple(_runOptimizedCode);
 
             if (UseLocalScope)

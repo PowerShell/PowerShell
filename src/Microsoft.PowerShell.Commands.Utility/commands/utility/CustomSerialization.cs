@@ -741,7 +741,7 @@ namespace System.Management.Automation
             Dbg.Assert(depth >= 0, "depth should be greater or equal to zero");
             if (source.GetSerializationMethod(null) == SerializationMethod.SpecificProperties)
             {
-                PSMemberInfoInternalCollection<PSPropertyInfo> specificProperties = new PSMemberInfoInternalCollection<PSPropertyInfo>();
+                PSMemberInfoInternalCollection<PSPropertyInfo> specificProperties = new();
                 foreach (string propertyName in source.GetSpecificPropertiesToSerialize(null))
                 {
                     PSPropertyInfo property = source.Properties[propertyName];

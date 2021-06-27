@@ -25,7 +25,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterDefinitionEntry
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterDefinitionEntry"/> class.
         /// </summary>
         /// <param name="parameterSetName"></param>
         /// <param name="mandatory"></param>
@@ -38,12 +38,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property ParameterSetName.
         /// </summary>
-        internal string ParameterSetName { get; } = null;
+        internal string ParameterSetName { get; }
 
         /// <summary>
         /// Whether the parameter is mandatory to the set.
         /// </summary>
-        internal bool IsMandatory { get; } = false;
+        internal bool IsMandatory { get; }
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterSetEntry
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
         internal ParameterSetEntry(UInt32 mandatoryParameterCount)
@@ -65,7 +65,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// </summary>
         /// <param name="toClone"></param>
         internal ParameterSetEntry(ParameterSetEntry toClone)
@@ -76,7 +76,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
         /// <param name="mandatory"></param>
@@ -99,7 +99,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property <c>DefaultParameterSet</c>
         /// </summary>
-        internal bool IsDefaultParameterSet { get; } = false;
+        internal bool IsDefaultParameterSet { get; }
 
         /// <summary>
         /// Property <c>MandatoryParameterCount</c>
@@ -109,12 +109,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property <c>IsValueSet</c>
         /// </summary>
-        internal bool IsValueSet { get; set; } = false;
+        internal bool IsValueSet { get; set; }
 
         /// <summary>
         /// Property <c>IsValueSetAtBeginProcess</c>
         /// </summary>
-        internal bool IsValueSetAtBeginProcess { get; set; } = false;
+        internal bool IsValueSetAtBeginProcess { get; set; }
 
         /// <summary>
         /// Property <c>SetMandatoryParameterCount</c>
@@ -133,7 +133,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class ParameterBinder
     {
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="ParameterBinder"/> class.
         /// </summary>
         /// <param name="parameters"></param>
         /// <param name="sets"></param>
@@ -483,7 +483,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructors
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimBaseCommand"/> class.
         /// </summary>
         internal CimBaseCommand()
         {
@@ -492,7 +492,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="CimBaseCommand"/> class.
         /// </summary>
         internal CimBaseCommand(Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters,
             Dictionary<string, ParameterSetEntry> sets)
@@ -672,6 +672,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Throw terminating error
         /// </para>
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         internal void ThrowTerminatingError(Exception exception, string operation)
         {
             ErrorRecord errorRecord = new(exception, operation, ErrorCategory.InvalidOperation, this);

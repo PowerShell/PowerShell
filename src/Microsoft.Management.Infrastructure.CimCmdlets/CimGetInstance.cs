@@ -51,6 +51,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimGetInstance : CimAsyncOperation
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="CimGetInstance"/> class.
         /// <para>
         /// Constructor
         /// </para>
@@ -82,7 +83,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 GetComputerName(cmdlet));
             string nameSpace;
             List<CimSessionProxy> proxys = new();
-            bool isGetCimInstanceCommand = (cmdlet is GetCimInstanceCommand);
+            bool isGetCimInstanceCommand = cmdlet is GetCimInstanceCommand;
             CimInstance targetCimInstance = null;
             switch (cmdlet.ParameterSetName)
             {

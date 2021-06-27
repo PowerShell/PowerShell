@@ -238,7 +238,7 @@ namespace System.Management.Automation
         /// </summary>
         public List<CommandParameterCollection> Parameters
         {
-            get { return _parameters ?? (_parameters = new List<CommandParameterCollection>()); }
+            get { return _parameters ??= new List<CommandParameterCollection>(); }
         }
 
         /// <summary>
@@ -361,7 +361,7 @@ namespace System.Management.Automation
                 return null;
             CommandParameterCollection paramCollection = new CommandParameterCollection();
             foreach (CommandParameter paramItem in
-                parameters.Select(param => new CommandParameter(param.Key, param.Value)))
+                parameters.Select(static param => new CommandParameter(param.Key, param.Value)))
             {
                 paramCollection.Add(paramItem);
             }

@@ -12,6 +12,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 using Microsoft.PowerShell.Commands;
+using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
@@ -77,8 +79,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                return t_dynamicKeywords ??
-                       (t_dynamicKeywords = new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase));
+                return t_dynamicKeywords ??= new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
@@ -92,8 +93,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                return t_dynamicKeywordsStack ??
-                       (t_dynamicKeywordsStack = new Stack<Dictionary<string, DynamicKeyword>>());
+                return t_dynamicKeywordsStack ??= new Stack<Dictionary<string, DynamicKeyword>>();
             }
         }
 
@@ -320,8 +320,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                return _properties ??
-                       (_properties = new Dictionary<string, DynamicKeywordProperty>(StringComparer.OrdinalIgnoreCase));
+                return _properties ??= new Dictionary<string, DynamicKeywordProperty>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
@@ -334,8 +333,7 @@ namespace System.Management.Automation.Language
         {
             get
             {
-                return _parameters ??
-                       (_parameters = new Dictionary<string, DynamicKeywordParameter>(StringComparer.OrdinalIgnoreCase));
+                return _parameters ??= new Dictionary<string, DynamicKeywordParameter>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
@@ -365,7 +363,15 @@ namespace System.Management.Automation.Language
             string implementingModule = keyword.ImplementingModule;
             if (implementingModule != null)
             {
-                return implementingModule.Equals(DscClassCache.DefaultModuleInfoForMetaConfigResource.Item1, StringComparison.OrdinalIgnoreCase);
+                ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                if (dscSubsystem != null)
+                {
+                    dscSubsystem.IsDefaultModuleNameForMetaConfigResource(implementingModule);
+                }
+                else
+                {
+                    return implementingModule.Equals(DscClassCache.DefaultModuleInfoForMetaConfigResource.Item1, StringComparison.OrdinalIgnoreCase);
+                }
             }
 
             return false;
@@ -426,7 +432,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public List<string> Attributes
         {
-            get { return _attributes ?? (_attributes = new List<string>()); }
+            get { return _attributes ??= new List<string>(); }
         }
 
         private List<string> _attributes;
@@ -436,7 +442,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public List<string> Values
         {
-            get { return _values ?? (_values = new List<string>()); }
+            get { return _values ??= new List<string>(); }
         }
 
         private List<string> _values;
@@ -446,7 +452,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public Dictionary<string, string> ValueMap
         {
-            get { return _valueMap ?? (_valueMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)); }
+            get { return _valueMap ??= new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); }
         }
 
         private Dictionary<string, string> _valueMap;
@@ -633,18 +639,18 @@ namespace System.Management.Automation.Language
         };
 
         private static readonly TokenKind[] s_keywordTokenKind = new TokenKind[] {
-        /*1*/    TokenKind.ElseIf,          TokenKind.If,       TokenKind.Else,     TokenKind.Switch,             /*1*/
-        /*2*/    TokenKind.Foreach,         TokenKind.From,     TokenKind.In,       TokenKind.For,                /*2*/
-        /*3*/    TokenKind.While,           TokenKind.Until,    TokenKind.Do,       TokenKind.Try,                /*3*/
-        /*4*/    TokenKind.Catch,           TokenKind.Finally,  TokenKind.Trap,     TokenKind.Data,               /*4*/
-        /*5*/    TokenKind.Return,          TokenKind.Continue, TokenKind.Break,    TokenKind.Exit,               /*5*/
-        /*6*/    TokenKind.Throw,           TokenKind.Begin,    TokenKind.Process,  TokenKind.End,                /*6*/
-        /*7*/    TokenKind.Dynamicparam,    TokenKind.Function, TokenKind.Filter,   TokenKind.Param,              /*7*/
-        /*8*/    TokenKind.Class,           TokenKind.Define,   TokenKind.Var,      TokenKind.Using,              /*8*/
-        /*9*/    TokenKind.Workflow,        TokenKind.Parallel, TokenKind.Sequence, TokenKind.InlineScript,       /*9*/
-        /*A*/    TokenKind.Configuration,   TokenKind.Public,   TokenKind.Private,  TokenKind.Static,             /*A*/
-        /*B*/    TokenKind.Interface,       TokenKind.Enum,     TokenKind.Namespace,TokenKind.Module,             /*B*/
-        /*C*/    TokenKind.Type,            TokenKind.Assembly, TokenKind.Command,  TokenKind.Hidden,             /*C*/
+        /*1*/    TokenKind.ElseIf,          TokenKind.If,       TokenKind.Else,      TokenKind.Switch,            /*1*/
+        /*2*/    TokenKind.Foreach,         TokenKind.From,     TokenKind.In,        TokenKind.For,               /*2*/
+        /*3*/    TokenKind.While,           TokenKind.Until,    TokenKind.Do,        TokenKind.Try,               /*3*/
+        /*4*/    TokenKind.Catch,           TokenKind.Finally,  TokenKind.Trap,      TokenKind.Data,              /*4*/
+        /*5*/    TokenKind.Return,          TokenKind.Continue, TokenKind.Break,     TokenKind.Exit,              /*5*/
+        /*6*/    TokenKind.Throw,           TokenKind.Begin,    TokenKind.Process,   TokenKind.End,               /*6*/
+        /*7*/    TokenKind.Dynamicparam,    TokenKind.Function, TokenKind.Filter,    TokenKind.Param,             /*7*/
+        /*8*/    TokenKind.Class,           TokenKind.Define,   TokenKind.Var,       TokenKind.Using,             /*8*/
+        /*9*/    TokenKind.Workflow,        TokenKind.Parallel, TokenKind.Sequence,  TokenKind.InlineScript,      /*9*/
+        /*A*/    TokenKind.Configuration,   TokenKind.Public,   TokenKind.Private,   TokenKind.Static,            /*A*/
+        /*B*/    TokenKind.Interface,       TokenKind.Enum,     TokenKind.Namespace, TokenKind.Module,            /*B*/
+        /*C*/    TokenKind.Type,            TokenKind.Assembly, TokenKind.Command,   TokenKind.Hidden,            /*C*/
         /*D*/    TokenKind.Base,            TokenKind.Default,                                                    /*D*/
         };
 
@@ -708,7 +714,7 @@ namespace System.Management.Automation.Language
             // The hash we compute is intentionally dumb, we want collisions to catch similar strings,
             // so we just sum up the characters.
             const string beginSig = "sig#beginsignatureblock";
-            beginSig.Aggregate(0, (current, t) => current + t);
+            beginSig.Aggregate(0, static (current, t) => current + t);
 
             // Spot check to help make sure the arrays are in sync
             Diagnostics.Assert(s_keywordTable["using"] == TokenKind.Using, "Keyword table out of sync w/ enum");
@@ -1273,7 +1279,7 @@ namespace System.Management.Automation.Language
             }
             else if ((flags & TokenFlags.TokenInError) == 0)
             {
-                if (nestedTokens.Any(tok => tok.HasError))
+                if (nestedTokens.Any(static tok => tok.HasError))
                 {
                     flags |= TokenFlags.TokenInError;
                 }

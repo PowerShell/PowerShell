@@ -543,7 +543,6 @@ namespace System.Management.Automation
             if (pCert != IntPtr.Zero)
             {
                 NativeMethods.CRYPT_PROVIDER_CERT provCert =
-                    (NativeMethods.CRYPT_PROVIDER_CERT)
                     Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_CERT>(pCert);
                 signerCert = new X509Certificate2(provCert.pCert);
             }
@@ -618,7 +617,6 @@ namespace System.Management.Automation
                 if (pProvSigner != IntPtr.Zero)
                 {
                     NativeMethods.CRYPT_PROVIDER_SGNR provSigner =
-                        (NativeMethods.CRYPT_PROVIDER_SGNR)
                         Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_SGNR>(pProvSigner);
                     if (provSigner.csCounterSigners == 1)
                     {

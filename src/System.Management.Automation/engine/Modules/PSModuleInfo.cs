@@ -299,8 +299,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _moduleBase ??
-                       (_moduleBase = !string.IsNullOrEmpty(Path) ? IO.Path.GetDirectoryName(Path) : string.Empty);
+                return _moduleBase ??= !string.IsNullOrEmpty(Path) ? IO.Path.GetDirectoryName(Path) : string.Empty;
             }
         }
 
@@ -471,7 +470,10 @@ namespace System.Management.Automation
         /// </summary>
         public ModuleAccessMode AccessMode
         {
-            get { return _accessMode; }
+            get
+            {
+                return _accessMode;
+            }
 
             set
             {
@@ -582,7 +584,7 @@ namespace System.Management.Automation
             }
         }
 
-        private bool IsScriptModuleFile(string path)
+        private static bool IsScriptModuleFile(string path)
         {
             var ext = System.IO.Path.GetExtension(path);
             return ext != null && s_scriptModuleExtensions.Contains(ext);
@@ -659,16 +661,16 @@ namespace System.Management.Automation
             else
             {
                 this._exportedTypeDefinitionsNoNested = new ReadOnlyDictionary<string, TypeDefinitionAst>(
-                    moduleContentScriptBlockAsts.FindAll(a => (a is TypeDefinitionAst), false)
+                    moduleContentScriptBlockAsts.FindAll(static a => (a is TypeDefinitionAst), false)
                         .OfType<TypeDefinitionAst>()
-                        .ToDictionary(a => a.Name, StringComparer.OrdinalIgnoreCase));
+                        .ToDictionary(static a => a.Name, StringComparer.OrdinalIgnoreCase));
             }
         }
 
         internal void AddDetectedTypeExports(List<TypeDefinitionAst> typeDefinitions)
         {
             this._exportedTypeDefinitionsNoNested = new ReadOnlyDictionary<string, TypeDefinitionAst>(
-                typeDefinitions.ToDictionary(a => a.Name, StringComparer.OrdinalIgnoreCase));
+                typeDefinitions.ToDictionary(static a => a.Name, StringComparer.OrdinalIgnoreCase));
         }
 
         /// <summary>
@@ -922,8 +924,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _readonlyNestedModules ??
-                       (_readonlyNestedModules = new ReadOnlyCollection<PSModuleInfo>(_nestedModules));
+                return _readonlyNestedModules ??= new ReadOnlyCollection<PSModuleInfo>(_nestedModules);
             }
         }
 
@@ -1014,8 +1015,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _readonlyRequiredModules ??
-                       (_readonlyRequiredModules = new ReadOnlyCollection<PSModuleInfo>(_requiredModules));
+                return _readonlyRequiredModules ??= new ReadOnlyCollection<PSModuleInfo>(_requiredModules);
             }
         }
 
@@ -1040,8 +1040,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _readonlyRequiredModulesSpecification ??
-                       (_readonlyRequiredModulesSpecification = new ReadOnlyCollection<ModuleSpecification>(_requiredModulesSpecification));
+                return _readonlyRequiredModulesSpecification ??= new ReadOnlyCollection<ModuleSpecification>(_requiredModulesSpecification);
             }
         }
 

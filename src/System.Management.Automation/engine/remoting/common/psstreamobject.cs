@@ -91,8 +91,8 @@ namespace System.Management.Automation.Remoting.Internal
         /// </summary>
         /// <param name="objectType"></param>
         /// <param name="value"></param>
-        public PSStreamObject(PSStreamObjectType objectType, object value) :
-            this(objectType, value, Guid.Empty)
+        public PSStreamObject(PSStreamObjectType objectType, object value)
+            : this(objectType, value, Guid.Empty)
         {
         }
 

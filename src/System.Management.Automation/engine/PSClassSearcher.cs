@@ -288,7 +288,7 @@ namespace System.Management.Automation
             return modules;
         }
 
-        private PSClassInfo ConvertToClassInfo(PSModuleInfo module, ScriptBlockAst ast, TypeDefinitionAst statement)
+        private static PSClassInfo ConvertToClassInfo(PSModuleInfo module, ScriptBlockAst ast, TypeDefinitionAst statement)
         {
             PSClassInfo classInfo = new PSClassInfo(statement.Name);
             Dbg.Assert(statement.Name != null, "statement should have a name.");

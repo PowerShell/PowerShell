@@ -32,7 +32,10 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         internal PSTraceSourceOptions OptionsInternal
         {
-            get { return _options; }
+            get
+            {
+                return _options;
+            }
 
             set
             {
@@ -53,7 +56,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal TraceOptions ListenerOptionsInternal
         {
-            get { return _traceOptions; }
+            get
+            {
+                return _traceOptions;
+            }
 
             set
             {
@@ -229,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        Collection<string> resolvedPaths = new Collection<string>();
+                        Collection<string> resolvedPaths = new();
                         try
                         {
                             // Resolve the file path
@@ -287,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
                             if (ForceWrite && System.IO.File.Exists(resolvedPath))
                             {
                                 // remove readonly attributes on the file
-                                System.IO.FileInfo fInfo = new System.IO.FileInfo(resolvedPath);
+                                System.IO.FileInfo fInfo = new(resolvedPath);
                                 if (fInfo != null)
                                 {
                                     // Save some disk write time by checking whether file is readonly..
@@ -300,13 +306,13 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             // Trace commands always append..So there is no need to set overwrite with force..
-                            FileStream fileStream = new FileStream(resolvedPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                            FileStream fileStream = new(resolvedPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
                             FileStreams.Add(fileStream);
 
                             // Open the file stream
 
                             TextWriterTraceListener fileListener =
-                                    new TextWriterTraceListener(fileStream, resolvedPath);
+                                    new(fileStream, resolvedPath);
 
                             fileListener.Name = FileListener;
 
@@ -328,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
                         if (fileOpenError != null)
                         {
                             ErrorRecord errorRecord =
-                                new ErrorRecord(
+                                new(
                                     fileOpenError,
                                     "FileListenerPathResolutionFailed",
                                     ErrorCategory.OpenError,
@@ -353,7 +359,7 @@ namespace Microsoft.PowerShell.Commands
                     if (error != null)
                     {
                         ErrorRecord errorRecord =
-                            new ErrorRecord(
+                            new(
                                 error,
                                 "FileListenerPathResolutionFailed",
                                 ErrorCategory.InvalidArgument,
@@ -491,7 +497,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Copy the listeners into a different collection
 
-                    Collection<TraceListener> listenerCollection = new Collection<TraceListener>();
+                    Collection<TraceListener> listenerCollection = new();
                     foreach (TraceListener listener in source.Listeners)
                     {
                         listenerCollection.Add(listener);
@@ -596,7 +602,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private readonly Dictionary<PSTraceSource, KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>>> _storedTraceSourceState =
-            new Dictionary<PSTraceSource, KeyValuePair<PSTraceSourceOptions, Collection<TraceListener>>>();
+            new();
 
         #endregion stored state
     }

@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         private ManagementObjectSearcher _searchProcess;
 
         private bool _inputContainsWildcard = false;
-        private readonly ConnectionOptions _connectionOptions = new ConnectionOptions();
+        private readonly ConnectionOptions _connectionOptions = new();
 
         /// <summary>
         /// Sets connection options.
@@ -87,8 +87,8 @@ namespace Microsoft.PowerShell.Commands
             foreach (string computer in ComputerName)
             {
                 bool foundRecord = false;
-                StringBuilder queryString = new StringBuilder();
-                ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), _connectionOptions);
+                StringBuilder queryString = new();
+                ManagementScope scope = new(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), _connectionOptions);
                 scope.Connect();
                 if (Id != null)
                 {
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            SecurityIdentifier secObj = new SecurityIdentifier(installed);
+                            SecurityIdentifier secObj = new(installed);
                             obj["InstalledBy"] = secObj.Translate(typeof(NTAccount));
                         }
                         catch (IdentityNotMappedException)

@@ -431,7 +431,7 @@ namespace System.Management.Automation
 {{
     internal partial class PowerShellAssemblyLoadContext
     {{
-        private Dictionary<string, string> InitializeTypeCatalog()
+        private static Dictionary<string, string> InitializeTypeCatalog()
         {{
             return new Dictionary<string, string>({0}, StringComparer.OrdinalIgnoreCase) {{";
             const string SourceEnd = @"

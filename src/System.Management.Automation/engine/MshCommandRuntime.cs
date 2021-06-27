@@ -125,7 +125,7 @@ namespace System.Management.Automation
         /// <value>The invocation object for this command.</value>
         internal InvocationInfo MyInvocation
         {
-            get { return _myInvocation ?? (_myInvocation = _thisCommand.MyInvocation); }
+            get { return _myInvocation ??= _thisCommand.MyInvocation; }
         }
 
         /// <summary>
@@ -2055,6 +2055,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.Cmdlet.ProcessRecord"/>.
         /// etc.
         /// </remarks>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             ThrowIfStopping();
@@ -2211,7 +2212,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Pipe InputPipe
         {
-            get { return _inputPipe ?? (_inputPipe = new Pipe()); }
+            get { return _inputPipe ??= new Pipe(); }
 
             set { _inputPipe = value; }
         }
@@ -2221,7 +2222,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Pipe OutputPipe
         {
-            get { return _outputPipe ?? (_outputPipe = new Pipe()); }
+            get { return _outputPipe ??= new Pipe(); }
 
             set { _outputPipe = value; }
         }
@@ -2244,7 +2245,7 @@ namespace System.Management.Automation
         /// </summary>
         internal Pipe ErrorOutputPipe
         {
-            get { return _errorOutputPipe ?? (_errorOutputPipe = new Pipe()); }
+            get { return _errorOutputPipe ??= new Pipe(); }
 
             set { _errorOutputPipe = value; }
         }
@@ -3136,7 +3137,10 @@ namespace System.Management.Automation
         /// </remarks>
         internal bool Verbose
         {
-            get { return _verboseFlag; }
+            get
+            {
+                return _verboseFlag;
+            }
 
             set
             {
@@ -3209,7 +3213,10 @@ namespace System.Management.Automation
         /// </remarks>
         internal bool Debug
         {
-            get { return _debugFlag; }
+            get
+            {
+                return _debugFlag;
+            }
 
             set
             {
@@ -3751,6 +3758,17 @@ namespace System.Management.Automation
 
             if (this.PipelineVariable != null)
             {
+                // _state can be null if the current script block is dynamicparam, etc.
+                if (_state != null)
+                {
+                    // Create the pipeline variable
+                    _state.PSVariable.Set(_pipelineVarReference);
+
+                    // Get the reference again in case we re-used one from the
+                    // same scope.
+                    _pipelineVarReference = _state.PSVariable.Get(this.PipelineVariable);
+                }
+
                 this.OutputPipe.SetPipelineVariable(_pipelineVarReference);
             }
         }

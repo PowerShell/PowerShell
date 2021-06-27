@@ -65,6 +65,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return cmdlet.ShouldProcess(verboseDescription, verboseWarning, caption, out shouldProcessReason);
         }
 
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         public virtual void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             cmdlet.ThrowTerminatingError(errorRecord);
@@ -115,6 +116,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Throw terminating error
         /// </para>
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         internal void ThrowTerminatingError(Exception exception, string operation)
         {
             ErrorRecord errorRecord = new(exception, operation, ErrorCategory.InvalidOperation, this);
@@ -123,7 +125,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CmdletOperationBase"/> class.
         /// </summary>
         public CmdletOperationBase(Cmdlet cmdlet)
         {
@@ -143,7 +145,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationRemoveCimInstance : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CmdletOperationRemoveCimInstance"/> class.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationRemoveCimInstance(Cmdlet cmdlet,
@@ -207,7 +209,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationSetCimInstance : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CmdletOperationSetCimInstance"/> class.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationSetCimInstance(Cmdlet cmdlet,
@@ -285,7 +287,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationInvokeCimMethod : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CmdletOperationInvokeCimMethod"/> class.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationInvokeCimMethod(Cmdlet cmdlet,
@@ -350,7 +352,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CmdletOperationTestCimSession : CmdletOperationBase
     {
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CmdletOperationTestCimSession"/> class.
         /// </summary>
         /// <param name="cmdlet"></param>
         public CmdletOperationTestCimSession(Cmdlet cmdlet,

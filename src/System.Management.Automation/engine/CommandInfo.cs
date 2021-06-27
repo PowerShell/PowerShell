@@ -230,7 +230,10 @@ namespace System.Management.Automation
         /// </summary>
         internal ExecutionContext Context
         {
-            get { return _context; }
+            get
+            {
+                return _context;
+            }
 
             set
             {
@@ -583,7 +586,7 @@ namespace System.Management.Automation
 
         internal CommandMetadata ExternalCommandMetadata
         {
-            get { return _externalCommandMetadata ?? (_externalCommandMetadata = new CommandMetadata(this, true)); }
+            get { return _externalCommandMetadata ??= new CommandMetadata(this, true); }
 
             set { _externalCommandMetadata = value; }
         }
@@ -904,7 +907,7 @@ namespace System.Management.Automation
     }
 
     [DebuggerDisplay("{PSTypeName} {Name}")]
-    internal struct PSMemberNameAndType
+    internal readonly struct PSMemberNameAndType
     {
         public readonly string Name;
 
@@ -936,7 +939,7 @@ namespace System.Management.Automation
             var typeName = GetMemberTypeProjection(typename.Name, membersTypes);
             var members = new List<PSMemberNameAndType>();
             members.AddRange(membersTypes);
-            members.Sort((c1, c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
+            members.Sort(static (c1, c2) => string.Compare(c1.Name, c2.Name, StringComparison.OrdinalIgnoreCase));
             return new PSSyntheticTypeName(typeName, typename.Type, members);
         }
 
@@ -960,7 +963,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static bool IsPSTypeName(PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
+        private static bool IsPSTypeName(in PSMemberNameAndType member) => member.Name.Equals(nameof(PSTypeName), StringComparison.OrdinalIgnoreCase);
 
         private static string GetMemberTypeProjection(string typename, IList<PSMemberNameAndType> members)
         {
@@ -977,7 +980,7 @@ namespace System.Management.Automation
 
             var builder = new StringBuilder(typename, members.Count * 7);
             builder.Append('#');
-            foreach (var m in members.OrderBy(m => m.Name))
+            foreach (var m in members.OrderBy(static m => m.Name))
             {
                 if (!IsPSTypeName(m))
                 {
@@ -992,6 +995,7 @@ namespace System.Management.Automation
         public IList<PSMemberNameAndType> Members { get; }
     }
 
+#nullable enable
     internal interface IScriptCommandInfo
     {
         ScriptBlock ScriptBlock { get; }

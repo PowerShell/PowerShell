@@ -33,7 +33,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #endregion
 
         /// <summary>
-        /// Constructor method.
+        /// Initializes a new instance of the <see cref="CimWriteMessage"/> class.
         /// </summary>
         public CimWriteMessage(UInt32 channel,
             string message)

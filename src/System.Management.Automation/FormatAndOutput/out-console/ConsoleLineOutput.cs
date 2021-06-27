@@ -87,8 +87,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal override int Length(string str, int offset)
         {
-            Dbg.Assert(offset >= 0, "offset >= 0");
-            Dbg.Assert(string.IsNullOrEmpty(str) || (offset < str.Length), "offset < str.Length");
+            if (string.IsNullOrEmpty(str))
+            {
+                return 0;
+            }
+
+            if (offset < 0 || offset >= str.Length)
+            {
+                throw PSTraceSource.NewArgumentException(nameof(offset));
+            }
 
             try
             {
@@ -100,7 +107,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we will fallback to the default value.
             }
 
-            return string.IsNullOrEmpty(str) ? 0 : str.Length - offset;
+            return str.Length - offset;
         }
 
         internal override int Length(string str)
@@ -222,6 +229,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void WriteLine(string s)
         {
             CheckStopProcessing();
+
             // delegate the action to the helper,
             // that will properly break the string into
             // screen lines
@@ -351,6 +359,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 #if TEST_MULTICELL_ON_SINGLE_CELL_LOCALE
             s = ((DisplayCellsTest)this._displayCellsPSHost).GenerateTestString(s);
 #endif
+
             switch (this.WriteStream)
             {
                 case WriteStreamType.Error:

@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        ProcessStartInfo startInfo = new ProcessStartInfo();
+                        ProcessStartInfo startInfo = new();
                         startInfo.FileName = tmpFilePath;
                         startInfo.UseShellExecute = true;
                         Process.Start(startInfo);

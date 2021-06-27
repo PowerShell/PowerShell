@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell
     /// Defines a unique key for a Shell Property.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    internal struct PropertyKey : IEquatable<PropertyKey>
+    internal readonly struct PropertyKey : IEquatable<PropertyKey>
     {
         #region Public Properties
         /// <summary>

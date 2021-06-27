@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
         private static Hashtable PopulateHashTableFromJDictionary(JObject entries, out ErrorRecord error)
         {
             error = null;
-            Hashtable result = new Hashtable(entries.Count);
+            Hashtable result = new(entries.Count);
             foreach (var entry in entries)
             {
                 // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
@@ -708,7 +708,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static object ProcessDictionary(IDictionary dict, int depth, in ConvertToJsonContext context)
         {
-            Dictionary<string, object> result = new Dictionary<string, object>(dict.Count);
+            Dictionary<string, object> result = new(dict.Count);
 
             foreach (DictionaryEntry entry in dict)
             {
@@ -745,7 +745,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static object ProcessEnumerable(IEnumerable enumerable, int depth, in ConvertToJsonContext context)
         {
-            List<object> result = new List<object>();
+            List<object> result = new();
 
             foreach (object o in enumerable)
             {
@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static object ProcessCustomObject<T>(object o, int depth, in ConvertToJsonContext context)
         {
-            Dictionary<string, object> result = new Dictionary<string, object>();
+            Dictionary<string, object> result = new();
             Type t = o.GetType();
 
             foreach (FieldInfo info in t.GetFields(BindingFlags.Public | BindingFlags.Instance))

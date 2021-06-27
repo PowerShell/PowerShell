@@ -2868,7 +2868,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private Debugger GetRunspaceDebugger(int runspaceId)
+        private static Debugger GetRunspaceDebugger(int runspaceId)
         {
             if (!Runspace.RunspaceDictionary.TryGetValue(runspaceId, out WeakReference<Runspace> wr))
             {
@@ -4650,7 +4650,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private void RestoreRemoteOutput(object runningCmd)
+        private static void RestoreRemoteOutput(object runningCmd)
         {
             if (runningCmd == null) { return; }
 
@@ -4908,7 +4908,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private string FixUpStatementExtent(int startColNum, string stateExtentText)
+        private static string FixUpStatementExtent(int startColNum, string stateExtentText)
         {
             Text.StringBuilder sb = new Text.StringBuilder();
             sb.Append(' ', startColNum);
@@ -4947,7 +4947,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private void RestoreRemoteOutput(object runningCmd)
+        private static void RestoreRemoteOutput(object runningCmd)
         {
             if (runningCmd == null) { return; }
 
@@ -5207,7 +5207,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Displays the help text for the debugger commands.
         /// </summary>
-        private void DisplayHelp(PSHost host, IList<PSObject> output)
+        private static void DisplayHelp(PSHost host, IList<PSObject> output)
         {
             WriteLine(string.Empty, host, output);
             WriteLine(StringUtil.Format(DebuggerStrings.StepHelp, StepShortcut, StepCommand), host, output);
@@ -5335,7 +5335,7 @@ namespace System.Management.Automation
             WriteCR(host, output);
         }
 
-        private void WriteLine(string line, PSHost host, IList<PSObject> output)
+        private static void WriteLine(string line, PSHost host, IList<PSObject> output)
         {
             if (host != null)
             {
@@ -5348,7 +5348,7 @@ namespace System.Management.Automation
             }
         }
 
-        private void WriteCR(PSHost host, IList<PSObject> output)
+        private static void WriteCR(PSHost host, IList<PSObject> output)
         {
             if (host != null)
             {
@@ -5361,7 +5361,7 @@ namespace System.Management.Automation
             }
         }
 
-        private void WriteErrorLine(string error, PSHost host, IList<PSObject> output)
+        private static void WriteErrorLine(string error, PSHost host, IList<PSObject> output)
         {
             if (host != null)
             {

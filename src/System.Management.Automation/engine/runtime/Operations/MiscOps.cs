@@ -407,7 +407,7 @@ namespace System.Management.Automation
             else
             {
                 string whitespaces = parameterName.Substring(endPosition);
-                parameterText = string.Concat("-", parameterName.AsSpan().Slice(0, endPosition), ":", whitespaces);
+                parameterText = string.Concat("-", parameterName.AsSpan(0, endPosition), ":", whitespaces);
             }
 
             return parameterText;
@@ -529,7 +529,7 @@ namespace System.Management.Automation
                 // For background jobs rewrite the pipeline as a Start-Job command
                 var scriptblockBodyString = pipelineAst.Extent.Text;
                 var pipelineOffset = pipelineAst.Extent.StartOffset;
-                var variables = pipelineAst.FindAll(x => x is VariableExpressionAst, true);
+                var variables = pipelineAst.FindAll(static x => x is VariableExpressionAst, true);
 
                 // Used to make sure that the job runs in the current directory
                 const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location -LiteralPath $using:pwd ; ";
@@ -1308,7 +1308,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(_scriptBlock == null || _scriptBlock.SessionStateInternal == null,
                 "Cached script block should not hold on to session state");
 
-            var result = (_scriptBlock ?? (_scriptBlock = new ScriptBlock(_ast, isFilter))).Clone();
+            var result = (_scriptBlock ??= new ScriptBlock(_ast, isFilter)).Clone();
             result.SessionStateInternal = context.EngineSessionState;
             return result;
         }

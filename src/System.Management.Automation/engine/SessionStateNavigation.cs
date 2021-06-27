@@ -190,7 +190,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string AddQualifier(string path, ProviderInfo provider, string qualifier, bool isProviderQualified, bool isDriveQualified)
+        private static string AddQualifier(string path, ProviderInfo provider, string qualifier, bool isProviderQualified, bool isDriveQualified)
         {
             string result = path;
 
@@ -640,7 +640,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="c">The character to test.</param>
         /// <returns>True if the character is a path separator.</returns>
-        private bool IsPathSeparator(char c)
+        private static bool IsPathSeparator(char c)
         {
             return c == StringLiterals.DefaultPathSeparator || c == StringLiterals.AlternatePathSeparator;
         }

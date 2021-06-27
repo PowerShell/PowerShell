@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Cim
             }
         }
 
-        private readonly List<IDisposable> _trackedDisposables = new List<IDisposable>();
+        private readonly List<IDisposable> _trackedDisposables = new();
 
         /// <summary>
         /// Releases resources associated with this object.

@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        VerbInfo verb = new VerbInfo();
+                        VerbInfo verb = new();
                         verb.Verb = field.Name;
                         verb.AliasPrefix = VerbAliasPrefixes.GetVerbAliasPrefix(field.Name);
                         verb.Group = groupName;
