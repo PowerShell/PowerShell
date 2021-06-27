@@ -326,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 sortedEntries.Sort(
-                    delegate (DictionaryEntry left, DictionaryEntry right)
+                    (DictionaryEntry left, DictionaryEntry right) =>
                     {
                         string leftKey = (string)left.Key;
                         string rightKey = (string)right.Key;
@@ -708,8 +708,7 @@ namespace Microsoft.PowerShell.Commands
             if (ItemExists(path) && !Force)
             {
                 PSArgumentException e =
-                    (PSArgumentException)
-                    PSTraceSource.NewArgumentException(
+                    (PSArgumentException)PSTraceSource.NewArgumentException(
                         nameof(path),
                         SessionStateStrings.NewItemAlreadyExists,
                         path);
@@ -838,8 +837,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 PSArgumentException e =
-                    (PSArgumentException)
-                    PSTraceSource.NewArgumentException(
+                    (PSArgumentException)PSTraceSource.NewArgumentException(
                         nameof(path),
                         SessionStateStrings.CopyItemDoesntExist,
                         path);
@@ -897,8 +895,7 @@ namespace Microsoft.PowerShell.Commands
                 if (ItemExists(newName) && !Force)
                 {
                     PSArgumentException e =
-                        (PSArgumentException)
-                        PSTraceSource.NewArgumentException(
+                        (PSArgumentException)PSTraceSource.NewArgumentException(
                             nameof(newName),
                             SessionStateStrings.NewItemAlreadyExists,
                             newName);
@@ -984,8 +981,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 PSArgumentException e =
-                    (PSArgumentException)
-                    PSTraceSource.NewArgumentException(
+                    (PSArgumentException)PSTraceSource.NewArgumentException(
                         nameof(name),
                         SessionStateStrings.RenameItemDoesntExist,
                         name);
@@ -1116,8 +1112,8 @@ namespace Microsoft.PowerShell.Commands
             _provider = provider;
         }
 
-        private string _path;
-        private SessionStateProviderBase _provider;
+        private readonly string _path;
+        private readonly SessionStateProviderBase _provider;
 
         /// <summary>
         /// Reads the content from the item.

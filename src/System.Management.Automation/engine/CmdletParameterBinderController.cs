@@ -626,8 +626,7 @@ namespace System.Management.Automation
 
             foreach (DictionaryEntry entry in DefaultParameterValues)
             {
-                string key = entry.Key as string;
-                if (key == null)
+                if (!(entry.Key is string key))
                 {
                     continue;
                 }
@@ -2451,7 +2450,7 @@ namespace System.Management.Automation
             }
         }
 
-        private uint NewParameterSetPromptingData(
+        private static uint NewParameterSetPromptingData(
             Dictionary<uint, ParameterSetPromptingData> promptingData,
             MergedCompiledCommandParameter parameter,
             ParameterSetSpecificMetadata parameterSetMetadata,
@@ -2662,7 +2661,7 @@ namespace System.Management.Automation
 
             IEnumerable<ParameterSetSpecificMetadata> allParameterSetMetadatas = boundParameters.Values
                 .Concat(unboundParameters)
-                .SelectMany(p => p.Parameter.ParameterSetData.Values);
+                .SelectMany(static p => p.Parameter.ParameterSetData.Values);
             uint allParameterSetFlags = 0;
             foreach (ParameterSetSpecificMetadata parameterSetMetadata in allParameterSetMetadatas)
             {
@@ -2676,8 +2675,8 @@ namespace System.Management.Automation
                 "This method should only be called when there is an ambiguity wrt parameter sets");
 
             IEnumerable<ParameterSetSpecificMetadata> parameterSetMetadatasForUnboundMandatoryParameters = unboundParameters
-                .SelectMany(p => p.Parameter.ParameterSetData.Values)
-                .Where(p => p.IsMandatory);
+                .SelectMany(static p => p.Parameter.ParameterSetData.Values)
+                .Where(static p => p.IsMandatory);
             foreach (ParameterSetSpecificMetadata parameterSetMetadata in parameterSetMetadatasForUnboundMandatoryParameters)
             {
                 remainingParameterSetsWithNoMandatoryUnboundParameters &= (~parameterSetMetadata.ParameterSetFlag);
@@ -3928,8 +3927,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _boundObsoleteParameterNames ??
-                       (_boundObsoleteParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase));
+                return _boundObsoleteParameterNames ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             }
         }
 
@@ -4119,7 +4117,7 @@ namespace System.Management.Automation
                     /*argumentAst*/null, parameterValue,
                     false);
 
-                flags = flags & ~ParameterBindingFlags.DelayBindScriptBlock;
+                flags &= ~ParameterBindingFlags.DelayBindScriptBlock;
                 result = BindParameter(_currentParameterSetFlag, param, parameter, flags);
 
                 if (result)
@@ -4224,7 +4222,7 @@ namespace System.Management.Automation
 
                     if (error != null)
                     {
-                        Type specifiedType = (argumentToBind.ArgumentValue == null) ? null : argumentToBind.ArgumentValue.GetType();
+                        Type specifiedType = argumentToBind.ArgumentValue?.GetType();
                         ParameterBindingException bindingException =
                             new ParameterBindingException(
                                 error,
@@ -4389,8 +4387,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
-            var strKey = key as string;
-            if (strKey == null) { return false; }
+            if (!(key is string strKey)) { return false; }
 
             string keyAfterTrim = strKey.Trim();
             return base.ContainsKey(keyAfterTrim);
@@ -4416,8 +4413,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
-            var strKey = key as string;
-            if (strKey == null)
+            if (!(key is string strKey))
             {
                 throw PSTraceSource.NewArgumentException(nameof(key), ParameterBinderStrings.StringValueKeyExpected, key, key.GetType().FullName);
             }
@@ -4462,8 +4458,7 @@ namespace System.Management.Automation
             {
                 if (key == null) { throw PSTraceSource.NewArgumentNullException(nameof(key)); }
 
-                var strKey = key as string;
-                if (strKey == null) { return null; }
+                if (!(key is string strKey)) { return null; }
 
                 string keyAfterTrim = strKey.Trim();
                 return base[keyAfterTrim];
@@ -4486,8 +4481,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
-            var strKey = key as string;
-            if (strKey == null) { return; }
+            if (!(key is string strKey)) { return; }
 
             string keyAfterTrim = strKey.Trim();
             if (base.ContainsKey(keyAfterTrim))
@@ -4646,4 +4640,3 @@ namespace System.Management.Automation
         #endregion KeyValidation
     }
 }
-

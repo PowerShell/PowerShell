@@ -21,7 +21,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// This holds the current configurations XML.
         /// </summary>
-        private XmlDocument rootDocument;
+        private readonly XmlDocument rootDocument;
 
         /// <summary>
         /// Holds the reference to the current document element.
@@ -36,7 +36,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// Session of the WsMan sserver.
         /// </summary>
-        private IWSManSession serverSession;
+        private readonly IWSManSession serverSession;
 
         /// <summary>
         /// Gets the server session associated with the configuration.
@@ -131,7 +131,7 @@ namespace Microsoft.WSMan.Management
             {
                 if (nodeToRemove is XmlAttribute)
                 {
-                    this.RemoveAttribute(nodeToRemove as XmlAttribute);
+                    RemoveAttribute(nodeToRemove as XmlAttribute);
                 }
             }
             else
@@ -217,7 +217,7 @@ namespace Microsoft.WSMan.Management
         /// Removes the attribute from OwnerNode.
         /// </summary>
         /// <param name="attributeToRemove">Attribute to Remove.</param>
-        private void RemoveAttribute(XmlAttribute attributeToRemove)
+        private static void RemoveAttribute(XmlAttribute attributeToRemove)
         {
             XmlElement ownerElement = attributeToRemove.OwnerElement;
             ownerElement.RemoveAttribute(attributeToRemove.Name);

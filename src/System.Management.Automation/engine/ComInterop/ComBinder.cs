@@ -310,8 +310,8 @@ namespace System.Management.Automation.ComInterop
             private readonly GetMemberBinder _originalBinder;
             internal bool _canReturnCallables;
 
-            internal ComGetMemberBinder(GetMemberBinder originalBinder, bool canReturnCallables) :
-                base(originalBinder.Name, originalBinder.IgnoreCase)
+            internal ComGetMemberBinder(GetMemberBinder originalBinder, bool canReturnCallables)
+             : base(originalBinder.Name, originalBinder.IgnoreCase)
             {
                 _originalBinder = originalBinder;
                 _canReturnCallables = canReturnCallables;
@@ -343,8 +343,8 @@ namespace System.Management.Automation.ComInterop
             private readonly InvokeMemberBinder _originalBinder;
             internal bool IsPropertySet;
 
-            internal ComInvokeMemberBinder(InvokeMemberBinder originalBinder, bool isPropertySet) :
-                base(originalBinder.Name, originalBinder.IgnoreCase, originalBinder.CallInfo)
+            internal ComInvokeMemberBinder(InvokeMemberBinder originalBinder, bool isPropertySet)
+                : base(originalBinder.Name, originalBinder.IgnoreCase, originalBinder.CallInfo)
             {
                 _originalBinder = originalBinder;
                 this.IsPropertySet = isPropertySet;

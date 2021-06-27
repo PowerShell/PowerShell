@@ -278,11 +278,11 @@ namespace System.Management.Automation
                 string text = GetObjText(obj);
                 if (!string.IsNullOrEmpty(text))
                 {
-                    sb.Append("\n");
+                    sb.Append('\n');
                     sb.Append(section);
                     sb.Append("\n\n");
                     sb.Append(text);
-                    sb.Append("\n");
+                    sb.Append('\n');
                 }
             }
         }
@@ -306,13 +306,13 @@ namespace System.Management.Automation
                         }
 
                         sb.Append(text);
-                        sb.Append("\n");
+                        sb.Append('\n');
                     }
                 }
 
                 if (!first)
                 {
-                    sb.Append("\n");
+                    sb.Append('\n');
                 }
             }
         }
@@ -327,7 +327,7 @@ namespace System.Management.Automation
                 sb.Append(section);
                 sb.Append("\n\n");
                 sb.Append(GetObjText(name));
-                sb.Append("\n");
+                sb.Append('\n');
             }
             else
             {
@@ -338,7 +338,7 @@ namespace System.Management.Automation
                     sb.Append(section);
                     sb.Append("\n\n");
                     sb.Append(GetObjText(uri));
-                    sb.Append("\n");
+                    sb.Append('\n');
                 }
             }
         }
@@ -395,7 +395,7 @@ namespace System.Management.Automation
                         if (!string.IsNullOrEmpty(text))
                         {
                             sb.Append(text);
-                            sb.Append("\n");
+                            sb.Append('\n');
                         }
                     }
                 }
@@ -430,7 +430,7 @@ namespace System.Management.Automation
                     PSObject[] remarks = GetProperty<PSObject[]>(ex, "remarks");
                     if (remarks != null)
                     {
-                        exsb.Append("\n");
+                        exsb.Append('\n');
                         foreach (PSObject remark in remarks)
                         {
                             string remarkText = GetProperty<string>(remark, "text");
@@ -441,7 +441,7 @@ namespace System.Management.Automation
                     if (exsb.Length > 0)
                     {
                         sb.Append("\n\n.EXAMPLE\n\n");
-                        sb.Append(exsb.ToString());
+                        sb.Append(exsb);
                     }
                 }
             }

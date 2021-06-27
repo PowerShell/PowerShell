@@ -16,7 +16,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class ExecutionContextForStepping : IDisposable
     {
-        private ExecutionContext _executionContext;
+        private readonly ExecutionContext _executionContext;
         private PSInformationalBuffers _originalInformationalBuffers;
         private PSHost _originalHost;
 
@@ -72,13 +72,13 @@ namespace System.Management.Automation
         // information
         // data to client
         // was created
-        private bool _addToHistory;
+        private readonly bool _addToHistory;
         // associated with this powershell
-        private ApartmentState apartmentState;  // apartment state for this powershell
+        private readonly ApartmentState apartmentState;  // apartment state for this powershell
 
         // pipeline that runs the actual command.
-        private ServerSteppablePipelineSubscriber _eventSubscriber;
-        private PSDataCollection<object> _powershellInput; // input collection of the PowerShell pipeline
+        private readonly ServerSteppablePipelineSubscriber _eventSubscriber;
+        private readonly PSDataCollection<object> _powershellInput; // input collection of the PowerShell pipeline
 
         #endregion
 

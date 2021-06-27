@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 
@@ -196,6 +197,7 @@ namespace Microsoft.Management.UI.Internal
 
         #region Helpers
 
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private bool TryGetGenericParameterForComparableValueFilterRule(FilterRule rule, out Type genericParameter)
         {
             genericParameter = null;
@@ -217,6 +219,7 @@ namespace Microsoft.Management.UI.Internal
             return true;
         }
 
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private object GetValueFromValidatingValue(FilterRule rule, string propertyName)
         {
             Debug.Assert(rule != null && !string.IsNullOrEmpty(propertyName), "rule and propertyname are not null");
@@ -236,6 +239,7 @@ namespace Microsoft.Management.UI.Internal
             return property.GetValue(validatingValue, null);
         }
 
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private void SetValueOnValidatingValue(FilterRule rule, string propertyName, object value)
         {
             Debug.Assert(rule != null && !string.IsNullOrEmpty(propertyName), "rule and propertyname are not null");

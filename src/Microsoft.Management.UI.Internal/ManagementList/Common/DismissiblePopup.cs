@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls.Primitives;
@@ -79,6 +80,7 @@ namespace Microsoft.Management.UI.Internal
             }
         }
 
+        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private void SetFocus(UIElement element)
         {
             if (element.Focusable)

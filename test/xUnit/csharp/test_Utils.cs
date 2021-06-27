@@ -59,7 +59,7 @@ namespace PSTests.Parallel
         [Fact]
         public static void TestBoundedStack()
         {
-            int capacity = 20;
+            const int capacity = 20;
             var boundedStack = new BoundedStack<string>(capacity);
             Assert.Throws<InvalidOperationException>(() => boundedStack.Pop());
 
@@ -116,7 +116,7 @@ namespace PSTests.Parallel
         public static void TestConvertToJsonWithoutCompress()
         {
             var context = new JsonObject.ConvertToJsonContext(maxDepth: 1, enumsAsStrings: true, compressOutput: false);
-            string expected = @"{
+            const string expected = @"{
   ""type"": ""Alias""
 }";
             Hashtable hash = new Hashtable {
@@ -134,9 +134,9 @@ namespace PSTests.Parallel
                 maxDepth: 1,
                 enumsAsStrings: true,
                 compressOutput: false,
-                source.Token,
                 Newtonsoft.Json.StringEscapeHandling.Default,
-                targetCmdlet: null);
+                targetCmdlet: null,
+                source.Token);
 
             source.Cancel();
             Hashtable hash = new Hashtable {

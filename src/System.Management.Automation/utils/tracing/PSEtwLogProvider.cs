@@ -15,7 +15,7 @@ namespace System.Management.Automation.Tracing
     /// </summary>
     internal class PSEtwLogProvider : LogProvider
     {
-        private static EventProvider etwProvider;
+        private static readonly EventProvider etwProvider;
         internal static readonly Guid ProviderGuid = new Guid("F90714A8-5509-434A-BF6D-B1624C8A19A2");
         private static EventDescriptor _xferEventDescriptor = new EventDescriptor(0x1f05, 0x1, 0x11, 0x5, 0x14, 0x0, (long)0x4000000000000000);
 
@@ -284,7 +284,7 @@ namespace System.Management.Automation.Tracing
             EventDescriptor desc = new EventDescriptor((int)id, (byte)PSEventVersion.One, (byte)channel,
                 (byte)level, (byte)opcode, (int)task, longKeyword);
 
-            etwProvider.WriteEvent(ref desc, args);
+            etwProvider.WriteEvent(in desc, args);
         }
 
         /// <summary>
@@ -292,7 +292,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         internal void WriteTransferEvent(Guid parentActivityId)
         {
-            etwProvider.WriteTransferEvent(ref _xferEventDescriptor, parentActivityId, EtwActivity.GetActivityId(), parentActivityId);
+            etwProvider.WriteTransferEvent(in _xferEventDescriptor, parentActivityId, EtwActivity.GetActivityId(), parentActivityId);
         }
 
         /// <summary>

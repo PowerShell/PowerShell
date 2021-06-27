@@ -32,6 +32,10 @@ namespace System.Management.Automation
 
         internal static readonly VariablePath OFSVarPath = new VariablePath(OFS);
 
+        internal const string PSStyle = "PSStyle";
+
+        internal static readonly VariablePath PSStyleVarPath = new VariablePath(PSStyle);
+
         internal const string OutputEncoding = "OutputEncoding";
 
         internal static readonly VariablePath OutputEncodingVarPath = new VariablePath(OutputEncoding);
@@ -252,6 +256,11 @@ namespace System.Management.Automation
         internal static readonly VariablePath InformationPreferenceVarPath = new VariablePath(InformationPreference);
 
         #endregion Preference Variables
+
+        // Native command argument passing style
+        internal const string NativeArgumentPassing = "PSNativeCommandArgumentPassing";
+
+        internal static readonly VariablePath NativeArgumentPassingVarPath = new VariablePath(NativeArgumentPassing);
 
         internal const string ErrorView = "ErrorView";
 

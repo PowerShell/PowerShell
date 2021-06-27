@@ -102,9 +102,8 @@ namespace System.Management.Automation
 
         #region private data
 
-        private InternalCommand _cmdlet;
+        private readonly InternalCommand _cmdlet;
 
         #endregion private data
     }
 }
-

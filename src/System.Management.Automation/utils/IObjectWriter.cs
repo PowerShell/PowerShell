@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections;
 using System.Threading;
 
@@ -124,7 +123,7 @@ namespace System.Management.Automation.Runspaces
 
     internal class DiscardingPipelineWriter : PipelineWriter
     {
-        private ManualResetEvent _waitHandle = new ManualResetEvent(true);
+        private readonly ManualResetEvent _waitHandle = new ManualResetEvent(true);
 
         public override WaitHandle WaitHandle
         {
@@ -161,7 +160,7 @@ namespace System.Management.Automation.Runspaces
 
         public override int Write(object obj)
         {
-            int numberOfObjectsWritten = 1;
+            const int numberOfObjectsWritten = 1;
             _count += numberOfObjectsWritten;
             return numberOfObjectsWritten;
         }
@@ -192,4 +191,3 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-

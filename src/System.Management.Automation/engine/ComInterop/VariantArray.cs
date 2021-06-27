@@ -74,7 +74,7 @@ namespace System.Management.Automation.ComInterop
                 // See if we can find an existing type
                 foreach (Type t in s_generatedTypes)
                 {
-                    int arity = int.Parse(t.Name.AsSpan("VariantArray".Length),  NumberStyles.Integer, CultureInfo.InvariantCulture);
+                    int arity = int.Parse(t.Name.AsSpan("VariantArray".Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
                     if (size == arity)
                     {
                         return t;

@@ -230,7 +230,7 @@ namespace System.Management.Automation
 
         private T _current;
         protected SessionStateInternal sessionState;
-        private VariablePath _lookupPath;
+        private readonly VariablePath _lookupPath;
         private SessionStateScopeEnumerator _scopeEnumerable;
         private bool _isSingleScopeLookup;
         private bool _isInitialized;
@@ -274,7 +274,7 @@ namespace System.Management.Automation
             VariablePath name,
             out PSVariable variable)
         {
-            Diagnostics.Assert(!(name is FunctionLookupPath),
+            Diagnostics.Assert(name is not FunctionLookupPath,
                 "name was scanned incorrect if we get here and it is a FunctionLookupPath");
 
             bool result = true;
@@ -328,7 +328,7 @@ namespace System.Management.Automation
             VariablePath name,
             out AliasInfo alias)
         {
-            Diagnostics.Assert(!(name is FunctionLookupPath),
+            Diagnostics.Assert(name is not FunctionLookupPath,
                 "name was scanned incorrect if we get here and it is a FunctionLookupPath");
 
             bool result = true;
@@ -470,7 +470,7 @@ namespace System.Management.Automation
             VariablePath name,
             out PSDriveInfo drive)
         {
-            Diagnostics.Assert(!(name is FunctionLookupPath),
+            Diagnostics.Assert(name is not FunctionLookupPath,
                 "name was scanned incorrect if we get here and it is a FunctionLookupPath");
 
             bool result = true;

@@ -11,21 +11,17 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
-using System.Security.Permissions;
 using System.Text;
 using System.Threading;
-using Microsoft.Win32;
-using Microsoft.PowerShell.Commands.Internal;
 using Microsoft.Management.Infrastructure;
 using Microsoft.Management.Infrastructure.Options;
-using System.Linq;
+using Microsoft.Win32;
 using Dbg = System.Management.Automation;
 
 // FxCop suppressions for resource strings:
@@ -198,9 +194,9 @@ namespace Microsoft.PowerShell.Commands
         [Alias("CN", "__SERVER", "Server", "IPAddress")]
         public string[] ComputerName { get; set; } = new string[] { "." };
 
-        private List<string> _validatedComputerNames = new List<string>();
-        private readonly List<string> _waitOnComputers = new List<string>();
-        private readonly HashSet<string> _uniqueComputerNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private List<string> _validatedComputerNames = new();
+        private readonly List<string> _waitOnComputers = new();
+        private readonly HashSet<string> _uniqueComputerNames = new(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// The following is the definition of the input parameter "Credential".
@@ -237,7 +233,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(-1, int.MaxValue)]
         public int Timeout
         {
-            get { return _timeout; }
+            get
+            {
+                return _timeout;
+            }
 
             set
             {
@@ -256,7 +255,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = DefaultParameterSet)]
         public WaitForServiceTypes For
         {
-            get { return _waitFor; }
+            get
+            {
+                return _waitFor;
+            }
 
             set
             {
@@ -276,7 +278,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange(1, Int16.MaxValue)]
         public Int16 Delay
         {
-            get { return (Int16)_delay; }
+            get
+            {
+                return (Int16)_delay;
+            }
 
             set
             {
@@ -318,7 +323,7 @@ $result
         /// <summary>
         /// The indicator to use when show progress.
         /// </summary>
-        private string[] _indicator = { "|", "/", "-", "\\" };
+        private readonly string[] _indicator = { "|", "/", "-", "\\" };
 
         /// <summary>
         /// The activity id.
@@ -340,13 +345,13 @@ $result
         /// Indicate to exit.
         /// </summary>
         private bool _exit, _timeUp;
-        private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancel = new();
 
         /// <summary>
         /// A waithandler to wait on. Current thread will wait on it during the delay interval.
         /// </summary>
-        private readonly ManualResetEventSlim _waitHandler = new ManualResetEventSlim(false);
-        private readonly Dictionary<string, ComputerInfo> _computerInfos = new Dictionary<string, ComputerInfo>(StringComparer.OrdinalIgnoreCase);
+        private readonly ManualResetEventSlim _waitHandler = new(false);
+        private readonly Dictionary<string, ComputerInfo> _computerInfos = new(StringComparer.OrdinalIgnoreCase);
 
         // CLR 4.0 Port note - use https://msdn.microsoft.com/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
         private readonly string _shortLocalMachineName = Dns.GetHostName();
@@ -445,7 +450,7 @@ $result
             if (!InternalTestHooks.TestWaitStopComputer && Wait && containLocalhost)
             {
                 // The local machine will be ignored, and an error will be emitted.
-                InvalidOperationException ex = new InvalidOperationException(ComputerResources.CannotWaitLocalComputer);
+                InvalidOperationException ex = new(ComputerResources.CannotWaitLocalComputer);
                 WriteError(new ErrorRecord(ex, "CannotWaitLocalComputer", ErrorCategory.InvalidOperation, null));
                 containLocalhost = false;
             }
@@ -467,7 +472,7 @@ $result
         /// <param name="progressRecordType"></param>
         private void WriteProgress(string activity, string status, int percent, ProgressRecordType progressRecordType)
         {
-            ProgressRecord progress = new ProgressRecord(_activityId, activity, status);
+            ProgressRecord progress = new(_activityId, activity, status);
             progress.PercentComplete = percent;
             progress.RecordType = progressRecordType;
             WriteProgress(progress);
@@ -537,7 +542,7 @@ $result
                 {
                     if (token.IsCancellationRequested) { break; }
 
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, token, this))
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, this, token))
                     {
                         bool itemRetrieved = false;
                         IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
@@ -593,7 +598,7 @@ $result
             {
                 try
                 {
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, token, this))
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, Credential, WsmanAuthentication, isLocalHost: false, this, token))
                     {
                         bool itemRetrieved = false;
                         IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
@@ -663,7 +668,7 @@ $result
 
         #region "Internal Methods"
 
-        internal static List<string> TestWmiConnectionUsingWsman(List<string> computerNames, List<string> nextTestList, CancellationToken token, PSCredential credential, string wsmanAuthentication, PSCmdlet cmdlet)
+        internal static List<string> TestWmiConnectionUsingWsman(List<string> computerNames, List<string> nextTestList, PSCredential credential, string wsmanAuthentication, PSCmdlet cmdlet, CancellationToken token)
         {
             // Check if the WMI service "Winmgmt" is started
             const string wmiServiceQuery = "Select * from " + ComputerWMIHelper.WMI_Class_Service + " Where name = 'Winmgmt'";
@@ -679,7 +684,7 @@ $result
                 {
                     if (token.IsCancellationRequested) { break; }
 
-                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credential, wsmanAuthentication, isLocalHost: false, token, cmdlet))
+                    using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credential, wsmanAuthentication, isLocalHost: false, cmdlet, token))
                     {
                         bool itemRetrieved = false;
                         IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(
@@ -729,7 +734,7 @@ $result
         /// <returns></returns>
         internal static List<string> TestPowerShell(List<string> computerNames, List<string> nextTestList, System.Management.Automation.PowerShell powershell, PSCredential credential)
         {
-            List<string> psList = new List<string>();
+            List<string> psList = new();
 
             try
             {
@@ -787,7 +792,7 @@ $result
             // Timeout, For, Delay, Progress cannot be present if Wait is not present
             if ((_timeoutSpecified || _waitForSpecified || _delaySpecified) && !Wait)
             {
-                InvalidOperationException ex = new InvalidOperationException(ComputerResources.RestartComputerInvalidParameter);
+                InvalidOperationException ex = new(ComputerResources.RestartComputerInvalidParameter);
                 ThrowTerminatingError(new ErrorRecord(ex, "RestartComputerInvalidParameter", ErrorCategory.InvalidOperation, null));
             }
 
@@ -814,8 +819,8 @@ $result
                         _powershell.AddScript(TestPowershellScript);
                         break;
                     default:
-                        InvalidOperationException ex = new InvalidOperationException(ComputerResources.NoSupportForCombinedServiceType);
-                        ErrorRecord error = new ErrorRecord(ex, "NoSupportForCombinedServiceType", ErrorCategory.InvalidOperation, (int)_waitFor);
+                        InvalidOperationException ex = new(ComputerResources.NoSupportForCombinedServiceType);
+                        ErrorRecord error = new(ex, "NoSupportForCombinedServiceType", ErrorCategory.InvalidOperation, (int)_waitFor);
                         ThrowTerminatingError(error);
                         break;
                 }
@@ -964,7 +969,7 @@ $result
                                         WriteProgress(_indicator[(indicatorIndex++) % 4] + _activity, _status, _percent, ProgressRecordType.Processing);
                                     }
 
-                                    wmiTestList = TestWmiConnectionUsingWsman(wmiTestList, winrmTestList, _cancel.Token, Credential, WsmanAuthentication, this);
+                                    wmiTestList = TestWmiConnectionUsingWsman(wmiTestList, winrmTestList, Credential, WsmanAuthentication, this, _cancel.Token);
                                 }
                             }
 
@@ -1121,7 +1126,7 @@ $result
     {
         #region Private Members
 
-        private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancel = new();
 
         private const int forcedShutdown = 5; // See https://msdn.microsoft.com/library/aa394058(v=vs.85).aspx
 
@@ -1392,7 +1397,7 @@ $result
             {
                 bool isLocalhost = targetComputer.Equals(ComputerWMIHelper.localhostStr, StringComparison.OrdinalIgnoreCase);
                 string errMsg = StringUtil.Format(ComputerResources.InvalidNewName, isLocalhost ? _shortLocalMachineName : targetComputer, NewName);
-                ErrorRecord error = new ErrorRecord(
+                ErrorRecord error = new(
                         new InvalidOperationException(errMsg), "InvalidNewName",
                         ErrorCategory.InvalidArgument, NewName);
                 WriteError(error);
@@ -1434,8 +1439,8 @@ $result
 
             try
             {
-                using (CancellationTokenSource cancelTokenSource = new CancellationTokenSource())
-                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credToUse, WsmanAuthentication, isLocalhost, cancelTokenSource.Token, this))
+                using (CancellationTokenSource cancelTokenSource = new())
+                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(computer, credToUse, WsmanAuthentication, isLocalhost, this, cancelTokenSource.Token))
                 {
                     var operationOptions = new CimOperationOptions
                     {
@@ -1457,7 +1462,7 @@ $result
                         if (oldName.Equals(newName, StringComparison.OrdinalIgnoreCase))
                         {
                             string errMsg = StringUtil.Format(ComputerResources.NewNameIsOldName, computerName, newName);
-                            ErrorRecord error = new ErrorRecord(
+                            ErrorRecord error = new(
                                     new InvalidOperationException(errMsg), "NewNameIsOldName",
                                     ErrorCategory.InvalidArgument, newName);
                             WriteError(error);
@@ -1516,7 +1521,7 @@ $result
                         {
                             var ex = new Win32Exception(retVal);
                             string errMsg = StringUtil.Format(ComputerResources.FailToRename, computerName, newName, ex.Message);
-                            ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "FailToRenameComputer", ErrorCategory.OperationStopped, computerName);
+                            ErrorRecord error = new(new InvalidOperationException(errMsg), "FailToRenameComputer", ErrorCategory.OperationStopped, computerName);
                             WriteError(error);
                         }
                         else
@@ -1557,14 +1562,14 @@ $result
             catch (CimException ex)
             {
                 string errMsg = StringUtil.Format(ComputerResources.FailToConnectToComputer, computerName, ex.Message);
-                ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "RenameComputerException",
+                ErrorRecord error = new(new InvalidOperationException(errMsg), "RenameComputerException",
                                                     ErrorCategory.OperationStopped, computerName);
                 WriteError(error);
             }
             catch (Exception ex)
             {
                 string errMsg = StringUtil.Format(ComputerResources.FailToConnectToComputer, computerName, ex.Message);
-                ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), "RenameComputerException",
+                ErrorRecord error = new(new InvalidOperationException(errMsg), "RenameComputerException",
                                                     ErrorCategory.OperationStopped, computerName);
                 WriteError(error);
             }
@@ -1643,7 +1648,7 @@ $result
         /// <param name="HasSucceeded"></param>
         /// <param name="computername"></param>
         /// <returns></returns>
-        private string FormatLine(string HasSucceeded, string computername)
+        private static string FormatLine(string HasSucceeded, string computername)
         {
             return StringUtil.Format(MatchFormat, HasSucceeded, computername);
         }
@@ -1687,7 +1692,7 @@ $result
         /// <param name="newcomputername"></param>
         /// <param name="oldcomputername"></param>
         /// <returns></returns>
-        private string FormatLine(string HasSucceeded, string newcomputername, string oldcomputername)
+        private static string FormatLine(string HasSucceeded, string newcomputername, string oldcomputername)
         {
             return StringUtil.Format(MatchFormat, HasSucceeded, newcomputername, oldcomputername);
         }
@@ -1797,7 +1802,7 @@ $result
             string localUserName = null;
 
             // The format of local admin username should be "ComputerName\AdminName"
-            if (psLocalCredential.UserName.Contains("\\"))
+            if (psLocalCredential.UserName.Contains('\\'))
             {
                 localUserName = psLocalCredential.UserName;
             }
@@ -1810,7 +1815,7 @@ $result
                 }
                 else
                 {
-                    localUserName = computerName.Substring(0, dotIndex) + "\\" + psLocalCredential.UserName;
+                    localUserName = string.Concat(computerName.AsSpan(0, dotIndex), "\\", psLocalCredential.UserName);
                 }
             }
 
@@ -1848,7 +1853,7 @@ $result
         /// <returns></returns>
         internal static string GetScopeString(string computer, string namespaceParameter)
         {
-            StringBuilder returnValue = new StringBuilder("\\\\");
+            StringBuilder returnValue = new("\\\\");
             if (computer.Equals("::1", StringComparison.OrdinalIgnoreCase) || computer.Equals("[::1]", StringComparison.OrdinalIgnoreCase))
             {
                 returnValue.Append("localhost");
@@ -1924,7 +1929,7 @@ $result
             }
 
             string compname = string.Empty;
-            StringBuilder strComputers = new StringBuilder();
+            StringBuilder strComputers = new();
             int i = 0;
             foreach (string computer in computerNames)
             {
@@ -1954,7 +1959,7 @@ $result
 
         internal static ComputerChangeInfo GetComputerStatusObject(int errorcode, string computername)
         {
-            ComputerChangeInfo computerchangeinfo = new ComputerChangeInfo();
+            ComputerChangeInfo computerchangeinfo = new();
             computerchangeinfo.ComputerName = computername;
             if (errorcode != 0)
             {
@@ -1970,7 +1975,7 @@ $result
 
         internal static RenameComputerChangeInfo GetRenameComputerStatusObject(int errorcode, string newcomputername, string oldcomputername)
         {
-            RenameComputerChangeInfo renamecomputerchangeinfo = new RenameComputerChangeInfo();
+            RenameComputerChangeInfo renamecomputerchangeinfo = new();
             renamecomputerchangeinfo.OldComputerName = oldcomputername;
             renamecomputerchangeinfo.NewComputerName = newcomputername;
             if (errorcode != 0)
@@ -1987,7 +1992,7 @@ $result
 
         internal static void WriteNonTerminatingError(int errorcode, PSCmdlet cmdlet, string computername)
         {
-            Win32Exception ex = new Win32Exception(errorcode);
+            Win32Exception ex = new(errorcode);
             string additionalmessage = string.Empty;
             if (ex.NativeErrorCode.Equals(0x00000035))
             {
@@ -1995,7 +2000,7 @@ $result
             }
 
             string message = StringUtil.Format(ComputerResources.OperationFailed, ex.Message, computername, additionalmessage);
-            ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, computername);
+            ErrorRecord er = new(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, computername);
             cmdlet.WriteError(er);
         }
 
@@ -2105,12 +2110,12 @@ $result
                     string message =
                         StringUtil.Format(ComputerResources.PrivilegeNotEnabled, computerName,
                             isLocalhost ? ComputerWMIHelper.SE_SHUTDOWN_NAME : ComputerWMIHelper.SE_REMOTE_SHUTDOWN_NAME);
-                    ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(message), "PrivilegeNotEnabled", ErrorCategory.InvalidOperation, null);
+                    ErrorRecord errorRecord = new(new InvalidOperationException(message), "PrivilegeNotEnabled", ErrorCategory.InvalidOperation, null);
                     cmdlet.WriteError(errorRecord);
                     return false;
                 }
 
-                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(targetMachine, credInUse, authInUse, isLocalhost, cancelToken, cmdlet))
+                using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(targetMachine, credInUse, authInUse, isLocalhost, cmdlet, cancelToken))
                 {
                     var methodParameters = new CimMethodParametersCollection();
                     int retVal;
@@ -2163,7 +2168,7 @@ $result
                     {
                         var ex = new Win32Exception(retVal);
                         string errMsg = StringUtil.Format(formatErrorMessage, computerName, ex.Message);
-                        ErrorRecord error = new ErrorRecord(
+                        ErrorRecord error = new(
                             new InvalidOperationException(errMsg), ErrorFQEID, ErrorCategory.OperationStopped, computerName);
                         cmdlet.WriteError(error);
                     }
@@ -2176,14 +2181,14 @@ $result
             catch (CimException ex)
             {
                 string errMsg = StringUtil.Format(formatErrorMessage, computerName, ex.Message);
-                ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), ErrorFQEID,
+                ErrorRecord error = new(new InvalidOperationException(errMsg), ErrorFQEID,
                                                     ErrorCategory.OperationStopped, computerName);
                 cmdlet.WriteError(error);
             }
             catch (Exception ex)
             {
                 string errMsg = StringUtil.Format(formatErrorMessage, computerName, ex.Message);
-                ErrorRecord error = new ErrorRecord(new InvalidOperationException(errMsg), ErrorFQEID,
+                ErrorRecord error = new(new InvalidOperationException(errMsg), ErrorFQEID,
                                                     ErrorCategory.OperationStopped, computerName);
                 cmdlet.WriteError(error);
             }

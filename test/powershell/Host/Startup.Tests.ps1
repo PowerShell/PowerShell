@@ -22,7 +22,6 @@ Describe "Validate start of console host" -Tag CI {
             'System.ComponentModel.TypeConverter.dll'
             'System.Console.dll'
             'System.Data.Common.dll'
-            'System.Diagnostics.FileVersionInfo.dll'
             'System.Diagnostics.Process.dll'
             'System.Diagnostics.TraceSource.dll'
             'System.Diagnostics.Tracing.dll'
@@ -53,6 +52,7 @@ Describe "Validate start of console host" -Tag CI {
             'System.Runtime.Serialization.Primitives.dll'
             'System.Security.AccessControl.dll'
             'System.Security.Cryptography.Encoding.dll'
+            'System.Security.Cryptography.Primitives.dll'
             'System.Security.Cryptography.X509Certificates.dll'
             'System.Security.Principal.Windows.dll'
             'System.Text.Encoding.Extensions.dll'
@@ -70,16 +70,12 @@ Describe "Validate start of console host" -Tag CI {
                 'System.DirectoryServices.dll'
                 'System.Management.dll'
                 'System.Security.Claims.dll'
-                'System.Security.Cryptography.Primitives.dll'
                 'System.Threading.Overlapped.dll'
             )
         }
         else {
             $allowedAssemblies += @(
-                'System.Collections.Immutable.dll'
-                'System.IO.MemoryMappedFiles.dll'
                 'System.Net.Sockets.dll'
-                'System.Reflection.Metadata.dll'
             )
         }
 
@@ -93,7 +89,7 @@ Describe "Validate start of console host" -Tag CI {
             Remove-Item $profileDataFile -Force
         }
 
-        $loadedAssemblies = & "$PSHOME/pwsh" -noprofile -command '([System.AppDomain]::CurrentDomain.GetAssemblies()).manifestmodule | Where-Object { $_.Name -notlike ""<*>"" } | ForEach-Object { $_.Name }'
+        $loadedAssemblies = & "$PSHOME/pwsh" -noprofile -command '([System.AppDomain]::CurrentDomain.GetAssemblies()).manifestmodule | Where-Object { $_.Name -notlike "<*>" } | ForEach-Object { $_.Name }'
     }
 
     It "No new assemblies are loaded" {

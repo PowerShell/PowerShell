@@ -291,7 +291,7 @@ namespace System.Management.Automation.Host
         Collection<Attribute>
         Attributes
         {
-            get { return metadata ?? (metadata = new Collection<Attribute>()); }
+            get { return metadata ??= new Collection<Attribute>(); }
         }
 
         /// <summary>
@@ -414,4 +414,3 @@ namespace System.Management.Automation.Host
         #endregion
     }
 }
-

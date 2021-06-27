@@ -20,22 +20,22 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Remote host user interface.
         /// </summary>
-        private ServerRemoteHostUserInterface _remoteHostUserInterface;
+        private readonly ServerRemoteHostUserInterface _remoteHostUserInterface;
 
         /// <summary>
         /// Server method executor.
         /// </summary>
-        private ServerMethodExecutor _serverMethodExecutor;
+        private readonly ServerMethodExecutor _serverMethodExecutor;
 
         /// <summary>
         /// Client runspace pool id.
         /// </summary>
-        private Guid _clientRunspacePoolId;
+        private readonly Guid _clientRunspacePoolId;
 
         /// <summary>
         /// Client power shell id.
         /// </summary>
-        private Guid _clientPowerShellId;
+        private readonly Guid _clientPowerShellId;
 
         /// <summary>
         /// Transport manager.
@@ -45,7 +45,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// ServerDriverRemoteHost.
         /// </summary>
-        private ServerDriverRemoteHost _serverDriverRemoteHost;
+        private readonly ServerDriverRemoteHost _serverDriverRemoteHost;
 
         #endregion
 
@@ -327,16 +327,15 @@ namespace System.Management.Automation.Remoting
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.ServerDriverRemoteHostAlreadyPushed);
             }
 
-            RemoteRunspace remoteRunspace = runspace as RemoteRunspace;
-            if (remoteRunspace == null)
+            if (!(runspace is RemoteRunspace remoteRunspace))
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.ServerDriverRemoteHostNotRemoteRunspace);
             }
 
             // PSEdit support.  Existence of RemoteSessionOpenFileEvent event indicates host supports PSEdit
             _hostSupportsPSEdit = false;
-            PSEventManager localEventManager = (Runspace != null) ? Runspace.Events : null;
-            _hostSupportsPSEdit = (localEventManager != null) ? localEventManager.GetEventSubscribers(HostUtilities.RemoteSessionOpenFileEvent).GetEnumerator().MoveNext() : false;
+            PSEventManager localEventManager = Runspace?.Events;
+            _hostSupportsPSEdit = localEventManager != null && localEventManager.GetEventSubscribers(HostUtilities.RemoteSessionOpenFileEvent).GetEnumerator().MoveNext();
             if (_hostSupportsPSEdit)
             {
                 AddPSEditForRunspace(remoteRunspace);

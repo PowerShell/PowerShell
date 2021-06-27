@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             var wqlQueryBuilder = new StringBuilder();
             wqlQueryBuilder.Append("SELECT * FROM ");
             wqlQueryBuilder.Append(this.JobContext.ClassName);
-            wqlQueryBuilder.Append(" ");
+            wqlQueryBuilder.Append(' ');
             wqlQueryBuilder.Append(wqlCondition);
             _wqlQuery = wqlQueryBuilder.ToString();
 

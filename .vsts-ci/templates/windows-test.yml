@@ -34,10 +34,21 @@ jobs:
 
   # must be run frow Windows PowerShell
   - powershell: |
+      # Remove "Program Files\dotnet" from the env variable PATH, so old SDKs won't affect us.
+      Write-Host "Old Path:"
+      Write-Host $env:Path
+
+      $dotnetPath = Join-Path $env:SystemDrive 'Program Files\dotnet'
+      $paths = $env:Path -split ";" | Where-Object { -not $_.StartsWith($dotnetPath) }
+      $env:Path = $paths -join ";"
+
+      Write-Host "New Path:"
+      Write-Host $env:Path
+
+      # Bootstrap
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall
     displayName: Bootstrap
-    condition: succeededOrFailed()
 
   - pwsh: |
       Import-Module .\tools\ci.psm1

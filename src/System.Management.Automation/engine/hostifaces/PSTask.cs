@@ -539,7 +539,7 @@ namespace System.Management.Automation.PSTasks
         public PSTaskDataStreamWriter(PSCmdlet psCmdlet)
         {
             _cmdlet = psCmdlet;
-            _cmdletThreadId = Thread.CurrentThread.ManagedThreadId;
+            _cmdletThreadId = Environment.CurrentManagedThreadId;
             _dataStream = new PSDataCollection<PSStreamObject>();
         }
 
@@ -605,7 +605,7 @@ namespace System.Management.Automation.PSTasks
 
         private void CheckCmdletThread()
         {
-            if (Thread.CurrentThread.ManagedThreadId != _cmdletThreadId)
+            if (Environment.CurrentManagedThreadId != _cmdletThreadId)
             {
                 throw new PSInvalidOperationException(InternalCommandStrings.PSTaskStreamWriterWrongThread);
             }

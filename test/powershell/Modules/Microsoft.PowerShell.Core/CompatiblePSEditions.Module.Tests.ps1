@@ -473,8 +473,8 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
         It "Verify that Warning is generated with default WarningAction" {
             $LogPath = Join-Path $TestDrive (New-Guid).ToString()
-            & $pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName" *> $LogPath
-            $LogPath | Should -FileContentMatch 'loaded in Windows PowerShell'
+            & $pwsh -NoProfile -NonInteractive -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName;Get-Error" *> $LogPath
+            $LogPath | Should -FileContentMatch 'loaded in Windows PowerShell' -Because (Get-Content $LogPath)
         }
 
         It "Verify that Error is Not generated with -ErrorAction Ignore" {

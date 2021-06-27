@@ -22,7 +22,7 @@ namespace System.Management.Automation
         private int _setterIndex;
         private int _setterByRefIndex;
         private int _getterIndex;
-        private COM.ITypeInfo _typeInfo;
+        private readonly COM.ITypeInfo _typeInfo;
 
         /// <summary>
         /// Initializes a new instance of ComProperty.
@@ -366,7 +366,7 @@ namespace System.Management.Automation
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(this.GetDefinition());
-            builder.Append(" ");
+            builder.Append(' ');
             if (IsGettable)
             {
                 builder.Append("{get} ");

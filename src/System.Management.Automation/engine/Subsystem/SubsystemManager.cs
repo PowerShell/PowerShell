@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Subsystem.DSC;
+using System.Management.Automation.Subsystem.Prediction;
 
 namespace System.Management.Automation.Subsystem
 {
@@ -28,6 +30,11 @@ namespace System.Management.Automation.Subsystem
                     SubsystemKind.CommandPredictor,
                     allowUnregistration: true,
                     allowMultipleRegistration: true),
+
+                SubsystemInfo.Create<ICrossPlatformDsc>(
+                    SubsystemKind.CrossPlatformDsc,
+                    allowUnregistration: true,
+                    allowMultipleRegistration: false),
             };
 
             var subSystemTypeMap = new Dictionary<Type, SubsystemInfo>(subsystems.Length);
@@ -217,7 +224,7 @@ namespace System.Management.Automation.Subsystem
                     nameof(proxy));
             }
 
-            if (subsystemInfo.RequiredCmdlets.Any() || subsystemInfo.RequiredFunctions.Any())
+            if (subsystemInfo.RequiredCmdlets.Count > 0 || subsystemInfo.RequiredFunctions.Count > 0)
             {
                 // Process 'proxy.CmdletImplementationAssembly' and 'proxy.FunctionsToDefine'
                 // Functions are added to global scope.
@@ -265,7 +272,7 @@ namespace System.Management.Automation.Subsystem
 
         private static void UnregisterSubsystem(SubsystemInfo subsystemInfo, Guid id)
         {
-            if (subsystemInfo.RequiredCmdlets.Any() || subsystemInfo.RequiredFunctions.Any())
+            if (subsystemInfo.RequiredCmdlets.Count > 0 || subsystemInfo.RequiredFunctions.Count > 0)
             {
                 throw new NotSupportedException("NotSupported yet: unregister subsystem that introduced new cmdlets/functions.");
             }
@@ -273,7 +280,14 @@ namespace System.Management.Automation.Subsystem
             ISubsystem impl = subsystemInfo.UnregisterImplementation(id);
             if (impl is IDisposable disposable)
             {
-                disposable.Dispose();
+                try
+                {
+                    disposable.Dispose();
+                }
+                catch
+                {
+                    // It's OK to ignore all exceptions when disposing the object.
+                }
             }
         }
 

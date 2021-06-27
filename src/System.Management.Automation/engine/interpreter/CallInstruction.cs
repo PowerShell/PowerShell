@@ -178,7 +178,7 @@ namespace System.Management.Automation.Interpreter
 
         private static bool ShouldCache(MethodInfo info)
         {
-            return !(info is DynamicMethod);
+            return info is not DynamicMethod;
         }
 
         /// <summary>

@@ -3,8 +3,6 @@
 
 using System.Management.Automation;
 
-using Dbg = System.Management.Automation.Diagnostics;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>

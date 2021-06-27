@@ -21,6 +21,8 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
+        internal const string PSAnsiProgressFeatureName = "PSAnsiProgress";
+        internal const string PSNativeCommandArgumentPassingFeatureName = "PSNativeCommandArgumentPassing";
 
         #endregion
 
@@ -126,11 +128,24 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
+                new ExperimentalFeature(
+                    name: "PSAnsiRendering",
+                    description: "Enable $PSStyle variable to control ANSI rendering of strings"),
+                new ExperimentalFeature(
+                    name: PSAnsiProgressFeatureName,
+                    description: "Enable lightweight progress bar that leverages ANSI codes for rendering"),
+                new ExperimentalFeature(
+                    name: PSNativeCommandArgumentPassingFeatureName,
+                    description: "Use ArgumentList when invoking a native command"),
+                new ExperimentalFeature(
+                    name: "PSLoadAssemblyFromNativeCode",
+                    description: "Expose an API to allow assembly loading from native code"),
             };
+
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
             // Initialize the readonly dictionary 'EngineExperimentalFeatureMap'.
-            var engineExpFeatureMap = engineFeatures.ToDictionary(f => f.Name, StringComparer.OrdinalIgnoreCase);
+            var engineExpFeatureMap = engineFeatures.ToDictionary(static f => f.Name, StringComparer.OrdinalIgnoreCase);
             EngineExperimentalFeatureMap = new ReadOnlyDictionary<string, ExperimentalFeature>(engineExpFeatureMap);
 
             // Initialize the readonly hashset 'EnabledExperimentalFeatureNames'.
@@ -345,20 +360,21 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(experimentName))
             {
-                string paramName = nameof(experimentName);
+                const string paramName = nameof(experimentName);
                 throw PSTraceSource.NewArgumentNullException(paramName, Metadata.ArgumentNullOrEmpty, paramName);
             }
 
             if (experimentAction == ExperimentAction.None)
             {
-                string paramName = nameof(experimentAction);
-                string invalidMember = nameof(ExperimentAction.None);
+                const string paramName = nameof(experimentAction);
+                const string invalidMember = nameof(ExperimentAction.None);
                 string validMembers = StringUtil.Format("{0}, {1}", ExperimentAction.Hide, ExperimentAction.Show);
                 throw PSTraceSource.NewArgumentException(paramName, Metadata.InvalidEnumArgument, invalidMember, paramName, validMembers);
             }
         }
 
         internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
+
         internal bool ToShow => EffectiveAction == ExperimentAction.Show;
 
         /// <summary>

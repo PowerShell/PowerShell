@@ -5,9 +5,9 @@ using System.ServiceProcess;
 
 namespace TestService
 {
-    static class Program
+    internal static class Program
     {
-       static void Main()
+       private static void Main()
         {
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]

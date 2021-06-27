@@ -60,11 +60,13 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         protected virtual void NotifyFilterExpressionChanged()
         {
+            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             EventHandler eh = this.FilterExpressionChanged;
             if (eh != null)
             {
                 eh(this, new EventArgs());
             }
+            #pragma warning restore IDE1005s
         }
 
         #endregion

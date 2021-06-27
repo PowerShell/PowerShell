@@ -19,6 +19,7 @@ RUN yum install -y \
         which \
         curl \
         git \
+        wget \
     && yum clean all
 
 COPY PowerShellPackage.ps1 /

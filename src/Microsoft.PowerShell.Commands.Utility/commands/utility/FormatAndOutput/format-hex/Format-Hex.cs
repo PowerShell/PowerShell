@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
         /// For cases where a homogenous collection of bytes or other items are directly piped in, we collect all the
         /// bytes in a List&lt;byte&gt; and then output the formatted result all at once in EndProcessing().
         /// </summary>
-        private readonly List<byte> _inputBuffer = new List<byte>();
+        private readonly List<byte> _inputBuffer = new();
 
         /// <summary>
         /// Expect to group <see cref="InputObject"/>s by default. When receiving input that should not be grouped,
@@ -77,6 +77,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _encoding;
             }
+
             set
             {
                 EncodingConversion.WarnIfObsolete(this, value);
@@ -152,12 +153,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private List<string> ResolvePaths(string[] path, bool literalPath)
         {
-            List<string> pathsToProcess = new List<string>();
+            List<string> pathsToProcess = new();
             ProviderInfo provider = null;
 
             foreach (string currentPath in path)
             {
-                List<string> newPaths = new List<string>();
+                List<string> newPaths = new();
 
                 if (literalPath)
                 {
@@ -173,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (!WildcardPattern.ContainsWildcardCharacters(currentPath))
                         {
-                            ErrorRecord errorRecord = new ErrorRecord(e, "FileNotFound", ErrorCategory.ObjectNotFound, path);
+                            ErrorRecord errorRecord = new(e, "FileNotFound", ErrorCategory.ObjectNotFound, path);
                             WriteError(errorRecord);
                             continue;
                         }
@@ -184,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Write a non-terminating error message indicating that path specified is not supported.
                     string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexOnlySupportsFileSystemPaths, currentPath);
-                    ErrorRecord errorRecord = new ErrorRecord(
+                    ErrorRecord errorRecord = new(
                         new ArgumentException(errorMessage),
                         "FormatHexOnlySupportsFileSystemPaths",
                         ErrorCategory.InvalidArgument,
@@ -292,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static readonly Random _idGenerator = new Random();
+        private static readonly Random _idGenerator = new();
 
         private static string GetGroupLabel(Type inputType)
             => string.Format("{0} ({1}) <{2:X8}>", inputType.Name, inputType.FullName, _idGenerator.Next());
@@ -369,7 +370,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 string errorMessage = StringUtil.Format(UtilityCommonStrings.FormatHexTypeNotSupported, obj.GetType());
-                ErrorRecord errorRecord = new ErrorRecord(
+                ErrorRecord errorRecord = new(
                     new ArgumentException(errorMessage),
                     "FormatHexTypeNotSupported",
                     ErrorCategory.InvalidArgument,
@@ -485,7 +486,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="offset">Offset in the file.</param>
         private void WriteHexadecimal(Span<byte> inputBytes, string path, long offset)
         {
-            var bytesPerObject = 16;
+            const int bytesPerObject = 16;
             for (int index = 0; index < inputBytes.Length; index += bytesPerObject)
             {
                 var count = inputBytes.Length - index < bytesPerObject
@@ -507,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void WriteHexadecimal(Span<byte> inputBytes, long offset, string label)
         {
-            var bytesPerObject = 16;
+            const int bytesPerObject = 16;
             for (int index = 0; index < inputBytes.Length; index += bytesPerObject)
             {
                 var count = inputBytes.Length - index < bytesPerObject

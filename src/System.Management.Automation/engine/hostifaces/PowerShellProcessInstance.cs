@@ -185,6 +185,7 @@ namespace System.Management.Automation.Runspaces
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="disposing"></param>

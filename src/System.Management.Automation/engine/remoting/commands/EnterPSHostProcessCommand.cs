@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell.Commands
             return remoteRunspace;
         }
 
-        private void PrepareRunspace(Runspace runspace)
+        private static void PrepareRunspace(Runspace runspace)
         {
             string promptFn = StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessPrompt,
                 @"function global:prompt { """,
@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void VerifyProcess(Process process)
         {
-            if (process.Id == Process.GetCurrentProcess().Id)
+            if (process.Id == Environment.ProcessId)
             {
                 ThrowTerminatingError(
                         new ErrorRecord(
@@ -574,7 +574,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
 
-        private int[] GetProcIdsFromProcs(Process[] processes)
+        private static int[] GetProcIdsFromProcs(Process[] processes)
         {
             List<int> returnIds = new List<int>();
             foreach (Process process in processes)
@@ -585,7 +585,7 @@ namespace Microsoft.PowerShell.Commands
             return returnIds.ToArray();
         }
 
-        private int[] GetProcIdsFromNames(string[] names)
+        private static int[] GetProcIdsFromNames(string[] names)
         {
             if ((names == null) || (names.Length == 0))
             {

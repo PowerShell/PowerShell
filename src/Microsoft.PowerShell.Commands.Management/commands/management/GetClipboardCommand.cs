@@ -23,7 +23,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter Raw
         {
-            get { return _raw; }
+            get
+            {
+                return _raw;
+            }
 
             set
             {

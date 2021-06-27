@@ -331,7 +331,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public ScopedItemOptions Options
         {
-            get { return _options; }
+            get
+            {
+                return _options;
+            }
 
             set
             {
@@ -354,4 +357,3 @@ namespace Microsoft.PowerShell.Commands
         private bool _optionsSet = false;
     }
 }
-

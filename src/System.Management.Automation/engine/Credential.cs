@@ -177,8 +177,8 @@ namespace System.Management.Automation
             }
         }
 
-        private string _userName;
-        private SecureString _password;
+        private readonly string _userName;
+        private readonly SecureString _password;
 
         /// <summary>
         /// User's name.
@@ -405,4 +405,3 @@ namespace System.Management.Automation
         }
     }
 }
-

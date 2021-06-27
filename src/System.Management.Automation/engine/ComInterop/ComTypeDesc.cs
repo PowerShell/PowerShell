@@ -118,6 +118,7 @@ namespace System.Management.Automation.ComInterop
             method = null;
             return false;
         }
+
         internal void AddPutRef(string name, ComMethodDesc method)
         {
             name = name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);

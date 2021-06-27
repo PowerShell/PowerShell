@@ -22,7 +22,6 @@ namespace mvc.Controllers
 
             Response.StatusCode = 200;
 
-
             StringValues dosType;
             if (Request.Query.TryGetValue("dosType", out dosType))
             {

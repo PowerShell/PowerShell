@@ -1,13 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
-using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Security;
-
-using Microsoft.Win32;
 
 namespace Microsoft.PowerShell
 {
@@ -101,17 +97,26 @@ namespace Microsoft.PowerShell
             passwordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_Password, userName
             );
 
-            //
-            // now, prompt for the password
-            //
-            WriteToConsole(passwordPrompt, true);
-            password = ReadLineAsSecureString();
-            if (password == null)
+            if (!InternalTestHooks.NoPromptForPassword)
             {
-                return null;
+                WriteToConsole(passwordPrompt, transcribeResult: true);
+                password = ReadLineAsSecureString();
+                if (password == null)
+                {
+                    return null;
+                }
+
+                WriteLineToConsole();
+            }
+            else
+            {
+                password = new SecureString();
             }
 
-            WriteLineToConsole();
+            if (!string.IsNullOrEmpty(targetName))
+            {
+                userName = StringUtil.Format("{0}\\{1}", targetName, userName);
+            }
 
             cred = new PSCredential(userName, password);
 
@@ -119,4 +124,3 @@ namespace Microsoft.PowerShell
         }
     }
 }
-

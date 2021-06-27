@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Windows;
 
@@ -76,6 +77,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             this.commands = new List<CommandViewModel>();
             this.filteredCommands = new ObservableCollection<CommandViewModel>();
 
+            #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
+
             // This check looks to see if the given module name shows up in
             // the set of modules that are known to be imported in the current
             // session.  In remote PowerShell sessions, the core cmdlet module
@@ -86,6 +89,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 importedModules == null ? true : name.Length == 0 ||
                 importedModules.ContainsKey(name) ||
                 string.Equals("Microsoft.PowerShell.Core", name, StringComparison.OrdinalIgnoreCase);
+
+            #pragma warning restore IDE0075
         }
         #endregion
 
@@ -372,6 +377,8 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             }
         }
 
+        #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
+
         /// <summary>
         /// Callled in response to a GUI event that requires the command to be run.
         /// </summary>
@@ -527,5 +534,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
+        #pragma warning restore IDE1005
     }
 }

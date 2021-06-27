@@ -625,7 +625,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            bool implementsIList = (type.GetInterface(typeof(IList).Name) != null);
+            bool implementsIList = (type.GetInterface(nameof(IList)) != null);
 
             // Look for class Collection<T>.  Collection<T> implements IList, and also IList
             // is more efficient to bind than ICollection<T>.  This optimization
@@ -649,7 +649,7 @@ namespace System.Management.Automation
             // to an ICollection<T> is via reflected calls to Add(T),
             // but the advantage over plain IList is that we can typecast the elements.
             Type interfaceICollection =
-                Array.Find(interfaces, i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
+                Array.Find(interfaces, static i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICollection<>));
             if (interfaceICollection != null)
             {
                 // We only deal with the first type for which ICollection<T> is implemented

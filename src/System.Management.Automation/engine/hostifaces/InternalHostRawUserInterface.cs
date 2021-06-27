@@ -609,7 +609,7 @@ namespace System.Management.Automation.Internal.Host
             return _externalRawUI.LengthInBufferCells(character);
         }
 
-        private PSHostRawUserInterface _externalRawUI;
-        private InternalHost _parentHost;
+        private readonly PSHostRawUserInterface _externalRawUI;
+        private readonly InternalHost _parentHost;
     }
 }
