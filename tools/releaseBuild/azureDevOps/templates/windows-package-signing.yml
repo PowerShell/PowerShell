@@ -21,10 +21,11 @@ jobs:
   - checkout: ComplianceRepo
     clean: true
 
-  - template: shouldSign.yml
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: shouldSign.yml
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download artifacts'
@@ -44,13 +45,23 @@ jobs:
     parameters:
         buildOutputPath: $(System.ArtifactsDirectory)\signed
         signOutputPath: $(Build.StagingDirectory)\signedPackages
-        certificateId: "CP-230012"
+        certificateId: $(MSIX_CERT)
         pattern: |
           **\*.msix
+        useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
+        displayName: Sign msix
+
+  - template: EsrpSign.yml@ComplianceRepo
+    parameters:
+        buildOutputPath: $(System.ArtifactsDirectory)\signed
+        signOutputPath: $(Build.StagingDirectory)\signedPackages
+        certificateId: $(AUTHENTICODE_CERT)
+        pattern: |
           **\*.exe
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
-        displayName: Sign exe and msix
+        displayName: Sign exe
 
   - powershell: |
       new-item -itemtype Directory -path '$(Build.StagingDirectory)\signedPackages'

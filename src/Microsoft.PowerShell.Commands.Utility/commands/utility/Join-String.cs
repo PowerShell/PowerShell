@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
@@ -159,6 +160,10 @@ namespace Microsoft.PowerShell.Commands.Utility
         }
     }
 
+    [SuppressMessage(
+        "Microsoft.Performance",
+        "CA1812:AvoidUninstantiatedInternalClasses",
+        Justification = "Class is instantiated through late-bound reflection")]
     internal class JoinItemCompleter : IArgumentCompleter
     {
         public IEnumerable<CompletionResult> CompleteArgument(
