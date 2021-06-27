@@ -346,7 +346,7 @@ dotnet_diagnostic.CA1810.severity = none
 
 # CA1812: Avoid uninstantiated internal classes
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1812
-dotnet_diagnostic.CA1812.severity = none
+dotnet_diagnostic.CA1812.severity = warning
 
 # CA1813: Avoid unsealed attributes
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1813
