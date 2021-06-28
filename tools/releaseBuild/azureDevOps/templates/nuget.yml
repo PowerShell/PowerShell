@@ -198,8 +198,8 @@ jobs:
       $packages  = Get-ChildItem -Path $srcPaths -Include *.zip, *.tar.gz, *.msi*, *.pkg, *.deb, *.rpm -Exclude "PowerShell-Symbols*" -Recurse
       $packages | ForEach-Object { Copy-Item $_.FullName -Destination $packagePath -Verbose }
 
-      $message = Get-ChildItem $packagePath -Recurse | Select-Object -ExpandProperty FullName | Out-String
-      Write-Verbose -Verbose $message
+      $packagePathList = Get-ChildItem $packagePath -Recurse | Select-Object -ExpandProperty FullName | Out-String
+      Write-Verbose -Verbose $packagePathList
 
       $hashFileContent = [System.Text.StringBuilder]::new()
 
