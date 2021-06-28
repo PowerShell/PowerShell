@@ -12,9 +12,6 @@ using System.Security.Principal;
 #endif
 using System.Threading;
 using Microsoft.PowerShell.Commands;
-using Microsoft.Win32;
-
-using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Runspaces
 {
@@ -279,54 +276,53 @@ namespace System.Management.Automation.Runspaces
         private FlowControlException InvokeHelper()
         {
             FlowControlException flowControlException = null;
-
             PipelineProcessor pipelineProcessor = null;
+
             try
             {
-#if TRANSACTIONS_SUPPORTED
-                // 2004/11/08-JeffJon
-                // Transactions will not be supported for the Exchange release
-
-                // Add the transaction to this thread
-                System.Transactions.Transaction.Current = this.LocalRunspace.ExecutionContext.CurrentTransaction;
-#endif
                 // Raise the event for Pipeline.Running
                 RaisePipelineStateEvents();
 
                 // Add this pipeline to history
                 RecordPipelineStartTime();
 
-                // Add automatic transcription, but don't transcribe nested commands
-                if (this.AddToHistory || !IsNested)
+                // Add automatic transcription when it's NOT a pulse pipeline, but don't transcribe nested commands.
+                if (!IsPulsePipeline && (AddToHistory || !IsNested))
                 {
-                    bool needToAddOutDefault = true;
-                    CommandInfo outDefaultCommandInfo = new CmdletInfo("Out-Default", typeof(Microsoft.PowerShell.Commands.OutDefaultCommand), null, null, null);
-
-                    foreach (Command command in this.Commands)
+                    foreach (Command command in Commands)
                     {
-                        if (command.IsScript && (!this.IsPulsePipeline))
+                        if (command.IsScript)
                         {
                             // Transcribe scripts, unless they are the pulse pipeline.
-                            this.Runspace.GetExecutionContext.EngineHostInterface.UI.TranscribeCommand(command.CommandText, null);
-                        }
-
-                        // Don't need to add Out-Default if the pipeline already has it, or we've got a pipeline evaluating
-                        // the PSConsoleHostReadLine command.
-                        if (
-                            string.Equals(outDefaultCommandInfo.Name, command.CommandText, StringComparison.OrdinalIgnoreCase) ||
-                            string.Equals("PSConsoleHostReadLine", command.CommandText, StringComparison.OrdinalIgnoreCase) ||
-                            string.Equals("TabExpansion2", command.CommandText, StringComparison.OrdinalIgnoreCase) ||
-                            this.IsPulsePipeline)
-                        {
-                            needToAddOutDefault = false;
+                            Runspace.GetExecutionContext.EngineHostInterface.UI.TranscribeCommand(command.CommandText, invocation: null);
                         }
                     }
 
-                    if (this.Runspace.GetExecutionContext.EngineHostInterface.UI.IsTranscribing)
+                    if (Runspace.GetExecutionContext.EngineHostInterface.UI.IsTranscribing)
                     {
+                        bool needToAddOutDefault = true;
+                        Command lastCommand = Commands[Commands.Count - 1];
+
+                        // Don't need to add Out-Default if the pipeline already has it, or we've got a pipeline evaluating
+                        // the PSConsoleHostReadLine or the TabExpansion2 commands.
+                        if (string.Equals("Out-Default", lastCommand.CommandText, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals("PSConsoleHostReadLine", lastCommand.CommandText, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals("TabExpansion2", lastCommand.CommandText, StringComparison.OrdinalIgnoreCase) ||
+                            (lastCommand.CommandInfo is CmdletInfo cmdlet && cmdlet.ImplementingType == typeof(OutDefaultCommand)))
+                        {
+                            needToAddOutDefault = false;
+                        }
+
                         if (needToAddOutDefault)
                         {
-                            Command outDefaultCommand = new Command(outDefaultCommandInfo);
+                            var outDefaultCommand = new Command(
+                                new CmdletInfo(
+                                    "Out-Default",
+                                    typeof(OutDefaultCommand),
+                                    helpFile: null,
+                                    PSSnapin: null,
+                                    context: null));
+
                             outDefaultCommand.Parameters.Add(new CommandParameter("Transcript", true));
                             outDefaultCommand.Parameters.Add(new CommandParameter("OutVariable", null));
 

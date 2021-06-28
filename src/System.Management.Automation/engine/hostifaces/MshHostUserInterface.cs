@@ -438,7 +438,7 @@ namespace System.Management.Automation.Host
             {
                 if (TranscriptionData.SystemTranscript == null)
                 {
-                    TranscriptionData.SystemTranscript = PSHostUserInterface.GetSystemTranscriptOption(TranscriptionData.SystemTranscript);
+                    TranscriptionData.SystemTranscript = GetSystemTranscriptOption(TranscriptionData.SystemTranscript);
                     if (TranscriptionData.SystemTranscript != null)
                     {
                         LogTranscriptHeader(null, TranscriptionData.SystemTranscript);
