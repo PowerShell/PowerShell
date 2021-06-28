@@ -201,19 +201,16 @@ jobs:
       $packagePathList = Get-ChildItem $packagePath -Recurse | Select-Object -ExpandProperty FullName | Out-String
       Write-Verbose -Verbose $packagePathList
 
-      $hashFileContent = [System.Text.StringBuilder]::new()
+      Get-ChildItem -Path $packagePath | 
+          ForEach-Object {
+            Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
+            $packageName = $_.Name
+            $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA512).Hash.ToLower()
 
-      Get-ChildItem -Path $packagePath | ForEach-Object {
-        Write-Verbose -Verbose "Generating checksum file for $_"
-        $packageName = Split-Path $_ -Leaf
-        $hash = (Get-FileHash -Path $_ -Algorithm SHA512).Hash.ToLower()
-
-        # the '*' before the packagename signifies it is a binary
-        $hashLine = "$hash *$packageName"
-        $hashFileContent.AppendLine($hashLine) > $null
-      }
-
-      $hashFileContent.ToString() | Out-File -FilePath "$packagePath\SHA512SUMS" -Force
+            # the '*' before the packagename signifies it is a binary
+            "$hash *$packageName"
+          } |
+          Out-File -FilePath "$packagePath\SHA512SUMS" -Force
 
       $fileContent = Get-Content -Path "$packagePath\SHA512SUMS" -Raw | Out-String
       Write-Verbose -Verbose -Message $fileContent
