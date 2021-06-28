@@ -105,7 +105,8 @@ dotnet_diagnostic.CA1041.severity = warning
 
 # CA1043: Use Integral Or String Argument For Indexers
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1043
-dotnet_diagnostic.CA1043.severity = none
+dotnet_diagnostic.CA1043.severity = warning
+dotnet_code_quality.ca1043.api_surface = all
 
 # CA1044: Properties should not be write only
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1044
