@@ -221,10 +221,11 @@ namespace Microsoft.PowerShell.Commands
                         throw new ArgumentException(errorMsg);
                     }
 
+                    // if we processed an array let's return the array
+                    // If we did not process the array we can return the first (and only) object in our result arraylist
                     if (isArray)
                     {
                         return result.ToArray();
-
                     }
                     else if (result.Count >= 1)
                     {
