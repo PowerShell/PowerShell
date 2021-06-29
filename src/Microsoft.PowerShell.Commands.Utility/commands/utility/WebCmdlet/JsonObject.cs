@@ -168,59 +168,68 @@ namespace Microsoft.PowerShell.Commands
                 serializer.MetadataPropertyHandling = MetadataPropertyHandling.Ignore;
                 serializer.MaxDepth = maxDepth;
                 using (System.IO.MemoryStream stream = new System.IO.MemoryStream(System.Text.Encoding.Default.GetBytes(input)))
+                using (System.IO.StreamReader streamReader = new System.IO.StreamReader(stream))
+                using (JsonReader reader = new JsonTextReader(streamReader))
                 {
-                    using (System.IO.StreamReader streamReader = new System.IO.StreamReader(stream))
-                    {
-                        using (JsonReader reader = new JsonTextReader(streamReader))
-                        {
-                            bool isArray = false;
-                            var readResult = reader.Read();
-                            // If the first token in our file is an array let's read in that token so that our next token is an object or a primitive.
-                            // This will allow newtonsoft to deserialize the incoming json one object at a time instead of doing the whole object at once.
-                            if (reader.TokenType == JsonToken.StartArray)
-                            {
-                                isArray = true;
-                                reader.Read();
-                            }
-                            System.Collections.ArrayList result = new System.Collections.ArrayList();
+                    bool isArray = false;
 
-                            do
-                            {
-                                if (reader.TokenType == JsonToken.EndArray)
-                                { break; }
-                                var thisObject = serializer.Deserialize(reader);
-                                switch (thisObject)
-                                {
-                                    case JObject dictionary:
-                                        // JObject is a IDictionary
-                                        result.Add(returnHashtable
-                                                   ? PopulateHashTableFromJDictionary(dictionary, out error)
-                                                   : PopulateFromJDictionary(dictionary, new DuplicateMemberHashSet(dictionary.Count), out error));
-                                        break;
-                                    case JArray list:
-                                        result.Add(returnHashtable
-                                                   ? PopulateHashTableFromJArray(list, out error)
-                                                   : PopulateFromJArray(list, out error));
-                                        break;
-                                    default:
-                                        result.Add(thisObject);
-                                        break;
-                                }
-                            } while (reader.Read());
-                            
-                            if (isArray)
-                            {
-                                return result.ToArray();
-                            }
-                            else if (result.Count >= 1)
-                            {
-                                return result.ToArray()[0];
-                            }
-                            else
-                            {
-                                return null;
-                            }
+                    var readResult = reader.Read();
+                    // If the first token in our file is an array let's read in that token so that our next token is an object or a primitive.
+                    // This will allow newtonsoft to deserialize the incoming json one object at a time instead of doing the whole object at once.
+                    if (reader.TokenType == JsonToken.StartArray)
+                    {
+                        isArray = true;
+                        reader.Read();
+                    }
+                    System.Collections.ArrayList result = new System.Collections.ArrayList();
+
+                    do
+                    {
+                        if (reader.TokenType == JsonToken.EndArray)
+                        { break; }
+                        var thisObject = serializer.Deserialize(reader);
+                        switch (thisObject)
+                        {
+                            case JObject dictionary:
+                                // JObject is a IDictionary
+                                result.Add(returnHashtable
+                                            ? PopulateHashTableFromJDictionary(dictionary, out error)
+                                            : PopulateFromJDictionary(dictionary, new DuplicateMemberHashSet(dictionary.Count), out error));
+                                break;
+                            case JArray list:
+                                result.Add(returnHashtable
+                                            ? PopulateHashTableFromJArray(list, out error)
+                                            : PopulateFromJArray(list, out error));
+                                break;
+                            default:
+                                result.Add(thisObject);
+                                break;
                         }
+                    } while (reader.Read());
+
+                    // Earlier we stripped off the start of the array. Here we want to make sure that if we were handling an array that we ended with an EndArray token.
+                    if (isArray && reader.TokenType != JsonToken.EndArray)
+                    {
+                        var errorMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.JsonStringInBadFormat);
+                        error = new ErrorRecord(
+                            new InvalidOperationException(errorMsg),
+                            "ArrayStartsButDoesNotEnd",
+                            ErrorCategory.InvalidOperation,
+                            null);
+                        throw new ArgumentException(errorMsg);
+                    }
+
+                    if (isArray)
+                    {
+                        return result.ToArray();
+                    }
+                    else if (result.Count >= 1)
+                    {
+                        return result.ToArray()[0];
+                    }
+                    else
+                    {
+                        return null;
                     }
                 }
 
