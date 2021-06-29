@@ -167,17 +167,14 @@ namespace Microsoft.PowerShell.Commands
                 serializer.TypeNameHandling = TypeNameHandling.None;
                 serializer.MetadataPropertyHandling = MetadataPropertyHandling.Ignore;
                 serializer.MaxDepth = maxDepth;
-
                 using (System.IO.MemoryStream stream = new System.IO.MemoryStream(System.Text.Encoding.Default.GetBytes(input)))
                 {
                     using (System.IO.StreamReader streamReader = new System.IO.StreamReader(stream))
                     {
                         using (JsonReader reader = new JsonTextReader(streamReader))
                         {
-
                             bool isArray = false;
                             var readResult = reader.Read();
-
                             // If the first token in our file is an array let's read in that token so that our next token is an object or a primitive.
                             // This will allow newtonsoft to deserialize the incoming json one object at a time instead of doing the whole object at once.
                             if (reader.TokenType == JsonToken.StartArray)
@@ -189,47 +186,40 @@ namespace Microsoft.PowerShell.Commands
 
                             do
                             {
-                                switch (reader.TokenType)
+                                if (reader.TokenType == JsonToken.EndArray)
+                                { break; }
+                                var thisObject = serializer.Deserialize(reader);
+                                switch (thisObject)
                                 {
-                                    case JsonToken.StartObject:
-                                        JObject dictionary = JObject.Load(reader);
+                                    case JObject dictionary:
+                                        // JObject is a IDictionary
                                         result.Add(returnHashtable
                                                    ? PopulateHashTableFromJDictionary(dictionary, out error)
                                                    : PopulateFromJDictionary(dictionary, new DuplicateMemberHashSet(dictionary.Count), out error));
                                         break;
-                                    case JsonToken.StartArray:
-                                        JArray list = JArray.Load(reader);
+                                    case JArray list:
                                         result.Add(returnHashtable
                                                    ? PopulateHashTableFromJArray(list, out error)
                                                    : PopulateFromJArray(list, out error));
                                         break;
-                                    case JsonToken.String:
-                                        result.Add(JObject.Load(reader));
-                                        break;
-                                    case JsonToken.Integer:
-                                        result.Add(JObject.Load(reader));
-                                        break;
-                                    case JsonToken.Boolean:
-                                        result.Add(JObject.Load(reader));
-                                        break;
-                                    case JsonToken.EndObject:
-                                        break;
-                                    case JsonToken.EndArray:
-                                        break;
                                     default:
-                                        result.Add(JObject.Load(reader));
+                                        result.Add(thisObject);
                                         break;
                                 }
                             } while (reader.Read());
-
+                            
                             if (isArray)
-                            { return result.ToArray(); }
+                            {
+                                return result.ToArray();
+                            }
                             else if (result.Count >= 1)
                             {
                                 return result.ToArray()[0];
                             }
                             else
-                            { return null; }
+                            {
+                                return null;
+                            }
                         }
                     }
                 }
