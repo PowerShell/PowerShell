@@ -1432,17 +1432,7 @@ namespace System.Management.Automation
             if ((input == null) || (input.Count == 0))
             { return; }
 
-            List<FunctionInfo> output = new List<FunctionInfo>(input.Count);
-            foreach (var fnInfo in input)
-            {
-                if (module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase))
-                {
-                    output.Add(fnInfo);
-                }
-            }
-
-            input.Clear();
-            input.AddRange(output);
+            input.RemoveAll(fnInfo => !module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase));
         }
 
         private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
@@ -1460,21 +1450,16 @@ namespace System.Management.Automation
 
             bool firstItem = true;
             string previousKey = null;
-            List<T> output = new List<T>(input.Count);
-            foreach (T item in input)
+            input.RemoveAll(ShouldRemove);
+
+            bool ShouldRemove(T item)
             {
                 string currentKey = keyGetter(item);
-                if ((firstItem) || !currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase))
-                {
-                    output.Add(item);
-                }
-
+                bool match = !firstItem && currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase);
                 previousKey = currentKey;
                 firstItem = false;
+                return match;
             }
-
-            input.Clear();
-            input.AddRange(output);
         }
 
         /// <summary>
