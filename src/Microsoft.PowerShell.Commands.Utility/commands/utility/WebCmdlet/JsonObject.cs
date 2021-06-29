@@ -161,7 +161,6 @@ namespace Microsoft.PowerShell.Commands
             error = null;
             try
             {
-
                 var serializer = new JsonSerializer();
 
                 serializer.TypeNameHandling = TypeNameHandling.None;
@@ -174,6 +173,7 @@ namespace Microsoft.PowerShell.Commands
                     bool isArray = false;
 
                     var readResult = reader.Read();
+
                     // If the first token in our file is an array let's read in that token so that our next token is an object or a primitive.
                     // This will allow newtonsoft to deserialize the incoming json one object at a time instead of doing the whole object at once.
                     if (reader.TokenType == JsonToken.StartArray)
@@ -181,6 +181,7 @@ namespace Microsoft.PowerShell.Commands
                         isArray = true;
                         reader.Read();
                     }
+
                     System.Collections.ArrayList result = new System.Collections.ArrayList();
 
                     do
@@ -205,7 +206,8 @@ namespace Microsoft.PowerShell.Commands
                                 result.Add(thisObject);
                                 break;
                         }
-                    } while (reader.Read());
+                    } 
+                    while (reader.Read());
 
                     // Earlier we stripped off the start of the array. Here we want to make sure that if we were handling an array that we ended with an EndArray token.
                     if (isArray && reader.TokenType != JsonToken.EndArray)
@@ -222,6 +224,7 @@ namespace Microsoft.PowerShell.Commands
                     if (isArray)
                     {
                         return result.ToArray();
+
                     }
                     else if (result.Count >= 1)
                     {
@@ -232,7 +235,6 @@ namespace Microsoft.PowerShell.Commands
                         return null;
                     }
                 }
-
             }
             catch (JsonException je)
             {
