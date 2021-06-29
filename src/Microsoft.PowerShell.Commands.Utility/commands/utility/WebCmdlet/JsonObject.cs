@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Language;
 using System.Reflection;
@@ -160,30 +161,61 @@ namespace Microsoft.PowerShell.Commands
             error = null;
             try
             {
-                var obj = JsonConvert.DeserializeObject(
-                    input,
-                    new JsonSerializerSettings
-                    {
-                        // This TypeNameHandling setting is required to be secure.
-                        TypeNameHandling = TypeNameHandling.None,
-                        MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
-                        MaxDepth = maxDepth
-                    });
 
-                switch (obj)
+                var serializer = new JsonSerializer();
+
+                serializer.TypeNameHandling = TypeNameHandling.None;
+                serializer.MetadataPropertyHandling = MetadataPropertyHandling.Ignore;
+                serializer.MaxDepth = maxDepth;
+
+                using (System.IO.MemoryStream stream = new System.IO.MemoryStream(System.Text.Encoding.Default.GetBytes(input)))
                 {
-                    case JObject dictionary:
-                        // JObject is a IDictionary
-                        return returnHashtable
-                                   ? PopulateHashTableFromJDictionary(dictionary, out error)
-                                   : PopulateFromJDictionary(dictionary, new DuplicateMemberHashSet(dictionary.Count), out error);
-                    case JArray list:
-                        return returnHashtable
-                                   ? PopulateHashTableFromJArray(list, out error)
-                                   : PopulateFromJArray(list, out error);
-                    default:
-                        return obj;
+                    using (System.IO.StreamReader streamReader = new System.IO.StreamReader(stream))
+                    {
+                        using (JsonReader reader = new JsonTextReader(streamReader))
+                        {
+
+                            bool isArray = false;
+                            var readResult = reader.Read();
+
+                            if (reader.TokenType == JsonToken.StartArray)
+                            {
+                                isArray = true;
+                            }
+                            System.Collections.ArrayList result = new System.Collections.ArrayList(); 
+
+                            while (reader.Read())
+                            {
+                                switch (reader.TokenType)
+                                {
+                                    case JsonToken.StartObject:
+                                        JObject dictionary = JObject.Load(reader);
+                                        result.Add(returnHashtable
+                                                   ? PopulateHashTableFromJDictionary(dictionary, out error)
+                                                   : PopulateFromJDictionary(dictionary, new DuplicateMemberHashSet(dictionary.Count), out error));
+                                        break;
+                                    case JsonToken.StartArray:
+                                        JArray list = JArray.Load(reader);
+                                        result.Add(returnHashtable
+                                                   ? PopulateHashTableFromJArray(list, out error)
+                                                   : PopulateFromJArray(list, out error));
+                                        break;
+                                    case JsonToken.EndObject:
+                                        break;
+                                    case JsonToken.EndArray:
+                                        break;
+                                    default:
+                                        result.Add(JObject.Load(reader));
+                                        break;
+                                }
+                            }
+                            if (isArray)
+                            { return result.ToArray(); }
+                            return result.ToArray()[0];
+                        }
+                    }
                 }
+
             }
             catch (JsonException je)
             {
@@ -428,6 +460,12 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
+        /*
+        private static object ProcessValue (object obj)
+        {
+            if (obj is )
+        }
+        */
         #endregion ConvertFromJson
 
         #region ConvertToJson
