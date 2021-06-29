@@ -13,6 +13,11 @@
     <?define IconPath = "assets\Powershell_black.ico"?>
   <?endif?>
   <!-- UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS, otherwise, updates won't occur. -->
+  <!-- UpgradeCode reserved for the future, if you have to add any upgrade code other than these
+       Please work with @TravisEz13 to update the Microsoft Update logic
+      811f0d06-4594-4797-bd42-130b27649a97
+      b3629b9d-907d-43f9-9f51-488689c31cbb
+  --> 
   <?if $(sys.BUILDARCH)=x64?>
     <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(var.SimpleProductVersion)"?>
     <?define UpgradeCodePreview = "39243d76-adaf-42b1-94fb-16ecf83237c8"?>
