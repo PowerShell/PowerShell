@@ -263,7 +263,6 @@ namespace Microsoft.PowerShell.Commands
                 default:
                     return thisObject;
             }
-            
         }
 
         // This function is a clone of PopulateFromDictionary using JObject as an input.
