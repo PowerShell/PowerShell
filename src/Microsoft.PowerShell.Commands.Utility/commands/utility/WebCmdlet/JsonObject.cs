@@ -477,12 +477,6 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        /*
-        private static object ProcessValue (object obj)
-        {
-            if (obj is )
-        }
-        */
         #endregion ConvertFromJson
 
         #region ConvertToJson
