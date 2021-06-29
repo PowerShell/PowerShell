@@ -1088,7 +1088,9 @@ namespace System.Management.Automation.Security
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPT_PROVIDER_CERT
         {
-            private readonly DWORD _cbStruct;
+#pragma warning disable IDE0044
+            private DWORD _cbStruct;
+#pragma warning restore IDE0044
             internal IntPtr pCert; // PCCERT_CONTEXT
             private readonly BOOL _fCommercial;
             private readonly BOOL _fTrustedRoot;
