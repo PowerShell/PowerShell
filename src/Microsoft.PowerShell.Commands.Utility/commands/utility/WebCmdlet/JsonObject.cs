@@ -178,13 +178,16 @@ namespace Microsoft.PowerShell.Commands
                             bool isArray = false;
                             var readResult = reader.Read();
 
+                            // If the first token in our file is an array let's read in that token so that our next token is an object or a primitive.
+                            // This will allow newtonsoft to deserialize the incoming json one object at a time instead of doing the whole object at once.
                             if (reader.TokenType == JsonToken.StartArray)
                             {
                                 isArray = true;
+                                reader.Read();
                             }
-                            System.Collections.ArrayList result = new System.Collections.ArrayList(); 
+                            System.Collections.ArrayList result = new System.Collections.ArrayList();
 
-                            while (reader.Read())
+                            do
                             {
                                 switch (reader.TokenType)
                                 {
@@ -200,6 +203,15 @@ namespace Microsoft.PowerShell.Commands
                                                    ? PopulateHashTableFromJArray(list, out error)
                                                    : PopulateFromJArray(list, out error));
                                         break;
+                                    case JsonToken.String:
+                                        result.Add(JObject.Load(reader));
+                                        break;
+                                    case JsonToken.Integer:
+                                        result.Add(JObject.Load(reader));
+                                        break;
+                                    case JsonToken.Boolean:
+                                        result.Add(JObject.Load(reader));
+                                        break;
                                     case JsonToken.EndObject:
                                         break;
                                     case JsonToken.EndArray:
@@ -208,10 +220,16 @@ namespace Microsoft.PowerShell.Commands
                                         result.Add(JObject.Load(reader));
                                         break;
                                 }
-                            }
+                            } while (reader.Read());
+
                             if (isArray)
                             { return result.ToArray(); }
-                            return result.ToArray()[0];
+                            else if (result.Count >= 1)
+                            {
+                                return result.ToArray()[0];
+                            }
+                            else
+                            { return null; }
                         }
                     }
                 }
