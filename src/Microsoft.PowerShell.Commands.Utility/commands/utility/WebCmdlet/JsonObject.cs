@@ -161,79 +161,48 @@ namespace Microsoft.PowerShell.Commands
             error = null;
             try
             {
-                var serializer = new JsonSerializer();
+                var serializer = new JsonSerializer()
+                {
+                    TypeNameHandling = TypeNameHandling.None,
+                    MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
+                    MaxDepth = maxDepth
+                };
 
                 serializer.TypeNameHandling = TypeNameHandling.None;
                 serializer.MetadataPropertyHandling = MetadataPropertyHandling.Ignore;
                 serializer.MaxDepth = maxDepth;
+
                 using (System.IO.MemoryStream stream = new System.IO.MemoryStream(System.Text.Encoding.Default.GetBytes(input)))
                 using (System.IO.StreamReader streamReader = new System.IO.StreamReader(stream))
                 using (JsonReader reader = new JsonTextReader(streamReader))
                 {
-                    bool isArray = false;
-
                     var readResult = reader.Read();
 
                     // If the first token in our file is an array let's read in that token so that our next token is an object or a primitive.
                     // This will allow newtonsoft to deserialize the incoming json one object at a time instead of doing the whole object at once.
                     if (reader.TokenType == JsonToken.StartArray)
                     {
-                        isArray = true;
-                        reader.Read();
-                    }
+                        List<object> result;
 
-                    System.Collections.ArrayList result = new System.Collections.ArrayList();
-
-                    do
-                    {
-                        if (reader.TokenType == JsonToken.EndArray)
-                        { break; }
-                        var thisObject = serializer.Deserialize(reader);
-                        switch (thisObject)
+                        result = DeserializeRootArrayHelper(reader, serializer, returnHashtable, out error);
+                        if (error != null)
                         {
-                            case JObject dictionary:
-                                // JObject is a IDictionary
-                                result.Add(returnHashtable
-                                            ? PopulateHashTableFromJDictionary(dictionary, out error)
-                                            : PopulateFromJDictionary(dictionary, new DuplicateMemberHashSet(dictionary.Count), out error));
-                                break;
-                            case JArray list:
-                                result.Add(returnHashtable
-                                            ? PopulateHashTableFromJArray(list, out error)
-                                            : PopulateFromJArray(list, out error));
-                                break;
-                            default:
-                                result.Add(thisObject);
-                                break;
+                            return null;
                         }
-                    } 
-                    while (reader.Read());
 
-                    // Earlier we stripped off the start of the array. Here we want to make sure that if we were handling an array that we ended with an EndArray token.
-                    if (isArray && reader.TokenType != JsonToken.EndArray)
-                    {
-                        var errorMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.JsonStringInBadFormat);
-                        error = new ErrorRecord(
-                            new InvalidOperationException(errorMsg),
-                            "ArrayStartsButDoesNotEnd",
-                            ErrorCategory.InvalidOperation,
-                            null);
-                        throw new ArgumentException(errorMsg);
-                    }
-
-                    // if we processed an array let's return the array
-                    // If we did not process the array we can return the first (and only) object in our result arraylist
-                    if (isArray)
-                    {
                         return result.ToArray();
-                    }
-                    else if (result.Count >= 1)
-                    {
-                        return result.ToArray()[0];
                     }
                     else
                     {
-                        return null;
+                        object result;
+
+                        result = DeserializeObjectHelper(reader, serializer, returnHashtable, out error);
+                        if (error != null)
+                        {
+                            return null;
+                        }
+
+                        return result;
                     }
                 }
             }
@@ -244,6 +213,57 @@ namespace Microsoft.PowerShell.Commands
                 // the same as JavaScriptSerializer does
                 throw new ArgumentException(msg, je);
             }
+        }
+
+        private static List<object> DeserializeRootArrayHelper(JsonReader reader, JsonSerializer serializer, bool returnHashtable, out ErrorRecord error)
+        {
+            error = null;
+
+            List<object> elements = new List<object>();
+
+            while (reader.Read() && reader.TokenType != JsonToken.EndArray)
+            {
+                elements.Add(DeserializeObjectHelper(reader, serializer, returnHashtable, out error));
+                if (error != null)
+                {
+                    return null;
+                }
+            }
+
+            if (reader.TokenType != JsonToken.EndArray)
+            {
+                var errorMsg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.JsonStringInBadFormat);
+                error = new ErrorRecord(
+                    new InvalidOperationException(errorMsg),
+                    "ArrayStartsButDoesNotEnd",
+                    ErrorCategory.InvalidOperation,
+                    null);
+                throw new ArgumentException(errorMsg);
+            }
+
+            return elements;
+        }
+
+        private static object DeserializeObjectHelper(JsonReader reader, JsonSerializer serializer, bool returnHashtable, out ErrorRecord error)
+        {
+            error = null;
+
+            var thisObject = serializer.Deserialize(reader);
+
+            switch (thisObject)
+            {
+                case JObject dictionary:
+                    return returnHashtable
+                                ? PopulateHashTableFromJDictionary(dictionary, out error)
+                                : PopulateFromJDictionary(dictionary, new DuplicateMemberHashSet(dictionary.Count), out error);
+                case JArray list:
+                    return returnHashtable
+                                ? PopulateHashTableFromJArray(list, out error)
+                                : PopulateFromJArray(list, out error);
+                default:
+                    return thisObject;
+            }
+            
         }
 
         // This function is a clone of PopulateFromDictionary using JObject as an input.
