@@ -96,7 +96,7 @@ namespace System.Management.Automation.Interpreter
 
         // list of (instruction index, cookie) sorted by instruction index:
 #pragma warning disable IDE0044 // Add readonly modifier
-        private List<KeyValuePair<int, object>> _debugCookies = null;
+        private List<KeyValuePair<int, object>> _debugCookies;
 #pragma warning restore IDE0044 // Variable is assigned when DEBUG is defined.
 
         #region Debug View

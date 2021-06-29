@@ -995,7 +995,7 @@ namespace System.Management.Automation
             this.Certificates = new X509Certificate2Collection();
         }
 
-        private readonly string _identifier = null;
+        private readonly string _identifier;
 
         /// <summary>
         /// Creates an instance of the CmsMessageRecipient class.
@@ -1007,7 +1007,7 @@ namespace System.Management.Automation
             this.Certificates = new X509Certificate2Collection();
         }
 
-        private readonly X509Certificate2 _pendingCertificate = null;
+        private readonly X509Certificate2 _pendingCertificate;
 
         /// <summary>
         /// Gets the certificate associated with this recipient.
