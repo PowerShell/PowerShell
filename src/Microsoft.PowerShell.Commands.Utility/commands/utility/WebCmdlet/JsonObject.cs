@@ -124,6 +124,18 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Convert a Json string back to an object of type PSObject.
+        /// </summary>
+        /// <param name="stream">The json text to convert.</param>
+        /// <param name="error">An error record if the conversion failed.</param>
+        /// <returns>A PSObject.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
+        public static object ConvertFromJson(StreamReader stream, out ErrorRecord error)
+        {
+            return ConvertFromJson(stream, returnHashtable: false, out error);
+        }
+
+        /// <summary>
         /// Convert a Json string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
         /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
         /// </summary>
@@ -138,12 +150,27 @@ namespace Microsoft.PowerShell.Commands
         {
             return ConvertFromJson(input, returnHashtable, maxDepth: 1024, out error);
         }
+        /// <summary>
+        /// Convert a Json string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
+        /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
+        /// </summary>
+        /// <param name="stream">The json text to convert.</param>
+        /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
+        /// instead of a <see cref="System.Management.Automation.PSObject"/></param>
+        /// <param name="error">An error record if the conversion failed.</param>
+        /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
+        /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
+        public static object ConvertFromJson(StreamReader stream, bool returnHashtable, out ErrorRecord error)
+        {
+            return ConvertFromJson(stream, returnHashtable, maxDepth: 1024, out error);
+        }
 
         /// <summary>
         /// Convert a JSON string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
         /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
         /// </summary>
-        /// <param name="input">The JSON text to convert.</param>
+        /// <param name="stream">The JSON text to convert.</param>
         /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
         /// instead of a <see cref="System.Management.Automation.PSObject"/>.</param>
         /// <param name="maxDepth">The max depth allowed when deserializing the json input. Set to null for no maximum.</param>
@@ -151,11 +178,11 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
         /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
-        public static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, out ErrorRecord error)
+        public static object ConvertFromJson(StreamReader stream, bool returnHashtable, int? maxDepth, out ErrorRecord error)
         {
-            if (input == null)
+            if (stream == null)
             {
-                throw new ArgumentNullException(nameof(input));
+                throw new ArgumentNullException(nameof(stream));
             }
 
             error = null;
@@ -172,9 +199,7 @@ namespace Microsoft.PowerShell.Commands
                 serializer.MetadataPropertyHandling = MetadataPropertyHandling.Ignore;
                 serializer.MaxDepth = maxDepth;
 
-                using (System.IO.MemoryStream stream = new System.IO.MemoryStream(System.Text.Encoding.Default.GetBytes(input)))
-                using (System.IO.StreamReader streamReader = new System.IO.StreamReader(stream))
-                using (JsonReader reader = new JsonTextReader(streamReader))
+                using (JsonReader reader = new JsonTextReader(stream))
                 {
                     var readResult = reader.Read();
 
@@ -213,6 +238,24 @@ namespace Microsoft.PowerShell.Commands
                 // the same as JavaScriptSerializer does
                 throw new ArgumentException(msg, je);
             }
+        }
+
+        /// <summary>
+        /// Convert a JSON string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
+        /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
+        /// </summary>
+        /// <param name="input">The JSON text to convert.</param>
+        /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
+        /// instead of a <see cref="System.Management.Automation.PSObject"/>.</param>
+        /// <param name="maxDepth">The max depth allowed when deserializing the json input. Set to null for no maximum.</param>
+        /// <param name="error">An error record if the conversion failed.</param>
+        /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
+        /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
+        public static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, out ErrorRecord error)
+        {
+            StreamReader thisStream = new StreamReader(new MemoryStream(System.Text.Encoding.Default.GetBytes(input)));
+            return ConvertFromJson(thisStream, returnHashtable, maxDepth, out error);
         }
 
         private static List<object> DeserializeRootArrayHelper(JsonReader reader, JsonSerializer serializer, bool returnHashtable, out ErrorRecord error)
@@ -513,7 +556,6 @@ namespace Microsoft.PowerShell.Commands
                 // Pre-process the object so that it serializes the same, except that properties whose
                 // values cannot be evaluated are treated as having the value null.
                 _maxDepthWarningWritten = false;
-                object preprocessedObject = ProcessValue(objectToProcess, currentDepth: 0, in context);
                 var jsonSettings = new JsonSerializerSettings
                 {
                     // This TypeNameHandling setting is required to be secure.
@@ -532,7 +574,36 @@ namespace Microsoft.PowerShell.Commands
                     jsonSettings.Formatting = Formatting.Indented;
                 }
 
-                return JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
+                Type typ = objectToProcess.GetType();
+                
+                if (context.CompressOutput && typ.IsArray)
+                {
+                    System.Text.StringBuilder thisWriter = new System.Text.StringBuilder();
+
+                    thisWriter.Append('[');
+
+                    object[] objectToProcessArray = (object[])objectToProcess;
+
+                    for (int i = 0; i < objectToProcessArray.Length; i++)
+                    {
+                        object preprocessedObject = ProcessValue(objectToProcessArray[i], currentDepth: 0, in context);
+                        thisWriter.Append(JsonConvert.SerializeObject(preprocessedObject, jsonSettings));
+
+                        if (i != (objectToProcessArray.Length - 1))
+                        {
+                            thisWriter.Append(',');
+                        }
+                    }
+                    
+                    thisWriter.Append(']');
+
+                    return thisWriter.ToString();
+                }
+                else
+                {
+                    object preprocessedObject = ProcessValue(objectToProcess, currentDepth: 0, in context);
+                    return JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
+                } 
             }
             catch (OperationCanceledException)
             {
@@ -596,7 +667,6 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 Type t = obj.GetType();
-
                 if (t.IsPrimitive)
                 {
                     rv = obj;

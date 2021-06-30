@@ -181,19 +181,19 @@ namespace Microsoft.PowerShell.Commands
             return (doc != null);
         }
 
-        private static bool TryConvertToJson(string json, out object obj, ref Exception exRef)
+        private static bool TryConvertToJson(StreamReader stream, out object obj, ref Exception exRef)
         {
             bool converted = false;
             try
             {
                 ErrorRecord error;
-                obj = JsonObject.ConvertFromJson(json, out error);
+                obj = JsonObject.ConvertFromJson(stream, out error);
 
                 if (obj == null)
                 {
                     // This ensures that a null returned by ConvertFromJson() is the actual JSON null literal.
                     // if not, the ArgumentException will be caught.
-                    JToken.Parse(json);
+                    // JToken.Parse(json);
                 }
 
                 if (error != null)
@@ -417,8 +417,6 @@ namespace Microsoft.PowerShell.Commands
                     object obj = null;
                     Exception ex = null;
 
-                    string str = StreamHelper.DecodeStream(responseStream, ref encoding);
-
                     string encodingVerboseName;
                     try
                     {
@@ -439,16 +437,24 @@ namespace Microsoft.PowerShell.Commands
 
                     if (returnType == RestReturnType.Json)
                     {
-                        convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
+                        convertSuccess = TryConvertToJson(new StreamReader(responseStream), out obj, ref ex);
+
+                        if (!convertSuccess)
+                        {
+                            string str = StreamHelper.DecodeStream(baseResponseStream, ref encoding);
+                            convertSuccess = TryConvertToXml(str, out obj, ref ex);
+                         }
                     }
                     // default to try xml first since it's more common
                     else
                     {
-                        convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
+                        string str = StreamHelper.DecodeStream(responseStream, ref encoding);
+                        convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(new StreamReader(responseStream), out obj, ref ex);
                     }
 
                     if (!convertSuccess)
                     {
+                        string str = StreamHelper.DecodeStream(responseStream, ref encoding);
                         // fallback to string
                         obj = str;
                     }
