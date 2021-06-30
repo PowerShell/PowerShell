@@ -67,6 +67,11 @@ namespace Microsoft.PowerShell.Commands
 
             set { base._maximumFollowRelLink = value; }
         }
+        /// <summary>
+        /// Returned data structure is a Hashtable instead a CustomPSObject.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter AsHashtable { get; set; }
 
         /// <summary>
         /// Gets or sets the ResponseHeadersVariable property.
@@ -181,19 +186,20 @@ namespace Microsoft.PowerShell.Commands
             return (doc != null);
         }
 
-        private static bool TryConvertToJson(StreamReader stream, out object obj, ref Exception exRef)
+        private static bool TryConvertToJson(StreamReader stream, Encoding encoding, bool AsHashtable, out object obj, ref Exception exRef)
         {
             bool converted = false;
             try
             {
                 ErrorRecord error;
-                obj = JsonObject.ConvertFromJson(stream, out error);
+                obj = JsonObject.ConvertFromJson(stream, AsHashtable, out error);
 
                 if (obj == null)
                 {
                     // This ensures that a null returned by ConvertFromJson() is the actual JSON null literal.
                     // if not, the ArgumentException will be caught.
-                    // JToken.Parse(json);
+                    string str = StreamHelper.DecodeStream(stream.BaseStream, ref encoding);
+                    JToken.Parse(str);
                 }
 
                 if (error != null)
@@ -435,28 +441,40 @@ namespace Microsoft.PowerShell.Commands
                     );
                     bool convertSuccess = false;
 
-                    if (returnType == RestReturnType.Json)
-                    {
-                        convertSuccess = TryConvertToJson(new StreamReader(responseStream), out obj, ref ex);
+                    string str;
 
-                        if (!convertSuccess)
-                        {
-                            string str = StreamHelper.DecodeStream(baseResponseStream, ref encoding);
+                    switch (returnType)
+                    {
+                        case RestReturnType.Json:
+                            convertSuccess = TryConvertToJson(new StreamReader(responseStream), encoding, AsHashtable, out obj, ref ex);
+                            break;
+                        case RestReturnType.Xml:
+                            str = StreamHelper.DecodeStream(responseStream, ref encoding);
                             convertSuccess = TryConvertToXml(str, out obj, ref ex);
-                         }
-                    }
-                    // default to try xml first since it's more common
-                    else
-                    {
-                        string str = StreamHelper.DecodeStream(responseStream, ref encoding);
-                        convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(new StreamReader(responseStream), out obj, ref ex);
+                            break;
+                        default:
+                            str = StreamHelper.DecodeStream(responseStream, ref encoding);
+                            convertSuccess = TryConvertToXml(str, out obj, ref ex);
+                            break;
                     }
 
+                    // If at first we don't succeed, try again with a different format
                     if (!convertSuccess)
                     {
-                        string str = StreamHelper.DecodeStream(responseStream, ref encoding);
-                        // fallback to string
-                        obj = str;
+                        switch (returnType)
+                        {
+                            case RestReturnType.Json:
+                                str = StreamHelper.DecodeStream(responseStream, ref encoding);
+                                convertSuccess = TryConvertToXml(str, out obj, ref ex);
+                                break;
+                            case RestReturnType.Xml:
+                                convertSuccess = TryConvertToJson(new StreamReader(responseStream), encoding, AsHashtable, out obj, ref ex);
+                                break;
+                            default:
+                                str = StreamHelper.DecodeStream(responseStream, ref encoding);
+                                obj = str;
+                                break;
+                        }
                     }
 
                     WriteObject(obj);
