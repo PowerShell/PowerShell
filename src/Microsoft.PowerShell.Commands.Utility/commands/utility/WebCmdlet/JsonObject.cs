@@ -118,9 +118,9 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="error">An error record if the conversion failed.</param>
         /// <returns>A PSObject.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
-        public static object ConvertFromJson(StreamReader stream, out ErrorRecord error)
+        public static object ConvertFromJsonStream(StreamReader stream, out ErrorRecord error)
         {
-            return ConvertFromJson(stream, returnHashtable: false, out error);
+            return ConvertFromJsonStream(stream, returnHashtable: false, out error);
         }
 
         /// <summary>
@@ -146,9 +146,9 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
         /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
-        public static object ConvertFromJson(StreamReader stream, bool returnHashtable, out ErrorRecord error)
+        public static object ConvertFromJsonStream(StreamReader stream, bool returnHashtable, out ErrorRecord error)
         {
-            return ConvertFromJson(stream, returnHashtable, maxDepth: 1024, out error);
+            return ConvertFromJsonStream(stream, returnHashtable, maxDepth: 1024, out error);
         }
 
         /// <summary>
@@ -171,6 +171,24 @@ namespace Microsoft.PowerShell.Commands
         /// Convert a JSON string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
         /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
         /// </summary>
+        /// <param name="input">The JSON text to convert.</param>
+        /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
+        /// instead of a <see cref="System.Management.Automation.PSObject"/>.</param>
+        /// <param name="maxDepth">The max depth allowed when deserializing the json input. Set to null for no maximum.</param>
+        /// <param name="error">An error record if the conversion failed.</param>
+        /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
+        /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
+        public static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, out ErrorRecord error)
+        {
+            StreamReader thisStream = new StreamReader(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(input)));
+            return ConvertFromJsonStream(thisStream, returnHashtable, maxDepth, out error);
+        }
+
+        /// <summary>
+        /// Convert a JSON string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
+        /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
+        /// </summary>
         /// <param name="stream">The JSON text to convert.</param>
         /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
         /// instead of a <see cref="System.Management.Automation.PSObject"/>.</param>
@@ -179,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
         /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
-        public static object ConvertFromJson(StreamReader stream, bool returnHashtable, int? maxDepth, out ErrorRecord error)
+        public static object ConvertFromJsonStream(StreamReader stream, bool returnHashtable, int? maxDepth, out ErrorRecord error)
         {
             if (stream == null)
             {
@@ -239,24 +257,6 @@ namespace Microsoft.PowerShell.Commands
                 // the same as JavaScriptSerializer does
                 throw new ArgumentException(msg, je);
             }
-        }
-
-        /// <summary>
-        /// Convert a JSON string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
-        /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
-        /// </summary>
-        /// <param name="input">The JSON text to convert.</param>
-        /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
-        /// instead of a <see cref="System.Management.Automation.PSObject"/>.</param>
-        /// <param name="maxDepth">The max depth allowed when deserializing the json input. Set to null for no maximum.</param>
-        /// <param name="error">An error record if the conversion failed.</param>
-        /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
-        /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
-        public static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, out ErrorRecord error)
-        {
-            StreamReader thisStream = new StreamReader(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(input)));
-            return ConvertFromJson(thisStream, returnHashtable, maxDepth, out error);
         }
 
         private static List<object> DeserializeRootArrayHelper(JsonReader reader, JsonSerializer serializer, bool returnHashtable, out ErrorRecord error)

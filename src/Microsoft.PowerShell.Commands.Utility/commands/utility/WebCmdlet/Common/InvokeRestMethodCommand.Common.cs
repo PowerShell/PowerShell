@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 ErrorRecord error;
-                obj = JsonObject.ConvertFromJson(stream, AsHashtable, out error);
+                obj = JsonObject.ConvertFromJsonStream(stream, AsHashtable, out error);
 
                 if (obj == null)
                 {
