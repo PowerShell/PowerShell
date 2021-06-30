@@ -1,6 +1,8 @@
-name: Bug report 🐛
-description: Report errors or unexpected behavior 🤔
+name: Microsoft Update issue report 🐛
+description: Report issue installing a PowerShell 7 Update or fresh install through Microsoft Update 🤔
 labels: Needs-Triage
+assignees:
+  - TravisEz13
 body:
 - type: markdown
   attributes:
@@ -58,6 +60,22 @@ body:
     description: Paste verbatim output from `$PSVersionTable` below.
     render: powershell
     placeholder: PS> $PSVersionTable
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: OS Data
+    description: Paste verbatim output from `(Get-CimInstance Win32_OperatingSystem) | Select-Object -Property Version, Caption` below.
+    render: powershell
+    placeholder: PS> (Get-CimInstance Win32_OperatingSystem) | Select-Object -Property Version, Caption
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Windows update log
+    description: Please run `Get-WindowsUpdateLog` and upload the resulting file to this issue.
+    render: markdown
+    placeholder: PS> Get-WindowsUpdateLog
   validations:
     required: true
 - type: textarea
