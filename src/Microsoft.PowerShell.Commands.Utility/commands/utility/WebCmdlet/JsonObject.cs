@@ -114,6 +114,18 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Convert a Json string back to an object of type PSObject.
         /// </summary>
+        /// <param name="stream">The json text to convert.</param>
+        /// <param name="error">An error record if the conversion failed.</param>
+        /// <returns>A PSObject.</returns>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
+        public static object ConvertFromJson(StreamReader stream, out ErrorRecord error)
+        {
+            return ConvertFromJson(stream, returnHashtable: false, out error);
+        }
+
+        /// <summary>
+        /// Convert a Json string back to an object of type PSObject.
+        /// </summary>
         /// <param name="input">The json text to convert.</param>
         /// <param name="error">An error record if the conversion failed.</param>
         /// <returns>A PSObject.</returns>
@@ -124,15 +136,19 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Convert a Json string back to an object of type PSObject.
+        /// Convert a Json string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
+        /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
         /// </summary>
         /// <param name="stream">The json text to convert.</param>
+        /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
+        /// instead of a <see cref="System.Management.Automation.PSObject"/></param>
         /// <param name="error">An error record if the conversion failed.</param>
-        /// <returns>A PSObject.</returns>
+        /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
+        /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
-        public static object ConvertFromJson(StreamReader stream, out ErrorRecord error)
+        public static object ConvertFromJson(StreamReader stream, bool returnHashtable, out ErrorRecord error)
         {
-            return ConvertFromJson(stream, returnHashtable: false, out error);
+            return ConvertFromJson(stream, returnHashtable, maxDepth: 1024, out error);
         }
 
         /// <summary>
@@ -149,21 +165,6 @@ namespace Microsoft.PowerShell.Commands
         public static object ConvertFromJson(string input, bool returnHashtable, out ErrorRecord error)
         {
             return ConvertFromJson(input, returnHashtable, maxDepth: 1024, out error);
-        }
-        /// <summary>
-        /// Convert a Json string back to an object of type <see cref="System.Management.Automation.PSObject"/> or
-        /// <see cref="System.Collections.Hashtable"/> depending on parameter <paramref name="returnHashtable"/>.
-        /// </summary>
-        /// <param name="stream">The json text to convert.</param>
-        /// <param name="returnHashtable">True if the result should be returned as a <see cref="System.Collections.Hashtable"/>
-        /// instead of a <see cref="System.Management.Automation.PSObject"/></param>
-        /// <param name="error">An error record if the conversion failed.</param>
-        /// <returns>A <see cref="System.Management.Automation.PSObject"/> or a <see cref="System.Collections.Hashtable"/>
-        /// if the <paramref name="returnHashtable"/> parameter is true.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
-        public static object ConvertFromJson(StreamReader stream, bool returnHashtable, out ErrorRecord error)
-        {
-            return ConvertFromJson(stream, returnHashtable, maxDepth: 1024, out error);
         }
 
         /// <summary>
@@ -254,7 +255,7 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", Justification = "Preferring Json over JSON")]
         public static object ConvertFromJson(string input, bool returnHashtable, int? maxDepth, out ErrorRecord error)
         {
-            StreamReader thisStream = new StreamReader(new MemoryStream(System.Text.Encoding.Default.GetBytes(input)));
+            StreamReader thisStream = new StreamReader(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(input)));
             return ConvertFromJson(thisStream, returnHashtable, maxDepth, out error);
         }
 
