@@ -8,7 +8,7 @@ body:
   attributes:
     value: >
       For Windows PowerShell 5.1 issues, suggestions, or feature requests please use the
-      [Windows PowerShell UserVoice](https://windowsserver.uservoice.com/forums/301869-powershell)
+      [Feedback Hub app](https://support.microsoft.com/windows/send-feedback-to-microsoft-with-the-feedback-hub-app-f59187f8-8739-22d6-ba93-f66612949332)
 
       This repository is **ONLY** for PowerShell Core 6 and PowerShell 7+ issues.
 - type: checkboxes
