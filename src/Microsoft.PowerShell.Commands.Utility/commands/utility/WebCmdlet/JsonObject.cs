@@ -546,7 +546,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion ConvertFromJson
 
         #region ConvertToJson
-
         /// <summary>
         /// Convert an object to JSON string.
         /// </summary>
@@ -557,6 +556,7 @@ namespace Microsoft.PowerShell.Commands
                 // Pre-process the object so that it serializes the same, except that properties whose
                 // values cannot be evaluated are treated as having the value null.
                 _maxDepthWarningWritten = false;
+                object preprocessedObject = ProcessValue(objectToProcess, currentDepth: 0, in context);
                 var jsonSettings = new JsonSerializerSettings
                 {
                     // This TypeNameHandling setting is required to be secure.
@@ -575,36 +575,7 @@ namespace Microsoft.PowerShell.Commands
                     jsonSettings.Formatting = Formatting.Indented;
                 }
 
-                Type typ = objectToProcess.GetType();
-                
-                if (context.CompressOutput && typ.IsArray)
-                {
-                    System.Text.StringBuilder thisWriter = new System.Text.StringBuilder();
-
-                    thisWriter.Append('[');
-
-                    object[] objectToProcessArray = (object[])objectToProcess;
-
-                    for (int i = 0; i < objectToProcessArray.Length; i++)
-                    {
-                        object preprocessedObject = ProcessValue(objectToProcessArray[i], currentDepth: 0, in context);
-                        thisWriter.Append(JsonConvert.SerializeObject(preprocessedObject, jsonSettings));
-
-                        if (i != (objectToProcessArray.Length - 1))
-                        {
-                            thisWriter.Append(',');
-                        }
-                    }
-                    
-                    thisWriter.Append(']');
-
-                    return thisWriter.ToString();
-                }
-                else
-                {
-                    object preprocessedObject = ProcessValue(objectToProcess, currentDepth: 0, in context);
-                    return JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
-                } 
+                return JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
             }
             catch (OperationCanceledException)
             {
