@@ -2052,7 +2052,7 @@ namespace System.Management.Automation
         /// </returns>
         public override bool Equals(object obj)
         {
-            return Equals(obj as PSEventSubscriber);
+            return obj is PSEventSubscriber es && Equals(es);
         }
         
         /// <summary>
