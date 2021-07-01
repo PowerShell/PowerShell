@@ -548,14 +548,29 @@ Describe "Json Tests" -Tags "Feature" {
 			$Object.Friends | should -beoftype [pscustomobject]
 			$Object.Friends[0].id | should -be 0
 			$Object.Friends[0].name | should -be "Renee Holden"
-			$Object.Friends[1].id | should -be 0
+			$Object.Friends[1].id | should -be 1
 			$Object.Friends[1].name | should -be "Bennett Dixon"
-			$Object.Friends[2].id | should -be 0
+			$Object.Friends[2].id | should -be 2
 			$Object.Friends[2].name | should -be "Emilia Holder"
 			$Object.Tags.count | should -be 7 
 			$Object.Tags | Should -be @("laboris", "voluptate", "amet", "ad", "velit", "ipsum", "do")
 			
 			
+		}
+		
+		It "ConvertFrom-Json chooses the appropriate number type" {
+			ConvertFrom-Json -InputObject "5" | should -be 5
+			ConvertFrom-Json -InputObject 5 | should -be 5
+			ConvertFrom-Json -InputObject "5" | should -beoftype [int64]
+			ConvertFrom-Json -InputObject 5 | should -beoftype [int64]
+			ConvertFrom-Json -InputObject "5000000000000" | should -beoftype [int64]
+			ConvertFrom-Json -InputObject 5000000000000 | should -beoftype [int64]
+			ConvertFrom-Json -InputObject "5.0" | should -beoftype [double]
+			ConvertFrom-Json -InputObject 5.0 | should -beoftype [double]
+			ConvertFrom-Json -InputObject "500000000000.0000000000000001" | should -beoftype [double]
+			ConvertFrom-Json -InputObject 500000000000.0000000000000001 | should -beoftype [double]
+			ConvertFrom-Json -InputObject "50000000000000000000000000000000000.0000000000000001" | should -beoftype [double]
+			ConvertFrom-Json -InputObject 50000000000000000000000000000000000.0000000000000001 | should -beoftype [double]
 		}
 		
         It "ConvertFrom-Json with special characters" {
