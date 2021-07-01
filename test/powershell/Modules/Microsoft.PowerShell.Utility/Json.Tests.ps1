@@ -374,79 +374,79 @@ Describe "Json Tests" -Tags "Feature" {
 }
 "@
 			foreach ($AsHashtableOption in @($True, $false)) {
-				$object = ConvertFrom-Json $json -AsHashtable:$AsHashtableOption
+				$result = ConvertFrom-Json $json -AsHashtable:$AsHashtableOption
 
 
-				$Object."date-s-should-parse-as-datetime".ToString("d") | should -be "9/22/2008"
-				$Object."date-s-should-parse-as-datetime".ToString("D") | should -be "Monday, September 22, 2008"
-				$Object."date-s-should-parse-as-datetime".ToString("f") | should -be "Monday, September 22, 2008 2:01 PM"
-				$Object."date-s-should-parse-as-datetime".ToString("F") | should -be "Monday, September 22, 2008 2:01:54 PM"
-				$Object."date-s-should-parse-as-datetime".ToString("g") | should -be "9/22/2008 2:01 PM"
-				$Object."date-s-should-parse-as-datetime".ToString("G") | should -be "9/22/2008 2:01:54 PM"
-				$Object."date-s-should-parse-as-datetime".ToString("m") | should -be "September 22"
-				$Object."date-s-should-parse-as-datetime".ToString("M") | should -be "September 22"
-				$Object."date-s-should-parse-as-datetime".ToString("o") | should -be "2008-09-22T14:01:54.0000000"
-				$Object."date-s-should-parse-as-datetime".ToString("O") | should -be "2008-09-22T14:01:54.0000000"
-				$Object."date-s-should-parse-as-datetime".ToString("R") | should -be "Mon, 22 Sep 2008 14:01:54 GMT"
-				$Object."date-s-should-parse-as-datetime".ToString("s") | should -be "2008-09-22T14:01:54"
-				$Object."date-s-should-parse-as-datetime".ToString("t") | should -be "2:01 PM"
-				$Object."date-s-should-parse-as-datetime".ToString("T") | should -be "2:01:54 PM"
-				$Object."date-s-should-parse-as-datetime".ToString("u") | should -be "2008-09-22 14:01:54Z"
-				$Object."date-s-should-parse-as-datetime".ToString("U") | should -be "Monday, September 22, 2008 7:01:54 PM"
-				$Object."date-s-should-parse-as-datetime".ToString("Y") | should -be "September 2008"
-				$Object."date-s-should-parse-as-datetime".ToString("y") | should -be "September 2008"
-				$Object."date-s-should-parse-as-datetime" | should -beoftype [DateTime]
+				$result."date-s-should-parse-as-datetime".ToString("d") | Should -Be "9/22/2008"
+				$result."date-s-should-parse-as-datetime".ToString("D") | Should -Be "Monday, September 22, 2008"
+				$result."date-s-should-parse-as-datetime".ToString("f") | Should -Be "Monday, September 22, 2008 2:01 PM"
+				$result."date-s-should-parse-as-datetime".ToString("F") | Should -Be "Monday, September 22, 2008 2:01:54 PM"
+				$result."date-s-should-parse-as-datetime".ToString("g") | Should -Be "9/22/2008 2:01 PM"
+				$result."date-s-should-parse-as-datetime".ToString("G") | Should -Be "9/22/2008 2:01:54 PM"
+				$result."date-s-should-parse-as-datetime".ToString("m") | Should -Be "September 22"
+				$result."date-s-should-parse-as-datetime".ToString("M") | Should -Be "September 22"
+				$result."date-s-should-parse-as-datetime".ToString("o") | Should -Be "2008-09-22T14:01:54.0000000"
+				$result."date-s-should-parse-as-datetime".ToString("O") | Should -Be "2008-09-22T14:01:54.0000000"
+				$result."date-s-should-parse-as-datetime".ToString("R") | Should -Be "Mon, 22 Sep 2008 14:01:54 GMT"
+				$result."date-s-should-parse-as-datetime".ToString("s") | Should -Be "2008-09-22T14:01:54"
+				$result."date-s-should-parse-as-datetime".ToString("t") | Should -Be "2:01 PM"
+				$result."date-s-should-parse-as-datetime".ToString("T") | Should -Be "2:01:54 PM"
+				$result."date-s-should-parse-as-datetime".ToString("u") | Should -Be "2008-09-22 14:01:54Z"
+				$result."date-s-should-parse-as-datetime".ToString("U") | Should -Be "Monday, September 22, 2008 7:01:54 PM"
+				$result."date-s-should-parse-as-datetime".ToString("Y") | Should -Be "September 2008"
+				$result."date-s-should-parse-as-datetime".ToString("y") | Should -Be "September 2008"
+				$result."date-s-should-parse-as-datetime" | Should -Beoftype [DateTime]
 				
-				$Object."date-upperO-should-parse-as-datetime".ToString("d") | should -be "9/22/2008"
-				$Object."date-upperO-should-parse-as-datetime".ToString("D") | should -be "Monday, September 22, 2008"
-				$Object."date-upperO-should-parse-as-datetime".ToString("f") | should -be "Monday, September 22, 2008 2:01 PM"
-				$Object."date-upperO-should-parse-as-datetime".ToString("F") | should -be "Monday, September 22, 2008 2:01:54 PM"
-				$Object."date-upperO-should-parse-as-datetime".ToString("g") | should -be "9/22/2008 2:01 PM"
-				$Object."date-upperO-should-parse-as-datetime".ToString("G") | should -be "9/22/2008 2:01:54 PM"
-				$Object."date-upperO-should-parse-as-datetime".ToString("m") | should -be "September 22"
-				$Object."date-upperO-should-parse-as-datetime".ToString("M") | should -be "September 22"
-				$Object."date-upperO-should-parse-as-datetime".ToString("o") | should -be "2008-09-22T14:01:54.9571247Z"
-				$Object."date-upperO-should-parse-as-datetime".ToString("O") | should -be "2008-09-22T14:01:54.9571247Z"
-				$Object."date-upperO-should-parse-as-datetime".ToString("R") | should -be "Mon, 22 Sep 2008 14:01:54 GMT"
-				$Object."date-upperO-should-parse-as-datetime".ToString("s") | should -be "2008-09-22T14:01:54"
-				$Object."date-upperO-should-parse-as-datetime".ToString("t") | should -be "2:01 PM"
-				$Object."date-upperO-should-parse-as-datetime".ToString("T") | should -be "2:01:54 PM"
-				$Object."date-upperO-should-parse-as-datetime".ToString("u") | should -be "2008-09-22 14:01:54Z"
-				$Object."date-upperO-should-parse-as-datetime".ToString("U") | should -be "Monday, September 22, 2008 2:01:54 PM"
-				$Object."date-upperO-should-parse-as-datetime".ToString("Y") | should -be "September 2008"
-				$Object."date-upperO-should-parse-as-datetime".ToString("y") | should -be "September 2008"
-				$Object."date-upperO-should-parse-as-datetime" | should -beoftype [DateTime]
+				$result."date-upperO-should-parse-as-datetime".ToString("d") | Should -Be "9/22/2008"
+				$result."date-upperO-should-parse-as-datetime".ToString("D") | Should -Be "Monday, September 22, 2008"
+				$result."date-upperO-should-parse-as-datetime".ToString("f") | Should -Be "Monday, September 22, 2008 2:01 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("F") | Should -Be "Monday, September 22, 2008 2:01:54 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("g") | Should -Be "9/22/2008 2:01 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("G") | Should -Be "9/22/2008 2:01:54 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("m") | Should -Be "September 22"
+				$result."date-upperO-should-parse-as-datetime".ToString("M") | Should -Be "September 22"
+				$result."date-upperO-should-parse-as-datetime".ToString("o") | Should -Be "2008-09-22T14:01:54.9571247Z"
+				$result."date-upperO-should-parse-as-datetime".ToString("O") | Should -Be "2008-09-22T14:01:54.9571247Z"
+				$result."date-upperO-should-parse-as-datetime".ToString("R") | Should -Be "Mon, 22 Sep 2008 14:01:54 GMT"
+				$result."date-upperO-should-parse-as-datetime".ToString("s") | Should -Be "2008-09-22T14:01:54"
+				$result."date-upperO-should-parse-as-datetime".ToString("t") | Should -Be "2:01 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("T") | Should -Be "2:01:54 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("u") | Should -Be "2008-09-22 14:01:54Z"
+				$result."date-upperO-should-parse-as-datetime".ToString("U") | Should -Be "Monday, September 22, 2008 2:01:54 PM"
+				$result."date-upperO-should-parse-as-datetime".ToString("Y") | Should -Be "September 2008"
+				$result."date-upperO-should-parse-as-datetime".ToString("y") | Should -Be "September 2008"
+				$result."date-upperO-should-parse-as-datetime" | Should -Beoftype [DateTime]
 				
-				$Object."date-o-should-parse-as-string" | should -be "2019-12-17T06:14:06 +06:00"
-				$Object."date-o-should-parse-as-string" | should -beoftype [String]
-				$Object."date-f-should-parse-as-string" | should -be "Monday, September 22, 2008 2:01 PM"
-				$Object."date-f-should-parse-as-string" | should -beoftype [String]
-				$Object."date-g-should-parse-as-string" | should -be "9/22/2008 2:01 PM"
-				$Object."date-g-should-parse-as-string" | should -beoftype [String]
-				$Object."date-m-should-parse-as-string" | should -be "September 22"
-				$Object."date-m-should-parse-as-string" | should -beoftype [String]
-				$Object."date-upperM-should-parse-as-string" | should -be "September 22"
-				$Object."date-upperM-should-parse-as-string" | should -beoftype [String]
-				$Object."date-t-should-parse-as-string" | should -be "2:01 PM"
-				$Object."date-t-should-parse-as-string" | should -beoftype [String]
-				$Object."date-u-should-parse-as-string" | should -be "2008-09-22 14:01:54Z"
-				$Object."date-u-should-parse-as-string" | should -beoftype [String]
-				$Object."date-upperD-should-parse-as-string" | should -be "Monday, September 22, 2008"
-				$Object."date-upperD-should-parse-as-string" | should -beoftype [String]
-				$Object."date-upperF-should-parse-as-string" | should -be "Monday, September 22, 2008 2:01:54 PM"
-				$Object."date-upperF-should-parse-as-string" | should -beoftype [String]
-				$Object."date-upperG-should-parse-as-string" | should -be "9/22/2008 2:01:54 PM"
-				$Object."date-upperG-should-parse-as-string" | should -beoftype [String]
-				$Object."date-upperR-should-parse-as-string" | should -be "Mon, 22 Sep 2008 14:01:54 GMT"
-				$Object."date-upperR-should-parse-as-string" | should -beoftype [String]
-				$Object."date-upperT-should-parse-as-string" | should -be "2:01:54 PM"
-				$Object."date-upperT-should-parse-as-string" | should -beoftype [String]
-				$Object."date-upperU-should-parse-as-string" | should -be "Monday, September 22, 2008 2:01:54 PM"
-				$Object."date-upperU-should-parse-as-string" | should -beoftype [String]
-				$Object."date-upperY-should-parse-as-string" | should -be "September 2008"
-				$Object."date-upperY-should-parse-as-string" | should -beoftype [String]
-				$Object."date-y-should-parse-as-string" | should -be "September 2008"
-				$Object."date-y-should-parse-as-string" | should -beoftype [String]
+				$result."date-o-should-parse-as-string" | Should -Be "2019-12-17T06:14:06 +06:00"
+				$result."date-o-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-f-should-parse-as-string" | Should -Be "Monday, September 22, 2008 2:01 PM"
+				$result."date-f-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-g-should-parse-as-string" | Should -Be "9/22/2008 2:01 PM"
+				$result."date-g-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-m-should-parse-as-string" | Should -Be "September 22"
+				$result."date-m-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-upperM-should-parse-as-string" | Should -Be "September 22"
+				$result."date-upperM-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-t-should-parse-as-string" | Should -Be "2:01 PM"
+				$result."date-t-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-u-should-parse-as-string" | Should -Be "2008-09-22 14:01:54Z"
+				$result."date-u-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-upperD-should-parse-as-string" | Should -Be "Monday, September 22, 2008"
+				$result."date-upperD-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-upperF-should-parse-as-string" | Should -Be "Monday, September 22, 2008 2:01:54 PM"
+				$result."date-upperF-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-upperG-should-parse-as-string" | Should -Be "9/22/2008 2:01:54 PM"
+				$result."date-upperG-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-upperR-should-parse-as-string" | Should -Be "Mon, 22 Sep 2008 14:01:54 GMT"
+				$result."date-upperR-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-upperT-should-parse-as-string" | Should -Be "2:01:54 PM"
+				$result."date-upperT-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-upperU-should-parse-as-string" | Should -Be "Monday, September 22, 2008 2:01:54 PM"
+				$result."date-upperU-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-upperY-should-parse-as-string" | Should -Be "September 2008"
+				$result."date-upperY-should-parse-as-string" | Should -Beoftype [String]
+				$result."date-y-should-parse-as-string" | Should -Be "September 2008"
+				$result."date-y-should-parse-as-string" | Should -Beoftype [String]
 			}
 		}
 		
@@ -498,64 +498,62 @@ Describe "Json Tests" -Tags "Feature" {
 "favoriteFruit": "banana"
 }
 "@
-			$Object = ConvertFrom-Json $Json
-			$Object."about"| should -be "Ipsum pariatur nisi eiusmod aliquip in cupidatat. Deserunt non sit anim consectetur consectetur incididunt elit qui id proident nostrud. Consectetur pariatur et adipisicing aliquip fugiat fugiat Lorem reprehenderit laboris magna. Duis veniam irure amet ex minim eiusmod et laborum non elit. Dolor enim Lorem occaecat nisi consectetur mollit laborum anim velit et. Irure aliquip eiusmod anim proident ex ea duis deserunt aute amet adipisicing nisi nostrud. Minim ipsum fugiat consequat mollit fugiat tempor fugiat."
-			$Object."about" | should -beoftype [String]
-			$Object."address"| should -be "931 Kings Place, Hartsville/Hartley, Federated States Of Micronesia, 9344"
-			$Object."address" | should -beoftype [String]
-			$Object."age" | should -beoftype [Int64]
-			$Object."balance"| should -be ",039.72"
-			$Object."balance" | should -beoftype [String]
-			$Object."company"| should -be "INSECTUS"
-			$Object."company" | should -beoftype [String]
-			$Object."email"| should -be "rhodesroberson@insectus.com"
-			$Object."email" | should -beoftype [String]
-			$Object."eyeColor"| should -be "green"
-			$Object."eyeColor" | should -beoftype [String]
-			$Object."favoriteFruit"| should -be "banana"
-			$Object."favoriteFruit" | should -beoftype [String]
-			$Object."gender"| should -be "male"
-			$Object."gender" | should -beoftype [String]
-			$Object."greeting"| should -be "Hello, Rhodes Roberson! You have 9 unread messages."
-			$Object."greeting" | should -beoftype [String]
-			$Object."guid"| should -be "429b96a7-24e3-47de-a93b-f44a346c5ac9"
-			$Object."guid" | should -beoftype [String]
-			$Object."index" | should -beoftype [Int64]
-			$Object."isActive"| should -be False
-			$Object."isActive" | should -beoftype [Boolean]
-			$Object."latitude"| should -be 51.890798
-			$Object."latitude" | should -beoftype [Double]
-			$Object."longitude"| should -be -47.522764
-			$Object."longitude" | should -beoftype [Double]
-			$Object."name"| should -be "Rhodes Roberson"
-			$Object."name" | should -beoftype [String]
-			$Object."phone"| should -be "+1 (883) 561-3999"
-			$Object."phone" | should -beoftype [String]
-			$Object."picture"| should -be "http://placehold.it/32x32"
-			$Object."picture" | should -beoftype [String]
-			$Object."registered"| should -be "2019-12-17T06:14:06 +06:00"
-			$Object."registered" | should -beoftype [String]
-			$Object."_id"| should -be "60dd3ea9253016932039a0a2"
-			$Object."_id" | should -beoftype [String]
+			$result = ConvertFrom-Json $Json
+			$result."about"| Should -Be "Ipsum pariatur nisi eiusmod aliquip in cupidatat. Deserunt non sit anim consectetur consectetur incididunt elit qui id proident nostrud. Consectetur pariatur et adipisicing aliquip fugiat fugiat Lorem reprehenderit laboris magna. Duis veniam irure amet ex minim eiusmod et laborum non elit. Dolor enim Lorem occaecat nisi consectetur mollit laborum anim velit et. Irure aliquip eiusmod anim proident ex ea duis deserunt aute amet adipisicing nisi nostrud. Minim ipsum fugiat consequat mollit fugiat tempor fugiat."
+			$result."about" | Should -Beoftype [String]
+			$result."address"| Should -Be "931 Kings Place, Hartsville/Hartley, Federated States Of Micronesia, 9344"
+			$result."address" | Should -Beoftype [String]
+			$result."age" | Should -Beoftype [Int64]
+			$result."balance"| Should -Be ",039.72"
+			$result."balance" | Should -Beoftype [String]
+			$result."company"| Should -Be "INSECTUS"
+			$result."company" | Should -Beoftype [String]
+			$result."email"| Should -Be "rhodesroberson@insectus.com"
+			$result."email" | Should -Beoftype [String]
+			$result."eyeColor"| Should -Be "green"
+			$result."eyeColor" | Should -Beoftype [String]
+			$result."favoriteFruit"| Should -Be "banana"
+			$result."favoriteFruit" | Should -Beoftype [String]
+			$result."gender"| Should -Be "male"
+			$result."gender" | Should -Beoftype [String]
+			$result."greeting"| Should -Be "Hello, Rhodes Roberson! You have 9 unread messages."
+			$result."greeting" | Should -Beoftype [String]
+			$result."guid"| Should -Be "429b96a7-24e3-47de-a93b-f44a346c5ac9"
+			$result."guid" | Should -Beoftype [String]
+			$result."index" | Should -Beoftype [Int64]
+			$result."isActive"| Should -Be False
+			$result."isActive" | Should -Beoftype [Boolean]
+			$result."latitude"| Should -Be 51.890798
+			$result."latitude" | Should -Beoftype [Double]
+			$result."longitude"| Should -Be -47.522764
+			$result."longitude" | Should -Beoftype [Double]
+			$result."name"| Should -Be "Rhodes Roberson"
+			$result."name" | Should -Beoftype [String]
+			$result."phone"| Should -Be "+1 (883) 561-3999"
+			$result."phone" | Should -Beoftype [String]
+			$result."picture"| Should -Be "http://placehold.it/32x32"
+			$result."picture" | Should -Beoftype [String]
+			$result."registered"| Should -Be "2019-12-17T06:14:06 +06:00"
+			$result."registered" | Should -Beoftype [String]
+			$result."_id"| Should -Be "60dd3ea9253016932039a0a2"
+			$result."_id" | Should -Beoftype [String]
 			
-			$Object.Tags | should -beoftype [string]
+			$result.Tags | Should -Beoftype [string]
 			
-			$Object.Tags.count | should -be 7 
-			$Object.Tags[0] | should -be "laboris"
-			$Object.Tags | Should -be @("laboris", "voluptate", "amet", "ad", "velit", "ipsum", "do")
-			
-			
-			$Object.Friends | should -beoftype [pscustomobject]
-			$Object.Friends[0].id | should -be 0
-			$Object.Friends[0].name | should -be "Renee Holden"
-			$Object.Friends[1].id | should -be 1
-			$Object.Friends[1].name | should -be "Bennett Dixon"
-			$Object.Friends[2].id | should -be 2
-			$Object.Friends[2].name | should -be "Emilia Holder"
-			$Object.Tags.count | should -be 7 
-			$Object.Tags | Should -be @("laboris", "voluptate", "amet", "ad", "velit", "ipsum", "do")
+			$result.Tags.count | Should -Be 7 
+			$result.Tags[0] | Should -Be "laboris"
+			$result.Tags | Should -Be @("laboris", "voluptate", "amet", "ad", "velit", "ipsum", "do")
 			
 			
+			$result.Friends | Should -Beoftype [pscustomobject]
+			$result.Friends[0].id | Should -Be 0
+			$result.Friends[0].name | Should -Be "Renee Holden"
+			$result.Friends[1].id | Should -Be 1
+			$result.Friends[1].name | Should -Be "Bennett Dixon"
+			$result.Friends[2].id | Should -Be 2
+			$result.Friends[2].name | Should -Be "Emilia Holder"
+			$result.Tags.count | Should -Be 7 
+			$result.Tags | Should -Be @("laboris", "voluptate", "amet", "ad", "velit", "ipsum", "do")
 		}
 		
 		It "ConvertFrom-Json chooses the appropriate number type" {
@@ -567,9 +565,7 @@ Describe "Json Tests" -Tags "Feature" {
 			ConvertFrom-Json -InputObject "5000000000000" | should -be "5000000000000"
 			ConvertFrom-Json -InputObject "5000000000000" | should -beoftype [int64]
 			ConvertFrom-Json -InputObject 5000000000000 | should -beoftype [int64]
-			ConvertFrom-Json -InputObject "5.0" | should -be 5
 			ConvertFrom-Json -InputObject "5.0" | should -be 5.0
-			ConvertFrom-Json -InputObject 5.0 | should -be 5
 			ConvertFrom-Json -InputObject 5.0 | should -be 5.0
 			ConvertFrom-Json -InputObject "5.0" | should -beoftype [double]
 			ConvertFrom-Json -InputObject 5.0 | should -beoftype [double]
