@@ -563,14 +563,41 @@ Describe "Json Tests" -Tags "Feature" {
 			ConvertFrom-Json -InputObject 5 | should -be 5
 			ConvertFrom-Json -InputObject "5" | should -beoftype [int64]
 			ConvertFrom-Json -InputObject 5 | should -beoftype [int64]
+			ConvertFrom-Json -InputObject 5000000000000 | should -be 5000000000000
+			ConvertFrom-Json -InputObject "5000000000000" | should -be "5000000000000"
 			ConvertFrom-Json -InputObject "5000000000000" | should -beoftype [int64]
 			ConvertFrom-Json -InputObject 5000000000000 | should -beoftype [int64]
+			ConvertFrom-Json -InputObject "5.0" | should -be 5
+			ConvertFrom-Json -InputObject "5.0" | should -be 5.0
+			ConvertFrom-Json -InputObject 5.0 | should -be 5
+			ConvertFrom-Json -InputObject 5.0 | should -be 5.0
 			ConvertFrom-Json -InputObject "5.0" | should -beoftype [double]
 			ConvertFrom-Json -InputObject 5.0 | should -beoftype [double]
+			
+			# The decimal is lost but only when this is quoted
+			ConvertFrom-Json -InputObject "500000000000.0000000000000001" | should -be "500000000000"
+			
+			# Counter intuitively all four of these tests pass because precision is lost on both sides of the test, likely due to powershell number handling
+			ConvertFrom-Json -InputObject 500000000000.0000000000000001 | should -be 500000000000
+			ConvertFrom-Json -InputObject 500000000000.0000000000000001 | should -be 500000000000.0000000000000001
+			ConvertFrom-Json -InputObject 500000000000 | should -be 500000000000.0000000000000001
+			ConvertFrom-Json -InputObject 500000000000 | should -be 500000000000
+			
 			ConvertFrom-Json -InputObject "500000000000.0000000000000001" | should -beoftype [double]
 			ConvertFrom-Json -InputObject 500000000000.0000000000000001 | should -beoftype [double]
+			
+			# these tests also pass because precision is lost during conversion/powershell handling
+			ConvertFrom-Json -InputObject "50000000000000000000000000000000000.0000000000000001" | should -be "50000000000000000000000000000000000"
+			ConvertFrom-Json -InputObject 50000000000000000000000000000000000.0000000000000001 | should -be 50000000000000000000000000000000000
+			
 			ConvertFrom-Json -InputObject "50000000000000000000000000000000000.0000000000000001" | should -beoftype [double]
 			ConvertFrom-Json -InputObject 50000000000000000000000000000000000.0000000000000001 | should -beoftype [double]
+			
+			
+			ConvertFrom-Json -InputObject "50000000000000000000000000000000000" | should -be 50000000000000000000000000000000000
+			ConvertFrom-Json -InputObject 50000000000000000000000000000000000 | should -be 50000000000000000000000000000000000
+			ConvertFrom-Json -InputObject "50000000000000000000000000000000000" | should -beoftype [BigInt]
+			ConvertFrom-Json -InputObject 50000000000000000000000000000000000 | should -beoftype [BigInt]
 		}
 		
         It "ConvertFrom-Json with special characters" {
