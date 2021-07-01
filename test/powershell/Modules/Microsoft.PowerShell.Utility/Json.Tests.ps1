@@ -373,9 +373,8 @@ Describe "Json Tests" -Tags "Feature" {
 	"date-y-should-parse-as-string": "September 2008"
 }
 "@
-			foreach ($AsHashtableOption in @($True, $false)) {
-				$result = ConvertFrom-Json $json -AsHashtable:$AsHashtableOption
-
+			foreach ($asHashtableOption in @($True, $false)) {
+				$result = ConvertFrom-Json $json -AsHashtable:$asHashtableOption
 
 				$result."date-s-should-parse-as-datetime".ToString("d") | Should -Be "9/22/2008"
 				$result."date-s-should-parse-as-datetime".ToString("D") | Should -Be "Monday, September 22, 2008"
@@ -544,7 +543,6 @@ Describe "Json Tests" -Tags "Feature" {
 			$result.Tags[0] | Should -Be "laboris"
 			$result.Tags | Should -Be @("laboris", "voluptate", "amet", "ad", "velit", "ipsum", "do")
 			
-			
 			$result.Friends | Should -Beoftype [pscustomobject]
 			$result.Friends[0].id | Should -Be 0
 			$result.Friends[0].name | Should -Be "Renee Holden"
@@ -552,8 +550,6 @@ Describe "Json Tests" -Tags "Feature" {
 			$result.Friends[1].name | Should -Be "Bennett Dixon"
 			$result.Friends[2].id | Should -Be 2
 			$result.Friends[2].name | Should -Be "Emilia Holder"
-			$result.Tags.count | Should -Be 7 
-			$result.Tags | Should -Be @("laboris", "voluptate", "amet", "ad", "velit", "ipsum", "do")
 		}
 		
 		It "ConvertFrom-Json chooses the appropriate number type" {
