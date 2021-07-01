@@ -376,6 +376,10 @@ Describe "Json Tests" -Tags "Feature" {
 			foreach ($asHashtableOption in @($True, $false)) {
 				$result = ConvertFrom-Json $json -AsHashtable:$asHashtableOption
 
+                # If the timezone is not specified in the input string newtonsoft assumes the system timezone.
+                # this means that some tests will fail locally but work on the build farm and vice-versa.
+                # this is used to force the datetime into UTC without changing the value so 4PM Central becomes 4PM UTC instead of becoming 10PM UTC
+                $result."date-s-should-parse-as-datetime" = [datetime]::SpecifyKind($result."date-s-should-parse-as-datetime", [System.DateTimeKind]::Utc)
 				$result."date-s-should-parse-as-datetime".ToString("d") | Should -Be "9/22/2008"
 				$result."date-s-should-parse-as-datetime".ToString("D") | Should -Be "Monday, September 22, 2008"
 				$result."date-s-should-parse-as-datetime".ToString("f") | Should -Be "Monday, September 22, 2008 2:01 PM"
@@ -384,18 +388,19 @@ Describe "Json Tests" -Tags "Feature" {
 				$result."date-s-should-parse-as-datetime".ToString("G") | Should -Be "9/22/2008 2:01:54 PM"
 				$result."date-s-should-parse-as-datetime".ToString("m") | Should -Be "September 22"
 				$result."date-s-should-parse-as-datetime".ToString("M") | Should -Be "September 22"
-				$result."date-s-should-parse-as-datetime".ToString("o") | Should -Be "2008-09-22T14:01:54.0000000"
-				$result."date-s-should-parse-as-datetime".ToString("O") | Should -Be "2008-09-22T14:01:54.0000000"
+				$result."date-s-should-parse-as-datetime".ToString("o") | Should -Be "2008-09-22T14:01:54.0000000Z"
+				$result."date-s-should-parse-as-datetime".ToString("O") | Should -Be "2008-09-22T14:01:54.0000000Z"
 				$result."date-s-should-parse-as-datetime".ToString("R") | Should -Be "Mon, 22 Sep 2008 14:01:54 GMT"
 				$result."date-s-should-parse-as-datetime".ToString("s") | Should -Be "2008-09-22T14:01:54"
 				$result."date-s-should-parse-as-datetime".ToString("t") | Should -Be "2:01 PM"
 				$result."date-s-should-parse-as-datetime".ToString("T") | Should -Be "2:01:54 PM"
 				$result."date-s-should-parse-as-datetime".ToString("u") | Should -Be "2008-09-22 14:01:54Z"
-				$result."date-s-should-parse-as-datetime".ToString("U") | Should -Be "Monday, September 22, 2008 7:01:54 PM"
+				$result."date-s-should-parse-as-datetime".ToString("U") | Should -Be "Monday, September 22, 2008 2:01:54 PM"
 				$result."date-s-should-parse-as-datetime".ToString("Y") | Should -Be "September 2008"
 				$result."date-s-should-parse-as-datetime".ToString("y") | Should -Be "September 2008"
 				$result."date-s-should-parse-as-datetime" | Should -Beoftype [DateTime]
 				
+                $result."date-upperO-should-parse-as-datetime" = [datetime]::SpecifyKind($result."date-upperO-should-parse-as-datetime", [System.DateTimeKind]::Utc)
 				$result."date-upperO-should-parse-as-datetime".ToString("d") | Should -Be "9/22/2008"
 				$result."date-upperO-should-parse-as-datetime".ToString("D") | Should -Be "Monday, September 22, 2008"
 				$result."date-upperO-should-parse-as-datetime".ToString("f") | Should -Be "Monday, September 22, 2008 2:01 PM"
@@ -579,8 +584,8 @@ Describe "Json Tests" -Tags "Feature" {
 			ConvertFrom-Json -InputObject 500000000000.0000000000000001 | should -beoftype [double]
 			
 			# these tests also pass because precision is lost during conversion/powershell handling
-			ConvertFrom-Json -InputObject "50000000000000000000000000000000000.0000000000000001" | should -be "50000000000000000000000000000000000"
-			ConvertFrom-Json -InputObject 50000000000000000000000000000000000.0000000000000001 | should -be 50000000000000000000000000000000000
+			ConvertFrom-Json -InputObject "50000000000000000000000000000000000.0000000000000001" | should -be "5E+34"
+			ConvertFrom-Json -InputObject 50000000000000000000000000000000000.0000000000000001 | should -be "5E+34"
 			
 			ConvertFrom-Json -InputObject "50000000000000000000000000000000000.0000000000000001" | should -beoftype [double]
 			ConvertFrom-Json -InputObject 50000000000000000000000000000000000.0000000000000001 | should -beoftype [double]
