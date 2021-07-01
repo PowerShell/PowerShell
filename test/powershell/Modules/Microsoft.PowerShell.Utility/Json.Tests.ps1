@@ -449,6 +449,115 @@ Describe "Json Tests" -Tags "Feature" {
 				$Object."date-y-should-parse-as-string" | should -beoftype [String]
 			}
 		}
+		
+		It "ConvertFrom-Json properly parses complex objects" {
+			$json = @"
+{
+"_id": "60dd3ea9253016932039a0a2",
+"index": 0,
+"guid": "429b96a7-24e3-47de-a93b-f44a346c5ac9",
+"isActive": false,
+"balance": "$2,039.72",
+"picture": "http://placehold.it/32x32",
+"age": 35,
+"eyeColor": "green",
+"name": "Rhodes Roberson",
+"gender": "male",
+"company": "INSECTUS",
+"email": "rhodesroberson@insectus.com",
+"phone": "+1 (883) 561-3999",
+"address": "931 Kings Place, Hartsville/Hartley, Federated States Of Micronesia, 9344",
+"about": "Ipsum pariatur nisi eiusmod aliquip in cupidatat. Deserunt non sit anim consectetur consectetur incididunt elit qui id proident nostrud. Consectetur pariatur et adipisicing aliquip fugiat fugiat Lorem reprehenderit laboris magna. Duis veniam irure amet ex minim eiusmod et laborum non elit. Dolor enim Lorem occaecat nisi consectetur mollit laborum anim velit et. Irure aliquip eiusmod anim proident ex ea duis deserunt aute amet adipisicing nisi nostrud. Minim ipsum fugiat consequat mollit fugiat tempor fugiat.",
+"registered": "2019-12-17T06:14:06 +06:00",
+"latitude": 51.890798,
+"longitude": -47.522764,
+"tags": [
+  "laboris",
+  "voluptate",
+  "amet",
+  "ad",
+  "velit",
+  "ipsum",
+  "do"
+],
+"friends": [
+  {
+	"id": 0,
+	"name": "Renee Holden"
+  },
+  {
+	"id": 1,
+	"name": "Bennett Dixon"
+  },
+  {
+	"id": 2,
+	"name": "Emilia Holder"
+  }
+],
+"greeting": "Hello, Rhodes Roberson! You have 9 unread messages.",
+"favoriteFruit": "banana"
+}
+"@
+			$Object = ConvertFrom-Json $Json
+			$Object."about"| should -be "Ipsum pariatur nisi eiusmod aliquip in cupidatat. Deserunt non sit anim consectetur consectetur incididunt elit qui id proident nostrud. Consectetur pariatur et adipisicing aliquip fugiat fugiat Lorem reprehenderit laboris magna. Duis veniam irure amet ex minim eiusmod et laborum non elit. Dolor enim Lorem occaecat nisi consectetur mollit laborum anim velit et. Irure aliquip eiusmod anim proident ex ea duis deserunt aute amet adipisicing nisi nostrud. Minim ipsum fugiat consequat mollit fugiat tempor fugiat."
+			$Object."about" | should -beoftype [String]
+			$Object."address"| should -be "931 Kings Place, Hartsville/Hartley, Federated States Of Micronesia, 9344"
+			$Object."address" | should -beoftype [String]
+			$Object."age" | should -beoftype [Int64]
+			$Object."balance"| should -be ",039.72"
+			$Object."balance" | should -beoftype [String]
+			$Object."company"| should -be "INSECTUS"
+			$Object."company" | should -beoftype [String]
+			$Object."email"| should -be "rhodesroberson@insectus.com"
+			$Object."email" | should -beoftype [String]
+			$Object."eyeColor"| should -be "green"
+			$Object."eyeColor" | should -beoftype [String]
+			$Object."favoriteFruit"| should -be "banana"
+			$Object."favoriteFruit" | should -beoftype [String]
+			$Object."gender"| should -be "male"
+			$Object."gender" | should -beoftype [String]
+			$Object."greeting"| should -be "Hello, Rhodes Roberson! You have 9 unread messages."
+			$Object."greeting" | should -beoftype [String]
+			$Object."guid"| should -be "429b96a7-24e3-47de-a93b-f44a346c5ac9"
+			$Object."guid" | should -beoftype [String]
+			$Object."index" | should -beoftype [Int64]
+			$Object."isActive"| should -be False
+			$Object."isActive" | should -beoftype [Boolean]
+			$Object."latitude"| should -be 51.890798
+			$Object."latitude" | should -beoftype [Double]
+			$Object."longitude"| should -be -47.522764
+			$Object."longitude" | should -beoftype [Double]
+			$Object."name"| should -be "Rhodes Roberson"
+			$Object."name" | should -beoftype [String]
+			$Object."phone"| should -be "+1 (883) 561-3999"
+			$Object."phone" | should -beoftype [String]
+			$Object."picture"| should -be "http://placehold.it/32x32"
+			$Object."picture" | should -beoftype [String]
+			$Object."registered"| should -be "2019-12-17T06:14:06 +06:00"
+			$Object."registered" | should -beoftype [String]
+			$Object."_id"| should -be "60dd3ea9253016932039a0a2"
+			$Object."_id" | should -beoftype [String]
+			
+			$Object.Tags | should -beoftype [string]
+			
+			$Object.Tags.count | should -be 7 
+			$Object.Tags[0] | should -be "laboris"
+			$Object.Tags | Should -be @("laboris", "voluptate", "amet", "ad", "velit", "ipsum", "do")
+			
+			
+			$Object.Friends | should -beoftype [pscustomobject]
+			$Object.Friends[0].id | should -be 0
+			$Object.Friends[0].name | should -be "Renee Holden"
+			$Object.Friends[1].id | should -be 0
+			$Object.Friends[1].name | should -be "Bennett Dixon"
+			$Object.Friends[2].id | should -be 0
+			$Object.Friends[2].name | should -be "Emilia Holder"
+			$Object.Tags.count | should -be 7 
+			$Object.Tags | Should -be @("laboris", "voluptate", "amet", "ad", "velit", "ipsum", "do")
+			
+			
+		}
+		
         It "ConvertFrom-Json with special characters" {
 
             $json = '{"SampleValue":"\"\\\b\f\n\r\t\u4321\uD7FF"}'
