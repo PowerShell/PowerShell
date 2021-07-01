@@ -345,6 +345,110 @@ Describe "Json Tests" -Tags "Feature" {
             ValidateSampleObject -result $result -hasEmbeddedSampleObject
         }
 
+		It "ConvertFrom-Json correctly processes datetimes vs strings using newtonsoft conventions" {
+			# Create all the various "standard" date formats from a source date 2008-09-22T14:01:54.9571247Z
+			# Then we deserialize them and verify which ones newtonsoft decides to make into datetimes and which ones newtonsoft keeps as strings
+			# For the ones that are datetimes, make sure they retain all of the various formats correctly
+			# for the ones that are strings just verify that they are actually strings.
+
+			$json = @"
+{
+	"date-s-should-parse-as-datetime": "2008-09-22T14:01:54",
+	"date-upperO-should-parse-as-datetime": "2008-09-22T14:01:54.9571247Z",
+	
+	"date-o-should-parse-as-string": "2019-12-17T06:14:06 +06:00",
+	"date-upperD-should-parse-as-string": "Monday, September 22, 2008",
+	"date-f-should-parse-as-string": "Monday, September 22, 2008 2:01 PM",
+	"date-upperF-should-parse-as-string": "Monday, September 22, 2008 2:01:54 PM",
+	"date-g-should-parse-as-string": "9/22/2008 2:01 PM",
+	"date-upperG-should-parse-as-string": "9/22/2008 2:01:54 PM",
+	"date-m-should-parse-as-string": "September 22",
+	"date-upperM-should-parse-as-string": "September 22",
+	"date-upperR-should-parse-as-string": "Mon, 22 Sep 2008 14:01:54 GMT",
+	"date-t-should-parse-as-string": "2:01 PM",
+	"date-upperT-should-parse-as-string": "2:01:54 PM",
+	"date-u-should-parse-as-string": "2008-09-22 14:01:54Z",
+	"date-upperU-should-parse-as-string": "Monday, September 22, 2008 2:01:54 PM",
+	"date-upperY-should-parse-as-string": "September 2008",
+	"date-y-should-parse-as-string": "September 2008"
+}
+"@
+			foreach ($AsHashtableOption in @($True, $false)) {
+				$object = ConvertFrom-Json $json -AsHashtable:$AsHashtableOption
+
+
+				$Object."date-s-should-parse-as-datetime".ToString("d") | should -be "9/22/2008"
+				$Object."date-s-should-parse-as-datetime".ToString("D") | should -be "Monday, September 22, 2008"
+				$Object."date-s-should-parse-as-datetime".ToString("f") | should -be "Monday, September 22, 2008 2:01 PM"
+				$Object."date-s-should-parse-as-datetime".ToString("F") | should -be "Monday, September 22, 2008 2:01:54 PM"
+				$Object."date-s-should-parse-as-datetime".ToString("g") | should -be "9/22/2008 2:01 PM"
+				$Object."date-s-should-parse-as-datetime".ToString("G") | should -be "9/22/2008 2:01:54 PM"
+				$Object."date-s-should-parse-as-datetime".ToString("m") | should -be "September 22"
+				$Object."date-s-should-parse-as-datetime".ToString("M") | should -be "September 22"
+				$Object."date-s-should-parse-as-datetime".ToString("o") | should -be "2008-09-22T14:01:54.0000000"
+				$Object."date-s-should-parse-as-datetime".ToString("O") | should -be "2008-09-22T14:01:54.0000000"
+				$Object."date-s-should-parse-as-datetime".ToString("R") | should -be "Mon, 22 Sep 2008 14:01:54 GMT"
+				$Object."date-s-should-parse-as-datetime".ToString("s") | should -be "2008-09-22T14:01:54"
+				$Object."date-s-should-parse-as-datetime".ToString("t") | should -be "2:01 PM"
+				$Object."date-s-should-parse-as-datetime".ToString("T") | should -be "2:01:54 PM"
+				$Object."date-s-should-parse-as-datetime".ToString("u") | should -be "2008-09-22 14:01:54Z"
+				$Object."date-s-should-parse-as-datetime".ToString("U") | should -be "Monday, September 22, 2008 7:01:54 PM"
+				$Object."date-s-should-parse-as-datetime".ToString("Y") | should -be "September 2008"
+				$Object."date-s-should-parse-as-datetime".ToString("y") | should -be "September 2008"
+				$Object."date-s-should-parse-as-datetime" | should -beoftype [DateTime]
+				
+				$Object."date-upperO-should-parse-as-datetime".ToString("d") | should -be "9/22/2008"
+				$Object."date-upperO-should-parse-as-datetime".ToString("D") | should -be "Monday, September 22, 2008"
+				$Object."date-upperO-should-parse-as-datetime".ToString("f") | should -be "Monday, September 22, 2008 2:01 PM"
+				$Object."date-upperO-should-parse-as-datetime".ToString("F") | should -be "Monday, September 22, 2008 2:01:54 PM"
+				$Object."date-upperO-should-parse-as-datetime".ToString("g") | should -be "9/22/2008 2:01 PM"
+				$Object."date-upperO-should-parse-as-datetime".ToString("G") | should -be "9/22/2008 2:01:54 PM"
+				$Object."date-upperO-should-parse-as-datetime".ToString("m") | should -be "September 22"
+				$Object."date-upperO-should-parse-as-datetime".ToString("M") | should -be "September 22"
+				$Object."date-upperO-should-parse-as-datetime".ToString("o") | should -be "2008-09-22T14:01:54.9571247Z"
+				$Object."date-upperO-should-parse-as-datetime".ToString("O") | should -be "2008-09-22T14:01:54.9571247Z"
+				$Object."date-upperO-should-parse-as-datetime".ToString("R") | should -be "Mon, 22 Sep 2008 14:01:54 GMT"
+				$Object."date-upperO-should-parse-as-datetime".ToString("s") | should -be "2008-09-22T14:01:54"
+				$Object."date-upperO-should-parse-as-datetime".ToString("t") | should -be "2:01 PM"
+				$Object."date-upperO-should-parse-as-datetime".ToString("T") | should -be "2:01:54 PM"
+				$Object."date-upperO-should-parse-as-datetime".ToString("u") | should -be "2008-09-22 14:01:54Z"
+				$Object."date-upperO-should-parse-as-datetime".ToString("U") | should -be "Monday, September 22, 2008 2:01:54 PM"
+				$Object."date-upperO-should-parse-as-datetime".ToString("Y") | should -be "September 2008"
+				$Object."date-upperO-should-parse-as-datetime".ToString("y") | should -be "September 2008"
+				$Object."date-upperO-should-parse-as-datetime" | should -beoftype [DateTime]
+				
+				$Object."date-o-should-parse-as-string" | should -be "2019-12-17T06:14:06 +06:00"
+				$Object."date-o-should-parse-as-string" | should -beoftype [String]
+				$Object."date-f-should-parse-as-string" | should -be "Monday, September 22, 2008 2:01 PM"
+				$Object."date-f-should-parse-as-string" | should -beoftype [String]
+				$Object."date-g-should-parse-as-string" | should -be "9/22/2008 2:01 PM"
+				$Object."date-g-should-parse-as-string" | should -beoftype [String]
+				$Object."date-m-should-parse-as-string" | should -be "September 22"
+				$Object."date-m-should-parse-as-string" | should -beoftype [String]
+				$Object."date-upperM-should-parse-as-string" | should -be "September 22"
+				$Object."date-upperM-should-parse-as-string" | should -beoftype [String]
+				$Object."date-t-should-parse-as-string" | should -be "2:01 PM"
+				$Object."date-t-should-parse-as-string" | should -beoftype [String]
+				$Object."date-u-should-parse-as-string" | should -be "2008-09-22 14:01:54Z"
+				$Object."date-u-should-parse-as-string" | should -beoftype [String]
+				$Object."date-upperD-should-parse-as-string" | should -be "Monday, September 22, 2008"
+				$Object."date-upperD-should-parse-as-string" | should -beoftype [String]
+				$Object."date-upperF-should-parse-as-string" | should -be "Monday, September 22, 2008 2:01:54 PM"
+				$Object."date-upperF-should-parse-as-string" | should -beoftype [String]
+				$Object."date-upperG-should-parse-as-string" | should -be "9/22/2008 2:01:54 PM"
+				$Object."date-upperG-should-parse-as-string" | should -beoftype [String]
+				$Object."date-upperR-should-parse-as-string" | should -be "Mon, 22 Sep 2008 14:01:54 GMT"
+				$Object."date-upperR-should-parse-as-string" | should -beoftype [String]
+				$Object."date-upperT-should-parse-as-string" | should -be "2:01:54 PM"
+				$Object."date-upperT-should-parse-as-string" | should -beoftype [String]
+				$Object."date-upperU-should-parse-as-string" | should -be "Monday, September 22, 2008 2:01:54 PM"
+				$Object."date-upperU-should-parse-as-string" | should -beoftype [String]
+				$Object."date-upperY-should-parse-as-string" | should -be "September 2008"
+				$Object."date-upperY-should-parse-as-string" | should -beoftype [String]
+				$Object."date-y-should-parse-as-string" | should -be "September 2008"
+				$Object."date-y-should-parse-as-string" | should -beoftype [String]
+			}
+		}
         It "ConvertFrom-Json with special characters" {
 
             $json = '{"SampleValue":"\"\\\b\f\n\r\t\u4321\uD7FF"}'
