@@ -91,7 +91,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     columnWidths[k] = _minimumColumnWidth;
                     unfixedColumnCount++;
-                    fixedColumn[k] = false;
                 }
                 else
                 {
