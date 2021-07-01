@@ -55,7 +55,7 @@ namespace System.Management.Automation.Remoting
         {
             get { return _serviceId; }
 
-            set { _vmId = value; }
+            set { _serviceId = value; }
         }
 
         #endregion
