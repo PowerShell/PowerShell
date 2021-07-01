@@ -679,7 +679,7 @@ namespace Microsoft.PowerShell.Commands
         private static void AppendPsProperties(PSObject psObj, IDictionary receiver, int depth, bool isCustomObject, in ConvertToJsonContext context)
         {
             // if the psObj is a DateTime or String type, we don't serialize any extended or adapted properties
-            if (psObj.BaseObject is DateTime || psObj.BaseObject is string)
+            if (psObj.BaseObject is string || psObj.BaseObject is DateTime)
             {
                 return;
             }
