@@ -71,17 +71,21 @@ namespace Microsoft.PowerShell.Commands
             // 2. The complete input is a collection which represents a single Json content. This is typically the majority of the case.
             if (_inputObjectBuffer.Count > 0)
             {
+                ErrorRecord error = null;
+
                 if (_inputObjectBuffer.Count == 1)
                 {
-                    ConvertFromJsonHelper(_inputObjectBuffer[0]);
+                    ConvertFromJsonHelper(_inputObjectBuffer[0].Trim(), out error);
                 }
                 else
                 {
-                    bool successfullyConverted = false;
+                    // The logic here is that we try to deserialize the first element and:
+                    // if it fails then we should concatenate all of the elements and convert the lerge blob
+                    // if it succeeds we should deserialize the rest of the elements starting at index 2
                     try
                     {
                         // Try to deserialize the first element.
-                        successfullyConverted = ConvertFromJsonHelper(_inputObjectBuffer[0]);
+                        ConvertFromJsonHelper(_inputObjectBuffer[0], out error);
                     }
                     catch (ArgumentException)
                     {
@@ -89,17 +93,22 @@ namespace Microsoft.PowerShell.Commands
                         // Hence consider the the entire input as a single Json content.
                     }
 
-                    if (successfullyConverted)
+                    if (error == null)
                     {
                         for (int index = 1; index < _inputObjectBuffer.Count; index++)
                         {
-                            ConvertFromJsonHelper(_inputObjectBuffer[index]);
+                            ConvertFromJsonHelper(_inputObjectBuffer[index], out error);
                         }
                     }
                     else
                     {
                         // Process the entire input as a single Json content.
-                        ConvertFromJsonHelper(string.Join(System.Environment.NewLine, _inputObjectBuffer.ToArray()));
+                        ConvertFromJsonHelper(string.Join(System.Environment.NewLine, _inputObjectBuffer.ToArray()), out error);
+                    }
+
+                    if (error != null)
+                    {
+                        ThrowTerminatingError(error);
                     }
                 }
             }
@@ -109,10 +118,10 @@ namespace Microsoft.PowerShell.Commands
         /// ConvertFromJsonHelper is a helper method to convert to Json input to .Net Type.
         /// </summary>
         /// <param name="input">Input string.</param>
+        /// <param name="error">ErrorRecord.</param>
         /// <returns>True if successfully converted, else returns false.</returns>
-        private bool ConvertFromJsonHelper(string input)
+        private bool ConvertFromJsonHelper(string input, out ErrorRecord error)
         {
-            ErrorRecord error = null;
             object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, Depth, out error);
 
             if (error != null)
