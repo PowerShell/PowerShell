@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_inputObjectBuffer.Count == 1)
                 {
-                    ConvertFromJsonHelper(_inputObjectBuffer[0].Trim(), out error);
+                    ConvertFromJsonHelper(_inputObjectBuffer[0], out error);
                 }
                 else
                 {
