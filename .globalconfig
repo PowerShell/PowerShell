@@ -1364,7 +1364,7 @@ dotnet_diagnostic.IDE0069.severity = silent
 
 # IDE0070: UseSystemHashCode
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0070
-dotnet_diagnostic.IDE0070.severity = silent
+dotnet_diagnostic.IDE0070.severity = warning
 
 # IDE0071: SimplifyInterpolation
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0071
