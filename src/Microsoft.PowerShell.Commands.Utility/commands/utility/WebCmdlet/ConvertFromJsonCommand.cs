@@ -80,8 +80,8 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // The logic here is that we try to deserialize the first element and:
-                    // if it fails then we should concatenate all of the elements and convert the lerge blob
-                    // if it succeeds we should deserialize the rest of the elements starting at index 2
+                    //   if it fails then we should concatenate all of the elements and convert the lerge blob
+                    //   if it succeeds we should deserialize the rest of the elements starting at index 2
                     try
                     {
                         // Try to deserialize the first element.
