@@ -331,10 +331,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return fid;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Usage",
-            "CA2208:Instantiate argument exceptions correctly",
-            Justification = "https://github.com/PowerShell/PowerShell/issues/13909")]
         internal void VerifyDataNotNull(object obj, string name)
         {
             if (obj != null)
@@ -343,7 +339,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_NullDataMember, name);
 
             ErrorRecord errorRecord = new ErrorRecord(
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
                                             new ArgumentException(),
+#pragma warning restore CA2208 // https://github.com/PowerShell/PowerShell/issues/13909
                                             "FormatObjectDeserializerNullDataMember",
                                             ErrorCategory.InvalidData,
                                             null);

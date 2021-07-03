@@ -1750,10 +1750,6 @@ namespace System.Management.Automation
             return results;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Usage",
-            "CA2208:Instantiate argument exceptions correctly",
-            Justification = "https://github.com/PowerShell/PowerShell/issues/13909")]
         private List<CompletionResult> GetResultForIdentifier(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength, bool isQuotedString)
         {
             var tokenAtCursor = completionContext.TokenAtCursor;
@@ -1812,7 +1808,9 @@ namespace System.Management.Automation
                             case UsingStatementKind.Type:
                                 break;
                             default:
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
                                 throw new ArgumentOutOfRangeException("UsingStatementKind");
+#pragma warning restore CA2208 // https://github.com/PowerShell/PowerShell/issues/13909
                         }
                     }
                 }

@@ -89,14 +89,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #region helper
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Usage",
-            "CA2208:Instantiate argument exceptions correctly",
-            Justification = "https://github.com/PowerShell/PowerShell/issues/13909")]
         private static ErrorRecord BuildOutOfRangeErrorRecord(object val, string errorId)
         {
             string msg = StringUtil.Format(HostStrings.InvalidColorErrorTemplate, val.ToString());
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
             ArgumentOutOfRangeException e = new("value", val, msg);
+#pragma warning restore CA2208 // https://github.com/PowerShell/PowerShell/issues/13909
             return new ErrorRecord(e, errorId, ErrorCategory.InvalidArgument, null);
         }
         #endregion helper

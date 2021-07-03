@@ -185,10 +185,6 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage(
-            "Usage",
-            "CA2208:Instantiate argument exceptions correctly",
-            Justification = "https://github.com/PowerShell/PowerShell/issues/13909")] 
         private List<string> ResolvePath(string path, bool isLiteral)
         {
             ProviderInfo provider = null;
@@ -221,7 +217,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 string errorMessage = StringUtil.Format(ConvertMarkdownStrings.FileSystemPathsOnly, path);
                 ErrorRecord errorRecord = new(
+#pragma warning disable CA2208 // Instantiate argument exceptions correctly
                     new ArgumentException(),
+#pragma warning restore CA2208 // https://github.com/PowerShell/PowerShell/issues/13909
                     "OnlyFileSystemPathsSupported",
                     ErrorCategory.InvalidArgument,
                     path);
