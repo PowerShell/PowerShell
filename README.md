@@ -40,7 +40,7 @@ You can download and install a PowerShell package for any of the following platf
 | [CentOS 8][corefx-linux]                   | [.rpm][lts-centos8]     | [.rpm][rl-centos8]      | [.rpm][pv-rpm]        |                               |
 | [Red Hat Enterprise Linux 7][corefx-linux] | [.rpm][lts-centos]      | [.rpm][rl-centos]       | [.rpm][pv-rpm]        | [Instructions][in-rhel7]      |
 | [openSUSE 42.3][corefx-linux]              | [.rpm][lts-centos]      | [.rpm][rl-centos]       | [.rpm][pv-rpm]        | [Instructions][in-opensuse]   |
-| [Fedora 30][corefx-linux]                  | [.rpm][lts-centos]      | [.rpm][rl-centos]       | [.rpm][pv-rpm]        | [Instructions][in-fedora]     |
+| [Fedora 34][corefx-linux]                  | [.rpm][lts-centos]      | [.rpm][rl-centos]       | [.rpm][pv-rpm]        | [Instructions][in-fedora]     |
 | [macOS 10.13+][corefx-macos]               | [.pkg][lts-macos]       | [.pkg][rl-macos]        | [.pkg][pv-macos]      | [Instructions][in-macos]      |
 | Docker                                     |                         |                         |                       | [Instructions][in-docker]     |
 
