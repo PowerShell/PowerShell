@@ -14,7 +14,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Execution context used for stepping.
     /// </summary>
-    internal class ExecutionContextForStepping : IDisposable
+    internal sealed class ExecutionContextForStepping : IDisposable
     {
         private readonly ExecutionContext _executionContext;
         private PSInformationalBuffers _originalInformationalBuffers;
