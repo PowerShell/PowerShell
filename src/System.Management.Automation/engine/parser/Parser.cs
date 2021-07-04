@@ -728,7 +728,7 @@ namespace System.Management.Automation.Language
                 || parseErrors.Length > 0
                 || ast.BeginBlock != null
                 || ast.ProcessBlock != null
-                || ast.CleanupBlock != null
+                || ast.CleanBlock != null
                 || ast.DynamicParamBlock != null
                 || ast.EndBlock.Traps != null)
             {
@@ -1714,7 +1714,7 @@ namespace System.Management.Automation.Language
             NamedBlockAst beginBlock = null;
             NamedBlockAst processBlock = null;
             NamedBlockAst endBlock = null;
-            NamedBlockAst cleanupBlock = null;
+            NamedBlockAst cleanBlock = null;
 
             IScriptExtent startExtent = lCurly?.Extent ?? paramBlockAst?.Extent;
             IScriptExtent endExtent = null;
@@ -1758,7 +1758,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.Begin:
                     case TokenKind.Process:
                     case TokenKind.End:
-                    case TokenKind.Cleanup:
+                    case TokenKind.Clean:
                         break;
                 }
 
@@ -1799,9 +1799,9 @@ namespace System.Management.Automation.Language
                 {
                     endBlock = new NamedBlockAst(extent, TokenKind.End, statementBlock, false);
                 }
-                else if (blockNameToken.Kind == TokenKind.Cleanup && cleanupBlock == null)
+                else if (blockNameToken.Kind == TokenKind.Clean && cleanBlock == null)
                 {
-                    cleanupBlock = new NamedBlockAst(extent, TokenKind.Cleanup, statementBlock, false);
+                    cleanBlock = new NamedBlockAst(extent, TokenKind.Clean, statementBlock, false);
                 }
                 else if (blockNameToken.Kind == TokenKind.Dynamicparam && dynamicParamBlock == null)
                 {
@@ -1831,7 +1831,7 @@ namespace System.Management.Automation.Language
                 beginBlock,
                 processBlock,
                 endBlock,
-                cleanupBlock,
+                cleanBlock,
                 dynamicParamBlock);
         }
 

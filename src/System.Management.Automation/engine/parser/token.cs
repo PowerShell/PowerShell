@@ -587,8 +587,9 @@ namespace System.Management.Automation.Language
 
         /// <summary>The 'default' keyword</summary>
         Default = 169,
-        /// <summary>The 'cleanup' keyword.</summary>
-        Cleanup = 170,
+
+        /// <summary>The 'clean' keyword.</summary>
+        Clean = 170,
 
         #endregion Keywords
     }
@@ -661,7 +662,7 @@ namespace System.Management.Automation.Language
         Keyword = 0x00000010,
 
         /// <summary>
-        /// The token one of the keywords that is a part of a script block: 'begin', 'process', 'end', 'cleanup', or 'dynamicparam'.
+        /// The token is one of the keywords that is a part of a script block: 'begin', 'process', 'end', 'clean', or 'dynamicparam'.
         /// </summary>
         ScriptBlockBlockName = 0x00000020,
 
@@ -950,7 +951,7 @@ namespace System.Management.Automation.Language
             /*               Hidden */ TokenFlags.Keyword,
             /*                 Base */ TokenFlags.Keyword,
             /*              Default */ TokenFlags.Keyword,
-            /*              Cleanup */ TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName,
+            /*                Clean */ TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName,
 
             #endregion Flags for keywords
         };
@@ -1150,7 +1151,7 @@ namespace System.Management.Automation.Language
             /*               Hidden */ "hidden",
             /*                 Base */ "base",
             /*              Default */ "default",
-            /*              Cleanup */ "cleanup",
+            /*                Clean */ "clean",
 
             #endregion Text for keywords
         };
@@ -1159,10 +1160,10 @@ namespace System.Management.Automation.Language
         static TokenTraits()
         {
             Diagnostics.Assert(
-                s_staticTokenFlags.Length == ((int)TokenKind.Cleanup + 1),
+                s_staticTokenFlags.Length == ((int)TokenKind.Clean + 1),
                 "Table size out of sync with enum - _staticTokenFlags");
             Diagnostics.Assert(
-                s_tokenText.Length == ((int)TokenKind.Cleanup + 1),
+                s_tokenText.Length == ((int)TokenKind.Clean + 1),
                 "Table size out of sync with enum - _tokenText");
             // Some random assertions to make sure the enum and the traits are in sync
             Diagnostics.Assert(GetTraits(TokenKind.Begin) == (TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName),

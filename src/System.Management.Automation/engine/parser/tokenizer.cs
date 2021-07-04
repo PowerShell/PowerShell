@@ -635,7 +635,7 @@ namespace System.Management.Automation.Language
         /*A*/    "configuration",           "public",           "private",          "static",                     /*A*/
         /*B*/    "interface",               "enum",             "namespace",        "module",                     /*B*/
         /*C*/    "type",                    "assembly",         "command",          "hidden",                     /*C*/
-        /*D*/    "base",                    "default",          "cleanup",                                        /*D*/
+        /*D*/    "base",                    "default",          "clean",                                          /*D*/
         };
 
         private static readonly TokenKind[] s_keywordTokenKind = new TokenKind[] {
@@ -651,7 +651,7 @@ namespace System.Management.Automation.Language
         /*A*/    TokenKind.Configuration,   TokenKind.Public,   TokenKind.Private,   TokenKind.Static,             /*A*/
         /*B*/    TokenKind.Interface,       TokenKind.Enum,     TokenKind.Namespace, TokenKind.Module,             /*B*/
         /*C*/    TokenKind.Type,            TokenKind.Assembly, TokenKind.Command,   TokenKind.Hidden,             /*C*/
-        /*D*/    TokenKind.Base,            TokenKind.Default,  TokenKind.Cleanup,                                 /*D*/
+        /*D*/    TokenKind.Base,            TokenKind.Default,  TokenKind.Clean,                                   /*D*/
         };
 
         internal static readonly string[] _operatorText = new string[] {

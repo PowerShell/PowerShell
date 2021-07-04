@@ -826,14 +826,14 @@ namespace System.Management.Automation.Language
                 beginBlock,
                 processBlock,
                 endBlock,
-                cleanupBlock: null,
+                cleanBlock: null,
                 dynamicParamBlock)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScriptBlockAst"/> class.
-        /// This construction uses explicitly named begin/process/end/cleanup blocks.
+        /// This construction uses explicitly named begin/process/end/clean blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
         /// <param name="usingStatements">The list of using statments, may be null.</param>
@@ -842,7 +842,7 @@ namespace System.Management.Automation.Language
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
         /// <param name="processBlock">The ast for the process block, may be null.</param>
         /// <param name="endBlock">The ast for the end block, may be null.</param>
-        /// <param name="cleanupBlock">The ast for the cleanup block, may be null.</param>
+        /// <param name="cleanBlock">The ast for the clean block, may be null.</param>
         /// <param name="dynamicParamBlock">The ast for the dynamicparam block, may be null.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
@@ -856,7 +856,7 @@ namespace System.Management.Automation.Language
             NamedBlockAst beginBlock,
             NamedBlockAst processBlock,
             NamedBlockAst endBlock,
-            NamedBlockAst cleanupBlock,
+            NamedBlockAst cleanBlock,
             NamedBlockAst dynamicParamBlock)
             : base(extent)
         {
@@ -896,10 +896,10 @@ namespace System.Management.Automation.Language
                 SetParent(endBlock);
             }
 
-            if (cleanupBlock != null)
+            if (cleanBlock != null)
             {
-                this.CleanupBlock = cleanupBlock;
-                SetParent(cleanupBlock);
+                this.CleanBlock = cleanBlock;
+                SetParent(cleanBlock);
             }
 
             if (dynamicParamBlock != null)
@@ -936,7 +936,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScriptBlockAst"/> class.
-        /// This construction uses explicitly named begin/process/end/dispose blocks.
+        /// This construction uses explicitly named begin/process/end/clean blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
         /// <param name="usingStatements">The list of using statments, may be null.</param>
@@ -944,7 +944,7 @@ namespace System.Management.Automation.Language
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
         /// <param name="processBlock">The ast for the process block, may be null.</param>
         /// <param name="endBlock">The ast for the end block, may be null.</param>
-        /// <param name="cleanupBlock">The ast for the dispose block, may be null.</param>
+        /// <param name="cleanBlock">The ast for the dispose block, may be null.</param>
         /// <param name="dynamicParamBlock">The ast for the dynamicparam block, may be null.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
@@ -957,9 +957,9 @@ namespace System.Management.Automation.Language
             NamedBlockAst beginBlock,
             NamedBlockAst processBlock,
             NamedBlockAst endBlock,
-            NamedBlockAst cleanupBlock,
+            NamedBlockAst cleanBlock,
             NamedBlockAst dynamicParamBlock)
-            : this(extent, usingStatements, null, paramBlock, beginBlock, processBlock, endBlock, cleanupBlock, dynamicParamBlock)
+            : this(extent, usingStatements, null, paramBlock, beginBlock, processBlock, endBlock, cleanBlock, dynamicParamBlock)
         {
         }
 
@@ -988,14 +988,14 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ScriptBlockAst"/> class.
-        /// This construction uses explicitly named begin/process/end/dispose blocks.
+        /// This construction uses explicitly named begin/process/end/clean blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
         /// <param name="paramBlock">The ast for the param block, may be null.</param>
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
         /// <param name="processBlock">The ast for the process block, may be null.</param>
         /// <param name="endBlock">The ast for the end block, may be null.</param>
-        /// <param name="cleanupBlock">The ast for the dispose block, may be null.</param>
+        /// <param name="cleanBlock">The ast for the dispose block, may be null.</param>
         /// <param name="dynamicParamBlock">The ast for the dynamicparam block, may be null.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
@@ -1007,9 +1007,9 @@ namespace System.Management.Automation.Language
             NamedBlockAst beginBlock,
             NamedBlockAst processBlock,
             NamedBlockAst endBlock,
-            NamedBlockAst cleanupBlock,
+            NamedBlockAst cleanBlock,
             NamedBlockAst dynamicParamBlock)
-            : this(extent, null, paramBlock, beginBlock, processBlock, endBlock, cleanupBlock, dynamicParamBlock)
+            : this(extent, null, paramBlock, beginBlock, processBlock, endBlock, cleanBlock, dynamicParamBlock)
         {
         }
 
@@ -1220,7 +1220,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Gets the ast representing the dispose block for a script block, or null if no dispose block was specified.
         /// </summary>
-        public NamedBlockAst CleanupBlock { get; }
+        public NamedBlockAst CleanBlock { get; }
 
         /// <summary>
         /// The ast representing the dynamicparam block for a script block, or null if no dynamicparam block was specified.
@@ -1301,7 +1301,7 @@ namespace System.Management.Automation.Language
             var newBeginBlock = CopyElement(this.BeginBlock);
             var newProcessBlock = CopyElement(this.ProcessBlock);
             var newEndBlock = CopyElement(this.EndBlock);
-            var newCleanupBlock = CopyElement(this.CleanupBlock);
+            var newCleanBlock = CopyElement(this.CleanBlock);
             var newDynamicParamBlock = CopyElement(this.DynamicParamBlock);
             var newAttributes = CopyElements(this.Attributes);
             var newUsingStatements = CopyElements(this.UsingStatements);
@@ -1314,7 +1314,7 @@ namespace System.Management.Automation.Language
                 newBeginBlock,
                 newProcessBlock,
                 newEndBlock,
-                newCleanupBlock,
+                newCleanBlock,
                 newDynamicParamBlock)
             {
                 IsConfiguration = this.IsConfiguration,
@@ -1489,7 +1489,7 @@ namespace System.Management.Automation.Language
                     VisitAndShallContinue(BeginBlock) &&
                     VisitAndShallContinue(ProcessBlock) &&
                     VisitAndShallContinue(EndBlock) &&
-                    VisitAndShallContinue(CleanupBlock);
+                    VisitAndShallContinue(CleanBlock);
             }
 
             return visitor.CheckForPostAction(this, action);
@@ -1705,7 +1705,7 @@ namespace System.Management.Automation.Language
         {
             if (BeginBlock != null
                 || ProcessBlock != null
-                || CleanupBlock != null
+                || CleanBlock != null
                 || DynamicParamBlock != null)
             {
                 errorId = nameof(AutomationExceptions.CanConvertOneClauseOnly);
@@ -1874,7 +1874,7 @@ namespace System.Management.Automation.Language
     public class NamedBlockAst : Ast
     {
         /// <summary>
-        /// Construct the ast for a begin, process, end, cleanup, or dynamic param block.
+        /// Construct the ast for a begin, process, end, clean, or dynamic param block.
         /// </summary>
         /// <param name="extent">
         /// The extent of the block.  If <paramref name="unnamed"/> is false, the extent includes
@@ -1886,7 +1886,7 @@ namespace System.Management.Automation.Language
         /// <item><see cref="TokenKind.Begin"/></item>
         /// <item><see cref="TokenKind.Process"/></item>
         /// <item><see cref="TokenKind.End"/></item>
-        /// <item><see cref="TokenKind.Cleanup"/></item>
+        /// <item><see cref="TokenKind.Clean"/></item>
         /// <item><see cref="TokenKind.Dynamicparam"/></item>
         /// </list>
         /// </param>
@@ -1963,7 +1963,7 @@ namespace System.Management.Automation.Language
         /// <item><see cref="TokenKind.Begin"/></item>
         /// <item><see cref="TokenKind.Process"/></item>
         /// <item><see cref="TokenKind.End"/></item>
-        /// <item><see cref="TokenKind.Cleanup"/></item>
+        /// <item><see cref="TokenKind.Clean"/></item>
         /// <item><see cref="TokenKind.Dynamicparam"/></item>
         /// </list>
         /// </summary>
@@ -2007,7 +2007,7 @@ namespace System.Management.Automation.Language
         {
             return !blockName.HasTrait(TokenFlags.ScriptBlockBlockName)
                 || (unnamed && (blockName == TokenKind.Begin
-                    || blockName == TokenKind.Cleanup
+                    || blockName == TokenKind.Clean
                     || blockName == TokenKind.Dynamicparam));
         }
 

@@ -33,7 +33,7 @@ namespace System.Management.Automation
         Begin,
         Process,
         End,
-        Cleanup,
+        Clean,
         ProcessBlockOnly,
     }
 
@@ -246,7 +246,7 @@ namespace System.Management.Automation
 
                 if (scriptBlockAst.BeginBlock != null
                     || scriptBlockAst.ProcessBlock != null
-                    || scriptBlockAst.CleanupBlock != null
+                    || scriptBlockAst.CleanBlock != null
                     || scriptBlockAst.ParamBlock != null
                     || scriptBlockAst.DynamicParamBlock != null
                     || scriptBlockAst.ScriptRequirements != null
@@ -334,9 +334,9 @@ namespace System.Management.Automation
 
         internal Action<FunctionContext> UnoptimizedEndBlock { get; set; }
 
-        internal Action<FunctionContext> CleanupBlock { get; set; }
+        internal Action<FunctionContext> CleanBlock { get; set; }
 
-        internal Action<FunctionContext> UnoptimizedCleanupBlock { get; set; }
+        internal Action<FunctionContext> UnoptimizedCleanBlock { get; set; }
 
         #endregion Named Blocks
 
@@ -761,7 +761,7 @@ namespace System.Management.Automation
         {
             errorHandler ??= (static _ => null);
 
-            if (HasBeginBlock || HasProcessBlock || HasCleanupBlock)
+            if (HasBeginBlock || HasProcessBlock || HasCleanBlock)
             {
                 return errorHandler(AutomationExceptions.CanConvertOneClauseOnly);
             }
@@ -901,7 +901,7 @@ namespace System.Management.Automation
             var ast = AstInternal;
             if (HasBeginBlock
                 || HasProcessBlock
-                || HasCleanupBlock
+                || HasCleanBlock
                 || ast.Body.ParamBlock != null)
             {
                 Ast errorAst = ast.Body.BeginBlock ?? (Ast)ast.Body.ProcessBlock ?? ast.Body.ParamBlock;
@@ -988,7 +988,7 @@ namespace System.Management.Automation
             if ((clauseToInvoke == ScriptBlockClauseToInvoke.Begin && !HasBeginBlock)
                 || (clauseToInvoke == ScriptBlockClauseToInvoke.Process && !HasProcessBlock)
                 || (clauseToInvoke == ScriptBlockClauseToInvoke.End && !HasEndBlock)
-                || (clauseToInvoke == ScriptBlockClauseToInvoke.Cleanup && !HasCleanupBlock))
+                || (clauseToInvoke == ScriptBlockClauseToInvoke.Clean && !HasCleanBlock))
             {
                 return;
             }
@@ -1374,7 +1374,7 @@ namespace System.Management.Automation
         private Action<FunctionContext> GetCodeToInvoke(ref bool optimized, ScriptBlockClauseToInvoke clauseToInvoke)
         {
             if (clauseToInvoke == ScriptBlockClauseToInvoke.ProcessBlockOnly
-                && (HasBeginBlock || HasCleanupBlock || (HasEndBlock && HasProcessBlock)))
+                && (HasBeginBlock || HasCleanBlock || (HasEndBlock && HasProcessBlock)))
             {
                 throw PSTraceSource.NewInvalidOperationException(AutomationExceptions.ScriptBlockInvokeOnOneClauseOnly);
             }
@@ -1391,8 +1391,8 @@ namespace System.Management.Automation
                         return _scriptBlockData.ProcessBlock;
                     case ScriptBlockClauseToInvoke.End:
                         return _scriptBlockData.EndBlock;
-                    case ScriptBlockClauseToInvoke.Cleanup:
-                        return _scriptBlockData.CleanupBlock;
+                    case ScriptBlockClauseToInvoke.Clean:
+                        return _scriptBlockData.CleanBlock;
                     default:
                         return HasProcessBlock ? _scriptBlockData.ProcessBlock : _scriptBlockData.EndBlock;
                 }
@@ -1406,8 +1406,8 @@ namespace System.Management.Automation
                     return _scriptBlockData.UnoptimizedProcessBlock;
                 case ScriptBlockClauseToInvoke.End:
                     return _scriptBlockData.UnoptimizedEndBlock;
-                case ScriptBlockClauseToInvoke.Cleanup:
-                    return _scriptBlockData.UnoptimizedCleanupBlock;
+                case ScriptBlockClauseToInvoke.Clean:
+                    return _scriptBlockData.UnoptimizedCleanBlock;
                 default:
                     return HasProcessBlock ? _scriptBlockData.UnoptimizedProcessBlock : _scriptBlockData.UnoptimizedEndBlock;
             }
@@ -2163,9 +2163,9 @@ namespace System.Management.Automation
 
         internal Action<FunctionContext> UnoptimizedEndBlock { get => _scriptBlockData.UnoptimizedEndBlock; }
 
-        internal Action<FunctionContext> CleanupBlock { get => _scriptBlockData.CleanupBlock; }
+        internal Action<FunctionContext> CleanBlock { get => _scriptBlockData.CleanBlock; }
 
-        internal Action<FunctionContext> UnoptimizedCleanupBlock { get => _scriptBlockData.UnoptimizedCleanupBlock; }
+        internal Action<FunctionContext> UnoptimizedCleanBlock { get => _scriptBlockData.UnoptimizedCleanBlock; }
 
         internal bool HasBeginBlock { get => AstInternal.Body.BeginBlock != null; }
 
@@ -2173,7 +2173,7 @@ namespace System.Management.Automation
 
         internal bool HasEndBlock { get => AstInternal.Body.EndBlock != null; }
 
-        internal bool HasCleanupBlock { get => AstInternal.Body.CleanupBlock != null; }
+        internal bool HasCleanBlock { get => AstInternal.Body.CleanBlock != null; }
     }
 
     [Serializable]
@@ -2317,7 +2317,7 @@ namespace System.Management.Automation
 
         internal override void DoCleanResource()
         {
-            if (_scriptBlock.HasCleanupBlock && _anyClauseExecuted)
+            if (_scriptBlock.HasCleanBlock && _anyClauseExecuted)
             {
                 // The 'Clean' block doesn't write any output to pipeline, so we use a 'NullPipe' here and
                 // disallow the output to be collected by an 'out' variable. However, the error, warning,
@@ -2332,7 +2332,7 @@ namespace System.Management.Automation
                 try
                 {
                     RunClause(
-                        clause: _runOptimized ? _scriptBlock.CleanupBlock : _scriptBlock.UnoptimizedCleanupBlock,
+                        clause: _runOptimized ? _scriptBlock.CleanBlock : _scriptBlock.UnoptimizedCleanBlock,
                         dollarUnderbar: AutomationNull.Value,
                         inputToProcess: AutomationNull.Value);
                 }

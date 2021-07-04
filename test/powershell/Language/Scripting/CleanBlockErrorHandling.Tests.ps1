@@ -18,7 +18,7 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
 
             End { <# use an empty end block to allow the clean block to actually run #> }
 
-            cleanup {
+            clean {
                 if ($ThrowTerminatingError) {
                     $ex = [System.ArgumentException]::new('terminating-exception')
                     $er = [System.Management.Automation.ErrorRecord]::new($ex, 'ThrowTerminatingError:error', 'InvalidArgument', $null)
@@ -109,7 +109,7 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
             param()
 
             end {}
-            cleanup {
+            clean {
                 try {
                     1/0
                     Write-Verbose -Verbose 'clean'
@@ -123,7 +123,7 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
             param()
 
             end {}
-            cleanup {
+            clean {
                 try {
                     $iss = [initialsessionstate]::Create()
                     $iss.ImportPSModule($null)
@@ -138,7 +138,7 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
             param()
 
             end {}
-            cleanup {
+            clean {
                 trap {
                     Write-Verbose -Verbose $_.Exception.GetType().FullName
                     continue
@@ -154,7 +154,7 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
             param()
 
             end {}
-            cleanup {
+            clean {
                 trap {
                     Write-Verbose -Verbose $_.Exception.GetType().FullName
                     continue
@@ -593,7 +593,7 @@ Describe "Multiple errors from 'Clean' and another named block" {
                 }
             }
 
-            cleanup {
+            clean {
                 switch ($ErrorFromCleanBlock) {
                     'ThrowTerminatingError' {
                         $ex = [System.ArgumentException]::new('clean-terminating-exception')
@@ -1196,7 +1196,7 @@ Describe "Error handling within a pipeline (multiple commands with 'Clean' block
                 }
                 Write-Output 'process-obj'
             }
-            cleanup {
+            clean {
                 throw 'test1-clean'
                 Write-Verbose -Verbose 'test1-clean-verbose'
             }
@@ -1210,7 +1210,7 @@ Describe "Error handling within a pipeline (multiple commands with 'Clean' block
                 }
                 Write-Verbose -Verbose $_
             }
-            cleanup {
+            clean {
                 throw 'test2-clean'
                 Write-Verbose -Verbose 'test2-clean-verbose'
             }
@@ -1219,7 +1219,7 @@ Describe "Error handling within a pipeline (multiple commands with 'Clean' block
         function test-1 {
             param([switch] $EmitException)
             process { 'output' }
-            cleanup {
+            clean {
                 if ($EmitException) {
                     throw 'test-1-clean-exception'
                 }
@@ -1230,7 +1230,7 @@ Describe "Error handling within a pipeline (multiple commands with 'Clean' block
         function test-2 {
             param([switch] $EmitException)
             process { $_ }
-            cleanup {
+            clean {
                 if ($EmitException) {
                     throw 'test-2-clean-exception'
                 }
@@ -1241,7 +1241,7 @@ Describe "Error handling within a pipeline (multiple commands with 'Clean' block
         function test-3 {
             param([switch] $EmitException)
             process { Write-Warning $_ }
-            cleanup {
+            clean {
                 if ($EmitException) {
                     throw 'test-3-clean-exception'
                 }

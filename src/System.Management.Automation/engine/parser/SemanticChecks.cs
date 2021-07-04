@@ -408,7 +408,7 @@ namespace System.Management.Automation.Language
 
             if (body.BeginBlock != null
                 || body.ProcessBlock != null
-                || body.CleanupBlock != null
+                || body.CleanBlock != null
                 || body.DynamicParamBlock != null
                 || !body.EndBlock.Unnamed)
             {

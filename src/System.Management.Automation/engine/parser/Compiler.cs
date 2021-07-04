@@ -2026,7 +2026,7 @@ namespace System.Management.Automation.Language
                 scriptBlock.BeginBlock = CompileTree(_beginBlockLambda, compileInterpretChoice);
                 scriptBlock.ProcessBlock = CompileTree(_processBlockLambda, compileInterpretChoice);
                 scriptBlock.EndBlock = CompileTree(_endBlockLambda, compileInterpretChoice);
-                scriptBlock.CleanupBlock = CompileTree(_cleanupBlockLambda, compileInterpretChoice);
+                scriptBlock.CleanBlock = CompileTree(_cleanBlockLambda, compileInterpretChoice);
                 scriptBlock.LocalsMutableTupleType = LocalVariablesTupleType;
                 scriptBlock.LocalsMutableTupleCreator = MutableTuple.TupleCreator(LocalVariablesTupleType);
                 scriptBlock.NameToIndexMap = nameToIndexMap;
@@ -2037,7 +2037,7 @@ namespace System.Management.Automation.Language
                 scriptBlock.UnoptimizedBeginBlock = CompileTree(_beginBlockLambda, compileInterpretChoice);
                 scriptBlock.UnoptimizedProcessBlock = CompileTree(_processBlockLambda, compileInterpretChoice);
                 scriptBlock.UnoptimizedEndBlock = CompileTree(_endBlockLambda, compileInterpretChoice);
-                scriptBlock.UnoptimizedCleanupBlock = CompileTree(_cleanupBlockLambda, compileInterpretChoice);
+                scriptBlock.UnoptimizedCleanBlock = CompileTree(_cleanBlockLambda, compileInterpretChoice);
                 scriptBlock.UnoptimizedLocalsMutableTupleType = LocalVariablesTupleType;
                 scriptBlock.UnoptimizedLocalsMutableTupleCreator = MutableTuple.TupleCreator(LocalVariablesTupleType);
             }
@@ -2223,7 +2223,7 @@ namespace System.Management.Automation.Language
         private Expression<Action<FunctionContext>> _beginBlockLambda;
         private Expression<Action<FunctionContext>> _processBlockLambda;
         private Expression<Action<FunctionContext>> _endBlockLambda;
-        private Expression<Action<FunctionContext>> _cleanupBlockLambda;
+        private Expression<Action<FunctionContext>> _cleanBlockLambda;
 
         private readonly List<LoopGotoTargets> _loopTargets = new List<LoopGotoTargets>();
         private bool _generatingWhileOrDoLoop;
@@ -2469,9 +2469,9 @@ namespace System.Management.Automation.Language
                 rootForDefiningTypesAndUsings = null;
             }
 
-            if (scriptBlockAst.CleanupBlock != null)
+            if (scriptBlockAst.CleanBlock != null)
             {
-                _cleanupBlockLambda = CompileNamedBlock(scriptBlockAst.CleanupBlock, funcName + "<Cleanup>", rootForDefiningTypesAndUsings);
+                _cleanBlockLambda = CompileNamedBlock(scriptBlockAst.CleanBlock, funcName + "<Clean>", rootForDefiningTypesAndUsings);
                 rootForDefiningTypesAndUsings = null;
             }
 

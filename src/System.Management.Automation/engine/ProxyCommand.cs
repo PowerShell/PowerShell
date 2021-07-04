@@ -250,7 +250,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This method constructs a string representing the dispose block of the command
         /// specified by <paramref name="commandMetadata"/>. The returned string only contains the
-        /// script, it is not enclosed in "cleanup { }".
+        /// script, it is not enclosed in "clean { }".
         /// </summary>
         /// <param name="commandMetadata">
         /// An instance of CommandMetadata representing a command.
@@ -261,14 +261,14 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="commandMetadata"/> is null.
         /// </exception>
-        public static string GetCleanup(CommandMetadata commandMetadata)
+        public static string GetClean(CommandMetadata commandMetadata)
         {
             if (commandMetadata == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
             }
 
-            return commandMetadata.GetCleanupBlock();
+            return commandMetadata.GetCleanBlock();
         }
 
         private static T GetProperty<T>(PSObject obj, string property) where T : class

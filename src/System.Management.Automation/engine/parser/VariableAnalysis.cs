@@ -965,9 +965,9 @@ namespace System.Management.Automation.Language
                 scriptBlockAst.EndBlock.Accept(this);
             }
 
-            if (scriptBlockAst.CleanupBlock != null)
+            if (scriptBlockAst.CleanBlock != null)
             {
-                scriptBlockAst.CleanupBlock.Accept(this);
+                scriptBlockAst.CleanBlock.Accept(this);
             }
 
             _currentBlock.FlowsTo(_exitBlock);

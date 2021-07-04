@@ -7,8 +7,6 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Runtime.InteropServices;
 
-using Dbg = System.Management.Automation.Diagnostics;
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -57,7 +55,7 @@ namespace System.Management.Automation
                     throw new CmdletInvocationException(errorRecord);
                 }
 
-                HasCleanBlock = scriptCommand.ScriptBlock.HasCleanupBlock;
+                HasCleanBlock = scriptCommand.ScriptBlock.HasCleanBlock;
             }
 
             CommandInfo = commandInfo;
@@ -687,7 +685,7 @@ namespace System.Management.Automation
             //
             // Therefore we set this property to 'false' here to mask off the previous setting that could be from a
             // TryStatement or TrapStatement. Example:
-            //   PS:1> function b { end {} cleanup { 1/0; Write-Host 'clean' } }
+            //   PS:1> function b { end {} clean { 1/0; Write-Host 'clean' } }
             //   PS:2> b
             //   RuntimeException: Attempted to divide by zero.
             //   clean
@@ -699,7 +697,7 @@ namespace System.Management.Automation
             //
             // Be noted that, this doesn't affect the TryStatement/TrapStatement within the 'Clean' block. Example:
             //   ## 'try/trap' within 'Clean' block makes the general exception catch-able.
-            //   PS:3> function a { end {} cleanup { try { 1/0; Write-Host 'clean' } catch { Write-Host "caught: $_" } } }
+            //   PS:3> function a { end {} clean { try { 1/0; Write-Host 'clean' } catch { Write-Host "caught: $_" } } }
             //   PS:4> a
             //   caught: Attempted to divide by zero.
             bool oldExceptionPropagationState = _context.PropagateExceptionsToEnclosingStatementBlock;

@@ -2843,7 +2843,7 @@ function Get-PSImplicitRemotingClientSideParameters
 
     End {{ {7} }}
 
-    Cleanup {{ {8} }}
+    Clean {{ {8} }}
 
     # .ForwardHelpTargetName {1}
     # .ForwardHelpCategory {5}
@@ -2870,7 +2870,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 /* 5 */ commandMetadata.WrappedCommandType,
                 /* 6 */ ProxyCommand.GetProcess(commandMetadata),
                 /* 7 */ ProxyCommand.GetEnd(commandMetadata),
-                /* 8 */ ProxyCommand.GetCleanup(commandMetadata),
+                /* 8 */ ProxyCommand.GetClean(commandMetadata),
                 /* 9 */ commandMetadata.WrappedAnyCmdlet);
         }
 

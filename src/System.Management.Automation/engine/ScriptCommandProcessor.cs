@@ -435,7 +435,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (!_scriptBlock.HasCleanupBlock)
+                if (!_scriptBlock.HasCleanBlock)
                 {
                     ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
                 }
@@ -444,7 +444,7 @@ namespace System.Management.Automation
 
         protected override void CleanResource()
         {
-            if (_scriptBlock.HasCleanupBlock && _anyClauseExecuted)
+            if (_scriptBlock.HasCleanBlock && _anyClauseExecuted)
             {
                 // The 'Clean' block doesn't write to pipeline.
                 Pipe oldOutputPipe = _functionContext._outputPipe;
@@ -453,7 +453,7 @@ namespace System.Management.Automation
                 try
                 {
                     RunClause(
-                        clause: _runOptimizedCode ? _scriptBlock.CleanupBlock : _scriptBlock.UnoptimizedCleanupBlock,
+                        clause: _runOptimizedCode ? _scriptBlock.CleanBlock : _scriptBlock.UnoptimizedCleanBlock,
                         dollarUnderbar: AutomationNull.Value,
                         inputToProcess: AutomationNull.Value);
                 }

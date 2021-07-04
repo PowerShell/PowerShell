@@ -876,7 +876,7 @@ process
 end
 {{{5}}}
 
-cleanup
+clean
 {{{6}}}
 <#
 {7}
@@ -888,7 +888,7 @@ cleanup
                 GetBeginBlock(),
                 GetProcessBlock(),
                 GetEndBlock(),
-                GetCleanupBlock(),
+                GetCleanBlock(),
                 CodeGeneration.EscapeBlockCommentContent(helpComment));
 
             return result;
@@ -1122,7 +1122,7 @@ cleanup
 ";
         }
 
-        internal string GetCleanupBlock()
+        internal string GetCleanBlock()
         {
             // Here we don't need to enclose the script in a 'try/catch' like elsewhere, because
             //  1. the 'Clean' block doesn't propagate up any exception (terminating error);
