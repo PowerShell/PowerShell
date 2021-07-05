@@ -1448,16 +1448,14 @@ namespace System.Management.Automation
                 }
             );
 
-            bool firstItem = true;
             string previousKey = null;
             input.RemoveAll(ShouldRemove);
 
             bool ShouldRemove(T item)
             {
                 string currentKey = keyGetter(item);
-                bool match = !firstItem && currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase);
+                bool match = previousKey != null && currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase);
                 previousKey = currentKey;
-                firstItem = false;
                 return match;
             }
         }
