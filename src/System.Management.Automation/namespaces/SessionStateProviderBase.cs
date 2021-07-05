@@ -694,7 +694,7 @@ namespace Microsoft.PowerShell.Commands
             if (newItem == null)
             {
                 ArgumentNullException argException =
-                    PSTraceSource.NewArgumentNullException("value");
+                    PSTraceSource.NewArgumentNullException(nameof(newItem));
 
                 WriteError(
                     new ErrorRecord(
