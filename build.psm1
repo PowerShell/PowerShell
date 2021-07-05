@@ -308,7 +308,7 @@ function Start-PSBuild {
         [string]$ReleaseTag,
         [switch]$Detailed,
         [switch]$InteractiveAuth,
-        [switch]$SkipAnalyzers
+        [switch]$SkipRoslynAnalyzers
     )
 
     if ($ReleaseTag -and $ReleaseTag -notmatch "^v\d+\.\d+\.\d+(-(preview|rc)(\.\d{1,2})?)?$") {
@@ -454,7 +454,7 @@ Fix steps:
         $Arguments += "/property:ReleaseTag=$ReleaseTagToUse"
     }
 
-    if (-not $SkipAnalyzers) {
+    if (-not $SkipRoslynAnalyzers) {
         $Arguments += "/property:RunAnalyzersDuringBuild=true"
     }
     else {
