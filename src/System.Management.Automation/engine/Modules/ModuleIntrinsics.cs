@@ -1438,7 +1438,7 @@ namespace System.Management.Automation
 #nullable enable
         private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
         {
-            Dbg.Assert(input != null, "Caller should verify that input != null");
+            Dbg.Assert(input is not null, "Caller should verify that input != null");
 
             input.Sort(
                 (T x, T y) =>
@@ -1455,7 +1455,8 @@ namespace System.Management.Automation
             bool ShouldRemove(T item)
             {
                 string currentKey = keyGetter(item);
-                bool match = previousKey != null && currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase);
+                bool match = previousKey is not null
+                    && currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase);
                 previousKey = currentKey;
                 return match;
             }
