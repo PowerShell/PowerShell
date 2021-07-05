@@ -168,7 +168,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException();
                 }
 
                 _culture = value;
@@ -191,7 +191,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException();
                 }
 
                 _uiCulture = value;
@@ -403,7 +403,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (value == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("value");
+                    throw PSTraceSource.NewArgumentNullException();
                 }
 
                 UpdateUri(value);
@@ -610,7 +610,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (value == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("value");
+                    throw PSTraceSource.NewArgumentNullException();
                 }
 
                 _thumbPrint = value;

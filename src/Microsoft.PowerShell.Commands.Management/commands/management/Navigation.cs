@@ -1090,7 +1090,7 @@ namespace Microsoft.PowerShell.Commands
         public string Name
         {
             get => _name;
-            set => _name = value ?? throw PSTraceSource.NewArgumentNullException(nameof(value));
+            set => _name = value ?? throw PSTraceSource.NewArgumentNullException();
         }
 
         /// <summary>
@@ -1100,7 +1100,7 @@ namespace Microsoft.PowerShell.Commands
         public string PSProvider
         {
             get => _provider;
-            set => _provider = value ?? throw PSTraceSource.NewArgumentNullException(nameof(value));
+            set => _provider = value ?? throw PSTraceSource.NewArgumentNullException();
         }
 
         /// <summary>
@@ -1112,7 +1112,7 @@ namespace Microsoft.PowerShell.Commands
         public string Root
         {
             get => _root;
-            set => _root = value ?? throw PSTraceSource.NewArgumentNullException(nameof(value));
+            set => _root = value ?? throw PSTraceSource.NewArgumentNullException();
         }
 
         /// <summary>
@@ -1122,7 +1122,7 @@ namespace Microsoft.PowerShell.Commands
         public string Description
         {
             get => _description;
-            set => _description = value ?? throw PSTraceSource.NewArgumentNullException(nameof(value));
+            set => _description = value ?? throw PSTraceSource.NewArgumentNullException();
         }
 
         /// <summary>

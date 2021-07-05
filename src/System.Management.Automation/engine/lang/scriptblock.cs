@@ -716,7 +716,7 @@ namespace System.Management.Automation
             {
                 if (value == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException(nameof(value));
+                    throw PSTraceSource.NewArgumentNullException();
                 }
 
                 SessionStateInternal = value.Internal;

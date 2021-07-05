@@ -116,7 +116,7 @@ namespace System.Management.Automation
             {
                 if (value == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("value");
+                    throw PSTraceSource.NewArgumentNullException();
                 }
 
                 _parameterType = value;

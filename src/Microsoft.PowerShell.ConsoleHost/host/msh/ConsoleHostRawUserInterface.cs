@@ -831,7 +831,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentNullException("value");
+                    throw PSTraceSource.NewArgumentNullException();
                 }
             }
         }
