@@ -48,7 +48,7 @@ namespace System.Management.Automation
         protected bool _dontUseScopeCommandOrigin;
 
         /// <summary>
-        /// If true, then an exit exception will be rethrown to instead of caught and processed...
+        /// If true, then an exit exception will be rethrown instead of caught and processed...
         /// </summary>
         protected bool _rethrowExitException;
 
