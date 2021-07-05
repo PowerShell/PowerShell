@@ -1435,6 +1435,7 @@ namespace System.Management.Automation
             input.RemoveAll(fnInfo => !module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase));
         }
 
+#nullable enable
         private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
         {
             Dbg.Assert(input != null, "Caller should verify that input != null");
@@ -1448,7 +1449,7 @@ namespace System.Management.Automation
                 }
             );
 
-            string previousKey = null;
+            string? previousKey = null;
             input.RemoveAll(ShouldRemove);
 
             bool ShouldRemove(T item)
@@ -1459,6 +1460,7 @@ namespace System.Management.Automation
                 return match;
             }
         }
+#nullable restore
 
         /// <summary>
         /// Mark stuff to be exported from the current environment using the various patterns.
