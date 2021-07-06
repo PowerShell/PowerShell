@@ -110,7 +110,7 @@ namespace System.Management.Automation.PerformanceData
             if ((counterInfoArray == null)
                 || (counterInfoArray.Length == 0))
             {
-                throw new ArgumentNullException("counterInfoArray");
+                throw new ArgumentNullException(nameof(counterInfoArray));
             }
 
             CounterInfoArray = new CounterInfo[counterInfoArray.Length];
@@ -136,7 +136,7 @@ namespace System.Management.Automation.PerformanceData
         {
             if (srcCounterSetRegistrarBase == null)
             {
-                throw new ArgumentNullException("srcCounterSetRegistrarBase");
+                throw new ArgumentNullException(nameof(srcCounterSetRegistrarBase));
             }
 
             ProviderId = srcCounterSetRegistrarBase.ProviderId;
@@ -243,7 +243,7 @@ namespace System.Management.Automation.PerformanceData
         {
             if (srcPSCounterSetRegistrar == null)
             {
-                throw new ArgumentNullException("srcPSCounterSetRegistrar");
+                throw new ArgumentNullException(nameof(srcPSCounterSetRegistrar));
             }
         }
 

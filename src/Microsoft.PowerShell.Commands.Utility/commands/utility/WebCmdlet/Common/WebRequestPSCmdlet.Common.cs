@@ -1865,7 +1865,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (formData == null)
             {
-                throw new ArgumentNullException("formDate");
+                throw new ArgumentNullException(nameof(formData));
             }
 
             // It is possible that the dictionary keys or values are PSObject wrapped depending on how the dictionary is defined and assigned.

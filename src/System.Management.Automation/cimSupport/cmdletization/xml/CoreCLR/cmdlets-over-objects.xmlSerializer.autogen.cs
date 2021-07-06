@@ -6680,7 +6680,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
         {
             if (reader == null)
             {
-                throw new ArgumentNullException("reader");
+                throw new ArgumentNullException(nameof(reader));
             }
 
             XmlSerializationReader1 cdxmlSerializationReader = new XmlSerializationReader1(reader);
