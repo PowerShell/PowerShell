@@ -265,8 +265,7 @@ namespace Microsoft.PowerShell
 #endif
         }
 
-        private
-        class FindOldestNodeVisitor : NodeVisitor
+        private sealed class FindOldestNodeVisitor : NodeVisitor
         {
             internal override
             bool
@@ -366,8 +365,7 @@ namespace Microsoft.PowerShell
                 FindNodeById(sourceId, activityId, out listWhereFound, out indexWhereFound);
         }
 
-        private
-        class FindByIdNodeVisitor : NodeVisitor
+        private sealed class FindByIdNodeVisitor : NodeVisitor
         {
             internal
             FindByIdNodeVisitor(Int64 sourceIdToFind, int activityIdToFind)
@@ -508,8 +506,7 @@ namespace Microsoft.PowerShell
             return found;
         }
 
-        private
-        class AgeAndResetStyleVisitor : NodeVisitor
+        private sealed class AgeAndResetStyleVisitor : NodeVisitor
         {
             internal override
             bool
@@ -666,8 +663,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private
-        class HeightTallyer : NodeVisitor
+        private sealed class HeightTallyer : NodeVisitor
         {
             internal HeightTallyer(PSHostRawUserInterface rawUi, int maxHeight, int maxWidth)
             {
