@@ -103,7 +103,7 @@ namespace System.Management.Automation.Tracing
             /// <summary>
             /// ParentActivityId.
             /// </summary>
-            protected readonly Guid parentActivityId;
+            private readonly Guid parentActivityId;
             private readonly EtwActivity tracer;
 
             /// <summary>
