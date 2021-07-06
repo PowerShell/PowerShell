@@ -1184,7 +1184,7 @@ namespace System.Management.Automation.Tracing
                                         PSKeyword.UseAlwaysAnalytic,
                                         className, methodName, workflowId.ToString(),
                                         parameters == null ? message : StringUtil.Format(message, parameters),
-                                        sb.ToString(),// Job
+                                        sb.ToString(), // Job
                                         string.Empty, // Activity name
                                         string.Empty, // Activity GUID
                                         string.Empty);

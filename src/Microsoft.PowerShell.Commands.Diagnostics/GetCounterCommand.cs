@@ -16,9 +16,9 @@ using Microsoft.PowerShell.Commands.GetCounter;
 
 namespace Microsoft.PowerShell.Commands
 {
-    ///
+    /// <summary>
     /// Class that implements the Get-Counter cmdlet.
-    ///
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2109647")]
     public sealed class GetCounterCommand : PSCmdlet
     {
@@ -55,7 +55,10 @@ namespace Microsoft.PowerShell.Commands
                             Justification = "A string[] is required here because that is the type Powershell supports")]
         public string[] Counter
         {
-            get { return _counter; }
+            get
+            {
+                return _counter;
+            }
 
             set
             {
@@ -100,7 +103,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange((Int64)1, Int64.MaxValue)]
         public Int64 MaxSamples
         {
-            get { return _maxSamples; }
+            get
+            {
+                return _maxSamples;
+            }
 
             set
             {
@@ -164,11 +170,11 @@ namespace Microsoft.PowerShell.Commands
                        FrenchCultureId, new List<Tuple<char, char>>()
                                             {
                                                 // 'APOSTROPHE' to 'RIGHT SINGLE QUOTATION MARK'
-                                                new Tuple<char, char>((char) 0x0027, (char) 0x2019),
+                                                new Tuple<char, char>((char)0x0027, (char)0x2019),
                                                 // 'MODIFIER LETTER APOSTROPHE' to 'RIGHT SINGLE QUOTATION MARK'
-                                                new Tuple<char, char>((char) 0x02BC, (char) 0x2019),
+                                                new Tuple<char, char>((char)0x02BC, (char)0x2019),
                                                 // 'HEAVY SINGLE COMMA QUOTATION MARK ORNAMENT' to 'RIGHT SINGLE QUOTATION MARK'
-                                                new Tuple<char, char>((char) 0x275C, (char) 0x2019),
+                                                new Tuple<char, char>((char)0x275C, (char)0x2019),
                                             }
                    }
                 };
@@ -581,13 +587,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (string machine in ComputerName)
                     {
+                        string slashBeforePath = path.Length > 0 && path[0] == '\\' ? string.Empty : "\\";
                         if (machine.StartsWith("\\\\", StringComparison.OrdinalIgnoreCase))
                         {
-                            retColl.Add(machine + "\\" + path);
+                            retColl.Add(machine + slashBeforePath + path);
                         }
                         else
                         {
-                            retColl.Add("\\\\" + machine + "\\" + path);
+                            retColl.Add("\\\\" + machine + slashBeforePath + path);
                         }
                     }
                 }

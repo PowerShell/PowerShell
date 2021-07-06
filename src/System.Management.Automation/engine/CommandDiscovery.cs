@@ -65,7 +65,10 @@ namespace System.Management.Automation
         /// </summary>
         public ScriptBlock CommandScriptBlock
         {
-            get { return _scriptBlock; }
+            get
+            {
+                return _scriptBlock;
+            }
 
             set
             {
@@ -990,7 +993,7 @@ namespace System.Management.Automation
             {
                 if (!searcher.MoveNext())
                 {
-                    if (!commandName.Contains("-") && !commandName.Contains("\\"))
+                    if (!commandName.Contains('-') && !commandName.Contains('\\'))
                     {
                         discoveryTracer.WriteLine(
                             "The command [{0}] was not found, trying again with get- prepended",
@@ -1046,7 +1049,6 @@ namespace System.Management.Automation
             if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleAutoDiscoveryStart(commandName);
 
             CommandInfo result = null;
-            bool cleanupModuleAnalysisAppDomain = false;
             try
             {
                 // If commandName had a slash, it was module-qualified or path-qualified.
@@ -1068,8 +1070,6 @@ namespace System.Management.Automation
                     {
                         discoveryTracer.WriteLine("Executing non module-qualified search: {0}", commandName);
                         context.CommandDiscovery.RegisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
-
-                        cleanupModuleAnalysisAppDomain = context.TakeResponsibilityForModuleAnalysisAppDomain();
 
                         // Get the available module files, preferring modules from $PSHOME so that user modules don't
                         // override system modules during auto-loading
@@ -1135,10 +1135,6 @@ namespace System.Management.Automation
             finally
             {
                 context.CommandDiscovery.UnregisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
-                if (cleanupModuleAnalysisAppDomain)
-                {
-                    context.ReleaseResponsibilityForModuleAnalysisAppDomain();
-                }
             }
 
             if (etwEnabled) CommandDiscoveryEventSource.Log.ModuleAutoDiscoveryStop(commandName);

@@ -11,11 +11,13 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 using Microsoft.PowerShell;
+using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
 {
-    internal class SemanticChecks : AstVisitor2, IAstPostVisitHandler
+    internal sealed class SemanticChecks : AstVisitor2, IAstPostVisitHandler
     {
         private readonly Parser _parser;
 
@@ -100,7 +102,7 @@ namespace System.Management.Automation.Language
                     }
 
                     var voidConstraint =
-                        parameter.Attributes.OfType<TypeConstraintAst>().FirstOrDefault(t => typeof(void) == t.TypeName.GetReflectionType());
+                        parameter.Attributes.OfType<TypeConstraintAst>().FirstOrDefault(static t => typeof(void) == t.TypeName.GetReflectionType());
 
                     if (voidConstraint != null)
                     {
@@ -1386,7 +1388,7 @@ namespace System.Management.Automation.Language
                     else if (!keyword.Properties.ContainsKey(propName.Value))
                     {
                         IOrderedEnumerable<string> tableKeys = keyword.Properties.Keys
-                            .OrderBy(key => key, StringComparer.OrdinalIgnoreCase);
+                            .OrderBy(static key => key, StringComparer.OrdinalIgnoreCase);
 
                         _parser.ReportError(propName.Extent,
                             nameof(ParserStrings.InvalidInstanceProperty),
@@ -1405,7 +1407,10 @@ namespace System.Management.Automation.Language
             {
                 StringConstantExpressionAst nameAst = dynamicKeywordStatementAst.CommandElements[0] as StringConstantExpressionAst;
                 Diagnostics.Assert(nameAst != null, "nameAst should never be null");
-                if (!DscClassCache.SystemResourceNames.Contains(nameAst.Extent.Text.Trim()))
+                var extentText = nameAst.Extent.Text.Trim();
+                ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                var extentTextIsASystemResourceName = (dscSubsystem != null) ? dscSubsystem.IsSystemResourceName(extentText) : DscClassCache.SystemResourceNames.Contains(extentText);
+                if (!extentTextIsASystemResourceName)
                 {
                     if (configAst.ConfigurationType == ConfigurationType.Meta && !dynamicKeywordStatementAst.Keyword.IsMetaDSCResource())
                     {

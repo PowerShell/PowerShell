@@ -3670,7 +3670,7 @@ namespace System.Management.Automation
     /// <summary>
     /// /// This class is used in PSMemberInfoInternalCollection and ReadOnlyPSMemberInfoCollection.
     /// </summary>
-    internal class MemberMatch
+    internal static class MemberMatch
     {
         internal static WildcardPattern GetNamePattern(string name)
         {
@@ -4974,7 +4974,7 @@ namespace System.Management.Automation
         /// <returns>The enumerator for this collection.</returns>
         public override IEnumerator<T> GetEnumerator()
         {
-            return new Enumerator<T>(this);
+            return new Enumerator(this);
         }
 
         internal override T FirstOrDefault(MemberNamePredicate predicate)
@@ -5028,17 +5028,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Enumerable for this class.
         /// </summary>
-        internal struct Enumerator<S> : IEnumerator<S> where S : PSMemberInfo
+        internal struct Enumerator : IEnumerator<T>
         {
-            private S _current;
+            private T _current;
             private int _currentIndex;
-            private readonly PSMemberInfoInternalCollection<S> _allMembers;
+            private readonly PSMemberInfoInternalCollection<T> _allMembers;
 
             /// <summary>
             /// Constructs this instance to enumerate over members.
             /// </summary>
             /// <param name="integratingCollection">Members we are enumerating.</param>
-            internal Enumerator(PSMemberInfoIntegratingCollection<S> integratingCollection)
+            internal Enumerator(PSMemberInfoIntegratingCollection<T> integratingCollection)
             {
                 using (PSObject.MemberResolution.TraceScope("Enumeration Start"))
                 {
@@ -5070,7 +5070,7 @@ namespace System.Management.Automation
             {
                 _currentIndex++;
 
-                S member = null;
+                T member = null;
                 while (_currentIndex < _allMembers.Count)
                 {
                     member = _allMembers[_currentIndex];
@@ -5096,7 +5096,7 @@ namespace System.Management.Automation
             /// Current PSMemberInfo in the enumeration.
             /// </summary>
             /// <exception cref="ArgumentException">For invalid arguments.</exception>
-            S IEnumerator<S>.Current
+            T IEnumerator<T>.Current
             {
                 get
                 {
@@ -5109,7 +5109,7 @@ namespace System.Management.Automation
                 }
             }
 
-            object IEnumerator.Current => ((IEnumerator<S>)this).Current;
+            object IEnumerator.Current => ((IEnumerator<T>)this).Current;
 
             void IEnumerator.Reset()
             {

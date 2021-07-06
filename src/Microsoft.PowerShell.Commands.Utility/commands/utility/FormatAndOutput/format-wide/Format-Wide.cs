@@ -54,7 +54,10 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            set { _autosize = value; }
+            set
+            {
+                _autosize = value;
+            }
         }
 
         private bool? _autosize = null;
@@ -74,7 +77,10 @@ namespace Microsoft.PowerShell.Commands
                 return -1;
             }
 
-            set { _column = value; }
+            set
+            {
+                _column = value;
+            }
         }
 
         private int? _column = null;

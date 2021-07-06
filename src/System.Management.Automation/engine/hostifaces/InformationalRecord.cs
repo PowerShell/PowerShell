@@ -59,7 +59,10 @@ namespace System.Management.Automation
                 return _message;
             }
 
-            set { _message = value; }
+            set
+            {
+                _message = value;
+            }
         }
 
         /// <summary>

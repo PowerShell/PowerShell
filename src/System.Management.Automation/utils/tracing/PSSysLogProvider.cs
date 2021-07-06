@@ -19,7 +19,7 @@ namespace System.Management.Automation.Tracing
         private static readonly SysLogProvider s_provider;
 
         // by default, do not include channel bits
-        internal const PSKeyword DefaultKeywords = (PSKeyword) (0x00FFFFFFFFFFFFFF);
+        internal const PSKeyword DefaultKeywords = (PSKeyword)(0x00FFFFFFFFFFFFFF);
 
         // the default enabled channel(s)
         internal const PSChannel DefaultChannels = PSChannel.Operational;

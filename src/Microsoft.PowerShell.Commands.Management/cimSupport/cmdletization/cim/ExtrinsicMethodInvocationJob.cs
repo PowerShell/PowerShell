@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             if (cmdletOutput.Count == 1)
             {
-                var singleOutputParameter = cmdletOutput.Values.Single();
+                var singleOutputParameter = cmdletOutput.Values.First();
                 if (singleOutputParameter.Value == null)
                 {
                     return;

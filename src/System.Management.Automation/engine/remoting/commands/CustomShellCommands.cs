@@ -1955,7 +1955,10 @@ else
         [Parameter(Position = 1, Mandatory = true, ParameterSetName = PSSessionConfigurationCommandBase.AssemblyNameParameterSetName)]
         public string AssemblyName
         {
-            get { return assemblyName; }
+            get
+            {
+                return assemblyName;
+            }
 
             set
             {
@@ -1977,7 +1980,10 @@ else
         [Parameter(ParameterSetName = AssemblyNameParameterSetName)]
         public string ApplicationBase
         {
-            get { return applicationBase; }
+            get
+            {
+                return applicationBase;
+            }
 
             set
             {
@@ -1997,7 +2003,10 @@ else
         [Parameter(Position = 2, Mandatory = true, ParameterSetName = PSSessionConfigurationCommandBase.AssemblyNameParameterSetName)]
         public string ConfigurationTypeName
         {
-            get { return configurationTypeName; }
+            get
+            {
+                return configurationTypeName;
+            }
 
             set
             {
@@ -2046,7 +2055,10 @@ else
                 return ApartmentState.Unknown;
             }
 
-            set { threadAptState = value; }
+            set
+            {
+                threadAptState = value;
+            }
         }
 
         internal ApartmentState? threadAptState;
@@ -2067,7 +2079,10 @@ else
                 return PSThreadOptions.UseCurrentThread;
             }
 
-            set { threadOptions = value; }
+            set
+            {
+                threadOptions = value;
+            }
         }
 
         internal PSThreadOptions? threadOptions;
@@ -2078,7 +2093,10 @@ else
         [Parameter]
         public PSSessionConfigurationAccessMode AccessMode
         {
-            get { return _accessMode; }
+            get
+            {
+                return _accessMode;
+            }
 
             set
             {
@@ -2117,7 +2135,10 @@ else
         [Parameter()]
         public string StartupScript
         {
-            get { return configurationScript; }
+            get
+            {
+                return configurationScript;
+            }
 
             set
             {
@@ -2137,7 +2158,10 @@ else
         [AllowNull]
         public double? MaximumReceivedDataSizePerCommandMB
         {
-            get { return maxCommandSizeMB; }
+            get
+            {
+                return maxCommandSizeMB;
+            }
 
             set
             {
@@ -2164,7 +2188,10 @@ else
         [AllowNull]
         public double? MaximumReceivedObjectSizeMB
         {
-            get { return maxObjectSizeMB; }
+            get
+            {
+                return maxObjectSizeMB;
+            }
 
             set
             {
@@ -2191,7 +2218,10 @@ else
         [Parameter()]
         public string SecurityDescriptorSddl
         {
-            get { return sddl; }
+            get
+            {
+                return sddl;
+            }
 
             set
             {
@@ -2221,7 +2251,10 @@ else
         [Parameter()]
         public SwitchParameter ShowSecurityDescriptorUI
         {
-            get { return _showUI; }
+            get
+            {
+                return _showUI;
+            }
 
             set
             {
@@ -2273,7 +2306,10 @@ else
         [ValidateNotNullOrEmpty]
         public Version PSVersion
         {
-            get { return psVersion; }
+            get
+            {
+                return psVersion;
+            }
 
             set
             {
@@ -2366,7 +2402,7 @@ else
                         // Add this check after checking if it a path
                         if (!string.IsNullOrEmpty(modulepath.Trim()))
                         {
-                            if ((modulepath.Contains("\\") || modulepath.Contains(":")) &&
+                            if ((modulepath.Contains('\\') || modulepath.Contains(':')) &&
                                 !(Directory.Exists(modulepath) || File.Exists(modulepath)))
                             {
                                 throw new ArgumentException(
@@ -3955,7 +3991,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
 function Test-WinRMQuickConfigNeeded
 {{
-    # see issue #11005 - Function Test-WinRMQuickConfigNeeded needs to be updated: 
+    # see issue #11005 - Function Test-WinRMQuickConfigNeeded needs to be updated:
     # 1) currently this function always returns $True
     # 2) checking for a firewall rule using Get-NetFirewallRule engages WinCompat code and has significant perf impact on Enable-PSRemoting; maybe change to Get-CimInstance -ClassName MSFT_NetFirewallRule
     return $True
@@ -5226,7 +5262,7 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
             }
 
             // The validator that will be applied to the role lookup
-            Func<string, bool> validator = (role) => true;
+            Func<string, bool> validator = static (role) => true;
 
             if (!string.IsNullOrEmpty(this.Username))
             {

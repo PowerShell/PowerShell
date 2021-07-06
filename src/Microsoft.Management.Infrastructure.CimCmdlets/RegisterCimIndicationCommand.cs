@@ -50,7 +50,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CimBaseCommand.ClassNameComputerSet)]
         public string ClassName
         {
-            get { return className; }
+            get
+            {
+                return className;
+            }
 
             set
             {
@@ -75,7 +78,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CimBaseCommand.QueryExpressionComputerSet)]
         public string Query
         {
-            get { return query; }
+            get
+            {
+                return query;
+            }
 
             set
             {
@@ -97,7 +103,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ParameterSetName = CimBaseCommand.QueryExpressionSessionSet)]
         public string QueryDialect
         {
-            get { return queryDialect; }
+            get
+            {
+                return queryDialect;
+            }
 
             set
             {
@@ -129,7 +138,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CimBaseCommand.ClassNameSessionSet)]
         public CimSession CimSession
         {
-            get { return cimSession; }
+            get
+            {
+                return cimSession;
+            }
 
             set
             {
@@ -150,7 +162,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ParameterSetName = CimBaseCommand.ClassNameComputerSet)]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {

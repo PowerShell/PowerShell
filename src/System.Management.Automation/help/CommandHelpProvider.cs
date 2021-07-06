@@ -1018,7 +1018,7 @@ namespace System.Management.Automation
             {
                 if (decoratedSearch)
                 {
-                    if (target.IndexOf(StringLiterals.CommandVerbNounSeparator) >= 0)
+                    if (target.Contains(StringLiterals.CommandVerbNounSeparator))
                     {
                         patternList.Add(target + "*");
                     }
@@ -1352,7 +1352,7 @@ namespace System.Management.Automation
     /// Legally, user-defined Help Data should be within the same file as the corresponding
     /// commandHelp and it should appear after the commandHelp.
     /// </summary>
-    internal class UserDefinedHelpData
+    internal sealed class UserDefinedHelpData
     {
         private UserDefinedHelpData()
         {

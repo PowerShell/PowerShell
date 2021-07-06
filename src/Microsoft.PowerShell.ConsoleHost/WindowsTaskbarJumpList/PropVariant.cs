@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell
             Dispose();
         }
 
-        private class PropVariantNativeMethods
+        private static class PropVariantNativeMethods
         {
             [DllImport("Ole32.dll", PreserveSig = false)]
             internal static extern void PropVariantClear([In, Out] PropVariant pvar);

@@ -669,7 +669,10 @@ namespace System.Management.Automation
         /// </summary>
         public string PSJobTypeName
         {
-            get { return _jobTypeName; }
+            get
+            {
+                return _jobTypeName;
+            }
 
             protected internal set
             {
@@ -1740,8 +1743,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal PSRemotingJob(string[] computerNames,
                         List<IThrottleOperation> computerNameHelpers, string remoteCommand, string name)
-            :
-            this(computerNames, computerNameHelpers, remoteCommand, 0, name)
+            : this(computerNames, computerNameHelpers, remoteCommand, 0, name)
         { }
 
         /// <summary>
@@ -1758,8 +1760,7 @@ namespace System.Management.Automation
         /// </param>
         internal PSRemotingJob(PSSession[] remoteRunspaceInfos,
                         List<IThrottleOperation> runspaceHelpers, string remoteCommand, string name)
-            :
-            this(remoteRunspaceInfos, runspaceHelpers, remoteCommand, 0, name)
+            : this(remoteRunspaceInfos, runspaceHelpers, remoteCommand, 0, name)
         { }
 
         /// <summary>
@@ -2286,7 +2287,10 @@ namespace System.Management.Automation
         /// </summary>
         internal bool HideComputerName
         {
-            get { return _hideComputerName; }
+            get
+            {
+                return _hideComputerName;
+            }
 
             set
             {
@@ -2934,7 +2938,10 @@ namespace System.Management.Automation
         /// </summary>
         internal bool HideComputerName
         {
-            get { return _hideComputerName; }
+            get
+            {
+                return _hideComputerName;
+            }
 
             set
             {

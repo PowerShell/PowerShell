@@ -22,7 +22,8 @@ namespace Microsoft.PowerShell.Commands
         /// Initializes a new instance of the HelpNotFoundException class with the give help topic.
         /// </summary>
         /// <param name="helpTopic">The help topic for which help is not found.</param>
-        public HelpNotFoundException(string helpTopic) : base()
+        public HelpNotFoundException(string helpTopic)
+            : base()
         {
             _helpTopic = helpTopic;
             CreateErrorRecord();
@@ -31,7 +32,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Initializes a new instance of the HelpNotFoundException class.
         /// </summary>
-        public HelpNotFoundException() : base()
+        public HelpNotFoundException()
+            : base()
         {
             CreateErrorRecord();
         }
@@ -42,8 +44,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="helpTopic">The help topic for which help is not found.</param>
         /// <param name="innerException">The inner exception.</param>
-        public HelpNotFoundException(string helpTopic, Exception innerException) :
-                base((innerException != null) ? innerException.Message : string.Empty, innerException)
+        public HelpNotFoundException(string helpTopic, Exception innerException)
+            : base(
+                  (innerException != null) ? innerException.Message : string.Empty,
+                  innerException)
         {
             _helpTopic = helpTopic;
             CreateErrorRecord();

@@ -9,7 +9,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Threading;
 
-namespace System.Management.Automation.Subsystem
+namespace System.Management.Automation.Subsystem.Prediction
 {
     /// <summary>
     /// Interface for implementing a predictor plugin.
@@ -27,41 +27,131 @@ namespace System.Management.Automation.Subsystem
         SubsystemKind ISubsystem.Kind => SubsystemKind.CommandPredictor;
 
         /// <summary>
-        /// Gets a value indicating whether the predictor supports early processing.
+        /// Get the predictive suggestions. It indicates the start of a suggestion rendering session.
         /// </summary>
-        bool SupportEarlyProcessing { get; }
+        /// <param name="client">Represents the client that initiates the call.</param>
+        /// <param name="context">The <see cref="PredictionContext"/> object to be used for prediction.</param>
+        /// <param name="cancellationToken">The cancellation token to cancel the prediction.</param>
+        /// <returns>An instance of <see cref="SuggestionPackage"/>.</returns>
+        SuggestionPackage GetSuggestion(PredictionClient client, PredictionContext context, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Gets a value indicating whether the predictor accepts feedback about the previous suggestion.
+        /// Gets a value indicating whether the predictor accepts a specific kind of feedback.
         /// </summary>
-        bool AcceptFeedback { get; }
+        /// <param name="client">Represents the client that initiates the call.</param>
+        /// <param name="feedback">A specific type of feedback.</param>
+        /// <returns>True or false, to indicate whether the specific feedback is accepted.</returns>
+        bool CanAcceptFeedback(PredictionClient client, PredictorFeedbackKind feedback);
+
+        /// <summary>
+        /// One or more suggestions provided by the predictor were displayed to the user.
+        /// </summary>
+        /// <param name="client">Represents the client that initiates the call.</param>
+        /// <param name="session">The mini-session where the displayed suggestions came from.</param>
+        /// <param name="countOrIndex">
+        /// When the value is greater than 0, it's the number of displayed suggestions from the list returned in <paramref name="session"/>, starting from the index 0.
+        /// When the value is less than or equal to 0, it means a single suggestion from the list got displayed, and the index is the absolute value.
+        /// </param>
+        void OnSuggestionDisplayed(PredictionClient client, uint session, int countOrIndex);
+
+        /// <summary>
+        /// The suggestion provided by the predictor was accepted.
+        /// </summary>
+        /// <param name="client">Represents the client that initiates the call.</param>
+        /// <param name="session">Represents the mini-session where the accepted suggestion came from.</param>
+        /// <param name="acceptedSuggestion">The accepted suggestion text.</param>
+        void OnSuggestionAccepted(PredictionClient client, uint session, string acceptedSuggestion);
 
         /// <summary>
         /// A command line was accepted to execute.
         /// The predictor can start processing early as needed with the latest history.
         /// </summary>
+        /// <param name="client">Represents the client that initiates the call.</param>
         /// <param name="history">History command lines provided as references for prediction.</param>
-        void StartEarlyProcessing(IReadOnlyList<string> history);
+        void OnCommandLineAccepted(PredictionClient client, IReadOnlyList<string> history);
 
         /// <summary>
-        /// The suggestion given by the predictor was accepted.
+        /// A command line was done execution.
         /// </summary>
-        /// <param name="acceptedSuggestion">The accepted suggestion text.</param>
-        void OnSuggestionAccepted(string acceptedSuggestion);
+        /// <param name="client">Represents the client that initiates the call.</param>
+        /// <param name="commandLine">The last accepted command line.</param>
+        /// <param name="success">Shows whether the execution was successful.</param>
+        void OnCommandLineExecuted(PredictionClient client, string commandLine, bool success);
+    }
+
+    /// <summary>
+    /// Kinds of feedback a predictor can choose to accept.
+    /// </summary>
+    public enum PredictorFeedbackKind
+    {
+        /// <summary>
+        /// Feedback when one or more suggestions are displayed to the user.
+        /// </summary>
+        SuggestionDisplayed,
 
         /// <summary>
-        /// Get the predictive suggestions.
+        /// Feedback when a suggestion is accepted by the user.
         /// </summary>
-        /// <param name="context">The <see cref="PredictionContext"/> object to be used for prediction.</param>
-        /// <param name="cancellationToken">The cancellation token to cancel the prediction.</param>
-        /// <returns>A list of predictive suggestions.</returns>
-        List<PredictiveSuggestion>? GetSuggestion(PredictionContext context, CancellationToken cancellationToken);
+        SuggestionAccepted,
+
+        /// <summary>
+        /// Feedback when a command line is accepted by the user.
+        /// </summary>
+        CommandLineAccepted,
+
+        /// <summary>
+        /// Feedback when the accepted command line finishes its execution.
+        /// </summary>
+        CommandLineExecuted,
+    }
+
+    /// <summary>
+    /// Kinds of prediction clients.
+    /// </summary>
+    public enum PredictionClientKind
+    {
+        /// <summary>
+        /// A terminal client, representing the command-line experience.
+        /// </summary>
+        Terminal,
+
+        /// <summary>
+        /// An editor client, representing the editor experience.
+        /// </summary>
+        Editor,
+    }
+
+    /// <summary>
+    /// The class represents a client that interacts with predictors.
+    /// </summary>
+    public sealed class PredictionClient
+    {
+        /// <summary>
+        /// Gets the client name.
+        /// </summary>
+        public string Name { get; }
+
+        /// <summary>
+        /// Gets the client kind.
+        /// </summary>
+        public PredictionClientKind Kind { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PredictionClient"/> class.
+        /// </summary>
+        /// <param name="name">Name of the interactive client.</param>
+        /// <param name="kind">Kind of the interactive client.</param>
+        public PredictionClient(string name, PredictionClientKind kind)
+        {
+            Name = name;
+            Kind = kind;
+        }
     }
 
     /// <summary>
     /// Context information about the user input.
     /// </summary>
-    public class PredictionContext
+    public sealed class PredictionContext
     {
         /// <summary>
         /// Gets the abstract syntax tree (AST) generated from parsing the user input.
@@ -158,6 +248,49 @@ namespace System.Management.Automation.Subsystem
 
             SuggestionText = suggestion;
             ToolTip = toolTip;
+        }
+    }
+
+    /// <summary>
+    /// A package returned from <see cref="ICommandPredictor.GetSuggestion"/>.
+    /// </summary>
+    public struct SuggestionPackage
+    {
+        /// <summary>
+        /// Gets the mini-session that represents a specific invocation to <see cref="ICommandPredictor.GetSuggestion"/>.
+        /// When it's not specified, it's considered by a client that the predictor doesn't expect feedback.
+        /// </summary>
+        public uint? Session { get; }
+
+        /// <summary>
+        /// Gets the suggestion entries returned from that mini-session.
+        /// </summary>
+        public List<PredictiveSuggestion>? SuggestionEntries { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SuggestionPackage"/> struct without providing a session id.
+        /// Note that, when a session id is not specified, it's considered by a client that the predictor doesn't expect feedback.
+        /// </summary>
+        /// <param name="suggestionEntries">The suggestions to return.</param>
+        public SuggestionPackage(List<PredictiveSuggestion> suggestionEntries)
+        {
+            Requires.NotNullOrEmpty(suggestionEntries, nameof(suggestionEntries));
+
+            Session = null;
+            SuggestionEntries = suggestionEntries;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SuggestionPackage"/> struct with the mini-session id and the suggestions.
+        /// </summary>
+        /// <param name="session">The mini-session where suggestions came from.</param>
+        /// <param name="suggestionEntries">The suggestions to return.</param>
+        public SuggestionPackage(uint session, List<PredictiveSuggestion> suggestionEntries)
+        {
+            Requires.NotNullOrEmpty(suggestionEntries, nameof(suggestionEntries));
+
+            Session = session;
+            SuggestionEntries = suggestionEntries;
         }
     }
 }

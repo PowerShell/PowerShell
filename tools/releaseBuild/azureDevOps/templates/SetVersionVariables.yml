@@ -2,8 +2,17 @@ parameters:
   ReleaseTagVar: v6.2.0
   ReleaseTagVarName: ReleaseTagVar
   CreateJson: 'no'
+  UseJson: 'yes'
 
 steps:
+- ${{ if eq(parameters['UseJson'],'yes') }}:
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      artifactName: 'BuildInfoJson'
+      itemPattern: '**/*.json'
+      downloadPath: '$(System.ArtifactsDirectory)'
+    displayName: Download Build Info Json
+
 - powershell: |
     $path = "./build.psm1"
 
@@ -25,7 +34,7 @@ steps:
   displayName: 'Set repo Root'
 
 - powershell: |
-    $createJson = ("${{ parameters.ReleaseTagVarName }}" -ne "no")
+    $createJson = ("${{ parameters.CreateJson }}" -ne "no")
     $releaseTag = & "$env:REPOROOT/tools/releaseBuild/setReleaseTag.ps1" -ReleaseTag ${{ parameters.ReleaseTagVar }} -Variable "${{ parameters.ReleaseTagVarName }}" -CreateJson:$createJson
     $version = $releaseTag.Substring(1)
     $vstsCommandString = "vso[task.setvariable variable=Version]$version"

@@ -172,13 +172,16 @@ namespace System.Management.Automation
         }
     }
 
-    internal class UsingExpressionAstSearcher : AstSearcher
+    internal sealed class UsingExpressionAstSearcher : AstSearcher
     {
-        internal static IEnumerable<Ast> FindAllUsingExpressionExceptForWorkflow(Ast ast)
+        internal static IEnumerable<Ast> FindAllUsingExpressions(Ast ast)
         {
             Diagnostics.Assert(ast != null, "caller to verify arguments");
 
-            var searcher = new UsingExpressionAstSearcher(astParam => astParam is UsingExpressionAst, stopOnFirst: false, searchNestedScriptBlocks: true);
+            var searcher = new UsingExpressionAstSearcher(
+                callback: astParam => astParam is UsingExpressionAst,
+                stopOnFirst: false,
+                searchNestedScriptBlocks: true);
             ast.InternalVisit(searcher);
             return searcher.Results;
         }
@@ -204,7 +207,7 @@ namespace System.Management.Automation
     /// Converts a ScriptBlock to a PowerShell object by traversing the
     /// given Ast.
     /// </summary>
-    internal class ScriptBlockToPowerShellConverter
+    internal sealed class ScriptBlockToPowerShellConverter
     {
         private readonly PowerShell _powershell;
         private ExecutionContext _context;
@@ -314,6 +317,145 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Get using values as dictionary for the Foreach-Object parallel cmdlet.
+        /// Ignore any using expressions that are associated with inner nested Foreach-Object parallel calls,
+        /// since they are only effective in the nested call scope and not the current outer scope.
+        /// </summary>
+        /// <param name = "scriptBlock">Scriptblock to search.</param>
+        /// <param name = "isTrustedInput">True when input is trusted.</param>
+        /// <param name = "context">Execution context.</param>
+        /// <param name = "foreachNames">List of foreach command names and aliases.</param>
+        /// <returns>Dictionary of using variable map.</returns>
+        internal static Dictionary<string, object> GetUsingValuesForEachParallel(
+            ScriptBlock scriptBlock,
+            bool isTrustedInput,
+            ExecutionContext context,
+            string[] foreachNames)
+        {
+            // Using variables for Foreach-Object -Parallel use are restricted to be within the 
+            // Foreach-Object -Parallel call scope. This will filter the using variable map to variables 
+            // only within the current (outer) Foreach-Object -Parallel call scope.
+            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(scriptBlock.Ast).ToList();
+            UsingExpressionAst usingAst = null;
+            var usingValueMap = new Dictionary<string, object>(usingAsts.Count);
+            Version oldStrictVersion = null;
+            try
+            {
+                if (context != null)
+                {
+                    oldStrictVersion = context.EngineSessionState.CurrentScope.StrictModeVersion;
+                    context.EngineSessionState.CurrentScope.StrictModeVersion = PSVersionInfo.PSVersion;
+                }
+
+                for (int i = 0; i < usingAsts.Count; ++i)
+                {
+                    usingAst = (UsingExpressionAst)usingAsts[i];
+                    if (IsInForeachParallelCallingScope(usingAst, foreachNames))
+                    {
+                        var value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
+                        string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
+                        usingValueMap.TryAdd(usingAstKey, value);
+                    }
+                }
+            }
+            catch (RuntimeException rte)
+            {
+                if (rte.ErrorRecord.FullyQualifiedErrorId.Equals("VariableIsUndefined", StringComparison.Ordinal))
+                {
+                    throw InterpreterError.NewInterpreterException(
+                        targetObject: null, 
+                        exceptionType: typeof(RuntimeException),
+                        errorPosition: usingAst.Extent, 
+                        resourceIdAndErrorId: "UsingVariableIsUndefined",
+                        resourceString: AutomationExceptions.UsingVariableIsUndefined, 
+                        args: rte.ErrorRecord.TargetObject);
+                }
+            }
+            finally
+            {
+                if (context != null)
+                {
+                    context.EngineSessionState.CurrentScope.StrictModeVersion = oldStrictVersion;
+                }
+            }
+
+            return usingValueMap;
+        }
+
+        /// <summary>
+        /// Walks the using Ast to verify it is used within a foreach-object -parallel command
+        /// and parameter set scope, and not from within a nested foreach-object -parallel call.
+        /// </summary>
+        /// <param name="usingAst">Using Ast to check.</param>
+        /// <param name-"foreachNames">List of foreach-object command names.</param>
+        /// <returns>True if using expression is in current call scope.</returns>
+        private static bool IsInForeachParallelCallingScope(
+            UsingExpressionAst usingAst,
+            string[] foreachNames)
+        {
+            /*
+                Example:
+                $Test1 = "Hello"
+                1 | ForEach-Object -Parallel { 
+                   $using:Test1
+                   $Test2 = "Goodbye"
+                   1 | ForEach-Object -Parallel {
+                       $using:Test1    # Invalid using scope
+                       $using:Test2    # Valid using scope
+                   }
+                }
+            */
+            Diagnostics.Assert(usingAst != null, "usingAst argument cannot be null.");
+
+            // Search up the parent Ast chain for 'Foreach-Object -Parallel' commands.
+            Ast currentParent = usingAst.Parent;
+            int foreachNestedCount = 0;
+            while (currentParent != null)
+            {
+                // Look for Foreach-Object outer commands
+                if (currentParent is CommandAst commandAst)
+                {
+                    foreach (var commandElement in commandAst.CommandElements)
+                    {
+                        if (commandElement is StringConstantExpressionAst commandName)
+                        {
+                            bool found = false;
+                            foreach (var foreachName in foreachNames)
+                            {
+                                if (commandName.Value.Equals(foreachName, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (found)
+                            {
+                                // Verify this is foreach-object with parallel parameter set.
+                                var bindingResult = StaticParameterBinder.BindCommand(commandAst);
+                                if (bindingResult.BoundParameters.ContainsKey("Parallel"))
+                                {
+                                    foreachNestedCount++;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (foreachNestedCount > 1)
+                {
+                    // This using expression Ast is outside the original calling scope.
+                    return false;
+                }
+
+                currentParent = currentParent.Parent;
+            }
+
+            return foreachNestedCount == 1;
+        }
+
+        /// <summary>
         /// Get using values in the dictionary form.
         /// </summary>
         internal static Dictionary<string, object> GetUsingValuesAsDictionary(ScriptBlock scriptBlock, bool isTrustedInput, ExecutionContext context, Dictionary<string, object> variables)
@@ -343,11 +485,16 @@ namespace System.Management.Automation
         /// A tuple of the dictionary-form and the array-form using values.
         /// If the array-form using value is null, then there are UsingExpressions used in different scopes.
         /// </returns>
-        private static Tuple<Dictionary<string, object>, object[]> GetUsingValues(Ast body, bool isTrustedInput, ExecutionContext context, Dictionary<string, object> variables, bool filterNonUsingVariables)
+        private static Tuple<Dictionary<string, object>, object[]> GetUsingValues(
+            Ast body,
+            bool isTrustedInput,
+            ExecutionContext context,
+            Dictionary<string, object> variables,
+            bool filterNonUsingVariables)
         {
             Diagnostics.Assert(context != null || variables != null, "can't retrieve variables with no context and no variables");
 
-            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow(body).ToList();
+            var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(body).ToList();
             var usingValueArray = new object[usingAsts.Count];
             var usingValueMap = new Dictionary<string, object>(usingAsts.Count);
             HashSet<string> usingVarNames = (variables != null && filterNonUsingVariables) ? new HashSet<string>() : null;
@@ -456,7 +603,7 @@ namespace System.Management.Automation
         /// Check if the given UsingExpression is in a different scope from the previous UsingExpression that we analyzed.
         /// </summary>
         /// <remarks>
-        /// Note that the value of <paramref name="usingExpr"/> is retrieved by calling 'UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow'.
+        /// Note that the value of <paramref name="usingExpr"/> is retrieved by calling 'UsingExpressionAstSearcher.FindAllUsingExpressions'.
         /// So <paramref name="usingExpr"/> is guaranteed not inside a workflow.
         /// </remarks>
         /// <param name="usingExpr">The UsingExpression to analyze.</param>

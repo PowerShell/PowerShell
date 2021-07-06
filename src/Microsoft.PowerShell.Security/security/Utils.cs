@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell
         {
             long size = 0;
 
-            using (FileStream fs = new FileStream(filePath, FileMode.Open))
+            using (FileStream fs = new(filePath, FileMode.Open))
             {
                 size = fs.Length;
             }
@@ -63,14 +63,13 @@ namespace Microsoft.PowerShell
                     args
                 );
 
-            FileNotFoundException e =
-                new FileNotFoundException(message);
+            FileNotFoundException e = new(message);
 
-            ErrorRecord er =
-                new ErrorRecord(e,
-                                errorId,
-                                ErrorCategory.ObjectNotFound,
-                                null);
+            ErrorRecord er = new(
+                e,
+                errorId,
+                ErrorCategory.ObjectNotFound,
+                targetObject: null);
 
             return er;
         }
@@ -84,14 +83,13 @@ namespace Microsoft.PowerShell
         ErrorRecord CreatePathNotFoundErrorRecord(string path,
                                                   string errorId)
         {
-            ItemNotFoundException e =
-                new ItemNotFoundException(path, "PathNotFound", SessionStateStrings.PathNotFound);
+            ItemNotFoundException e = new(path, "PathNotFound", SessionStateStrings.PathNotFound);
 
-            ErrorRecord er =
-                new ErrorRecord(e,
-                                errorId,
-                                ErrorCategory.ObjectNotFound,
-                                null);
+            ErrorRecord er = new(
+                e,
+                errorId,
+                ErrorCategory.ObjectNotFound,
+                targetObject: null);
 
             return er;
         }
@@ -109,14 +107,13 @@ namespace Microsoft.PowerShell
         {
             string message = StringUtil.Format(resourceStr, args);
 
-            NotSupportedException e =
-                new NotSupportedException(message);
+            NotSupportedException e = new(message);
 
-            ErrorRecord er =
-                new ErrorRecord(e,
-                                errorId,
-                                ErrorCategory.NotImplemented,
-                                null);
+            ErrorRecord er = new(
+                e,
+                errorId,
+                ErrorCategory.NotImplemented,
+                targetObject: null);
 
             return er;
         }
@@ -130,11 +127,11 @@ namespace Microsoft.PowerShell
         ErrorRecord CreateInvalidArgumentErrorRecord(Exception e,
                                                      string errorId)
         {
-            ErrorRecord er =
-                new ErrorRecord(e,
-                                errorId,
-                                ErrorCategory.InvalidArgument,
-                                null);
+            ErrorRecord er = new(
+                e,
+                errorId,
+                ErrorCategory.InvalidArgument,
+                targetObject: null);
 
             return er;
         }

@@ -50,7 +50,10 @@ namespace Microsoft.PowerShell.Commands
                      System.Management.Automation.Runspaces.TypeData.CodeMethod, IgnoreCase = true)]
         public PSMemberTypes MemberType
         {
-            get { return _memberType; }
+            get
+            {
+                return _memberType;
+            }
 
             set
             {

@@ -302,7 +302,8 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public PSCryptoException() : this(0, new StringBuilder(string.Empty)) { }
+        public PSCryptoException()
+            : this(0, new StringBuilder(string.Empty)) { }
 
         /// <summary>
         /// Constructor that will be used from within CryptoUtils.
@@ -320,7 +321,8 @@ namespace System.Management.Automation.Internal
         /// Constructor with just message but no inner exception.
         /// </summary>
         /// <param name="message">Error message associated with this failure.</param>
-        public PSCryptoException(string message) : this(message, null) { }
+        public PSCryptoException(string message)
+            : this(message, null) { }
 
         /// <summary>
         /// Constructor with inner exception.
@@ -329,8 +331,8 @@ namespace System.Management.Automation.Internal
         /// <param name="innerException">Inner exception.</param>
         /// <remarks>This constructor is currently not called
         /// explicitly from crypto utils</remarks>
-        public PSCryptoException(string message, Exception innerException) :
-            base(message, innerException)
+        public PSCryptoException(string message, Exception innerException)
+            : base(message, innerException)
         {
             _errorCode = unchecked((uint)-1);
         }
@@ -343,8 +345,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>Currently no custom type-specific serialization logic is
         /// implemented</remarks>
         protected PSCryptoException(SerializationInfo info, StreamingContext context)
-            :
-            base(info, context)
+            : base(info, context)
         {
             _errorCode = unchecked(0xFFFFFFF);
             Dbg.Assert(false, "type-specific serialization logic not implemented and so this constructor should not be called");
@@ -369,7 +370,7 @@ namespace System.Management.Automation.Internal
     /// A reverse compatible implementation of session key exchange. This supports the CAPI
     /// keyblob formats but uses dotnet std abstract AES and RSA classes for all crypto operations.
     /// </summary>
-    internal class PSRSACryptoServiceProvider : IDisposable
+    internal sealed class PSRSACryptoServiceProvider : IDisposable
     {
         #region Private Members
 
@@ -611,7 +612,7 @@ namespace System.Management.Automation.Internal
             System.GC.SuppressFinalize(this);
         }
 
-        protected void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing)
             {

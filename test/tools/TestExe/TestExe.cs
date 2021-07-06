@@ -48,7 +48,7 @@ namespace TestExe
         {
             for (int i = 1; i < args.Length; i++)
             {
-                Console.WriteLine("Arg {0} is <{1}>", i-1, args[i]);
+                Console.WriteLine("Arg {0} is <{1}>", i - 1, args[i]);
             }
         }
 
@@ -64,7 +64,7 @@ namespace TestExe
                 for (uint i = 0; i < num; i++)
                 {
                     Process child = new Process();
-                    child.StartInfo.FileName = Process.GetCurrentProcess().MainModule.FileName;
+                    child.StartInfo.FileName = Environment.ProcessPath;
                     child.StartInfo.Arguments = "-createchildprocess";
                     child.Start();
                 }

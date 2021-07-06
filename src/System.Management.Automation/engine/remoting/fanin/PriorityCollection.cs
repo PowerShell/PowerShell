@@ -88,7 +88,10 @@ namespace System.Management.Automation.Remoting
 
         internal Fragmentor Fragmentor
         {
-            get { return _fragmentor; }
+            get
+            {
+                return _fragmentor;
+            }
 
             set
             {

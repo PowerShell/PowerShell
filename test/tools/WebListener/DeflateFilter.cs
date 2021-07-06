@@ -11,7 +11,7 @@ namespace mvc.Controllers
 {
     internal sealed class DeflateFilter : ResultFilterAttribute
     {
-        public override async Task OnResultExecutionAsync( ResultExecutingContext context, ResultExecutionDelegate next)
+        public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
             var httpContext = context.HttpContext;
             using (var memoryStream = new MemoryStream())

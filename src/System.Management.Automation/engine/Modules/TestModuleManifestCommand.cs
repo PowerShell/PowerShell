@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
 
         // All module extensions except ".psd1" are valid RootModule extensions
         private static readonly IReadOnlyList<string> s_validRootModuleExtensions = ModuleIntrinsics.PSModuleExtensions
-            .Where(ext => !string.Equals(ext, StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
+            .Where(static ext => !string.Equals(ext, StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
             .ToArray();
 
         /// <summary>

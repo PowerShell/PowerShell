@@ -45,7 +45,8 @@ jobs:
     displayName: Determine container name
 
   - pwsh: |
-      $zipFile = (Get-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/PowerShell*-win-x64.zip")
+      $zipFile = Get-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/PowerShell*-win-x64.zip" -Exclude *-symbols-*
+      Write-Verbose -Verbose "zipFile: $zipFile"
       Expand-Archive -Path $zipFile -Destination "$ENV:PIPELINE_WORKSPACE/expanded"
 
       $pwshDepsFile = Get-Item "$ENV:PIPELINE_WORKSPACE/expanded/pwsh.deps.json"

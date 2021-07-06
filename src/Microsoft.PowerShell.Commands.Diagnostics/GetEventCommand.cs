@@ -20,9 +20,9 @@ using System.Xml;
 
 namespace Microsoft.PowerShell.Commands
 {
-    ///
+    /// <summary>
     /// Class that implements the Get-WinEvent cmdlet.
-    ///
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "WinEvent", DefaultParameterSetName = "GetLogSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096581")]
     public sealed class GetWinEventCommand : PSCmdlet
     {

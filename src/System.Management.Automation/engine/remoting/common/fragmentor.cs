@@ -142,7 +142,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal int BlobLength
         {
-            get { return _blobLength; }
+            get
+            {
+                return _blobLength;
+            }
 
             set
             {
@@ -156,7 +159,10 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal byte[] Blob
         {
-            get { return _blob; }
+            get
+            {
+                return _blob;
+            }
 
             set
             {

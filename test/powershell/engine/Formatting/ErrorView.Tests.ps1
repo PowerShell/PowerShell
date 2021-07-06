@@ -21,6 +21,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
     Context 'ConciseView tests' {
         BeforeEach {
             $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'test.ps1'
+            $testModulePath = Join-Path -Path $TestDrive -ChildPath 'test.psm1'
         }
 
         AfterEach {
@@ -136,6 +137,19 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e = & "$PSHOME/pwsh" -noprofile -file $testScriptPath 2>&1 | Out-String
             $e.Split("o${newline}t").Count | Should -Be 1 -Because "Error message should not contain newline"
         }
+
+        It "Script module error should not show line information" {
+            $testModule = @'
+                function Invoke-Error() {
+                    throw 'oops'
+                }
+'@
+
+            Set-Content -Path $testModulePath -Value $testModule
+            $e = & "$PSHOME/pwsh" -noprofile -command "Import-Module '$testModulePath'; Invoke-Error" 2>&1 | Out-String
+            $e | Should -Not -BeNullOrEmpty
+            $e | Should -Not -BeLike "*Line*"
+        }
     }
 
     Context 'NormalView tests' {
@@ -154,6 +168,22 @@ Describe 'Tests for $ErrorView' -Tag CI {
             }
 
             $e | Should -BeLike '*Oops!*'
+        }
+    }
+
+    Context 'DetailedView tests' {
+
+        It 'Detailed error is rendered' {
+            try {
+                $ErrorView = 'DetailedView'
+                throw 'Oops!'
+            }
+            catch {
+                # an extra newline gets added by the formatting system so we remove them
+                $e = ($_ | Out-String).Trim([Environment]::NewLine.ToCharArray())
+            }
+
+            $e | Should -BeExactly (Get-Error | Out-String).Trim([Environment]::NewLine.ToCharArray())
         }
     }
 }

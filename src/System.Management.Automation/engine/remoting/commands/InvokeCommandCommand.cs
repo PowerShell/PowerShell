@@ -738,6 +738,30 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets and sets a value for the SSH subsystem to use for the remote connection.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        public override string Subsystem
+        {
+            get { return base.Subsystem; }
+
+            set { base.Subsystem = value; }
+        }
+
+        /// <summary>
+        /// Gets and sets a value in milliseconds that limits the time allowed for an SSH connection to be established.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        public override int ConnectingTimeout
+        {
+            get { return base.ConnectingTimeout; }
+            
+            set { base.ConnectingTimeout = value; }
+        }
+
+        /// <summary>
         /// This parameter specifies that SSH is used to establish the remote
         /// connection and act as the remoting transport.  By default WinRM is used
         /// as the remoting transport.  Using the SSH transport requires that SSH is

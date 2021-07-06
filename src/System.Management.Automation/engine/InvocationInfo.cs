@@ -204,7 +204,10 @@ namespace System.Management.Automation
                 return _boundParameters ??= new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
             }
 
-            internal set { _boundParameters = value; }
+            internal set
+            {
+                _boundParameters = value;
+            }
         }
 
         /// <summary>
@@ -380,7 +383,10 @@ namespace System.Management.Automation
                 }
             }
 
-            set { _scriptPosition = value; }
+            set
+            {
+                _scriptPosition = value;
+            }
         }
 
         /// <summary>
@@ -433,11 +439,11 @@ namespace System.Management.Automation
             if (extent != null)
             {
                 extent.ToPSObjectForRemoting(psObject);
-                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", () => true);
+                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", static () => true);
             }
             else
             {
-                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", () => false);
+                RemotingEncoder.AddNoteProperty(psObject, "SerializeExtent", static () => false);
             }
 
             RemoteCommandInfo.ToPSObjectForRemoting(this.MyCommand, psObject);

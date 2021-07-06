@@ -10,7 +10,7 @@ namespace System.Management.Automation
     /// Class ProviderHelpInfo keeps track of help information to be returned by
     /// command help provider.
     /// </summary>
-    internal class ProviderHelpInfo : HelpInfo
+    internal sealed class ProviderHelpInfo : HelpInfo
     {
         /// <summary>
         /// Constructor for HelpProvider.

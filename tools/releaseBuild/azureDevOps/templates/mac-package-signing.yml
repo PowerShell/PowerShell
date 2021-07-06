@@ -10,7 +10,10 @@ jobs:
     name: Package ES Standard Build
   variables:
     - group: ESRP
-
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
   steps:
   - checkout: self
     clean: true
@@ -61,6 +64,7 @@ jobs:
           **\*.zip
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
+        displayName: Sign pkg
 
   - template: upload-final-results.yml
     parameters:

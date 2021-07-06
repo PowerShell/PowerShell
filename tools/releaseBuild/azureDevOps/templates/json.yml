@@ -4,7 +4,10 @@ parameters:
 jobs:
 - job: json
   variables:
-    runCodesignValidationInjection: false
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
   displayName: Create Json for Blob
   dependsOn:
     ${{ parameters.parentJobs }}

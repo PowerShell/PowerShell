@@ -164,20 +164,21 @@ namespace System.Management.Automation
             return retValue;
         }
 
-        internal static PSMemberInfoInternalCollection<U> TransformMemberInfoCollection<T, U>(PSMemberInfoCollection<T> source) where T : PSMemberInfo where U : PSMemberInfo
+        internal static PSMemberInfoInternalCollection<TResult> TransformMemberInfoCollection<TSource, TResult>(PSMemberInfoCollection<TSource> source)
+            where TSource : PSMemberInfo where TResult : PSMemberInfo
         {
-            if (typeof(T) == typeof(U))
+            if (typeof(TSource) == typeof(TResult))
             {
                 // If the types are the same, don't make a copy, return the cached collection.
-                return source as PSMemberInfoInternalCollection<U>;
+                return source as PSMemberInfoInternalCollection<TResult>;
             }
 
-            PSMemberInfoInternalCollection<U> returnValue = new PSMemberInfoInternalCollection<U>();
-            foreach (T member in source)
+            PSMemberInfoInternalCollection<TResult> returnValue = new PSMemberInfoInternalCollection<TResult>();
+            foreach (TSource member in source)
             {
-                if (member is U tAsU)
+                if (member is TResult result)
                 {
-                    returnValue.Add(tAsU);
+                    returnValue.Add(result);
                 }
             }
 

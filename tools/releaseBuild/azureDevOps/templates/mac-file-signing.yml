@@ -10,6 +10,10 @@ jobs:
       name: Package ES Standard Build
     variables:
       - group: ESRP
+      - name: runCodesignValidationInjection
+        value: false
+      - name: NugetSecurityAnalysisWarningLevel
+        value: none
 
     steps:
     - checkout: self
@@ -18,11 +22,11 @@ jobs:
     - checkout: ComplianceRepo
       clean: true
 
-    - template: shouldSign.yml
-
     - template: SetVersionVariables.yml
       parameters:
         ReleaseTagVar: $(ReleaseTagVar)
+
+    - template: shouldSign.yml
 
     - task: DownloadBuildArtifacts@0
       inputs:
@@ -74,6 +78,7 @@ jobs:
             **\*.zip
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
+          displayName: Sign macOS Binaries
 
     - pwsh: |
         $destination = "$(System.ArtifactsDirectory)\azureMacOs"

@@ -359,8 +359,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    importedString = new SecureString();
-                    foreach (char currentChar in String) { importedString.AppendChar(currentChar); }
+                    importedString = SecureStringHelper.FromPlainTextString(String);
                 }
             }
             catch (ArgumentException e)
