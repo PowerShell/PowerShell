@@ -148,6 +148,7 @@
     <Feature Id="ProductFeature" Title="PowerShell" Level="1">
       <ComponentGroupRef Id="ApplicationFiles"/>
       <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
+      <ComponentRef Id="MURegistryEntries"/>
       <ComponentRef Id="RegistryEntries"/>
       <ComponentRef Id="SharedRegistryEntries"/>
       <ComponentRef Id="SetPath"/>
@@ -192,7 +193,7 @@
             <Component Id="MURegistryEntries">
               <!-- Create registry key to allow opt-out of MU servicing without opting out of MU completely.  -->
               <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="no">
-                  <RegistryValue Type="integer" Value="[USE_MU]" Name="UseMU" KeyPath="yes"/>
+                  <RegistryValue Type="integer" Value="[USE_MU]" Name="UseMU"/>
               </RegistryKey>
             </Component>
             <Component Id="RegistryEntries">
