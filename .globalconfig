@@ -1440,7 +1440,7 @@ dotnet_diagnostic.IDE0120.severity = warning
 
 # IDE0130: NamespaceDoesNotMatchFolderStructure
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0130
-dotnet_diagnostic.IDE0130.severity = suggestion
+dotnet_diagnostic.IDE0130.severity = silent
 
 # IDE1001: AnalyzerChanged
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide1001
