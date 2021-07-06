@@ -846,7 +846,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ForwardingHelper : IDisposable
+        private sealed class ForwardingHelper : IDisposable
         {
             // This is higher than 1000 used in
             //      RxExtensionMethods+ToEnumerableObserver<T>.BlockingCollectionCapacity

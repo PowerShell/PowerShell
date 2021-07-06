@@ -1575,7 +1575,7 @@ namespace System.Management.Automation
         #region private members
 
         [DebuggerDisplay("{FunctionContext.CurrentPosition}")]
-        private class CallStackInfo
+        private sealed class CallStackInfo
         {
             internal InvocationInfo InvocationInfo { get; set; }
 

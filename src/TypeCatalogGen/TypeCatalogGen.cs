@@ -459,7 +459,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper class to keep the metadata of a type.
         /// </summary>
-        private class TypeMetadata
+        private sealed class TypeMetadata
         {
             internal readonly string AssemblyName;
             internal readonly bool IsObsolete;

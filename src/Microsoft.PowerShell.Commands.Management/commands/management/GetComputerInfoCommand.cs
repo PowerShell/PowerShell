@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
     public class GetComputerInfoCommand : PSCmdlet
     {
         #region Inner Types
-        private class OSInfoGroup
+        private sealed class OSInfoGroup
         {
             public WmiOperatingSystem os;
             public HotFix[] hotFixes;
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
             public RegWinNtCurrentVersion regCurVer;
         }
 
-        private class SystemInfoGroup
+        private sealed class SystemInfoGroup
         {
             public WmiBaseBoard baseboard;
             public WmiBios bios;
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
             public NetworkAdapter[] networkAdapters;
         }
 
-        private class HyperVInfo
+        private sealed class HyperVInfo
         {
             public bool? Present;
             public bool? VMMonitorModeExtensions;
@@ -59,13 +59,13 @@ namespace Microsoft.PowerShell.Commands
             public bool? DataExecutionPreventionAvailable;
         }
 
-        private class DeviceGuardInfo
+        private sealed class DeviceGuardInfo
         {
             public DeviceGuardSmartStatus status;
             public DeviceGuard deviceGuard;
         }
 
-        private class MiscInfoGroup
+        private sealed class MiscInfoGroup
         {
             public ulong? physicallyInstalledMemory;
             public string timeZone;

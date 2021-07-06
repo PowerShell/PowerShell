@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Cim
 {
     internal class CimSensitiveValueConverter : IDisposable
     {
-        private class SensitiveString : IDisposable
+        private sealed class SensitiveString : IDisposable
         {
             private GCHandle _gcHandle;
             private string _string;

@@ -1379,7 +1379,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Represent a handler search result.
         /// </summary>
-        private class HandlerSearchResult
+        private sealed class HandlerSearchResult
         {
             internal HandlerSearchResult()
             {

@@ -277,7 +277,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private class UsingResult
+        private sealed class UsingResult
         {
             public object Value { get; set; }
         }

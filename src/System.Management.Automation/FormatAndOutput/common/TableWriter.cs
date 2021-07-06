@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Information about each column boundaries.
         /// </summary>
-        private class ColumnInfo
+        private sealed class ColumnInfo
         {
             internal int startCol = 0;
             internal int width = 0;
@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Class containing information about the tabular layout.
         /// </summary>
-        private class ScreenInfo
+        private sealed class ScreenInfo
         {
             internal int screenColumns = 0;
             internal int screenRows = 0;

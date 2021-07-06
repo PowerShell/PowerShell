@@ -416,7 +416,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private class ComCreateInfo
+        private sealed class ComCreateInfo
         {
             public object objectCreated;
             public bool success;

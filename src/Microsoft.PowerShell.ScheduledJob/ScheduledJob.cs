@@ -953,7 +953,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         #region Private ResultsInfo class
 
         [Serializable]
-        private class ResultsInfo : ISerializable
+        private sealed class ResultsInfo : ISerializable
         {
             // Private Members
             private Collection<PSObject> _output;
