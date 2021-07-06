@@ -84,6 +84,16 @@
                   Execute="deferred"
                   Return="ignore"
                   Impersonate="no" />
+    <SetProperty Id="EnableMU"
+                 Before="EnableMU"
+                 Sequence="execute"
+                 Value="&quot;[VersionFolder]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;$null=(New-Object -ComObject Microsoft.Update.ServiceManager).AddService2('7971f918-a847-4430-9279-4a52d1efe18d', 7, '')&quot;" />
+    <CustomAction Id="EnableMU"
+                  BinaryKey="WixCA"
+                  DllEntry="CAQuietExec"
+                  Execute="deferred"
+                  Return="ignore"
+                  Impersonate="no" />
     <InstallExecuteSequence>
       <!-- Do not remove shortcuts on upgrade to preserve user shortcuts pinned to Taskbar, see https://stackoverflow.com/a/33402698/1810304 -->
       <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE</RemoveShortcuts>
@@ -92,6 +102,9 @@
       </Custom>
       <Custom Action="EnablePSRemoting" After="InstallFiles">
         <![CDATA[NOT Installed AND (ENABLE_PSREMOTING=1)]]>
+      </Custom>
+      <Custom Action="EnableMU" After="InstallFiles">
+        <![CDATA[NOT Installed AND (USE_MU=1)]]>
       </Custom>
     </InstallExecuteSequence>
     <UI>
@@ -176,9 +189,18 @@
               <!-- Should retain component GUID since this is a shared, non-file, non-registry resource. -->
               <Environment Id="PowerShellDistributionChannel" Action="create" Name="POWERSHELL_DISTRIBUTION_CHANNEL" Permanent="no" System="yes" Value="MSI:[WINDOWS_PRODUCT_NAME]"/>
             </Component>
+            <Component Id="MURegistryEntries">
+              <!-- Create registry key to allow opt-out of MU servicing without opting out of MU completely.  -->
+              <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="no">
+                  <RegistryValue Type="integer" Value="[USE_MU]" Name="UseMU" KeyPath="yes"/>
+              </RegistryKey>
+            </Component>
             <Component Id="RegistryEntries">
               <!-- create key for easy detection of a particular version of a powershell core package
                     The upgrade code is used in the key because it will change when we allow SxS       -->
+              <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
+                  <RegistryValue Type="integer" Value="[USE_MU]" Name="UseMU" KeyPath="yes"/>
+              </RegistryKey>
               <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)" ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes">
                   <RegistryValue Type="string" Value="$(var.ProductSemanticVersion)" Name="SemanticVersion" KeyPath="yes"/>
                   <RegistryValue Type="string" Value="[VersionFolder]" Name="InstallLocation" />
@@ -288,7 +310,7 @@
  <UI>
     <Property Id="REGISTER_MANIFEST" Value="1" />
     <Property Id="ADD_PATH" Value="1" />
-    <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
+    <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="310" Title="!(loc.ExitDialog_Title)">
       <!-- Banner -->
       <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="!(loc.InstallDirDlgBannerBitmap)"/>
       <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Optional Actions" TabSkip="yes" />
@@ -300,23 +322,56 @@
       <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
       <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
       <Control Id="ContextMenuRunPowerShell" Type="CheckBox" X="20" Y="140" Width="290" Height="17" Property="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.PowerShellFileContextSubMenuDialogText)' context menu for PowerShell files"/>
-      <Control Id="LicenseLink" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
+      <Control Id="LicenseLink" Type="Hyperlink" X="20" Y="230" Width="214" Height="17">
         <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt">The application is distributed under the MIT license.</a>]]></Text>
       </Control>
-      <Control Id="TpnLink" Type="Hyperlink" X="20" Y="210" Width="290" Height="17">
+      <Control Id="TpnLink" Type="Hyperlink" X="20" Y="250" Width="290" Height="17">
         <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/ThirdPartyNotices.txt">Please review the ThirdPartyNotices.txt</a>]]></Text>
       </Control>
       <!-- divider and bottom buttons -->
-      <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>
-      <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
-      <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
-      <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+      <Control Id="BottomLine" Type="Line" X="0" Y="254" Width="370" Height="0" TabSkip="yes"/>
+      <Control Id="Back" Type="PushButton" X="180" Y="283" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
+      <Control Id="Next" Type="PushButton" X="236" Y="283" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
+      <Control Id="Cancel" Type="PushButton" X="304" Y="283" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
         <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
       </Control>
     </Dialog>
   </UI>
 </Fragment>
 
+<!-- Microsoft Update Menu Dialog -->
+<Fragment>
+ <UI>
+    <Dialog Id="MuDialog" Width="370" Height="310" Title="!(loc.ExitDialog_Title)">
+      <!-- Banner -->
+      <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="!(loc.InstallDirDlgBannerBitmap)"/>
+      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Use Microsoft Update to help keep your computer secure and up to date" TabSkip="yes" />
+      <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Microsoft Update helps keep your computer secure and up to date for Windows and other Microsoft products, including PowerShell 7. Updates will be delivered based on your current update settings. You can review or change these settings from the Windows Update control panel." TabSkip="yes" />
+      <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" TabSkip="yes" />
+      <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
+      <Control Id="UseMuCheckBox" Type="CheckBox" X="20" Y="160" Width="290" Height="17" Property="USE_MU" CheckBoxValue="1" Text="Update using Microsoft Update"/>
+      <Control Id="UseMuRadioButtonGroup" Type="RadioButtonGroup" X="20" Y="160" Width="290" Height="200" Property="USE_MU">
+        <RadioButtonGroup Property="USE_MU">
+          <RadioButton Value="0" X="0" Y="0" Width="200" Height="10" Text="Use Microsoft Update when I check for updates (recommended)" />
+          <RadioButton Value="1" X="0" Y="20" Width="200" Height="10" Text="I don’t want to use Microsoft Update." />
+        </RadioButtonGroup>
+      </Control>
+      <Control Id="MuFAQ" Type="Hyperlink" X="20" Y="230" Width="214" Height="17">
+        <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-FAQ">See the Microsoft Update FAQ.</a>]]></Text>
+      </Control>
+      <Control Id="PrivacyLink" Type="Hyperlink" X="20" Y="250" Width="290" Height="17">
+        <Text><![CDATA[<a href="http://go.microsoft.com/fwlink/?LinkID=57190">Read the Microsoft Update Priacy Statement.</a>]]></Text>
+      </Control>
+      <!-- divider and bottom buttons -->
+      <Control Id="BottomLine" Type="Line" X="0" Y="254" Width="370" Height="0" TabSkip="yes"/>
+      <Control Id="Back" Type="PushButton" X="180" Y="283" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
+      <Control Id="Next" Type="PushButton" X="236" Y="283" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
+      <Control Id="Cancel" Type="PushButton" X="304" Y="283" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+        <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+      </Control>
+    </Dialog>
+  </UI>
+</Fragment>
 <!-- Customized version of WixUI_InstallDir, which is necessary to add custom dialogs. https://github.com/wixtoolset/wix3/blob/master/src/ext/UIExtension/wixlib/WixUI_InstallDir.wxs -->
 <Fragment>
   <UI Id="CustomWixUI_InstallDir">
@@ -325,6 +380,7 @@
       - WixUI_WelcomeDlg
       - WixUI_InstallDirDlg
       - ExplorerContextMenuDialog
+      - MuDialog
       - WixUI_VerifyReadyDlg
       - WixUI_DiskCostDlg
       Maintenance dialog sequence:
@@ -364,7 +420,9 @@
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
 
       <Publish Dialog="ExplorerContextMenuDialog" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
-      <Publish Dialog="ExplorerContextMenuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="ExplorerContextMenuDialog" Control="Next" Event="NewDialog" Value="MuDialog">1</Publish>
+      <Publish Dialog="MuDialog" Control="Back" Event="NewDialog" Value="ExplorerContextMenuDialog">1</Publish>
+      <Publish Dialog="MuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
 
       <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
