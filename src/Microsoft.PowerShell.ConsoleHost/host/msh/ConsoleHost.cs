@@ -2916,7 +2916,7 @@ namespace Microsoft.PowerShell
             {
             }
 
-            internal
+            private
             ConsoleHostStartupException(
                 System.Runtime.Serialization.SerializationInfo info,
                 System.Runtime.Serialization.StreamingContext context)
