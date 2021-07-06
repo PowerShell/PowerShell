@@ -454,10 +454,7 @@ Fix steps:
         $Arguments += "/property:ReleaseTag=$ReleaseTagToUse"
     }
 
-    if (-not $SkipRoslynAnalyzers) {
-        $Arguments += "/property:RunAnalyzersDuringBuild=true"
-    }
-    else {
+    if ($SkipRoslynAnalyzers) {
         $Arguments += "/property:RunAnalyzersDuringBuild=false"
     }
 
