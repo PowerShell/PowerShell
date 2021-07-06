@@ -308,7 +308,7 @@
  <UI>
     <Property Id="REGISTER_MANIFEST" Value="1" />
     <Property Id="ADD_PATH" Value="1" />
-    <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="310" Title="!(loc.ExitDialog_Title)">
+    <Dialog Id="ExplorerContextMenuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
       <!-- Banner -->
       <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="!(loc.InstallDirDlgBannerBitmap)"/>
       <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Optional Actions" TabSkip="yes" />
@@ -320,17 +320,17 @@
       <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
       <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
       <Control Id="ContextMenuRunPowerShell" Type="CheckBox" X="20" Y="140" Width="290" Height="17" Property="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.PowerShellFileContextSubMenuDialogText)' context menu for PowerShell files"/>
-      <Control Id="LicenseLink" Type="Hyperlink" X="20" Y="230" Width="214" Height="17">
+      <Control Id="LicenseLink" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
         <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt">The application is distributed under the MIT license.</a>]]></Text>
       </Control>
-      <Control Id="TpnLink" Type="Hyperlink" X="20" Y="250" Width="290" Height="17">
+      <Control Id="TpnLink" Type="Hyperlink" X="20" Y="210" Width="290" Height="17">
         <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/ThirdPartyNotices.txt">Please review the ThirdPartyNotices.txt</a>]]></Text>
       </Control>
       <!-- divider and bottom buttons -->
-      <Control Id="BottomLine" Type="Line" X="0" Y="254" Width="370" Height="0" TabSkip="yes"/>
-      <Control Id="Back" Type="PushButton" X="180" Y="283" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
-      <Control Id="Next" Type="PushButton" X="236" Y="283" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
-      <Control Id="Cancel" Type="PushButton" X="304" Y="283" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+      <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>
+      <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
+      <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
+      <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
         <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
       </Control>
     </Dialog>
@@ -341,12 +341,12 @@
 <Fragment>
  <UI>
     <Property Id="USE_MU" Value="1" />
-    <Dialog Id="MuDialog" Width="370" Height="310" Title="!(loc.ExitDialog_Title)">
+    <Dialog Id="MuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
       <!-- Banner -->
       <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="!(loc.InstallDirDlgBannerBitmap)"/>
-      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Use Microsoft Update to help keep your computer secure and up to date" TabSkip="yes" />
-      <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="Microsoft Update helps keep your computer secure and up to date for Windows and other Microsoft products, including PowerShell 7. Updates will be delivered based on your current update settings. You can review or change these settings from the Windows Update control panel." TabSkip="yes" />
+      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="30" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Use Microsoft Update to help keep your computer secure and up to date" TabSkip="yes" />
       <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" TabSkip="yes" />
+      <Control Id="Description" Type="Text" X="25" Y="54" Width="280" Height="100" Transparent="yes" NoPrefix="yes" Text="Microsoft Update helps keep your computer secure and up to date for Windows and other Microsoft products, including PowerShell 7. Updates will be delivered based on your current update settings. You can review or change these settings from the Windows Update control panel." TabSkip="yes" />
       <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
       <Control Id="UseMuRadioButtonGroup" Type="RadioButtonGroup" X="20" Y="160" Width="290" Height="30" Property="USE_MU">
         <RadioButtonGroup Property="USE_MU">
@@ -361,10 +361,10 @@
         <Text><![CDATA[<a href="http://go.microsoft.com/fwlink/?LinkID=57190">Read the Microsoft Update Priacy Statement.</a>]]></Text>
       </Control>
       <!-- divider and bottom buttons -->
-      <Control Id="BottomLine" Type="Line" X="0" Y="254" Width="370" Height="0" TabSkip="yes"/>
-      <Control Id="Back" Type="PushButton" X="180" Y="283" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
-      <Control Id="Next" Type="PushButton" X="236" Y="283" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
-      <Control Id="Cancel" Type="PushButton" X="304" Y="283" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+      <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>
+      <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
+      <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
+      <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
         <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
       </Control>
     </Dialog>
