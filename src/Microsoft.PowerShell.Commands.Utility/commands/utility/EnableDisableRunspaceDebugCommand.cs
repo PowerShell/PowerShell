@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (runspaceName.Length == 0)
             {
-                throw new PSArgumentException(nameof(runspaceName));
+                throw new PSArgumentException(null, nameof(runspaceName));
             }
 
             this.Enabled = enabled;
