@@ -104,7 +104,7 @@
         <![CDATA[NOT Installed AND (ENABLE_PSREMOTING=1)]]>
       </Custom>
       <Custom Action="EnableMU" After="InstallFiles">
-        <![CDATA[NOT Installed AND (USE_MU=1)]]>
+        <![CDATA[NOT Installed AND (ENABLE_MU=1)]]>
       </Custom>
     </InstallExecuteSequence>
     <UI>
@@ -341,6 +341,7 @@
 <Fragment>
  <UI>
     <Property Id="USE_MU" Value="1" />
+    <Property Id="ENABLE_MU" Value="1" />
     <Dialog Id="MuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
       <!-- Banner -->
       <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="!(loc.InstallDirDlgBannerBitmap)"/>
@@ -348,12 +349,8 @@
       <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" TabSkip="yes" />
       <Control Id="Description" Type="Text" X="25" Y="54" Width="280" Height="100" Transparent="yes" NoPrefix="yes" Text="Microsoft Update helps keep your computer secure and up to date for Windows and other Microsoft products, including PowerShell 7. Updates will be delivered based on your current update settings. You can review or change these settings from the Windows Update control panel." TabSkip="yes" />
       <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
-      <Control Id="UseMuRadioButtonGroup" Type="RadioButtonGroup" X="20" Y="160" Width="290" Height="30" Property="USE_MU">
-        <RadioButtonGroup Property="USE_MU">
-          <RadioButton Value="1" X="0" Y="0" Width="200" Height="10" Text="Use Microsoft Update when I check for updates (recommended)" />
-          <RadioButton Value="0" X="0" Y="20" Width="200" Height="10" Text="I don’t want to use Microsoft Update." />
-        </RadioButtonGroup>
-      </Control>
+      <Control Id="UseMuCheckBox" Type="CheckBox" X="20" Y="140" Width="290" Height="50" Property="ADD_PATH" CheckBoxValue="0" Text="Enable updating PowerShell through Microsft Update or WSUS (recommended)"/>
+      <Control Id="EnableMuCheckBox" Type="CheckBox" X="20" Y="180" Width="290" Height="50" Property="ADD_PATH" CheckBoxValue="0" Text="Use Microsoft Update when I check for updates (recommended)"/>
       <Control Id="MuFAQ" Type="Hyperlink" X="20" Y="230" Width="214" Height="17">
         <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-FAQ">See the Microsoft Update FAQ.</a>]]></Text>
       </Control>
