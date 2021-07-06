@@ -1865,9 +1865,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (formData == null)
             {
-#pragma warning disable CA2208 // Instantiate argument exceptions correctly
-                throw new ArgumentNullException("formDate");
-#pragma warning restore CA2208 // https://github.com/PowerShell/PowerShell/issues/13909
+                throw new ArgumentNullException(nameof(formData));
             }
 
             // It is possible that the dictionary keys or values are PSObject wrapped depending on how the dictionary is defined and assigned.

@@ -370,7 +370,7 @@ namespace System.Management.Automation.Internal
     /// A reverse compatible implementation of session key exchange. This supports the CAPI
     /// keyblob formats but uses dotnet std abstract AES and RSA classes for all crypto operations.
     /// </summary>
-    internal class PSRSACryptoServiceProvider : IDisposable
+    internal sealed class PSRSACryptoServiceProvider : IDisposable
     {
         #region Private Members
 
@@ -612,7 +612,7 @@ namespace System.Management.Automation.Internal
             System.GC.SuppressFinalize(this);
         }
 
-        protected void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing)
             {

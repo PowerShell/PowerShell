@@ -1359,7 +1359,7 @@ namespace System.Management.Automation
     /// Legally, user-defined Help Data should be within the same file as the corresponding
     /// commandHelp and it should appear after the commandHelp.
     /// </summary>
-    internal class UserDefinedHelpData
+    internal sealed class UserDefinedHelpData
     {
         private UserDefinedHelpData()
         {
