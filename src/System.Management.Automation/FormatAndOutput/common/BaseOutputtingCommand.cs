@@ -917,7 +917,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             protected OutCommandInner InnerCommand { get; }
         }
 
-        private sealed class TableOutputContextBase : GroupOutputContext
+        private class TableOutputContextBase : GroupOutputContext
         {
             /// <summary>
             /// Construct a context to push on the stack.

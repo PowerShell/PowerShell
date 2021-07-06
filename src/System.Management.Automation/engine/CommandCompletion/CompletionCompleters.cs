@@ -5913,7 +5913,7 @@ namespace System.Management.Automation
         /// This type represents a non-generic type for type name completion. It only contains information that can be
         /// inferred from the full type name.
         /// </summary>
-        private sealed class TypeCompletionInStringFormat : TypeCompletionBase
+        private class TypeCompletionInStringFormat : TypeCompletionBase
         {
             /// <summary>
             /// Get the full type name of the type represented by this instance.
@@ -6056,7 +6056,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This type represents a non-generic type for type name completion. It contains the actual type instance.
         /// </summary>
-        private sealed class TypeCompletion : TypeCompletionBase
+        private class TypeCompletion : TypeCompletionBase
         {
             internal Type Type;
 

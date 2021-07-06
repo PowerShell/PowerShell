@@ -1102,7 +1102,7 @@ namespace System.Management.Automation
                             PatternPositionsVisitor patternPositionsForEndOfStringPosition);
         }
 
-        private sealed class QuestionMarkElement : PatternElement
+        private class QuestionMarkElement : PatternElement
         {
             public override void ProcessStringCharacter(
                             char currentStringCharacter,
