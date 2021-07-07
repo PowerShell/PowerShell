@@ -202,14 +202,14 @@ jobs:
       Write-Verbose -Verbose $packagePathList
 
       $checksums = Get-ChildItem -Path $packagePath |
-      ForEach-Object {
-          Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
-          $packageName = $_.Name
-          $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA512).Hash.ToLower()
+          ForEach-Object {
+              Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
+              $packageName = $_.Name
+              $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA512).Hash.ToLower()
 
-          # the '*' before the packagename signifies it is a binary
-          "$hash *$packageName"
-      }
+              # the '*' before the packagename signifies it is a binary
+              "$hash *$packageName"
+          }
 
       $checksums | Out-File -FilePath "$packagePath\SHA512SUMS" -Force
 
