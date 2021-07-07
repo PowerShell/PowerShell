@@ -37,6 +37,7 @@ namespace System.Management.Automation
         Classic = 1,
     }
     
+    /// <summary>
     /// Type is used for custom formatting.
     /// </summary>
     public class AnsiDictionary : Dictionary<string, string>
@@ -44,7 +45,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the <see cref="AnsiDictionary"/> class.
         /// </summary>
-        public AnsiDictionary() : base(StringComparer.OrdinalIgnoreCase){}
+        public AnsiDictionary() : base(StringComparer.OrdinalIgnoreCase) { }
     }
 
     #region PSStyle
