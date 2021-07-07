@@ -307,7 +307,8 @@ function Start-PSBuild {
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
         [switch]$Detailed,
-        [switch]$InteractiveAuth
+        [switch]$InteractiveAuth,
+        [switch]$SkipRoslynAnalyzers
     )
 
     if ($ReleaseTag -and $ReleaseTag -notmatch "^v\d+\.\d+\.\d+(-(preview|rc)(\.\d{1,2})?)?$") {
@@ -451,6 +452,10 @@ Fix steps:
     if ($ReleaseTag) {
         $ReleaseTagToUse = $ReleaseTag -Replace '^v'
         $Arguments += "/property:ReleaseTag=$ReleaseTagToUse"
+    }
+
+    if ($SkipRoslynAnalyzers) {
+        $Arguments += "/property:RunAnalyzersDuringBuild=false"
     }
 
     # handle Restore
