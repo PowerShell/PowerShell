@@ -44,7 +44,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the <see cref="AnsiDictionary"/> class.
         /// </summary>
-        public AnsiDictionary():base(StringComparer.OrdinalIgnoreCase){}
+        public AnsiDictionary() : base(StringComparer.OrdinalIgnoreCase){}
     }
 
     #region PSStyle

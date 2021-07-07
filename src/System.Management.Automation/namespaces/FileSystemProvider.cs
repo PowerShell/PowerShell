@@ -2058,8 +2058,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Name if a file or directory, Name -> Target if symlink.</returns>
         public static string NameString(PSObject instance)
         {
-            string[] executableExtensions = { ".exe", ".bat", ".com", ".cmd" };
-
             if (ExperimentalFeature.IsEnabled("PSAnsiRendering") && ExperimentalFeature.IsEnabled("PSAnsiRendering.FileInfo"))
             {
                 if (instance?.BaseObject is FileSystemInfo fileInfo)
@@ -2076,7 +2074,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         return $"{PSStyle.Instance.FileInfo.Extension[fileInfo.Extension]}{fileInfo.Name}{PSStyle.Instance.Reset}";
                     }
-                    else if ((Platform.IsWindows && executableExtensions.Contains(fileInfo.Extension.ToLower())) ||
+                    else if ((Platform.IsWindows && CommandDiscovery.PathExtensions.Contains(fileInfo.Extension.ToLower())) ||
                         (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileInfo.FullName)))
                     {
                         return $"{PSStyle.Instance.FileInfo.Executable}{fileInfo.Name}{PSStyle.Instance.Reset}";
