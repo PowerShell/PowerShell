@@ -84,7 +84,7 @@ Describe -Name "Windows MSI" -Fixture {
     }
 
     AfterAll {
-        Set-StrictMode -Verbose 3.0
+        Set-StrictMode -Version 3.0
     }
 
     BeforeEach {
