@@ -42,15 +42,17 @@ param (
     [ValidatePattern("-signed.zip$")]
     [string]$BuildZip,
 
-    [string]$ArtifactName = 'result'
+    [string]$ArtifactName = 'result',
+
+    [switch]$SkipReleaseChecks
 )
 
 $repoRoot = $location
 
 if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
-    $releaseTagParam = @{ }
+    $releaseTagParam = @{}
     if ($ReleaseTag) {
-        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
+        $releaseTagParam['ReleaseTag'] = $ReleaseTag
 
         #Remove the initial 'v' from the ReleaseTag
         $version = $ReleaseTag -replace '^v'
@@ -65,6 +67,7 @@ if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
 
 Push-Location
 try {
+    $pspackageParams = @{ SkipReleaseChecks = $SkipReleaseChecks }
     Write-Verbose -Message "Init..." -Verbose
     Set-Location $repoRoot
     Import-Module "$repoRoot/build.psm1"
@@ -81,15 +84,15 @@ try {
 
         Remove-Item -Path $BuildZip
 
-        Start-PSPackage @releaseTagParam
+        Start-PSPackage @pspackageParams @releaseTagParam
         switch ($ExtraPackage) {
-            "tar" { Start-PSPackage -Type tar @releaseTagParam }
+            "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam }
         }
 
         if ($LTS) {
             Start-PSPackage @releaseTagParam -LTS
             switch ($ExtraPackage) {
-                "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+                "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam -LTS }
             }
         }
     }
@@ -97,22 +100,21 @@ try {
     if ($Build.IsPresent) {
         if ($Symbols.IsPresent) {
             Start-PSBuild -Configuration 'Release' -Crossgen -NoPSModuleRestore @releaseTagParam
-            $pspackageParams = @{}
             $pspackageParams['Type']='zip'
             $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
             Write-Verbose "Starting powershell packaging(zip)..." -Verbose
             Start-PSPackage @pspackageParams @releaseTagParam
         } else {
             Start-PSBuild -Configuration 'Release' -Crossgen -PSModuleRestore @releaseTagParam
-            Start-PSPackage @releaseTagParam
+            Start-PSPackage @pspackageParams @releaseTagParam
             switch ($ExtraPackage) {
-                "tar" { Start-PSPackage -Type tar @releaseTagParam }
+                "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam }
             }
 
             if ($LTS) {
                 Start-PSPackage @releaseTagParam -LTS
                 switch ($ExtraPackage) {
-                    "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+                    "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam -LTS }
                 }
             }
         }

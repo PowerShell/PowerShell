@@ -443,7 +443,6 @@ Fix steps:
     # See: https://stackoverflow.com/a/68148776
     # The property is set in Powershell.Common.props file.
     # We override the property through the build command line.
-    wait-debugger
     $isM1MacOS = $IsMacOS -and ((uname -a) -match 'ARM64')
     if($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize -or $isM1MacOS) {
         $Arguments += "/property:PublishReadyToRun=false"
