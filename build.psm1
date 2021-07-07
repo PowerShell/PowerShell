@@ -13,7 +13,9 @@ Set-StrictMode -Version 3.0
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 $script:Options = $null
 
-$dotnetCLIChannel = $(Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json).Sdk.Channel
+$dotnetMetadata = Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json
+$dotnetCLIChannel = $dotnetMetadata.Sdk.Channel
+$dotnetCLIQuality = $dotnetMetadata.Sdk.Quality
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
 # Track if tags have been sync'ed
@@ -1699,6 +1701,7 @@ function Install-Dotnet {
     param(
         [string]$Channel = $dotnetCLIChannel,
         [string]$Version = $dotnetCLIRequiredVersion,
+        [string]$Quality = $dotnetCLIQuality,
         [switch]$NoSudo,
         [string]$InstallDir,
         [string]$AzureFeed,
@@ -1742,7 +1745,12 @@ function Install-Dotnet {
                 throw "./$installScript was 0 length"
             }
 
-            $bashArgs = @("./$installScript", '-c', $Channel, '-v', $Version)
+            if ($Version) {
+                $bashArgs = @("./$installScript", '-v', $Version, '-q', $Quality)
+            }
+            elseif ($Channel) {
+                $bashArgs = @("./$installScript", '-c', $Channel, '-q', $Quality)
+            }
 
             if ($InstallDir) {
                 $bashArgs += @('-i', $InstallDir)
@@ -1761,7 +1769,7 @@ function Install-Dotnet {
         if (-not $environment.IsCoreCLR) {
             $installArgs = @{
                 Channel = $Channel
-                Version = $Version
+                Quality = $Quality
             }
 
             if ($InstallDir) {
@@ -1782,7 +1790,13 @@ function Install-Dotnet {
             $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
             $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
             Start-NativeExecution {
-                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Channel', $Channel, '-Version', $Version)
+
+                if ($Version) {
+                    $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version, '-Quality', $Quality)
+                }
+                elseif ($Channel) {
+                    $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Channel', $Channel, '-Quality', $Quality)
+                }
 
                 if ($InstallDir) {
                     $psArgs += @('-InstallDir', $InstallDir)

@@ -76,6 +76,7 @@ function Update-PackageVersion {
     $paths = @(
         "$PSScriptRoot/packaging/projects/reference/Microsoft.PowerShell.Commands.Utility/Microsoft.PowerShell.Commands.Utility.csproj"
         "$PSScriptRoot/packaging/projects/reference/System.Management.Automation/System.Management.Automation.csproj"
+        "$PSScriptRoot/packaging/projects/reference/Microsoft.PowerShell.ConsoleHost/Microsoft.PowerShell.ConsoleHost.csproj"
         "$PSScriptRoot/../src/"
         "$PSScriptRoot/../test/tools/"
     )
@@ -154,10 +155,13 @@ function Update-CsprojFile([string] $path, $values) {
 }
 
 function Get-DotnetUpdate {
-    $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
-    $metataJson = (Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json)
-    $nextChannel = $metataJson.sdk.nextChannel
-    $feedUrl = $metataJson.internalfeed.url
+    param (
+        $channel,
+        $quality,
+        $qualityFallback,
+        $feedUrl,
+        $sdkImageVersion
+    )
 
     if ($SDKVersionOverride) {
         return @{
@@ -169,7 +173,24 @@ function Get-DotnetUpdate {
     }
 
     try {
-        $latestSDKversion = [System.Management.Automation.SemanticVersion] (Invoke-RestMethod -Uri "http://aka.ms/dotnet/$nextChannel/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() })
+
+        $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$quality/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
+        $selectedQuality = $quality
+
+        if (-not $latestSDKVersionString.StartsWith($sdkImageVersion))
+        {
+            # we did not get a version number so fall back to daily
+            $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$qualityFallback/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
+            $selectedQuality = $qualityFallback
+
+            if (-not $latestSDKVersionString.StartsWith($sdkImageVersion))
+            {
+                throw "No build found!"
+            }
+        }
+
+        $latestSDKversion = [System.Management.Automation.SemanticVersion] $latestSDKVersionString
+
         $currentVersion = [System.Management.Automation.SemanticVersion] (( Get-Content -Path "$PSScriptRoot/../global.json" -Raw | ConvertFrom-Json).sdk.version)
 
         if ($latestSDKversion -gt $currentVersion) {
@@ -191,6 +212,7 @@ function Get-DotnetUpdate {
         NewVersion   = $newVersion
         Message      = $Message
         FeedUrl      = $feedUrl
+        Quality      = $selectedQuality
     }
 }
 
@@ -203,15 +225,18 @@ function Update-DevContainer {
     $devContainerDocker | Out-File -FilePath $dockerFilePath -Force
 }
 
-$dotnetUpdate = Get-DotnetUpdate
+$dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
+$dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
+$channel = $dotnetMetadataJson.sdk.channel
+$nextChannel = $dotnetMetadataJson.sdk.nextChannel
+$quality = $dotnetMetadataJson.sdk.quality
+$qualityFallback = $dotnetMetadataJson.sdk.qualityFallback
+$sdkImageVersion = $dotnetMetadataJson.sdk.sdkImageVersion
+$internalfeed = $dotnetMetadataJson.internalfeed.url
+
+$dotnetUpdate = Get-DotnetUpdate -channel $nextChannel -quality $quality -feedUrl $internalfeed -qualityFallback $qualityFallback -sdkImageVersion $sdkImageVersion
 
 if ($dotnetUpdate.ShouldUpdate) {
-
-    $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
-    $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
-
-    # Channel is like: $Channel = "5.0.1xx-preview2"
-    $Channel = $dotnetMetadataJson.sdk.channel
 
     Import-Module "$PSScriptRoot/../build.psm1" -Force
 
@@ -243,13 +268,14 @@ if ($dotnetUpdate.ShouldUpdate) {
 
     ## Install latest version from the channel
 
+    $sdkQuality = $dotnetUpdate.Quality
     $sdkVersion = if ($SDKVersionOverride) { $SDKVersionOverride } else { $dotnetUpdate.NewVersion }
 
     if (-not $RuntimeSourceFeed) {
-        Install-Dotnet -Channel "$Channel" -Version $sdkVersion
+        Install-Dotnet -Version $sdkVersion -Quality $sdkQuality -Channel $null
     }
     else {
-        Install-Dotnet -Channel "$Channel" -Version $sdkVersion -AzureFeed $RuntimeSourceFeed -FeedCredential $RuntimeSourceFeedKey
+        Install-Dotnet -Version $sdkVersion -Quality $sdkQuality -AzureFeed $RuntimeSourceFeed -FeedCredential $RuntimeSourceFeedKey -Channel $null
     }
 
     Write-Verbose -Message "Installing .NET SDK completed." -Verbose
