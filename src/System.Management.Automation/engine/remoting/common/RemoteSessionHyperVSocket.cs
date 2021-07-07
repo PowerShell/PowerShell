@@ -19,9 +19,7 @@ namespace System.Management.Automation.Remoting
 
         private readonly System.Net.Sockets.AddressFamily _addressFamily;
         private Guid _vmId;
-#pragma warning disable IDE0044
         private Guid _serviceId;
-#pragma warning restore IDE0044 // https://github.com/PowerShell/PowerShell/issues/13995
 
         public const System.Net.Sockets.AddressFamily AF_HYPERV = (System.Net.Sockets.AddressFamily)34;
         public const int HYPERV_SOCK_ADDR_SIZE = 36;
@@ -55,7 +53,7 @@ namespace System.Management.Automation.Remoting
         {
             get { return _serviceId; }
 
-            set { _vmId = value; }
+            set { _serviceId = value; }
         }
 
         #endregion
