@@ -1262,7 +1262,7 @@ namespace System.Management.Automation.Host
                     Text.StringBuilder splitLabel = new Text.StringBuilder(choices[i].Label.Substring(0, andPos), choices[i].Label.Length);
                     if (andPos + 1 < choices[i].Label.Length)
                     {
-                        splitLabel.Append(choices[i].Label.Substring(andPos + 1));
+                        splitLabel.Append(choices[i].Label.AsSpan(andPos + 1));
                         hotkeysAndPlainLabels[0, i] = CultureInfo.CurrentCulture.TextInfo.ToUpper(choices[i].Label.AsSpan(andPos + 1, 1).Trim().ToString());
                     }
 

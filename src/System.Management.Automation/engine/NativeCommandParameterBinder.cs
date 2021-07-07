@@ -466,7 +466,7 @@ namespace System.Management.Automation
                     {
                         ProviderInfo fileSystemProvider = context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
                         return new StringBuilder(fileSystemProvider.Home)
-                            .Append(path.Substring(1))
+                            .Append(path.AsSpan(1))
                             .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
                             .ToString();
                     }

@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell
                 if (Environment.GetEnvironmentVariable("NO_COLOR") != null)
                 {
                     PSStyle.Instance.OutputRendering = OutputRendering.PlainText;
-                }   
+                }
             }
 
             if (SupportsVirtualTerminal)
@@ -961,7 +961,7 @@ namespace Microsoft.PowerShell
                     int w = maxWidthInBufferCells - cellCounter;
                     Dbg.Assert(w < e.Current.CellCount, "width remaining should be less than size of word");
 
-                    line.Append(e.Current.Text.Substring(0, w));
+                    line.Append(e.Current.Text.AsSpan(0, w));
 
                     l = line.ToString();
                     Dbg.Assert(RawUI.LengthInBufferCells(l) == maxWidthInBufferCells, "line should exactly fit");
@@ -2019,8 +2019,7 @@ namespace Microsoft.PowerShell
                     var completionResult = commandCompletion.GetNextResult(rlResult == ReadLineResult.endedOnTab);
                     if (completionResult != null)
                     {
-                        completedInput = completionInput.Substring(0, commandCompletion.ReplacementIndex)
-                                         + completionResult.CompletionText;
+                        completedInput = string.Concat(completionInput.AsSpan(0, commandCompletion.ReplacementIndex), completionResult.CompletionText);
                     }
                     else
                     {
