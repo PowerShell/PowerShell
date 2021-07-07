@@ -2060,7 +2060,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string[] executableExtensions = { ".exe", ".bat", ".com", ".cmd" };
 
-            if (ExperimentalFeature.IsEnabled("PSAnsiRendering") && ExperimentalFeature.IsEnabled("PSFileInfoColor"))
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering") && ExperimentalFeature.IsEnabled("PSAnsiRendering.FileInfo"))
             {
                 if (instance?.BaseObject is FileSystemInfo fileInfo)
                 {

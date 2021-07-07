@@ -141,7 +141,7 @@ namespace System.Management.Automation
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
                 new ExperimentalFeature(
-                    name: "PSFileInfoColor",
+                    name: "PSAnsiRendering.FileInfo",
                     description: "Enable coloring for FileInfo objects"),
             };
 
