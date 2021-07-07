@@ -33,14 +33,20 @@ function Sync-PSTags
         $AddRemoteIfMissing
     )
 
-    $PowerShellRemoteUrl = "https://github.com/PowerShell/PowerShell.git"
+    $powerShellRemoteUrls = @(
+        'https://github.com/PowerShell/PowerShell'
+        'git@github.com:PowerShell/PowerShell'
+    )
+
     $upstreamRemoteDefaultName = 'upstream'
     $remotes = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote}
     $upstreamRemote = $null
     foreach($remote in $remotes)
     {
         $url = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote get-url $remote}
-        if($url -eq $PowerShellRemoteUrl)
+        if ($url.EndsWith('.git')) { $url = $url.Substring(0, $url.Length - 4) }
+
+        if($url -in $powerShellRemoteUrls)
         {
             $upstreamRemote = $remote
             break
@@ -432,9 +438,14 @@ Fix steps:
     }
 
     # Framework Dependent builds do not support ReadyToRun as it needs a specific runtime to optimize for.
+    # M1/ARM64 macOS similarly does not support ReadyToRun
+    # We need to detect ARM64 macOS from a Rosetta process, forcing us to parse uname -a
+    # See: https://stackoverflow.com/a/68148776
     # The property is set in Powershell.Common.props file.
     # We override the property through the build command line.
-    if($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) {
+    wait-debugger
+    $isM1MacOS = $IsMacOS -and ((uname -a) -match 'ARM64')
+    if($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize -or $isM1MacOS) {
         $Arguments += "/property:PublishReadyToRun=false"
     }
 
