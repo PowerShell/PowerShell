@@ -37,6 +37,7 @@ function Sync-PSTags
         'https://github.com/PowerShell/PowerShell'
         'git@github.com:PowerShell/PowerShell'
     )
+    $defaultRemoteUrl = "$($powerShellRemoteUrls[0]).git"
 
     $upstreamRemoteDefaultName = 'upstream'
     $remotes = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote}
@@ -55,12 +56,12 @@ function Sync-PSTags
 
     if(!$upstreamRemote -and $AddRemoteIfMissing.IsPresent -and $remotes -notcontains $upstreamRemoteDefaultName)
     {
-        $null = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote add $upstreamRemoteDefaultName $PowerShellRemoteUrl}
+        $null = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote add $upstreamRemoteDefaultName $defaultRemoteUrl}
         $upstreamRemote = $upstreamRemoteDefaultName
     }
     elseif(!$upstreamRemote)
     {
-        Write-Error "Please add a remote to PowerShell\PowerShell.  Example:  git remote add $upstreamRemoteDefaultName $PowerShellRemoteUrl" -ErrorAction Stop
+        Write-Error "Please add a remote to PowerShell\PowerShell.  Example:  git remote add $upstreamRemoteDefaultName $defaultRemoteUrl" -ErrorAction Stop
     }
 
     $null = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" fetch --tags --quiet $upstreamRemote}
