@@ -14,6 +14,15 @@ Describe -Name "Windows MSI" -Fixture {
             return (([Security.Principal.WindowsIdentity]::GetCurrent()).Groups -contains "S-1-5-32-544")
         }
 
+        function Test-IsMuEnabled {
+            $sm = (New-Object -ComObject Microsoft.Update.ServiceManager)
+            $mu = $sm.Services | Where-Object { $_.ServiceId -eq '7971f918-a847-4430-9279-4a52d1efe18d' }
+            if ($mu) {
+                return $true
+            }
+            return $false
+        }
+
         function Invoke-Msiexec {
             param(
                 [Parameter(ParameterSetName = 'Install', Mandatory)]
@@ -55,6 +64,7 @@ Describe -Name "Windows MSI" -Fixture {
         $msiX64Path = $env:PsMsiX64Path
         $channel = $env:PSMsiChannel
         $runtime = $env:PSMsiRuntime
+        $muEnabled = Test-IsMuEnabled
 
         # Get any existing powershell in the path
         $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
@@ -79,6 +89,34 @@ Describe -Name "Windows MSI" -Fixture {
             Copy-Item -Path $msiLog -Destination $env:temp -Force
             Write-Verbose "MSI log is at $env:temp\msilog.txt" -Verbose
             $uploadedLog = $true
+        }
+    }
+
+    Context "Enable_MU disabled" {
+        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
+            if($muEnabled) {
+                Set-ItResult -Skipped -Because "MU already enabled"
+            }
+            {
+                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{Enable_MU = 0}
+            } | Should -Not -Throw
+        }
+
+        It "MU should be disabled" -Skip:(!(Test-Elevated)) {
+            if($muEnabled) {
+                Set-ItResult -Skipped -Because "MU already enabled"
+            }
+
+            Test-IsMuEnabled | Should -BeFalse -Because "MU should not have been enabled"
+        }
+
+        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
+            if($muEnabled) {
+                Set-ItResult -Skipped -Because "MU already enabled"
+            }
+            {
+                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
+            } | Should -Not -Throw
         }
     }
 
@@ -158,6 +196,40 @@ Describe -Name "Windows MSI" -Fixture {
                 Where-Object { $_ -like '*files\powershell*' -and $_ -notin $beforePath }
 
             $psPath | Should -BeNullOrEmpty
+        }
+
+        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
+            {
+                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
+            } | Should -Not -Throw
+        }
+
+        It "UseMU should be 1" -Skip:(!(Test-Elevated)) {
+            $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU
+
+            $useMu | Should -Be 1
+        }
+
+        It "MU should be enabled" -Skip:(!(Test-Elevated)) {
+            if($muEnabled) {
+                Set-ItResult -Skipped -Because "MU already enabled"
+            }
+
+            Test-IsMuEnabled | Should -BeTrue -Because "MU should have been enabled"
+        }
+    }
+
+    Context "USE_MU disabled" {
+        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
+            {
+                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{USE_MU = 0}
+            } | Should -Not -Throw
+        }
+
+        It "UseMU should be 0" -Skip:(!(Test-Elevated)) {
+            $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU
+
+            $useMu | Should -Be 0
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
