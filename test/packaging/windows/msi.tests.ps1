@@ -194,7 +194,7 @@ Describe -Name "Windows MSI" -Fixture {
     Context "Add Path disabled" {
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
             {
-                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 0}
+                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 0; USE_MU = 1; ENABLE_MU = 1}
             } | Should -Not -Throw
         }
 
