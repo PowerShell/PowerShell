@@ -386,7 +386,7 @@ function __cmdletization_BindCommonParameters
             return new List<string>(parameterSetNames.Keys);
         }
 
-        private Dictionary<CommonMethodMetadata, int> _staticMethodMetadataToUniqueId = new();
+        private readonly Dictionary<CommonMethodMetadata, int> _staticMethodMetadataToUniqueId = new();
 
         private string GetMethodParameterSet(CommonMethodMetadata methodMetadata)
         {
@@ -2100,7 +2100,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                 /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(commandMetadata.Name));
         }
 
-        private static object s_enumCompilationLock = new();
+        private static readonly object s_enumCompilationLock = new();
 
         private static void CompileEnum(EnumMetadataEnum enumMetadata)
         {

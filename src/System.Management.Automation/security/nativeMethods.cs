@@ -1088,36 +1088,38 @@ namespace System.Management.Automation.Security
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPT_PROVIDER_CERT
         {
+#pragma warning disable IDE0044
             private DWORD _cbStruct;
+#pragma warning restore IDE0044
             internal IntPtr pCert; // PCCERT_CONTEXT
-            private BOOL _fCommercial;
-            private BOOL _fTrustedRoot;
-            private BOOL _fSelfSigned;
-            private BOOL _fTestCert;
-            private DWORD _dwRevokedReason;
-            private DWORD _dwConfidence;
-            private DWORD _dwError;
-            private IntPtr _pTrustListContext; // CTL_CONTEXT*
-            private BOOL _fTrustListSignerCert;
-            private IntPtr _pCtlContext; // PCCTL_CONTEXT
-            private DWORD _dwCtlError;
-            private BOOL _fIsCyclic;
-            private IntPtr _pChainElement; // PCERT_CHAIN_ELEMENT
+            private readonly BOOL _fCommercial;
+            private readonly BOOL _fTrustedRoot;
+            private readonly BOOL _fSelfSigned;
+            private readonly BOOL _fTestCert;
+            private readonly DWORD _dwRevokedReason;
+            private readonly DWORD _dwConfidence;
+            private readonly DWORD _dwError;
+            private readonly IntPtr _pTrustListContext; // CTL_CONTEXT*
+            private readonly BOOL _fTrustListSignerCert;
+            private readonly IntPtr _pCtlContext; // PCCTL_CONTEXT
+            private readonly DWORD _dwCtlError;
+            private readonly BOOL _fIsCyclic;
+            private readonly IntPtr _pChainElement; // PCERT_CHAIN_ELEMENT
         }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPT_PROVIDER_SGNR
         {
-            private DWORD _cbStruct;
+            private readonly DWORD _cbStruct;
             private FILETIME _sftVerifyAsOf;
-            private DWORD _csCertChain;
-            private IntPtr _pasCertChain; // CRYPT_PROVIDER_CERT*
-            private DWORD _dwSignerType;
-            private IntPtr _psSigner; // CMSG_SIGNER_INFO*
-            private DWORD _dwError;
+            private readonly DWORD _csCertChain;
+            private readonly IntPtr _pasCertChain; // CRYPT_PROVIDER_CERT*
+            private readonly DWORD _dwSignerType;
+            private readonly IntPtr _psSigner; // CMSG_SIGNER_INFO*
+            private readonly DWORD _dwError;
             internal DWORD csCounterSigners;
             internal IntPtr pasCounterSigners; // CRYPT_PROVIDER_SGNR*
-            private IntPtr _pChainContext; // PCCERT_CHAIN_CONTEXT
+            private readonly IntPtr _pChainContext; // PCCERT_CHAIN_CONTEXT
         }
 
         [DllImport("wintrust.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -1993,33 +1995,33 @@ namespace System.Management.Automation.Security
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTCATATTRIBUTE
         {
-            private DWORD _cbStruct;
+            private readonly DWORD _cbStruct;
 
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszReferenceTag;
 
-            private DWORD _dwAttrTypeAndAction;
+            private readonly DWORD _dwAttrTypeAndAction;
             internal DWORD cbValue;
             internal System.IntPtr pbValue;
-            private DWORD _dwReserved;
+            private readonly DWORD _dwReserved;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTCATSTORE
         {
-            private DWORD _cbStruct;
+            private readonly DWORD _cbStruct;
             internal DWORD dwPublicVersion;
 
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszP7File;
 
-            private IntPtr _hProv;
-            private DWORD _dwEncodingType;
-            private DWORD _fdwStoreFlags;
-            private IntPtr _hReserved;
-            private IntPtr _hAttrs;
-            private IntPtr _hCryptMsg;
-            private IntPtr _hSorted;
+            private readonly IntPtr _hProv;
+            private readonly DWORD _dwEncodingType;
+            private readonly DWORD _fdwStoreFlags;
+            private readonly IntPtr _hReserved;
+            private readonly IntPtr _hAttrs;
+            private readonly IntPtr _hCryptMsg;
+            private readonly IntPtr _hSorted;
         }
 
         [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]

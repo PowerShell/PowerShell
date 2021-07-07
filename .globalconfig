@@ -1260,7 +1260,7 @@ dotnet_diagnostic.IDE0043.severity = silent
 
 # IDE0044: MakeFieldReadonly
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0044
-dotnet_diagnostic.IDE0044.severity = silent
+dotnet_diagnostic.IDE0044.severity = warning
 
 # IDE0045: UseConditionalExpressionForAssignment
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0045
