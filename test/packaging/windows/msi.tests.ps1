@@ -3,6 +3,7 @@
 
 Describe -Name "Windows MSI" -Fixture {
     BeforeAll {
+        Set-StrictMode -Off
         function Test-Elevated {
             [CmdletBinding()]
             [OutputType([bool])]
@@ -81,9 +82,15 @@ Describe -Name "Windows MSI" -Fixture {
         }
         $uploadedLog = $false
     }
+
+    AfterAll {
+        Set-StrictMode -Verbose 3.0
+    }
+
     BeforeEach {
         $error.Clear()
     }
+
     AfterEach {
         if ($error.Count -ne 0 -and !$uploadedLog) {
             Copy-Item -Path $msiLog -Destination $env:temp -Force
