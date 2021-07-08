@@ -38,6 +38,15 @@ Describe -Name "Windows MSI" -Fixture {
             }
         }
 
+        function Get-UseMU {
+            $useMu = 0
+            try {
+                $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction SilentlyContinue
+            } catch {}
+
+            return $useMu
+        }
+
         function Invoke-Msiexec {
             param(
                 [Parameter(ParameterSetName = 'Install', Mandatory)]
@@ -122,6 +131,13 @@ Describe -Name "Windows MSI" -Fixture {
             }
 
             Test-IsMuEnabled | Should -BeFalse -Because "MU should not have been enabled"
+        }
+
+        It "UseMU should be 1" -Skip:(!(Test-Elevated)) {
+            Invoke-TestAndUploadLogOnFailure -Test {
+                $useMu = Get-UseMU
+                $useMu | Should -Be 1
+            }
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
@@ -214,9 +230,7 @@ Describe -Name "Windows MSI" -Fixture {
 
         It "UseMU should be 1" -Skip:(!(Test-Elevated)) {
             Invoke-TestAndUploadLogOnFailure -Test {
-                $useMu = 0
-                $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction SilentlyContinue
-
+                $useMu = Get-UseMU
                 $useMu | Should -Be 1
             }
         }
@@ -247,10 +261,18 @@ Describe -Name "Windows MSI" -Fixture {
 
         It "UseMU should be 0" -Skip:(!(Test-Elevated)) {
             Invoke-TestAndUploadLogOnFailure -Test {
-                $useMu = 0
-                $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction SilentlyContinue
-
+                $useMu = Get-UseMU
                 $useMu | Should -Be 0
+            }
+        }
+
+        It "MU should be enabled" -Skip:(!(Test-Elevated)) {
+            if($muEnabled) {
+                Set-ItResult -Skipped -Because "MU already enabled"
+            }
+
+            Invoke-TestAndUploadLogOnFailure -Test {
+                Test-IsMuEnabled | Should -BeTrue -Because "MU should have been enabled"
             }
         }
 
