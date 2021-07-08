@@ -55,6 +55,7 @@ Describe -Name "Windows MSI" -Fixture {
             }
 
             $argumentList = "$switch $MsiPath /quiet /l*vx $msiLog $additionalOptions"
+            Write-Verbose -Message "running msiexec $argumentList" -Verbose
             $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList $argumentList -NoNewWindow -PassThru
             if ($msiExecProcess.ExitCode -ne 0) {
                 $exitCode = $msiExecProcess.ExitCode
@@ -212,7 +213,8 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         It "UseMU should be 1" -Skip:(!(Test-Elevated)) {
-            $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU
+            $useMu = 0
+            $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction Ignore
 
             $useMu | Should -Be 1
         }
@@ -234,7 +236,8 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         It "UseMU should be 0" -Skip:(!(Test-Elevated)) {
-            $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU
+            $useMu = 0
+            $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction Ignore
 
             $useMu | Should -Be 0
         }
