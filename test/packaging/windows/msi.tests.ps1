@@ -198,12 +198,6 @@ Describe -Name "Windows MSI" -Fixture {
             $psPath | Should -BeNullOrEmpty
         }
 
-        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
-            {
-                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
-            } | Should -Not -Throw
-        }
-
         It "UseMU should be 1" -Skip:(!(Test-Elevated)) {
             try {
                 $useMu = 0
@@ -224,6 +218,12 @@ Describe -Name "Windows MSI" -Fixture {
 
             Test-IsMuEnabled | Should -BeTrue -Because "MU should have been enabled"
         }
+
+        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
+            {
+                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
+            } | Should -Not -Throw
+        }
     }
 
     Context "USE_MU disabled" {
@@ -235,7 +235,7 @@ Describe -Name "Windows MSI" -Fixture {
 
         It "UseMU should be 0" -Skip:(!(Test-Elevated)) {
             $useMu = 0
-            $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction Ignore
+            $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction SilentlyContinue
 
             $useMu | Should -Be 0
         }
