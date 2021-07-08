@@ -220,10 +220,14 @@ namespace System.Management.Automation.Internal
                 }
             }
 
-            if (_needToLog && !string.IsNullOrEmpty(logElement))
+            if (_eventLogBuffer is not null && !string.IsNullOrEmpty(logElement))
             {
-                _eventLogBuffer ??= new List<string>();
                 _eventLogBuffer.Add(logElement);
+                _eventLogBufferDetailSize += logElement.Length;
+                if (_eventLogBufferDetailSize > EventLogBufferDetailThreshold)
+                {
+                    LogToEventLog();
+                }
             }
         }
 
@@ -231,21 +235,26 @@ namespace System.Management.Automation.Internal
         {
             // We check to see if there is anything in the buffer before we flush it.
             // Flushing the empty buffer causes a measurable performance degradation.
-            if (_commands?.Count > 0 && _eventLogBuffer?.Count > 0)
+            if (_eventLogBuffer?.Count > 0)
             {
-                InternalCommand firstCmd = _commands[0].Command;
-                MshLog.LogPipelineExecutionDetailEvent(
-                    firstCmd.Context,
-                    _eventLogBuffer,
-                    firstCmd.MyInvocation);
-            }
+                if (_commands?.Count > 0)
+                {
+                    InternalCommand firstCmd = _commands[0].Command;
+                    MshLog.LogPipelineExecutionDetailEvent(
+                        firstCmd.Context,
+                        _eventLogBuffer,
+                        firstCmd.MyInvocation);
+                }
 
-            // Clear the log buffer after writing the event.
-            _eventLogBuffer?.Clear();
+                // Clear the log buffer after writing the event.
+                _eventLogBuffer.Clear();
+                _eventLogBufferDetailSize = 0;
+            }
         }
 
-        private bool _needToLog = false;
         private List<string> _eventLogBuffer;
+        private int _eventLogBufferDetailSize;
+        private const int EventLogBufferDetailThreshold = 16384;
 
         #endregion
 
@@ -402,7 +411,10 @@ namespace System.Management.Automation.Internal
             _commands.Add(commandProcessor);
 
             // We will log event(s) about the pipeline execution details if any command in the pipeline requests that.
-            _needToLog |= commandProcessor.CommandRuntime.LogPipelineExecutionDetail;
+            if (_eventLogBuffer is null && commandProcessor.CommandRuntime.LogPipelineExecutionDetail)
+            {
+                _eventLogBuffer = new List<string>();
+            }
 
             // We give the Command a pointer back to the
             // PipelineProcessor so that it can check whether the
