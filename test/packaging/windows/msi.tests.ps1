@@ -24,6 +24,20 @@ Describe -Name "Windows MSI" -Fixture {
             return $false
         }
 
+        function Invoke-TestAndUploadLogOnFailure {
+            param (
+                [scriptblock] $Test
+            )
+
+            try {
+                & $Test
+            }
+            catch {
+                Send-VstsLogFile -Path $msiLog
+                throw
+            }
+        }
+
         function Invoke-Msiexec {
             param(
                 [Parameter(ParameterSetName = 'Install', Mandatory)]
@@ -199,15 +213,11 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         It "UseMU should be 1" -Skip:(!(Test-Elevated)) {
-            try {
+            Invoke-TestAndUploadLogOnFailure -Test {
                 $useMu = 0
-                $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction Ignore
+                $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction SilentlyContinue
 
                 $useMu | Should -Be 1
-            }
-            catch {
-                Send-VstsLogFile -Path $msiLog
-                throw
             }
         }
 
@@ -216,7 +226,9 @@ Describe -Name "Windows MSI" -Fixture {
                 Set-ItResult -Skipped -Because "MU already enabled"
             }
 
-            Test-IsMuEnabled | Should -BeTrue -Because "MU should have been enabled"
+            Invoke-TestAndUploadLogOnFailure -Test {
+                Test-IsMuEnabled | Should -BeTrue -Because "MU should have been enabled"
+            }
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
@@ -234,10 +246,12 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         It "UseMU should be 0" -Skip:(!(Test-Elevated)) {
-            $useMu = 0
-            $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction SilentlyContinue
+            Invoke-TestAndUploadLogOnFailure -Test {
+                $useMu = 0
+                $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction SilentlyContinue
 
-            $useMu | Should -Be 0
+                $useMu | Should -Be 0
+            }
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
