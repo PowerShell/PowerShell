@@ -480,6 +480,38 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             Test-Path $filePath | Should -BeTrue
             Get-Content $filePath | Should -BeExactly 'Clean block is hit'
         }
+
+        It "ExitException within 'Clean' block will not be propagated up" {
+            function test {
+                end {}
+                clean {
+                    'Clean block is hit' > $filePath
+                    exit
+                    'more text' >> $filePath
+                }
+            }
+
+            test
+            Test-Path $filePath | Should -BeTrue
+            Get-Content $filePath | Should -BeExactly 'Clean block is hit'
+        }
+
+        It "Exit from a script file works the same in 'Clean' block" {
+            $scriptFile = "$TestDrive\script.ps1"
+            "exit 122" > $scriptFile
+
+            function test {
+                end {}
+                clean {
+                    & $scriptFile
+                    $LASTEXITCODE > $filePath
+                }
+            }
+
+            test
+            Test-Path $filePath | Should -BeTrue
+            Get-Content $filePath | Should -BeExactly '122'
+        }
     }
 
     <#
