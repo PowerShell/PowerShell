@@ -49,7 +49,7 @@ param (
 
 $repoRoot = $location
 
-if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
+if ($Build -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
     $releaseTagParam = @{}
     if ($ReleaseTag) {
         $releaseTagParam['ReleaseTag'] = $ReleaseTag
@@ -74,7 +74,7 @@ try {
     Import-Module "$repoRoot/tools/packaging"
     Sync-PSTags -AddRemoteIfMissing
 
-    if ($BootStrap.IsPresent) {
+    if ($BootStrap) {
         Start-PSBootstrap -Package
     }
 
@@ -97,8 +97,8 @@ try {
         }
     }
 
-    if ($Build.IsPresent) {
-        if ($Symbols.IsPresent) {
+    if ($Build) {
+        if ($Symbols) {
             Start-PSBuild -Configuration 'Release' -Crossgen -NoPSModuleRestore @releaseTagParam
             $pspackageParams['Type']='zip'
             $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
@@ -123,7 +123,7 @@ try {
     Pop-Location
 }
 
-if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
+if ($Build -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
     $macPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg, *.tar.gz, *.zip
     foreach ($macPackage in $macPackages) {
         $filePath = $macPackage.FullName
