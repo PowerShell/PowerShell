@@ -440,12 +440,9 @@ Fix steps:
 
     # Framework Dependent builds do not support ReadyToRun as it needs a specific runtime to optimize for.
     # M1/ARM64 macOS similarly does not support ReadyToRun
-    # We need to detect ARM64 macOS from a Rosetta process, forcing us to parse uname -a
-    # See: https://stackoverflow.com/a/68148776
     # The property is set in Powershell.Common.props file.
     # We override the property through the build command line.
-    $isM1MacOS = $IsMacOS -and ((uname -a) -match 'ARM64')
-    if($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize -or $isM1MacOS) {
+    if($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize -or (Test-IsArm64MacOS)) {
         $Arguments += "/property:PublishReadyToRun=false"
     }
 
@@ -3381,4 +3378,9 @@ function New-NugetConfigFile
     $content = $nugetConfigTemplate.Replace('[FEED]', $NugetFeedUrl).Replace('[FEEDNAME]', $FeedName).Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
 
     Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
+}
+
+function Test-IsArm64MacOS
+{
+    return $IsMacOS -and (Start-NativeExecution -IgnoreExitCode { (arch -arm64 uname -p) -eq 'arm' } 2>$null)
 }
