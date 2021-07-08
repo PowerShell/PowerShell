@@ -92,14 +92,6 @@ Describe -Name "Windows MSI" -Fixture {
         $error.Clear()
     }
 
-    AfterEach {
-        if ($error.Count -ne 0 -and !$uploadedLog) {
-            Copy-Item -Path $msiLog -Destination $env:temp -Force
-            Write-Verbose "MSI log is at $env:temp\msilog.txt" -Verbose
-            $uploadedLog = $true
-        }
-    }
-
     Context "Enable_MU disabled" {
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
             if($muEnabled) {
@@ -213,10 +205,16 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         It "UseMU should be 1" -Skip:(!(Test-Elevated)) {
-            $useMu = 0
-            $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction Ignore
+            try {
+                $useMu = 0
+                $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction Ignore
 
-            $useMu | Should -Be 1
+                $useMu | Should -Be 1
+            }
+            catch {
+                Send-VstsLogFile -Path $msiLog
+                throw
+            }
         }
 
         It "MU should be enabled" -Skip:(!(Test-Elevated)) {
