@@ -32,5 +32,4 @@ jobs:
       Import-Module .\tools\ci.psm1
       New-CodeCoverageAndTestPackage
       Invoke-CIFinish -Runtime win7-${{ parameters.architecture }} -channel ${{ parameters.channel }}
-    errorActionPreference: continue
     displayName: Build and Test Package
