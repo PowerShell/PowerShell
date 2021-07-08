@@ -497,7 +497,7 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
         $err.FullyQualifiedErrorId | Should -BeExactly 'throw-exception'
     }
 
-    It "Error out variable should work for the 'Clean' block" {
+    It "Error out-variable should work for the 'Clean' block" {
         ## Terminating errors thrown from 'Clean' block are captured and written to the error pipe.
         ## Here we redirect the error pipe to discard the error stream, so the error doesn't pollute
         ## the test output.
@@ -505,11 +505,15 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
         $err.Count | Should -BeExactly 1
         $err[0].Message | Should -BeExactly 'terminating-exception'
 
-        ## TODO: $err.Count is 3 in this case. It's the same for other named blocks too.
+        ## $err.Count is 3 in this case. It's the same for other named blocks too.
+        ## This looks like an existing bug because $err.Count should be 1 since only 1 error happened.
+        ## Opened issue https://github.com/PowerShell/PowerShell/issues/15739
         ErrorInClean -ErrorActionStop -ErrorVariable err 2>&1 > $null
         $err[0] | Should -BeOfType 'System.Management.Automation.ActionPreferenceStopException'
 
-        ## TODO: $err.Count is 2 in this case. It's the same for other named blocks too.
+        ## $err.Count is 2 in this case. It's the same for other named blocks too.
+        ## Similarly, this looks like an existing bug and $err.Count should be 1.
+        ## This is tracked by the same issue above.
         ErrorInClean -ThrowException -ErrorVariable err 2>&1 > $null
         $err[0].Exception.Message | Should -BeExactly 'throw-exception'
 
