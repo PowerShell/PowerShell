@@ -552,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (errorId.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(errorId));
+                throw PSTraceSource.NewArgumentException(nameof(errorId));
             }
 
             return new ErrorDetails(
@@ -587,7 +587,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (commandName.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(commandName));
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             const string errorId = "ErrorMalformedDataFromRemoteCommand";
@@ -613,7 +613,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (commandNames.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(commandNames));
+                throw PSTraceSource.NewArgumentException(nameof(commandNames));
             }
 
             const string errorId = "ErrorCommandSkippedBecauseOfShadowing";
@@ -639,7 +639,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (commandName.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(commandName));
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             const string errorId = "ErrorSkippedNonRequestedCommand";
@@ -665,7 +665,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (typeName.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(typeName));
+                throw PSTraceSource.NewArgumentException(nameof(typeName));
             }
 
             const string errorId = "ErrorSkippedNonRequestedTypeDefinition";
@@ -691,7 +691,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (commandName.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(commandName));
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             const string errorId = "ErrorSkippedUnsafeCommandName";
@@ -717,7 +717,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (commandName.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(commandName));
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             if (nameType is null)
@@ -727,7 +727,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (nameType.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(nameType));
+                throw PSTraceSource.NewArgumentException(nameof(nameType));
             }
 
             Dbg.Assert(nameType.Equals("Alias") || nameType.Equals("ParameterSet") || nameType.Equals("Parameter"), "nameType matches resource names");
@@ -739,7 +739,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (name.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(name));
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             string errorId = "ErrorSkippedUnsafe" + nameType + "Name";
@@ -765,7 +765,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (commandName.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(commandName));
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             if (runtimeException == null)
@@ -824,7 +824,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (aliasName.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(aliasName));
+                throw PSTraceSource.NewArgumentException(nameof(aliasName));
             }
 
             const string errorId = "ErrorCouldntResolveAlias";
@@ -850,7 +850,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (commandName.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(commandName));
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             const string errorId = "ErrorNoResultsFromRemoteEnd";
@@ -953,7 +953,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (commandName.Length == 0)
             {
-                throw PSTraceSource.NewArgumentException(null, nameof(commandName));
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             if (this.AllowClobber.IsPresent)
