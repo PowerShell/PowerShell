@@ -78,7 +78,7 @@ Describe -Name "Windows MSI" -Fixture {
             }
 
             $argumentList = "$switch $MsiPath /quiet /l*vx $msiLog $additionalOptions"
-            Write-Verbose -Message "running msiexec $argumentList" -Verbose
+            Write-Verbose -Message "running msiexec $argumentList"
             $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList $argumentList -NoNewWindow -PassThru
             if ($msiExecProcess.ExitCode -ne 0) {
                 $exitCode = $msiExecProcess.ExitCode
