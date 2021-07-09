@@ -503,26 +503,26 @@ Describe "Json Tests" -Tags "Feature" {
 }
 "@
 			$result = ConvertFrom-Json $Json
-			$result."about"| Should -Be "Ipsum pariatur nisi eiusmod aliquip in cupidatat. Deserunt non sit anim consectetur consectetur incididunt elit qui id proident nostrud. Consectetur pariatur et adipisicing aliquip fugiat fugiat Lorem reprehenderit laboris magna. Duis veniam irure amet ex minim eiusmod et laborum non elit. Dolor enim Lorem occaecat nisi consectetur mollit laborum anim velit et. Irure aliquip eiusmod anim proident ex ea duis deserunt aute amet adipisicing nisi nostrud. Minim ipsum fugiat consequat mollit fugiat tempor fugiat."
+			$result."about"| Should -BeExactly "Ipsum pariatur nisi eiusmod aliquip in cupidatat. Deserunt non sit anim consectetur consectetur incididunt elit qui id proident nostrud. Consectetur pariatur et adipisicing aliquip fugiat fugiat Lorem reprehenderit laboris magna. Duis veniam irure amet ex minim eiusmod et laborum non elit. Dolor enim Lorem occaecat nisi consectetur mollit laborum anim velit et. Irure aliquip eiusmod anim proident ex ea duis deserunt aute amet adipisicing nisi nostrud. Minim ipsum fugiat consequat mollit fugiat tempor fugiat."
 			$result."about" | Should -Beoftype [String]
-			$result."address"| Should -Be "931 Kings Place, Hartsville/Hartley, Federated States Of Micronesia, 9344"
+			$result."address"| Should -BeExactly "931 Kings Place, Hartsville/Hartley, Federated States Of Micronesia, 9344"
 			$result."address" | Should -Beoftype [String]
 			$result."age" | Should -Beoftype [Int64]
-			$result."balance"| Should -Be ",039.72"
+			$result."balance"| Should -BeExactly ",039.72"
 			$result."balance" | Should -Beoftype [String]
-			$result."company"| Should -Be "INSECTUS"
+			$result."company"| Should -BeExactly "INSECTUS"
 			$result."company" | Should -Beoftype [String]
-			$result."email"| Should -Be "rhodesroberson@insectus.com"
+			$result."email"| Should -BeExactly "rhodesroberson@insectus.com"
 			$result."email" | Should -Beoftype [String]
-			$result."eyeColor"| Should -Be "green"
+			$result."eyeColor"| Should -BeExactly "green"
 			$result."eyeColor" | Should -Beoftype [String]
-			$result."favoriteFruit"| Should -Be "banana"
+			$result."favoriteFruit"| Should -BeExactly "banana"
 			$result."favoriteFruit" | Should -Beoftype [String]
-			$result."gender"| Should -Be "male"
+			$result."gender"| Should -BeExactly "male"
 			$result."gender" | Should -Beoftype [String]
-			$result."greeting"| Should -Be "Hello, Rhodes Roberson! You have 9 unread messages."
+			$result."greeting"| Should -BeExactly "Hello, Rhodes Roberson! You have 9 unread messages."
 			$result."greeting" | Should -Beoftype [String]
-			$result."guid"| Should -Be "429b96a7-24e3-47de-a93b-f44a346c5ac9"
+			$result."guid"| Should -BeExactly "429b96a7-24e3-47de-a93b-f44a346c5ac9"
 			$result."guid" | Should -Beoftype [String]
 			$result."index" | Should -Beoftype [Int64]
 			$result."isActive"| Should -Be False
@@ -531,30 +531,30 @@ Describe "Json Tests" -Tags "Feature" {
 			$result."latitude" | Should -Beoftype [Double]
 			$result."longitude"| Should -Be -47.522764
 			$result."longitude" | Should -Beoftype [Double]
-			$result."name"| Should -Be "Rhodes Roberson"
+			$result."name"| Should -BeExactly "Rhodes Roberson"
 			$result."name" | Should -Beoftype [String]
-			$result."phone"| Should -Be "+1 (883) 561-3999"
+			$result."phone"| Should -BeExactly "+1 (883) 561-3999"
 			$result."phone" | Should -Beoftype [String]
-			$result."picture"| Should -Be "http://placehold.it/32x32"
+			$result."picture"| Should -BeExactly "http://placehold.it/32x32"
 			$result."picture" | Should -Beoftype [String]
-			$result."registered"| Should -Be "2019-12-17T06:14:06 +06:00"
+			$result."registered"| Should -BeExactly "2019-12-17T06:14:06 +06:00"
 			$result."registered" | Should -Beoftype [String]
-			$result."_id"| Should -Be "60dd3ea9253016932039a0a2"
+			$result."_id"| Should -BeExactly "60dd3ea9253016932039a0a2"
 			$result."_id" | Should -Beoftype [String]
 			
 			$result.Tags | Should -Beoftype [string]
 			
 			$result.Tags.count | Should -Be 7 
-			$result.Tags[0] | Should -Be "laboris"
+			$result.Tags[0] | Should -BeExactly "laboris"
 			$result.Tags | Should -Be @("laboris", "voluptate", "amet", "ad", "velit", "ipsum", "do")
 			
 			$result.Friends | Should -Beoftype [pscustomobject]
 			$result.Friends[0].id | Should -Be 0
-			$result.Friends[0].name | Should -Be "Renee Holden"
+			$result.Friends[0].name | Should -BeExactly "Renee Holden"
 			$result.Friends[1].id | Should -Be 1
-			$result.Friends[1].name | Should -Be "Bennett Dixon"
+			$result.Friends[1].name | Should -BeExactly "Bennett Dixon"
 			$result.Friends[2].id | Should -Be 2
-			$result.Friends[2].name | Should -Be "Emilia Holder"
+			$result.Friends[2].name | Should -BeExactly "Emilia Holder"
 		}
 		
 		It "ConvertFrom-Json chooses the appropriate number type" {
