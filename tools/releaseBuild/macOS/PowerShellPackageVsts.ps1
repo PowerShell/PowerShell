@@ -102,14 +102,15 @@ try {
     }
 
     if ($Build) {
+        $runCrossgen = $Runtime -eq 'osx-x64'
         if ($Symbols) {
-            Start-PSBuild -Clean -Configuration 'Release' -Crossgen -NoPSModuleRestore @releaseTagParam -Runtime $Runtime
+            Start-PSBuild -Clean -Configuration 'Release' -Crossgen:$runCrossgen -NoPSModuleRestore @releaseTagParam -Runtime $Runtime
             $pspackageParams['Type']='zip'
             $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
             Write-Verbose "Starting powershell packaging(zip)..." -Verbose
             Start-PSPackage @pspackageParams @releaseTagParam -MacOSRuntime $Runtime
         } else {
-            Start-PSBuild -Configuration 'Release' -Crossgen -PSModuleRestore @releaseTagParam
+            Start-PSBuild -Configuration 'Release' -Crossgen:$runCrossgen -PSModuleRestore @releaseTagParam
             Start-PSPackage @pspackageParams @releaseTagParam
             switch ($ExtraPackage) {
                 "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam }
