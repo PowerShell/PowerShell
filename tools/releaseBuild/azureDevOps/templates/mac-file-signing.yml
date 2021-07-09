@@ -1,10 +1,10 @@
 parameters:
-    parentJob: ''
+    parentJobs: []
 
 jobs:
   - job: MacFileSigningJob
     displayName: macOS File signing
-    dependsOn: ${{ parameters.parentJob }}
+    dependsOn: ${{ parameters.parentJobs }}
     condition: succeeded()
     pool:
       name: Package ES Standard Build

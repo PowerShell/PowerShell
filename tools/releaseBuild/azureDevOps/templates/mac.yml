@@ -1,9 +1,8 @@
 parameters:
   buildArchitecture: 'x64'
-  jobName: 'build_macOS'
 
 jobs:
-- job: ${{ parameters.jobName }}
+- job: build_macOS_${{ parameters.buildArchitecture }}
   displayName: Build macOS
   condition: succeeded()
   pool: Hosted Mac Internal
