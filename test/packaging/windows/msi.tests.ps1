@@ -125,7 +125,8 @@ Describe -Name "Windows MSI" -Fixture {
             } | Should -Not -Throw
         }
 
-        It "MU should be disabled" -Skip:(!(Test-Elevated)) {
+        # Doesn't work in azDO hosts
+        It "MU should be disabled" -Pending {
             if($muEnabled) {
                 Set-ItResult -Skipped -Because "MU already enabled"
             }
@@ -235,7 +236,8 @@ Describe -Name "Windows MSI" -Fixture {
             }
         }
 
-        It "MU should be enabled" -Skip:(!(Test-Elevated)) {
+        # Doesn't work in azDO hosts
+        It "MU should be enabled" -Pending {
             if($muEnabled) {
                 Set-ItResult -Skipped -Because "MU already enabled"
             }
@@ -266,7 +268,8 @@ Describe -Name "Windows MSI" -Fixture {
             }
         }
 
-        It "MU should be enabled" -Skip:(!(Test-Elevated)) {
+        # Doesn't work in azDO hosts
+        It "MU should be enabled" -Pending {
             if($muEnabled) {
                 Set-ItResult -Skipped -Because "MU already enabled"
             }
