@@ -1807,7 +1807,7 @@ namespace System.Management.Automation
                 {
                     // Fix up prompt.
                     ++index;
-                    string debugPrompt = String.Concat("\"[DBG]: ", originalPromptString.AsSpan(index, originalPromptString.Length - index));
+                    string debugPrompt = string.Concat("\"[DBG]: ", originalPromptString.AsSpan(index, originalPromptString.Length - index));
 
                     defaultPromptInfo.Update(
                         ScriptBlock.Create(debugPrompt), true, ScopedItemOptions.Unspecified);
