@@ -49,7 +49,9 @@ stages:
 
       - template: templates/mac-file-signing.yml
         parameters:
-          parentJob: build_macOS
+          parentJobs:
+            - build_macOS_x64
+            - build_macOS_arm64
 
       - template: templates/mac-package-build.yml
         parameters:
