@@ -40,10 +40,12 @@ stages:
       - template: templates/mac.yml
         parameters:
           buildArchitecture: x64
+          jobName: build_macOS_x64
 
       - template: templates/mac.yml
         parameters:
           buildArchitecture: arm64
+          jobName: build_macOS_arm64
 
       - template: templates/mac-file-signing.yml
         parameters:
