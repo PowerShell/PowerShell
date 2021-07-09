@@ -132,6 +132,16 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
         '[ 1 ]' | ConvertFrom-Json -NoEnumerate | ConvertTo-Json -Compress | Should -Be '[1]'
     }
 
+	It 'Properly handles a null first element' {
+		(@('5','','','','','') | convertfrom-json).count | should -be 6
+		(@('','5','','','','') | convertfrom-json).count | should -be 6
+		(@('','','5','','','') | convertfrom-json).count | should -be 6
+		(@('','','','5','','') | convertfrom-json).count | should -be 6
+		(@('','','','','5','') | convertfrom-json).count | should -be 6
+		(@('','','','','','5') | convertfrom-json).count | should -be 6
+		@('','','{"common":[1,2]}' | ConvertFrom-Json).Length | should -be 3
+	}
+
     It 'Can convert null' {
         'null' | ConvertFrom-Json | Should -Be $null
         $out = '[1, null, 2]' | ConvertFrom-Json

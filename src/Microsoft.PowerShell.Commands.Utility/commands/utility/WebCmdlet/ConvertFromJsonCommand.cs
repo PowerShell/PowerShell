@@ -72,6 +72,7 @@ namespace Microsoft.PowerShell.Commands
             if (_inputObjectBuffer.Count > 0)
             {
                 ErrorRecord error = null;
+                ArgumentException exception = null;
 
                 if (_inputObjectBuffer.Count == 1)
                 {
@@ -87,13 +88,15 @@ namespace Microsoft.PowerShell.Commands
                         // Try to deserialize the first element.
                         ConvertFromJsonHelper(_inputObjectBuffer[0], out error);
                     }
-                    catch (ArgumentException)
+                    catch (ArgumentException thisError)
                     {
+                        exception = thisError;
                         // The first input string does not represent a complete Json Syntax.
                         // Hence consider the the entire input as a single Json content.
                     }
 
-                    if (error == null)
+                    // We were able to parse the first entry so that means we should parse every entry
+                    if (error != null || exception != null)
                     {
                         for (int index = 1; index < _inputObjectBuffer.Count; index++)
                         {
