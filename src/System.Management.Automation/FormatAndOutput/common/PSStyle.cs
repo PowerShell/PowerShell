@@ -37,17 +37,6 @@ namespace System.Management.Automation
         Classic = 1,
     }
     
-    /// <summary>
-    /// Type is used for custom formatting.
-    /// </summary>
-    public class AnsiDictionary : Dictionary<string, string>
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AnsiDictionary"/> class.
-        /// </summary>
-        public AnsiDictionary() : base(StringComparer.OrdinalIgnoreCase) { }
-    }
-
     #region PSStyle
     /// <summary>
     /// Contains configuration for how PowerShell renders text.
@@ -349,7 +338,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Contains formatting styles for FileInfo objects.
         /// </summary>
-        public class FileInfoFormatting
+        public sealed class FileInfoFormatting
         {
             /// <summary>
             /// Gets or sets the style for directories.
