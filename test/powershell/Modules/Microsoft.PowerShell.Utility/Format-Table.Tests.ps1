@@ -119,6 +119,92 @@ Describe "Format-Table" -Tags "CI" {
                 $result | Should -Match "Jim\s+5678\s+False"
         }
 
+        It "Format-Table output should not be greater than console width" {
+            $consoleWidth = (Get-Host).UI.RawUI.BufferSize.Width
+            $longName = [System.Text.StringBuilder]::new()
+            for ($i = 0; $i -lt $consoleWidth+1; $i+=8) {
+                [void]$longName.Append("LongName")
+            }
+            # Test cases (f - fixed, v - non-fixed field):
+            # f
+            $IP1 = [PSCustomObject]@{'Name'=$longName.ToString()}
+            $IPs = New-Object System.Collections.ArrayList
+            $IPs.Add($IP1)
+            $result =($IPs | Format-Table -Property @{Name = "Name";Expression={$_.Name};Width=$consoleWidth+700} | Out-String).Split([Environment]::NewLine)
+
+            for ($i = 0; $i -lt $result.Count; $i++) {
+                $result[$i].Length | Should -BeLessOrEqual $consoleWidth
+            }
+            # v
+            $IP1 = [PSCustomObject]@{'Name'=$longName.ToString()}
+            $IPs = New-Object System.Collections.ArrayList
+            $IPs.Add($IP1)
+            $result =($IPs | Format-Table -AutoSize | Out-String).Split([Environment]::NewLine)
+
+            for ($i = 0; $i -lt $result.Count; $i++) {
+                $result[$i].Length | Should -BeLessOrEqual $consoleWidth
+            }
+            # fv
+            $IP1 = [PSCustomObject]@{'Name'=$longName.ToString();'Size'=1234;}
+            $IPs = New-Object System.Collections.ArrayList
+            $IPs.Add($IP1)
+            $result =($IPs | Format-Table -Property @{Name = "Name";Expression={$_.Name};Width=$consoleWidth+700}, Size | Out-String).Split([Environment]::NewLine)
+
+            for ($i = 0; $i -lt $result.Count; $i++) {
+                $result[$i].Length | Should -BeLessOrEqual $consoleWidth
+            }
+
+            #vf
+            $IP1 = [PSCustomObject]@{'Name'=$longName.ToString();'Size'=1234;'BooleanValue'=$false}
+            $IPs = New-Object System.Collections.ArrayList
+            $IPs.Add($IP1)
+            $result =($IPs | Format-Table -Property Name,@{Name = "Size";Expression={$_.Size};Width=$consoleWidth} | Out-String).Split([Environment]::NewLine)
+
+            for ($i = 0; $i -lt $result.Count; $i++) {
+                $result[$i].Length | Should -BeLessOrEqual $consoleWidth
+            }
+
+            # fff
+            $IP1 = [PSCustomObject]@{'Name'=$longName.ToString();'Size'=1234;'BooleanValue'=$false}
+            $IPs = New-Object System.Collections.ArrayList
+            $IPs.Add($IP1)
+            $result =($IPs | Format-Table -Property @{Name = "Name";Expression={$_.Name};Width=$consoleWidth},@{Name = "Size";Expression={$_.Size};Width=$consoleWidth},@{Name = "BooleanValue";Expression={$_.BooleanValue};Width=$consoleWidth} | Out-String).Split([Environment]::NewLine)
+
+            for ($i = 0; $i -lt $result.Count; $i++) {
+                $result[$i].Length | Should -BeLessOrEqual $consoleWidth
+            }
+
+            # fffv
+            $IP1 = [PSCustomObject]@{'Name'=$longName.ToString();'Size'=1234;'BooleanValue'=$false;'Weight'=125}
+            $IPs = New-Object System.Collections.ArrayList
+            $IPs.Add($IP1)
+            $result =($IPs | Format-Table -Property @{Name = "Name";Expression={$_.Name};Width=$consoleWidth},@{Name = "Size";Expression={$_.Size};Width=$consoleWidth},@{Name = "BooleanValue";Expression={$_.BooleanValue};Width=$consoleWidth},Weight | Out-String).Split([Environment]::NewLine)
+
+            for ($i = 0; $i -lt $result.Count; $i++) {
+                $result[$i].Length | Should -BeLessOrEqual $consoleWidth
+            }
+
+            # fffvv
+            $IP1 = [PSCustomObject]@{'Name'=$longName.ToString();'Size'=1234;'BooleanValue'=$false;'Weight'=125;'Height'=72}
+            $IPs = New-Object System.Collections.ArrayList
+            $IPs.Add($IP1)
+            $result =($IPs | Format-Table -Property @{Name = "Name";Expression={$_.Name};Width=$consoleWidth},@{Name = "Size";Expression={$_.Size};Width=$consoleWidth},@{Name = "BooleanValue";Expression={$_.BooleanValue};Width=$consoleWidth},Weight,Height | Out-String).Split([Environment]::NewLine)
+
+            for ($i = 0; $i -lt $result.Count; $i++) {
+                $result[$i].Length | Should -BeLessOrEqual $consoleWidth
+            }
+
+            # vvvfff
+            $IP1 = [PSCustomObject]@{'Name'=$longName.ToString();'Size'=1234;'BooleanValue'=$false;'Weight'=125;'Height'=72;'Birthplace'='Jacksonville'}
+            $IPs = New-Object System.Collections.ArrayList
+            $IPs.Add($IP1)
+            $result =($IPs | Format-Table -Property Name,Size,BooleanValue,@{Name = "Weight";Expression={$_.Weight};Width=$consoleWidth},@{Name = "Height";Expression={$_.Height};Width=75},@{Name = "Birthplace";Expression={$_.Birthplace};Width=25}| Out-String).Split([Environment]::NewLine)
+
+            for ($i = 0; $i -lt $result.Count; $i++) {
+                $result[$i].Length | Should -BeLessOrEqual $consoleWidth
+            }
+        }
+
         It "Format-Table with '<testName>' should return `$null" -TestCases @(
             @{ testName = "empty array"; testObject = @{}   },
             @{ testName = "null"       ; testObject = $null }
