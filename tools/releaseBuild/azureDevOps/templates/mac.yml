@@ -1,6 +1,6 @@
 parameters:
-  jobName: 'build_macOS'
   buildArchitecture: 'x64'
+  jobName: 'build_macOS_${{ parameters.buildArchitecture }}'
 
 jobs:
 - job: ${{ parameters.jobName }}
