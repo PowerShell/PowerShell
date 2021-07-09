@@ -408,7 +408,7 @@ namespace Microsoft.PowerShell
             int maxStatusLength = barWidth - secRemainLength - 1;
             if (maxStatusLength > 0 && StatusDescription.Length > barWidth - secRemainLength)
             {
-                sb.Append(StatusDescription.Substring(0, barWidth - secRemainLength - 1));
+                sb.Append(StatusDescription.AsSpan(0, barWidth - secRemainLength - 1));
                 sb.Append(PSObjectHelper.Ellipsis);
             }
             else

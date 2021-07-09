@@ -1209,7 +1209,7 @@ namespace System.Management.Automation
 
                     if (ret != null && ret.Count > 0)
                     {
-                        var prefix = TokenKind.LParen.Text() + input.Substring(0, fakeReplacementIndex);
+                        string prefix = string.Concat(TokenKind.LParen.Text(), input.AsSpan(0, fakeReplacementIndex));
                         foreach (CompletionResult entry in ret)
                         {
                             string completionText = prefix + entry.CompletionText;
@@ -5394,11 +5394,11 @@ namespace System.Management.Automation
 
             return null;
         }
-        
+
         private static List<CompletionResult> CompleteCommentParameterValue(CompletionContext context, string wordToComplete)
         {
             FunctionDefinitionAst foundFunction = GetCommentHelpFunctionTarget(context);
-            
+
             ReadOnlyCollection<ParameterAst> foundParameters = null;
             if (foundFunction is not null)
             {
@@ -5409,7 +5409,7 @@ namespace System.Management.Automation
                 // The helpblock is for a script file
                 foundParameters = scriptAst.ParamBlock?.Parameters;
             }
-            
+
             if (foundParameters is null || foundParameters.Count == 0)
             {
                 return null;
@@ -6531,7 +6531,7 @@ namespace System.Management.Automation
 
             //search for help files for the current culture + en-US as fallback
             var searchPaths = new string[]
-            { 
+            {
                 Path.Combine(userHelpDir, currentCulture),
                 Path.Combine(appHelpDir, currentCulture),
                 Path.Combine(userHelpDir, "en-US"),
