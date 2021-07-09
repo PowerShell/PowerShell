@@ -37,6 +37,10 @@ function Start-PSPackage {
         [ValidateScript({$Environment.IsWindows})]
         [string] $WindowsRuntime,
 
+        [ValidateSet('osx-x64', 'osx-arm64')]
+        [ValidateScript({$Environment.IsMacOS})]
+        [string] $MacOSRuntime,
+
         [Switch] $Force,
 
         [Switch] $SkipReleaseChecks,
@@ -71,6 +75,8 @@ function Start-PSPackage {
         # Runtime and Configuration settings required by the package
         ($Runtime, $Configuration) = if ($WindowsRuntime) {
             $WindowsRuntime, "Release"
+        } elseif ($MacOSRuntime) {
+           $MacOSRuntime, "Release"
         } elseif ($Type -eq "tar-alpine") {
             New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type -eq "tar-arm") {
@@ -101,6 +107,8 @@ function Start-PSPackage {
         } elseif ($Type -eq 'fxdependent-win-desktop') {
             $NameSuffix = "win-fxdependentWinDesktop"
             Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
+        } elseif ($MacOSRuntime) {
+            $NameSuffix = $MacOSRuntime
         } else {
             Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
         }

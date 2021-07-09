@@ -38,6 +38,12 @@ stages:
     dependsOn: ['prep']
     jobs:
       - template: templates/mac.yml
+        parameters:
+          buildArchitecture: x64
+
+      - template: templates/mac.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-file-signing.yml
         parameters:

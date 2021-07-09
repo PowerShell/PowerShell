@@ -1,5 +1,6 @@
 parameters:
   jobName: 'build_macOS'
+  buildArchitecture: 'x64'
 
 jobs:
 - job: ${{ parameters.jobName }}
@@ -45,7 +46,7 @@ jobs:
 
   - pwsh: |
       $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
-      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults
+      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults -Runtime 'osx-${{ parameters.buildArchitecture }}'
       $env:AzDevOpsFeedPAT2 = $null
     displayName: 'Build'
 

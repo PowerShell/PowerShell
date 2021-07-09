@@ -42,6 +42,10 @@ param (
     [ValidatePattern("-signed.zip$")]
     [string]$BuildZip,
 
+    [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
+    [ValidateSet('osx-x64', 'osx-arm64')]
+    [string]$Runtime,
+
     [string]$ArtifactName = 'result',
 
     [switch]$SkipReleaseChecks
@@ -99,11 +103,11 @@ try {
 
     if ($Build) {
         if ($Symbols) {
-            Start-PSBuild -Configuration 'Release' -Crossgen -NoPSModuleRestore @releaseTagParam
+            Start-PSBuild -Clean -Configuration 'Release' -Crossgen -NoPSModuleRestore @releaseTagParam -Runtime $Runtime
             $pspackageParams['Type']='zip'
             $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
             Write-Verbose "Starting powershell packaging(zip)..." -Verbose
-            Start-PSPackage @pspackageParams @releaseTagParam
+            Start-PSPackage @pspackageParams @releaseTagParam -MacOSRuntime $Runtime
         } else {
             Start-PSBuild -Configuration 'Release' -Crossgen -PSModuleRestore @releaseTagParam
             Start-PSPackage @pspackageParams @releaseTagParam

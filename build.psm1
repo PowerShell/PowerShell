@@ -442,7 +442,7 @@ Fix steps:
     # M1/ARM64 macOS similarly does not support ReadyToRun
     # The property is set in Powershell.Common.props file.
     # We override the property through the build command line.
-    if($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize -or (Test-IsArm64MacOS)) {
+    if($Options.Runtime -eq 'osx-arm64' -or $Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) {
         $Arguments += "/property:PublishReadyToRun=false"
     }
 
