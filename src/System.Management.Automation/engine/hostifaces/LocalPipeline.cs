@@ -1271,7 +1271,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Object used to lock critical sections where script execution must occur even in stopping pipelines.
         /// </summary>
-        private readonly object _criticalSectionLock = new object();
+        private readonly object _criticalSectionLock = new();
 
         /// <summary>
         /// The current depth of nested critical sections. If this is above zero, the pipeline execution

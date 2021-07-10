@@ -456,19 +456,14 @@ namespace System.Management.Automation
                     HandleObsoleteCommand(ObsoleteAttribute);
                 }
             }
-            catch (Exception e)
+            catch (InvalidComObjectException e)
             {
-                if (e is InvalidComObjectException)
-                {
-                    // This type of exception could be thrown from parameter binding.
-                    string msg = StringUtil.Format(ParserStrings.InvalidComObjectException, e.Message);
-                    var newEx = new RuntimeException(msg, e);
+                // This type of exception could be thrown from parameter binding.
+                string msg = StringUtil.Format(ParserStrings.InvalidComObjectException, e.Message);
+                var newEx = new RuntimeException(msg, e);
 
-                    newEx.SetErrorId("InvalidComObjectException");
-                    throw newEx;
-                }
-
-                throw;
+                newEx.SetErrorId("InvalidComObjectException");
+                throw newEx;
             }
             finally
             {

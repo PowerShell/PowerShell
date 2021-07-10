@@ -1132,9 +1132,8 @@ namespace System.Management.Automation.Internal
         /// </summary>
         private void SetupParameterVariables()
         {
-            for (int i = 0; i < _commands.Count; i++)
+            foreach (CommandProcessorBase commandProcessor in _commands)
             {
-                CommandProcessorBase commandProcessor = _commands[i];
                 ValidateCommandProcessorNotNull(commandProcessor, errorMessage: null);
 
                 commandProcessor.CommandRuntime.SetupOutVariable();
@@ -1234,9 +1233,8 @@ namespace System.Management.Automation.Internal
             // deal with the output. Don't do anything here...
             if (!_linkedErrorOutput)
             {
-                for (int i = 0; i < _commands.Count; i++)
+                foreach (CommandProcessorBase commandProcessor in _commands)
                 {
-                    CommandProcessorBase commandProcessor = _commands[i];
                     ValidateCommandProcessorNotNull(commandProcessor, errorMessage: null);
 
                     Pipe ErrorPipe = commandProcessor.CommandRuntime.ErrorOutputPipe;
@@ -1286,9 +1284,8 @@ namespace System.Management.Automation.Internal
         {
             Dbg.Assert(pipeToUse != null, "Caller should verify pipeToUse != null");
 
-            for (int i = 0; i < _commands.Count; i++)
+            foreach (CommandProcessorBase commandProcessor in _commands)
             {
-                CommandProcessorBase commandProcessor = _commands[i];
                 ValidateCommandProcessorNotNull(commandProcessor, errorMessage: null);
 
                 if (commandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet == null)

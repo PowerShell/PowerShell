@@ -369,9 +369,7 @@ namespace System.Management.Automation
                 throw NewArgumentNullException(nameof(resourceString));
             }
 
-            string message = args.Length == 0
-                ? resourceString
-                : StringUtil.Format(resourceString, args);
+            string message = StringUtil.Format(resourceString, args);
 
             var e = new PSInvalidOperationException(message);
             return e;
