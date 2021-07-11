@@ -186,6 +186,9 @@
   <data name="NestedPromptLevelDescription" xml:space="preserve">
     <value>Dictates what type of prompt should be displayed for the current nesting level</value>
   </data>
+  <data name="NativeCommandThrowPreferenceDescription" xml:space="preserve">
+    <value>If true, native executables that return a non-zero exit code generate a terminating error</value>
+  </data>  
   <data name="WhatIfPreferenceDescription" xml:space="preserve">
     <value>If true, WhatIf is considered to be enabled for all commands.</value>
   </data>

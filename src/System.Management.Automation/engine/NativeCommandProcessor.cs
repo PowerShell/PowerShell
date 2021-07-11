@@ -726,7 +726,26 @@ namespace System.Management.Automation
 
                     this.Command.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, _nativeProcess.ExitCode);
                     if (_nativeProcess.ExitCode != 0)
+                    {
                         this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+
+                        bool nativeCommandThrowPref = 
+                            this.Command.Context.GetBooleanPreference(
+                                SpecialVariables.NativeCommandThrowPreferenceVarPath, 
+                                false, 
+                                out _);
+
+                        if (nativeCommandThrowPref)
+                        {
+                            var nonZeroExitCodeErrorRecord = 
+                                new ErrorRecord(
+                                    exception: new Exception("Native executable returned a non-zero exit code."), 
+                                    errorId: "NativeCommandThrow", 
+                                    errorCategory: ErrorCategory.NotSpecified,
+                                    targetObject: this.NativeCommandName);
+                            this.commandRuntime.ThrowTerminatingError(nonZeroExitCodeErrorRecord);
+                        }
+                    }
                 }
             }
             catch (Win32Exception e)
