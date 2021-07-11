@@ -4471,6 +4471,7 @@ end {
         internal const ActionPreference DefaultInformationPreference = ActionPreference.SilentlyContinue;
 
         internal const ErrorView DefaultErrorView = ErrorView.ConciseView;
+        internal const bool DefaultNativeCommandThrowPreference = false;
         internal const bool DefaultWhatIfPreference = false;
         internal const ConfirmImpact DefaultConfirmPreference = ConfirmImpact.High;
 
@@ -4560,6 +4561,10 @@ end {
                 SpecialVariables.NestedPromptLevel,
                 0,
                 RunspaceInit.NestedPromptLevelDescription),
+            new SessionStateVariableEntry(
+                SpecialVariables.NativeCommandThrowPreference,
+                DefaultNativeCommandThrowPreference,
+                RunspaceInit.NativeCommandThrowPreferenceDescription),
             new SessionStateVariableEntry(
                 SpecialVariables.WhatIfPreference,
                 DefaultWhatIfPreference,
