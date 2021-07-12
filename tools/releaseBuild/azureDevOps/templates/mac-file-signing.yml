@@ -42,9 +42,11 @@ jobs:
 
     - pwsh: |
         $symbolsFolder = New-Item -Path "$(System.ArtifactsDirectory)\zip_symbols" -ItemType Directory
+
         Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*.zip' |
           ForEach-Object {
-            Write-Verbose -Verbose "Zip Path: $_"
+            $zipPath = $_.FullName
+            Write-Verbose -Verbose "Zip Path: $zipPath"
 
             $expandedFolder = $_.BaseName
             Expand-Archive -Path $zipPath -Destination "$($symbolsFolder.FullName)\$expandedFolder" -Force
