@@ -41,7 +41,8 @@ jobs:
       continueOnError: true
 
     - pwsh: |
-        $symbolsFolder = New-Item -Path "$(System.ArtifactsDirectory)\zip_symbols" -ItemType Directory
+        $symbolsFolder = New-Item -Path "$(System.ArtifactsDirectory)\zip_symbols" -ItemType Directory -Force -ErrorAction Stop
+        Write-Verbose -Verbose "Created symbols dir: $symbolsFolder"
 
         Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*.zip' |
           ForEach-Object {
@@ -52,6 +53,7 @@ jobs:
             Expand-Archive -Path $zipPath -Destination "$($symbolsFolder.FullName)\$expandedFolder" -Force
           }
 
+        $symbolsFolder = $symbolsFolder.BaseName
         Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$symbolsFolder"
         Write-Host "##vso[task.setvariable variable=SymbolsFolder]$symbolsFolder"
 
