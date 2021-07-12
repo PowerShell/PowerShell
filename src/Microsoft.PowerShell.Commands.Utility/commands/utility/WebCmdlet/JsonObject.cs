@@ -678,6 +678,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="context">The context for the operation.</param>
         private static void AppendPsProperties(PSObject psObj, IDictionary receiver, int depth, bool isCustomObject, in ConvertToJsonContext context)
         {
+            // if the psObj is a DateTime or String type, we don't serialize any extended or adapted properties
+            if (psObj.BaseObject is string || psObj.BaseObject is DateTime)
+            {
+                return;
+            }
+
             // serialize only Extended and Adapted properties..
             PSMemberInfoCollection<PSPropertyInfo> srcPropertiesToSearch =
                 new PSMemberInfoIntegratingCollection<PSPropertyInfo>(psObj,
