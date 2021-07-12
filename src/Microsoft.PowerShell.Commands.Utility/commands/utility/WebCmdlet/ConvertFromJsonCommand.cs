@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     // We were able to parse the first entry so that means we should parse every entry
-                    if (error != null || exception != null)
+                    if (error == null && exception == null)
                     {
                         for (int index = 1; index < _inputObjectBuffer.Count; index++)
                         {
