@@ -4,7 +4,7 @@ parameters:
 jobs:
   - job: MacFileSigningJob
     displayName: macOS File signing
-    dependsOn: ${{ parameters.parentJobs }}
+    dependsOn: ${{ parameters.parentJob }}
     condition: succeeded()
     pool:
       name: Package ES Standard Build
@@ -41,14 +41,18 @@ jobs:
       continueOnError: true
 
     - pwsh: |
-        $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*.zip'
-        Write-Verbose -Verbose "Zip Path: $zipPath"
+        $symbolsFolder = New-Item -Path "$(System.ArtifactsDirectory)\zip_symbols" -ItemType Directory
+        Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*.zip' |
+          ForEach-Object {
+            Write-Verbose -Verbose "Zip Path: $_"
 
-        $expandedFolder = $zipPath.BaseName
-        Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
-        Write-Host "##vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
+            $expandedFolder = $_.BaseName
+            Expand-Archive -Path $zipPath -Destination "$($symbolsFolder.FullName)\$expandedFolder" -Force
+          }
 
-        Expand-Archive -Path $zipPath -Destination "$(System.ArtifactsDirectory)\$expandedFolder" -Force
+        Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$symbolsFolder"
+        Write-Host "##vso[task.setvariable variable=SymbolsFolder]$symbolsFolder"
+
       displayName: Expand symbols zip
 
     - pwsh: |
