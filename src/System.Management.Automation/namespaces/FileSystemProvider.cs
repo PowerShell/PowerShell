@@ -2058,11 +2058,43 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Name if a file or directory, Name -> Target if symlink.</returns>
         public static string NameString(PSObject instance)
         {
-            return instance?.BaseObject is FileSystemInfo fileInfo
-                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo)
-                    ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
-                    : fileInfo.Name
-                : string.Empty;
+            if (ExperimentalFeature.IsEnabled("PSAnsiRendering") && ExperimentalFeature.IsEnabled("PSAnsiRenderingFileInfo"))
+            {
+                if (instance?.BaseObject is FileSystemInfo fileInfo)
+                {
+                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.SymbolicLink}{fileInfo.Name}{PSStyle.Instance.Reset} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}";
+                    }
+                    else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.Directory}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                    }
+                    else if (PSStyle.Instance.FileInfo.Extension.ContainsKey(fileInfo.Extension))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.Extension[fileInfo.Extension]}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                    }
+                    else if ((Platform.IsWindows && CommandDiscovery.PathExtensions.Contains(fileInfo.Extension.ToLower())) ||
+                        (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileInfo.FullName)))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.Executable}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                    }
+                    else
+                    {
+                        return fileInfo.Name;
+                    }
+                }
+
+                return string.Empty;
+            }
+            else
+            {
+                return instance?.BaseObject is FileSystemInfo fileInfo
+                    ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo)
+                        ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
+                        : fileInfo.Name
+                    : string.Empty;
+            }
         }
 
         /// <summary>
