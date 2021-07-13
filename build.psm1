@@ -124,7 +124,7 @@ function Get-EnvironmentInformation
     if ($environment.IsWindows)
     {
         $environment += @{'IsAdmin' = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)}
-        $environment += @{'nugetPackagesRoot' = "${env:USERPROFILE}\.nuget\packages"}
+        $environment += @{'nugetPackagesRoot' = "${env:USERPROFILE}\.nuget\packages", "${env:NUGET_PACKAGES}"}
     }
     else
     {
@@ -2323,78 +2323,80 @@ function Start-CrossGen {
 
     function New-CrossGenAssembly {
         param (
-            [Parameter(Mandatory= $true)]
+            [Parameter(Mandatory = $true)]
             [ValidateNotNullOrEmpty()]
-            [String]
+            [String[]]
             $AssemblyPath,
-            [Parameter(Mandatory= $true)]
+
+            [Parameter(Mandatory = $true)]
             [ValidateNotNullOrEmpty()]
             [String]
-            $CrossgenPath
+            $CrossgenPath,
+
+            [Parameter(Mandatory = $true)]
+            [ValidateSet("alpine-x64",
+                "linux-arm",
+                "linux-arm64",
+                "linux-x64",
+                "osx-arm64",
+                "osx-x64",
+                "win-arm",
+                "win-arm64",
+                "win7-x64",
+                "win7-x86")]
+            [string]
+            $Runtime
         )
 
-        $outputAssembly = $AssemblyPath.Replace(".dll", ".ni.dll")
-        $platformAssembliesPath = Split-Path $AssemblyPath -Parent
-        $crossgenFolder = Split-Path $CrossgenPath
-        $niAssemblyName = Split-Path $outputAssembly -Leaf
+        $platformAssembliesPath = Split-Path $AssemblyPath[0] -Parent
 
-        try {
-            Push-Location $crossgenFolder
+        $targetOS, $targetArch = $Runtime -split '-'
 
-            # Generate the ngen assembly
-            Write-Verbose "Generating assembly $niAssemblyName"
-            Start-NativeExecution {
-                & $CrossgenPath /ReadyToRun /MissingDependenciesOK /in $AssemblyPath /out $outputAssembly /Platform_Assemblies_Paths $platformAssembliesPath
-            } | Write-Verbose
-        } finally {
-            Pop-Location
+        # Special cases where OS / Arch does not conform with runtime names
+        switch ($Runtime) {
+            'alpine-x64' {
+                $targetOS = 'linux'
+                $targetArch = 'x64'
+             }
+            'win-arm' {
+                $targetOS = 'windows'
+                $targetArch = 'arm'
+            }
+            'win-arm64' {
+                $targetOS = 'windows'
+                $targetArch = 'arm64'
+            }
+            'win7-x64' {
+                $targetOS = 'windows'
+                $targetArch = 'x64'
+            }
+            'win7-x86' {
+                $targetOS = 'windows'
+                $targetArch = 'x86'
+            }
         }
-    }
 
-    function New-CrossGenSymbol {
-        param (
-            [Parameter(Mandatory= $true)]
-            [ValidateNotNullOrEmpty()]
-            [String]
-            $AssemblyPath,
-            [Parameter(Mandatory= $true)]
-            [ValidateNotNullOrEmpty()]
-            [String]
-            $CrossgenPath
-        )
+        # The path to folder must end with directory separator
+        $dirSep = [System.IO.Path]::DirectorySeparatorChar
+        $platformAssembliesPath = if (-not $platformAssembliesPath.EndsWith($dirSep)) { $platformAssembliesPath + $dirSep }
 
+        Start-NativeExecution {
+            $crossgen2Params = @(
+                "-r"
+                $platformAssembliesPath
+                "--out-near-input"
+                "--single-file-compilation"
+                "-O"
+                "--pdb"
+                "--targetos"
+                $targetOS
+                "--targetarch"
+                $targetArch
+            )
 
-        $platformAssembliesPath = Split-Path $AssemblyPath -Parent
-        $crossgenFolder = Split-Path $CrossgenPath
+            $crossgen2Params += $AssemblyPath
 
-        try {
-            Push-Location $crossgenFolder
-
-            $symbolsPath = [System.IO.Path]::ChangeExtension($assemblyPath, ".pdb")
-
-            $createSymbolOptionName = $null
-            if($Environment.IsWindows)
-            {
-                $createSymbolOptionName = '-CreatePDB'
-
-            }
-            elseif ($Environment.IsLinux)
-            {
-                $createSymbolOptionName = '-CreatePerfMap'
-            }
-
-            if($createSymbolOptionName)
-            {
-                Start-NativeExecution {
-                    & $CrossgenPath -readytorun -platform_assemblies_paths $platformAssembliesPath $createSymbolOptionName $platformAssembliesPath $AssemblyPath
-                } | Write-Verbose
-            }
-
-            # Rename the corresponding ni.dll assembly to be the same as the IL assembly
-            $niSymbolsPath = [System.IO.Path]::ChangeExtension($symbolsPath, "ni.pdb")
-            Rename-Item $niSymbolsPath $symbolsPath -Force -ErrorAction Stop
-        } finally {
-            Pop-Location
+            & $CrossgenPath $crossgen2Params
         }
     }
 
@@ -2403,8 +2405,7 @@ function Start-CrossGen {
     }
 
     # Get the path to crossgen
-    $crossGenExe = if ($environment.IsWindows) { "crossgen.exe" } else { "crossgen" }
-    $generateSymbols = $false
+    $crossGenExe = if ($environment.IsWindows) { "crossgen2.exe" } else { "crossgen2" }
 
     # The crossgen tool is only published for these particular runtimes
     $crossGenRuntime = if ($environment.IsWindows) {
@@ -2412,15 +2413,9 @@ function Start-CrossGen {
             "win-x86"
         } elseif ($Runtime -match "-x64") {
             "win-x64"
-            $generateSymbols = $true
-        } elseif (!($env:PROCESSOR_ARCHITECTURE -match "arm")) {
-            throw "crossgen for 'win-arm' and 'win-arm64' must be run on that platform"
+        } else {
+            $Runtime
         }
-    } elseif ($Runtime -eq "linux-arm") {
-        throw "crossgen is not available for 'linux-arm'"
-    } elseif ($Runtime -eq "linux-x64") {
-        $Runtime
-        # We should set $generateSymbols = $true, but the code needs to be adjusted for different extension on Linux
     } else {
         $Runtime
     }
@@ -2440,31 +2435,9 @@ function Start-CrossGen {
                         Select-Object -First 1 | `
                         ForEach-Object { $_.FullName }
     if (-not $crossGenPath) {
-        throw "Unable to find latest version of crossgen.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
+        throw "Unable to find latest version of crossgen2.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
     }
-    Write-Verbose "Matched CrossGen.exe: $crossGenPath" -Verbose
-
-    # Crossgen.exe requires the following assemblies:
-    # mscorlib.dll
-    # System.Private.CoreLib.dll
-    # clrjit.dll on Windows or libclrjit.so/dylib on Linux/OS X
-    $crossGenRequiredAssemblies = @("mscorlib.dll", "System.Private.CoreLib.dll")
-
-    $crossGenRequiredAssemblies += if ($environment.IsWindows) {
-        "clrjit.dll"
-    } elseif ($environment.IsLinux) {
-        "libclrjit.so"
-    } elseif ($environment.IsMacOS) {
-        "libclrjit.dylib"
-    }
-
-    # Make sure that all dependencies required by crossgen are at the directory.
-    $crossGenFolder = Split-Path $crossGenPath
-    foreach ($assemblyName in $crossGenRequiredAssemblies) {
-        if (-not (Test-Path "$crossGenFolder\$assemblyName")) {
-            Copy-Item -Path "$PublishPath\$assemblyName" -Destination $crossGenFolder -Force -ErrorAction Stop
-        }
-    }
+    Write-Verbose "Matched CrossGen2.exe: $crossGenPath" -Verbose
 
     # Common assemblies used by Add-Type or assemblies with high JIT and no pdbs to crossgen
     $commonAssembliesForAddType = @(
@@ -2495,10 +2468,12 @@ function Start-CrossGen {
 
     $fullAssemblyList = $commonAssembliesForAddType
 
-    foreach ($assemblyName in $fullAssemblyList) {
-        $assemblyPath = Join-Path $PublishPath $assemblyName
-        New-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
+    $assemblyFullPaths = @()
+    $assemblyFullPaths += foreach ($assemblyName in $fullAssemblyList) {
+        Join-Path $PublishPath $assemblyName
     }
+
+    New-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyFullPaths -Runtime $Runtime
 
     #
     # With the latest dotnet.exe, the default load context is only able to load TPAs, and TPA
@@ -2523,12 +2498,6 @@ function Start-CrossGen {
         # Microsoft.CodeAnalysis.VisualBasic.dll, and Microsoft.CSharp.dll.
         if ($commonAssembliesForAddType -notcontains $assemblyName) {
             Remove-Item $symbolsPath -Force -ErrorAction Stop
-
-            if($generateSymbols)
-            {
-                Write-Verbose "Generating Symbols for $assemblyPath"
-                New-CrossGenSymbol -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
-            }
         }
     }
 }
