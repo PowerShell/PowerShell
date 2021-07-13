@@ -436,7 +436,7 @@
       <Publish Dialog="ExplorerContextMenuDialog" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="ExplorerContextMenuDialog" Control="Next" Event="NewDialog" Value="MuDialog">1</Publish>
       <Publish Dialog="MuDialog" Control="Back" Event="NewDialog" Value="ExplorerContextMenuDialog">1</Publish>
-      <Publish Dialog="MuDialog" Control="Next" Event="SpawnDialog" Value="MuWarningDlg" Order="1">ENABLE_MU=0 AND USE_MU=1</Publish>
+      <Publish Dialog="MuDialog" Control="Next" Event="SpawnDialog" Value="MuWarningDlg" Order="1">NOT ENABLE_MU AND USE_MU=1</Publish>
       <Publish Dialog="MuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
 
       <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
