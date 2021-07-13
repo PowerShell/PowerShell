@@ -1,10 +1,10 @@
 parameters:
-    parentJobs: []
+  buildArchitecture: 'x64'
 
 jobs:
-  - job: MacFileSigningJob
+  - job: MacFileSigningJob_${{ parameters.buildArchitecture }}
     displayName: macOS File signing
-    dependsOn: ${{ parameters.parentJobs }}
+    dependsOn: build_macOS_${{ parameters.buildArchitecture }}
     condition: succeeded()
     pool:
       name: Package ES Standard Build
@@ -41,22 +41,14 @@ jobs:
       continueOnError: true
 
     - pwsh: |
-        $symbolsFolder = New-Item -Path "$(System.ArtifactsDirectory)\zip_symbols" -ItemType Directory -Force -ErrorAction Stop
-        Write-Verbose -Verbose "Created symbols dir: $symbolsFolder"
+        $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*${{ parameters.buildArchitecture }}*.zip'
+        Write-Verbose -Verbose "Zip Path: $zipPath"
 
-        Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*.zip' |
-          ForEach-Object {
-            $zipPath = $_.FullName
-            Write-Verbose -Verbose "Zip Path: $zipPath"
+        $expandedFolder = $zipPath.BaseName
+        Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
+        Write-Host "##vso[task.setvariable variable=SymbolsFolder]$expandedFolder"
 
-            $expandedFolder = $_.BaseName
-            Expand-Archive -Path $zipPath -Destination "$($symbolsFolder.FullName)\$expandedFolder" -Force
-          }
-
-        $symbolsFolder = $symbolsFolder.BaseName
-        Write-Host "sending.. vso[task.setvariable variable=SymbolsFolder]$symbolsFolder"
-        Write-Host "##vso[task.setvariable variable=SymbolsFolder]$symbolsFolder"
-
+        Expand-Archive -Path $zipPath -Destination "$(System.ArtifactsDirectory)\$expandedFolder" -Force
       displayName: Expand symbols zip
 
     - pwsh: |
@@ -71,7 +63,7 @@ jobs:
 
     - pwsh: |
         $null = new-item -type directory -path "$(Build.StagingDirectory)\macos"
-        $zipFile = "$(Build.StagingDirectory)\macos\powershell-files-$(Version)-osx-x64.zip"
+        $zipFile = "$(Build.StagingDirectory)\macos\powershell-files-$(Version)-osx-${{ parameters.buildArchitecture }}.zip"
         Get-ChildItem "$(System.ArtifactsDirectory)\$(SymbolsFolder)" -Recurse -Include pwsh, *.dylib |
           Compress-Archive -Destination $zipFile
         Write-Host $zipFile
@@ -89,7 +81,7 @@ jobs:
           displayName: Sign macOS Binaries
 
     - pwsh: |
-        $destination = "$(System.ArtifactsDirectory)\azureMacOs"
+        $destination = "$(System.ArtifactsDirectory)\azureMacOs_${{ parameters.buildArchitecture }}"
         New-Item -Path $destination -Type Directory
         $zipPath = Get-ChildItem "$(Build.StagingDirectory)\signedMacOSPackages\powershell-*.zip" -Recurse | select-object -expandproperty fullname
         foreach ($z in $zipPath) { Expand-Archive -Path $z -DestinationPath $destination }
@@ -98,15 +90,15 @@ jobs:
 
     - template: upload-final-results.yml
       parameters:
-        artifactPath: $(System.ArtifactsDirectory)\azureMacOs
+        artifactPath: $(System.ArtifactsDirectory)\azureMacOs_${{ parameters.buildArchitecture }}
         artifactFilter: "*"
-        artifactName: signedMacOsBins
+        artifactName: signedMacOsBins_${{ parameters.buildArchitecture }}
         condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
     - ${{ if eq(variables['SHOULD_SIGN'], 'true') }}:
       - template: EsrpScan.yml@ComplianceRepo
         parameters:
-            scanPath: $(System.ArtifactsDirectory)\azureMacOs
+            scanPath: $(System.ArtifactsDirectory)\azureMacOs_${{ parameters.buildArchitecture }}
             pattern: |
               **\*
 

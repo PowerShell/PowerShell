@@ -1,11 +1,11 @@
 parameters:
   parentJob: ''
-  jobName: 'package_macOS'
+  buildArchitecture: x64
 
 jobs:
-- job: ${{ parameters.jobName }}
+- job: package_macOS_${{ parameters.buildArchitecture }}
   displayName: Package macOS
-  dependsOn: ${{ parameters.parentJob }}
+  dependsOn: MacFileSigningJob_${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool: Hosted Mac Internal
   variables:
@@ -40,13 +40,13 @@ jobs:
     displayName: Download macosBinResults
     inputs:
       artifactName: 'macosBinResults'
-      itemPattern: '**/*.zip'
+      itemPattern: '**/*${{ parameters.buildArchitecture }}.zip'
       downloadPath: '$(System.ArtifactsDirectory)/Symbols'
 
   - task: DownloadBuildArtifacts@0
     displayName: Download signedMacOsBins
     inputs:
-      artifactName: 'signedMacOsBins'
+      artifactName: 'signedMacOsBins_${{ parameters.buildArchitecture }}'
       itemPattern: '**/*'
       downloadPath: '$(System.ArtifactsDirectory)/macOsBins'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
@@ -58,7 +58,7 @@ jobs:
     continueOnError: true
 
   - pwsh: |
-      $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*.zip'
+      $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*${{ parameters.buildArchitecture }}.zip'
       Write-Verbose -Verbose "Zip Path: $zipPath"
 
       $expandedFolder = $zipPath.BaseName
