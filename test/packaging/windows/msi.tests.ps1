@@ -120,42 +120,6 @@ Describe -Name "Windows MSI" -Fixture {
         $error.Clear()
     }
 
-    Context "Enable_MU disabled" {
-        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
-            if($muEnabled) {
-                Set-ItResult -Skipped -Because "MU already enabled"
-            }
-            {
-                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{Enable_MU = 0}
-            } | Should -Not -Throw
-        }
-
-        # Doesn't work in azDO hosts
-        It "MU should be disabled" -Pending {
-            if($muEnabled) {
-                Set-ItResult -Skipped -Because "MU already enabled"
-            }
-
-            Test-IsMuEnabled | Should -BeFalse -Because "MU should not have been enabled"
-        }
-
-        It "UseMU should be 1" -Skip:(!(Test-Elevated)) {
-            Invoke-TestAndUploadLogOnFailure -Test {
-                $useMu = Get-UseMU
-                $useMu | Should -Be 1
-            }
-        }
-
-        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
-            if($muEnabled) {
-                Set-ItResult -Skipped -Because "MU already enabled"
-            }
-            {
-                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
-            } | Should -Not -Throw
-        }
-    }
-
     Context "Upgrade code" {
         BeforeAll {
             Write-Verbose "cr-$channel-$runtime" -Verbose
@@ -241,17 +205,6 @@ Describe -Name "Windows MSI" -Fixture {
             }
         }
 
-        # Doesn't work in azDO hosts
-        It "MU should be enabled" -Pending {
-            if($muEnabled) {
-                Set-ItResult -Skipped -Because "MU already enabled"
-            }
-
-            Invoke-TestAndUploadLogOnFailure -Test {
-                Test-IsMuEnabled | Should -BeTrue -Because "MU should have been enabled"
-            }
-        }
-
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
             {
                 Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
@@ -270,17 +223,6 @@ Describe -Name "Windows MSI" -Fixture {
             Invoke-TestAndUploadLogOnFailure -Test {
                 $useMu = Get-UseMU
                 $useMu | Should -Be 0
-            }
-        }
-
-        # Doesn't work in azDO hosts
-        It "MU should be enabled" -Pending {
-            if($muEnabled) {
-                Set-ItResult -Skipped -Because "MU already enabled"
-            }
-
-            Invoke-TestAndUploadLogOnFailure -Test {
-                Test-IsMuEnabled | Should -BeTrue -Because "MU should have been enabled"
             }
         }
 
