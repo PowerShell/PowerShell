@@ -367,6 +367,20 @@
       </Control>
     </Dialog>
   </UI>
+  <!-- MU not enable dialog box -->
+  <UI>
+    <Dialog Id="MuWarningDlg" Width="284" Height="73" Title="Microsoft Update Warning" NoMinimize="yes">
+      <Control Id="Text" Type="Text" X="38" Y="8" Width="240" Height="40" TabSkip="no">
+        <Text>Without Microsoft Update enabled, you will need to use another update solution like WSUS or SCCM in order to receive automatic updates. Are you sure you want to continue?</Text>
+      </Control>
+      <Control Id="Okay" Type="PushButton" X="114" Y="52" Width="56" Height="17" Default="yes"  Cancel="no" Text="OK">
+        <Publish Event="EndDialog" Value="Return">1</Publish>
+      </Control>
+      <Control Id="Cancel" Type="PushButton" X="184" Y="52" Width="56" Height="17" Default="yes"  Cancel="yes" Text="OK">
+        <Publish Event="EndDialog" Value="Return">0</Publish>
+      </Control>
+    </Dialog>
+  </UI>
 </Fragment>
 <!-- Customized version of WixUI_InstallDir, which is necessary to add custom dialogs. https://github.com/wixtoolset/wix3/blob/master/src/ext/UIExtension/wixlib/WixUI_InstallDir.wxs -->
 <Fragment>
@@ -377,6 +391,7 @@
       - WixUI_InstallDirDlg
       - ExplorerContextMenuDialog
       - MuDialog
+      - MuWarningDlg
       - WixUI_VerifyReadyDlg
       - WixUI_DiskCostDlg
       Maintenance dialog sequence:
@@ -418,7 +433,8 @@
       <Publish Dialog="ExplorerContextMenuDialog" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="ExplorerContextMenuDialog" Control="Next" Event="NewDialog" Value="MuDialog">1</Publish>
       <Publish Dialog="MuDialog" Control="Back" Event="NewDialog" Value="ExplorerContextMenuDialog">1</Publish>
-      <Publish Dialog="MuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="MuDialog" Control="Next" Event="SpawnDialog" Value="MuWarningDlg" Order="1"><![CDATA[ENABLE_MU = 0 AND USE_MU = 1]]></Publish>
+      <Publish Dialog="MuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
 
       <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
