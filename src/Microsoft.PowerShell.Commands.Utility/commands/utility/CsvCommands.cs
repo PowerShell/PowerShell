@@ -895,8 +895,9 @@ namespace Microsoft.PowerShell.Commands
             _quoteKind = quoteKind;
             _quoteFields = quoteFields == null ? null : new HashSet<string>(quoteFields, StringComparer.OrdinalIgnoreCase);
             _outputString = new StringBuilder(128);
+
             // As per RFC 4180, fields with line breaks, double quotes (the escape character) or delimiter should be escaped
-            _escapeCharacters = new Char[] { '"', '\r', '\n', delimiter};
+            _escapeCharacters = new char[] { '"', '\r', '\n', delimiter };
         }
 
         // Name of properties to be written in CSV format
