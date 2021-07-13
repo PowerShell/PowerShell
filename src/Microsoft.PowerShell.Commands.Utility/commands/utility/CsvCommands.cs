@@ -881,6 +881,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly BaseCsvWritingCommand.QuoteKind _quoteKind;
         private readonly HashSet<string> _quoteFields;
         private readonly StringBuilder _outputString;
+        private readonly char[] _escapeCharacters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExportCsvHelper"/> class.
@@ -894,6 +895,8 @@ namespace Microsoft.PowerShell.Commands
             _quoteKind = quoteKind;
             _quoteFields = quoteFields == null ? null : new HashSet<string>(quoteFields, StringComparer.OrdinalIgnoreCase);
             _outputString = new StringBuilder(128);
+            // As per RFC 4180, fields with line breaks, double quotes (the escape character) or delimiter should be escaped
+            _escapeCharacters = new Char[] { '"', '\r', '\n', delimiter};
         }
 
         // Name of properties to be written in CSV format
@@ -967,7 +970,7 @@ namespace Microsoft.PowerShell.Commands
                             AppendStringWithEscapeAlways(_outputString, propertyName);
                             break;
                         case BaseCsvWritingCommand.QuoteKind.AsNeeded:
-                            if (propertyName.Contains(_delimiter))
+                            if (propertyName.IndexOfAny(_escapeCharacters) != -1)
                             {
                                 AppendStringWithEscapeAlways(_outputString, propertyName);
                             }
@@ -1038,7 +1041,7 @@ namespace Microsoft.PowerShell.Commands
                                 AppendStringWithEscapeAlways(_outputString, value);
                                 break;
                             case BaseCsvWritingCommand.QuoteKind.AsNeeded:
-                                if (value != null && value.Contains(_delimiter))
+                                if (value != null && value.IndexOfAny(_escapeCharacters) != -1)
                                 {
                                     AppendStringWithEscapeAlways(_outputString, value);
                                 }

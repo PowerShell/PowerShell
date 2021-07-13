@@ -41,6 +41,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
         $Name = "Hello"; $Data = "World";
         $testObject = [pscustomobject]@{ FirstColumn = $Name; SecondColumn = $Data }
         $testNullObject = [pscustomobject]@{ FirstColumn = $Name; SecondColumn = $null }
+        $testQuotesObject = [pscustomobject]@{ FirstColumn = "`"$Name`""; SecondColumn = "`nWorld"}
     }
 
     It "Should Be able to be called without error" {
@@ -127,6 +128,11 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
             $result[0] | Should -BeExactly "`"FirstColumn`",`"SecondColumn`""
             $result[1] | Should -BeExactly "`"Hello`","
+
+            $result = $testQuotesObject | ConvertTo-Csv -UseQuotes Always -Delimiter ','
+
+            $result[0] | Should -BeExactly "`"FirstColumn`",`"SecondColumn`""
+            $result[1] | Should -BeExactly "`"`"`"Hello`"`"`",`"`nWorld`""
         }
 
         It "UseQuotes Always is default" {
@@ -146,6 +152,8 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
             $result[0] | Should -BeExactly "FirstColumn,SecondColumn"
             $result[1] | Should -BeExactly "Hello,"
+
+            $result = $testQuotesObject | ConvertTo-Csv -UseQuotes Never
         }
 
         It "UseQuotes AsNeeded" {
@@ -158,6 +166,16 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
             $result[0] | Should -BeExactly "`"FirstColumn`"rSecondColumn"
             $result[1] | Should -BeExactly "Hellor"
+
+            $result = $testQuotesObject | ConvertTo-Csv -UseQuotes AsNeeded -Delimiter ','
+
+            $result[0] | Should -BeExactly "FirstColumn,SecondColumn"
+            $result[1] | Should -BeExactly "`"`"`"Hello`"`"`",`"`nWorld`""
+
+            $result = $testQuotesObject | ConvertTo-Csv -UseQuotes AsNeeded -Delimiter 'e'
+
+            $result[0] | Should -BeExactly "FirstColumne`"SecondColumn`""
+            $result[1] | Should -BeExactly "`"`"`"Hello`"`"`"e`"`nWorld`""
         }
     }
 }
