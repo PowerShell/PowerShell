@@ -43,6 +43,7 @@ param (
     [string]$BuildZip,
 
     [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
+    [Parameter(Mandatory, ParameterSetName = 'packageSigned')]
     [ValidateSet('osx-x64', 'osx-arm64')]
     [string]$Runtime,
 
@@ -90,13 +91,13 @@ try {
 
         Start-PSPackage @pspackageParams @releaseTagParam
         switch ($ExtraPackage) {
-            "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam }
+            "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam -MacOSRuntime $Runtime }
         }
 
         if ($LTS) {
             Start-PSPackage @releaseTagParam -LTS
             switch ($ExtraPackage) {
-                "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam -LTS }
+                "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam -LTS -MacOSRuntime $Runtime }
             }
         }
     }
