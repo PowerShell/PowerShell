@@ -433,7 +433,7 @@
       <Publish Dialog="ExplorerContextMenuDialog" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="ExplorerContextMenuDialog" Control="Next" Event="NewDialog" Value="MuDialog">1</Publish>
       <Publish Dialog="MuDialog" Control="Back" Event="NewDialog" Value="ExplorerContextMenuDialog">1</Publish>
-      <Publish Dialog="MuDialog" Control="Next" Event="SpawnDialog" Value="MuWarningDlg" Order="1"><![CDATA[ENABLE_MU = 0 AND USE_MU = 1]]></Publish>
+      <Publish Dialog="MuDialog" Control="Next" Event="SpawnDialog" Value="MuWarningDlg" Order="1">ENABLE_MU<>"1" AND USE_MU="1"></Publish>
       <Publish Dialog="MuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
 
       <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
@@ -445,7 +445,7 @@
       <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
 
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ExplorerContextMenuDialog" Order="1">NOT Installed</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MuDialog" Order="1">NOT Installed</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>
 
