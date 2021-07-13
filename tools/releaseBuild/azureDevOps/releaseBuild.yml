@@ -36,11 +36,12 @@ stages:
 
   - stage: macos
     dependsOn: ['prep']
-    matrix:
-      x64:
-        buildArchitecture: x64
-      arm64:
-        buildArchitecture: arm64
+    strategy:
+      matrix:
+        x64:
+          buildArchitecture: x64
+        arm64:
+          buildArchitecture: arm64
     jobs:
       - template: templates/mac.yml
         parameters:
