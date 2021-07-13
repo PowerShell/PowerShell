@@ -3521,9 +3521,7 @@ namespace System.Management.Automation
                 ActionPreference preference;
                 if (_batchInvocationSettings != null)
                 {
-                    preference = (_batchInvocationSettings.ErrorActionPreference.HasValue) ?
-                        _batchInvocationSettings.ErrorActionPreference.Value
-                        : ActionPreference.Continue;
+                    preference = _batchInvocationSettings.ErrorActionPreference ?? ActionPreference.Continue;
                 }
                 else
                 {

@@ -168,7 +168,7 @@ namespace System.Management.Automation
             // The default server settings is to make new commands execute in the calling thread...this saves
             // thread switching time and thread pool pressure on the service.
             // Users can override the server settings only if they are administrators
-            PSThreadOptions serverThreadOptions = configData.ShellThreadOptions.HasValue ? configData.ShellThreadOptions.Value : PSThreadOptions.UseCurrentThread;
+            PSThreadOptions serverThreadOptions = configData.ShellThreadOptions ?? PSThreadOptions.UseCurrentThread;
             if (threadOptions == PSThreadOptions.Default || threadOptions == serverThreadOptions)
             {
                 RunspacePool.ThreadOptions = serverThreadOptions;
@@ -184,7 +184,7 @@ namespace System.Management.Automation
             }
 
             // Set Thread ApartmentState for this RunspacePool
-            ApartmentState serverApartmentState = configData.ShellThreadApartmentState.HasValue ? configData.ShellThreadApartmentState.Value : Runspace.DefaultApartmentState;
+            ApartmentState serverApartmentState = configData.ShellThreadApartmentState ?? Runspace.DefaultApartmentState;
 
             if (apartmentState == ApartmentState.Unknown || apartmentState == serverApartmentState)
             {
