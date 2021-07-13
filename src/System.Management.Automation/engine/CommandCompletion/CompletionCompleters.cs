@@ -5783,12 +5783,11 @@ namespace System.Management.Automation
                                 && viewPattern.IsMatch(viewDefinition.name))
                             {
                                 string completionText = viewDefinition.name;
-                                var quoteInUse = quote == string.Empty && viewDefinition.name.IndexOfAny(s_charactersRequiringQuotes) != -1 ? "'" : quote;
-                                if (quoteInUse == "'")
+                                // If the string is quoted or if it contains characters that need quoting, quote it in single quotes
+                                if (quote != string.Empty || viewDefinition.name.IndexOfAny(s_charactersRequiringQuotes) != -1)
                                 {
-                                    completionText = completionText.Replace("'", "''");
+                                    completionText = "'" + completionText.Replace("'", "''") + "'";
                                 }
-                                completionText = quoteInUse + completionText + quoteInUse;
 
                                 results.Add(new CompletionResult(completionText, viewDefinition.name, CompletionResultType.Text, viewDefinition.name));
                             }
