@@ -42,8 +42,9 @@ param (
     [ValidatePattern("-signed.zip$")]
     [string]$BuildZip,
 
-    [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
     [Parameter(Mandatory, ParameterSetName = 'packageSigned')]
+    [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
+    [Parameter(Mandatory, ParameterSetName = 'Build')]
     [ValidateSet('osx-x64', 'osx-arm64')]
     [string]$Runtime,
 
@@ -72,7 +73,7 @@ if ($Build -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
 
 Push-Location
 try {
-    $pspackageParams = @{ SkipReleaseChecks = $SkipReleaseChecks }
+    $pspackageParams = @{ SkipReleaseChecks = $SkipReleaseChecks; MacOSRuntime = $Runtime }
     Write-Verbose -Message "Init..." -Verbose
     Set-Location $repoRoot
     Import-Module "$repoRoot/build.psm1"
@@ -91,13 +92,13 @@ try {
 
         Start-PSPackage @pspackageParams @releaseTagParam
         switch ($ExtraPackage) {
-            "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam -MacOSRuntime $Runtime }
+            "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam }
         }
 
         if ($LTS) {
-            Start-PSPackage @releaseTagParam -LTS
+            Start-PSPackage @pspackageParams @releaseTagParam -LTS
             switch ($ExtraPackage) {
-                "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam -LTS -MacOSRuntime $Runtime }
+                "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam -LTS }
             }
         }
     }
@@ -109,9 +110,9 @@ try {
             $pspackageParams['Type']='zip'
             $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
             Write-Verbose "Starting powershell packaging(zip)..." -Verbose
-            Start-PSPackage @pspackageParams @releaseTagParam -MacOSRuntime $Runtime
+            Start-PSPackage @pspackageParams @releaseTagParam
         } else {
-            Start-PSBuild -Configuration 'Release' -Crossgen:$runCrossgen -PSModuleRestore @releaseTagParam
+            Start-PSBuild -Configuration 'Release' -Crossgen:$runCrossgen -PSModuleRestore @releaseTagParam -Runtime $Runtime
             Start-PSPackage @pspackageParams @releaseTagParam
             switch ($ExtraPackage) {
                 "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam }
