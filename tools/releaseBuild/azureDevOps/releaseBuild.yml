@@ -36,28 +36,38 @@ stages:
 
   - stage: macos
     dependsOn: ['prep']
-    strategy:
-      matrix:
-        x64:
-          buildArchitecture: x64
-        arm64:
-          buildArchitecture: arm64
     jobs:
       - template: templates/mac.yml
         parameters:
-          buildArchitecture: $(buildArchitecture)
+          buildArchitecture: x64
+
+      - template: templates/mac.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-file-signing.yml
         parameters:
-          buildArchitecture: $(buildArchitecture)
+          buildArchitecture: x64
+
+      - template: templates/mac-file-signing.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-package-build.yml
         parameters:
-          buildArchitecture: $(buildArchitecture)
+          buildArchitecture: x64
+
+      - template: templates/mac-package-build.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-package-signing.yml
         parameters:
-          buildArchitecture: $(buildArchitecture)
+          buildArchitecture: x64
+
+      - template: templates/mac-package-signing.yml
+        parameters:
+          buildArchitecture: arm64
 
   - stage: linux
     dependsOn: ['prep']
