@@ -4,7 +4,7 @@ parameters:
 
 jobs:
 - job: package_macOS_${{ parameters.buildArchitecture }}
-  displayName: Package macOS
+  displayName: Package macOS ${{ parameters.buildArchitecture }}
   dependsOn: MacFileSigningJob_${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool: Hosted Mac Internal
@@ -71,7 +71,7 @@ jobs:
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
       Import-Module $(PowerShellRoot)/tools/packaging -Force
-      $signedFilesPath = '$(System.ArtifactsDirectory)/macOsBins/signedMacOsBins/'
+      $signedFilesPath = '$(System.ArtifactsDirectory)/macOsBins/signedMacOsBins_${{ parameters.buildArchitecture }}/'
       $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
 
       Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
@@ -102,7 +102,7 @@ jobs:
     displayName: 'Bootstrap VM'
 
   - pwsh: |
-      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar"
+      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar" -Runtime 'osx-${{ parameters.buildArchitecture }}'
     displayName: 'Package'
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0

@@ -3,7 +3,7 @@ parameters:
 
 jobs:
 - job: MacPackageSigningJob_${{ parameters.buildArchitecture }}
-  displayName: macOS Package signing
+  displayName: macOS Package signing ${{ parameters.buildArchitecture }}
   dependsOn: package_macOS_${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
