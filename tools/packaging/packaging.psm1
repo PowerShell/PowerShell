@@ -429,6 +429,10 @@ function Start-PSPackage {
                     Force = $Force
                 }
 
+                if ($MacOSRuntime) {
+                    $Arguments['Architecture'] = $MacOSRuntime.Split('-')[1]
+                }
+
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
                     New-TarballPackage @Arguments
                 }

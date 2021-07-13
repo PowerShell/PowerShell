@@ -69,7 +69,7 @@ jobs:
   - template: upload-final-results.yml
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\macosPkgResults
-      artifactFilter: "*.tar.gz"
+      artifactFilter: "*${{ parameters.buildArchitecture }}.tar.gz"
 
   - pwsh: |
       $destination = "$(System.ArtifactsDirectory)\azureMacOs"
