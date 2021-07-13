@@ -2,7 +2,7 @@ parameters:
   buildArchitecture: x64
 
 jobs:
-- job: MacPackageSigningJob
+- job: MacPackageSigningJob_${{ parameters.buildArchitecture }}
   displayName: macOS Package signing
   dependsOn: package_macOS_${{ parameters.buildArchitecture }}
   condition: succeeded()
