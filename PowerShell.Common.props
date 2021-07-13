@@ -138,7 +138,6 @@
     <TargetFramework>net6.0</TargetFramework>
     <LangVersion>9.0</LangVersion>
     <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
-    <PublishReadyToRunUseCrossgen2>false</PublishReadyToRunUseCrossgen2>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
