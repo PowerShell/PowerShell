@@ -410,8 +410,8 @@
 
       <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
       <Property Id="WixUI_Mode" Value="InstallDir" />
-      <Property Id="WixUI_ENABLE_MU" Value="ENABLE_MU" />
-      <Property Id="WixUI_USE_MU" Value="USE_MU" />
+      <PropertyRef Id="ENABLE_MU" />
+      <PropertyRef Id="USE_MU" />
 
       <DialogRef Id="BrowseDlg" />
       <DialogRef Id="DiskCostDlg" />
@@ -435,7 +435,7 @@
       <Publish Dialog="ExplorerContextMenuDialog" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="ExplorerContextMenuDialog" Control="Next" Event="NewDialog" Value="MuDialog">1</Publish>
       <Publish Dialog="MuDialog" Control="Back" Event="NewDialog" Value="ExplorerContextMenuDialog">1</Publish>
-      <Publish Dialog="MuDialog" Control="Next" Event="SpawnDialog" Value="MuWarningDlg" Order="1">WixUI_ENABLE_MU=0 AND WixUI_USE_MU=1></Publish>
+      <Publish Dialog="MuDialog" Control="Next" Event="SpawnDialog" Value="MuWarningDlg" Order="1">ENABLE_MU=0 AND USE_MU=1></Publish>
       <Publish Dialog="MuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
 
       <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
