@@ -2076,6 +2076,7 @@ namespace System.Management.Automation.Internal
         internal static bool ForcePromptForChoiceDefaultOption;
         internal static bool BypassOutputRedirectionCheck;
         internal static bool NoPromptForPassword;
+        internal static bool ForceFormatListFixedLabelWidth;
 
         // Stop/Restart/Rename Computer tests
         internal static bool TestStopComputer;

@@ -60,6 +60,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // check if we have to truncate the labels
             int maxAllowableLabelLength = screenColumnWidth - Separator.Length - MinFieldWidth;
+            if (InternalTestHooks.ForceFormatListFixedLabelWidth)
+            {
+                maxAllowableLabelLength = 10;
+            }
 
             // find out the max display length (cell count) of the property names
             _propertyLabelsDisplayLength = 0; // reset max
@@ -87,26 +91,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (propertyNameCellCounts[k] < _propertyLabelsDisplayLength)
                 {
                     // shorter than the max, add padding
-                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
-                    {
-                        _propertyLabels[k] = PSStyle.Instance.Formatting.FormatAccent + propertyNames[k] + StringUtil.Padding(_propertyLabelsDisplayLength - propertyNameCellCounts[k]);
-                    }
-                    else
-                    {
-                        _propertyLabels[k] = propertyNames[k] + StringUtil.Padding(_propertyLabelsDisplayLength - propertyNameCellCounts[k]);
-                    }
+                    _propertyLabels[k] = propertyNames[k] + StringUtil.Padding(_propertyLabelsDisplayLength - propertyNameCellCounts[k]);
                 }
                 else if (propertyNameCellCounts[k] > _propertyLabelsDisplayLength)
                 {
                     // longer than the max, clip
-                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
-                    {
-                        _propertyLabels[k] = PSStyle.Instance.Formatting.FormatAccent + propertyNames[k].Substring(0, dc.GetHeadSplitLength(propertyNames[k], _propertyLabelsDisplayLength));
-                    }
-                    else
-                    {
-                        _propertyLabels[k] = propertyNames[k].Substring(0, dc.GetHeadSplitLength(propertyNames[k], _propertyLabelsDisplayLength));
-                    }
+                    _propertyLabels[k] = propertyNames[k].Substring(0, dc.GetHeadSplitLength(propertyNames[k], _propertyLabelsDisplayLength));
                 }
                 else
                 {
@@ -243,7 +233,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    lo.WriteLine(padding + sc[k]);
+                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    {
+                        lo.WriteLine(padding + PSStyle.Instance.Formatting.FormatAccent + PSStyle.Instance.Reset + sc[k]);
+                    }
+                    else
+                    {
+                        lo.WriteLine(padding + sc[k]);
+                    }
                 }
             }
         }

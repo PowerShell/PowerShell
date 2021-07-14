@@ -214,13 +214,18 @@ dbda : KM
 Describe 'Format-List color tests' {
     BeforeAll {
         $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRendering')))
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForceFormatListFixedLabelWidth', $true)
     }
 
     AfterAll {
         $PSDefaultParameterValues.Remove('It:Skip')
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForceFormatListFixedLabelWidth', $false)
     }
 
     It 'Property names should use FormatAccent' {
-        ([pscustomobject]@{foo = 1} | Format-List | Out-String).Trim() | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)foo : $($PSStyle.Reset)1"
+        $out = ([pscustomobject]@{Short=1;LongLabelName=2} | fl | out-string).Split([Environment]::NewLine, [System.StringSplitOptions]::RemoveEmptyEntries)
+        $out.Count | Should -Be 2
+        $out[0] | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)Short      : $($PSStyle.Reset)1" -Because ($out[0] | Format-Hex)
+        $out[1] | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)LongLabelN : $($PSStyle.Reset)2"
     }
 }
