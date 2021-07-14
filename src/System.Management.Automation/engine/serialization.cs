@@ -84,8 +84,6 @@ namespace System.Management.Automation
     /// </summary>
     public static class PSSerializer
     {
-        internal PSSerializer() { }
-
         /// <summary>
         /// Serializes an object into PowerShell CliXml.
         /// </summary>
