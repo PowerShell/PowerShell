@@ -2388,7 +2388,6 @@ function Start-CrossGen {
                 "--out-near-input"
                 "--single-file-compilation"
                 "-O"
-                "--pdb"
                 "--targetos"
                 $targetOS
                 "--targetarch"
