@@ -396,8 +396,6 @@
 
       <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
       <Property Id="WixUI_Mode" Value="InstallDir" />
-      <PropertyRef Id="ENABLE_MU" />
-      <PropertyRef Id="USE_MU" />
 
       <DialogRef Id="BrowseDlg" />
       <DialogRef Id="DiskCostDlg" />
