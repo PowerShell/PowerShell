@@ -173,6 +173,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
             $result[0] | Should -BeExactly "`"FirstColumn`"rSecond,Column"
             $result[1] | Should -BeExactly "Hello,r`"World`""
         }
+
         It "UseQuotes AsNeeded Escapes Newlines" {
             $testCRLFObject = [pscustomobject]@{ "First`r`nColumn" = "Hello`r`nWorld" };
             $testLFObject = [pscustomobject]@{ "First`nColumn" = "Hello`nWorld" };
@@ -187,6 +188,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
             $result[0] | Should -BeExactly "`"First`nColumn`""
             $result[1] | Should -BeExactly "`"Hello`nWorld`""
         }
+
         It "UseQuotes AsNeeded Escapes Quotes" {
             $testQuotesObject = [pscustomobject]@{ "First`"Column" = "`"Hello`" World" };
 
