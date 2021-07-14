@@ -27,7 +27,7 @@ namespace System.Management.Automation
     /// The above statement retrieves the PowerShell edition.
     /// </para>
     /// </summary>
-    public class PSVersionInfo
+    public static class PSVersionInfo
     {
         internal const string PSVersionTableName = "PSVersionTable";
         internal const string PSRemotingProtocolVersionName = "PSRemotingProtocolVersion";
