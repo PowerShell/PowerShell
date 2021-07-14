@@ -864,7 +864,10 @@ foo``u{2195}abc
             @{ Script = "0x0"; ExpectedValue = "0"; ExpectedType = [int] }
             @{ Script = "0x12"; ExpectedValue = "18"; ExpectedType = [int] }
             @{ Script = "-0x12"; ExpectedValue = "-18"; ExpectedType = [int] }
-            @{ Script = "0x80000000"; ExpectedValue = $([int32]::MinValue); ExpectedType = [int] }
+
+            # Disabling this because https://github.com/dotnet/runtime/issues/54251
+            # @{ Script = "0x80000000"; ExpectedValue = $([int32]::MinValue); ExpectedType = [int] }
+
             @{ Script = "0x7fffffff"; ExpectedValue = $([int32]::MaxValue); ExpectedType = [int] }
             @{ Script = "0x100000000"; ExpectedValue = [int64]0x100000000; ExpectedType = [long] }
             @{ Script = "0xFF"; ExpectedValue = "255"; ExpectedType = [int] }
@@ -1057,7 +1060,10 @@ foo``u{2195}abc
             @{ Script = "0b10u"; ExpectedValue = "2"; ExpectedType = [uint] }
             @{ Script = "0b11111111u"; ExpectedValue = "255"; ExpectedType = [uint] }
             @{ Script = "0b1111111111111111u"; ExpectedValue = "65535"; ExpectedType = [uint] }
-            @{ Script = "0b11111111111111111111111111111111u"; ExpectedValue = "4294967295"; ExpectedType = [uint] }
+
+            # Disabling this because https://github.com/dotnet/runtime/issues/54251
+            # @{ Script = "0b11111111111111111111111111111111u"; ExpectedValue = "4294967295"; ExpectedType = [uint] }
+
             @{ Script = "0b1111111111111111111111111111111111111111111111111111111111111111u"; ExpectedValue = "18446744073709551615"; ExpectedType = [ulong] }
             #Multipliers
             @{ Script = "1ukb"; ExpectedValue = "1024"; ExpectedType = [uint] }
