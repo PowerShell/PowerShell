@@ -783,11 +783,6 @@ namespace System.Management.Automation
             return oldPipe;
         }
 
-        internal void RestoreErrorPipe(Pipe pipe)
-        {
-            ShellFunctionErrorOutputPipe = pipe;
-        }
-
         /// <summary>
         /// Reset all of the redirection book keeping variables. This routine should be called when starting to
         /// execute a script.

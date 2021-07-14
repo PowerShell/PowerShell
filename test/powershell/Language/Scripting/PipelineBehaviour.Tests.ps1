@@ -270,6 +270,21 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             Test-Path $filePath | Should -BeTrue
             Get-Content $filePath | Should -BeExactly 'Clean block hit'
         }
+
+        It "Select-Object in pipeline" {
+            function bar {
+                process { 'bar_' + $_ } end { 'bar_end' } clean { 'bar_clean' > $filePath }
+            }
+
+            function zoo {
+                process { 'zoo_' + $_ } end { 'zoo_end' } clean { 'zoo_clean' >> $filePath }
+            }
+
+            1..10 | bar | Select-Object -First 2 | zoo | Should -Be @('zoo_bar_1', 'zoo_bar_2', 'zoo_end')
+            Test-Path $filePath | Should -BeTrue
+            $content = Get-Content $filePath
+            $content | Should -Be @('bar_clean', 'zoo_clean')
+        }
     }
 
     Context 'Streams from Named Blocks' {
@@ -514,45 +529,36 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
         }
     }
 
-    <#
     Context 'Ctrl-C behavior' {
 
-        BeforeAll {
-            $powershell = $null
-        }
-
         AfterEach {
-            if ($powershell) {
-                $powershell.Dispose()
-                $powershell = $null
+            if ($pwsh) {
+                $pwsh.Dispose()
+                $pwsh = $null
             }
         }
 
         It 'still executes clean {} when StopProcessing() is triggered mid-pipeline' {
             $script = @"
-                function test {
-                    begin {}
-                    process {
-                        Start-Sleep -Seconds 10
-                    }
-                    end {}
-                    clean {
-                        Write-Information "CLEAN"
-                    }
-
-                }
+    function test {
+        process { Start-Sleep -Seconds 10 }
+        clean { Write-Information "CLEAN" }
+    }
 "@
-            $powershell = [powershell]::Create()
-            $powershell.AddScript($script).AddStatement().AddCommand('test') > $null
+            $pwsh = [powershell]::Create()
+            $pwsh.AddScript($script).Invoke()
+            $pwsh.Commands.Clear()
+            $pwsh.AddCommand('test') > $null
 
-            $asyncResult = $powershell.BeginInvoke()
+            $asyncResult = $pwsh.BeginInvoke()
             Start-Sleep -Seconds 2
-            $powershell.Stop()
+            $pwsh.Stop()
 
-            $powershell.EndInvoke($asyncResult) > $null
-            $powershell.Streams.Information[0].MessageData | Should -BeExactly "CLEAN"
+            { $pwsh.EndInvoke($asyncResult) } | Should -Throw -ErrorId 'PipelineStoppedException'
+            $pwsh.Streams.Information[0].MessageData | Should -BeExactly "CLEAN"
         }
 
+        <#
         It 'still completes clean {} execution when StopProcessing() is triggered mid-clean {}' {
             $script = @"
                 function test {
@@ -568,18 +574,18 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
 
                 }
 "@
-            $powershell = [powershell]::Create()
-            $powershell.AddScript($script).AddStatement().AddCommand('test') > $null
+            $pwsh = [powershell]::Create()
+            $pwsh.AddScript($script).AddStatement().AddCommand('test') > $null
 
-            $asyncResult = $powershell.BeginInvoke()
+            $asyncResult = $pwsh.BeginInvoke()
             Start-Sleep -Seconds 2
-            $powershell.Stop()
+            $pwsh.Stop()
 
-            $output = $powershell.EndInvoke($asyncResult)
+            $output = $pwsh.EndInvoke($asyncResult)
 
             $output | Should -Be "PROCESS"
-            $powershell.Streams.Information[0].MessageData | Should -BeExactly "CLEAN"
+            $pwsh.Streams.Information[0].MessageData | Should -BeExactly "CLEAN"
         }
+        #>
     }
-    #>
 }

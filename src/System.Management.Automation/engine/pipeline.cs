@@ -702,6 +702,9 @@ namespace System.Management.Automation.Internal
             // on each command processor, so we have to save the old value here and restore later.
             ExceptionDispatchInfo oldFirstTerminatingError = _firstTerminatingError;
 
+            // Suspend a stopping pipeline by setting 'IsStopping' to false and restore it afterwards.
+            bool oldIsStopping = ExceptionHandlingOps.SuspendStoppingPipelineImpl(LocalPipeline);
+
             try
             {
                 foreach (CommandProcessorBase commandProcessor in _commands)
@@ -739,6 +742,7 @@ namespace System.Management.Automation.Internal
             finally
             {
                 _firstTerminatingError = oldFirstTerminatingError;
+                ExceptionHandlingOps.RestoreStoppingPipelineImpl(LocalPipeline, oldIsStopping);
             }
         }
 

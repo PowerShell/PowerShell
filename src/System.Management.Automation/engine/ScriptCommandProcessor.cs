@@ -582,7 +582,7 @@ namespace System.Management.Automation
                 }
                 finally
                 {
-                    this.Context.RestoreErrorPipe(oldErrorOutputPipe);
+                    Context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
 
                     if (oldLanguageMode.HasValue)
                     {

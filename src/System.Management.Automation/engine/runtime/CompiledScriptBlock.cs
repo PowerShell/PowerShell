@@ -985,10 +985,14 @@ namespace System.Management.Automation
             InvocationInfo invocationInfo,
             params object[] args)
         {
+            if (clauseToInvoke == ScriptBlockClauseToInvoke.Clean)
+            {
+                throw new PSNotSupportedException(ParserStrings.InvokingCleanBlockNotSupported);
+            }
+
             if ((clauseToInvoke == ScriptBlockClauseToInvoke.Begin && !HasBeginBlock)
                 || (clauseToInvoke == ScriptBlockClauseToInvoke.Process && !HasProcessBlock)
-                || (clauseToInvoke == ScriptBlockClauseToInvoke.End && !HasEndBlock)
-                || (clauseToInvoke == ScriptBlockClauseToInvoke.Clean && !HasCleanBlock))
+                || (clauseToInvoke == ScriptBlockClauseToInvoke.End && !HasEndBlock))
             {
                 return;
             }
@@ -1003,7 +1007,7 @@ namespace System.Management.Automation
                 throw new PipelineStoppedException();
             }
 
-            // Validate at the arguments are consistent. The only public API that gets you here never sets createLocalScope to false...
+            // Validate that the arguments are consistent. The only public API that gets you here never sets createLocalScope to false...
             Diagnostics.Assert(
                 createLocalScope || functionsToDefine == null,
                 "When calling ScriptBlock.InvokeWithContext(), if 'functionsToDefine' != null then 'createLocalScope' must be true");
@@ -1207,7 +1211,7 @@ namespace System.Management.Automation
                     _sequencePoints = SequencePoints,
                 };
 
-                ScriptBlock.LogScriptBlockStart(this, context.CurrentRunspace.InstanceId);
+                LogScriptBlockStart(this, context.CurrentRunspace.InstanceId);
 
                 try
                 {
@@ -1215,7 +1219,7 @@ namespace System.Management.Automation
                 }
                 finally
                 {
-                    ScriptBlock.LogScriptBlockEnd(this, context.CurrentRunspace.InstanceId);
+                    LogScriptBlockEnd(this, context.CurrentRunspace.InstanceId);
                 }
             }
             catch (TargetInvocationException tie)
@@ -2409,7 +2413,7 @@ namespace System.Management.Automation
                 }
                 finally
                 {
-                    this.Context.RestoreErrorPipe(oldErrorOutputPipe);
+                    Context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
 
                     // Restore the language mode
                     if (oldLanguageMode.HasValue)
