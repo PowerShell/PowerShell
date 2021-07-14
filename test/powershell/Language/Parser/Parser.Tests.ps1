@@ -1050,7 +1050,10 @@ foo``u{2195}abc
             @{ Script = "0xFFu"; ExpectedValue = "255"; ExpectedType = [uint] }
             @{ Script = "0xFFFFu"; ExpectedValue = "65535"; ExpectedType = [uint] }
             @{ Script = "0xFFFFFFu"; ExpectedValue = "16777215"; ExpectedType = [uint] }
-            @{ Script = "0xFFFFFFFFu"; ExpectedValue = "$([uint]::MaxValue)"; ExpectedType = [uint] }
+
+            # Disabling this because https://github.com/dotnet/runtime/issues/54251
+            # @{ Script = "0xFFFFFFFFu"; ExpectedValue = "$([uint]::MaxValue)"; ExpectedType = [uint] }
+
             @{ Script = "0xFFFFFFFFFFu"; ExpectedValue = "1099511627775"; ExpectedType = [ulong] }
             @{ Script = "0xFFFFFFFFFFFFu"; ExpectedValue = "281474976710655"; ExpectedType = [ulong] }
             @{ Script = "0xFFFFFFFFFFFFFFu"; ExpectedValue = "72057594037927935"; ExpectedType = [ulong] }
