@@ -355,8 +355,8 @@
         <Publish Event="SpawnDialog" Value="MuWarningDlg"><![CDATA[ENABLE_MU<>"1" AND USE_MU="1"]]></Publish>
       </Control>
       <Control Id="MuWarningText" Type="Text" X="20" Y="160" Width="290" Height="17" Text="Without Microsoft Update enabled, you will need to use another update solution like WSUS or SCCM in order to receive automatic updates.">
-        <Condition Action="hide"><![CDATA[ENABLE_MU="1" OR USE_MU<>"1"]]></Condition>
-        <Condition Action="show"><![CDATA[ENABLE_MU<>"1" AND USE_MU="1"]]></Condition>
+        <Condition Action="hide"><![CDATA[ENABLE_MU="1" OR NOT USE_MU]]></Condition>
+        <Condition Action="show"><![CDATA[NOT ENABLE_MU AND USE_MU="1"]]></Condition>
       </Control>
       <Control Id="MuFAQ" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
         <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-FAQ">See the Microsoft Update FAQ.</a>]]></Text>
