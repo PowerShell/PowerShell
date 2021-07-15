@@ -1200,7 +1200,7 @@ dotnet_diagnostic.IDE0028.severity = silent
 
 # IDE0029: UseCoalesceExpression
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0029
-dotnet_diagnostic.IDE0029.severity = silent
+dotnet_diagnostic.IDE0029.severity = warning
 
 # IDE0030: UseCoalesceExpressionForNullable
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0030
