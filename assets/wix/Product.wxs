@@ -366,25 +366,9 @@
       <!-- divider and bottom buttons -->
       <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>
       <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
-      <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)">
-        <Publish Event="SpawnDialog" Value="MuWarningDlg"><![CDATA[ENABLE_MU<>"1" AND USE_MU="1"]]></Publish>
-      </Control>
+      <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
       <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
         <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
-      </Control>
-    </Dialog>
-  </UI>
-  <!-- MU not enable dialog box -->
-  <UI>
-    <Dialog Id="MuWarningDlg" Width="284" Height="73" Title="Microsoft Update Warning" NoMinimize="yes">
-      <Control Id="Text" Type="Text" X="38" Y="8" Width="240" Height="40" TabSkip="no">
-        <Text>Without Microsoft Update enabled, you will need to use another update solution like WSUS or SCCM in order to receive automatic updates. Are you sure you want to continue?</Text>
-      </Control>
-      <Control Id="Okay" Type="PushButton" X="114" Y="52" Width="56" Height="17" Default="yes"  Cancel="no" Text="Okay">
-        <Publish Event="EndDialog" Value="Return">1</Publish>
-      </Control>
-      <Control Id="Cancel" Type="PushButton" X="184" Y="52" Width="56" Height="17" Default="yes"  Cancel="yes" Text="Cancel">
-        <Publish Event="EndDialog" Value="Return">1</Publish>
       </Control>
     </Dialog>
   </UI>
@@ -398,7 +382,6 @@
       - WixUI_InstallDirDlg
       - ExplorerContextMenuDialog
       - MuDialog
-      - MuWarningDlg
       - WixUI_VerifyReadyDlg
       - WixUI_DiskCostDlg
       Maintenance dialog sequence:
