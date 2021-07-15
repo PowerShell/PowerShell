@@ -141,8 +141,10 @@ function Get-EnvironmentInformation
     if ($environment.IsMacOS) {
         $environment += @{'UsingHomebrew' = [bool](Get-Command brew -ErrorAction ignore)}
         $environment += @{'UsingMacports' = [bool](Get-Command port -ErrorAction ignore)}
+
+        $isArm64 = (Get-Command -CommandType Application -Name arch -ErrorAction SilentlyContinue) -and (arch -arm64 uname -p 2>$null) -eq 'arm'
         $environment += @{
-            'Architecture' = if ((Start-NativeExecution -IgnoreExitCode { (arch -arm64 uname -p) -eq 'arm' } 2>$null)) { 'arm64' } else { 'x64' }
+            'Architecture' = if ($isArm64) { 'arm64' } else { 'x64' }
         }
 
         if (-not($environment.UsingHomebrew -or $environment.UsingMacports)) {
