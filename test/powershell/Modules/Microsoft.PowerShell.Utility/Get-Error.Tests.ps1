@@ -125,4 +125,21 @@ Describe 'Get-Error tests' -Tag CI {
 
         $out | Should -BeLikeExactly "*$expectedExceptionType*"
     }
+
+    It 'Get-Error uses Error color for Message and PositionMessage members' -Skip:(!$EnabledExperimentalFeatures.Contains("PSAnsiRendering")) {
+        try {
+            1/0
+        }
+        catch {
+        }
+
+        $out = $error[0] | Get-Error | Out-String
+
+        # need to escape the open square bracket so the regex works
+        $resetColor = $PSStyle.Reset
+        $errorColor = $PSStyle.Formatting.Error.Replace('[','\[')
+        $out | Should -Match "Message +: ${resetColor}${errorColor}[A-z]+"
+        # match the position message underline
+        $out | Should -Match ".*?${errorColor}~~~"
+    }
 }
