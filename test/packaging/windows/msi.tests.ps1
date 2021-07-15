@@ -231,52 +231,6 @@ Describe -Name "Windows MSI" -Fixture {
                 Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
             } | Should -Not -Throw
         }
-
-        It "UseMU should be 1" -Skip:(!(Test-Elevated)) {
-            try {
-                $useMu = 0
-                $useMu = Get-ItemPropertyValue -Path HKLM:\SOFTWARE\Microsoft\PowerShellCore\ -Name UseMU -ErrorAction SilentlyContinue
-
-                $useMu | Should -Be 1
-            }
-        }
-
-        It "MU should be enabled" -Skip:(!(Test-Elevated)) {
-            if($muEnabled) {
-                Set-ItResult -Skipped -Because "MU already enabled"
-            }
-
-            Invoke-TestAndUploadLogOnFailure -Test {
-                Test-IsMuEnabled | Should -BeTrue -Because "MU should have been enabled"
-            }
-        }
-
-        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
-            {
-                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
-            } | Should -Not -Throw
-        }
-    }
-
-    Context "USE_MU disabled" {
-        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
-            {
-                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{USE_MU = 0}
-            } | Should -Not -Throw
-        }
-
-        It "UseMU should be 0" -Skip:(!(Test-Elevated)) {
-            Invoke-TestAndUploadLogOnFailure -Test {
-                $useMu = Get-UseMU
-                $useMu | Should -Be 0
-            }
-        }
-
-        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
-            {
-                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
-            } | Should -Not -Throw
-        }
     }
 
     Context "Add Path enabled" {
