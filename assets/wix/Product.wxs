@@ -352,7 +352,6 @@
       <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
       <Control Id="UseMuCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="27" Property="USE_MU" CheckBoxValue="1" Text="Enable updating PowerShell through Microsft Update or WSUS (recommended)"/>
       <Control Id="EnableMuCheckBox" Type="CheckBox" X="20" Y="130" Width="290" Height="17" Property="ENABLE_MU" CheckBoxValue="1" Text="Use Microsoft Update when I check for updates (recommended)">
-        <Publish Event="SpawnDialog" Value="MuWarningDlg"><![CDATA[ENABLE_MU<>"1" AND USE_MU="1"]]></Publish>
       </Control>
       <Control Id="MuWarningText" Type="Text" X="20" Y="160" Width="290" Height="17" Text="Without Microsoft Update enabled, you will need to use another update solution like WSUS or SCCM in order to receive automatic updates.">
         <Condition Action="hide"><![CDATA[ENABLE_MU="1"]]></Condition>
@@ -367,7 +366,9 @@
       <!-- divider and bottom buttons -->
       <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>
       <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
-      <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
+      <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)">
+        <Publish Event="SpawnDialog" Value="MuWarningDlg"><![CDATA[ENABLE_MU<>"1" AND USE_MU="1"]]></Publish>
+      </Control>
       <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
         <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
       </Control>
@@ -379,11 +380,11 @@
       <Control Id="Text" Type="Text" X="38" Y="8" Width="240" Height="40" TabSkip="no">
         <Text>Without Microsoft Update enabled, you will need to use another update solution like WSUS or SCCM in order to receive automatic updates. Are you sure you want to continue?</Text>
       </Control>
-      <Control Id="Okay" Type="PushButton" X="114" Y="52" Width="56" Height="17" Default="yes"  Cancel="no" Text="OK">
+      <Control Id="Okay" Type="PushButton" X="114" Y="52" Width="56" Height="17" Default="yes"  Cancel="no" Text="Okay">
         <Publish Event="EndDialog" Value="Return">1</Publish>
       </Control>
-      <Control Id="Cancel" Type="PushButton" X="184" Y="52" Width="56" Height="17" Default="yes"  Cancel="yes" Text="OK">
-        <Publish Event="EndDialog" Value="Return">0</Publish>
+      <Control Id="Cancel" Type="PushButton" X="184" Y="52" Width="56" Height="17" Default="yes"  Cancel="yes" Text="Cancel">
+        <Publish Event="EndDialog" Value="Return">1</Publish>
       </Control>
     </Dialog>
   </UI>
