@@ -51,12 +51,6 @@ jobs:
     displayName: Bootstrap
 
   - pwsh: |
-      $pkg = Find-Package -Name Microsoft.NETCore.App.Crossgen2.win-x64 -AllowPrereleaseVersions -AllVersions -Source  https://api.nuget.org/v3/index.json
-      Install-Package -Name Microsoft.NETCore.App.Crossgen2.win-x64 -RequiredVersion $pkg[0].Version
-    displayName: Install CrossGen2 nuget package
-
-
-  - pwsh: |
       Import-Module .\tools\ci.psm1
       Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
       $options = (Get-PSOptions)

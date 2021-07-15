@@ -45,15 +45,6 @@ jobs:
       Invoke-CIInstall -SkipUser
     displayName: Bootstrap
 
-  - pwsh: |
-      $pkgName = if ($IsLinux) { 'Microsoft.NETCore.App.Crossgen2.linux-x64' } else { 'Microsoft.NETCore.App.Crossgen2.osx-x64' }
-      $pkg = Find-Package -Name $pkgName -AllowPrereleaseVersions -AllVersions -Source  https://api.nuget.org/v3/index.json
-
-      Write-Verbose -Verbose "Package: $pkgName Version: $($pkg[0].Version)"
-
-      Install-Package -Name $pkgName -RequiredVersion $pkg[0].Version
-    displayName: Install CrossGen2 nuget package
-
   - task: ExtractFiles@1
     displayName: 'Extract Build ZIP'
     inputs:
