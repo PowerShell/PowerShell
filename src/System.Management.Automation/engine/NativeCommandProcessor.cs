@@ -729,21 +729,32 @@ namespace System.Management.Automation
                     {
                         this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
-                        bool nativeCommandThrowPref = 
+                        bool nativeCommandUseErrorActionPref = 
                             this.Command.Context.GetBooleanPreference(
-                                SpecialVariables.NativeCommandThrowPreferenceVarPath, 
+                                SpecialVariables.NativeCommandUseErrorActionPreferenceVarPath, 
                                 false, 
                                 out _);
 
-                        if (nativeCommandThrowPref)
+                        // If $PSNativeCommandUseErrorActionPreference is $true, then evaluate $ErrorActionPreference
+                        if (nativeCommandUseErrorActionPref)
                         {
-                            var nonZeroExitCodeErrorRecord = 
-                                new ErrorRecord(
-                                    exception: new Exception("Native executable returned a non-zero exit code."), 
-                                    errorId: "NativeCommandThrow", 
-                                    errorCategory: ErrorCategory.NotSpecified,
-                                    targetObject: this.NativeCommandName);
-                            this.commandRuntime.ThrowTerminatingError(nonZeroExitCodeErrorRecord);
+                            ActionPreference errorActionPref =
+                                this.Command.Context.GetEnumPreference(
+                                    SpecialVariables.ErrorActionPreferenceVarPath,
+                                    ActionPreference.SilentlyContinue,
+                                    out _);
+
+                            if (errorActionPref != ActionPreference.Ignore)
+                            {
+                                var errorRecord = 
+                                    new ErrorRecord(
+                                        exception: new Exception($"Program {this.NativeCommandName} ended with non-zero exit code {_nativeProcess.ExitCode}"), 
+                                        errorId: "NativeCommandThrow", 
+                                        errorCategory: ErrorCategory.NotSpecified,
+                                        targetObject: this.NativeCommandName);
+                                // this.commandRuntime.ThrowTerminatingError(nonZeroExitCodeErrorRecord);
+                                this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord, isNativeError: true);
+                            }
                         }
                     }
                 }

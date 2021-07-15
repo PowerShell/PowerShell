@@ -255,10 +255,10 @@ namespace System.Management.Automation
 
         internal static readonly VariablePath InformationPreferenceVarPath = new VariablePath(InformationPreference);
 
-        internal const string NativeCommandThrowPreference = "PSNativeCommandThrowPreference";
+        internal const string NativeCommandUseErrorActionPreference = "PSNativeCommandUseErrorActionPreference";
 
-        internal static readonly VariablePath NativeCommandThrowPreferenceVarPath =
-            new VariablePath(NativeCommandThrowPreference);
+        internal static readonly VariablePath NativeCommandUseErrorActionPreferenceVarPath =
+            new VariablePath(NativeCommandUseErrorActionPreference);
 
         #endregion Preference Variables
 
@@ -334,19 +334,19 @@ namespace System.Management.Automation
                                                                     SpecialVariables.WarningPreference,
                                                                     SpecialVariables.InformationPreference,
                                                                     SpecialVariables.ConfirmPreference,
-                                                                    SpecialVariables.NativeCommandThrowPreference,
+                                                                    SpecialVariables.NativeCommandUseErrorActionPreference,
                                                                 };
 
         internal static readonly Type[] PreferenceVariableTypes = 
             {
-                /* DebugPreference */              typeof(ActionPreference),
-                /* VerbosePreference */            typeof(ActionPreference),
-                /* ErrorPreference */              typeof(ActionPreference),
-                /* WhatIfPreference */             typeof(SwitchParameter),
-                /* WarningPreference */            typeof(ActionPreference),
-                /* InformationPreference */        typeof(ActionPreference),
-                /* ConfirmPreference */            typeof(ConfirmImpact),
-                /* NativeCommandThrowPreference */ typeof(SwitchParameter),
+                /* DebugPreference */                       typeof(ActionPreference),
+                /* VerbosePreference */                     typeof(ActionPreference),
+                /* ErrorPreference */                       typeof(ActionPreference),
+                /* WhatIfPreference */                      typeof(SwitchParameter),
+                /* WarningPreference */                     typeof(ActionPreference),
+                /* InformationPreference */                 typeof(ActionPreference),
+                /* ConfirmPreference */                     typeof(ConfirmImpact),
+                /* NativeCommandUseErrorActionPreference */ typeof(SwitchParameter),
             };
 
         // The following variables are created in every session w/ AllScope.  We avoid creating local slots when we
