@@ -2409,13 +2409,7 @@ function Start-CrossGen {
 
     # The crossgen tool is only published for these particular runtimes
     $crossGenRuntime = if ($environment.IsWindows) {
-        if ($Runtime -match "-x86") {
-            "win-x86"
-        } elseif ($Runtime -match "-x64") {
-            "win-x64"
-        } else {
-            $Runtime
-        }
+        "win-x64"
     } else {
         $Runtime
     }
