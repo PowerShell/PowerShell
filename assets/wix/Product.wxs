@@ -350,8 +350,8 @@
       <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" TabSkip="yes" />
       <Control Id="Description" Type="Text" X="25" Y="54" Width="280" Height="100" Transparent="yes" NoPrefix="yes" Text="Microsoft Update helps keep your computer secure and up to date for Windows and other Microsoft products, including PowerShell 7. Updates will be delivered based on your current update settings. You can review or change these settings from the Windows Update control panel." TabSkip="yes" />
       <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
-      <Control Id="UseMuCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="27" Property="USE_MU" Text="Enable updating PowerShell through Microsft Update or WSUS (recommended)"/>
-      <Control Id="EnableMuCheckBox" Type="CheckBox" X="20" Y="130" Width="290" Height="17" Property="ENABLE_MU" Text="Use Microsoft Update when I check for updates (recommended)"/>
+      <Control Id="UseMuCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="27" Property="USE_MU" CheckBoxValue="1" Text="Enable updating PowerShell through Microsft Update or WSUS (recommended)"/>
+      <Control Id="EnableMuCheckBox" Type="CheckBox" X="20" Y="130" Width="290" Height="17" Property="ENABLE_MU" CheckBoxValue="1" Text="Use Microsoft Update when I check for updates (recommended)"/>
       <Control Id="MuWarningText" Type="Text" X="20" Y="160" Width="290" Height="27" Text="Without Microsoft Update enabled, you will need to use another update solution like WSUS or SCCM in order to receive automatic updates."/>
       <Control Id="MuFAQ" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
         <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-FAQ">See the Microsoft Update FAQ</a>]]></Text>
