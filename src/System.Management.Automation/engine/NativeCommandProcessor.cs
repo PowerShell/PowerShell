@@ -789,7 +789,6 @@ namespace System.Management.Automation
                                         errorId: "NativeCommandThrow", 
                                         errorCategory: ErrorCategory.NotSpecified,
                                         targetObject: this.NativeCommandName);
-                                // this.commandRuntime.ThrowTerminatingError(nonZeroExitCodeErrorRecord);
                                 this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord, isNativeError: true);
                             }
                         }

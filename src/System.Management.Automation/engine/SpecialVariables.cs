@@ -414,6 +414,6 @@ namespace System.Management.Automation
         Warning = 13,
         Information = 14,
         Confirm = 15,
-        NativeCommandThrow = 16,
+        NativeCommandUseErrorAction = 16,
     }
 }
