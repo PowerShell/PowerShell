@@ -10,6 +10,7 @@ using System.Text;
 using System.Collections;
 using System.Threading;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
 using System.Xml;
 using System.Runtime.InteropServices;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -766,14 +767,13 @@ namespace System.Management.Automation
                     {
                         this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
-                        bool nativeCommandUseErrorActionPref = 
+                        bool nativeCommandUseErrorActionPreference = 
                             this.Command.Context.GetBooleanPreference(
-                                SpecialVariables.NativeCommandUseErrorActionPreferenceVarPath, 
-                                false, 
+                                SpecialVariables.NativeCommandUseErrorActionPreferenceVarPath,
+                                InitialSessionState.DefaultNativeCommandUseErrorActionPreference,
                                 out _);
 
-                        // If $PSNativeCommandUseErrorActionPreference is $true, then evaluate $ErrorActionPreference
-                        if (nativeCommandUseErrorActionPref)
+                        if (nativeCommandUseErrorActionPreference)
                         {
                             ActionPreference errorActionPref =
                                 this.Command.Context.GetEnumPreference(
