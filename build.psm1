@@ -141,6 +141,9 @@ function Get-EnvironmentInformation
     if ($environment.IsMacOS) {
         $environment += @{'UsingHomebrew' = [bool](Get-Command brew -ErrorAction ignore)}
         $environment += @{'UsingMacports' = [bool](Get-Command port -ErrorAction ignore)}
+        $environment += @{
+            'Architecture' = if ((Start-NativeExecution -IgnoreExitCode { (arch -arm64 uname -p) -eq 'arm' } 2>$null)) { 'arm64' } else { 'x64' }
+        }
 
         if (-not($environment.UsingHomebrew -or $environment.UsingMacports)) {
             throw "Neither Homebrew nor MacPorts is installed on this system, visit https://brew.sh/ or https://www.macports.org/ to continue"
@@ -439,10 +442,9 @@ Fix steps:
     }
 
     # Framework Dependent builds do not support ReadyToRun as it needs a specific runtime to optimize for.
-    # M1/ARM64 macOS similarly does not support ReadyToRun
     # The property is set in Powershell.Common.props file.
     # We override the property through the build command line.
-    if($Options.Runtime -eq 'osx-arm64' -or $Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) {
+    if($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) {
         $Arguments += "/property:PublishReadyToRun=false"
     }
 
@@ -3378,9 +3380,4 @@ function New-NugetConfigFile
     $content = $nugetConfigTemplate.Replace('[FEED]', $NugetFeedUrl).Replace('[FEEDNAME]', $FeedName).Replace('[USERNAME]', $UserName).Replace('[PASSWORD]', $ClearTextPAT)
 
     Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
-}
-
-function Test-IsArm64MacOS
-{
-    return $IsMacOS -and (Start-NativeExecution -IgnoreExitCode { (arch -arm64 uname -p) -eq 'arm' } 2>$null)
 }
