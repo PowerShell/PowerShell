@@ -561,7 +561,7 @@ namespace System.Management.Automation
                     Exception lastException = errorList[0] as Exception;
                     if (lastException != null)
                     {
-                        exceptionThrown = (lastException.Message != null) ? lastException.Message : string.Empty;
+                        exceptionThrown = lastException.Message ?? string.Empty;
                     }
                     else
                     {
