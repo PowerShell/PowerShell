@@ -810,7 +810,12 @@ namespace System.Management.Automation.Runspaces
                             $maxDepth = 10
                             $ellipsis = ""`u{2026}""
                             $resetColor = ''
+                            $errorColor = ''
                             if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
+                                if ($null -ne $psstyle) {
+                                    $errorColor = $psstyle.Formatting.Error
+                                }
+
                                 $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
                                     [System.Management.Automation.VTUtility+VT]::Reset
                                 )
@@ -947,6 +952,13 @@ namespace System.Management.Automation.Runspaces
                                             $value = $null
                                             if ([System.Management.Automation.LanguagePrimitives]::TryConvertTo($prop.Value, [string], [ref]$value) -and $value -ne $null)
                                             {
+                                                if ($prop.Name -eq 'PositionMessage') {
+                                                    $value = $value.Insert($value.IndexOf('~'), $errorColor)
+                                                }
+                                                elseif ($prop.Name -eq 'Message') {
+                                                    $value = $errorColor + $value
+                                                }
+
                                                 $isFirstLine = $true
                                                 if ($value.Contains($newline)) {
                                                     # the 3 is to account for ' : '
