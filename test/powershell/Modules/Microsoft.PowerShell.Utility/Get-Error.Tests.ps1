@@ -128,7 +128,7 @@ Describe 'Get-Error tests' -Tag CI {
 
     It 'Get-Error uses Error color for Message and PositionMessage members' -Skip:(!$EnabledExperimentalFeatures.Contains("PSAnsiRendering")) {
 
-        $out = pwsh -noprofile -command '[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("BypassOutputRedirectionCheck", $true); try { 1/0 } catch { }; Get-Error' | Out-String
+        $out = pwsh -noprofile -command '$PSStyle.OutputRendering = "ANSI"; [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("BypassOutputRedirectionCheck", $true); try { 1/0 } catch { }; Get-Error' | Out-String
 
         # need to escape the open square bracket so the regex works
         $resetColor = $PSStyle.Reset.Replace('[','\[')
