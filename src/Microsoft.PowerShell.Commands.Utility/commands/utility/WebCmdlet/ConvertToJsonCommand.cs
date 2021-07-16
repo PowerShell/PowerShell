@@ -104,8 +104,9 @@ namespace Microsoft.PowerShell.Commands
             if (disposing)
             {
                 _cancellationSource.Dispose();
-                _disposed = true;
             }
+            
+            _disposed = true;
         }
 
         /// <summary>
