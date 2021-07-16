@@ -31,6 +31,7 @@ jobs:
     condition: succeededOrFailed()
 
   - pwsh: |
+      Set-PSDebug -Trace 1
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall -SkipUser
     displayName: Bootstrap
