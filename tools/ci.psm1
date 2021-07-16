@@ -23,7 +23,7 @@ try
 }
 catch
 {
-    Get-Error
+    Get-Error | Out-Host
     throw
 }
 
