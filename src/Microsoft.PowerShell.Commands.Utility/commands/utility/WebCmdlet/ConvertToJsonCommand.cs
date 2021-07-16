@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// This command converts an object to a Json string representation.
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
-    public class ConvertToJsonCommand : PSCmdlet
+    public class ConvertToJsonCommand : PSCmdlet, IDisposable
     {
         /// <summary>
         /// Gets or sets the InputObject property.
@@ -30,6 +30,8 @@ namespace Microsoft.PowerShell.Commands
         private const int maxDepthAllowed = 100;
 
         private readonly CancellationTokenSource _cancellationSource = new();
+
+        private bool _disposed;
 
         /// <summary>
         /// Gets or sets the Depth property.
@@ -76,6 +78,34 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public StringEscapeHandling EscapeHandling { get; set; } = StringEscapeHandling.Default;
+
+        /// <summary>
+        /// IDisposable implementation, dispose of any disposable resources created by the cmdlet.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Implementation of IDisposable for both manual Dispose() and finalizer-called disposal of resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// Specified as true when Dispose() was called, false if this is called from the finalizer.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    _cancellationSource.Dispose();
+                }
+
+                _disposed = true;
+            }
+        }
 
         /// <summary>
         /// Prerequisite checks.
