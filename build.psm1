@@ -142,9 +142,8 @@ function Get-EnvironmentInformation
         $environment += @{'UsingHomebrew' = [bool](Get-Command brew -ErrorAction ignore)}
         $environment += @{'UsingMacports' = [bool](Get-Command port -ErrorAction ignore)}
 
-        $isArm64 = (Get-Command -Name arch -ErrorAction SilentlyContinue) -and (arch -arm64 uname -p 2>$null) -eq 'arm'
         $environment += @{
-            'Architecture' = if ($isArm64) { 'arm64' } else { 'x64' }
+            'OSArchitecture' = if ((uname -v) -match 'ARM64') { 'arm64' } else { 'x64' }
         }
 
         if (-not($environment.UsingHomebrew -or $environment.UsingMacports)) {
