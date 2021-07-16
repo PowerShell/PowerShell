@@ -96,13 +96,14 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (_disposed)
             {
-                if (disposing)
-                {
-                    _cancellationSource.Dispose();
-                }
-
+                return;
+            }
+            
+            if (disposing)
+            {
+                _cancellationSource.Dispose();
                 _disposed = true;
             }
         }
