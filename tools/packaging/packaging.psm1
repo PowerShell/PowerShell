@@ -37,6 +37,10 @@ function Start-PSPackage {
         [ValidateScript({$Environment.IsWindows})]
         [string] $WindowsRuntime,
 
+        [ValidateSet('osx-x64', 'osx-arm64')]
+        [ValidateScript({$Environment.IsMacOS})]
+        [string] $MacOSRuntime,
+
         [Switch] $Force,
 
         [Switch] $SkipReleaseChecks,
@@ -71,12 +75,18 @@ function Start-PSPackage {
         # Runtime and Configuration settings required by the package
         ($Runtime, $Configuration) = if ($WindowsRuntime) {
             $WindowsRuntime, "Release"
+        } elseif ($MacOSRuntime) {
+           $MacOSRuntime, "Release"
         } elseif ($Type -eq "tar-alpine") {
             New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type -eq "tar-arm") {
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } elseif ($Type -eq "tar-arm64") {
-            New-PSOptions -Configuration "Release" -Runtime "Linux-ARM64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+            if ($IsMacOS) {
+                New-PSOptions -Configuration "Release" -Runtime "osx-arm64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+            } else {
+                New-PSOptions -Configuration "Release" -Runtime "Linux-ARM64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+            }
         } else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
@@ -97,6 +107,8 @@ function Start-PSPackage {
         } elseif ($Type -eq 'fxdependent-win-desktop') {
             $NameSuffix = "win-fxdependentWinDesktop"
             Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
+        } elseif ($MacOSRuntime) {
+            $NameSuffix = $MacOSRuntime
         } else {
             Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
         }
@@ -415,6 +427,10 @@ function Start-PSPackage {
                     Name = $Name
                     Version = $Version
                     Force = $Force
+                }
+
+                if ($MacOSRuntime) {
+                    $Arguments['Architecture'] = $MacOSRuntime.Split('-')[1]
                 }
 
                 if ($PSCmdlet.ShouldProcess("Create tar.gz Package")) {
