@@ -763,35 +763,39 @@ namespace System.Management.Automation
                     }
 
                     this.Command.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, _nativeProcess.ExitCode);
-                    if (_nativeProcess.ExitCode != 0)
+                    if (_nativeProcess.ExitCode == 0)
                     {
-                        this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+                        return;
+                    }
 
-                        bool nativeCommandUseErrorActionPreference = 
-                            this.Command.Context.GetBooleanPreference(
-                                SpecialVariables.NativeCommandUseErrorActionPreferenceVarPath,
-                                InitialSessionState.DefaultNativeCommandUseErrorActionPreference,
-                                out _);
+                    this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
-                        if (nativeCommandUseErrorActionPreference)
-                        {
-                            ActionPreference errorActionPref =
-                                this.Command.Context.GetEnumPreference(
-                                    SpecialVariables.ErrorActionPreferenceVarPath,
-                                    ActionPreference.SilentlyContinue,
-                                    out _);
+                    bool nativeCommandUseErrorActionPreference = 
+                        this.Command.Context.GetBooleanPreference(
+                            SpecialVariables.NativeCommandUseErrorActionPreferenceVarPath,
+                            InitialSessionState.DefaultNativeCommandUseErrorActionPreference,
+                            out _);
 
-                            if (errorActionPref != ActionPreference.Ignore)
-                            {
-                                var errorRecord = 
-                                    new ErrorRecord(
-                                        exception: new Exception($"Program {this.NativeCommandName} ended with non-zero exit code {_nativeProcess.ExitCode}"), 
-                                        errorId: "NativeCommandThrow", 
-                                        errorCategory: ErrorCategory.NotSpecified,
-                                        targetObject: this.NativeCommandName);
-                                this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord, isNativeError: true);
-                            }
-                        }
+                    if (!nativeCommandUseErrorActionPreference)
+                    {
+                        return;
+                    }
+
+                    ActionPreference errorActionPref =
+                        this.Command.Context.GetEnumPreference(
+                            SpecialVariables.ErrorActionPreferenceVarPath,
+                            ActionPreference.SilentlyContinue,
+                            out _);
+
+                    if (errorActionPref != ActionPreference.Ignore)
+                    {
+                        var errorRecord = 
+                            new ErrorRecord(
+                                exception: new Exception($"Program {this.NativeCommandName} ended with non-zero exit code {_nativeProcess.ExitCode}"), 
+                                errorId: "NativeCommandThrow", 
+                                errorCategory: ErrorCategory.NotSpecified,
+                                targetObject: this.NativeCommandName);
+                        this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord, isNativeError: true);
                     }
                 }
             }
