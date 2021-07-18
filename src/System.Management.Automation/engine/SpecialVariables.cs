@@ -255,10 +255,10 @@ namespace System.Management.Automation
 
         internal static readonly VariablePath InformationPreferenceVarPath = new VariablePath(InformationPreference);
 
-        internal const string NativeCommandUseErrorActionPreference = "PSNativeCommandUseErrorActionPreference";
+        internal const string PSNativeCommandUseErrorActionPreference = nameof(PSNativeCommandUseErrorActionPreference);
 
-        internal static readonly VariablePath NativeCommandUseErrorActionPreferenceVarPath =
-            new VariablePath(NativeCommandUseErrorActionPreference);
+        internal static readonly VariablePath PSNativeCommandUseErrorActionPreferenceVarPath =
+            new VariablePath(PSNativeCommandUseErrorActionPreference);
 
         #endregion Preference Variables
 
@@ -326,28 +326,29 @@ namespace System.Management.Automation
                                                                    /* PSCommandPath */     typeof(string),
                                                                  };
 
-        internal static readonly string[] PreferenceVariables = {
-                                                                    SpecialVariables.DebugPreference,
-                                                                    SpecialVariables.VerbosePreference,
-                                                                    SpecialVariables.ErrorActionPreference,
-                                                                    SpecialVariables.WhatIfPreference,
-                                                                    SpecialVariables.WarningPreference,
-                                                                    SpecialVariables.InformationPreference,
-                                                                    SpecialVariables.ConfirmPreference,
-                                                                    SpecialVariables.NativeCommandUseErrorActionPreference,
-                                                                };
+        internal static readonly string[] PreferenceVariables = 
+        {
+            SpecialVariables.DebugPreference,
+            SpecialVariables.VerbosePreference,
+            SpecialVariables.ErrorActionPreference,
+            SpecialVariables.WhatIfPreference,
+            SpecialVariables.WarningPreference,
+            SpecialVariables.InformationPreference,
+            SpecialVariables.ConfirmPreference,
+            SpecialVariables.PSNativeCommandUseErrorActionPreference,
+        };
 
         internal static readonly Type[] PreferenceVariableTypes = 
-            {
-                /* DebugPreference */                       typeof(ActionPreference),
-                /* VerbosePreference */                     typeof(ActionPreference),
-                /* ErrorPreference */                       typeof(ActionPreference),
-                /* WhatIfPreference */                      typeof(SwitchParameter),
-                /* WarningPreference */                     typeof(ActionPreference),
-                /* InformationPreference */                 typeof(ActionPreference),
-                /* ConfirmPreference */                     typeof(ConfirmImpact),
-                /* NativeCommandUseErrorActionPreference */ typeof(SwitchParameter),
-            };
+        {
+            /* DebugPreference */                         typeof(ActionPreference),
+            /* VerbosePreference */                       typeof(ActionPreference),
+            /* ErrorPreference */                         typeof(ActionPreference),
+            /* WhatIfPreference */                        typeof(SwitchParameter),
+            /* WarningPreference */                       typeof(ActionPreference),
+            /* InformationPreference */                   typeof(ActionPreference),
+            /* ConfirmPreference */                       typeof(ConfirmImpact),
+            /* PSNativeCommandUseErrorActionPreference */ typeof(SwitchParameter),
+        };
 
         // The following variables are created in every session w/ AllScope.  We avoid creating local slots when we
         // see an assignment to any of these variables so that they get handled properly (either throwing an exception
@@ -414,6 +415,6 @@ namespace System.Management.Automation
         Warning = 13,
         Information = 14,
         Confirm = 15,
-        NativeCommandUseErrorAction = 16,
+        PSNativeCommandUseErrorAction = 16,
     }
 }

@@ -4471,7 +4471,7 @@ end {
         internal const ActionPreference DefaultInformationPreference = ActionPreference.SilentlyContinue;
 
         internal const ErrorView DefaultErrorView = ErrorView.ConciseView;
-        internal const bool DefaultNativeCommandUseErrorActionPreference = false;
+        internal const bool DefaultPSNativeCommandUseErrorActionPreference = false;
         internal const bool DefaultWhatIfPreference = false;
         internal const ConfirmImpact DefaultConfirmPreference = ConfirmImpact.High;
 
@@ -4562,9 +4562,9 @@ end {
                 0,
                 RunspaceInit.NestedPromptLevelDescription),
             new SessionStateVariableEntry(
-                SpecialVariables.NativeCommandUseErrorActionPreference,
-                DefaultNativeCommandUseErrorActionPreference,
-                RunspaceInit.NativeCommandUseErrorActionPreferenceDescription),
+                SpecialVariables.PSNativeCommandUseErrorActionPreference,
+                DefaultPSNativeCommandUseErrorActionPreference,
+                RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription),
             new SessionStateVariableEntry(
                 SpecialVariables.WhatIfPreference,
                 DefaultWhatIfPreference,
