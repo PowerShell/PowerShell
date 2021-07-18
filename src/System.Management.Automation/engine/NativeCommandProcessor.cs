@@ -132,6 +132,112 @@ namespace System.Management.Automation
     }
 
     /// <summary>
+    /// This exception is used by the NativeCommandProcessor to indicate an error
+    /// when a native command retuns a non-zero exit code.
+    /// </summary>
+    [Serializable]
+    public class NativeCommandException : RuntimeException
+    {
+        /// <summary>
+        /// Gets the path of the native command.
+        /// </summary>
+        public string Path { get; private set; }
+
+        /// <summary>
+        /// Gets the exit code returned by the native command.
+        /// </summary>
+        public int ExitCode { get; private set; }
+
+        /// <summary>
+        /// Gets the native command's process Id.
+        /// </summary>
+        public int ProcessId { get; private set; }
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructs a NativeCommandException.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="exitCode"></param>
+        /// <param name="processId"></param>
+        /// <param name="message"></param>
+        /// <param name="errorId"></param>
+        internal NativeCommandException(string path, int exitCode, int processId, string message, string errorId)
+            : base(message)
+        {
+            SetErrorId(errorId);
+            SetErrorCategory(ErrorCategory.NotSpecified);
+            this.Path = path;
+            this.ExitCode = exitCode;
+            this.ProcessId = processId;
+        }
+
+        /// <summary>
+        /// This is the default constructor.
+        /// </summary>
+        public NativeCommandException() : base() { }
+
+        /// <summary>
+        /// This constructor takes a localized error message.
+        /// </summary>
+        /// <param name="message">
+        /// A localized error message.
+        /// </param>
+        public NativeCommandException(string message) : base(message) { }
+
+        /// <summary>
+        /// This constructor takes a localized message and an inner exception.
+        /// </summary>
+        /// <param name="message">
+        /// Localized error message.
+        /// </param>
+        /// <param name="innerException">
+        /// Inner exception.
+        /// </param>
+        public NativeCommandException(string message, Exception innerException) : base(message, innerException) { }
+
+        /// <summary>
+        /// This constructor is required by serialization.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        protected NativeCommandException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            if (info == null)
+            {
+                throw new PSArgumentNullException(nameof(info));
+            }
+
+            this.Path = info.GetString(nameof(this.Path));
+            this.ExitCode = info.GetInt32(nameof(this.ExitCode));
+            this.ProcessId = info.GetInt32(nameof(this.ProcessId));
+        }
+
+        #endregion Constructors
+
+        /// <summary>
+        /// Serializes the exception data.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+            {
+                throw new PSArgumentNullException(nameof(info));
+            }
+
+            base.GetObjectData(info, context);
+
+            info.AddValue(nameof(this.Path), this.Path);
+            info.AddValue(nameof(this.ExitCode), this.ExitCode);
+            info.AddValue(nameof(this.ProcessId), this.ProcessId);
+        }
+    }
+
+    /// <summary>
     /// Provides way to create and execute native commands.
     /// </summary>
     internal class NativeCommandProcessor : CommandProcessorBase
@@ -789,12 +895,23 @@ namespace System.Management.Automation
 
                     if (errorActionPref != ActionPreference.Ignore)
                     {
-                        var errorRecord = 
-                            new ErrorRecord(
-                                exception: new Exception($"Program {this.NativeCommandName} ended with non-zero exit code {_nativeProcess.ExitCode}"), 
-                                errorId: "NativeCommandThrow", 
-                                errorCategory: ErrorCategory.NotSpecified,
-                                targetObject: this.NativeCommandName);
+                        const string errorId = "ProgramFailedToComplete";
+
+                        string errorMsg =
+                            StringUtil.Format(
+                                CommandBaseStrings.ProgramFailedToComplete,
+                                this.NativeCommandName,
+                                _nativeProcess.ExitCode);
+
+                        var exception =
+                            new NativeCommandException(
+                                this.Path, 
+                                _nativeProcess.ExitCode,
+                                _nativeProcess.Id,
+                                errorMsg,
+                                errorId);
+
+                        var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.NotSpecified, null);
                         this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord, isNativeError: true);
                     }
                 }
