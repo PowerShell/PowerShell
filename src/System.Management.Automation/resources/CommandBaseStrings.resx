@@ -156,6 +156,9 @@
   <data name="PauseHelpMessage" xml:space="preserve">
     <value>Pause the current pipeline and return to the command prompt. Type "{0}" to resume the pipeline.</value>
   </data>
+  <data name="ProgramFailedToComplete" xml:space="preserve">
+    <value>Program "{0}" ended with non-zero exit code {1}.</value>
+  </data>
   <data name="ShouldProcessMessage" xml:space="preserve">
     <value>Performing the operation "{0}" on target "{1}".</value>
   </data>
