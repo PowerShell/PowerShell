@@ -735,8 +735,8 @@ namespace System.Management.Automation
 
                     bool nativeCommandUseErrorActionPreference = 
                         this.Command.Context.GetBooleanPreference(
-                            SpecialVariables.NativeCommandUseErrorActionPreferenceVarPath,
-                            InitialSessionState.DefaultNativeCommandUseErrorActionPreference,
+                            SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath,
+                            InitialSessionState.DefaultPSNativeCommandUseErrorActionPreference,
                             out _);
 
                     if (!nativeCommandUseErrorActionPreference)

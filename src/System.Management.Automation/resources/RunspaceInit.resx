@@ -186,7 +186,7 @@
   <data name="NestedPromptLevelDescription" xml:space="preserve">
     <value>Dictates what type of prompt should be displayed for the current nesting level</value>
   </data>
-  <data name="NativeCommandUseErrorActionPreferenceDescription" xml:space="preserve">
+  <data name="PSNativeCommandUseErrorActionPreferenceDescription" xml:space="preserve">
     <value>If true, $ErrorActionPreference applies to native executable non-zero exit codes</value>
   </data>  
   <data name="WhatIfPreferenceDescription" xml:space="preserve">
