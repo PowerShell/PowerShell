@@ -31,8 +31,6 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly CancellationTokenSource _cancellationSource = new();
 
-        private bool _disposed;
-
         /// <summary>
         /// Gets or sets the Depth property.
         /// </summary>
@@ -96,17 +94,10 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed)
-            {
-                return;
-            }
-            
             if (disposing)
             {
                 _cancellationSource.Dispose();
             }
-            
-            _disposed = true;
         }
 
         /// <summary>
