@@ -2416,6 +2416,8 @@ function Start-CrossGen {
 
     # The crossgen tool is only published for these particular runtimes
     $crossGenRuntime = if ($environment.IsWindows) {
+        # for windows the tool architecture is the host machine architecture, so it is always x64.
+        # we can cross compile for x86, arm and arm64
         "win-x64"
     } else {
         $Runtime
