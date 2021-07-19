@@ -907,16 +907,16 @@ namespace System.Management.Automation.Runspaces.Internal
         private ObjectStreamBase inputstream;
         private ObjectStreamBase errorstream;
         private PSInformationalBuffers informationalBuffers;
-        private PowerShell shell;
-        private Guid clientRunspacePoolId;
+        private readonly PowerShell shell;
+        private readonly Guid clientRunspacePoolId;
         private bool noInput;
         private PSInvocationSettings settings;
         private ObjectStreamBase outputstream;
-        private string computerName;
+        private readonly string computerName;
         private ClientPowerShellDataStructureHandler dataStructureHandler;
         private bool stopCalled = false;
         private PSHost hostToUse;
-        private RemoteRunspacePoolInternal runspacePool;
+        private readonly RemoteRunspacePoolInternal runspacePool;
 
         private const string WRITE_DEBUG_LINE = "WriteDebugLine";
         private const string WRITE_VERBOSE_LINE = "WriteVerboseLine";
