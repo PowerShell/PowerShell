@@ -938,28 +938,15 @@ namespace System.Management.Automation.Runspaces.Internal
         #region IDisposable
 
         /// <summary>
-        /// Public interface for dispose.
+        /// Release all resources.
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-
-            GC.SuppressFinalize(this);
+            // inputstream.Dispose();
+            // outputstream.Dispose();
+            // errorstream.Dispose();
         }
 
-        /// <summary>
-        /// Release all resources.
-        /// </summary>
-        /// <param name="disposing">If true, release all managed resources.</param>
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                // inputstream.Dispose();
-                // outputstream.Dispose();
-                // errorstream.Dispose();
-            }
-        }
         #endregion IDisposable
     }
 
