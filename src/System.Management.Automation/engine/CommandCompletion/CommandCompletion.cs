@@ -1141,7 +1141,7 @@ namespace System.Management.Automation
         /// LastWordFinder implements the algorithm we use to search for the last word in a line of input taken from the console.
         /// This class exists for legacy purposes only - V3 and forward uses a slightly different interface.
         /// </summary>
-        private class LastWordFinder
+        private sealed class LastWordFinder
         {
             internal static string FindLastWord(string sentence, out int replacementIndexOut, out char closingQuote)
             {

@@ -522,7 +522,7 @@ $result
             }
         }
 
-        private class ComputerInfo
+        private sealed class ComputerInfo
         {
             internal string LastBootUpTime;
             internal bool RebootComplete;

@@ -305,7 +305,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region CompletionEventArgs
 
-        private class CompletionEventArgs : EventArgs
+        private sealed class CompletionEventArgs : EventArgs
         {
             internal CompletionEventArgs(CompletionNotification notification)
             {
@@ -2833,7 +2833,7 @@ namespace System.Management.Automation.Remoting.Client
         private readonly string _cmdLine;
         private readonly WSManClientSessionTransportManager _sessnTm;
 
-        private class SendDataChunk
+        private sealed class SendDataChunk
         {
             public SendDataChunk(byte[] data, DataPriorityType type)
             {

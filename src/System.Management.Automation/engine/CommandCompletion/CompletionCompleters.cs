@@ -408,7 +408,7 @@ namespace System.Management.Automation
             return results;
         }
 
-        private class FindFunctionsVisitor : AstVisitor
+        private sealed class FindFunctionsVisitor : AstVisitor
         {
             internal readonly List<FunctionDefinitionAst> FunctionDefinitions = new List<FunctionDefinitionAst>();
 
@@ -4887,7 +4887,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class FindVariablesVisitor : AstVisitor
+        private sealed class FindVariablesVisitor : AstVisitor
         {
             internal Ast Top;
             internal Ast CompletionVariableAst;
@@ -6092,7 +6092,7 @@ namespace System.Management.Automation
         /// This type represents a generic type for type name completion. It only contains information that can be
         /// inferred from the full type name.
         /// </summary>
-        private class GenericTypeCompletionInStringFormat : TypeCompletionInStringFormat
+        private sealed class GenericTypeCompletionInStringFormat : TypeCompletionInStringFormat
         {
             /// <summary>
             /// Get the number of generic type arguments required by the type represented by this instance.
@@ -6209,7 +6209,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This type represents a generic type for type name completion. It contains the actual type instance.
         /// </summary>
-        private class GenericTypeCompletion : TypeCompletion
+        private sealed class GenericTypeCompletion : TypeCompletion
         {
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
             {
@@ -6246,7 +6246,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This type represents a namespace for namespace completion.
         /// </summary>
-        private class NamespaceCompletion : TypeCompletionBase
+        private sealed class NamespaceCompletion : TypeCompletionBase
         {
             internal string Namespace;
 
@@ -6268,7 +6268,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class TypeCompletionMapping
+        private sealed class TypeCompletionMapping
         {
             // The Key is the string we'll be searching on.  It could complete to various things.
             internal string Key;
@@ -7334,7 +7334,7 @@ namespace System.Management.Automation
             return defaultChoice;
         }
 
-        private class ItemPathComparer : IComparer<PSObject>
+        private sealed class ItemPathComparer : IComparer<PSObject>
         {
             public int Compare(PSObject x, PSObject y)
             {
@@ -7369,7 +7369,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class CommandNameComparer : IComparer<PSObject>
+        private sealed class CommandNameComparer : IComparer<PSObject>
         {
             public int Compare(PSObject x, PSObject y)
             {

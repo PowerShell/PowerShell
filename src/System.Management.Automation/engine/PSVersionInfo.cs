@@ -376,7 +376,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class PSVersionTableComparer : IComparer
+        private sealed class PSVersionTableComparer : IComparer
         {
             public int Compare(object x, object y)
             {

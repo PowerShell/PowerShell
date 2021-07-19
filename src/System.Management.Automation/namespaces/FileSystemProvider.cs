@@ -7401,7 +7401,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Tracks visited files/directories by caching their device IDs and inodes.
         /// </summary>
-        private class InodeTracker
+        private sealed class InodeTracker
         {
             private readonly HashSet<(UInt64, UInt64)> _visitations;
 

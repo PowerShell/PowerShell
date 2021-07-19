@@ -2322,7 +2322,7 @@ namespace Microsoft.PowerShell
         /// Neither this class' instances nor its static data is threadsafe.  Caller is responsible for ensuring threadsafe
         /// access.
         /// </summary>
-        private class InputLoop
+        private sealed class InputLoop
         {
             internal static void RunNewInputLoop(ConsoleHost parent, bool isNested)
             {
@@ -2902,7 +2902,7 @@ namespace Microsoft.PowerShell
         [Serializable]
         [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic", Justification =
             "This exception cannot be used outside of the console host application. It is not thrown by a library routine, only by an application.")]
-        private class ConsoleHostStartupException : Exception
+        private sealed class ConsoleHostStartupException : Exception
         {
             internal
             ConsoleHostStartupException()
@@ -2916,7 +2916,7 @@ namespace Microsoft.PowerShell
             {
             }
 
-            protected
+            private
             ConsoleHostStartupException(
                 System.Runtime.Serialization.SerializationInfo info,
                 System.Runtime.Serialization.StreamingContext context)

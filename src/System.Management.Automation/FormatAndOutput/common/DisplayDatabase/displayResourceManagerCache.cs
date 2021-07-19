@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Helper class to resolve an assembly name to an assembly reference
         /// The class caches previous results for faster lookup.
         /// </summary>
-        private class AssemblyNameResolver
+        private sealed class AssemblyNameResolver
         {
             /// <summary>
             /// Resolve the assembly name against the set of loaded assemblies.

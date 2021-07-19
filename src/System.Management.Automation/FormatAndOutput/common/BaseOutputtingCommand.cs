@@ -848,7 +848,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Context for the outer scope of the format sequence.
         /// </summary>
-        private class FormatOutputContext : FormatMessagesContextManager.OutputContext
+        private sealed class FormatOutputContext : FormatMessagesContextManager.OutputContext
         {
             /// <summary>
             /// Construct a context to push on the stack.
@@ -1296,7 +1296,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             /// Helper class to accumulate the display values so that when the end
             /// of a line is reached, a full line can be composed.
             /// </summary>
-            private class StringValuesBuffer
+            private sealed class StringValuesBuffer
             {
                 /// <summary>
                 /// Construct the buffer.

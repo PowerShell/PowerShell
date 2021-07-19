@@ -673,7 +673,7 @@ namespace System.Management.Automation.Language
 
     internal static class TypeCache
     {
-        private class KeyComparer : IEqualityComparer<Tuple<ITypeName, TypeResolutionState>>
+        private sealed class KeyComparer : IEqualityComparer<Tuple<ITypeName, TypeResolutionState>>
         {
             public bool Equals(Tuple<ITypeName, TypeResolutionState> x,
                                Tuple<ITypeName, TypeResolutionState> y)

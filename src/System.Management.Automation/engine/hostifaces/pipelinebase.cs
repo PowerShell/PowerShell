@@ -768,7 +768,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private Queue<ExecutionEventQueueItem> _executionEventQueue = new Queue<ExecutionEventQueueItem>();
 
-        private class ExecutionEventQueueItem
+        private sealed class ExecutionEventQueueItem
         {
             public ExecutionEventQueueItem(PipelineStateInfo pipelineStateInfo, RunspaceAvailability currentAvailability, RunspaceAvailability newAvailability)
             {

@@ -410,7 +410,7 @@ namespace Microsoft.PowerShell.Commands
         /// A generic circular buffer.
         /// </summary>
         /// <typeparam name="T">The type of items that are buffered.</typeparam>
-        private class CircularBuffer<T> : ICollection<T>
+        private sealed class CircularBuffer<T> : ICollection<T>
         {
             // Ring of items
             private readonly T[] _items;
@@ -627,7 +627,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A state machine to track display context for each match.
         /// </summary>
-        private class DisplayContextTracker : IContextTracker
+        private sealed class DisplayContextTracker : IContextTracker
         {
             private enum ContextState
             {
@@ -784,12 +784,12 @@ namespace Microsoft.PowerShell.Commands
         /// and other matching lines (since they will appear
         /// as their own match entries.).
         /// </remarks>
-        private class LogicalContextTracker : IContextTracker
+        private sealed class LogicalContextTracker : IContextTracker
         {
             // A union: string | MatchInfo. Needed since
             // context lines could be either proper matches
             // or non-matching lines.
-            private class ContextEntry
+            private sealed class ContextEntry
             {
                 public readonly string Line;
                 public readonly MatchInfo Match;
@@ -989,7 +989,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A class to track both logical and display contexts.
         /// </summary>
-        private class ContextTracker : IContextTracker
+        private sealed class ContextTracker : IContextTracker
         {
             private readonly IContextTracker _displayTracker;
             private readonly IContextTracker _logicalTracker;
@@ -1058,7 +1058,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ContextTracker that does not work for the case when pre- and post context is 0.
         /// </summary>
-        private class NoContextTracker : IContextTracker
+        private sealed class NoContextTracker : IContextTracker
         {
             private readonly IList<MatchInfo> _matches = new List<MatchInfo>(1);
 
@@ -1996,7 +1996,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Magic class that works around the limitations on ToString() for FileInfo.
         /// </summary>
-        private class FileinfoToStringAttribute : ArgumentTransformationAttribute
+        private sealed class FileinfoToStringAttribute : ArgumentTransformationAttribute
         {
             public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
             {

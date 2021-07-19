@@ -1177,7 +1177,7 @@ namespace System.Management.Automation
         }
 
         [DebuggerDisplay("OverloadCandidate: {method.methodDefinition}")]
-        private class OverloadCandidate
+        private sealed class OverloadCandidate
         {
             internal MethodInformation method;
             internal ParameterInformation[] parameters;

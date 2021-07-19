@@ -1252,7 +1252,7 @@ namespace System.Management.Automation
             BreakpointManagement,
         }
 
-        private class DebuggerCommandArgument
+        private sealed class DebuggerCommandArgument
         {
             public DebugModes? Mode { get; set; }
 

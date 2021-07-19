@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         /// Keys are strings. Keys are compared with OrdinalIgnoreCase.
         /// </summary>
         /// <typeparam name="TValue">Value type.</typeparam>
-        private class MeasureObjectDictionary<TValue> : Dictionary<string, TValue>
+        private sealed class MeasureObjectDictionary<TValue> : Dictionary<string, TValue>
             where TValue : new()
         {
             /// <summary>
@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
         /// what mode we're in.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
-        private class Statistics
+        private sealed class Statistics
         {
             // Common properties
             internal int count = 0;

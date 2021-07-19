@@ -2200,7 +2200,7 @@ namespace System.Management.Automation.Language
             return Expression.Lambda<Func<FunctionContext, object>>(body, parameters).Compile();
         }
 
-        private class LoopGotoTargets
+        private sealed class LoopGotoTargets
         {
             internal LoopGotoTargets(string label, LabelTarget breakLabel, LabelTarget continueLabel)
             {
@@ -5154,7 +5154,7 @@ namespace System.Management.Automation.Language
         //    }
         //
         // This is a little convoluted because an automatic variable isn't necessarily set.
-        private class AutomaticVarSaver
+        private sealed class AutomaticVarSaver
         {
             private readonly Compiler _compiler;
             private readonly int _automaticVar;

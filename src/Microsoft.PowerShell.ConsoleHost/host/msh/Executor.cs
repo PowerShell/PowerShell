@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell
             _parent.ErrorSerializer.Serialize(er);
         }
 
-        private class PipelineFinishedWaitHandle
+        private sealed class PipelineFinishedWaitHandle
         {
             internal PipelineFinishedWaitHandle(Pipeline p)
             {
