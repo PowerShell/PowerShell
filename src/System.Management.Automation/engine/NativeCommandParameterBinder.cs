@@ -427,7 +427,7 @@ namespace System.Management.Automation
                     }
                     else if (arg.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
                     {
-                        var replacementString = home + arg.Substring(1);
+                        string replacementString = string.Concat(home, arg.AsSpan(1));
                         _arguments.Append(replacementString);
                         AddToArgumentList(parameter, replacementString);
                         argExpanded = true;
