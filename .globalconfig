@@ -1350,18 +1350,6 @@ dotnet_diagnostic.IDE0065.severity = silent
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0066
 dotnet_diagnostic.IDE0066.severity = silent
 
-# IDE0067: DisposeObjectsBeforeLosingScope
-# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0067
-dotnet_diagnostic.IDE0067.severity = silent
-
-# IDE0068: UseRecommendedDisposePattern
-# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0068
-dotnet_diagnostic.IDE0068.severity = silent
-
-# IDE0069: DisposableFieldsShouldBeDisposed
-# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0069
-dotnet_diagnostic.IDE0069.severity = silent
-
 # IDE0070: UseSystemHashCode
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/ide0070
 dotnet_diagnostic.IDE0070.severity = warning
