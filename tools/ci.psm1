@@ -171,9 +171,6 @@ function Invoke-CIInstall
     }
 
     Set-BuildVariable -Name TestPassed -Value False
-
-    Get-Content $PSScriptRoot\..\global.json | Write-Verbose -Verbose
-
     Start-PSBootstrap
 }
 

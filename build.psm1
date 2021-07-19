@@ -419,6 +419,7 @@ Fix steps:
 
     # setup arguments
     # adding ErrorOnDuplicatePublishOutputFiles=false due to .NET SDk issue: https://github.com/dotnet/sdk/issues/15748
+    # removing --no-restore due to .NET SDK issue: https://github.com/dotnet/sdk/issues/18999
     # $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
     $Arguments = @("publish","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
     if ($Output -or $SMAOnly) {
@@ -2377,6 +2378,8 @@ function Start-CrossGen {
             }
         }
 
+        $generatePdb = $targetos -eq 'windows'
+
         # The path to folder must end with directory separator
         $dirSep = [System.IO.Path]::DirectorySeparatorChar
         $platformAssembliesPath = if (-not $platformAssembliesPath.EndsWith($dirSep)) { $platformAssembliesPath + $dirSep }
@@ -2393,6 +2396,10 @@ function Start-CrossGen {
                 "--targetarch"
                 $targetArch
             )
+
+            if ($generatePdb) {
+                $crossgen2Params += "--pdb"
+            }
 
             $crossgen2Params += $AssemblyPath
 
