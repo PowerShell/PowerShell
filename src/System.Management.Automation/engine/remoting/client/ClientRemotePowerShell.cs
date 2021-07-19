@@ -15,7 +15,7 @@ namespace System.Management.Automation.Runspaces.Internal
     /// PowerShell client side proxy base which handles invocation
     /// of powershell on a remote machine.
     /// </summary>
-    internal class ClientRemotePowerShell : IDisposable
+    internal sealed class ClientRemotePowerShell : IDisposable
     {
         #region Tracer
 
