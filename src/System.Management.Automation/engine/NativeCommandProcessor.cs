@@ -427,7 +427,7 @@ namespace System.Management.Automation
             bool soloCommand = this.Command.MyInvocation.PipelineLength == 1;
 
             // Get the start info for the process.
-            ProcessStartInfo startInfo = GetProcessStartInfo(redirectInput, redirectOutput, redirectError, soloCommand);
+            ProcessStartInfo startInfo = GetProcessStartInfo(redirectOutput, redirectError, redirectInput, soloCommand);
 
 #if !UNIX
             string commandPath = this.Path.ToLowerInvariant();
@@ -1165,9 +1165,9 @@ namespace System.Management.Automation
         /// <param name="soloCommand">A boolean that indicates, when true, that the command to be executed is not part of a pipeline, and otherwise indicates that is is.</param>
         /// <returns>A ProcessStartInfo object which is the base of the native invocation.</returns>
         private ProcessStartInfo GetProcessStartInfo(
-            bool redirectInput,
             bool redirectOutput,
             bool redirectError,
+            bool redirectInput,
             bool soloCommand)
         {
             var startInfo = new ProcessStartInfo
