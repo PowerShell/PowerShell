@@ -135,6 +135,26 @@ namespace System.Management.Automation
     /// </summary>
     internal class NativeCommandProcessor : CommandProcessorBase
     {
+        // This is the list of files which will trigger Legacy behavior if
+        // PSNativeCommandArgumentPassing is set to "Windows".
+        private static readonly IReadOnlySet<string> s_legacyFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".js",
+            ".wsf",
+            ".cmd",
+            ".bat",
+            ".vbs",
+        };
+
+        // The following native commands have non-standard behavior with regard to argument passing,
+        // so we use Legacy argument parsing for them when PSNativeCommandArgumentPassing is set to Windows.
+        private static readonly IReadOnlySet<string> s_legacyCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "cmd",
+            "cscript",
+            "wscript",
+        };
+
         #region ctor/native command properties
 
         /// <summary>
@@ -1198,7 +1218,7 @@ namespace System.Management.Automation
             NativeParameterBinderController.ArgumentPassingStyle switch
             {
                 NativeArgumentPassingStyle.Legacy => true,
-                NativeArgumentPassingStyle.Windows => UseLegacyPassingStyle(filePath),
+                NativeArgumentPassingStyle.Windows => ShouldUseLegacyPassingStyle(filePath),
                 _ => false
             };
 
@@ -1267,41 +1287,15 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="filePath">The file to use when checking how to pass arguments.</param>
         /// <returns>A boolean indicating what passing style should be used.</returns>
-        private static bool UseLegacyPassingStyle(string filePath)
+        private static bool ShouldUseLegacyPassingStyle(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
             {
                 return false;
             }
 
-            // This is the list of files which will trigger Legacy behavior if
-            // PSNativeCommandArgumentPassing is set to "Windows".
-            // The following native commands have non-standard behavior with regard to argument passing.
-            // It's possible (but not likely) that one of the executables could have forward slashes,
-            // so we check for both.
-            string[] exceptions = new string[]
-                {
-                "\\cmd.exe",
-                "/cmd.exe",
-                "\\cscript.exe",
-                "/cscript.exe",
-                "\\wscript.exe",
-                "/wscript.exe",
-                ".bat",
-                ".cmd",
-                ".vbs",
-                ".wsf",
-                ".js"
-                };
-            foreach (string exception in exceptions)
-            {
-                if (filePath.EndsWith(exception, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return s_legacyFileExtensions.Contains(IO.Path.GetExtension(filePath))
+                || s_legacyCommands.Contains(IO.Path.GetFileNameWithoutExtension(filePath));
         }
 
         private static bool IsDownstreamOutDefault(Pipe downstreamPipe)
