@@ -427,7 +427,7 @@ namespace System.Management.Automation
             bool soloCommand = this.Command.MyInvocation.PipelineLength == 1;
 
             // Get the start info for the process.
-            ProcessStartInfo startInfo = GetProcessStartInfo(redirectOutput, redirectError, redirectInput, soloCommand);
+            ProcessStartInfo startInfo = GetProcessStartInfo(redirectInput, redirectOutput, redirectError, soloCommand);
 
 #if !UNIX
             string commandPath = this.Path.ToLowerInvariant();
@@ -1164,32 +1164,18 @@ namespace System.Management.Automation
         /// <param name="redirectInput">A boolean that indicates that, when true, input to the process is taken from a stream, and otherwise is taken from stdin.</param>
         /// <param name="soloCommand">A boolean that indicates, when true, that the command to be executed is not part of a pipeline, and otherwise indicates that is is.</param>
         /// <returns>A ProcessStartInfo object which is the base of the native invocation.</returns>
-        private ProcessStartInfo GetProcessStartInfoObject(bool redirectOutput, bool redirectError, bool redirectInput, bool soloCommand)
+        private ProcessStartInfo GetProcessStartInfo(
+            bool redirectInput,
+            bool redirectOutput,
+            bool redirectError,
+            bool soloCommand)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = this.Path;
-
-            if (IsExecutable(this.Path))
+            var startInfo = new ProcessStartInfo
             {
-                startInfo.UseShellExecute = false;
-                if (redirectInput)
-                {
-                    startInfo.RedirectStandardInput = true;
-                }
+                FileName = this.Path
+            };
 
-                if (redirectOutput)
-                {
-                    startInfo.RedirectStandardOutput = true;
-                    startInfo.StandardOutputEncoding = Console.OutputEncoding;
-                }
-
-                if (redirectError)
-                {
-                    startInfo.RedirectStandardError = true;
-                    startInfo.StandardErrorEncoding = Console.OutputEncoding;
-                }
-            }
-            else
+            if (!IsExecutable(this.Path))
             {
                 if (Platform.IsNanoServer || Platform.IsIoT)
                 {
@@ -1218,40 +1204,30 @@ namespace System.Management.Automation
 
                 startInfo.UseShellExecute = true;
             }
-
-            return startInfo;
-        }
-
-        /// <summary>
-        /// Get whether we should treat this executable with special handling and use the legacy passing style.
-        /// </summary>
-        /// <param name="filePath"></param>
-        private bool UseSpecialArgumentPassing(string filePath) =>
-            NativeParameterBinderController.ArgumentPassingStyle switch
+            else
             {
-                NativeArgumentPassingStyle.Legacy => true,
-                NativeArgumentPassingStyle.Windows => ShouldUseLegacyPassingStyle(filePath),
-                _ => false
-            };
+                startInfo.UseShellExecute = false;
+                startInfo.RedirectStandardInput = redirectInput;
 
-        /// <summary>
-        /// Gets the start info for process.
-        /// </summary>
-        /// <param name="redirectOutput"></param>
-        /// <param name="redirectError"></param>
-        /// <param name="redirectInput"></param>
-        /// <param name="soloCommand"></param>
-        /// <returns></returns>
-        private ProcessStartInfo GetProcessStartInfo(bool redirectOutput, bool redirectError, bool redirectInput, bool soloCommand)
-        {
-            ProcessStartInfo startInfo = GetProcessStartInfoObject(redirectOutput, redirectError, redirectInput, soloCommand);
+                if (redirectOutput)
+                {
+                    startInfo.RedirectStandardOutput = true;
+                    startInfo.StandardOutputEncoding = Console.OutputEncoding;
+                }
+
+                if (redirectError)
+                {
+                    startInfo.RedirectStandardError = true;
+                    startInfo.StandardErrorEncoding = Console.OutputEncoding;
+                }
+            }
 
             // For minishell value of -outoutFormat parameter depends on value of redirectOutput.
             // So we delay the parameter binding. Do parameter binding for minishell now.
             if (_isMiniShell)
             {
                 MinishellParameterBinderController mpc = (MinishellParameterBinderController)NativeParameterBinderController;
-                mpc.BindParameters(arguments, redirectOutput, this.Command.Context.EngineHostInterface.Name);
+                mpc.BindParameters(arguments, startInfo.RedirectStandardOutput, this.Command.Context.EngineHostInterface.Name);
                 startInfo.CreateNoWindow = mpc.NonInteractive;
             }
 
@@ -1290,6 +1266,7 @@ namespace System.Management.Automation
                 context.EngineSessionState.GetNamespaceCurrentLocation(
                     context.ProviderNames.FileSystem).ProviderPath;
             startInfo.WorkingDirectory = WildcardPattern.Unescape(rawPath);
+
             return startInfo;
         }
 
