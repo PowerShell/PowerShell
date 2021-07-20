@@ -1145,6 +1145,18 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Get whether we should treat this executable with special handling and use the legacy passing style.
+        /// </summary>
+        /// <param name="filePath"></param>
+        private bool UseSpecialArgumentPassing(string filePath) =>
+            NativeParameterBinderController.ArgumentPassingStyle switch
+            {
+                NativeArgumentPassingStyle.Legacy => true,
+                NativeArgumentPassingStyle.Windows => ShouldUseLegacyPassingStyle(filePath),
+                _ => false
+            };
+
+        /// <summary>
         /// Gets the ProcessStartInfo for process.
         /// </summary>
         /// <param name="redirectOutput">A boolean that indicates that, when true, output from the process is redirected to a stream, and otherwise is sent to stdout.</param>
