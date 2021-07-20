@@ -5,10 +5,7 @@ param()
 
 Describe "Behavior is specific for each platform" -tags "CI" {
     BeforeAll {
-        $skipTests = $false
-        if ($EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing') {
-            $skipTests = $true
-        }
+        $skipTests = $EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing'
     }
     It "PSNativeCommandArgumentPassing is set to 'Windows' on Windows systems" -skip:(-not $IsWindows) {
         $PSNativeCommandArgumentPassing | Should -Be "Windows"
@@ -31,10 +28,8 @@ Describe "Behavior is specific for each platform" -tags "CI" {
 
 Describe "tests for multiple languages and extensions" -tags "CI" {
     AfterAll {
-        if ($EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing') {
-            return
-        }
-        if (! $IsWindows ) {
+        if (-not $IsWindows -or
+            $EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing') {
             return
         }
         $PSNativeCommandArgumentPassing = $passingStyle
@@ -131,14 +126,8 @@ echo Argument 4 is: ^<%4^>
 
         # determine whether we should skip the tests we just defined
         # doing it in this order ensures that the test output will show each skipped test
-        $skipTests = $false
-        if ($EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing') {
-            $skipTests = $true
-            return
-        }
-
-        if (! $IsWindows ) {
-            $skipTests = $true
+        $skipTests = -not $IsWindows -or $EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing'
+        if ($skipTests) {
             return
         }
 

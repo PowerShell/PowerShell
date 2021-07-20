@@ -486,8 +486,8 @@ namespace System.Management.Automation
 
                             string oldArguments = startInfo.Arguments;
                             string oldFileName = startInfo.FileName;
+                            // Check to see whether this executable should be using Legacy mode argument parsing
                             bool useSpecialArgumentPassing = UseSpecialArgumentPassing(oldFileName);
-                            // Check to see whether we should be using Legacy mode
                             if (useSpecialArgumentPassing)
                             {
                                 startInfo.Arguments = "\"" + oldFileName + "\" " + startInfo.Arguments;
@@ -1195,8 +1195,12 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="filePath"></param>
         private bool UseSpecialArgumentPassing(string filePath) =>
-            NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Legacy
-            || (NativeParameterBinderController.ArgumentPassingStyle == NativeArgumentPassingStyle.Windows && UseLegacyPassingStyle(filePath));
+            NativeParameterBinderController.ArgumentPassingStyle switch
+            {
+                NativeArgumentPassingStyle.Legacy => true,
+                NativeArgumentPassingStyle.Windows => UseLegacyPassingStyle(filePath),
+                _ => false
+            };
 
         /// <summary>
         /// Gets the start info for process.
