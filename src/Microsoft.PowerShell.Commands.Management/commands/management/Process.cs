@@ -2183,8 +2183,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
 #if UNIX
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private StreamWriter _outputWriter;
         private StreamWriter _errorWriter;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         private void StdOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
