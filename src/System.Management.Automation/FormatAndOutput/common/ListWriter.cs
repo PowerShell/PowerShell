@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Management.Automation;
 using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
@@ -59,6 +60,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // check if we have to truncate the labels
             int maxAllowableLabelLength = screenColumnWidth - Separator.Length - MinFieldWidth;
+            if (InternalTestHooks.ForceFormatListFixedLabelWidth)
+            {
+                maxAllowableLabelLength = 10;
+            }
 
             // find out the max display length (cell count) of the property names
             _propertyLabelsDisplayLength = 0; // reset max
@@ -217,11 +222,25 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (k == 0)
                 {
-                    lo.WriteLine(prependString + sc[k]);
+                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    {
+                        lo.WriteLine(PSStyle.Instance.Formatting.FormatAccent + prependString + PSStyle.Instance.Reset + sc[k]);
+                    }
+                    else
+                    {
+                        lo.WriteLine(prependString + sc[k]);
+                    }
                 }
                 else
                 {
-                    lo.WriteLine(padding + sc[k]);
+                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    {
+                        lo.WriteLine(padding + PSStyle.Instance.Formatting.FormatAccent + PSStyle.Instance.Reset + sc[k]);
+                    }
+                    else
+                    {
+                        lo.WriteLine(padding + sc[k]);
+                    }
                 }
             }
         }

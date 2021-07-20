@@ -24,6 +24,7 @@ Describe 'Tests for $PSStyle automatic variable' {
 
         $formattingDefaults = @{
             FormatAccent = "`e[32;1m"
+            TableHeader = "`e[32;1m"
             ErrorAccent = "`e[36;1m"
             Error = "`e[31;1m"
             Debug = "`e[33;1m"
@@ -137,5 +138,31 @@ Describe 'Tests for $PSStyle automatic variable' {
     It '$PSStyle.FormatHyperlink() works' {
         $o = $PSStyle.FormatHyperlink('PSBlog','https://aka.ms/psblog')
         $o | Should -BeExactly "`e]8;;https://aka.ms/psblog`e\PSBlog`e]8;;`e\" -Because ($o | Format-Hex | Out-String)
+    }
+
+    It '$PSStyle.Formatting.FormatAccent is applied to Format-List' {
+        $old = $PSStyle.Formatting.FormatAccent
+
+        try {
+            $PSStyle.Formatting.FormatAccent = $PSStyle.Foreground.Yellow + $PSStyle.Background.Red + $PSStyle.Italic
+            $out = $PSVersionTable | Format-List | Out-String
+            $out | Should -BeLike "*$($PSStyle.Formatting.FormatAccent.Replace('[',"``["))*"
+        }
+        finally {
+            $PSStyle.Formatting.FormatAccent = $old
+        }
+    }
+
+    It '$PSStyle.Formatting.TableHeader is applied to Format-Table' {
+        $old = $PSStyle.Formatting.TableHeader
+
+        try {
+            $PSStyle.Formatting.TableHeader = $PSStyle.Foreground.Blue + $PSStyle.Background.White + $PSStyle.Bold
+            $out = $PSVersionTable | Format-Table | Out-String
+            $out | Should -BeLike "*$($PSStyle.Formatting.TableHeader.Replace('[',"``["))*"
+        }
+        finally {
+            $PSStyle.Formatting.TableHeader = $old
+        }
     }
 }

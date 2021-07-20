@@ -275,7 +275,7 @@ export $envVarName='$guid'
         }
 
         It "Doesn't run the login profile when -Login not used" {
-            $result = & $powershell -Command "`$env:$envVarName"
+            $result = & $powershell -noprofile -Command "`$env:$envVarName"
             $result | Should -BeNullOrEmpty
             $LASTEXITCODE | Should -Be 0
         }
@@ -374,7 +374,20 @@ export $envVarName='$guid'
     }
 
     Context "Pipe to/from powershell" {
-        $p = [PSCustomObject]@{X=10;Y=20}
+        BeforeAll {
+            if ($null -ne $PSStyle) {
+                $outputRendering = $PSStyle.OutputRendering
+                $PSStyle.OutputRendering = 'plaintext'
+            }
+
+            $p = [PSCustomObject]@{X=10;Y=20}
+        }
+
+        AfterAll {
+            if ($null -ne $PSStyle) {
+                $PSStyle.OutputRendering = $outputRendering
+            }
+        }
 
         It "xml input" {
             $p | & $powershell -noprofile { $input | ForEach-Object {$a = 0} { $a += $_.X + $_.Y } { $a } } | Should -Be 30
@@ -651,7 +664,7 @@ namespace StackTest {
         }
 
         It "powershell starts if PATH is not set" -Skip:($IsWindows) {
-            bash -c "unset PATH;$powershell -c '1+1'" | Should -BeExactly 2
+            bash -c "unset PATH;$powershell -nop -c '1+1'" | Should -BeExactly 2
         }
     }
 
