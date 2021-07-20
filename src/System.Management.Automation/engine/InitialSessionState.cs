@@ -1320,13 +1320,18 @@ namespace System.Management.Automation.Runspaces
 
             // If the PSNativeCommandArgumentPassing feature is enabled, create the variable which controls the behavior
             // Since the BuiltInVariables list is static, and this should be done dynamically
-            // we need to do this here.
+            // we need to do this here. Also, since the defaults are different based on platform we need a
+            // bit more logic.
             if (ExperimentalFeature.IsEnabled("PSNativeCommandArgumentPassing"))
             {
+                NativeArgumentPassingStyle style = NativeArgumentPassingStyle.Standard;
+                if (Platform.IsWindows) {
+                    style = NativeArgumentPassingStyle.Windows;
+                }
                 Variables.Add(
                     new SessionStateVariableEntry(
                         SpecialVariables.NativeArgumentPassing,
-                        NativeArgumentPassingStyle.Standard,
+                        style,
                         RunspaceInit.NativeCommandArgumentPassingDescription,
                         ScopedItemOptions.None,
                         new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));

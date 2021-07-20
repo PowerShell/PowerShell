@@ -2,7 +2,165 @@
 # Licensed under the MIT License.
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidGlobalVars", "")]
 param()
-Describe "Will error correctly if an attempt to set variable to improper value" {
+
+Describe "Behavior is specific for each platform" -tags "CI" {
+    BeforeAll {
+        $skipTests = $EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing'
+    }
+    It "PSNativeCommandArgumentPassing is set to 'Windows' on Windows systems" -skip:(-not $IsWindows) {
+        $PSNativeCommandArgumentPassing | Should -Be "Windows"
+    }
+    It "PSNativeCommandArgumentPassing is set to 'Standard' on non-Windows systems" -skip:($IsWindows) {
+        $PSNativeCommandArgumentPassing | Should -Be "Standard"
+    }
+    It "Has proper behavior on Windows" -skip:(-not $IsWindows) {
+        "@echo off`nSET V1=1" > "$TESTDRIVE\script 1.cmd"
+        "@echo off`nSET V2=a`necho %V1%" > "$TESTDRIVE\script 2.cmd"
+        "@echo off`necho %V1%`necho %V2%" > "$TESTDRIVE\script 3.cmd"
+        $result = cmd /c """${TESTDRIVE}\script 1.cmd"" && ""${TESTDRIVE}\script 2.cmd"" && ""${TESTDRIVE}\script 3.cmd"""
+        $result.Count | Should -Be 3
+        $result[0] | Should -Be 1
+        $result[1] | Should -Be 1
+        $result[2] | Should Be "a"
+    }
+
+}
+
+Describe "tests for multiple languages and extensions" -tags "CI" {
+    AfterAll {
+        if (-not $IsWindows -or
+            $EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing') {
+            return
+        }
+        $PSNativeCommandArgumentPassing = $passingStyle
+    }
+    BeforeAll {
+        $testCases = @(
+            @{
+                Command = "cscript.exe"
+                Filename = "test.wsf"
+                ExpectedResults = @(
+                    "Argument 0 is: <ab cd>"
+                    "Argument 1 is: <ab cd>"
+                    "Argument 2 is: <ab cd>"
+                    "Argument 3 is: <a'b c'd>"
+                )
+                Script = @'
+<?xml version="1.0" ?>
+<job id="test">
+   <script language="VBScript">
+     <![CDATA[
+for i = 0 to wScript.arguments.count-1
+    wscript.echo "Argument " & i & " is: <" & wScript.arguments(i) & ">"
+next
+     ]]>
+   </script>
+</job>
+'@
+            }
+            @{
+                Command = "cscript.exe"
+                Filename = "test.vbs"
+                ExpectedResults = @(
+                    "Argument 0 is: <ab cd>"
+                    "Argument 1 is: <ab cd>"
+                    "Argument 2 is: <ab cd>"
+                    "Argument 3 is: <a'b c'd>"
+                )
+                Script = @'
+for i = 0 to wScript.arguments.count - 1
+    wscript.echo "Argument " & i & " is: <" & (wScript.arguments(i)) & ">"
+next
+'@
+            }
+            @{
+                Command = "cscript"
+                Filename = "test.js"
+                ExpectedResults = @(
+                    "Argument 0 is: <ab cd>"
+                    "Argument 1 is: <ab cd>"
+                    "Argument 2 is: <ab cd>"
+                    "Argument 3 is: <a'b c'd>"
+                )
+                Script = @'
+for(i = 0; i < WScript.Arguments.Count(); i++) {
+    WScript.echo("Argument " + i + " is: <" + WScript.Arguments(i) + ">");
+}
+'@
+            }
+            @{
+                Command = ""
+                Filename = "test.bat"
+                ExpectedResults = @(
+                    "Argument 1 is: <a""b c""d>"
+                    "Argument 2 is: <a""b c""d>"
+                    "Argument 3 is: <""ab cd"">"
+                    "Argument 4 is: <""a'b c'd"">"
+                )
+                Script = @'
+@echo off
+echo Argument 1 is: ^<%1^>
+echo Argument 2 is: ^<%2^>
+echo Argument 3 is: ^<%3^>
+echo Argument 4 is: ^<%4^>
+'@
+            }
+            @{
+                Command = ""
+                Filename = "test.cmd"
+                ExpectedResults = @(
+                    "Argument 1 is: <a""b c""d>"
+                    "Argument 2 is: <a""b c""d>"
+                    "Argument 3 is: <""ab cd"">"
+                    "Argument 4 is: <""a'b c'd"">"
+                )
+                Script = @'
+@echo off
+echo Argument 1 is: ^<%1^>
+echo Argument 2 is: ^<%2^>
+echo Argument 3 is: ^<%3^>
+echo Argument 4 is: ^<%4^>
+'@
+            }
+        )
+
+        # determine whether we should skip the tests we just defined
+        # doing it in this order ensures that the test output will show each skipped test
+        $skipTests = -not $IsWindows -or $EnabledExperimentalFeatures -notcontains 'PSNativeCommandArgumentPassing'
+        if ($skipTests) {
+            return
+        }
+
+        # save the passing style
+        $passingStyle = $PSNativeCommandArgumentPassing
+        # explicitely set the passing style to Windows
+        $PSNativeCommandArgumentPassing = "Windows"
+    }
+
+    It "Invoking '<Filename>' is compatible with PowerShell 5" -TestCases $testCases -Skip:$($skipTests) {
+        param ( $Command, $Arguments, $Filename, $Script, $ExpectedResults )
+        cscript  //h:cscript //nologo //s
+        $a = 'a"b c"d'
+        $scriptPath = Join-Path $TESTDRIVE $Filename
+        $Script | out-file -encoding ASCII $scriptPath
+        if ($Command) {
+            $results = & $Command $scriptPath  $a 'a"b c"d' a"b c"d "a'b c'd" 2> "${TESTDRIVE}/error.txt"
+        }
+        else {
+            $results = & $scriptPath  $a 'a"b c"d' a"b c"d "a'b c'd" 2> "${TESTDRIVE}/error.txt"
+        }
+        $errorContent = Get-Content "${TESTDRIVE}/error.txt" -ErrorAction Ignore
+        $errorContent | Should -BeNullOrEmpty
+        $results.Count | Should -Be 4
+        $results[0] | Should -Be $ExpectedResults[0]
+        $results[1] | Should -Be $ExpectedResults[1]
+        $results[2] | Should -Be $ExpectedResults[2]
+        $results[3] | Should -Be $ExpectedResults[3]
+    }
+}
+
+
+Describe "Will error correctly if an attempt to set variable to improper value" -tags "CI" {
     It "will error when setting variable incorrectly" {
         if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
             { $global:PSNativeCommandArgumentPassing = "zzz" } | Should -Throw -ExceptionType System.Management.Automation.ArgumentTransformationMetadataException
@@ -107,7 +265,7 @@ foreach ( $argumentListValue in "Standard","Legacy" ) {
         }
     }
 }
-Describe 'PSPath to native commands' {
+Describe 'PSPath to native commands' -tags "CI" {
     BeforeAll {
         $featureEnabled = $EnabledExperimentalFeatures.Contains('PSNativePSPathResolution')
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()

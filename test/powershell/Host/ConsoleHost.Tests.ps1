@@ -240,7 +240,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $LASTEXITCODE | Should -Be 64
         }
 
-        It "Empty space command should succeed" {
+        It "Empty space command should succeed on non-Windows" -skip:$IsWindows {
             & $powershell -noprofile -c '' | Should -BeNullOrEmpty
             $LASTEXITCODE | Should -Be 0
         }
