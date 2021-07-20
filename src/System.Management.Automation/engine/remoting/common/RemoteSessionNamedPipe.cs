@@ -341,7 +341,9 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private readonly object _syncObject;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         private const string _threadName = "IPC Listener Thread";
         private const int _namedPipeBufferSizeForRemoting = 32768;
@@ -1007,7 +1009,9 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private NamedPipeClientStream _clientPipeStream;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         protected string _pipeName;
 

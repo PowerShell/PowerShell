@@ -593,7 +593,7 @@ dotnet_diagnostic.CA2211.severity = warning
 
 # CA2213: Disposable fields should be disposed
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2213
-dotnet_diagnostic.CA2213.severity = none
+dotnet_diagnostic.CA2213.severity = warning
 
 # CA2214: Do not call overridable methods in constructors
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2214

@@ -479,7 +479,9 @@ namespace System.Management.Automation.Remoting.Client
         private readonly Timer _closeTimeOutTimer;
 
         protected OutOfProcessTextWriter stdInWriter;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         protected PowerShellTraceSource _tracer;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         #endregion
 
@@ -1592,7 +1594,9 @@ namespace System.Management.Automation.Remoting.Client
         private StreamReader _stdOutReader;
         private StreamReader _stdErrReader;
         private bool _connectionEstablished;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private Timer _connectionTimer;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         private const string _threadName = "SSHTransport Reader Thread";
 

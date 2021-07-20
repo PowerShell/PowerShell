@@ -1066,7 +1066,9 @@ namespace System.Management.Automation
             return traceResult(result);
         }
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IEnumerator<CmdletInfo>? _matchingCmdlet;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         [return: NotNullIfNotNull("result")]
         private static CmdletInfo? traceResult(CmdletInfo? result)
@@ -1492,7 +1494,9 @@ namespace System.Management.Automation
         /// The enumerator that uses the Path to
         /// search for commands.
         /// </summary>
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private CommandPathSearch? _pathSearcher;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         /// <summary>
         /// The execution context instance for the current engine...
@@ -1658,12 +1662,16 @@ namespace System.Management.Automation
         /// <summary>
         /// An enumerator of the matching aliases.
         /// </summary>
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IEnumerator<AliasInfo>? _matchingAlias;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         /// <summary>
         /// An enumerator of the matching functions.
         /// </summary>
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IEnumerator<CommandInfo?>? _matchingFunctionEnumerator;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         /// <summary>
         /// The CommandInfo that references the command that matches the pattern.

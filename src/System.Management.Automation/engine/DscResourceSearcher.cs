@@ -30,7 +30,9 @@ namespace System.Management.Automation
         private readonly string _resourceName = null;
         private readonly ExecutionContext _context = null;
         private DscResourceInfo _currentMatch = null;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IEnumerator<DscResourceInfo> _matchingResource = null;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
         private Collection<DscResourceInfo> _matchingResourceList = null;
 
         #endregion

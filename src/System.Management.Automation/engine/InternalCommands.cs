@@ -376,7 +376,9 @@ namespace Microsoft.PowerShell.Commands
         private PSTaskDataStreamWriter _taskDataStreamWriter;
         private Dictionary<string, object> _usingValuesMap;
         private Timer _taskTimer;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private PSTaskJob _taskJob;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
         private PSDataCollection<System.Management.Automation.PSTasks.PSTask> _taskCollection;
         private Exception _taskCollectionException;
         private string _currentLocationPath;

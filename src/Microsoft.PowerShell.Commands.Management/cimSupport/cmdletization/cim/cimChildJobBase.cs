@@ -166,7 +166,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private const int MaxRetryDelayMs = 15 * 1000;
         private const int MinRetryDelayMs = 100;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private Timer _sleepAndRetryTimer;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         private void SleepAndRetry_OnWakeup(object state)
         {

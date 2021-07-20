@@ -685,7 +685,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         // This is to notify once runspace has been opened (RunspaceState.Opened)
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal ManualResetEventSlim RunspaceOpening = new ManualResetEventSlim(false);
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         /// <summary>
         /// Set the new runspace state.
@@ -986,7 +988,9 @@ namespace System.Management.Automation.Runspaces
             return _currentlyRunningPipeline;
         }
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private Pipeline _currentlyRunningPipeline = null;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         /// <summary>
         /// This method stops all the pipelines which are nested

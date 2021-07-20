@@ -2976,13 +2976,17 @@ namespace Microsoft.PowerShell
         private bool _shouldEndSession;
         private int _beginApplicationNotifyCount;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly ConsoleTextWriter _consoleWriter;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
         private WrappedSerializer _outputSerializer;
         private WrappedSerializer _errorSerializer;
         private bool _displayDebuggerBanner;
         private DebuggerStopEventArgs _debuggerStopEventArgs;
         private bool _inPushedConfiguredSession;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal Pipeline runningCmd;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         // The ConsoleHost class is a singleton.  Note that there is not a thread-safety issue with these statics as there can
         // only be one console host per process.

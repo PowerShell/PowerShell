@@ -2357,7 +2357,9 @@ namespace System.Management.Automation
             // There is no finalizer, by design.  This class relies on always
             // being disposed and always following stack semantics.
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
             private readonly PipelineProcessor _pp = null;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
             private readonly InternalCommand _wasPermittedToWrite = null;
             private readonly bool _wasPermittedToWriteToPipeline = false;
             private readonly Thread _wasPermittedToWriteThread = null;

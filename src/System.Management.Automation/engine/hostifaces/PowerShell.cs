@@ -1937,7 +1937,9 @@ namespace System.Management.Automation
             }
         }
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private RunspacePool _runspacePool = null;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         /// <summary>
         /// Gets the associated Runspace or RunspacePool for this PowerShell

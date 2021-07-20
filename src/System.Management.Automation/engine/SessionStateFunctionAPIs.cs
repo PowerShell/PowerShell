@@ -47,7 +47,7 @@ namespace System.Management.Automation
             Dictionary<string, FunctionInfo> result =
                 new Dictionary<string, FunctionInfo>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (SessionStateScope scope in scopeEnumerator)
+            foreach (var scope in scopeEnumerator)
             {
                 foreach (FunctionInfo entry in scope.FunctionTable.Values)
                 {

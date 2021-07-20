@@ -670,7 +670,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// XmlReader used to read file.
         /// </summary>
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal XmlReader _xr;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         private static XmlReader CreateXmlReader(Stream stream)
         {

@@ -36,7 +36,9 @@ namespace System.Management.Automation
         private readonly string _className = null;
         private readonly ExecutionContext _context = null;
         private PSClassInfo _currentMatch = null;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private IEnumerator<PSClassInfo> _matchingClass = null;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
         private Collection<PSClassInfo> _matchingClassList = null;
         private readonly bool _useWildCards = false;
         private readonly Dictionary<string, PSModuleInfo> _moduleInfoCache = null;

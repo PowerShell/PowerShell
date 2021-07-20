@@ -526,7 +526,9 @@ namespace System.Management.Automation
         // count of number of child jobs which stopped
         private int _stoppedChildJobsCount = 0;
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
         private readonly PSDataCollection<ErrorRecord> _executionError = new PSDataCollection<ErrorRecord>();
 
         private PSEventManager _eventManager;

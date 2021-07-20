@@ -44,7 +44,9 @@ namespace System.Management.Automation
 
         // the following two variables have been added for supporting
         // the Invoke-Command | Invoke-Command scenario
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private InvokeCommandCommand _currentInvokeCommand = null;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
         private long _currentLocalPipelineId = 0;
 
         /// <summary>
@@ -1793,7 +1795,9 @@ namespace System.Management.Automation
         #region Members
 
         private readonly RemoteRunspace _runspace;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private PowerShell _psDebuggerCommand;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
         private bool _remoteDebugSupported;
         private bool _isActive;
         private int _breakpointCount;

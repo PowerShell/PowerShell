@@ -228,7 +228,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Reference to the implementation command that this class
         /// is wrapping.
         /// </summary>
+#pragma warning disable CA2213 // Disposable fields should be disposed
         internal ImplementationCommandBase implementation = null;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         #region IDisposable Implementation
 

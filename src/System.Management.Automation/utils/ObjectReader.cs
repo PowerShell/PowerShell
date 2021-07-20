@@ -488,7 +488,9 @@ namespace System.Management.Automation.Internal
     {
         #region Private Data
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly PSDataCollectionEnumerator<T> _enumerator;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         #endregion
 

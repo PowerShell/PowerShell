@@ -314,7 +314,9 @@ namespace Microsoft.PowerShell.Commands
         private bool _isStopping;
         private bool _isDisposed;
         private readonly ReaderWriterLockSlim _resultsReaderWriterLock = new ReaderWriterLockSlim();
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
         private readonly ManualResetEvent _writeExistingData = new ManualResetEvent(true);
         private readonly PSDataCollection<PSStreamObject> _results = new PSDataCollection<PSStreamObject>();
         private bool _holdingResultsRef;

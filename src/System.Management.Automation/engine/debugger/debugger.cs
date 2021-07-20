@@ -1689,7 +1689,9 @@ namespace System.Management.Automation
         private DebuggerCommandProcessor _commandProcessor = new DebuggerCommandProcessor();
         private InvocationInfo _currentInvocationInfo;
         private bool _inBreakpoint;
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private PowerShell _psDebuggerCommand;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         // Job debugger integration.
         private bool _nestedDebuggerStop;

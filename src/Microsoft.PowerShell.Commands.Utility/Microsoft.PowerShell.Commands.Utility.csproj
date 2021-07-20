@@ -2,7 +2,8 @@
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.Commands.Utility project</Description>
-    <NoWarn>$(NoWarn);CS1570;CA1416</NoWarn>
+    <!-- CA2213: https://github.com/PowerShell/PowerShell/issues/15803 -->
+    <NoWarn>$(NoWarn);CS1570;CA1416;CA2213</NoWarn>
     <AssemblyName>Microsoft.PowerShell.Commands.Utility</AssemblyName>
   </PropertyGroup>
 

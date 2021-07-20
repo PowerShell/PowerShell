@@ -24,7 +24,9 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Data
 
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly Stream _originalStreamToProxy;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
         private bool _isInitialized = false;
         private readonly Cmdlet _ownerCmdlet;
 

@@ -2018,7 +2018,9 @@ namespace Microsoft.PowerShell.Commands
         private PSInvokeExpressionSyncJob _job;
 
         // used for streaming behavior for local invocations
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private SteppablePipeline _steppablePipeline;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         private bool _pipelineinvoked = false;    // if pipeline has been invoked
         private bool _inputStreamClosed = false;

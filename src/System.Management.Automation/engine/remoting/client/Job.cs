@@ -3826,7 +3826,9 @@ namespace System.Management.Automation
         #region Private Members
 
         // helper associated with this job object
+#pragma warning disable CA2213 // Disposable fields should be disposed
         private readonly RemotePipeline _remotePipeline = null;
+#pragma warning restore CA2213 // https://github.com/PowerShell/PowerShell/issues/15803
 
         // object used for synchronization
         protected object SyncObject = new object();
