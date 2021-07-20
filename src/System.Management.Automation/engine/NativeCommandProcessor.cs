@@ -135,6 +135,26 @@ namespace System.Management.Automation
     /// </summary>
     internal class NativeCommandProcessor : CommandProcessorBase
     {
+        // This is the list of files which will trigger Legacy behavior if
+        // PSNativeCommandArgumentPassing is set to "Windows".
+        private static readonly IReadOnlySet<string> s_legacyFileExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".js",
+            ".wsf",
+            ".cmd",
+            ".bat",
+            ".vbs",
+        };
+
+        // The following native commands have non-standard behavior with regard to argument passing,
+        // so we use Legacy argument parsing for them when PSNativeCommandArgumentPassing is set to Windows.
+        private static readonly IReadOnlySet<string> s_legacyCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "cmd",
+            "cscript",
+            "wscript",
+        };
+
         #region ctor/native command properties
 
         /// <summary>
@@ -1125,39 +1145,37 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Get whether we should treat this executable with special handling and use the legacy passing style.
+        /// </summary>
+        /// <param name="filePath"></param>
+        private bool UseSpecialArgumentPassing(string filePath) =>
+            NativeParameterBinderController.ArgumentPassingStyle switch
+            {
+                NativeArgumentPassingStyle.Legacy => true,
+                NativeArgumentPassingStyle.Windows => ShouldUseLegacyPassingStyle(filePath),
+                _ => false
+            };
+
+        /// <summary>
         /// Gets the ProcessStartInfo for process.
         /// </summary>
-        /// <param name="redirectOutput">A boolean which determines whether the output is to be redirected.</param>
-        /// <param name="redirectError">A boolean which determines whether errors are to be redirected.</param>
-        /// <param name="redirectInput">A boolean which determines whether the input is to be redirected.</param>
-        /// <param name="soloCommand">A boolean which determines whether this is a solo command.</param>
+        /// <param name="redirectOutput">A boolean that indicates that, when true, output from the process is redirected to a stream, and otherwise is sent to stdout.</param>
+        /// <param name="redirectError">A boolean that indicates that, when true, error output from the process is redirected to a stream, and otherwise is sent to stderr.</param>
+        /// <param name="redirectInput">A boolean that indicates that, when true, input to the process is taken from a stream, and otherwise is taken from stdin.</param>
+        /// <param name="soloCommand">A boolean that indicates, when true, that the command to be executed is not part of a pipeline, and otherwise indicates that is is.</param>
         /// <returns>A ProcessStartInfo object which is the base of the native invocation.</returns>
-        private ProcessStartInfo GetProcessStartInfoObject(bool redirectOutput, bool redirectError, bool redirectInput, bool soloCommand)
+        private ProcessStartInfo GetProcessStartInfo(
+            bool redirectOutput,
+            bool redirectError,
+            bool redirectInput,
+            bool soloCommand)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.FileName = this.Path;
-
-            if (IsExecutable(this.Path))
+            var startInfo = new ProcessStartInfo
             {
-                startInfo.UseShellExecute = false;
-                if (redirectInput)
-                {
-                    startInfo.RedirectStandardInput = true;
-                }
+                FileName = this.Path
+            };
 
-                if (redirectOutput)
-                {
-                    startInfo.RedirectStandardOutput = true;
-                    startInfo.StandardOutputEncoding = Console.OutputEncoding;
-                }
-
-                if (redirectError)
-                {
-                    startInfo.RedirectStandardError = true;
-                    startInfo.StandardErrorEncoding = Console.OutputEncoding;
-                }
-            }
-            else
+            if (!IsExecutable(this.Path))
             {
                 if (Platform.IsNanoServer || Platform.IsIoT)
                 {
@@ -1186,40 +1204,30 @@ namespace System.Management.Automation
 
                 startInfo.UseShellExecute = true;
             }
-
-            return startInfo;
-        }
-
-        /// <summary>
-        /// Get whether we should treat this executable with special handling and use the legacy passing style.
-        /// </summary>
-        /// <param name="filePath"></param>
-        private bool UseSpecialArgumentPassing(string filePath) =>
-            NativeParameterBinderController.ArgumentPassingStyle switch
+            else
             {
-                NativeArgumentPassingStyle.Legacy => true,
-                NativeArgumentPassingStyle.Windows => UseLegacyPassingStyle(filePath),
-                _ => false
-            };
+                startInfo.UseShellExecute = false;
+                startInfo.RedirectStandardInput = redirectInput;
 
-        /// <summary>
-        /// Gets the start info for process.
-        /// </summary>
-        /// <param name="redirectOutput"></param>
-        /// <param name="redirectError"></param>
-        /// <param name="redirectInput"></param>
-        /// <param name="soloCommand"></param>
-        /// <returns></returns>
-        private ProcessStartInfo GetProcessStartInfo(bool redirectOutput, bool redirectError, bool redirectInput, bool soloCommand)
-        {
-            ProcessStartInfo startInfo = GetProcessStartInfoObject(redirectOutput, redirectError, redirectInput, soloCommand);
+                if (redirectOutput)
+                {
+                    startInfo.RedirectStandardOutput = true;
+                    startInfo.StandardOutputEncoding = Console.OutputEncoding;
+                }
+
+                if (redirectError)
+                {
+                    startInfo.RedirectStandardError = true;
+                    startInfo.StandardErrorEncoding = Console.OutputEncoding;
+                }
+            }
 
             // For minishell value of -outoutFormat parameter depends on value of redirectOutput.
             // So we delay the parameter binding. Do parameter binding for minishell now.
             if (_isMiniShell)
             {
                 MinishellParameterBinderController mpc = (MinishellParameterBinderController)NativeParameterBinderController;
-                mpc.BindParameters(arguments, redirectOutput, this.Command.Context.EngineHostInterface.Name);
+                mpc.BindParameters(arguments, startInfo.RedirectStandardOutput, this.Command.Context.EngineHostInterface.Name);
                 startInfo.CreateNoWindow = mpc.NonInteractive;
             }
 
@@ -1258,6 +1266,7 @@ namespace System.Management.Automation
                 context.EngineSessionState.GetNamespaceCurrentLocation(
                     context.ProviderNames.FileSystem).ProviderPath;
             startInfo.WorkingDirectory = WildcardPattern.Unescape(rawPath);
+
             return startInfo;
         }
 
@@ -1267,41 +1276,15 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="filePath">The file to use when checking how to pass arguments.</param>
         /// <returns>A boolean indicating what passing style should be used.</returns>
-        private static bool UseLegacyPassingStyle(string filePath)
+        private static bool ShouldUseLegacyPassingStyle(string filePath)
         {
             if (string.IsNullOrEmpty(filePath))
             {
                 return false;
             }
 
-            // This is the list of files which will trigger Legacy behavior if
-            // PSNativeCommandArgumentPassing is set to "Windows".
-            // The following native commands have non-standard behavior with regard to argument passing.
-            // It's possible (but not likely) that one of the executables could have forward slashes,
-            // so we check for both.
-            string[] exceptions = new string[]
-                {
-                "\\cmd.exe",
-                "/cmd.exe",
-                "\\cscript.exe",
-                "/cscript.exe",
-                "\\wscript.exe",
-                "/wscript.exe",
-                ".bat",
-                ".cmd",
-                ".vbs",
-                ".wsf",
-                ".js"
-                };
-            foreach (string exception in exceptions)
-            {
-                if (filePath.EndsWith(exception, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return s_legacyFileExtensions.Contains(IO.Path.GetExtension(filePath))
+                || s_legacyCommands.Contains(IO.Path.GetFileNameWithoutExtension(filePath));
         }
 
         private static bool IsDownstreamOutDefault(Pipe downstreamPipe)
