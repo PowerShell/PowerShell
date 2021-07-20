@@ -3,22 +3,22 @@
 
 #pragma warning disable 1634, 1691
 
-using System.Diagnostics;
-using System.IO;
-using System.ComponentModel;
-using System.Text;
 using System.Collections;
-using System.Threading;
-using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
-using System.Xml;
-using System.Runtime.InteropServices;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Runtime.Serialization;
-using System.Globalization;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading;
+using System.Xml;
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -156,13 +156,14 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Constructs a NativeCommandException.
+        /// Initializes a new instance of the <see cref="NativeCommandException"/> class with information on the native
+        /// command, a specified error message and a specified error ID.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="exitCode"></param>
-        /// <param name="processId"></param>
-        /// <param name="message"></param>
-        /// <param name="errorId"></param>
+        /// <param name="path">The full path of the native command.</param>
+        /// <param name="exitCode">The exit code returned by the native command.</param>
+        /// <param name="processId">The process ID of the process before it ended.</param>
+        /// <param name="message">The error message.</param>
+        /// <param name="errorId">The error ID.</param>
         internal NativeCommandException(string path, int exitCode, int processId, string message, string errorId)
             : base(message)
         {
@@ -174,12 +175,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This is the default constructor.
+        /// Initializes a new instance of the <see cref="NativeCommandException"/> class.
         /// </summary>
         public NativeCommandException() : base() { }
 
         /// <summary>
-        /// This constructor takes a localized error message.
+        /// Initializes a new instance of the <see cref="NativeCommandException"/> class with a specified error message.
         /// </summary>
         /// <param name="message">
         /// A localized error message.
@@ -187,7 +188,8 @@ namespace System.Management.Automation
         public NativeCommandException(string message) : base(message) { }
 
         /// <summary>
-        /// This constructor takes a localized message and an inner exception.
+        /// Initializes a new instance of the <see cref="NativeCommandException"/> class with a specified error message 
+        /// and a reference to the inner exception that is the cause of this exception.
         /// </summary>
         /// <param name="message">
         /// Localized error message.
@@ -198,7 +200,7 @@ namespace System.Management.Automation
         public NativeCommandException(string message, Exception innerException) : base(message, innerException) { }
 
         /// <summary>
-        /// This constructor is required by serialization.
+        /// Initializes a new instance of the <see cref="NativeCommandException"/> class with serialized data.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
