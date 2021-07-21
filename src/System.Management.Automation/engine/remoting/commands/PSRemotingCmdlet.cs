@@ -807,13 +807,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This parameter specifies the SSH subsystem to use for the remote connection.
-        /// </summary>
-        [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        public virtual string Subsystem { get; set; }
-
-        /// <summary>
         /// Gets or sets the Hashtable containing options to be passed to OpenSSH.
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]

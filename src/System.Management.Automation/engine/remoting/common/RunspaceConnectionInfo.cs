@@ -2073,6 +2073,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="keyFilePath">Key File Path.</param>
         /// <param name="port">Port number for connection (default 22).</param>
         /// <param name="subsystem">Subsystem to use (default 'powershell').</param>
+        /// <param name="connectingTimeout">Timeout time for terminating connection attempt.</param>
         /// <param name="options">Options for the SSH connection.</param>
         public SSHConnectionInfo(
             string userName,
@@ -2080,9 +2081,10 @@ namespace System.Management.Automation.Runspaces
             string keyFilePath,
             int port,
             string subsystem,
-            Hashtable options) : this(userName, computerName, keyFilePath, port, subsystem)
+            int connectingTimeout,
+            Hashtable options) : this(userName, computerName, keyFilePath, port, subsystem, connectingTimeout)
         {
-           this.Options = options;
+           Options = options;
         }
 
         #endregion
