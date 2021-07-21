@@ -1781,8 +1781,13 @@ function Install-Dotnet {
         Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
         if (-not $environment.IsCoreCLR) {
             $installArgs = @{
-                Channel = $Channel
                 Quality = $Quality
+            }
+
+            if ($Version) {
+                $installArgs += @{ Version = $Version }
+            } elseif ($Channel) {
+                $installArgs += @{ Channel = $Channel }
             }
 
             if ($InstallDir) {
