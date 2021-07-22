@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -737,14 +738,18 @@ namespace Microsoft.PowerShell.Commands
                 // Write property information
                 string properties = _helper.ConvertPropertyNamesCSV(_propertyNames);
                 if (!properties.Equals(string.Empty))
+                {
                     WriteCsvLine(properties);
+                }
             }
 
             string csv = _helper.ConvertPSObjectToCSV(InputObject, _propertyNames);
 
-            // write to the console
+            // Write to the output stream
             if (csv != string.Empty)
+            {
                 WriteCsvLine(csv);
+            }
         }
 
         #endregion Overrides
@@ -908,16 +913,36 @@ namespace Microsoft.PowerShell.Commands
                 throw new InvalidOperationException(CsvCommandStrings.BuildPropertyNamesMethodShouldBeCalledOnlyOncePerCmdletInstance);
             }
 
-            // serialize only Extended and Adapted properties..
-            PSMemberInfoCollection<PSPropertyInfo> srcPropertiesToSearch =
-                new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
-                    source,
-                    PSObject.GetPropertyCollection(PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted));
-
             propertyNames = new Collection<string>();
-            foreach (PSPropertyInfo prop in srcPropertiesToSearch)
+            if (source.BaseObject is IDictionary dictionary)
             {
-                propertyNames.Add(prop.Name);
+                foreach (var key in dictionary.Keys)
+                {
+                    propertyNames.Add(LanguagePrimitives.ConvertTo<string>(key));
+                }
+
+                // Add additional extended members added to the dictionary object, if any
+                var propertiesToSearch = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
+                    source,
+                    PSObject.GetPropertyCollection(PSMemberViewTypes.Extended));
+
+                foreach (var prop in propertiesToSearch)
+                {
+                    propertyNames.Add(prop.Name);
+                }
+            }
+            else
+            {
+                // serialize only Extended and Adapted properties.
+                PSMemberInfoCollection<PSPropertyInfo> srcPropertiesToSearch =
+                    new PSMemberInfoIntegratingCollection<PSPropertyInfo>(
+                        source,
+                        PSObject.GetPropertyCollection(PSMemberViewTypes.Extended | PSMemberViewTypes.Adapted));
+
+                foreach (PSPropertyInfo prop in srcPropertiesToSearch)
+                {
+                    propertyNames.Add(prop.Name);
+                }
             }
 
             return propertyNames;
@@ -1014,11 +1039,26 @@ namespace Microsoft.PowerShell.Commands
                     _outputString.Append(_delimiter);
                 }
 
-                // If property is not present, assume value is null and skip it.
-                if (mshObject.Properties[propertyName] is PSPropertyInfo property)
+                string value = null;
+                if (mshObject.BaseObject is IDictionary dictionary)
                 {
-                    var value = GetToStringValueForProperty(property);
+                    if (dictionary.Contains(propertyName))
+                    {
+                        value = dictionary[propertyName].ToString();
+                    }
+                    else if (mshObject.Properties[propertyName] is PSPropertyInfo property)
+                    {
+                        value = GetToStringValueForProperty(property);
+                    }
+                }
+                else if (mshObject.Properties[propertyName] is PSPropertyInfo property)
+                {
+                    value = GetToStringValueForProperty(property);
+                }
 
+                // If value is null, assume property is not present and skip it.
+                if (value != null)
+                {
                     if (_quoteFields != null)
                     {
                         if (_quoteFields.TryGetValue(propertyName, out _))
