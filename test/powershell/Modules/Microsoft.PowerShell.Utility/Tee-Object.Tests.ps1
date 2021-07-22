@@ -4,21 +4,39 @@ Describe "Tee-Object" -Tags "CI" {
 
     Context "Validate Tee-Object is correctly forking output" {
 
-	$testfile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath testfile.txt
+        BeforeAll {
+            $testfile = Join-Path $TestDrive -ChildPath "testfile.txt"
+            $testvalue = "ф"
+            if ($IsWindows) {
+                # Expected bytes: 244 - 'ф', 13  - '`r', 10  - '`n'.
+                $expectedBytes = 244,13,10 -join "-"
+            } else {
+                $expectedBytes = 244,10 -join "-"
+            }
+        }
+
+        BeforeEach {
+            Remove-Item -Path $testfile -ErrorAction SilentlyContinue -Force
+        }
 
 	    It "Should return the output to the screen and to the variable" {
-	        $teefile = $testfile
 	        Write-Output teeobjecttest1 | Tee-Object -Variable teeresults
-	        $teeresults         | Should -BeExactly "teeobjecttest1"
-	        Remove-Item $teefile -ErrorAction SilentlyContinue
+	        $teeresults | Should -BeExactly "teeobjecttest1"
 	    }
 
 	    It "Should tee the output to a file" {
 	        $teefile = $testfile
 	        Write-Output teeobjecttest3  | Tee-Object $teefile
 	        Get-Content $teefile | Should -BeExactly "teeobjecttest3"
-	        Remove-Item $teefile -ErrorAction SilentlyContinue
-	    }
+        }
+
+        It "Parameter 'Encoding' should accept encoding" {
+            $teefile = $testfile
+            $encoding = 1251
+            $testvalue | Tee-Object -Encoding $encoding $teefile
+            Get-Content $teefile -Encoding $encoding | Should -BeExactly $testvalue
+            (Get-Content $teefile -AsByteStream) -join "-" | Should -BeExactly $expectedBytes
+        }
     }
 }
 
