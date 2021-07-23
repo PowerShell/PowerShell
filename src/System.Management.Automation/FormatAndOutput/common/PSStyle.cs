@@ -528,15 +528,15 @@ namespace System.Management.Automation
             public class AnsiDictionary : Dictionary<string, string>
             {
                 /// <summary>
-                /// Constructor for AnsiDictionary.
+                /// Initializes a new instance of the <see cref="AnsiDictionary"/> class.
                 /// </summary>
-                public AnsiDictionary() : base(StringComparer.OrdinalIgnoreCase){}
+                public AnsiDictionary() : base(StringComparer.OrdinalIgnoreCase) { }
 
                 /// <summary>
                 /// Addnew entry to dictionary.
                 /// </summary>
-                /// <param name="key">Key to add</param>
-                /// <param name="value">ANSI string value to add</param>
+                /// <param name="key">Key to add.</param>
+                /// <param name="value">ANSI string value to add.</param>
                 public new void Add(string key, string value)
                 {
                     base.Add(key, ValidateNoContent(value));
