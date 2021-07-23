@@ -165,4 +165,45 @@ Describe 'Tests for $PSStyle automatic variable' {
             $PSStyle.Formatting.TableHeader = $old
         }
     }
+
+    It 'Should fail if setting formatting contains printable characters: <member>.<submember>' -TestCases @(
+        @{ Submember = 'Reset' }
+        @{ Submember = 'BlinkOff' }
+        @{ Submember = 'Blink' }
+        @{ Submember = 'BoldOff' }
+        @{ Submember = 'Bold' }
+        @{ Submember = 'HiddenOff' }
+        @{ Submember = 'Hidden' }
+        @{ Submember = 'ItalicOff' }
+        @{ Submember = 'Italic' }
+        @{ Submember = 'UnderlineOff' }
+        @{ Submember = 'Underline' }
+        @{ Submember = 'StrikethroughOff' }
+        @{ Submember = 'Strikethrough' }
+        @{ Member = 'Formatting'; Submember = 'FormatAccent' }
+        @{ Member = 'Formatting'; Submember = 'TableHeader' }
+        @{ Member = 'Formatting'; Submember = 'ErrorAccent' }
+        @{ Member = 'Formatting'; Submember = 'Error' }
+        @{ Member = 'Formatting'; Submember = 'Warning' }
+        @{ Member = 'Formatting'; Submember = 'Verbose' }
+        @{ Member = 'Formatting'; Submember = 'Debug' }
+        @{ Member = 'Progress'; Submember = 'Style' }
+        @{ Member = 'FileInfo'; Submember = 'Directory' }
+        @{ Member = 'FileInfo'; Submember = 'SymbolicLink' }
+        @{ Member = 'FileInfo'; Submember = 'Executable' }
+        @{ Member = 'FileInfo'; Submember = 'Hidden' }
+    ) {
+        param ($member, $submember)
+
+        if ($null -ne $member) {
+            { $PSStyle.$member.$submember = $PSStyle.Foreground.Red + 'hello' } | Should -Throw
+        }
+        else {
+            { $PSStyle.$submember = $PSStyle.Foreground.Red + 'hello' } | Should -Throw
+        }
+    }
+
+    It 'Should fail adding extension formatting with printable characters' {
+        { $PSStyle.FileInfo.Extension.Add('.md', 'hello') } | Should -Throw
+    }
 }

@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
+using System.Management.Automation.Internal;
 
 namespace System.Management.Automation
 {
@@ -281,12 +282,43 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets the style for progress bar.
             /// </summary>
-            public string Style { get; set; } = "\x1b[33;1m";
+            public string Style
+            {
+                get
+                {
+                    return _style;
+                } 
+
+                set
+                {
+                    _style = ValidateNoContent(value);
+                }
+            }
+
+            private string _style = "\x1b[33;1m";
 
             /// <summary>
             /// Gets or sets the max width of the progress bar.
             /// </summary>
-            public int MaxWidth { get; set; } = 120;
+            public int MaxWidth
+            {
+                get
+                {
+                    return _maxWidth;
+                } 
+                
+                set
+                {
+                    if (value < 0)
+                    {
+                        value = 0;
+                    }
+
+                    _maxWidth = value;
+                }
+            }
+
+            private int _maxWidth = 120;
 
             /// <summary>
             /// Gets or sets the view for progress bar.
@@ -307,37 +339,128 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets the accent style for formatting.
             /// </summary>
-            public string FormatAccent { get; set; } = "\x1b[32;1m";
+            public string FormatAccent
+            {
+                get
+                {
+                    return _formatAccent;
+                }
+
+                set
+                {
+                    _formatAccent = ValidateNoContent(value);
+                }
+            }
+
+            private string _formatAccent = "\x1b[32;1m";
 
             /// <summary>
             /// Gets or sets the style for table headers.
             /// </summary>
-            public string TableHeader { get; set; } = "\x1b[32;1m";
+            public string TableHeader
+            {
+                get
+                {
+                    return _tableHeader;
+                }
+
+                set
+                {
+                    _tableHeader = ValidateNoContent(value);
+                }
+            }
+
+            private string _tableHeader = "\x1b[32;1m";
 
             /// <summary>
             /// Gets or sets the accent style for errors.
             /// </summary>
-            public string ErrorAccent { get; set; } = "\x1b[36;1m";
+            public string ErrorAccent
+            {
+                get
+                {
+                    return _errorAccent;
+                }
+
+                set
+                {
+                    _errorAccent = ValidateNoContent(value);
+                }
+            }
+
+            private string _errorAccent = "\x1b[36;1m";
 
             /// <summary>
             /// Gets or sets the style for error messages.
             /// </summary>
-            public string Error { get; set; } = "\x1b[31;1m";
+            public string Error
+            {
+                get
+                {
+                    return _error;
+                }
+
+                set
+                {
+                    _error = ValidateNoContent(value);
+                }
+            }
+            
+            private string _error = "\x1b[31;1m";
 
             /// <summary>
             /// Gets or sets the style for warning messages.
             /// </summary>
-            public string Warning { get; set; } = "\x1b[33;1m";
+            public string Warning
+            {
+                get
+                {
+                    return _warning;
+                }
+
+                set
+                {
+                    _warning = ValidateNoContent(value);
+                }
+            }
+
+            private string _warning = "\x1b[33;1m";
 
             /// <summary>
             /// Gets or sets the style for verbose messages.
             /// </summary>
-            public string Verbose { get; set; } = "\x1b[33;1m";
+            public string Verbose
+            {
+                get
+                {
+                    return _verbose;
+                }
+
+                set
+                {
+                    _verbose = ValidateNoContent(value);
+                }
+            }
+
+            private string _verbose = "\x1b[33;1m";
 
             /// <summary>
             /// Gets or sets the style for debug messages.
             /// </summary>
-            public string Debug { get; set; } = "\x1b[33;1m";
+            public string Debug
+            {
+                get
+                {
+                    return _debug;
+                }
+
+                set
+                {
+                    _debug = ValidateNoContent(value);
+                }
+            }
+
+            private string _debug = "\x1b[33;1m";
         }
 
         /// <summary>
@@ -348,29 +471,89 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets the style for directories.
             /// </summary>
-            public string Directory { get; set; } = "\x1b[44;1m";
+            public string Directory
+            {
+                get
+                {
+                    return _directory;
+                }
+
+                set
+                {
+                    _directory = ValidateNoContent(value);
+                }
+            }
+
+            private string _directory = "\x1b[44;1m";
 
             /// <summary>
             /// Gets or sets the style for symbolic links.
             /// </summary>
-            public string SymbolicLink { get; set; } = "\x1b[36;1m";
+            public string SymbolicLink
+            {
+                get
+                {
+                    return _symbolicLink;
+                }
+
+                set
+                {
+                    _symbolicLink = ValidateNoContent(value);
+                }
+            }
+
+            private string _symbolicLink = "\x1b[36;1m";
 
             /// <summary>
             /// Gets or sets the style for executables.
             /// </summary>
-            public string Executable { get; set; } = "\x1b[32;1m";
+            public string Executable
+            {
+                get
+                {
+                    return _executable;
+                }
+
+                set
+                {
+                    _executable = ValidateNoContent(value);
+                }
+            }
+
+            private string _executable = "\x1b[32;1m";
+
+            /// <summary>
+            /// Custom dictionary handling validation of content.
+            /// </summary>
+            public class AnsiDictionary : Dictionary<string, string>
+            {
+                /// <summary>
+                /// Constructor for AnsiDictionary.
+                /// </summary>
+                public AnsiDictionary() : base(StringComparer.OrdinalIgnoreCase){}
+
+                /// <summary>
+                /// Addnew entry to dictionary.
+                /// </summary>
+                /// <param name="key">Key to add</param>
+                /// <param name="value">ANSI string value to add</param>
+                public new void Add(string key, string value)
+                {
+                    base.Add(key, ValidateNoContent(value));
+                }
+            }
 
             /// <summary>
             /// Gets the style for archive.
             /// </summary>
-            public Dictionary<string, string> Extension { get; }
+            public AnsiDictionary Extension { get; }
 
             /// <summary>
             /// Initializes a new instance of the <see cref="FileInfoFormatting"/> class.
             /// </summary>
             public FileInfoFormatting()
             {
-                Extension = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                Extension = new AnsiDictionary();
 
                 // archives
                 Extension.Add(".zip", "\x1b[31;1m");
@@ -514,6 +697,17 @@ namespace System.Management.Automation
             Foreground = new ForegroundColor();
             Background = new BackgroundColor();
             FileInfo = new FileInfoFormatting();
+        }
+
+        private static string ValidateNoContent(string text)
+        {
+            var decorartedString = new StringDecorated(text);
+            if (decorartedString.ContentLength > 0)
+            {
+                throw new InvalidOperationException(string.Format(PSStyleStrings.TextContainsContent, decorartedString.ToString(OutputRendering.PlainText)));
+            }
+
+            return text;
         }
 
         /// <summary>
