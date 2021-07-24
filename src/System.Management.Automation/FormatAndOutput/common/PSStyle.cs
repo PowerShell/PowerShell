@@ -284,15 +284,8 @@ namespace System.Management.Automation
             /// </summary>
             public string Style
             {
-                get
-                {
-                    return _style;
-                } 
-
-                set
-                {
-                    _style = ValidateNoContent(value);
-                }
+                get => _style;
+                set => _style = ValidateNoContent(value);
             }
 
             private string _style = "\x1b[33;1m";
@@ -302,13 +295,10 @@ namespace System.Management.Automation
             /// </summary>
             public int MaxWidth
             {
-                get
-                {
-                    return _maxWidth;
-                } 
-                
+                get => _maxWidth;
                 set
                 {
+                    // Width less than 18 does not render correctly due to the different parts of the progress bar.
                     if (value < 18)
                     {
                         throw new ArgumentOutOfRangeException(nameof(MaxWidth), PSStyleStrings.ProgressWidthTooSmall);
@@ -341,15 +331,8 @@ namespace System.Management.Automation
             /// </summary>
             public string FormatAccent
             {
-                get
-                {
-                    return _formatAccent;
-                }
-
-                set
-                {
-                    _formatAccent = ValidateNoContent(value);
-                }
+                get => _formatAccent;
+                set => _formatAccent = ValidateNoContent(value);
             }
 
             private string _formatAccent = "\x1b[32;1m";
@@ -359,15 +342,8 @@ namespace System.Management.Automation
             /// </summary>
             public string TableHeader
             {
-                get
-                {
-                    return _tableHeader;
-                }
-
-                set
-                {
-                    _tableHeader = ValidateNoContent(value);
-                }
+                get => _tableHeader;
+                set => _tableHeader = ValidateNoContent(value);
             }
 
             private string _tableHeader = "\x1b[32;1m";
@@ -377,15 +353,8 @@ namespace System.Management.Automation
             /// </summary>
             public string ErrorAccent
             {
-                get
-                {
-                    return _errorAccent;
-                }
-
-                set
-                {
-                    _errorAccent = ValidateNoContent(value);
-                }
+                get => _errorAccent;
+                set => _errorAccent = ValidateNoContent(value);
             }
 
             private string _errorAccent = "\x1b[36;1m";
@@ -395,15 +364,8 @@ namespace System.Management.Automation
             /// </summary>
             public string Error
             {
-                get
-                {
-                    return _error;
-                }
-
-                set
-                {
-                    _error = ValidateNoContent(value);
-                }
+                get => _error;
+                set => _error = ValidateNoContent(value);
             }
             
             private string _error = "\x1b[31;1m";
@@ -413,15 +375,8 @@ namespace System.Management.Automation
             /// </summary>
             public string Warning
             {
-                get
-                {
-                    return _warning;
-                }
-
-                set
-                {
-                    _warning = ValidateNoContent(value);
-                }
+                get => _warning;
+                set => _warning = ValidateNoContent(value);
             }
 
             private string _warning = "\x1b[33;1m";
@@ -431,15 +386,8 @@ namespace System.Management.Automation
             /// </summary>
             public string Verbose
             {
-                get
-                {
-                    return _verbose;
-                }
-
-                set
-                {
-                    _verbose = ValidateNoContent(value);
-                }
+                get => _verbose;
+                set => _verbose = ValidateNoContent(value);
             }
 
             private string _verbose = "\x1b[33;1m";
@@ -449,16 +397,9 @@ namespace System.Management.Automation
             /// </summary>
             public string Debug
             {
-                get
-                {
-                    return _debug;
-                }
-
-                set
-                {
-                    _debug = ValidateNoContent(value);
-                }
-            }
+                get => _debug;
+                set => _debug = ValidateNoContent(value);
+            }   
 
             private string _debug = "\x1b[33;1m";
         }
@@ -473,15 +414,8 @@ namespace System.Management.Automation
             /// </summary>
             public string Directory
             {
-                get
-                {
-                    return _directory;
-                }
-
-                set
-                {
-                    _directory = ValidateNoContent(value);
-                }
+                get => _directory;
+                set => _directory = ValidateNoContent(value);
             }
 
             private string _directory = "\x1b[44;1m";
@@ -491,15 +425,8 @@ namespace System.Management.Automation
             /// </summary>
             public string SymbolicLink
             {
-                get
-                {
-                    return _symbolicLink;
-                }
-
-                set
-                {
-                    _symbolicLink = ValidateNoContent(value);
-                }
+                get => _symbolicLink;
+                set => _symbolicLink = ValidateNoContent(value);
             }
 
             private string _symbolicLink = "\x1b[36;1m";
@@ -509,15 +436,8 @@ namespace System.Management.Automation
             /// </summary>
             public string Executable
             {
-                get
-                {
-                    return _executable;
-                }
-
-                set
-                {
-                    _executable = ValidateNoContent(value);
-                }
+                get => _executable;
+                set => _executable = ValidateNoContent(value);
             }
 
             private string _executable = "\x1b[32;1m";
