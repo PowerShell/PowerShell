@@ -204,6 +204,16 @@ Describe 'Tests for $PSStyle automatic variable' {
     }
 
     It 'Should fail adding extension formatting with printable characters' {
-        { $PSStyle.FileInfo.Extension.Add('.md', 'hello') } | Should -Throw
+        { $PSStyle.FileInfo.Extension.Add('.md', 'hello') } | Should -Throw -ErrorId 'InvalidOperationException'
+    }
+
+    It 'Should fail if MaxWidth is less than 18' {
+        $maxWidth = $PSStyle.Progress.MaxWidth
+        try {
+            { $PSStyle.Progress.MaxWidth = 17 } | Should -Throw -ErrorId 'ExceptionWhenSetting'
+        }
+        finally {
+            $PSStyle.Progress.MaxWidth = $maxWidth
+        }
     }
 }

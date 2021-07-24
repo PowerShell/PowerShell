@@ -61,4 +61,7 @@
   <data name="TextContainsContent" xml:space="preserve">
     <value>The specified string contains printable content when it should only contain ANSI escape sequences: {0}</value>
   </data>
+  <data name="ProgressWidthTooSmall" xml:space="preserve">
+    <value>The MaxWidth for the Progress rendering must be at least 18 to render correctly.</value>
+  </data>
 </root>

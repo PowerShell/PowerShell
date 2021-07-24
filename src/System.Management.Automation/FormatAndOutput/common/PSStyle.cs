@@ -309,9 +309,9 @@ namespace System.Management.Automation
                 
                 set
                 {
-                    if (value < 0)
+                    if (value < 18)
                     {
-                        value = 0;
+                        throw new ArgumentOutOfRangeException(nameof(MaxWidth), PSStyleStrings.ProgressWidthTooSmall);
                     }
 
                     _maxWidth = value;
