@@ -207,8 +207,31 @@ Describe 'Tests for $PSStyle automatic variable' {
         { $PSStyle.FileInfo.Extension.Add('.md', 'hello') } | Should -Throw -ErrorId 'InvalidOperationException'
     }
 
+    It 'Should add and remove extension: <extension>' -TestCases @(
+        @{ extension = '.myext' }
+        @{ extension = 'myext' }
+    ) {
+        param ($extension)
+
+        if ($extension.StartsWith('.')) {
+            $fullExtension = $extension
+        }
+        else {
+            $fullExtension = '.' + $extension
+        }
+
+        $PSStyle.FileInfo.Extension.Keys | Should -Not -Contain $fullextension
+        $PSStyle.FileInfo.Extension.Add($extension, $PSStyle.Foreground.Blue)
+
+        $PSStyle.FileInfo.Extension[$fullextension] | Should -Be $PSStyle.Foreground.Blue
+        $PSStyle.FileInfo.Extension.Remove($extension)
+        $PSStyle.FileInfo.Extension.Keys | Should -Not -Contain $fullextension
+    }
+
     It 'Should fail if MaxWidth is less than 18' {
         $maxWidth = $PSStyle.Progress.MaxWidth
+
+        # minimum allowed width is 18 as less than that doesn't render correctly
         try {
             { $PSStyle.Progress.MaxWidth = 17 } | Should -Throw -ErrorId 'ExceptionWhenSetting'
         }

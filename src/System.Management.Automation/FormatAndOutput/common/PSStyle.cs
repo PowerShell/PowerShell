@@ -443,37 +443,58 @@ namespace System.Management.Automation
             private string _executable = "\x1b[32;1m";
 
             /// <summary>
-            /// Custom dictionary handling validation of content.
+            /// Custom dictionary handling validation of extension and content.
             /// </summary>
-            public class AnsiDictionary : Dictionary<string, string>
+            public class FileExtensionDictionary : Dictionary<string, string>
             {
                 /// <summary>
-                /// Initializes a new instance of the <see cref="AnsiDictionary"/> class.
+                /// Initializes a new instance of the <see cref="FileExtensionDictionary"/> class.
                 /// </summary>
-                public AnsiDictionary() : base(StringComparer.OrdinalIgnoreCase) { }
+                public FileExtensionDictionary() : base(StringComparer.OrdinalIgnoreCase) { }
 
                 /// <summary>
-                /// Addnew entry to dictionary.
+                /// Add new extension and decoration to dictionary.
                 /// </summary>
-                /// <param name="key">Key to add.</param>
-                /// <param name="value">ANSI string value to add.</param>
-                public new void Add(string key, string value)
+                /// <param name="extension">Extension to add.</param>
+                /// <param name="decoration">ANSI string value to add.</param>
+                public new void Add(string extension, string decoration)
                 {
-                    base.Add(key, ValidateNoContent(value));
+                    // if extension doesn't start with a dot, add one
+                    if (!extension.StartsWith("."))
+                    {
+                        extension = "." + extension;
+                    }
+
+                    base.Add(extension, ValidateNoContent(decoration));
+                }
+
+                /// <summary>
+                /// Remove an extension from dictionary.
+                /// </summary>
+                /// <param name="extension">Extension to remove.</param>
+                public new void Remove(string extension)
+                {
+                    // if extension doesn't start with a dot, add one
+                    if (!extension.StartsWith("."))
+                    {
+                        extension = "." + extension;
+                    }
+
+                    base.Remove(extension);
                 }
             }
 
             /// <summary>
             /// Gets the style for archive.
             /// </summary>
-            public AnsiDictionary Extension { get; }
+            public FileExtensionDictionary Extension { get; }
 
             /// <summary>
             /// Initializes a new instance of the <see cref="FileInfoFormatting"/> class.
             /// </summary>
             public FileInfoFormatting()
             {
-                Extension = new AnsiDictionary();
+                Extension = new FileExtensionDictionary();
 
                 // archives
                 Extension.Add(".zip", "\x1b[31;1m");
