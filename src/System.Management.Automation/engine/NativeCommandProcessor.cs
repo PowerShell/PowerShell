@@ -877,7 +877,7 @@ namespace System.Management.Automation
                                 errorId);
 
                         var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.NotSpecified, null);
-                        this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord, isNativeError: true);
+                        this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord);
                     }
                 }
             }
@@ -1202,7 +1202,7 @@ namespace System.Management.Automation
                 ErrorRecord record = outputValue.Data as ErrorRecord;
                 Dbg.Assert(record != null, "ProcessReader should ensure that data is ErrorRecord");
                 record.SetInvocationInfo(this.Command.MyInvocation);
-                this.commandRuntime._WriteErrorSkipAllowCheck(record, isNativeError: true);
+                this.commandRuntime._WriteErrorSkipAllowCheck(record, isNativeStdErrCall: true);
             }
             else if (outputValue.Stream == MinishellStream.Output)
             {
