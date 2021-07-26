@@ -204,7 +204,7 @@ Describe 'Tests for $PSStyle automatic variable' {
     }
 
     It 'Should fail adding extension formatting with printable characters' {
-        { $PSStyle.FileInfo.Extension.Add('.md', 'hello') } | Should -Throw -ErrorId 'InvalidOperationException'
+        { $PSStyle.FileInfo.Extension.Add('.md', 'hello') } | Should -Throw -ErrorId 'ArgumentException'
     }
 
     It 'Should add and remove extension' {

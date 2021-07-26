@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
 
@@ -445,40 +446,94 @@ namespace System.Management.Automation
             /// <summary>
             /// Custom dictionary handling validation of extension and content.
             /// </summary>
-            public sealed class FileExtensionDictionary : Dictionary<string, string>
+            public sealed class FileExtensionDictionary : IEnumerable
             {
-                /// <summary>
-                /// Initializes a new instance of the <see cref="FileExtensionDictionary"/> class.
-                /// </summary>
-                public FileExtensionDictionary() : base(StringComparer.OrdinalIgnoreCase) { }
+                private static string ValidateExtension(string extension)
+                {
+                    if (!extension.StartsWith('.'))
+                    {
+                        throw new ArgumentException(PSStyleStrings.ExtensionNotStartingWithPeriod);
+                    }
+
+                    return extension;
+                }
+
+                private readonly Dictionary<string, string> _extensionDictionary = new();
 
                 /// <summary>
                 /// Add new extension and decoration to dictionary.
                 /// </summary>
                 /// <param name="extension">Extension to add.</param>
                 /// <param name="decoration">ANSI string value to add.</param>
-                public new void Add(string extension, string decoration)
+                public void Add(string extension, string decoration)
                 {
-                    if (!extension.StartsWith('.'))
-                    {
-                        throw new ArgumentException(PSStyleStrings.ExtensionNotStartingWithPeriod);
-                    }
-
-                    base.Add(extension, ValidateNoContent(decoration));
+                    _extensionDictionary.Add(ValidateExtension(extension), ValidateNoContent(decoration));
                 }
 
                 /// <summary>
                 /// Remove an extension from dictionary.
                 /// </summary>
                 /// <param name="extension">Extension to remove.</param>
-                public new void Remove(string extension)
+                public void Remove(string extension)
                 {
-                    if (!extension.StartsWith('.'))
+                    _extensionDictionary.Remove(ValidateExtension(extension));
+                }
+
+                /// <summary>
+                /// Clear the dictionary.
+                /// </summary>
+                public void Clear()
+                {
+                    _extensionDictionary.Clear();
+                }
+
+                /// <summary>
+                /// Gets the enumerator for the dictionary.
+                /// </summary>
+                /// <returns>The enumerator for the dictionary.</returns>
+                public IEnumerator GetEnumerator()
+                {
+                    return _extensionDictionary.GetEnumerator();
+                }
+
+                /// <summary>
+                /// Gets or sets the decoration by specified extension.
+                /// </summary>
+                /// <param name="extension">Extension to get decoration for.</param>
+                /// <returns>The decoration for specified extension.</returns>
+                public string this[string extension]
+                {
+                    get
                     {
-                        throw new ArgumentException(PSStyleStrings.ExtensionNotStartingWithPeriod);
+                        return _extensionDictionary[ValidateExtension(extension)];
                     }
 
-                    base.Remove(extension);
+                    set
+                    {
+                        _extensionDictionary[ValidateExtension(extension)] = ValidateNoContent(value);
+                    }
+                }
+
+                /// <summary>
+                /// Gets whether the dictionary contains the specified extension.
+                /// </summary>
+                /// <param name="extension">Extension to check for.</param>
+                /// <returns>True if the dictionary contains the specified extension, otherwise false.</returns>
+                public bool ContainsKey(string extension)
+                {
+                    return _extensionDictionary.ContainsKey(ValidateExtension(extension));
+                }
+
+                /// <summary>
+                /// Gets the extensions for the dictionary.
+                /// </summary>
+                /// <returns>The extensions for the dictionary.</returns>
+                public IEnumerable<string> Keys
+                {
+                    get
+                    {
+                        return _extensionDictionary.Keys;
+                    }
                 }
             }
 
@@ -643,7 +698,7 @@ namespace System.Management.Automation
             var decorartedString = new StringDecorated(text);
             if (decorartedString.ContentLength > 0)
             {
-                throw new InvalidOperationException(string.Format(PSStyleStrings.TextContainsContent, decorartedString.ToString(OutputRendering.PlainText)));
+                throw new ArgumentException(string.Format(PSStyleStrings.TextContainsContent, decorartedString.ToString(OutputRendering.PlainText)));
             }
 
             return text;
