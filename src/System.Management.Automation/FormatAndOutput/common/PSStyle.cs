@@ -459,7 +459,7 @@ namespace System.Management.Automation
                 /// <param name="decoration">ANSI string value to add.</param>
                 public new void Add(string extension, string decoration)
                 {
-                    if (!extension.StartsWith("."))
+                    if (!extension.StartsWith('.'))
                     {
                         throw new ArgumentException(PSStyleStrings.ExtensionNotStartingWithPeriod);
                     }
@@ -473,7 +473,7 @@ namespace System.Management.Automation
                 /// <param name="extension">Extension to remove.</param>
                 public new void Remove(string extension)
                 {
-                    if (!extension.StartsWith("."))
+                    if (!extension.StartsWith('.'))
                     {
                         throw new ArgumentException(PSStyleStrings.ExtensionNotStartingWithPeriod);
                     }
