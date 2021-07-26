@@ -446,7 +446,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Custom dictionary handling validation of extension and content.
             /// </summary>
-            public sealed class FileExtensionDictionary : IEnumerable
+            public sealed class FileExtensionDictionary
             {
                 private static string ValidateExtension(string extension)
                 {
@@ -485,15 +485,6 @@ namespace System.Management.Automation
                 public void Clear()
                 {
                     _extensionDictionary.Clear();
-                }
-
-                /// <summary>
-                /// Gets the enumerator for the dictionary.
-                /// </summary>
-                /// <returns>The enumerator for the dictionary.</returns>
-                public IEnumerator GetEnumerator()
-                {
-                    return _extensionDictionary.GetEnumerator();
                 }
 
                 /// <summary>
