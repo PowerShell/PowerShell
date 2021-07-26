@@ -458,7 +458,7 @@ namespace System.Management.Automation
                     return extension;
                 }
 
-                private readonly Dictionary<string, string> _extensionDictionary = new();
+                private readonly Dictionary<string, string> _extensionDictionary = new(StringComparer.OrdinalIgnoreCase);
 
                 /// <summary>
                 /// Add new extension and decoration to dictionary.
@@ -521,7 +521,7 @@ namespace System.Management.Automation
                 /// <returns>True if the dictionary contains the specified extension, otherwise false.</returns>
                 public bool ContainsKey(string extension)
                 {
-                    return _extensionDictionary.ContainsKey(ValidateExtension(extension));
+                    return _extensionDictionary.ContainsKey(extension);
                 }
 
                 /// <summary>
