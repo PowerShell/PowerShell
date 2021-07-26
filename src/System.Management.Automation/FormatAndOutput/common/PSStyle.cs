@@ -445,7 +445,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Custom dictionary handling validation of extension and content.
             /// </summary>
-            public class FileExtensionDictionary : Dictionary<string, string>
+            public sealed class FileExtensionDictionary : Dictionary<string, string>
             {
                 /// <summary>
                 /// Initializes a new instance of the <see cref="FileExtensionDictionary"/> class.
@@ -459,10 +459,9 @@ namespace System.Management.Automation
                 /// <param name="decoration">ANSI string value to add.</param>
                 public new void Add(string extension, string decoration)
                 {
-                    // if extension doesn't start with a dot, add one
                     if (!extension.StartsWith("."))
                     {
-                        extension = "." + extension;
+                        throw new ArgumentException(PSStyleStrings.ExtensionNotStartingWithPeriod);
                     }
 
                     base.Add(extension, ValidateNoContent(decoration));
@@ -474,10 +473,9 @@ namespace System.Management.Automation
                 /// <param name="extension">Extension to remove.</param>
                 public new void Remove(string extension)
                 {
-                    // if extension doesn't start with a dot, add one
                     if (!extension.StartsWith("."))
                     {
-                        extension = "." + extension;
+                        throw new ArgumentException(PSStyleStrings.ExtensionNotStartingWithPeriod);
                     }
 
                     base.Remove(extension);

@@ -64,4 +64,7 @@
   <data name="ProgressWidthTooSmall" xml:space="preserve">
     <value>The MaxWidth for the Progress rendering must be at least 18 to render correctly.</value>
   </data>
+  <data name="ExtensionNotStartingWithPeriod" xml:space="preserve">
+    <value>When adding or removing extensions, the extension must start with a period.</value>
+  </data>
 </root>

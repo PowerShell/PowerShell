@@ -207,25 +207,22 @@ Describe 'Tests for $PSStyle automatic variable' {
         { $PSStyle.FileInfo.Extension.Add('.md', 'hello') } | Should -Throw -ErrorId 'InvalidOperationException'
     }
 
-    It 'Should add and remove extension: <extension>' -TestCases @(
-        @{ extension = '.myext' }
-        @{ extension = 'myext' }
-    ) {
-        param ($extension)
-
-        if ($extension.StartsWith('.')) {
-            $fullExtension = $extension
-        }
-        else {
-            $fullExtension = '.' + $extension
-        }
-
-        $PSStyle.FileInfo.Extension.Keys | Should -Not -Contain $fullextension
+    It 'Should add and remove extension' {
+        $extension = '.mytest'
+        $PSStyle.FileInfo.Extension.Keys | Should -Not -Contain $extension
         $PSStyle.FileInfo.Extension.Add($extension, $PSStyle.Foreground.Blue)
 
-        $PSStyle.FileInfo.Extension[$fullextension] | Should -Be $PSStyle.Foreground.Blue
+        $PSStyle.FileInfo.Extension[$extension] | Should -Be $PSStyle.Foreground.Blue
         $PSStyle.FileInfo.Extension.Remove($extension)
-        $PSStyle.FileInfo.Extension.Keys | Should -Not -Contain $fullextension
+        $PSStyle.FileInfo.Extension.Keys | Should -Not -Contain $extension
+    }
+
+    It 'Should fail to add extension does not start with a period' {
+        { $PSStyle.FileInfo.Extension.Add('mytest', $PSStyle.Foreground.Blue) } | Should -Throw -ErrorId 'ArgumentException'
+    }
+
+    It 'Should fail to remove extension does not start with a period' {
+        { $PSStyle.FileInfo.Extension.Remove('zip') } | Should -Throw -ErrorId 'ArgumentException'
     }
 
     It 'Should fail if MaxWidth is less than 18' {
