@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -1117,33 +1116,40 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             internal static string[] GetProperties(ListViewEntry lve)
             {
-                StringCollection props = new StringCollection();
-                foreach (ListViewField lvf in lve.listViewFieldList)
+                int count = lve.listViewFieldList.Count;
+
+                if (count == 0)
                 {
-                    props.Add(lvf.label ?? lvf.propertyName);
+                    return null;
                 }
 
-                if (props.Count == 0)
-                    return null;
-                string[] retVal = new string[props.Count];
-                props.CopyTo(retVal, 0);
-                return retVal;
+                string[] result = new string[count];
+                for (int index = 0; index < result.Length; ++index)
+                {
+                    ListViewField lvf = lve.listViewFieldList[index];
+                    result[index] = lvf.label ?? lvf.propertyName;
+                }
+
+                return result;
             }
 
             internal static string[] GetValues(ListViewEntry lve)
             {
-                StringCollection vals = new StringCollection();
+                int count = lve.listViewFieldList.Count;
 
-                foreach (ListViewField lvf in lve.listViewFieldList)
+                if (count == 0)
                 {
-                    vals.Add(lvf.formatPropertyField.propertyValue);
+                    return null;
                 }
 
-                if (vals.Count == 0)
-                    return null;
-                string[] retVal = new string[vals.Count];
-                vals.CopyTo(retVal, 0);
-                return retVal;
+                string[] result = new string[count];
+                for (int index = 0; index < result.Length; ++index)
+                {
+                    ListViewField lvf = lve.listViewFieldList[index];
+                    result[index] = lvf.formatPropertyField.propertyValue;
+                }
+
+                return result;
             }
 
             /// <summary>
