@@ -4,6 +4,7 @@
 using System;
 using System.Threading;
 using System.Diagnostics;
+using System.IO;
 
 namespace TestExe
 {
@@ -28,17 +29,36 @@ namespace TestExe
                     case "-stderr":
                         Console.Error.WriteLine(args[1]);
                         break;
+                    case "-writetofile":
+                        string fileName = args[1];
+                        WriteInputToFile(fileName);
+                        break;
                     default:
                         Console.WriteLine("Unknown test {0}", args[0]);
                         break;
                 }
-            }
-            else
-            {
-                Console.WriteLine("Test not specified");
+
+                return 0;
             }
 
+            Console.WriteLine("Test not specified");
             return 0;
+        }
+
+        private static void WriteInputToFile(string path)
+        {
+            if (!Path.IsPathRooted(path))
+            {
+                path = Path.Combine(Environment.CurrentDirectory, path);
+            }
+
+            path = Path.GetFullPath(path);
+
+            using (Stream inStream = Console.OpenStandardInput())
+            using (FileStream outFileStream = File.OpenWrite(path))
+            {
+                inStream.CopyTo(outFileStream);
+            }
         }
 
         // <Summary>
