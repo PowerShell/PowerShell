@@ -23,6 +23,7 @@ namespace System.Management.Automation
         internal const string EngineSource = "PSEngine";
         internal const string PSAnsiProgressFeatureName = "PSAnsiProgress";
         internal const string PSNativeCommandArgumentPassingFeatureName = "PSNativeCommandArgumentPassing";
+        internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
 
         #endregion
 
@@ -140,6 +141,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
+                new ExperimentalFeature(
+                    name: PSNativeCommandErrorActionPreferenceFeatureName,
+                    description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

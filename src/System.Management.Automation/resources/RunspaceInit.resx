@@ -188,7 +188,7 @@
   </data>
   <data name="PSNativeCommandUseErrorActionPreferenceDescription" xml:space="preserve">
     <value>If true, $ErrorActionPreference applies to native executable non-zero exit codes</value>
-  </data>  
+  </data>
   <data name="WhatIfPreferenceDescription" xml:space="preserve">
     <value>If true, WhatIf is considered to be enabled for all commands.</value>
   </data>
