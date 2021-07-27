@@ -33,6 +33,10 @@ namespace TestExe
                         string fileName = args[1];
                         WriteInputToFile(fileName);
                         break;
+                    case "-writebytes":
+                        string hexStr = args[1];
+                        WriteBytesFromHex(hexStr);
+                        break;
                     default:
                         Console.WriteLine("Unknown test {0}", args[0]);
                         break;
@@ -58,6 +62,18 @@ namespace TestExe
             using (FileStream outFileStream = File.OpenWrite(path))
             {
                 inStream.CopyTo(outFileStream);
+            }
+        }
+
+        private static void WriteBytesFromHex(string hexStr)
+        {
+            using (Stream outStream = Console.OpenStandardOutput())
+            {
+                for (int i = 0; i < hexStr.Length; i += 2)
+                {
+                    byte value = Convert.ToByte(hexStr.Substring(i, 2), fromBase: 16);
+                    outStream.WriteByte(value);
+                }
             }
         }
 
