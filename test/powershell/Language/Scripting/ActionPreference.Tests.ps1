@@ -207,6 +207,55 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         $err.FullyQualifiedErrorId | Should -BeExactly "ParameterBindingFailed,Microsoft.PowerShell.Commands.TestPathCommand"
         $err.Exception.InnerException.InnerException | Should -BeOfType "System.Management.Automation.PSInvalidCastException"
     }
+
+    It 'Correctly interprets ErrorActionPreference on Write-Error when it''s reset in a finally block' {
+        try
+        {
+            $oldEAP = $ErrorActionPreference
+            $ErrorActionPreference = 'Stop'
+
+            try
+            {
+                Write-Error 'error'
+            }
+            finally
+            {
+                $ErrorActionPreference = $oldEAP
+            }
+        }
+        catch
+        {
+            $err = $_
+        }
+
+        $err.FullyQualifiedErrorId | Should -BeExactly 'Microsoft.PowerShell.Commands.WriteErrorException'
+        $err.Exception.Message | Should -BeExactly 'error'
+    }
+
+    It 'Correctly interprets ErrorActionPreference on a parameter binding error when it''s reset in a finally block' {
+        try
+        {
+            $oldEAP = $ErrorActionPreference
+            $ErrorActionPreference = 'Stop'
+
+            try
+            {
+                Get-Process -Banana
+            }
+            finally
+            {
+                $ErrorActionPreference = $oldEAP
+            }
+        }
+        catch
+        {
+            $err = $_
+        }
+
+        $err.FullyQualifiedErrorId | Should -BeExactly 'NamedParameterNotFound,Microsoft.PowerShell.Commands.GetProcessCommand'
+        $err.CategoryInfo.Activity | Should -BeExactly 'InvalidArgument'
+        $err.CategoryInfo.Reason   | Should -BeExactly 'ParameterBindingException'
+    }
 }
 
 Describe 'ActionPreference.Break tests' -Tag 'CI' {
