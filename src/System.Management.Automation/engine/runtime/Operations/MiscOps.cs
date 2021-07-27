@@ -1651,6 +1651,15 @@ namespace System.Management.Automation
             }
             else if (ExceptionCannotBeStoppedContinuedOrIgnored(rte, context))
             {
+                // If we throw this error but don't mark it for prompt suppression
+                // it might be recaught later when the error action preference has changed.
+                // Instead we need to mark it here to preserve the EAP semantics from
+                // where it was originally thrown
+                if (preference == ActionPreference.Stop)
+                {
+                    rte.SuppressPromptInInterpreter = true;
+                }
+
                 throw rte;
             }
             else if (preference == ActionPreference.Inquire && !rte.SuppressPromptInInterpreter)
