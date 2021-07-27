@@ -6,6 +6,12 @@
 
 Describe 'Native command error handling tests' -Tags 'CI' {
     BeforeAll {
+        if (-not [ExperimentalFeature]::IsEnabled('PSNativeCommandErrorActionPreference'))
+        {
+            $PSDefaultParameterValues['It:Skip'] = $true
+            return
+        }
+
         $exeName = $IsWindows ? 'testexe.exe' : 'testexe'
 
         $errorActionPrefTestCases = @(
@@ -14,6 +20,10 @@ Describe 'Native command error handling tests' -Tags 'CI' {
             @{ ErrorActionPref = 'SilentlyContinue' }
             @{ ErrorActionPref = 'Ignore' }
         )
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues['It:Skip'] = $false
     }
 
     BeforeEach {

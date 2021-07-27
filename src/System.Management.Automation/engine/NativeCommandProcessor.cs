@@ -188,7 +188,7 @@ namespace System.Management.Automation
         public NativeCommandException(string message) : base(message) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandException"/> class with a specified error message 
+        /// Initializes a new instance of the <see cref="NativeCommandException"/> class with a specified error message
         /// and a reference to the inner exception that is the cause of this exception.
         /// </summary>
         /// <param name="message">
@@ -878,8 +878,8 @@ namespace System.Management.Automation
 
                     this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
-                    bool nativeCommandUseErrorActionPreference = 
-                        this.Command.Context.GetBooleanPreference(
+                    bool nativeCommandUseErrorActionPreference = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName)
+                        && this.Command.Context.GetBooleanPreference(
                             SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath,
                             InitialSessionState.DefaultPSNativeCommandUseErrorActionPreference,
                             out _);
@@ -907,7 +907,7 @@ namespace System.Management.Automation
 
                         var exception =
                             new NativeCommandException(
-                                this.Path, 
+                                this.Path,
                                 _nativeProcess.ExitCode,
                                 _nativeProcess.Id,
                                 errorMsg,
