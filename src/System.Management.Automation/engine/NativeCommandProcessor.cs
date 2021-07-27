@@ -136,7 +136,7 @@ namespace System.Management.Automation
     /// when a native command retuns a non-zero exit code.
     /// </summary>
     [Serializable]
-    public class NativeCommandException : RuntimeException
+    public class NativeCommandExitException : RuntimeException
     {
         /// <summary>
         /// Gets the path of the native command.
@@ -156,7 +156,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandException"/> class with information on the native
+        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with information on the native
         /// command, a specified error message and a specified error ID.
         /// </summary>
         /// <param name="path">The full path of the native command.</param>
@@ -164,31 +164,31 @@ namespace System.Management.Automation
         /// <param name="processId">The process ID of the process before it ended.</param>
         /// <param name="message">The error message.</param>
         /// <param name="errorId">The error ID.</param>
-        internal NativeCommandException(string path, int exitCode, int processId, string message, string errorId)
+        internal NativeCommandExitException(string path, int exitCode, int processId, string message, string errorId)
             : base(message)
         {
             SetErrorId(errorId);
             SetErrorCategory(ErrorCategory.NotSpecified);
-            this.Path = path;
-            this.ExitCode = exitCode;
-            this.ProcessId = processId;
+            Path = path;
+            ExitCode = exitCode;
+            ProcessId = processId;
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandException"/> class.
+        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class.
         /// </summary>
-        public NativeCommandException() : base() { }
+        public NativeCommandExitException() : base() { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandException"/> class with a specified error message.
+        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with a specified error message.
         /// </summary>
         /// <param name="message">
         /// A localized error message.
         /// </param>
-        public NativeCommandException(string message) : base(message) { }
+        public NativeCommandExitException(string message) : base(message) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandException"/> class with a specified error message
+        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with a specified error message
         /// and a reference to the inner exception that is the cause of this exception.
         /// </summary>
         /// <param name="message">
@@ -197,14 +197,14 @@ namespace System.Management.Automation
         /// <param name="innerException">
         /// Inner exception.
         /// </param>
-        public NativeCommandException(string message, Exception innerException) : base(message, innerException) { }
+        public NativeCommandExitException(string message, Exception innerException) : base(message, innerException) { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandException"/> class with serialized data.
+        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with serialized data.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        protected NativeCommandException(SerializationInfo info, StreamingContext context)
+        protected NativeCommandExitException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
             if (info == null)
@@ -212,9 +212,9 @@ namespace System.Management.Automation
                 throw new PSArgumentNullException(nameof(info));
             }
 
-            this.Path = info.GetString(nameof(this.Path));
-            this.ExitCode = info.GetInt32(nameof(this.ExitCode));
-            this.ProcessId = info.GetInt32(nameof(this.ProcessId));
+            Path = info.GetString(nameof(Path));
+            ExitCode = info.GetInt32(nameof(ExitCode));
+            ProcessId = info.GetInt32(nameof(ProcessId));
         }
 
         #endregion Constructors
@@ -233,9 +233,9 @@ namespace System.Management.Automation
 
             base.GetObjectData(info, context);
 
-            info.AddValue(nameof(this.Path), this.Path);
-            info.AddValue(nameof(this.ExitCode), this.ExitCode);
-            info.AddValue(nameof(this.ProcessId), this.ProcessId);
+            info.AddValue(nameof(Path), Path);
+            info.AddValue(nameof(ExitCode), ExitCode);
+            info.AddValue(nameof(ProcessId), ProcessId);
         }
     }
 
@@ -906,7 +906,7 @@ namespace System.Management.Automation
                                 _nativeProcess.ExitCode);
 
                         var exception =
-                            new NativeCommandException(
+                            new NativeCommandExitException(
                                 this.Path,
                                 _nativeProcess.ExitCode,
                                 _nativeProcess.Id,
