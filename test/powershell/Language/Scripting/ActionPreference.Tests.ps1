@@ -253,7 +253,8 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         }
 
         $err.FullyQualifiedErrorId | Should -BeExactly 'NamedParameterNotFound,Microsoft.PowerShell.Commands.GetProcessCommand'
-        $err.CategoryInfo.Activity | Should -BeExactly 'InvalidArgument'
+        $err.CategoryInfo.Activity | Should -BeExactly 'Get-Process'
+        $err.CategoryInfo.Category | Should -BeExactly 'InvalidArgument'
         $err.CategoryInfo.Reason   | Should -BeExactly 'ParameterBindingException'
     }
 }
