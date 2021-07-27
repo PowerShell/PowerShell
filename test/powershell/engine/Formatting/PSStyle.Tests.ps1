@@ -165,4 +165,75 @@ Describe 'Tests for $PSStyle automatic variable' {
             $PSStyle.Formatting.TableHeader = $old
         }
     }
+
+    It 'Should fail if setting formatting contains printable characters: <member>.<submember>' -TestCases @(
+        @{ Submember = 'Reset' }
+        @{ Submember = 'BlinkOff' }
+        @{ Submember = 'Blink' }
+        @{ Submember = 'BoldOff' }
+        @{ Submember = 'Bold' }
+        @{ Submember = 'HiddenOff' }
+        @{ Submember = 'Hidden' }
+        @{ Submember = 'ItalicOff' }
+        @{ Submember = 'Italic' }
+        @{ Submember = 'UnderlineOff' }
+        @{ Submember = 'Underline' }
+        @{ Submember = 'StrikethroughOff' }
+        @{ Submember = 'Strikethrough' }
+        @{ Member = 'Formatting'; Submember = 'FormatAccent' }
+        @{ Member = 'Formatting'; Submember = 'TableHeader' }
+        @{ Member = 'Formatting'; Submember = 'ErrorAccent' }
+        @{ Member = 'Formatting'; Submember = 'Error' }
+        @{ Member = 'Formatting'; Submember = 'Warning' }
+        @{ Member = 'Formatting'; Submember = 'Verbose' }
+        @{ Member = 'Formatting'; Submember = 'Debug' }
+        @{ Member = 'Progress'; Submember = 'Style' }
+        @{ Member = 'FileInfo'; Submember = 'Directory' }
+        @{ Member = 'FileInfo'; Submember = 'SymbolicLink' }
+        @{ Member = 'FileInfo'; Submember = 'Executable' }
+        @{ Member = 'FileInfo'; Submember = 'Hidden' }
+    ) {
+        param ($member, $submember)
+
+        if ($null -ne $member) {
+            { $PSStyle.$member.$submember = $PSStyle.Foreground.Red + 'hello' } | Should -Throw
+        }
+        else {
+            { $PSStyle.$submember = $PSStyle.Foreground.Red + 'hello' } | Should -Throw
+        }
+    }
+
+    It 'Should fail adding extension formatting with printable characters' {
+        { $PSStyle.FileInfo.Extension.Add('.md', 'hello') } | Should -Throw -ErrorId 'ArgumentException'
+    }
+
+    It 'Should add and remove extension' {
+        $extension = '.mytest'
+        $PSStyle.FileInfo.Extension.Keys | Should -Not -Contain $extension
+        $PSStyle.FileInfo.Extension.Add($extension, $PSStyle.Foreground.Blue)
+
+        $PSStyle.FileInfo.Extension[$extension] | Should -Be $PSStyle.Foreground.Blue
+        $PSStyle.FileInfo.Extension.Remove($extension)
+        $PSStyle.FileInfo.Extension.Keys | Should -Not -Contain $extension
+    }
+
+    It 'Should fail to add extension does not start with a period' {
+        { $PSStyle.FileInfo.Extension.Add('mytest', $PSStyle.Foreground.Blue) } | Should -Throw -ErrorId 'ArgumentException'
+    }
+
+    It 'Should fail to remove extension does not start with a period' {
+        { $PSStyle.FileInfo.Extension.Remove('zip') } | Should -Throw -ErrorId 'ArgumentException'
+    }
+
+    It 'Should fail if MaxWidth is less than 18' {
+        $maxWidth = $PSStyle.Progress.MaxWidth
+
+        # minimum allowed width is 18 as less than that doesn't render correctly
+        try {
+            { $PSStyle.Progress.MaxWidth = 17 } | Should -Throw -ErrorId 'ExceptionWhenSetting'
+        }
+        finally {
+            $PSStyle.Progress.MaxWidth = $maxWidth
+        }
+    }
 }
