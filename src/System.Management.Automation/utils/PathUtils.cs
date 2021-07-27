@@ -449,6 +449,18 @@ namespace System.Management.Automation
             return false;
         }
 
+        internal static string EnsureExtendedPrefix(string path)
+        {
+            if (IsPartiallyQualified(path) || IsDevice(path))
+                return path;
+
+            // Given \\server\share in longpath becomes \\?\UNC\server\share
+            if (path.StartsWith(UncPathPrefix, StringComparison.OrdinalIgnoreCase))
+                return path.Insert(2, UncDevicePrefixToInsert);
+
+            return ExtendedDevicePathPrefix + path;
+        }
+
         #region Helpers for long paths from .Net RUmtime
         private const string ExtendedDevicePathPrefix = @"\\?\";
         private const string UncPathPrefix = @"\\";
@@ -465,18 +477,6 @@ namespace System.Management.Automation
         private static bool IsValidDriveChar(char value)
         {
             return ((value >= 'A' && value <= 'Z') || (value >= 'a' && value <= 'z'));
-        }
-
-        internal static string EnsureExtendedPrefix(string path)
-        {
-            if (IsPartiallyQualified(path) || IsDevice(path))
-                return path;
-
-            // Given \\server\share in longpath becomes \\?\UNC\server\share
-            if (path.StartsWith(UncPathPrefix, StringComparison.OrdinalIgnoreCase))
-                return path.Insert(2, UncDevicePrefixToInsert);
-
-            return ExtendedDevicePathPrefix + path;
         }
 
         private static bool IsDevice(string path)

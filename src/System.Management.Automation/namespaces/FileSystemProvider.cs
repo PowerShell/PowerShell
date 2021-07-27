@@ -8280,7 +8280,7 @@ namespace Microsoft.PowerShell.Commands
                 fullPath = PathUtils.EnsureExtendedPrefix(fullPath);
             }
 
-            using (var handle = FindFirstFileEx(fullPath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+            using (SafeFindHandle handle = FindFirstFileEx(fullPath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
                 if (handle.IsInvalid)
                 {
