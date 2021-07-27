@@ -512,7 +512,12 @@ namespace System.Management.Automation
                 /// <returns>True if the dictionary contains the specified extension, otherwise false.</returns>
                 public bool ContainsKey(string extension)
                 {
-                    return _extensionDictionary.ContainsKey(extension);
+                    if (string.IsNullOrEmpty(extension))
+                    {
+                        return false;
+                    }
+
+                    return _extensionDictionary.ContainsKey(ValidateExtension(extension));
                 }
 
                 /// <summary>
