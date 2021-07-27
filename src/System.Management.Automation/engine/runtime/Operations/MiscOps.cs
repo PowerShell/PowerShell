@@ -1667,21 +1667,19 @@ namespace System.Management.Automation
                 preference = InquireForActionPreference(rte.Message, context);
             }
 
-            if ((preference == ActionPreference.SilentlyContinue) ||
-                (preference == ActionPreference.Ignore))
+            switch (preference)
             {
-                return;
-            }
+                case ActionPreference.SilentlyContinue:
+                case ActionPreference.Ignore:
+                    return;
 
-            if (preference == ActionPreference.Stop)
-            {
-                // The interpreter prompt CommandBaseStrings:InquireHalt
-                // should be suppressed when this flag is set.  This will be set
-                // when this prompt has already occurred and Break was chosen,
-                // or for ActionPreferenceStopException in all cases.
-                rte.SuppressPromptInInterpreter = true;
-
-                throw rte;
+                case ActionPreference.Stop:
+                    // The interpreter prompt CommandBaseStrings:InquireHalt
+                    // should be suppressed when this flag is set.  This will be set
+                    // when this prompt has already occurred and Break was chosen,
+                    // or for ActionPreferenceStopException in all cases.
+                    rte.SuppressPromptInInterpreter = true;
+                    throw rte;
             }
 
             if (!anyTrapHandlers && rte.WasThrownFromThrowStatement)
