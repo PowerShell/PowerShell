@@ -2067,7 +2067,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (instance?.BaseObject is FileSystemInfo fileInfo)
                 {
-                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo))
+                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo))
                     {
                         return $"{PSStyle.Instance.FileInfo.SymbolicLink}{fileInfo.Name}{PSStyle.Instance.Reset} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}";
                     }
@@ -2095,7 +2095,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 return instance?.BaseObject is FileSystemInfo fileInfo
-                    ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo)
+                    ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo)
                         ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
                         : fileInfo.Name
                     : string.Empty;
