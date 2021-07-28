@@ -951,7 +951,8 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
-        protected void Dispose(bool disposing)
+#pragma warning disable CA1822 // Mark members as static
+        protected static void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -960,6 +961,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // errorstream.Dispose();
             }
         }
+#pragma warning restore CA1822 // https://github.com/dotnet/roslyn-analyzers/issues/5323
         #endregion IDisposable
     }
 
