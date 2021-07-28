@@ -1696,7 +1696,9 @@ namespace System.Management.Automation
                     foreach (string value in setAtt.ValidValues)
                     {
                         if (value == string.Empty)
-                        { continue; }
+                        {
+                            continue;
+                        }
 
                         if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
                         {
