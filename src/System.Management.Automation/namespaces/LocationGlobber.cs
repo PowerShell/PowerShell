@@ -459,7 +459,7 @@ namespace System.Management.Automation
             // Associate the drive with the context
 
             context.Drive = drive;
-            providerInstance = _sessionState.Internal.GetContainerProviderInstance(drive.Provider);
+            providerInstance = SessionStateInternal.GetContainerProviderInstance(drive.Provider);
             ContainerCmdletProvider containerCmdletProvider = providerInstance as ContainerCmdletProvider;
             ItemCmdletProvider itemProvider = providerInstance as ItemCmdletProvider;
 
@@ -1921,7 +1921,7 @@ namespace System.Management.Automation
             try
             {
                 providerInstance =
-                    _sessionState.Internal.GetContainerProviderInstance(workingDriveForPath.Provider);
+                    SessionStateInternal.GetContainerProviderInstance(workingDriveForPath.Provider);
 
                 // Add the drive info to the context so that downstream methods
                 // have access to it.
@@ -1958,7 +1958,7 @@ namespace System.Management.Automation
             string childPath = string.Empty;
 
             CmdletProvider providerInstance =
-                _sessionState.Internal.GetContainerProviderInstance(drive.Provider);
+                SessionStateInternal.GetContainerProviderInstance(drive.Provider);
             NavigationCmdletProvider navigationProvider = providerInstance as NavigationCmdletProvider;
 
             // Normalize the paths

@@ -251,7 +251,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="logContext">Log context.</param>
         /// <param name="payLoad"></param>
-        internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
+        internal static void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
         {
             WriteEvent(id, channel, opcode, GetPSLevelFromSeverity(logContext.Severity), task, (PSKeyword)0x0,
                 LogContextToString(logContext), GetPSLogUserData(logContext.ExecutionContext), payLoad);

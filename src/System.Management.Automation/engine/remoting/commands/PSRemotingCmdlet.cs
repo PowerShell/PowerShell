@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="resourceString">resource String which holds the message
         /// </param>
         /// <returns>Error message loaded from appropriate resource cache.</returns>
-        internal string GetMessage(string resourceString)
+        internal static string GetMessage(string resourceString)
         {
             string message = GetMessage(resourceString, null);
 

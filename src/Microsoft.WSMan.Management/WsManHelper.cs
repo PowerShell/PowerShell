@@ -288,7 +288,7 @@ namespace Microsoft.WSMan.Management
             return Sessions.SessionObjCache;
         }
 
-        internal string GetRootNodeName(string operation, string resourceUri, string actionStr)
+        internal static string GetRootNodeName(string operation, string resourceUri, string actionStr)
         {
             string resultStr = null, sfx = null;
             if (resourceUri != null)
@@ -500,7 +500,7 @@ namespace Microsoft.WSMan.Management
             return resultString;
         }
 
-        internal string GetXmlNs(string resUri)
+        internal static string GetXmlNs(string resUri)
         {
             return (@"xmlns:p=""" + StripParams(resUri) + @"""");
         }
@@ -913,7 +913,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        internal string GetURIWithFilter(string uri, string filter, Hashtable selectorset, string operation)
+        internal static string GetURIWithFilter(string uri, string filter, Hashtable selectorset, string operation)
         {
             StringBuilder sburi = new StringBuilder();
             sburi.Append(uri);

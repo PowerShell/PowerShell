@@ -42,8 +42,7 @@ namespace System.Management.Automation.Internal.Host
             _internalRawUI = new InternalHostRawUserInterface(rawui, _parent);
         }
 
-        private
-        void
+        private static void
         ThrowNotInteractive()
         {
             InternalHostRawUserInterface.ThrowNotInteractive();

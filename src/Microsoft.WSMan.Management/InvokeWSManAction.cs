@@ -277,7 +277,7 @@ namespace Microsoft.WSMan.Management
                 // create the session object
                 m_session = helper.CreateSessionObject(m_wsmanObject, Authentication, sessionoption, Credential, connectionStr, CertificateThumbprint, usessl.IsPresent);
 
-                string rootNode = helper.GetRootNodeName(helper.WSManOp, m_resource.ResourceUri, action);
+                string rootNode = WSManHelper.GetRootNodeName(helper.WSManOp, m_resource.ResourceUri, action);
                 string input = helper.ProcessInput(m_wsmanObject, filepath, helper.WSManOp, rootNode, valueset, m_resource, m_session);
                 string resultXml = m_session.Invoke(action, m_resource, input, 0);
 

@@ -276,7 +276,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="payLoad"></param>
         internal static void LogOperationalError(PSEventId id, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
         {
-            provider.WriteEvent(id, PSChannel.Operational, opcode, task, logContext, payLoad);
+            PSEtwLogProvider.WriteEvent(id, PSChannel.Operational, opcode, task, logContext, payLoad);
         }
 
         internal static void SetActivityIdForCurrentThread(Guid newActivityId)

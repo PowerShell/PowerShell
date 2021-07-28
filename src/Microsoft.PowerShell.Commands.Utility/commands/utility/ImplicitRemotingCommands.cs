@@ -557,7 +557,7 @@ namespace Microsoft.PowerShell.Commands
                 args);
         }
 
-        private ErrorRecord GetErrorNoCommandsImportedBecauseOfSkipping()
+        private static ErrorRecord GetErrorNoCommandsImportedBecauseOfSkipping()
         {
             const string errorId = "ErrorNoCommandsImportedBecauseOfSkipping";
 
@@ -573,7 +573,7 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-        private ErrorRecord GetErrorMalformedDataFromRemoteCommand(string commandName)
+        private static ErrorRecord GetErrorMalformedDataFromRemoteCommand(string commandName)
         {
             if (string.IsNullOrEmpty(commandName))
             {
@@ -594,7 +594,7 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-        private ErrorRecord GetErrorCommandSkippedBecauseOfShadowing(string commandNames)
+        private static ErrorRecord GetErrorCommandSkippedBecauseOfShadowing(string commandNames)
         {
             if (string.IsNullOrEmpty(commandNames))
             {
@@ -615,7 +615,7 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-        private ErrorRecord GetErrorSkippedNonRequestedCommand(string commandName)
+        private static ErrorRecord GetErrorSkippedNonRequestedCommand(string commandName)
         {
             if (string.IsNullOrEmpty(commandName))
             {
@@ -636,7 +636,7 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-        private ErrorRecord GetErrorSkippedNonRequestedTypeDefinition(string typeName)
+        private static ErrorRecord GetErrorSkippedNonRequestedTypeDefinition(string typeName)
         {
             if (string.IsNullOrEmpty(typeName))
             {
@@ -657,7 +657,7 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-        private ErrorRecord GetErrorSkippedUnsafeCommandName(string commandName)
+        private static ErrorRecord GetErrorSkippedUnsafeCommandName(string commandName)
         {
             if (string.IsNullOrEmpty(commandName))
             {
@@ -678,7 +678,7 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-        private ErrorRecord GetErrorSkippedUnsafeNameInMetadata(string commandName, string nameType, string name)
+        private static ErrorRecord GetErrorSkippedUnsafeNameInMetadata(string commandName, string nameType, string name)
         {
             if (string.IsNullOrEmpty(commandName))
             {
@@ -764,7 +764,7 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-        private ErrorRecord GetErrorCouldntResolvedAlias(string aliasName)
+        private static ErrorRecord GetErrorCouldntResolvedAlias(string aliasName)
         {
             if (string.IsNullOrEmpty(aliasName))
             {
@@ -785,7 +785,7 @@ namespace Microsoft.PowerShell.Commands
             return errorRecord;
         }
 
-        private ErrorRecord GetErrorNoResultsFromRemoteEnd(string commandName)
+        private static ErrorRecord GetErrorNoResultsFromRemoteEnd(string commandName)
         {
             if (string.IsNullOrEmpty(commandName))
             {
@@ -813,7 +813,7 @@ namespace Microsoft.PowerShell.Commands
             if (_commandsSkippedBecauseOfShadowing.Count != 0)
             {
                 string skippedCommands = string.Join(", ", _commandsSkippedBecauseOfShadowing.ToArray());
-                ErrorRecord errorRecord = this.GetErrorCommandSkippedBecauseOfShadowing(skippedCommands);
+                ErrorRecord errorRecord = GetErrorCommandSkippedBecauseOfShadowing(skippedCommands);
                 this.WriteWarning(errorRecord.ErrorDetails.Message);
             }
         }
@@ -999,14 +999,14 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    this.ThrowTerminatingError(this.GetErrorMalformedDataFromRemoteCommand(commandName));
+                    this.ThrowTerminatingError(GetErrorMalformedDataFromRemoteCommand(commandName));
                 }
             }
 
             T t;
             if (!LanguagePrimitives.TryConvertTo<T>(value, out t))
             {
-                this.ThrowTerminatingError(this.GetErrorMalformedDataFromRemoteCommand(commandName));
+                this.ThrowTerminatingError(GetErrorMalformedDataFromRemoteCommand(commandName));
             }
 
             return t;
@@ -1022,7 +1022,7 @@ namespace Microsoft.PowerShell.Commands
             PSPropertyInfo property = pso.Properties[propertyName];
             if (property == null)
             {
-                this.ThrowTerminatingError(this.GetErrorMalformedDataFromRemoteCommand(commandName));
+                this.ThrowTerminatingError(GetErrorMalformedDataFromRemoteCommand(commandName));
             }
 
             return ConvertTo<T>(commandName, property.Value, nullOk);
@@ -1188,20 +1188,20 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!IsCommandNameMatchingParameters(commandMetadata.Name))
             {
-                this.WriteError(this.GetErrorSkippedNonRequestedCommand(commandMetadata.Name));
+                this.WriteError(GetErrorSkippedNonRequestedCommand(commandMetadata.Name));
                 return false;
             }
 
             if (!IsSafeNameOrIdentifier(commandMetadata.Name))
             {
-                this.WriteError(this.GetErrorSkippedUnsafeCommandName(commandMetadata.Name));
+                this.WriteError(GetErrorSkippedUnsafeCommandName(commandMetadata.Name));
                 return false;
             }
 
             if ((commandMetadata.DefaultParameterSetName != null) &&
                 !IsSafeNameOrIdentifier(commandMetadata.DefaultParameterSetName))
             {
-                this.WriteError(this.GetErrorSkippedUnsafeNameInMetadata(
+                this.WriteError(GetErrorSkippedUnsafeNameInMetadata(
                     commandMetadata.Name,
                     "ParameterSet",
                     commandMetadata.DefaultParameterSetName));
@@ -1226,7 +1226,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!IsSafeParameterName(parameter.Name))
                     {
-                        this.WriteError(this.GetErrorSkippedUnsafeNameInMetadata(
+                        this.WriteError(GetErrorSkippedUnsafeNameInMetadata(
                             commandMetadata.Name,
                             "Parameter",
                             parameter.Name));
@@ -1239,7 +1239,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (!IsSafeNameOrIdentifier(alias))
                             {
-                                this.WriteError(this.GetErrorSkippedUnsafeNameInMetadata(
+                                this.WriteError(GetErrorSkippedUnsafeNameInMetadata(
                                     commandMetadata.Name,
                                     "Alias",
                                     alias));
@@ -1254,7 +1254,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (!IsSafeNameOrIdentifier(setPair.Key))
                             {
-                                this.WriteError(this.GetErrorSkippedUnsafeNameInMetadata(
+                                this.WriteError(GetErrorSkippedUnsafeNameInMetadata(
                                     commandMetadata.Name,
                                     "ParameterSet",
                                     setPair.Key));
@@ -1341,7 +1341,7 @@ namespace Microsoft.PowerShell.Commands
                 resolvedCommandName = GetPropertyValue<string>("Get-Command", deserializedCommandInfo, "ResolvedCommandName", true);
                 if (string.IsNullOrEmpty(resolvedCommandName))
                 {
-                    this.WriteError(this.GetErrorCouldntResolvedAlias(name));
+                    this.WriteError(GetErrorCouldntResolvedAlias(name));
                 }
             }
             else
@@ -1421,7 +1421,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (resolvedCommandName != null && !IsSafeNameOrIdentifier(commandMetadata.Name))
             {
-                this.WriteError(this.GetErrorSkippedUnsafeCommandName(resolvedCommandName));
+                this.WriteError(GetErrorSkippedUnsafeCommandName(resolvedCommandName));
                 return;
             }
 
@@ -1468,7 +1468,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!IsTypeNameMatchingParameters(typeDefinition.TypeName))
             {
-                this.WriteError(this.GetErrorSkippedNonRequestedTypeDefinition(typeDefinition.TypeName));
+                this.WriteError(GetErrorSkippedNonRequestedTypeDefinition(typeDefinition.TypeName));
                 return false;
             }
 
@@ -1644,7 +1644,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if ((numberOfReceivedObjects == 0) && (_formatTypeNamesSpecified))
                         {
-                            this.ThrowTerminatingError(this.GetErrorNoResultsFromRemoteEnd("Get-FormatData"));
+                            this.ThrowTerminatingError(GetErrorNoResultsFromRemoteEnd("Get-FormatData"));
                         }
 
                         return result;
@@ -1770,7 +1770,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if ((numberOfReceivedObjects == 0) && (_commandParameterSpecified))
                         {
-                            this.ThrowTerminatingError(this.GetErrorNoResultsFromRemoteEnd("Get-Command"));
+                            this.ThrowTerminatingError(GetErrorNoResultsFromRemoteEnd("Get-Command"));
                         }
 
                         return new List<CommandMetadata>(name2commandMetadata.Values);
@@ -1889,7 +1889,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (listOfCommandMetadata.Count == 0)
                 {
-                    ErrorRecord error = this.GetErrorNoCommandsImportedBecauseOfSkipping();
+                    ErrorRecord error = GetErrorNoCommandsImportedBecauseOfSkipping();
                     this.ThrowTerminatingError(error);
                 }
             }

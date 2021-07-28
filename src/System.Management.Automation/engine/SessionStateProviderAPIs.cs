@@ -375,7 +375,7 @@ namespace System.Management.Automation
         /// if the <paramref name="provider"/> is not for a provider
         /// that is derived from NavigationCmdletProvider.
         /// </exception>
-        internal DriveCmdletProvider GetDriveProviderInstance(ProviderInfo provider)
+        internal static DriveCmdletProvider GetDriveProviderInstance(ProviderInfo provider)
         {
             if (provider == null)
             {
@@ -474,7 +474,7 @@ namespace System.Management.Automation
         /// if the <paramref name="provider"/> is not for a provider
         /// that is derived from NavigationCmdletProvider.
         /// </exception>
-        internal ItemCmdletProvider GetItemProviderInstance(ProviderInfo provider)
+        internal static ItemCmdletProvider GetItemProviderInstance(ProviderInfo provider)
         {
             if (provider == null)
             {
@@ -573,7 +573,7 @@ namespace System.Management.Automation
         /// if the <paramref name="provider"/> is not for a provider
         /// that is derived from NavigationCmdletProvider.
         /// </exception>
-        internal ContainerCmdletProvider GetContainerProviderInstance(ProviderInfo provider)
+        internal static ContainerCmdletProvider GetContainerProviderInstance(ProviderInfo provider)
         {
             if (provider == null)
             {
@@ -637,7 +637,7 @@ namespace System.Management.Automation
         /// if the <paramref name="provider"/> is not for a provider
         /// that is derived from NavigationCmdletProvider.
         /// </exception>
-        internal NavigationCmdletProvider GetNavigationProviderInstance(ProviderInfo provider)
+        internal static NavigationCmdletProvider GetNavigationProviderInstance(ProviderInfo provider)
         {
             if (provider == null)
             {

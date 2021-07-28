@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             return res;
         }
 
-        private IEnumerable<CompletionResult> CompleteSeparator(string wordToComplete)
+        private static IEnumerable<CompletionResult> CompleteSeparator(string wordToComplete)
         {
             var res = new List<CompletionResult>(10);
 
