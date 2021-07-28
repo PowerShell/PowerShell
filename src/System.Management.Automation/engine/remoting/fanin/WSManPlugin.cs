@@ -1191,7 +1191,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <returns></returns>
-        internal protected static bool EnsureOptionsComply(
+        protected internal static bool EnsureOptionsComply(
             WSManNativeApi.WSManPluginRequest requestDetails)
         {
             WSManNativeApi.WSManOption[] options = requestDetails.operationInfo.optionSet.options;
