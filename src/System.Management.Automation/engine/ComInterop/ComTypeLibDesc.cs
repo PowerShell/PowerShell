@@ -37,7 +37,7 @@ namespace System.Management.Automation.ComInterop
             return string.Format(CultureInfo.CurrentCulture, "<type library {0}>", Name);
         }
 
-        public string Documentation
+        public static string Documentation
         {
             get { return string.Empty; }
         }

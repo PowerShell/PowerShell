@@ -2377,7 +2377,7 @@ namespace System.Management.Automation
                         var switchPair = boundArgument.Value as SwitchPair;
                         if (switchPair != null)
                         {
-                            result[boundArgument.Key] = switchPair.Argument;
+                            result[boundArgument.Key] = SwitchPair.Argument;
                             continue;
                         }
                         // Ignored:

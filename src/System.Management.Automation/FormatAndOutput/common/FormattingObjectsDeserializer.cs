@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return val != null && (bool)val;
         }
 
-        internal WriteStreamType DeserializeWriteStreamTypeMemberVariable(PSObject so)
+        internal static WriteStreamType DeserializeWriteStreamTypeMemberVariable(PSObject so)
         {
             object wsTypeValue = GetProperty(so, "writeStream");
             if (wsTypeValue == null)
@@ -563,7 +563,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             base.Deserialize(so, deserializer);
             this.formatEntryInfo = (FormatEntryInfo)deserializer.DeserializeMandatoryMemberObject(so, "formatEntryInfo");
             this.outOfBand = deserializer.DeserializeBoolMemberVariable(so, "outOfBand");
-            this.writeStream = deserializer.DeserializeWriteStreamTypeMemberVariable(so);
+            this.writeStream = FormatObjectDeserializer.DeserializeWriteStreamTypeMemberVariable(so);
             this.isHelpObject = so.IsHelpObject;
         }
     }

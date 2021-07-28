@@ -270,7 +270,7 @@ namespace System.Management.Automation
             PSScriptCmdlet scriptCmdlet = this.Command as PSScriptCmdlet;
             if (scriptCmdlet != null && !UseLocalScope)
             {
-                scriptCmdlet.PopDottedScope(CommandSessionState.CurrentScope);
+                PSScriptCmdlet.PopDottedScope(CommandSessionState.CurrentScope);
             }
         }
 

@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         private void PopGroup()
         {
-            GroupEndData endGroup = _viewManager.ViewGenerator.GenerateGroupEndData();
+            GroupEndData endGroup = ViewGenerator.GenerateGroupEndData();
             this.WriteObject(endGroup);
             contextManager.Pop();
         }

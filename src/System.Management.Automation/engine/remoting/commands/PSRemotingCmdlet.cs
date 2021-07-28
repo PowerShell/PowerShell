@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="resourceString"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        internal string GetMessage(string resourceString, params object[] args)
+        internal static string GetMessage(string resourceString, params object[] args)
         {
             string message;
 

@@ -4676,7 +4676,7 @@ namespace System.Management.Automation
                 if (fileSystemProviders.Count > 0)
                 {
                     providerPath = path;
-                    providerInstance = ExecutionContext.EngineSessionState.GetProviderInstance(
+                    providerInstance = GetProviderInstance(
                         fileSystemProviders[0]);
                 }
             }

@@ -462,7 +462,7 @@ namespace Microsoft.PowerShell.Commands
             return certContext;
         }
 
-        public void FreeCert(IntPtr certContext)
+        public static void FreeCert(IntPtr certContext)
         {
             Security.NativeMethods.CertFreeCertificateContext(certContext);
         }
@@ -1081,7 +1081,7 @@ namespace Microsoft.PowerShell.Commands
                         IntPtr certContext = store.GetFirstCert();
                         if (certContext != IntPtr.Zero)
                         {
-                            store.FreeCert(certContext);
+                            X509NativeStore.FreeCert(certContext);
                             result = true;
                         }
                     }
@@ -2112,7 +2112,7 @@ namespace Microsoft.PowerShell.Commands
                             item = new X509Certificate2(certContext);
                         }
 
-                        store.FreeCert(certContext);
+                        X509NativeStore.FreeCert(certContext);
 
                         break;
 
@@ -2914,7 +2914,7 @@ namespace Microsoft.PowerShell.Commands
                 CultureInfo currentUICulture = CultureInfo.CurrentUICulture;
 
                 string fullHelpPath = Path.Combine(
-                    this.ProviderInfo.ApplicationBase,
+                    ProviderInfo.ApplicationBase,
                     currentUICulture.ToString(),
                     this.ProviderInfo.HelpFile);
                 XmlReaderSettings settings = new();
@@ -3219,7 +3219,7 @@ namespace Microsoft.PowerShell.Commands
                         if (certContext != IntPtr.Zero)
                         {
                             certFromStore = new X509Certificate2(certContext);
-                            store.FreeCert(certContext);
+                            X509NativeStore.FreeCert(certContext);
                         }
                     }
 

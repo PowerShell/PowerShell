@@ -569,7 +569,7 @@ namespace Microsoft.WSMan.Management
             helper = new WSManHelper(this);
             helper.WSManOp = "Get";
             string connectionStr = null;
-            connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
+            connectionStr = WSManHelper.CreateConnectionString(connectionuri, port, computername, applicationname);
             if (connectionuri != null)
             {
                 try
@@ -581,7 +581,7 @@ namespace Microsoft.WSMan.Management
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    helper.AssertError(helper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
+                    helper.AssertError(WSManHelper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
                 }
             }
 
@@ -950,7 +950,7 @@ namespace Microsoft.WSMan.Management
             try
             {
                 string connectionStr = string.Empty;
-                connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
+                connectionStr = WSManHelper.CreateConnectionString(connectionuri, port, computername, applicationname);
                 if (connectionuri != null)
                 {
                     try
@@ -962,7 +962,7 @@ namespace Microsoft.WSMan.Management
                     }
                     catch (IndexOutOfRangeException)
                     {
-                        helper.AssertError(helper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
+                        helper.AssertError(WSManHelper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
                     }
                 }
 
@@ -1245,7 +1245,7 @@ namespace Microsoft.WSMan.Management
             try
             {
                 string connectionStr = string.Empty;
-                connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
+                connectionStr = WSManHelper.CreateConnectionString(connectionuri, port, computername, applicationname);
                 if (connectionuri != null)
                 {
                     try
@@ -1257,7 +1257,7 @@ namespace Microsoft.WSMan.Management
                     }
                     catch (IndexOutOfRangeException)
                     {
-                        helper.AssertError(helper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
+                        helper.AssertError(WSManHelper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
                     }
                 }
 
@@ -1536,7 +1536,7 @@ namespace Microsoft.WSMan.Management
         {
             helper = new WSManHelper(this);
             helper.WSManOp = "new";
-            connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
+            connectionStr = WSManHelper.CreateConnectionString(connectionuri, port, computername, applicationname);
             if (connectionuri != null)
             {
                 try
@@ -1548,7 +1548,7 @@ namespace Microsoft.WSMan.Management
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    helper.AssertError(helper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
+                    helper.AssertError(WSManHelper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
                 }
             }
         }

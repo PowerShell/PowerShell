@@ -100,7 +100,7 @@ namespace System.Management.Automation
             try
             {
                 context.RuntimePermissions = evalPersmissions;
-                return context.InferType(ast, new TypeInferenceVisitor(context)).Distinct(new PSTypeNameComparer()).ToList();
+                return TypeInferenceContext.InferType(ast, new TypeInferenceVisitor(context)).Distinct(new PSTypeNameComparer()).ToList();
             }
             finally
             {
@@ -249,7 +249,7 @@ namespace System.Management.Automation
 
                 var members = isStatic
                               ? PSObject.DotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type)
-                              : PSObject.DotNetInstanceAdapter.GetPropertiesAndMethods(type, false);
+                              : DotNetAdapter.GetPropertiesAndMethods(type, false);
 
                 if (filterToCall != null)
                 {
@@ -395,7 +395,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal IEnumerable<PSTypeName> InferType(Ast ast, TypeInferenceVisitor visitor)
+        internal static IEnumerable<PSTypeName> InferType(Ast ast, TypeInferenceVisitor visitor)
         {
             var res = ast.Accept(visitor);
             Diagnostics.Assert(res != null, "Fix visit methods to not return null");
@@ -492,7 +492,7 @@ namespace System.Management.Automation
 
         private IEnumerable<PSTypeName> InferTypes(Ast ast)
         {
-            return _context.InferType(ast, this);
+            return TypeInferenceContext.InferType(ast, this);
         }
 
         object ICustomAstVisitor.VisitTypeExpression(TypeExpressionAst typeExpressionAst)

@@ -110,7 +110,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal string ApplicationBase
+        internal static string ApplicationBase
         {
             get
             {

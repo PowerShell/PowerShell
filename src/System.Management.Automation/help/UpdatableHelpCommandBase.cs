@@ -508,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Win8: 572882 When the system locale is English and the UI is JPN,
             // running "update-help" still downs English help content.
-            var cultures = _language ?? _helpSystem.GetCurrentUICulture();
+            var cultures = _language ?? UpdatableHelpSystem.GetCurrentUICulture();
 
             foreach (string culture in cultures)
             {
@@ -639,7 +639,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="culture">Current culture.</param>
         /// <param name="force">Force update.</param>
         /// <returns>True if it is necessary to update help, false if not.</returns>
-        internal bool IsUpdateNecessary(UpdatableHelpModuleInfo module, UpdatableHelpInfo currentHelpInfo,
+        internal static bool IsUpdateNecessary(UpdatableHelpModuleInfo module, UpdatableHelpInfo currentHelpInfo,
             UpdatableHelpInfo newHelpInfo, CultureInfo culture, bool force)
         {
             Debug.Assert(module != null);
@@ -804,7 +804,7 @@ namespace Microsoft.PowerShell.Commands
         /// Validates the provider of the path, only FileSystem provider is accepted.
         /// </summary>
         /// <param name="path">Path to validate.</param>
-        internal void ValidatePathProvider(PathInfo path)
+        internal static void ValidatePathProvider(PathInfo path)
         {
             if (path.Provider == null || path.Provider.Name != FileSystemProvider.ProviderName)
             {

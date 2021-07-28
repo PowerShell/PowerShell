@@ -274,7 +274,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="provider"/> is null.
         /// </exception>
-        internal Provider.CmdletProvider GetProviderInstance(ProviderInfo provider)
+        internal static Provider.CmdletProvider GetProviderInstance(ProviderInfo provider)
         {
             if (provider == null)
             {

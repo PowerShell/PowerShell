@@ -156,7 +156,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        internal string GetResourceMsgFromResourcetext(string rscname)
+        internal static string GetResourceMsgFromResourcetext(string rscname)
         {
             return _resourceMgr.GetString(rscname);
         }
@@ -167,7 +167,7 @@ namespace Microsoft.WSMan.Management
             return FormatResourceMsgFromResourcetextS(_resourceMgr, rscname, args);
         }
 
-        internal string FormatResourceMsgFromResourcetext(string resourceName,
+        internal static string FormatResourceMsgFromResourcetext(string resourceName,
             params object[] args)
         {
             return FormatResourceMsgFromResourcetextS(_resourceMgr, resourceName, args);
@@ -205,7 +205,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         /// <param name="key">Connection string.</param>
         /// <param name="value">Session object.</param>
-        internal void AddtoDictionary(string key, object value)
+        internal static void AddtoDictionary(string key, object value)
         {
             key = key.ToLowerInvariant();
             lock (Sessions.SessionObjCache)
@@ -233,7 +233,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        internal object RemoveFromDictionary(string computer)
+        internal static object RemoveFromDictionary(string computer)
         {
             object objsession = null;
             computer = computer.ToLowerInvariant();
@@ -319,7 +319,7 @@ namespace Microsoft.WSMan.Management
             return resultStr;
         }
 
-        internal string StripParams(string uri)
+        internal static string StripParams(string uri)
         {
             int pos = uri.IndexOf('?');
             if (pos > 0)
@@ -505,7 +505,7 @@ namespace Microsoft.WSMan.Management
             return (@"xmlns:p=""" + StripParams(resUri) + @"""");
         }
 
-        internal XmlNode GetXmlNode(string xmlString, string xpathpattern, string xmlnamespace)
+        internal static XmlNode GetXmlNode(string xmlString, string xpathpattern, string xmlnamespace)
         {
             XmlNode node = null;
             XmlDocument xDoc = new XmlDocument();
@@ -520,7 +520,7 @@ namespace Microsoft.WSMan.Management
             return node;
         }
 
-        internal string CreateConnectionString(Uri ConnUri, int port, string computername, string applicationname)
+        internal static string CreateConnectionString(Uri ConnUri, int port, string computername, string applicationname)
         {
             string ConnectionString = null;
             if (ConnUri != null)
@@ -863,7 +863,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        internal string GetFilterString(Hashtable seletorset)
+        internal static string GetFilterString(Hashtable seletorset)
         {
             StringBuilder filter = new StringBuilder();
             foreach (DictionaryEntry entry in seletorset)

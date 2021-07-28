@@ -543,7 +543,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Localized errors and messages
 
-        internal ErrorDetails GetErrorDetails(string errorId, params object[] args)
+        internal static ErrorDetails GetErrorDetails(string errorId, params object[] args)
         {
             if (string.IsNullOrEmpty(errorId))
             {
@@ -561,7 +561,7 @@ namespace Microsoft.PowerShell.Commands
         {
             const string errorId = "ErrorNoCommandsImportedBecauseOfSkipping";
 
-            ErrorDetails details = this.GetErrorDetails(errorId);
+            ErrorDetails details = GetErrorDetails(errorId);
 
             ErrorRecord errorRecord = new(
                 new ArgumentException(details.Message),
@@ -582,7 +582,7 @@ namespace Microsoft.PowerShell.Commands
 
             const string errorId = "ErrorMalformedDataFromRemoteCommand";
 
-            ErrorDetails details = this.GetErrorDetails(errorId, commandName);
+            ErrorDetails details = GetErrorDetails(errorId, commandName);
 
             ErrorRecord errorRecord = new(
                 new ArgumentException(details.Message),
@@ -603,7 +603,7 @@ namespace Microsoft.PowerShell.Commands
 
             const string errorId = "ErrorCommandSkippedBecauseOfShadowing";
 
-            ErrorDetails details = this.GetErrorDetails(errorId, commandNames);
+            ErrorDetails details = GetErrorDetails(errorId, commandNames);
 
             ErrorRecord errorRecord = new(
                 new InvalidOperationException(details.Message),
@@ -624,7 +624,7 @@ namespace Microsoft.PowerShell.Commands
 
             const string errorId = "ErrorSkippedNonRequestedCommand";
 
-            ErrorDetails details = this.GetErrorDetails(errorId, commandName);
+            ErrorDetails details = GetErrorDetails(errorId, commandName);
 
             ErrorRecord errorRecord = new(
                 new InvalidOperationException(details.Message),
@@ -645,7 +645,7 @@ namespace Microsoft.PowerShell.Commands
 
             const string errorId = "ErrorSkippedNonRequestedTypeDefinition";
 
-            ErrorDetails details = this.GetErrorDetails(errorId, typeName);
+            ErrorDetails details = GetErrorDetails(errorId, typeName);
 
             ErrorRecord errorRecord = new(
                 new InvalidOperationException(details.Message),
@@ -666,7 +666,7 @@ namespace Microsoft.PowerShell.Commands
 
             const string errorId = "ErrorSkippedUnsafeCommandName";
 
-            ErrorDetails details = this.GetErrorDetails(errorId, commandName);
+            ErrorDetails details = GetErrorDetails(errorId, commandName);
 
             ErrorRecord errorRecord = new(
                 new InvalidOperationException(details.Message),
@@ -698,7 +698,7 @@ namespace Microsoft.PowerShell.Commands
 
             string errorId = "ErrorSkippedUnsafe" + nameType + "Name";
 
-            ErrorDetails details = this.GetErrorDetails(errorId, commandName, name);
+            ErrorDetails details = GetErrorDetails(errorId, commandName, name);
 
             ErrorRecord errorRecord = new(
                 new InvalidOperationException(details.Message),
@@ -735,7 +735,7 @@ namespace Microsoft.PowerShell.Commands
                 if (Deserializer.IsInstanceOfType(remoteException.SerializedRemoteException, typeof(CommandNotFoundException)))
                 {
                     errorId = "ErrorRequiredRemoteCommandNotFound";
-                    errorDetails = this.GetErrorDetails(errorId, this.MyInvocation.MyCommand.Name);
+                    errorDetails = GetErrorDetails(errorId, this.MyInvocation.MyCommand.Name);
 
                     errorRecord = new ErrorRecord(
                         new RuntimeException(errorDetails.Message, runtimeException),
@@ -752,7 +752,7 @@ namespace Microsoft.PowerShell.Commands
             // output a generic error message if exception is not recognized
             //
             errorId = "ErrorFromRemoteCommand";
-            errorDetails = this.GetErrorDetails(errorId, commandName, runtimeException.Message);
+            errorDetails = GetErrorDetails(errorId, commandName, runtimeException.Message);
 
             errorRecord = new ErrorRecord(
                 new RuntimeException(errorDetails.Message, runtimeException),
@@ -773,7 +773,7 @@ namespace Microsoft.PowerShell.Commands
 
             const string errorId = "ErrorCouldntResolveAlias";
 
-            ErrorDetails details = this.GetErrorDetails(errorId, aliasName);
+            ErrorDetails details = GetErrorDetails(errorId, aliasName);
 
             ErrorRecord errorRecord = new(
                 new ArgumentException(details.Message),
@@ -794,7 +794,7 @@ namespace Microsoft.PowerShell.Commands
 
             const string errorId = "ErrorNoResultsFromRemoteEnd";
 
-            ErrorDetails details = this.GetErrorDetails(errorId, commandName);
+            ErrorDetails details = GetErrorDetails(errorId, commandName);
 
             ErrorRecord errorRecord = new(
                 new ArgumentException(details.Message),

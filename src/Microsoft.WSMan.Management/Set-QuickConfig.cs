@@ -86,8 +86,8 @@ namespace Microsoft.WSMan.Management
             // If not running elevated, then throw an "elevation required" error message.
             WSManHelper.ThrowIfNotAdministrator();
             helper = new WSManHelper(this);
-            string query = helper.GetResourceMsgFromResourcetext("QuickConfigContinueQuery");
-            string caption = helper.GetResourceMsgFromResourcetext("QuickConfigContinueCaption");
+            string query = WSManHelper.GetResourceMsgFromResourcetext("QuickConfigContinueQuery");
+            string caption = WSManHelper.GetResourceMsgFromResourcetext("QuickConfigContinueCaption");
             if (!force && !ShouldContinue(query, caption))
             {
                 return;

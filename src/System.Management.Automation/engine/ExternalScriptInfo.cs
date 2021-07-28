@@ -409,7 +409,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal uint ApplicationIDLineNumber
+        internal static uint ApplicationIDLineNumber
         {
             get { return 0; }
         }
@@ -450,7 +450,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal uint PSVersionLineNumber
+        internal static uint PSVersionLineNumber
         {
             get { return 0; }
         }

@@ -3582,7 +3582,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal IEnumerable<object> GetPropertiesAndMethods(Type type, bool @static)
+        internal static IEnumerable<object> GetPropertiesAndMethods(Type type, bool @static)
         {
             CacheTable propertyTable = @static
                 ? GetStaticPropertyReflectionTable(type)
@@ -3744,7 +3744,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        protected T GetFirstDynamicMemberOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
+        protected static T GetFirstDynamicMemberOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
             var idmop = obj as IDynamicMetaObjectProvider;
             if (idmop == null || obj is PSObject)
@@ -3859,7 +3859,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal void AddAllDynamicMembers<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T : PSMemberInfo
+        internal static void AddAllDynamicMembers<T>(object obj, PSMemberInfoInternalCollection<T> members, bool ignoreDuplicates) where T : PSMemberInfo
         {
             var idmop = obj as IDynamicMetaObjectProvider;
             if (idmop == null || obj is PSObject)

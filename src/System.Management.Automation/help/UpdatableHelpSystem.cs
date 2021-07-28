@@ -290,7 +290,7 @@ namespace System.Management.Automation.Help
         /// Gets the current UIculture (includes the fallback chain)
         /// </summary>
         /// <returns>A list of cultures.</returns>
-        internal IEnumerable<string> GetCurrentUICulture()
+        internal static IEnumerable<string> GetCurrentUICulture()
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
 
@@ -1498,7 +1498,7 @@ namespace System.Management.Automation.Help
         /// Gets the default source path from GP.
         /// </summary>
         /// <returns></returns>
-        internal string GetDefaultSourcePath()
+        internal static string GetDefaultSourcePath()
         {
             var updatableHelpSetting = Utils.GetPolicySetting<UpdatableHelp>(Utils.SystemWideOnlyConfig);
             string defaultSourcePath = updatableHelpSetting?.DefaultSourcePath;

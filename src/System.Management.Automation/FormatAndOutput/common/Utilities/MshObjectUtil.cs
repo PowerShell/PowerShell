@@ -561,7 +561,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class PSPropertyExpressionFactory
     {
         /// <exception cref="ParseException"></exception>
-        internal void VerifyScriptBlockText(string scriptText)
+        internal static void VerifyScriptBlockText(string scriptText)
         {
             ScriptBlock.Create(scriptText);
         }

@@ -3280,7 +3280,7 @@ namespace System.Management.Automation
         /// <param name="helper"></param>
         /// <param name="failureException"></param>
         /// <param name="failureErrorRecord"></param>
-        protected void ProcessJobFailure(ExecutionCmdletHelper helper, out Exception failureException,
+        protected static void ProcessJobFailure(ExecutionCmdletHelper helper, out Exception failureException,
                             out ErrorRecord failureErrorRecord)
         {
             //      There are three errors possible

@@ -195,7 +195,7 @@ namespace Microsoft.WSMan.Management
 
             if (!string.IsNullOrEmpty(drive.Root))
             {
-                AssertError(helper.GetResourceMsgFromResourcetext("NewDriveRootDoesNotExist"), false);
+                AssertError(WSManHelper.GetResourceMsgFromResourcetext("NewDriveRootDoesNotExist"), false);
                 return null;
             }
 
@@ -210,7 +210,7 @@ namespace Microsoft.WSMan.Management
         {
             Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
             drives.Add(new PSDriveInfo(WSManStringLiterals.rootpath, ProviderInfo, string.Empty,
-                        helper.GetResourceMsgFromResourcetext("ConfigStorage"), null));
+                        WSManHelper.GetResourceMsgFromResourcetext("ConfigStorage"), null));
             return drives;
         }
 
@@ -875,14 +875,14 @@ namespace Microsoft.WSMan.Management
         {
             if (value == null)
             {
-                throw new ArgumentException(helper.GetResourceMsgFromResourcetext("value"));
+                throw new ArgumentException(WSManHelper.GetResourceMsgFromResourcetext("value"));
             }
 
             string ChildName = string.Empty;
 
             if (path.Length == 0 && string.IsNullOrEmpty(ChildName))
             {
-                AssertError(helper.GetResourceMsgFromResourcetext("SetItemNotSupported"), false);
+                AssertError(WSManHelper.GetResourceMsgFromResourcetext("SetItemNotSupported"), false);
                 return;
             }
 
@@ -898,7 +898,7 @@ namespace Microsoft.WSMan.Management
 
             if (ChildName.Equals(path, StringComparison.OrdinalIgnoreCase))
             {
-                AssertError(helper.GetResourceMsgFromResourcetext("SetItemNotSupported"), false);
+                AssertError(WSManHelper.GetResourceMsgFromResourcetext("SetItemNotSupported"), false);
                 return;
             }
 
@@ -920,12 +920,12 @@ namespace Microsoft.WSMan.Management
                 // if he intends to disable RunAs on the Plugin.
                 if (string.Equals(ChildName, WSManStringLiterals.ConfigRunAsPasswordName, StringComparison.OrdinalIgnoreCase))
                 {
-                    AssertError(helper.GetResourceMsgFromResourcetext("ClearItemOnRunAsPassword"), false);
+                    AssertError(WSManHelper.GetResourceMsgFromResourcetext("ClearItemOnRunAsPassword"), false);
                     return;
                 }
             }
 
-            string whatIfMessage = string.Format(CultureInfo.CurrentUICulture, helper.GetResourceMsgFromResourcetext("SetItemWhatIfAndConfirmText"), path, value);
+            string whatIfMessage = string.Format(CultureInfo.CurrentUICulture, WSManHelper.GetResourceMsgFromResourcetext("SetItemWhatIfAndConfirmText"), path, value);
             if (!ShouldProcess(whatIfMessage, string.Empty, string.Empty))
             {
                 return;
@@ -977,7 +977,7 @@ namespace Microsoft.WSMan.Management
                 {
                     if (path.EndsWith(strPathChk + WSManStringLiterals.containerPlugin, StringComparison.OrdinalIgnoreCase))
                     {
-                        AssertError(helper.GetResourceMsgFromResourcetext("SetItemNotSupported"), false);
+                        AssertError(WSManHelper.GetResourceMsgFromResourcetext("SetItemNotSupported"), false);
                     }
 
                     try
@@ -990,7 +990,7 @@ namespace Microsoft.WSMan.Management
                             if (!this.clearItemIsCalled)
                             {
                                 // Don't need an error if ClearItem is called.
-                                AssertError(helper.GetResourceMsgFromResourcetext("ItemDoesNotExist"), false);
+                                AssertError(WSManHelper.GetResourceMsgFromResourcetext("ItemDoesNotExist"), false);
                             }
 
                             return;
@@ -1047,7 +1047,7 @@ namespace Microsoft.WSMan.Management
                                             WSManStringLiterals.ConfigRunAsUserName))))
                                 {
                                     // User Cannot set RunAsPassword if, RunAsUser is not present.
-                                    AssertError(helper.GetResourceMsgFromResourcetext("SetItemOnRunAsPasswordNoRunAsUser"), false);
+                                    AssertError(WSManHelper.GetResourceMsgFromResourcetext("SetItemOnRunAsPasswordNoRunAsUser"), false);
                                 }
 
                                 value = GetStringFromSecureString(value);
@@ -1061,7 +1061,7 @@ namespace Microsoft.WSMan.Management
                         {
                             if (path.EndsWith(strPathChk + WSManStringLiterals.containerResources, StringComparison.OrdinalIgnoreCase))
                             {
-                                AssertError(helper.GetResourceMsgFromResourcetext("SetItemNotSupported"), false);
+                                AssertError(WSManHelper.GetResourceMsgFromResourcetext("SetItemNotSupported"), false);
                                 return;
                             }
 
@@ -1088,7 +1088,7 @@ namespace Microsoft.WSMan.Management
 
                                     if (ChildName.Equals(WSManStringLiterals.ConfigResourceUriName, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        AssertError(helper.GetResourceMsgFromResourcetext("NoChangeValue"), false);
+                                        AssertError(WSManHelper.GetResourceMsgFromResourcetext("NoChangeValue"), false);
                                         return;
                                     }
 
@@ -1112,7 +1112,7 @@ namespace Microsoft.WSMan.Management
                                             }
                                             else
                                             {
-                                                AssertError(helper.GetResourceMsgFromResourcetext("NoChangeValue"), false);
+                                                AssertError(WSManHelper.GetResourceMsgFromResourcetext("NoChangeValue"), false);
                                             }
                                         }
                                     }
@@ -1123,7 +1123,7 @@ namespace Microsoft.WSMan.Management
                                 {
                                     if (path.EndsWith(strPathChk + WSManStringLiterals.containerSecurity, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        AssertError(helper.GetResourceMsgFromResourcetext("NoChangeValue"), false);
+                                        AssertError(WSManHelper.GetResourceMsgFromResourcetext("NoChangeValue"), false);
                                         return;
                                     }
 
@@ -1144,9 +1144,9 @@ namespace Microsoft.WSMan.Management
                                             {
                                                 if (!Force)
                                                 {
-                                                    string query = helper.GetResourceMsgFromResourcetext("ShouldContinueSecurityQuery");
+                                                    string query = WSManHelper.GetResourceMsgFromResourcetext("ShouldContinueSecurityQuery");
                                                     query = string.Format(CultureInfo.CurrentCulture, query, currentpluginname);
-                                                    if (!ShouldContinue(query, helper.GetResourceMsgFromResourcetext("ShouldContinueSecurityCaption")))
+                                                    if (!ShouldContinue(query, WSManHelper.GetResourceMsgFromResourcetext("ShouldContinueSecurityCaption")))
                                                     {
                                                         return;
                                                     }
@@ -1221,7 +1221,7 @@ namespace Microsoft.WSMan.Management
                                         WSManStringLiterals.containerShell,
                                         adjustedChileName);
 
-                                warningMessage.Add(string.Format(helper.GetResourceMsgFromResourcetext("SetItemWarnigForPPQ"), pathForGlobalQuota));
+                                warningMessage.Add(string.Format(WSManHelper.GetResourceMsgFromResourcetext("SetItemWarnigForPPQ"), pathForGlobalQuota));
                             }
                         }
 
@@ -1241,11 +1241,11 @@ namespace Microsoft.WSMan.Management
                             {
                                 if (IsPathLocalMachine(host))
                                 {
-                                    warningMessage.Add(helper.GetResourceMsgFromResourcetext("SetItemServiceRestartWarning"));
+                                    warningMessage.Add(WSManHelper.GetResourceMsgFromResourcetext("SetItemServiceRestartWarning"));
                                 }
                                 else
                                 {
-                                    warningMessage.Add(string.Format(helper.GetResourceMsgFromResourcetext("SetItemServiceRestartWarningRemote"), host));
+                                    warningMessage.Add(string.Format(WSManHelper.GetResourceMsgFromResourcetext("SetItemServiceRestartWarningRemote"), host));
                                 }
                             }
                         }
@@ -1259,17 +1259,17 @@ namespace Microsoft.WSMan.Management
                     }
                     catch (PSArgumentException)
                     {
-                        AssertError(helper.GetResourceMsgFromResourcetext("ItemDoesNotExist"), false);
+                        AssertError(WSManHelper.GetResourceMsgFromResourcetext("ItemDoesNotExist"), false);
                         return;
                     }
                     catch (PSArgumentNullException)
                     {
-                        AssertError(helper.GetResourceMsgFromResourcetext("ItemDoesNotExist"), false);
+                        AssertError(WSManHelper.GetResourceMsgFromResourcetext("ItemDoesNotExist"), false);
                         return;
                     }
                     catch (NullReferenceException)
                     {
-                        AssertError(helper.GetResourceMsgFromResourcetext("ItemDoesNotExist"), false);
+                        AssertError(WSManHelper.GetResourceMsgFromResourcetext("ItemDoesNotExist"), false);
                         return;
                     }
                 }
@@ -1285,14 +1285,14 @@ namespace Microsoft.WSMan.Management
                                 if (!Force)
                                 {
                                     string query = string.Empty;
-                                    string caption = helper.GetResourceMsgFromResourcetext("SetItemGeneralSecurityCaption");
+                                    string caption = WSManHelper.GetResourceMsgFromResourcetext("SetItemGeneralSecurityCaption");
                                     if (ChildName.Equals("TrustedHosts", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        query = helper.GetResourceMsgFromResourcetext("SetItemTrustedHostsWarningQuery");
+                                        query = WSManHelper.GetResourceMsgFromResourcetext("SetItemTrustedHostsWarningQuery");
                                     }
                                     else if (ChildName.Equals("RootSDDL", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        query = helper.GetResourceMsgFromResourcetext("SetItemRootSDDLWarningQuery");
+                                        query = WSManHelper.GetResourceMsgFromResourcetext("SetItemRootSDDLWarningQuery");
                                     }
 
                                     if (!ShouldContinue(query, caption))
@@ -1318,7 +1318,7 @@ namespace Microsoft.WSMan.Management
                             }
                             else
                             {
-                                AssertError(helper.GetResourceMsgFromResourcetext("TrustedHostValueTypeError"), false);
+                                AssertError(WSManHelper.GetResourceMsgFromResourcetext("TrustedHostValueTypeError"), false);
                             }
                         }
                         else
@@ -1327,7 +1327,7 @@ namespace Microsoft.WSMan.Management
 
                             if (globalWarningUris.Contains(uri) && globalWarningConfigurations.Contains(ChildName.ToLowerInvariant()))
                             {
-                                warningMessage.Add(string.Format(helper.GetResourceMsgFromResourcetext("SetItemWarningForGlobalQuota"), value));
+                                warningMessage.Add(string.Format(WSManHelper.GetResourceMsgFromResourcetext("SetItemWarningForGlobalQuota"), value));
                             }
                         }
 
@@ -1625,7 +1625,7 @@ namespace Microsoft.WSMan.Management
             bool throwerror = true;
             if (path.Length == 0)
             {
-                AssertError(helper.GetResourceMsgFromResourcetext("RemoveItemNotSupported"), false);
+                AssertError(WSManHelper.GetResourceMsgFromResourcetext("RemoveItemNotSupported"), false);
                 return;
             }
 
@@ -1645,10 +1645,10 @@ namespace Microsoft.WSMan.Management
             {
                 if (ChildName.Equals("localhost", StringComparison.OrdinalIgnoreCase))
                 {
-                    AssertError(helper.GetResourceMsgFromResourcetext("LocalHost"), false);
+                    AssertError(WSManHelper.GetResourceMsgFromResourcetext("LocalHost"), false);
                 }
 
-                helper.RemoveFromDictionary(ChildName);
+                WSManHelper.RemoveFromDictionary(ChildName);
                 return;
             }
 
@@ -1758,7 +1758,7 @@ namespace Microsoft.WSMan.Management
 
                     if (throwerror)
                     {
-                        AssertError(helper.GetResourceMsgFromResourcetext("RemoveItemNotSupported"), false);
+                        AssertError(WSManHelper.GetResourceMsgFromResourcetext("RemoveItemNotSupported"), false);
                         return;
                     }
 
@@ -1788,7 +1788,7 @@ namespace Microsoft.WSMan.Management
 
                 if (throwerror)
                 {
-                    AssertError(helper.GetResourceMsgFromResourcetext("RemoveItemNotSupported"), false);
+                    AssertError(WSManHelper.GetResourceMsgFromResourcetext("RemoveItemNotSupported"), false);
                     return;
                 }
             }
@@ -1823,7 +1823,7 @@ namespace Microsoft.WSMan.Management
 
             if (string.IsNullOrEmpty(host))
             {
-                throw new ArgumentException(helper.GetResourceMsgFromResourcetext("InvalidPath"));
+                throw new ArgumentException(WSManHelper.GetResourceMsgFromResourcetext("InvalidPath"));
             }
 
             // Chk for Winrm Service
@@ -1875,7 +1875,7 @@ namespace Microsoft.WSMan.Management
                         listenerparams.Add("CertificateThumbPrint", niParams.CertificateThumbPrint);
                     }
 
-                    NewItemContainerListenerOrCertMapping(sessionobj, path, uri, host, listenerparams, WSManStringLiterals.containerListener, helper.GetResourceMsgFromResourcetext("NewItemShouldContinueListenerQuery"), helper.GetResourceMsgFromResourcetext("NewItemShouldContinueListenerCaption"));
+                    NewItemContainerListenerOrCertMapping(sessionobj, path, uri, host, listenerparams, WSManStringLiterals.containerListener, WSManHelper.GetResourceMsgFromResourcetext("NewItemShouldContinueListenerQuery"), WSManHelper.GetResourceMsgFromResourcetext("NewItemShouldContinueListenerCaption"));
                 }
                 else if (path.EndsWith(strPathChk + WSManStringLiterals.containerClientCertificate, StringComparison.OrdinalIgnoreCase))
                 {
@@ -1893,11 +1893,11 @@ namespace Microsoft.WSMan.Management
                     }
 
                     Certparams.Add("Enabled", dynParams.Enabled);
-                    NewItemContainerListenerOrCertMapping(sessionobj, path, uri, host, Certparams, WSManStringLiterals.containerClientCertificate, helper.GetResourceMsgFromResourcetext("NewItemShouldContinueClientCertQuery"), helper.GetResourceMsgFromResourcetext("NewItemShouldContinueClientCertCaption"));
+                    NewItemContainerListenerOrCertMapping(sessionobj, path, uri, host, Certparams, WSManStringLiterals.containerClientCertificate, WSManHelper.GetResourceMsgFromResourcetext("NewItemShouldContinueClientCertQuery"), WSManHelper.GetResourceMsgFromResourcetext("NewItemShouldContinueClientCertCaption"));
                 }
                 else
                 {
-                    AssertError(helper.GetResourceMsgFromResourcetext("NewItemNotSupported"), false);
+                    AssertError(WSManHelper.GetResourceMsgFromResourcetext("NewItemNotSupported"), false);
                     return;
                 }
             }
@@ -2115,7 +2115,7 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(helper.GetResourceMsgFromResourcetext("NewItemNotSupported")), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(WSManHelper.GetResourceMsgFromResourcetext("NewItemNotSupported")), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -2195,9 +2195,9 @@ namespace Microsoft.WSMan.Management
                     {
                         if (!Force)
                         {
-                            string query = helper.GetResourceMsgFromResourcetext("ShouldContinueSecurityQuery");
+                            string query = WSManHelper.GetResourceMsgFromResourcetext("ShouldContinueSecurityQuery");
                             query = string.Format(CultureInfo.CurrentCulture, query, pName);
-                            if (!ShouldContinue(query, helper.GetResourceMsgFromResourcetext("ShouldContinueSecurityCaption")))
+                            if (!ShouldContinue(query, WSManHelper.GetResourceMsgFromResourcetext("ShouldContinueSecurityCaption")))
                             {
                                 return;
                             }
@@ -2206,7 +2206,7 @@ namespace Microsoft.WSMan.Management
                         PSObject resourceDirProperties = GetItemValue(strPathChk);
                         if ((resourceDirProperties == null) || (resourceDirProperties.Properties["ResourceUri"] == null))
                         {
-                            string message = helper.FormatResourceMsgFromResourcetext("ResourceURIMissingInResourceDir",
+                            string message = WSManHelper.FormatResourceMsgFromResourcetext("ResourceURIMissingInResourceDir",
                                 "ResourceUri", strPathChk);
                             AssertError(message, false);
                             return; // AssertError is going to throw - return silences some static analysis tools
@@ -2356,7 +2356,7 @@ namespace Microsoft.WSMan.Management
 
             if (xmlResource == null)
             {
-                AssertError(helper.GetResourceMsgFromResourcetext("InvalidPath"), false);
+                AssertError(WSManHelper.GetResourceMsgFromResourcetext("InvalidPath"), false);
             }
 
             if (ResourceURI.EndsWith(WSManStringLiterals.containerListener, StringComparison.OrdinalIgnoreCase))
@@ -2370,13 +2370,13 @@ namespace Microsoft.WSMan.Management
 
             if (path.EndsWith(host + WSManStringLiterals.DefaultPathSeparator + parent, StringComparison.OrdinalIgnoreCase))
             {
-                AssertError(helper.GetResourceMsgFromResourcetext("SetItemNotSupported"), false);
+                AssertError(WSManHelper.GetResourceMsgFromResourcetext("SetItemNotSupported"), false);
             }
             else
             {
                 if (!Force)
                 {
-                    if (!ShouldContinue(helper.GetResourceMsgFromResourcetext("SetItemShouldContinueQuery"), helper.GetResourceMsgFromResourcetext("SetItemShouldContinueCaption")))
+                    if (!ShouldContinue(WSManHelper.GetResourceMsgFromResourcetext("SetItemShouldContinueQuery"), WSManHelper.GetResourceMsgFromResourcetext("SetItemShouldContinueCaption")))
                     {
                         return;
                     }
@@ -2690,7 +2690,7 @@ namespace Microsoft.WSMan.Management
                             }
                             else
                             {
-                                AssertError(helper.GetResourceMsgFromResourcetext("ItemDoesNotExist"), false);
+                                AssertError(WSManHelper.GetResourceMsgFromResourcetext("ItemDoesNotExist"), false);
                                 return;
                             }
                         }
@@ -4610,10 +4610,10 @@ namespace Microsoft.WSMan.Management
             {
                 string startserviceScript = string.Format(CultureInfo.InvariantCulture, WSManStringLiterals.StartWinrmServiceSBFormat);
                 ScriptBlock startserviceSb = ScriptBlock.Create(startserviceScript);
-                Collection<PSObject> result = startserviceSb.Invoke(force, helper.GetResourceMsgFromResourcetext("WSManServiceStartCaption"), helper.GetResourceMsgFromResourcetext("WSManServiceStartQuery"));
+                Collection<PSObject> result = startserviceSb.Invoke(force, WSManHelper.GetResourceMsgFromResourcetext("WSManServiceStartCaption"), WSManHelper.GetResourceMsgFromResourcetext("WSManServiceStartQuery"));
                 if (!(bool)result[0].ImmediateBaseObject)
                 {
-                    AssertError(helper.GetResourceMsgFromResourcetext("WinRMServiceError"), false);
+                    AssertError(WSManHelper.GetResourceMsgFromResourcetext("WinRMServiceError"), false);
                 }
             }
             catch (CmdletInvocationException)
@@ -5153,7 +5153,7 @@ namespace Microsoft.WSMan.Management
                 else
                 {
                     string error = string.Format(
-                        helper.GetResourceMsgFromResourcetext("InvalidValueType"),
+                        WSManHelper.GetResourceMsgFromResourcetext("InvalidValueType"),
                         WSManStringLiterals.ConfigRunAsPasswordName,
                         typeof(SecureString).FullName);
 
@@ -5174,7 +5174,7 @@ namespace Microsoft.WSMan.Management
                 else
                 {
                     string error = string.Format(
-                        helper.GetResourceMsgFromResourcetext("InvalidValueType"),
+                        WSManHelper.GetResourceMsgFromResourcetext("InvalidValueType"),
                         WSManStringLiterals.ConfigRunAsUserName,
                         typeof(PSCredential).FullName);
 

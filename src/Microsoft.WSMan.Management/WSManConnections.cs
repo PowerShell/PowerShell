@@ -277,7 +277,7 @@ namespace Microsoft.WSMan.Management
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    helper.AssertError(helper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
+                    helper.AssertError(WSManHelper.GetResourceMsgFromResourcetext("NotProperURI"), false, connectionuri);
                 }
             }
 
@@ -285,7 +285,7 @@ namespace Microsoft.WSMan.Management
 
             if (this.SessionState.Path.CurrentProviderLocation(WSManStringLiterals.rootpath).Path.StartsWith(this.SessionState.Drive.Current.Name + ":" + WSManStringLiterals.DefaultPathSeparator + crtComputerName, StringComparison.OrdinalIgnoreCase))
             {
-                helper.AssertError(helper.GetResourceMsgFromResourcetext("ConnectFailure"), false, computername);
+                helper.AssertError(WSManHelper.GetResourceMsgFromResourcetext("ConnectFailure"), false, computername);
             }
 
             helper.CreateWsManConnection(ParameterSetName, connectionuri, port, computername, applicationname, usessl.IsPresent, Authentication, sessionoption, Credential, CertificateThumbprint);
@@ -367,22 +367,22 @@ namespace Microsoft.WSMan.Management
 
             if (this.SessionState.Path.CurrentProviderLocation(WSManStringLiterals.rootpath).Path.StartsWith(WSManStringLiterals.rootpath + ":" + WSManStringLiterals.DefaultPathSeparator + computername, StringComparison.OrdinalIgnoreCase))
             {
-                helper.AssertError(helper.GetResourceMsgFromResourcetext("DisconnectFailure"), false, computername);
+                helper.AssertError(WSManHelper.GetResourceMsgFromResourcetext("DisconnectFailure"), false, computername);
             }
 
             if (computername.Equals("localhost", StringComparison.OrdinalIgnoreCase))
             {
-                helper.AssertError(helper.GetResourceMsgFromResourcetext("LocalHost"), false, computername);
+                helper.AssertError(WSManHelper.GetResourceMsgFromResourcetext("LocalHost"), false, computername);
             }
 
-            object _ws = helper.RemoveFromDictionary(computername);
+            object _ws = WSManHelper.RemoveFromDictionary(computername);
             if (_ws != null)
             {
                 Dispose(_ws);
             }
             else
             {
-                helper.AssertError(helper.GetResourceMsgFromResourcetext("InvalidComputerName"), false, computername);
+                helper.AssertError(WSManHelper.GetResourceMsgFromResourcetext("InvalidComputerName"), false, computername);
             }
         }
     }

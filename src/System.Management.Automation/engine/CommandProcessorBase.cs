@@ -855,7 +855,7 @@ namespace System.Management.Automation
 
                         // Rollback the transaction in the case of errors.
                         if (
-                            _context.TransactionManager.HasTransaction
+                            PSTransactionManager.HasTransaction
                             &&
                             _context.TransactionManager.RollbackPreference != RollbackSeverity.Never
                            )

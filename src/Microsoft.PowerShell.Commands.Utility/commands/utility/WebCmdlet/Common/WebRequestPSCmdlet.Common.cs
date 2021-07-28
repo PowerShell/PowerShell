@@ -1656,7 +1656,7 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, byte[] content)
+        internal static long SetRequestContent(HttpRequestMessage request, byte[] content)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -1728,7 +1728,7 @@ namespace Microsoft.PowerShell.Commands
             return byteArrayContent.Headers.ContentLength.Value;
         }
 
-        internal long SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
+        internal static long SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -1765,7 +1765,7 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, Stream contentStream)
+        internal static long SetRequestContent(HttpRequestMessage request, Stream contentStream)
         {
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
@@ -1788,7 +1788,7 @@ namespace Microsoft.PowerShell.Commands
         /// Because this function sets the request's ContentLength property and writes content data into the requests's stream,
         /// it should be called one time maximum on a given request.
         /// </remarks>
-        internal long SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
+        internal static long SetRequestContent(HttpRequestMessage request, MultipartFormDataContent multipartContent)
         {
             if (request == null)
             {

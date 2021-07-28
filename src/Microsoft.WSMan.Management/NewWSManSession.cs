@@ -263,7 +263,7 @@ namespace Microsoft.WSMan.Management
             {
                 if (_proxycredential == null)
                 {
-                    InvalidOperationException ex = new InvalidOperationException(helper.GetResourceMsgFromResourcetext("NewWSManSessionOptionCred"));
+                    InvalidOperationException ex = new InvalidOperationException(WSManHelper.GetResourceMsgFromResourcetext("NewWSManSessionOptionCred"));
                     ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
@@ -272,7 +272,7 @@ namespace Microsoft.WSMan.Management
 
             if ((_proxycredential != null) && (proxyauthentication == 0))
             {
-                InvalidOperationException ex = new InvalidOperationException(helper.GetResourceMsgFromResourcetext("NewWSManSessionOptionAuth"));
+                InvalidOperationException ex = new InvalidOperationException(WSManHelper.GetResourceMsgFromResourcetext("NewWSManSessionOptionAuth"));
                 ErrorRecord er = new ErrorRecord(ex, "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                 WriteError(er);
                 return;

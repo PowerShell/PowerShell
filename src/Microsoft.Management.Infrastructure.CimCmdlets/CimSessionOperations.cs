@@ -389,7 +389,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="psObject"></param>
-        internal string GetRemoveSessionObjectTarget(PSObject psObject)
+        internal static string GetRemoveSessionObjectTarget(PSObject psObject)
         {
             string message = string.Empty;
             if (psObject.BaseObject is CimSession)
@@ -1192,7 +1192,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 foreach (PSObject psobject in sessionToRemove)
                 {
-                    if (cmdlet.ShouldProcess(this.sessionState.GetRemoveSessionObjectTarget(psobject), RemoveCimSessionActionName))
+                    if (cmdlet.ShouldProcess(CimSessionState.GetRemoveSessionObjectTarget(psobject), RemoveCimSessionActionName))
                     {
                         this.sessionState.RemoveOneSessionObjectFromCache(psobject);
                     }

@@ -1061,7 +1061,7 @@ end
             return result;
         }
 
-        internal string GetProcessBlock()
+        internal static string GetProcessBlock()
         {
             return @"
     try {
@@ -1102,7 +1102,7 @@ end
             _wrappedCommandType);
         }
 
-        internal string GetEndBlock()
+        internal static string GetEndBlock()
         {
             return @"
     try {

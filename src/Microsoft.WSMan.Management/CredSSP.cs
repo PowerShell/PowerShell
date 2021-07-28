@@ -128,7 +128,7 @@ namespace Microsoft.WSMan.Management
                 if (xNode is null)
                 {
                     InvalidOperationException ex = new InvalidOperationException();
-                    ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
+                    ErrorRecord er = new ErrorRecord(ex, WSManHelper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -152,7 +152,7 @@ namespace Microsoft.WSMan.Management
 
                 if (!helper.ValidateCreadSSPRegistryRetry(false, null, applicationname))
                 {
-                    helper.AssertError(helper.GetResourceMsgFromResourcetext("DisableCredSSPPolicyValidateError"), false, null);
+                    helper.AssertError(WSManHelper.GetResourceMsgFromResourcetext("DisableCredSSPPolicyValidateError"), false, null);
                 }
             }
             catch (System.Xml.XPath.XPathException ex)
@@ -194,7 +194,7 @@ namespace Microsoft.WSMan.Management
                 {
                     InvalidOperationException ex = new InvalidOperationException();
                     ErrorRecord er = new ErrorRecord(ex,
-                        helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"),
+                        WSManHelper.GetResourceMsgFromResourcetext("WinrmNotConfigured"),
                         ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
@@ -442,7 +442,7 @@ namespace Microsoft.WSMan.Management
             // DelegateComputer cannot be specified when Role is other than client
             if ((delegatecomputer != null) && !Role.Equals(Client, StringComparison.OrdinalIgnoreCase))
             {
-                string message = helper.FormatResourceMsgFromResourcetext("CredSSPRoleAndDelegateCannotBeSpecified",
+                string message = WSManHelper.FormatResourceMsgFromResourcetext("CredSSPRoleAndDelegateCannotBeSpecified",
                     "DelegateComputer",
                     "Role",
                     Role,
@@ -454,7 +454,7 @@ namespace Microsoft.WSMan.Management
             // DelegateComputer must be specified when Role is client
             if (Role.Equals(Client, StringComparison.OrdinalIgnoreCase) && (delegatecomputer == null))
             {
-                string message = helper.FormatResourceMsgFromResourcetext("CredSSPClientAndDelegateMustBeSpecified",
+                string message = WSManHelper.FormatResourceMsgFromResourcetext("CredSSPClientAndDelegateMustBeSpecified",
                     "DelegateComputer",
                     "Role",
                     Client);
@@ -481,8 +481,8 @@ namespace Microsoft.WSMan.Management
         /// </exception>
         private void EnableClientSideSettings()
         {
-            string query = helper.GetResourceMsgFromResourcetext("CredSSPContinueQuery");
-            string caption = helper.GetResourceMsgFromResourcetext("CredSSPContinueCaption");
+            string query = WSManHelper.GetResourceMsgFromResourcetext("CredSSPContinueQuery");
+            string caption = WSManHelper.GetResourceMsgFromResourcetext("CredSSPContinueCaption");
             if (!force && !ShouldContinue(query, caption))
             {
                 return;
@@ -498,12 +498,12 @@ namespace Microsoft.WSMan.Management
             {
                 // get the credssp node to check if wsman is configured on this machine
                 string result = m_SessionObj.Get(helper.CredSSP_RUri, 0);
-                XmlNode node = helper.GetXmlNode(result, helper.CredSSP_SNode, helper.CredSSP_XMLNmsp);
+                XmlNode node = WSManHelper.GetXmlNode(result, helper.CredSSP_SNode, helper.CredSSP_XMLNmsp);
 
                 if (node == null)
                 {
                     InvalidOperationException ex = new InvalidOperationException();
-                    ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
+                    ErrorRecord er = new ErrorRecord(ex, WSManHelper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -535,7 +535,7 @@ namespace Microsoft.WSMan.Management
                     }
                     else
                     {
-                        helper.AssertError(helper.GetResourceMsgFromResourcetext("EnableCredSSPPolicyValidateError"), false, delegatecomputer);
+                        helper.AssertError(WSManHelper.GetResourceMsgFromResourcetext("EnableCredSSPPolicyValidateError"), false, delegatecomputer);
                     }
                 }
                 catch (COMException)
@@ -559,8 +559,8 @@ namespace Microsoft.WSMan.Management
 
         private void EnableServerSideSettings()
         {
-            string query = helper.GetResourceMsgFromResourcetext("CredSSPServerContinueQuery");
-            string caption = helper.GetResourceMsgFromResourcetext("CredSSPContinueCaption");
+            string query = WSManHelper.GetResourceMsgFromResourcetext("CredSSPServerContinueQuery");
+            string caption = WSManHelper.GetResourceMsgFromResourcetext("CredSSPContinueCaption");
             if (!force && !ShouldContinue(query, caption))
             {
                 return;
@@ -576,14 +576,14 @@ namespace Microsoft.WSMan.Management
             {
                 // get the credssp node to check if wsman is configured on this machine
                 string result = m_SessionObj.Get(helper.Service_CredSSP_Uri, 0);
-                XmlNode node = helper.GetXmlNode(result,
+                XmlNode node = WSManHelper.GetXmlNode(result,
                     helper.CredSSP_SNode,
                     helper.Service_CredSSP_XMLNmsp);
 
                 if (node == null)
                 {
                     InvalidOperationException ex = new InvalidOperationException();
-                    ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
+                    ErrorRecord er = new ErrorRecord(ex, WSManHelper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -817,11 +817,11 @@ namespace Microsoft.WSMan.Management
                 IWSManEx wsmanObject = (IWSManEx)new WSManClass();
                 m_SessionObj = (IWSManSession)wsmanObject.CreateSession(null, 0, null);
                 string result = m_SessionObj.Get(helper.CredSSP_RUri, 0);
-                XmlNode node = helper.GetXmlNode(result, helper.CredSSP_SNode, helper.CredSSP_XMLNmsp);
+                XmlNode node = WSManHelper.GetXmlNode(result, helper.CredSSP_SNode, helper.CredSSP_XMLNmsp);
                 if (node == null)
                 {
                     InvalidOperationException ex = new InvalidOperationException();
-                    ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
+                    ErrorRecord er = new ErrorRecord(ex, WSManHelper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
@@ -831,31 +831,31 @@ namespace Microsoft.WSMan.Management
                 string credsspResult = GetDelegateSettings(applicationname);
                 if (string.IsNullOrEmpty(credsspResult))
                 {
-                    WriteObject(helper.GetResourceMsgFromResourcetext("NoDelegateFreshCred"));
+                    WriteObject(WSManHelper.GetResourceMsgFromResourcetext("NoDelegateFreshCred"));
                 }
                 else
                 {
-                    WriteObject(helper.GetResourceMsgFromResourcetext("DelegateFreshCred") + credsspResult);
+                    WriteObject(WSManHelper.GetResourceMsgFromResourcetext("DelegateFreshCred") + credsspResult);
                 }
 
                 // Get the server side settings
                 result = m_SessionObj.Get(helper.Service_CredSSP_Uri, 0);
-                node = helper.GetXmlNode(result, helper.CredSSP_SNode, helper.Service_CredSSP_XMLNmsp);
+                node = WSManHelper.GetXmlNode(result, helper.CredSSP_SNode, helper.Service_CredSSP_XMLNmsp);
                 if (node == null)
                 {
                     InvalidOperationException ex = new InvalidOperationException();
-                    ErrorRecord er = new ErrorRecord(ex, helper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
+                    ErrorRecord er = new ErrorRecord(ex, WSManHelper.GetResourceMsgFromResourcetext("WinrmNotConfigured"), ErrorCategory.InvalidOperation, null);
                     WriteError(er);
                     return;
                 }
 
                 if (node.InnerText.Equals("true", StringComparison.OrdinalIgnoreCase))
                 {
-                    WriteObject(helper.GetResourceMsgFromResourcetext("CredSSPServiceConfigured"));
+                    WriteObject(WSManHelper.GetResourceMsgFromResourcetext("CredSSPServiceConfigured"));
                 }
                 else
                 {
-                    WriteObject(helper.GetResourceMsgFromResourcetext("CredSSPServiceNotConfigured"));
+                    WriteObject(WSManHelper.GetResourceMsgFromResourcetext("CredSSPServiceNotConfigured"));
                 }
             }
             catch (UnauthorizedAccessException ex)

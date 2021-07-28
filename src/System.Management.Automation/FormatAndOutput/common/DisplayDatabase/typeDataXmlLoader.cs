@@ -719,7 +719,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // For faster startup, we don't validate any of the built-in formatting script blocks, where isFullyTrusted == built-in.
                     if (!LoadingInfo.isFullyTrusted)
                     {
-                        this.expressionFactory.VerifyScriptBlockText(token.expressionValue);
+                        PSPropertyExpressionFactory.VerifyScriptBlockText(token.expressionValue);
                     }
                 }
                 catch (ParseException e)
@@ -1924,7 +1924,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             try
             {
-                this.expressionFactory.VerifyScriptBlockText(scriptBlockText);
+                PSPropertyExpressionFactory.VerifyScriptBlockText(scriptBlockText);
             }
             catch (ParseException e)
             {

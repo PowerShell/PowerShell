@@ -2446,7 +2446,7 @@ namespace Microsoft.PowerShell
                     if (ui.SupportsVirtualTerminal)
                     {
                         // need to re-enable VT mode if it was previously enabled as native commands may have turned it off
-                        ui.TryTurnOnVtMode();
+                        ConsoleHostUserInterface.TryTurnOnVtMode();
                     }
 #endif
 

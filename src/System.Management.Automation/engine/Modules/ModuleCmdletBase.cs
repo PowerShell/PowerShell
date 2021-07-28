@@ -4029,7 +4029,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="extension"></param>
         /// <param name="nestedModuleInfoIfAvailable"></param>
         /// <returns></returns>
-        internal bool VerifyIfNestedModuleIsAvailable(ModuleSpecification nestedModuleSpec,
+        internal static bool VerifyIfNestedModuleIsAvailable(ModuleSpecification nestedModuleSpec,
             string rootedModulePath,
             string extension,
             out PSModuleInfo nestedModuleInfoIfAvailable)
@@ -4435,7 +4435,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Enable Module logging based on group policy.
         /// </summary>
-        internal void SetModuleLoggingInformation(PSModuleInfo m)
+        internal static void SetModuleLoggingInformation(PSModuleInfo m)
         {
             IEnumerable<string> moduleNames;
             ModuleLoggingGroupPolicyStatus status = GetModuleLoggingInformation(out moduleNames);
@@ -4639,7 +4639,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleBase">The base path to use if the file is not rooted.</param>
         /// <param name="path">The file name to resolve.</param>
         /// <returns></returns>
-        internal string GetAbsolutePath(string moduleBase, string path)
+        internal static string GetAbsolutePath(string moduleBase, string path)
         {
             if (!IsRooted(path) && (path.Contains('/') || path.Contains('\\')))
             {

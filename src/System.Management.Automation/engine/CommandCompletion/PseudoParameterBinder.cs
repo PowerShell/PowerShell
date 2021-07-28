@@ -159,7 +159,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Get the argument.
         /// </summary>
-        public bool Argument
+        public static bool Argument
         {
             get { return true; }
         }

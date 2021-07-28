@@ -19,8 +19,7 @@ namespace System.Management.Automation.Internal.Host
             _parentHost = parentHost;
         }
 
-        internal
-        void
+        internal static void
         ThrowNotInteractive()
         {
             // It might be interesting to do something like

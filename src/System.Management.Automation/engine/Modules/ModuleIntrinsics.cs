@@ -266,7 +266,7 @@ namespace System.Management.Automation
         /// <param name="sb">The scriptblock to bind.</param>
         /// <param name="linkToGlobal">Whether it should be linked to the global session state or not.</param>
         /// <returns>A new scriptblock.</returns>
-        internal ScriptBlock CreateBoundScriptBlock(ExecutionContext context, ScriptBlock sb, bool linkToGlobal)
+        internal static ScriptBlock CreateBoundScriptBlock(ExecutionContext context, ScriptBlock sb, bool linkToGlobal)
         {
             PSModuleInfo module = new PSModuleInfo(context, linkToGlobal);
             return module.NewBoundScriptBlock(sb, context);

@@ -1735,7 +1735,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 try
                 {
-                    _connectionInfo.KillSSHProcess(sshProcessId);
+                    SSHConnectionInfo.KillSSHProcess(sshProcessId);
                 }
                 catch (ArgumentException) { }
                 catch (InvalidOperationException) { }

@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.Commands
 
         private ServiceController[] _allServices;
 
-        internal ServiceController GetOneService(string nameOfService)
+        internal static ServiceController GetOneService(string nameOfService)
         {
             Dbg.Assert(!WildcardPattern.ContainsWildcardCharacters(nameOfService), "Caller should verify that nameOfService doesn't contain wildcard characters");
 
@@ -1085,7 +1085,7 @@ namespace Microsoft.PowerShell.Commands
         /// This removes all services that are not stopped from a list of services.
         /// </summary>
         /// <param name="services">A list of services.</param>
-        internal void RemoveNotStoppedServices(List<ServiceController> services)
+        internal static void RemoveNotStoppedServices(List<ServiceController> services)
         {
             // You shall not modify a collection during enumeration.
             services.RemoveAll(service =>

@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return _groupingManager.UpdateGroupingKeyValue(so);
         }
 
-        internal GroupEndData GenerateGroupEndData()
+        internal static GroupEndData GenerateGroupEndData()
         {
             return new GroupEndData();
         }

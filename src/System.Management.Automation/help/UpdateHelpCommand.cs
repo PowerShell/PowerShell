@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
             if (_path == null)
             {
                 // Pull default source path from GP
-                string defaultSourcePath = _helpSystem.GetDefaultSourcePath();
+                string defaultSourcePath = UpdatableHelpSystem.GetDefaultSourcePath();
 
                 if (defaultSourcePath != null)
                 {

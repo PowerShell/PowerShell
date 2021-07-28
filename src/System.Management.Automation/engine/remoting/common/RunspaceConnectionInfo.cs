@@ -313,7 +313,7 @@ namespace System.Management.Automation.Runspaces
 
         #region Internal Methods
 
-        internal int TimeSpanToTimeOutMs(TimeSpan t)
+        internal static int TimeSpanToTimeOutMs(TimeSpan t)
         {
             if ((t.TotalMilliseconds > int.MaxValue) || (t == TimeSpan.MaxValue) || (t.TotalMilliseconds < 0))
             {
@@ -2227,7 +2227,7 @@ namespace System.Management.Automation.Runspaces
             return StartSSHProcessImpl(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
         }
 
-        internal void KillSSHProcess(int pid)
+        internal static void KillSSHProcess(int pid)
         {
             KillSSHProcessImpl(pid);
         }

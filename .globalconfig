@@ -408,7 +408,7 @@ dotnet_diagnostic.CA1821.severity = warning
 # CA1822: Mark members as static
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1822
 dotnet_diagnostic.CA1822.severity = warning
-dotnet_code_quality.CA1822.api_surface = private
+dotnet_code_quality.CA1822.api_surface = private, internal
 
 # CA1823: Avoid unused private fields
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1823

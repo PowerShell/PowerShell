@@ -1016,7 +1016,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return res;
         }
 
-        public uint LookupPerfNameByIndex(string machineName, uint index, out string locName)
+        public static uint LookupPerfNameByIndex(string machineName, uint index, out string locName)
         {
             //
             //  NOTE: to make PdhLookupPerfNameByIndex() work,
@@ -1133,7 +1133,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             return bAtLeastOneAdded ? PdhResults.PDH_CSTATUS_VALID_DATA : res;
         }
 
-        public string GetCounterSetHelp(string szMachineName, string szObjectName)
+        public static string GetCounterSetHelp(string szMachineName, string szObjectName)
         {
             // API not available to retrieve
             return string.Empty;

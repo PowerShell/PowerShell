@@ -1077,7 +1077,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        internal void RemoveTokensFromListDuringResync(List<Token> tokenList, int start)
+        internal static void RemoveTokensFromListDuringResync(List<Token> tokenList, int start)
         {
             int removeFrom = 0;
             // If we were saving tokens, remove all tokens from token to the end of the saved tokens.

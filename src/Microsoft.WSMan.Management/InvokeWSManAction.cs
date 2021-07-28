@@ -261,7 +261,7 @@ namespace Microsoft.WSMan.Management
             helper.WSManOp = "invoke";
 
             // create the connection string
-            connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);
+            connectionStr = WSManHelper.CreateConnectionString(connectionuri, port, computername, applicationname);
         }
 
         /// <summary>

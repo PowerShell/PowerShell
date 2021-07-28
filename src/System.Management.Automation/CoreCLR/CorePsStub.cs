@@ -66,7 +66,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// Always return false in CoreCLR
         /// </remarks>
-        internal bool HasTransaction
+        internal static bool HasTransaction
         {
             get
             {

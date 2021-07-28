@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Commands.Utility
             return res;
         }
 
-        public string NewLineText
+        public static string NewLineText
         {
             get
             {

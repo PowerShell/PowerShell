@@ -2429,7 +2429,7 @@ namespace System.Management.Automation
         /// <summary>
         /// If the script cmdlet is dotted, this method is used to pop the locals from the 'DottedScopes' of the current scope.
         /// </summary>
-        internal void PopDottedScope(SessionStateScope scope) => scope.DottedScopes.Pop();
+        internal static void PopDottedScope(SessionStateScope scope) => scope.DottedScopes.Pop();
 
         internal void PrepareForBinding(CommandLineParameters commandLineParameters)
         {

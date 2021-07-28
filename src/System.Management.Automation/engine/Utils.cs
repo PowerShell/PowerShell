@@ -2278,7 +2278,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Indicate if it's a readonly Hashset.
         /// </summary>
-        public bool IsReadOnly => true;
+        public static bool IsReadOnly => true;
 
         /// <summary>
         /// Check if the set contains an item.

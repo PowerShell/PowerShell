@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands
                         categoryType = PerformanceCounterCategoryType.SingleInstance;
                     }
 
-                    string setHelp = _pdhHelper.GetCounterSetHelp(machine, counterSet);
+                    string setHelp = PdhHelper.GetCounterSetHelp(machine, counterSet);
 
                     CounterSet setObj = new(counterSet, machine, categoryType, setHelp, ref counterInstanceMapping);
                     WriteObject(setObj);

@@ -1954,7 +1954,7 @@ namespace System.Management.Automation
         /// </summary>
         private ScriptBlock CreateBoundScriptBlock(ScriptBlock scriptAction)
         {
-            ScriptBlock newAction = _context.Modules.CreateBoundScriptBlock(_context, scriptAction, true);
+            ScriptBlock newAction = ModuleIntrinsics.CreateBoundScriptBlock(_context, scriptAction, true);
 
             // Create a new Error variable so that it doesn't pollute the global errors.
             PSVariable errorVariable = new PSVariable("script:Error", new ArrayList(), ScopedItemOptions.Constant);

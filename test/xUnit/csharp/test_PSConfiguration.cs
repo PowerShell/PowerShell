@@ -245,7 +245,7 @@ namespace PSTests.Sequential
             }
         }
 
-        internal void CompareTwoPolicies(PowerShellPolicies a, PowerShellPolicies b)
+        internal static void CompareTwoPolicies(PowerShellPolicies a, PowerShellPolicies b)
         {
             // Compare 'ScriptExecution' settings
             CompareScriptExecution(a.ScriptExecution, b.ScriptExecution);
@@ -387,7 +387,7 @@ namespace PSTests.Sequential
             File.WriteAllText(fileName, "[abbra");
         }
 
-        internal void ForceReadingFromFile()
+        internal static void ForceReadingFromFile()
         {
             // Reset the cached roots.
             FieldInfo roots = typeof(PowerShellConfig).GetField("configRoots", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -412,7 +412,7 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesNotEmpty()
         {
             fixture.SetupConfigFile1();
-            fixture.ForceReadingFromFile();
+            PowerShellPolicyFixture.ForceReadingFromFile();
 
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
@@ -428,7 +428,7 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_EmptyUserConfig()
         {
             fixture.SetupConfigFile2();
-            fixture.ForceReadingFromFile();
+            PowerShellPolicyFixture.ForceReadingFromFile();
 
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
@@ -443,7 +443,7 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_EmptySystemConfig()
         {
             fixture.SetupConfigFile3();
-            fixture.ForceReadingFromFile();
+            PowerShellPolicyFixture.ForceReadingFromFile();
 
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
@@ -458,7 +458,7 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesEmpty()
         {
             fixture.SetupConfigFile4();
-            fixture.ForceReadingFromFile();
+            PowerShellPolicyFixture.ForceReadingFromFile();
 
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
@@ -471,7 +471,7 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesNotExist()
         {
             fixture.CleanupConfigFiles();
-            fixture.ForceReadingFromFile();
+            PowerShellPolicyFixture.ForceReadingFromFile();
 
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
@@ -484,7 +484,7 @@ namespace PSTests.Sequential
         public void Utils_GetPolicySetting_BothConfigFilesNotEmpty()
         {
             fixture.SetupConfigFile1();
-            fixture.ForceReadingFromFile();
+            PowerShellPolicyFixture.ForceReadingFromFile();
 
             ScriptExecution scriptExecution;
             scriptExecution = Utils.GetPolicySetting<ScriptExecution>(Utils.SystemWideOnlyConfig);
@@ -583,7 +583,7 @@ namespace PSTests.Sequential
         public void Utils_GetPolicySetting_EmptyUserConfig()
         {
             fixture.SetupConfigFile2();
-            fixture.ForceReadingFromFile();
+            PowerShellPolicyFixture.ForceReadingFromFile();
 
             // The CurrentUser config is empty
             ScriptExecution scriptExecution;
@@ -682,7 +682,7 @@ namespace PSTests.Sequential
         public void Utils_GetPolicySetting_EmptySystemConfig()
         {
             fixture.SetupConfigFile3();
-            fixture.ForceReadingFromFile();
+            PowerShellPolicyFixture.ForceReadingFromFile();
 
             // The SystemWide config is empty
             ScriptExecution scriptExecution;
@@ -782,7 +782,7 @@ namespace PSTests.Sequential
         public void Utils_GetPolicySetting_BothConfigFilesEmpty()
         {
             fixture.SetupConfigFile4();
-            fixture.ForceReadingFromFile();
+            PowerShellPolicyFixture.ForceReadingFromFile();
 
             // Both config files are empty
             ScriptExecution scriptExecution;
@@ -882,7 +882,7 @@ namespace PSTests.Sequential
         public void Utils_GetPolicySetting_BothConfigFilesNotExist()
         {
             fixture.CleanupConfigFiles();
-            fixture.ForceReadingFromFile();
+            PowerShellPolicyFixture.ForceReadingFromFile();
 
             // Both config files don't exist
             ScriptExecution scriptExecution;
@@ -982,7 +982,7 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_BrokenSystemConfig()
         {
             fixture.SetupConfigFile5();
-            fixture.ForceReadingFromFile();
+            PowerShellPolicyFixture.ForceReadingFromFile();
 
             Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers));
             Assert.Throws<System.Management.Automation.PSInvalidOperationException>(() => PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser));

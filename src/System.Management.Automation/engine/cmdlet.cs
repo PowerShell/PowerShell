@@ -140,7 +140,7 @@ namespace System.Management.Automation
             if (mshRuntime != null)
             {
                 if (mshRuntime.UseTransaction &&
-                   (!this.Context.TransactionManager.HasTransaction))
+                   (!PSTransactionManager.HasTransaction))
                 {
                     string error = TransactionStrings.NoTransactionStarted;
 

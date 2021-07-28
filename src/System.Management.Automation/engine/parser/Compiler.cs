@@ -2399,7 +2399,7 @@ namespace System.Management.Automation.Language
             return result;
         }
 
-        internal Expression CallAddPipe(Expression expr, Expression pipe)
+        internal static Expression CallAddPipe(Expression expr, Expression pipe)
         {
             if (!PSEnumerableBinder.IsStaticTypePossiblyEnumerable(expr.Type))
             {
@@ -5620,7 +5620,7 @@ namespace System.Management.Automation.Language
 
         #region Expressions
 
-        public Expression GenerateCallContains(Expression lhs, Expression rhs, bool ignoreCase)
+        public static Expression GenerateCallContains(Expression lhs, Expression rhs, bool ignoreCase)
         {
             return Expression.Call(
                 CachedReflectionInfo.ParserOps_ContainsOperatorCompiled,
@@ -6212,7 +6212,7 @@ namespace System.Management.Automation.Language
             return GetLocal(tupleIndex);
         }
 
-        internal Expression CompileTypeName(ITypeName typeName, IScriptExtent errorPos)
+        internal static Expression CompileTypeName(ITypeName typeName, IScriptExtent errorPos)
         {
             Type type;
             try

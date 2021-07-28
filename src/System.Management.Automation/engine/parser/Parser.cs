@@ -4049,7 +4049,7 @@ namespace System.Management.Automation.Language
             return dynamicKeywordAst;
         }
 
-        internal StatementAst CreateErrorStatementAst(
+        internal static StatementAst CreateErrorStatementAst(
             Token functionName,
             ExpressionAst instanceName,
             ExpressionAst bodyExpression)

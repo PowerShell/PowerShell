@@ -526,7 +526,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (reason == null)
                         {
-                            reason = new RuntimeException(this.GetMessage(RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState, state));
+                            reason = new RuntimeException(GetMessage(RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState, state));
                         }
 
                         string fullyQualifiedErrorId = WSManTransportManagerUtils.GetFQEIDFromTransportError(

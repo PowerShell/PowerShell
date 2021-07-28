@@ -1250,7 +1250,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="requestDetails"></param>
         /// <param name="clientVersionString"></param>
         /// <returns></returns>
-        protected internal bool EnsureProtocolVersionComplies(
+        internal protected static bool EnsureProtocolVersionComplies(
             WSManNativeApi.WSManPluginRequest requestDetails,
             string clientVersionString)
         {

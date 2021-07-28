@@ -196,7 +196,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
 
-            return commandMetadata.GetProcessBlock();
+            return CommandMetadata.GetProcessBlock();
         }
 
         /// <summary>
@@ -244,7 +244,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("commandMetaData");
             }
 
-            return commandMetadata.GetEndBlock();
+            return CommandMetadata.GetEndBlock();
         }
 
         private static T GetProperty<T>(PSObject obj, string property) where T : class

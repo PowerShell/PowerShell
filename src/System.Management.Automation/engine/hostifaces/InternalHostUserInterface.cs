@@ -46,7 +46,7 @@ namespace System.Management.Automation.Internal.Host
         void
         ThrowNotInteractive()
         {
-            _internalRawUI.ThrowNotInteractive();
+            InternalHostRawUserInterface.ThrowNotInteractive();
         }
 
         private static void

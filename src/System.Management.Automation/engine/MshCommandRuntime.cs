@@ -1986,7 +1986,7 @@ namespace System.Management.Automation
         /// </summary>
         public bool TransactionAvailable()
         {
-            return UseTransactionFlagSet && Context.TransactionManager.HasTransaction;
+            return UseTransactionFlagSet && PSTransactionManager.HasTransaction;
         }
 
         /// <summary>

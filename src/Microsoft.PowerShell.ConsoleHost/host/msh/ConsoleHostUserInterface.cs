@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal bool TryTurnOnVtMode()
+        internal static bool TryTurnOnVtMode()
         {
 #if UNIX
             return true;
