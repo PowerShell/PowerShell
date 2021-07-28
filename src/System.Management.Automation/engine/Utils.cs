@@ -2278,7 +2278,9 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Indicate if it's a readonly Hashset.
         /// </summary>
-        public static bool IsReadOnly => true;
+#pragma warning disable CA1822 // Mark members as static
+        public bool IsReadOnly => true;
+#pragma warning restore CA1822 // https://github.com/dotnet/roslyn-analyzers/issues/5320
 
         /// <summary>
         /// Check if the set contains an item.
