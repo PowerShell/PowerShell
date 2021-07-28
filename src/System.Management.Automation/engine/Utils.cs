@@ -2107,6 +2107,7 @@ namespace System.Management.Automation.Internal
         // To emulate OneDrive behavior we use the hard-coded symlink.
         // If OneDriveTestRecuseOn is false then the symlink works as regular symlink.
         // If OneDriveTestRecuseOn is true then we resurce into the symlink as OneDrive should work.
+        // OneDriveTestSymlinkName defines the symlink name used in tests.
         internal static bool OneDriveTestOn;
         internal static bool OneDriveTestRecurseOn;
         internal static string OneDriveTestSymlinkName = "link-Beta";

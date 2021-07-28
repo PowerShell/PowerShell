@@ -449,6 +449,7 @@ namespace System.Management.Automation
             return false;
         }
 
+        #region Helpers for long paths from .Net Runtime
         internal static string EnsureExtendedPrefix(string path)
         {
             if (IsPartiallyQualified(path) || IsDevice(path))
@@ -461,7 +462,6 @@ namespace System.Management.Automation
             return ExtendedDevicePathPrefix + path;
         }
 
-        #region Helpers for long paths from .Net RUmtime
         private const string ExtendedDevicePathPrefix = @"\\?\";
         private const string UncPathPrefix = @"\\";
         private const string UncDevicePrefixToInsert = @"?\UNC\";
