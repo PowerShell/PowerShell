@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         private
         void
-        HandleIncomingProgressRecord(Int64 sourceId, ProgressRecord record)
+        HandleIncomingProgressRecord(long sourceId, ProgressRecord record)
         {
             Dbg.Assert(record != null, "record should not be null");
 

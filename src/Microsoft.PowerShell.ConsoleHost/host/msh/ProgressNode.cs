@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell
         /// Constructs an instance from a ProgressRecord.
         /// </summary>
         internal
-        ProgressNode(Int64 sourceId, ProgressRecord record)
+        ProgressNode(long sourceId, ProgressRecord record)
             : base(record.ActivityId, record.Activity, record.StatusDescription)
         {
             Dbg.Assert(record.RecordType == ProgressRecordType.Processing, "should only create node for Processing records");
@@ -485,7 +485,7 @@ namespace Microsoft.PowerShell
         /// Identifies the source of the progress record.
         /// </summary>
         internal
-        Int64
+        long
         SourceId;
 
         /// <summary>

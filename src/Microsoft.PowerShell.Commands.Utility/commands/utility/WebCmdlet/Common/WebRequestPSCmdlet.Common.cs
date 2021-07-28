@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the TimeOut property.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public virtual int TimeoutSec { get; set; }
 
         /// <summary>
@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the RedirectMax property.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public virtual int MaximumRedirection
         {
             get { return _maximumRedirection; }
@@ -238,14 +238,14 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the MaximumRetryCount property, which determines the number of retries of a failed web request.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public virtual int MaximumRetryCount { get; set; }
 
         /// <summary>
         /// Gets or sets the RetryIntervalSec property, which determines the number seconds between retries.
         /// </summary>
         [Parameter]
-        [ValidateRange(1, Int32.MaxValue)]
+        [ValidateRange(1, int.MaxValue)]
         public virtual int RetryIntervalSec { get; set; } = 5;
 
         #endregion
@@ -940,7 +940,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Maximum number of Rel Links to follow.
         /// </summary>
-        internal int _maximumFollowRelLink = Int32.MaxValue;
+        internal int _maximumFollowRelLink = int.MaxValue;
 
         /// <summary>
         /// The remote endpoint returned a 206 status code indicating successful resume.

@@ -551,7 +551,7 @@ namespace Microsoft.PowerShell.Commands
                     // Win8:378368 Enums based on System.Int64 or System.UInt64 are not JSON-serializable
                     // because JavaScript does not support the necessary precision.
                     Type enumUnderlyingType = Enum.GetUnderlyingType(obj.GetType());
-                    if (enumUnderlyingType.Equals(typeof(Int64)) || enumUnderlyingType.Equals(typeof(UInt64)))
+                    if (enumUnderlyingType.Equals(typeof(long)) || enumUnderlyingType.Equals(typeof(ulong)))
                     {
                         rv = obj.ToString();
                     }

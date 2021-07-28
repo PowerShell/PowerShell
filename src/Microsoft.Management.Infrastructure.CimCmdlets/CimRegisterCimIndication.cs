@@ -123,7 +123,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string nameSpace,
             string queryDialect,
             string queryExpression,
-            UInt32 operationTimeout)
+            uint operationTimeout)
         {
             DebugHelper.WriteLogEx("queryDialect = '{0}'; queryExpression = '{1}'", 0, queryDialect, queryExpression);
             this.TargetComputerName = computerName;
@@ -146,7 +146,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string nameSpace,
             string queryDialect,
             string queryExpression,
-            UInt32 operationTimeout)
+            uint operationTimeout)
         {
             DebugHelper.WriteLogEx("queryDialect = '{0}'; queryExpression = '{1}'", 0, queryDialect, queryExpression);
             if (cimSession == null)
@@ -317,7 +317,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         private CimSessionProxy CreateSessionProxy(
             string computerName,
-            UInt32 timeout)
+            uint timeout)
         {
             CimSessionProxy proxy = CreateCimSessionProxy(computerName);
             proxy.OperationTimeout = timeout;
@@ -332,7 +332,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         private CimSessionProxy CreateSessionProxy(
             CimSession session,
-            UInt32 timeout)
+            uint timeout)
         {
             CimSessionProxy proxy = CreateCimSessionProxy(session);
             proxy.OperationTimeout = timeout;
