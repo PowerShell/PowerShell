@@ -927,7 +927,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         // requires a different firewall exception.
         // This function checks and Asserts if the path is not valid.
         //
-        public uint TranslateLocalCounterPath(string englishPath, out string localizedPath)
+        public static uint TranslateLocalCounterPath(string englishPath, out string localizedPath)
         {
             uint res = PdhResults.PDH_CSTATUS_VALID_DATA;
             localizedPath = string.Empty;

@@ -422,7 +422,7 @@ namespace Microsoft.PowerShell.Commands
                 string localizedPath = path;
                 if (_defaultCounters)
                 {
-                    res = _pdhHelper.TranslateLocalCounterPath(path, out localizedPath);
+                    res = PdhHelper.TranslateLocalCounterPath(path, out localizedPath);
                     if (res != PdhResults.PDH_CSTATUS_VALID_DATA)
                     {
                         string msg = string.Format(CultureInfo.CurrentCulture, _resourceMgr.GetString("CounterPathTranslationFailed"), res);
