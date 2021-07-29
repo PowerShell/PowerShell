@@ -18,6 +18,7 @@ using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace System.Management.Automation
 {
@@ -31,7 +32,8 @@ namespace System.Management.Automation
     internal enum NativeCommandIOFormat
     {
         Text,
-        Xml
+        Xml,
+        Binary,
     }
 
     /// <summary>
@@ -127,6 +129,94 @@ namespace System.Management.Automation
         {
             Data = data;
             Stream = stream;
+        }
+    }
+
+    internal sealed class NativePipe : IDisposable
+    {
+        public static NativePipe LinkCommands(
+            NativeCommandProcessor upstreamCommand,
+            NativeCommandProcessor downstreamCommand)
+        {
+            var pipe = new NativePipe(upstreamCommand, downstreamCommand);
+            upstreamCommand.DownstreamNativePipe = pipe;
+            downstreamCommand.UpstreamNativePipe = pipe;
+            return pipe;
+        }
+
+        private readonly NativeCommandProcessor _upstreamCommand;
+
+        private readonly NativeCommandProcessor _downstreamCommand;
+
+        private Process _fromProcess;
+
+        private Process _toProcess;
+
+        private Task _streamCopyTask;
+
+        private BlockingCollection<ProcessOutputObject> _outputQueue;
+
+        private bool _isFirstOutput;
+
+        private bool _outputIsCliXml;
+
+        private NativePipe(
+            NativeCommandProcessor upstreamCommand,
+            NativeCommandProcessor downstreamCommand)
+        {
+            _upstreamCommand = upstreamCommand;
+            _downstreamCommand = downstreamCommand;
+        }
+
+        public bool SendOutput { get; init; } = true;
+
+        public bool SendErrors { get; init; } = false;
+
+        public void RegisterInputProcess(Process inputProcess, BlockingCollection<ProcessOutputObject> outputQueue)
+        {
+            _fromProcess = inputProcess;
+
+            if (!SendOutput)
+            {
+                _fromProcess.OutputDataReceived += HandleOutput;
+            }
+
+            if (!SendErrors)
+            {
+                _fromProcess.ErrorDataReceived += HandleErrors;
+            }
+        }
+
+        public void RegisterOutputProcess(Process outputProcess)
+        {
+            _toProcess = outputProcess;
+            _streamCopyTask = _fromProcess.StandardOutput.BaseStream.CopyToAsync(_toProcess.StandardInput.BaseStream);
+        }
+
+        public void WaitForPipeCompletion()
+        {
+            _streamCopyTask?.GetAwaiter().GetResult();
+        }
+
+        public void Dispose()
+        {
+            _fromProcess.OutputDataReceived -= HandleOutput;
+            _fromProcess.ErrorDataReceived -= HandleErrors;
+        }
+
+        private void HandleErrors(object sender, DataReceivedEventArgs args)
+        {
+
+        }
+
+        private void HandleOutput(object sender, DataReceivedEventArgs args)
+        {
+            if (args.Data is null)
+            {
+                return;
+            }
+
+            _outputQueue.Add(new ProcessOutputObject(args.Data, MinishellStream.Output));
         }
     }
 
@@ -240,6 +330,10 @@ namespace System.Management.Automation
                 return path;
             }
         }
+
+        internal NativePipe UpstreamNativePipe { get; set; }
+
+        internal NativePipe DownstreamNativePipe { get; set; }
 
         #endregion ctor/native command properties
 
@@ -579,19 +673,7 @@ namespace System.Management.Automation
                     // If input is redirected, start input to process.
                     if (startInfo.RedirectStandardInput)
                     {
-                        NativeCommandIOFormat inputFormat = NativeCommandIOFormat.Text;
-                        if (_isMiniShell)
-                        {
-                            inputFormat = ((MinishellParameterBinderController)NativeParameterBinderController).InputFormat;
-                        }
-
-                        lock (_sync)
-                        {
-                            if (!_stopped)
-                            {
-                                _inputWriter.Start(_nativeProcess, inputFormat);
-                            }
-                        }
+                        SetupUpstreamInput();
                     }
                 }
                 catch (Exception)
@@ -636,6 +718,29 @@ namespace System.Management.Automation
             }
         }
 
+        private void SetupUpstreamInput()
+        {
+            if (UpstreamNativePipe is not null)
+            {
+                UpstreamNativePipe.RegisterOutputProcess(_nativeProcess);
+                return;
+            }
+
+            NativeCommandIOFormat inputFormat = NativeCommandIOFormat.Text;
+            if (_isMiniShell)
+            {
+                inputFormat = ((MinishellParameterBinderController)NativeParameterBinderController).InputFormat;
+            }
+
+            lock (_sync)
+            {
+                if (!_stopped)
+                {
+                    _inputWriter.Start(_nativeProcess, inputFormat);
+                }
+            }
+        }
+
         private void InitOutputQueue()
         {
             // if output is redirected, start reading output of process in queue.
@@ -646,6 +751,13 @@ namespace System.Management.Automation
                     if (!_stopped)
                     {
                         _nativeProcessOutputQueue = new BlockingCollection<ProcessOutputObject>();
+
+                        if (DownstreamNativePipe is not null)
+                        {
+                            DownstreamNativePipe.RegisterInputProcess(_nativeProcess, _nativeProcessOutputQueue);
+                            return;
+                        }
+
                         // we don't assign the handler to anything, because it's used only for objects marshaling
                         new ProcessOutputHandler(_nativeProcess, _nativeProcessOutputQueue);
                     }
@@ -691,6 +803,11 @@ namespace System.Management.Automation
         /// </summary>
         private void ConsumeAvailableNativeProcessOutput(bool blocking)
         {
+            if (UpstreamNativePipe is not null)
+            {
+                return;
+            }
+
             if (!_isRunningInBackground)
             {
                 if (_nativeProcess.StartInfo.RedirectStandardOutput || _nativeProcess.StartInfo.RedirectStandardError)
@@ -722,7 +839,13 @@ namespace System.Management.Automation
 
                     // read all the available output in the blocking way
                     ConsumeAvailableNativeProcessOutput(blocking: true);
+
                     _nativeProcess.WaitForExit();
+
+                    if (UpstreamNativePipe is not null)
+                    {
+                        UpstreamNativePipe.WaitForPipeCompletion();
+                    }
 
                     // Capture screen output if we are transcribing and running stand alone
                     if (_isTranscribing && (s_supportScreenScrape == true) && _runStandAlone)
@@ -800,6 +923,21 @@ namespace System.Management.Automation
 
                 throw appFailedException;
             }
+        }
+
+        internal override void HookupToCommandPipeline(
+            IReadOnlyList<CommandProcessorBase> upstreamCommands,
+            int previousCommandIndex,
+            bool readErrorQueue)
+        {
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandRawPipingFeatureName)
+                && upstreamCommands[previousCommandIndex] is NativeCommandProcessor upstreamNativeCommandProcessor)
+            {
+                NativePipe.LinkCommands(upstreamNativeCommandProcessor, this);
+                return;
+            }
+
+            base.HookupToCommandPipeline(upstreamCommands, previousCommandIndex, readErrorQueue);
         }
 
         #region Process cleanup with Child Process cleanup
@@ -1212,13 +1350,21 @@ namespace System.Management.Automation
                 if (redirectOutput)
                 {
                     startInfo.RedirectStandardOutput = true;
-                    startInfo.StandardOutputEncoding = Console.OutputEncoding;
+
+                    if (DownstreamNativePipe is null)
+                    {
+                        startInfo.StandardOutputEncoding = Console.OutputEncoding;
+                    }
                 }
 
                 if (redirectError)
                 {
                     startInfo.RedirectStandardError = true;
-                    startInfo.StandardErrorEncoding = Console.OutputEncoding;
+
+                    if (DownstreamNativePipe is null)
+                    {
+                        startInfo.StandardErrorEncoding = Console.OutputEncoding;
+                    }
                 }
             }
 
@@ -1856,20 +2002,27 @@ namespace System.Management.Automation
         /// <param name="input"></param>
         internal void Add(object input)
         {
-            if (_stopping || _streamWriter == null)
+            if (_stopping)
+            {
+                return;
+            }
+
+            if (_streamWriter is null)
             {
                 // if _streamWriter is already null, then we already called Dispose()
                 // so we should just discard the input.
                 return;
             }
 
-            if (_inputFormat == NativeCommandIOFormat.Text)
+            switch (_inputFormat)
             {
-                AddTextInput(input);
-            }
-            else // Xml
-            {
-                AddXmlInput(input);
+                case NativeCommandIOFormat.Text:
+                    AddTextInput(input);
+                    break;
+
+                case NativeCommandIOFormat.Xml:
+                    AddXmlInput(input);
+                    break;
             }
         }
 
@@ -1936,6 +2089,8 @@ namespace System.Management.Automation
         {
             Dbg.Assert(process != null, "caller should validate the paramter");
 
+            _inputFormat = inputFormat;
+
             // Get the encoding for writing to native command. Note we get the Encoding
             // from the current scope so a script or function can use a different encoding
             // than global value.
@@ -1945,17 +2100,17 @@ namespace System.Management.Automation
             _streamWriter = new StreamWriter(process.StandardInput.BaseStream, pipeEncoding);
             _streamWriter.AutoFlush = true;
 
-            _inputFormat = inputFormat;
+            switch (_inputFormat)
+            {
+                case NativeCommandIOFormat.Xml:
+                    _streamWriter.WriteLine(ProcessOutputHandler.XmlCliTag);
+                    _xmlSerializer = new Serializer(XmlWriter.Create(_streamWriter));
+                    break;
 
-            if (_inputFormat == NativeCommandIOFormat.Xml)
-            {
-                _streamWriter.WriteLine(ProcessOutputHandler.XmlCliTag);
-                _xmlSerializer = new Serializer(XmlWriter.Create(_streamWriter));
-            }
-            else // Text
-            {
-                _pipeline = ScriptBlock.Create("Out-String -Stream").GetSteppablePipeline();
-                _pipeline.Begin(true);
+                case NativeCommandIOFormat.Text:
+                    _pipeline = ScriptBlock.Create("Out-String -Stream").GetSteppablePipeline();
+                    _pipeline.Begin(true);
+                    break;
             }
         }
 

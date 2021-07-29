@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -304,6 +305,65 @@ namespace System.Management.Automation
                 false);
             helpCommandProcessor.AddParameter(cpi);
             return helpCommandProcessor;
+        }
+
+        internal virtual void HookupToCommandPipeline(
+            IReadOnlyList<CommandProcessorBase> upstreamCommands,
+            int previousCommandIndex,
+            bool readErrorQueue)
+        {
+            CommandProcessorBase upstreamCommand = upstreamCommands[previousCommandIndex];
+
+            if (upstreamCommand?.CommandRuntime is null)
+            {
+                throw PSTraceSource.NewInvalidOperationException();
+            }
+
+            Pipe upstreamPipe = readErrorQueue
+                ? upstreamCommand.CommandRuntime.ErrorOutputPipe
+                : upstreamCommand.CommandRuntime.OutputPipe;
+
+            if (upstreamPipe is null)
+            {
+                throw PSTraceSource.NewInvalidOperationException();
+            }
+
+            if (upstreamPipe.DownstreamCmdlet is not null)
+            {
+                throw PSTraceSource.NewInvalidOperationException(
+                    PipelineStrings.PipeAlreadyTaken);
+            }
+
+            // Mark this command as part of a pipeline now
+            AddedToPipelineAlready = true;
+
+            CommandRuntime.InputPipe = upstreamPipe;
+            upstreamPipe.DownstreamCmdlet = this;
+
+            // 2004/09/14-JonN This code could be moved to SynchronousExecute
+            //  if this setting needed to bind at a later time
+            //  than AddCommand.
+            if (CommandRuntime.MergeUnclaimedPreviousErrorResults)
+            {
+                for (int i = 0; i < upstreamCommands.Count; i++)
+                {
+                    CommandProcessorBase prevcommandProcessor = upstreamCommands[i];
+                    if (prevcommandProcessor == null || prevcommandProcessor.CommandRuntime == null)
+                    {
+                        // "PipelineProcessor.AddCommand(): previous request object == null"
+                        throw PSTraceSource.NewInvalidOperationException();
+                    }
+                    // check whether the error output is already claimed
+                    if (prevcommandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet != null)
+                        continue;
+                    if (prevcommandProcessor.CommandRuntime.ErrorOutputPipe.ExternalWriter != null)
+                        continue;
+
+                    // Set the upstream cmdlet's error output to go down
+                    // the same pipe as the downstream cmdlet's input
+                    prevcommandProcessor.CommandRuntime.ErrorOutputPipe = upstreamPipe;
+                }
+            }
         }
 
         #endregion

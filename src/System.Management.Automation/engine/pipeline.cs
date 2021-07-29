@@ -347,56 +347,7 @@ namespace System.Management.Automation.Internal
             }
             else
             {
-                CommandProcessorBase prevcommandProcessor = _commands[readFromCommand - 1] as CommandProcessorBase;
-                if (prevcommandProcessor == null || prevcommandProcessor.CommandRuntime == null)
-                {
-                    // "PipelineProcessor.AddCommand(): previous request object == null"
-                    throw PSTraceSource.NewInvalidOperationException();
-                }
-
-                Pipe UpstreamPipe = (readErrorQueue) ?
-                    prevcommandProcessor.CommandRuntime.ErrorOutputPipe : prevcommandProcessor.CommandRuntime.OutputPipe;
-                if (UpstreamPipe == null)
-                {
-                    // "PipelineProcessor.AddCommand(): UpstreamPipe == null"
-                    throw PSTraceSource.NewInvalidOperationException();
-                }
-
-                if (UpstreamPipe.DownstreamCmdlet != null)
-                {
-                    throw PSTraceSource.NewInvalidOperationException(
-                        PipelineStrings.PipeAlreadyTaken);
-                }
-
-                commandProcessor.AddedToPipelineAlready = true;
-
-                commandProcessor.CommandRuntime.InputPipe = UpstreamPipe;
-                UpstreamPipe.DownstreamCmdlet = commandProcessor;
-
-                // 2004/09/14-JonN This code could be moved to SynchronousExecute
-                //  if this setting needed to bind at a later time
-                //  than AddCommand.
-                if (commandProcessor.CommandRuntime.MergeUnclaimedPreviousErrorResults)
-                {
-                    for (int i = 0; i < _commands.Count; i++)
-                    {
-                        prevcommandProcessor = _commands[i];
-                        if (prevcommandProcessor == null || prevcommandProcessor.CommandRuntime == null)
-                        {
-                            // "PipelineProcessor.AddCommand(): previous request object == null"
-                            throw PSTraceSource.NewInvalidOperationException();
-                        }
-                        // check whether the error output is already claimed
-                        if (prevcommandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet != null)
-                            continue;
-                        if (prevcommandProcessor.CommandRuntime.ErrorOutputPipe.ExternalWriter != null)
-                            continue;
-
-                        // Set the upstream cmdlet's error output to go down
-                        // the same pipe as the downstream cmdlet's input
-                        prevcommandProcessor.CommandRuntime.ErrorOutputPipe = UpstreamPipe;
-                    }
-                }
+                commandProcessor.HookupToCommandPipeline(_commands, previousCommandIndex: readFromCommand - 1, readErrorQueue);
             }
 
             _commands.Add(commandProcessor);

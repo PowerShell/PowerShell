@@ -23,6 +23,7 @@ namespace System.Management.Automation
         internal const string EngineSource = "PSEngine";
         internal const string PSAnsiProgressFeatureName = "PSAnsiProgress";
         internal const string PSNativeCommandArgumentPassingFeatureName = "PSNativeCommandArgumentPassing";
+        internal const string PSNativeCommandRawPipingFeatureName = "PSNativeCommandRawPiping";
 
         #endregion
 
@@ -143,6 +144,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSAnsiRenderingFileInfo",
                     description: "Enable coloring for FileInfo objects"),
+                new ExperimentalFeature(
+                    name: PSNativeCommandRawPipingFeatureName,
+                    description: "Enable direct bytestream piping between native executables without PowerShell marshalling"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
