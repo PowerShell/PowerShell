@@ -1156,7 +1156,7 @@ namespace System.Management.Automation
                 // TODO: Bug 251457. This is a workaround to unblock partners and find out the root cause.
                 Tracing.PSEtwLogProvider provider = new Tracing.PSEtwLogProvider();
 
-                Tracing.PSEtwLogProvider.WriteEvent(PSEventId.Engine_Health,
+                provider.WriteEvent(PSEventId.Engine_Health,
                                     PSChannel.Analytic,
                                     PSOpcode.Exception,
                                     PSLevel.Informational,

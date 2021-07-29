@@ -140,7 +140,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="args"></param>
         internal static void LogOperationalInformation(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
-            PSEtwLogProvider.WriteEvent(id, PSChannel.Operational, opcode, PSLevel.Informational, task, keyword, args);
+            provider.WriteEvent(id, PSChannel.Operational, opcode, PSLevel.Informational, task, keyword, args);
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="args"></param>
         internal static void LogOperationalWarning(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
-            PSEtwLogProvider.WriteEvent(id, PSChannel.Operational, opcode, PSLevel.Warning, task, keyword, args);
+            provider.WriteEvent(id, PSChannel.Operational, opcode, PSLevel.Warning, task, keyword, args);
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="args"></param>
         internal static void LogOperationalVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
-            PSEtwLogProvider.WriteEvent(id, PSChannel.Operational, opcode, PSLevel.Verbose, task, keyword, args);
+            provider.WriteEvent(id, PSChannel.Operational, opcode, PSLevel.Verbose, task, keyword, args);
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="args"></param>
         internal static void LogAnalyticError(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
-            PSEtwLogProvider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Error, task, keyword, args);
+            provider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Error, task, keyword, args);
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="args"></param>
         internal static void LogAnalyticWarning(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
-            PSEtwLogProvider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Warning, task, keyword, args);
+            provider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Warning, task, keyword, args);
         }
 
         /// <summary>
@@ -216,12 +216,12 @@ namespace System.Management.Automation.Tracing
             UInt32 fragmentLength,
             PSETWBinaryBlob fragmentData)
         {
-            if (PSEtwLogProvider.IsEnabled(PSLevel.Verbose, keyword))
+            if (provider.IsEnabled(PSLevel.Verbose, keyword))
             {
                 string payLoadData = BitConverter.ToString(fragmentData.blob, fragmentData.offset, fragmentData.length);
                 payLoadData = string.Format(CultureInfo.InvariantCulture, "0x{0}", payLoadData.Replace("-", string.Empty));
 
-                PSEtwLogProvider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Verbose, task, keyword,
+                provider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Verbose, task, keyword,
                                     objectId, fragmentId, isStartFragment, isEndFragment, fragmentLength,
                                     payLoadData);
             }
@@ -237,7 +237,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="args"></param>
         internal static void LogAnalyticVerbose(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
-            PSEtwLogProvider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Verbose, task, keyword, args);
+            provider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Verbose, task, keyword, args);
         }
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="args"></param>
         internal static void LogAnalyticInformational(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
-            PSEtwLogProvider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Informational, task, keyword, args);
+            provider.WriteEvent(id, PSChannel.Analytic, opcode, PSLevel.Informational, task, keyword, args);
         }
 
         /// <summary>
@@ -263,7 +263,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="args"></param>
         internal static void LogOperationalError(PSEventId id, PSOpcode opcode, PSTask task, PSKeyword keyword, params object[] args)
         {
-            PSEtwLogProvider.WriteEvent(id, PSChannel.Operational, opcode, PSLevel.Error, task, keyword, args);
+            provider.WriteEvent(id, PSChannel.Operational, opcode, PSLevel.Error, task, keyword, args);
         }
 
         /// <summary>
@@ -276,19 +276,19 @@ namespace System.Management.Automation.Tracing
         /// <param name="payLoad"></param>
         internal static void LogOperationalError(PSEventId id, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
         {
-            PSEtwLogProvider.WriteEvent(id, PSChannel.Operational, opcode, task, logContext, payLoad);
+            provider.WriteEvent(id, PSChannel.Operational, opcode, task, logContext, payLoad);
         }
 
         internal static void SetActivityIdForCurrentThread(Guid newActivityId)
         {
-            PSEtwLogProvider.SetActivityIdForCurrentThread(newActivityId);
+            provider.SetActivityIdForCurrentThread(newActivityId);
         }
 
         internal static void ReplaceActivityIdForCurrentThread(Guid newActivityId,
             PSEventId eventForOperationalChannel, PSEventId eventForAnalyticChannel, PSKeyword keyword, PSTask task)
         {
             // set the new activity id
-            PSEtwLogProvider.SetActivityIdForCurrentThread(newActivityId);
+            provider.SetActivityIdForCurrentThread(newActivityId);
 
             // Once the activity id is set, write the transfer event
             WriteTransferEvent(newActivityId, eventForOperationalChannel, eventForAnalyticChannel, keyword, task);
@@ -308,10 +308,10 @@ namespace System.Management.Automation.Tracing
         internal static void WriteTransferEvent(Guid relatedActivityId, PSEventId eventForOperationalChannel,
                             PSEventId eventForAnalyticChannel, PSKeyword keyword, PSTask task)
         {
-            PSEtwLogProvider.WriteEvent(eventForOperationalChannel, PSChannel.Operational, PSOpcode.Method, PSLevel.Informational, task,
+            provider.WriteEvent(eventForOperationalChannel, PSChannel.Operational, PSOpcode.Method, PSLevel.Informational, task,
                 PSKeyword.UseAlwaysOperational);
 
-            PSEtwLogProvider.WriteEvent(eventForAnalyticChannel, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, task,
+            provider.WriteEvent(eventForAnalyticChannel, PSChannel.Analytic, PSOpcode.Method, PSLevel.Informational, task,
                 PSKeyword.UseAlwaysAnalytic);
         }
 
@@ -321,7 +321,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="parentActivityId"></param>
         internal static void WriteTransferEvent(Guid parentActivityId)
         {
-            PSEtwLogProvider.WriteTransferEvent(parentActivityId);
+            provider.WriteTransferEvent(parentActivityId);
         }
     }
 }

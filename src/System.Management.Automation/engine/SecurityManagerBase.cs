@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Host;
 
 using Dbg = System.Management.Automation;
@@ -72,6 +73,10 @@ namespace System.Management.Automation
         /// If the derived security manager threw an exception or returned
         /// false with a reason.
         /// </exception>
+        [SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "Issue with conditional compilation using UNIX symbol.")]
         internal void ShouldRunInternal(CommandInfo commandInfo,
                                         CommandOrigin origin,
                                         PSHost host)
