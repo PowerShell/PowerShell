@@ -40,11 +40,7 @@ namespace System.Management.Automation.Tracing
         /// may want to call this function if the provider needs to perform extra work to generate the event. In this case,
         ///  calling this function first to determine if a session requested the event or not, may save resources and time.
         /// </remarks>
-        [SuppressMessage(
-            "Performance",
-            "CA1822:Mark members as static",
-            Justification = "Issue with conditional compilation using UNIX symbol.")]
-        internal bool IsEnabled(PSLevel level, PSKeyword keywords)
+        internal static bool IsEnabled(PSLevel level, PSKeyword keywords)
         {
             return etwProvider.IsEnabled((byte)level, (long)keywords);
         }
@@ -256,11 +252,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="logContext">Log context.</param>
         /// <param name="payLoad"></param>
-        [SuppressMessage(
-            "Performance",
-            "CA1822:Mark members as static",
-            Justification = "Issue with conditional compilation using UNIX symbol.")]
-        internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
+        internal static void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
         {
             WriteEvent(id, channel, opcode, GetPSLevelFromSeverity(logContext.Severity), task, (PSKeyword)0x0,
                 LogContextToString(logContext), GetPSLogUserData(logContext.ExecutionContext), payLoad);
@@ -276,11 +268,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="keyword"></param>
         /// <param name="args"></param>
-        [SuppressMessage(
-            "Performance",
-            "CA1822:Mark members as static",
-            Justification = "Issue with conditional compilation using UNIX symbol.")]
-        internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSLevel level, PSTask task, PSKeyword keyword, params object[] args)
+        internal static void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSLevel level, PSTask task, PSKeyword keyword, params object[] args)
         {
             long longKeyword = 0x00;
 
@@ -303,11 +291,7 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Writes an activity transfer event.
         /// </summary>
-        [SuppressMessage(
-            "Performance",
-            "CA1822:Mark members as static",
-            Justification = "Issue with conditional compilation using UNIX symbol.")]
-        internal void WriteTransferEvent(Guid parentActivityId)
+        internal static void WriteTransferEvent(Guid parentActivityId)
         {
             etwProvider.WriteTransferEvent(in _xferEventDescriptor, parentActivityId, EtwActivity.GetActivityId(), parentActivityId);
         }
@@ -315,11 +299,7 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// </summary>
         /// <param name="newActivityId"></param>
-        [SuppressMessage(
-            "Performance",
-            "CA1822:Mark members as static",
-            Justification = "Issue with conditional compilation using UNIX symbol.")]
-        internal void SetActivityIdForCurrentThread(Guid newActivityId)
+        internal static void SetActivityIdForCurrentThread(Guid newActivityId)
         {
             Guid result = newActivityId;
             EventProvider.SetActivityId(ref result);

@@ -71,7 +71,7 @@ namespace System.Management.Automation.Tracing
         /// may want to call this function if the provider needs to perform extra work to generate the event. In this case,
         ///  calling this function first to determine if a session requested the event or not, may save resources and time.
         /// </remarks>
-        internal bool IsEnabled(PSLevel level, PSKeyword keywords)
+        internal static bool IsEnabled(PSLevel level, PSKeyword keywords)
         {
             return s_provider.IsEnabled(level, keywords);
         }
@@ -291,7 +291,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="logContext">Log context.</param>
         /// <param name="payLoad"></param>
-        internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
+        internal static void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSTask task, LogContext logContext, string payLoad)
         {
             s_provider.Log(id, channel, task, opcode, GetPSLevelFromSeverity(logContext.Severity), DefaultKeywords,
                            LogContextToString(logContext),
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Tracing
         /// <param name="task"></param>
         /// <param name="keyword"></param>
         /// <param name="args"></param>
-        internal void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSLevel level, PSTask task, PSKeyword keyword, params object[] args)
+        internal static void WriteEvent(PSEventId id, PSChannel channel, PSOpcode opcode, PSLevel level, PSTask task, PSKeyword keyword, params object[] args)
         {
             s_provider.Log(id, channel, task, opcode, level, keyword, args);
         }
@@ -317,18 +317,18 @@ namespace System.Management.Automation.Tracing
         /// <summary>
         /// Writes an activity transfer event.
         /// </summary>
-        internal void WriteTransferEvent(Guid parentActivityId)
+        internal static void WriteTransferEvent(Guid parentActivityId)
         {
-            s_provider.LogTransfer(parentActivityId);
+            SysLogProvider.LogTransfer(parentActivityId);
         }
 
         /// <summary>
         /// Sets the activity id for the current thread.
         /// </summary>
         /// <param name="newActivityId">The GUID identifying the activity.</param>
-        internal void SetActivityIdForCurrentThread(Guid newActivityId)
+        internal static void SetActivityIdForCurrentThread(Guid newActivityId)
         {
-            s_provider.SetActivity(newActivityId);
+            SysLogProvider.SetActivity(newActivityId);
         }
     }
 }

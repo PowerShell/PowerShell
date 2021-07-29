@@ -290,7 +290,7 @@ namespace System.Management.Automation.Tracing
         /// Logs a activity transfer.
         /// </summary>
         /// <param name="parentActivityId">The parent activity id.</param>
-        public void LogTransfer(Guid parentActivityId)
+        public static void LogTransfer(Guid parentActivityId)
         {
             // NOTE: always log
             int threadId = Environment.CurrentManagedThreadId;
@@ -307,7 +307,7 @@ namespace System.Management.Automation.Tracing
         /// Logs the activity identifier for the current thread.
         /// </summary>
         /// <param name="activity">The Guid activity identifier.</param>
-        public void SetActivity(Guid activity)
+        public static void SetActivity(Guid activity)
         {
             int threadId = Environment.CurrentManagedThreadId;
             Activity = activity;
