@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace System.Management.Automation
 {
-    internal sealed class SessionStateScopeEnumerator : IEnumerator<SessionStateScope>, IEnumerable<SessionStateScope>
+    internal struct SessionStateScopeEnumerator : IEnumerator<SessionStateScope>, IEnumerable<SessionStateScope>
     {
         /// <summary>
         /// Constructs an enumerator for enumerating through the session state scopes
@@ -19,6 +19,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(scope != null, "Caller to verify scope argument");
             _initialScope = scope;
+            _currentEnumeratedScope = null;
         }
 
         /// <summary>
@@ -94,7 +95,7 @@ namespace System.Management.Automation
 
         public void Dispose()
         {
-            Reset();
+            // Nothing to dispose
         }
 
         private readonly SessionStateScope _initialScope;
