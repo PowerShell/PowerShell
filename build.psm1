@@ -2400,26 +2400,28 @@ function Start-CrossGen {
         $dirSep = [System.IO.Path]::DirectorySeparatorChar
         $platformAssembliesPath = if (-not $platformAssembliesPath.EndsWith($dirSep)) { $platformAssembliesPath + $dirSep }
 
-        Start-NativeExecution {
-            $crossgen2Params = @(
-                "-r"
-                $platformAssembliesPath
-                "--out-near-input"
-                "--single-file-compilation"
-                "-O"
-                "--targetos"
-                $targetOS
-                "--targetarch"
-                $targetArch
-            )
+        $AssemblyPath | ForEach-Object {
 
-            if ($generatePdb) {
-                $crossgen2Params += "--pdb"
+            Start-NativeExecution {
+                $crossgen2Params = @(
+                    "-r"
+                    $platformAssembliesPath
+                    "--out-near-input"
+                    "-O"
+                    "--targetos"
+                    $targetOS
+                    "--targetarch"
+                    $targetArch
+                )
+
+                if ($generatePdb) {
+                    $crossgen2Params += "--pdb"
+                }
+
+                $crossgen2Params += $_
+
+                & $CrossgenPath $crossgen2Params
             }
-
-            $crossgen2Params += $AssemblyPath
-
-            & $CrossgenPath $crossgen2Params
         }
     }
 
