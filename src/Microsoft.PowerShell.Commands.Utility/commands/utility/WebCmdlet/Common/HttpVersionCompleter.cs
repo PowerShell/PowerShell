@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -10,7 +12,7 @@ using System.Management.Automation.Language;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// HttpVersionCompleter for http version names.
+    /// A completer for HTTP version names.
     /// </summary>
     [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Class is instantiated through late-bound reflection")]
     internal sealed class HttpVersionCompleter : IArgumentCompleter
