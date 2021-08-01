@@ -27,7 +27,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 // skip field Unknown and not Version type
                 if (fields[i].Name == nameof(HttpVersion.Unknown) || fields[i].FieldType != typeof(Version))
+                {
                     continue;
+                }
 
                 var version = (Version)fields[i].GetValue(null);
 
