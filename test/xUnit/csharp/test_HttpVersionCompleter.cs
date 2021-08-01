@@ -4,10 +4,11 @@
 using Microsoft.PowerShell.Commands;
 
 using System.Linq;
+using System.Management.Automation;
 
 using Xunit;
 
-namespace xUnit.tests.csharp
+namespace PSTests.Parallel
 {
     public class HttpVersionCompleterTests
     {
@@ -25,12 +26,14 @@ namespace xUnit.tests.csharp
             var result = completer.CompleteArgument(default, default, wordToComplete, default, default).ToArray();
 
             Assert.Equal(expectedCount, result.Length);
-            Assert.All(result, r =>
-            {
-                Assert.Equal(System.Management.Automation.CompletionResultType.Text, r.ResultType);
-                Assert.Contains(r.CompletionText, HttpVersionUtils.AllowedVersions);
-                Assert.StartsWith(wordToComplete, r.CompletionText);
-            });
+            Assert.All(
+                result,
+                r =>
+                {
+                    Assert.Equal(CompletionResultType.Text, r.ResultType);
+                    Assert.Contains(r.CompletionText, HttpVersionUtils.AllowedVersions);
+                    Assert.StartsWith(wordToComplete, r.CompletionText);
+                });
         }
     }
 }

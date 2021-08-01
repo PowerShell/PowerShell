@@ -1,18 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using Microsoft.PowerShell.Commands;
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Management.Automation;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.PowerShell.Commands;
 
 using Xunit;
 
-namespace xUnit.tests.csharp
+namespace PSTests.Parallel
 {
     public class HttpVersionTransformationAttributeTests
     {
