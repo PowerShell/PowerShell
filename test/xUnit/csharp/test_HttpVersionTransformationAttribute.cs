@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using Microsoft.PowerShell.Commands;
-
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
+
+using Microsoft.PowerShell.Commands;
 
 using Xunit;
 
