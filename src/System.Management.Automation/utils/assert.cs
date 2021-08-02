@@ -199,7 +199,7 @@ namespace System.Management.Automation
                 throw new AssertException(assertionMessage);
             }
 
-            System.Diagnostics.Debug.Fail(whyThisShouldNeverHappen, detailMessage);
+            // System.Diagnostics.Debug.Fail(whyThisShouldNeverHappen, detailMessage);
 #endif
         }
     }
