@@ -7,7 +7,7 @@ jobs:
   dependsOn: package_macOS_${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
-    name: Package ES Standard Build
+    vmImage: windows-latest
   variables:
     - group: ESRP
     - name: runCodesignValidationInjection

@@ -7,7 +7,8 @@ jobs:
     ${{ parameters.parentJobs }}
   displayName: Build NuGet packages
   condition: succeeded()
-  pool: Package ES Standard Build
+  pool:
+    vmImage: windows-latest
 
   timeoutInMinutes: 90
 

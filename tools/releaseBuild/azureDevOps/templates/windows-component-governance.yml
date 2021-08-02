@@ -10,7 +10,7 @@ jobs:
   condition: succeeded()
 
   pool:
-    name: Package ES Standard Build
+    vmImage: windows-latest
 
   steps:
   - checkout: self

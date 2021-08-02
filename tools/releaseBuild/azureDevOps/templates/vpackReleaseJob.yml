@@ -5,7 +5,8 @@ jobs:
 - job: vpack_${{ parameters.architecture }}
   displayName: Build and Publish VPack - ${{ parameters.architecture }}
   condition: succeeded()
-  pool: Package ES Standard Build
+  pool:
+    vmImage: windows-latest
   steps:
   - checkout: self
     clean: true

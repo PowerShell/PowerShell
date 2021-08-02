@@ -12,7 +12,7 @@ jobs:
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
-    name: Package ES Standard Build
+    vmImage: windows-latest
 
   # APIScan can take a long time
   timeoutInMinutes: 180
