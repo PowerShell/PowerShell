@@ -111,11 +111,6 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
-#if UNIX
-                new ExperimentalFeature(
-                    name: "PSUnixFileStat",
-                    description: "Provide unix permission information for files and directories"),
-#endif
                 new ExperimentalFeature(
                     name: "PSCultureInvariantReplaceOperator",
                     description: "Use culture invariant to-string convertor for lval in replace operator"),
