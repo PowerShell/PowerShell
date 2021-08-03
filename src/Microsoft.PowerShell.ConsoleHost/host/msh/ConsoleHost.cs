@@ -1857,6 +1857,7 @@ namespace Microsoft.PowerShell
 
                 Pipeline tempPipeline = exec.CreatePipeline();
                 Command c;
+#if UNIX
                 // if file doesn't have .ps1 extension, we read the contents and treat it as a script to support shebang with no .ps1 extension usage
                 if (!Path.GetExtension(filePath).Equals(".ps1", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1864,6 +1865,7 @@ namespace Microsoft.PowerShell
                     c = new Command(script, isScript: true, useLocalScope: false);
                 }
                 else
+#endif
                 {
                     c = new Command(filePath, false, false);
                 }

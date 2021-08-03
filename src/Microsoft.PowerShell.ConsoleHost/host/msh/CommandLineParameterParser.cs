@@ -1159,6 +1159,16 @@ namespace Microsoft.PowerShell
                         showHelp: true);
                     return false;
                 }
+#if !UNIX
+                // Only do the .ps1 extension check on Windows since shebang is not supported
+                else if (!Path.GetExtension(_file).Equals(".ps1", StringComparison.OrdinalIgnoreCase))
+                {
+                    SetCommandLineError(
+                        string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgumentExtension, args[i]),
+                        showBanner: false);
+                    return false;
+                }
+#endif
 
                 i++;
 
