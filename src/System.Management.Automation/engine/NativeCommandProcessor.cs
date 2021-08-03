@@ -148,17 +148,15 @@ namespace System.Management.Automation
 
         private readonly NativeCommandProcessor _downstreamCommand;
 
+        private ProcessStdoutHandler _stdoutHandler;
+
+        private ProcessStderrHandler _stderrHandler;
+
         private Process _fromProcess;
 
         private Process _toProcess;
 
         private Task _streamCopyTask;
-
-        private BlockingCollection<ProcessOutputObject> _outputQueue;
-
-        private bool _isFirstOutput;
-
-        private bool _outputIsCliXml;
 
         private NativePipe(
             NativeCommandProcessor upstreamCommand,
@@ -172,18 +170,18 @@ namespace System.Management.Automation
 
         public bool SendErrors { get; init; } = false;
 
-        public void RegisterInputProcess(Process inputProcess, BlockingCollection<ProcessOutputObject> outputQueue)
+        public void RegisterInputProcess(Process inputProcess, ProcessOutputQueue outputQueue)
         {
             _fromProcess = inputProcess;
 
             if (!SendOutput)
             {
-                _fromProcess.OutputDataReceived += HandleOutput;
+                _stdoutHandler = new ProcessStdoutHandler(inputProcess, outputQueue);
             }
 
             if (!SendErrors)
             {
-                _fromProcess.ErrorDataReceived += HandleErrors;
+                _stderrHandler = new ProcessStderrHandler(inputProcess, outputQueue);
             }
         }
 
@@ -200,23 +198,8 @@ namespace System.Management.Automation
 
         public void Dispose()
         {
-            _fromProcess.OutputDataReceived -= HandleOutput;
-            _fromProcess.ErrorDataReceived -= HandleErrors;
-        }
-
-        private void HandleErrors(object sender, DataReceivedEventArgs args)
-        {
-
-        }
-
-        private void HandleOutput(object sender, DataReceivedEventArgs args)
-        {
-            if (args.Data is null)
-            {
-                return;
-            }
-
-            _outputQueue.Add(new ProcessOutputObject(args.Data, MinishellStream.Output));
+            _stdoutHandler?.Dispose();
+            _stderrHandler?.Dispose();
         }
     }
 
@@ -452,6 +435,10 @@ namespace System.Management.Automation
         /// </summary>
         private System.Diagnostics.Process _nativeProcess;
 
+        private ProcessStdoutHandler _stdoutHandler;
+
+        private ProcessStderrHandler _stderrHandler;
+
         /// <summary>
         /// This is used for writing input to the process.
         /// </summary>
@@ -480,7 +467,7 @@ namespace System.Management.Automation
         /// We could do a blocking read in the Complete block instead,
         /// but then we would not be able to restore the order reasonable.
         /// </summary>
-        private BlockingCollection<ProcessOutputObject> _nativeProcessOutputQueue;
+        private ProcessOutputQueue _nativeProcessOutputQueue;
 
         private static bool? s_supportScreenScrape = null;
         private readonly bool _isTranscribing;
@@ -750,7 +737,7 @@ namespace System.Management.Automation
                 {
                     if (!_stopped)
                     {
-                        _nativeProcessOutputQueue = new BlockingCollection<ProcessOutputObject>();
+                        _nativeProcessOutputQueue = new ProcessOutputQueue();
 
                         if (DownstreamNativePipe is not null)
                         {
@@ -758,8 +745,15 @@ namespace System.Management.Automation
                             return;
                         }
 
-                        // we don't assign the handler to anything, because it's used only for objects marshaling
-                        new ProcessOutputHandler(_nativeProcess, _nativeProcessOutputQueue);
+                        if (_nativeProcess.StartInfo.RedirectStandardOutput)
+                        {
+                            _stdoutHandler = new ProcessStdoutHandler(_nativeProcess, _nativeProcessOutputQueue);
+                        }
+
+                        if (_nativeProcess.StartInfo.RedirectStandardError)
+                        {
+                            _stderrHandler = new ProcessStderrHandler(_nativeProcess, _nativeProcessOutputQueue);
+                        }
                     }
                 }
             }
@@ -1730,132 +1724,170 @@ namespace System.Management.Automation
         internal static bool IsServerSide { get; set; }
     }
 
-    internal class ProcessOutputHandler
+    internal class ProcessOutputQueue
     {
-        internal const string XmlCliTag = "#< CLIXML";
+        private readonly BlockingCollection<ProcessOutputObject> _queue;
 
         private int _refCount;
-        private readonly BlockingCollection<ProcessOutputObject> _queue;
-        private bool _isFirstOutput;
-        private bool _isFirstError;
-        private bool _isXmlCliOutput;
-        private bool _isXmlCliError;
-        private readonly string _processFileName;
 
-        public ProcessOutputHandler(Process process, BlockingCollection<ProcessOutputObject> queue)
+        public ProcessOutputQueue()
         {
-            Debug.Assert(process.StartInfo.RedirectStandardOutput || process.StartInfo.RedirectStandardError, "Caller should redirect at least one stream");
+            _queue = new BlockingCollection<ProcessOutputObject>();
             _refCount = 0;
-            _processFileName = process.StartInfo.FileName;
-            _queue = queue;
-
-            // we incrementing refCount on the same thread and before running any processing
-            // so it's safe to do it without Interlocked.
-            if (process.StartInfo.RedirectStandardOutput) { _refCount++; }
-
-            if (process.StartInfo.RedirectStandardError) { _refCount++; }
-
-            // once we have _refCount, we can start processing
-            if (process.StartInfo.RedirectStandardOutput)
-            {
-                _isFirstOutput = true;
-                _isXmlCliOutput = false;
-                process.OutputDataReceived += OutputHandler;
-                process.BeginOutputReadLine();
-            }
-
-            if (process.StartInfo.RedirectStandardError)
-            {
-                _isFirstError = true;
-                _isXmlCliError = false;
-                process.ErrorDataReceived += ErrorHandler;
-                process.BeginErrorReadLine();
-            }
         }
 
-        private void decrementRefCount()
+        public bool IsCompleted => _queue.IsCompleted;
+
+        public void Add(ProcessOutputObject obj)
         {
-            Debug.Assert(_refCount > 0, "RefCount should always be positive, when we are trying to decrement it");
-            if (Interlocked.Decrement(ref _refCount) == 0)
+            _queue.Add(obj);
+        }
+
+        public ProcessOutputObject Take() => _queue.Take();
+
+        public bool TryTake(out ProcessOutputObject obj) => _queue.TryTake(out obj);
+
+        public void RegisterSubscriber()
+        {
+            Interlocked.Increment(ref _refCount);
+        }
+
+        public void UnregisterSubscriber()
+        {
+            if (Interlocked.Decrement(ref _refCount) <= 0)
             {
                 _queue.CompleteAdding();
             }
         }
+    }
 
-        private void OutputHandler(object sender, DataReceivedEventArgs outputReceived)
+    internal class ProcessStdoutHandler : ProcessOutputHandler
+    {
+        public ProcessStdoutHandler(Process process, ProcessOutputQueue outputQueue)
+            : base(process, outputQueue)
         {
-            if (outputReceived.Data != null)
-            {
-                if (_isFirstOutput)
-                {
-                    _isFirstOutput = false;
-                    if (string.Equals(outputReceived.Data, XmlCliTag, StringComparison.Ordinal))
-                    {
-                        _isXmlCliOutput = true;
-                        return;
-                    }
-                }
-
-                if (_isXmlCliOutput)
-                {
-                    foreach (var record in DeserializeCliXmlObject(outputReceived.Data, true))
-                    {
-                        _queue.Add(record);
-                    }
-                }
-                else
-                {
-                    _queue.Add(new ProcessOutputObject(outputReceived.Data, MinishellStream.Output));
-                }
-            }
-            else
-            {
-                decrementRefCount();
-            }
+            process.OutputDataReceived += HandleOutput;
+            process.BeginOutputReadLine();
         }
 
-        private void ErrorHandler(object sender, DataReceivedEventArgs errorReceived)
+        public override void Dispose()
         {
-            if (errorReceived.Data != null)
+            Process.OutputDataReceived -= HandleOutput;
+        }
+
+        private void HandleOutput(object sender, DataReceivedEventArgs outputReceived)
+        {
+            if (outputReceived.Data is null)
             {
-                if (string.Equals(errorReceived.Data, XmlCliTag, StringComparison.Ordinal))
+                OutputQueue.UnregisterSubscriber();
+                return;
+            }
+
+            if (IsFirstOutput)
+            {
+                IsFirstOutput = false;
+                if (IsXmlCliTag(outputReceived.Data))
                 {
-                    _isXmlCliError = true;
+                    IsCliXmlOutput = true;
                     return;
                 }
+            }
 
-                if (_isXmlCliError)
+            if (IsCliXmlOutput)
+            {
+                foreach (ProcessOutputObject record in DeserializeCliXmlObject(outputReceived.Data, true))
                 {
-                    foreach (var record in DeserializeCliXmlObject(errorReceived.Data, false))
-                    {
-                        _queue.Add(record);
-                    }
+                    OutputQueue.Add(record);
                 }
-                else
-                {
-                    ErrorRecord errorRecord;
-                    if (_isFirstError)
-                    {
-                        _isFirstError = false;
-                        // Produce a regular error record for the first line of the output
-                        errorRecord = new ErrorRecord(new RemoteException(errorReceived.Data), "NativeCommandError", ErrorCategory.NotSpecified, errorReceived.Data);
-                    }
-                    else
-                    {
-                        // Wrap the rest of the output in ErrorRecords with the "NativeCommandErrorMessage" error ID
-                        errorRecord = new ErrorRecord(new RemoteException(errorReceived.Data), "NativeCommandErrorMessage", ErrorCategory.NotSpecified, null);
-                    }
+                return;
+            }
 
-                    _queue.Add(new ProcessOutputObject(errorRecord, MinishellStream.Error));
+            OutputQueue.Add(new ProcessOutputObject(outputReceived.Data, MinishellStream.Output));
+            return;
+        }
+    }
+
+    internal class ProcessStderrHandler : ProcessOutputHandler
+    {
+        public ProcessStderrHandler(Process process, ProcessOutputQueue outputQueue)
+            : base(process, outputQueue)
+        {
+            process.ErrorDataReceived += HandleError;
+            process.BeginErrorReadLine();
+        }
+
+        public override void Dispose()
+        {
+            Process.ErrorDataReceived -= HandleError;
+        }
+
+        private void HandleError(object sender, DataReceivedEventArgs errorReceived)
+        {
+            if (errorReceived.Data is null)
+            {
+                OutputQueue.UnregisterSubscriber();
+            }
+
+            if (IsXmlCliTag(errorReceived.Data))
+            {
+                IsCliXmlOutput = true;
+                return;
+            }
+
+            if (IsCliXmlOutput)
+            {
+                foreach (var record in DeserializeCliXmlObject(errorReceived.Data, false))
+                {
+                    OutputQueue.Add(record);
                 }
+                return;
+            }
+
+            ErrorRecord errorRecord;
+            if (IsFirstOutput)
+            {
+                IsFirstOutput = false;
+                // Produce a regular error record for the first line of the output
+                errorRecord = new ErrorRecord(new RemoteException(errorReceived.Data), "NativeCommandError", ErrorCategory.NotSpecified, errorReceived.Data);
             }
             else
             {
-                decrementRefCount();
+                // Wrap the rest of the output in ErrorRecords with the "NativeCommandErrorMessage" error ID
+                errorRecord = new ErrorRecord(new RemoteException(errorReceived.Data), "NativeCommandErrorMessage", ErrorCategory.NotSpecified, null);
             }
+
+            OutputQueue.Add(new ProcessOutputObject(errorRecord, MinishellStream.Error));
+        }
+    }
+
+    internal abstract class ProcessOutputHandler : IDisposable
+    {
+        internal const string XmlCliTag = "#< CLIXML";
+
+        protected ProcessOutputHandler(
+            Process process,
+            ProcessOutputQueue outputQueue)
+        {
+            OutputQueue = outputQueue;
+            IsFirstOutput = true;
+            IsCliXmlOutput = false;
+
+            OutputQueue.RegisterSubscriber();
         }
 
-        private List<ProcessOutputObject> DeserializeCliXmlObject(string xml, bool isOutput)
+        protected Process Process { get; }
+
+        protected ProcessOutputQueue OutputQueue { get; }
+
+        protected bool IsFirstOutput { get; set; }
+
+        protected bool IsCliXmlOutput { get; set; }
+
+        public abstract void Dispose();
+
+        protected bool IsXmlCliTag(string str) => string.Equals(str, XmlCliTag, StringComparison.Ordinal);
+
+        protected List<ProcessOutputObject> DeserializeCliXmlObject(string xml, bool isOutput)
         {
             var result = new List<ProcessOutputObject>();
             try
@@ -1956,7 +1988,7 @@ namespace System.Management.Automation
                     null,
                     template,
                     isOutput ? MinishellStream.Output : MinishellStream.Error,
-                    _processFileName,
+                    Process.StartInfo.FileName,
                     originalException.Message);
                 XmlException newException = new XmlException(
                     message,
@@ -1966,7 +1998,7 @@ namespace System.Management.Automation
                     newException,
                     "ProcessStreamReader_CliXmlError",
                     ErrorCategory.SyntaxError,
-                    _processFileName);
+                    Process.StartInfo.FileName);
                 result.Add(new ProcessOutputObject(error, MinishellStream.Error));
             }
 
