@@ -222,25 +222,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (k == 0)
                 {
-                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
-                    {
-                        lo.WriteLine(PSStyle.Instance.Formatting.FormatAccent + prependString + PSStyle.Instance.Reset + sc[k]);
-                    }
-                    else
-                    {
-                        lo.WriteLine(prependString + sc[k]);
-                    }
+                    lo.WriteLine(PSStyle.Instance.Formatting.FormatAccent + prependString + PSStyle.Instance.Reset + sc[k]);
                 }
                 else
                 {
-                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
-                    {
-                        lo.WriteLine(padding + PSStyle.Instance.Formatting.FormatAccent + PSStyle.Instance.Reset + sc[k]);
-                    }
-                    else
-                    {
-                        lo.WriteLine(padding + sc[k]);
-                    }
+                    lo.WriteLine(padding + PSStyle.Instance.Formatting.FormatAccent + PSStyle.Instance.Reset + sc[k]);
                 }
             }
         }

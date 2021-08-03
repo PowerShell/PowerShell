@@ -120,9 +120,6 @@ namespace System.Management.Automation
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
                 new ExperimentalFeature(
-                    name: "PSAnsiRendering",
-                    description: "Enable $PSStyle variable to control ANSI rendering of strings"),
-                new ExperimentalFeature(
                     name: PSNativeCommandArgumentPassingFeatureName,
                     description: "Use ArgumentList when invoking a native command"),
                 new ExperimentalFeature(

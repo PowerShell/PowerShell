@@ -1791,22 +1791,19 @@ namespace System.Management.Automation
         {
             var outputRendering = OutputRendering.Ansi;
 
-            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            if (supportsVirtualTerminal != false)
             {
-                if (supportsVirtualTerminal != false)
+                switch (PSStyle.Instance.OutputRendering)
                 {
-                    switch (PSStyle.Instance.OutputRendering)
-                    {
-                        case OutputRendering.Automatic:
-                            outputRendering = OutputRendering.Ansi;
-                            break;
-                        case OutputRendering.Host:
-                            outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
-                            break;
-                        default:
-                            outputRendering = PSStyle.Instance.OutputRendering;
-                            break;
-                    }
+                    case OutputRendering.Automatic:
+                        outputRendering = OutputRendering.Ansi;
+                        break;
+                    case OutputRendering.Host:
+                        outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
+                        break;
+                    default:
+                        outputRendering = PSStyle.Instance.OutputRendering;
+                        break;
                 }
             }
 
@@ -1815,25 +1812,22 @@ namespace System.Management.Automation
 
         internal static string GetOutputString(string s, bool isHost, bool? supportsVirtualTerminal = null, bool isOutputRedirected = false)
         {
-            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            var sd = new ValueStringDecorated(s);
+
+            if (sd.IsDecorated)
             {
-                var sd = new ValueStringDecorated(s);
-
-                if (sd.IsDecorated)
+                var outputRendering = OutputRendering.Ansi;
+                if (InternalTestHooks.BypassOutputRedirectionCheck)
                 {
-                    var outputRendering = OutputRendering.Ansi;
-                    if (InternalTestHooks.BypassOutputRedirectionCheck)
-                    {
-                        isOutputRedirected = false;
-                    }
-
-                    if (isOutputRedirected || ShouldOutputPlainText(isHost, supportsVirtualTerminal))
-                    {
-                        outputRendering = OutputRendering.PlainText;
-                    }
-
-                    s = sd.ToString(outputRendering);
+                    isOutputRedirected = false;
                 }
+
+                if (isOutputRedirected || ShouldOutputPlainText(isHost, supportsVirtualTerminal))
+                {
+                    outputRendering = OutputRendering.PlainText;
+                }
+
+                s = sd.ToString(outputRendering);
             }
 
             return s;
@@ -1862,33 +1856,28 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            PSStyle psstyle = PSStyle.Instance;                
+            switch (formatStyle)
             {
-                PSStyle psstyle = PSStyle.Instance;                
-                switch (formatStyle)
-                {
-                    case FormatStyle.Reset:
-                        return psstyle.Reset;
-                    case FormatStyle.FormatAccent:
-                        return psstyle.Formatting.FormatAccent;
-                    case FormatStyle.TableHeader:
-                        return psstyle.Formatting.TableHeader;
-                    case FormatStyle.ErrorAccent:
-                        return psstyle.Formatting.ErrorAccent;
-                    case FormatStyle.Error:
-                        return psstyle.Formatting.Error;
-                    case FormatStyle.Warning:
-                        return psstyle.Formatting.Warning;
-                    case FormatStyle.Verbose:
-                        return psstyle.Formatting.Verbose;
-                    case FormatStyle.Debug:
-                        return psstyle.Formatting.Debug;
-                    default:
-                        return string.Empty;
-                }
+                case FormatStyle.Reset:
+                    return psstyle.Reset;
+                case FormatStyle.FormatAccent:
+                    return psstyle.Formatting.FormatAccent;
+                case FormatStyle.TableHeader:
+                    return psstyle.Formatting.TableHeader;
+                case FormatStyle.ErrorAccent:
+                    return psstyle.Formatting.ErrorAccent;
+                case FormatStyle.Error:
+                    return psstyle.Formatting.Error;
+                case FormatStyle.Warning:
+                    return psstyle.Formatting.Warning;
+                case FormatStyle.Verbose:
+                    return psstyle.Formatting.Verbose;
+                case FormatStyle.Debug:
+                    return psstyle.Formatting.Debug;
+                default:
+                    return string.Empty;
             }
-
-            return string.Empty;
         }
 
         #endregion

@@ -1025,12 +1025,10 @@ Describe 'Console host name' -Tag CI {
 Describe 'TERM env var' -Tag CI {
     BeforeAll {
         $oldTERM = $env:TERM
-        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRendering')))
     }
 
     AfterAll {
         $env:TERM = $oldTERM
-        $PSDefaultParameterValues.Remove('It:Skip')
     }
 
     It 'TERM = "dumb"' {

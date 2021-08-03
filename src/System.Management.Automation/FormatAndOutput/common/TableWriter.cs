@@ -43,7 +43,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ScreenInfo _si;
 
         private const char ESC = '\u001b';
-        private const string ResetConsoleVt100Code = "\u001b[m";
 
         private List<string> _header;
 
@@ -156,14 +155,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 foreach (string line in _header)
                 {
-                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
-                    {
-                        lo.WriteLine(PSStyle.Instance.Formatting.TableHeader + line + PSStyle.Instance.Reset);
-                    }
-                    else
-                    {
-                        lo.WriteLine(line);
-                    }
+                    lo.WriteLine(PSStyle.Instance.Formatting.TableHeader + line + PSStyle.Instance.Reset);
                 }
 
                 return _header.Count;
@@ -241,7 +233,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 foreach (string line in GenerateTableRow(values, currentAlignment, lo.DisplayCells))
                 {
                     generatedRows?.Add(line);
-                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering") && isHeader)
+                    if (isHeader)
                     {
                         lo.WriteLine(PSStyle.Instance.Formatting.TableHeader + line + PSStyle.Instance.Reset);
                     }
@@ -255,7 +247,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 string line = GenerateRow(values, currentAlignment, dc);
                 generatedRows?.Add(line);
-                if (ExperimentalFeature.IsEnabled("PSAnsiRendering") && isHeader)
+                if (isHeader)
                 {
                     lo.WriteLine(PSStyle.Instance.Formatting.TableHeader + line + PSStyle.Instance.Reset);
                 }
@@ -469,15 +461,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (values[k].Contains(ESC))
                 {
                     // Reset the console output if the content of this column contains ESC
-                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
-                    {
-                        // Remove definition of `ResetConsoleVt10Code` when PSAnsiRendering is not experimental
-                        sb.Append(PSStyle.Instance.Reset);
-                    }
-                    else
-                    {
-                        sb.Append(ResetConsoleVt100Code);
-                    }
+                    sb.Append(PSStyle.Instance.Reset);
                 }
             }
 
