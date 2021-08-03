@@ -123,9 +123,6 @@ namespace System.Management.Automation
                     name: "PSNativePSPathResolution",
                     description: "Convert PSPath to filesystem path, if possible, for native commands"),
                 new ExperimentalFeature(
-                    name: "PSNotApplyErrorActionToStderr",
-                    description: "Don't have $ErrorActionPreference affect stderr output"),
-                new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
                 new ExperimentalFeature(

@@ -2839,7 +2839,7 @@ namespace System.Management.Automation
                 this.PipelineProcessor.LogExecutionError(_thisCommand.MyInvocation, errorRecord);
             }
 
-            if (!(ExperimentalFeature.IsEnabled("PSNotApplyErrorActionToStderr") && isNativeError))
+            if (!isNativeError)
             {
                 this.PipelineProcessor.ExecutionFailed = true;
 
