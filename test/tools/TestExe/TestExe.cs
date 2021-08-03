@@ -30,12 +30,19 @@ namespace TestExe
                         Console.Error.WriteLine(args[1]);
                         break;
                     case "-writetofile":
-                        string fileName = args[1];
-                        WriteInputToFile(fileName);
+                        WriteInputToFile(args[1]);
                         break;
                     case "-writebytes":
-                        string hexStr = args[1];
-                        WriteBytesFromHex(hexStr);
+                        WriteBytesFromHex(args[1]);
+
+                        if (args.Length > 2 && args[2] == "-errbytes")
+                        {
+                            WriteErrorBytesFromHex(args[3]);
+                        }
+
+                        break;
+                    case "-errbytes":
+                        WriteErrorBytesFromHex(args[1]);
                         break;
                     default:
                         Console.WriteLine("Unknown test {0}", args[0]);
@@ -68,6 +75,18 @@ namespace TestExe
         private static void WriteBytesFromHex(string hexStr)
         {
             using (Stream outStream = Console.OpenStandardOutput())
+            {
+                for (int i = 0; i < hexStr.Length; i += 2)
+                {
+                    byte value = Convert.ToByte(hexStr.Substring(i, 2), fromBase: 16);
+                    outStream.WriteByte(value);
+                }
+            }
+        }
+
+        private static void WriteErrorBytesFromHex(string hexStr)
+        {
+            using (Stream outStream = Console.OpenStandardError())
             {
                 for (int i = 0; i < hexStr.Length; i += 2)
                 {
