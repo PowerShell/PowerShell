@@ -497,11 +497,16 @@ function ConvertFrom-SysLog
     {
         foreach ($line in $Content)
         {
-            [PSLogItem] $item = [PSLogItem]::ConvertSysLog($line, $id, $after)
-            if ($item -ne $null)
-            {
-                $totalWritten++
-                Write-Output $item
+            try {
+                [PSLogItem] $item = [PSLogItem]::ConvertSysLog($line, $id, $after)
+                if ($item -ne $null)
+                {
+                    $totalWritten++
+                    Write-Output $item
+                }
+            }
+            catch {
+                Write-Warning -Message "Could not convert '$line' to PSLogItem"
             }
         }
     }
