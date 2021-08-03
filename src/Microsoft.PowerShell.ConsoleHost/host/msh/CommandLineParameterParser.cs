@@ -1163,9 +1163,7 @@ namespace Microsoft.PowerShell
                 // Only do the .ps1 extension check on Windows since shebang is not supported
                 else if (!Path.GetExtension(_file).Equals(".ps1", StringComparison.OrdinalIgnoreCase))
                 {
-                    SetCommandLineError(
-                        string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgumentExtension, args[i]),
-                        showBanner: false);
+                    SetCommandLineError(string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgumentExtension, args[i]));
                     return false;
                 }
 #endif
