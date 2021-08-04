@@ -992,7 +992,8 @@ namespace Microsoft.PowerShell.Commands
                             AppendStringWithEscapeAlways(_outputString, propertyName);
                             break;
                         case BaseCsvWritingCommand.QuoteKind.AsNeeded:
-                            if (propertyName.Contains(_delimiter))
+                            
+                            if (propertyName.AsSpan().IndexOfAny(_delimiter, '\n', '"') != -1)
                             {
                                 AppendStringWithEscapeAlways(_outputString, propertyName);
                             }
@@ -1078,7 +1079,7 @@ namespace Microsoft.PowerShell.Commands
                                 AppendStringWithEscapeAlways(_outputString, value);
                                 break;
                             case BaseCsvWritingCommand.QuoteKind.AsNeeded:
-                                if (value != null && value.Contains(_delimiter))
+                                if (value != null && value.AsSpan().IndexOfAny(_delimiter, '\n', '"') != -1)
                                 {
                                     AppendStringWithEscapeAlways(_outputString, value);
                                 }
