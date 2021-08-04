@@ -345,5 +345,16 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
         $result = Invoke-Command -Session $openSession -ScriptBlock { $using:number }
         $result | Should -Be 100
     }
+
+    It '$Host.Version should be PSVersion' {
+        $session = New-RemoteSession -ConfigurationName $endPoint
+        try {
+            $result = Invoke-Command -Session $session -ScriptBlock { $Host.Version }
+            $result | Should -Be $PSVersionTable.PSVersion
+        }
+        finally {
+            $session | Remove-PSSession -ErrorAction Ignore
+        }
+    }
 }
 

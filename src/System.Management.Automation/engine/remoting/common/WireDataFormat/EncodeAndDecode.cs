@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
@@ -73,7 +74,7 @@ namespace System.Management.Automation
     /// </summary>
     internal static class RemotingConstants
     {
-        internal static readonly Version HostVersion = new Version(1, 0, 0, 0);
+        internal static readonly Version HostVersion = PSVersionInfo.PSVersion;
 
         internal static readonly Version ProtocolVersionWin7RC = new Version(2, 0);
         internal static readonly Version ProtocolVersionWin7RTM = new Version(2, 1);
