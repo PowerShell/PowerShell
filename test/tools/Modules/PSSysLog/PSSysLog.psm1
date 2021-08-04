@@ -497,7 +497,8 @@ function ConvertFrom-SysLog
     {
         foreach ($line in $Content)
         {
-            try {
+            try
+            {
                 [PSLogItem] $item = [PSLogItem]::ConvertSysLog($line, $id, $after)
                 if ($item -ne $null)
                 {
@@ -505,7 +506,8 @@ function ConvertFrom-SysLog
                     Write-Output $item
                 }
             }
-            catch {
+            catch
+            {
                 Write-Warning -Message "Could not convert '$line' to PSLogItem"
             }
         }
