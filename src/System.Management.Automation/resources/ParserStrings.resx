@@ -1461,27 +1461,6 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="ParserError" xml:space="preserve">
     <value>{0}</value>
   </data>
-  <data name="ImplicitRemotingPipelineBatchingNotSupported" xml:space="preserve">
-    <value>Command pipeline not supported for implicit remoting batching.</value>
-  </data>
-  <data name="ImplicitRemotingPipelineBatchingNotASimplePipeline" xml:space="preserve">
-    <value>Command is not a simple pipeline and cannot be batched.</value>
-  </data>
-  <data name="ImplicitRemotingPipelineBatchingNotImplicitCommand" xml:space="preserve">
-    <value>The pipeline command '{0}' is not an implicit remoting command or an approved batching command.</value>
-  </data>
-  <data name="ImplicitRemotingPipelineBatchingWrongSession" xml:space="preserve">
-    <value>The pipeline command '{0}' is for a different remote session and cannot be batched.</value>
-  </data>
-  <data name="ImplicitRemotingPipelineBatchingNoPSSession" xml:space="preserve">
-    <value>The implicit remoting PSSession for batching could not be retrieved.</value>
-  </data>
-  <data name="ImplicitRemotingPipelineBatchingException" xml:space="preserve">
-    <value>Exception while checking the command for implicit remoting batching: {0}</value>
-  </data>
-  <data name="ImplicitRemotingPipelineBatchingSuccess" xml:space="preserve">
-    <value>Implicit remoting command pipeline has been batched for execution on remote target.</value>
-  </data>
   <data name="ScriptHasAdminBlockedContent" xml:space="preserve">
     <value>This script contains content that has been flagged as suspicious through a policy setting and has been blocked with error code {0}. Contact your administrator for more information.</value>
   </data>
