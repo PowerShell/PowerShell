@@ -228,6 +228,13 @@ Describe "Get-ChildItem" -Tags "CI" {
             $barFiles = Get-ChildItem -Path testdrive:/foo/bar -Recurse
             $barFiles.Count | Should -Be 2
         }
+
+        It 'Works with Windows volume paths' -Skip:(!$IsWindows) {
+            $volume = (Get-Volume -DriveLetter $env:SystemDrive[0]).Path
+            $items = Get-ChildItem -LiteralPath "${volume}Windows"
+            $items[0].Parent | Should -BeExactly "${volume}Windows"
+            $items.Count | Should -Be (Get-ChildItem $env:SystemRoot).Count
+        }
     }
 
     Context 'Env: Provider' {
