@@ -21,11 +21,19 @@ Describe "Get-FormatData" -Tags "CI" {
         }
         It "Can get format data requiring v5.1+ with <cmd>" -TestCases $cmds {
             param([scriptblock] $cmd)
+
+            if ($IsWindows) {
+                $expectedCount = 4
+            } else {
+                # UnixStat addes extra one
+                $expectedCount = 5
+            }
+
             $format = & $cmd
             $format.TypeNames | Should -HaveCount 2
             $format.TypeNames[0] | Should -BeExactly "System.IO.DirectoryInfo"
             $format.TypeNames[1] | Should -BeExactly "System.IO.FileInfo"
-            $format.FormatViewDefinition | Should -HaveCount 5
+            $format.FormatViewDefinition | Should -HaveCount $expectedCount
         }
     }
 
