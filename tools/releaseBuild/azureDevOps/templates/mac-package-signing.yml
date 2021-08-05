@@ -1,10 +1,10 @@
 parameters:
-  parentJob: ''
+  buildArchitecture: x64
 
 jobs:
-- job: MacPackageSigningJob
-  displayName: macOS Package signing
-  dependsOn: ${{ parameters.parentJob }}
+- job: MacPackageSigningJob_${{ parameters.buildArchitecture }}
+  displayName: macOS Package signing ${{ parameters.buildArchitecture }}
+  dependsOn: package_macOS_${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
     name: Package ES Standard Build
@@ -41,15 +41,15 @@ jobs:
 
   - pwsh: |
       $null = new-item -type directory -path "$(Build.StagingDirectory)\macos"
-      $zipFile = "$(Build.StagingDirectory)\macos\powershell-$(Version)-osx-x64.zip"
-      Compress-Archive -Path "$(System.ArtifactsDirectory)\macosPkgResults\powershell-$(Version)-osx-x64.pkg" -Destination $zipFile
+      $zipFile = "$(Build.StagingDirectory)\macos\powershell-$(Version)-osx-${{ parameters.buildArchitecture }}.zip"
+      Compress-Archive -Path "$(System.ArtifactsDirectory)\macosPkgResults\powershell-$(Version)-osx-${{ parameters.buildArchitecture }}.pkg" -Destination $zipFile
       Write-Host $zipFile
 
-      $ltsPkgPath = "$(System.ArtifactsDirectory)\macosPkgResults\powershell-lts-$(Version)-osx-x64.pkg"
+      $ltsPkgPath = "$(System.ArtifactsDirectory)\macosPkgResults\powershell-lts-$(Version)-osx-${{ parameters.buildArchitecture }}.pkg"
 
       if(Test-Path $ltsPkgPath)
       {
-         $ltsZipFile = "$(Build.StagingDirectory)\macos\powershell-lts-$(Version)-osx-x64.zip"
+         $ltsZipFile = "$(Build.StagingDirectory)\macos\powershell-lts-$(Version)-osx-${{ parameters.buildArchitecture }}.zip"
          Compress-Archive -Path $ltsPkgPath -Destination $ltsZipFile
          Write-Host $ltsZipFile
       }
@@ -69,7 +69,7 @@ jobs:
   - template: upload-final-results.yml
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\macosPkgResults
-      artifactFilter: "*.tar.gz"
+      artifactFilter: "*${{ parameters.buildArchitecture }}.tar.gz"
 
   - pwsh: |
       $destination = "$(System.ArtifactsDirectory)\azureMacOs"

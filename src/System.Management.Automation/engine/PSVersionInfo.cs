@@ -27,7 +27,7 @@ namespace System.Management.Automation
     /// The above statement retrieves the PowerShell edition.
     /// </para>
     /// </summary>
-    public class PSVersionInfo
+    public static class PSVersionInfo
     {
         internal const string PSVersionTableName = "PSVersionTable";
         internal const string PSRemotingProtocolVersionName = "PSRemotingProtocolVersion";
@@ -376,7 +376,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class PSVersionTableComparer : IComparer
+        private sealed class PSVersionTableComparer : IComparer
         {
             public int Compare(object x, object y)
             {

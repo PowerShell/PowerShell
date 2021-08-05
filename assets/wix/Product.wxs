@@ -84,6 +84,16 @@
                   Execute="deferred"
                   Return="ignore"
                   Impersonate="no" />
+    <SetProperty Id="EnableMU"
+                 Before="EnableMU"
+                 Sequence="execute"
+                 Value="&quot;[VersionFolder]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;$null=(New-Object -ComObject Microsoft.Update.ServiceManager).AddService2('7971f918-a847-4430-9279-4a52d1efe18d', 7, '')&quot;" />
+    <CustomAction Id="EnableMU"
+                  BinaryKey="WixCA"
+                  DllEntry="CAQuietExec"
+                  Execute="deferred"
+                  Return="ignore"
+                  Impersonate="no" />
     <InstallExecuteSequence>
       <!-- Do not remove shortcuts on upgrade to preserve user shortcuts pinned to Taskbar, see https://stackoverflow.com/a/33402698/1810304 -->
       <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE</RemoveShortcuts>
@@ -92,6 +102,9 @@
       </Custom>
       <Custom Action="EnablePSRemoting" After="InstallFiles">
         <![CDATA[NOT Installed AND (ENABLE_PSREMOTING=1)]]>
+      </Custom>
+      <Custom Action="EnableMU" After="InstallFiles">
+        <![CDATA[NOT Installed AND (ENABLE_MU=1)]]>
       </Custom>
     </InstallExecuteSequence>
     <UI>
@@ -135,6 +148,7 @@
     <Feature Id="ProductFeature" Title="PowerShell" Level="1">
       <ComponentGroupRef Id="ApplicationFiles"/>
       <ComponentRef Id="ApplicationProgramsMenuShortcut"/>
+      <ComponentRef Id="MURegistryEntries"/>
       <ComponentRef Id="RegistryEntries"/>
       <ComponentRef Id="SharedRegistryEntries"/>
       <ComponentRef Id="SetPath"/>
@@ -175,6 +189,13 @@
             <Component Id="Telemetry" Guid="{80520f20-471d-4d08-adc8-bab637627b39}" KeyPath="yes">
               <!-- Should retain component GUID since this is a shared, non-file, non-registry resource. -->
               <Environment Id="PowerShellDistributionChannel" Action="create" Name="POWERSHELL_DISTRIBUTION_CHANNEL" Permanent="no" System="yes" Value="MSI:[WINDOWS_PRODUCT_NAME]"/>
+            </Component>
+            <Component Id="MURegistryEntries">
+              <Condition>USE_MU=1</Condition>
+              <!-- Create registry key to allow opt-out of MU servicing without opting out of MU completely.  -->
+              <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore" Action="create" ForceCreateOnInstall="yes">
+                  <RegistryValue Type="integer" Value="1" Name="UseMU"  KeyPath="yes"/>
+              </RegistryKey>
             </Component>
             <Component Id="RegistryEntries">
               <!-- create key for easy detection of a particular version of a powershell core package
@@ -317,6 +338,41 @@
   </UI>
 </Fragment>
 
+<!-- Microsoft Update Menu Dialog -->
+<Fragment>
+ <UI>
+    <Property Id="USE_MU" Value="1" />
+    <Property Id="ENABLE_MU" Value="1" />
+    <Dialog Id="MuDialog" Width="370" Height="270" Title="!(loc.ExitDialog_Title)">
+      <!-- Banner -->
+      <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="yes" Text="!(loc.InstallDirDlgBannerBitmap)"/>
+      <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="30" Transparent="yes" NoPrefix="yes" Text="{\WixUI_Font_Title}Use Microsoft Update to help keep your computer secure and up to date" TabSkip="yes" />
+      <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" TabSkip="yes" />
+      <Control Id="Description" Type="Text" X="25" Y="54" Width="280" Height="100" Transparent="yes" NoPrefix="yes" Text="Microsoft Update helps keep your computer secure and up to date for Windows and other Microsoft products, including PowerShell 7. Updates will be delivered based on your current update settings. You can review or change these settings from the Windows Update control panel." TabSkip="yes" />
+      <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
+      <Control Id="UseMuCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="27" Property="USE_MU" CheckBoxValue="1" Text="Enable updating PowerShell through Microsft Update or WSUS (recommended)"/>
+      <Control Id="EnableMuCheckBox" Type="CheckBox" X="20" Y="130" Width="290" Height="17" Property="ENABLE_MU" CheckBoxValue="1" Text="Use Microsoft Update when I check for updates (recommended)">
+      </Control>
+      <Control Id="MuWarningText" Type="Text" X="20" Y="160" Width="290" Height="27" Text="Without Microsoft Update enabled, you will need to use another update solution like WSUS or SCCM in order to receive automatic updates.">
+        <Condition Action="hide"><![CDATA[ENABLE_MU="1" OR USE_MU<>"1"]]></Condition>
+        <Condition Action="show"><![CDATA[ENABLE_MU<>"1" AND USE_MU="1"]]></Condition>
+      </Control>
+      <Control Id="MuFAQ" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
+        <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-FAQ">See the Microsoft Update FAQ</a>]]></Text>
+      </Control>
+      <Control Id="PrivacyLink" Type="Hyperlink" X="20" Y="210" Width="290" Height="17">
+        <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-Privacy-Statement">Read the Microsoft Update Priacy Statement</a>]]></Text>
+      </Control>
+      <!-- divider and bottom buttons -->
+      <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>
+      <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)"/>
+      <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Cancel="yes" Default="yes" Text="!(loc.WixUINext)"/>
+      <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+        <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+      </Control>
+    </Dialog>
+  </UI>
+</Fragment>
 <!-- Customized version of WixUI_InstallDir, which is necessary to add custom dialogs. https://github.com/wixtoolset/wix3/blob/master/src/ext/UIExtension/wixlib/WixUI_InstallDir.wxs -->
 <Fragment>
   <UI Id="CustomWixUI_InstallDir">
@@ -325,6 +381,7 @@
       - WixUI_WelcomeDlg
       - WixUI_InstallDirDlg
       - ExplorerContextMenuDialog
+      - MuDialog
       - WixUI_VerifyReadyDlg
       - WixUI_DiskCostDlg
       Maintenance dialog sequence:
@@ -364,7 +421,9 @@
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">Installed AND PATCH</Publish>
 
       <Publish Dialog="ExplorerContextMenuDialog" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
-      <Publish Dialog="ExplorerContextMenuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg">1</Publish>
+      <Publish Dialog="ExplorerContextMenuDialog" Control="Next" Event="NewDialog" Value="MuDialog">1</Publish>
+      <Publish Dialog="MuDialog" Control="Back" Event="NewDialog" Value="ExplorerContextMenuDialog">1</Publish>
+      <Publish Dialog="MuDialog" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Order="2">1</Publish>
 
       <Publish Dialog="InstallDirDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="Next" Event="SetTargetPath" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
@@ -375,7 +434,7 @@
       <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Property="_BrowseProperty" Value="[WIXUI_INSTALLDIR]" Order="1">1</Publish>
       <Publish Dialog="InstallDirDlg" Control="ChangeFolder" Event="SpawnDialog" Value="BrowseDlg" Order="2">1</Publish>
 
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="ExplorerContextMenuDialog" Order="1">NOT Installed</Publish>
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MuDialog" Order="1">NOT Installed</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2">Installed AND NOT PATCH</Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2">Installed AND PATCH</Publish>
 

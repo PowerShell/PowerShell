@@ -1422,7 +1422,7 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
                 }
 
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = e.Message ?? string.Empty;
                 _tracer.WriteMessage("HyperVSocketClientSessionTransportManager", "StartReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
 
@@ -1784,7 +1784,7 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (Exception e)
             {
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = e.Message ?? string.Empty;
                 _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessErrorThread", Guid.Empty,
                     "Transport manager error thread ended with error: {0}", errorMsg);
 
@@ -1908,7 +1908,7 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
                 }
 
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = e.Message ?? string.Empty;
                 _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
             }
@@ -2035,7 +2035,7 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accommodate read buffer size.");
                 }
 
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = e.Message ?? string.Empty;
                 _tracer.WriteMessage("NamedPipeClientSessionTransportManager", "StartReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
             }

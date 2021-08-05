@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell
         /// </param>
         internal
         void
-        Update(Int64 sourceId, ProgressRecord record)
+        Update(long sourceId, ProgressRecord record)
         {
             Dbg.Assert(record != null, "record should not be null");
 
@@ -265,8 +265,7 @@ namespace Microsoft.PowerShell
 #endif
         }
 
-        private
-        class FindOldestNodeVisitor : NodeVisitor
+        private sealed class FindOldestNodeVisitor : NodeVisitor
         {
             internal override
             bool
@@ -358,7 +357,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         private
         ProgressNode
-        FindNodeById(Int64 sourceId, int activityId)
+        FindNodeById(long sourceId, int activityId)
         {
             ArrayList listWhereFound = null;
             int indexWhereFound = -1;
@@ -366,11 +365,10 @@ namespace Microsoft.PowerShell
                 FindNodeById(sourceId, activityId, out listWhereFound, out indexWhereFound);
         }
 
-        private
-        class FindByIdNodeVisitor : NodeVisitor
+        private sealed class FindByIdNodeVisitor : NodeVisitor
         {
             internal
-            FindByIdNodeVisitor(Int64 sourceIdToFind, int activityIdToFind)
+            FindByIdNodeVisitor(long sourceIdToFind, int activityIdToFind)
             {
                 _sourceIdToFind = sourceIdToFind;
                 _idToFind = activityIdToFind;
@@ -404,7 +402,7 @@ namespace Microsoft.PowerShell
             IndexWhereFound = -1;
 
             private readonly int _idToFind = -1;
-            private readonly Int64 _sourceIdToFind;
+            private readonly long _sourceIdToFind;
         }
 
         /// <summary>
@@ -428,7 +426,7 @@ namespace Microsoft.PowerShell
         /// </returns>
         private
         ProgressNode
-        FindNodeById(Int64 sourceId, int activityId, out ArrayList listWhereFound, out int indexWhereFound)
+        FindNodeById(long sourceId, int activityId, out ArrayList listWhereFound, out int indexWhereFound)
         {
             listWhereFound = null;
             indexWhereFound = -1;
@@ -508,8 +506,7 @@ namespace Microsoft.PowerShell
             return found;
         }
 
-        private
-        class AgeAndResetStyleVisitor : NodeVisitor
+        private sealed class AgeAndResetStyleVisitor : NodeVisitor
         {
             internal override
             bool
@@ -666,8 +663,7 @@ namespace Microsoft.PowerShell
             }
         }
 
-        private
-        class HeightTallyer : NodeVisitor
+        private sealed class HeightTallyer : NodeVisitor
         {
             internal HeightTallyer(PSHostRawUserInterface rawUi, int maxHeight, int maxWidth)
             {

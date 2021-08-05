@@ -346,9 +346,12 @@ namespace System.Management.Automation
         /// </summary>
         public void Reset()
         {
+            _lookupPathsEnumerator.Dispose();
             _lookupPathsEnumerator = _lookupPaths.GetEnumerator();
+            _patternEnumerator.Dispose();
             _patternEnumerator = _patterns.GetEnumerator();
             _currentDirectoryResults = Array.Empty<string>();
+            _currentDirectoryResultsEnumerator.Dispose();
             _currentDirectoryResultsEnumerator = _currentDirectoryResults.GetEnumerator();
             _justReset = true;
         }

@@ -1338,7 +1338,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Invoked by CommandBase.WriteProgress to display a progress record.
         /// </summary>
-        public override void WriteProgress(Int64 sourceId, ProgressRecord record)
+        public override void WriteProgress(long sourceId, ProgressRecord record)
         {
             Dbg.Assert(record != null, "WriteProgress called with null ProgressRecord");
 
@@ -2116,20 +2116,20 @@ namespace Microsoft.PowerShell
             for (int i = 0; i < length; i++)
             {
                 var down = new ConsoleControl.INPUT();
-                down.Type = (UInt32)ConsoleControl.InputType.Keyboard;
+                down.Type = (uint)ConsoleControl.InputType.Keyboard;
                 down.Data.Keyboard = new ConsoleControl.KeyboardInput();
-                down.Data.Keyboard.Vk = (UInt16)ConsoleControl.VirtualKeyCode.Left;
+                down.Data.Keyboard.Vk = (ushort)ConsoleControl.VirtualKeyCode.Left;
                 down.Data.Keyboard.Scan = 0;
                 down.Data.Keyboard.Flags = 0;
                 down.Data.Keyboard.Time = 0;
                 down.Data.Keyboard.ExtraInfo = IntPtr.Zero;
 
                 var up = new ConsoleControl.INPUT();
-                up.Type = (UInt32)ConsoleControl.InputType.Keyboard;
+                up.Type = (uint)ConsoleControl.InputType.Keyboard;
                 up.Data.Keyboard = new ConsoleControl.KeyboardInput();
-                up.Data.Keyboard.Vk = (UInt16)ConsoleControl.VirtualKeyCode.Left;
+                up.Data.Keyboard.Vk = (ushort)ConsoleControl.VirtualKeyCode.Left;
                 up.Data.Keyboard.Scan = 0;
-                up.Data.Keyboard.Flags = (UInt32)ConsoleControl.KeyboardFlag.KeyUp;
+                up.Data.Keyboard.Flags = (uint)ConsoleControl.KeyboardFlag.KeyUp;
                 up.Data.Keyboard.Time = 0;
                 up.Data.Keyboard.ExtraInfo = IntPtr.Zero;
 

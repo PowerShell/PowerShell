@@ -645,7 +645,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The comparer to sort CommandInfo objects in the result list.
         /// </summary>
-        private class CommandInfoComparer : IComparer<CommandInfo>
+        private sealed class CommandInfoComparer : IComparer<CommandInfo>
         {
             /// <summary>
             /// Compare two CommandInfo objects first by their command types, and if they

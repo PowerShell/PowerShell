@@ -2318,7 +2318,7 @@ namespace System.Management.Automation
             return new AllowWrite(_thisCommand, permittedToWriteToPipeline);
         }
 
-        private class AllowWrite : IDisposable
+        private sealed class AllowWrite : IDisposable
         {
             /// <summary>
             /// Begin the scope where WriteObject/WriteError is permitted.

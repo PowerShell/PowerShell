@@ -24,6 +24,7 @@ using Microsoft.Management.Infrastructure.Options;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Cim;
 using Microsoft.PowerShell.Commands;
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation
 {
@@ -407,7 +408,7 @@ namespace System.Management.Automation
             return results;
         }
 
-        private class FindFunctionsVisitor : AstVisitor
+        private sealed class FindFunctionsVisitor : AstVisitor
         {
             internal readonly List<FunctionDefinitionAst> FunctionDefinitions = new List<FunctionDefinitionAst>();
 
@@ -2282,6 +2283,14 @@ namespace System.Management.Automation
                 case "Measure-Object":
                 case "Sort-Object":
                 case "Where-Object":
+                    {
+                        if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionMemberName(context, result, commandAst);
+                        }
+
+                        break;
+                    }
                 case "Format-Custom":
                 case "Format-List":
                 case "Format-Table":
@@ -2290,6 +2299,10 @@ namespace System.Management.Automation
                         if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
                         {
                             NativeCompletionMemberName(context, result, commandAst);
+                        }
+                        else if (parameterName.Equals("View", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionFormatViewName(context, boundArguments, result, commandAst, commandName);
                         }
 
                         break;
@@ -3785,44 +3798,78 @@ namespace System.Management.Automation
             result.Add(CompletionResult.Null);
         }
 
-        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst)
+        private static IEnumerable<PSTypeName> GetInferenceTypes(CompletionContext context, CommandAst commandAst)
         {
             // Command is something like where-object/foreach-object/format-list/etc. where there is a parameter that is a property name
             // and we want member names based on the input object, which is either the parameter InputObject, or comes from the pipeline.
-            if (!(commandAst.Parent is PipelineAst pipelineAst))
-                return;
+            if (commandAst.Parent is not PipelineAst pipelineAst)
+            {
+                return null;
+            }
 
             int i;
             for (i = 0; i < pipelineAst.PipelineElements.Count; i++)
             {
                 if (pipelineAst.PipelineElements[i] == commandAst)
+                {
                     break;
+                }
             }
 
             IEnumerable<PSTypeName> prevType = null;
             if (i == 0)
             {
+                // based on a type of the argument which is binded to 'InputObject' parameter.
                 AstParameterArgumentPair pair;
                 if (!context.PseudoBindingInfo.BoundArguments.TryGetValue("InputObject", out pair)
                     || !pair.ArgumentSpecified)
                 {
-                    return;
+                    return null;
                 }
 
                 var astPair = pair as AstPair;
                 if (astPair == null || astPair.Argument == null)
                 {
-                    return;
+                    return null;
                 }
 
                 prevType = AstTypeInference.InferTypeOf(astPair.Argument, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
             }
             else
             {
+                // based on OutputTypeAttribute() of the first cmdlet in pipeline.
                 prevType = AstTypeInference.InferTypeOf(pipelineAst.PipelineElements[i - 1], context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
             }
 
-            CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
+            return prevType;
+        }
+
+        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst)
+        {
+            IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
+            if (prevType is not null)
+            {
+                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
+            }
+
+            result.Add(CompletionResult.Null);
+        }
+
+        private static void NativeCompletionFormatViewName(
+            CompletionContext context,
+            Dictionary<string, AstParameterArgumentPair> boundArguments,
+            List<CompletionResult> result,
+            CommandAst commandAst,
+            string commandName)
+        {
+            IEnumerable<PSTypeName> prevType = NativeCommandArgumentCompletion_InferTypesOfArgument(boundArguments, commandAst, context, "InputObject");
+
+            if (prevType is not null)
+            {
+                string[] inferTypeNames = prevType.Select(t => t.Name).ToArray();
+                CompleteFormatViewByInferredType(context, inferTypeNames, result, commandName);
+            }
+
             result.Add(CompletionResult.Null);
         }
 
@@ -4840,7 +4887,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class FindVariablesVisitor : AstVisitor
+        private sealed class FindVariablesVisitor : AstVisitor
         {
             internal Ast Top;
             internal Ast CompletionVariableAst;
@@ -5697,6 +5744,59 @@ namespace System.Management.Automation
             return Ast.GetAncestorAst<ConfigurationDefinitionAst>(expression) != null;
         }
 
+        private static void CompleteFormatViewByInferredType(CompletionContext context, string[] inferredTypeNames, List<CompletionResult> results, string commandName)
+        {
+            var typeInfoDB = context.TypeInferenceContext.ExecutionContext.FormatDBManager.GetTypeInfoDataBase();
+
+            if (typeInfoDB is null)
+            {
+                return;
+            }
+
+            Type controlBodyType = commandName switch
+            {
+                "Format-Table" => typeof(TableControlBody),
+                "Format-List" => typeof(ListControlBody),
+                "Format-Wide" => typeof(WideControlBody),
+                "Format-Custom" => typeof(ComplexControlBody),
+                _ => null
+            };
+
+            Diagnostics.Assert(controlBodyType is not null, "This should never happen unless a new Format-* cmdlet is added");
+
+            var wordToComplete = context.WordToComplete;
+            var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            WildcardPattern viewPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            var uniqueNames = new HashSet<string>();
+            foreach (ViewDefinition viewDefinition in typeInfoDB.viewDefinitionsSection.viewDefinitionList)
+            {
+                if (viewDefinition?.appliesTo is not null && controlBodyType == viewDefinition.mainControl.GetType())
+                {
+                    foreach (TypeOrGroupReference applyTo in viewDefinition.appliesTo.referenceList)
+                    {
+                        foreach (string inferredTypeName in inferredTypeNames)
+                        {
+                            // We use 'StartsWith()' because 'applyTo.Name' can look like "System.Diagnostics.Process#IncludeUserName".
+                            if (applyTo.name.StartsWith(inferredTypeName, StringComparison.OrdinalIgnoreCase)
+                                && uniqueNames.Add(viewDefinition.name)
+                                && viewPattern.IsMatch(viewDefinition.name))
+                            {
+                                string completionText = viewDefinition.name;
+                                // If the string is quoted or if it contains characters that need quoting, quote it in single quotes
+                                if (quote != string.Empty || viewDefinition.name.IndexOfAny(s_charactersRequiringQuotes) != -1)
+                                {
+                                    completionText = "'" + completionText.Replace("'", "''") + "'";
+                                }
+
+                                results.Add(new CompletionResult(completionText, viewDefinition.name, CompletionResultType.Text, viewDefinition.name));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic)
         {
             bool extensionMethodsAdded = false;
@@ -5992,7 +6092,7 @@ namespace System.Management.Automation
         /// This type represents a generic type for type name completion. It only contains information that can be
         /// inferred from the full type name.
         /// </summary>
-        private class GenericTypeCompletionInStringFormat : TypeCompletionInStringFormat
+        private sealed class GenericTypeCompletionInStringFormat : TypeCompletionInStringFormat
         {
             /// <summary>
             /// Get the number of generic type arguments required by the type represented by this instance.
@@ -6109,7 +6209,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This type represents a generic type for type name completion. It contains the actual type instance.
         /// </summary>
-        private class GenericTypeCompletion : TypeCompletion
+        private sealed class GenericTypeCompletion : TypeCompletion
         {
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
             {
@@ -6146,7 +6246,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This type represents a namespace for namespace completion.
         /// </summary>
-        private class NamespaceCompletion : TypeCompletionBase
+        private sealed class NamespaceCompletion : TypeCompletionBase
         {
             internal string Namespace;
 
@@ -6168,7 +6268,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class TypeCompletionMapping
+        private sealed class TypeCompletionMapping
         {
             // The Key is the string we'll be searching on.  It could complete to various things.
             internal string Key;
@@ -7234,7 +7334,7 @@ namespace System.Management.Automation
             return defaultChoice;
         }
 
-        private class ItemPathComparer : IComparer<PSObject>
+        private sealed class ItemPathComparer : IComparer<PSObject>
         {
             public int Compare(PSObject x, PSObject y)
             {
@@ -7269,7 +7369,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class CommandNameComparer : IComparer<PSObject>
+        private sealed class CommandNameComparer : IComparer<PSObject>
         {
             public int Compare(PSObject x, PSObject y)
             {

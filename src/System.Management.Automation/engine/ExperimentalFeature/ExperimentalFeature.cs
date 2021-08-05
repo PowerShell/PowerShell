@@ -144,6 +144,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSNativeCommandErrorActionPreferenceFeatureName,
                     description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
+                new ExperimentalFeature(
+                    name: "PSAnsiRenderingFileInfo",
+                    description: "Enable coloring for FileInfo objects"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

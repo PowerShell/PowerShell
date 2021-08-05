@@ -50,7 +50,7 @@ steps:
 - pwsh: |
     $message = @()
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.pkg | ForEach-Object {
-        if($_.Name -notmatch 'powershell-(lts-)?\d\.\d\.\d\-([a-z]*.\d+\-)?osx(\.10\.12)?\-x64\.pkg')
+        if($_.Name -notmatch 'powershell-(lts-)?\d\.\d\.\d\-([a-z]*.\d+\-)?osx(\.10\.12)?\-(x64|arm64)\.pkg')
         {
             $messageInstance = "$($_.Name) is not a valid package name"
             $message += $messageInstance

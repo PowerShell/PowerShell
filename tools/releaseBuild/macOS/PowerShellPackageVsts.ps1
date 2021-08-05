@@ -42,15 +42,23 @@ param (
     [ValidatePattern("-signed.zip$")]
     [string]$BuildZip,
 
-    [string]$ArtifactName = 'result'
+    [Parameter(Mandatory, ParameterSetName = 'packageSigned')]
+    [Parameter(Mandatory, ParameterSetName = 'IncludeSymbols')]
+    [Parameter(Mandatory, ParameterSetName = 'Build')]
+    [ValidateSet('osx-x64', 'osx-arm64')]
+    [string]$Runtime,
+
+    [string]$ArtifactName = 'result',
+
+    [switch]$SkipReleaseChecks
 )
 
 $repoRoot = $location
 
-if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
-    $releaseTagParam = @{ }
+if ($Build -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
+    $releaseTagParam = @{}
     if ($ReleaseTag) {
-        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
+        $releaseTagParam['ReleaseTag'] = $ReleaseTag
 
         #Remove the initial 'v' from the ReleaseTag
         $version = $ReleaseTag -replace '^v'
@@ -65,13 +73,14 @@ if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
 
 Push-Location
 try {
+    $pspackageParams = @{ SkipReleaseChecks = $SkipReleaseChecks; MacOSRuntime = $Runtime }
     Write-Verbose -Message "Init..." -Verbose
     Set-Location $repoRoot
     Import-Module "$repoRoot/build.psm1"
     Import-Module "$repoRoot/tools/packaging"
     Sync-PSTags -AddRemoteIfMissing
 
-    if ($BootStrap.IsPresent) {
+    if ($BootStrap) {
         Start-PSBootstrap -Package
     }
 
@@ -81,38 +90,38 @@ try {
 
         Remove-Item -Path $BuildZip
 
-        Start-PSPackage @releaseTagParam
+        Start-PSPackage @pspackageParams @releaseTagParam
         switch ($ExtraPackage) {
-            "tar" { Start-PSPackage -Type tar @releaseTagParam }
+            "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam }
         }
 
         if ($LTS) {
-            Start-PSPackage @releaseTagParam -LTS
+            Start-PSPackage @pspackageParams @releaseTagParam -LTS
             switch ($ExtraPackage) {
-                "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+                "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam -LTS }
             }
         }
     }
 
-    if ($Build.IsPresent) {
-        if ($Symbols.IsPresent) {
-            Start-PSBuild -Configuration 'Release' -Crossgen -NoPSModuleRestore @releaseTagParam
-            $pspackageParams = @{}
+    if ($Build) {
+        $runCrossgen = $Runtime -eq 'osx-x64'
+        if ($Symbols) {
+            Start-PSBuild -Clean -Configuration 'Release' -Crossgen:$runCrossgen -NoPSModuleRestore @releaseTagParam -Runtime $Runtime
             $pspackageParams['Type']='zip'
             $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
             Write-Verbose "Starting powershell packaging(zip)..." -Verbose
             Start-PSPackage @pspackageParams @releaseTagParam
         } else {
-            Start-PSBuild -Configuration 'Release' -Crossgen -PSModuleRestore @releaseTagParam
-            Start-PSPackage @releaseTagParam
+            Start-PSBuild -Configuration 'Release' -Crossgen:$runCrossgen -PSModuleRestore @releaseTagParam -Runtime $Runtime
+            Start-PSPackage @pspackageParams @releaseTagParam
             switch ($ExtraPackage) {
-                "tar" { Start-PSPackage -Type tar @releaseTagParam }
+                "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam }
             }
 
             if ($LTS) {
                 Start-PSPackage @releaseTagParam -LTS
                 switch ($ExtraPackage) {
-                    "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+                    "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam -LTS }
                 }
             }
         }
@@ -121,7 +130,7 @@ try {
     Pop-Location
 }
 
-if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
+if ($Build -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
     $macPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg, *.tar.gz, *.zip
     foreach ($macPackage in $macPackages) {
         $filePath = $macPackage.FullName

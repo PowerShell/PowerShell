@@ -301,6 +301,111 @@ Describe "TabCompletion" -Tags CI {
         $actual | Should -BeExactly $expected
     }
 
+    Context "Format cmdlet's View paramter completion" {
+        BeforeAll {
+            $viewDefinition = @'
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>R A M</Name>
+      <ViewSelectedBy>
+        <TypeName>System.Diagnostics.Process</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>ProcName</Label>
+            <Width>40</Width>
+            <Alignment>Center</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>PagedMem</Label>
+            <Width>40</Width>
+            <Alignment>Center</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>PeakWS</Label>
+            <Width>40</Width>
+            <Alignment>Center</Alignment>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <Alignment>Center</Alignment>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <Alignment>Center</Alignment>
+                <PropertyName>PagedMemorySize</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <Alignment>Center</Alignment>
+                <PropertyName>PeakWorkingSet</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
+'@
+
+            $tempViewFile = Join-Path -Path $TestDrive -ChildPath 'processViewDefinition.ps1xml'
+            Set-Content -LiteralPath $tempViewFile -Value $viewDefinition -Force
+
+            $ps = [PowerShell]::Create()
+            $null = $ps.AddScript("Update-FormatData -AppendPath $tempViewFile")
+            $ps.Invoke()
+            $ps.HadErrors | Should -BeFalse
+            $ps.Commands.Clear()
+
+            Remove-Item -LiteralPath $tempViewFile -Force -ErrorAction SilentlyContinue
+        }
+
+        It 'Should complete Get-ChildItem | <cmd> -View' -TestCases (
+            @{ cmd = 'Format-Table'; expected = "children childrenWithHardlink$(if ($EnabledExperimentalFeatures.Contains('PSUnixFileStat')) { ' childrenWithUnixStat' })" },
+            @{ cmd = 'Format-List'; expected = 'children' },
+            @{ cmd = 'Format-Wide'; expected = 'children' },
+            @{ cmd = 'Format-Custom'; expected = '' }
+        ) {
+            param($cmd, $expected)
+
+            # The completion is based on OutputTypeAttribute() of the cmdlet.
+            $res = TabExpansion2 -inputScript "Get-ChildItem | $cmd -View " -cursorColumn "Get-ChildItem | $cmd -View ".Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $expected
+        }
+
+        It 'Should complete $processList = Get-Process; $processList | <cmd>' -TestCases (
+            @{ cmd = 'Format-Table -View '; expected = "'R A M'", "Priority", "process", "ProcessModule", "ProcessWithUserName", "StartTime" },
+            @{ cmd = 'Format-List -View '; expected = '' },
+            @{ cmd = 'Format-Wide -View '; expected = 'process' },
+            @{ cmd = 'Format-Custom -View '; expected = '' },
+            @{ cmd = 'Format-Table -View S'; expected = "StartTime" },
+            @{ cmd = "Format-Table -View 'S"; expected = "'StartTime'" },
+            @{ cmd = "Format-Table -View R"; expected = "'R A M'" }
+        ) {
+            param($cmd, $expected)
+
+            $null = $ps.AddScript({
+                param ($cmd)
+                $processList = Get-Process
+                $res = TabExpansion2 -inputScript "`$processList | $cmd" -cursorColumn "`$processList | $cmd".Length
+                $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+                $completionText
+            }).AddArgument($cmd)
+
+            $result = $ps.Invoke()
+            $ps.Commands.Clear()
+            $expected = ($expected | Sort-Object) -join ' '
+            $result -join ' ' | Should -BeExactly $expected
+        }
+    }
+
     Context NativeCommand {
         BeforeAll {
             $nativeCommand = (Get-Command -CommandType Application -TotalCount 1).Name
@@ -1384,7 +1489,7 @@ dir -Recurse `
                 ## Save original culture and temporarily set it to da-DK because there's no localized help for da-DK.
                 $OriginalCulture = [cultureinfo]::CurrentCulture
                 [cultureinfo]::CurrentCulture="da-DK"
-                
+
                 $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
                 $res.CompletionMatches | Should -HaveCount 1
                 $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'

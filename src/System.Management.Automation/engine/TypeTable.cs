@@ -1683,7 +1683,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static readonly IEqualityComparer<ConsolidatedString> EqualityComparer = new ConsolidatedStringEqualityComparer();
 
-        private class ConsolidatedStringEqualityComparer : IEqualityComparer<ConsolidatedString>
+        private sealed class ConsolidatedStringEqualityComparer : IEqualityComparer<ConsolidatedString>
         {
             bool IEqualityComparer<ConsolidatedString>.Equals(ConsolidatedString x, ConsolidatedString y)
             {

@@ -1,7 +1,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Format-List" -Tags "CI" {
-    $nl = [Environment]::NewLine
+    BeforeAll {
+        $nl = [Environment]::NewLine
+
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+    }
+
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+    }
+
     BeforeEach {
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
@@ -70,6 +84,19 @@ Describe "Format-List" -Tags "CI" {
 }
 
 Describe "Format-List DRT basic functionality" -Tags "CI" {
+    BeforeAll {
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+    }
+
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+    }
+
     It "Format-List with array should work" {
         $al = (0..255)
         $info = @{}
@@ -181,5 +208,24 @@ dbda : KM
         $actual = $obj | Format-List | Out-String
         $actual = $actual -replace "`r`n", "`n"
         $actual | Should -BeExactly $expected
+    }
+}
+
+Describe 'Format-List color tests' {
+    BeforeAll {
+        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRendering')))
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForceFormatListFixedLabelWidth', $true)
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove('It:Skip')
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForceFormatListFixedLabelWidth', $false)
+    }
+
+    It 'Property names should use FormatAccent' {
+        $out = ([pscustomobject]@{Short=1;LongLabelName=2} | fl | out-string).Split([Environment]::NewLine, [System.StringSplitOptions]::RemoveEmptyEntries)
+        $out.Count | Should -Be 2
+        $out[0] | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)Short      : $($PSStyle.Reset)1" -Because ($out[0] | Format-Hex)
+        $out[1] | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)LongLabelN : $($PSStyle.Reset)2"
     }
 }

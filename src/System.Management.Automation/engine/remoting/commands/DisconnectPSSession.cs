@@ -392,7 +392,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Throttle class to perform a remoterunspace disconnect operation.
         /// </summary>
-        private class DisconnectRunspaceOperation : IThrottleOperation
+        private sealed class DisconnectRunspaceOperation : IThrottleOperation
         {
             private readonly PSSession _remoteSession;
             private readonly ObjectStream _writeStream;

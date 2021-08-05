@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell
             LTS = 2
         }
 
-        private class Release
+        private sealed class Release
         {
             internal Release(string publishAt, string tagName)
             {

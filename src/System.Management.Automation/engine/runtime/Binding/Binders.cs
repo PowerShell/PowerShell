@@ -1177,7 +1177,7 @@ namespace System.Management.Automation.Language
 
     internal sealed class PSInvokeDynamicMemberBinder : DynamicMetaObjectBinder
     {
-        private class KeyComparer : IEqualityComparer<PSInvokeDynamicMemberBinderKeyType>
+        private sealed class KeyComparer : IEqualityComparer<PSInvokeDynamicMemberBinderKeyType>
         {
             public bool Equals(PSInvokeDynamicMemberBinderKeyType x, PSInvokeDynamicMemberBinderKeyType y)
             {
@@ -4887,7 +4887,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     internal class PSGetMemberBinder : GetMemberBinder
     {
-        private class KeyComparer : IEqualityComparer<PSGetMemberBinderKeyType>
+        private sealed class KeyComparer : IEqualityComparer<PSGetMemberBinderKeyType>
         {
             public bool Equals(PSGetMemberBinderKeyType x, PSGetMemberBinderKeyType y)
             {
@@ -4911,7 +4911,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private class ReservedMemberBinder : PSGetMemberBinder
+        private sealed class ReservedMemberBinder : PSGetMemberBinder
         {
             internal ReservedMemberBinder(string name, bool ignoreCase, bool @static) : base(name, null, ignoreCase, @static, nonEnumerating: false)
             {
@@ -5936,7 +5936,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     internal class PSSetMemberBinder : SetMemberBinder
     {
-        private class KeyComparer : IEqualityComparer<PSSetMemberBinderKeyType>
+        private sealed class KeyComparer : IEqualityComparer<PSSetMemberBinderKeyType>
         {
             public bool Equals(PSSetMemberBinderKeyType x, PSSetMemberBinderKeyType y)
             {
@@ -6519,7 +6519,7 @@ namespace System.Management.Automation.Language
             NonVirtual,
         }
 
-        private class KeyComparer : IEqualityComparer<PSInvokeMemberBinderKeyType>
+        private sealed class KeyComparer : IEqualityComparer<PSInvokeMemberBinderKeyType>
         {
             public bool Equals(PSInvokeMemberBinderKeyType x, PSInvokeMemberBinderKeyType y)
             {
@@ -7509,7 +7509,7 @@ namespace System.Management.Automation.Language
         private readonly bool _publicTypeOnly;
         private int _version;
 
-        private class KeyComparer : IEqualityComparer<Tuple<CallInfo, PSMethodInvocationConstraints, bool>>
+        private sealed class KeyComparer : IEqualityComparer<Tuple<CallInfo, PSMethodInvocationConstraints, bool>>
         {
             public bool Equals(Tuple<CallInfo, PSMethodInvocationConstraints, bool> x,
                                Tuple<CallInfo, PSMethodInvocationConstraints, bool> y)
@@ -7687,7 +7687,7 @@ namespace System.Management.Automation.Language
         private readonly CallInfo _callInfo;
         private readonly PSMethodInvocationConstraints _constraints;
 
-        private class KeyComparer : IEqualityComparer<Tuple<CallInfo, PSMethodInvocationConstraints>>
+        private sealed class KeyComparer : IEqualityComparer<Tuple<CallInfo, PSMethodInvocationConstraints>>
         {
             public bool Equals(Tuple<CallInfo, PSMethodInvocationConstraints> x,
                                Tuple<CallInfo, PSMethodInvocationConstraints> y)
