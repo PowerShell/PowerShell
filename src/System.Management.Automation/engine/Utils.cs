@@ -1281,7 +1281,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        internal static bool PathIsUnc(string path)
+        internal static bool PathIsUnc(string path, bool networkOnly = false)
         {
 #if UNIX
             return false;
@@ -1292,7 +1292,7 @@ namespace System.Management.Automation
             }
 
             // handle special cases like \\wsl$\ubuntu and \\?\ which aren't a UNC path, but we can say it is so the filesystemprovider can use it
-            if (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase) || path.StartsWith("\\\\?\\"))
+            if (!networkOnly && (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase) || path.StartsWith("\\\\?\\")))
             {
                 return true;
             }

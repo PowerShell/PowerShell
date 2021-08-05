@@ -7258,7 +7258,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                if (Utils.PathIsUnc(path))
+                if (Utils.PathIsUnc(path, networkOnly : true))
                 {
                     return true;
                 }
