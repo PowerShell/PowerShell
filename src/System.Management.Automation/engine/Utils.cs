@@ -1291,8 +1291,8 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // handle special cases like \\wsl$\ubuntu which isn't a UNC path, but we can say it is so the filesystemprovider can use it
-            if (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase))
+            // handle special cases like \\wsl$\ubuntu and \\?\ which aren't a UNC path, but we can say it is so the filesystemprovider can use it
+            if (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase) || path.StartsWith("\\\\?\\"))
             {
                 return true;
             }

@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string exactPath = string.Empty;
                 int itemsToSkip = 0;
-                if (Utils.PathIsUnc(path) || path.StartsWith("\\\\?\\"))
+                if (Utils.PathIsUnc(path))
                 {
                     // With the Split method, a UNC path like \\server\share, we need to skip
                     // trying to enumerate the server and share, so skip the first two empty
