@@ -43,7 +43,7 @@ Describe 'OutputRendering tests' {
     }
 
     It 'OutputRendering works for "<outputRendering>" to the pipeline' -TestCases @(
-        @{ outputRendering = 'automatic'; ansi = $true }
+        @{ outputRendering = 'automatic'; ansi = $false }
         @{ outputRendering = 'host'     ; ansi = $false }
         @{ outputRendering = 'ansi'     ; ansi = $true }
         @{ outputRendering = 'plaintext'; ansi = $false }

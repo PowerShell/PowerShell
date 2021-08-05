@@ -1,0 +1,32 @@
+
+    Directory: /Users/steve/repos/PowerShell
+
+UnixMode   User             Group                 LastWriteTime           Size Name
+--------   ----             -----                 -------------           ---- ----
+drwxr-xr-x steve            staff               7/28/2021 09:27           1280 assets
+drwxr-xr-x steve            staff               7/28/2021 09:27            288 CHANGELOG
+drwxr-xr-x steve            staff               8/11/2020 10:51            448 demos
+drwxr-xr-x steve            staff               8/11/2020 10:51            160 docker
+drwxr-xr-x steve            staff               4/18/2021 09:43            448 docs
+drwxr-xr-x steve            staff               7/28/2021 09:27            896 src
+drwxr-xr-x steve            staff               7/28/2021 09:27            480 test
+drwxr-xr-x steve            staff                8/3/2021 13:26           1024 tools
+-rw-r--r-- steve            staff               7/28/2021 09:27           4773 ADOPTERS.md
+-rw-r--r-- steve            staff               7/28/2021 09:27            267 Analyzers.props
+-rw-r--r-- steve            staff               7/28/2021 09:27         121242 build.psm1
+-rw-r--r-- steve            staff               8/11/2020 10:50             95 CHANGELOG.md
+-rw-r--r-- steve            staff               8/11/2020 10:50            440 CODE_OF_CONDUCT.md
+-rw-r--r-- steve            staff               2/24/2020 21:50            151 codecov.yml
+-rw-r--r-- steve            staff               7/28/2021 09:27            273 DotnetRuntimeMetadata.json
+-rw-r--r-- steve            staff               7/28/2021 09:27             62 global.json
+-rw-r--r-- steve            staff               4/18/2021 09:43           1074 LICENSE.txt
+-rw-r--r-- steve            staff               7/28/2021 09:27            368 nuget.config
+-rw-r--r-- steve            staff                8/3/2021 15:48           5208 pester-tests.xml
+-rw-r--r-- steve            staff               7/28/2021 09:27          10998 PowerShell.Common.props
+-rw-r--r-- steve            staff               7/28/2021 09:27          14290 PowerShell.sln
+-rw-r--r-- steve            staff               7/28/2021 09:27          21117 README.md
+-rw-r--r-- steve            staff               7/21/2021 13:41           8066 Settings.StyleCop
+-rw-r--r-- steve            staff               8/11/2020 10:51           1821 stylecop.json
+-rw-r--r-- steve            staff                8/5/2021 15:33           2406 test.txt
+-rw-r--r-- steve            staff               8/11/2020 10:50         136320 ThirdPartyNotices.txt
+
