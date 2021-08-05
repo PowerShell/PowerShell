@@ -228,8 +228,8 @@ Describe 'Generic Method invocation' -Tags 'CI' {
             [array]::Empty[string, int]()
         }
         catch {
-            $_.Exception.Message | Should -BeExactly 'Cannot find an overload for "Empty" and the argument count: "0".'
-            $_.FullyQualifiedErrorId | Should -BeExactly 'MethodCountCouldNotFindBest'
+            $_.Exception.Message | Should -BeExactly 'Could not find a suitable generic method overload for "Empty" with "2" type parameters, and the argument count: "0".'
+            $_.FullyQualifiedErrorId | Should -BeExactly 'MethodCountCouldNotFindBestGeneric'
         }
     }
 
@@ -238,8 +238,8 @@ Describe 'Generic Method invocation' -Tags 'CI' {
             [array]::Empty[thisdoesnotexist]()
         }
         catch {
-            $_.Exception.Message | Should -BeExactly 'Cannot find an overload for "empty" and the argument count: "0".'
-            $_.FullyQualifiedErrorId | Should -BeExactly 'MethodCountCouldNotFindBest'
+            $_.Exception.Message | Should -BeExactly 'One or more of the generic type parameters provided for the method "Empty" refers to a type which cannot be found.'
+            $_.FullyQualifiedErrorId | Should -BeExactly 'TypeNotFoundForGenericMethod'
         }
     }
 

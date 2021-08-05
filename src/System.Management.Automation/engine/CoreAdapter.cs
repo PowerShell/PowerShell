@@ -1611,6 +1611,22 @@ namespace System.Management.Automation
                         methods[0].method.DeclaringType.FullName);
                     return null;
                 }
+                else if (genericParameters.Length != 0 && genericParameters.Contains(null))
+                {
+                    errorId = "TypeNotFoundForGenericMethod";
+                    errorMsg = ExtendedTypeSystem.MethodGenericArgumentTypeNotFoundException;
+                    return null;
+                }
+                else if (genericParameters.Length != 0)
+                {
+                    errorId = "MethodCountCouldNotFindBestGeneric";
+                    errorMsg = string.Format(
+                        ExtendedTypeSystem.MethodGenericArgumentCountException,
+                        methods[0].method.Name,
+                        genericParameters.Length,
+                        arguments.Length);
+                    return null;
+                }
                 else
                 {
                     errorId = "MethodCountCouldNotFindBest";
