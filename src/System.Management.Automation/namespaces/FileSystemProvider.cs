@@ -8070,7 +8070,6 @@ namespace Microsoft.PowerShell.Commands
             private static extern bool FindClose(IntPtr handle);
         }
 
-        // SetLastError is false as the use of this API doesn't not require GetLastError() to be called
         [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern SafeFindHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
 
