@@ -1898,7 +1898,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 // We've already taken the expense of initializing the Attributes property here,
                                 // so we can use that to avoid needing to call IsReparsePointLikeSymlink() later.
-                                checkReparsePoint = (recursiveDirectory.Attributes & FileAttributes.ReparsePoint) != 0;
+                                checkReparsePoint = recursiveDirectory.Attributes.HasFlag(FileAttributes.ReparsePoint);
                             }
 
                             // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
