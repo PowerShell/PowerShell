@@ -450,6 +450,11 @@ namespace System.Management.Automation
         }
 
         #region Helpers for long paths from .Net Runtime
+        
+        // Code here is copied from .NET's internal path helper implementation:
+        // https://github.com/dotnet/runtime/blob/dcce0f56e10f5ac9539354b049341a2d7c0cdebf/src/libraries/System.Private.CoreLib/src/System/IO/PathInternal.Windows.cs
+        // It has been left as a verbatim copy.
+
         internal static string EnsureExtendedPrefix(string path)
         {
             if (IsPartiallyQualified(path) || IsDevice(path))
