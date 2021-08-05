@@ -1424,7 +1424,7 @@ namespace System.Management.Automation
                     Type[] argumentTypesForTypeInference = new Type[argumentTypes.Length];
                     Array.Copy(argumentTypes, argumentTypesForTypeInference, argumentTypes.Length);
 
-                    if (invocationConstraints?.ParameterTypes != null)
+                    if (invocationConstraints?.ParameterTypes is not null)
                     {
                         int parameterIndex = 0;
                         foreach (Type typeConstraintFromCallSite in invocationConstraints.ParameterTypes)

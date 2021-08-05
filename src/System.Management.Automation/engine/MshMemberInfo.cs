@@ -2011,19 +2011,7 @@ namespace System.Management.Automation
         }
 
         public override int GetHashCode()
-        {
-            // algorithm based on https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
-            unchecked
-            {
-                int result = 61;
-
-                result = (result * 397) + (MethodTargetType != null ? MethodTargetType.GetHashCode() : 0);
-                result = (result * 397) + ParameterTypes.SequenceGetHashCode();
-                result = (result * 397) + GenericTypeParameters.SequenceGetHashCode();
-
-                return result;
-            }
-        }
+            => HashCode.Combine(MethodTargetType, ParameterTypes, GenericTypeParameters);
 
         public override string ToString()
         {
