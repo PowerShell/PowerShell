@@ -326,7 +326,7 @@ namespace System.Management.Automation
                                                                    /* PSCommandPath */     typeof(string),
                                                                  };
 
-        internal static readonly string[] PreferenceVariables = 
+        internal static readonly string[] PreferenceVariables =
         {
             SpecialVariables.DebugPreference,
             SpecialVariables.VerbosePreference,
@@ -338,7 +338,7 @@ namespace System.Management.Automation
             SpecialVariables.PSNativeCommandUseErrorActionPreference,
         };
 
-        internal static readonly Type[] PreferenceVariableTypes = 
+        internal static readonly Type[] PreferenceVariableTypes =
         {
             /* DebugPreference */                         typeof(ActionPreference),
             /* VerbosePreference */                       typeof(ActionPreference),

@@ -2819,7 +2819,7 @@ namespace System.Management.Automation
         /// but the command failure will ultimately be
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
-        internal void _WriteErrorSkipAllowCheck(ErrorRecord errorRecord, ActionPreference? actionPreference = null, bool isNativeError = false)
+        internal void _WriteErrorSkipAllowCheck(ErrorRecord errorRecord, ActionPreference? actionPreference = null, bool isNativeStdErrCall = false)
         {
             ThrowIfStopping();
 
@@ -2839,7 +2839,7 @@ namespace System.Management.Automation
                 this.PipelineProcessor.LogExecutionError(_thisCommand.MyInvocation, errorRecord);
             }
 
-            if (!(ExperimentalFeature.IsEnabled("PSNotApplyErrorActionToStderr") && isNativeError))
+            if (!(ExperimentalFeature.IsEnabled("PSNotApplyErrorActionToStderr") && isNativeStdErrCall))
             {
                 this.PipelineProcessor.ExecutionFailed = true;
 
@@ -2905,7 +2905,7 @@ namespace System.Management.Automation
             // when tracing), so don't add the member again.
 
             // We don't add a note property on messages that comes from stderr stream.
-            if (!isNativeError)
+            if (!isNativeStdErrCall)
             {
                 errorWrap.WriteStream = WriteStreamType.Error;
             }
