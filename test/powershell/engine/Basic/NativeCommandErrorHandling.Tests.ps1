@@ -6,6 +6,7 @@
 
 Describe 'Native command error handling tests' -Tags 'CI' {
     BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if (-not [ExperimentalFeature]::IsEnabled('PSNativeCommandErrorActionPreference'))
         {
             $PSDefaultParameterValues['It:Skip'] = $true
@@ -23,7 +24,7 @@ Describe 'Native command error handling tests' -Tags 'CI' {
     }
 
     AfterAll {
-        $PSDefaultParameterValues['It:Skip'] = $false
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
     BeforeEach {
@@ -53,7 +54,7 @@ Describe 'Native command error handling tests' -Tags 'CI' {
             $stderr[1].Exception.Message | Should -Be "Program `"$exeName`" ended with non-zero exit code 1."
         }
 
-        It 'Non-zero exit code generrates a non-teminating error for $ErrorActionPreference = ''SilentlyContinue''' {
+        It 'Non-zero exit code generates a non-teminating error for $ErrorActionPreference = ''SilentlyContinue''' {
             $ErrorActionPreference = 'SilentlyContinue'
 
             testexe -returncode 1 > $null
