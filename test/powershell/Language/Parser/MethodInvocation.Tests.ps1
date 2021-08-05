@@ -102,19 +102,54 @@ Describe 'Generic Method invocation' -Tags 'CI' {
 
         $ExpectedParseErrors = @(
             @{
-                Script          = '$object.Method[incompl'
-                ExpectedErrors  = 'EndSquareBracketExpectedAtEndOfType'
-                ErrorCount      = 1
+                Script         = '$object.Method[incompl'
+                ExpectedErrors = 'EndSquareBracketExpectedAtEndOfType'
+                ErrorCount     = 1
             }
             @{
-                Script          = '[type]::Member[incompl'
-                ExpectedErrors  = 'EndSquareBracketExpectedAtEndOfType'
-                ErrorCount      = 1
+                Script         = '[type]::Member[incompl'
+                ExpectedErrors = 'EndSquareBracketExpectedAtEndOfType'
+                ErrorCount     = 1
             }
             @{
-                Script          = '$object.Method[Type1[Type2'
-                ExpectedErrors  = 'UnexpectedToken','EndSquareBracketExpectedAtEndOfType'
-                ErrorCount      = 2
+                Script         = '$object.Method[Type1[Type2'
+                ExpectedErrors = 'UnexpectedToken','EndSquareBracketExpectedAtEndOfType'
+                ErrorCount     = 2
+            }
+            @{
+                Script         = '[array]::empty[type]]()'
+                ExpectedErrors = 'UnexpectedToken', 'ExpectedExpression'
+                ErrorCount     = 2
+            }
+            @{
+                Script         = '$object.Method[type,]()'
+                ExpectedErrors = 'MissingTypeName'
+                ErrorCount     = 1
+            }
+            @{
+                Script         = '$object.Method[]()'
+                ExpectedErrors = 'MissingArrayIndexExpression', 'UnexpectedToken', 'ExpectedExpression'
+                ErrorCount     = 3
+            }
+            @{
+                Script         = '$object.Method[,]()'
+                ExpectedErrors = 'MissingExpressionAfterOperator', 'UnexpectedToken', 'ExprectedExpression'
+                ErrorCount     = 3
+            }
+            @{
+                Script         = '$object.Method[,type]()'
+                ExpectedErrors = 'MissingExpressionAfterOperator', 'UnexpectedToken', 'ExpectedExpression'
+                ErrorCount     = 3
+            }
+            @{
+                Script         = '$object.Method[type()'
+                ExpectedErrors = 'UnexpectedToken', 'ExpectedExpression'
+                ErrorCount     = 2
+            }
+            @{
+                Script         = '$object.Method[type)'
+                ExpectedErrors = 'EndSquareBracketExpectedAtEndOfType', 'UnexpectedToken'
+                ErrorCount     = 2
             }
         )
     }
@@ -186,5 +221,56 @@ Describe 'Generic Method invocation' -Tags 'CI' {
             [int[]](0..10),
             [func[int, int]] { $args[0] + 2 }
         ) | Should -Be @(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+    }
+
+    It 'gives a runtime error if too many type parameters are given' {
+        try {
+            [array]::Empty[string, int]()
+        }
+        catch {
+            $_.Exception.Message | Should -BeExactly 'Cannot find an overload for "Empty" and the argument count: "0".'
+            $_.FullyQualifiedErrorId | Should -BeExactly 'MethodCountCouldNotFindBest'
+        }
+    }
+
+    It 'gives a runtime error if a nonexistent type is specified' {
+        try {
+            [array]::Empty[thisdoesnotexist]()
+        }
+        catch {
+            $_.Exception.Message | Should -BeExactly 'Cannot find an overload for "empty" and the argument count: "0".'
+            $_.FullyQualifiedErrorId | Should -BeExactly 'MethodCountCouldNotFindBest'
+        }
+    }
+
+    It 'lists the same method group information with and without type parameters' {
+        $dict = [System.Collections.Concurrent.ConcurrentDictionary[string, int]]::new()
+        $noTypeParams = $dict.AddOrUpdate
+        $typeParams = $dict.AddOrUpdate[string]
+        $extraTypeParams = $dict.AddOrUpdate[string, int]
+
+        $typeParams.OverloadDefinitions | Should -BeExactly $noTypeParams.OverloadDefinitions
+        $extraTypeParams.OverloadDefinitions | Should -BeExactly $typeParams.OverloadDefinitions
+    }
+
+    It 'successfully invokes common Linq generic methods' {
+        [System.Collections.Generic.List[int]]$list = @( 1, 2, 3, 4, 5 )
+        $result = [System.Linq.Enumerable]::Select[int, float](
+            $list,
+            [Func[int, float]]{
+                param($item)
+                [math]::Pow($item, 3)
+            }
+        )
+
+        $result.GetType().Name | Should -BeExactly 'SelectListIterator`2'
+        $typeArgs = $result.GetType().GenericTypeArguments
+        $typeArgs[0] | Should -Be ([int])
+        $typeArgs[1] | Should -Be ([float])
+
+        $resultList = $result.ToList()
+        $resultList.GetType().Name | Should -Be 'List`1'
+        $resultList.GetType().GenericTypeArguments | Should -Be ([float])
+        $resultList | Should -Be @( 1, 8, 27, 64, 125)
     }
 }
