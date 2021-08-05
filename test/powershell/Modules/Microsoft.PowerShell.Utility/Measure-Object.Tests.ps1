@@ -64,7 +64,7 @@ Describe "Measure-Object" -Tags "CI" {
     }
 
     It "Should be able to count using the Property switch" {
-        $expected = $(Get-ChildItem $TestDrive).Length
+        $expected = $(Get-ChildItem $TestDrive | Where-Object { $_ -is [System.IO.FileInfo] }).Length
         $actual   = $(Get-ChildItem $TestDrive | Measure-Object -Property Length).Count
 
         $actual | Should -Be $expected
