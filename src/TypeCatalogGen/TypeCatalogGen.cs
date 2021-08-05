@@ -27,7 +27,7 @@ using System.Text;
 
 namespace Microsoft.PowerShell.CoreCLR
 {
-    public class TypeCatalogGen
+    public static class TypeCatalogGen
     {
         // Help messages
         private const string Param_TargetCSharpFilePath = "TargetCSharpFilePath";
