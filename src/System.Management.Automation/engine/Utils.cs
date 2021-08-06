@@ -2093,6 +2093,14 @@ namespace System.Management.Automation.Internal
 
         internal static bool ThrowExdevErrorOnMoveDirectory;
 
+        // To emulate OneDrive behavior we use the hard-coded symlink.
+        // If OneDriveTestRecurseOn is false then the symlink works as regular symlink.
+        // If OneDriveTestRecurseOn is true then we recurse into the symlink as OneDrive should work.
+        // OneDriveTestSymlinkName defines the symlink name used in tests.
+        internal static bool OneDriveTestOn;
+        internal static bool OneDriveTestRecurseOn;
+        internal static string OneDriveTestSymlinkName = "link-Beta";
+
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
         {

@@ -2699,7 +2699,7 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             System.IO.DirectoryInfo di = new(providerPath);
-                            if (di != null && (di.Attributes & System.IO.FileAttributes.ReparsePoint) != 0)
+                            if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(di))
                             {
                                 shouldRecurse = false;
                                 treatAsFile = true;

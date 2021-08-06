@@ -147,19 +147,30 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "-File should be default parameter" {
-            Set-Content -Path $testdrive/test -Value "'hello'"
-            $observed = & $powershell -NoProfile $testdrive/test
+            Set-Content -Path $testdrive/test.ps1 -Value "'hello'"
+            $observed = & $powershell -NoProfile $testdrive/test.ps1
             $observed | Should -Be "hello"
         }
 
-        It "-File accepts scripts with and without .ps1 extension: <Filename>" -TestCases @(
-            @{Filename="test.ps1"},
-            @{Filename="test"}
-        ) {
-            param($Filename)
+        It "-File accepts scripts with .ps1 extension" {
+            $Filename = 'test.ps1'
             Set-Content -Path $testdrive/$Filename -Value "'hello'"
             $observed = & $powershell -NoProfile -File $testdrive/$Filename
             $observed | Should -Be "hello"
+        }
+
+        It "-File accepts scripts without .ps1 extension to support shebang" -Skip:($IsWindows) {
+            $Filename = 'test.xxx'
+            Set-Content -Path $testdrive/$Filename -Value "'hello'"
+            $observed = & $powershell -NoProfile -File $testdrive/$Filename
+            $observed | Should -Be "hello"
+        }
+
+        It "-File should fail for script without .ps1 extension" -Skip:(!$IsWindows) {
+            $Filename = 'test.xxx'
+            Set-Content -Path $testdrive/$Filename -Value "'hello'"
+            & $powershell -NoProfile -File $testdrive/$Filename > $null
+            $LASTEXITCODE | Should -Be 64
         }
 
         It "-File should pass additional arguments to script" {
@@ -208,11 +219,8 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should -Be $BoolValue
         }
 
-        It "-File '<filename>' should return exit code from script" -TestCases @(
-            @{Filename = "test.ps1"},
-            @{Filename = "test"}
-        ) {
-            param($Filename)
+        It "-File should return exit code from script" {
+            $Filename = 'test.ps1'
             Set-Content -Path $testdrive/$Filename -Value 'exit 123'
             & $powershell $testdrive/$Filename
             $LASTEXITCODE | Should -Be 123
