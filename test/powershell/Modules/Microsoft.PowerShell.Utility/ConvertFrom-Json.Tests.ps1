@@ -132,7 +132,7 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
         '[ 1 ]' | ConvertFrom-Json -NoEnumerate | ConvertTo-Json -Compress | Should -Be '[1]'
     }
 
-	It 'Properly handles a null first element' {
+	It 'Properly handles an empty first element' {
 		(@('5','','','','','') | convertfrom-json).count | should -be 6
 		(@('','5','','','','') | convertfrom-json).count | should -be 6
 		(@('','','5','','','') | convertfrom-json).count | should -be 6
