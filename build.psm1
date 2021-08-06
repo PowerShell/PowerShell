@@ -432,10 +432,17 @@ Fix steps:
     # adding ErrorOnDuplicatePublishOutputFiles=false due to .NET SDk issue: https://github.com/dotnet/sdk/issues/15748
     # removing --no-restore due to .NET SDK issue: https://github.com/dotnet/sdk/issues/18999
     # $Arguments = @("publish","--no-restore","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
-    # Add --self-contained due to "warning NETSDK1179: One of '--self-contained' or '--no-self-contained' options are required when '--runtime' is used."
-    $Arguments = @("publish","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false", "--self-contained")
+    $Arguments = @("publish","/property:GenerateFullPaths=true", "/property:ErrorOnDuplicatePublishOutputFiles=false")
     if ($Output -or $SMAOnly) {
         $Arguments += "--output", (Split-Path $Options.Output)
+    }
+
+    # Add --self-contained due to "warning NETSDK1179: One of '--self-contained' or '--no-self-contained' options are required when '--runtime' is used."
+    if ($Options.Runtime -like 'fxdependent*') {
+        $Arguments += "--no-self-contained"
+    }
+    else {
+        $Arguments += "--self-contained"
     }
 
     if ($Options.Runtime -like 'win*' -or ($Options.Runtime -like 'fxdependent*' -and $environment.IsWindows)) {
