@@ -138,6 +138,12 @@ namespace System.Management.Automation
     [Serializable]
     public class NativeCommandExitException : RuntimeException
     {
+        // NOTE:
+        // When implementing the native error action preference integration,
+        // reusing ApplicationFailedException was contemplated.
+        // However, rather than possibly reusing a type already used in another scenario
+        // it was decided instead to use a fresh type to minimize the chance of conflating the two scenarios.
+
         /// <summary>
         /// Gets the path of the native command.
         /// </summary>

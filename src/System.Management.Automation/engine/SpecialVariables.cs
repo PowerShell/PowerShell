@@ -347,7 +347,7 @@ namespace System.Management.Automation
             /* WarningPreference */                       typeof(ActionPreference),
             /* InformationPreference */                   typeof(ActionPreference),
             /* ConfirmPreference */                       typeof(ConfirmImpact),
-            /* PSNativeCommandUseErrorActionPreference */ typeof(SwitchParameter),
+            /* PSNativeCommandUseErrorActionPreference */ typeof(bool),
         };
 
         // The following variables are created in every session w/ AllScope.  We avoid creating local slots when we
