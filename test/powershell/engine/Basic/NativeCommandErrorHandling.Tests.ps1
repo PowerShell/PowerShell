@@ -87,6 +87,72 @@ Describe 'Native command error handling tests' -Tags 'CI' {
             $LASTEXITCODE | Should -Be 0
             $Error.Count | Should -Be 0
         }
+
+        It 'Works as expected with a try/catch block when $ErrorActionPreference = ''<ErrorActionPref>''' -TestCase $errorActionPrefTestCases {
+            param($ErrorActionPref)
+
+            $ErrorActionPreference = $ErrorActionPref
+
+            $threw = $false
+            $continued = $false
+            $hitFinally = $false
+            try
+            {
+                testexe -returncode 17 2>&1 > $null
+                $continued = $true
+            }
+            catch
+            {
+                $threw = $true
+                $exception = $_.Exception
+            }
+            finally
+            {
+                $hitFinally = $true
+            }
+
+            $hitFinally | Should -BeTrue
+            $continued  | Should -Be ($ErrorActionPreference -ne 'Stop')
+            $threw      | Should -Be ($ErrorActionPreference -eq 'Stop')
+
+            if ($threw)
+            {
+                $exception.Path      | Should -BeExactly (Get-Command -Name testexe -CommandType Application).Path
+                $exception.ExitCode  | Should -Be $LASTEXITCODE
+                $exception.ProcessId | Should -BeGreaterThan 0
+            }
+        }
+
+        It 'Works with trap when $ErrorActionPreference = ''<ErrorActionPref>''' -TestCases $errorActionPrefTestCases {
+            param($ErrorActionPref)
+
+            $ErrorActionPreference = $ErrorActionPref
+
+            trap
+            {
+                $hitTrap = $true
+                $exception = $_
+                continue
+            }
+
+            $hitTrap = $false
+
+            # Expect this to be trapped
+            testexe -returncode 17 2>&1 > $null
+
+            if ($ErrorActionPreference -eq 'Stop')
+            {
+                $hitTrap             | Should -BeTrue
+                $exception.ExitCode  | Should -Be $LASTEXITCODE
+                $exception.Path      | Should -BeExactly (Get-Command -Name testexe -CommandType Application).Path
+                $exception.ProcessId | Should -BeGreaterThan 0
+            }
+            else
+            {
+                $hitTrap   | Should -BeFalse
+                $exception | Should -BeNullOrEmpty
+            }
+        }
     }
 
     Context 'PSNativeCommandUseErrorActionPreference is $false' {
