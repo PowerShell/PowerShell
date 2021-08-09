@@ -77,13 +77,9 @@ Describe 'Native command error handling tests' -Tags 'CI' {
 
             $ErrorActionPreference = $ErrorActionPref
 
-            if ($ErrorActionPref -eq 'Stop') {
-                { testexe -returncode 0 } | Should -Not -Throw
-            }
-            else {
-                testexe -returncode 0 > $null
-            }
+            $output = testexe -returncode 0
 
+            $output | Should -BeExactly '0'
             $LASTEXITCODE | Should -Be 0
             $Error.Count | Should -Be 0
         }
