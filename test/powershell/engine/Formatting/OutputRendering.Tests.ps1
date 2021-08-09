@@ -3,16 +3,11 @@
 
 Describe 'OutputRendering tests' {
     BeforeAll {
-        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRendering')))
         $th = New-TestHost
         $rs = [runspacefactory]::Createrunspace($th)
         $rs.open()
         $ps = [powershell]::Create()
         $ps.Runspace = $rs
-    }
-
-    AfterAll {
-        $PSDefaultParameterValues.Remove('It:Skip')
     }
 
     BeforeEach {

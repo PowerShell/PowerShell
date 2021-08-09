@@ -21,7 +21,6 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
-        internal const string PSAnsiProgressFeatureName = "PSAnsiProgress";
         internal const string PSNativeCommandArgumentPassingFeatureName = "PSNativeCommandArgumentPassing";
 
         #endregion
@@ -111,29 +110,12 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
-#if UNIX
-                new ExperimentalFeature(
-                    name: "PSUnixFileStat",
-                    description: "Provide unix permission information for files and directories"),
-#endif
-                new ExperimentalFeature(
-                    name: "PSCultureInvariantReplaceOperator",
-                    description: "Use culture invariant to-string convertor for lval in replace operator"),
                 new ExperimentalFeature(
                     name: "PSNativePSPathResolution",
                     description: "Convert PSPath to filesystem path, if possible, for native commands"),
                 new ExperimentalFeature(
-                    name: "PSNotApplyErrorActionToStderr",
-                    description: "Don't have $ErrorActionPreference affect stderr output"),
-                new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
-                new ExperimentalFeature(
-                    name: "PSAnsiRendering",
-                    description: "Enable $PSStyle variable to control ANSI rendering of strings"),
-                new ExperimentalFeature(
-                    name: PSAnsiProgressFeatureName,
-                    description: "Enable lightweight progress bar that leverages ANSI codes for rendering"),
                 new ExperimentalFeature(
                     name: PSNativeCommandArgumentPassingFeatureName,
                     description: "Use ArgumentList when invoking a native command"),

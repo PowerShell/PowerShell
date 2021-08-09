@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell
 
                 _pendingProgress = null;
 
-                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAnsiProgressFeatureName) && PSStyle.Instance.Progress.UseOSCIndicator)
+                if (SupportsVirtualTerminal && PSStyle.Instance.Progress.UseOSCIndicator)
                 {
                     // OSC sequence to turn off progress indicator
                     // https://github.com/microsoft/terminal/issues/6700
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell
             {
                 // Update the progress pane only when the timer set up the update flag or WriteProgress is completed.
                 // As a result, we do not block WriteProgress and whole script and eliminate unnecessary console locks and updates.
-                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAnsiProgressFeatureName) && PSStyle.Instance.Progress.UseOSCIndicator)
+                if (SupportsVirtualTerminal && PSStyle.Instance.Progress.UseOSCIndicator)
                 {
                     int percentComplete = record.PercentComplete;
                     if (percentComplete < 0)
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell
                 }
 
                 // If VT is not supported, we change ProgressView to classic
-                if (!SupportsVirtualTerminal && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAnsiProgressFeatureName))
+                if (!SupportsVirtualTerminal)
                 {
                     PSStyle.Instance.Progress.View = ProgressView.Classic;
                 }

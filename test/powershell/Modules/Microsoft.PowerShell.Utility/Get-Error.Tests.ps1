@@ -126,7 +126,7 @@ Describe 'Get-Error tests' -Tag CI {
         $out | Should -BeLikeExactly "*$expectedExceptionType*"
     }
 
-    It 'Get-Error uses Error color for Message and PositionMessage members' -Skip:(!$EnabledExperimentalFeatures.Contains("PSAnsiRendering")) {
+    It 'Get-Error uses Error color for Message and PositionMessage members' {
         $suppressVT = $false
         if (Test-Path env:/__SuppressAnsiEscapeSequences) {
             $suppressVT = $true

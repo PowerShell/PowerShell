@@ -213,12 +213,10 @@ dbda : KM
 
 Describe 'Format-List color tests' {
     BeforeAll {
-        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRendering')))
         [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForceFormatListFixedLabelWidth', $true)
     }
 
     AfterAll {
-        $PSDefaultParameterValues.Remove('It:Skip')
         [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForceFormatListFixedLabelWidth', $false)
     }
 

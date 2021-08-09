@@ -3,7 +3,6 @@
 
 Describe 'Tests for $PSStyle automatic variable' {
     BeforeAll {
-        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRendering')))
         $styleDefaults = @{
             Reset = "`e[0m"
             BlinkOff = "`e[25m"
@@ -80,10 +79,6 @@ Describe 'Tests for $PSStyle automatic variable' {
 
             return $testcases
         }
-    }
-
-    AfterAll {
-        $PSDefaultParameterValues.Remove('It:Skip')
     }
 
     It '$PSStyle has correct default for OutputRendering' {

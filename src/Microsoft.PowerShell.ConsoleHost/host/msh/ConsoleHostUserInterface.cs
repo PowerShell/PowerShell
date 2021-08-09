@@ -63,29 +63,26 @@ namespace Microsoft.PowerShell
             SupportsVirtualTerminal = true;
             _isInteractiveTestToolListening = false;
 
-            if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+            // check if TERM env var is set
+            // `dumb` means explicitly don't use VT
+            // `xterm-mono` and `xtermm` means support VT, but emit plaintext
+            switch (Environment.GetEnvironmentVariable("TERM"))
             {
-                // check if TERM env var is set
-                // `dumb` means explicitly don't use VT
-                // `xterm-mono` and `xtermm` means support VT, but emit plaintext
-                switch (Environment.GetEnvironmentVariable("TERM"))
-                {
-                    case "dumb":
-                        SupportsVirtualTerminal = false;
-                        break;
-                    case "xterm-mono":
-                    case "xtermm":
-                        PSStyle.Instance.OutputRendering = OutputRendering.PlainText;
-                        break;
-                    default:
-                        break;
-                }
-
-                // widely supported by CLI tools via https://no-color.org/
-                if (Environment.GetEnvironmentVariable("NO_COLOR") != null)
-                {
+                case "dumb":
+                    SupportsVirtualTerminal = false;
+                    break;
+                case "xterm-mono":
+                case "xtermm":
                     PSStyle.Instance.OutputRendering = OutputRendering.PlainText;
-                }
+                    break;
+                default:
+                    break;
+            }
+
+            // widely supported by CLI tools via https://no-color.org/
+            if (Environment.GetEnvironmentVariable("NO_COLOR") != null)
+            {
+                PSStyle.Instance.OutputRendering = OutputRendering.PlainText;
             }
 
             if (SupportsVirtualTerminal)
@@ -1216,7 +1213,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                if (SupportsVirtualTerminal)
                 {
                     WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message) + PSStyle.Instance.Reset);
                 }
@@ -1277,7 +1274,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                if (SupportsVirtualTerminal)
                 {
                     WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message) + PSStyle.Instance.Reset);
                 }
@@ -1321,7 +1318,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                if (SupportsVirtualTerminal)
                 {
                     WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message) + PSStyle.Instance.Reset);
                 }
@@ -1393,7 +1390,7 @@ namespace Microsoft.PowerShell
             {
                 if (writer == _parent.ConsoleTextWriter)
                 {
-                    if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    if (SupportsVirtualTerminal)
                     {
                         WriteLine(value);
                     }

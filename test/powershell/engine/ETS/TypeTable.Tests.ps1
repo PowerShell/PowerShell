@@ -18,13 +18,10 @@ Describe "Built-in type information tests" -Tag "CI" {
     }
 
     It "Should have correct number of built-in type items in type table" {
-        $isUnixStatEnabled = $EnabledExperimentalFeatures -contains 'PSUnixFileStat'
         $expected = if ($IsWindows) {
             273
-        } elseif ($isUnixStatEnabled) {
-            272
         } else {
-            271
+            272
         }
         $types.Count | Should -BeExactly $expected
     }

@@ -367,7 +367,7 @@ Describe "TabCompletion" -Tags CI {
         }
 
         It 'Should complete Get-ChildItem | <cmd> -View' -TestCases (
-            @{ cmd = 'Format-Table'; expected = "children childrenWithHardlink$(if ($EnabledExperimentalFeatures.Contains('PSUnixFileStat')) { ' childrenWithUnixStat' })" },
+            @{ cmd = 'Format-Table'; expected = "children childrenWithHardlink$(if (!$IsWindows) { ' childrenWithUnixStat' })" },
             @{ cmd = 'Format-List'; expected = 'children' },
             @{ cmd = 'Format-Wide'; expected = 'children' },
             @{ cmd = 'Format-Custom'; expected = '' }
