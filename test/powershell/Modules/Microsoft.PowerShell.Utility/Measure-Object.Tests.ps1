@@ -70,7 +70,7 @@ Describe "Measure-Object" -Tags "CI" {
             [pscustomobject]@{ X = 'e'; Y = 'f' }
         )
 
-        ($items | Measure-Object -Property Y) | Should -Be 2
+        ($items | Measure-Object -Property Y).Count | Should -Be 2
     }
 
     It "Should be able to use wildcards for the Property argument" {
