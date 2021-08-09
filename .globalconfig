@@ -506,6 +506,10 @@ dotnet_diagnostic.CA1845.severity = warning
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1846
 dotnet_diagnostic.CA1846.severity = warning
 
+# CA1847: Use char literal for a single character lookup
+# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1847
+dotnet_diagnostic.CA1847.severity = warning
+
 # CA2000: Dispose objects before losing scope
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2000
 dotnet_diagnostic.CA2000.severity = none
@@ -703,6 +707,10 @@ dotnet_diagnostic.CA2250.severity = warning
 # CA2251: Use 'string.Equals'
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2251
 dotnet_diagnostic.CA2251.severity = warning
+
+# CA2252: This API requires opting into preview features
+# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2252
+dotnet_diagnostic.CA2251.severity = none
 
 # CA2300: Do not use insecure deserializer BinaryFormatter
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca2300
