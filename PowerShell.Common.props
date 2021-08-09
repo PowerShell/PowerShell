@@ -136,7 +136,7 @@
     <Copyright>(c) Microsoft Corporation.</Copyright>
 
     <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -144,6 +144,8 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <DisableImplicitNamespaceImports_DotNet>true</DisableImplicitNamespaceImports_DotNet>
 
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>

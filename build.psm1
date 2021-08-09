@@ -437,6 +437,14 @@ Fix steps:
         $Arguments += "--output", (Split-Path $Options.Output)
     }
 
+    # Add --self-contained due to "warning NETSDK1179: One of '--self-contained' or '--no-self-contained' options are required when '--runtime' is used."
+    if ($Options.Runtime -like 'fxdependent*') {
+        $Arguments += "--no-self-contained"
+    }
+    else {
+        $Arguments += "--self-contained"
+    }
+
     if ($Options.Runtime -like 'win*' -or ($Options.Runtime -like 'fxdependent*' -and $environment.IsWindows)) {
         $Arguments += "/property:IsWindows=true"
     }
