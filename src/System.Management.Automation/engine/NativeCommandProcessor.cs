@@ -884,13 +884,11 @@ namespace System.Management.Automation
 
                     this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
-                    bool nativeCommandUseErrorActionPreference = ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName)
-                        && this.Command.Context.GetBooleanPreference(
-                            SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath,
-                            InitialSessionState.DefaultPSNativeCommandUseErrorActionPreference,
-                            out _);
-
-                    if (!nativeCommandUseErrorActionPreference)
+                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName)
+                        || !this.Command.Context.GetBooleanPreference(
+                                SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath,
+                                InitialSessionState.DefaultPSNativeCommandUseErrorActionPreference,
+                                out _))
                     {
                         return;
                     }
