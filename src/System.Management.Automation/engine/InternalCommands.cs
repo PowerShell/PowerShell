@@ -2647,46 +2647,19 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter _off;
 
         /// <summary>
-        /// To make it easier to specify a version, we add some conversions that wouldn't happen otherwise:
-        ///   * A simple integer, i.e. 2
-        ///   * A string without a dot, i.e. "2"
-        ///   * The string 'latest', which we interpret to be the current version of PowerShell.
+        /// Handle 'latest', which we interpret to be the current version of PowerShell.
         /// </summary>
-        private sealed class ArgumentToVersionTransformationAttribute : ArgumentTransformationAttribute
+        private sealed class CommandArgumentToVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
         {
-            public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
+            protected override bool TryString(string versionString, object inputData, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out object version)
             {
-                object version = PSObject.Base(inputData);
-
-                string versionStr = version as string;
-                if (versionStr != null)
+                if (versionString.Equals("latest", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (versionStr.Equals("latest", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return PSVersionInfo.PSVersion;
-                    }
-
-                    if (versionStr.Contains('.'))
-                    {
-                        // If the string contains a '.', let the Version constructor handle the conversion.
-                        return inputData;
-                    }
+                    version = PSVersionInfo.PSVersion;
+                    return true;
                 }
 
-                if (version is double)
-                {
-                    // The conversion to int below is wrong, but the usual conversions will turn
-                    // the double into a string, so just return the original object.
-                    return inputData;
-                }
-
-                int majorVersion;
-                if (LanguagePrimitives.TryConvertTo<int>(version, out majorVersion))
-                {
-                    return new Version(majorVersion, 0);
-                }
-
-                return inputData;
+                return base.TryString(versionString, inputData, out version);
             }
         }
 
@@ -2711,7 +2684,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets strict mode in the current scope.
         /// </summary>
         [Parameter(ParameterSetName = "Version", Mandatory = true)]
-        [ArgumentToVersionTransformation]
+        [CommandArgumentToVersionTransformation]
         [ValidateVersion]
         [Alias("v")]
         public Version Version

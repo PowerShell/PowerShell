@@ -113,7 +113,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the HTTP Version property.
         /// </summary>
         [Parameter]
-        [HttpVersionTransformation]
+        [ArgumentToVersionTransformation]
         [ArgumentCompleter(typeof(HttpVersionCompleter))]
         public virtual Version HttpVersion { get; set; }
 

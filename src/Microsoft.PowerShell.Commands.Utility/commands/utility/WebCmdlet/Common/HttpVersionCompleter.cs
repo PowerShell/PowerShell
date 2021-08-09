@@ -20,15 +20,20 @@ namespace Microsoft.PowerShell.Commands
         /// <inheritdoc/>
         public IEnumerable<CompletionResult> CompleteArgument(string commandName, string parameterName, string wordToComplete, CommandAst commandAst, IDictionary fakeBoundParameters)
         {
-            var wordToCompletePattern = WildcardPattern.Get(string.IsNullOrWhiteSpace(wordToComplete) ? "*" : wordToComplete + "*", WildcardOptions.IgnoreCase);
+            var valueToComplete = wordToComplete.Trim('\'');
+
+            var wordToCompletePattern = WildcardPattern.Get(string.IsNullOrWhiteSpace(valueToComplete) ? "*" : valueToComplete + "*", WildcardOptions.IgnoreCase);
 
             foreach (var version in HttpVersionUtils.AllowedVersions)
             {
                 if (wordToCompletePattern.IsMatch(version))
                 {
-                    yield return new CompletionResult(version, version, CompletionResultType.Text, version);
+                    var quotedVersion = Quoted(version);
+                    yield return new CompletionResult(quotedVersion, quotedVersion, CompletionResultType.ParameterValue, quotedVersion);
                 }
             }
         }
+
+        private static string Quoted(string version) => "'" + version + "'";
     }
 }
