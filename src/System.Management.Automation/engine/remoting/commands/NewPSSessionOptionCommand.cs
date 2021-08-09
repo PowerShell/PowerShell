@@ -29,9 +29,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public int MaximumRedirection
         {
-            get { return _maximumRedirection.Value; }
-
-            set { _maximumRedirection = value; }
+            get => _maximumRedirection ?? -1;
+            set => _maximumRedirection = value;
         }
 
         private int? _maximumRedirection;
