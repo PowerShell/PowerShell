@@ -209,6 +209,9 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
     }
 
     It 'Correctly interprets ErrorActionPreference on Write-Error when it''s reset in a finally block' {
+        $completedCommand = $false
+        $completedFinally = $false
+
         try
         {
             $oldEAP = $ErrorActionPreference
@@ -217,10 +220,12 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             try
             {
                 Write-Error 'error'
+                $completedCommand = $true
             }
             finally
             {
                 $ErrorActionPreference = $oldEAP
+                $completedFinally = $true
             }
         }
         catch
@@ -230,9 +235,14 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
 
         $err.FullyQualifiedErrorId | Should -BeExactly 'Microsoft.PowerShell.Commands.WriteErrorException'
         $err.Exception.Message | Should -BeExactly 'error'
+        $completedCommand | Should -BeFalse
+        $completedFinally | Should -BeTrue
     }
 
     It 'Correctly interprets ErrorActionPreference on a parameter binding error when it''s reset in a finally block' {
+        $completedCommand = $false
+        $completedFinally = $false
+
         try
         {
             $oldEAP = $ErrorActionPreference
@@ -241,10 +251,12 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
             try
             {
                 Get-Process -Banana
+                $completedCommand = $true
             }
             finally
             {
                 $ErrorActionPreference = $oldEAP
+                $completedFinally = $true
             }
         }
         catch
@@ -256,6 +268,8 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         $err.CategoryInfo.Activity | Should -BeExactly 'Get-Process'
         $err.CategoryInfo.Category | Should -BeExactly 'InvalidArgument'
         $err.CategoryInfo.Reason   | Should -BeExactly 'ParameterBindingException'
+        $completedCommand | Should -BeFalse
+        $completedFinally | Should -BeTrue
     }
 }
 
