@@ -10,12 +10,12 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// To make it easier to specify a version, we add some conversions that wouldn't happen otherwise:
-    ///   * A simple integer, i.e. 2
-    ///   * A string without a dot, i.e. "2"
+    ///   * A simple integer, i.e. 2;
+    ///   * A string without a dot, i.e. "2".
     /// </summary>
     public class ArgumentToVersionTransformationAttribute : ArgumentTransformationAttribute
     {
-        ///<inheritdoc/>
+        /// <inheritdoc/>
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
             object version = PSObject.Base(inputData);
@@ -39,12 +39,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Try to convert string input
+        /// Try to convert string input.
         /// </summary>
-        /// <param name="versionString"><see cref="string"/> input data</param>
-        /// <param name="inputData">Original value</param>
-        /// <param name="version">Parsed <see cref="Version"/></param>
-        /// <returns>true if conversion succeeds</returns>
+        /// <param name="versionString"><see cref="string"/> input data.</param>
+        /// <param name="inputData">Original value.</param>
+        /// <param name="version">Parsed <see cref="Version"/>.</param>
+        /// <returns>true if conversion succeeds.</returns>
         protected virtual bool TryString(string versionString, object inputData, [NotNullWhen(true)] out object? version)
         {
             if (versionString.Contains('.'))
@@ -58,12 +58,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Try to convert double input
+        /// Try to convert double input.
         /// </summary>
-        /// <param name="versionDouble"><see cref="double"/> intput data</param>
-        /// <param name="inputData">Original value</param>
-        /// <param name="version">Parsed <see cref="Version"/></param>
-        /// <returns>true if conversion succeeds</returns>
+        /// <param name="versionDouble"><see cref="double"/> intput data.</param>
+        /// <param name="inputData">Original value.</param>
+        /// <param name="version">Parsed <see cref="Version"/>.</param>
+        /// <returns>true if conversion succeeds.</returns>
         protected virtual bool TryDouble(double versionDouble, object inputData, [NotNullWhen(true)] out object? version)
         {
             // just return as is
