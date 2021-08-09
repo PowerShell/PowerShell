@@ -885,7 +885,7 @@ namespace System.Management.Automation
                     this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
                     if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName)
-                        || !this.Command.Context.GetBooleanPreference(
+                        || !Command.Context.GetBooleanPreference(
                                 SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath,
                                 InitialSessionState.DefaultPSNativeCommandUseErrorActionPreference,
                                 out _))
@@ -906,12 +906,12 @@ namespace System.Management.Automation
                         string errorMsg =
                             StringUtil.Format(
                                 CommandBaseStrings.ProgramFailedToComplete,
-                                this.NativeCommandName,
+                                NativeCommandName,
                                 _nativeProcess.ExitCode);
 
                         var exception =
                             new NativeCommandExitException(
-                                this.Path,
+                                Path,
                                 _nativeProcess.ExitCode,
                                 _nativeProcess.Id,
                                 errorMsg,
