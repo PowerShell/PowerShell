@@ -136,7 +136,7 @@
     <Copyright>(c) Microsoft Corporation.</Copyright>
 
     <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
