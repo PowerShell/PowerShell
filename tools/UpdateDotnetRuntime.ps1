@@ -22,7 +22,11 @@ param (
     [switch]$InteractiveAuth,
 
     [Parameter()]
-    [switch]$UseInternalFeed
+    [switch]$UseInternalFeed,
+
+    [Parameter()]
+    [ValidateSet("Daily", "Signed", "Validated")]
+    [string]$QualityOverride
 )
 
 <#
@@ -268,7 +272,7 @@ if ($dotnetUpdate.ShouldUpdate) {
 
     ## Install latest version from the channel
 
-    $sdkQuality = $dotnetUpdate.Quality
+    $sdkQuality = if ($QualityOverride) { $QualityOverride } else { $dotnetUpdate.Quality }
     $sdkVersion = if ($SDKVersionOverride) { $SDKVersionOverride } else { $dotnetUpdate.NewVersion }
 
     if (-not $RuntimeSourceFeed) {
