@@ -902,19 +902,17 @@ namespace System.Management.Automation
                     {
                         const string errorId = "ProgramFailedToComplete";
 
-                        string errorMsg =
-                            StringUtil.Format(
-                                CommandBaseStrings.ProgramFailedToComplete,
-                                NativeCommandName,
-                                _nativeProcess.ExitCode);
+                        string errorMsg = StringUtil.Format(
+                            CommandBaseStrings.ProgramFailedToComplete,
+                            NativeCommandName,
+                            _nativeProcess.ExitCode);
 
-                        var exception =
-                            new NativeCommandExitException(
-                                Path,
-                                _nativeProcess.ExitCode,
-                                _nativeProcess.Id,
-                                errorMsg,
-                                errorId);
+                        var exception = new NativeCommandExitException(
+                            Path,
+                            _nativeProcess.ExitCode,
+                            _nativeProcess.Id,
+                            errorMsg,
+                            errorId);
 
                         var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.NotSpecified, null);
                         this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord);
