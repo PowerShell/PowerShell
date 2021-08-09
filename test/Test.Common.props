@@ -12,6 +12,8 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsWindows Condition="'$(OS)' == 'Windows_NT'">true</IsWindows>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <DisableImplicitNamespaceImports_DotNet>true</DisableImplicitNamespaceImports_DotNet>
   </PropertyGroup>
 
   <PropertyGroup>
