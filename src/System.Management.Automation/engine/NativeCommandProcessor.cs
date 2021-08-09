@@ -893,11 +893,10 @@ namespace System.Management.Automation
                         return;
                     }
 
-                    ActionPreference errorActionPref =
-                        this.Command.Context.GetEnumPreference(
-                            SpecialVariables.ErrorActionPreferenceVarPath,
-                            ActionPreference.SilentlyContinue,
-                            out _);
+                    ActionPreference errorActionPref = Command.Context.GetEnumPreference(
+                        SpecialVariables.ErrorActionPreferenceVarPath,
+                        ActionPreference.SilentlyContinue,
+                        out _);
 
                     if (errorActionPref != ActionPreference.Ignore)
                     {
