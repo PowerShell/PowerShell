@@ -30,7 +30,7 @@
     <PackageReference Include="System.Private.ServiceModel" Version="4.9.0-preview1.21220.1" />
     <!-- the source could not be found for the following package(s) -->
     <PackageReference Include="Microsoft.NETCore.Windows.ApiSets" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0-preview.6.21352.13" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0-preview.7.21377.4" />
   </ItemGroup>
 
 </Project>
