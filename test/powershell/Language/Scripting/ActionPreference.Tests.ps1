@@ -208,14 +208,23 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         $err.Exception.InnerException.InnerException | Should -BeOfType "System.Management.Automation.PSInvalidCastException"
     }
 
-    It 'Correctly interprets ErrorActionPreference on Write-Error when it''s reset in a finally block' {
+    It 'Correctly interprets ErrorActionPreference = ''<EAP>'' on Write-Error when it''s reset in a finally block' -TestCases @(
+        @{ EAP = 'Stop' }
+        @{ EAP = 'Continue' }
+        @{ EAP = 'SilentlyContinue' }
+        @{ EAP = 'Ignore' }
+    ) {
+        param([System.Management.Automation.ActionPreference]$EAP)
+
+        $error.Clear()
         $completedCommand = $false
         $completedFinally = $false
+        $threw = $false
 
         try
         {
             $oldEAP = $ErrorActionPreference
-            $ErrorActionPreference = 'Stop'
+            $ErrorActionPreference = $EAP
 
             try
             {
@@ -231,22 +240,61 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         catch
         {
             $err = $_
+            $threw = $true
         }
 
-        $err.FullyQualifiedErrorId | Should -BeExactly 'Microsoft.PowerShell.Commands.WriteErrorException'
-        $err.Exception.Message | Should -BeExactly 'error'
-        $completedCommand | Should -BeFalse
-        $completedFinally | Should -BeTrue
+        switch ($EAP)
+        {
+            'Stop'
+            {
+                $err.FullyQualifiedErrorId | Should -BeExactly 'Microsoft.PowerShell.Commands.WriteErrorException'
+                $err.Exception.Message | Should -BeExactly 'error'
+                $completedCommand | Should -BeFalse
+                $completedFinally | Should -BeTrue
+                $threw | Should -BeTrue
+                break
+            }
+
+            'Ignore'
+            {
+                $completedCommand | Should -BeTrue
+                $completedFinally | Should -BeTrue
+                $threw | Should -BeFalse
+                $err | Should -BeNullOrEmpty
+                $error.Count | Should -Be 0
+                break
+            }
+
+            { $_ -in 'Continue','SilentlyContinue' }
+            {
+                $lastError = $error[0]
+                $completedCommand | Should -BeTrue
+                $completedFinally | Should -BeTrue
+                $threw | Should -BeFalse
+                $lastError.FullyQualifiedErrorId | Should -BeExactly 'Microsoft.PowerShell.Commands.WriteErrorException'
+                $lastError.Exception.Message | Should -BeExactly 'error'
+            }
+        }
+
     }
 
-    It 'Correctly interprets ErrorActionPreference on a parameter binding error when it''s reset in a finally block' {
+    It 'Correctly interprets ErrorActionPreference = ''<EAP>'' on a parameter binding error when it''s reset in a finally block' -TestCases @(
+        @{ EAP = 'Stop' }
+        @{ EAP = 'Continue' }
+        @{ EAP = 'SilentlyContinue' }
+        @{ EAP = 'Ignore' }
+    ) {
+        param([System.Management.Automation.ActionPreference]$EAP)
+
+        $error.Clear()
         $completedCommand = $false
         $completedFinally = $false
+        $threw = $false
 
         try
         {
             $oldEAP = $ErrorActionPreference
-            $ErrorActionPreference = 'Stop'
+            $ErrorActionPreference = $EAP
 
             try
             {
@@ -262,14 +310,44 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         catch
         {
             $err = $_
+            $threw = $true
         }
 
-        $err.FullyQualifiedErrorId | Should -BeExactly 'NamedParameterNotFound,Microsoft.PowerShell.Commands.GetProcessCommand'
-        $err.CategoryInfo.Activity | Should -BeExactly 'Get-Process'
-        $err.CategoryInfo.Category | Should -BeExactly 'InvalidArgument'
-        $err.CategoryInfo.Reason   | Should -BeExactly 'ParameterBindingException'
-        $completedCommand | Should -BeFalse
-        $completedFinally | Should -BeTrue
+        switch ($EAP)
+        {
+            'Stop'
+            {
+                $err.FullyQualifiedErrorId | Should -BeExactly 'NamedParameterNotFound,Microsoft.PowerShell.Commands.GetProcessCommand'
+                $err.CategoryInfo.Activity | Should -BeExactly 'Get-Process'
+                $err.CategoryInfo.Category | Should -BeExactly 'InvalidArgument'
+                $err.CategoryInfo.Reason   | Should -BeExactly 'ParameterBindingException'
+                $completedCommand | Should -BeFalse
+                $completedFinally | Should -BeTrue
+                $threw | Should -BeTrue
+                break
+            }
+
+            'Ignore'
+            {
+                $completedCommand | Should -BeTrue
+                $completedFinally | Should -BeTrue
+                $threw | Should -BeFalse
+                $err | Should -BeNullOrEmpty
+                $error.Count | Should -Be 0
+            }
+
+            { $_ -in 'Continue','SilentlyContinue' }
+            {
+                $completedCommand | Should -BeTrue
+                $completedFinally | Should -BeTrue
+                $threw | Should -BeFalse
+                $lastError = $error[0]
+                $lastError.FullyQualifiedErrorId | Should -BeExactly 'NamedParameterNotFound,Microsoft.PowerShell.Commands.GetProcessCommand'
+                $lastError.CategoryInfo.Activity | Should -BeExactly 'Get-Process'
+                $lastError.CategoryInfo.Category | Should -BeExactly 'InvalidArgument'
+                $lastError.CategoryInfo.Reason   | Should -BeExactly 'ParameterBindingException'
+            }
+        }
     }
 }
 
