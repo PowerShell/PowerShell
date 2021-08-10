@@ -905,7 +905,7 @@ namespace System.Management.Automation
 
                     if (errorActionPref != ActionPreference.Ignore)
                     {
-                        const string errorId = "ProgramFailedToComplete";
+                        const string errorId = nameof(CommandBaseStrings.ProgramFailedToComplete);
 
                         string errorMsg = StringUtil.Format(
                             CommandBaseStrings.ProgramFailedToComplete,
