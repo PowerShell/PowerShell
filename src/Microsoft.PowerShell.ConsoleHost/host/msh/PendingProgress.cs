@@ -854,9 +854,9 @@ namespace Microsoft.PowerShell
 
 #if DEBUG || ASSERTIONS_TRACE
 
-            Dbg.Assert(
-                nodesCompressed == CountNodes(),
-                "We should have compressed every node in the tree.");
+            //Dbg.Assert(
+            //    nodesCompressed == CountNodes(),
+            //    "We should have compressed every node in the tree.");
             Dbg.Assert(
                 AllNodesHaveGivenStyle(_topLevelNodes, newStyle),
                 "We should have compressed every node in the tree.");
