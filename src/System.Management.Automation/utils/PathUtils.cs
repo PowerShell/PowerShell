@@ -443,6 +443,10 @@ namespace System.Management.Automation
                 {
                     // file is in use on Windows
                 }
+                catch (UnauthorizedAccessException)
+                {
+                    // user does not have permissions
+                }
             }
 
             return false;
