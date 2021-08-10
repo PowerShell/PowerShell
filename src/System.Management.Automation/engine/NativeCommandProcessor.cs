@@ -140,9 +140,11 @@ namespace System.Management.Automation
     {
         // NOTE:
         // When implementing the native error action preference integration,
-        // reusing ApplicationFailedException was contemplated.
-        // However, rather than possibly reusing a type already used in another scenario
-        // it was decided instead to use a fresh type to minimize the chance of conflating the two scenarios.
+        // reusing ApplicationFailedException was rejected.
+        // Instead of reusing the type already used in another scenario
+        // it was decided instead to use a fresh type to minimize the chance of conflating the two scenarios:
+        // * ApplicationFailedException: PowerShell can not execute an application.
+        // * NativeCommandExitException: an application was successfully executed and completed but return non-zero exit code.
 
         /// <summary>
         /// Gets the path of the native command.
