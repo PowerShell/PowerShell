@@ -139,6 +139,7 @@
     <LangVersion>9.0</LangVersion>
     <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
     <PublishReadyToRunComposite Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRunComposite>
+    <PublishReadyToRunCrossgen2ExtraArgs>--verify-type-and-field-layout</PublishReadyToRunCrossgen2ExtraArgs>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
