@@ -131,6 +131,7 @@ namespace System.Management.Automation
         }
     }
 
+    #nullable enable
     /// <summary>
     /// This exception is used by the NativeCommandProcessor to indicate an error
     /// when a native command retuns a non-zero exit code.
@@ -145,21 +146,6 @@ namespace System.Management.Automation
         // it was decided instead to use a fresh type to minimize the chance of conflating the two scenarios:
         // * ApplicationFailedException: PowerShell can not execute an application.
         // * NativeCommandExitException: an application was successfully executed and completed but return non-zero exit code.
-
-        /// <summary>
-        /// Gets the path of the native command.
-        /// </summary>
-        public string Path { get; }
-
-        /// <summary>
-        /// Gets the exit code returned by the native command.
-        /// </summary>
-        public int ExitCode { get; }
-
-        /// <summary>
-        /// Gets the native command's process Id.
-        /// </summary>
-        public int ProcessId { get; }
 
         #region Constructors
 
@@ -245,7 +231,24 @@ namespace System.Management.Automation
             info.AddValue(nameof(ExitCode), ExitCode);
             info.AddValue(nameof(ProcessId), ProcessId);
         }
+
+        /// <summary>
+        /// Gets the path of the native command.
+        /// </summary>
+        public string? Path { get; }
+
+        /// <summary>
+        /// Gets the exit code returned by the native command.
+        /// </summary>
+        public int? ExitCode { get; }
+
+        /// <summary>
+        /// Gets the native command's process Id.
+        /// </summary>
+        public int? ProcessId { get; }
+
     }
+    #nullable restore
 
     /// <summary>
     /// Provides way to create and execute native commands.
