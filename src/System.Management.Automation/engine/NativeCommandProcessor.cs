@@ -149,17 +149,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the path of the native command.
         /// </summary>
-        public string Path { get; private set; }
+        public string Path { get; }
 
         /// <summary>
         /// Gets the exit code returned by the native command.
         /// </summary>
-        public int ExitCode { get; private set; }
+        public int ExitCode { get; }
 
         /// <summary>
         /// Gets the native command's process Id.
         /// </summary>
-        public int ProcessId { get; private set; }
+        public int ProcessId { get; }
 
         #region Constructors
 
