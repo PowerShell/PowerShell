@@ -5407,18 +5407,6 @@ namespace System.Management.Automation.Language
 
             var type = castToType ?? ((value != null) ? value.GetType() : typeof(object));
 
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
-            // the derivation chain to find the first public parent, and use reflection methods on the public parent.
-            if (!TypeResolver.IsPublic(type) && DotNetAdapter.DisallowPrivateReflection(type))
-            {
-                var publicType = DotNetAdapter.GetFirstPublicParentType(type);
-                if (publicType != null)
-                {
-                    type = publicType;
-                }
-                // else we'll probably fail, but the error message might be more helpful than NullReferenceException
-            }
-
             if (expr.Type != type)
             {
                 // Unbox value types (or use Nullable<T>.Value) to avoid a copy in case the value is mutated.
@@ -5779,7 +5767,7 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods.ToArray());
+                        DotNetAdapter.MethodCacheEntry method = new DotNetAdapter.MethodCacheEntry(candidateMethods);
                         memberInfo = PSMethod.Create(this.Name, PSObject.DotNetInstanceAdapter, null, method);
                     }
                 }

@@ -5651,15 +5651,6 @@ namespace System.Management.Automation
                 }
             }
 
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types.
-            if (!TypeResolver.IsPublic(toType) && DotNetAdapter.DisallowPrivateReflection(toType))
-            {
-                // If the type is non-public and reflection execution is not allowed on it, then we return
-                // 'ConvertNoConversion', because we won't be able to invoke constructor, methods or set
-                // properties on an instance of this type through reflection.
-                return CacheConversion(fromType, toType, ConvertNoConversion, ConversionRank.None);
-            }
-
             PSConverter<object> valueDependentConversion = null;
             ConversionRank valueDependentRank = ConversionRank.None;
             IConversionData conversionData = FigureLanguageConversion(fromType, toType, out valueDependentConversion, out valueDependentRank);
