@@ -3139,6 +3139,23 @@ namespace System.Management.Automation
                     continue;
                 }
 
+                if (interfaceType.IsGenericType && type.IsArray)
+                {
+                    // A bit background: Array doesn't directly support any generic interface at all. Instead, a stub class
+                    // named 'SZArrayHelper' provides these generic interfaces at runtime for zero-based one-dimension arrays.
+                    // This is why '[object[]].GetInterfaceMap([ICollection[object]])' throws 'ArgumentException'.
+                    // (see https://stackoverflow.com/a/31883327)
+                    //
+                    // We had always been skipping generic interfaces for array types because 'GetInterfaceMap' doesn't work
+                    // for it. Today, even though we don't use 'GetInterfaceMap' anymore, the same code is kept here because
+                    // methods from generic interfaces of an array type could cause ambiguity in method overloads resolution.
+                    // For example, "$objs = @(1,2,3,4); $objs.Contains(1)" would fail because there would be 2 overloads of
+                    // the 'Contains' methods which are equally good matching for the call.
+                    //    bool IList.Contains(System.Object value)
+                    //    bool ICollection[Object].Contains(System.Object item)
+                    continue;
+                }
+
                 methods = interfaceType.GetMethods(bindingFlags);
 
                 foreach (MethodInfo interfaceMethod in methods)
