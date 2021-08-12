@@ -1,9 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Piping with native commands' {
+Describe 'Piping with native commands' -Tag CI {
     BeforeAll {
         $tmpFile = Join-Path $TestDrive 'tmp.bin'
+        wait-debugger
     }
 
     BeforeEach {
@@ -11,7 +12,7 @@ Describe 'Piping with native commands' {
     }
 
     It 'Pipes bytes exactly from one native command to another' {
-        testexe -writebytes 'deadbeef' | textexe -writetofile $tmpFile
+        testexe -writebytes 'deadbeef' | testexe -writetofile $tmpFile
         Get-Content -LiteralPath $tmpFile -AsByteStream | Should -BeExactly ([byte[]](0xde, 0xad, 0xbe, 0xef))
     }
 

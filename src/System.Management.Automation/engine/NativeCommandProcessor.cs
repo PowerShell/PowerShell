@@ -156,8 +156,6 @@ namespace System.Management.Automation
 
         private Process _toProcess;
 
-        private Task _streamCopyTask;
-
         private NativePipe(
             NativeCommandProcessor upstreamCommand,
             NativeCommandProcessor downstreamCommand)
@@ -166,20 +164,16 @@ namespace System.Management.Automation
             _downstreamCommand = downstreamCommand;
         }
 
-        public bool SendOutput { get; init; } = true;
-
-        public bool SendErrors { get; init; } = false;
-
         public void RegisterInputProcess(Process inputProcess, ProcessOutputQueue outputQueue)
         {
             _fromProcess = inputProcess;
 
-            if (!SendOutput)
+            if (inputProcess.StartInfo.RedirectStandardOutput)
             {
                 _stdoutHandler = new ProcessStdoutHandler(inputProcess, outputQueue);
             }
 
-            if (!SendErrors)
+            if (inputProcess.StartInfo.RedirectStandardError)
             {
                 _stderrHandler = new ProcessStderrHandler(inputProcess, outputQueue);
             }
@@ -188,12 +182,11 @@ namespace System.Management.Automation
         public void RegisterOutputProcess(Process outputProcess)
         {
             _toProcess = outputProcess;
-            _streamCopyTask = _fromProcess.StandardOutput.BaseStream.CopyToAsync(_toProcess.StandardInput.BaseStream);
         }
 
         public void WaitForPipeCompletion()
         {
-            _streamCopyTask?.GetAwaiter().GetResult();
+            _fromProcess.StandardOutput.BaseStream.CopyTo(_toProcess.StandardInput.BaseStream);
         }
 
         public void Dispose()
@@ -834,12 +827,12 @@ namespace System.Management.Automation
                     // read all the available output in the blocking way
                     ConsumeAvailableNativeProcessOutput(blocking: true);
 
-                    _nativeProcess.WaitForExit();
-
                     if (UpstreamNativePipe is not null)
                     {
                         UpstreamNativePipe.WaitForPipeCompletion();
                     }
+
+                    _nativeProcess.WaitForExit();
 
                     // Capture screen output if we are transcribing and running stand alone
                     if (_isTranscribing && (s_supportScreenScrape == true) && _runStandAlone)
