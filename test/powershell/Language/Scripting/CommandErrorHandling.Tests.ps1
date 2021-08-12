@@ -111,7 +111,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
 
     Context 'Terminating error' {
 
-        It "'ThrowTerminatingError' stops execution with 'ActionPreference.<ErrorAction>' for error action" -TestCases @(
+        It "'ThrowTerminatingError' should always stop execution even when the error action is '<ErrorAction>'" -TestCases @(
             @{ ErrorAction = 'Continue' }
             @{ ErrorAction = 'Ignore' }
             @{ ErrorAction = 'SilentlyContinue' }
@@ -135,7 +135,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $pwsh.Streams.Verbose.Count | Should -BeExactly 0
         }
 
-        It "'-ErrorAction Stop' stops execution with 'ActionPreference.<ErrorAction>' for error action" -TestCases @(
+        It "'-ErrorAction Stop' should always stop execution even when the error action is '<ErrorAction>'" -TestCases @(
             @{ ErrorAction = 'Continue' }
             @{ ErrorAction = 'Ignore' }
             @{ ErrorAction = 'SilentlyContinue' }
@@ -158,7 +158,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $pwsh.Streams.Verbose.Count | Should -BeExactly 0
         }
 
-        It "'throw' statement stops execution with 'ActionPreference.Continue' (the default error action)" {
+        It "'throw' statement should stop execution when running with the default error action ('Continue')" {
             $failure = $null
 
             try {
@@ -176,7 +176,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
         }
 
         <# The 'throw' statement is special, in that it can be suppressed by '-ErrorAction SilentlyContinue/Ignore' #>
-        It "'throw' statement continues execution with 'ActionPreference.<ErrorAction>'" -TestCases @(
+        It "'throw' statement doesn't stop execution when the error action is '<ErrorAction>'" -TestCases @(
             @{ ErrorAction = 'Ignore' }
             @{ ErrorAction = 'SilentlyContinue' }
         ) {
@@ -203,7 +203,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $err.FullyQualifiedErrorId | Should -BeExactly 'throw-exception'
         }
 
-        It "'throw' statement stops execution with 'ActionPreference.<ErrorAction>' when it's wrapped in 'try/catch'" -TestCases @(
+        It "'throw' statement should stop execution with the error action '<ErrorAction>' when it's wrapped in 'try/catch'" -TestCases @(
             @{ ErrorAction = 'Ignore' }
             @{ ErrorAction = 'SilentlyContinue' }
         ) {
@@ -216,7 +216,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $pwsh.Streams.Debug | Should -BeExactly 'throw-exception'
         }
 
-        It "'throw' statement stops execution with 'ActionPreference.<ErrorAction>' when it's accompanied by 'trap' statement" -TestCases @(
+        It "'throw' statement should stop execution with the error action '<ErrorAction>' when it's accompanied by 'trap' statement" -TestCases @(
             @{ ErrorAction = 'Ignore' }
             @{ ErrorAction = 'SilentlyContinue' }
         ) {
@@ -232,7 +232,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
 
     Context 'Non-terminating error' {
 
-        It "'WriteErrorAPI' continues execution with with 'ActionPreference.Continue' (the default error action)" {
+        It "'WriteErrorAPI' doesn't stop execution with the default error action ('Continue')" {
             RunCommand -Command 'WriteErrorAPI' -ErrorAction Continue
 
             $pwsh.Streams.Error.Count | Should -BeExactly 1
@@ -243,7 +243,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
         }
 
-        It "'WriteErrorAPI' continues execution with with 'ActionPreference.Ignore' without logging the error in `$Error" {
+        It "'WriteErrorAPI' doesn't stop execution with the error action 'Ignore' and the error doesn't get logged in `$Error" {
             ClearDollarError
             RunCommand -Command 'WriteErrorAPI' -ErrorAction Ignore
 
@@ -255,7 +255,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $lastErr | Should -BeNullOrEmpty
         }
 
-        It "'WriteErrorAPI' continues execution with with 'ActionPreference.SilentlyContinue' and logs the error in `$Error" {
+        It "'WriteErrorAPI' doesn't stop execution with the error action 'SilentlyContinue' and the error gets logged in `$Error" {
             ClearDollarError
             RunCommand -Command 'WriteErrorAPI' -ErrorAction SilentlyContinue
 
@@ -269,7 +269,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $lastErr.FullyQualifiedErrorId | Should -BeExactly 'WriteErrorAPI:error,WriteErrorAPI'
         }
 
-        It "'WriteErrorCmdlet' continues execution with with 'ActionPreference.Continue' (the default error action)" {
+        It "'WriteErrorCmdlet' doesn't stop execution with the default error action ('Continue')" {
             RunCommand -Command 'WriteErrorCmdlet' -ErrorAction Continue
 
             $pwsh.Streams.Error.Count | Should -BeExactly 1
@@ -280,7 +280,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
         }
 
-        It "'WriteErrorCmdlet' continues execution with with 'ActionPreference.Ignore' without logging the error in `$Error" {
+        It "'WriteErrorCmdlet' doesn't stop execution with the error action 'Ignore' and the error doesn't get logged in `$Error" {
             ClearDollarError
             RunCommand -Command 'WriteErrorCmdlet' -ErrorAction Ignore
 
@@ -292,7 +292,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $lastErr | Should -BeNullOrEmpty
         }
 
-        It "'WriteErrorCmdlet' continues execution with with 'ActionPreference.SilentlyContinue' and logs the error in `$Error" {
+        It "'WriteErrorCmdlet' doesn't stop execution with the error action 'SilentlyContinue' and the error gets logged in `$Error" {
             ClearDollarError
             RunCommand -Command 'WriteErrorCmdlet' -ErrorAction SilentlyContinue
 
@@ -311,7 +311,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
 
         #region MethodInvocationThrowException
 
-        It "'MethodInvocationThrowException' emits non-terminating error with 'ActionPreference.Continue' (the default error action)" {
+        It "'MethodInvocationThrowException' emits non-terminating error with the default error action ('Continue')" {
             RunCommand -Command 'MethodInvocationThrowException' -ErrorAction 'Continue'
 
             $pwsh.Streams.Error.Count | Should -BeExactly 1
@@ -321,7 +321,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
         }
 
-        It "'MethodInvocationThrowException' emits no error with 'ActionPreference.<ErrorAction>'" -TestCases @(
+        It "'MethodInvocationThrowException' emits no error with the error action '<ErrorAction>'" -TestCases @(
             @{ ErrorAction = 'Ignore' }
             @{ ErrorAction = 'SilentlyContinue' }
         ) {
@@ -339,7 +339,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $err.FullyQualifiedErrorId | Should -BeExactly 'ArgumentNullException'
         }
 
-        It "'MethodInvocationThrowException' emits terminating error with 'ActionPreference.Stop'" {
+        It "'MethodInvocationThrowException' emits terminating error with the error action 'Stop'" {
             $failure = $null
 
             try {
@@ -356,7 +356,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $pwsh.Streams.Verbose.Count | Should -BeExactly 0
         }
 
-        It "'MethodInvocationThrowException' emits terminating error with 'ActionPreference.<ErrorAction>' when wrapped in 'try/catch'" -TestCases @(
+        It "'MethodInvocationThrowException' emits terminating error with the error action '<ErrorAction>' when it's wrapped in 'try/catch'" -TestCases @(
             @{ ErrorAction = 'Continue' }
             @{ ErrorAction = 'Ignore' }
             @{ ErrorAction = 'SilentlyContinue' }
@@ -371,7 +371,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $pwsh.Streams.Debug | Should -BeExactly 'System.ArgumentNullException'
         }
 
-        It "'MethodInvocationThrowException' emits terminating error with 'ActionPreference.<ErrorAction>' when accompanied by 'trap' statement" -TestCases @(
+        It "'MethodInvocationThrowException' emits terminating error with the error action '<ErrorAction>' when it's accompanied by 'trap' statement" -TestCases @(
             @{ ErrorAction = 'Continue' }
             @{ ErrorAction = 'Ignore' }
             @{ ErrorAction = 'SilentlyContinue' }
@@ -390,7 +390,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
 
         #region ExpressionThrowException
 
-        It "'ExpressionThrowException' emits non-terminating error with 'ActionPreference.Continue' (the default error action)" {
+        It "'ExpressionThrowException' emits non-terminating error with the default error action ('Continue')" {
             RunCommand -Command 'ExpressionThrowException' -ErrorAction 'Continue'
 
             $pwsh.Streams.Error.Count | Should -BeExactly 1
@@ -400,7 +400,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
         }
 
-        It "'ExpressionThrowException' emits no error with 'ActionPreference.<ErrorAction>'" -TestCases @(
+        It "'ExpressionThrowException' emits no error with the error action '<ErrorAction>'" -TestCases @(
             @{ ErrorAction = 'Ignore' }
             @{ ErrorAction = 'SilentlyContinue' }
         ) {
@@ -418,7 +418,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $err.Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
         }
 
-        It "'ExpressionThrowException' emits terminating error with 'ActionPreference.Stop'" {
+        It "'ExpressionThrowException' emits terminating error with the error action 'Stop'" {
             $failure = $null
 
             try {
@@ -435,7 +435,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $pwsh.Streams.Verbose.Count | Should -BeExactly 0
         }
 
-        It "'ExpressionThrowException' emits terminating error with 'ActionPreference.<ErrorAction>' when wrapped in 'try/catch'" -TestCases @(
+        It "'ExpressionThrowException' emits terminating error with the error action '<ErrorAction>' when it's wrapped in 'try/catch'" -TestCases @(
             @{ ErrorAction = 'Continue' }
             @{ ErrorAction = 'Ignore' }
             @{ ErrorAction = 'SilentlyContinue' }
@@ -450,7 +450,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $pwsh.Streams.Debug | Should -BeExactly 'System.DivideByZeroException'
         }
 
-        It "'ExpressionThrowException' emits terminating error with 'ActionPreference.<ErrorAction>' when accompanied by 'trap' statement" -TestCases @(
+        It "'ExpressionThrowException' emits terminating error with the error action '<ErrorAction>' when it's accompanied by 'trap' statement" -TestCases @(
             @{ ErrorAction = 'Continue' }
             @{ ErrorAction = 'Ignore' }
             @{ ErrorAction = 'SilentlyContinue' }
