@@ -87,6 +87,11 @@ Describe "Get-Process" -Tags "CI" {
         { Get-Process -Module -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateModules,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
+    It "Should not fail to stop Get-Process with -Module when piped to Select-Object" {
+        Get-Process -Module -Id $PID -ErrorVariable errs | Select-Object -First 1
+        $errs | Should -HaveCount 0
+    }
+
     It "Should fail to run Get-Process with -FileVersionInfo without admin" -Skip:(!$IsWindows) {
         { Get-Process -FileVersionInfo -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateFileVer,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
