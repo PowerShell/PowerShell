@@ -3141,7 +3141,7 @@ namespace System.Management.Automation
 
                 if (interfaceType.IsGenericType && type.IsArray)
                 {
-                    // A bit background: Array doesn't directly support any generic interface at all. Instead, a stub class
+                    // A bit of background: Array doesn't directly support any generic interface at all. Instead, a stub class
                     // named 'SZArrayHelper' provides these generic interfaces at runtime for zero-based one-dimension arrays.
                     // This is why '[object[]].GetInterfaceMap([ICollection[object]])' throws 'ArgumentException'.
                     // (see https://stackoverflow.com/a/31883327)
@@ -3150,7 +3150,7 @@ namespace System.Management.Automation
                     // for it. Today, even though we don't use 'GetInterfaceMap' anymore, the same code is kept here because
                     // methods from generic interfaces of an array type could cause ambiguity in method overloads resolution.
                     // For example, "$objs = @(1,2,3,4); $objs.Contains(1)" would fail because there would be 2 overloads of
-                    // the 'Contains' methods which are equally good matching for the call.
+                    // the 'Contains' methods which are equally good matches for the call.
                     //    bool IList.Contains(System.Object value)
                     //    bool ICollection[Object].Contains(System.Object item)
                     continue;
@@ -3226,19 +3226,16 @@ namespace System.Management.Automation
             foreach (EventInfo typeEvent in events)
             {
                 string eventName = typeEvent.Name;
-                List<EventInfo> previousEntry;
-                if (!tempTable.TryGetValue(eventName, out previousEntry))
+                if (!tempTable.TryGetValue(eventName, out List<EventInfo> entryList))
                 {
-                    var eventEntry = new List<EventInfo> { typeEvent };
-                    tempTable.Add(eventName, eventEntry);
+                    entryList = new List<EventInfo>();
+                    tempTable.Add(eventName, entryList);
                 }
-                else
-                {
-                    previousEntry.Add(typeEvent);
-                }
+
+                entryList.Add(typeEvent);
             }
 
-            foreach (var entry in tempTable)
+            foreach (KeyValuePair<string, List<EventInfo>> entry in tempTable)
             {
                 typeEvents.Add(entry.Key, new EventCacheEntry(entry.Value.ToArray()));
             }
@@ -3331,7 +3328,7 @@ namespace System.Management.Automation
                 }
             }
 
-            foreach (var entry in tempTable)
+            foreach (KeyValuePair<string, List<PropertyInfo>> entry in tempTable)
             {
                 List<PropertyInfo> propertiesList = entry.Value;
                 PropertyInfo firstProperty = propertiesList[0];
@@ -3354,14 +3351,19 @@ namespace System.Management.Automation
                 {
                     typeProperties.Add(fieldName, new PropertyCacheEntry(field));
                 }
-                else
+                else if (!string.Equals(previousMember.member.Name, fieldName))
                 {
-                    // A property/field declared with new in a derived class might appear twice
-                    if (!string.Equals(previousMember.member.Name, fieldName))
-                    {
-                        throw new ExtendedTypeSystemException("NotACLSComplaintField", null,
-                            ExtendedTypeSystem.NotAClsCompliantFieldProperty, fieldName, type.FullName, previousMember.member.Name);
-                    }
+                    // A property/field declared with 'new' in a derived class might appear twice, and it's OK to ignore
+                    // the second property/field in that case.
+                    // However, if the names of two properties/fields are different only in letter casing, then it's not
+                    // CLS complaint and we throw an exception.
+                    throw new ExtendedTypeSystemException(
+                        "NotACLSComplaintField",
+                        innerException: null,
+                        ExtendedTypeSystem.NotAClsCompliantFieldProperty,
+                        fieldName,
+                        type.FullName,
+                        previousMember.member.Name);
                 }
             }
         }
