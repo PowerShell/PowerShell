@@ -235,6 +235,11 @@ Describe "Get-ChildItem" -Tags "CI" {
             $items[0].Parent | Should -BeExactly "${volume}Windows"
             $items.Count | Should -Be (Get-ChildItem $env:SystemRoot).Count
         }
+
+        It 'Works with Windows pipes' -Skip:(!$IsWindows) {
+            $out = pwsh -noprofile -custompipename myTestPipe { Get-ChildItem \\.\pipe\myTestPipe }
+            $out.Name | Should -BeExactly 'myTestPipe'
+        }
     }
 
     Context 'Env: Provider' {
