@@ -838,12 +838,15 @@ namespace System.Management.Automation.Internal
 
                 if (!startSucceeded && e is PipelineStoppedException)
                 {
-                    // We want to report the first terminating error which occurred during pipeline execution,
-                    // regardless of whether other errors occurred afterward.
+                    // When a terminating error happens during command execution, PowerShell will first save it
+                    // to '_firstTerminatingError', and then throw a 'PipelineStoppedException' to tear down the
+                    // pipeline. So when the caught exception here is 'PipelineStoppedException', it may not be
+                    // the actual original terminating error.
+                    // In this case, we want to report the first terminating error which occurred during pipeline
+                    // execution, regardless of whether other errors occurred afterward.
                     ThrowFirstErrorIfExisting(logException: false);
                 }
 
-                // If we haven't recorded the first terminating error, then re-throw this exception.
                 throw;
             }
         }
@@ -947,12 +950,15 @@ namespace System.Management.Automation.Internal
 
                 if (!injectSucceeded && e is PipelineStoppedException)
                 {
-                    // We want to report the first terminating error which occurred during pipeline execution,
-                    // regardless of whether other errors occurred afterward.
+                    // When a terminating error happens during command execution, PowerShell will first save it
+                    // to '_firstTerminatingError', and then throw a 'PipelineStoppedException' to tear down the
+                    // pipeline. So when the caught exception here is 'PipelineStoppedException', it may not be
+                    // the actual original terminating error.
+                    // In this case, we want to report the first terminating error which occurred during pipeline
+                    // execution, regardless of whether other errors occurred afterward.
                     ThrowFirstErrorIfExisting(logException: false);
                 }
 
-                // If we haven't recorded the first terminating error, then re-throw this exception.
                 throw;
             }
         }
@@ -1001,7 +1007,9 @@ namespace System.Management.Automation.Internal
             }
 
             if (_executionStarted)
+            {
                 return;
+            }
 
             if (_commands == null || _commands.Count == 0)
             {
