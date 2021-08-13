@@ -5177,21 +5177,6 @@ namespace Microsoft.PowerShell.Commands
 
                     // And the appdomain level module path cache.
                     PSModuleInfo.RemoveFromAppDomainLevelCache(module.Name);
-
-                    // Update implicit module loaded property
-                    if (Context.Modules.IsImplicitRemotingModuleLoaded)
-                    {
-                        Context.Modules.IsImplicitRemotingModuleLoaded = false;
-                        foreach (var modInfo in Context.Modules.ModuleTable.Values)
-                        {
-                            var privateData = modInfo.PrivateData as Hashtable;
-                            if ((privateData != null) && privateData.ContainsKey("ImplicitRemoting"))
-                            {
-                                Context.Modules.IsImplicitRemotingModuleLoaded = true;
-                                break;
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -6923,13 +6908,6 @@ namespace Microsoft.PowerShell.Commands
             if (targetSessionState.Module != null)
             {
                 targetSessionState.Module.AddNestedModule(module);
-            }
-
-            var privateDataHashTable = module.PrivateData as Hashtable;
-            if (!context.Modules.IsImplicitRemotingModuleLoaded &&
-                privateDataHashTable != null && privateDataHashTable.ContainsKey("ImplicitRemoting"))
-            {
-                context.Modules.IsImplicitRemotingModuleLoaded = true;
             }
         }
 

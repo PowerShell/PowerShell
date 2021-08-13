@@ -105,9 +105,6 @@ namespace System.Management.Automation
                     description: "Replace the old FileSystemProvider with cleaner design and faster code"),
                 */
                 new ExperimentalFeature(
-                    name: "PSImplicitRemotingBatching",
-                    description: "Batch implicit remoting proxy commands to improve performance"),
-                new ExperimentalFeature(
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
                 new ExperimentalFeature(
