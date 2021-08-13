@@ -2067,7 +2067,7 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"""$($_.Strikethrough)$($_.Strikethrough.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "Strikethrough")
                         .AddItemProperty(@"OutputRendering")
                         .AddItemScriptBlock(@"""$($_.Formatting.FormatAccent)$($_.Formatting.FormatAccent.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FormatAccent")
-                        .AddItemScriptBlock(@"""$($_.Formatting.TableHeaader)$($_.Formatting.TableHeaader.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.TableHeaader")
+                        .AddItemScriptBlock(@"""$($_.Formatting.TableHeader)$($_.Formatting.TableHeader.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.TableHeader")
                         .AddItemScriptBlock(@"""$($_.Formatting.ErrorAccent)$($_.Formatting.ErrorAccent.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.ErrorAccent")
                         .AddItemScriptBlock(@"""$($_.Formatting.Error)$($_.Formatting.Error.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Error")
                         .AddItemScriptBlock(@"""$($_.Formatting.Warning)$($_.Formatting.Warning.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Warning")
