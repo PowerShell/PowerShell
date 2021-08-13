@@ -248,7 +248,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method constructs a string representing the dispose block of the command
+        /// This method constructs a string representing the clean block of the command
         /// specified by <paramref name="commandMetadata"/>. The returned string only contains the
         /// script, it is not enclosed in "clean { }".
         /// </summary>

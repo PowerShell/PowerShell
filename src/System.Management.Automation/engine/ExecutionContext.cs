@@ -841,8 +841,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            var arraylist = DollarErrorVariable as ArrayList;
-            if (arraylist is null)
+            if (DollarErrorVariable is not ArrayList arraylist)
             {
                 Diagnostics.Assert(false, "$error should be a global constant ArrayList");
                 return;

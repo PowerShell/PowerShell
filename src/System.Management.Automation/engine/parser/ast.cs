@@ -944,7 +944,7 @@ namespace System.Management.Automation.Language
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
         /// <param name="processBlock">The ast for the process block, may be null.</param>
         /// <param name="endBlock">The ast for the end block, may be null.</param>
-        /// <param name="cleanBlock">The ast for the dispose block, may be null.</param>
+        /// <param name="cleanBlock">The ast for the clean block, may be null.</param>
         /// <param name="dynamicParamBlock">The ast for the dynamicparam block, may be null.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
@@ -995,7 +995,7 @@ namespace System.Management.Automation.Language
         /// <param name="beginBlock">The ast for the begin block, may be null.</param>
         /// <param name="processBlock">The ast for the process block, may be null.</param>
         /// <param name="endBlock">The ast for the end block, may be null.</param>
-        /// <param name="cleanBlock">The ast for the dispose block, may be null.</param>
+        /// <param name="cleanBlock">The ast for the clean block, may be null.</param>
         /// <param name="dynamicParamBlock">The ast for the dynamicparam block, may be null.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
@@ -1218,7 +1218,7 @@ namespace System.Management.Automation.Language
         public NamedBlockAst EndBlock { get; }
 
         /// <summary>
-        /// Gets the ast representing the dispose block for a script block, or null if no dispose block was specified.
+        /// Gets the ast representing the clean block for a script block, or null if no clean block was specified.
         /// </summary>
         public NamedBlockAst CleanBlock { get; }
 
