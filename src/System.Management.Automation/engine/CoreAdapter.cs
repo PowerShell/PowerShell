@@ -2616,7 +2616,7 @@ namespace System.Management.Automation
             /// </summary>
             internal Func<string, DotNetAdapter, object, DotNetAdapter.MethodCacheEntry, bool, bool, PSMethod> PSMethodCtor;
 
-            internal MethodCacheEntry(MethodBase[] methods)
+            internal MethodCacheEntry(IList<MethodBase> methods)
             {
                 methodInformationStructures = DotNetAdapter.GetMethodInformationArray(methods);
             }
@@ -3075,9 +3075,8 @@ namespace System.Management.Automation
 
         private static void PopulateMethodReflectionTable(Type type, MethodInfo[] methods, CacheTable typeMethods)
         {
-            for (int i = 0; i < methods.Length; i++)
+            foreach (MethodInfo method in methods)
             {
-                MethodInfo method = methods[i];
                 if (method.DeclaringType == type)
                 {
                     string methodName = method.Name;
@@ -3102,7 +3101,7 @@ namespace System.Management.Automation
 
         private static void PopulateMethodReflectionTable(ConstructorInfo[] ctors, CacheTable typeMethods)
         {
-            foreach (var ctor in ctors)
+            foreach (ConstructorInfo ctor in ctors)
             {
                 var previousMethodEntry = (List<MethodBase>)typeMethods["new"];
                 if (previousMethodEntry == null)
@@ -3127,26 +3126,14 @@ namespace System.Management.Automation
         /// <param name="bindingFlags">BindingFlags to use.</param>
         private static void PopulateMethodReflectionTable(Type type, CacheTable typeMethods, BindingFlags bindingFlags)
         {
-            Type typeToGetMethod = type;
+            bool isStatic = bindingFlags.HasFlag(BindingFlags.Static);
 
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
-            // the derivation chain to find the first public parent, and use reflection methods on the public parent.
-            if (!TypeResolver.IsPublic(type) && DisallowPrivateReflection(type))
-            {
-                typeToGetMethod = GetFirstPublicParentType(type);
-            }
-
-            // In CoreCLR, "GetFirstPublicParentType" may return null if 'type' is an interface
-            if (typeToGetMethod != null)
-            {
-                MethodInfo[] methods = typeToGetMethod.GetMethods(bindingFlags);
-                PopulateMethodReflectionTable(typeToGetMethod, methods, typeMethods);
-            }
+            MethodInfo[] methods = type.GetMethods(bindingFlags);
+            PopulateMethodReflectionTable(type, methods, typeMethods);
 
             Type[] interfaces = type.GetInterfaces();
-            for (int interfaceIndex = 0; interfaceIndex < interfaces.Length; interfaceIndex++)
+            foreach (Type interfaceType in interfaces)
             {
-                var interfaceType = interfaces[interfaceIndex];
                 if (!TypeResolver.IsPublic(interfaceType))
                 {
                     continue;
@@ -3154,41 +3141,50 @@ namespace System.Management.Automation
 
                 if (interfaceType.IsGenericType && type.IsArray)
                 {
-                    continue; // GetInterfaceMap is not supported in this scenario... not sure if we need to do something special here...
+                    // A bit of background: Array doesn't directly support any generic interface at all. Instead, a stub class
+                    // named 'SZArrayHelper' provides these generic interfaces at runtime for zero-based one-dimension arrays.
+                    // This is why '[object[]].GetInterfaceMap([ICollection[object]])' throws 'ArgumentException'.
+                    // (see https://stackoverflow.com/a/31883327)
+                    //
+                    // We had always been skipping generic interfaces for array types because 'GetInterfaceMap' doesn't work
+                    // for it. Today, even though we don't use 'GetInterfaceMap' anymore, the same code is kept here because
+                    // methods from generic interfaces of an array type could cause ambiguity in method overloads resolution.
+                    // For example, "$objs = @(1,2,3,4); $objs.Contains(1)" would fail because there would be 2 overloads of
+                    // the 'Contains' methods which are equally good matches for the call.
+                    //    bool IList.Contains(System.Object value)
+                    //    bool ICollection[Object].Contains(System.Object item)
+                    continue;
                 }
 
-                MethodInfo[] methods;
-                if (type.IsInterface)
-                {
-                    methods = interfaceType.GetMethods(bindingFlags);
-                }
-                else
-                {
-                    InterfaceMapping interfaceMapping = type.GetInterfaceMap(interfaceType);
-                    methods = interfaceMapping.InterfaceMethods;
-                }
+                methods = interfaceType.GetMethods(bindingFlags);
 
-                for (int methodIndex = 0; methodIndex < methods.Length; methodIndex++)
+                foreach (MethodInfo interfaceMethod in methods)
                 {
-                    MethodInfo interfaceMethodDefinition = methods[methodIndex];
-
-                    if ((!interfaceMethodDefinition.IsPublic) ||
-                        (interfaceMethodDefinition.IsStatic != ((BindingFlags.Static & bindingFlags) != 0)))
+                    if (isStatic && interfaceMethod.IsVirtual)
                     {
+                        // Ignore static virtual/abstract methods on an interface because:
+                        //  1. if it's implicitly implemented, which will be mostly the case, then the corresponding
+                        //     methods were already retrieved from the 'type.GetMethods' step above;
+                        //  2. if it's explicitly implemented, we cannot call 'Invoke(null, args)' on the static method,
+                        //     but have to use 'type.GetInterfaceMap(interfaceType)' to get the corresponding target
+                        //     methods, and call 'Invoke(null, args)' on them. The target methods will be non-public
+                        //     in this case, which we always ignore.
+                        //  3. The recommendation from .NET team is to ignore the static virtuals on interfaces,
+                        //     especially given that the APIs may change in .NET 7.
                         continue;
                     }
 
-                    var previousMethodEntry = (List<MethodBase>)typeMethods[interfaceMethodDefinition.Name];
+                    var previousMethodEntry = (List<MethodBase>)typeMethods[interfaceMethod.Name];
                     if (previousMethodEntry == null)
                     {
-                        var methodEntry = new List<MethodBase> { interfaceMethodDefinition };
-                        typeMethods.Add(interfaceMethodDefinition.Name, methodEntry);
+                        var methodEntry = new List<MethodBase> { interfaceMethod };
+                        typeMethods.Add(interfaceMethod.Name, methodEntry);
                     }
                     else
                     {
-                        if (!previousMethodEntry.Contains(interfaceMethodDefinition))
+                        if (!previousMethodEntry.Contains(interfaceMethod))
                         {
-                            previousMethodEntry.Add(interfaceMethodDefinition);
+                            previousMethodEntry.Add(interfaceMethod);
                         }
                     }
                 }
@@ -3211,7 +3207,7 @@ namespace System.Management.Automation
             for (int i = 0; i < typeMethods.memberCollection.Count; i++)
             {
                 typeMethods.memberCollection[i] =
-                    new MethodCacheEntry(((List<MethodBase>)typeMethods.memberCollection[i]).ToArray());
+                    new MethodCacheEntry((List<MethodBase>)typeMethods.memberCollection[i]);
             }
         }
 
@@ -3224,38 +3220,24 @@ namespace System.Management.Automation
         /// <param name="bindingFlags">BindingFlags to use.</param>
         private static void PopulateEventReflectionTable(Type type, Dictionary<string, EventCacheEntry> typeEvents, BindingFlags bindingFlags)
         {
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
-            // the derivation chain to find the first public parent, and use reflection events on the public parent.
-            if (!TypeResolver.IsPublic(type) && DisallowPrivateReflection(type))
+            EventInfo[] events = type.GetEvents(bindingFlags);
+            var tempTable = new Dictionary<string, List<EventInfo>>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (EventInfo typeEvent in events)
             {
-                type = GetFirstPublicParentType(type);
+                string eventName = typeEvent.Name;
+                if (!tempTable.TryGetValue(eventName, out List<EventInfo> entryList))
+                {
+                    entryList = new List<EventInfo>();
+                    tempTable.Add(eventName, entryList);
+                }
+
+                entryList.Add(typeEvent);
             }
 
-            // In CoreCLR, "GetFirstPublicParentType" may return null if 'type' is an interface
-            if (type != null)
+            foreach (KeyValuePair<string, List<EventInfo>> entry in tempTable)
             {
-                EventInfo[] events = type.GetEvents(bindingFlags);
-                var tempTable = new Dictionary<string, List<EventInfo>>(StringComparer.OrdinalIgnoreCase);
-                for (int i = 0; i < events.Length; i++)
-                {
-                    var typeEvent = events[i];
-                    string eventName = typeEvent.Name;
-                    List<EventInfo> previousEntry;
-                    if (!tempTable.TryGetValue(eventName, out previousEntry))
-                    {
-                        var eventEntry = new List<EventInfo> { typeEvent };
-                        tempTable.Add(eventName, eventEntry);
-                    }
-                    else
-                    {
-                        previousEntry.Add(typeEvent);
-                    }
-                }
-
-                foreach (var entry in tempTable)
-                {
-                    typeEvents.Add(entry.Key, new EventCacheEntry(entry.Value.ToArray()));
-                }
+                typeEvents.Add(entry.Key, new EventCacheEntry(entry.Value.ToArray()));
             }
         }
 
@@ -3270,9 +3252,8 @@ namespace System.Management.Automation
             ParameterInfo[] propertyParameters = property.GetIndexParameters();
             int propertyIndexLength = propertyParameters.Length;
 
-            for (int propertyIndex = 0; propertyIndex < previousProperties.Count; propertyIndex++)
+            foreach (PropertyInfo previousProperty in previousProperties)
             {
-                var previousProperty = previousProperties[propertyIndex];
                 ParameterInfo[] previousParameters = previousProperty.GetIndexParameters();
                 if (previousParameters.Length == propertyIndexLength)
                 {
@@ -3308,79 +3289,81 @@ namespace System.Management.Automation
         /// <param name="bindingFlags">BindingFlags to use.</param>
         private static void PopulatePropertyReflectionTable(Type type, CacheTable typeProperties, BindingFlags bindingFlags)
         {
+            bool isStatic = bindingFlags.HasFlag(BindingFlags.Static);
             var tempTable = new Dictionary<string, List<PropertyInfo>>(StringComparer.OrdinalIgnoreCase);
-            Type typeToGetPropertyAndField = type;
 
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up the
-            // derivation chain to find the first public parent, and use reflection properties/fields on the public parent.
-            if (!TypeResolver.IsPublic(type) && DisallowPrivateReflection(type))
+            PropertyInfo[] properties = type.GetProperties(bindingFlags);
+            foreach (PropertyInfo property in properties)
             {
-                typeToGetPropertyAndField = GetFirstPublicParentType(type);
-            }
-
-            // In CoreCLR, "GetFirstPublicParentType" may return null if 'type' is an interface
-            PropertyInfo[] properties;
-            if (typeToGetPropertyAndField != null)
-            {
-                properties = typeToGetPropertyAndField.GetProperties(bindingFlags);
-                for (int i = 0; i < properties.Length; i++)
-                {
-                    PopulateSingleProperty(type, properties[i], tempTable, properties[i].Name);
-                }
+                PopulateSingleProperty(type, property, tempTable, property.Name);
             }
 
             Type[] interfaces = type.GetInterfaces();
-            for (int interfaceIndex = 0; interfaceIndex < interfaces.Length; interfaceIndex++)
+            foreach (Type interfaceType in interfaces)
             {
-                Type interfaceType = interfaces[interfaceIndex];
                 if (!TypeResolver.IsPublic(interfaceType))
                 {
                     continue;
                 }
 
                 properties = interfaceType.GetProperties(bindingFlags);
-                for (int propertyIndex = 0; propertyIndex < properties.Length; propertyIndex++)
+                foreach (PropertyInfo property in properties)
                 {
-                    PopulateSingleProperty(type, properties[propertyIndex], tempTable, properties[propertyIndex].Name);
+                    if (isStatic &&
+                        (property.GetMethod?.IsVirtual == true || property.SetMethod?.IsVirtual == true))
+                    {
+                        // Ignore static virtual/abstract properties on an interface because:
+                        //  1. if it's implicitly implemented, which will be mostly the case, then the corresponding
+                        //     properties were already retrieved from the 'type.GetProperties' step above;
+                        //  2. if it's explicitly implemented, we cannot call 'GetValue(null)' on the static property,
+                        //     but have to use 'type.GetInterfaceMap(interfaceType)' to get the corresponding target
+                        //     get/set accessor methods, and call 'Invoke(null, args)' on them. The target methods will
+                        //     be non-public in this case, which we always ignore.
+                        //  3. The recommendation from .NET team is to ignore the static virtuals on interfaces,
+                        //     especially given that the APIs may change in .NET 7.
+                        continue;
+                    }
+
+                    PopulateSingleProperty(type, property, tempTable, property.Name);
                 }
             }
 
-            foreach (var pairs in tempTable)
+            foreach (KeyValuePair<string, List<PropertyInfo>> entry in tempTable)
             {
-                var propertiesList = pairs.Value;
+                List<PropertyInfo> propertiesList = entry.Value;
                 PropertyInfo firstProperty = propertiesList[0];
                 if ((propertiesList.Count > 1) || (firstProperty.GetIndexParameters().Length != 0))
                 {
-                    typeProperties.Add(pairs.Key, new ParameterizedPropertyCacheEntry(propertiesList));
+                    typeProperties.Add(entry.Key, new ParameterizedPropertyCacheEntry(propertiesList));
                 }
                 else
                 {
-                    typeProperties.Add(pairs.Key, new PropertyCacheEntry(firstProperty));
+                    typeProperties.Add(entry.Key, new PropertyCacheEntry(firstProperty));
                 }
             }
 
-            // In CoreCLR, "GetFirstPublicParentType" may return null if 'type' is an interface
-            if (typeToGetPropertyAndField != null)
+            FieldInfo[] fields = type.GetFields(bindingFlags);
+            foreach (FieldInfo field in fields)
             {
-                FieldInfo[] fields = typeToGetPropertyAndField.GetFields(bindingFlags);
-                for (int i = 0; i < fields.Length; i++)
+                string fieldName = field.Name;
+                var previousMember = (PropertyCacheEntry)typeProperties[fieldName];
+                if (previousMember == null)
                 {
-                    FieldInfo field = fields[i];
-                    string fieldName = field.Name;
-                    var previousMember = (PropertyCacheEntry)typeProperties[fieldName];
-                    if (previousMember == null)
-                    {
-                        typeProperties.Add(fieldName, new PropertyCacheEntry(field));
-                    }
-                    else
-                    {
-                        // A property/field declared with new in a derived class might appear twice
-                        if (!string.Equals(previousMember.member.Name, fieldName))
-                        {
-                            throw new ExtendedTypeSystemException("NotACLSComplaintField", null,
-                                ExtendedTypeSystem.NotAClsCompliantFieldProperty, fieldName, type.FullName, previousMember.member.Name);
-                        }
-                    }
+                    typeProperties.Add(fieldName, new PropertyCacheEntry(field));
+                }
+                else if (!string.Equals(previousMember.member.Name, fieldName))
+                {
+                    // A property/field declared with 'new' in a derived class might appear twice, and it's OK to ignore
+                    // the second property/field in that case.
+                    // However, if the names of two properties/fields are different only in letter casing, then it's not
+                    // CLS complaint and we throw an exception.
+                    throw new ExtendedTypeSystemException(
+                        "NotACLSComplaintField",
+                        innerException: null,
+                        ExtendedTypeSystem.NotAClsCompliantFieldProperty,
+                        fieldName,
+                        type.FullName,
+                        previousMember.member.Name);
                 }
             }
         }
@@ -3410,68 +3393,6 @@ namespace System.Management.Automation
                 previousPropertyEntry.Add(property);
             }
         }
-
-        #region Handle_Internal_Type_Reflection_In_CoreCLR
-
-        /// <summary>
-        /// The dictionary cache about if an assembly supports reflection execution on its internal types.
-        /// </summary>
-        private static readonly ConcurrentDictionary<string, bool> s_disallowReflectionCache =
-            new ConcurrentDictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
-
-        /// <summary>
-        /// Check if the type is defined in an assembly that disallows reflection execution on internal types.
-        ///  - .NET Framework assemblies don't support reflection execution on their internal types.
-        /// </summary>
-        internal static bool DisallowPrivateReflection(Type type)
-        {
-            bool disallowReflection = false;
-            Assembly assembly = type.Assembly;
-            if (s_disallowReflectionCache.TryGetValue(assembly.FullName, out disallowReflection))
-            {
-                return disallowReflection;
-            }
-
-            var productAttribute = assembly.GetCustomAttribute<AssemblyProductAttribute>();
-            if (productAttribute != null && string.Equals(productAttribute.Product, "Microsoft® .NET Framework", StringComparison.OrdinalIgnoreCase))
-            {
-                disallowReflection = true;
-            }
-            else
-            {
-                #pragma warning disable SYSLIB0015
-                // Check for 'DisablePrivateReflectionAttribute'. It's applied at the assembly level, and allow an assembly to opt-out of private/internal reflection.
-                var disablePrivateReflectionAttribute = assembly.GetCustomAttribute<System.Runtime.CompilerServices.DisablePrivateReflectionAttribute>();
-                disallowReflection = disablePrivateReflectionAttribute != null;
-                #pragma warning restore SYSLIB0015
-            }
-
-            s_disallowReflectionCache.TryAdd(assembly.FullName, disallowReflection);
-            return disallowReflection;
-        }
-
-        /// <summary>
-        /// Walk up the derivation chain to find the first public parent type.
-        /// </summary>
-        internal static Type GetFirstPublicParentType(Type type)
-        {
-            Dbg.Assert(!TypeResolver.IsPublic(type), "type should not be public.");
-            Type parent = type.BaseType;
-            while (parent != null)
-            {
-                if (parent.IsPublic)
-                {
-                    return parent;
-                }
-
-                parent = parent.BaseType;
-            }
-
-            // Return null when type is an interface
-            return null;
-        }
-
-        #endregion Handle_Internal_Type_Reflection_In_CoreCLR
 
         /// <summary>
         /// Called from GetProperty and GetProperties to populate the
@@ -4286,11 +4207,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="methods">The methods to be converted.</param>
         /// <returns>The MethodInformation[] corresponding to methods.</returns>
-        internal static MethodInformation[] GetMethodInformationArray(MethodBase[] methods)
+        internal static MethodInformation[] GetMethodInformationArray(IList<MethodBase> methods)
         {
-            int methodCount = methods.Length;
-            MethodInformation[] returnValue = new MethodInformation[methodCount];
-            for (int i = 0; i < methods.Length; i++)
+            var returnValue = new MethodInformation[methods.Count];
+            for (int i = 0; i < methods.Count; i++)
             {
                 returnValue[i] = new MethodInformation(methods[i], 0);
             }
