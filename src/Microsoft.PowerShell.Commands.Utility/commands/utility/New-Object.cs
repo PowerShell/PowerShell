@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
                         WriteObject(_newObject);
                         return;
                     }
-                    else if (type.GetTypeInfo().IsValueType)
+                    else if (type.IsValueType)
                     {
                         // This is for default parameterless struct ctor which is not returned by
                         // Type.GetConstructor(System.Type.EmptyTypes).
@@ -351,12 +351,12 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
         #region Com
 
-        private object SafeCreateInstance(Type t, object[] args)
+        private object SafeCreateInstance(Type t)
         {
             object result = null;
             try
             {
-                result = Activator.CreateInstance(t, args);
+                result = Activator.CreateInstance(t);
             }
             // Does not catch InvalidComObjectException because ComObject is obtained from GetTypeFromProgID
             catch (ArgumentException e)
@@ -430,13 +430,10 @@ namespace Microsoft.PowerShell.Commands
             ComCreateInfo info = (ComCreateInfo)createstruct;
             try
             {
-                Type type = null;
-                PSArgumentException mshArgE = null;
-
-                type = Type.GetTypeFromCLSID(_comObjectClsId);
+                Type type = Type.GetTypeFromCLSID(_comObjectClsId);
                 if (type == null)
                 {
-                    mshArgE = PSTraceSource.NewArgumentException(
+                    PSArgumentException mshArgE = PSTraceSource.NewArgumentException(
                         "ComObject",
                         NewObjectStrings.CannotLoadComObjectType,
                         ComObject);
@@ -446,7 +443,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                info.objectCreated = SafeCreateInstance(type, ArgumentList);
+                info.objectCreated = SafeCreateInstance(type);
                 info.success = true;
             }
             catch (Exception e)
@@ -458,20 +455,25 @@ namespace Microsoft.PowerShell.Commands
 
         private object CreateComObject()
         {
-            Type type = null;
-            PSArgumentException mshArgE = null;
-
             try
             {
-                type = Marshal.GetTypeFromCLSID(_comObjectClsId);
+                Type type = Marshal.GetTypeFromCLSID(_comObjectClsId);
                 if (type == null)
                 {
-                    mshArgE = PSTraceSource.NewArgumentException("ComObject", NewObjectStrings.CannotLoadComObjectType, ComObject);
+                    PSArgumentException mshArgE = PSTraceSource.NewArgumentException(
+                        "ComObject",
+                        NewObjectStrings.CannotLoadComObjectType,
+                        ComObject);
+
                     ThrowTerminatingError(
-                        new ErrorRecord(mshArgE, "CannotLoadComObjectType", ErrorCategory.InvalidType, null));
+                        new ErrorRecord(
+                            mshArgE,
+                            "CannotLoadComObjectType",
+                            ErrorCategory.InvalidType,
+                            targetObject: null));
                 }
 
-                return SafeCreateInstance(type, ArgumentList);
+                return SafeCreateInstance(type);
             }
             catch (COMException e)
             {
