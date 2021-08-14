@@ -132,7 +132,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $failure.Exception.InnerException.InnerException | Should -BeOfType 'System.ArgumentException'
             $failure.Exception.InnerException.InnerException.Message | Should -BeExactly 'terminating-exception'
 
-            $pwsh.Streams.Verbose.Count | Should -Be 0
+            $pwsh.Streams.Verbose | Should -HaveCount 0
         }
 
         It "'-ErrorAction Stop' should always stop execution even when the error action is '<ErrorAction>'" -TestCases @(
@@ -155,7 +155,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $failure.Exception.InnerException | Should -BeOfType 'System.Management.Automation.ActionPreferenceStopException'
             $failure.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand'
 
-            $pwsh.Streams.Verbose.Count | Should -Be 0
+            $pwsh.Streams.Verbose | Should -HaveCount 0
         }
 
         It "'throw' statement should stop execution when running with the default error action ('Continue')" {
@@ -172,7 +172,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $failure.Exception.InnerException | Should -BeOfType 'System.Management.Automation.RuntimeException'
             $failure.Exception.InnerException.Message | Should -BeExactly 'throw-exception'
 
-            $pwsh.Streams.Verbose.Count | Should -Be 0
+            $pwsh.Streams.Verbose | Should -HaveCount 0
         }
 
         <# The 'throw' statement is special, in that it can be suppressed by '-ErrorAction SilentlyContinue/Ignore' #>
@@ -191,11 +191,11 @@ Describe 'Command error handling in general' -Tag 'CI' {
             }
 
             $failure | Should -BeNullOrEmpty
-            $pwsh.Streams.Verbose.Count | Should -Be 1
+            $pwsh.Streams.Verbose | Should -HaveCount 1
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
 
             ## The suppressed 'throw' exception is not written to the error stream, not sure why but it's the current behavior.
-            $pwsh.Streams.Error.Count | Should -Be 0
+            $pwsh.Streams.Error | Should -HaveCount 0
 
             ## The suppressed 'throw' exception is kept in '$Error'
             $err = GetLastError
@@ -211,8 +211,8 @@ Describe 'Command error handling in general' -Tag 'CI' {
 
             RunScript -Script "try { ThrowException -ErrorAction $ErrorAction } catch { Write-Debug -Debug `$_.FullyQualifiedErrorId }"
 
-            $pwsh.Streams.Verbose.Count | Should -Be 0
-            $pwsh.Streams.Debug.Count | Should -Be 1
+            $pwsh.Streams.Verbose | Should -HaveCount 0
+            $pwsh.Streams.Debug | Should -HaveCount 1
             $pwsh.Streams.Debug | Should -BeExactly 'throw-exception'
         }
 
@@ -224,8 +224,8 @@ Describe 'Command error handling in general' -Tag 'CI' {
 
             RunScript -Script "trap { Write-Debug -Debug `$_.FullyQualifiedErrorId; continue } ThrowException -ErrorAction $ErrorAction"
 
-            $pwsh.Streams.Verbose.Count | Should -Be 0
-            $pwsh.Streams.Debug.Count | Should -Be 1
+            $pwsh.Streams.Verbose | Should -HaveCount 0
+            $pwsh.Streams.Debug | Should -HaveCount 1
             $pwsh.Streams.Debug | Should -BeExactly 'throw-exception'
         }
     }
@@ -235,11 +235,11 @@ Describe 'Command error handling in general' -Tag 'CI' {
         It "'WriteErrorAPI' doesn't stop execution with the default error action ('Continue')" {
             RunCommand -Command 'WriteErrorAPI' -ErrorAction Continue
 
-            $pwsh.Streams.Error.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 1
             $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'arg-exception'
             $pwsh.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'WriteErrorAPI:error,WriteErrorAPI'
 
-            $pwsh.Streams.Verbose.Count | Should -Be 1
+            $pwsh.Streams.Verbose | Should -HaveCount 1
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
         }
 
@@ -247,8 +247,8 @@ Describe 'Command error handling in general' -Tag 'CI' {
             ClearDollarError
             RunCommand -Command 'WriteErrorAPI' -ErrorAction Ignore
 
-            $pwsh.Streams.Error.Count | Should -Be 0
-            $pwsh.Streams.Verbose.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 0
+            $pwsh.Streams.Verbose | Should -HaveCount 1
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
 
             $lastErr = GetLastError
@@ -259,8 +259,8 @@ Describe 'Command error handling in general' -Tag 'CI' {
             ClearDollarError
             RunCommand -Command 'WriteErrorAPI' -ErrorAction SilentlyContinue
 
-            $pwsh.Streams.Error.Count | Should -Be 0
-            $pwsh.Streams.Verbose.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 0
+            $pwsh.Streams.Verbose | Should -HaveCount 1
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
 
             $lastErr = GetLastError
@@ -272,11 +272,11 @@ Describe 'Command error handling in general' -Tag 'CI' {
         It "'WriteErrorCmdlet' doesn't stop execution with the default error action ('Continue')" {
             RunCommand -Command 'WriteErrorCmdlet' -ErrorAction Continue
 
-            $pwsh.Streams.Error.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 1
             $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'write-error-cmdlet'
             $pwsh.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'Microsoft.PowerShell.Commands.WriteErrorException,WriteErrorCmdlet'
 
-            $pwsh.Streams.Verbose.Count | Should -Be 1
+            $pwsh.Streams.Verbose | Should -HaveCount 1
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
         }
 
@@ -284,8 +284,8 @@ Describe 'Command error handling in general' -Tag 'CI' {
             ClearDollarError
             RunCommand -Command 'WriteErrorCmdlet' -ErrorAction Ignore
 
-            $pwsh.Streams.Error.Count | Should -Be 0
-            $pwsh.Streams.Verbose.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 0
+            $pwsh.Streams.Verbose | Should -HaveCount 1
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
 
             $lastErr = GetLastError
@@ -296,8 +296,8 @@ Describe 'Command error handling in general' -Tag 'CI' {
             ClearDollarError
             RunCommand -Command 'WriteErrorCmdlet' -ErrorAction SilentlyContinue
 
-            $pwsh.Streams.Error.Count | Should -Be 0
-            $pwsh.Streams.Verbose.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 0
+            $pwsh.Streams.Verbose | Should -HaveCount 1
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
 
             $lastErr = GetLastError
@@ -314,10 +314,10 @@ Describe 'Command error handling in general' -Tag 'CI' {
         It "'MethodInvocationThrowException' emits non-terminating error with the default error action ('Continue')" {
             RunCommand -Command 'MethodInvocationThrowException' -ErrorAction 'Continue'
 
-            $pwsh.Streams.Error.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 1
             $pwsh.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'ArgumentNullException'
 
-            $pwsh.Streams.Verbose.Count | Should -BeLikeExactly 1
+            $pwsh.Streams.Verbose | Should -HaveCount  1
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
         }
 
@@ -329,8 +329,8 @@ Describe 'Command error handling in general' -Tag 'CI' {
 
             RunCommand -Command 'MethodInvocationThrowException' -ErrorAction $ErrorAction
 
-            $pwsh.Streams.Error.Count | Should -Be 0
-            $pwsh.Streams.Verbose.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 0
+            $pwsh.Streams.Verbose | Should -HaveCount 1
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
 
             ## The suppressed exception is kept in '$Error'
@@ -353,7 +353,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $failure.Exception.InnerException | Should -BeOfType 'System.Management.Automation.CmdletInvocationException'
             $failure.Exception.InnerException.InnerException.InnerException | Should -BeOfType 'System.ArgumentNullException'
 
-            $pwsh.Streams.Verbose.Count | Should -Be 0
+            $pwsh.Streams.Verbose | Should -HaveCount 0
         }
 
         It "'MethodInvocationThrowException' emits terminating error with the error action '<ErrorAction>' when it's wrapped in 'try/catch'" -TestCases @(
@@ -365,9 +365,9 @@ Describe 'Command error handling in general' -Tag 'CI' {
 
             RunScript -Script "try { MethodInvocationThrowException -ErrorAction $ErrorAction } catch { Write-Debug -Debug `$_.Exception.InnerException.GetType().FullName }"
 
-            $pwsh.Streams.Error.Count | Should -Be 0
-            $pwsh.Streams.Verbose.Count | Should -Be 0
-            $pwsh.Streams.Debug.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 0
+            $pwsh.Streams.Verbose | Should -HaveCount 0
+            $pwsh.Streams.Debug | Should -HaveCount 1
             $pwsh.Streams.Debug | Should -BeExactly 'System.ArgumentNullException'
         }
 
@@ -380,9 +380,9 @@ Describe 'Command error handling in general' -Tag 'CI' {
 
             RunScript -Script "trap { Write-Debug -Debug `$_.Exception.InnerException.GetType().FullName; continue } MethodInvocationThrowException -ErrorAction $ErrorAction"
 
-            $pwsh.Streams.Error.Count | Should -Be 0
-            $pwsh.Streams.Verbose.Count | Should -Be 0
-            $pwsh.Streams.Debug.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 0
+            $pwsh.Streams.Verbose | Should -HaveCount 0
+            $pwsh.Streams.Debug | Should -HaveCount 1
             $pwsh.Streams.Debug | Should -BeExactly 'System.ArgumentNullException'
         }
 
@@ -393,10 +393,10 @@ Describe 'Command error handling in general' -Tag 'CI' {
         It "'ExpressionThrowException' emits non-terminating error with the default error action ('Continue')" {
             RunCommand -Command 'ExpressionThrowException' -ErrorAction 'Continue'
 
-            $pwsh.Streams.Error.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 1
             $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
 
-            $pwsh.Streams.Verbose.Count | Should -BeLikeExactly 1
+            $pwsh.Streams.Verbose | Should -HaveCount  1
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
         }
 
@@ -408,8 +408,8 @@ Describe 'Command error handling in general' -Tag 'CI' {
 
             RunCommand -Command 'ExpressionThrowException' -ErrorAction $ErrorAction
 
-            $pwsh.Streams.Error.Count | Should -Be 0
-            $pwsh.Streams.Verbose.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 0
+            $pwsh.Streams.Verbose | Should -HaveCount 1
             $pwsh.Streams.Verbose | Should -BeExactly 'verbose-message'
 
             ## The suppressed exception is kept in '$Error'
@@ -432,7 +432,7 @@ Describe 'Command error handling in general' -Tag 'CI' {
             $failure.Exception.InnerException | Should -BeOfType 'System.Management.Automation.CmdletInvocationException'
             $failure.Exception.InnerException.InnerException.InnerException | Should -BeOfType 'System.DivideByZeroException'
 
-            $pwsh.Streams.Verbose.Count | Should -Be 0
+            $pwsh.Streams.Verbose | Should -HaveCount 0
         }
 
         It "'ExpressionThrowException' emits terminating error with the error action '<ErrorAction>' when it's wrapped in 'try/catch'" -TestCases @(
@@ -444,9 +444,9 @@ Describe 'Command error handling in general' -Tag 'CI' {
 
             RunScript -Script "try { ExpressionThrowException -ErrorAction $ErrorAction } catch { Write-Debug -Debug `$_.Exception.InnerException.GetType().FullName }"
 
-            $pwsh.Streams.Error.Count | Should -Be 0
-            $pwsh.Streams.Verbose.Count | Should -Be 0
-            $pwsh.Streams.Debug.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 0
+            $pwsh.Streams.Verbose | Should -HaveCount 0
+            $pwsh.Streams.Debug | Should -HaveCount 1
             $pwsh.Streams.Debug | Should -BeExactly 'System.DivideByZeroException'
         }
 
@@ -459,9 +459,9 @@ Describe 'Command error handling in general' -Tag 'CI' {
 
             RunScript -Script "trap { Write-Debug -Debug `$_.Exception.InnerException.GetType().FullName; continue } ExpressionThrowException -ErrorAction $ErrorAction"
 
-            $pwsh.Streams.Error.Count | Should -Be 0
-            $pwsh.Streams.Verbose.Count | Should -Be 0
-            $pwsh.Streams.Debug.Count | Should -Be 1
+            $pwsh.Streams.Error | Should -HaveCount 0
+            $pwsh.Streams.Verbose | Should -HaveCount 0
+            $pwsh.Streams.Debug | Should -HaveCount 1
             $pwsh.Streams.Debug | Should -BeExactly 'System.DivideByZeroException'
         }
 
