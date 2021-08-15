@@ -55,7 +55,7 @@ namespace System.Management.Automation.Internal
         /// Render the decorarted string using automatic output rendering.
         /// </summary>
         /// <returns>Rendered string based on automatic output rendering.</returns>
-        public override string ToString() => _isDecorated ? ToString(OutputRendering.Automatic) : _text;
+        public override string ToString() => _isDecorated ? ToString(OutputRendering.Ansi) : _text;
 
         /// <summary>
         /// Return string representation of content depending on output rendering mode.
@@ -69,16 +69,7 @@ namespace System.Management.Automation.Internal
                 return _text;
             }
 
-            if (outputRendering == OutputRendering.Automatic)
-            {
-                outputRendering = OutputRendering.Ansi;
-                if (PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
-                {
-                    outputRendering = OutputRendering.PlainText;
-                }
-            }
-
-            if (outputRendering == OutputRendering.PlainText)
+            if (outputRendering == OutputRendering.PlainText || PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
             {
                 return PlainText;
             }
@@ -139,7 +130,7 @@ namespace System.Management.Automation.Internal
         /// Render the decorarted string using automatic output rendering.
         /// </summary>
         /// <returns>Rendered string based on automatic output rendering.</returns>
-        public override string ToString() => _isDecorated ? ToString(OutputRendering.Automatic) : _text;
+        public override string ToString() => _isDecorated ? ToString(OutputRendering.Ansi) : _text;
 
         /// <summary>
         /// Return string representation of content depending on output rendering mode.
@@ -153,16 +144,7 @@ namespace System.Management.Automation.Internal
                 return _text;
             }
 
-            if (outputRendering == OutputRendering.Automatic)
-            {
-                outputRendering = OutputRendering.Ansi;
-                if (PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
-                {
-                    outputRendering = OutputRendering.PlainText;
-                }
-            }
-
-            if (outputRendering == OutputRendering.PlainText)
+            if (outputRendering == OutputRendering.PlainText || PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
             {
                 return PlainText;
             }

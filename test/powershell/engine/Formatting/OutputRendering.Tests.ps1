@@ -25,7 +25,6 @@ Describe 'OutputRendering tests' {
     }
 
     It 'OutputRendering works for "<outputRendering>" to the host' -TestCases @(
-        @{ outputRendering = 'automatic'; ansi = $true }
         @{ outputRendering = 'host'     ; ansi = $true }
         @{ outputRendering = 'ansi'     ; ansi = $true }
         @{ outputRendering = 'plaintext'; ansi = $false }
@@ -43,7 +42,6 @@ Describe 'OutputRendering tests' {
     }
 
     It 'OutputRendering works for "<outputRendering>" to the pipeline' -TestCases @(
-        @{ outputRendering = 'automatic'; ansi = $false }
         @{ outputRendering = 'host'     ; ansi = $false }
         @{ outputRendering = 'ansi'     ; ansi = $true }
         @{ outputRendering = 'plaintext'; ansi = $false }
