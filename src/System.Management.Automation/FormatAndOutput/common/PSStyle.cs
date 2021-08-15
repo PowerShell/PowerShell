@@ -21,7 +21,6 @@ namespace System.Management.Automation
 
         /// <summary>Render as ANSI.</summary>
         Ansi = 2,
-
     }
     #endregion OutputRendering
 
