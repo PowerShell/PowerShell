@@ -848,6 +848,15 @@ A Name                                  B
     }
 
 Describe 'Table color tests' {
+    BeforeAll {
+        $originalRendering = $PSStyle.OutputRendering
+        $PSStyle.OutputRendering = 'Ansi'
+    }
+
+    AfterAll {
+        $PSStyle.OutputRendering = $originalRendering
+    }
+
     It 'Table header should use FormatAccent' {
         ([pscustomobject]@{foo = 1} | Format-Table | Out-String).Trim() | Should -BeExactly @"
 $($PSStyle.Formatting.FormatAccent)foo$($PSStyle.Reset)

@@ -25,7 +25,6 @@ Describe 'OutputRendering tests' {
     }
 
     It 'OutputRendering works for "<outputRendering>" to the host' -TestCases @(
-        @{ outputRendering = 'automatic'; ansi = $true }
         @{ outputRendering = 'host'     ; ansi = $true }
         @{ outputRendering = 'ansi'     ; ansi = $true }
         @{ outputRendering = 'plaintext'; ansi = $false }
@@ -43,7 +42,6 @@ Describe 'OutputRendering tests' {
     }
 
     It 'OutputRendering works for "<outputRendering>" to the pipeline' -TestCases @(
-        @{ outputRendering = 'automatic'; ansi = $true }
         @{ outputRendering = 'host'     ; ansi = $false }
         @{ outputRendering = 'ansi'     ; ansi = $true }
         @{ outputRendering = 'plaintext'; ansi = $false }
@@ -78,5 +76,14 @@ Describe 'OutputRendering tests' {
         $out.Count | Should -Be 2
         $out[0] | Should -BeExactly "$($PSStyle.Formatting.$stream)$($stream.ToUpper()): hello$($PSStyle.Reset)" -Because ($out[0] | Out-String | Format-hex)
         $out[1] | Should -BeExactly "bye"
+    }
+
+    It 'ToString(OutputRendering) works correctly' {
+        $s = [System.Management.Automation.Internal.StringDecorated]::new($PSStyle.Foreground.Red + 'Hello')
+        $s.IsDecorated | Should -BeTrue
+        $s.ToString() | Should -BeExactly "$($PSStyle.Foreground.Red)Hello"
+        $s.ToString([System.Management.Automation.OutputRendering]::ANSI) | Should -BeExactly "$($PSStyle.Foreground.Red)Hello"
+        $s.ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'Hello'
+        { $s.ToString([System.Management.Automation.OutputRendering]::Host) } | Should -Throw -ErrorId 'ArgumentException'
     }
 }

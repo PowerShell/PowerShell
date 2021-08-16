@@ -213,10 +213,13 @@ dbda : KM
 
 Describe 'Format-List color tests' {
     BeforeAll {
+        $originalRendering = $PSStyle.OutputRendering
+        $PSStyle.OutputRendering = 'Ansi'
         [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForceFormatListFixedLabelWidth', $true)
     }
 
     AfterAll {
+        $PSStyle.OutputRendering = $originalRendering
         [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ForceFormatListFixedLabelWidth', $false)
     }
 

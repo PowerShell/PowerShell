@@ -1570,9 +1570,6 @@ namespace System.Management.Automation
             {
                 switch (PSStyle.Instance.OutputRendering)
                 {
-                    case OutputRendering.Automatic:
-                        outputRendering = OutputRendering.Ansi;
-                        break;
                     case OutputRendering.Host:
                         outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
                         break;

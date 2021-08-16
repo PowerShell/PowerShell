@@ -13,17 +13,14 @@ namespace System.Management.Automation
     /// </summary>
     public enum OutputRendering
     {
-        /// <summary>Automatic by PowerShell.</summary>
-        Automatic = 0,
+        /// <summary>Render ANSI only to host.</summary>
+        Host = 0,
 
         /// <summary>Render as plaintext.</summary>
         PlainText = 1,
 
         /// <summary>Render as ANSI.</summary>
         Ansi = 2,
-
-        /// <summary>Render ANSI only to host.</summary>
-        Host = 3,
     }
     #endregion OutputRendering
 
@@ -565,7 +562,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the rendering mode for output.
         /// </summary>
-        public OutputRendering OutputRendering { get; set; } = OutputRendering.Automatic;
+        public OutputRendering OutputRendering { get; set; } = OutputRendering.Host;
 
         /// <summary>
         /// Gets value to turn off all attributes.

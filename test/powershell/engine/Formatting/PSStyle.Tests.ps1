@@ -83,7 +83,7 @@ Describe 'Tests for $PSStyle automatic variable' {
 
     It '$PSStyle has correct default for OutputRendering' {
         $PSStyle | Should -Not -BeNullOrEmpty
-        $PSStyle.OutputRendering | Should -BeExactly 'Automatic'
+        $PSStyle.OutputRendering | Should -BeExactly 'Host'
     }
 
     It '$PSStyle has correct defaults for style <key>' -TestCases (Get-TestCases $styleDefaults) {
@@ -137,26 +137,32 @@ Describe 'Tests for $PSStyle automatic variable' {
 
     It '$PSStyle.Formatting.FormatAccent is applied to Format-List' {
         $old = $PSStyle.Formatting.FormatAccent
+        $oldRender = $PSStyle.OutputRendering
 
         try {
+            $PSStyle.OutputRendering = 'Ansi'
             $PSStyle.Formatting.FormatAccent = $PSStyle.Foreground.Yellow + $PSStyle.Background.Red + $PSStyle.Italic
             $out = $PSVersionTable | Format-List | Out-String
             $out | Should -BeLike "*$($PSStyle.Formatting.FormatAccent.Replace('[',"``["))*"
         }
         finally {
+            $PSStyle.OutputRendering = $oldRender
             $PSStyle.Formatting.FormatAccent = $old
         }
     }
 
     It '$PSStyle.Formatting.TableHeader is applied to Format-Table' {
         $old = $PSStyle.Formatting.TableHeader
+        $oldRender = $PSStyle.OutputRendering
 
         try {
+            $PSStyle.OutputRendering = 'Ansi'
             $PSStyle.Formatting.TableHeader = $PSStyle.Foreground.Blue + $PSStyle.Background.White + $PSStyle.Bold
             $out = $PSVersionTable | Format-Table | Out-String
             $out | Should -BeLike "*$($PSStyle.Formatting.TableHeader.Replace('[',"``["))*"
         }
         finally {
+            $PSStyle.OutputRendering = $oldRender
             $PSStyle.Formatting.TableHeader = $old
         }
     }
