@@ -77,4 +77,13 @@ Describe 'OutputRendering tests' {
         $out[0] | Should -BeExactly "$($PSStyle.Formatting.$stream)$($stream.ToUpper()): hello$($PSStyle.Reset)" -Because ($out[0] | Out-String | Format-hex)
         $out[1] | Should -BeExactly "bye"
     }
+
+    It 'ToString(OutputRendering) works correctly' {
+        $s = [System.Management.Automation.Internal.StringDecorated]::new($PSStyle.Foreground.Red + 'Hello')
+        $s.IsDecorated | Should -BeTrue
+        $s.ToString() | Should -BeExactly "$($PSStyle.Foreground.Red)Hello"
+        $s.ToString([System.Management.Automation.OutputRendering]::ANSI) | Should -BeExactly "$($PSStyle.Foreground.Red)Hello"
+        $s.ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'Hello'
+        { $s.ToString([System.Management.Automation.OutputRendering]::Host) } | Should -Throw -ErrorId 'ArgumentException'
+    }
 }

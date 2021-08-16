@@ -55,7 +55,10 @@ namespace System.Management.Automation.Internal
         /// Render the decorarted string using automatic output rendering.
         /// </summary>
         /// <returns>Rendered string based on automatic output rendering.</returns>
-        public override string ToString() => _isDecorated ? ToString(OutputRendering.Ansi) : _text;
+        public override string ToString() => ToString(
+            PSStyle.Instance.OutputRendering == OutputRendering.PlainText
+                ? OutputRendering.PlainText
+                : OutputRendering.Ansi);
 
         /// <summary>
         /// Return string representation of content depending on output rendering mode.
@@ -64,20 +67,18 @@ namespace System.Management.Automation.Internal
         /// <returns>Rendered string based on outputRendering.</returns>
         public string ToString(OutputRendering outputRendering)
         {
+            if (outputRendering == OutputRendering.Host)
+            {
+                throw new ArgumentException(StringDecoratedStrings.RequireExplicitRendering);
+            }
+
             if (!_isDecorated)
             {
                 return _text;
             }
 
-            if (outputRendering == OutputRendering.PlainText || PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
-            {
-                return PlainText;
-            }
-            else
-            {
-                return _text;
-            }
-        }
+            return outputRendering == OutputRendering.PlainText ? PlainText : _text;
+        }    
     }
 
     internal struct ValueStringDecorated
@@ -130,7 +131,10 @@ namespace System.Management.Automation.Internal
         /// Render the decorarted string using automatic output rendering.
         /// </summary>
         /// <returns>Rendered string based on automatic output rendering.</returns>
-        public override string ToString() => _isDecorated ? ToString(OutputRendering.Ansi) : _text;
+        public override string ToString() => ToString(
+            PSStyle.Instance.OutputRendering == OutputRendering.PlainText
+                ? OutputRendering.PlainText
+                : OutputRendering.Ansi);
 
         /// <summary>
         /// Return string representation of content depending on output rendering mode.
@@ -139,19 +143,17 @@ namespace System.Management.Automation.Internal
         /// <returns>Rendered string based on outputRendering.</returns>
         public string ToString(OutputRendering outputRendering)
         {
+            if (outputRendering == OutputRendering.Host)
+            {
+                throw new ArgumentException(StringDecoratedStrings.RequireExplicitRendering);
+            }
+
             if (!_isDecorated)
             {
                 return _text;
             }
 
-            if (outputRendering == OutputRendering.PlainText || PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
-            {
-                return PlainText;
-            }
-            else
-            {
-                return _text;
-            }
-        }
+            return outputRendering == OutputRendering.PlainText ? PlainText : _text;
+        }    
     }
 }
