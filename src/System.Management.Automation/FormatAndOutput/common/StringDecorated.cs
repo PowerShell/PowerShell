@@ -78,7 +78,7 @@ namespace System.Management.Automation.Internal
             }
 
             return outputRendering == OutputRendering.PlainText ? PlainText : _text;
-        }    
+        }
     }
 
     internal struct ValueStringDecorated
@@ -154,6 +154,6 @@ namespace System.Management.Automation.Internal
             }
 
             return outputRendering == OutputRendering.PlainText ? PlainText : _text;
-        }    
+        }
     }
 }
