@@ -191,7 +191,9 @@ namespace System.Management.Automation
         /// <param name="innerException">
         /// Inner exception.
         /// </param>
-        public NativeCommandExitException(string message, Exception innerException) : base(message, innerException) { }
+        public NativeCommandExitException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with serialized data.
@@ -201,7 +203,7 @@ namespace System.Management.Automation
         protected NativeCommandExitException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }
@@ -220,7 +222,7 @@ namespace System.Management.Automation
         /// <param name="context">Streaming context.</param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            if (info == null)
+            if (info is null)
             {
                 throw new PSArgumentNullException(nameof(info));
             }

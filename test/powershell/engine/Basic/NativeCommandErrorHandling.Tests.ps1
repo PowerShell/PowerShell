@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# Functional tests to verify that errors (non-terminating and terminating) appropriately
+# Functional tests to verify that native executables throw errors (non-terminating and terminating) appropriately
 # when $PSNativeCommandUseErrorActionPreference is $true
 
 Describe 'Native command error handling tests' -Tags 'CI' {
