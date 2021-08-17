@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell
         private enum NotificationType
         {
             /// <summary>
-            /// Turn off the udpate notification.
+            /// Turn off the update notification.
             /// </summary>
             Off = 0,
 

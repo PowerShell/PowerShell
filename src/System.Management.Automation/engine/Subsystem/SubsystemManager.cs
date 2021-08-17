@@ -66,7 +66,7 @@ namespace System.Management.Automation.Subsystem
         /// directly interacting with the implementation proxy object of `IPrediction`.
         /// </remarks>
         /// <typeparam name="TConcreteSubsystem">The concrete subsystem base type.</typeparam>
-        /// <returns>The most recently registered implmentation object of the concrete subsystem.</returns>
+        /// <returns>The most recently registered implementation object of the concrete subsystem.</returns>
         internal static TConcreteSubsystem? GetSubsystem<TConcreteSubsystem>()
             where TConcreteSubsystem : class, ISubsystem
         {
@@ -87,7 +87,7 @@ namespace System.Management.Automation.Subsystem
         /// Return an empty collection when the given subsystem is not registered.
         /// </summary>
         /// <typeparam name="TConcreteSubsystem">The concrete subsystem base type.</typeparam>
-        /// <returns>A readonly collection of all implmentation objects registered for the concrete subsystem.</returns>
+        /// <returns>A readonly collection of all implementation objects registered for the concrete subsystem.</returns>
         internal static ReadOnlyCollection<TConcreteSubsystem> GetSubsystems<TConcreteSubsystem>()
             where TConcreteSubsystem : class, ISubsystem
         {

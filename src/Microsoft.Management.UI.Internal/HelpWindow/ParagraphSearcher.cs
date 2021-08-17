@@ -56,7 +56,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             // If the caret is in the end of a highlight we move to the adjacent run
-            // It has to be in the end because if there is a match at the begining of the file
+            // It has to be in the end because if there is a match at the beginning of the file
             // and the caret has not been touched (so it is in the beginning of the file too)
             // we want to highlight this first match.
             // Considering the caller allways set the caret to the end of the highlight

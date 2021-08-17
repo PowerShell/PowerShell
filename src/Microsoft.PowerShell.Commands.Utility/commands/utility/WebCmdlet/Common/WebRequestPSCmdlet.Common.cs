@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter AllowUnencryptedAuthentication { get; set; }
 
         /// <summary>
-        /// Gets or sets the Authentication property used to determin the Authentication method for the web session.
+        /// Gets or sets the Authentication property used to determine the Authentication method for the web session.
         /// Authentication does not work with UseDefaultCredentials.
         /// Authentication over unencrypted sessions requires AllowUnencryptedAuthentication.
         /// Basic: Requires Credential.

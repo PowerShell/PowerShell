@@ -373,7 +373,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Callled in response to a GUI event that requires the command to be run.
+        /// Called in response to a GUI event that requires the command to be run.
         /// </summary>
         internal void OnRunSelectedCommand()
         {
