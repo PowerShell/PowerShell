@@ -1359,7 +1359,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioError)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 ErrorRecord er = new ErrorRecord(ioError, "GetItemIOError", ErrorCategory.ReadError, path);
                 WriteError(er);
             }
@@ -2250,7 +2250,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "RenameItemIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -2362,7 +2362,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (IOException exception)
                 {
-                    // IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(exception, "NewItemIOError", ErrorCategory.WriteError, path));
                 }
                 catch (UnauthorizedAccessException accessException)
@@ -2858,7 +2858,7 @@ namespace Microsoft.PowerShell.Commands
                 // Ignore the error if force was specified
                 if (!Force)
                 {
-                    // IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(ioException, "CreateDirectoryIOError", ErrorCategory.WriteError, path));
                 }
             }
@@ -2933,7 +2933,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "CreateIntermediateDirectoriesIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -3076,7 +3076,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException exception)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(exception, "RemoveItemIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -3925,7 +3925,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (IOException ioException)
                             {
-                                // IOException contains specific message about the error occured and so no need for errordetails.
+                                // IOException contains specific message about the error occurred and so no need for errordetails.
                                 WriteError(new ErrorRecord(ioException, "CopyDirectoryInfoItemIOError", ErrorCategory.WriteError, file));
                             }
                             catch (UnauthorizedAccessException accessException)
@@ -3956,7 +3956,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (IOException ioException)
                             {
-                                // IOException contains specific message about the error occured and so no need for errordetails.
+                                // IOException contains specific message about the error occurred and so no need for errordetails.
                                 WriteError(new ErrorRecord(ioException, "CopyDirectoryInfoItemIOError", ErrorCategory.WriteError, childDir));
                             }
                             catch (UnauthorizedAccessException accessException)
@@ -5254,7 +5254,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (IOException ioError)
                 {
-                    // IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(ioError, "NormalizeRelativePathIOError", ErrorCategory.ReadError, path));
                     break;
                 }
@@ -5898,7 +5898,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "MoveItemIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -6011,7 +6011,7 @@ namespace Microsoft.PowerShell.Commands
                                 (exception is ArgumentNullException) ||
                                 (exception is IOException))
                             {
-                                // IOException contains specific message about the error occured and so no need for errordetails.
+                                // IOException contains specific message about the error occurred and so no need for errordetails.
                                 WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, destfile));
                             }
                             else
@@ -6020,13 +6020,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        // IOException contains specific message about the error occured and so no need for errordetails.
+                        // IOException contains specific message about the error occurred and so no need for errordetails.
                         WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, file));
                     }
                 }
                 else
                 {
-                    // IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, file));
                 }
             }
@@ -6097,7 +6097,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "MoveDirectoryItemIOError", ErrorCategory.WriteError, directory));
             }
         }
@@ -6259,7 +6259,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "GetPropertyIOError", ErrorCategory.ReadError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -6559,7 +6559,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "ClearPropertyIOError", ErrorCategory.WriteError, path));
             }
         }
@@ -6739,7 +6739,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "GetContentReaderIOError", ErrorCategory.ReadError, path));
             }
             catch (System.Security.SecurityException securityException)
@@ -6879,7 +6879,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "GetContentWriterIOError", ErrorCategory.WriteError, path));
             }
             catch (System.Security.SecurityException securityException)
@@ -7045,7 +7045,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "ClearContentIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -7177,7 +7177,7 @@ namespace Microsoft.PowerShell.Commands
             /// </param>
             /// <returns>If connection is established to the network resource
             /// then success is returned or else the error code describing the
-            /// type of failure that occured while establishing
+            /// type of failure that occurred while establishing
             /// the connection is returned.</returns>
             [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
             internal static extern int WNetAddConnection2(ref NetResource netResource, byte[] password, string username, int flags);
@@ -7197,7 +7197,7 @@ namespace Microsoft.PowerShell.Commands
             /// if there are open files or jobs.
             /// </param>
             /// <returns>If connection is removed then success is returned or
-            /// else the error code describing the type of failure that occured while
+            /// else the error code describing the type of failure that occurred while
             /// trying to remove the connection is returned.
             /// </returns>
             [DllImport("mpr.dll", CharSet = CharSet.Unicode)]

@@ -457,7 +457,7 @@ namespace Microsoft.PowerShell
                 }
 
                 // if the new size will extend past the edge of screen buffer, then move the window position to try to
-                // accomodate that.
+                // accommodate that.
 
                 ConsoleControl.SMALL_RECT r = bufferInfo.WindowRect;
 

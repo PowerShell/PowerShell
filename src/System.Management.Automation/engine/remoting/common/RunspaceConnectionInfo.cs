@@ -2191,7 +2191,7 @@ namespace System.Management.Automation.Runspaces
                 startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-i ""{0}""", this.KeyFilePath));
             }
 
-            // pass "-l login_name" commmand line argument to ssh if UserName is set
+            // pass "-l login_name" command line argument to ssh if UserName is set
             // if UserName is not set, then ssh will use User from ssh_config if defined else the environment user by default
             if (!string.IsNullOrEmpty(this.UserName))
             {

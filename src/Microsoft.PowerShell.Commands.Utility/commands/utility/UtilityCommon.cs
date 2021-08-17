@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
         public static string FileReadError { get { return UtilityCommonStrings.FileReadError; } }
 
         /// <summary>
-        /// The resource string used to indicate 'PATH:' in the formating header.
+        /// The resource string used to indicate 'PATH:' in the formatting header.
         /// </summary>
         public static string FormatHexPathPrefix { get { return UtilityCommonStrings.FormatHexPathPrefix; } }
 

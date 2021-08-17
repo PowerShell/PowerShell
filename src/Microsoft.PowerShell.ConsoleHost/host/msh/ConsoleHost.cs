@@ -2715,7 +2715,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    // an exception ocurred when the command was executed.  Tell the user about it.
+                    // an exception occurred when the command was executed.  Tell the user about it.
                     _parent.ReportException(e, _exec);
                 }
 

@@ -123,7 +123,7 @@ namespace System.Management.Automation
         ///         </atomicXml>
         ///        In this case, an PSObject that wraps string "atomic xml text" will be returned with following properties
         ///             attribute => name
-        ///     3. Composite xml, which is an xmlNode with structured child nodes, but not a special case for Maml formating.
+        ///     3. Composite xml, which is an xmlNode with structured child nodes, but not a special case for Maml formatting.
         ///         <compositeXml attribute="attribute">
         ///             <singleChildNode>
         ///                 single child node text
