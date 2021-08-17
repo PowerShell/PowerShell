@@ -1260,6 +1260,7 @@ ini
 package.json
 jcotton42
 RPMs
+PSDesiredStateConfiguration
  - CHANGELOG/preview.md
 Gimly
 jborean93
@@ -1371,6 +1372,7 @@ codesign
 release-BuildJson
 yml
 centos-7
+PSDesiredStateConfiguration
  - test/perf/benchmarks/README.md
 benchmarked
 BenchmarkDotNet
