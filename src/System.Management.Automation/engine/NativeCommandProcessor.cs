@@ -168,12 +168,12 @@ namespace System.Management.Automation
         {
             _fromProcess = inputProcess;
 
-            if (inputProcess.StartInfo.RedirectStandardOutput)
+            if (!inputProcess.StartInfo.RedirectStandardOutput)
             {
                 _stdoutHandler = new ProcessStdoutHandler(inputProcess, outputQueue);
             }
 
-            if (inputProcess.StartInfo.RedirectStandardError)
+            if (!inputProcess.StartInfo.RedirectStandardError)
             {
                 _stderrHandler = new ProcessStderrHandler(inputProcess, outputQueue);
             }
@@ -186,7 +186,12 @@ namespace System.Management.Automation
 
         public void WaitForPipeCompletion()
         {
-            _fromProcess.StandardOutput.BaseStream.CopyTo(_toProcess.StandardInput.BaseStream);
+            if (_fromProcess.StartInfo.RedirectStandardOutput)
+            {
+                _fromProcess.StandardOutput.BaseStream.CopyTo(_toProcess.StandardInput.BaseStream);
+            }
+
+            // TODO: Handle redirected error
         }
 
         public void Dispose()
@@ -738,12 +743,12 @@ namespace System.Management.Automation
                             return;
                         }
 
-                        if (_nativeProcess.StartInfo.RedirectStandardOutput)
+                        if (!_nativeProcess.StartInfo.RedirectStandardOutput)
                         {
                             _stdoutHandler = new ProcessStdoutHandler(_nativeProcess, _nativeProcessOutputQueue);
                         }
 
-                        if (_nativeProcess.StartInfo.RedirectStandardError)
+                        if (!_nativeProcess.StartInfo.RedirectStandardError)
                         {
                             _stderrHandler = new ProcessStderrHandler(_nativeProcess, _nativeProcessOutputQueue);
                         }
@@ -827,9 +832,9 @@ namespace System.Management.Automation
                     // read all the available output in the blocking way
                     ConsumeAvailableNativeProcessOutput(blocking: true);
 
-                    if (UpstreamNativePipe is not null)
+                    if (DownstreamNativePipe is not null)
                     {
-                        UpstreamNativePipe.WaitForPipeCompletion();
+                        DownstreamNativePipe.WaitForPipeCompletion();
                     }
 
                     _nativeProcess.WaitForExit();
