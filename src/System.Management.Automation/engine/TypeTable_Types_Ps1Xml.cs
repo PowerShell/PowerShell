@@ -676,17 +676,6 @@ namespace System.Management.Automation.Runspaces
                 typeMembers,
                 isOverride: false);
 
-            newMembers.Add(@"Target");
-            AddMember(
-                errors,
-                typeName,
-                new PSCodeProperty(
-                    @"Target",
-                    GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), @"GetTarget"),
-                    setterCodeReference: null),
-                typeMembers,
-                isOverride: false);
-
             newMembers.Add(@"LinkType");
             AddMember(
                 errors,

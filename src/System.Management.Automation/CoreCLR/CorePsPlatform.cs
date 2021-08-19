@@ -516,11 +516,6 @@ namespace System.Management.Automation
             return Unix.IsHardLink(fileInfo);
         }
 
-        internal static string NonWindowsInternalGetTarget(string path)
-        {
-            return Unix.NativeMethods.FollowSymLink(path);
-        }
-
         internal static string NonWindowsGetUserFromPid(int path)
         {
             return Unix.NativeMethods.GetUserFromPid(path);
@@ -1138,10 +1133,6 @@ namespace System.Management.Automation
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)] string filePath,
                                                           [MarshalAs(UnmanagedType.LPStr)] string target);
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string FollowSymLink([MarshalAs(UnmanagedType.LPStr)] string filePath);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]

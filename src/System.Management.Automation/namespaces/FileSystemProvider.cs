@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
         /// <exception cref="System.UnauthorizedAccessException">
         /// An I/O error or a specific type of security error.
         /// </exception>
-        private static FileSystemInfo GetFileSystemInfo(string path, out bool isContainer)
+        internal static FileSystemInfo GetFileSystemInfo(string path, out bool isContainer)
         {
             // We use 'FileInfo.Attributes' (not 'FileInfo.Exist')
             // because we want to get exceptions
@@ -2069,7 +2069,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo))
                     {
-                        return $"{PSStyle.Instance.FileInfo.SymbolicLink}{fileInfo.Name}{PSStyle.Instance.Reset} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}";
+                        return $"{PSStyle.Instance.FileInfo.SymbolicLink}{fileInfo.Name}{PSStyle.Instance.Reset} -> {fileInfo.LinkTarget}";
                     }
                     else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
                     {
@@ -2096,7 +2096,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return instance?.BaseObject is FileSystemInfo fileInfo
                     ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo)
-                        ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
+                        ? $"{fileInfo.Name} -> {fileInfo.LinkTarget}"
                         : fileInfo.Name
                     : string.Empty;
             }
@@ -8112,11 +8112,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
-#if !UNIX
-                return WinInternalGetTarget(fileSysInfo.FullName);
-#else
-               return UnixInternalGetTarget(fileSysInfo.FullName);
-#endif
+                return fileSysInfo.LinkTarget;
             }
 
             return null;
@@ -8138,20 +8134,6 @@ namespace Microsoft.PowerShell.Commands
 
             return null;
         }
-
-#if UNIX
-        private static string UnixInternalGetTarget(string filePath)
-        {
-            string link = Platform.NonWindowsInternalGetTarget(filePath);
-
-            if (string.IsNullOrEmpty(link))
-            {
-                throw new Win32Exception(Marshal.GetLastWin32Error());
-            }
-
-            return link;
-        }
-#endif
 
         private static string InternalGetLinkType(FileSystemInfo fileInfo)
         {
@@ -8445,99 +8427,6 @@ namespace Microsoft.PowerShell.Commands
             bool succeeded = InternalSymbolicLinkLinkCodeMethods.GetFileInformationByHandle(handle, out handleInfo);
             return succeeded && (handleInfo.NumberOfLinks > 1);
         }
-
-#if !UNIX
-        internal static string WinInternalGetTarget(string path)
-        {
-            // We set accessMode parameter to zero because documentation says:
-            // If this parameter is zero, the application can query certain metadata
-            // such as file, directory, or device attributes without accessing
-            // that file or device, even if GENERIC_READ access would have been denied.
-            using (SafeFileHandle handle = OpenReparsePoint(path, FileDesiredAccess.GenericZero))
-            {
-                return WinInternalGetTarget(handle);
-            }
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        private static string WinInternalGetTarget(SafeFileHandle handle)
-        {
-            int outBufferSize = Marshal.SizeOf<REPARSE_DATA_BUFFER_SYMBOLICLINK>();
-
-            IntPtr outBuffer = Marshal.AllocHGlobal(outBufferSize);
-            bool success = false;
-
-            try
-            {
-                int bytesReturned;
-
-                // OACR warning 62001 about using DeviceIOControl has been disabled.
-                // According to MSDN guidance DangerousAddRef() and DangerousRelease() have been used.
-                handle.DangerousAddRef(ref success);
-
-                bool result = DeviceIoControl(
-                    handle.DangerousGetHandle(),
-                    FSCTL_GET_REPARSE_POINT,
-                    InBuffer: IntPtr.Zero,
-                    nInBufferSize: 0,
-                    outBuffer,
-                    outBufferSize,
-                    out bytesReturned,
-                    lpOverlapped: IntPtr.Zero);
-
-                if (!result)
-                {
-                    // It's not a reparse point or the file system doesn't support reparse points.
-                    return null;
-                }
-
-                string targetDir = null;
-
-                REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
-
-                switch (reparseDataBuffer.ReparseTag)
-                {
-                    case IO_REPARSE_TAG_SYMLINK:
-                        targetDir = Encoding.Unicode.GetString(reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength);
-                        break;
-
-                    case IO_REPARSE_TAG_MOUNT_POINT:
-                        REPARSE_DATA_BUFFER_MOUNTPOINT reparseMountPointDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_MOUNTPOINT>(outBuffer);
-                        targetDir = Encoding.Unicode.GetString(reparseMountPointDataBuffer.PathBuffer, reparseMountPointDataBuffer.SubstituteNameOffset, reparseMountPointDataBuffer.SubstituteNameLength);
-                        break;
-
-                    case IO_REPARSE_TAG_APPEXECLINK:
-                        REPARSE_DATA_BUFFER_APPEXECLINK reparseAppExeDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_APPEXECLINK>(outBuffer);
-                        // The target file is at index 2
-                        if (reparseAppExeDataBuffer.StringCount >= 3)
-                        {
-                            string temp = Encoding.Unicode.GetString(reparseAppExeDataBuffer.StringList);
-                            targetDir = temp.Split('\0')[2];
-                        }
-                        break;
-
-                    default:
-                        return null;
-                }
-
-                if (targetDir != null && targetDir.StartsWith(NonInterpretedPathPrefix, StringComparison.OrdinalIgnoreCase))
-                {
-                    targetDir = targetDir.Substring(NonInterpretedPathPrefix.Length);
-                }
-
-                return targetDir;
-            }
-            finally
-            {
-                if (success)
-                {
-                    handle.DangerousRelease();
-                }
-
-                Marshal.FreeHGlobal(outBuffer);
-            }
-        }
-#endif
 
         internal static bool CreateJunction(string path, string target)
         {

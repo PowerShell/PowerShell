@@ -984,7 +984,7 @@ namespace System.Management.Automation
             // SHGetFileInfo() does not understand reparse points and returns 0 ("non exe or error")
             // so we are trying to get a real path before.
             // It is a workaround for Microsoft Store applications.
-            string realPath = Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods.WinInternalGetTarget(fileName);
+            string realPath = Microsoft.PowerShell.Commands.FileSystemProvider.GetFileSystemInfo(fileName, out _).LinkTarget; 
             if (realPath is not null)
             {
                 fileName = realPath;
