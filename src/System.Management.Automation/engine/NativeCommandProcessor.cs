@@ -137,15 +137,15 @@ namespace System.Management.Automation
     /// when a native command retuns a non-zero exit code.
     /// </summary>
     [Serializable]
-    public class NativeCommandExitException : RuntimeException
+    public sealed class NativeCommandExitException : RuntimeException
     {
         // NOTE:
         // When implementing the native error action preference integration,
         // reusing ApplicationFailedException was rejected.
-        // Instead of reusing the type already used in another scenario
-        // it was decided instead to use a fresh type to minimize the chance of conflating the two scenarios:
-        // * ApplicationFailedException: PowerShell can not execute an application.
-        // * NativeCommandExitException: an application was successfully executed and completed but return non-zero exit code.
+        // Instead of reusing a type already used in another scenario
+        // it was decided instead to use a fresh type to avoid conflating the two scenarios:
+        // * ApplicationFailedException: PowerShell was not able to complete execution of the application.
+        // * NativeCommandExitException: the application completed execution but returned a non-zero exit code.
 
         #region Constructors
 
@@ -157,7 +157,7 @@ namespace System.Management.Automation
         /// <param name="exitCode">The exit code returned by the native command.</param>
         /// <param name="processId">The process ID of the process before it ended.</param>
         /// <param name="message">The error message.</param>
-        /// <param name="errorId">The error ID.</param>
+        /// <param name="errorId">The PowerShell runtime error ID.</param>
         internal NativeCommandExitException(string path, int exitCode, int processId, string message, string errorId)
             : base(message)
         {
@@ -171,7 +171,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class.
         /// </summary>
-        public NativeCommandExitException() : base() { }
+        public NativeCommandExitException() : base()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with a specified error message.
@@ -179,7 +181,9 @@ namespace System.Management.Automation
         /// <param name="message">
         /// A localized error message.
         /// </param>
-        public NativeCommandExitException(string message) : base(message) { }
+        public NativeCommandExitException(string message) : base(message)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with a specified error message
@@ -200,7 +204,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        protected NativeCommandExitException(SerializationInfo info, StreamingContext context)
+        private NativeCommandExitException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
             if (info is null)
@@ -242,12 +246,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the exit code returned by the native command.
         /// </summary>
-        public int? ExitCode { get; }
+        public int ExitCode { get; }
 
         /// <summary>
-        /// Gets the native command's process Id.
+        /// Gets the native command's process ID.
         /// </summary>
-        public int? ProcessId { get; }
+        public int ProcessId { get; }
 
     }
     #nullable restore
