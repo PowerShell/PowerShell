@@ -1146,14 +1146,14 @@ dir -Recurse `
             $inputStr = 'Invoke-WebRequest -HttpVersion '
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches | Should -HaveCount 4
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "'1.0','1.1','2.0','3.0'"
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "1.0,1.1,2.0,3.0"
         }
 
         It "Test completion for HttpVersion parameter with input" {
             $inputStr = 'Invoke-WebRequest -HttpVersion 1'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches | Should -HaveCount 2
-            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "'1.0','1.1'"
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "1.0,1.1"
         }
     }
 

@@ -2658,7 +2658,6 @@ namespace Microsoft.PowerShell.Commands
 
             public CommandArgumentToVersionTransformationAttribute() : base(s_versionMap)
             {
-
             }
         }
 
