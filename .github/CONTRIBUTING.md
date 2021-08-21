@@ -34,7 +34,7 @@ Please read the rest of this document to ensure a smooth contribution process.
 * Issues marked as [`First-Time-Issue`][first-time-issue],
   are identified as being easy and a great way to learn about this project and making
   contributions.
-
+ 
 ## Contributing to Documentation
 
 ### Contributing to documentation related to PowerShell
