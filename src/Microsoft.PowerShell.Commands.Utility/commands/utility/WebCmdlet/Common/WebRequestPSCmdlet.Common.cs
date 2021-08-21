@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ArgumentToVersionTransformation]
-        [ArgumentCompleter(typeof(HttpVersionCompleter))]
+        [HttpVersionCompletions]
         public virtual Version HttpVersion { get; set; }
 
         #endregion

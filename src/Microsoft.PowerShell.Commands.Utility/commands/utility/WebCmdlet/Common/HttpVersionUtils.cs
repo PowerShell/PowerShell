@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
 {
     internal static class HttpVersionUtils
     {
-        public static readonly IReadOnlyCollection<string> AllowedVersions;
+        public static readonly string[] AllowedVersions;
 
         static HttpVersionUtils()
         {
@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
                 versions.Add(version.ToString());
             }
 
-            AllowedVersions = versions;
+            AllowedVersions = versions.ToArray();
         }
     }
 }

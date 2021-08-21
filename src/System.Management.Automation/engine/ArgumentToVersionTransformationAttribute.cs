@@ -3,8 +3,8 @@
 
 #nullable enable
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 
 namespace System.Management.Automation
 {
@@ -15,19 +15,50 @@ namespace System.Management.Automation
     /// </summary>
     public class ArgumentToVersionTransformationAttribute : ArgumentTransformationAttribute
     {
+        private static readonly IReadOnlyDictionary<string, Version> _empty = new Dictionary<string, Version>();
+
+        private readonly IReadOnlyDictionary<string, Version> _map;
+
+        /// <summary>
+        /// Initializes a new instance of the ArgumentToVersionTransformationAttribute class with empty version map.
+        /// </summary>
+        public ArgumentToVersionTransformationAttribute() : this(_empty)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ArgumentToVersionTransformationAttribute class.
+        /// </summary>
+        /// <param name="map">Version mapping.</param>
+        public ArgumentToVersionTransformationAttribute(IReadOnlyDictionary<string, Version> map)
+        {
+            _map = map ?? _empty;
+        }
+
         /// <inheritdoc/>
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
             object version = PSObject.Base(inputData);
 
-            if (version is string versionStr && TryString(versionStr, inputData, out var fromStr))
+            if (version is string versionStr)
             {
-                return fromStr;
+                if (TryMap(versionStr, out var fromMap))
+                {
+                    return fromMap;
+                }
+
+                if (versionStr.Contains('.'))
+                {
+                    // If the string contains a '.', let the Version constructor handle the conversion.
+                    return inputData;
+                }
             }
 
-            if (version is double versionDbl && TryDouble(versionDbl, inputData, out var fromDbl))
+            if (version is double)
             {
-                return fromDbl;
+                // The conversion to int below is wrong, but the usual conversions will turn
+                // the double into a string, so just return the original object.
+                return inputData;
             }
 
             if (LanguagePrimitives.TryConvertTo<int>(version, out var majorVersion))
@@ -38,37 +69,9 @@ namespace System.Management.Automation
             return inputData;
         }
 
-        /// <summary>
-        /// Try to convert string input.
-        /// </summary>
-        /// <param name="versionString"><see cref="string"/> input data.</param>
-        /// <param name="inputData">Original value.</param>
-        /// <param name="version">Parsed <see cref="Version"/>.</param>
-        /// <returns>true if conversion succeeds.</returns>
-        protected virtual bool TryString(string versionString, object inputData, [NotNullWhen(true)] out object? version)
+        private bool TryMap(string versionName, [NotNullWhen(true)] out Version? version)
         {
-            if (versionString.Contains('.'))
-            {
-                version = inputData;
-                return true;
-            } 
-
-            version = null;
-            return false;
-        }
-
-        /// <summary>
-        /// Try to convert double input.
-        /// </summary>
-        /// <param name="versionDouble"><see cref="double"/> intput data.</param>
-        /// <param name="inputData">Original value.</param>
-        /// <param name="version">Parsed <see cref="Version"/>.</param>
-        /// <returns>true if conversion succeeds.</returns>
-        protected virtual bool TryDouble(double versionDouble, object inputData, [NotNullWhen(true)] out object? version)
-        {
-            // just return as is
-            version = inputData;
-            return true;
+            return _map.TryGetValue(versionName, out version);
         }
     }
 }

@@ -2651,15 +2651,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private sealed class CommandArgumentToVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
         {
-            protected override bool TryString(string versionString, object inputData, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out object version)
+            private static readonly IReadOnlyDictionary<string, Version> s_versionMap = new Dictionary<string, Version>(StringComparer.OrdinalIgnoreCase)
             {
-                if (versionString.Equals("latest", StringComparison.OrdinalIgnoreCase))
-                {
-                    version = PSVersionInfo.PSVersion;
-                    return true;
-                }
+                ["latest"] = PSVersionInfo.PSVersion,
+            };
 
-                return base.TryString(versionString, inputData, out version);
+            public CommandArgumentToVersionTransformationAttribute() : base(s_versionMap)
+            {
+
             }
         }
 
