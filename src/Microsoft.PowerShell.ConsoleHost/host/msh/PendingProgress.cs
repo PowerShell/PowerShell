@@ -851,18 +851,6 @@ namespace Microsoft.PowerShell
             }
 
             // If we get all the way to here, then we've compressed all the nodes and we still don't fit.
-
-#if DEBUG || ASSERTIONS_TRACE
-
-            Dbg.Assert(
-                nodesCompressed == CountNodes(),
-                "We should have compressed every node in the tree.");
-            Dbg.Assert(
-                AllNodesHaveGivenStyle(_topLevelNodes, newStyle),
-                "We should have compressed every node in the tree.");
-
-#endif
-
             return false;
         }
 
