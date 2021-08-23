@@ -258,7 +258,7 @@ namespace System.Management.Automation
         internal const string PSNativeCommandUseErrorActionPreference = nameof(PSNativeCommandUseErrorActionPreference);
 
         internal static readonly VariablePath PSNativeCommandUseErrorActionPreferenceVarPath =
-            new VariablePath(PSNativeCommandUseErrorActionPreference);
+            new(PSNativeCommandUseErrorActionPreference);
 
         #endregion Preference Variables
 
