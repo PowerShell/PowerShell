@@ -865,10 +865,7 @@ namespace System.Management.Automation
                     this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
                     if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName)
-                        || !Command.Context.GetBooleanPreference(
-                                SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath,
-                                InitialSessionState.DefaultPSNativeCommandUseErrorActionPreference,
-                                out _))
+                        || !(bool)Command.Context.GetVariableValue(SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath))
                     {
                         return;
                     }
