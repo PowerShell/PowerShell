@@ -326,9 +326,9 @@ namespace System.Management.Automation
                                                                    /* PSCommandPath */     typeof(string),
                                                                  };
 
-        // This array and the one below it exist to optimize the way common parameters work in cmdlets/advanced functions.
-        // Common parameters work by setting preference variables in the scope of the cmdlet and restoring the old value afterward.
-        // Preference variables that don't correspond to common cmdlet parameters don't need to be added here.
+        // This array and the one below it exist to optimize the way common parameters work in advanced functions.
+        // Common parameters work by setting preference variables in the scope of the function and restoring the old value afterward.
+        // Variables that don't correspond to common cmdlet parameters don't need to be added here.
         internal static readonly string[] PreferenceVariables =
         {
             SpecialVariables.DebugPreference,
@@ -416,6 +416,5 @@ namespace System.Management.Automation
         Warning = 13,
         Information = 14,
         Confirm = 15,
-        PSNativeCommandUseErrorAction = 16,
     }
 }
