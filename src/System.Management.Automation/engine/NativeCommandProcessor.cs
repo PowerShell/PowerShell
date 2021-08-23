@@ -909,25 +909,22 @@ namespace System.Management.Automation
                         ActionPreference.SilentlyContinue,
                         out _);
 
-                    if (errorActionPref != ActionPreference.Ignore)
-                    {
-                        const string errorId = nameof(CommandBaseStrings.ProgramFailedToComplete);
+                    const string errorId = nameof(CommandBaseStrings.ProgramFailedToComplete);
 
-                        string errorMsg = StringUtil.Format(
-                            CommandBaseStrings.ProgramFailedToComplete,
-                            NativeCommandName,
-                            _nativeProcess.ExitCode);
+                    string errorMsg = StringUtil.Format(
+                        CommandBaseStrings.ProgramFailedToComplete,
+                        NativeCommandName,
+                        _nativeProcess.ExitCode);
 
-                        var exception = new NativeCommandExitException(
-                            Path,
-                            _nativeProcess.ExitCode,
-                            _nativeProcess.Id,
-                            errorMsg,
-                            errorId);
+                    var exception = new NativeCommandExitException(
+                        Path,
+                        _nativeProcess.ExitCode,
+                        _nativeProcess.Id,
+                        errorMsg,
+                        errorId);
 
-                        var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.NotSpecified, targetObject: null);
-                        this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord);
-                    }
+                    var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.NotSpecified, targetObject: null);
+                    this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord);
                 }
             }
             catch (Win32Exception e)
