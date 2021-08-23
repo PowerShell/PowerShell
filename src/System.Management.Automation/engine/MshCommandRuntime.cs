@@ -2809,7 +2809,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errorRecord">The error record to write.</param>
         /// <param name="actionPreference">The configured error action preference.</param>
-        /// <param name="isFromNativeStdError">True when this method is called to write from a native command's stderr stream.</param>
+        /// <param name="isFromNativeStdError">
+        /// True when this method is called to write from a native command's stderr stream.
+        /// When errors are written through a native stderr stream, they do not interact with the error preference system,
+        /// but must still present as errors in PowerShell.
+        /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
