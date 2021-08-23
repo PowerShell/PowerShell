@@ -878,10 +878,10 @@ namespace System.Management.Automation
                         ActionPreference.SilentlyContinue,
                         out _);
 
-                    const string errorId = nameof(CommandBaseStrings.ProgramEndsWithNonZeroCode);
+                    const string errorId = nameof(CommandBaseStrings.ProgramExitedWithNonZeroCode);
 
                     string errorMsg = StringUtil.Format(
-                        CommandBaseStrings.ProgramEndsWithNonZeroCode,
+                        CommandBaseStrings.ProgramExitedWithNonZeroCode,
                         NativeCommandName,
                         _nativeProcess.ExitCode);
 
