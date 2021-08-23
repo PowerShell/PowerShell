@@ -169,37 +169,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class.
-        /// </summary>
-        public NativeCommandExitException() : base()
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with a specified error message.
-        /// </summary>
-        /// <param name="message">
-        /// A localized error message.
-        /// </param>
-        public NativeCommandExitException(string message) : base(message)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with a specified error message
-        /// and a reference to the inner exception that is the cause of this exception.
-        /// </summary>
-        /// <param name="message">
-        /// Localized error message.
-        /// </param>
-        /// <param name="innerException">
-        /// Inner exception.
-        /// </param>
-        public NativeCommandExitException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with serialized data.
         /// </summary>
         /// <param name="info"></param>
