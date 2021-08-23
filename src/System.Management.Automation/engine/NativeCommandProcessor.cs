@@ -925,7 +925,7 @@ namespace System.Management.Automation
                             errorMsg,
                             errorId);
 
-                        var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.NotSpecified, null);
+                        var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.NotSpecified, targetObject: null);
                         this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord);
                     }
                 }
