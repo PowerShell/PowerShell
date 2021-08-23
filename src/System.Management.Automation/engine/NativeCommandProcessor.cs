@@ -909,10 +909,10 @@ namespace System.Management.Automation
                         ActionPreference.SilentlyContinue,
                         out _);
 
-                    const string errorId = nameof(CommandBaseStrings.ProgramFailedToComplete);
+                    const string errorId = nameof(CommandBaseStrings.ProgramEndsWithNonZeroCode);
 
                     string errorMsg = StringUtil.Format(
-                        CommandBaseStrings.ProgramFailedToComplete,
+                        CommandBaseStrings.ProgramEndsWithNonZeroCode,
                         NativeCommandName,
                         _nativeProcess.ExitCode);
 

@@ -156,7 +156,7 @@
   <data name="PauseHelpMessage" xml:space="preserve">
     <value>Pause the current pipeline and return to the command prompt. Type "{0}" to resume the pipeline.</value>
   </data>
-  <data name="ProgramFailedToComplete" xml:space="preserve">
+  <data name="ProgramEndsWithNonZeroCode" xml:space="preserve">
     <!-- NOTE:
       This string was added for the native command error action preference integration feature.
       ParserStrings already declares a ProgramFailedToExecute string,

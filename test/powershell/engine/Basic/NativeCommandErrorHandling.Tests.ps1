@@ -39,10 +39,10 @@ Describe 'Native command error handling tests' -Tags 'CI' {
         It 'Non-zero exit code throws teminating error for $ErrorActionPreference = ''Stop''' {
             $ErrorActionPreference = 'Stop'
 
-            { testexe -returncode 1 } | Should -Throw -ErrorId 'ProgramFailedToComplete'
+            { testexe -returncode 1 } | Should -Throw -ErrorId 'ProgramEndsWithNonZeroCode'
 
             $error.Count | Should -Be 1
-            $error[0].FullyQualifiedErrorId | Should -Be 'ProgramFailedToComplete'
+            $error[0].FullyQualifiedErrorId | Should -Be 'ProgramEndsWithNonZeroCode'
         }
 
         It 'Non-zero exit code outputs a non-teminating error for $ErrorActionPreference = ''Continue''' {
@@ -50,7 +50,7 @@ Describe 'Native command error handling tests' -Tags 'CI' {
 
             $stderr = testexe -returncode 1 2>&1
 
-            $error[0].FullyQualifiedErrorId | Should -Be 'ProgramFailedToComplete'
+            $error[0].FullyQualifiedErrorId | Should -Be 'ProgramEndsWithNonZeroCode'
             $stderr[1].Exception.Message | Should -Be "Program `"$exeName`" ended with non-zero exit code: 1."
         }
 
@@ -60,7 +60,7 @@ Describe 'Native command error handling tests' -Tags 'CI' {
             testexe -returncode 1 > $null
 
             $error.Count | Should -Be 1
-            $error[0].FullyQualifiedErrorId | Should -Be 'ProgramFailedToComplete'
+            $error[0].FullyQualifiedErrorId | Should -Be 'ProgramEndsWithNonZeroCode'
         }
 
         It 'Non-zero exit code does not generates an error record for $ErrorActionPreference = ''Ignore''' {
