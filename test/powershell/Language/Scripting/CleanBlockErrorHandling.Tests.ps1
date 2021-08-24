@@ -221,53 +221,53 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
         $pwsh.Dispose()
     }
 
-    It "Terminating error stops the 'Clean' block execution but is not propagated up" {
+    It "Terminating error should stop the 'Clean' block execution but should not be propagated up" {
         ## 'ThrowTerminatingException' stops the execution within the 'Clean' block, but the error doesn't get
         ## propagated out of the 'Clean' block. Instead, the error is written to the 'ErrorOutput' pipe.
         RunCommand -Command 'ErrorInClean' -ParamNameToUse 'ThrowTerminatingError'
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'terminating-exception'
 
         ## 'throw' statement stops the execution within the 'Clean' block by default, but the error doesn't get
         ## propagated out of the 'Clean' block. Instead, the error is written to the 'ErrorOutput' pipe.
         RunCommand -Command 'ErrorInClean' -ParamNameToUse 'ThrowException'
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'throw-exception'
 
         ## '-ErrorAction Stop' stops the execution within the 'Clean' block, but the error doesn't get propagated
         ## out of the 'Clean' block. Instead, the error is written to the 'ErrorOutput' pipe.
         RunCommand -Command 'ErrorInClean' -ParamNameToUse 'ErrorActionStop'
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand'
 
         ## Turn non-terminating errors into terminating by '-ErrorAction Stop' explicitly.
         ## Execution within the 'Clean' block should be stopped. The resulted terminating error should not get
         ## propagated, but instead should be written to 'ErrorOutput' pipe.
         RunCommand -Command 'ErrorInClean' -ParamNameToUse 'WriteErrorAPI' -ErrorAction Stop
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'arg-exception'
 
         RunCommand -Command 'ErrorInClean' -ParamNameToUse 'WriteErrorCmdlet' -ErrorAction Stop
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'write-error-cmdlet'
 
         RunCommand -Command 'ErrorInClean' -ParamNameToUse 'MethodInvocationThrowException' -ErrorAction Stop
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.ArgumentNullException'
 
         RunCommand -Command 'ErrorInClean' -ParamNameToUse 'ExpressionThrowException' -ErrorAction Stop
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
     }
 
-    It "Terminating error stops the 'Clean' block execution but is not propagated up -- checking `$?" {
+    It "Terminating error should set `$? correctly" {
         RunScript -Script 'ErrorInClean -ThrowTerminatingError; $?' | Should -BeFalse
         RunScript -Script 'ErrorInClean -ThrowException; $?' | Should -BeFalse
         RunScript -Script 'ErrorInClean -ErrorActionStop; $?' | Should -BeFalse
@@ -277,59 +277,63 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
         RunScript -Script 'ErrorInClean -ExpressionThrowException -ErrorAction Stop; $?' | Should -BeFalse
     }
 
-    It "Non-terminating error within 'Clean' block acts based on `$ErrorActionPreference: Continue (default)" {
-        RunCommand -Command 'ErrorInClean' -ParamNameToUse 'WriteErrorAPI'
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
-        $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
-        $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'arg-exception'
-
-        RunCommand -Command 'ErrorInClean' -ParamNameToUse 'WriteErrorCmdlet'
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
-        $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
-        $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'write-error-cmdlet'
-
-        RunCommand -Command 'ErrorInClean' -ParamNameToUse 'MethodInvocationThrowException'
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
-        $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
-        $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.ArgumentNullException'
-
-        RunCommand -Command 'ErrorInClean' -ParamNameToUse 'ExpressionThrowException'
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
-        $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
-        $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
-    }
-
-    It "Non-terminating error within 'Clean' block acts based on `$ErrorActionPreference: Continue (default) -- checking `$?" {
+    It "Track the `$? behavior for non-terminating errors within 'Clean' and 'End' blocks" {
         RunScript -Script 'ErrorInClean -WriteErrorAPI; $?' | Should -BeFalse
         RunScript -Script 'ErrorInEnd -WriteErrorAPI; $?' | Should -BeFalse
 
         ## The 'Write-Error' is specially weird, in that when a command emits error because of 'Write-Error' within it,
-        ## the subsequent '$?' won't reflect '$false', but will be '$true'.
+        ## the following '$?' won't reflect '$false', but will be '$true'.
         ## Frankly, this is counter-intuitive, but it's the existing behavior. The tests below just keeps track of this
         ## behavior. Feel free to change this test if someone is fixing this seemingly wrong behavior.
         RunScript -Script 'ErrorInClean -WriteErrorCmdlet; $?' | Should -BeTrue
         RunScript -Script 'ErrorInEnd -WriteErrorCmdlet; $?' | Should -BeTrue
 
         ## Similarly, when a command emits error because of a method invocation within it throws an exception,
-        ## the subsequent '$?' won't reflect '$false', but will be '$true'.
+        ## the following '$?' won't reflect '$false', but will be '$true'.
         ## Again, this seems wrong, but it's the existing behavior. The tests below just keeps track of this
         ## behavior. Feel free to change this test if someone is fixing this seemingly wrong behavior.
         RunScript -Script 'ErrorInClean -MethodInvocationThrowException; $?' | Should -BeTrue
         RunScript -Script 'ErrorInEnd -MethodInvocationThrowException; $?' | Should -BeTrue
 
         ## Again, when a command emits error because of an expression within it throws an exception,
-        ## the subsequent '$?' won't reflect '$false', but will be '$true'.
+        ## the following '$?' won't reflect '$false', but will be '$true'.
         ## This seems wrong, but it's the existing behavior. The tests below just keeps track of this
         ## behavior. Feel free to change this test if someone is fixing this seemingly wrong behavior.
         RunScript -Script 'ErrorInClean -ExpressionThrowException; $?' | Should -BeTrue
         RunScript -Script 'ErrorInEnd -ExpressionThrowException; $?' | Should -BeTrue
     }
 
-    It "Non-terminating error within 'Clean' block acts based on `$ErrorActionPreference: <ParamName> - <Action>" -TestCases @(
+    It "Non-terminating error within 'Clean' block should act based on ErrorActionPreference: <ParamName> - Continue" -TestCases @(
+        @{ ParamName = 'WriteErrorAPI';    AssertScript = { param($err) $err.Exception.Message | Should -BeExactly 'arg-exception' } }
+        @{ ParamName = 'WriteErrorCmdlet'; AssertScript = { param($err) $err.Exception.Message | Should -BeExactly 'write-error-cmdlet' } }
+        @{ ParamName = 'MethodInvocationThrowException'; AssertScript = { param($err) $err.Exception.InnerException | Should -BeOfType 'System.ArgumentNullException' } }
+        @{ ParamName = 'ExpressionThrowException';       AssertScript = { param($err) $err.Exception.InnerException | Should -BeOfType 'System.DivideByZeroException' } }
+    ) {
+        param($ParamName, $AssertScript)
+
+        RunCommand -Command 'ErrorInClean' -ParamNameToUse $ParamName
+        $pwsh.Streams.Verbose.Count | Should -Be 1
+        $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
+        $pwsh.Streams.Error.Count | Should -Be 1
+        & $AssertScript $pwsh.Streams.Error[0]
+    }
+
+    It "Non-terminating error within 'End' block should act based on ErrorActionPreference: <ParamName> - Continue" -TestCases @(
+        @{ ParamName = 'WriteErrorAPI';    AssertScript = { param($err) $err.Exception.Message | Should -BeExactly 'arg-exception' } }
+        @{ ParamName = 'WriteErrorCmdlet'; AssertScript = { param($err) $err.Exception.Message | Should -BeExactly 'write-error-cmdlet' } }
+        @{ ParamName = 'MethodInvocationThrowException'; AssertScript = { param($err) $err.Exception.InnerException | Should -BeOfType 'System.ArgumentNullException' } }
+        @{ ParamName = 'ExpressionThrowException';       AssertScript = { param($err) $err.Exception.InnerException | Should -BeOfType 'System.DivideByZeroException' } }
+    ) {
+        param($ParamName, $AssertScript)
+
+        RunCommand -Command 'ErrorInEnd' -ParamNameToUse $ParamName
+        $pwsh.Streams.Verbose.Count | Should -Be 1
+        $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
+        $pwsh.Streams.Error.Count | Should -Be 1
+        & $AssertScript $pwsh.Streams.Error[0]
+    }
+
+    It "Non-terminating error within 'Clean' block should act based on ErrorActionPreference: <ParamName> - <Action>" -TestCases @(
         ### When error action is 'Ignore', non-terminating errors emitted by 'WriteErrorAPI' and 'WriteErrorCmdlet' are not captured in $Error,
         ### but non-terminating errors emitted by method exception or expression exception are captured in $Error.
         ### This inconsistency is surprising, but it's the existing behavior -- same in other named blocks.
@@ -348,8 +352,8 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
         ClearDollarError
         RunCommand -Command 'ErrorInClean' -ParamNameToUse $ParamName -ErrorAction $Action
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 0
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 0
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
 
         $lastErr = GetLastError
@@ -363,11 +367,12 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
 
     ### These tests are targeting 'End' block but with the same settings as the ones right above.
     ### They are used as a comparison to prove the consistent behavior in 'End' and 'Clean'.
-    It "Non-terminating error within 'End' block acts based on `$ErrorActionPreference: <ParamName> - <Action>" -TestCases @(
+    It "Non-terminating error within 'End' block should act based on ErrorActionPreference: <ParamName> - <Action>" -TestCases @(
         @{ ParamName = 'WriteErrorAPI'; Action = 'Ignore'; AssertScript = $null }
         @{ ParamName = 'WriteErrorCmdlet'; Action = 'Ignore'; AssertScript = $null }
         @{ ParamName = 'MethodInvocationThrowException'; Action = 'Ignore'; AssertScript = { param($err) $err.Exception.InnerException | Should -BeOfType 'System.ArgumentNullException' } }
         @{ ParamName = 'ExpressionThrowException'; Action = 'Ignore'; AssertScript = { param($err) $err.Exception.InnerException | Should -BeOfType 'System.DivideByZeroException' } }
+
         @{ ParamName = 'WriteErrorAPI'; Action = 'SilentlyContinue'; AssertScript = { param($err) $err.Exception.Message | Should -BeExactly 'arg-exception' } }
         @{ ParamName = 'WriteErrorCmdlet'; Action = 'SilentlyContinue'; AssertScript = { param($err) $err.Exception.Message | Should -BeExactly 'write-error-cmdlet' } }
         @{ ParamName = 'MethodInvocationThrowException'; Action = 'SilentlyContinue'; AssertScript = { param($err) $err.Exception.InnerException | Should -BeOfType 'System.ArgumentNullException' } }
@@ -378,8 +383,8 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
         ClearDollarError
         RunCommand -Command 'ErrorInEnd' -ParamNameToUse $ParamName -ErrorAction $Action
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 0
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 0
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
 
         $lastErr = GetLastError
@@ -391,7 +396,7 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
         }
     }
 
-    It "'try/catch' and 'trap' turn general exception thrown from method/expression into terminating error within 'Clean' block: ActionPreference.<ErrorAction>" -TestCases @(
+    It "'try/catch' and 'trap' should turn general exception thrown from method/expression into terminating error within 'Clean' block. ErrorAction: <ErrorAction>" -TestCases @(
         @{ ErrorAction = 'Continue' }
         @{ ErrorAction = 'Ignore' }
         @{ ErrorAction = 'SilentlyContinue' }
@@ -399,63 +404,63 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
         param($ErrorAction)
 
         $verbose = DivideByZeroWrappedInTry -ErrorAction $ErrorAction 4>&1
-        $verbose.Count | Should -BeExactly 1
+        $verbose.Count | Should -Be 1
         $verbose.Message | Should -BeExactly 'System.DivideByZeroException'
 
         $verbose = ArgumentNullWrappedInTry -ErrorAction $ErrorAction 4>&1
-        $verbose.Count | Should -BeExactly 1
+        $verbose.Count | Should -Be 1
         $verbose.Message | Should -BeExactly 'System.ArgumentNullException'
 
         $verbose = DivideByZeroWithTrap -ErrorAction $ErrorAction 4>&1
-        $verbose.Count | Should -BeExactly 2
+        $verbose.Count | Should -Be 2
         $verbose[0].Message | Should -BeExactly 'System.DivideByZeroException'
         $verbose[1].Message | Should -BeExactly 'clean'
 
         $verbose = ArgumentNullWithTrap -ErrorAction $ErrorAction 4>&1
-        $verbose.Count | Should -BeExactly 2
+        $verbose.Count | Should -Be 2
         $verbose[0].Message | Should -BeExactly 'System.ArgumentNullException'
         $verbose[1].Message | Should -BeExactly 'clean'
     }
 
-    It "'try/catch' and 'trap' outside the command DO NOT affect general exception thrown from method/expression in the 'Clean' block" {
+    It "'try/catch' and 'trap' outside the command should NOT affect general exception thrown from method/expression in the 'Clean' block" {
         ## The catch block should not run
         RunScript -Script "try { ErrorInClean -MethodInvocationThrowException } catch { Write-Debug -Debug 'caught-something' }"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.ArgumentNullException'
-        $pwsh.Streams.Debug.Count | Should -BeExactly 0
+        $pwsh.Streams.Debug.Count | Should -Be 0
 
         ## The catch block should not run
         RunScript -Script "try { ErrorInClean -ExpressionThrowException } catch { Write-Debug -Debug 'caught-something' }"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
-        $pwsh.Streams.Debug.Count | Should -BeExactly 0
+        $pwsh.Streams.Debug.Count | Should -Be 0
 
         ## The trap block should not run
         RunScript -Script "trap { Write-Debug -Debug 'caught-something'; continue } ErrorInClean -MethodInvocationThrowException"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.ArgumentNullException'
-        $pwsh.Streams.Debug.Count | Should -BeExactly 0
+        $pwsh.Streams.Debug.Count | Should -Be 0
 
         ## The trap block should not run
         RunScript -Script "trap { Write-Debug -Debug 'caught-something'; continue } ErrorInClean -ExpressionThrowException"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
-        $pwsh.Streams.Debug.Count | Should -BeExactly 0
+        $pwsh.Streams.Debug.Count | Should -Be 0
     }
 
-    It "'try/catch' and 'trap' outside the command DO NOT affect 'throw' statement in the 'Clean' block: ActionPreference.<ErrorAction>" -TestCases @(
+    It "'try/catch' and 'trap' outside the command should NOT affect 'throw' statement in the 'Clean' block. ErrorAction: <ErrorAction>" -TestCases @(
         @{ ErrorAction = 'Ignore' }
         @{ ErrorAction = 'SilentlyContinue' }
     ) {
@@ -465,13 +470,13 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
         ## even if the command is wrapped in try/catch.
         RunScript -Script "try { ErrorInClean -ThrowException -ErrorAction $ErrorAction } catch { Write-Debug -Debug 'caught-something' }"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
 
         ## Nothing written to error stream
-        $pwsh.Streams.Error.Count | Should -BeExactly 0
+        $pwsh.Streams.Error.Count | Should -Be 0
         ## Nothing written to debug stream
-        $pwsh.Streams.Debug.Count | Should -BeExactly 0
+        $pwsh.Streams.Debug.Count | Should -Be 0
 
         ## The suppressed 'throw' exception is kept in '$Error'
         $err = GetLastError
@@ -483,13 +488,13 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
         ## even if the command is accompanied by 'trap'.
         RunScript -Script "trap { Write-Debug -Debug 'caught-something'; continue } ErrorInClean -ThrowException -ErrorAction $ErrorAction"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'verbose-message'
 
         ## Nothing written to error stream
-        $pwsh.Streams.Error.Count | Should -BeExactly 0
+        $pwsh.Streams.Error.Count | Should -Be 0
         ## Nothing written to debug stream
-        $pwsh.Streams.Debug.Count | Should -BeExactly 0
+        $pwsh.Streams.Debug.Count | Should -Be 0
 
         ## The suppressed 'throw' exception is kept in '$Error'
         $err = GetLastError
@@ -502,7 +507,7 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
         ## Here we redirect the error pipe to discard the error stream, so the error doesn't pollute
         ## the test output.
         ErrorInClean -ThrowTerminatingError -ErrorVariable err 2>&1 > $null
-        $err.Count | Should -BeExactly 1
+        $err.Count | Should -Be 1
         $err[0].Message | Should -BeExactly 'terminating-exception'
 
         ## $err.Count is 3 in this case. It's the same for other named blocks too.
@@ -518,19 +523,19 @@ Describe "Error handling within a single 'Clean' block" -Tag 'CI' {
         $err[0].Exception.Message | Should -BeExactly 'throw-exception'
 
         ErrorInClean -WriteErrorAPI -ErrorVariable err *>&1 > $null
-        $err.Count | Should -BeExactly 1
+        $err.Count | Should -Be 1
         $err[0].Exception.Message | Should -BeExactly 'arg-exception'
 
         ErrorInClean -WriteErrorCmdlet -ErrorVariable err *>&1 > $null
-        $err.Count | Should -BeExactly 1
+        $err.Count | Should -Be 1
         $err[0].Exception.Message | Should -BeExactly 'write-error-cmdlet'
 
         ErrorInClean -MethodInvocationThrowException -ErrorVariable err *>&1 > $null
-        $err.Count | Should -BeExactly 1
+        $err.Count | Should -Be 1
         $err[0].Exception.InnerException | Should -BeOfType 'System.ArgumentNullException'
 
         ErrorInClean -ExpressionThrowException -ErrorVariable err *>&1 > $null
-        $err.Count | Should -BeExactly 1
+        $err.Count | Should -Be 1
         $err[0].Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
     }
 }
@@ -705,7 +710,7 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $pwsh.Dispose()
     }
 
-    It "Terminating error from both 'End' (ThrowTerminatingError) and 'Clean' (ThrowTerminatingError)" {
+    It "Terminating errors from both 'End' (ThrowTerminatingError) and 'Clean' (ThrowTerminatingError) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ThrowTerminatingError' -ErrorFromCleanBlock 'ThrowTerminatingError'
@@ -719,13 +724,13 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception.InnerException.InnerException | Should -BeOfType 'System.ArgumentException'
         $failure.Exception.InnerException.InnerException.Message | Should -BeExactly 'end-terminating-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception | Should -BeOfType 'System.ArgumentException'
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'clean-terminating-exception'
     }
 
-    It "Terminating error from both 'End' (ErrorActionStop) and 'Clean' (ThrowTerminatingError)" {
+    It "Terminating errors from both 'End' (ErrorActionStop) and 'Clean' (ThrowTerminatingError) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ErrorActionStop' -ErrorFromCleanBlock 'ThrowTerminatingError'
@@ -738,13 +743,13 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception.InnerException | Should -BeOfType 'System.Management.Automation.ActionPreferenceStopException'
         $failure.Exception.InnerException.Message | should -BeLike "*'NonExistEnd'*"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception | Should -BeOfType 'System.ArgumentException'
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'clean-terminating-exception'
     }
 
-    It "Terminating error from both 'End' (ThrowException) and 'Clean' (ThrowTerminatingError)" {
+    It "Terminating errors from both 'End' (ThrowException) and 'Clean' (ThrowTerminatingError) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ThrowException' -ErrorFromCleanBlock 'ThrowTerminatingError'
@@ -756,13 +761,13 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception | Should -BeOfType 'System.Management.Automation.MethodInvocationException'
         $failure.Exception.InnerException.Message | should -BeExactly 'end-throw-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception | Should -BeOfType 'System.ArgumentException'
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'clean-terminating-exception'
     }
 
-    It "Terminating error from both 'End' (ThrowTerminatingError) and 'Clean' (ErrorActionStop)" {
+    It "Terminating errors from both 'End' (ThrowTerminatingError) and 'Clean' (ErrorActionStop) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ThrowTerminatingError' -ErrorFromCleanBlock 'ErrorActionStop'
@@ -776,13 +781,13 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception.InnerException.InnerException | Should -BeOfType 'System.ArgumentException'
         $failure.Exception.InnerException.InnerException.Message | Should -BeExactly 'end-terminating-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand'
         $pwsh.Streams.Error[0].Exception.Message | Should -BeLike "*'NonExistClean'*"
     }
 
-    It "Terminating error from both 'End' (ErrorActionStop) and 'Clean' (ErrorActionStop)" {
+    It "Terminating errors from both 'End' (ErrorActionStop) and 'Clean' (ErrorActionStop) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ErrorActionStop' -ErrorFromCleanBlock 'ErrorActionStop'
@@ -795,13 +800,13 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception.InnerException | Should -BeOfType 'System.Management.Automation.ActionPreferenceStopException'
         $failure.Exception.InnerException.Message | should -BeLike "*'NonExistEnd'*"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand'
         $pwsh.Streams.Error[0].Exception.Message | Should -BeLike "*'NonExistClean'*"
     }
 
-    It "Terminating error from both 'End' (ThrowException) and 'Clean' (ErrorActionStop)" {
+    It "Terminating errors from both 'End' (ThrowException) and 'Clean' (ErrorActionStop) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ThrowException' -ErrorFromCleanBlock 'ErrorActionStop'
@@ -813,13 +818,13 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception | Should -BeOfType 'System.Management.Automation.MethodInvocationException'
         $failure.Exception.InnerException.Message | should -BeExactly 'end-throw-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].FullyQualifiedErrorId | Should -BeExactly 'CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand'
         $pwsh.Streams.Error[0].Exception.Message | Should -BeLike "*'NonExistClean'*"
     }
 
-    It "Terminating error from both 'End' (ThrowTerminatingError) and 'Clean' (ThrowException)" {
+    It "Terminating errors from both 'End' (ThrowTerminatingError) and 'Clean' (ThrowException) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ThrowTerminatingError' -ErrorFromCleanBlock 'ThrowException'
@@ -833,12 +838,12 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception.InnerException.InnerException | Should -BeOfType 'System.ArgumentException'
         $failure.Exception.InnerException.InnerException.Message | Should -BeExactly 'end-terminating-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'clean-throw-exception'
     }
 
-    It "Terminating error from both 'End' (ErrorActionStop) and 'Clean' (ThrowException)" {
+    It "Terminating errors from both 'End' (ErrorActionStop) and 'Clean' (ThrowException) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ErrorActionStop' -ErrorFromCleanBlock 'ThrowException'
@@ -851,12 +856,12 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception.InnerException | Should -BeOfType 'System.Management.Automation.ActionPreferenceStopException'
         $failure.Exception.InnerException.Message | should -BeLike "*'NonExistEnd'*"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'clean-throw-exception'
     }
 
-    It "Terminating error from both 'End' (ThrowException) and 'Clean' (ThrowException)" {
+    It "Terminating errors from both 'End' (ThrowException) and 'Clean' (ThrowException) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ThrowException' -ErrorFromCleanBlock 'ThrowException'
@@ -868,12 +873,12 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception | Should -BeOfType 'System.Management.Automation.MethodInvocationException'
         $failure.Exception.InnerException.Message | should -BeExactly 'end-throw-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'clean-throw-exception'
     }
 
-    It "Terminating error from both 'End' (ThrowException) and 'Clean' (ThrowException) with ErrorActionPreference <ErrorAction>" -TestCases @(
+    It "Terminating errors from both 'End' (ThrowException) and 'Clean' (ThrowException) with ErrorAction '<ErrorAction>' should work properly" -TestCases @(
         @{ ErrorAction = 'Ignore' }
         @{ ErrorAction = 'SilentlyContinue' }
     ) {
@@ -884,162 +889,162 @@ Describe "Multiple errors from 'Clean' and another named block" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ThrowException' -ErrorFromCleanBlock 'ThrowException' -ErrorAction $ErrorAction
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 0
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 0
+        $pwsh.Streams.Verbose.Count | Should -Be 2
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
         $pwsh.Streams.Verbose[1] | Should -BeExactly 'clean-verbose-message'
 
         $ers = GetAllErrors
-        $ers.Count | Should -BeExactly 2
+        $ers.Count | Should -Be 2
         $ers[0].Exception.Message | Should -BeExactly 'clean-throw-exception'
         $ers[1].Exception.Message | Should -BeExactly 'end-throw-exception'
     }
 
-    It "Non-terminating error from 'End' (WriteErrorAPI) and terminating error from 'Clean' (ThrowTerminatingError)" {
+    It "Non-terminating error from 'End' (WriteErrorAPI) and terminating error from 'Clean' (ThrowTerminatingError) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'WriteErrorAPI' -ErrorFromCleanBlock 'ThrowTerminatingError'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'end-arg-exception'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'clean-terminating-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (WriteErrorAPI) and terminating error from 'Clean' (ErrorActionStop)" {
+    It "Non-terminating error from 'End' (WriteErrorAPI) and terminating error from 'Clean' (ErrorActionStop) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'WriteErrorAPI' -ErrorFromCleanBlock 'ErrorActionStop'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'end-arg-exception'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeLike "*'NonExistClean'*"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (WriteErrorAPI) and terminating error from 'Clean' (ThrowException)" {
+    It "Non-terminating error from 'End' (WriteErrorAPI) and terminating error from 'Clean' (ThrowException) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'WriteErrorAPI' -ErrorFromCleanBlock 'ThrowException'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'end-arg-exception'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'clean-throw-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (WriteErrorCmdlet) and terminating error from 'Clean' (ThrowTerminatingError)" {
+    It "Non-terminating error from 'End' (WriteErrorCmdlet) and terminating error from 'Clean' (ThrowTerminatingError) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'WriteErrorCmdlet' -ErrorFromCleanBlock 'ThrowTerminatingError'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'end-write-error-cmdlet'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'clean-terminating-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (WriteErrorCmdlet) and terminating error from 'Clean' (ErrorActionStop)" {
+    It "Non-terminating error from 'End' (WriteErrorCmdlet) and terminating error from 'Clean' (ErrorActionStop) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'WriteErrorCmdlet' -ErrorFromCleanBlock 'ErrorActionStop'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'end-write-error-cmdlet'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeLike "*'NonExistClean'*"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (WriteErrorCmdlet) and terminating error from 'Clean' (ThrowException)" {
+    It "Non-terminating error from 'End' (WriteErrorCmdlet) and terminating error from 'Clean' (ThrowException) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'WriteErrorCmdlet' -ErrorFromCleanBlock 'ThrowException'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'end-write-error-cmdlet'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'clean-throw-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (MethodInvocationThrowException) and terminating error from 'Clean' (ThrowTerminatingError)" {
+    It "Non-terminating error from 'End' (MethodInvocationThrowException) and terminating error from 'Clean' (ThrowTerminatingError) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'MethodInvocationThrowException' -ErrorFromCleanBlock 'ThrowTerminatingError'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.ArgumentNullException'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'clean-terminating-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (MethodInvocationThrowException) and terminating error from 'Clean' (ErrorActionStop)" {
+    It "Non-terminating error from 'End' (MethodInvocationThrowException) and terminating error from 'Clean' (ErrorActionStop) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'MethodInvocationThrowException' -ErrorFromCleanBlock 'ErrorActionStop'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.ArgumentNullException'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeLike "*'NonExistClean'*"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (MethodInvocationThrowException) and terminating error from 'Clean' (ThrowException)" {
+    It "Non-terminating error from 'End' (MethodInvocationThrowException) and terminating error from 'Clean' (ThrowException) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'MethodInvocationThrowException' -ErrorFromCleanBlock 'ThrowException'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.ArgumentNullException'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'clean-throw-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (ExpressionThrowException) and terminating error from 'Clean' (ThrowTerminatingError)" {
+    It "Non-terminating error from 'End' (ExpressionThrowException) and terminating error from 'Clean' (ThrowTerminatingError) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ExpressionThrowException' -ErrorFromCleanBlock 'ThrowTerminatingError'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'clean-terminating-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (ExpressionThrowException) and terminating error from 'Clean' (ErrorActionStop)" {
+    It "Non-terminating error from 'End' (ExpressionThrowException) and terminating error from 'Clean' (ErrorActionStop) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ExpressionThrowException' -ErrorFromCleanBlock 'ErrorActionStop'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeLike "*'NonExistClean'*"
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (ExpressionThrowException) and terminating error from 'Clean' (ThrowException)" {
+    It "Non-terminating error from 'End' (ExpressionThrowException) and terminating error from 'Clean' (ThrowException) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ExpressionThrowException' -ErrorFromCleanBlock 'ThrowException'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'clean-throw-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'end-verbose-message'
     }
 
-    It "Terminating error from 'End' (ThrowException) and non-terminating error from 'Clean' (WriteErrorAPI)" {
+    It "Terminating error from 'End' (ThrowException) and non-terminating error from 'Clean' (WriteErrorAPI) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ThrowException' -ErrorFromCleanBlock 'WriteErrorAPI'
@@ -1051,13 +1056,13 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception | Should -BeOfType 'System.Management.Automation.MethodInvocationException'
         $failure.Exception.InnerException.Message | should -BeExactly 'end-throw-exception'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'clean-arg-exception'
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'clean-verbose-message'
     }
 
-    It "Terminating error from 'End' (ThrowException) and non-terminating error from 'Clean' (WriteErrorCmdlet)" {
+    It "Terminating error from 'End' (ThrowException) and non-terminating error from 'Clean' (WriteErrorCmdlet) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ThrowException' -ErrorFromCleanBlock 'WriteErrorCmdlet'
@@ -1069,13 +1074,13 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception | Should -BeOfType 'System.Management.Automation.MethodInvocationException'
         $failure.Exception.InnerException.Message | should -BeExactly 'end-throw-exception'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'clean-write-error-cmdlet'
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'clean-verbose-message'
     }
 
-    It "Terminating error from 'End' (ThrowException) and non-terminating error from 'Clean' (MethodInvocationThrowException)" {
+    It "Terminating error from 'End' (ThrowException) and non-terminating error from 'Clean' (MethodInvocationThrowException) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ThrowException' -ErrorFromCleanBlock 'MethodInvocationThrowException'
@@ -1087,13 +1092,13 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception | Should -BeOfType 'System.Management.Automation.MethodInvocationException'
         $failure.Exception.InnerException.Message | should -BeExactly 'end-throw-exception'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.ArgumentNullException'
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'clean-verbose-message'
     }
 
-    It "Terminating error from 'End' (ThrowException) and non-terminating error from 'Clean' (ExpressionThrowException)" {
+    It "Terminating error from 'End' (ThrowException) and non-terminating error from 'Clean' (ExpressionThrowException) should work properly" {
         $failure = $null
         try {
             RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'ThrowException' -ErrorFromCleanBlock 'ExpressionThrowException'
@@ -1105,86 +1110,86 @@ Describe "Multiple errors from 'Clean' and another named block" {
         $failure.Exception | Should -BeOfType 'System.Management.Automation.MethodInvocationException'
         $failure.Exception.InnerException.Message | should -BeExactly 'end-throw-exception'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
+        $pwsh.Streams.Verbose.Count | Should -Be 1
         $pwsh.Streams.Verbose[0] | Should -BeExactly 'clean-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (WriteErrorAPI) and non-terminating error from 'Clean' (WriteErrorCmdlet)" {
+    It "Non-terminating error from 'End' (WriteErrorAPI) and non-terminating error from 'Clean' (WriteErrorCmdlet) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'WriteErrorAPI' -ErrorFromCleanBlock 'WriteErrorCmdlet'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'end-arg-exception'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'clean-write-error-cmdlet'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 2
+        $pwsh.Streams.Verbose.Count | Should -Be 2
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'end-verbose-message'
         $pwsh.Streams.Verbose[1].Message | Should -BeExactly 'clean-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (WriteErrorAPI) and non-terminating error from 'Clean' (MethodInvocationThrowException)" {
+    It "Non-terminating error from 'End' (WriteErrorAPI) and non-terminating error from 'Clean' (MethodInvocationThrowException) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'WriteErrorAPI' -ErrorFromCleanBlock 'MethodInvocationThrowException'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'end-arg-exception'
         $pwsh.Streams.Error[1].Exception.InnerException | Should -BeOfType 'System.ArgumentNullException'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 2
+        $pwsh.Streams.Verbose.Count | Should -Be 2
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'end-verbose-message'
         $pwsh.Streams.Verbose[1].Message | Should -BeExactly 'clean-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (WriteErrorCmdlet) and non-terminating error from 'Clean' (WriteErrorAPI)" {
+    It "Non-terminating error from 'End' (WriteErrorCmdlet) and non-terminating error from 'Clean' (WriteErrorAPI) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'WriteErrorCmdlet' -ErrorFromCleanBlock 'WriteErrorAPI'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'end-write-error-cmdlet'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'clean-arg-exception'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 2
+        $pwsh.Streams.Verbose.Count | Should -Be 2
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'end-verbose-message'
         $pwsh.Streams.Verbose[1].Message | Should -BeExactly 'clean-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (WriteErrorCmdlet) and non-terminating error from 'Clean' (ExpressionThrowException)" {
+    It "Non-terminating error from 'End' (WriteErrorCmdlet) and non-terminating error from 'Clean' (ExpressionThrowException) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'WriteErrorCmdlet' -ErrorFromCleanBlock 'ExpressionThrowException'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'end-write-error-cmdlet'
         $pwsh.Streams.Error[1].Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 2
+        $pwsh.Streams.Verbose.Count | Should -Be 2
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'end-verbose-message'
         $pwsh.Streams.Verbose[1].Message | Should -BeExactly 'clean-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (MethodInvocationThrowException) and non-terminating error from 'Clean' (WriteErrorCmdlet)" {
+    It "Non-terminating error from 'End' (MethodInvocationThrowException) and non-terminating error from 'Clean' (WriteErrorCmdlet) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'MethodInvocationThrowException' -ErrorFromCleanBlock 'WriteErrorCmdlet'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.ArgumentNullException'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'clean-write-error-cmdlet'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 2
+        $pwsh.Streams.Verbose.Count | Should -Be 2
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'end-verbose-message'
         $pwsh.Streams.Verbose[1].Message | Should -BeExactly 'clean-verbose-message'
     }
 
-    It "Non-terminating error from 'End' (MethodInvocationThrowException) and non-terminating error from 'Clean' (ExpressionThrowException)" {
+    It "Non-terminating error from 'End' (MethodInvocationThrowException) and non-terminating error from 'Clean' (ExpressionThrowException) should work properly" {
         ## No exception should be thrown
         RunCommand -Command 'MultipleErrors' -ErrorFromEndBlock 'MethodInvocationThrowException' -ErrorFromCleanBlock 'ExpressionThrowException'
 
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.InnerException | Should -BeOfType 'System.ArgumentNullException'
         $pwsh.Streams.Error[1].Exception.InnerException | Should -BeOfType 'System.DivideByZeroException'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 2
+        $pwsh.Streams.Verbose.Count | Should -Be 2
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'end-verbose-message'
         $pwsh.Streams.Verbose[1].Message | Should -BeExactly 'clean-verbose-message'
     }
@@ -1270,26 +1275,26 @@ Describe "Error handling within a pipeline (multiple commands with 'Clean' block
         #endregion
     }
 
-    It "Error from multiple 'Clean' blocks" {
+    It "Errors from multiple 'Clean' blocks should work properly" {
         ## No exception should be thrown
         RunScript -Script "test1 | test2"
 
         ## Exceptions thrown from 'throw' statement are not propagated up, but instead written to the error stream.
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'test1-clean'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'test2-clean'
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'process-obj'
     }
 
-    It "ErrorAction is honored by 'Clean' blocks" {
+    It "ErrorAction should be honored by 'Clean' blocks" {
         try {
             RunScript -Script '$ErrorActionPreference = "SilentlyContinue"'
             ## No exception should be thrown.
             RunScript -Script "test1 | test2"
 
             ## The exception from 'throw' statement should be suppressed by 'SilentlyContinue'.
-            $pwsh.Streams.Error.Count | Should -BeExactly 0
-            $pwsh.Streams.Verbose.Count | Should -BeExactly 3
+            $pwsh.Streams.Error.Count | Should -Be 0
+            $pwsh.Streams.Verbose.Count | Should -Be 3
             $pwsh.Streams.Verbose[0].Message | Should -BeExactly 'process-obj'
             $pwsh.Streams.Verbose[1].Message | Should -BeExactly 'test1-clean-verbose'
             $pwsh.Streams.Verbose[2].Message | Should -BeExactly 'test2-clean-verbose'
@@ -1300,7 +1305,7 @@ Describe "Error handling within a pipeline (multiple commands with 'Clean' block
         }
     }
 
-    It "Error from 'Clean' blocks when another named block emits error" {
+    It "Errors from 'Clean' blocks should work properly when another named block emits error" {
         $failure = $null
         try {
             RunScript -Script "test1 | test2 -EmitErrorInProcess"
@@ -1312,8 +1317,8 @@ Describe "Error handling within a pipeline (multiple commands with 'Clean' block
         $failure.Exception | Should -BeOfType 'System.Management.Automation.MethodInvocationException'
         $failure.Exception.InnerException.Message | Should -BeExactly 'test2-process'
 
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 0
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
+        $pwsh.Streams.Verbose.Count | Should -Be 0
+        $pwsh.Streams.Error.Count | Should -Be 2
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'test1-clean'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'test2-clean'
     }
@@ -1333,11 +1338,11 @@ Describe "Error handling within a pipeline (multiple commands with 'Clean' block
         ## Only the 'Clean' block from 'test1' will run.
         ## The 'Clean' block from 'test2' won't run because none of the other blocks from 'test2' gets to run
         ## due to the terminating exception thrown from 'test1.Process'.
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 1
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'test1-clean'
     }
 
-    It "Exception from the 'Clean' block at <Position> doesn't affect other 'Clean' blocks" -TestCases @(
+    It "Exception from the 'Clean' block at <Position> should not affect other 'Clean' blocks" -TestCases @(
         @{ Position = 'beginning-of-pipeline'; Script = 'test-1 -EmitException | test-2 | test-3'; ExceptionMessage = 'test-1-clean-exception'; VerboseMessages = @('test-2-clean', 'test-3-clean') }
         @{ Position = 'middle-of-pipeline';    Script = 'test-1 | test-2 -EmitException | test-3'; ExceptionMessage = 'test-2-clean-exception'; VerboseMessages = @('test-1-clean', 'test-3-clean') }
         @{ Position = 'end-of-pipeline';       Script = 'test-1 | test-2 | test-3 -EmitException'; ExceptionMessage = 'test-3-clean-exception'; VerboseMessages = @('test-1-clean', 'test-2-clean') }
@@ -1345,9 +1350,9 @@ Describe "Error handling within a pipeline (multiple commands with 'Clean' block
         param($Script, $ExceptionMessage, $VerboseMessages)
 
         RunScript -Script $Script
-        $pwsh.Streams.Error.Count | Should -BeExactly 1
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 2
-        $pwsh.Streams.Warning.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 1
+        $pwsh.Streams.Verbose.Count | Should -Be 2
+        $pwsh.Streams.Warning.Count | Should -Be 1
 
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly $ExceptionMessage
         $pwsh.Streams.Verbose[0].Message | Should -BeExactly $VerboseMessages[0]
@@ -1355,11 +1360,11 @@ Describe "Error handling within a pipeline (multiple commands with 'Clean' block
         $pwsh.Streams.Warning[0].Message | Should -BeExactly 'output'
     }
 
-    It "Multiple exceptions from 'Clean' blocks doesn't affect other 'Clean' blocks" {
+    It "Multiple exceptions from 'Clean' blocks should not affect other 'Clean' blocks" {
         RunScript -Script 'test-1 -EmitException | test-2 | test-3 -EmitException'
-        $pwsh.Streams.Error.Count | Should -BeExactly 2
-        $pwsh.Streams.Verbose.Count | Should -BeExactly 1
-        $pwsh.Streams.Warning.Count | Should -BeExactly 1
+        $pwsh.Streams.Error.Count | Should -Be 2
+        $pwsh.Streams.Verbose.Count | Should -Be 1
+        $pwsh.Streams.Warning.Count | Should -Be 1
 
         $pwsh.Streams.Error[0].Exception.Message | Should -BeExactly 'test-1-clean-exception'
         $pwsh.Streams.Error[1].Exception.Message | Should -BeExactly 'test-3-clean-exception'
