@@ -1,11 +1,11 @@
 {
   "sdk": {
-    "channel": "6.0.1xx-preview6",
+    "channel": "6.0.1xx-rc1",
     "quality": "signed",
     "qualityFallback": "daily",
-    "packageVersionPattern": "6.0.0-preview.6",
+    "packageVersionPattern": "6.0.0-rc.1",
     "sdkImageVersion": "6.0.100",
-    "nextChannel": "6.0.1xx-preview7"
+    "nextChannel": "6.0.1xx-rc1"
   },
   "internalfeed" : {
     "url": null
