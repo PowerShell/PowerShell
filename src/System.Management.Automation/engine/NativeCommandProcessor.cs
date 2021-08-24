@@ -884,7 +884,7 @@ namespace System.Management.Automation
                         errorMsg,
                         errorId);
 
-                    var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.NotSpecified, targetObject: _nativeProcess.ProcessName);
+                    var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.NotSpecified, targetObject: NativeCommandName);
                     this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord);
                 }
             }
