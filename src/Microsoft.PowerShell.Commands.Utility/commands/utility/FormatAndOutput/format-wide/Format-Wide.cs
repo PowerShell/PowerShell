@@ -47,17 +47,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter AutoSize
         {
-            get
-            {
-                if (_autosize.HasValue)
-                    return _autosize.Value;
-                return false;
-            }
-
-            set
-            {
-                _autosize = value;
-            }
+            get => _autosize.GetValueOrDefault();
+            set => _autosize = value;
         }
 
         private bool? _autosize = null;
@@ -70,17 +61,8 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRangeAttribute(1, int.MaxValue)]
         public int Column
         {
-            get
-            {
-                if (_column.HasValue)
-                    return _column.Value;
-                return -1;
-            }
-
-            set
-            {
-                _column = value;
-            }
+            get => _column.GetValueOrDefault(-1);
+            set => _column = value;
         }
 
         private int? _column = null;
@@ -110,42 +92,34 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // we cannot specify -column and -autosize, they are mutually exclusive
-            if (_autosize.HasValue && _column.HasValue)
+            if (_column.HasValue && _autosize.GetValueOrDefault())
             {
-                if (_autosize.Value)
-                {
-                    // the user specified -autosize:true AND a column number
-                    string msg = StringUtil.Format(FormatAndOut_format_xxx.CannotSpecifyAutosizeAndColumnsError);
+                // the user specified -autosize:true AND a column number
+                string msg = StringUtil.Format(FormatAndOut_format_xxx.CannotSpecifyAutosizeAndColumnsError);
 
-                    ErrorRecord errorRecord = new(
-                        new InvalidDataException(),
-                        "FormatCannotSpecifyAutosizeAndColumns",
-                        ErrorCategory.InvalidArgument,
-                        null);
+                ErrorRecord errorRecord = new(
+                    new InvalidDataException(),
+                    "FormatCannotSpecifyAutosizeAndColumns",
+                    ErrorCategory.InvalidArgument,
+                    null);
 
-                    errorRecord.ErrorDetails = new ErrorDetails(msg);
-                    this.ThrowTerminatingError(errorRecord);
-                }
+                errorRecord.ErrorDetails = new ErrorDetails(msg);
+                this.ThrowTerminatingError(errorRecord);
             }
 
             parameters.groupByParameter = this.ProcessGroupByParameter();
             parameters.forceFormattingAlsoOnOutOfBand = this.Force;
-            if (this.showErrorsAsMessages.HasValue)
-                parameters.showErrorsAsMessages = this.showErrorsAsMessages;
-            if (this.showErrorsInFormattedOutput.HasValue)
-                parameters.showErrorsInFormattedOutput = this.showErrorsInFormattedOutput;
+            parameters.showErrorsAsMessages = this.showErrorsAsMessages.GetValueOrDefault();
+            parameters.showErrorsInFormattedOutput = this.showErrorsInFormattedOutput.GetValueOrDefault();
 
             parameters.expansion = ProcessExpandParameter();
 
-            if (_autosize.HasValue)
-                parameters.autosize = _autosize.Value;
+            parameters.autosize = _autosize.GetValueOrDefault();
 
-            WideSpecificParameters wideSpecific = new();
-            parameters.shapeParameters = wideSpecific;
-            if (_column.HasValue)
+            parameters.shapeParameters = new WideSpecificParameters()
             {
-                wideSpecific.columns = _column.Value;
-            }
+                columns = _column.GetValueOrDefault()
+            };
 
             return parameters;
         }
