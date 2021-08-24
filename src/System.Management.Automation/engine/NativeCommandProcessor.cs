@@ -865,15 +865,10 @@ namespace System.Management.Automation
                     this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
                     if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName)
-                        || !(bool)Command.Context.GetVariableValue(SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath))
+                        || !(bool)Command.Context.GetVariableValue(SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath, defaultValue: false))
                     {
                         return;
                     }
-
-                    ActionPreference errorActionPref = Command.Context.GetEnumPreference(
-                        SpecialVariables.ErrorActionPreferenceVarPath,
-                        ActionPreference.SilentlyContinue,
-                        out _);
 
                     const string errorId = nameof(CommandBaseStrings.ProgramExitedWithNonZeroCode);
 
