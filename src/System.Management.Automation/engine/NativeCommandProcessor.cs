@@ -3,21 +3,22 @@
 
 #pragma warning disable 1634, 1691
 
-using System.Diagnostics;
-using System.IO;
-using System.ComponentModel;
-using System.Text;
 using System.Collections;
-using System.Threading;
-using System.Management.Automation.Internal;
-using System.Xml;
-using System.Runtime.InteropServices;
-using Dbg = System.Management.Automation.Diagnostics;
-using System.Runtime.Serialization;
-using System.Globalization;
-using System.Diagnostics.CodeAnalysis;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Management.Automation.Internal;
+using System.Management.Automation.Runspaces;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading;
+using System.Xml;
+using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
@@ -129,6 +130,100 @@ namespace System.Management.Automation
             Stream = stream;
         }
     }
+
+    #nullable enable
+    /// <summary>
+    /// This exception is used by the NativeCommandProcessor to indicate an error
+    /// when a native command retuns a non-zero exit code.
+    /// </summary>
+    [Serializable]
+    public sealed class NativeCommandExitException : RuntimeException
+    {
+        // NOTE:
+        // When implementing the native error action preference integration,
+        // reusing ApplicationFailedException was rejected.
+        // Instead of reusing a type already used in another scenario
+        // it was decided instead to use a fresh type to avoid conflating the two scenarios:
+        // * ApplicationFailedException: PowerShell was not able to complete execution of the application.
+        // * NativeCommandExitException: the application completed execution but returned a non-zero exit code.
+
+        #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with information on the native
+        /// command, a specified error message and a specified error ID.
+        /// </summary>
+        /// <param name="path">The full path of the native command.</param>
+        /// <param name="exitCode">The exit code returned by the native command.</param>
+        /// <param name="processId">The process ID of the process before it ended.</param>
+        /// <param name="message">The error message.</param>
+        /// <param name="errorId">The PowerShell runtime error ID.</param>
+        internal NativeCommandExitException(string path, int exitCode, int processId, string message, string errorId)
+            : base(message)
+        {
+            SetErrorId(errorId);
+            SetErrorCategory(ErrorCategory.NotSpecified);
+            Path = path;
+            ExitCode = exitCode;
+            ProcessId = processId;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NativeCommandExitException"/> class with serialized data.
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        private NativeCommandExitException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+            if (info is null)
+            {
+                throw new PSArgumentNullException(nameof(info));
+            }
+
+            Path = info.GetString(nameof(Path));
+            ExitCode = info.GetInt32(nameof(ExitCode));
+            ProcessId = info.GetInt32(nameof(ProcessId));
+        }
+
+        #endregion Constructors
+
+        /// <summary>
+        /// Serializes the exception data.
+        /// </summary>
+        /// <param name="info">Serialization information.</param>
+        /// <param name="context">Streaming context.</param>
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info is null)
+            {
+                throw new PSArgumentNullException(nameof(info));
+            }
+
+            base.GetObjectData(info, context);
+
+            info.AddValue(nameof(Path), Path);
+            info.AddValue(nameof(ExitCode), ExitCode);
+            info.AddValue(nameof(ProcessId), ProcessId);
+        }
+
+        /// <summary>
+        /// Gets the path of the native command.
+        /// </summary>
+        public string? Path { get; }
+
+        /// <summary>
+        /// Gets the exit code returned by the native command.
+        /// </summary>
+        public int ExitCode { get; }
+
+        /// <summary>
+        /// Gets the native command's process ID.
+        /// </summary>
+        public int ProcessId { get; }
+
+    }
+    #nullable restore
 
     /// <summary>
     /// Provides way to create and execute native commands.
@@ -762,8 +857,35 @@ namespace System.Management.Automation
                     }
 
                     this.Command.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, _nativeProcess.ExitCode);
-                    if (_nativeProcess.ExitCode != 0)
-                        this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+                    if (_nativeProcess.ExitCode == 0)
+                    {
+                        return;
+                    }
+
+                    this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+
+                    if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName)
+                        || !(bool)Command.Context.GetVariableValue(SpecialVariables.PSNativeCommandUseErrorActionPreferenceVarPath, defaultValue: false))
+                    {
+                        return;
+                    }
+
+                    const string errorId = nameof(CommandBaseStrings.ProgramExitedWithNonZeroCode);
+
+                    string errorMsg = StringUtil.Format(
+                        CommandBaseStrings.ProgramExitedWithNonZeroCode,
+                        NativeCommandName,
+                        _nativeProcess.ExitCode);
+
+                    var exception = new NativeCommandExitException(
+                        Path,
+                        _nativeProcess.ExitCode,
+                        _nativeProcess.Id,
+                        errorMsg,
+                        errorId);
+
+                    var errorRecord = new ErrorRecord(exception, errorId, ErrorCategory.NotSpecified, targetObject: NativeCommandName);
+                    this.commandRuntime._WriteErrorSkipAllowCheck(errorRecord);
                 }
             }
             catch (Win32Exception e)
@@ -1087,7 +1209,7 @@ namespace System.Management.Automation
                 ErrorRecord record = outputValue.Data as ErrorRecord;
                 Dbg.Assert(record != null, "ProcessReader should ensure that data is ErrorRecord");
                 record.SetInvocationInfo(this.Command.MyInvocation);
-                this.commandRuntime._WriteErrorSkipAllowCheck(record, isNativeError: true);
+                this.commandRuntime._WriteErrorSkipAllowCheck(record, isFromNativeStdError: true);
             }
             else if (outputValue.Stream == MinishellStream.Output)
             {

@@ -22,6 +22,7 @@ namespace System.Management.Automation
 
         internal const string EngineSource = "PSEngine";
         internal const string PSNativeCommandArgumentPassingFeatureName = "PSNativeCommandArgumentPassing";
+        internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
 
         #endregion
 
@@ -122,6 +123,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSAnsiRenderingFileInfo",
                     description: "Enable coloring for FileInfo objects"),
+                new ExperimentalFeature(
+                    name: PSNativeCommandErrorActionPreferenceFeatureName,
+                    description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

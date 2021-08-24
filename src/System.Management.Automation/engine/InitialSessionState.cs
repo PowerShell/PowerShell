@@ -4471,154 +4471,173 @@ end {
         internal const ActionPreference DefaultInformationPreference = ActionPreference.SilentlyContinue;
 
         internal const ErrorView DefaultErrorView = ErrorView.ConciseView;
+        internal const bool DefaultPSNativeCommandUseErrorActionPreference = false;
         internal const bool DefaultWhatIfPreference = false;
         internal const ConfirmImpact DefaultConfirmPreference = ConfirmImpact.High;
 
-        internal static readonly SessionStateVariableEntry[] BuiltInVariables = new SessionStateVariableEntry[]
+        static InitialSessionState()
         {
-            // Engine variables that should be precreated before running profile
-            // Bug fix for Win7:2202228 Engine halts if initial command fulls up variable table
-            // Anytime a new variable that the engine depends on to run is added, this table
-            // must be updated...
-            new SessionStateVariableEntry(SpecialVariables.LastToken, null, string.Empty),
-            new SessionStateVariableEntry(SpecialVariables.FirstToken, null, string.Empty),
-            new SessionStateVariableEntry(SpecialVariables.StackTrace, null, string.Empty),
+            var builtinVariables = new List<SessionStateVariableEntry>()
+            {
+                // Engine variables that should be precreated before running profile
+                // Bug fix for Win7:2202228 Engine halts if initial command fulls up variable table
+                // Anytime a new variable that the engine depends on to run is added, this table
+                // must be updated...
+                new SessionStateVariableEntry(SpecialVariables.LastToken, null, string.Empty),
+                new SessionStateVariableEntry(SpecialVariables.FirstToken, null, string.Empty),
+                new SessionStateVariableEntry(SpecialVariables.StackTrace, null, string.Empty),
 
-            // Variable which controls the output rendering
-            new SessionStateVariableEntry(
-                SpecialVariables.PSStyle,
-                PSStyle.Instance,
-                RunspaceInit.PSStyleDescription,
-                ScopedItemOptions.None),
+                // Variable which controls the output rendering
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSStyle,
+                    PSStyle.Instance,
+                    RunspaceInit.PSStyleDescription,
+                    ScopedItemOptions.None),
 
-            // Variable which controls the encoding for piping data to a NativeCommand
-            new SessionStateVariableEntry(
-                SpecialVariables.OutputEncoding,
-                Utils.utf8NoBom,
-                RunspaceInit.OutputEncodingDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(System.Text.Encoding))),
+                // Variable which controls the encoding for piping data to a NativeCommand
+                new SessionStateVariableEntry(
+                    SpecialVariables.OutputEncoding,
+                    Utils.utf8NoBom,
+                    RunspaceInit.OutputEncodingDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(System.Text.Encoding))),
 
-            // Preferences
-            //
-            // NTRAID#Windows Out Of Band Releases-931461-2006/03/13
-            // ArgumentTypeConverterAttribute is applied to these variables,
-            // but this only reaches the global variable.  If these are
-            // redefined in script scope etc, the type conversion
-            // is not applicable.
-            //
-            // Variables typed to ActionPreference
-            new SessionStateVariableEntry(
-                SpecialVariables.ConfirmPreference,
-                DefaultConfirmPreference,
-                RunspaceInit.ConfirmPreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ConfirmImpact))),
-            new SessionStateVariableEntry(
-                SpecialVariables.DebugPreference,
-                DefaultDebugPreference,
-                RunspaceInit.DebugPreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
-            new SessionStateVariableEntry(
-                SpecialVariables.ErrorActionPreference,
-                DefaultErrorActionPreference,
-                RunspaceInit.ErrorActionPreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
-            new SessionStateVariableEntry(
-                SpecialVariables.ProgressPreference,
-                DefaultProgressPreference,
-                RunspaceInit.ProgressPreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
-            new SessionStateVariableEntry(
-                SpecialVariables.VerbosePreference,
-                DefaultVerbosePreference,
-                RunspaceInit.VerbosePreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
-            new SessionStateVariableEntry(
-                SpecialVariables.WarningPreference,
-                DefaultWarningPreference,
-                RunspaceInit.WarningPreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
-            new SessionStateVariableEntry(
-                SpecialVariables.InformationPreference,
-                DefaultInformationPreference,
-                RunspaceInit.InformationPreferenceDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
-            new SessionStateVariableEntry(
-                SpecialVariables.ErrorView,
-                DefaultErrorView,
-                RunspaceInit.ErrorViewDescription,
-                ScopedItemOptions.None,
-                new ArgumentTypeConverterAttribute(typeof(ErrorView))),
-            new SessionStateVariableEntry(
-                SpecialVariables.NestedPromptLevel,
-                0,
-                RunspaceInit.NestedPromptLevelDescription),
-            new SessionStateVariableEntry(
-                SpecialVariables.WhatIfPreference,
-                DefaultWhatIfPreference,
-                RunspaceInit.WhatIfPreferenceDescription),
-            new SessionStateVariableEntry(
-                FormatEnumerationLimit,
-                DefaultFormatEnumerationLimit,
-                RunspaceInit.FormatEnumerationLimitDescription),
+                // Preferences
+                //
+                // NTRAID#Windows Out Of Band Releases-931461-2006/03/13
+                // ArgumentTypeConverterAttribute is applied to these variables,
+                // but this only reaches the global variable.  If these are
+                // redefined in script scope etc, the type conversion
+                // is not applicable.
+                //
+                // Variables typed to ActionPreference
+                new SessionStateVariableEntry(
+                    SpecialVariables.ConfirmPreference,
+                    DefaultConfirmPreference,
+                    RunspaceInit.ConfirmPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ConfirmImpact))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.DebugPreference,
+                    DefaultDebugPreference,
+                    RunspaceInit.DebugPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.ErrorActionPreference,
+                    DefaultErrorActionPreference,
+                    RunspaceInit.ErrorActionPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.ProgressPreference,
+                    DefaultProgressPreference,
+                    RunspaceInit.ProgressPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.VerbosePreference,
+                    DefaultVerbosePreference,
+                    RunspaceInit.VerbosePreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.WarningPreference,
+                    DefaultWarningPreference,
+                    RunspaceInit.WarningPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.InformationPreference,
+                    DefaultInformationPreference,
+                    RunspaceInit.InformationPreferenceDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.ErrorView,
+                    DefaultErrorView,
+                    RunspaceInit.ErrorViewDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(ErrorView))),
+                new SessionStateVariableEntry(
+                    SpecialVariables.NestedPromptLevel,
+                    0,
+                    RunspaceInit.NestedPromptLevelDescription),
+                new SessionStateVariableEntry(
+                    SpecialVariables.WhatIfPreference,
+                    DefaultWhatIfPreference,
+                    RunspaceInit.WhatIfPreferenceDescription),
+                new SessionStateVariableEntry(
+                    FormatEnumerationLimit,
+                    DefaultFormatEnumerationLimit,
+                    RunspaceInit.FormatEnumerationLimitDescription),
 
-             // variable for PSEmailServer
-            new SessionStateVariableEntry(
-                SpecialVariables.PSEmailServer,
-                string.Empty,
-                RunspaceInit.PSEmailServerDescription),
+                // variable for PSEmailServer
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSEmailServer,
+                    string.Empty,
+                    RunspaceInit.PSEmailServerDescription),
 
-            // Start: Variables which control remoting behavior
-            new SessionStateVariableEntry(
-                Microsoft.PowerShell.Commands.PSRemotingBaseCmdlet.DEFAULT_SESSION_OPTION,
-                new System.Management.Automation.Remoting.PSSessionOption(),
-                RemotingErrorIdStrings.PSDefaultSessionOptionDescription,
-                ScopedItemOptions.None),
-            new SessionStateVariableEntry(
-                SpecialVariables.PSSessionConfigurationName,
-                "http://schemas.microsoft.com/powershell/Microsoft.PowerShell",
-                RemotingErrorIdStrings.PSSessionConfigurationName,
-                ScopedItemOptions.None),
-            new SessionStateVariableEntry(
-                SpecialVariables.PSSessionApplicationName,
-                "wsman",
-                RemotingErrorIdStrings.PSSessionAppName,
-                ScopedItemOptions.None),
-            // End: Variables which control remoting behavior
+                // Start: Variables which control remoting behavior
+                new SessionStateVariableEntry(
+                    Microsoft.PowerShell.Commands.PSRemotingBaseCmdlet.DEFAULT_SESSION_OPTION,
+                    new System.Management.Automation.Remoting.PSSessionOption(),
+                    RemotingErrorIdStrings.PSDefaultSessionOptionDescription,
+                    ScopedItemOptions.None),
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSSessionConfigurationName,
+                    "http://schemas.microsoft.com/powershell/Microsoft.PowerShell",
+                    RemotingErrorIdStrings.PSSessionConfigurationName,
+                    ScopedItemOptions.None),
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSSessionApplicationName,
+                    "wsman",
+                    RemotingErrorIdStrings.PSSessionAppName,
+                    ScopedItemOptions.None),
+                // End: Variables which control remoting behavior
 
-            #region Platform
-            new SessionStateVariableEntry(
-                SpecialVariables.IsLinux,
-                Platform.IsLinux,
-                string.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                #region Platform
+                new SessionStateVariableEntry(
+                    SpecialVariables.IsLinux,
+                    Platform.IsLinux,
+                    string.Empty,
+                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
-            new SessionStateVariableEntry(
-                SpecialVariables.IsMacOS,
-                Platform.IsMacOS,
-                string.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                new SessionStateVariableEntry(
+                    SpecialVariables.IsMacOS,
+                    Platform.IsMacOS,
+                    string.Empty,
+                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
-            new SessionStateVariableEntry(
-                SpecialVariables.IsWindows,
-                Platform.IsWindows,
-                string.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                new SessionStateVariableEntry(
+                    SpecialVariables.IsWindows,
+                    Platform.IsWindows,
+                    string.Empty,
+                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 
-            new SessionStateVariableEntry(
-                SpecialVariables.IsCoreCLR,
-                Platform.IsCoreCLR,
-                string.Empty,
-                ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-            #endregion
-        };
+                new SessionStateVariableEntry(
+                    SpecialVariables.IsCoreCLR,
+                    Platform.IsCoreCLR,
+                    string.Empty,
+                    ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                #endregion
+            };
+
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandErrorActionPreferenceFeatureName))
+            {
+                builtinVariables.Add(
+                    new SessionStateVariableEntry(
+                        SpecialVariables.PSNativeCommandUseErrorActionPreference,
+                        DefaultPSNativeCommandUseErrorActionPreference,
+                        RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription,
+                        ScopedItemOptions.None,
+                        new ArgumentTypeConverterAttribute(typeof(bool))));
+            }
+
+            BuiltInVariables = builtinVariables.ToArray();
+        }
+
+        internal static readonly SessionStateVariableEntry[] BuiltInVariables;
 
         /// <summary>
         /// Returns a new array of alias entries everytime it's called. This

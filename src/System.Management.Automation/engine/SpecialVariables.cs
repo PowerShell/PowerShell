@@ -255,6 +255,11 @@ namespace System.Management.Automation
 
         internal static readonly VariablePath InformationPreferenceVarPath = new VariablePath(InformationPreference);
 
+        internal const string PSNativeCommandUseErrorActionPreference = nameof(PSNativeCommandUseErrorActionPreference);
+
+        internal static readonly VariablePath PSNativeCommandUseErrorActionPreferenceVarPath =
+            new(PSNativeCommandUseErrorActionPreference);
+
         #endregion Preference Variables
 
         // Native command argument passing style
@@ -321,25 +326,30 @@ namespace System.Management.Automation
                                                                    /* PSCommandPath */     typeof(string),
                                                                  };
 
-        internal static readonly string[] PreferenceVariables = {
-                                                                    SpecialVariables.DebugPreference,
-                                                                    SpecialVariables.VerbosePreference,
-                                                                    SpecialVariables.ErrorActionPreference,
-                                                                    SpecialVariables.WhatIfPreference,
-                                                                    SpecialVariables.WarningPreference,
-                                                                    SpecialVariables.InformationPreference,
-                                                                    SpecialVariables.ConfirmPreference,
-                                                                };
+        // This array and the one below it exist to optimize the way common parameters work in advanced functions.
+        // Common parameters work by setting preference variables in the scope of the function and restoring the old value afterward.
+        // Variables that don't correspond to common cmdlet parameters don't need to be added here.
+        internal static readonly string[] PreferenceVariables =
+        {
+            SpecialVariables.DebugPreference,
+            SpecialVariables.VerbosePreference,
+            SpecialVariables.ErrorActionPreference,
+            SpecialVariables.WhatIfPreference,
+            SpecialVariables.WarningPreference,
+            SpecialVariables.InformationPreference,
+            SpecialVariables.ConfirmPreference,
+        };
 
-        internal static readonly Type[] PreferenceVariableTypes = {
-                                                                    /* DebugPreference */       typeof(ActionPreference),
-                                                                    /* VerbosePreference */     typeof(ActionPreference),
-                                                                    /* ErrorPreference */       typeof(ActionPreference),
-                                                                    /* WhatIfPreference */      typeof(SwitchParameter),
-                                                                    /* WarningPreference */     typeof(ActionPreference),
-                                                                    /* InformationPreference */ typeof(ActionPreference),
-                                                                    /* ConfirmPreference */     typeof(ConfirmImpact),
-                                                                  };
+        internal static readonly Type[] PreferenceVariableTypes =
+        {
+            /* DebugPreference */                         typeof(ActionPreference),
+            /* VerbosePreference */                       typeof(ActionPreference),
+            /* ErrorPreference */                         typeof(ActionPreference),
+            /* WhatIfPreference */                        typeof(SwitchParameter),
+            /* WarningPreference */                       typeof(ActionPreference),
+            /* InformationPreference */                   typeof(ActionPreference),
+            /* ConfirmPreference */                       typeof(ConfirmImpact),
+        };
 
         // The following variables are created in every session w/ AllScope.  We avoid creating local slots when we
         // see an assignment to any of these variables so that they get handled properly (either throwing an exception
