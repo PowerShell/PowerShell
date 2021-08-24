@@ -525,9 +525,7 @@ namespace System.Management.Automation
         /// </summary>
         internal object GetVariableValue(VariablePath path, object defaultValue)
         {
-            CmdletProviderContext context;
-            SessionStateScope scope;
-            return EngineSessionState.GetVariableValue(path, out context, out scope) ?? defaultValue;
+            return EngineSessionState.GetVariableValue(path, out _, out _) ?? defaultValue;
         }
 
         /// <summary>
@@ -612,19 +610,15 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal bool GetBooleanPreference(VariablePath preferenceVariablePath, bool defaultPref, out bool defaultUsed)
         {
-            CmdletProviderContext context = null;
-            SessionStateScope scope = null;
-            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out context, out scope);
-            if (val == null)
+            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out _, out _);
+            if (val is null)
             {
                 defaultUsed = true;
                 return defaultPref;
             }
 
-            bool converted = defaultPref;
-            defaultUsed = !LanguagePrimitives.TryConvertTo<bool>
-                (val, out converted);
-            return (defaultUsed) ? defaultPref : converted;
+            defaultUsed = !LanguagePrimitives.TryConvertTo(val, out bool converted);
+            return defaultUsed ? defaultPref : converted;
         }
         #endregion GetSetVariable methods
 

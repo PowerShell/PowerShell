@@ -3250,8 +3250,7 @@ namespace System.Management.Automation
             {
                 if (!IsWhatIfFlagSet && !_isWhatIfPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _whatIfFlag = Context.GetBooleanPreference(SpecialVariables.WhatIfPreferenceVarPath, _whatIfFlag, out defaultUsed);
+                    _whatIfFlag = Context.GetBooleanPreference(SpecialVariables.WhatIfPreferenceVarPath, _whatIfFlag, out _);
                     _isWhatIfPreferenceCached = true;
                 }
 
