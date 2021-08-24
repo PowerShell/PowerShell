@@ -43,6 +43,11 @@ jobs:
             Write-Verbose "CREATE_PR=true" -Verbose
             "CREATE_PR=true" | Out-File $env:GITHUB_ENV -Append
           }
+      - name: Microsoft Teams Notifier
+        uses: skitionek/notify-microsoft-teams@master
+        if: failure()
+        with:
+          webhook_url: ${{ secrets.PS_BUILD_TEAMS_CHANNEL }}
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v2
         id: cpr
