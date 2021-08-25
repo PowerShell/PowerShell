@@ -13,7 +13,7 @@ namespace System.Management.Automation
     ///   * A simple integer, i.e. 2;
     ///   * A string without a dot, i.e. "2".
     /// </summary>
-    public class ArgumentToVersionTransformationAttribute : ArgumentTransformationAttribute
+    internal class ArgumentToVersionTransformationAttribute : ArgumentTransformationAttribute
     {
         private static readonly IReadOnlyDictionary<string, Version> _empty = new Dictionary<string, Version>();
 

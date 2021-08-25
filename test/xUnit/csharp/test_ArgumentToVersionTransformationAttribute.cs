@@ -17,7 +17,7 @@ namespace PSTests.Parallel
         {
             var transformation = new ArgumentToVersionTransformationAttribute();
             var result = transformation.Transform(default, inputData);
-    
+
             Assert.Equal(expected, result);
         }
 
@@ -26,6 +26,7 @@ namespace PSTests.Parallel
             // strings
             yield return new object[] { "1.1", "1.1" };
             yield return new object[] { "1", new Version(1, 0) };
+            yield return new object[] { string.Empty, new Version(0, 0) };
 
             // doubles
             yield return new object[] { 1.0, 1.0 };
@@ -36,11 +37,15 @@ namespace PSTests.Parallel
             yield return new object[] { 2, new Version(2, 0) };
 
             // PSObjects
-            yield return new object[] { new PSObject(false), new Version(0, 0) };
-            yield return new object[] { new PSObject(true), new Version(1, 0) };
+            yield return new object[] { new PSObject(obj: 0), new Version(0, 0) };
+            yield return new object[] { new PSObject(obj: 1), new Version(1, 0) };
 
             // unhandled
-            yield return new object[] { string.Empty, new Version(0, 0) };
+            var obj = new object();
+            yield return new object[] { obj, obj };
+
+            var date = DateTimeOffset.UtcNow;
+            yield return new object[] { date, date };
         }
     }
 }
