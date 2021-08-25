@@ -31,6 +31,8 @@ namespace PSTests.Parallel
         [InlineData(3000, "2.9 KB")]
         [InlineData(1024 * 1024, "1.0 MB")]
         [InlineData(1024 * 1024 * 1024, "1.000 GB")]
+        [InlineData((long)(1024 * 1024 * 1024) * 1024, "1.0000 TB")]
+        [InlineData((long)(1024 * 1024 * 1024) * 1024 * 1024, "1.00000 PB")]
         [InlineData(long.MaxValue, "8.000000000 EB")]
         public static void DisplayHumanReadableFileSize(long bytes, string expected)
         {
