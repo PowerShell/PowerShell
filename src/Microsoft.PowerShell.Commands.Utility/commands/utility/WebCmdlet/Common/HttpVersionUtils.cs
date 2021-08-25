@@ -33,9 +33,12 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                var version = (Version)fields[i].GetValue(null);
+                var version = (Version?)fields[i].GetValue(null);
 
-                versions.Add(version.ToString());
+                if (version is not null)
+                {
+                    versions.Add(version.ToString());
+                }
             }
 
             AllowedVersions = versions.ToArray();
