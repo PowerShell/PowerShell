@@ -107,12 +107,24 @@ function Update-PackageVersion {
     }
 
     $packages.GetEnumerator() | ForEach-Object {
-        $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPrereleaseVersions -Source $source
+        $pkgName = $_.Key
+
+        $pkgs = [System.Collections.Generic.Dictionary[string, Microsoft.PackageManagement.Packaging.SoftwareIdentity]]::new()
+
+        # We have to find packages for all sources separately as Find-Package does not return all packages when both sources are provided at the same time.
+        # Since there will be a lot of duplicates we add the package to a dictionary so we only get a unique set by version.
+        $source | ForEach-Object {
+            Find-Package -Name $pkgName -AllVersions -AllowPrereleaseVersions -Source $_ | ForEach-Object {
+                if (-not $pkgs.ContainsKey($_.Version)) {
+                    $pkgs.Add($_.Version, $_)
+                }
+            }
+        }
 
         foreach ($v in $_.Value) {
             $version = $v.Version
 
-            foreach ($p in $pkgs) {
+            foreach ($p in $pkgs.Values) {
                 # some packages are directly updated on nuget.org so need to check that too.
                 if ($p.Version -like "$versionPattern*" -or $p.Source -eq 'nuget.org') {
                     if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
