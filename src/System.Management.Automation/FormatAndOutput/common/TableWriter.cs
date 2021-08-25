@@ -458,7 +458,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 sb.Append(GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding));
-                if (values[k].Contains(ESC))
+                if (values[k] is not null && values[k].Contains(ESC))
                 {
                     // Reset the console output if the content of this column contains ESC
                     sb.Append(PSStyle.Instance.Reset);
