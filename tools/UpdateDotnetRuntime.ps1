@@ -114,7 +114,7 @@ function Update-PackageVersion {
         # We have to find packages for all sources separately as Find-Package does not return all packages when both sources are provided at the same time.
         # Since there will be a lot of duplicates we add the package to a dictionary so we only get a unique set by version.
         $source | ForEach-Object {
-            Find-Package -Name $pkgName -AllVersions -AllowPrereleaseVersions -Source $_ | ForEach-Object {
+            Find-Package -Name $pkgName -AllVersions -AllowPrereleaseVersions -Source $_ -ErrorAction SilentlyContinue | ForEach-Object {
                 if (-not $pkgs.ContainsKey($_.Version)) {
                     $pkgs.Add($_.Version, $_)
                 }
