@@ -1897,8 +1897,8 @@ namespace System.Management.Automation
                 < 1125899906842624 and >= 1073741824 => $"{(bytes / 1073741824.0).ToString("0.000")} GB",
                 < 1073741824 and >= 1048576 => $"{(bytes / 1048576.0).ToString("0.0")} MB",
                 < 1048576 and >= 1024 => $"{(bytes / 1024.0).ToString("0.0")} KB",
-                < 1024 and >= 0 => $"{bytes} Byte",
-                _ => $"0 Byte"
+                < 1024 and >= 0 => $"{bytes} Bytes",
+                _ => $"0 Bytes"
             };
         }
     }
