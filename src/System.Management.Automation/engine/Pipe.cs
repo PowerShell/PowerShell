@@ -111,6 +111,8 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// Gets whether the out variable list should be ignored.
+        /// This is used for scenarios like the `clean` block, where writing to output stream is intentionally
+        /// disabled and thus out variables should also be ignored.
         /// </summary>
         internal bool IgnoreOutVariableList { get; set; }
 

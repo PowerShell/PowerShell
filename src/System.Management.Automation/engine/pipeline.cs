@@ -478,13 +478,13 @@ namespace System.Management.Automation.Internal
                     {
                         // If the caller specified an input object array, we run assuming there is an incoming "stream"
                         // of objects. This will prevent the one default call to ProcessRecord on the first command.
-                        Start(input != AutomationNull.Value);
+                        Start(incomingStream: input != AutomationNull.Value);
 
                         // Start has already validated firstcommandProcessor
                         CommandProcessorBase firstCommandProcessor = _commands[0];
 
                         // Add any input to the first command.
-                        if (ExternalInput != null)
+                        if (ExternalInput is not null)
                         {
                             firstCommandProcessor.CommandRuntime.InputPipe.ExternalReader = ExternalInput;
                         }
@@ -598,7 +598,7 @@ namespace System.Management.Automation.Internal
             {
                 CommandProcessorBase commandProcessor = _commands[i];
 
-                if (commandProcessor == null)
+                if (commandProcessor is null)
                 {
                     // An internal error that should not happen.
                     throw PSTraceSource.NewInvalidOperationException();
@@ -611,7 +611,7 @@ namespace System.Management.Automation.Internal
                     continue;
                 }
 
-                if (commandRequestingUpstreamCommandsToStop != null)
+                if (commandRequestingUpstreamCommandsToStop is not null)
                 {
                     // Do not call DoComplete/EndProcessing on commands that were stopped upstream.
                     continue;
@@ -652,11 +652,11 @@ namespace System.Management.Automation.Internal
             }
 
             // Log the pipeline completion.
-            if (lastCommandRuntime != null)
+            if (lastCommandRuntime is not null)
             {
                 // Only log the pipeline completion if this wasn't a nested pipeline, as
                 // pipeline state in transcription is associated with the toplevel pipeline
-                if (LocalPipeline == null || !LocalPipeline.IsNested)
+                if (LocalPipeline is null || !LocalPipeline.IsNested)
                 {
                     lastCommandRuntime.PipelineProcessor.LogPipelineComplete();
                 }

@@ -510,9 +510,9 @@ namespace System.Management.Automation
                     // The RedirectShellErrorOutputPipe flag is used by the V2 hosting API to force the
                     // redirection.
                     //
-                    if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe != null)
+                    if (RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe is not null)
                     {
-                        _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
+                        _context.ShellFunctionErrorOutputPipe = commandRuntime.ErrorOutputPipe;
                     }
 
                     _context.CurrentCommandProcessor = this;
@@ -523,7 +523,7 @@ namespace System.Management.Automation
                     {
                         if (Context._debuggingMode > 0 && Command is not PSScriptCmdlet)
                         {
-                            Context.Debugger.CheckCommand(this.Command.MyInvocation);
+                            Context.Debugger.CheckCommand(Command.MyInvocation);
                         }
 
                         Command.DoBeginProcessing();
@@ -624,9 +624,9 @@ namespace System.Management.Automation
                 // The RedirectShellErrorOutputPipe flag is used by the V2 hosting API to force the
                 // redirection.
                 //
-                if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe != null)
+                if (RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe is not null)
                 {
-                    _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
+                    _context.ShellFunctionErrorOutputPipe = commandRuntime.ErrorOutputPipe;
                 }
 
                 _context.CurrentCommandProcessor = this;
@@ -649,7 +649,7 @@ namespace System.Management.Automation
                 using (commandRuntime.AllowThisCommandToWrite(permittedToWriteToPipeline: true))
                 using (ParameterBinderBase.bindingTracer.TraceScope("CALLING CleanResource"))
                 {
-                    this.Command.DoCleanResource();
+                    Command.DoCleanResource();
                 }
             }
             catch (HaltCommandException)
@@ -703,9 +703,9 @@ namespace System.Management.Automation
 
             try
             {
-                if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe != null)
+                if (RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe is not null)
                 {
-                    _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
+                    _context.ShellFunctionErrorOutputPipe = commandRuntime.ErrorOutputPipe;
                 }
 
                 _context.CurrentCommandProcessor = this;
@@ -1010,6 +1010,15 @@ namespace System.Management.Automation
             {
                 if (UseLocalScope)
                 {
+                    // Clean up the PS drives that are associated with this local scope.
+                    // This operation may be needed at multiple stages depending on whether the 'clean' block is declared:
+                    //  1. when there is a 'clean' block, it needs to be done only after 'clean' block runs, because the scope
+                    //     needs to be preserved until the 'clean' block finish execution.
+                    //  2. when there is no 'clean' block, it needs to be done when
+                    //      (1) there is any exception thrown from 'DoPrepare()', 'DoBegin()', 'DoExecute()', or 'DoComplete';
+                    //      (2) OR, the command runs to the end successfully;
+                    // Doing this cleanup at those multiple stages is cumbersome. Since we will always dispose the command in
+                    // the end, doing this cleanup here will cover all the above cases.
                     CommandSessionState.RemoveScope(CommandScope);
                 }
 

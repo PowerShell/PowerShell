@@ -1269,17 +1269,6 @@ namespace System.Management.Automation.Runspaces
     internal class PipelineStopper
     {
         /// <summary>
-        /// Object used to lock critical sections where script execution must occur even in stopping pipelines.
-        /// </summary>
-        private readonly object _criticalSectionLock = new();
-
-        /// <summary>
-        /// The current depth of nested critical sections. If this is above zero, the pipeline execution
-        /// is currently in a critical code section.
-        /// </summary>
-        private int _criticalSectionDepth;
-
-        /// <summary>
         /// Stack of current executing pipeline processor.
         /// </summary>
         private readonly Stack<PipelineProcessor> _stack = new Stack<PipelineProcessor>();
@@ -1289,41 +1278,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private readonly object _syncRoot = new object();
         private readonly LocalPipeline _localPipeline;
-
-        internal void AwaitPipelineCriticalSection()
-        {
-            Monitor.Enter(_criticalSectionLock);
-            Monitor.Exit(_criticalSectionLock);
-        }
-
-        internal void EnterCriticalSection()
-        {
-            // Increment the depth value. If we were not previously in a critical section (depth is now 1),
-            // also enter the critical section lock.
-            if (Interlocked.Increment(ref _criticalSectionDepth) == 1)
-            {
-                Monitor.Enter(_criticalSectionLock);
-            }
-        }
-
-        internal void ExitCriticalSection()
-        {
-            // Decrement the depth value. If we are now at depth 0, we should no longer be in a critical section,
-            // so it is safe to exit the critical section lock.
-            if (Interlocked.Decrement(ref _criticalSectionDepth) == 0)
-            {
-                Monitor.Exit(_criticalSectionLock);
-            }
-        }
-
-        /// <summary>
-        /// Gets whether the currently running pipeline is in a critical code section.
-        /// </summary>
-        /// <value></value>
-        internal bool InCriticalSection
-        {
-            get => _criticalSectionDepth != 0;
-        }
 
         /// <summary>
         /// Default constructor.
@@ -1338,15 +1292,17 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private bool _stopping;
 
-        /// <summary>
-        /// Whether the pipeline is currently stopping. This will indicate true when the pipeline is stopping, unless
-        /// it is currently running in a critical code section where stopping is not permitted until the critical
-        /// section is exited.
-        /// </summary>
         internal bool IsStopping
         {
-            get => _stopping && !InCriticalSection;
-            set => _stopping = value;
+            get
+            {
+                return _stopping;
+            }
+
+            set
+            {
+                _stopping = value;
+            }
         }
 
         /// <summary>
@@ -1362,7 +1318,7 @@ namespace System.Management.Automation.Runspaces
 
             lock (_syncRoot)
             {
-                if (IsStopping)
+                if (_stopping)
                 {
                     PipelineStoppedException e = new PipelineStoppedException();
                     throw e;
@@ -1384,7 +1340,7 @@ namespace System.Management.Automation.Runspaces
                 // If we are stopping, Stop will pop the entire stack, so
                 // we shouldn't do any popping or some PipelineProcessor won't
                 // be notified that it is being stopped.
-                if (IsStopping)
+                if (_stopping)
                 {
                     return;
                 }
@@ -1419,10 +1375,6 @@ namespace System.Management.Automation.Runspaces
 
                 copyStack = _stack.ToArray();
             }
-
-            // We don't want to stop when a pipeline is in a critical region.
-            // Typically it will be in the middle of command disposal.
-            AwaitPipelineCriticalSection();
 
             // Propagate error from the toplevel operation through to enclosing the LocalPipeline.
             if (copyStack.Length > 0)

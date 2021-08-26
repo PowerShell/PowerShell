@@ -1496,8 +1496,11 @@ namespace System.Management.Automation.Language
 
             bool VisitAndShallContinue(Ast ast)
             {
-                if (ast != null)
+                if (ast is not null)
+                {
                     action = ast.InternalVisit(visitor);
+                }
+
                 return action == AstVisitAction.Continue;
             }
         }
@@ -2006,9 +2009,9 @@ namespace System.Management.Automation.Language
         private static bool HasInvalidBlockName(TokenKind blockName, bool unnamed)
         {
             return !blockName.HasTrait(TokenFlags.ScriptBlockBlockName)
-                || (unnamed && (blockName == TokenKind.Begin
-                    || blockName == TokenKind.Clean
-                    || blockName == TokenKind.Dynamicparam));
+                || (unnamed
+                    && blockName != TokenKind.Process
+                    && blockName != TokenKind.End);
         }
 
         // Used by the debugger for command breakpoints
