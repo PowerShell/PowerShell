@@ -204,6 +204,7 @@ namespace System.Management.Automation
         internal static readonly VariablePath PSModuleAutoLoadingPreferenceVarPath = new VariablePath("global:" + PSModuleAutoLoading);
 
         #region Platform Variables
+
         internal const string IsLinux = "IsLinux";
 
         internal static readonly VariablePath IsLinuxPath = new VariablePath("IsLinux");
@@ -221,6 +222,7 @@ namespace System.Management.Automation
         internal static readonly VariablePath IsCoreCLRPath = new VariablePath("IsCoreCLR");
 
         #endregion
+
         #region Preference Variables
 
         internal const string DebugPreference = "DebugPreference";
@@ -255,12 +257,12 @@ namespace System.Management.Automation
 
         internal static readonly VariablePath InformationPreferenceVarPath = new VariablePath(InformationPreference);
 
+        #endregion Preference Variables
+
         internal const string PSNativeCommandUseErrorActionPreference = nameof(PSNativeCommandUseErrorActionPreference);
 
         internal static readonly VariablePath PSNativeCommandUseErrorActionPreferenceVarPath =
             new(PSNativeCommandUseErrorActionPreference);
-
-        #endregion Preference Variables
 
         // Native command argument passing style
         internal const string NativeArgumentPassing = "PSNativeCommandArgumentPassing";

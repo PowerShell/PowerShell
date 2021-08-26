@@ -1308,37 +1308,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        #region VariableHelper
-        /// <summary>
-        /// A helper for adding variables to session state.
-        /// Experimental features can be handled here.
-        /// </summary>
-        /// <param name="variables">The variables to add to session state.</param>
-        private void AddVariables(IEnumerable<SessionStateVariableEntry> variables)
-        {
-            Variables.Add(variables);
-
-            // If the PSNativeCommandArgumentPassing feature is enabled, create the variable which controls the behavior
-            // Since the BuiltInVariables list is static, and this should be done dynamically
-            // we need to do this here. Also, since the defaults are different based on platform we need a
-            // bit more logic.
-            if (ExperimentalFeature.IsEnabled("PSNativeCommandArgumentPassing"))
-            {
-                NativeArgumentPassingStyle style = NativeArgumentPassingStyle.Standard;
-                if (Platform.IsWindows) {
-                    style = NativeArgumentPassingStyle.Windows;
-                }
-                Variables.Add(
-                    new SessionStateVariableEntry(
-                        SpecialVariables.NativeArgumentPassing,
-                        style,
-                        RunspaceInit.NativeCommandArgumentPassingDescription,
-                        ScopedItemOptions.None,
-                        new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
-            }
-        }
-        #endregion
-
         /// <summary>
         /// Creates an initial session state from a PSSC configuration file.
         /// </summary>
@@ -1444,7 +1413,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Add built-in variables.
-            iss.AddVariables(BuiltInVariables);
+            iss.Variables.Add(BuiltInVariables);
 
             // wrap some commands in a proxy function to restrict their parameters
             foreach (KeyValuePair<string, CommandMetadata> proxyFunction in CommandMetadata.GetRestrictedCommands(SessionCapabilities.RemoteServer))
@@ -1531,7 +1500,7 @@ namespace System.Management.Automation.Runspaces
 
             InitialSessionState ss = new InitialSessionState();
 
-            ss.AddVariables(BuiltInVariables);
+            ss.Variables.Add(BuiltInVariables);
             ss.Commands.Add(new SessionStateApplicationEntry("*"));
             ss.Commands.Add(new SessionStateScriptEntry("*"));
             ss.Commands.Add(BuiltInFunctions);
@@ -1598,7 +1567,7 @@ namespace System.Management.Automation.Runspaces
         {
             InitialSessionState ss = new InitialSessionState();
 
-            ss.AddVariables(BuiltInVariables);
+            ss.Variables.Add(BuiltInVariables);
             ss.Commands.Add(new SessionStateApplicationEntry("*"));
             ss.Commands.Add(new SessionStateScriptEntry("*"));
             ss.Commands.Add(BuiltInFunctions);
@@ -1639,7 +1608,7 @@ namespace System.Management.Automation.Runspaces
         {
             InitialSessionState ss = new InitialSessionState();
 
-            ss.AddVariables(this.Variables.Clone());
+            ss.Variables.Add(this.Variables.Clone());
             ss.EnvironmentVariables.Add(this.EnvironmentVariables.Clone());
             ss.Commands.Add(this.Commands.Clone());
             ss.Assemblies.Add(this.Assemblies.Clone());
@@ -4471,7 +4440,6 @@ end {
         internal const ActionPreference DefaultInformationPreference = ActionPreference.SilentlyContinue;
 
         internal const ErrorView DefaultErrorView = ErrorView.ConciseView;
-        internal const bool DefaultPSNativeCommandUseErrorActionPreference = false;
         internal const bool DefaultWhatIfPreference = false;
         internal const ConfirmImpact DefaultConfirmPreference = ConfirmImpact.High;
 
@@ -4628,10 +4596,21 @@ end {
                 builtinVariables.Add(
                     new SessionStateVariableEntry(
                         SpecialVariables.PSNativeCommandUseErrorActionPreference,
-                        DefaultPSNativeCommandUseErrorActionPreference,
+                        value: false,
                         RunspaceInit.PSNativeCommandUseErrorActionPreferenceDescription,
                         ScopedItemOptions.None,
                         new ArgumentTypeConverterAttribute(typeof(bool))));
+            }
+
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandArgumentPassingFeatureName))
+            {
+                builtinVariables.Add(
+                    new SessionStateVariableEntry(
+                        SpecialVariables.NativeArgumentPassing,
+                        Platform.IsWindows ? NativeArgumentPassingStyle.Windows : NativeArgumentPassingStyle.Standard,
+                        RunspaceInit.NativeCommandArgumentPassingDescription,
+                        ScopedItemOptions.None,
+                        new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
             }
 
             BuiltInVariables = builtinVariables.ToArray();

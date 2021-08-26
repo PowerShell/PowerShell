@@ -56,6 +56,19 @@ Describe 'Native command error handling tests' -Tags 'CI' {
             $stderr[1].Exception.Message | Should -BeExactly "Program `"$exeName`" ended with non-zero exit code: 1."
         }
 
+        It "Non-boolean value should not cause type casting error when the native command exited with non-zero code" {
+            $ErrorActionPreference = 'Continue'
+
+            $PSNativeCommandUseErrorActionPreference = 'Yeah'
+            $PSNativeCommandUseErrorActionPreference | Should -BeExactly 'Yeah'
+
+            $stderr = testexe -returncode 1 2>&1
+
+            $error[0].FullyQualifiedErrorId | Should -BeExactly 'ProgramExitedWithNonZeroCode'
+            $error[0].TargetObject | Should -BeExactly $exeName
+            $stderr[1].Exception.Message | Should -BeExactly "Program `"$exeName`" ended with non-zero exit code: 1."
+        }
+
         It 'Non-zero exit code generates a non-teminating error for $ErrorActionPreference = ''SilentlyContinue''' {
             $ErrorActionPreference = 'SilentlyContinue'
 
@@ -170,6 +183,19 @@ Describe 'Native command error handling tests' -Tags 'CI' {
             else {
                 testexe -returncode 1 > $null
             }
+
+            $LASTEXITCODE | Should -Be 1
+            $Error.Count | Should -Be 0
+        }
+
+        It "Non-boolean value should not cause type casting error when the native command exited with non-zero code" {
+            $ErrorActionPreference = 'Continue'
+
+            $PSNativeCommandUseErrorActionPreference = 0
+            $PSNativeCommandUseErrorActionPreference | Should -Be 0
+            $PSNativeCommandUseErrorActionPreference | Should -BeOfType 'System.Int32'
+
+            testexe -returncode 1 > $null
 
             $LASTEXITCODE | Should -Be 1
             $Error.Count | Should -Be 0

@@ -20,8 +20,6 @@ namespace System.Management.Automation
     /// </summary>
     internal class NativeCommandParameterBinder : ParameterBinderBase
     {
-        private readonly VariablePath s_nativeArgumentPassingVarPath = new VariablePath(SpecialVariables.NativeArgumentPassing);
-
         #region ctor
 
         /// <summary>
@@ -193,13 +191,13 @@ namespace System.Management.Automation
         {
             get
             {
-                if (ExperimentalFeature.IsEnabled("PSNativeCommandArgumentPassing"))
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandArgumentPassingFeatureName))
                 {
                     try
                     {
                         // This will default to the new behavior if it is set to anything other than Legacy
                         var preference = LanguagePrimitives.ConvertTo<NativeArgumentPassingStyle>(
-                            Context.GetVariableValue(s_nativeArgumentPassingVarPath, NativeArgumentPassingStyle.Standard));
+                            Context.GetVariableValue(SpecialVariables.NativeArgumentPassingVarPath, NativeArgumentPassingStyle.Standard));
                         return preference;
                     }
                     catch
