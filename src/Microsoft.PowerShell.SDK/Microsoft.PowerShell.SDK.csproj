@@ -18,9 +18,9 @@
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="6.0.0-preview.6.21352.12" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="6.0.0-preview.6.21352.12" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0-preview.6.21352.12" />
+    <PackageReference Include="System.IO.Packaging" Version="6.0.0-rc.1.21425.7" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="6.0.0-rc.1.21425.7" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0-rc.1.21425.7" />
     <!-- the following package(s) are from https://github.com/dotnet/wcf -->
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.9.0-preview1.21220.1" />
     <PackageReference Include="System.ServiceModel.Http" Version="4.9.0-preview1.21220.1" />
@@ -30,7 +30,7 @@
     <PackageReference Include="System.Private.ServiceModel" Version="4.9.0-preview1.21220.1" />
     <!-- the source could not be found for the following package(s) -->
     <PackageReference Include="Microsoft.NETCore.Windows.ApiSets" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0-preview.4.21253.7" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0-rc.1.21425.7" />
   </ItemGroup>
 
 </Project>
