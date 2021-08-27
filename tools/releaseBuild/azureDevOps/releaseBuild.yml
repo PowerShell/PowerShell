@@ -189,7 +189,9 @@ stages:
       - job: release_json
         displayName: Create and Upload release.json
         pool:
-          vmImage: 'windows-latest'
+          name: PowerShell1ES
+          demands:
+          - ImageOverride -equals MMS2019
         steps:
         - checkout: self
           clean: true

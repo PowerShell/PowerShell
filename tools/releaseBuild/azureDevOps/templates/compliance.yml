@@ -12,7 +12,9 @@ jobs:
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
-    vmImage: windows-latest
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
 
   # APIScan can take a long time
   timeoutInMinutes: 180

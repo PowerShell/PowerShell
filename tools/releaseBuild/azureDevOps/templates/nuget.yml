@@ -8,7 +8,9 @@ jobs:
   displayName: Build NuGet packages
   condition: succeeded()
   pool:
-    vmImage: windows-latest
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
 
   timeoutInMinutes: 90
 
