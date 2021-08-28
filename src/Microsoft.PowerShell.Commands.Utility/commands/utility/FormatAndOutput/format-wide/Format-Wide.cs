@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // we cannot specify -column and -autosize, they are mutually exclusive
-            if (_column.HasValue && _autosize.GetValueOrDefault())
+            if (AutoSize && _column.HasValue)
             {
                 // the user specified -autosize:true AND a column number
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.CannotSpecifyAutosizeAndColumnsError);
@@ -109,17 +109,22 @@ namespace Microsoft.PowerShell.Commands
 
             parameters.groupByParameter = this.ProcessGroupByParameter();
             parameters.forceFormattingAlsoOnOutOfBand = this.Force;
-            parameters.showErrorsAsMessages = this.showErrorsAsMessages.GetValueOrDefault();
-            parameters.showErrorsInFormattedOutput = this.showErrorsInFormattedOutput.GetValueOrDefault();
+            if (this.showErrorsAsMessages.HasValue)
+                parameters.showErrorsAsMessages = this.showErrorsAsMessages;
+            if (this.showErrorsInFormattedOutput.HasValue)
+                parameters.showErrorsInFormattedOutput = this.showErrorsInFormattedOutput;
 
             parameters.expansion = ProcessExpandParameter();
 
-            parameters.autosize = _autosize.GetValueOrDefault();
+            if (_autosize.HasValue)
+                parameters.autosize = _autosize.Value;
 
-            parameters.shapeParameters = new WideSpecificParameters()
+            WideSpecificParameters wideSpecific = new();
+            parameters.shapeParameters = wideSpecific;
+            if (_column.HasValue)
             {
-                columns = _column.GetValueOrDefault()
-            };
+                wideSpecific.columns = _column.Value;
+            }
 
             return parameters;
         }
