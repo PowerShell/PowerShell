@@ -5,7 +5,8 @@ jobs:
 - job: build_macOS_${{ parameters.buildArchitecture }}
   displayName: Build macOS ${{ parameters.buildArchitecture }}
   condition: succeeded()
-  pool: Hosted Mac Internal
+  pool:
+    vmImage: internal-macos-10.14
   variables:
     # Turn off Homebrew analytics
     - name: HOMEBREW_NO_ANALYTICS
