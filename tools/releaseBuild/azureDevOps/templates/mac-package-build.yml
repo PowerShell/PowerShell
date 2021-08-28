@@ -7,7 +7,8 @@ jobs:
   displayName: Package macOS ${{ parameters.buildArchitecture }}
   dependsOn: MacFileSigningJob_${{ parameters.buildArchitecture }}
   condition: succeeded()
-  pool: Hosted Mac Internal
+  pool:
+    vmImage: internal-macos-10.14
   variables:
     # Turn off Homebrew analytics
     - name: HOMEBREW_NO_ANALYTICS
