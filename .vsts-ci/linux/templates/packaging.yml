@@ -1,5 +1,5 @@
 parameters:
-  pool: 'ubuntu-16.04'
+  pool: 'ubuntu-20.04'
   parentJobs: []
   name: 'Linux'
 
