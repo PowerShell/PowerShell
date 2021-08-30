@@ -1227,6 +1227,7 @@ function Start-PSPester {
             $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
         }
         else {
+            # Azure DevOps agents do not have Temp folder setup on Ubuntu 20.04, hence using HOME directory
             $outputBufferFilePath = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         }
     }
