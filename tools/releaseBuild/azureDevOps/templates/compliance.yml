@@ -21,9 +21,6 @@ jobs:
   # APIScan can take a long time
   timeoutInMinutes: 180
 
-  env:
-    AzureServicesAuthConnectionString: RunAs=App;AppId=$(APIScanClient);TenantId=$(APIScanTenant);AppKey=$(APIScanSecret)
-
   steps:
   - checkout: self
     clean: true
@@ -122,6 +119,8 @@ jobs:
       softwareVersionNum: '$(ReleaseTagVar)'
       isLargeApp: false
       preserveTempFiles: true
+    env:
+      AzureServicesAuthConnectionString: RunAs=App;AppId=$(APIScanClient);TenantId=$(APIScanTenant);AppKey=$(APIScanSecret)
     continueOnError: true
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
