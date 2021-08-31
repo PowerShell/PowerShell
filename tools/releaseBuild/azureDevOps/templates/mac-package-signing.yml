@@ -7,7 +7,9 @@ jobs:
   dependsOn: package_macOS_${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
-    name: Package ES Standard Build
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
   variables:
     - group: ESRP
     - name: runCodesignValidationInjection

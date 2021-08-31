@@ -10,7 +10,9 @@ jobs:
   condition: succeeded()
 
   pool:
-    name: Package ES Standard Build
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
 
   steps:
   - checkout: self
