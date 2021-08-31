@@ -181,6 +181,7 @@ function Get-DotnetUpdate {
             NewVersion   = $SDKVersionOverride
             Message      = $null
             FeedUrl      = $feedUrl
+            Quality      = $quality
         }
     }
 
