@@ -14,7 +14,9 @@ jobs:
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
-    vmImage: windows-latest
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
   variables:
     - name: runCodesignValidationInjection
       value: false

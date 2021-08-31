@@ -7,7 +7,9 @@ jobs:
   dependsOn: ${{ parameters.parentJob }}
   condition: succeeded()
   pool:
-    name: Package ES CodeHub Lab E
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
   variables:
     - group: ESRP
     - name: runCodesignValidationInjection

@@ -8,7 +8,9 @@ jobs:
     ${{ parameters.parentJobs }}
   condition: succeeded()
   pool:
-    vmImage: windows-latest
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
   variables:
     - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
       value: 1
