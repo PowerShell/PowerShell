@@ -14,7 +14,9 @@ jobs:
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
-    name: Package ES Standard Build
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
   variables:
     - name: BuildConfiguration
       value: ${{ parameters.BuildConfiguration }}

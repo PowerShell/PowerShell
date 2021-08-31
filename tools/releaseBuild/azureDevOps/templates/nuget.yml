@@ -7,7 +7,10 @@ jobs:
     ${{ parameters.parentJobs }}
   displayName: Build NuGet packages
   condition: succeeded()
-  pool: Package ES Standard Build
+  pool:
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
 
   timeoutInMinutes: 90
 
