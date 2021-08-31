@@ -8,6 +8,8 @@ jobs:
     value : false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
+
+  # Defines the variables APIScanClient, APIScanTenant and APIScanSecret
   - group: PS-PS-APIScan
 
   displayName: Compliance
