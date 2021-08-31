@@ -902,7 +902,7 @@ namespace System.Management.Automation
             if (HasBeginBlock
                 || HasProcessBlock
                 || HasCleanBlock
-                || ast.Body.ParamBlock != null)
+                || ast.Body.ParamBlock is not null)
             {
                 Ast errorAst = ast.Body.BeginBlock ?? (Ast)ast.Body.ProcessBlock ?? ast.Body.ParamBlock;
                 parser.ReportError(
