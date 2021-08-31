@@ -72,14 +72,6 @@ namespace System.Management.Automation.Remoting.Server
         {
             try
             {
-#if !CORECLR
-                // CurrentUICulture is not available in Thread Class in CSS
-                // WinBlue: 621775. Thread culture is not properly set
-                // for local background jobs causing experience differences
-                // between local console and local background jobs.
-                Thread.CurrentThread.CurrentUICulture = Microsoft.PowerShell.NativeCultureResolver.UICulture;
-                Thread.CurrentThread.CurrentCulture = Microsoft.PowerShell.NativeCultureResolver.Culture;
-#endif
                 string data = state as string;
                 OutOfProcessUtils.ProcessData(data, callbacks);
             }
@@ -423,28 +415,6 @@ namespace System.Management.Automation.Remoting.Server
         }
 
         #endregion
-
-        #region Static Methods
-
-        internal static void AppDomainUnhandledException(object sender, UnhandledExceptionEventArgs args)
-        {
-            // args can never be null.
-            Exception exception = (Exception)args.ExceptionObject;
-            // log the exception to crimson event logs
-            PSEtwLog.LogOperationalError(PSEventId.AppDomainUnhandledException,
-                PSOpcode.Close, PSTask.None,
-                PSKeyword.UseAlwaysOperational,
-                exception.GetType().ToString(), exception.Message,
-                exception.StackTrace);
-
-            PSEtwLog.LogAnalyticError(PSEventId.AppDomainUnhandledException_Analytic,
-                    PSOpcode.Close, PSTask.None,
-                    PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                    exception.GetType().ToString(), exception.Message,
-                    exception.StackTrace);
-        }
-
-        #endregion
     }
 
     internal sealed class StdIOProcessMediator : OutOfProcessMediatorBase
@@ -510,10 +480,6 @@ namespace System.Management.Automation.Remoting.Server
                 s_singletonInstance = new StdIOProcessMediator();
             }
 
-#if !CORECLR
-            // Setup unhandled exception to log events.
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
-#endif
             s_singletonInstance.Start(
                 initialCommand: initialCommand,
                 cryptoHelper: new PSRemotingCryptoHelperServer(),
@@ -587,10 +553,6 @@ namespace System.Management.Automation.Remoting.Server
                 s_singletonInstance = new NamedPipeProcessMediator(namedPipeServer);
             }
 
-#if !CORECLR
-            // AppDomain is not available in CoreCLR
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
-#endif
             s_singletonInstance.Start(
                 initialCommand: initialCommand,
                 cryptoHelper: new PSRemotingCryptoHelperServer(),
@@ -680,11 +642,6 @@ namespace System.Management.Automation.Remoting.Server
             {
                 s_instance = new HyperVSocketMediator();
             }
-
-#if !CORECLR
-            // AppDomain is not available in CoreCLR
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
-#endif
 
             s_instance.Start(
                 initialCommand: initialCommand,
