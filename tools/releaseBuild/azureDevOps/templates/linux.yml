@@ -8,7 +8,9 @@ jobs:
   displayName: Build ${{ parameters.buildName }}
   condition: succeeded()
   pool:
-    vmImage: ubuntu-16.04
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMSUbuntu20.04
   dependsOn: ${{ parameters.parentJob }}
   variables:
     - name: runCodesignValidationInjection
@@ -66,7 +68,9 @@ jobs:
   dependsOn: build_${{ parameters.buildName }}
   condition: succeeded()
   pool:
-    vmImage: windows-latest
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
   variables:
     - name: buildName
       value: ${{ parameters.buildName }}
