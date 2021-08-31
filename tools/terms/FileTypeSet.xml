@@ -104,6 +104,7 @@
 <Ext Check="1" UseCustomParser="0" DllPath="" ClassName="">.nuspec</Ext>
 <Ext Check="1" UseCustomParser="0" DllPath="" ClassName="">.cdxml</Ext>
 <Ext Check="1" UseCustomParser="0" DllPath="" ClassName="">.manifest</Ext>
+<Ext Check="1" UseCustomParser="0" DllPath="" ClassName="">.stylecop</Ext>
 </Extensions>
 </Type>
 <Type ID="3" Check="1">
