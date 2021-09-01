@@ -10,6 +10,11 @@ pr:
     - master
     - release*
 
+parameters:
+  - name: ForceAzureBlobDelete
+    displayName: Delete Azure Blob
+    default: false
+
 resources:
   repositories:
   - repository: ComplianceRepo

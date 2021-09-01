@@ -85,12 +85,11 @@ jobs:
     inputs:
       targetType: F
       optionsFC: 0
-      optionsXS: 0
+      optionsXS: 1
       optionsPE: '1|2|3|4'
       optionsHMENABLE: 0
       optionsRulesDBPath: '$(Build.SourcesDirectory)\tools\terms\PowerShell-Terms-Rules.mdb'
-      optionsFTPATH: '$(Build.SourcesDirectory)\tools\terms\FileTypeSet.xml'
-      toolVersion: 5.8.2.1
+      optionsUEPath: $(Build.SourcesDirectory)\tools\terms\TermsExclusion.xml
     continueOnError: true
 
   # add RoslynAnalyzers
