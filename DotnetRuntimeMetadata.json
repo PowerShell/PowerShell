@@ -8,6 +8,6 @@
     "nextChannel": "6.0.1xx-rc1"
   },
   "internalfeed" : {
-    "url": null
+    "url": "https://pkgs.dev.azure.com/dnceng/public/_packaging/6.0.100-rc.1.21430.44-shipping/nuget/v2"
   }
 }

@@ -3054,8 +3054,8 @@
       <Component Id="cmp957498053E01454DA1E21E6D7317DCD6">
         <File Id="fil2AA6F0D8A51D4BB89F33F2B73AB12391" KeyPath="yes" Source="$(var.ProductSourcePath)\msquic.dll" />
       </Component>
-      <Component Id="cmpFF0AD067132E492DA31F4E9921B01375">
-        <File Id="fil2646459F2E774B48BC5FA3E7F8BED502" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.21.42515.dll" />
+      <Component Id="cmpC0B842EBB4D244718CA6CEF819EE242B">
+        <File Id="fil229AFC7374F34B97AC3E4296BCB45CE7" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.21.43011.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4041,7 +4041,7 @@
       <ComponentRef Id="cmp708913639F7A46E784CC0FA862A1A2CE" />
       <ComponentRef Id="cmpA75DEF5617C54DA1937CB37D5824BF79" />
       <ComponentRef Id="cmp957498053E01454DA1E21E6D7317DCD6" />
-      <ComponentRef Id="cmpFF0AD067132E492DA31F4E9921B01375" />
+      <ComponentRef Id="cmpC0B842EBB4D244718CA6CEF819EE242B" />
     </ComponentGroup>
   </Fragment>
 </Wix>
