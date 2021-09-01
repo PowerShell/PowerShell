@@ -84,8 +84,8 @@ jobs:
     displayName: 'Run PoliCheck'
     inputs:
       targetType: F
+      targetArgument: '$(Build.SourcesDirectory)'
       optionsFC: 0
-      optionsXS: 1
       optionsPE: '1|2|3|4'
       optionsHMENABLE: 0
       optionsRulesDBPath: '$(Build.SourcesDirectory)\tools\terms\PowerShell-Terms-Rules.mdb'
