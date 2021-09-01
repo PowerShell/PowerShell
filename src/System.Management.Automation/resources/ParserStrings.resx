@@ -1127,7 +1127,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Unable to convert input to the target type [{0}] passed to the ForEach() operator. Please check the specified type and try running your script again.</value>
   </data>
   <data name="ForEachNotSupportCleanBlock" xml:space="preserve">
-    <value>Script block with a 'clean' block is not supported.</value>
+    <value>Script block with a 'clean' block is not supported by the 'ForEach' method.</value>
   </data>
   <data name="NumberToReturnMustBeGreaterThanZero" xml:space="preserve">
     <value>The 'numberToReturn' value provided to the third argument of the Where() operator must be greater than zero. Please correct the argument's value and try running your script again.</value>
