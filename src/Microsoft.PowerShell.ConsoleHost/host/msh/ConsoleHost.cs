@@ -193,7 +193,20 @@ namespace Microsoft.PowerShell
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-ServerMode");
-                    System.Management.Automation.Remoting.Server.OutOfProcessMediator.Run(s_cpp.InitialCommand, s_cpp.WorkingDirectory);
+                    System.Management.Automation.Remoting.Server.StdIOProcessMediator.Run(
+                        initialCommand: s_cpp.InitialCommand,
+                        workingDirectory: s_cpp.WorkingDirectory,
+                        configurationName: null);
+                    exitCode = 0;
+                }
+                else if (s_cpp.SSHServerMode)
+                {
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer");
+                    ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
+                    System.Management.Automation.Remoting.Server.StdIOProcessMediator.Run(
+                        initialCommand: s_cpp.InitialCommand,
+                        workingDirectory: null,
+                        configurationName: null);
                     exitCode = 0;
                 }
                 else if (s_cpp.NamedPipeServerMode)
@@ -201,22 +214,16 @@ namespace Microsoft.PowerShell
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe");
                     ProfileOptimization.StartProfile("StartupProfileData-NamedPipeServerMode");
                     System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(
-                        s_cpp.ConfigurationName);
-                    exitCode = 0;
-                }
-                else if (s_cpp.SSHServerMode)
-                {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer");
-                    ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
-                    System.Management.Automation.Remoting.Server.SSHProcessMediator.Run(s_cpp.InitialCommand);
+                        configurationName: s_cpp.ConfigurationName);
                     exitCode = 0;
                 }
                 else if (s_cpp.SocketServerMode)
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-SocketServerMode");
-                    System.Management.Automation.Remoting.Server.HyperVSocketMediator.Run(s_cpp.InitialCommand,
-                        s_cpp.ConfigurationName);
+                    System.Management.Automation.Remoting.Server.HyperVSocketMediator.Run(
+                        initialCommand: s_cpp.InitialCommand,
+                        configurationName: s_cpp.ConfigurationName);
                     exitCode = 0;
                 }
                 else
