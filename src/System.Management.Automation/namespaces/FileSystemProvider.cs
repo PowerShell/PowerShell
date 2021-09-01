@@ -54,10 +54,11 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
         // This is the errno returned by the rename() syscall
         // when an item is attempted to be renamed across filesystem mount boundaries.
-        private const int MOVE_FAILED_ERROR = 18;
+        private readonly List<int> MOVE_FAILED_ERRORS = new(){18};
 #else
         // 0x80070005 ACCESS_DENIED is returned when trying to move files across volumes like DFS
-        private const int MOVE_FAILED_ERROR = -2147024891;
+        // 0x80131620 is returned if the source and destination do not have the same root path
+        private readonly List<int> MOVE_FAILED_ERRORS = new(){-2147024891, -2146232800};
 #endif
 
         // 4MB gives the best results without spiking the resources on the remote connection for file transfers between pssessions.
@@ -6121,42 +6122,22 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="force">If true, force move the directory, overwriting anything at the destination.</param>
         private void MoveDirectoryInfoUnchecked(DirectoryInfo directory, string destinationPath, bool force)
         {
-            if (!IsSameWindowsVolume(directory.FullName, destinationPath))
+            try
             {
+                if (InternalTestHooks.ThrowExdevErrorOnMoveDirectory)
+                {
+                    throw new IOException("Invalid cross-device link", hresult: MOVE_FAILED_ERRORS[0]);
+                }
+
+                directory.MoveTo(destinationPath);
+            }
+            catch (IOException e) when (MOVE_FAILED_ERRORS.Contains(e.HResult))
+            {
+                // Rather than try to ascertain whether we can rename a directory ahead of time,
+                // it's both faster and more correct to try to rename it and fall back to copy/deleting it
+                // See also: https://github.com/coreutils/coreutils/blob/439741053256618eb651e6d43919df29625b8714/src/mv.c#L212-L216
                 CopyAndDelete(directory, destinationPath, force);
             }
-            else
-            {
-                try
-                {
-                    if (InternalTestHooks.ThrowExdevErrorOnMoveDirectory)
-                    {
-                        throw new IOException("Invalid cross-device link", hresult: MOVE_FAILED_ERROR);
-                    }
-
-                    directory.MoveTo(destinationPath);
-                }
-                catch (IOException e) when (e.HResult == MOVE_FAILED_ERROR)
-                {
-                    // Rather than try to ascertain whether we can rename a directory ahead of time,
-                    // it's both faster and more correct to try to rename it and fall back to copy/deleting it
-                    // See also: https://github.com/coreutils/coreutils/blob/439741053256618eb651e6d43919df29625b8714/src/mv.c#L212-L216
-                    CopyAndDelete(directory, destinationPath, force);
-                }
-            }
-        }
-
-        private static bool IsSameWindowsVolume(string source, string destination)
-        {
-#if UNIX
-            return true;
-#else
-
-            FileInfo src = new FileInfo(source);
-            FileInfo dest = new FileInfo(destination);
-
-            return src.Directory.Root.Name == dest.Directory.Root.Name;
-#endif
         }
 
         private void CopyAndDelete(DirectoryInfo directory, string destination, bool force)
