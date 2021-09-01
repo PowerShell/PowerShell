@@ -10,6 +10,11 @@ pr:
     - master
     - release*
 
+parameters:
+  - name: ForceAzureBlobDelete
+    displayName: Delete Azure Blob
+    default: false
+
 resources:
   repositories:
   - repository: ComplianceRepo
@@ -29,6 +34,9 @@ variables:
     value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
   - name: branchCounter
     value: $[counter(variables['branchCounterKey'], 1)]
+  - name: ForceAzureBlobDelete
+    value:  ${{ parameters.ForceAzureBlobDelete }}
+
 stages:
   - stage: prep
     jobs:
