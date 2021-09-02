@@ -51,16 +51,6 @@ namespace Microsoft.PowerShell.Commands
                                                      ISecurityDescriptorCmdletProvider,
                                                      ICmdletProviderSupportsHelp
     {
-#if UNIX
-        // This is the errno returned by the rename() syscall
-        // when an item is attempted to be renamed across filesystem mount boundaries.
-        private readonly List<int> MOVE_FAILED_ERRORS = new(){18};
-#else
-        // 0x80070005 ACCESS_DENIED is returned when trying to move files across volumes like DFS
-        // 0x80131620 is returned if the source and destination do not have the same root path
-        private readonly List<int> MOVE_FAILED_ERRORS = new(){-2147024891, -2146232800};
-#endif
-
         // 4MB gives the best results without spiking the resources on the remote connection for file transfers between pssessions.
         // NOTE: The script used to copy file data from session (PSCopyFromSessionHelper) has a
         // maximum fragment size value for security.  If FILETRANSFERSIZE changes make sure the
@@ -6126,12 +6116,20 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (InternalTestHooks.ThrowExdevErrorOnMoveDirectory)
                 {
-                    throw new IOException("Invalid cross-device link", hresult: MOVE_FAILED_ERRORS[0]);
+                    throw new IOException("Invalid cross-device link");
                 }
 
                 directory.MoveTo(destinationPath);
             }
-            catch (IOException e) when (MOVE_FAILED_ERRORS.Contains(e.HResult))
+#if UNIX
+            // This is the errno returned by the rename() syscall
+            // when an item is attempted to be renamed across filesystem mount boundaries.
+            catch (IOException e) when (e.HResult == 18)
+#else
+            // 0x80070005 ACCESS_DENIED is returned when trying to move files across volumes like DFS
+            // 0x80131620 is returned if the source and destination do not have the same root path
+            catch (IOException e) when (e.HResult == -2147024891 || e.HResult == -2146232800)
+#endif
             {
                 // Rather than try to ascertain whether we can rename a directory ahead of time,
                 // it's both faster and more correct to try to rename it and fall back to copy/deleting it
