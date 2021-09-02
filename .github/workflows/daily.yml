@@ -44,12 +44,14 @@ jobs:
             "CREATE_PR=true" | Out-File $env:GITHUB_ENV -Append
           }
       - name: Microsoft Teams Notifier
+        runs-on: ubuntu-18.04
         uses: skitionek/notify-microsoft-teams@master
         if: failure()
         with:
           webhook_url: ${{ secrets.PS_BUILD_TEAMS_CHANNEL }}
+          overwrite: "{title: `Failure in updating .NET build. Look at ${workflow_link}`}"
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v2
+        uses: peter-evans/create-pull-request@v3
         id: cpr
         if: env.CREATE_PR == 'true'
         with:
