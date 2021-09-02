@@ -170,7 +170,14 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         }
 
         It "Verify Move-Item will not move to an existing file" {
-            $e = { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId 'MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand' -PassThru
+            if ($IsWindows) {
+                $expectedError = 'MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand'
+            }
+            else {
+                $expectedError = 'DirectoryExist,Microsoft.PowerShell.Commands.MoveItemCommand'
+            }
+
+            $e = { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId $expectedError -PassThru
             $e.Exception | Should -BeOfType System.IO.IOException
             $testDir | Should -Exist
         }
