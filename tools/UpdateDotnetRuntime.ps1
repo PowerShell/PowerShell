@@ -187,17 +187,23 @@ function Get-DotnetUpdate {
 
     try {
 
-        $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$quality/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
-        $selectedQuality = $quality
+        try {
+            $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$quality/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
+            $selectedQuality = $quality
+        } catch {
+            if ($_.exception.Response.StatusCode -eq 'NotFound') {
+                Write-Verbose "Build not found for Channel: $Channel and Quality: $Quality" -Verbose
+            } else {
+                throw $_
+            }
+        }
 
-        if (-not $latestSDKVersionString.StartsWith($sdkImageVersion))
-        {
+        if (-not $latestSDKVersionString -or -not $latestSDKVersionString.StartsWith($sdkImageVersion)) {
             # we did not get a version number so fall back to daily
             $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$qualityFallback/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
             $selectedQuality = $qualityFallback
 
-            if (-not $latestSDKVersionString.StartsWith($sdkImageVersion))
-            {
+            if (-not $latestSDKVersionString.StartsWith($sdkImageVersion)) {
                 throw "No build found!"
             }
         }

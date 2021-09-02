@@ -34,7 +34,7 @@ jobs:
           Write-Verbose "OLD_VERSION=$currentVersion" -Verbose
           "OLD_VERSION=$currentVersion" | Out-File $env:GITHUB_ENV -Append
 
-          ./tools/UpdateDotnetRuntime.ps1 -UpdateMSIPackaging
+          ./tools/UpdateDotnetRuntime.ps1 -UpdateMSIPackaging -UseInternalFeed
           $newVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
           Write-Verbose "NEW_VERSION=$newVersion" -Verbose
           "NEW_VERSION=$newVersion" | Out-File $env:GITHUB_ENV -Append
