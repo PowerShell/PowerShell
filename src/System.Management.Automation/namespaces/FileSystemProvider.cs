@@ -7985,18 +7985,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct REPARSE_DATA_BUFFER_APPEXECLINK
-        {
-            public uint ReparseTag;
-            public ushort ReparseDataLength;
-            public ushort Reserved;
-            public uint StringCount;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
-            public byte[] StringList;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
         private struct BY_HANDLE_FILE_INFORMATION
         {
             public uint FileAttributes;
@@ -8222,10 +8210,6 @@ namespace Microsoft.PowerShell.Commands
 
                         case IO_REPARSE_TAG_MOUNT_POINT:
                             linkType = "Junction";
-                            break;
-
-                        case IO_REPARSE_TAG_APPEXECLINK:
-                            linkType = "AppExeCLink";
                             break;
 
                         default:
@@ -8504,16 +8488,6 @@ namespace Microsoft.PowerShell.Commands
                     case IO_REPARSE_TAG_MOUNT_POINT:
                         REPARSE_DATA_BUFFER_MOUNTPOINT reparseMountPointDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_MOUNTPOINT>(outBuffer);
                         targetDir = Encoding.Unicode.GetString(reparseMountPointDataBuffer.PathBuffer, reparseMountPointDataBuffer.SubstituteNameOffset, reparseMountPointDataBuffer.SubstituteNameLength);
-                        break;
-
-                    case IO_REPARSE_TAG_APPEXECLINK:
-                        REPARSE_DATA_BUFFER_APPEXECLINK reparseAppExeDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_APPEXECLINK>(outBuffer);
-                        // The target file is at index 2
-                        if (reparseAppExeDataBuffer.StringCount >= 3)
-                        {
-                            string temp = Encoding.Unicode.GetString(reparseAppExeDataBuffer.StringList);
-                            targetDir = temp.Split('\0')[2];
-                        }
                         break;
 
                     default:
