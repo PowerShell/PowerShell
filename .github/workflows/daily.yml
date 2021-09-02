@@ -44,7 +44,6 @@ jobs:
             "CREATE_PR=true" | Out-File $env:GITHUB_ENV -Append
           }
       - name: Microsoft Teams Notifier
-        runs-on: ubuntu-18.04
         uses: skitionek/notify-microsoft-teams@master
         if: failure()
         with:
