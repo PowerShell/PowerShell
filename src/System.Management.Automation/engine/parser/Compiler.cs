@@ -6513,7 +6513,7 @@ namespace System.Management.Automation.Language
             return nullConditional ? GetNullConditionalWrappedExpression(target, dynamicExprFromBinder) : dynamicExprFromBinder;
         }
 
-        private Expression InvokeBaseCtorMethod(
+        private static Expression InvokeBaseCtorMethod(
             PSMethodInvocationConstraints constraints,
             Expression target,
             IReadOnlyList<Expression> args)
