@@ -3279,9 +3279,9 @@ namespace System.Management.Automation.Language
         /// <returns>True is the compiler should add the success setting, false otherwise.</returns>
         private bool ShouldSetExecutionStatusToSuccess(PipelineAst pipelineAst)
         {
-            ExpressionAst expressionAst = pipelineAst.GetPureExpression();
+            ExpressionAst expressionAst = GetSingleExpressionFromPipeline(pipelineAst);
 
-            // If the pipeline is not a simple expression, it will set $?
+            // If the pipeline is not a single expression, it will set $?
             if (expressionAst == null)
             {
                 return false;
@@ -3289,6 +3289,22 @@ namespace System.Management.Automation.Language
 
             // Expressions may still set $? themselves, so dig deeper
             return ShouldSetExecutionStatusToSuccess(expressionAst);
+        }
+
+        /// <summary>
+        /// If the pipeline contains a single expression, the expression is returned, otherwise null is returned.
+        /// This method is different from <see cref="PipelineAst.GetPureExpression"/> in that it allows the single
+        /// expression to have redirections.
+        /// </summary>
+        private static ExpressionAst GetSingleExpressionFromPipeline(PipelineAst pipelineAst)
+        {
+            var pipelineElements = pipelineAst.PipelineElements;
+            if (pipelineElements.Count == 1 && pipelineElements[0] is CommandExpressionAst expr)
+            {
+                return expr.Expression;
+            }
+
+            return null;
         }
 
         /// <summary>

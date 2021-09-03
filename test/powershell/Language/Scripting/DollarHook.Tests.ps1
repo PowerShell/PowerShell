@@ -85,4 +85,84 @@ Describe 'Tests for setting $? for execution success' -Tag 'CI' {
         $script:hookValues | Should -Be $HookResults
         $output | Should -Be $PipelineResults
     }
+
+    It 'Sets $? correctly for single expression with redirection ''<Expression>''' -TestCases @(
+        @{ Expression = 'Write-Error "Bad"; Hook $?; "b" > $null; Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; "b" >> $null; Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; "b" > TESTDRIVE:\out.txt; Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; "b" >> TESTDRIVE:\out.txt; Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; "b" 2> $null; Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; "b" 2>> $null; Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; "b" 2> TESTDRIVE:\out.txt; Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; "b" 2>> TESTDRIVE:\out.txt; Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; "b" 2>&1; Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; "b" 2>&1; Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; "b" 2>&1 > $null; Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; "b" 2>&1 > TESTDRIVE:\out.txt; Hook $?'; HookResults = $($false, $true); }
+
+        @{ Expression = 'Write-Error "Bad"; Hook $?; ("b" > $null); Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; ("b" >> $null); Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; ("b" > TESTDRIVE:\out.txt); Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; ("b" >> TESTDRIVE:\out.txt); Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; ("b" 2> $null); Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; ("b" 2>> $null); Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; ("b" 2> TESTDRIVE:\out.txt); Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; ("b" 2>> TESTDRIVE:\out.txt); Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; ("b" 2>&1); Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; ("b" 2>&1 > $null); Hook $?'; HookResults = $($false, $true); }
+        @{ Expression = 'Write-Error "Bad"; Hook $?; ("b" 2>&1 > TESTDRIVE:\out.txt); Hook $?'; HookResults = $($false, $true); }
+    ) {
+        param([string]$Expression, [object[]]$HookResults)
+
+        Invoke-Expression $Expression 2>&1 >$null
+
+        $script:hookValues | Should -Be $HookResults
+    }
+
+    Context 'Validate $? with potential terminating error' {
+
+        ## Script execution directly in Pester tests will be enclosed in try/catch by the Pester,
+        ## and therefore, general exceptions thrown from an expression like "1/0" will be turned
+        ## into a terminating exception, which will stop the execution of remaining scripts.
+        ##
+        ## For those test cases, we have to use a PowerShell instance, so as to keep the default
+        ## error handling behavior for the general exceptions.
+
+        BeforeAll {
+            $pwsh = [powershell]::Create()
+
+            function Invoke([string] $script)
+            {
+                $pwsh.Commands.Clear()
+                $pwsh.Streams.ClearStreams()
+                $pwsh.AddScript($script).Invoke()
+            }
+
+            $root = Join-Path ([System.IO.Path]::GetTempPath()) ([guid]::NewGuid().ToString())
+            $null = Invoke "New-PSDrive -Name TESTDRIVE -PSProvider FileSystem -Root $root"
+        }
+
+        Afterall {
+            $null = Invoke "Remove-PSDrive -Name TESTDRIVE -PSProvider FileSystem -Force"
+            $pwsh.Dispose()
+        }
+
+        It 'Sets $? correctly for single expression with redirection ''<Expression>''' -TestCases @(
+            @{ Expression = '1/0 > $null; $?'; Result = $false; }
+            @{ Expression = '1/0 >> $null; $?'; Result = $false; }
+            @{ Expression = '1/0 > TESTDRIVE:\out.txt; $?'; Result = $false; }
+            @{ Expression = '1/0 >> TESTDRIVE:\out.txt; $?'; Result = $false; }
+            @{ Expression = '1/0 2>&1; $?'; Result = $false; }
+            @{ Expression = '1/0 2>&1 > $null; $?'; Result = $false; }
+            @{ Expression = '1/0 2>&1 > TESTDRIVE:\out.txt; $?'; Result = $false; }
+
+            @{ Expression = '"b" > NonExistDrive:\nowhere.txt; $?'; Result = $false; }
+            @{ Expression = '"b" >> NonExistDrive:\nowhere.txt; $?'; Result = $false; }
+            @{ Expression = '"b" 2>&1 > NonExistDrive:\nowhere.txt; $?'; Result = $false; }
+        ) {
+            param([string]$Expression, $Result)
+
+            Invoke $Expression | Should -Be $Result
+        }
+    }
 }
