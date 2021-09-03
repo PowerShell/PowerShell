@@ -34,7 +34,7 @@ jobs:
           Write-Verbose "OLD_VERSION=$currentVersion" -Verbose
           "OLD_VERSION=$currentVersion" | Out-File $env:GITHUB_ENV -Append
 
-          ./tools/UpdateDotnetRuntime.ps1 -UpdateMSIPackaging
+          ./tools/UpdateDotnetRuntime.ps1 -UpdateMSIPackaging -UseInternalFeed
           $newVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
           Write-Verbose "NEW_VERSION=$newVersion" -Verbose
           "NEW_VERSION=$newVersion" | Out-File $env:GITHUB_ENV -Append
@@ -48,8 +48,9 @@ jobs:
         if: failure()
         with:
           webhook_url: ${{ secrets.PS_BUILD_TEAMS_CHANNEL }}
+          overwrite: "{title: `Failure in updating .NET build. Look at ${workflow_link}`}"
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v2
+        uses: peter-evans/create-pull-request@v3
         id: cpr
         if: env.CREATE_PR == 'true'
         with:
