@@ -405,7 +405,7 @@ namespace System.Management.Automation.Language
     {
         #region External interface
 
-        internal static IEnumerable<Ast> FindAll(Ast ast, Func<Ast, bool> predicate, bool searchNestedScriptBlocks)
+        internal static List<Ast> FindAll(Ast ast, Func<Ast, bool> predicate, bool searchNestedScriptBlocks)
         {
             Diagnostics.Assert(ast != null && predicate != null, "caller to verify arguments");
 

@@ -2580,7 +2580,10 @@ namespace System.Management.Automation.Language
             // to the right place.  We can avoid also avoid generating the catch if we know there aren't any traps.
             if (!_compilingTrap
                 && ((traps != null && traps.Count > 0)
-                    || AstSearcher.AnyContains(statements, ast => ast is TrapStatementAst, searchNestedScriptBlocks: false)))
+                    || AstSearcher.AnyContains(
+                        statements,
+                        static ast => ast is TrapStatementAst,
+                        searchNestedScriptBlocks: false)))
             {
                 body = Expression.Block(
                     new[] { s_executionContextParameter },
@@ -2636,16 +2639,19 @@ namespace System.Management.Automation.Language
                     GenerateLoadUsings(rootForDefiningTypesAndUsings.UsingStatements, allUsingsAreNamespaces, exprs);
                 }
 
-                var typeAstList = new List<TypeDefinitionAst>();
-                foreach (TypeDefinitionAst ast in rootForDefiningTypesAndUsings.FindAll(ast => ast is TypeDefinitionAst, searchNestedScriptBlocks: true))
-                {
-                    typeAstList.Add((TypeDefinitionAst)ast);
-                }
+                var typeAstList = AstSearcher.FindAll(
+                    rootForDefiningTypesAndUsings,
+                    static ast => ast is TypeDefinitionAst,
+                    searchNestedScriptBlocks: true);
 
-                TypeDefinitionAst[] typeAsts = typeAstList.ToArray();
-
-                if (typeAsts.Length > 0)
+                if (typeAstList.Count > 0)
                 {
+                    var typeAsts = new TypeDefinitionAst[typeAstList.Count];
+                    for (int index = 0; index < typeAstList.Count; index++)
+                    {
+                        typeAsts[index] = (TypeDefinitionAst)typeAstList[index];
+                    }
+
                     var assembly = DefinePowerShellTypes(rootForDefiningTypesAndUsings, typeAsts);
                     exprs.Add(
                         Expression.Call(
