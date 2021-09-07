@@ -35,7 +35,10 @@ namespace mvc
                 .UseStartup<Startup>().UseKestrel(options =>
                 {
                    options.AllowSynchronousIO = true;
-                   options.Listen(IPAddress.Loopback, int.Parse(args[2]));
+                   options.Listen(IPAddress.Loopback, int.Parse(args[2]), listenOptions =>
+                   {
+                       listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
+                   });
                    options.Listen(IPAddress.Loopback, int.Parse(args[3]), listenOptions =>
                    {
                        var certificate = new X509Certificate2(args[0], args[1]);
@@ -46,6 +49,7 @@ namespace mvc
                        httpsOption.CheckCertificateRevocation = false;
                        httpsOption.ServerCertificate = certificate;
                        listenOptions.UseHttps(httpsOption);
+                       listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
                    });
                    options.Listen(IPAddress.Loopback, int.Parse(args[4]), listenOptions =>
                    {
@@ -57,6 +61,7 @@ namespace mvc
                        httpsOption.CheckCertificateRevocation = false;
                        httpsOption.ServerCertificate = certificate;
                        listenOptions.UseHttps(httpsOption);
+                       listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
                    });
                    options.Listen(IPAddress.Loopback, int.Parse(args[5]), listenOptions =>
                    {
@@ -68,6 +73,7 @@ namespace mvc
                        httpsOption.CheckCertificateRevocation = false;
                        httpsOption.ServerCertificate = certificate;
                        listenOptions.UseHttps(httpsOption);
+                       listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
                    });
                    options.Listen(IPAddress.Loopback, int.Parse(args[6]), listenOptions =>
                    {
@@ -79,6 +85,7 @@ namespace mvc
                        httpsOption.CheckCertificateRevocation = false;
                        httpsOption.ServerCertificate = certificate;
                        listenOptions.UseHttps(httpsOption);
+                       listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
                    });
                 })
                 .Build();

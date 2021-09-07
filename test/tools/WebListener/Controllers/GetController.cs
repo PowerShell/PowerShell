@@ -37,7 +37,8 @@ namespace mvc.Controllers
                 {"origin", Request.HttpContext.Connection.RemoteIpAddress.ToString()},
                 {"url", UriHelper.GetDisplayUrl(Request)},
                 {"query", Request.QueryString.ToUriComponent()},
-                {"method", Request.Method}
+                {"method", Request.Method},
+                {"protocol", Request.Protocol}
             };
 
             if (Request.HasFormContentType)
