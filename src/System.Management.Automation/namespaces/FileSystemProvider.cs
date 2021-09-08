@@ -6121,7 +6121,16 @@ namespace Microsoft.PowerShell.Commands
 
                 directory.MoveTo(destinationPath);
             }
-            catch (IOException)
+#if UNIX
+            // This is the errno returned by the rename() syscall
+            // when an item is attempted to be renamed across filesystem mount boundaries.
+            // 0x80131620 is returned if the source and destination do not have the same root path
+            catch (IOException e) when (e.HResult == 18 || e.HResult == -2146232800)
+#else
+            // 0x80070005 ACCESS_DENIED is returned when trying to move files across volumes like DFS
+            // 0x80131620 is returned if the source and destination do not have the same root path
+            catch (IOException e) when (e.HResult == -2147024891 || e.HResult == -2146232800)
+#endif
             {
                 // Rather than try to ascertain whether we can rename a directory ahead of time,
                 // it's both faster and more correct to try to rename it and fall back to copy/deleting it
