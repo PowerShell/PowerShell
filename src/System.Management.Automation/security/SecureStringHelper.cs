@@ -345,7 +345,7 @@ namespace Microsoft.PowerShell
             //
             using (var aes = Aes.Create())
             {
-                using (var decryptor = aes.CreateDecryptor(key, IV ?? aes.IV))
+                using (ICryptoTransform decryptor = aes.CreateDecryptor(key, IV ?? aes.IV))
                 using (var encryptedStream = new MemoryStream(ByteArrayFromString(input)))
                 using (var targetStream = new MemoryStream())
                 {
