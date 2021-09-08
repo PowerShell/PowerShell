@@ -1931,7 +1931,7 @@ namespace System.Management.Automation
             }
 
             int startOffset = variableExpressionAst.Extent.StartOffset;
-            var targetAsts = (List<Ast>)AstSearcher.FindAll(
+            var targetAsts = AstSearcher.FindAll(
                 parent,
                 ast =>
                 {

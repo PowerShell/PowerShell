@@ -2663,8 +2663,11 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            IEnumerable<Ast> asts = rootForDefiningTypesAndUsings.FindAll(ast => ast is TypeDefinitionAst, searchNestedScriptBlocks: false);
-            var typesToAddToScope = new Dictionary<string, TypeDefinitionAst>();
+            List<Ast> asts = AstSearcher.FindAll(
+                rootForDefiningTypesAndUsings,
+                ast => ast is TypeDefinitionAst,
+                searchNestedScriptBlocks: false);
+            var typesToAddToScope = new Dictionary<string, TypeDefinitionAst>(asts.Count);
 
             foreach (TypeDefinitionAst typeDef in asts)
             {
@@ -3815,22 +3818,32 @@ namespace System.Management.Automation.Language
 
                     bool hasConstantRedirections = false;
                     bool hasNonConstantRedirections = false;
+
                     for (int j = 0; i < pipeElements.Count; ++i, ++j)
                     {
                         var pipeElement = pipeElements[i];
                         pipelineExprs[j] = Compile(pipeElement);
 
-                        commandRedirections[j] = GetCommandRedirections(pipeElement);
-                        if (!hasNonConstantRedirections && commandRedirections[j] is Expression)
+                        object redirects = GetCommandRedirections(pipeElement);
+                        commandRedirections[j] = redirects;
+                        pipeElementAsts[j] = pipeElement;
+
+                        if (hasNonConstantRedirections)
+                        {
+                            // Once a non-constant redirection is found, we do not care whether
+                            // any constant redirection exists, because the code flow below this
+                            // for-loop would have been determined.
+                            continue;
+                        }
+
+                        if (redirects is Expression)
                         {
                             hasNonConstantRedirections = true;
                         }
-                        else if (!hasConstantRedirections && commandRedirections[j] != null)
+                        else if (!hasConstantRedirections)
                         {
-                            hasConstantRedirections = true;
+                            hasConstantRedirections = redirects != null;
                         }
-
-                        pipeElementAsts[j] = pipeElement;
                     }
 
                     // The redirections are passed as a CommandRedirection[][] - one dimension for each command in the pipe,
@@ -3845,14 +3858,9 @@ namespace System.Management.Automation.Language
                         for (int index = 0; index < commandRedirections.Length; index++)
                         {
                             var redirection = commandRedirections[index];
-                            if (redirection is Expression exprRedirect)
-                            {
-                                redirectionExpressions[index] = exprRedirect;
-                            }
-                            else
-                            {
-                                redirectionExpressions[index] = Expression.Constant(redirection, typeof(CommandRedirection[]));
-                            }
+                            redirectionExpressions[index] = redirection is Expression exprRedirect
+                                ? exprRedirect
+                                : Expression.Constant(redirection, typeof(CommandRedirection[]));
                         }
 
                         redirectionExpr = Expression.NewArrayInit(typeof(CommandRedirection[]), redirectionExpressions);
@@ -3920,14 +3928,9 @@ namespace System.Management.Automation.Language
                 for (int index = 0; index < compiledRedirections.Length; index++)
                 {
                     var redirection = compiledRedirections[index];
-                    if (redirection is Expression e)
-                    {
-                        redirectionExpressions[index] = e;
-                    }
-                    else
-                    {
-                        redirectionExpressions[index] = Expression.Constant(redirection);
-                    }
+                    redirectionExpressions[index] = redirection is Expression redirectExpr
+                        ? redirectExpr
+                        : Expression.Constant(redirection);
                 }
 
                 return Expression.NewArrayInit(typeof(CommandRedirection), redirectionExpressions);
@@ -5516,8 +5519,7 @@ namespace System.Management.Automation.Language
                     // This might be worth a strict-mode check - if there was a typo, the typo isn't discovered until
                     // the first time an exception is raised, which is rather unfortunate.
                     dynamicCatchTypes.Add(catchTypesExpr);
-
-                    catchTypesExpr = Expression.Block(dynamicCatchTypes.ToArray());
+                    catchTypesExpr = Expression.Block(dynamicCatchTypes);
                 }
 
                 AutomaticVarSaver avs = new AutomaticVarSaver(this, SpecialVariables.UnderbarVarPath, (int)AutomaticVariable.Underbar);
@@ -6644,7 +6646,7 @@ namespace System.Management.Automation.Language
                     ExpressionCache.Constant(keyValuePairs.Count),
                     ExpressionCache.OrdinalIgnoreCaseComparer.Cast(typeof(IEqualityComparer))));
 
-            for (int i = 1, j = 0; i <= keyValuePairs.Count; i++, j++)
+            for (int i = 1, j = 0; j < keyValuePairs.Count; i++, j++)
             {
                 var keyValuePair = keyValuePairs[j];
                 Expression key = Expression.Convert(Compile(keyValuePair.Item1), typeof(object));
@@ -6753,8 +6755,7 @@ namespace System.Management.Automation.Language
             Expression indexingExpr;
             if (arrayLiteral != null && arrayLiteral.Elements.Count > 1)
             {
-                Expression[] expressions;
-                expressions = new Expression[arrayLiteral.Elements.Count + 1];
+                var expressions = new Expression[arrayLiteral.Elements.Count + 1];
                 expressions[0] = targetExpr;
 
                 for (int i = 1; i < expressions.Length; i++)
@@ -7017,7 +7018,7 @@ namespace System.Management.Automation.Language
                 // doesn't matter.
                 var expressions = new Expression[arrayLiteral.Elements.Count + 1];
                 expressions[0] = _targetExprTemp;
-                for (int i = 1, j = 0; i <= arrayLiteral.Elements.Count; i++, j++)
+                for (int i = 1, j = 0; j < arrayLiteral.Elements.Count; i++, j++)
                 {
                     expressions[i] = compiler.Compile(arrayLiteral.Elements[j]);
                 }
@@ -7057,7 +7058,7 @@ namespace System.Management.Automation.Language
                 var expressions = new Expression[arrayLiteral.Elements.Count + 2];
                 expressions[0] = targetExpr;
                 expressions[^1] = temp;
-                for (int i = 1, j = 0; i < arrayLiteral.Elements.Count; i++, j++)
+                for (int i = 1, j = 0; j < arrayLiteral.Elements.Count; i++, j++)
                 {
                     expressions[i] = compiler.Compile(arrayLiteral.Elements[j]);
                 }
