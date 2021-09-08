@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell
                 byte[] data = GetData(input);
                 try
                 {
-                    using (var encryptor = aes.CreateEncryptor(key, iv))
+                    using (ICryptoTransform encryptor = aes.CreateEncryptor(key, iv))
                     using (var sourceStream = new MemoryStream(data))
                     using (var encryptedStream = new MemoryStream())
                     {
