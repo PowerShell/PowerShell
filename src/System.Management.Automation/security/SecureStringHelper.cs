@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell
             //
             using (Aes aes = Aes.Create())
             {
-                if (iv == null)
+                if (iv is null)
                 {
                     iv = aes.IV;
                 }
