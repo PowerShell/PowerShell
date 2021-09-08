@@ -317,24 +317,41 @@ namespace System.Management.Automation
 
                     try
                     {
-                        int hresult = NativeMethods.WTGetSignatureInfo(filename, stream.SafeFileHandle.DangerousGetHandle(),
-                            NativeMethods.SIGNATURE_INFO_FLAGS.SIF_CATALOG_SIGNED |
-                            NativeMethods.SIGNATURE_INFO_FLAGS.SIF_CATALOG_FIRST |
-                            NativeMethods.SIGNATURE_INFO_FLAGS.SIF_AUTHENTICODE_SIGNED |
-                            NativeMethods.SIGNATURE_INFO_FLAGS.SIF_BASE_VERIFICATION |
-                            NativeMethods.SIGNATURE_INFO_FLAGS.SIF_CHECK_OS_BINARY,
-                            ref sigInfo, ref ppCertContext, ref phStateData);
+                        Microsoft.Security.Extensions.FileSignatureInfo fileSigInfo = NativeMethods.WTGetSignatureInfoWrapper(filename);
+                        // int hresult = NativeMethods.WTGetSignatureInfo(filename, stream.SafeFileHandle.DangerousGetHandle(),
+                        //     NativeMethods.SIGNATURE_INFO_FLAGS.SIF_CATALOG_SIGNED |
+                        //     NativeMethods.SIGNATURE_INFO_FLAGS.SIF_CATALOG_FIRST |
+                        //     NativeMethods.SIGNATURE_INFO_FLAGS.SIF_AUTHENTICODE_SIGNED |
+                        //     NativeMethods.SIGNATURE_INFO_FLAGS.SIF_BASE_VERIFICATION |
+                        //     NativeMethods.SIGNATURE_INFO_FLAGS.SIF_CHECK_OS_BINARY,
+                        //     ref sigInfo, ref ppCertContext, ref phStateData);
+
+                        /* First – check that the file is signed, the signature isn’t
+                        invalid, and the signature isn’t untrusted; If so, there is no need
+                        to parse further */
+
+                        if (fileSigInfo.State == SignatureState.Unsigned ||
+                            fileSigInfo.State == SignatureState.Invalid ||
+                            fileSigInfo.State == SignatureState.SignedAndNotTrusted)
+                        {
+                            Console.WriteLine("Signature verification failed with: " +
+                            fileSigInfo.StateReason);
+                            return false;
+                        }
+
+                        if (fileSigInfo.TimestampCertificate != null)
+                        {
+                            Console.WriteLine("The signature is valid from: " +
+                            fileSigInfo.TimestampCertificate.NotBefore);
+                        }
 
                         if (Utils.Succeeded(hresult))
                         {
                             DWORD error = GetErrorFromSignatureState(sigInfo.nSignatureState);
-
                             X509Certificate2 cert = null;
-
                             if (ppCertContext != IntPtr.Zero)
                             {
                                 cert = new X509Certificate2(ppCertContext);
-
                                 // Get the time stamper certificate if available
                                 TryGetProviderSigner(phStateData, out IntPtr pProvSigner, out X509Certificate2 timestamperCert);
                                 if (timestamperCert != null)

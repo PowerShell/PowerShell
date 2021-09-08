@@ -8,6 +8,7 @@
 
   <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
+    <PackageReference Include="Microsoft.Security.Extensions" Version="1.0.0"  PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

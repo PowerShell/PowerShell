@@ -1768,7 +1768,7 @@ function Install-Dotnet {
 
         if ($uninstallScript) {
             Start-NativeExecution {
-                & $wget $uninstallObtainUrl/uninstall/$uninstallScript
+                & $wget -O $uninstallScript $uninstallObtainUrl/uninstall/$uninstallScript
                 Invoke-Expression "$sudo bash ./$uninstallScript"
             }
         } else {
@@ -1779,7 +1779,7 @@ function Install-Dotnet {
         $installScript = "dotnet-install.sh"
         Start-NativeExecution {
             Write-Verbose -Message "downloading install script from $installObtainUrl/$installScript ..." -Verbose
-            & $wget $installObtainUrl/$installScript
+            & $wget  -O $installScript $installObtainUrl/$installScript
 
             if ((Get-ChildItem "./$installScript").Length -eq 0) {
                 throw "./$installScript was 0 length"
