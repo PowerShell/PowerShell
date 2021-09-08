@@ -122,6 +122,9 @@ stages:
       condition: succeededOrFailed()
 
     - pwsh: |
+        Import-Module .\build.psm1
+        Set-CorrectLocale
+
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose UnelevatedPesterTests -TagSet Others
@@ -129,6 +132,9 @@ stages:
       condition: succeededOrFailed()
 
     - pwsh: |
+        Import-Module .\build.psm1
+        Set-CorrectLocale
+
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose ElevatedPesterTests -TagSet Others

@@ -3386,3 +3386,23 @@ function New-NugetConfigFile
 
     Set-Content -Path (Join-Path $Destination 'nuget.config') -Value $content -Force
 }
+
+function Set-CorrectLocale
+{
+    if (-not $IsLinux)
+    {
+        return
+    }
+
+    $environment = Get-EnvironmentInformation
+    if ($environment.IsUbuntu -and $environment.IsUbuntu20)
+    {
+        $env:LC_ALL = 'en_US.UTF-8'
+        $env:LANG = 'en_US.UTF-8'
+        sudo locale-gen $env:LANG
+        sudo update-locale
+    }
+
+    # Output the locale to log it
+    locale
+}
