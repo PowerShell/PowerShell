@@ -471,7 +471,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     $httpVersions = @('1.1', '2')
     foreach ($httpVersion in $httpVersions) {
-        It "Validate Invoke-WebRequest -HttpVersion $httpVersion" {
+        It "Validate Invoke-WebRequest -HttpVersion $httpVersion" -Skip:(!$IsWindows) {
             # Operation options
             $uri = Get-WebListenerUrl -Test 'Get' -Https
             $command = "Invoke-WebRequest -Uri $uri -HttpVersion $httpVersion -SkipCertificateCheck"
@@ -2094,7 +2094,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     $httpVersions = @('1.1', '2')
     foreach ($httpVersion in $httpVersions) {
-        It "Validate Invoke-RestMethod -HttpVersion $httpVersion" {
+        It "Validate Invoke-RestMethod -HttpVersion $httpVersion" -Skip:(!$IsWindows) {
             # Operation options
             $uri = Get-WebListenerUrl -Test 'Get' -Https
             $command = "Invoke-RestMethod -Uri $uri -HttpVersion $httpVersion -SkipCertificateCheck"
