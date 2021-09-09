@@ -1617,13 +1617,12 @@ namespace System.Management.Automation
             Debug,
         }
 
-        internal static string GetFormatStyleString(FormatStyle formatStyle)
+        internal static string GetFormatStyleString(FormatStyle formatStyle, bool isOutputRedirected)
         {
             // redirected console gets plaintext output to preserve existing behavior
             if (!InternalTestHooks.BypassOutputRedirectionCheck &&
                 ((PSStyle.Instance.OutputRendering == OutputRendering.PlainText) ||
-                (formatStyle == FormatStyle.Error && Console.IsErrorRedirected) ||
-                (formatStyle != FormatStyle.Error && Console.IsOutputRedirected)))
+                isOutputRedirected))
             {
                 return string.Empty;
             }
