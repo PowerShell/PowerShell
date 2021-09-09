@@ -2988,7 +2988,7 @@ namespace System.Management.Automation.Language
             {
                 MemberAst member = _memberFunctionType.Members[i];
                 if (member is not PropertyMemberAst propertyMember
-                    || propertyMember.InitialValue == null
+                    || propertyMember.InitialValue is null
                     || propertyMember.IsStatic != wantStatic)
                 {
                     continue;
@@ -6461,7 +6461,7 @@ namespace System.Management.Automation.Language
             var targetTypeConstraint = GetTypeConstraintForMethodResolution(invokeMemberExpressionAst.Expression);
 
             Type[] typeArguments = null;
-            if (arguments != null)
+            if (arguments is not null)
             {
                 typeArguments = new Type[arguments.Count];
                 for (int index = 0; index < arguments.Count; index++)
@@ -6879,7 +6879,7 @@ namespace System.Management.Automation.Language
             return _memberNameExprTemp ?? compiler.Compile(InvokeMemberExpressionAst.Member);
         }
 
-        private IReadOnlyList<Expression> GetArgumentExprs(Compiler compiler)
+        private Expression[] GetArgumentExprs(Compiler compiler)
         {
             if (_argExprTemps != null)
             {
@@ -6912,8 +6912,8 @@ namespace System.Management.Automation.Language
             int exprsIndex = exprs.Count;
 
             var args = GetArgumentExprs(compiler);
-            _argExprTemps = new ParameterExpression[args.Count];
-            for (int index = 0; index < args.Count; index++)
+            _argExprTemps = new ParameterExpression[args.Length];
+            for (int index = 0; index < args.Length; index++)
             {
                 _argExprTemps[index] = Expression.Variable(args[index].Type);
                 exprs.Add(Expression.Assign(_argExprTemps[index], args[index]));
@@ -6946,12 +6946,8 @@ namespace System.Management.Automation.Language
             var target = GetTargetExpr(compiler);
             var args = GetArgumentExprs(compiler);
 
-            var arguments = new Expression[args.Count + 1];
-            for (int index = 0; index < args.Count; index++)
-            {
-                arguments[index] = args[index];
-            }
-
+            var arguments = new Expression[args.Length + 1];
+            Array.Copy(args, arguments, args.Length);
             arguments[^1] = rhs;
 
             if (memberNameAst != null)
