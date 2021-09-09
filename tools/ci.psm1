@@ -215,6 +215,9 @@ function Invoke-CITest
         [string] $TagSet
     )
 
+    # Set locale correctly for Linux CIs
+    Set-CorrectLocale
+
     # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
     # https://github.com/pester/Pester/issues/608
     # To work-around it, we exlude all categories, but 'CI' from the list
