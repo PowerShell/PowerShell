@@ -63,9 +63,6 @@ jobs:
     continueOnError: true
 
   - pwsh: |
-      Import-Module .\build.psm1 -Force
-      Set-CorrectLocale
-
       Import-Module .\tools\ci.psm1
       Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
       $options = (Get-PSOptions)
