@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell
             }
             finally
             {
-                Array.Clear(keyBlob, 0, keyBlob.Length);
+                Array.Clear(keyBlob);
             }
         }
 
