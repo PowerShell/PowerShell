@@ -1215,7 +1215,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal)
                 {
-                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message) + PSStyle.Instance.Reset);
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Debug, Console.IsOutputRedirected) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1276,7 +1276,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal)
                 {
-                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message) + PSStyle.Instance.Reset);
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Verbose, Console.IsOutputRedirected) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1320,7 +1320,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal)
                 {
-                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message) + PSStyle.Instance.Reset);
+                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Warning, Console.IsOutputRedirected) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
