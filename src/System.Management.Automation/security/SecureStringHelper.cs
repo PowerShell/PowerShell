@@ -364,7 +364,7 @@ namespace Microsoft.PowerShell
                     }
                     finally
                     {
-                        Array.Clear(decryptedData, 0, decryptedData.Length);
+                        Array.Clear(decryptedData);
                     }
                 }
             }
