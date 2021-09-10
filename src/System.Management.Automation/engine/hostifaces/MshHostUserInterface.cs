@@ -310,7 +310,6 @@ namespace System.Management.Automation.Host
         /// <returns>
         /// The ANSI escape sequence for the given format style.
         /// </returns>
-
         public static string GetFormatStyleString(FormatStyle formatStyle, bool isOutputRedirected)
         {
             // redirected console gets plaintext output to preserve existing behavior
