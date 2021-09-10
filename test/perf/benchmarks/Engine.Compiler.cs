@@ -17,23 +17,13 @@ namespace Engine
     [BenchmarkCategory(Categories.Engine, Categories.Internal)]
     public class Compiler
     {
-        private Runspace runspace;
         private ScriptBlockAst scriptBlockAst;
-
-        private void SetupRunspace()
-        {
-            runspace = RunspaceFactory.CreateRunspace(InitialSessionState.CreateDefault());
-            runspace.Open();
-            Runspace.DefaultRunspace = runspace;
-        }
 
         #region Compile-Script
 
         [GlobalSetup(Target = nameof(CompileBuildModule))]
         public void GlobalSetup()
         {
-            SetupRunspace();
-
             char dirSeparator = Path.DirectorySeparatorChar;
             string pattern = $"{dirSeparator}test{dirSeparator}perf{dirSeparator}";
             string location = typeof(Compiler).Assembly.Location;
@@ -71,13 +61,6 @@ namespace Engine
         }
 
         #endregion
-
-        [GlobalCleanup]
-        public void GlobalCleanup()
-        {
-            runspace.Dispose();
-            Runspace.DefaultRunspace = null;
-        }
     }
 }
 
