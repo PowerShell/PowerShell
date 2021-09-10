@@ -314,7 +314,7 @@ namespace System.Management.Automation.Host
         {
             // redirected console gets plaintext output to preserve existing behavior
             if (!InternalTestHooks.BypassOutputRedirectionCheck &&
-                ((PSStyle.Instance.OutputRendering == OutputRendering.PlainText) ||
+                (PSStyle.Instance.OutputRendering == OutputRendering.PlainText ||
                 isOutputRedirected))
             {
                 return string.Empty;
