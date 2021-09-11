@@ -7,7 +7,6 @@ using System;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Language;
-using System.Management.Automation.Runspaces;
 
 using BenchmarkDotNet.Attributes;
 using MicroBenchmarks;
