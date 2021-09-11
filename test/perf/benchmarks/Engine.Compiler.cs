@@ -43,7 +43,7 @@ namespace Engine
 
             scriptBlockAst = Parser.ParseFile(buildModulePath, tokens: out _, errors: out _);
 
-            // Run it once to get the C# code jitted and the script compiled.
+            // Run it once to get the C# code jitted.
             // The first call to this takes relatively too long, which makes the BDN's heuristic incorrectly
             // believe that there is no need to run many ops in each interation. However, the subsequent runs
             // of this method is much faster than the first run, and this causes 'MinIterationTime' warnings
