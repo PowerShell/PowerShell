@@ -4,6 +4,7 @@
 #if NET6_0
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Language;
@@ -16,31 +17,44 @@ namespace Engine
     [BenchmarkCategory(Categories.Engine, Categories.Internal)]
     public class Compiler
     {
-        private ScriptBlockAst scriptBlockAst;
+        private static readonly Dictionary<string, ScriptBlockAst> s_scriptBlocksDict;
+        private static readonly List<string> s_functionNames;
+        private ScriptBlockAst _currentAst;
 
-        #region Compile-Script
-
-        [GlobalSetup(Target = nameof(CompileBuildModule))]
-        public void GlobalSetup()
+        static Compiler()
         {
-            char dirSeparator = Path.DirectorySeparatorChar;
-            string pattern = $"{dirSeparator}test{dirSeparator}perf{dirSeparator}";
+            string pattern = string.Format("{0}test{0}perf{0}benchmarks", Path.DirectorySeparatorChar);
             string location = typeof(Compiler).Assembly.Location;
-            string buildModulePath = null;
+            string testFilePath = null;
 
             int start = location.IndexOf(pattern, StringComparison.Ordinal);
             if (start > 0)
             {
-                ReadOnlySpan<char> psRepoRootDir = location.AsSpan(0, start);
-                buildModulePath = Path.Join(psRepoRootDir, "build.psm1".AsSpan());
+                testFilePath = Path.Join(location.AsSpan(0, start + pattern.Length), "assets", "compiler.test.ps1");
             }
 
-            if (!File.Exists(buildModulePath))
+            var topScriptBlockAst = Parser.ParseFile(testFilePath, tokens: out _, errors: out _);
+            var allFunctions = topScriptBlockAst.FindAll(ast => ast is FunctionDefinitionAst, searchNestedScriptBlocks: false);
+
+            s_scriptBlocksDict = new Dictionary<string, ScriptBlockAst>(capacity: 16);
+            s_functionNames = new List<string>(capacity: 16);
+
+            foreach (FunctionDefinitionAst function in allFunctions)
             {
-                throw new NotSupportedException("Cannot find 'build.psm1'. The 'Compiler' benchmarks depend on scripts in PowerShell repo, so please run benchmarks from with the PowerShell repo directory.");
+                s_functionNames.Add(function.Name);
+                s_scriptBlocksDict.Add(function.Name, function.Body);
             }
+        }
 
-            scriptBlockAst = Parser.ParseFile(buildModulePath, tokens: out _, errors: out _);
+        [ParamsSource(nameof(FunctionName))]
+        public string FunctionsToCompile { get; set; }
+
+        public IEnumerable<string> FunctionName() => s_functionNames;
+
+        [GlobalSetup(Target = nameof(CompileFunction))]
+        public void GlobalSetup()
+        {
+            _currentAst = s_scriptBlocksDict[FunctionsToCompile];
 
             // Run it once to get the C# code jitted.
             // The first call to this takes relatively too long, which makes the BDN's heuristic incorrectly
@@ -49,17 +63,15 @@ namespace Engine
             // to our benchmarks and make the benchmark results not reliable.
             // Calling this method once in 'GlobalSetup' is a workaround. 
             // See https://github.com/dotnet/BenchmarkDotNet/issues/837#issuecomment-828600157
-            CompileBuildModule();
+            CompileFunction();
         }
 
         [Benchmark]
-        public bool CompileBuildModule()
+        public bool CompileFunction()
         {
-            var compiledData = new CompiledScriptBlockData(scriptBlockAst, isFilter: false);
+            var compiledData = new CompiledScriptBlockData(_currentAst, isFilter: false);
             return compiledData.Compile(true);
         }
-
-        #endregion
     }
 }
 
