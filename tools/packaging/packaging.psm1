@@ -1115,7 +1115,7 @@ function New-MacOsDistributionPackage
     # 2 - package path
     # 3 - minimum os version
     # 4 - Package Identifier
-    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.13', $packageId | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
+    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.14', $packageId | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
 
     Write-Log "Applying distribution.xml to package..."
     Push-Location $tempDir
