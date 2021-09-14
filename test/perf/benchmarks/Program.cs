@@ -10,7 +10,7 @@ using BenchmarkDotNet.Extensions;
 
 namespace MicroBenchmarks
 {
-    public class Program
+    public sealed class Program
     {
         public static int Main(string[] args)
         {
