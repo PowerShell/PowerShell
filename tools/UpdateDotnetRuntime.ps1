@@ -79,6 +79,7 @@ function Update-PackageVersion {
         "$PSScriptRoot/packaging/projects/reference/Microsoft.PowerShell.ConsoleHost/Microsoft.PowerShell.ConsoleHost.csproj"
         "$PSScriptRoot/../src/"
         "$PSScriptRoot/../test/tools/"
+        "$PSScriptRoot/../test/perf/dotnet-tools/"
     )
 
     Get-ChildItem -Path $paths -Recurse -Filter "*.csproj" -Exclude 'PSGalleryModules.csproj', 'PSGalleryTestModules.csproj' | ForEach-Object {
