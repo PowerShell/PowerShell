@@ -234,7 +234,7 @@ namespace System.Management.Automation.Host
 
         private static bool ShouldOutputPlainText(bool isHost, bool? supportsVirtualTerminal)
         {
-            var outputRendering = OutputRendering.Ansi;
+            var outputRendering = OutputRendering.PlainText;
 
             if (supportsVirtualTerminal != false)
             {
@@ -247,11 +247,6 @@ namespace System.Management.Automation.Host
                         outputRendering = PSStyle.Instance.OutputRendering;
                         break;
                 }
-            }
-            else if (isHost)
-            {
-                // Use plain text when the host dosen't support VT.
-                outputRendering = OutputRendering.PlainText;
             }
 
             return outputRendering == OutputRendering.PlainText;
