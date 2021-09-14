@@ -248,6 +248,11 @@ namespace System.Management.Automation.Host
                         break;
                 }
             }
+            else if (isHost)
+            {
+                // Use plain text when the host dosen't support VT.
+                outputRendering = OutputRendering.PlainText;
+            }
 
             return outputRendering == OutputRendering.PlainText;
         }
