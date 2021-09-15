@@ -1063,7 +1063,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype1")]
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string,string)"/>
@@ -1157,7 +1157,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype2")]
@@ -1180,7 +1180,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string,string)"/>
@@ -1260,7 +1260,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
@@ -1286,7 +1286,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
@@ -1375,7 +1375,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
@@ -1681,7 +1681,7 @@ namespace System.Management.Automation
         /// to ShouldProcess for the Cmdlet instance.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
@@ -1725,7 +1725,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldContinue(string,string,ref bool,ref bool)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
@@ -1863,7 +1863,7 @@ namespace System.Management.Automation
         /// to ShouldProcess for the Cmdlet instance.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
@@ -1912,7 +1912,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
