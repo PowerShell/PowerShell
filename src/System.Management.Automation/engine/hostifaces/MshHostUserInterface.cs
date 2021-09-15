@@ -234,7 +234,7 @@ namespace System.Management.Automation.Host
 
         private static bool ShouldOutputPlainText(bool isHost, bool? supportsVirtualTerminal)
         {
-            var outputRendering = OutputRendering.Ansi;
+            var outputRendering = OutputRendering.PlainText;
 
             if (supportsVirtualTerminal != false)
             {
