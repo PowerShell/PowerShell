@@ -4,6 +4,7 @@
 #pragma warning disable 1634, 1691
 #pragma warning disable 56523
 
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Management.Automation.Internal;
@@ -1162,7 +1163,6 @@ namespace System.Management.Automation.Security
                 return fileSigInfo;
             }
         }
-
 
         internal static void FreeWVTStateData(System.IntPtr phWVTStateData)
         {
