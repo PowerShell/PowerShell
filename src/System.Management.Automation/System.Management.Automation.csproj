@@ -8,7 +8,6 @@
 
   <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
-    <PackageReference Include="Microsoft.Security.Extensions" Version="1.0.0"  PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +29,7 @@
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.2.0-preview.2" />
+    <PackageReference Include="Microsoft.Security.Extensions" Version="1.0.0"  PrivateAssets="all" />
   </ItemGroup>
 
   <PropertyGroup>
