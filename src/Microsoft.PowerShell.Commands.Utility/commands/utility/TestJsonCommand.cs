@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         public string Schema { get; set; }
 
         /// <summary>
-        /// Gets or sets path to the file containg schema to validate the JSON string against.
+        /// Gets or sets path to the file containing schema to validate the JSON string against.
         /// This is optional parameter.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = SchemaFileParameterSet)]

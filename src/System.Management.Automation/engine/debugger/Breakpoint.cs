@@ -439,7 +439,7 @@ namespace System.Management.Automation
 
         internal BitArray BreakpointBitArray { get; set; }
 
-        private class CheckBreakpointInScript : AstVisitor
+        private sealed class CheckBreakpointInScript : AstVisitor
         {
             public static bool IsInNestedScriptBlock(Ast ast, LineBreakpoint breakpoint)
             {

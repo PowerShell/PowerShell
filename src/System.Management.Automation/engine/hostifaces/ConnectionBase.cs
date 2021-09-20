@@ -670,7 +670,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private Queue<RunspaceEventQueueItem> _runspaceEventQueue = new Queue<RunspaceEventQueueItem>();
 
-        private class RunspaceEventQueueItem
+        private sealed class RunspaceEventQueueItem
         {
             public RunspaceEventQueueItem(RunspaceStateInfo runspaceStateInfo, RunspaceAvailability currentAvailability, RunspaceAvailability newAvailability)
             {

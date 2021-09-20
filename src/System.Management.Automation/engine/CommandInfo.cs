@@ -481,7 +481,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        private class GetMergedCommandParameterMetadataSafelyEventArgs : EventArgs
+        private sealed class GetMergedCommandParameterMetadataSafelyEventArgs : EventArgs
         {
             public MergedCommandParameterMetadata Result;
             public ExceptionDispatchInfo Exception;
@@ -928,7 +928,7 @@ namespace System.Management.Automation
     /// but can be used where a real type might not be available, in which case the name of the type can be used.
     /// The type encodes the members of dynamic objects in the type name.
     /// </summary>
-    internal class PSSyntheticTypeName : PSTypeName
+    internal sealed class PSSyntheticTypeName : PSTypeName
     {
         internal static PSSyntheticTypeName Create(string typename, IList<PSMemberNameAndType> membersTypes) => Create(new PSTypeName(typename), membersTypes);
 

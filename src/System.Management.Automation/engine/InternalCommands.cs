@@ -385,7 +385,7 @@ namespace Microsoft.PowerShell.Commands
         // TODO: Look into using SessionState.Internal.GetAliasTable() to find all user created aliases.
         //       But update Alias command logic to maintain reverse table that lists all aliases mapping
         //       to a single command definition, for performance.
-        private static string[] forEachNames = new string[]
+        private static readonly string[] forEachNames = new string[]
         {
             "ForEach-Object",
             "foreach",

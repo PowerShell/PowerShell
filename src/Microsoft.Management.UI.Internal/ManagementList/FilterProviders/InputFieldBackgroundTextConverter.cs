@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Windows.Data;
@@ -70,7 +69,6 @@ namespace Microsoft.Management.UI.Internal
 
         #region Helpers
 
-        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private bool IsOfTypeValidatingValue(object value)
         {
             Debug.Assert(value != null, "not null");
@@ -94,7 +92,6 @@ namespace Microsoft.Management.UI.Internal
             return value.GetType().GetGenericArguments()[0];
         }
 
-        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private object GetBackgroundTextForType(Type inputType)
         {
             if (typeof(DateTime) == inputType)

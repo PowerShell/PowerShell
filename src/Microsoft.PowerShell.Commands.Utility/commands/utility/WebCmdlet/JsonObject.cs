@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private class DuplicateMemberHashSet : HashSet<string>
+        private sealed class DuplicateMemberHashSet : HashSet<string>
         {
             public DuplicateMemberHashSet(int capacity)
                 : base(capacity, StringComparer.OrdinalIgnoreCase)
@@ -551,7 +551,7 @@ namespace Microsoft.PowerShell.Commands
                     // Win8:378368 Enums based on System.Int64 or System.UInt64 are not JSON-serializable
                     // because JavaScript does not support the necessary precision.
                     Type enumUnderlyingType = Enum.GetUnderlyingType(obj.GetType());
-                    if (enumUnderlyingType.Equals(typeof(Int64)) || enumUnderlyingType.Equals(typeof(UInt64)))
+                    if (enumUnderlyingType.Equals(typeof(long)) || enumUnderlyingType.Equals(typeof(ulong)))
                     {
                         rv = obj.ToString();
                     }
@@ -678,6 +678,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="context">The context for the operation.</param>
         private static void AppendPsProperties(PSObject psObj, IDictionary receiver, int depth, bool isCustomObject, in ConvertToJsonContext context)
         {
+            // if the psObj is a DateTime or String type, we don't serialize any extended or adapted properties
+            if (psObj.BaseObject is string || psObj.BaseObject is DateTime)
+            {
+                return;
+            }
+
             // serialize only Extended and Adapted properties..
             PSMemberInfoCollection<PSPropertyInfo> srcPropertiesToSearch =
                 new PSMemberInfoIntegratingCollection<PSPropertyInfo>(psObj,

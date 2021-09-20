@@ -94,7 +94,7 @@ namespace System.Management.Automation.Tracing
         /// This is a helper class that is used to wrap many multi-threading scenarios
         /// and makes correlation event to be logged easily.
         /// </summary>
-        private class CorrelatedCallback
+        private sealed class CorrelatedCallback
         {
             private readonly CallbackNoParameter callbackNoParam;
             private readonly CallbackWithState callbackWithState;
@@ -103,7 +103,7 @@ namespace System.Management.Automation.Tracing
             /// <summary>
             /// ParentActivityId.
             /// </summary>
-            protected readonly Guid parentActivityId;
+            private readonly Guid parentActivityId;
             private readonly EtwActivity tracer;
 
             /// <summary>

@@ -10,6 +10,11 @@ pr:
     - master
     - release*
 
+parameters:
+  - name: ForceAzureBlobDelete
+    displayName: Delete Azure Blob
+    default: false
+
 resources:
   repositories:
   - repository: ComplianceRepo
@@ -29,6 +34,9 @@ variables:
     value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
   - name: branchCounter
     value: $[counter(variables['branchCounterKey'], 1)]
+  - name: ForceAzureBlobDelete
+    value:  ${{ parameters.ForceAzureBlobDelete }}
+
 stages:
   - stage: prep
     jobs:
@@ -38,18 +46,36 @@ stages:
     dependsOn: ['prep']
     jobs:
       - template: templates/mac.yml
+        parameters:
+          buildArchitecture: x64
+
+      - template: templates/mac.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-file-signing.yml
         parameters:
-          parentJob: build_macOS
+          buildArchitecture: x64
+
+      - template: templates/mac-file-signing.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-package-build.yml
         parameters:
-          parentJob: MacFileSigningJob
+          buildArchitecture: x64
+
+      - template: templates/mac-package-build.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-package-signing.yml
         parameters:
-          parentJob: package_macOS
+          buildArchitecture: x64
+
+      - template: templates/mac-package-signing.yml
+        parameters:
+          buildArchitecture: arm64
 
   - stage: linux
     dependsOn: ['prep']
@@ -171,7 +197,9 @@ stages:
       - job: release_json
         displayName: Create and Upload release.json
         pool:
-          vmImage: 'windows-latest'
+          name: PowerShell1ES
+          demands:
+          - ImageOverride -equals MMS2019
         steps:
         - checkout: self
           clean: true

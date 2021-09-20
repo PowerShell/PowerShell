@@ -1,5 +1,204 @@
 # Current preview release
 
+## [7.2.0-preview.9] - 2021-08-23
+
+### Breaking Changes
+
+- Change the default value of `$PSStyle.OutputRendering` to `OutputRendering.Host` and remove `OutputRendering.Automatic` (#15882)
+- Fix `CA1052` for public API to make classes static when they only have static methods (#15775) (Thanks @xtqqczze!)
+- Update `pwsh.exe -File` to only accept `.ps1` script files on Windows (#15859)
+
+### Engine Updates and Fixes
+
+- Update .NET adapter to handle interface static members properly (#15908)
+- Catch and handle unauthorized access exception when removing AppLocker test files (#15881)
+
+### General Cmdlet Updates and Fixes
+
+- Add `-PassThru` parameter to `Set-Clipboard` (#13713) (Thanks @ThomasNieto!)
+- Add `-Encoding` parameter for `Tee-Object` (#12135) (Thanks @Peter-Schneider!)
+- Update `ConvertTo-Csv` and `Export-Csv` to handle `IDictionary` objects (#11029) (Thanks @vexx32!)
+- Update the parameters `-Exception` and `-ErrorRecord` for `Write-Error` to be position 0 (#13813) (Thanks @ThomasNieto!)
+- Don't use `ArgumentList` when creating COM object with `New-Object` as it's not applicable to the COM parameter set (#15915)
+- Fix `$PSStyle` list output to correctly show `TableHeader` (#15928)
+- Remove the `PSImplicitRemotingBatching` experimental feature (#15863)
+- Fix issue with `Get-Process -Module` failing to stop when it's piped to `Select-Object` (#15682) (Thanks @ArmaanMcleod!)
+- Make the experimental features `PSUnixFileStat`, `PSCultureInvariantReplaceOperator`, `PSNotApplyErrorActionToStderr`, `PSAnsiRendering`, `PSAnsiProgressFeatureName` stable (#15864)
+- Enhance `Remove-Item` to work with OneDrive (#15571) (Thanks @iSazonov!)
+- Make global tool entrypoint class static (#15880)
+- Update `ServerRemoteHost` version to be same as `PSVersion` (#15809)
+- Make the initialization of `HttpKnownHeaderNames` thread safe (#15519) (Thanks @iSazonov!)
+- `ConvertTo-Csv`: Quote fields with quotes and newlines when using `-UseQuotes AsNeeded` (#15765) (Thanks @lselden!)
+- Forwarding progress stream changes from `Foreach-Object -Parallel` runspaces (#14271) (Thanks @powercode!)
+- Add validation to `$PSStyle` to reject printable text when setting a property that only expects ANSI escape sequence (#15825)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Avoid unneeded array allocation in module code (#14329) (Thanks @xtqqczze!)</li>
+<li>Enable and fix analysis rules <code>CA1052</code>, <code>CA1067</code>, and <code>IDE0049</code> (#15840) (Thanks @xtqqczze!)</li>
+<li>Avoid unnecessary allocation in formatting code (#15832) (Thanks @xtqqczze!)</li>
+<li>Specify the analyzed API surface for all code quality rules (#15778) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Enable `/rebase` to automatically rebase a PR (#15808)
+- Update `.editorconfig` to not replace tabs with spaces in `.tsv` files (#15815) (Thanks @SethFalco!)
+- Update PowerShell team members in the change log generation script (#15817)
+
+### Tests
+
+- Add more tests to validate the current command error handling behaviors (#15919)
+- Make `Measure-Object` property test independent of the file system (#15879)
+- Add more information when a `syslog` parsing error occurs (#15857)
+- Harden logic when looking for `syslog` entries to be sure that we select based on the process id (#15841)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Disable implicit namespace imports for test projects (#15895)</li>
+<li>Update language version to 10 and fix related issues (#15886)</li>
+<li>Update <code>CodeQL</code> workflow to use Ubuntu 18.04 (#15868)</li>
+<li>Bump the version of various packages (#15944, #15934, #15935, #15891, #15812, #15822) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update `README` and `metadata files` for release `v7.2.0-preview.8` (#15819)
+- Update change logs for 7.0.7 and 7.1.4 (#15921)
+- Fix spelling in XML docs (#15939) (Thanks @slowy07!)
+- Update PowerShell Committee members (#15837)
+
+[7.2.0-preview.9]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.8...v7.2.0-preview.9
+
+## [7.2.0-preview.8] - 2021-07-22
+
+### Engine Updates and Fixes
+
+- Add a Windows mode to `$PSNativeCommandArgumentPassing` that allows some commands to use legacy argument passing (#15408)
+- Use `nameof` to get parameter names when creating `ArgumentNullException` (#15604) (Thanks @gukoff!)
+- Test if a command is 'Out-Default' more thoroughly for transcribing scenarios (#15653)
+- Add `Microsoft.PowerShell.Crescendo` to telemetry allow list (#15372)
+
+### General Cmdlet Updates and Fixes
+
+- Use `$PSStyle.Formatting.FormatAccent` for `Format-List` and `$PSStyle.Formatting.TableHeader` for `Format-Table` output (#14406)
+- Highlight using error color the exception `Message` and underline in `PositionMessage` for `Get-Error` (#15786)
+- Implement a completion for View parameter of format cmdlets (#14513) (Thanks @iSazonov!)
+- Add support to colorize `FileInfo` file names (#14403)
+- Don't serialize to JSON ETS properties for `DateTime` and `string` types (#15665)
+- Fix `HyperVSocketEndPoint.ServiceId` setter (#15704) (Thanks @xtqqczze!)
+- Add `DetailedView` to `$ErrorView` (#15609)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@iSazonov, @xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Remove <code>consolehost.proto</code> file (#15741) (Thanks @iSazonov!)</li>
+<li>Implement <code>IDisposable</code> for <code>ConvertToJsonCommand</code> (#15787) (Thanks @xtqqczze!)</li>
+<li>Fix <code>IDisposable</code> implementation for <code>CommandPathSearch</code> (#15793) (Thanks @xtqqczze!)</li>
+<li>Delete IDE dispose analyzer rules (#15798) (Thanks @xtqqczze!)</li>
+<li>Seal private classes (#15725) (Thanks @xtqqczze!)</li>
+<li>Enable IDE0029: <code>UseCoalesceExpression</code> (#15770) (Thanks @xtqqczze!)</li>
+<li>Enable IDE0070: <code>UseSystemHashCode</code> (#15715) (Thanks @xtqqczze!)</li>
+<li>Enable IDE0030: <code>UseCoalesceExpressionForNullable</code> (#14289) (Thanks @xtqqczze!)</li>
+<li>Fix CA1846 and CA1845 for using <code>AsSpan</code> instead of <code>Substring</code> (#15738)</li>
+<li>Use <code>List&lt;T&gt;.RemoveAll</code> to avoid creating temporary list (#15686) (Thanks @xtqqczze!)</li>
+<li>Enable IDE0044: <code>MakeFieldReadonly</code> (#13880) (Thanks @xtqqczze!)</li>
+<li>Disable IDE0130 (#15728) (Thanks @xtqqczze!)</li>
+<li>Make classes sealed (#15675) (Thanks @xtqqczze!)</li>
+<li>Enable CA1043: Use integral or string argument for indexers (#14467) (Thanks @xtqqczze!)</li>
+<li>Enable CA1812 (#15674) (Thanks @xtqqczze!)</li>
+<li>Replace <code>Single</code> with <code>First</code> when we know the element count is 1 (#15676) (Thanks @xtqqczze!)</li>
+<li>Skip analyzers for <code>Microsoft.Management.UI.Internal</code> (#15677) (Thanks @xtqqczze!)</li>
+<li>Fix CA2243: Attribute string literals should parse correctly (#15622) (Thanks @xtqqczze!)</li>
+<li>Enable CA1401 (#15621) (Thanks @xtqqczze!)</li>
+<li>Fix CA1309: Use ordinal <code>StringComparison</code> in Certificate Provider (#14352) (Thanks @xtqqczze!)</li>
+<li>Fix CA1839: Use <code>Environment.ProcessPath</code> (#15650) (Thanks @xtqqczze!)</li>
+<li>Add new analyzer rules (#15620) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Add `SkipRoslynAnalyzers` parameter to `Start-PSBuild` (#15640) (Thanks @xtqqczze!)
+- Create issue template for issues updating PowerShell through Windows update. (#15700)
+- Add `DocumentationAnalyzers` to build (#14336) (Thanks @xtqqczze!)
+- Convert GitHub issue templates to modern forms (#15645)
+
+### Tests
+
+- Add more tests for `ConvertFrom-Json` (#15706) (Thanks @strawgate!)
+- Update `glob-parent` and `hosted-git-info` test dependencies (#15643)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+Update .NET to version <code>v6.0.0-preview.6</code>
+</summary>
+
+<ul>
+<li>Add new package name for <code>osx-arm64</code> (#15813)</li>
+<li>Prefer version when available for dotnet-install (#15810)</li>
+<li>Make warning about MU being required dynamic (#15776)</li>
+<li>Add <code>Start-PSBootstrap</code> before running tests (#15804)</li>
+<li>Update to .NET 6 Preview 6 and use <code>crossgen2</code> (#15763)</li>
+<li>Enable ARM64 packaging for macOS (#15768)</li>
+<li>Make Microsoft Update opt-out/in check boxes work (#15784)</li>
+<li>Add Microsoft Update opt out to MSI install (#15727)</li>
+<li>Bump <code>NJsonSchema</code> from <code>10.4.4</code> to <code>10.4.5</code> (#15769)</li>
+<li>Fix computation of SHA512 checksum (#15736)</li>
+<li>Update the script to use quality parameter for <code>dotnet-install</code> (#15731)</li>
+<li>Generate SHA512 checksum file for all packages (#15678)</li>
+<li>Enable signing daily release build with lifetime certificate (#15642)</li>
+<li>Update metadata and README for 7.2.0-preview.7 (#15593)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Fix broken RFC links (#15807)
+- Add to bug report template getting details from `Get-Error` (#15737)
+- Update issue templates to link to new docs (#15711)
+- Add @jborean93 to Remoting Working Group (#15683)
+
+[7.2.0-preview.8]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.7...v7.2.0-preview.8
+
 ## [7.2.0-preview.7] - 2021-06-17
 
 ### Breaking Changes

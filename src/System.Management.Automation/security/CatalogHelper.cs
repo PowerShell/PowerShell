@@ -68,14 +68,14 @@ namespace System.Management.Automation
     internal static class CatalogHelper
     {
         // Catalog Version is (0X100 = 256) for Catalog Version 1
-        private static int catalogVersion1 = 256;
+        private const int catalogVersion1 = 256;
 
         // Catalog Version is (0X200 = 512) for Catalog Version 2
-        private static int catalogVersion2 = 512;
+        private const int catalogVersion2 = 512;
 
         // Hash Algorithms supported by Windows Catalog
-        private static string HashAlgorithmSHA1 = "SHA1";
-        private static string HashAlgorithmSHA256 = "SHA256";
+        private const string HashAlgorithmSHA1 = "SHA1";
+        private const string HashAlgorithmSHA256 = "SHA256";
         private static PSCmdlet _cmdlet = null;
 
         /// <summary>

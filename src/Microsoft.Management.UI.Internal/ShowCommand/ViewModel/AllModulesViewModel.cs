@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation;
@@ -80,12 +79,10 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="commands">Commands to show.</param>
         public AllModulesViewModel(Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands)
         {
-            #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
             if (commands == null || !commands.GetEnumerator().MoveNext())
             {
                 throw new ArgumentNullException("commands");
             }
-            #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
 
             this.Initialization(importedModules, commands, true);
         }
@@ -403,13 +400,11 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         internal void OnRefresh()
         {
-            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             EventHandler<EventArgs> handler = this.Refresh;
             if (handler != null)
             {
                 handler(this, new EventArgs());
             }
-            #pragma warning restore IDE1005s
         }
 
         #region Private Methods
@@ -598,8 +593,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             this.OnSelectedCommandInSelectedModuleNeedsImportModule(e);
         }
 
-        #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
-
         /// <summary>
         /// Triggers SelectedCommandInSelectedModuleNeedsHelp.
         /// </summary>
@@ -661,8 +654,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
-        #pragma warning restore IDE1005s
         #endregion
     }
 }

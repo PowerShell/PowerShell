@@ -1359,7 +1359,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioError)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 ErrorRecord er = new ErrorRecord(ioError, "GetItemIOError", ErrorCategory.ReadError, path);
                 WriteError(er);
             }
@@ -1891,9 +1891,14 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             bool hidden = false;
+                            bool checkReparsePoint = true;
                             if (!Force)
                             {
                                 hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
+
+                                // We've already taken the expense of initializing the Attributes property here,
+                                // so we can use that to avoid needing to call IsReparsePointLikeSymlink() later.
+                                checkReparsePoint = recursiveDirectory.Attributes.HasFlag(FileAttributes.ReparsePoint);
                             }
 
                             // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
@@ -1907,7 +1912,7 @@ namespace Microsoft.PowerShell.Commands
                                 //  c) it is not a reparse point with a target (not OneDrive or an AppX link).
                                 if (tracker == null)
                                 {
-                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(recursiveDirectory))
+                                    if (checkReparsePoint && InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(recursiveDirectory))
                                     {
                                         continue;
                                     }
@@ -2058,11 +2063,43 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Name if a file or directory, Name -> Target if symlink.</returns>
         public static string NameString(PSObject instance)
         {
-            return instance?.BaseObject is FileSystemInfo fileInfo
-                ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointWithTarget(fileInfo)
-                    ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
-                    : fileInfo.Name
-                : string.Empty;
+            if (ExperimentalFeature.IsEnabled("PSAnsiRenderingFileInfo"))
+            {
+                if (instance?.BaseObject is FileSystemInfo fileInfo)
+                {
+                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.SymbolicLink}{fileInfo.Name}{PSStyle.Instance.Reset} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}";
+                    }
+                    else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.Directory}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                    }
+                    else if (PSStyle.Instance.FileInfo.Extension.ContainsKey(fileInfo.Extension))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.Extension[fileInfo.Extension]}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                    }
+                    else if ((Platform.IsWindows && CommandDiscovery.PathExtensions.Contains(fileInfo.Extension.ToLower())) ||
+                        (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileInfo.FullName)))
+                    {
+                        return $"{PSStyle.Instance.FileInfo.Executable}{fileInfo.Name}{PSStyle.Instance.Reset}";
+                    }
+                    else
+                    {
+                        return fileInfo.Name;
+                    }
+                }
+
+                return string.Empty;
+            }
+            else
+            {
+                return instance?.BaseObject is FileSystemInfo fileInfo
+                    ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo)
+                        ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
+                        : fileInfo.Name
+                    : string.Empty;
+            }
         }
 
         /// <summary>
@@ -2213,7 +2250,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "RenameItemIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -2325,7 +2362,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (IOException exception)
                 {
-                    // IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(exception, "NewItemIOError", ErrorCategory.WriteError, path));
                 }
                 catch (UnauthorizedAccessException accessException)
@@ -2821,7 +2858,7 @@ namespace Microsoft.PowerShell.Commands
                 // Ignore the error if force was specified
                 if (!Force)
                 {
-                    // IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(ioException, "CreateDirectoryIOError", ErrorCategory.WriteError, path));
                 }
             }
@@ -2896,7 +2933,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "CreateIntermediateDirectoriesIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -3039,7 +3076,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException exception)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(exception, "RemoveItemIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -3099,22 +3136,31 @@ namespace Microsoft.PowerShell.Commands
                 continueRemoval = ShouldProcess(directory.FullName, action);
             }
 
-            if (directory.Attributes.HasFlag(FileAttributes.ReparsePoint))
+            if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(directory))
             {
+                void WriteErrorHelper(Exception exception)
+                {
+                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                }
+
                 try
                 {
-                    // TODO:
-                    // Different symlinks seem to vary by behavior.
-                    // In particular, OneDrive symlinks won't remove without recurse,
-                    // but the .NET API here does not allow us to distinguish them.
-                    // We may need to revisit using p/Invokes here to get the right behavior
-                    directory.Delete();
+                    if (InternalTestHooks.OneDriveTestOn)
+                    {
+                        WriteErrorHelper(new IOException());
+                        return;
+                    }
+                    else
+                    {
+                        // Name surrogates should just be detached.
+                        directory.Delete();
+                    }
                 }
                 catch (Exception e)
                 {
                     string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName, e.Message);
                     var exception = new IOException(error, e);
-                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                    WriteErrorHelper(exception);
                 }
 
                 return;
@@ -3879,7 +3925,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (IOException ioException)
                             {
-                                // IOException contains specific message about the error occured and so no need for errordetails.
+                                // IOException contains specific message about the error occurred and so no need for errordetails.
                                 WriteError(new ErrorRecord(ioException, "CopyDirectoryInfoItemIOError", ErrorCategory.WriteError, file));
                             }
                             catch (UnauthorizedAccessException accessException)
@@ -3910,7 +3956,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (IOException ioException)
                             {
-                                // IOException contains specific message about the error occured and so no need for errordetails.
+                                // IOException contains specific message about the error occurred and so no need for errordetails.
                                 WriteError(new ErrorRecord(ioException, "CopyDirectoryInfoItemIOError", ErrorCategory.WriteError, childDir));
                             }
                             catch (UnauthorizedAccessException accessException)
@@ -5208,7 +5254,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (IOException ioError)
                 {
-                    // IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(ioError, "NormalizeRelativePathIOError", ErrorCategory.ReadError, path));
                     break;
                 }
@@ -5852,7 +5898,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "MoveItemIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -5965,7 +6011,7 @@ namespace Microsoft.PowerShell.Commands
                                 (exception is ArgumentNullException) ||
                                 (exception is IOException))
                             {
-                                // IOException contains specific message about the error occured and so no need for errordetails.
+                                // IOException contains specific message about the error occurred and so no need for errordetails.
                                 WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, destfile));
                             }
                             else
@@ -5974,13 +6020,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        // IOException contains specific message about the error occured and so no need for errordetails.
+                        // IOException contains specific message about the error occurred and so no need for errordetails.
                         WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, file));
                     }
                 }
                 else
                 {
-                    // IOException contains specific message about the error occured and so no need for errordetails.
+                    // IOException contains specific message about the error occurred and so no need for errordetails.
                     WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, file));
                 }
             }
@@ -6051,7 +6097,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "MoveDirectoryItemIOError", ErrorCategory.WriteError, directory));
             }
         }
@@ -6075,7 +6121,16 @@ namespace Microsoft.PowerShell.Commands
 
                 directory.MoveTo(destinationPath);
             }
-            catch (IOException)
+#if UNIX
+            // This is the errno returned by the rename() syscall
+            // when an item is attempted to be renamed across filesystem mount boundaries.
+            // 0x80131620 is returned if the source and destination do not have the same root path
+            catch (IOException e) when (e.HResult == 18 || e.HResult == -2146232800)
+#else
+            // 0x80070005 ACCESS_DENIED is returned when trying to move files across volumes like DFS
+            // 0x80131620 is returned if the source and destination do not have the same root path
+            catch (IOException e) when (e.HResult == -2147024891 || e.HResult == -2146232800)
+#endif
             {
                 // Rather than try to ascertain whether we can rename a directory ahead of time,
                 // it's both faster and more correct to try to rename it and fall back to copy/deleting it
@@ -6213,7 +6268,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "GetPropertyIOError", ErrorCategory.ReadError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -6513,7 +6568,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "ClearPropertyIOError", ErrorCategory.WriteError, path));
             }
         }
@@ -6693,7 +6748,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "GetContentReaderIOError", ErrorCategory.ReadError, path));
             }
             catch (System.Security.SecurityException securityException)
@@ -6833,7 +6888,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "GetContentWriterIOError", ErrorCategory.WriteError, path));
             }
             catch (System.Security.SecurityException securityException)
@@ -6999,7 +7054,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (IOException ioException)
             {
-                // IOException contains specific message about the error occured and so no need for errordetails.
+                // IOException contains specific message about the error occurred and so no need for errordetails.
                 WriteError(new ErrorRecord(ioException, "ClearContentIOError", ErrorCategory.WriteError, path));
             }
             catch (UnauthorizedAccessException accessException)
@@ -7131,7 +7186,7 @@ namespace Microsoft.PowerShell.Commands
             /// </param>
             /// <returns>If connection is established to the network resource
             /// then success is returned or else the error code describing the
-            /// type of failure that occured while establishing
+            /// type of failure that occurred while establishing
             /// the connection is returned.</returns>
             [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
             internal static extern int WNetAddConnection2(ref NetResource netResource, byte[] password, string username, int flags);
@@ -7151,7 +7206,7 @@ namespace Microsoft.PowerShell.Commands
             /// if there are open files or jobs.
             /// </param>
             /// <returns>If connection is removed then success is returned or
-            /// else the error code describing the type of failure that occured while
+            /// else the error code describing the type of failure that occurred while
             /// trying to remove the connection is returned.
             /// </returns>
             [DllImport("mpr.dll", CharSet = CharSet.Unicode)]
@@ -7369,7 +7424,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Tracks visited files/directories by caching their device IDs and inodes.
         /// </summary>
-        private class InodeTracker
+        private sealed class InodeTracker
         {
             private readonly HashSet<(UInt64, UInt64)> _visitations;
 
@@ -7939,18 +7994,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        private struct REPARSE_DATA_BUFFER_APPEXECLINK
-        {
-            public uint ReparseTag;
-            public ushort ReparseDataLength;
-            public ushort Reserved;
-            public uint StringCount;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
-            public byte[] StringList;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
         private struct BY_HANDLE_FILE_INFORMATION
         {
             public uint FileAttributes;
@@ -8024,8 +8067,7 @@ namespace Microsoft.PowerShell.Commands
             private static extern bool FindClose(IntPtr handle);
         }
 
-        // SetLastError is false as the use of this API doesn't not require GetLastError() to be called
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = false, CharSet = CharSet.Unicode)]
+        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern SafeFindHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
 
         internal enum FINDEX_INFO_LEVELS : uint
@@ -8179,10 +8221,6 @@ namespace Microsoft.PowerShell.Commands
                             linkType = "Junction";
                             break;
 
-                        case IO_REPARSE_TAG_APPEXECLINK:
-                            linkType = "AppExeCLink";
-                            break;
-
                         default:
                             linkType = null;
                             break;
@@ -8216,28 +8254,55 @@ namespace Microsoft.PowerShell.Commands
             return fileInfo.Attributes.HasFlag(System.IO.FileAttributes.ReparsePoint);
         }
 
-        internal static bool IsReparsePointWithTarget(FileSystemInfo fileInfo)
+        internal static bool IsReparsePointLikeSymlink(FileSystemInfo fileInfo)
         {
-            if (!IsReparsePoint(fileInfo))
+#if UNIX
+            // Reparse point on Unix is a symlink.
+            return IsReparsePoint(fileInfo);
+#else
+            if (InternalTestHooks.OneDriveTestOn && fileInfo.Name == InternalTestHooks.OneDriveTestSymlinkName)
             {
-                return false;
+                return !InternalTestHooks.OneDriveTestRecurseOn;
             }
-#if !UNIX
-            // It is a reparse point and we should check some reparse point tags.
-            var data = new WIN32_FIND_DATA();
-            using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+
+            WIN32_FIND_DATA data = default;
+            string fullPath = Path.TrimEndingDirectorySeparator(fileInfo.FullName);
+            if (fullPath.Length > MAX_PATH)
             {
+                fullPath = PathUtils.EnsureExtendedPrefix(fullPath);
+            }
+
+            using (SafeFindHandle handle = FindFirstFileEx(fullPath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+            {
+                if (handle.IsInvalid)
+                {
+                    // Our handle could be invalidated by something else touching the filesystem,
+                    // so ensure we deal with that possibility here
+                    int lastError = Marshal.GetLastWin32Error();
+                    throw new Win32Exception(lastError);
+                }
+
+                // We already have the file attribute information from our Win32 call,
+                // so no need to take the expense of the FileInfo.FileAttributes call
+                const int FILE_ATTRIBUTE_REPARSE_POINT = 0x0400;
+                if ((data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) == 0)
+                {
+                    // Not a reparse point.
+                    return false;
+                }
+
                 // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/windows/win32/fileio/reparse-point-tags
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
                 // (like symlinks and mount points).
                 // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
-                if (!handle.IsInvalid && (data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
+                if ((data.dwReserved0 & 0x20000000) == 0 && (data.dwReserved0 != IO_REPARSE_TAG_APPEXECLINK))
                 {
                     return false;
                 }
             }
-#endif
+
             return true;
+#endif
         }
 
         internal static bool WinIsHardLink(FileSystemInfo fileInfo)
@@ -8432,16 +8497,6 @@ namespace Microsoft.PowerShell.Commands
                     case IO_REPARSE_TAG_MOUNT_POINT:
                         REPARSE_DATA_BUFFER_MOUNTPOINT reparseMountPointDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_MOUNTPOINT>(outBuffer);
                         targetDir = Encoding.Unicode.GetString(reparseMountPointDataBuffer.PathBuffer, reparseMountPointDataBuffer.SubstituteNameOffset, reparseMountPointDataBuffer.SubstituteNameLength);
-                        break;
-
-                    case IO_REPARSE_TAG_APPEXECLINK:
-                        REPARSE_DATA_BUFFER_APPEXECLINK reparseAppExeDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_APPEXECLINK>(outBuffer);
-                        // The target file is at index 2
-                        if (reparseAppExeDataBuffer.StringCount >= 3)
-                        {
-                            string temp = Encoding.Unicode.GetString(reparseAppExeDataBuffer.StringList);
-                            targetDir = temp.Split('\0')[2];
-                        }
                         break;
 
                     default:

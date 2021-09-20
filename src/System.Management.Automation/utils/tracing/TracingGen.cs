@@ -37,7 +37,7 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public const long KeywordAll = 0xFFFFFFFF;
 
-        private static Guid providerId = Guid.Parse("a0c1853b-5c40-4b15-8766-3cf1c58f985a");
+        private static readonly Guid providerId = Guid.Parse("a0c1853b-5c40-4b15-8766-3cf1c58f985a");
         private static readonly EventDescriptor WriteTransferEventEvent;
         private static readonly EventDescriptor DebugMessageEvent;
         private static readonly EventDescriptor M3PAbortingWorkflowExecutionEvent;

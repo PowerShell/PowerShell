@@ -40,8 +40,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             int theActivityID,
             string theCurrentOperation,
             string theStatusDescription,
-            UInt32 thePercentageCompleted,
-            UInt32 theSecondsRemaining)
+            uint thePercentageCompleted,
+            uint theSecondsRemaining)
         {
             this.Activity = theActivity;
             this.ActivityID = theActivityID;
@@ -112,12 +112,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Gets the percentage completed of the given activity.
         /// </summary>
-        internal UInt32 PercentageCompleted { get; }
+        internal uint PercentageCompleted { get; }
 
         /// <summary>
         /// Gets the number of seconds remaining for the given activity.
         /// </summary>
-        internal UInt32 SecondsRemaining { get; }
+        internal uint SecondsRemaining { get; }
 
         #endregion
     }

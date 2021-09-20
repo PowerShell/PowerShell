@@ -2048,7 +2048,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Simple throttle operation class for connecting jobs.
         /// </summary>
-        private class ConnectJobOperation : IThrottleOperation
+        private sealed class ConnectJobOperation : IThrottleOperation
         {
             private readonly PSRemotingChildJob _psRemoteChildJob;
 

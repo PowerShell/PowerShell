@@ -26,7 +26,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region Properties
 
-        internal UInt32 Channel { get; }
+        internal uint Channel { get; }
 
         internal string Message { get; }
 
@@ -35,7 +35,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="CimWriteMessage"/> class.
         /// </summary>
-        public CimWriteMessage(UInt32 channel,
+        public CimWriteMessage(uint channel,
             string message)
         {
             this.Channel = channel;

@@ -355,6 +355,7 @@ helpproviderwithfullcache
 helpsystem
 hemant
 hemantmahawar
+Higinbotham
 himura2la
 hololens
 homebrew
@@ -657,6 +658,7 @@ preview.7.20366.2
 preview.7.20366.15
 preview.4.20258.7
 preview.4.20229.10
+preview.8
 preview1-24530-04
 preview7
 productversion
@@ -1102,6 +1104,20 @@ DotnetMetadataRuntime.json
 deps.json
 Jaykul
 eltociear
+consolehost.proto
+IDisposable
+ConvertToJsonCommand
+CommandPathSearch
+UseCoalesceExpression
+UseSystemHashCode
+UseCoalesceExpressionForNullable
+substring
+RemoveAll
+MakeFieldReadonly
+Microsoft.Management.UI.Internal
+StringComparison
+osx-arm64
+crossgen2
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1244,6 +1260,7 @@ ini
 package.json
 jcotton42
 RPMs
+PSDesiredStateConfiguration
  - CHANGELOG/preview.md
 Gimly
 jborean93
@@ -1350,11 +1367,19 @@ adamsitnik
 msixbundle
 PowerShell-Native#70
 AppxManifest.xml
+preview.9
+ArmaanMcleod
+entrypoint
+lselden
+SethFalco
+CodeQL
+slowy07
  - CHANGELOG/7.0.md
 codesign
 release-BuildJson
 yml
 centos-7
+PSDesiredStateConfiguration
  - test/perf/benchmarks/README.md
 benchmarked
 BenchmarkDotNet

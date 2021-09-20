@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Host;
@@ -1449,14 +1450,14 @@ namespace Microsoft.PowerShell.Commands
 
                 // Read StartExecutionTime property
                 object temp = GetPropertyValue(mshObject, "StartExecutionTime");
-                if (temp == null || !LanguagePrimitives.TryConvertTo<DateTime>(temp, out DateTime startExecutionTime))
+                if (temp == null || !LanguagePrimitives.TryConvertTo<DateTime>(temp, CultureInfo.CurrentCulture, out DateTime startExecutionTime))
                 {
                     break;
                 }
 
                 // Read EndExecutionTime property
                 temp = GetPropertyValue(mshObject, "EndExecutionTime");
-                if (temp == null || !LanguagePrimitives.TryConvertTo<DateTime>(temp, out DateTime endExecutionTime))
+                if (temp == null || !LanguagePrimitives.TryConvertTo<DateTime>(temp, CultureInfo.CurrentCulture, out DateTime endExecutionTime))
                 {
                     break;
                 }

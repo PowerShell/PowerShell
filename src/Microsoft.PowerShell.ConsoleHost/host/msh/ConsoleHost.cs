@@ -193,7 +193,20 @@ namespace Microsoft.PowerShell
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-ServerMode");
-                    System.Management.Automation.Remoting.Server.OutOfProcessMediator.Run(s_cpp.InitialCommand, s_cpp.WorkingDirectory);
+                    System.Management.Automation.Remoting.Server.StdIOProcessMediator.Run(
+                        initialCommand: s_cpp.InitialCommand,
+                        workingDirectory: s_cpp.WorkingDirectory,
+                        configurationName: null);
+                    exitCode = 0;
+                }
+                else if (s_cpp.SSHServerMode)
+                {
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer");
+                    ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
+                    System.Management.Automation.Remoting.Server.StdIOProcessMediator.Run(
+                        initialCommand: s_cpp.InitialCommand,
+                        workingDirectory: null,
+                        configurationName: null);
                     exitCode = 0;
                 }
                 else if (s_cpp.NamedPipeServerMode)
@@ -201,22 +214,16 @@ namespace Microsoft.PowerShell
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe");
                     ProfileOptimization.StartProfile("StartupProfileData-NamedPipeServerMode");
                     System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(
-                        s_cpp.ConfigurationName);
-                    exitCode = 0;
-                }
-                else if (s_cpp.SSHServerMode)
-                {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer");
-                    ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
-                    System.Management.Automation.Remoting.Server.SSHProcessMediator.Run(s_cpp.InitialCommand);
+                        configurationName: s_cpp.ConfigurationName);
                     exitCode = 0;
                 }
                 else if (s_cpp.SocketServerMode)
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-SocketServerMode");
-                    System.Management.Automation.Remoting.Server.HyperVSocketMediator.Run(s_cpp.InitialCommand,
-                        s_cpp.ConfigurationName);
+                    System.Management.Automation.Remoting.Server.HyperVSocketMediator.Run(
+                        initialCommand: s_cpp.InitialCommand,
+                        configurationName: s_cpp.ConfigurationName);
                     exitCode = 0;
                 }
                 else
@@ -1857,13 +1864,15 @@ namespace Microsoft.PowerShell
 
                 Pipeline tempPipeline = exec.CreatePipeline();
                 Command c;
+#if UNIX
                 // if file doesn't have .ps1 extension, we read the contents and treat it as a script to support shebang with no .ps1 extension usage
-                if (!Path.GetExtension(filePath).Equals(".ps1", StringComparison.OrdinalIgnoreCase))
+                if (!filePath.EndsWith(".ps1", StringComparison.OrdinalIgnoreCase))
                 {
                     string script = File.ReadAllText(filePath);
                     c = new Command(script, isScript: true, useLocalScope: false);
                 }
                 else
+#endif
                 {
                     c = new Command(filePath, false, false);
                 }
@@ -2322,7 +2331,7 @@ namespace Microsoft.PowerShell
         /// Neither this class' instances nor its static data is threadsafe.  Caller is responsible for ensuring threadsafe
         /// access.
         /// </summary>
-        private class InputLoop
+        private sealed class InputLoop
         {
             internal static void RunNewInputLoop(ConsoleHost parent, bool isNested)
             {
@@ -2713,7 +2722,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    // an exception ocurred when the command was executed.  Tell the user about it.
+                    // an exception occurred when the command was executed.  Tell the user about it.
                     _parent.ReportException(e, _exec);
                 }
 
@@ -2902,7 +2911,7 @@ namespace Microsoft.PowerShell
         [Serializable]
         [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic", Justification =
             "This exception cannot be used outside of the console host application. It is not thrown by a library routine, only by an application.")]
-        private class ConsoleHostStartupException : Exception
+        private sealed class ConsoleHostStartupException : Exception
         {
             internal
             ConsoleHostStartupException()
@@ -2916,7 +2925,7 @@ namespace Microsoft.PowerShell
             {
             }
 
-            protected
+            private
             ConsoleHostStartupException(
                 System.Runtime.Serialization.SerializationInfo info,
                 System.Runtime.Serialization.StreamingContext context)

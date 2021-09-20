@@ -21,7 +21,6 @@ namespace System.Management.Automation.Help
         internal UpdatableHelpUri(string moduleName, Guid moduleGuid, CultureInfo culture, string resolvedUri)
         {
             Debug.Assert(!string.IsNullOrEmpty(moduleName));
-            Debug.Assert(moduleGuid != Guid.Empty);
             Debug.Assert(!string.IsNullOrEmpty(resolvedUri));
 
             ModuleName = moduleName;

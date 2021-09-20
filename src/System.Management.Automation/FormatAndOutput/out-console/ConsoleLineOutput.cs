@@ -473,7 +473,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Object to manage prompting.
         /// </summary>
-        private class PromptHandler
+        private sealed class PromptHandler
         {
             /// <summary>
             /// Prompt handler with the given prompt.

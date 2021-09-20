@@ -640,6 +640,10 @@ namespace Microsoft.PowerShell.Commands
                             WriteNonTerminatingError(process, ex, ProcessResources.CouldNotEnumerateModules, "CouldNotEnumerateModules", ErrorCategory.PermissionDenied);
                         }
                     }
+                    catch (PipelineStoppedException) 
+                    {
+                        throw;
+                    }
                     catch (Exception exception)
                     {
                         WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateModules, "CouldNotEnumerateModules", ErrorCategory.PermissionDenied);

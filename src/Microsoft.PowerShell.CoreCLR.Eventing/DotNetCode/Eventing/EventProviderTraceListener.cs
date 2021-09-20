@@ -42,7 +42,7 @@ namespace System.Diagnostics.Eventing
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("Delimiter");
+                    throw new ArgumentNullException(nameof(Delimiter));
 
                 if (value.Length == 0)
                     throw new ArgumentException(DotNetEventingStrings.Argument_NeedNonemptyDelimiter);

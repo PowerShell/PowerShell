@@ -281,8 +281,14 @@ namespace System.Management.Automation
         /// <summary>Use legacy argument parsing via ProcessStartInfo.Arguments.</summary>
         Legacy = 0,
 
-        /// <summary>Use new style argument parsing via ProcessStartInfo.ArgumentList.</summary>
-        Standard = 1
+        /// <summary>Use new style argument passing via ProcessStartInfo.ArgumentList.</summary>
+        Standard = 1,
+
+        /// <summary>
+        /// Use specific to Windows passing style which is Legacy for selected files on Windows, but
+        /// Standard for everything else. This is the default behavior for Windows.
+        /// </summary>
+        Windows = 2
     }
     #endregion NativeArgumentPassingStyle
 

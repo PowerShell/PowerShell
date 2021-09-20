@@ -76,8 +76,10 @@ function Update-PackageVersion {
     $paths = @(
         "$PSScriptRoot/packaging/projects/reference/Microsoft.PowerShell.Commands.Utility/Microsoft.PowerShell.Commands.Utility.csproj"
         "$PSScriptRoot/packaging/projects/reference/System.Management.Automation/System.Management.Automation.csproj"
+        "$PSScriptRoot/packaging/projects/reference/Microsoft.PowerShell.ConsoleHost/Microsoft.PowerShell.ConsoleHost.csproj"
         "$PSScriptRoot/../src/"
         "$PSScriptRoot/../test/tools/"
+        "$PSScriptRoot/../test/perf/dotnet-tools/"
     )
 
     Get-ChildItem -Path $paths -Recurse -Filter "*.csproj" -Exclude 'PSGalleryModules.csproj', 'PSGalleryTestModules.csproj' | ForEach-Object {
@@ -106,12 +108,24 @@ function Update-PackageVersion {
     }
 
     $packages.GetEnumerator() | ForEach-Object {
-        $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPrereleaseVersions -Source $source
+        $pkgName = $_.Key
+
+        $pkgs = [System.Collections.Generic.Dictionary[string, Microsoft.PackageManagement.Packaging.SoftwareIdentity]]::new()
+
+        # We have to find packages for all sources separately as Find-Package does not return all packages when both sources are provided at the same time.
+        # Since there will be a lot of duplicates we add the package to a dictionary so we only get a unique set by version.
+        $source | ForEach-Object {
+            Find-Package -Name $pkgName -AllVersions -AllowPrereleaseVersions -Source $_ -ErrorAction SilentlyContinue | ForEach-Object {
+                if (-not $pkgs.ContainsKey($_.Version)) {
+                    $pkgs.Add($_.Version, $_)
+                }
+            }
+        }
 
         foreach ($v in $_.Value) {
             $version = $v.Version
 
-            foreach ($p in $pkgs) {
+            foreach ($p in $pkgs.Values) {
                 # some packages are directly updated on nuget.org so need to check that too.
                 if ($p.Version -like "$versionPattern*" -or $p.Source -eq 'nuget.org') {
                     if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
@@ -154,10 +168,13 @@ function Update-CsprojFile([string] $path, $values) {
 }
 
 function Get-DotnetUpdate {
-    $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
-    $metataJson = (Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json)
-    $nextChannel = $metataJson.sdk.nextChannel
-    $feedUrl = $metataJson.internalfeed.url
+    param (
+        $channel,
+        $quality,
+        $qualityFallback,
+        $feedUrl,
+        $sdkImageVersion
+    )
 
     if ($SDKVersionOverride) {
         return @{
@@ -165,11 +182,35 @@ function Get-DotnetUpdate {
             NewVersion   = $SDKVersionOverride
             Message      = $null
             FeedUrl      = $feedUrl
+            Quality      = $quality
         }
     }
 
     try {
-        $latestSDKversion = [System.Management.Automation.SemanticVersion] (Invoke-RestMethod -Uri "http://aka.ms/dotnet/$nextChannel/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() })
+
+        try {
+            $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$quality/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
+            $selectedQuality = $quality
+        } catch {
+            if ($_.exception.Response.StatusCode -eq 'NotFound') {
+                Write-Verbose "Build not found for Channel: $Channel and Quality: $Quality" -Verbose
+            } else {
+                throw $_
+            }
+        }
+
+        if (-not $latestSDKVersionString -or -not $latestSDKVersionString.StartsWith($sdkImageVersion)) {
+            # we did not get a version number so fall back to daily
+            $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$qualityFallback/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
+            $selectedQuality = $qualityFallback
+
+            if (-not $latestSDKVersionString.StartsWith($sdkImageVersion)) {
+                throw "No build found!"
+            }
+        }
+
+        $latestSDKversion = [System.Management.Automation.SemanticVersion] $latestSDKVersionString
+
         $currentVersion = [System.Management.Automation.SemanticVersion] (( Get-Content -Path "$PSScriptRoot/../global.json" -Raw | ConvertFrom-Json).sdk.version)
 
         if ($latestSDKversion -gt $currentVersion) {
@@ -191,6 +232,7 @@ function Get-DotnetUpdate {
         NewVersion   = $newVersion
         Message      = $Message
         FeedUrl      = $feedUrl
+        Quality      = $selectedQuality
     }
 }
 
@@ -203,15 +245,18 @@ function Update-DevContainer {
     $devContainerDocker | Out-File -FilePath $dockerFilePath -Force
 }
 
-$dotnetUpdate = Get-DotnetUpdate
+$dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
+$dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
+$channel = $dotnetMetadataJson.sdk.channel
+$nextChannel = $dotnetMetadataJson.sdk.nextChannel
+$quality = $dotnetMetadataJson.sdk.quality
+$qualityFallback = $dotnetMetadataJson.sdk.qualityFallback
+$sdkImageVersion = $dotnetMetadataJson.sdk.sdkImageVersion
+$internalfeed = $dotnetMetadataJson.internalfeed.url
+
+$dotnetUpdate = Get-DotnetUpdate -channel $nextChannel -quality $quality -feedUrl $internalfeed -qualityFallback $qualityFallback -sdkImageVersion $sdkImageVersion
 
 if ($dotnetUpdate.ShouldUpdate) {
-
-    $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
-    $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
-
-    # Channel is like: $Channel = "5.0.1xx-preview2"
-    $Channel = $dotnetMetadataJson.sdk.channel
 
     Import-Module "$PSScriptRoot/../build.psm1" -Force
 
@@ -234,8 +279,15 @@ if ($dotnetUpdate.ShouldUpdate) {
         if ($feedname -eq 'dotnet-internal') {
             # This NuGet feed is for internal to Microsoft use only.
             $dotnetInternalFeed = $dotnetMetadataJson.internalfeed.url
-            $updatedNugetFile = $nugetFileContent -replace "</packageSources>", "  <add key=`"dotnet-internal`" value=`"$dotnetInternalFeed`" />`r`n  </packageSources>"
+
+            $updatedNugetFile = if ($nugetFileContent.Contains('dotnet-internal')) {
+                $nugetFileContent -replace ".<add key=`"dotnet-internal?.*', ' <add key=`"dotnet-internal`" value=`"$dotnetInternalFeed`" />`r`n  </packageSources>"
+            } else {
+                $nugetFileContent -replace "</packageSources>", "  <add key=`"dotnet-internal`" value=`"$dotnetInternalFeed`" />`r`n  </packageSources>"
+            }
+
             $updatedNugetFile | Out-File "$PSScriptRoot/../nuget.config" -Force
+
             Register-PackageSource -Name 'dotnet-internal' -Location $dotnetInternalFeed -ProviderName NuGet
             Write-Verbose -Message "Register new package source 'dotnet-internal'" -verbose
         }
@@ -243,13 +295,14 @@ if ($dotnetUpdate.ShouldUpdate) {
 
     ## Install latest version from the channel
 
+    $sdkQuality = $dotnetUpdate.Quality
     $sdkVersion = if ($SDKVersionOverride) { $SDKVersionOverride } else { $dotnetUpdate.NewVersion }
 
     if (-not $RuntimeSourceFeed) {
-        Install-Dotnet -Channel "$Channel" -Version $sdkVersion
+        Install-Dotnet -Version $sdkVersion -Quality $sdkQuality -Channel $null
     }
     else {
-        Install-Dotnet -Channel "$Channel" -Version $sdkVersion -AzureFeed $RuntimeSourceFeed -FeedCredential $RuntimeSourceFeedKey
+        Install-Dotnet -Version $sdkVersion -Quality $sdkQuality -AzureFeed $RuntimeSourceFeed -FeedCredential $RuntimeSourceFeedKey -Channel $null
     }
 
     Write-Verbose -Message "Installing .NET SDK completed." -Verbose
