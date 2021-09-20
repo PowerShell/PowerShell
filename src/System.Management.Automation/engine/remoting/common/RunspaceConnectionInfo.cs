@@ -2191,7 +2191,7 @@ namespace System.Management.Automation.Runspaces
                 startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-i ""{0}""", this.KeyFilePath));
             }
 
-            // pass "-l login_name" commmand line argument to ssh if UserName is set
+            // pass "-l login_name" command line argument to ssh if UserName is set
             // if UserName is not set, then ssh will use User from ssh_config if defined else the environment user by default
             if (!string.IsNullOrEmpty(this.UserName))
             {
@@ -2225,6 +2225,11 @@ namespace System.Management.Automation.Runspaces
             startInfo.UseShellExecute = false;
 
             return StartSSHProcessImpl(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
+        }
+
+        internal void KillSSHProcess(int pid)
+        {
+            KillSSHProcessImpl(pid);
         }
 
         #endregion
@@ -2263,6 +2268,16 @@ namespace System.Management.Automation.Runspaces
             stdErrReaderVar = stdErrReader;
 
             return pid;
+        }
+
+        private static void KillSSHProcessImpl(int pid)
+        {
+            // killing a zombie might or might not return ESRCH, so we ignore kill's return value
+            Platform.NonWindowsKillProcess(pid);
+
+            // block while waiting for process to die
+            // shouldn't take long after SIGKILL
+            Platform.NonWindowsWaitPid(pid, false);
         }
 
         #region UNIX Create Process
@@ -2568,6 +2583,17 @@ namespace System.Management.Automation.Runspaces
             }
 
             return sshProcess.Id;
+        }
+
+        private static void KillSSHProcessImpl(int pid)
+        {
+            using (var sshProcess = System.Diagnostics.Process.GetProcessById(pid))
+            {
+                if ((sshProcess != null) && (sshProcess.Handle != IntPtr.Zero) && !sshProcess.HasExited)
+                {
+                    sshProcess.Kill();
+                }
+            }
         }
 
         // Process creation flags

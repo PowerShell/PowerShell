@@ -13,7 +13,9 @@
         "yargs-parser": "^13.1.2" ,
         "y18n": "^5.0.5",
         "ini": "^1.3.6",
-        "copy-props":"^2.0.5"
+        "copy-props":"^2.0.5",
+        "glob-parent":"^5.1.2",
+        "hosted-git-info":"^3.0.8"
     },
     "devDependencies": {
         "gulp-concat": "^2.6.1",

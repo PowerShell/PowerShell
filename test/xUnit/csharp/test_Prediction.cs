@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
 using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.Prediction;
 using System.Threading;
 using Xunit;
 
@@ -17,6 +18,8 @@ namespace PSTests.Sequential
         private readonly bool _delay;
 
         public List<string> History { get; }
+
+        public List<string> Results { get; }
 
         public List<string> AcceptedSuggestions { get; }
 
@@ -47,9 +50,20 @@ namespace PSTests.Sequential
             _delay = delay;
 
             History = new List<string>();
+            Results = new List<string>();
             AcceptedSuggestions = new List<string>();
             DisplayedSuggestions = new List<string>();
         }
+
+        public void Clear()
+        {
+            History.Clear();
+            Results.Clear();
+            AcceptedSuggestions.Clear();
+            DisplayedSuggestions.Clear();
+        }
+
+        #region "Interface implementation"
 
         public Guid Id => _id;
 
@@ -57,29 +71,9 @@ namespace PSTests.Sequential
 
         public string Description => _description;
 
-        bool ICommandPredictor.SupportEarlyProcessing => true;
+        bool ICommandPredictor.CanAcceptFeedback(PredictionClient client, PredictorFeedbackKind feedback) => true;
 
-        bool ICommandPredictor.AcceptFeedback => true;
-
-        public void StartEarlyProcessing(string clientId, IReadOnlyList<string> history)
-        {
-            foreach (string item in history)
-            {
-                History.Add($"{clientId}-{item}");
-            }
-        }
-
-        public void OnSuggestionDisplayed(string clientId, uint session, int countOrIndex)
-        {
-            DisplayedSuggestions.Add($"{clientId}-{session}-{countOrIndex}");
-        }
-
-        public void OnSuggestionAccepted(string clientId, uint session, string acceptedSuggestion)
-        {
-            AcceptedSuggestions.Add($"{clientId}-{session}-{acceptedSuggestion}");
-        }
-
-        public SuggestionPackage GetSuggestion(string clientId, PredictionContext context, CancellationToken cancellationToken)
+        public SuggestionPackage GetSuggestion(PredictionClient client, PredictionContext context, CancellationToken cancellationToken)
         {
             if (_delay)
             {
@@ -92,18 +86,44 @@ namespace PSTests.Sequential
             var userInput = context.InputAst.Extent.Text;
             var entries = new List<PredictiveSuggestion>
             {
-                new PredictiveSuggestion($"'{userInput}' from '{clientId}' - TEST-1 from {Name}"),
-                new PredictiveSuggestion($"'{userInput}' from '{clientId}' - TeSt-2 from {Name}"),
+                new PredictiveSuggestion($"'{userInput}' from '{client.Name}' - TEST-1 from {Name}"),
+                new PredictiveSuggestion($"'{userInput}' from '{client.Name}' - TeSt-2 from {Name}"),
             };
 
             return new SuggestionPackage(56, entries);
         }
+
+        public void OnSuggestionDisplayed(PredictionClient client, uint session, int countOrIndex)
+        {
+            DisplayedSuggestions.Add($"{client.Name}-{session}-{countOrIndex}");
+        }
+
+        public void OnSuggestionAccepted(PredictionClient client, uint session, string acceptedSuggestion)
+        {
+            AcceptedSuggestions.Add($"{client.Name}-{session}-{acceptedSuggestion}");
+        }
+
+        public void OnCommandLineAccepted(PredictionClient client, IReadOnlyList<string> history)
+        {
+            foreach (string item in history)
+            {
+                History.Add($"{client.Name}-{item}");
+            }
+        }
+
+        public void OnCommandLineExecuted(PredictionClient client, string commandLine, bool success)
+        {
+            Results.Add($"{client.Name}-{commandLine}-{success}");
+        }
+
+        #endregion
     }
 
     public static class CommandPredictionTests
     {
         private const string Client = "PredictionTest";
         private const uint Session = 56;
+        private static readonly PredictionClient predClient = new(Client, PredictionClientKind.Terminal);
 
         [Fact]
         public static void PredictInput()
@@ -114,7 +134,7 @@ namespace PSTests.Sequential
             Ast ast = Parser.ParseInput(Input, out Token[] tokens, out _);
 
             // Returns null when no predictor implementation registered
-            List<PredictionResult> results = CommandPrediction.PredictInput(Client, ast, tokens).Result;
+            List<PredictionResult> results = CommandPrediction.PredictInputAsync(predClient, ast, tokens).Result;
             Assert.Null(results);
 
             try
@@ -127,7 +147,7 @@ namespace PSTests.Sequential
                 // cannot finish before the specified timeout.
                 // The specified timeout is exaggerated to make the test reliable.
                 // xUnit must spin up a lot tasks, which makes the test unreliable when the time difference between 'delay' and 'timeout' is small.
-                results = CommandPrediction.PredictInput(Client, ast, tokens, millisecondsTimeout: 1000).Result;
+                results = CommandPrediction.PredictInputAsync(predClient, ast, tokens, millisecondsTimeout: 1000).Result;
                 Assert.Single(results);
 
                 PredictionResult res = results[0];
@@ -140,7 +160,7 @@ namespace PSTests.Sequential
                 // Expect the results from both 'slow' and 'fast' predictors
                 // Same here -- the specified timeout is exaggerated to make the test reliable.
                 // xUnit must spin up a lot tasks, which makes the test unreliable when the time difference between 'delay' and 'timeout' is small.
-                results = CommandPrediction.PredictInput(Client, ast, tokens, millisecondsTimeout: 4000).Result;
+                results = CommandPrediction.PredictInputAsync(predClient, ast, tokens, millisecondsTimeout: 4000).Result;
                 Assert.Equal(2, results.Count);
 
                 PredictionResult res1 = results[0];
@@ -170,6 +190,9 @@ namespace PSTests.Sequential
             MyPredictor slow = MyPredictor.SlowPredictor;
             MyPredictor fast = MyPredictor.FastPredictor;
 
+            slow.Clear();
+            fast.Clear();
+
             try
             {
                 // Register 2 predictor implementations
@@ -179,16 +202,19 @@ namespace PSTests.Sequential
                 var history = new[] { "hello", "world" };
                 var ids = new HashSet<Guid> { slow.Id, fast.Id };
 
-                CommandPrediction.OnCommandLineAccepted(Client, history);
-                CommandPrediction.OnSuggestionDisplayed(Client, slow.Id, Session, 2);
-                CommandPrediction.OnSuggestionDisplayed(Client, fast.Id, Session, -1);
-                CommandPrediction.OnSuggestionAccepted(Client, slow.Id, Session, "Yeah");
+                CommandPrediction.OnCommandLineAccepted(predClient, history);
+                CommandPrediction.OnCommandLineExecuted(predClient, "last_input", true);
+                CommandPrediction.OnSuggestionDisplayed(predClient, slow.Id, Session, 2);
+                CommandPrediction.OnSuggestionDisplayed(predClient, fast.Id, Session, -1);
+                CommandPrediction.OnSuggestionAccepted(predClient, slow.Id, Session, "Yeah");
 
-                // The calls to 'StartEarlyProcessing' and 'OnSuggestionAccepted' are queued in thread pool,
-                // so we wait a bit to make sure the calls are done.
-                while (slow.History.Count == 0 || slow.AcceptedSuggestions.Count == 0)
+                // The feedback calls are queued in thread pool, so let's wait a bit to make sure the calls are done.
+                while (slow.History.Count == 0 || fast.History.Count == 0 ||
+                       slow.Results.Count == 0 || fast.Results.Count == 0 ||
+                       slow.DisplayedSuggestions.Count == 0 || fast.DisplayedSuggestions.Count == 0 ||
+                       slow.AcceptedSuggestions.Count == 0)
                 {
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
 
                 Assert.Equal(2, slow.History.Count);
@@ -198,6 +224,12 @@ namespace PSTests.Sequential
                 Assert.Equal(2, fast.History.Count);
                 Assert.Equal($"{Client}-{history[0]}", fast.History[0]);
                 Assert.Equal($"{Client}-{history[1]}", fast.History[1]);
+
+                Assert.Single(slow.Results);
+                Assert.Equal($"{Client}-last_input-True", slow.Results[0]);
+
+                Assert.Single(fast.Results);
+                Assert.Equal($"{Client}-last_input-True", fast.Results[0]);
 
                 Assert.Single(slow.DisplayedSuggestions);
                 Assert.Equal($"{Client}-{Session}-2", slow.DisplayedSuggestions[0]);

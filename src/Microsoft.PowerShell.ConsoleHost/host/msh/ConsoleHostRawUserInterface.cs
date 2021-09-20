@@ -190,14 +190,15 @@ namespace Microsoft.PowerShell
 
             set
             {
-                // cursor position can't be outside the buffer area
-
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
-
-                ConsoleHandle handle = GetBufferInfo(out bufferInfo);
-
-                CheckCoordinateWithinBuffer(ref value, ref bufferInfo, "value");
-                ConsoleControl.SetConsoleCursorPosition(handle, value);
+                try
+                {
+                    Console.SetCursorPosition(value.X, value.Y);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    // if screen buffer has changed, we cannot set it anywhere reasonable as the screen buffer
+                    // might change again, so we ignore this
+                }
             }
         }
 
@@ -456,7 +457,7 @@ namespace Microsoft.PowerShell
                 }
 
                 // if the new size will extend past the edge of screen buffer, then move the window position to try to
-                // accomodate that.
+                // accommodate that.
 
                 ConsoleControl.SMALL_RECT r = bufferInfo.WindowRect;
 

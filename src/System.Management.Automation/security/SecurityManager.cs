@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell
         private ExecutionPolicy _executionPolicy;
 
         // shellId supplied by runspace configuration
-        private string _shellId;
+        private readonly string _shellId;
 
         /// <summary>
         /// Initializes a new instance of the PSAuthorizationManager

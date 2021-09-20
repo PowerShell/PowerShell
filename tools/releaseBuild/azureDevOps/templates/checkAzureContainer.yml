@@ -8,7 +8,9 @@ jobs:
   - group: Azure Blob variable group
   displayName: Delete blob is exists
   pool:
-    vmImage: windows-latest
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
   steps:
   - checkout: self
     clean: true

@@ -51,7 +51,7 @@ jobs:
   displayName: Markdown and Common Tests
 
   pool:
-    vmImage: ubuntu-16.04
+    vmImage: ubuntu-20.04
 
   variables:
     - name: repoPath
@@ -85,7 +85,7 @@ jobs:
     condition: succeededOrFailed()
 
   - bash: |
-      mdspell '**/*.md' '!**/Pester/**/*.md' --ignore-numbers --ignore-acronyms --report --en-us;
+      mdspell '**/*.md' '!**/Pester/**/*.md' '!**/dotnet-tools/**/*.md' --ignore-numbers --ignore-acronyms --report --en-us;
     displayName: Test Spelling in Markdown
     condition: succeededOrFailed()
     workingDirectory: '$(repoPath)'

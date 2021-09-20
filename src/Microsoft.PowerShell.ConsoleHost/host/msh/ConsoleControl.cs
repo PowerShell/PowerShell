@@ -275,13 +275,13 @@ namespace Microsoft.PowerShell
             /// The absolute position of the mouse, or the amount of motion since the last mouse event was generated, depending on the value of the dwFlags member.
             /// Absolute data is specified as the x coordinate of the mouse; relative data is specified as the number of pixels moved.
             /// </summary>
-            internal Int32 X;
+            internal int X;
 
             /// <summary>
             /// The absolute position of the mouse, or the amount of motion since the last mouse event was generated, depending on the value of the dwFlags member.
             /// Absolute data is specified as the y coordinate of the mouse; relative data is specified as the number of pixels moved.
             /// </summary>
-            internal Int32 Y;
+            internal int Y;
 
             /// <summary>
             /// If dwFlags contains MOUSEEVENTF_WHEEL, then mouseData specifies the amount of wheel movement. A positive value indicates that the wheel was rotated forward, away from the user;
@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell
         /// <returns>True if it was successful.</returns>
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+        internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         internal static void SetConsoleMode(ProcessWindowStyle style)
         {
@@ -2654,7 +2654,7 @@ namespace Microsoft.PowerShell
         //     CSI params? '#' [{}pq]        // XTPUSHSGR ('{'), XTPOPSGR ('}'), or their aliases ('p' and 'q')
         //
         // Where:
-        //     params: digit+ (';' params)?
+        //     params: digit+ ((';' | ':') params)?
         //     CSI:     C0_CSI | C1_CSI
         //     C0_CSI:  \x001b '['            // ESC '['
         //     C1_CSI:  \x009b
@@ -2699,7 +2699,7 @@ namespace Microsoft.PowerShell
             {
                 c = str[offset++];
             }
-            while ((offset < str.Length) && (char.IsDigit(c) || c == ';'));
+            while ((offset < str.Length) && (char.IsDigit(c) || (c == ';') || (c == ':')));
 
             // Finally, handle the command characters for the specific sequences we
             // handle:
@@ -2817,40 +2817,6 @@ namespace Microsoft.PowerShell
 #if !UNIX
 
         #region Cursor
-
-        /// <summary>
-        /// Wraps Win32 SetConsoleCursorPosition.
-        /// </summary>
-        /// <param name="consoleHandle">
-        /// handle for the console where cursor position is set
-        /// </param>
-        /// <param name="cursorPosition">
-        /// location to which the cursor will be set
-        /// </param>
-        /// <exception cref="HostException">
-        /// If Win32's SetConsoleCursorPosition fails
-        /// </exception>
-        internal static void SetConsoleCursorPosition(ConsoleHandle consoleHandle, Coordinates cursorPosition)
-        {
-            Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
-            Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
-
-            ConsoleControl.COORD c;
-
-            c.X = (short)cursorPosition.X;
-            c.Y = (short)cursorPosition.Y;
-
-            bool result = NativeMethods.SetConsoleCursorPosition(consoleHandle.DangerousGetHandle(), c);
-
-            if (!result)
-            {
-                int err = Marshal.GetLastWin32Error();
-
-                HostException e = CreateHostException(err, "SetConsoleCursorPosition",
-                    ErrorCategory.ResourceUnavailable, ConsoleControlStrings.SetConsoleCursorPositionExceptionTemplate);
-                throw e;
-            }
-        }
 
         /// <summary>
         /// Wraps Win32 GetConsoleCursorInfo.
@@ -3159,10 +3125,6 @@ namespace Microsoft.PowerShell
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool SetConsoleCtrlHandler(BreakHandler handlerRoutine, bool add);
 
-            [DllImport(PinvokeDllNames.SetConsoleCursorPositionDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-            [return: MarshalAs(UnmanagedType.Bool)]
-            internal static extern bool SetConsoleCursorPosition(NakedWin32Handle consoleOutput, COORD cursorPosition);
-
             [DllImport(PinvokeDllNames.SetConsoleModeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             [return: MarshalAs(UnmanagedType.Bool)]
             internal static extern bool SetConsoleMode(NakedWin32Handle consoleHandle, DWORD mode);
@@ -3213,7 +3175,7 @@ namespace Microsoft.PowerShell
             );
 
             [DllImport(PinvokeDllNames.SendInputDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-            internal static extern UInt32 SendInput(UInt32 inputNumbers, INPUT[] inputs, Int32 sizeOfInput);
+            internal static extern UInt32 SendInput(UInt32 inputNumbers, INPUT[] inputs, int sizeOfInput);
 
             // There is no GetCurrentConsoleFontEx on Core
             [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]

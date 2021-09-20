@@ -42,7 +42,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets switch that determines if built-in limits are applied to the data.
         /// </summary>
-        [Experimental("Microsoft.PowerShell.Utility.PSImportPSDataFileSkipLimitCheck", ExperimentAction.Show)]
         [Parameter]
         public SwitchParameter SkipLimitCheck { get; set; }
 

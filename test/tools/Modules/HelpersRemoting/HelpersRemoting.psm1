@@ -18,7 +18,7 @@ function Get-DefaultEndPointName
 
     if ($endPoint -eq $null)
     {
-        Enable-PSRemoting -SkipNetworkProfileCheck
+        $null = Enable-PSRemoting -SkipNetworkProfileCheck
         $endPoint = Get-PSSessionConfiguration -Name $endPointName -ErrorAction SilentlyContinue
 
         if ($endPoint -eq $null)
@@ -30,7 +30,7 @@ function Get-DefaultEndPointName
 
     if ($endPoint.Permission -like "*NT AUTHORITY\NETWORK AccessDenied*")
     {
-        Enable-PSRemoting -SkipNetworkProfileCheck
+        $null = Enable-PSRemoting -SkipNetworkProfileCheck
         $endPoint = Get-PSSessionConfiguration -Name $endPointName -ErrorAction SilentlyContinue
 
         if ($endPoint.Permission -like "*NT AUTHORITY\NETWORK AccessDenied*")

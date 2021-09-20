@@ -64,10 +64,13 @@ Describe "Measure-Object" -Tags "CI" {
     }
 
     It "Should be able to count using the Property switch" {
-        $expected = $(Get-ChildItem $TestDrive).Length
-        $actual   = $(Get-ChildItem $TestDrive | Measure-Object -Property Length).Count
+        $items = @(
+            [pscustomobject]@{ X = 'a'; Y = 'b' }
+            [pscustomobject]@{ X = 'c' }
+            [pscustomobject]@{ X = 'e'; Y = 'f' }
+        )
 
-        $actual | Should -Be $expected
+        ($items | Measure-Object -Property Y).Count | Should -Be 2
     }
 
     It "Should be able to use wildcards for the Property argument" {

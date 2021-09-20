@@ -12,14 +12,14 @@ namespace System.Management.Automation
     [DebuggerDisplay("{ParameterName}")]
     internal sealed class CommandParameterInternal
     {
-        private class Parameter
+        private sealed class Parameter
         {
             internal Ast ast;
             internal string parameterName;
             internal string parameterText;
         }
 
-        private class Argument
+        private sealed class Argument
         {
             internal Ast ast;
             internal object value;

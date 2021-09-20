@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the unsecured string to be imported.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true)]
-        public String String
+        public string String
         {
             get
             {

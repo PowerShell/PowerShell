@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -214,12 +215,14 @@ namespace Microsoft.Management.UI.Internal
         /// </param>
         protected void NotifySelectedValueChanged(T oldValue, T newValue)
         {
+            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             EventHandler<PropertyChangedEventArgs<T>> eh = this.SelectedValueChanged;
 
             if (eh != null)
             {
                 eh(this, new PropertyChangedEventArgs<T>(oldValue, newValue));
             }
+            #pragma warning restore IDE1005
         }
 
         #endregion NotifySelectedValueChanged

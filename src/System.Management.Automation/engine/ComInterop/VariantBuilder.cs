@@ -16,6 +16,7 @@ namespace System.Management.Automation.ComInterop
         private MemberExpression _variant;
         private readonly ArgBuilder _argBuilder;
         private readonly VarEnum _targetComType;
+
         internal ParameterExpression TempVariable { get; private set; }
 
         internal VariantBuilder(VarEnum targetComType, ArgBuilder builder)

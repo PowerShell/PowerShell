@@ -14,7 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.0-preview.3.21201.4" />
+    <PackageReference Include="System.Security.AccessControl" Version="6.0.0-preview.5.21301.5" />
     <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.0-preview.2" />
   </ItemGroup>
 </Project>

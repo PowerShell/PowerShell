@@ -302,7 +302,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count)"
+            Write-Warning -Message "Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count) -> $content"
         }
 
         # (commitid:TID:ChannelID)
@@ -317,7 +317,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count)"
+            Write-Warning -Message "Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count) -> $content"
         }
 
         # nameid[PID]
@@ -331,7 +331,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split LogId $($item.LogId) on '[]:' Count:$($subparts.Count)"
+            Write-Warning -Message "Could not split LogId $($item.LogId) on '[]:' Count:$($subparts.Count) -> $content"
         }
 
         return $item
@@ -497,11 +497,18 @@ function ConvertFrom-SysLog
     {
         foreach ($line in $Content)
         {
-            [PSLogItem] $item = [PSLogItem]::ConvertSysLog($line, $id, $after)
-            if ($item -ne $null)
+            try
             {
-                $totalWritten++
-                Write-Output $item
+                [PSLogItem] $item = [PSLogItem]::ConvertSysLog($line, $id, $after)
+                if ($item -ne $null)
+                {
+                    $totalWritten++
+                    Write-Output $item
+                }
+            }
+            catch
+            {
+                Write-Warning -Message "Could not convert '$line' to PSLogItem"
             }
         }
     }

@@ -15,7 +15,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
     It 'Exceptions not thrown do not get formatted as ErrorRecord' {
         $exp = [System.Exception]::new('test') | Out-String
-        $exp | Should -BeLike "*Message        : test*"
+        $exp | Should -BeLike "*Message        : *test*"
     }
 
     Context 'ConciseView tests' {
@@ -168,6 +168,22 @@ Describe 'Tests for $ErrorView' -Tag CI {
             }
 
             $e | Should -BeLike '*Oops!*'
+        }
+    }
+
+    Context 'DetailedView tests' {
+
+        It 'Detailed error is rendered' {
+            try {
+                $ErrorView = 'DetailedView'
+                throw 'Oops!'
+            }
+            catch {
+                # an extra newline gets added by the formatting system so we remove them
+                $e = ($_ | Out-String).Trim([Environment]::NewLine.ToCharArray())
+            }
+
+            $e | Should -BeExactly (Get-Error | Out-String).Trim([Environment]::NewLine.ToCharArray())
         }
     }
 }

@@ -1063,7 +1063,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype1")]
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string,string)"/>
@@ -1157,7 +1157,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype2")]
@@ -1180,7 +1180,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string,string)"/>
@@ -1260,7 +1260,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
@@ -1286,7 +1286,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
@@ -1375,7 +1375,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
@@ -1681,7 +1681,7 @@ namespace System.Management.Automation
         /// to ShouldProcess for the Cmdlet instance.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
@@ -1725,7 +1725,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldContinue(string,string,ref bool,ref bool)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
@@ -1863,7 +1863,7 @@ namespace System.Management.Automation
         /// to ShouldProcess for the Cmdlet instance.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
@@ -1912,7 +1912,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
@@ -2055,6 +2055,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.Cmdlet.ProcessRecord"/>.
         /// etc.
         /// </remarks>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             ThrowIfStopping();
@@ -2317,7 +2318,7 @@ namespace System.Management.Automation
             return new AllowWrite(_thisCommand, permittedToWriteToPipeline);
         }
 
-        private class AllowWrite : IDisposable
+        private sealed class AllowWrite : IDisposable
         {
             /// <summary>
             /// Begin the scope where WriteObject/WriteError is permitted.
@@ -2803,8 +2804,16 @@ namespace System.Management.Automation
             _WriteErrorSkipAllowCheck(errorRecord, preference);
         }
 
-        // NOTICE-2004/06/08-JonN 959638
-        // Use this variant to skip the ThrowIfWriteNotPermitted check
+        /// <summary>
+        /// Write an error, skipping the ThrowIfWriteNotPermitted check.
+        /// </summary>
+        /// <param name="errorRecord">The error record to write.</param>
+        /// <param name="actionPreference">The configured error action preference.</param>
+        /// <param name="isFromNativeStdError">
+        /// True when this method is called to write from a native command's stderr stream.
+        /// When errors are written through a native stderr stream, they do not interact with the error preference system,
+        /// but must still present as errors in PowerShell.
+        /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -2818,7 +2827,7 @@ namespace System.Management.Automation
         /// but the command failure will ultimately be
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
-        internal void _WriteErrorSkipAllowCheck(ErrorRecord errorRecord, ActionPreference? actionPreference = null, bool isNativeError = false)
+        internal void _WriteErrorSkipAllowCheck(ErrorRecord errorRecord, ActionPreference? actionPreference = null, bool isFromNativeStdError = false)
         {
             ThrowIfStopping();
 
@@ -2838,7 +2847,7 @@ namespace System.Management.Automation
                 this.PipelineProcessor.LogExecutionError(_thisCommand.MyInvocation, errorRecord);
             }
 
-            if (!(ExperimentalFeature.IsEnabled("PSNotApplyErrorActionToStderr") && isNativeError))
+            if (!isFromNativeStdError)
             {
                 this.PipelineProcessor.ExecutionFailed = true;
 
@@ -2904,7 +2913,7 @@ namespace System.Management.Automation
             // when tracing), so don't add the member again.
 
             // We don't add a note property on messages that comes from stderr stream.
-            if (!isNativeError)
+            if (!isFromNativeStdError)
             {
                 errorWrap.WriteStream = WriteStreamType.Error;
             }
@@ -3241,8 +3250,7 @@ namespace System.Management.Automation
             {
                 if (!IsWhatIfFlagSet && !_isWhatIfPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _whatIfFlag = Context.GetBooleanPreference(SpecialVariables.WhatIfPreferenceVarPath, _whatIfFlag, out defaultUsed);
+                    _whatIfFlag = Context.GetBooleanPreference(SpecialVariables.WhatIfPreferenceVarPath, _whatIfFlag, out _);
                     _isWhatIfPreferenceCached = true;
                 }
 

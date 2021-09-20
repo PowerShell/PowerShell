@@ -296,8 +296,15 @@ namespace System.Management.Automation.ComInterop
     {
         #region public members
 
-        public static unsafe IntPtr ConvertInt32ByrefToPtr(ref int value) { return (IntPtr)System.Runtime.CompilerServices.Unsafe.AsPointer(ref value); }
-        public static unsafe IntPtr ConvertVariantByrefToPtr(ref Variant value) { return (IntPtr)System.Runtime.CompilerServices.Unsafe.AsPointer(ref value); }
+        public static unsafe IntPtr ConvertInt32ByrefToPtr(ref int value)
+        {
+            return (IntPtr)System.Runtime.CompilerServices.Unsafe.AsPointer(ref value);
+        }
+
+        public static unsafe IntPtr ConvertVariantByrefToPtr(ref Variant value)
+        {
+            return (IntPtr)System.Runtime.CompilerServices.Unsafe.AsPointer(ref value);
+        }
 
         internal static Variant GetVariantForObject(object obj)
         {
@@ -365,8 +372,7 @@ namespace System.Management.Automation.ComInterop
             fixed (ExcepInfo* pExcepInfo = &excepInfo)
             fixed (uint* pArgErr = &argErr)
             {
-                var pfnIDispatchInvoke = (delegate* unmanaged<IntPtr, int, Guid*, int, ushort, ComTypes.DISPPARAMS*, Variant*, ExcepInfo*, uint*, int>)
-                    (*(*(void***)dispatchPointer + 6 /* IDispatch.Invoke slot */));
+                var pfnIDispatchInvoke = (delegate* unmanaged<IntPtr, int, Guid*, int, ushort, ComTypes.DISPPARAMS*, Variant*, ExcepInfo*, uint*, int>)(*(*(void***)dispatchPointer + 6 /* IDispatch.Invoke slot */));
 
                 int hresult = pfnIDispatchInvoke(dispatchPointer,
                     memberDispId, &IID_NULL, 0, (ushort)flags, pDispParams, pResult, pExcepInfo, pArgErr);

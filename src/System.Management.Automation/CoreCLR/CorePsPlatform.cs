@@ -588,6 +588,16 @@ namespace System.Management.Automation
             return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
+        internal static bool NonWindowsKillProcess(int pid)
+        {
+            return Unix.NativeMethods.KillProcess(pid);
+        }
+
+        internal static int NonWindowsWaitPid(int pid, bool nohang)
+        {
+            return Unix.NativeMethods.WaitPid(pid, nohang);
+        }
+
         internal static class Windows
         {
             /// <summary>The native methods class.</summary>
@@ -612,8 +622,8 @@ namespace System.Management.Automation
         /// <summary>Unix specific implementations of required functionality.</summary>
         internal static class Unix
         {
-            private static Dictionary<int, string> usernameCache = new();
-            private static Dictionary<int, string> groupnameCache = new();
+            private static readonly Dictionary<int, string> usernameCache = new();
+            private static readonly Dictionary<int, string> groupnameCache = new();
 
             /// <summary>The type of a Unix file system item.</summary>
             public enum ItemType
@@ -745,7 +755,7 @@ namespace System.Management.Automation
                 private const char CanExecute = 'x';
 
                 // helper for getting unix mode
-                private Dictionary<StatMask, char> modeMap = new()
+                private readonly Dictionary<StatMask, char> modeMap = new()
                 {
                         { StatMask.OwnerRead, CanRead },
                         { StatMask.OwnerWrite, CanWrite },
@@ -758,7 +768,7 @@ namespace System.Management.Automation
                         { StatMask.OtherExecute, CanExecute },
                 };
 
-                private StatMask[] permissions = new StatMask[]
+                private readonly StatMask[] permissions = new StatMask[]
                 {
                     StatMask.OwnerRead,
                     StatMask.OwnerWrite,
@@ -772,7 +782,7 @@ namespace System.Management.Automation
                 };
 
                 // The item type and the character representation for the first element in the stat string
-                private Dictionary<ItemType, char> itemTypeTable = new()
+                private readonly Dictionary<ItemType, char> itemTypeTable = new()
                 {
                     { ItemType.BlockDevice, 'b' },
                     { ItemType.CharacterDevice, 'c' },
@@ -1062,6 +1072,13 @@ namespace System.Management.Automation
 
                 [DllImport(psLib, CharSet = CharSet.Ansi)]
                 internal static extern uint GetCurrentThreadId();
+
+                [DllImport(psLib)]
+                [return: MarshalAs(UnmanagedType.Bool)]
+                internal static extern bool KillProcess(int pid);
+
+                [DllImport(psLib)]
+                internal static extern int WaitPid(int pid, bool nohang);
 
                 // This is a struct tm from <time.h>.
                 [StructLayout(LayoutKind.Sequential)]

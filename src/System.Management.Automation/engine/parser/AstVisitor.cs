@@ -10,195 +10,197 @@ namespace System.Management.Automation.Language
 {
     /// <summary>
     /// </summary>
+#nullable enable
     public interface ICustomAstVisitor
     {
         /// <summary/>
-        object DefaultVisit(Ast ast) => null;
+        object? DefaultVisit(Ast ast) => null;
 
         /// <summary/>
-        object VisitErrorStatement(ErrorStatementAst errorStatementAst) => DefaultVisit(errorStatementAst);
+        object? VisitErrorStatement(ErrorStatementAst errorStatementAst) => DefaultVisit(errorStatementAst);
 
         /// <summary/>
-        object VisitErrorExpression(ErrorExpressionAst errorExpressionAst) => DefaultVisit(errorExpressionAst);
+        object? VisitErrorExpression(ErrorExpressionAst errorExpressionAst) => DefaultVisit(errorExpressionAst);
 
         #region Script Blocks
 
         /// <summary/>
-        object VisitScriptBlock(ScriptBlockAst scriptBlockAst) => DefaultVisit(scriptBlockAst);
+        object? VisitScriptBlock(ScriptBlockAst scriptBlockAst) => DefaultVisit(scriptBlockAst);
 
         /// <summary/>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "param")]
-        object VisitParamBlock(ParamBlockAst paramBlockAst) => DefaultVisit(paramBlockAst);
+        object? VisitParamBlock(ParamBlockAst paramBlockAst) => DefaultVisit(paramBlockAst);
 
         /// <summary/>
-        object VisitNamedBlock(NamedBlockAst namedBlockAst) => DefaultVisit(namedBlockAst);
+        object? VisitNamedBlock(NamedBlockAst namedBlockAst) => DefaultVisit(namedBlockAst);
 
         /// <summary/>
-        object VisitTypeConstraint(TypeConstraintAst typeConstraintAst) => DefaultVisit(typeConstraintAst);
+        object? VisitTypeConstraint(TypeConstraintAst typeConstraintAst) => DefaultVisit(typeConstraintAst);
 
         /// <summary/>
-        object VisitAttribute(AttributeAst attributeAst) => DefaultVisit(attributeAst);
+        object? VisitAttribute(AttributeAst attributeAst) => DefaultVisit(attributeAst);
 
         /// <summary/>
-        object VisitNamedAttributeArgument(NamedAttributeArgumentAst namedAttributeArgumentAst) => DefaultVisit(namedAttributeArgumentAst);
+        object? VisitNamedAttributeArgument(NamedAttributeArgumentAst namedAttributeArgumentAst) => DefaultVisit(namedAttributeArgumentAst);
 
         /// <summary/>
-        object VisitParameter(ParameterAst parameterAst) => DefaultVisit(parameterAst);
+        object? VisitParameter(ParameterAst parameterAst) => DefaultVisit(parameterAst);
 
         #endregion Script Blocks
 
         #region Statements
 
         /// <summary/>
-        object VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst) => DefaultVisit(functionDefinitionAst);
+        object? VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst) => DefaultVisit(functionDefinitionAst);
 
         /// <summary/>
-        object VisitStatementBlock(StatementBlockAst statementBlockAst) => DefaultVisit(statementBlockAst);
+        object? VisitStatementBlock(StatementBlockAst statementBlockAst) => DefaultVisit(statementBlockAst);
 
         /// <summary/>
-        object VisitIfStatement(IfStatementAst ifStmtAst) => DefaultVisit(ifStmtAst);
+        object? VisitIfStatement(IfStatementAst ifStmtAst) => DefaultVisit(ifStmtAst);
 
         /// <summary/>
-        object VisitTrap(TrapStatementAst trapStatementAst) => DefaultVisit(trapStatementAst);
+        object? VisitTrap(TrapStatementAst trapStatementAst) => DefaultVisit(trapStatementAst);
 
         /// <summary/>
-        object VisitSwitchStatement(SwitchStatementAst switchStatementAst) => DefaultVisit(switchStatementAst);
+        object? VisitSwitchStatement(SwitchStatementAst switchStatementAst) => DefaultVisit(switchStatementAst);
 
         /// <summary/>
-        object VisitDataStatement(DataStatementAst dataStatementAst) => DefaultVisit(dataStatementAst);
+        object? VisitDataStatement(DataStatementAst dataStatementAst) => DefaultVisit(dataStatementAst);
 
         /// <summary/>
-        object VisitForEachStatement(ForEachStatementAst forEachStatementAst) => DefaultVisit(forEachStatementAst);
+        object? VisitForEachStatement(ForEachStatementAst forEachStatementAst) => DefaultVisit(forEachStatementAst);
 
         /// <summary/>
-        object VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst) => DefaultVisit(doWhileStatementAst);
+        object? VisitDoWhileStatement(DoWhileStatementAst doWhileStatementAst) => DefaultVisit(doWhileStatementAst);
 
         /// <summary/>
-        object VisitForStatement(ForStatementAst forStatementAst) => DefaultVisit(forStatementAst);
+        object? VisitForStatement(ForStatementAst forStatementAst) => DefaultVisit(forStatementAst);
 
         /// <summary/>
-        object VisitWhileStatement(WhileStatementAst whileStatementAst) => DefaultVisit(whileStatementAst);
+        object? VisitWhileStatement(WhileStatementAst whileStatementAst) => DefaultVisit(whileStatementAst);
 
         /// <summary/>
-        object VisitCatchClause(CatchClauseAst catchClauseAst) => DefaultVisit(catchClauseAst);
+        object? VisitCatchClause(CatchClauseAst catchClauseAst) => DefaultVisit(catchClauseAst);
 
         /// <summary/>
-        object VisitTryStatement(TryStatementAst tryStatementAst) => DefaultVisit(tryStatementAst);
+        object? VisitTryStatement(TryStatementAst tryStatementAst) => DefaultVisit(tryStatementAst);
 
         /// <summary/>
-        object VisitBreakStatement(BreakStatementAst breakStatementAst) => DefaultVisit(breakStatementAst);
+        object? VisitBreakStatement(BreakStatementAst breakStatementAst) => DefaultVisit(breakStatementAst);
 
         /// <summary/>
-        object VisitContinueStatement(ContinueStatementAst continueStatementAst) => DefaultVisit(continueStatementAst);
+        object? VisitContinueStatement(ContinueStatementAst continueStatementAst) => DefaultVisit(continueStatementAst);
 
         /// <summary/>
-        object VisitReturnStatement(ReturnStatementAst returnStatementAst) => DefaultVisit(returnStatementAst);
+        object? VisitReturnStatement(ReturnStatementAst returnStatementAst) => DefaultVisit(returnStatementAst);
 
         /// <summary/>
-        object VisitExitStatement(ExitStatementAst exitStatementAst) => DefaultVisit(exitStatementAst);
+        object? VisitExitStatement(ExitStatementAst exitStatementAst) => DefaultVisit(exitStatementAst);
 
         /// <summary/>
-        object VisitThrowStatement(ThrowStatementAst throwStatementAst) => DefaultVisit(throwStatementAst);
+        object? VisitThrowStatement(ThrowStatementAst throwStatementAst) => DefaultVisit(throwStatementAst);
 
         /// <summary/>
-        object VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) => DefaultVisit(doUntilStatementAst);
+        object? VisitDoUntilStatement(DoUntilStatementAst doUntilStatementAst) => DefaultVisit(doUntilStatementAst);
 
         /// <summary/>
-        object VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst) => DefaultVisit(assignmentStatementAst);
+        object? VisitAssignmentStatement(AssignmentStatementAst assignmentStatementAst) => DefaultVisit(assignmentStatementAst);
 
         #endregion Statements
 
         #region Pipelines
 
         /// <summary/>
-        object VisitPipeline(PipelineAst pipelineAst) => DefaultVisit(pipelineAst);
+        object? VisitPipeline(PipelineAst pipelineAst) => DefaultVisit(pipelineAst);
 
         /// <summary/>
-        object VisitCommand(CommandAst commandAst) => DefaultVisit(commandAst);
+        object? VisitCommand(CommandAst commandAst) => DefaultVisit(commandAst);
 
         /// <summary/>
-        object VisitCommandExpression(CommandExpressionAst commandExpressionAst) => DefaultVisit(commandExpressionAst);
+        object? VisitCommandExpression(CommandExpressionAst commandExpressionAst) => DefaultVisit(commandExpressionAst);
 
         /// <summary/>
-        object VisitCommandParameter(CommandParameterAst commandParameterAst) => DefaultVisit(commandParameterAst);
+        object? VisitCommandParameter(CommandParameterAst commandParameterAst) => DefaultVisit(commandParameterAst);
 
         /// <summary/>
-        object VisitFileRedirection(FileRedirectionAst fileRedirectionAst) => DefaultVisit(fileRedirectionAst);
+        object? VisitFileRedirection(FileRedirectionAst fileRedirectionAst) => DefaultVisit(fileRedirectionAst);
 
         /// <summary/>
-        object VisitMergingRedirection(MergingRedirectionAst mergingRedirectionAst) => DefaultVisit(mergingRedirectionAst);
+        object? VisitMergingRedirection(MergingRedirectionAst mergingRedirectionAst) => DefaultVisit(mergingRedirectionAst);
 
         #endregion Pipelines
 
         #region Expressions
 
         /// <summary/>
-        object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst) => DefaultVisit(binaryExpressionAst);
+        object? VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst) => DefaultVisit(binaryExpressionAst);
 
         /// <summary/>
-        object VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst) => DefaultVisit(unaryExpressionAst);
+        object? VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst) => DefaultVisit(unaryExpressionAst);
 
         /// <summary/>
-        object VisitConvertExpression(ConvertExpressionAst convertExpressionAst) => DefaultVisit(convertExpressionAst);
+        object? VisitConvertExpression(ConvertExpressionAst convertExpressionAst) => DefaultVisit(convertExpressionAst);
 
         /// <summary/>
-        object VisitConstantExpression(ConstantExpressionAst constantExpressionAst) => DefaultVisit(constantExpressionAst);
+        object? VisitConstantExpression(ConstantExpressionAst constantExpressionAst) => DefaultVisit(constantExpressionAst);
 
         /// <summary/>
-        object VisitStringConstantExpression(StringConstantExpressionAst stringConstantExpressionAst) => DefaultVisit(stringConstantExpressionAst);
+        object? VisitStringConstantExpression(StringConstantExpressionAst stringConstantExpressionAst) => DefaultVisit(stringConstantExpressionAst);
 
         /// <summary/>
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "SubExpression")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "subExpression")]
-        object VisitSubExpression(SubExpressionAst subExpressionAst) => DefaultVisit(subExpressionAst);
+        object? VisitSubExpression(SubExpressionAst subExpressionAst) => DefaultVisit(subExpressionAst);
 
         /// <summary/>
-        object VisitUsingExpression(UsingExpressionAst usingExpressionAst) => DefaultVisit(usingExpressionAst);
+        object? VisitUsingExpression(UsingExpressionAst usingExpressionAst) => DefaultVisit(usingExpressionAst);
 
         /// <summary/>
-        object VisitVariableExpression(VariableExpressionAst variableExpressionAst) => DefaultVisit(variableExpressionAst);
+        object? VisitVariableExpression(VariableExpressionAst variableExpressionAst) => DefaultVisit(variableExpressionAst);
 
         /// <summary/>
-        object VisitTypeExpression(TypeExpressionAst typeExpressionAst) => DefaultVisit(typeExpressionAst);
+        object? VisitTypeExpression(TypeExpressionAst typeExpressionAst) => DefaultVisit(typeExpressionAst);
 
         /// <summary/>
-        object VisitMemberExpression(MemberExpressionAst memberExpressionAst) => DefaultVisit(memberExpressionAst);
+        object? VisitMemberExpression(MemberExpressionAst memberExpressionAst) => DefaultVisit(memberExpressionAst);
 
         /// <summary/>
-        object VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) => DefaultVisit(invokeMemberExpressionAst);
+        object? VisitInvokeMemberExpression(InvokeMemberExpressionAst invokeMemberExpressionAst) => DefaultVisit(invokeMemberExpressionAst);
 
         /// <summary/>
-        object VisitArrayExpression(ArrayExpressionAst arrayExpressionAst) => DefaultVisit(arrayExpressionAst);
+        object? VisitArrayExpression(ArrayExpressionAst arrayExpressionAst) => DefaultVisit(arrayExpressionAst);
 
         /// <summary/>
-        object VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst) => DefaultVisit(arrayLiteralAst);
+        object? VisitArrayLiteral(ArrayLiteralAst arrayLiteralAst) => DefaultVisit(arrayLiteralAst);
 
         /// <summary/>
-        object VisitHashtable(HashtableAst hashtableAst) => DefaultVisit(hashtableAst);
+        object? VisitHashtable(HashtableAst hashtableAst) => DefaultVisit(hashtableAst);
 
         /// <summary/>
-        object VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst) => DefaultVisit(scriptBlockExpressionAst);
+        object? VisitScriptBlockExpression(ScriptBlockExpressionAst scriptBlockExpressionAst) => DefaultVisit(scriptBlockExpressionAst);
 
         /// <summary/>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Paren")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "paren")]
-        object VisitParenExpression(ParenExpressionAst parenExpressionAst) => DefaultVisit(parenExpressionAst);
+        object? VisitParenExpression(ParenExpressionAst parenExpressionAst) => DefaultVisit(parenExpressionAst);
 
         /// <summary/>
-        object VisitExpandableStringExpression(ExpandableStringExpressionAst expandableStringExpressionAst) => DefaultVisit(expandableStringExpressionAst);
+        object? VisitExpandableStringExpression(ExpandableStringExpressionAst expandableStringExpressionAst) => DefaultVisit(expandableStringExpressionAst);
 
         /// <summary/>
-        object VisitIndexExpression(IndexExpressionAst indexExpressionAst) => DefaultVisit(indexExpressionAst);
+        object? VisitIndexExpression(IndexExpressionAst indexExpressionAst) => DefaultVisit(indexExpressionAst);
 
         /// <summary/>
-        object VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst) => DefaultVisit(attributedExpressionAst);
+        object? VisitAttributedExpression(AttributedExpressionAst attributedExpressionAst) => DefaultVisit(attributedExpressionAst);
 
         /// <summary/>
-        object VisitBlockStatement(BlockStatementAst blockStatementAst) => DefaultVisit(blockStatementAst);
+        object? VisitBlockStatement(BlockStatementAst blockStatementAst) => DefaultVisit(blockStatementAst);
 
         #endregion Expressions
     }
+#nullable restore
 
     /// <summary/>
 #nullable enable

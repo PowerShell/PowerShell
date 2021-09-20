@@ -383,6 +383,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "Microsoft.PowerApps.Checker.PowerShell",
                         "Microsoft.PowerShell.Archive",
                         "Microsoft.PowerShell.Core",
+                        "Microsoft.PowerShell.Crescendo",
                         "Microsoft.PowerShell.Diagnostics",
                         "Microsoft.PowerShell.Host",
                         "Microsoft.PowerShell.LocalAccounts",
@@ -835,28 +836,29 @@ namespace Microsoft.PowerShell.Telemetry
 
             // Multiple processes may start simultaneously so we need a system wide
             // way to control access to the file in the case (although remote) when we have
-            // simulataneous shell starts without the persisted file which attempt to create the file.
-            using (var m = new Mutex(true, "CreateUniqueUserId"))
+            // simultaneous shell starts without the persisted file which attempt to create the file.
+            try
             {
                 // TryCreateUniqueIdentifierAndFile shouldn't throw, but the mutex might
+                using var m = new Mutex(true, "CreateUniqueUserId");
+                m.WaitOne();
                 try
                 {
-                    m.WaitOne();
                     if (TryCreateUniqueIdentifierAndFile(uuidPath, out id))
                     {
                         return id;
                     }
                 }
-                catch (Exception)
-                {
-                    // Any problem in generating a uuid will result in no telemetry being sent.
-                    // Try to send the failure in telemetry, but it will have no unique id.
-                    s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "mutex");
-                }
                 finally
                 {
                     m.ReleaseMutex();
                 }
+            }
+            catch (Exception)
+            {
+                // Any problem in generating a uuid will result in no telemetry being sent.
+                // Try to send the failure in telemetry, but it will have no unique id.
+                s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "mutex");
             }
 
             // something bad happened, turn off telemetry since the unique id wasn't set.

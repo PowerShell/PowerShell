@@ -301,6 +301,111 @@ Describe "TabCompletion" -Tags CI {
         $actual | Should -BeExactly $expected
     }
 
+    Context "Format cmdlet's View paramter completion" {
+        BeforeAll {
+            $viewDefinition = @'
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <ViewDefinitions>
+    <View>
+      <Name>R A M</Name>
+      <ViewSelectedBy>
+        <TypeName>System.Diagnostics.Process</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>ProcName</Label>
+            <Width>40</Width>
+            <Alignment>Center</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>PagedMem</Label>
+            <Width>40</Width>
+            <Alignment>Center</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>PeakWS</Label>
+            <Width>40</Width>
+            <Alignment>Center</Alignment>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <Alignment>Center</Alignment>
+                <PropertyName>Name</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <Alignment>Center</Alignment>
+                <PropertyName>PagedMemorySize</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <Alignment>Center</Alignment>
+                <PropertyName>PeakWorkingSet</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+  </ViewDefinitions>
+</Configuration>
+'@
+
+            $tempViewFile = Join-Path -Path $TestDrive -ChildPath 'processViewDefinition.ps1xml'
+            Set-Content -LiteralPath $tempViewFile -Value $viewDefinition -Force
+
+            $ps = [PowerShell]::Create()
+            $null = $ps.AddScript("Update-FormatData -AppendPath $tempViewFile")
+            $ps.Invoke()
+            $ps.HadErrors | Should -BeFalse
+            $ps.Commands.Clear()
+
+            Remove-Item -LiteralPath $tempViewFile -Force -ErrorAction SilentlyContinue
+        }
+
+        It 'Should complete Get-ChildItem | <cmd> -View' -TestCases (
+            @{ cmd = 'Format-Table'; expected = "children childrenWithHardlink$(if (!$IsWindows) { ' childrenWithUnixStat' })" },
+            @{ cmd = 'Format-List'; expected = 'children' },
+            @{ cmd = 'Format-Wide'; expected = 'children' },
+            @{ cmd = 'Format-Custom'; expected = '' }
+        ) {
+            param($cmd, $expected)
+
+            # The completion is based on OutputTypeAttribute() of the cmdlet.
+            $res = TabExpansion2 -inputScript "Get-ChildItem | $cmd -View " -cursorColumn "Get-ChildItem | $cmd -View ".Length
+            $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+            $completionText -join ' ' | Should -BeExactly $expected
+        }
+
+        It 'Should complete $processList = Get-Process; $processList | <cmd>' -TestCases (
+            @{ cmd = 'Format-Table -View '; expected = "'R A M'", "Priority", "process", "ProcessModule", "ProcessWithUserName", "StartTime" },
+            @{ cmd = 'Format-List -View '; expected = '' },
+            @{ cmd = 'Format-Wide -View '; expected = 'process' },
+            @{ cmd = 'Format-Custom -View '; expected = '' },
+            @{ cmd = 'Format-Table -View S'; expected = "StartTime" },
+            @{ cmd = "Format-Table -View 'S"; expected = "'StartTime'" },
+            @{ cmd = "Format-Table -View R"; expected = "'R A M'" }
+        ) {
+            param($cmd, $expected)
+
+            $null = $ps.AddScript({
+                param ($cmd)
+                $processList = Get-Process
+                $res = TabExpansion2 -inputScript "`$processList | $cmd" -cursorColumn "`$processList | $cmd".Length
+                $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+                $completionText
+            }).AddArgument($cmd)
+
+            $result = $ps.Invoke()
+            $ps.Commands.Clear()
+            $expected = ($expected | Sort-Object) -join ' '
+            $result -join ' ' | Should -BeExactly $expected
+        }
+    }
+
     Context NativeCommand {
         BeforeAll {
             $nativeCommand = (Get-Command -CommandType Application -TotalCount 1).Name
@@ -1022,6 +1127,13 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount 4
             [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-wa,-Wait,-WarningAction,-WarningVariable"
         }
+
+        It "Test completion with splatted variable" {
+            $inputStr = 'Get-Content @Splat -P'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 4
+            [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "-Path,-PipelineVariable,-PSPath,-pv"
+        }
     }
 
     Context "Module completion for 'using module'" {
@@ -1370,6 +1482,201 @@ dir -Recurse `
             $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
             $res.CompletionMatches | Should -HaveCount $expectedCompletions
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+        }
+        It 'Should complete about help topic regardless of culture' {
+            try
+            {
+                ## Save original culture and temporarily set it to da-DK because there's no localized help for da-DK.
+                $OriginalCulture = [cultureinfo]::CurrentCulture
+                [cultureinfo]::CurrentCulture="da-DK"
+
+                $res = TabExpansion2 -inputScript 'get-help about_spla' -cursorColumn 'get-help about_spla'.Length
+                $res.CompletionMatches | Should -HaveCount 1
+                $res.CompletionMatches[0].CompletionText | Should -BeExactly 'about_Splatting'
+            }
+            finally
+            {
+                [cultureinfo]::CurrentCulture = $OriginalCulture
+            }
+        }
+        It '<Intent>' -TestCases @(
+            @{
+                Intent = 'Complete help keywords with minimum input'
+                Expected = @(
+                    'COMPONENT'
+                    'DESCRIPTION'
+                    'EXAMPLE'
+                    'EXTERNALHELP'
+                    'FORWARDHELPCATEGORY'
+                    'FORWARDHELPTARGETNAME'
+                    'FUNCTIONALITY'
+                    'INPUTS'
+                    'LINK'
+                    'NOTES'
+                    'OUTPUTS'
+                    'PARAMETER'
+                    'REMOTEHELPRUNSPACE'
+                    'ROLE'
+                    'SYNOPSIS'
+                )
+                TestString = @'
+<#
+.^
+#>
+'@
+            }
+            @{
+                Intent = 'Complete help keywords without duplicates'
+                Expected = $null
+                TestString = @'
+<#
+.SYNOPSIS
+.S^
+#>
+'@
+            }
+            @{
+                Intent = 'Complete help keywords with allowed duplicates'
+                Expected = 'PARAMETER'
+                TestString = @'
+<#
+.PARAMETER
+.Paramet^
+#>
+'@
+            }
+            @{
+                Intent = 'Complete help keyword FORWARDHELPTARGETNAME argument'
+                Expected = 'Get-ChildItem'
+                TestString = @'
+<#
+.FORWARDHELPTARGETNAME  Get-Child^
+#>
+'@
+            }
+            @{
+                Intent = 'Complete help keyword FORWARDHELPCATEGORY argument'
+                Expected = 'Cmdlet'
+                TestString = @'
+<#
+.FORWARDHELPCATEGORY C^
+#>
+'@
+            }
+            @{
+                Intent = 'Complete help keyword REMOTEHELPRUNSPACE argument'
+                Expected = 'PSEdition'
+                TestString = @'
+<#
+.REMOTEHELPRUNSPACE PSEditi^
+#>
+'@
+            }
+            @{
+                Intent = 'Complete help keyword EXTERNALHELP argument'
+                Expected = Join-Path $PSHOME "pwsh.xml"
+                TestString = @"
+<#
+.EXTERNALHELP $PSHOME\pwsh.^
+#>
+"@
+            }
+            @{
+                Intent = 'Complete help keyword PARAMETER argument for script'
+                Expected = 'Param1'
+                TestString = @'
+<#
+.PARAMETER ^
+#>
+param($Param1)
+'@
+            }
+            @{
+                Intent = 'Complete help keyword PARAMETER argument for function with help inside'
+                Expected = 'param2'
+                TestString = @'
+function MyFunction ($param1, $param2)
+{
+<#
+.PARAMETER param1
+.PARAMETER ^
+#>
+}
+'@
+            }
+            @{
+                Intent = 'Complete help keyword PARAMETER argument for function with help before it'
+                Expected = 'param1','param2'
+                TestString = @'
+<#
+.PARAMETER ^
+#>
+function MyFunction ($param1, $param2)
+{
+}
+'@
+            }
+            @{
+                Intent = 'Complete help keyword PARAMETER argument for advanced function with help inside'
+                Expected = 'Param1'
+                TestString = @'
+function Verb-Noun
+{
+<#
+.PARAMETER ^
+#>
+    [CmdletBinding()]
+    Param
+    (
+        $Param1
+    )
+
+    Begin
+    {
+    }
+    Process
+    {
+    }
+    End
+    {
+    }
+}
+'@
+            }
+            @{
+                Intent = 'Complete help keyword PARAMETER argument for nested function with help before it'
+                Expected = 'param3','param4'
+                TestString = @'
+function MyFunction ($param1, $param2)
+{
+    <#
+    .PARAMETER ^
+    #>
+    function MyFunction2 ($param3, $param4)
+    {
+    }
+}
+'@
+            }
+            @{
+                Intent = 'Not complete help keyword PARAMETER argument if following function is too far away'
+                Expected = $null
+                TestString = @'
+<#
+.PARAMETER ^
+#>
+
+
+function MyFunction ($param1, $param2)
+{
+}
+'@
+            }
+        ){
+            param($Expected, $TestString)
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+            $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
         }
     }
 }

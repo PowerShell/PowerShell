@@ -411,7 +411,7 @@ namespace Microsoft.PowerShell
         private enum NotificationType
         {
             /// <summary>
-            /// Turn off the udpate notification.
+            /// Turn off the update notification.
             /// </summary>
             Off = 0,
 
@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell
             LTS = 2
         }
 
-        private class Release
+        private sealed class Release
         {
             internal Release(string publishAt, string tagName)
             {

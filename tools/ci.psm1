@@ -16,8 +16,8 @@ if(Test-Path $dotNetPath)
 }
 
 # import build into the global scope so it can be used by packaging
-Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global
-Import-Module (Join-Path $repoRoot 'tools\packaging') -Scope Global
+Import-Module (Join-Path $repoRoot 'build.psm1') -Verbose -Scope Global
+Import-Module (Join-Path $repoRoot 'tools\packaging') -Verbose -Scope Global
 
 # import the windows specific functcion only in Windows PowerShell or on Windows
 if($PSVersionTable.PSEdition -eq 'Desktop' -or $IsWindows)
@@ -171,7 +171,7 @@ function Invoke-CIInstall
     }
 
     Set-BuildVariable -Name TestPassed -Value False
-    Start-PSBootstrap -Confirm:$false
+    Start-PSBootstrap
 }
 
 function Invoke-CIxUnit
@@ -214,6 +214,9 @@ function Invoke-CITest
         [ValidateSet('CI', 'Others')]
         [string] $TagSet
     )
+
+    # Set locale correctly for Linux CIs
+    Set-CorrectLocale
 
     # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
     # https://github.com/pester/Pester/issues/608
@@ -546,23 +549,21 @@ function Invoke-CIFinish
         Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
         $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
         $artifacts.Add($arm64Package)
-
+    }
+    finally {
         $pushedAllArtifacts = $true
 
         $artifacts | ForEach-Object {
             Write-Log -Message "Pushing $_ as CI artifact"
-            if(Test-Path $_)
-            {
+            if (Test-Path $_) {
                 Push-Artifact -Path $_ -Name 'artifacts'
-            }
-            else
-            {
+            } else {
                 $pushedAllArtifacts = $false
                 Write-Warning "Artifact $_ does not exist."
             }
         }
-        if(!$pushedAllArtifacts)
-        {
+
+        if (!$pushedAllArtifacts) {
             throw "Some artifacts did not exist!"
         }
     }

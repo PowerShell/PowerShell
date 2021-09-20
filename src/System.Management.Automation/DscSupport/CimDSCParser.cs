@@ -317,8 +317,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
     /// </summary>
     internal class CimDSCParser
     {
-        private CimMofDeserializer _deserializer;
-        private CimMofDeserializer.OnClassNeeded _onClassNeeded;
+        private readonly CimMofDeserializer _deserializer;
+        private readonly CimMofDeserializer.OnClassNeeded _onClassNeeded;
 
         /// <summary>
         /// </summary>
@@ -529,7 +529,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         private const string reservedProperties = "^(Require|Trigger|Notify|Before|After|Subscribe)$";
 
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
 
         // Constants for items in the module qualified name (Module\Version\ClassName)
         private const int IndexModuleName = 0;

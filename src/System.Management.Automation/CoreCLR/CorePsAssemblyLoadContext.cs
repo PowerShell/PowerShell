@@ -15,7 +15,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The powershell custom AssemblyLoadContext implementation.
     /// </summary>
-    internal partial class PowerShellAssemblyLoadContext
+    internal sealed partial class PowerShellAssemblyLoadContext
     {
         #region Resource_Strings
 
@@ -585,6 +585,37 @@ namespace System.Management.Automation
                 throw new ArgumentNullException(nameof(basePaths));
 
             PowerShellAssemblyLoadContext.InitializeSingleton(basePaths);
+        }
+    }
+
+    /// <summary>
+    /// Provides helper functions to faciliate calling managed code from a native PowerShell host.
+    /// </summary>
+    public static unsafe class PowerShellUnsafeAssemblyLoad
+    {
+        /// <summary>
+        /// Load an assembly in memory from unmanaged code.
+        /// </summary>
+        /// <remarks>
+        /// This API is covered by the experimental feature 'PSLoadAssemblyFromNativeCode',
+        /// and it may be deprecated and removed in future.
+        /// </remarks>
+        /// <param name="data">Unmanaged pointer to assembly data buffer.</param>
+        /// <param name="size">Size in bytes of the assembly data buffer.</param>
+        /// <returns>Returns zero on success and non-zero on failure.</returns>
+        [UnmanagedCallersOnly]
+        public static int LoadAssemblyFromNativeMemory(IntPtr data, int size)
+        {
+            try
+            {
+                using var stream = new UnmanagedMemoryStream((byte*)data, size);
+                AssemblyLoadContext.Default.LoadFromStream(stream);
+                return 0;
+            }
+            catch
+            {
+                return -1;
+            }
         }
     }
 }

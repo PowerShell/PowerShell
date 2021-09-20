@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// ErrorRecord.Exception -- if not specified, ErrorRecord.Exception is System.Exception.
         /// </summary>
-        [Parameter(ParameterSetName = "WithException", Mandatory = true)]
+        [Parameter(Position = 0, ParameterSetName = "WithException", Mandatory = true)]
         public Exception Exception { get; set; }
 
         /// <summary>
@@ -232,9 +232,9 @@ namespace Microsoft.PowerShell.Commands
         /// If Exception is specified, this is ErrorRecord.ErrorDetails.Message;
         /// otherwise, the Exception is System.Exception, and this is Exception.Message.
         /// </summary>
-        [Parameter(ParameterSetName = "ErrorRecord", Mandatory = true)]
+        [Parameter(Position = 0, ParameterSetName = "ErrorRecord", Mandatory = true)]
         public ErrorRecord ErrorRecord { get; set; }
-
+        
         /// <summary>
         /// ErrorRecord.CategoryInfo.Category.
         /// </summary>

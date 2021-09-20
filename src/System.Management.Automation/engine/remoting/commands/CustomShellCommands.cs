@@ -1962,7 +1962,10 @@ else
         [Parameter(Position = 1, Mandatory = true, ParameterSetName = PSSessionConfigurationCommandBase.AssemblyNameParameterSetName)]
         public string AssemblyName
         {
-            get { return assemblyName; }
+            get
+            {
+                return assemblyName;
+            }
 
             set
             {
@@ -1984,7 +1987,10 @@ else
         [Parameter(ParameterSetName = AssemblyNameParameterSetName)]
         public string ApplicationBase
         {
-            get { return applicationBase; }
+            get
+            {
+                return applicationBase;
+            }
 
             set
             {
@@ -2004,7 +2010,10 @@ else
         [Parameter(Position = 2, Mandatory = true, ParameterSetName = PSSessionConfigurationCommandBase.AssemblyNameParameterSetName)]
         public string ConfigurationTypeName
         {
-            get { return configurationTypeName; }
+            get
+            {
+                return configurationTypeName;
+            }
 
             set
             {
@@ -2053,7 +2062,10 @@ else
                 return ApartmentState.Unknown;
             }
 
-            set { threadAptState = value; }
+            set
+            {
+                threadAptState = value;
+            }
         }
 
         internal ApartmentState? threadAptState;
@@ -2074,7 +2086,10 @@ else
                 return PSThreadOptions.UseCurrentThread;
             }
 
-            set { threadOptions = value; }
+            set
+            {
+                threadOptions = value;
+            }
         }
 
         internal PSThreadOptions? threadOptions;
@@ -2085,7 +2100,10 @@ else
         [Parameter]
         public PSSessionConfigurationAccessMode AccessMode
         {
-            get { return _accessMode; }
+            get
+            {
+                return _accessMode;
+            }
 
             set
             {
@@ -2124,7 +2142,10 @@ else
         [Parameter()]
         public string StartupScript
         {
-            get { return configurationScript; }
+            get
+            {
+                return configurationScript;
+            }
 
             set
             {
@@ -2144,7 +2165,10 @@ else
         [AllowNull]
         public double? MaximumReceivedDataSizePerCommandMB
         {
-            get { return maxCommandSizeMB; }
+            get
+            {
+                return maxCommandSizeMB;
+            }
 
             set
             {
@@ -2171,7 +2195,10 @@ else
         [AllowNull]
         public double? MaximumReceivedObjectSizeMB
         {
-            get { return maxObjectSizeMB; }
+            get
+            {
+                return maxObjectSizeMB;
+            }
 
             set
             {
@@ -2198,7 +2225,10 @@ else
         [Parameter()]
         public string SecurityDescriptorSddl
         {
-            get { return sddl; }
+            get
+            {
+                return sddl;
+            }
 
             set
             {
@@ -2228,7 +2258,10 @@ else
         [Parameter()]
         public SwitchParameter ShowSecurityDescriptorUI
         {
-            get { return _showUI; }
+            get
+            {
+                return _showUI;
+            }
 
             set
             {
@@ -2280,7 +2313,10 @@ else
         [ValidateNotNullOrEmpty]
         public Version PSVersion
         {
-            get { return psVersion; }
+            get
+            {
+                return psVersion;
+            }
 
             set
             {

@@ -57,7 +57,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Initializes a new instance of the <see cref="ParameterSetEntry"/> class.
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
-        internal ParameterSetEntry(UInt32 mandatoryParameterCount)
+        internal ParameterSetEntry(uint mandatoryParameterCount)
         {
             this.MandatoryParameterCount = mandatoryParameterCount;
             this.IsDefaultParameterSet = false;
@@ -80,7 +80,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="mandatoryParameterCount"></param>
         /// <param name="mandatory"></param>
-        internal ParameterSetEntry(UInt32 mandatoryParameterCount, bool isDefault)
+        internal ParameterSetEntry(uint mandatoryParameterCount, bool isDefault)
         {
             this.MandatoryParameterCount = mandatoryParameterCount;
             this.IsDefaultParameterSet = isDefault;
@@ -104,7 +104,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property <c>MandatoryParameterCount</c>
         /// </summary>
-        internal UInt32 MandatoryParameterCount { get; } = 0;
+        internal uint MandatoryParameterCount { get; } = 0;
 
         /// <summary>
         /// Property <c>IsValueSet</c>
@@ -119,12 +119,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Property <c>SetMandatoryParameterCount</c>
         /// </summary>
-        internal UInt32 SetMandatoryParameterCount { get; set; } = 0;
+        internal uint SetMandatoryParameterCount { get; set; } = 0;
 
         /// <summary>
         /// Property <c>SetMandatoryParameterCountAtBeginProcess</c>
         /// </summary>
-        internal UInt32 SetMandatoryParameterCountAtBeginProcess { get; set; } = 0;
+        internal uint SetMandatoryParameterCountAtBeginProcess { get; set; } = 0;
     }
 
     /// <summary>
@@ -672,6 +672,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Throw terminating error
         /// </para>
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         internal void ThrowTerminatingError(Exception exception, string operation)
         {
             ErrorRecord errorRecord = new(exception, operation, ErrorCategory.InvalidOperation, this);

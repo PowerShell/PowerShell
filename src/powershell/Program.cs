@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Exception to signify an early startup failure.
         /// </summary>
-        private class StartupException : Exception
+        private sealed class StartupException : Exception
         {
             /// <summary>
             /// Construct a new startup exception instance.

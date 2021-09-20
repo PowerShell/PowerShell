@@ -1,5 +1,371 @@
 # Current preview release
 
+## [7.2.0-preview.9] - 2021-08-23
+
+### Breaking Changes
+
+- Change the default value of `$PSStyle.OutputRendering` to `OutputRendering.Host` and remove `OutputRendering.Automatic` (#15882)
+- Fix `CA1052` for public API to make classes static when they only have static methods (#15775) (Thanks @xtqqczze!)
+- Update `pwsh.exe -File` to only accept `.ps1` script files on Windows (#15859)
+
+### Engine Updates and Fixes
+
+- Update .NET adapter to handle interface static members properly (#15908)
+- Catch and handle unauthorized access exception when removing AppLocker test files (#15881)
+
+### General Cmdlet Updates and Fixes
+
+- Add `-PassThru` parameter to `Set-Clipboard` (#13713) (Thanks @ThomasNieto!)
+- Add `-Encoding` parameter for `Tee-Object` (#12135) (Thanks @Peter-Schneider!)
+- Update `ConvertTo-Csv` and `Export-Csv` to handle `IDictionary` objects (#11029) (Thanks @vexx32!)
+- Update the parameters `-Exception` and `-ErrorRecord` for `Write-Error` to be position 0 (#13813) (Thanks @ThomasNieto!)
+- Don't use `ArgumentList` when creating COM object with `New-Object` as it's not applicable to the COM parameter set (#15915)
+- Fix `$PSStyle` list output to correctly show `TableHeader` (#15928)
+- Remove the `PSImplicitRemotingBatching` experimental feature (#15863)
+- Fix issue with `Get-Process -Module` failing to stop when it's piped to `Select-Object` (#15682) (Thanks @ArmaanMcleod!)
+- Make the experimental features `PSUnixFileStat`, `PSCultureInvariantReplaceOperator`, `PSNotApplyErrorActionToStderr`, `PSAnsiRendering`, `PSAnsiProgressFeatureName` stable (#15864)
+- Enhance `Remove-Item` to work with OneDrive (#15571) (Thanks @iSazonov!)
+- Make global tool entrypoint class static (#15880)
+- Update `ServerRemoteHost` version to be same as `PSVersion` (#15809)
+- Make the initialization of `HttpKnownHeaderNames` thread safe (#15519) (Thanks @iSazonov!)
+- `ConvertTo-Csv`: Quote fields with quotes and newlines when using `-UseQuotes AsNeeded` (#15765) (Thanks @lselden!)
+- Forwarding progress stream changes from `Foreach-Object -Parallel` runspaces (#14271) (Thanks @powercode!)
+- Add validation to `$PSStyle` to reject printable text when setting a property that only expects ANSI escape sequence (#15825)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Avoid unneeded array allocation in module code (#14329) (Thanks @xtqqczze!)</li>
+<li>Enable and fix analysis rules <code>CA1052</code>, <code>CA1067</code>, and <code>IDE0049</code> (#15840) (Thanks @xtqqczze!)</li>
+<li>Avoid unnecessary allocation in formatting code (#15832) (Thanks @xtqqczze!)</li>
+<li>Specify the analyzed API surface for all code quality rules (#15778) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Enable `/rebase` to automatically rebase a PR (#15808)
+- Update `.editorconfig` to not replace tabs with spaces in `.tsv` files (#15815) (Thanks @SethFalco!)
+- Update PowerShell team members in the change log generation script (#15817)
+
+### Tests
+
+- Add more tests to validate the current command error handling behaviors (#15919)
+- Make `Measure-Object` property test independent of the file system (#15879)
+- Add more information when a `syslog` parsing error occurs (#15857)
+- Harden logic when looking for `syslog` entries to be sure that we select based on the process id (#15841)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Disable implicit namespace imports for test projects (#15895)</li>
+<li>Update language version to 10 and fix related issues (#15886)</li>
+<li>Update <code>CodeQL</code> workflow to use Ubuntu 18.04 (#15868)</li>
+<li>Bump the version of various packages (#15944, #15934, #15935, #15891, #15812, #15822) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update `README` and `metadata files` for release `v7.2.0-preview.8` (#15819)
+- Update change logs for 7.0.7 and 7.1.4 (#15921)
+- Fix spelling in XML docs (#15939) (Thanks @slowy07!)
+- Update PowerShell Committee members (#15837)
+
+[7.2.0-preview.9]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.8...v7.2.0-preview.9
+
+## [7.2.0-preview.8] - 2021-07-22
+
+### Engine Updates and Fixes
+
+- Add a Windows mode to `$PSNativeCommandArgumentPassing` that allows some commands to use legacy argument passing (#15408)
+- Use `nameof` to get parameter names when creating `ArgumentNullException` (#15604) (Thanks @gukoff!)
+- Test if a command is 'Out-Default' more thoroughly for transcribing scenarios (#15653)
+- Add `Microsoft.PowerShell.Crescendo` to telemetry allow list (#15372)
+
+### General Cmdlet Updates and Fixes
+
+- Use `$PSStyle.Formatting.FormatAccent` for `Format-List` and `$PSStyle.Formatting.TableHeader` for `Format-Table` output (#14406)
+- Highlight using error color the exception `Message` and underline in `PositionMessage` for `Get-Error` (#15786)
+- Implement a completion for View parameter of format cmdlets (#14513) (Thanks @iSazonov!)
+- Add support to colorize `FileInfo` file names (#14403)
+- Don't serialize to JSON ETS properties for `DateTime` and `string` types (#15665)
+- Fix `HyperVSocketEndPoint.ServiceId` setter (#15704) (Thanks @xtqqczze!)
+- Add `DetailedView` to `$ErrorView` (#15609)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@iSazonov, @xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Remove <code>consolehost.proto</code> file (#15741) (Thanks @iSazonov!)</li>
+<li>Implement <code>IDisposable</code> for <code>ConvertToJsonCommand</code> (#15787) (Thanks @xtqqczze!)</li>
+<li>Fix <code>IDisposable</code> implementation for <code>CommandPathSearch</code> (#15793) (Thanks @xtqqczze!)</li>
+<li>Delete IDE dispose analyzer rules (#15798) (Thanks @xtqqczze!)</li>
+<li>Seal private classes (#15725) (Thanks @xtqqczze!)</li>
+<li>Enable IDE0029: <code>UseCoalesceExpression</code> (#15770) (Thanks @xtqqczze!)</li>
+<li>Enable IDE0070: <code>UseSystemHashCode</code> (#15715) (Thanks @xtqqczze!)</li>
+<li>Enable IDE0030: <code>UseCoalesceExpressionForNullable</code> (#14289) (Thanks @xtqqczze!)</li>
+<li>Fix CA1846 and CA1845 for using <code>AsSpan</code> instead of <code>Substring</code> (#15738)</li>
+<li>Use <code>List&lt;T&gt;.RemoveAll</code> to avoid creating temporary list (#15686) (Thanks @xtqqczze!)</li>
+<li>Enable IDE0044: <code>MakeFieldReadonly</code> (#13880) (Thanks @xtqqczze!)</li>
+<li>Disable IDE0130 (#15728) (Thanks @xtqqczze!)</li>
+<li>Make classes sealed (#15675) (Thanks @xtqqczze!)</li>
+<li>Enable CA1043: Use integral or string argument for indexers (#14467) (Thanks @xtqqczze!)</li>
+<li>Enable CA1812 (#15674) (Thanks @xtqqczze!)</li>
+<li>Replace <code>Single</code> with <code>First</code> when we know the element count is 1 (#15676) (Thanks @xtqqczze!)</li>
+<li>Skip analyzers for <code>Microsoft.Management.UI.Internal</code> (#15677) (Thanks @xtqqczze!)</li>
+<li>Fix CA2243: Attribute string literals should parse correctly (#15622) (Thanks @xtqqczze!)</li>
+<li>Enable CA1401 (#15621) (Thanks @xtqqczze!)</li>
+<li>Fix CA1309: Use ordinal <code>StringComparison</code> in Certificate Provider (#14352) (Thanks @xtqqczze!)</li>
+<li>Fix CA1839: Use <code>Environment.ProcessPath</code> (#15650) (Thanks @xtqqczze!)</li>
+<li>Add new analyzer rules (#15620) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Add `SkipRoslynAnalyzers` parameter to `Start-PSBuild` (#15640) (Thanks @xtqqczze!)
+- Create issue template for issues updating PowerShell through Windows update. (#15700)
+- Add `DocumentationAnalyzers` to build (#14336) (Thanks @xtqqczze!)
+- Convert GitHub issue templates to modern forms (#15645)
+
+### Tests
+
+- Add more tests for `ConvertFrom-Json` (#15706) (Thanks @strawgate!)
+- Update `glob-parent` and `hosted-git-info` test dependencies (#15643)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+Update .NET to version <code>v6.0.0-preview.6</code>
+</summary>
+
+<ul>
+<li>Add new package name for <code>osx-arm64</code> (#15813)</li>
+<li>Prefer version when available for dotnet-install (#15810)</li>
+<li>Make warning about MU being required dynamic (#15776)</li>
+<li>Add <code>Start-PSBootstrap</code> before running tests (#15804)</li>
+<li>Update to .NET 6 Preview 6 and use <code>crossgen2</code> (#15763)</li>
+<li>Enable ARM64 packaging for macOS (#15768)</li>
+<li>Make Microsoft Update opt-out/in check boxes work (#15784)</li>
+<li>Add Microsoft Update opt out to MSI install (#15727)</li>
+<li>Bump <code>NJsonSchema</code> from <code>10.4.4</code> to <code>10.4.5</code> (#15769)</li>
+<li>Fix computation of SHA512 checksum (#15736)</li>
+<li>Update the script to use quality parameter for <code>dotnet-install</code> (#15731)</li>
+<li>Generate SHA512 checksum file for all packages (#15678)</li>
+<li>Enable signing daily release build with lifetime certificate (#15642)</li>
+<li>Update metadata and README for 7.2.0-preview.7 (#15593)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Fix broken RFC links (#15807)
+- Add to bug report template getting details from `Get-Error` (#15737)
+- Update issue templates to link to new docs (#15711)
+- Add @jborean93 to Remoting Working Group (#15683)
+
+[7.2.0-preview.8]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.7...v7.2.0-preview.8
+
+## [7.2.0-preview.7] - 2021-06-17
+
+### Breaking Changes
+
+- Remove PSDesiredStateConfiguration v2.0.5 module and published it to the PowerShell Gallery (#15536)
+
+### Engine Updates and Fixes
+
+- Fix splatting being treated as positional parameter in completions (#14623) (Thanks @MartinGC94!)
+- Prevent PowerShell from crashing when a telemetry mutex can't be created (#15574) (Thanks @gukoff!)
+- Ignore all exceptions when disposing an instance of a subsystem implementation (#15511)
+- Wait for SSH exit when closing remote connection (#14635) (Thanks @dinhngtu!)
+
+### Performance
+
+- Retrieve `ProductVersion` using informational version attribute in `AmsiUtils.Init()` (#15527) (Thanks @Fs00!)
+
+### General Cmdlet Updates and Fixes
+
+- Fix retrieving dynamic parameters from provider even if globbed path returns no results (#15525)
+- Revert "Enhance Remove-Item to work with OneDrive (#15260)" due to long path issue (#15546)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@octos4murai, @iSazonov, @Fs00</p>
+
+</summary>
+
+<ul>
+<li>Correct parameter name passed to exception in <code>PSCommand</code> constructor (#15580) (Thanks @octos4murai!)</li>
+<li>Enable nullable: <code>System.Management.Automation.ICommandRuntime</code> (#15566) (Thanks @iSazonov!)</li>
+<li>Clean up code regarding <code>AppDomain.CreateDomain</code> and <code>AppDomain.Unload</code> (#15554)</li>
+<li>Replace <code>ProcessModule.FileName</code> with <code>Environment.ProcessPath</code> and remove <code>PSUtils.GetMainModule</code> (#15012) (Thanks @Fs00!)</li>
+</ul>
+
+</details>
+
+### Tests
+
+- Fix `Start-Benchmarking` to put `TargetPSVersion` and `TargetFramework` in separate parameter sets (#15508)
+- Add `win-x86` test package to the build (#15517)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@schuelermine</p>
+
+</summary>
+
+<ul>
+<li>Update README.md and metadata.json for version 7.2.0-preview.6 (#15464)</li>
+<li>Make sure GA revision increases from RC and Preview releases (#15558)</li>
+<li>Remove <code>SupportsShouldProcess</code> from <code>Start-PSBootstrap</code> in build.psm1 (#15491) (Thanks @schuelermine!)</li>
+<li>Update <code>DotnetMetadataRuntime.json</code> next channel to take daily build from .NET preview 5 (#15518)</li>
+<li>Fix <code>deps.json</code> update in the release pipeline (#15486)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Add new members to Engine and Cmdlet Working Groups document (#15560)
+- Update the `mdspell` command to exclude the folder that should be ignored (#15576)
+- Replace 'User Voice' with 'Feedback Hub' in `README.md` (#15557)
+- Update Virtual User Group chat links (#15505) (Thanks @Jaykul!)
+- Fix typo in `FileSystemProvider.cs` (#15445) (Thanks @eltociear!)
+- Add `PipelineStoppedException` notes to PowerShell API (#15324)
+- Updated governance on Working Groups (WGs) (#14603)
+- Correct and improve XML documentation comments on `PSCommand` (#15568) (Thanks @octos4murai!)
+
+[7.2.0-preview.7]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.6...v7.2.0-preview.7
+
+## [7.2.0-preview.6] - 2021-05-27
+
+### Experimental Features
+
+- [Breaking Change] Update prediction interface to provide additional feedback to a predictor plugin (#15421)
+
+### Performance
+
+- Avoid collecting logs in buffer if a pipeline execution event is not going to be logged (#15350)
+- Avoid allocation in `LanguagePrimitives.UpdateTypeConvertFromTypeTable` (#15168) (Thanks @xtqqczze!)
+- Replace `Directory.GetDirectories` with `Directory.EnumerateDirectories` to avoid array allocations (#15167) (Thanks @xtqqczze!)
+- Use `List.ConvertAll` instead of `LINQ` (#15140) (Thanks @xtqqczze!)
+
+### General Cmdlet Updates and Fixes
+
+- Use `AllocConsole` before initializing CLR to ensure codepage is correct for WinRM remoting (PowerShell/PowerShell-Native#70) (Thanks @jborean93!)
+- Add completions for `#requires` statements (#14596) (Thanks @MartinGC94!)
+- Add completions for comment-based help keywords (#15337) (Thanks @MartinGC94!)
+- Move cross platform DSC code to a PowerShell engine subsystem (#15127)
+- Fix `Minimal` progress view to handle activity that is longer than console width (#15264)
+- Handle exception if ConsoleHost tries to set cursor out of bounds because screen buffer changed (#15380)
+- Fix `NullReferenceException` in DSC `ClearCache()` (#15373)
+- Update `ControlSequenceLength` to handle colon as a virtual terminal parameter separator (#14942)
+- Update the summary comment for `StopTranscriptCmdlet.cs` (#15349) (Thanks @dbaileyut!)
+- Remove the unusable alias `d` for the `-Directory` parameter from `Get-ChildItem` (#15171) (Thanks @kvprasoon!)
+- Fix tab completion for un-localized `about` topics (#15265) (Thanks @MartinGC94!)
+- Remove the unneeded SSH stdio handle workaround (#15308)
+- Add `LoadAssemblyFromNativeMemory` API to load assemblies from memory in a native PowerShell host (#14652) (Thanks @awakecoding!)
+- Re-implement `Remove-Item` OneDrive support (#15260) (Thanks @iSazonov!)
+- Kill native processes in pipeline when pipeline is disposed on Unix (#15287)
+- Default to MTA on Windows platforms where STA is not supported (#15106)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @powercode, @bcwood</p>
+
+</summary>
+
+<ul>
+<li>Enable <code>nullable</code> in some classes (#14185, #14177, #14159, #14191, #14162, #14150, #14156, #14161, #14155, #14163, #14181, #14157, #14151) (Thanks @powercode!)</li>
+<li>Annotate <code>ThrowTerminatingError</code> with <code>DoesNotReturn</code> attribute (#15352) (Thanks @powercode!)</li>
+<li>Use <code>GetValueOrDefault()</code> for nullable <code>PSLanguageMode</code> (#13849) (Thanks @bcwood!)</li>
+<li>Enable <code>SA1008</code>: Opening parenthesis should be spaced correctly (#14242) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Add `winget` release script (#15050)
+
+### Tests
+
+- Enable cross-runtime benchmarking to compare different .NET runtimes (#15387) (Thanks @adamsitnik!)
+- Add the performance benchmark project for PowerShell performance testing (#15242)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+Update .NET to version <code>v6.0.0-preview.4</code>
+</summary>
+
+<ul>
+<li>Suppress prompting when uploading the <code>msixbundle</code> package to blob (#15227)</li>
+<li>Update to .NET preview 4 SDK (#15452)</li>
+<li>Update <code>AppxManifest.xml</code> with newer OS version to allow PowerShell installed from Windows Store to make system-level changes (#15375)</li>
+<li>Ensure the build works when <code>PSDesiredStateConfiguration</code> module is pulled in from PSGallery (#15355)</li>
+<li>Make sure daily release tag does not change when retrying failures (#15286)</li>
+<li>Improve messages and behavior when there's a problem in finding zip files (#15284)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Add documentation comments section to coding guidelines (#14316) (Thanks @xtqqczze!)
+
+[7.2.0-preview.6]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.5...v7.2.0-preview.6
+
 ## [7.2.0-preview.5] - 2021-04-14
 
 ### Breaking Changes

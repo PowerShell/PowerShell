@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public ProcessorArchitecture ProcessorArchitecture
         {
-            get { return _processorArchitecture.HasValue ? _processorArchitecture.Value : ProcessorArchitecture.None; }
+            get { return _processorArchitecture ?? ProcessorArchitecture.None; }
 
             set { _processorArchitecture = value; }
         }

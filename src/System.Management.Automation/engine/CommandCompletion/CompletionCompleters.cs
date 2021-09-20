@@ -24,6 +24,7 @@ using Microsoft.Management.Infrastructure.Options;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Cim;
 using Microsoft.PowerShell.Commands;
+using Microsoft.PowerShell.Commands.Internal.Format;
 
 namespace System.Management.Automation
 {
@@ -407,7 +408,7 @@ namespace System.Management.Automation
             return results;
         }
 
-        private class FindFunctionsVisitor : AstVisitor
+        private sealed class FindFunctionsVisitor : AstVisitor
         {
             internal readonly List<FunctionDefinitionAst> FunctionDefinitions = new List<FunctionDefinitionAst>();
 
@@ -1209,7 +1210,7 @@ namespace System.Management.Automation
 
                     if (ret != null && ret.Count > 0)
                     {
-                        var prefix = TokenKind.LParen.Text() + input.Substring(0, fakeReplacementIndex);
+                        string prefix = string.Concat(TokenKind.LParen.Text(), input.AsSpan(0, fakeReplacementIndex));
                         foreach (CompletionResult entry in ret)
                         {
                             string completionText = prefix + entry.CompletionText;
@@ -2282,6 +2283,14 @@ namespace System.Management.Automation
                 case "Measure-Object":
                 case "Sort-Object":
                 case "Where-Object":
+                    {
+                        if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionMemberName(context, result, commandAst);
+                        }
+
+                        break;
+                    }
                 case "Format-Custom":
                 case "Format-List":
                 case "Format-Table":
@@ -2290,6 +2299,10 @@ namespace System.Management.Automation
                         if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
                         {
                             NativeCompletionMemberName(context, result, commandAst);
+                        }
+                        else if (parameterName.Equals("View", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionFormatViewName(context, boundArguments, result, commandAst, commandName);
                         }
 
                         break;
@@ -3785,44 +3798,78 @@ namespace System.Management.Automation
             result.Add(CompletionResult.Null);
         }
 
-        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst)
+        private static IEnumerable<PSTypeName> GetInferenceTypes(CompletionContext context, CommandAst commandAst)
         {
             // Command is something like where-object/foreach-object/format-list/etc. where there is a parameter that is a property name
             // and we want member names based on the input object, which is either the parameter InputObject, or comes from the pipeline.
-            if (!(commandAst.Parent is PipelineAst pipelineAst))
-                return;
+            if (commandAst.Parent is not PipelineAst pipelineAst)
+            {
+                return null;
+            }
 
             int i;
             for (i = 0; i < pipelineAst.PipelineElements.Count; i++)
             {
                 if (pipelineAst.PipelineElements[i] == commandAst)
+                {
                     break;
+                }
             }
 
             IEnumerable<PSTypeName> prevType = null;
             if (i == 0)
             {
+                // based on a type of the argument which is binded to 'InputObject' parameter.
                 AstParameterArgumentPair pair;
                 if (!context.PseudoBindingInfo.BoundArguments.TryGetValue("InputObject", out pair)
                     || !pair.ArgumentSpecified)
                 {
-                    return;
+                    return null;
                 }
 
                 var astPair = pair as AstPair;
                 if (astPair == null || astPair.Argument == null)
                 {
-                    return;
+                    return null;
                 }
 
                 prevType = AstTypeInference.InferTypeOf(astPair.Argument, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
             }
             else
             {
+                // based on OutputTypeAttribute() of the first cmdlet in pipeline.
                 prevType = AstTypeInference.InferTypeOf(pipelineAst.PipelineElements[i - 1], context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
             }
 
-            CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
+            return prevType;
+        }
+
+        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst)
+        {
+            IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
+            if (prevType is not null)
+            {
+                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
+            }
+
+            result.Add(CompletionResult.Null);
+        }
+
+        private static void NativeCompletionFormatViewName(
+            CompletionContext context,
+            Dictionary<string, AstParameterArgumentPair> boundArguments,
+            List<CompletionResult> result,
+            CommandAst commandAst,
+            string commandName)
+        {
+            IEnumerable<PSTypeName> prevType = NativeCommandArgumentCompletion_InferTypesOfArgument(boundArguments, commandAst, context, "InputObject");
+
+            if (prevType is not null)
+            {
+                string[] inferTypeNames = prevType.Select(t => t.Name).ToArray();
+                CompleteFormatViewByInferredType(context, inferTypeNames, result, commandName);
+            }
+
             result.Add(CompletionResult.Null);
         }
 
@@ -4840,7 +4887,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class FindVariablesVisitor : AstVisitor
+        private sealed class FindVariablesVisitor : AstVisitor
         {
             internal Ast Top;
             internal Ast CompletionVariableAst;
@@ -4923,6 +4970,11 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteComment(CompletionContext context, ref int replacementIndex, ref int replacementLength)
         {
+            if (context.WordToComplete.StartsWith("<#", StringComparison.Ordinal))
+            {
+                return CompleteCommentHelp(context, ref replacementIndex, ref replacementLength);
+            }
+
             // Complete #requires statements
             if (context.WordToComplete.StartsWith("#requires ", StringComparison.OrdinalIgnoreCase))
             {
@@ -5188,6 +5240,256 @@ namespace System.Management.Automation
             ' ',
         };
 
+        private static List<CompletionResult> CompleteCommentHelp(CompletionContext context, ref int replacementIndex, ref int replacementLength)
+        {
+            // Finds comment keywords like ".DESCRIPTION"
+            MatchCollection usedKeywords = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.)\w*", RegexOptions.Multiline);
+            if (usedKeywords.Count == 0)
+            {
+                return null;
+            }
+
+            // Last keyword at or before the cursor
+            Match lineKeyword = null;
+            for (int i = usedKeywords.Count - 1; i >= 0; i--)
+            {
+                Match keyword = usedKeywords[i];
+                if (context.CursorPosition.Offset >= keyword.Index + context.TokenAtCursor.Extent.StartOffset)
+                {
+                    lineKeyword = keyword;
+                    break;
+                }
+            }
+
+            if (lineKeyword is null)
+            {
+                return null;
+            }
+
+            // Cursor is within or at the start/end of the keyword
+            if (context.CursorPosition.Offset <= lineKeyword.Index + lineKeyword.Length + context.TokenAtCursor.Extent.StartOffset)
+            {
+                replacementIndex = context.TokenAtCursor.Extent.StartOffset + lineKeyword.Index;
+                replacementLength = lineKeyword.Value.Length;
+
+                var validKeywords = new HashSet<String>(s_commentHelpKeywords.Keys, StringComparer.OrdinalIgnoreCase);
+                foreach (Match keyword in usedKeywords)
+                {
+                    if (keyword == lineKeyword || s_commentHelpAllowedDuplicateKeywords.Contains(keyword.Value))
+                    {
+                        continue;
+                    }
+
+                    validKeywords.Remove(keyword.Value);
+                }
+
+                var result = new List<CompletionResult>();
+                foreach (string keyword in validKeywords)
+                {
+                    if (keyword.StartsWith(lineKeyword.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, s_commentHelpKeywords[keyword]));
+                    }
+                }
+
+                return result.Count > 0 ? result : null;
+            }
+
+            // Finds the argument for the keyword (any characters following the keyword, ignoring leading/trailing whitespace). For example "C:\New folder"
+            Match keywordArgument = Regex.Match(context.CursorPosition.Line, @"(?<=^\s*\.\w+\s+)\S.*(?<=\S)");
+            int lineStartIndex = lineKeyword.Index - context.CursorPosition.Line.IndexOf(lineKeyword.Value) + context.TokenAtCursor.Extent.StartOffset;
+            int argumentIndex = keywordArgument.Success ? keywordArgument.Index : context.CursorPosition.ColumnNumber - 1;
+
+            replacementIndex = lineStartIndex + argumentIndex;
+            replacementLength = keywordArgument.Value.Length;
+
+            if (lineKeyword.Value.Equals("PARAMETER", StringComparison.OrdinalIgnoreCase))
+            {
+                return CompleteCommentParameterValue(context, keywordArgument.Value);
+            }
+
+            if (lineKeyword.Value.Equals("FORWARDHELPTARGETNAME", StringComparison.OrdinalIgnoreCase))
+            {
+                var result = new List<CompletionResult>(CompleteCommand(keywordArgument.Value, "*", CommandTypes.All));
+                return result.Count > 0 ? result : null;
+            }
+
+            if (lineKeyword.Value.Equals("FORWARDHELPCATEGORY", StringComparison.OrdinalIgnoreCase))
+            {
+                var result = new List<CompletionResult>();
+                foreach (string category in s_commentHelpForwardCategories)
+                {
+                    if (category.StartsWith(keywordArgument.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(new CompletionResult(category));
+                    }
+                }
+                return result.Count > 0 ? result : null;
+            }
+
+            if (lineKeyword.Value.Equals("REMOTEHELPRUNSPACE", StringComparison.OrdinalIgnoreCase))
+            {
+                var result = new List<CompletionResult>();
+                foreach (CompletionResult variable in CompleteVariable(keywordArgument.Value))
+                {
+                    // ListItemText is used because it excludes the "$" as expected by REMOTEHELPRUNSPACE.
+                    result.Add(new CompletionResult(variable.ListItemText, variable.ListItemText, variable.ResultType, variable.ToolTip));
+                }
+                return result.Count > 0 ? result : null;
+            }
+
+            if (lineKeyword.Value.Equals("EXTERNALHELP", StringComparison.OrdinalIgnoreCase))
+            {
+                context.WordToComplete = keywordArgument.Value;
+                var result = new List<CompletionResult>(CompleteFilename(context, containerOnly: false, (new HashSet<string>() { ".xml" })));
+                return result.Count > 0 ? result : null;
+            }
+
+            return null;
+        }
+
+        private static readonly IReadOnlyDictionary<string, string> s_commentHelpKeywords = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "SYNOPSIS", "A brief description of the function or script. This keyword can be used only once in each topic." },
+            { "DESCRIPTION", "A detailed description of the function or script. This keyword can be used only once in each topic." },
+            { "PARAMETER", ".PARAMETER  <Parameter-Name>\nThe description of a parameter. Add a .PARAMETER keyword for each parameter in the function or script syntax." },
+            { "EXAMPLE", "A sample command that uses the function or script, optionally followed by sample output and a description. Repeat this keyword for each example." },
+            { "INPUTS", "The .NET types of objects that can be piped to the function or script. You can also include a description of the input objects." },
+            { "OUTPUTS", "The .NET type of the objects that the cmdlet returns. You can also include a description of the returned objects." },
+            { "NOTES", "Additional information about the function or script." },
+            { "LINK", "The name of a related topic. Repeat the .LINK keyword for each related topic. The .Link keyword content can also include a URI to an online version of the same help topic." },
+            { "COMPONENT", "The name of the technology or feature that the function or script uses, or to which it is related." },
+            { "ROLE", "The name of the user role for the help topic." },
+            { "FUNCTIONALITY", "The keywords that describe the intended use of the function." },
+            { "FORWARDHELPTARGETNAME", ".FORWARDHELPTARGETNAME <Command-Name>\nRedirects to the help topic for the specified command." },
+            { "FORWARDHELPCATEGORY", ".FORWARDHELPCATEGORY <Category>\nSpecifies the help category of the item in .ForwardHelpTargetName" },
+            { "REMOTEHELPRUNSPACE", ".REMOTEHELPRUNSPACE <PSSession-variable>\nSpecifies a session that contains the help topic. Enter a variable that contains a PSSession object." },
+            { "EXTERNALHELP", ".EXTERNALHELP <XML Help File>\nThe .ExternalHelp keyword is required when a function or script is documented in XML files." }
+        };
+
+        private static readonly HashSet<string> s_commentHelpAllowedDuplicateKeywords = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "PARAMETER",
+            "EXAMPLE",
+            "LINK"
+        };
+
+        private static readonly string[] s_commentHelpForwardCategories = new string[]
+        {
+            "Alias",
+            "Cmdlet",
+            "HelpFile",
+            "Function",
+            "Provider",
+            "General",
+            "FAQ",
+            "Glossary",
+            "ScriptCommand",
+            "ExternalScript",
+            "Filter",
+            "All"
+        };
+
+        private static FunctionDefinitionAst GetCommentHelpFunctionTarget(CompletionContext context)
+        {
+            if (context.TokenAtCursor.Kind != TokenKind.Comment)
+            {
+                return null;
+            }
+
+            Ast lastAst = context.RelatedAsts[^1];
+            Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= context.TokenAtCursor.Extent.EndOffset, searchNestedScriptBlocks: false);
+
+            // Comment-based help can apply to a following function definition if it starts within 2 lines
+            int commentEndLine = context.TokenAtCursor.Extent.EndLineNumber + 2;
+
+            if (lastAst is NamedBlockAst)
+            {
+                // Helpblock before function inside advanced function
+                if (firstAstAfterComment is not null
+                    && firstAstAfterComment.Extent.StartLineNumber <= commentEndLine
+                    && firstAstAfterComment is FunctionDefinitionAst outerHelpFunctionDefAst)
+                {
+                    return outerHelpFunctionDefAst;
+                }
+
+                // Helpblock inside function
+                if (lastAst.Parent.Parent is FunctionDefinitionAst innerHelpFunctionDefAst)
+                {
+                    return innerHelpFunctionDefAst;
+                }
+            }
+
+            if (lastAst is ScriptBlockAst)
+            {
+                // Helpblock before function
+                if (firstAstAfterComment is not null
+                    && firstAstAfterComment.Extent.StartLineNumber <= commentEndLine
+                    && firstAstAfterComment is NamedBlockAst block
+                    && block.Statements.Count > 0
+                    && block.Statements[0] is FunctionDefinitionAst statement)
+                {
+                    return statement;
+                }
+
+                // Advanced function with help inside
+                if (lastAst.Parent is FunctionDefinitionAst advFuncDefAst)
+                {
+                    return advFuncDefAst;
+                }
+            }
+
+            return null;
+        }
+
+        private static List<CompletionResult> CompleteCommentParameterValue(CompletionContext context, string wordToComplete)
+        {
+            FunctionDefinitionAst foundFunction = GetCommentHelpFunctionTarget(context);
+
+            ReadOnlyCollection<ParameterAst> foundParameters = null;
+            if (foundFunction is not null)
+            {
+                foundParameters = foundFunction.Parameters ?? foundFunction.Body.ParamBlock?.Parameters;
+            }
+            else if (context.RelatedAsts[^1] is ScriptBlockAst scriptAst)
+            {
+                // The helpblock is for a script file
+                foundParameters = scriptAst.ParamBlock?.Parameters;
+            }
+
+            if (foundParameters is null || foundParameters.Count == 0)
+            {
+                return null;
+            }
+
+            var parametersToShow = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (ParameterAst parameter in foundParameters)
+            {
+                if (parameter.Name.VariablePath.UserPath.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                {
+                    parametersToShow.Add(parameter.Name.VariablePath.UserPath);
+                }
+            }
+
+            MatchCollection usedParameters = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.parameter\s+)\w.*(?<=\S)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+            foreach (Match parameter in usedParameters)
+            {
+                if (wordToComplete.Equals(parameter.Value, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+                parametersToShow.Remove(parameter.Value);
+            }
+
+            var result = new List<CompletionResult>();
+            foreach (string parameter in parametersToShow)
+            {
+                result.Add(new CompletionResult(parameter));
+            }
+
+            return result.Count > 0 ? result : null;
+        }
+
         #endregion Comments
 
         #region Members
@@ -5440,6 +5742,59 @@ namespace System.Management.Automation
         private static bool IsInDscContext(ExpressionAst expression)
         {
             return Ast.GetAncestorAst<ConfigurationDefinitionAst>(expression) != null;
+        }
+
+        private static void CompleteFormatViewByInferredType(CompletionContext context, string[] inferredTypeNames, List<CompletionResult> results, string commandName)
+        {
+            var typeInfoDB = context.TypeInferenceContext.ExecutionContext.FormatDBManager.GetTypeInfoDataBase();
+
+            if (typeInfoDB is null)
+            {
+                return;
+            }
+
+            Type controlBodyType = commandName switch
+            {
+                "Format-Table" => typeof(TableControlBody),
+                "Format-List" => typeof(ListControlBody),
+                "Format-Wide" => typeof(WideControlBody),
+                "Format-Custom" => typeof(ComplexControlBody),
+                _ => null
+            };
+
+            Diagnostics.Assert(controlBodyType is not null, "This should never happen unless a new Format-* cmdlet is added");
+
+            var wordToComplete = context.WordToComplete;
+            var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+            WildcardPattern viewPattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+
+            var uniqueNames = new HashSet<string>();
+            foreach (ViewDefinition viewDefinition in typeInfoDB.viewDefinitionsSection.viewDefinitionList)
+            {
+                if (viewDefinition?.appliesTo is not null && controlBodyType == viewDefinition.mainControl.GetType())
+                {
+                    foreach (TypeOrGroupReference applyTo in viewDefinition.appliesTo.referenceList)
+                    {
+                        foreach (string inferredTypeName in inferredTypeNames)
+                        {
+                            // We use 'StartsWith()' because 'applyTo.Name' can look like "System.Diagnostics.Process#IncludeUserName".
+                            if (applyTo.name.StartsWith(inferredTypeName, StringComparison.OrdinalIgnoreCase)
+                                && uniqueNames.Add(viewDefinition.name)
+                                && viewPattern.IsMatch(viewDefinition.name))
+                            {
+                                string completionText = viewDefinition.name;
+                                // If the string is quoted or if it contains characters that need quoting, quote it in single quotes
+                                if (quote != string.Empty || viewDefinition.name.IndexOfAny(s_charactersRequiringQuotes) != -1)
+                                {
+                                    completionText = "'" + completionText.Replace("'", "''") + "'";
+                                }
+
+                                results.Add(new CompletionResult(completionText, viewDefinition.name, CompletionResultType.Text, viewDefinition.name));
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic)
@@ -5737,7 +6092,7 @@ namespace System.Management.Automation
         /// This type represents a generic type for type name completion. It only contains information that can be
         /// inferred from the full type name.
         /// </summary>
-        private class GenericTypeCompletionInStringFormat : TypeCompletionInStringFormat
+        private sealed class GenericTypeCompletionInStringFormat : TypeCompletionInStringFormat
         {
             /// <summary>
             /// Get the number of generic type arguments required by the type represented by this instance.
@@ -5854,7 +6209,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This type represents a generic type for type name completion. It contains the actual type instance.
         /// </summary>
-        private class GenericTypeCompletion : TypeCompletion
+        private sealed class GenericTypeCompletion : TypeCompletion
         {
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
             {
@@ -5891,7 +6246,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This type represents a namespace for namespace completion.
         /// </summary>
-        private class NamespaceCompletion : TypeCompletionBase
+        private sealed class NamespaceCompletion : TypeCompletionBase
         {
             internal string Namespace;
 
@@ -5913,7 +6268,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class TypeCompletionMapping
+        private sealed class TypeCompletionMapping
         {
             // The Key is the string we'll be searching on.  It could complete to various things.
             internal string Key;
@@ -6270,35 +6625,36 @@ namespace System.Management.Automation
         internal static List<CompletionResult> CompleteHelpTopics(CompletionContext context)
         {
             var results = new List<CompletionResult>();
-            var searchPaths = new List<string>();
-            var currentCulture = CultureInfo.CurrentCulture.Name;
+            string userHelpDir = HelpUtils.GetUserHomeHelpSearchPath();
+            string appHelpDir = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+            string currentCulture = CultureInfo.CurrentCulture.Name;
 
-            // Add the user scope path first, since it is searched in order.
-            var userHelpRoot = Path.Combine(HelpUtils.GetUserHomeHelpSearchPath(), currentCulture);
-
-            if (Directory.Exists(userHelpRoot))
+            //search for help files for the current culture + en-US as fallback
+            var searchPaths = new string[]
             {
-                searchPaths.Add(userHelpRoot);
-            }
+                Path.Combine(userHelpDir, currentCulture),
+                Path.Combine(appHelpDir, currentCulture),
+                Path.Combine(userHelpDir, "en-US"),
+                Path.Combine(appHelpDir, "en-US")
+            }.Distinct();
 
-            var dirPath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID), currentCulture);
-            searchPaths.Add(dirPath);
-
-            var wordToComplete = context.WordToComplete + "*";
-            var topicPattern = WildcardPattern.Get("about_*.help.txt", WildcardOptions.IgnoreCase);
-            List<string> files = new List<string>();
-
+            string wordToComplete = context.WordToComplete + "*";
             try
             {
                 var wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
 
                 foreach (var dir in searchPaths)
                 {
-                    foreach (var file in Directory.EnumerateFiles(dir))
+                    var currentDir = new DirectoryInfo(dir);
+                    if (currentDir.Exists)
                     {
-                        if (wildcardPattern.IsMatch(Path.GetFileName(file)))
+                        foreach (var file in currentDir.EnumerateFiles("about_*.help.txt"))
                         {
-                            files.Add(file);
+                            if (wildcardPattern.IsMatch(file.Name))
+                            {
+                                string topicName = file.Name.Substring(0, file.Name.LastIndexOf(".help.txt"));
+                                results.Add(new CompletionResult(topicName));
+                            }
                         }
                     }
                 }
@@ -6306,33 +6662,6 @@ namespace System.Management.Automation
             catch (Exception)
             {
             }
-
-            if (files != null)
-            {
-                foreach (string file in files)
-                {
-                    if (file == null)
-                    {
-                        continue;
-                    }
-
-                    try
-                    {
-                        var fileName = Path.GetFileName(file);
-                        if (fileName == null || !topicPattern.IsMatch(fileName))
-                            continue;
-
-                        // All topic files are ending with ".help.txt"
-                        var completionText = fileName.Substring(0, fileName.Length - 9);
-                        results.Add(new CompletionResult(completionText));
-                    }
-                    catch (Exception)
-                    {
-                        continue;
-                    }
-                }
-            }
-
             return results;
         }
 
@@ -7005,7 +7334,7 @@ namespace System.Management.Automation
             return defaultChoice;
         }
 
-        private class ItemPathComparer : IComparer<PSObject>
+        private sealed class ItemPathComparer : IComparer<PSObject>
         {
             public int Compare(PSObject x, PSObject y)
             {
@@ -7040,7 +7369,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class CommandNameComparer : IComparer<PSObject>
+        private sealed class CommandNameComparer : IComparer<PSObject>
         {
             public int Compare(PSObject x, PSObject y)
             {
@@ -7067,7 +7396,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// This class is very similar to the restricted langauge checker, but it is meant to allow more things, yet still
+    /// This class is very similar to the restricted language checker, but it is meant to allow more things, yet still
     /// be considered "safe", at least in the sense that tab completion can rely on it to not do bad things.  The primary
     /// use is for intellisense where you don't want to run arbitrary code, but you do want to know the values
     /// of various expressions so you can get the members.
@@ -7323,7 +7652,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the <see cref="PropertyNameCompleter"/> class.
         /// </summary>
-        /// <param name="parameterNameOfInput">The name of the property of the input object for witch to complete with property names.</param>
+        /// <param name="parameterNameOfInput">The name of the property of the input object for which to complete with property names.</param>
         public PropertyNameCompleter(string parameterNameOfInput)
         {
             _parameterNameOfInput = parameterNameOfInput;

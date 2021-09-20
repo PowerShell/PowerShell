@@ -9,6 +9,8 @@ using System.Management.Automation.Language;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
 
 namespace System.Management.Automation
 {
@@ -1721,9 +1723,16 @@ namespace System.Management.Automation
 
                 foreach (var keyword in matchedResults)
                 {
-                    string usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform.DscClassCache.NewApiIsUsed
-                        ? Microsoft.PowerShell.DesiredStateConfiguration.Internal.CrossPlatform.DscClassCache.GetDSCResourceUsageString(keyword)
-                        : Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
+                    string usageString = string.Empty;
+                    ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                    if (dscSubsystem != null)
+                    {
+                        usageString = dscSubsystem.GetDSCResourceUsageString(keyword);
+                    }
+                    else
+                    {
+                        usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
+                    }
 
                     if (results == null)
                     {

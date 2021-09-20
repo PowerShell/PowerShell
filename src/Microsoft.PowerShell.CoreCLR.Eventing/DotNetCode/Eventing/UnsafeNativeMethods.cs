@@ -268,10 +268,10 @@ namespace System.Diagnostics.Eventing
         internal struct EvtVariant
         {
             [FieldOffset(0)]
-            public UInt32 UInteger;
+            public uint UInteger;
 
             [FieldOffset(0)]
-            public Int32 Integer;
+            public int Integer;
 
             [FieldOffset(0)]
             public byte UInt8;
@@ -283,7 +283,7 @@ namespace System.Diagnostics.Eventing
             public ushort UShort;
 
             [FieldOffset(0)]
-            public UInt32 Bool;
+            public uint Bool;
 
             [FieldOffset(0)]
             public byte ByteVal;
@@ -292,13 +292,13 @@ namespace System.Diagnostics.Eventing
             public byte SByte;
 
             [FieldOffset(0)]
-            public UInt64 ULong;
+            public ulong ULong;
 
             [FieldOffset(0)]
-            public Int64 Long;
+            public long Long;
 
             [FieldOffset(0)]
-            public Single Single;
+            public float Single;
 
             [FieldOffset(0)]
             public double Double;
@@ -325,7 +325,7 @@ namespace System.Diagnostics.Eventing
             public IntPtr GuidReference;
 
             [FieldOffset(0)]
-            public UInt64 FileTime;
+            public ulong FileTime;
 
             [FieldOffset(0)]
             public IntPtr SystemTime;
@@ -334,10 +334,10 @@ namespace System.Diagnostics.Eventing
             public IntPtr SizeT;
 
             [FieldOffset(8)]
-            public UInt32 Count;   // number of elements (not length) in bytes.
+            public uint Count;   // number of elements (not length) in bytes.
 
             [FieldOffset(12)]
-            public UInt32 Type;
+            public uint Type;
         }
 
         internal enum EvtEventPropertyId
@@ -733,7 +733,7 @@ namespace System.Diagnostics.Eventing
         [SecurityCritical]
         internal static extern EventLogHandle EvtOpenChannelConfig(
                             EventLogHandle session,
-                            [MarshalAs(UnmanagedType.LPWStr)] String channelPath,
+                            [MarshalAs(UnmanagedType.LPWStr)] string channelPath,
                             int flags
                                     );
 
@@ -823,7 +823,7 @@ namespace System.Diagnostics.Eventing
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
         [SecurityCritical]
         internal static extern EventLogHandle EvtCreateRenderContext(
-                            Int32 valuePathsCount,
+                            int valuePathsCount,
                             [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr)]
                                 string[] valuePaths,
                             [MarshalAs(UnmanagedType.I4)] EvtRenderContextFlags flags
@@ -862,10 +862,10 @@ namespace System.Diagnostics.Eventing
             public string StringVal;
 
             [FieldOffset(8)]
-            public UInt32 Count;
+            public uint Count;
 
             [FieldOffset(12)]
-            public UInt32 Type;
+            public uint Type;
         }
 
         [DllImport(WEVTAPI, CharSet = CharSet.Unicode, SetLastError = true)]
