@@ -7,7 +7,9 @@
 using Dbg = System.Management.Automation;
 using System.IO;
 using System.Management.Automation.Internal;
+#if !UNIX
 using System.Management.Automation.Security;
+#endif
 using Microsoft.Security.Extensions;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
@@ -309,6 +311,7 @@ namespace System.Management.Automation
 
             try
             {
+#if !UNIX
                 using (FileStream stream = File.OpenRead(filename))
                 {
                     Microsoft.Security.Extensions.FileSignatureInfo fileSigInfo = NativeMethods.WTGetSignatureInfoWrapper(filename);
@@ -396,8 +399,12 @@ namespace System.Management.Automation
                         // If calling NativeMethods.WTGetSignatureInfo failed (returned a non-zero value), we still want to set Signature.CatalogApiAvailable to false.
                         Signature.CatalogApiAvailable = false;
                     }
-                    
+
                 }
+#else
+                // TODO: decide what we should do no non-Windows platforms
+                return null;
+#endif
             }
             catch (TypeLoadException)
             {
@@ -409,6 +416,7 @@ namespace System.Management.Automation
             return signature;
         }
 
+#if !UNIX
         private static DWORD GetErrorFromSignatureState(Microsoft.Security.Extensions.SignatureState signatureState)
         {
             switch (signatureState)
@@ -425,6 +433,7 @@ namespace System.Management.Automation
 
             }
         }
+#endif
 
         private static Signature GetSignatureFromWinVerifyTrust(string fileName, string fileContent)
         {
