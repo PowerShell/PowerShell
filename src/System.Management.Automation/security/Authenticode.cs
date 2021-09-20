@@ -7,10 +7,10 @@
 using Dbg = System.Management.Automation;
 using System.IO;
 using System.Management.Automation.Internal;
-#if !UNIX
 using System.Management.Automation.Security;
-#endif
+#if !UNIX
 using Microsoft.Security.Extensions;
+#endif
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using DWORD = System.UInt32;
@@ -304,14 +304,13 @@ namespace System.Management.Automation
                 return null;
             }
 
-            Signature signature = null;
-
             Utils.CheckArgForNullOrEmpty(filename, "fileName");
             SecuritySupport.CheckIfFileExists(filename);
 
+#if !UNIX
+            Signature signature = null;
             try
             {
-#if !UNIX
                 using (FileStream stream = File.OpenRead(filename))
                 {
                     Microsoft.Security.Extensions.FileSignatureInfo fileSigInfo = NativeMethods.WTGetSignatureInfoWrapper(filename);
@@ -401,10 +400,6 @@ namespace System.Management.Automation
                     }
 
                 }
-#else
-                // TODO: decide what we should do no non-Windows platforms
-                return null;
-#endif
             }
             catch (TypeLoadException)
             {
@@ -414,6 +409,10 @@ namespace System.Management.Automation
             }
 
             return signature;
+#else
+            // TODO: decide what we should do no non-Windows platforms
+            return new Signature(filename, Win32Errors.TRUST_E_NOSIGNATURE);
+#endif
         }
 
 #if !UNIX
