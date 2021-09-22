@@ -215,6 +215,10 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.SupportsWildcardsAttribute]
                 }
                 @{
+                    Accelerator = 'SuppressMessageAttribute'
+                    Type        = [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute]
+                }
+                @{
                     Accelerator = 'switch'
                     Type        = [System.Management.Automation.SwitchParameter]
                 }

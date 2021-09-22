@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 #if !UNIX
 using System.DirectoryServices;
 #endif
@@ -773,6 +774,7 @@ namespace System.Management.Automation
                     { typeof(sbyte),                                       new[] { "sbyte" } },
                     { typeof(string),                                      new[] { "string" } },
                     { typeof(SupportsWildcardsAttribute),                  new[] { "SupportsWildcards" } },
+                    { typeof(SuppressMessageAttribute),                    new[] { "SuppressMessageAttribute" } },
                     { typeof(SwitchParameter),                             new[] { "switch" } },
                     { typeof(CultureInfo),                                 new[] { "cultureinfo" } },
                     { typeof(BigInteger),                                  new[] { "bigint" } },
