@@ -408,14 +408,10 @@ Describe "Type accelerators" -Tags "CI" {
                 }
             )
 
-            if ( !$IsWindows )
-            {
-                $totalAccelerators = 99
-            }
-            else
-            {
-                $totalAccelerators = 104
+            [int] $totalAccelerators = 100
 
+            if ( $IsWindows )
+            {
                 $extraFullPSAcceleratorTestCases = @(
                     @{
                         Accelerator = 'adsi'
@@ -438,6 +434,7 @@ Describe "Type accelerators" -Tags "CI" {
                         Type        = [System.Management.ManagementObjectSearcher]
                     }
                 )
+                $totalAccelerators += $extraFullPSAcceleratorTestCases.Count
             }
         }
 
