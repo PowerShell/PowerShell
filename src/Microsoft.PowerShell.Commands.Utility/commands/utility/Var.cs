@@ -710,6 +710,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return _append;
             }
+
             set
             {
                 _append = value;
@@ -751,7 +752,7 @@ namespace Microsoft.PowerShell.Commands
                 _valueList = new List<object>();
                 var currentValue = Context.SessionState.PSVariable.Get(Name[0]);
                 if (currentValue != null) {
-                    if (currentValue.Value is IList)
+                    if (currentValue.Value is IList<object>)
                     {
                         _valueList.AddRange(currentValue.Value as IList<object>);
                     }
