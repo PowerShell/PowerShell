@@ -1227,7 +1227,7 @@ namespace System.Management.Automation
 
                 if (this.Appending)
                 {
-                    commandProcessor.AddParameter(CommandParameterInternal.CreateParameter("Append","-Append",null));
+                    commandProcessor.AddParameter(CommandParameterInternal.CreateParameter("Append", "-Append", null));
                 }
             }
             else
@@ -1254,7 +1254,6 @@ namespace System.Management.Automation
                     commandProcessor.AddParameter(cpi);
                 }
             }
-
 
             PipelineProcessor = new PipelineProcessor();
             PipelineProcessor.Add(commandProcessor);
