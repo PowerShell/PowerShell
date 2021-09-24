@@ -22,7 +22,7 @@ steps:
     $null = New-Item $OutputPath -ItemType File -Force
     foreach ($file in Get-ChildItem -Path $Path -File ){
         Get-FileHash -Algorithm SHA256 -Path $file |
-        ForEach-Object { "$($_.Hash) $($file.Name)" } |
+        ForEach-Object { "$($_.Hash) *$($file.Name)" } |
         Out-File -Path $OutputPath -Append
     }
   displayName: Add sha256 hashes
