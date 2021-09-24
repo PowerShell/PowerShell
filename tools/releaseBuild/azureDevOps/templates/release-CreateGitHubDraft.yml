@@ -17,6 +17,17 @@ steps:
   displayName: Clone Internal-Tools repository
 
 - pwsh: |
+    $Path = "$(System.ArtifactsDirectory)"
+    $OutputPath = Join-Path $Path ‘hashes.sha256’
+    $null = New-Item $OutputPath -ItemType File -Force
+    foreach ($file in Get-ChildItem -Path $Path -File ){
+        Get-FileHash -Algorithm SHA256 -Path $file |
+        ForEach-Object { "$($_.Hash) *$($file.Name)" } |
+        Out-File -Path $OutputPath -Append
+    }
+  displayName: Add sha256 hashes
+
+- pwsh: |
     Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
     Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description '<-- Update Me -->' -User PowerShell -Repository PowerShell  -PackageFolder $(System.ArtifactsDirectory) -Token $(GitHubReleasePat)
   displayName: Publish Release Draft
