@@ -8105,6 +8105,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="instance">The object of FileInfo or DirectoryInfo type.</param>
         /// <returns>The target of the reparse point.</returns>
+        [Obsolete("This method is now obsolete. Please use the .NET API 'FileSystemInfo.LinkTarget'", error: true)]
         public static string GetTarget(PSObject instance)
         {
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
