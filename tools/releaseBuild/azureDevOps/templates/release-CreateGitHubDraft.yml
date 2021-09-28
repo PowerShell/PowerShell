@@ -19,12 +19,19 @@ steps:
 - pwsh: |
     $Path = "$(System.ArtifactsDirectory)"
     $OutputPath = Join-Path $Path ‘hashes.sha256’
-    $null = New-Item $OutputPath -ItemType File -Force
-    foreach ($file in Get-ChildItem -Path $Path -File ){
-        Get-FileHash -Algorithm SHA256 -Path $file |
-        ForEach-Object { "$($_.Hash) *$($file.Name)" } |
-        Out-File -Path $OutputPath -Append
-    }
+    $srcPaths = @($Path)
+    $packages  = Get-ChildItem -Path $srcPaths -Include * -Recurse
+    $checksums = $packages |
+        ForEach-Object {
+            Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
+            $packageName = $_.Name
+            $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA256).Hash.ToLower()
+            # the '*' before the packagename signifies it is a binary
+            "$hash *$packageName"
+        }
+    $checksums | Out-File -FilePath $OutputPath -Force
+    $fileContent = Get-Content -Path $OutputPath -Raw | Out-String
+    Write-Verbose -Verbose -Message $fileContent
   displayName: Add sha256 hashes
 
 - pwsh: |
