@@ -1098,18 +1098,23 @@ namespace System.Management.Automation
         [ArchitectureSensitive]
         private static bool IsWindowsApplication(string fileName)
         {
-#if UNIX
-            return false;
-#else
-            if (!Platform.IsWindowsDesktop) { return false; }
-
-            // SHGetFileInfo() does not understand reparse points and returns 0 ("non exe or error")
-            // so we are trying to get a real path before.
-            // It is a workaround for Microsoft Store applications.
-            string realPath = Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods.WinInternalGetTarget(fileName);
-            if (realPath is not null)
+            var fileInfo = new FileInfo(fileName);
+            if (!fileInfo.Exists)
             {
-                fileName = realPath;
+                throw new ArgumentException(
+                    StringUtil.Format(SessionStateStrings.PathNotFound, fileName));
+            }
+
+            if (!Platform.IsWindowsDesktop)
+            {
+                return false;
+            }
+
+            // SHGetFileInfo() does not understand reparse points and returns 0 ("non exe or error"), so we use the link target in that case.
+            // This is a workaround for Microsoft Store applications.
+            if (fileInfo.LinkTarget is not null)
+            {
+                fileName = fileInfo.LinkTarget;
             }
 
             SHFILEINFO shinfo = new SHFILEINFO();
@@ -1130,7 +1135,6 @@ namespace System.Management.Automation
                     // anything else - is a windows program...
                     return true;
             }
-#endif
         }
 
         #endregion checkForConsoleApplication

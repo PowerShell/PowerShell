@@ -516,11 +516,6 @@ namespace System.Management.Automation
             return Unix.IsHardLink(fileInfo);
         }
 
-        internal static string NonWindowsInternalGetTarget(string path)
-        {
-            return Unix.NativeMethods.FollowSymLink(path);
-        }
-
         internal static string NonWindowsGetUserFromPid(int path)
         {
             return Unix.NativeMethods.GetUserFromPid(path);
