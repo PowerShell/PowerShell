@@ -1098,23 +1098,24 @@ namespace System.Management.Automation
         [ArchitectureSensitive]
         private static bool IsWindowsApplication(string fileName)
         {
-            var fileInfo = new FileInfo(fileName);
-            if (!fileInfo.Exists)
-            {
-                throw new ArgumentException(
-                    StringUtil.Format(SessionStateStrings.PathNotFound, fileName));
-            }
-
+#if UNIX
+            return false;
+#else
             if (!Platform.IsWindowsDesktop)
             {
                 return false;
             }
 
-            // SHGetFileInfo() does not understand reparse points and returns 0 ("non exe or error"), so we use the link target in that case.
-            // This is a workaround for Microsoft Store applications.
-            if (fileInfo.LinkTarget is not null)
+            // The function 'SHGetFileInfo()' does not understand reparse points and returns 0 ("non exe or error")
+            // for a symbolic link file, so we try to get the immediate link target in that case.
+            // Why not get the final target (use 'returnFinalTarget: true')? Because:
+            //  1. When starting a process on Windows, if the 'FileName' is a symbolic link, the immediate link target will automatically be used,
+            //     but the OS does not do recursive resolution when the immediate link target is also a symbolic link.
+            //  2. Keep the same behavior as before adopting the 'LinkTarget' and 'ResolveLinkTarget' APIs in .NET 6.
+            string linkTarget = new FileInfo(fileName).ResolveLinkTarget(returnFinalTarget: false)?.FullName;
+            if (linkTarget is not null)
             {
-                fileName = fileInfo.LinkTarget;
+                fileName = linkTarget;
             }
 
             SHFILEINFO shinfo = new SHFILEINFO();
@@ -1135,6 +1136,7 @@ namespace System.Management.Automation
                     // anything else - is a windows program...
                     return true;
             }
+#endif
         }
 
         #endregion checkForConsoleApplication
