@@ -1112,7 +1112,7 @@ namespace System.Management.Automation
             //  1. When starting a process on Windows, if the 'FileName' is a symbolic link, the immediate link target will automatically be used,
             //     but the OS does not do recursive resolution when the immediate link target is also a symbolic link.
             //  2. Keep the same behavior as before adopting the 'LinkTarget' and 'ResolveLinkTarget' APIs in .NET 6.
-            string linkTarget = new FileInfo(fileName).ResolveLinkTarget(returnFinalTarget: false)?.FullName;
+            string linkTarget = File.ResolveLinkTarget(fileName, returnFinalTarget: false)?.FullName;
             if (linkTarget is not null)
             {
                 fileName = linkTarget;
