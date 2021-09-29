@@ -132,6 +132,7 @@ CodeFormatter
 codeowner
 codepage
 commanddiscovery
+CommandInvocationIntrinsics
 commandsearch
 CommandSearcher
 comobject
@@ -176,6 +177,7 @@ ctrl
 CurrentCulture
 CustomShellCommands.cs
 DamirAinullin
+DarylGraves
 darquewarrior
 darwinjs
 DateTime
@@ -284,6 +286,7 @@ folderName
 foreach
 formatfileloading
 formatviewbinding
+FormatWideCommand
 Francisco-Gamino
 frontload
 fullclr
@@ -485,6 +488,7 @@ miaromero
 microsoft
 Microsoft.ApplicationInsights
 Microsoft.CodeAnalysis.CSharp
+Microsoft.CodeAnalysis.NetAnalyzers
 microsoft.com
 microsoft.management.infrastructure.cimcmdlets
 microsoft.management.infrastructure.native
@@ -650,6 +654,7 @@ preview.5.20268.9
 preview.5.20272.6
 preview.6
 preview.6.20318.15
+preview.6.21355.2
 preview.7
 preview.7.20356.2
 preview.7.20358.6
@@ -700,6 +705,8 @@ RandomNoun7
 raspbian
 rc
 rc.1
+rc.1.21455.2
+rc.1.21458.32
 rc.2
 rc.3
 rc2-24027
@@ -917,6 +924,7 @@ unregister-pssessionconfiguration
 unregistering
 untracked
 unvalidated
+UpdateDotnetRuntime.ps1
 update-formatdata
 update-modulemanifest
 update-scriptfileinfo
@@ -1368,6 +1376,7 @@ msixbundle
 PowerShell-Native#70
 AppxManifest.xml
 preview.9
+preview.10
 ArmaanMcleod
 entrypoint
 lselden
