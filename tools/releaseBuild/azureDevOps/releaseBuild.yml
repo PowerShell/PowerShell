@@ -13,6 +13,10 @@ pr:
 parameters:
   - name: ForceAzureBlobDelete
     displayName: Delete Azure Blob
+    type: string
+    values:
+      - true
+      - false
     default: false
 
 resources:
