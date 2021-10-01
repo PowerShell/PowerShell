@@ -773,6 +773,42 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $childB.Name | Should -BeExactly $childA.Name
         }
     }
+
+    Context "Show immediate target" {
+        BeforeAll {
+            $testDir = Join-Path $TestDrive "immediate-target"
+            New-Item -ItemType Directory $testDir > $null
+
+            $testFile = Join-Path $testDir "target"
+            Set-Content -Path $testFile -Value "Hello world"
+
+            Push-Location $testDir
+            New-Item -ItemType SymbolicLink -Path firstLink -Value target > $null
+            New-Item -ItemType SymbolicLink -Path secondLink -Value firstLink > $null
+            Pop-Location
+        }
+
+        AfterAll {
+            Remove-Item $testDir -Recurse -Force
+        }
+
+        It "Property 'Target' should show the immediate target" {
+            $firstLink = Get-Item (Join-Path $testDir 'firstLink')
+            $firstLink.Target | Should -BeExactly 'target'
+            $str = [Microsoft.PowerShell.Commands.FileSystemProvider]::NameString($firstLink)
+            [System.Management.Automation.Internal.StringDecorated]::new($str).ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'firstLink -> target'
+
+            $secondLink = Get-Item (Join-Path $testDir 'secondLink')
+            $secondLink.Target | Should -BeExactly 'firstLink'
+            $str = [Microsoft.PowerShell.Commands.FileSystemProvider]::NameString($secondLink)
+            [System.Management.Automation.Internal.StringDecorated]::new($str).ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'secondLink -> firstLink'
+        }
+
+        It "Get-Content should be able to resolve the final target" {
+            Get-Content (Join-Path $testDir 'firstLink') | Should -BeExactly "Hello world"
+            Get-Content (Join-Path $testDir 'secondLink') | Should -BeExactly "Hello world"
+        }
+    }
 }
 
 Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireAdminOnWindows" {
