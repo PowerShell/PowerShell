@@ -79,9 +79,12 @@ jobs:
     displayName: Merge signed files with Build
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
-  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-    displayName: 'Generate SBOM'
-    inputs:
+  # - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+  #   displayName: 'Generate SBOM'
+  #   inputs:
+  #     BuildDropPath: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+  - template: Sbom.yml@ComplianceRepo
+    parameters:
       BuildDropPath: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
 
   - pwsh: |

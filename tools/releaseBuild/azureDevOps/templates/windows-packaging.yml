@@ -227,10 +227,13 @@ jobs:
     displayName: Merge ThirdParty signed files with Build
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
-  - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-    displayName: 'Generate SBOM'
-    inputs:
+  - template: Sbom.yml@ComplianceRepo
+    parameters:
       BuildDropPath: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+  # - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+  #   displayName: 'Generate SBOM'
+  #   inputs:
+  #     BuildDropPath: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
 
   - powershell: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
