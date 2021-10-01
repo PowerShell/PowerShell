@@ -55,6 +55,8 @@ jobs:
     displayName: SyncTags
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
 
+  # TODO: add SBOM,
+  # we build and package in one step.  We need to split these two.
   - powershell: |
       $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
       & "$env:REPOROOT/tools/releaseBuild/vstsbuild.ps1" -ReleaseTag $(ReleaseTagVar) -Name '$(build)'
