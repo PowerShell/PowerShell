@@ -1088,7 +1088,7 @@ namespace System.Management.Automation
 
         private static void ValidateRange(object element, ValidateRangeKind rangeKind)
         {
-            if(element is TimeSpan ts)
+            if (element is TimeSpan ts)
             {
                 ValidateTimeSpanRange(ts, rangeKind);
                 return;
@@ -1218,7 +1218,7 @@ namespace System.Management.Automation
             }
         }
 
-        private void ValidateTimeSpanRange(TimeSpan element, ValidateRangeKind rangeKind)
+        private static void ValidateTimeSpanRange(TimeSpan element, ValidateRangeKind rangeKind)
         {
             TimeSpan zero = TimeSpan.Zero;
 
