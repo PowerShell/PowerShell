@@ -85,7 +85,7 @@ jobs:
   #     BuildDropPath: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
   - template: Sbom.yml@ComplianceRepo
     parameters:
-      BuildDropPath: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
+      BuildDropPath: '$(System.ArtifactsDirectory)/$(SymbolsFolder)'
 
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
