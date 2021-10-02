@@ -40,6 +40,8 @@ variables:
     value: $[counter(variables['branchCounterKey'], 1)]
   - name: ForceAzureBlobDelete
     value:  ${{ parameters.ForceAzureBlobDelete }}
+  - name: Github_Build_Repository_Uri
+    value: https://github.com/powershell/powershell
 
 stages:
   - stage: prep
