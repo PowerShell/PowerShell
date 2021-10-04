@@ -4148,18 +4148,20 @@ function Invoke-AzDevOpsLinuxPackageBuild {
         Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder
         $options = Get-PSOptions
         $null = New-Item -ItemType Directory "${buildFolder}-meta"
-        Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $Script:Options
+        Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $options
 
         ## Build 'linux-arm' and create 'tar.gz' package for it.
         ## Note that 'linux-arm' can only be built on Ubuntu environment.
         $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm32LinuxBuildFolder}"
         Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder
+        $options = Get-PSOptions
         $null = New-Item -ItemType Directory "${buildFolder}-meta"
-        Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $Script:Options
+        Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $options
 
         $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
         Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder
+        $options = Get-PSOptions
         $null = New-Item -ItemType Directory "${buildFolder}-meta"
-        Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $Script:Options
+        Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $options
     }
 }
