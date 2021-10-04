@@ -58,7 +58,7 @@ jobs:
   - powershell: |
       Import-Module "$env:REPOROOT/build.psm1"
 
-      Start-PSBootstrap -Package -NoSudo
+      Start-PSBootstrap -Package
     displayName: 'Bootstrap'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
 
