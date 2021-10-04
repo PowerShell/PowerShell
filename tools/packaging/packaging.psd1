@@ -20,6 +20,8 @@
         'Publish-NugetToMyGet'
         'Start-PSPackage'
         'Update-PSSignedBuildFolder'
+        'Invoke-AzDevOpsLinuxPackageCreation'
+        'Invoke-AzDevOpsLinuxPackageBuild'
     )
     RootModule        = "packaging.psm1"
     RequiredModules   = @("build")

@@ -4023,3 +4023,143 @@ function New-GlobalToolNupkg
         New-NugetPackage -NuSpecPath $_.RootFolder -PackageDestinationPath $DestinationPath
     }
 }
+
+${mainLinuxBuildFolder} = 'pwshLinuxBuild'
+${minSizeLinuxBuildFolder} = 'pwshLinuxBuildMinSize'
+${arm32LinuxBuildFolder} = 'pwshLinuxBuildArm32'
+${arm64LinuxBuildFolder} = 'pwshLinuxBuildArm64'
+
+<#
+    Used in Azure DevOps Yaml to package all the linux packages for a channel.
+#>
+function Invoke-AzDevOpsLinuxPackageCreation {
+    param(
+        [switch]
+        $LTS,
+
+        [Parameter(Mandatory)]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ReleaseTag,
+
+        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
+        [String]$BuildType
+    )
+
+    if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
+        throw "Must be run in Azure DevOps"
+    }
+
+    Write-Verbose "Packaging '$BuildType'-LTS:$LTS for $ReleaseTag ..." -Verbose
+
+    Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\psoptions.json"
+
+    $releaseTagParam = @{ 'ReleaseTag' = '$(ReleaseTagVar)' }
+
+    switch ($BuildType) {
+        'fxdependent' {
+            Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
+        }
+        'alpine' {
+            Start-PSPackage -Type 'tar-alpine' @releaseTagParam -LTS:$LTS
+        }
+        default {
+            Start-PSPackage @releaseTagParam -LTS:$LTS
+        }
+    }
+
+    if ($BuildType -eq 'deb') {
+        Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS
+
+        Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\psoptions.json"
+
+        Write-Verbose -Verbose "---- Min-Size ----"
+        Write-Verbose -Verbose "options.Output: $($options.Output)"
+        Write-Verbose -Verbose "options.Top $($options.Top)"
+
+        Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
+
+        ## Create 'linux-arm' 'tar.gz' package.
+        ## Note that 'linux-arm' can only be built on Ubuntu environment.
+        Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\psoptions.json"
+        Start-PSPackage -Type tar-arm @releaseTagParam -LTS:$LTS
+
+        ## Create 'linux-arm64' 'tar.gz' package.
+        ## Note that 'linux-arm64' can only be built on Ubuntu environment.
+        Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\psoptions.json"
+        Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
+    }
+}
+
+<#
+    Used in Azure DevOps Yaml to do all the builds needed for all Linux packages for a channel.
+#>
+function Invoke-AzDevOpsLinuxPackageBuild {
+    param (
+        [Parameter(Mandatory)]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ReleaseTag,
+
+        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
+        [String]$BuildType
+    )
+
+    if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
+        throw "Must be run in Azure DevOps"
+    }
+
+    Write-Verbose "Building '$BuildType' for $ReleaseTag ..." -Verbose
+
+    $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
+
+    $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true; Restore = $true }
+
+    switch ($BuildType) {
+        'fxdependent' {
+            $buildParams.Add("Runtime", "fxdependent")
+        }
+        'alpine' {
+            $buildParams.Add("Runtime", 'alpine-x64')
+        }
+        default {
+            $buildParams.Add("Crossgen", $true)
+        }
+    }
+
+    $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
+    Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder
+    $options = Get-PSOptions
+    $null = New-Item -ItemType Directory "${buildFolder}-meta"
+    Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $Script:Options
+
+    if ($BuildType -eq 'deb') {
+        ## Build 'min-size'
+        Write-Verbose -Verbose "---- Min-Size ----"
+        Write-Verbose -Verbose "options.Output: $($options.Output)"
+        Write-Verbose -Verbose "options.Top $($options.Top)"
+        #$binDir = Join-Path -Path $options.Top -ChildPath 'bin'
+        #Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
+        #Remove-Item -Path $binDir -Recurse -Force
+
+        $buildParams['Crossgen'] = $false
+        $buildParams['ForMinimalSize'] = $true
+        $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${minSizeLinuxBuildFolder}"
+        Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder
+        $options = Get-PSOptions
+        $null = New-Item -ItemType Directory "${buildFolder}-meta"
+        Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $Script:Options
+
+        ## Build 'linux-arm' and create 'tar.gz' package for it.
+        ## Note that 'linux-arm' can only be built on Ubuntu environment.
+        $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm32LinuxBuildFolder}"
+        Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder
+        $null = New-Item -ItemType Directory "${buildFolder}-meta"
+        Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $Script:Options
+
+        $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
+        Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder
+        $null = New-Item -ItemType Directory "${buildFolder}-meta"
+        Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $Script:Options
+    }
+}
