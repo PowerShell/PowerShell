@@ -783,8 +783,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Set-Content -Path $testFile -Value "Hello world"
 
             Push-Location $testDir
-            New-Item -ItemType SymbolicLink -Path firstLink -Value target > $null
-            New-Item -ItemType SymbolicLink -Path secondLink -Value firstLink > $null
+            New-Item -ItemType SymbolicLink -Path 'firstLink' -Value 'target' > $null
+            New-Item -ItemType SymbolicLink -Path 'secondLink' -Value 'firstLink' > $null
             Pop-Location
         }
 
