@@ -4139,7 +4139,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
         Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder
         $options = Get-PSOptions
         $null = New-Item -ItemType Directory "${buildFolder}-meta"
-        Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $Script:Options
+        Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $options
 
         if ($BuildType -eq 'deb') {
             ## Build 'min-size'
