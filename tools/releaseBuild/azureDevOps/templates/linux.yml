@@ -32,22 +32,12 @@ jobs:
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
 
-  - powershell: |
-      Write-Verbose -Verbose "$(build)"
+  - template: cloneToOfficialPath.yml
 
-      if ('$(build)' -in 'alpine', 'fxdependent' -and '$(ReleaseTagVar)' -match '6.0.*')
-      {
-          $vstsCommandString = "vso[task.setvariable variable=SkipBuild]true"
-      }
-      else
-      {
-          $vstsCommandString = "vso[task.setvariable variable=SkipBuild]false"
-      }
-    displayName: 'Skip Alpine or fxdependent for PS v6.0.*'
 
   - template: insert-nuget-config-azfeed.yml
     parameters:
-      repoRoot: $(REPOROOT)
+      repoRoot: $(PowerShellRoot)
 
   - powershell: |
       import-module "$env:REPOROOT/build.psm1"
@@ -63,12 +53,14 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
 
   - powershell: |
-      Import-Module "$env:REPOROOT/build.psm1"
-      Import-Module "$env:REPOROOT/tools/packaging"
+
+      Import-Module "$env:POWERSHELLROOT/build.psm1"
+      Import-Module "$env:POWERSHELLROOT/tools/packaging"
 
       Invoke-AzDevOpsLinuxPackageBuild -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
     displayName: 'Build'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+    workingDirectory: $(PowerShellRoot)
 
   - template: Sbom.yml@ComplianceRepo
     parameters:
@@ -98,10 +90,10 @@ jobs:
         displayName: Arm64 SBOM
 
   - powershell: |
-      Import-Module "$env:REPOROOT/build.psm1"
-      Import-Module "$env:REPOROOT/tools/packaging"
+      Import-Module "$env:POWERSHELLROOT/build.psm1"
+      Import-Module "$env:POWERSHELLROOT/tools/packaging"
 
-      $metadata = Get-Content "$env:REPOROOT/tools/metadata.json" -Raw | ConvertFrom-Json
+      $metadata = Get-Content "$env:POWERSHELLROOT/tools/metadata.json" -Raw | ConvertFrom-Json
       $LTS = $metadata.LTSRelease
       Write-Verbose -Verbose -Message "LTS is set to: $LTS"
 
@@ -113,9 +105,10 @@ jobs:
       }
     displayName: 'Package'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+    workingDirectory: $(PowerShellRoot)
 
   - powershell: |
-      $linuxPackages = Get-ChildItem "$env:REPOROOT/powershell*" -Include *.deb,*.rpm,*.tar.gz
+      $linuxPackages = Get-ChildItem "$env:POWERSHELLROOT/powershell*" -Include *.deb,*.rpm,*.tar.gz
 
       $bucket = 'release'
       foreach ($linuxPackage in $linuxPackages)
@@ -126,6 +119,7 @@ jobs:
       }
     displayName: Publish artifacts
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+    workingDirectory: $(PowerShellRoot)
 
 - job: upload_${{ parameters.buildName }}
   displayName: ${{ parameters.uploadDisplayName }} ${{ parameters.buildName }}
