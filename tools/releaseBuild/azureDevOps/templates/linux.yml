@@ -55,14 +55,71 @@ jobs:
     displayName: SyncTags
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
 
-  # TODO: add SBOM,
-  # we build and package in one step.  We need to split these two.
   - powershell: |
-      $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
-      & "$env:REPOROOT/tools/releaseBuild/vstsbuild.ps1" -ReleaseTag $(ReleaseTagVar) -Name '$(build)'
-      $env:AzDevOpsFeedPAT2 = $null
+      Import-Module "$env:REPOROOT/build.psm1"
 
-    displayName: 'Build and package'
+      Start-PSBootstrap -Package -NoSudo
+    displayName: 'Bootstrap'
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+
+  - powershell: |
+      Import-Module "$env:REPOROOT/build.psm1"
+
+      Invoke-AzDevOpsLinuxPackageBuild -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+    displayName: 'Build'
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+
+  - template: Sbom.yml@ComplianceRepo
+    parameters:
+      BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+      Build_Repository_Uri: $(Github_Build_Repository_Uri)
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinArm64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+
+  - powershell: |
+      Import-Module "$env:REPOROOT/build.psm1"
+      Import-Module "$env:REPOROOT/tools/packaging"
+
+      $metadata = Get-Content "$env:REPOROOT/tools/metadata.json" -Raw | ConvertFrom-Json
+      $LTS = $metadata.LTSRelease
+      Write-Verbose -Verbose -Message "LTS is set to: $LTS"
+
+      Invoke-AzDevOpsLinuxPackageCreation -ReleaseTag '$(ReleaseTagVar)'
+
+      if ($LTS) {
+          Write-Verbose -Verbose "Packaging LTS"
+          Invoke-AzDevOpsLinuxPackageCreation -LTS  -ReleaseTag '$(ReleaseTagVar)'
+      }
+    displayName: 'Package'
+    condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+
+  - powershell: |
+      $linuxPackages = Get-ChildItem "$env:REPOROOT/powershell*" -Include *.deb,*.rpm,*.tar.gz
+
+      $bucket = 'release'
+      foreach ($linuxPackage in $linuxPackages)
+      {
+          $filePath = $linuxPackage.FullName
+          Write-Verbose "Publishing $filePath to $bucket" -Verbose
+          Write-Host "##vso[artifact.upload containerfolder=$bucket;artifactname=$bucket]$filePath"
+      }
+    displayName: Publish artifacts
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
 
 - job: upload_${{ parameters.buildName }}
