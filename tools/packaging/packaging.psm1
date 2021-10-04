@@ -4055,7 +4055,7 @@ function Invoke-AzDevOpsLinuxPackageCreation {
 
         Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\psoptions.json"
 
-        $releaseTagParam = @{ 'ReleaseTag' = '$(ReleaseTagVar)' }
+        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
 
         switch ($BuildType) {
             'fxdependent' {
