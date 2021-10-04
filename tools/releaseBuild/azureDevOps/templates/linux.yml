@@ -64,6 +64,7 @@ jobs:
 
   - powershell: |
       Import-Module "$env:REPOROOT/build.psm1"
+      Import-Module "$env:REPOROOT/tools/packaging"
 
       Invoke-AzDevOpsLinuxPackageBuild -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
     displayName: 'Build'
