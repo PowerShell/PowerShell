@@ -1670,10 +1670,10 @@ Describe "Json Bug fixes"  -Tags "Feature" {
 
     $testCases = @(
         @{
-            Name = "ConvertTo-Json -Depth 101 throws MaximumAllowedDepthReached when the user specifies a depth greater than 100."
+            Name = "ConvertTo-Json -Depth 101 throws ParameterArgumentValidationError when the user specifies a depth greater than 100."
             NumberOfElements = 10
             MaxDepth = 101
-            FullyQualifiedErrorId = "ReachedMaximumDepthAllowed,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
+            FullyQualifiedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
             ShouldThrow = $true
         }
         @{
