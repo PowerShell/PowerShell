@@ -432,7 +432,7 @@ namespace Microsoft.PowerShell
                     host.ShouldEndSession = shouldEndSession;
                 }
 
-                // Creation of the tread and starting it should be an atomic operation.
+                // Creation of the thread and starting it should be an atomic operation.
                 // otherwise the code in Run method can get instance of the breakhandlerThread
                 // after it is created and before started and call join on it. This will result
                 // in ThreadStateException.

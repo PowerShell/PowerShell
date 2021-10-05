@@ -680,10 +680,7 @@ namespace System.Management.Automation.Runspaces
             AddMember(
                 errors,
                 typeName,
-                new PSCodeProperty(
-                    @"Target",
-                    GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), @"GetTarget"),
-                    setterCodeReference: null),
+                new PSAliasProperty(@"Target", @"LinkTarget", conversionType: null),
                 typeMembers,
                 isOverride: false);
 
@@ -808,10 +805,7 @@ namespace System.Management.Automation.Runspaces
             AddMember(
                 errors,
                 typeName,
-                new PSCodeProperty(
-                    @"Target",
-                    GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), @"GetTarget"),
-                    setterCodeReference: null),
+                new PSAliasProperty(@"Target", @"LinkTarget", conversionType: null),
                 typeMembers,
                 isOverride: false);
 

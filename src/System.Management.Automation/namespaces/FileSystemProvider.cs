@@ -2069,7 +2069,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo))
                     {
-                        return $"{PSStyle.Instance.FileInfo.SymbolicLink}{fileInfo.Name}{PSStyle.Instance.Reset} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}";
+                        return $"{PSStyle.Instance.FileInfo.SymbolicLink}{fileInfo.Name}{PSStyle.Instance.Reset} -> {fileInfo.LinkTarget}";
                     }
                     else if (fileInfo.Attributes.HasFlag(FileAttributes.Directory))
                     {
@@ -2096,7 +2096,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return instance?.BaseObject is FileSystemInfo fileInfo
                     ? InternalSymbolicLinkLinkCodeMethods.IsReparsePointLikeSymlink(fileInfo)
-                        ? $"{fileInfo.Name} -> {InternalSymbolicLinkLinkCodeMethods.GetTarget(instance)}"
+                        ? $"{fileInfo.Name} -> {fileInfo.LinkTarget}"
                         : fileInfo.Name
                     : string.Empty;
             }
@@ -8105,15 +8105,18 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="instance">The object of FileInfo or DirectoryInfo type.</param>
         /// <returns>The target of the reparse point.</returns>
+        [Obsolete("This method is now obsolete. Please use the .NET API 'FileSystemInfo.LinkTarget'", error: true)]
         public static string GetTarget(PSObject instance)
         {
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
-#if !UNIX
-                return WinInternalGetTarget(fileSysInfo.FullName);
-#else
-               return UnixInternalGetTarget(fileSysInfo.FullName);
-#endif
+                if (!fileSysInfo.Exists)
+                {
+                    throw new ArgumentException(
+                        StringUtil.Format(SessionStateStrings.PathNotFound, fileSysInfo.FullName));
+                }
+
+                return fileSysInfo.LinkTarget;
             }
 
             return null;
@@ -8136,20 +8139,6 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
-#if UNIX
-        private static string UnixInternalGetTarget(string filePath)
-        {
-            string link = Platform.NonWindowsInternalGetTarget(filePath);
-
-            if (string.IsNullOrEmpty(link))
-            {
-                throw new Win32Exception(Marshal.GetLastWin32Error());
-            }
-
-            return link;
-        }
-#endif
-
         private static string InternalGetLinkType(FileSystemInfo fileInfo)
         {
             if (Platform.IsWindows)
@@ -8165,16 +8154,11 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static string WinInternalGetLinkType(string filePath)
         {
-            if (!Platform.IsWindows)
-            {
-                throw new PlatformNotSupportedException();
-            }
-
             // We set accessMode parameter to zero because documentation says:
             // If this parameter is zero, the application can query certain metadata
             // such as file, directory, or device attributes without accessing
             // that file or device, even if GENERIC_READ access would have been denied.
-            using (SafeFileHandle handle = OpenReparsePoint(filePath, FileDesiredAccess.GenericZero))
+            using (SafeFileHandle handle = WinOpenReparsePoint(filePath, FileDesiredAccess.GenericZero))
             {
                 int outBufferSize = Marshal.SizeOf<REPARSE_DATA_BUFFER_SYMBOLICLINK>();
 
@@ -8439,176 +8423,77 @@ namespace Microsoft.PowerShell.Commands
             return succeeded && (handleInfo.NumberOfLinks > 1);
         }
 
-#if !UNIX
-        internal static string WinInternalGetTarget(string path)
-        {
-            // We set accessMode parameter to zero because documentation says:
-            // If this parameter is zero, the application can query certain metadata
-            // such as file, directory, or device attributes without accessing
-            // that file or device, even if GENERIC_READ access would have been denied.
-            using (SafeFileHandle handle = OpenReparsePoint(path, FileDesiredAccess.GenericZero))
-            {
-                return WinInternalGetTarget(handle);
-            }
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        private static string WinInternalGetTarget(SafeFileHandle handle)
-        {
-            int outBufferSize = Marshal.SizeOf<REPARSE_DATA_BUFFER_SYMBOLICLINK>();
-
-            IntPtr outBuffer = Marshal.AllocHGlobal(outBufferSize);
-            bool success = false;
-
-            try
-            {
-                int bytesReturned;
-
-                // OACR warning 62001 about using DeviceIOControl has been disabled.
-                // According to MSDN guidance DangerousAddRef() and DangerousRelease() have been used.
-                handle.DangerousAddRef(ref success);
-
-                bool result = DeviceIoControl(
-                    handle.DangerousGetHandle(),
-                    FSCTL_GET_REPARSE_POINT,
-                    InBuffer: IntPtr.Zero,
-                    nInBufferSize: 0,
-                    outBuffer,
-                    outBufferSize,
-                    out bytesReturned,
-                    lpOverlapped: IntPtr.Zero);
-
-                if (!result)
-                {
-                    // It's not a reparse point or the file system doesn't support reparse points.
-                    return null;
-                }
-
-                string targetDir = null;
-
-                REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
-
-                switch (reparseDataBuffer.ReparseTag)
-                {
-                    case IO_REPARSE_TAG_SYMLINK:
-                        targetDir = Encoding.Unicode.GetString(reparseDataBuffer.PathBuffer, reparseDataBuffer.SubstituteNameOffset, reparseDataBuffer.SubstituteNameLength);
-                        break;
-
-                    case IO_REPARSE_TAG_MOUNT_POINT:
-                        REPARSE_DATA_BUFFER_MOUNTPOINT reparseMountPointDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_MOUNTPOINT>(outBuffer);
-                        targetDir = Encoding.Unicode.GetString(reparseMountPointDataBuffer.PathBuffer, reparseMountPointDataBuffer.SubstituteNameOffset, reparseMountPointDataBuffer.SubstituteNameLength);
-                        break;
-
-                    default:
-                        return null;
-                }
-
-                if (targetDir != null && targetDir.StartsWith(NonInterpretedPathPrefix, StringComparison.OrdinalIgnoreCase))
-                {
-                    targetDir = targetDir.Substring(NonInterpretedPathPrefix.Length);
-                }
-
-                return targetDir;
-            }
-            finally
-            {
-                if (success)
-                {
-                    handle.DangerousRelease();
-                }
-
-                Marshal.FreeHGlobal(outBuffer);
-            }
-        }
-#endif
-
         internal static bool CreateJunction(string path, string target)
         {
-            // this is a purely Windows specific feature, no feature flag
-            // used for that reason
+            // this is a purely Windows specific feature, no feature flag used for that reason.
             if (Platform.IsWindows)
             {
                 return WinCreateJunction(path, target);
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         private static bool WinCreateJunction(string path, string target)
         {
-            if (!string.IsNullOrEmpty(path))
-            {
-                if (!string.IsNullOrEmpty(target))
-                {
-                    using (SafeHandle handle = OpenReparsePoint(path, FileDesiredAccess.GenericWrite))
-                    {
-                        byte[] mountPointBytes = Encoding.Unicode.GetBytes(NonInterpretedPathPrefix + Path.GetFullPath(target));
-
-                        REPARSE_DATA_BUFFER_MOUNTPOINT mountPoint = new REPARSE_DATA_BUFFER_MOUNTPOINT();
-                        mountPoint.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
-                        mountPoint.ReparseDataLength = (ushort)(mountPointBytes.Length + 12); // Added space for the header and null endo
-                        mountPoint.SubstituteNameOffset = 0;
-                        mountPoint.SubstituteNameLength = (ushort)mountPointBytes.Length;
-                        mountPoint.PrintNameOffset = (ushort)(mountPointBytes.Length + 2); // 2 as unicode null take 2 bytes.
-                        mountPoint.PrintNameLength = 0;
-                        mountPoint.PathBuffer = new byte[0x3FF0]; // Buffer for max size.
-                        Array.Copy(mountPointBytes, mountPoint.PathBuffer, mountPointBytes.Length);
-
-                        int nativeBufferSize = Marshal.SizeOf(mountPoint);
-                        IntPtr nativeBuffer = Marshal.AllocHGlobal(nativeBufferSize);
-                        bool success = false;
-
-                        try
-                        {
-                            Marshal.StructureToPtr(mountPoint, nativeBuffer, false);
-
-                            int bytesReturned = 0;
-
-                            // OACR warning 62001 about using DeviceIOControl has been disabled.
-                            // According to MSDN guidance DangerousAddRef() and DangerousRelease() have been used.
-                            handle.DangerousAddRef(ref success);
-
-                            bool result = DeviceIoControl(handle.DangerousGetHandle(), FSCTL_SET_REPARSE_POINT, nativeBuffer, mountPointBytes.Length + 20, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
-
-                            if (!result)
-                            {
-                                throw new Win32Exception(Marshal.GetLastWin32Error());
-                            }
-
-                            return result;
-                        }
-                        finally
-                        {
-                            Marshal.FreeHGlobal(nativeBuffer);
-
-                            if (success)
-                            {
-                                handle.DangerousRelease();
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    throw new ArgumentNullException(nameof(target));
-                }
-            }
-            else
+            if (string.IsNullOrEmpty(path))
             {
                 throw new ArgumentNullException(nameof(path));
             }
-        }
 
-        private static SafeFileHandle OpenReparsePoint(string reparsePoint, FileDesiredAccess accessMode)
-        {
-#if UNIX
-            throw new PlatformNotSupportedException();
-#else
-            return WinOpenReparsePoint(reparsePoint, accessMode);
-#endif
+            if (string.IsNullOrEmpty(target))
+            {
+                throw new ArgumentNullException(nameof(target));
+            }
+
+            using (SafeHandle handle = WinOpenReparsePoint(path, FileDesiredAccess.GenericWrite))
+            {
+                byte[] mountPointBytes = Encoding.Unicode.GetBytes(NonInterpretedPathPrefix + Path.GetFullPath(target));
+
+                var mountPoint = new REPARSE_DATA_BUFFER_MOUNTPOINT();
+                mountPoint.ReparseTag = IO_REPARSE_TAG_MOUNT_POINT;
+                mountPoint.ReparseDataLength = (ushort)(mountPointBytes.Length + 12); // Added space for the header and null endo
+                mountPoint.SubstituteNameOffset = 0;
+                mountPoint.SubstituteNameLength = (ushort)mountPointBytes.Length;
+                mountPoint.PrintNameOffset = (ushort)(mountPointBytes.Length + 2); // 2 as unicode null take 2 bytes.
+                mountPoint.PrintNameLength = 0;
+                mountPoint.PathBuffer = new byte[0x3FF0]; // Buffer for max size.
+                Array.Copy(mountPointBytes, mountPoint.PathBuffer, mountPointBytes.Length);
+
+                int nativeBufferSize = Marshal.SizeOf(mountPoint);
+                IntPtr nativeBuffer = Marshal.AllocHGlobal(nativeBufferSize);
+                bool success = false;
+
+                try
+                {
+                    Marshal.StructureToPtr(mountPoint, nativeBuffer, false);
+
+                    int bytesReturned = 0;
+
+                    // OACR warning 62001 about using DeviceIOControl has been disabled.
+                    // According to MSDN guidance DangerousAddRef() and DangerousRelease() have been used.
+                    handle.DangerousAddRef(ref success);
+
+                    bool result = DeviceIoControl(handle.DangerousGetHandle(), FSCTL_SET_REPARSE_POINT, nativeBuffer, mountPointBytes.Length + 20, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
+
+                    if (!result)
+                    {
+                        throw new Win32Exception(Marshal.GetLastWin32Error());
+                    }
+
+                    return result;
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(nativeBuffer);
+
+                    if (success)
+                    {
+                        handle.DangerousRelease();
+                    }
+                }
+            }
         }
 
         private static SafeFileHandle WinOpenReparsePoint(string reparsePoint, FileDesiredAccess accessMode)
