@@ -77,11 +77,11 @@ function Start-PSPackage {
             $WindowsRuntime, "Release"
         } elseif ($MacOSRuntime) {
            $MacOSRuntime, "Release"
-        } elseif ($Type -eq "tar-alpine") {
+        } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine") {
             New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
-        } elseif ($Type -eq "tar-arm") {
+        } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm") {
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
-        } elseif ($Type -eq "tar-arm64") {
+        } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm64") {
             if ($IsMacOS) {
                 New-PSOptions -Configuration "Release" -Runtime "osx-arm64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             } else {
@@ -103,12 +103,13 @@ function Start-PSPackage {
 
         if ($Type -eq 'fxdependent') {
             $NameSuffix = "win-fxdependent"
-            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
+            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration', Runtime: '$Runtime'"
         } elseif ($Type -eq 'fxdependent-win-desktop') {
             $NameSuffix = "win-fxdependentWinDesktop"
-            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
+            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration', Runtime: '$Runtime'"
         } elseif ($MacOSRuntime) {
             $NameSuffix = $MacOSRuntime
+            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration', Runtime: '$Runtime'"
         } else {
             Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
         }
