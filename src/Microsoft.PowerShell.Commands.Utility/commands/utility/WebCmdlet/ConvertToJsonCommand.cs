@@ -99,23 +99,7 @@ namespace Microsoft.PowerShell.Commands
                 _cancellationSource.Dispose();
             }
         }
-
-        /// <summary>
-        /// Prerequisite checks.
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            if (_depth > maxDepthAllowed)
-            {
-                string errorMessage = StringUtil.Format(WebCmdletStrings.ReachedMaximumDepthAllowed, maxDepthAllowed);
-                ThrowTerminatingError(new ErrorRecord(
-                                new InvalidOperationException(errorMessage),
-                                "ReachedMaximumDepthAllowed",
-                                ErrorCategory.InvalidOperation,
-                                null));
-            }
-        }
-
+        
         private readonly List<object> _inputObjects = new();
 
         /// <summary>
