@@ -979,15 +979,21 @@ namespace System.Management.Automation
 #if UNIX
             return false;
 #else
-            if (!Platform.IsWindowsDesktop) { return false; }
-
-            // SHGetFileInfo() does not understand reparse points and returns 0 ("non exe or error")
-            // so we are trying to get a real path before.
-            // It is a workaround for Microsoft Store applications.
-            string realPath = Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods.WinInternalGetTarget(fileName);
-            if (realPath is not null)
+            if (!Platform.IsWindowsDesktop)
             {
-                fileName = realPath;
+                return false;
+            }
+
+            // The function 'SHGetFileInfo()' does not understand reparse points and returns 0 ("non exe or error")
+            // for a symbolic link file, so we try to get the immediate link target in that case.
+            // Why not get the final target (use 'returnFinalTarget: true')? Because:
+            //  1. When starting a process on Windows, if the 'FileName' is a symbolic link, the immediate link target will automatically be used,
+            //     but the OS does not do recursive resolution when the immediate link target is also a symbolic link.
+            //  2. Keep the same behavior as before adopting the 'LinkTarget' and 'ResolveLinkTarget' APIs in .NET 6.
+            string linkTarget = File.ResolveLinkTarget(fileName, returnFinalTarget: false)?.FullName;
+            if (linkTarget is not null)
+            {
+                fileName = linkTarget;
             }
 
             SHFILEINFO shinfo = new SHFILEINFO();
