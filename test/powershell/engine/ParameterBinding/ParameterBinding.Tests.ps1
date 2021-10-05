@@ -264,6 +264,40 @@ Describe "Parameter Binding Tests" -Tags "CI" {
         { Copy-Item "~\$guid*" -Destination ~ -ToSession $null } | Should -Throw -ErrorId 'ParameterArgumentValidationError'
     }
 
+    It 'PipelineVariable should not cause variable-removal exception (issue #16155)' {
+        function Invoke-AddOne {
+            param (
+                [Parameter(ValueFromPipeline)]
+                [int]$Number
+            )
+
+            Begin {
+                $testValue = 'prefix-'
+            }
+
+            Process {
+                $testValue + $Number
+            }
+        }
+
+        1,2,3 | Invoke-AddOne -PipelineVariable testValue | ForEach-Object { $testValue } | Should -Be @('prefix-1', 'prefix-2', 'prefix-3')
+        { Get-Variable -Name testValue -ErrorAction Stop } | Should -Throw -ErrorId 'VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand'
+
+        $results = & { $test = 'str'; 1,2,3 | Invoke-AddOne -PipelineVariable test | ForEach-Object { $test }; Get-Variable test }
+        $results | Should -HaveCount 4
+        $results[0] | Should -BeExactly 'prefix-1'
+        $results[1] | Should -BeExactly 'prefix-2'
+        $results[2] | Should -BeExactly 'prefix-3'
+        $results[3] -is [psvariable] | Should -BeTrue
+
+        $results = & { Set-Variable -Name test -Value 'str'; 1,2,3 | Invoke-AddOne -PipelineVariable test | ForEach-Object { $test }; Get-Variable test }
+        $results | Should -HaveCount 4
+        $results[0] | Should -BeExactly 'prefix-1'
+        $results[1] | Should -BeExactly 'prefix-2'
+        $results[2] | Should -BeExactly 'prefix-3'
+        $results[3] -is [psvariable] | Should -BeTrue
+    }
+
     Context "PipelineVariable Behaviour" {
 
         BeforeAll {

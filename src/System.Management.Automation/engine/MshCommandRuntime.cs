@@ -928,7 +928,8 @@ namespace System.Management.Automation
         /// </summary>
         internal string PipelineVariable { get; set; }
 
-        private PSVariable _pipelineVarReference = null;
+        private PSVariable _pipelineVarReference;
+        private bool _shouldRemovePipelineVariable;
 
         internal void SetupOutVariable()
         {
@@ -972,7 +973,7 @@ namespace System.Management.Automation
             // This can't use the common SetupVariable implementation, as this needs to persist for an entire
             // pipeline.
 
-            if (string.IsNullOrEmpty(this.PipelineVariable))
+            if (string.IsNullOrEmpty(PipelineVariable))
             {
                 return;
             }
@@ -983,16 +984,29 @@ namespace System.Management.Automation
                 _state = new SessionState(Context.EngineSessionState);
 
             // Create the pipeline variable
-            _pipelineVarReference = new PSVariable(this.PipelineVariable);
+            _pipelineVarReference = new PSVariable(PipelineVariable);
             _state.PSVariable.Set(_pipelineVarReference);
 
-            // Get the reference again in case we re-used one from the
-            // same scope.
-            _pipelineVarReference = _state.PSVariable.Get(this.PipelineVariable);
+            // Get the reference again in case that we need to re-use an existing one from the same scope.
+            // In the case that an existing variable from the same scope is used, don't attemtp to remove
+            // the pipeline varaible in the end.
+            PSVariable varToUse = _state.PSVariable.Get(PipelineVariable);
+            _shouldRemovePipelineVariable = ReferenceEquals(_pipelineVarReference, varToUse);
+
+            _pipelineVarReference = varToUse;
 
             if (_thisCommand is not PSScriptCmdlet)
             {
                 this.OutputPipe.SetPipelineVariable(_pipelineVarReference);
+            }
+        }
+
+        internal void RemovePipelineVariable()
+        {
+            if (_shouldRemovePipelineVariable)
+            {
+                // Remove pipeline varaiable when a pipeline is being torn down.
+                _state.PSVariable.Remove(PipelineVariable);
             }
         }
 
@@ -3765,25 +3779,12 @@ namespace System.Management.Automation
 
             if (this.PipelineVariable != null)
             {
-                // _state can be null if the current script block is dynamicparam, etc.
-                if (_state != null)
-                {
-                    // Create the pipeline variable
-                    _state.PSVariable.Set(_pipelineVarReference);
-
-                    // Get the reference again in case we re-used one from the
-                    // same scope.
-                    _pipelineVarReference = _state.PSVariable.Get(this.PipelineVariable);
-                }
-
                 this.OutputPipe.SetPipelineVariable(_pipelineVarReference);
             }
         }
 
         internal void RemoveVariableListsInPipe()
         {
-            // Diagnostics.Assert(thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
-
             if (_outVarList != null)
             {
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Output, _outVarList);
@@ -3807,9 +3808,6 @@ namespace System.Management.Automation
             if (this.PipelineVariable != null)
             {
                 this.OutputPipe.RemovePipelineVariable();
-                // '_state' could be null when a 'DynamicParam' block runs because the 'DynamicParam' block runs in 'DoPrepare',
-                // before 'PipelineProcessor.SetupParameterVariables' is called, where '_state' is initialized.
-                _state?.PSVariable.Remove(this.PipelineVariable);
             }
         }
     }
