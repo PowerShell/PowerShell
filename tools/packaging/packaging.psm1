@@ -4066,7 +4066,7 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             'alpine' {
                 Start-PSPackage -Type 'tar-alpine' @releaseTagParam -LTS:$LTS
             }
-            'alpine' {
+            'rpm' {
                 Start-PSPackage -Type 'rpm' @releaseTagParam -LTS:$LTS
             }
             default {
