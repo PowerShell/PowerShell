@@ -47,17 +47,19 @@ jobs:
       repoRoot: $(PowerShellRoot)
 
   - powershell: |
-      import-module "$env:REPOROOT/build.psm1"
+      import-module "$env:POWERSHELLROOT/build.psm1"
       Sync-PSTags -AddRemoteIfMissing
     displayName: SyncTags
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+    workingDirectory: $(PowerShellRoot)
 
   - powershell: |
-      Import-Module "$env:REPOROOT/build.psm1"
+      Import-Module "$env:POWERSHELLROOT/build.psm1"
 
       Start-PSBootstrap -Package
     displayName: 'Bootstrap'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
+    workingDirectory: $(PowerShellRoot)
 
   - powershell: |
 
