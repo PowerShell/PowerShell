@@ -5855,7 +5855,7 @@ namespace Microsoft.PowerShell.Commands
                     if (destination.StartsWith(Path.TrimEndingDirectorySeparator(path) + Path.DirectorySeparatorChar))
                     {
                         string error = StringUtil.Format(FileSystemProviderStrings.TargetCannotBeSubdirectoryOfSource, destination);
-                        Exception e = new IOException(error);
+                        var e = new IOException(error);
                         WriteError(new ErrorRecord(e, "MoveItemArgumentError", ErrorCategory.InvalidArgument, destination));
                         return;
                     }
