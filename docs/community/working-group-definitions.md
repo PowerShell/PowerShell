@@ -19,7 +19,6 @@ Today, DSC is integrated into the PowerShell language, and we need to manage it 
 
 * @TravisEz13
 * @theJasonHelmick
-* @joeyaiello
 * @anmenaga
 
 ## Developer Experience

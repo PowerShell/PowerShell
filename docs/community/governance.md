@@ -27,7 +27,6 @@ The PowerShell Committee and its members (aka Committee Members) are the primary
 
 * Bruce Payette ([BrucePay](https://github.com/BrucePay))
 * Jim Truher ([JamesWTruher](https://github.com/JamesWTruher))
-* Joey Aiello ([joeyaiello](https://github.com/joeyaiello))
 * Paul Higinbotham ([paulhigin](https://github.com/paulhigin))
 * Rob Holt ([rjmholt](https://github.com/rjmholt))
 * Steve Lee ([SteveL-MSFT](https://github.com/SteveL-MSFT))

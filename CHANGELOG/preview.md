@@ -1,5 +1,82 @@
 # Current preview release
 
+## [7.2.0-preview.10] - 2021-09-28
+
+### Engine Updates and Fixes
+
+- Remove duplicate remote server mediator code (#16027)
+
+### General Cmdlet Updates and Fixes
+
+- Use `PlainText` when writing to a host that doesn't support VT (#16092)
+- Remove support for `AppExecLinks` to retrieve target (#16044)
+- Move `GetOuputString()` and `GetFormatStyleString()` to `PSHostUserInterface` as public API (#16075)
+- Add `isOutputRedirected` parameter to `GetFormatStyleString()` method (#14397)
+- Fix `ConvertTo-SecureString` with key regression due to .NET breaking change (#16068)
+- Fix regression in `Move-Item` to only fallback to `CopyAndDelete` in specific cases (#16029)
+- Set `$?` correctly for command expression with redirection (#16046)
+- Use `CurrentCulture` when handling conversions to `DateTime` in `Add-History` (#16005) (Thanks @vexx32!)
+- Fix `NullReferenceException` in `Format-Wide` (#15990) (Thanks @DarylGraves!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze!</p>
+
+</summary>
+
+<ul>
+<li>Improve <code>CommandInvocationIntrinsics</code> API documentation and style (#14369)</li>
+<li>Use <code>bool?.GetValueOrDefault()</code> in <code>FormatWideCommand</code> (#15988) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Fix typo in build.psm1 (#16038) (Thanks @eltociear!)
+- Add `.stylecop` to `filetypexml` and format it (#16025)
+- Enable sending Teams notification when workflow fails (#15982)
+
+### Tests
+
+- Enable two previously disabled `Get-Process` tests (#15845) (Thanks @iSazonov!)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+Details
+</summary>
+
+<ul>
+<li>Add SHA256 hashes to release (#16147)</li>
+<li>Update <code>Microsoft.CodeAnalysis.CSharp</code> version (#16138)</li>
+<li>Change path for Component Governance for build to the path we actually use to build (#16137)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.NetAnalyzers</code> (#16070) (#16045) (#16036) (#16021) (#15985)</li>
+<li>Update .NET to <code>6.0.100-rc.1.21458.32</code> (#16066)</li>
+<li>Update minimum required OS version for macOS (#16088)</li>
+<li>Ensure locale is set correctly on Ubuntu 20.04 in CI (#16067) (#16073)</li>
+<li>Update .NET SDK version from <code>6.0.100-preview.6.21355.2</code> to <code>6.0.100-rc.1.21455.2</code> (#16041) (#16028) (#15648)</li>
+<li>Fix the GitHub Action for updating .NET daily builds (#16042)</li>
+<li>Move from PkgES hosted agents to 1ES hosted agents (#16023)</li>
+<li>Update Ubuntu images to use Ubuntu 20.04 (#15906)</li>
+<li>Fix the macOS build by updating the pool image name (#16010)</li>
+<li>Use Alpine 3.12 for building PowerShell for Alpine Linux (#16008)</li>
+<li>Ignore error from <code>Find-Package</code> (#15999)</li>
+<li>Find packages separately for each source in <code>UpdateDotnetRuntime.ps1</code> script (#15998)</li>
+<li>Update metadata to start using .NET 6 RC1 builds (#15981)</li>
+</ul>
+
+</details>
+
+[7.2.0-preview.10]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.9...v7.2.0-preview.10
+
 ## [7.2.0-preview.9] - 2021-08-23
 
 ### Breaking Changes
