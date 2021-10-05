@@ -4065,8 +4065,11 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             'alpine' {
                 Start-PSPackage -Type 'tar-alpine' @releaseTagParam -LTS:$LTS
             }
+            'alpine' {
+                Start-PSPackage -Type 'rpm' @releaseTagParam -LTS:$LTS
+            }
             default {
-                Start-PSPackage @releaseTagParam -LTS:$LTS
+                Start-PSPackage @releaseTagParam -LTS:$LTS -Type 'deb', 'tar'
             }
         }
 
