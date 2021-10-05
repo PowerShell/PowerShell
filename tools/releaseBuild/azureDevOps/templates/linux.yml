@@ -104,11 +104,11 @@ jobs:
       $LTS = $metadata.LTSRelease
       Write-Verbose -Verbose -Message "LTS is set to: $LTS"
 
-      Invoke-AzDevOpsLinuxPackageCreation -ReleaseTag '$(ReleaseTagVar)'
+      Invoke-AzDevOpsLinuxPackageCreation -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
 
       if ($LTS) {
           Write-Verbose -Verbose "Packaging LTS"
-          Invoke-AzDevOpsLinuxPackageCreation -LTS  -ReleaseTag '$(ReleaseTagVar)'
+          Invoke-AzDevOpsLinuxPackageCreation -LTS  -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
       }
     displayName: 'Package'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))

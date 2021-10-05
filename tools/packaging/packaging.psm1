@@ -4042,6 +4042,7 @@ function Invoke-AzDevOpsLinuxPackageCreation {
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
 
+        [Parameter(Mandatory)]
         [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
         [String]$BuildType
     )
@@ -4107,6 +4108,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
 
+        [Parameter(Mandatory)]
         [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
         [String]$BuildType
     )
