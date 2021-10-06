@@ -1298,16 +1298,21 @@ namespace System.Management.Automation.Internal
                         // pipeline failure and continue disposing cmdlets.
                         try
                         {
-                            MshCommandRuntime commandRuntime = commandProcessor.CommandRuntime;
-                            if (commandProcessor is CommandProcessor && commandProcessor.Command is not PSScriptCmdlet)
+                            // Only cmdlets can have variables defined via the common parameters.
+                            // We handle the cleanup of those variables only if we need to.
+                            if (commandProcessor is CommandProcessor)
                             {
-                                // Only a cmdlet can have variable lists defined via the common parameters.
-                                // We only need to take care of binary cmdlet here, because for script cmdlet,
-                                // the variable lists were already removed when exiting a scope.
-                                commandRuntime.RemoveVariableListsInPipe();
+                                if (commandProcessor.Command is not PSScriptCmdlet)
+                                {
+                                    // For script cmdlets, the variable lists were already removed when exiting a scope.
+                                    // So we only need to take care of binary cmdlets here.
+                                    commandProcessor.CommandRuntime.RemoveVariableListsInPipe();
+                                }
+
+                                // Remove the pipeline variable if we need to.
+                                commandProcessor.CommandRuntime.RemovePipelineVariable();
                             }
 
-                            commandRuntime.RemovePipelineVariable();
                             commandProcessor.Dispose();
                         }
                         // 2005/04/13-JonN: The only vaguely plausible reason
