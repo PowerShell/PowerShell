@@ -1298,7 +1298,7 @@ namespace System.Management.Automation.Internal
                         // pipeline failure and continue disposing cmdlets.
                         try
                         {
-                            var commandRuntime = commandProcessor.CommandRuntime;
+                            MshCommandRuntime commandRuntime = commandProcessor.CommandRuntime;
                             if (commandProcessor is CommandProcessor && commandProcessor.Command is not PSScriptCmdlet)
                             {
                                 // Only a cmdlet can have variable lists defined via the common parameters.
