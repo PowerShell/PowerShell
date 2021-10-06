@@ -985,15 +985,23 @@ namespace System.Management.Automation
 
             // Create the pipeline variable
             _pipelineVarReference = new PSVariable(PipelineVariable);
-            var varToUse = (PSVariable)_state.Internal.SetVariable(
+            object varToUse = _state.Internal.SetVariable(
                 _pipelineVarReference,
                 force: false,
                 CommandOrigin.Internal);
 
-            // The returned variable to be used could be an existing one from the same scope.
-            // In that case, don't attempt to remove the pipeline varaible in the end.
-            _shouldRemovePipelineVariable = ReferenceEquals(_pipelineVarReference, varToUse);
-            _pipelineVarReference = varToUse;
+            if (ReferenceEquals(_pipelineVarReference, varToUse))
+            {
+                // The returned variable is the exact same instance, which means we set a new variable.
+                // In this case, we will try removing the pipeline varaible in the end.
+                _shouldRemovePipelineVariable = true;
+            }
+            else
+            {
+                // A variable with the same name already exists in the same scope and it was returned.
+                // In this case, we update the reference and don't remove the varaible in the end.
+                _pipelineVarReference = (PSVariable)varToUse;
+            }
 
             if (_thisCommand is not PSScriptCmdlet)
             {
