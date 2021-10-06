@@ -993,13 +993,13 @@ namespace System.Management.Automation
             if (ReferenceEquals(_pipelineVarReference, varToUse))
             {
                 // The returned variable is the exact same instance, which means we set a new variable.
-                // In this case, we will try removing the pipeline varaible in the end.
+                // In this case, we will try removing the pipeline variable in the end.
                 _shouldRemovePipelineVariable = true;
             }
             else
             {
                 // A variable with the same name already exists in the same scope and it was returned.
-                // In this case, we update the reference and don't remove the varaible in the end.
+                // In this case, we update the reference and don't remove the variable in the end.
                 _pipelineVarReference = (PSVariable)varToUse;
             }
 
