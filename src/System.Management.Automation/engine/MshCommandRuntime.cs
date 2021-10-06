@@ -988,7 +988,7 @@ namespace System.Management.Automation
             _state.PSVariable.Set(_pipelineVarReference);
 
             // Get the reference again in case that we need to re-use an existing one from the same scope.
-            // In the case that an existing variable from the same scope is used, don't attemtp to remove
+            // In the case that an existing variable from the same scope is used, don't attempt to remove
             // the pipeline varaible in the end.
             PSVariable varToUse = _state.PSVariable.Get(PipelineVariable);
             _shouldRemovePipelineVariable = ReferenceEquals(_pipelineVarReference, varToUse);
@@ -1005,7 +1005,7 @@ namespace System.Management.Automation
         {
             if (_shouldRemovePipelineVariable)
             {
-                // Remove pipeline varaiable when a pipeline is being torn down.
+                // Remove pipeline variable when a pipeline is being torn down.
                 _state.PSVariable.Remove(PipelineVariable);
             }
         }
