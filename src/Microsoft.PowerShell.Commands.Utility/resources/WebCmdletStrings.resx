@@ -237,9 +237,6 @@
   <data name="JsonNetModuleFilesRequired" xml:space="preserve">
     <value>Ensure 'Json.Net.psd1' and 'Newtonsoft.Json.dll' are available in a versioned subdirectory of '{0}'.</value>
   </data>
-  <data name="ReachedMaximumDepthAllowed" xml:space="preserve">
-    <value>The maximum depth allowed for serialization is {0}.</value>
-  </data>
   <data name="JsonDeserializationFailed" xml:space="preserve">
     <value>Conversion from JSON failed with error: {0}</value>
   </data>
