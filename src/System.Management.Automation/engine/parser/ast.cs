@@ -1261,7 +1261,7 @@ namespace System.Management.Automation.Language
                 var varAst = ast as VariableExpressionAst;
                 if (varAst != null)
                 {
-                    var varPath = varAst.VariablePath;
+                    VariablePath varPath = varAst.VariablePath;
                     string varName = varPath.IsDriveQualified ? $"{varPath.DriveName}_{varPath.UnqualifiedPath}" : $"{varPath.UnqualifiedPath}";
                     string varSign = varAst.Splatted ? "@" : "$";
                     string newVarName = varSign + UsingExpressionAst.UsingPrefix + varName;
@@ -2330,7 +2330,7 @@ namespace System.Management.Automation.Language
                 // We are done processing the current ParameterAst
                 if (astStartOffset >= endOffset) { break; }
 
-                var varPath = varAst.VariablePath;
+                VariablePath varPath = varAst.VariablePath;
                 string varName = varPath.IsDriveQualified ? $"{varPath.DriveName}_{varPath.UnqualifiedPath}" : $"{varPath.UnqualifiedPath}";
                 string varSign = varAst.Splatted ? "@" : "$";
                 string newVarName = varSign + UsingExpressionAst.UsingPrefix + varName;

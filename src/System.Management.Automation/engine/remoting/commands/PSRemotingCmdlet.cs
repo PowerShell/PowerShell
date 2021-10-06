@@ -2374,7 +2374,7 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (var varAst in usingVariables)
                 {
-                    var varPath = varAst.VariablePath;
+                    VariablePath varPath = varAst.VariablePath;
                     string varName = varPath.IsDriveQualified ? $"{varPath.DriveName}_{varPath.UnqualifiedPath}" : $"{varPath.UnqualifiedPath}";
                     string paramName = UsingExpressionAst.UsingPrefix + varName;
                     string paramNameWithDollar = "$" + paramName;
