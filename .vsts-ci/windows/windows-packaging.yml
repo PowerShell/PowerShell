@@ -72,7 +72,7 @@ resources:
   repositories:
     - repository: ComplianceRepo
       type: github
-      endpoint: ComplianceGHRepo
+      endpoint: PowerShell
       name: PowerShell/compliance
       ref: master
 
