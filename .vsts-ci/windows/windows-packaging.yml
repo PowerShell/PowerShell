@@ -67,6 +67,8 @@ variables:
   - name: __SuppressAnsiEscapeSequences
     value: 1
   - group: fakeNugetKey
+  - name: SBOMGenerator_Formats
+    value: spdx:2.2
 
 resources:
   repositories:

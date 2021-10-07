@@ -447,8 +447,7 @@ function Invoke-CIFinish
         [string[]] $Stage = ('Build','Package')
     )
 
-    if ($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS) -and $Stages -contains 'Build')
-    {
+    if ($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS) -and $Stage -contains 'Build') {
         return New-LinuxPackage
     }
 
