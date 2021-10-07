@@ -98,14 +98,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// <summary>
-        /// Prerequisite checks.
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            //removed parameter check
-        }
-
         private readonly List<object> _inputObjects = new();
 
         /// <summary>
