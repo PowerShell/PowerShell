@@ -452,6 +452,7 @@ function Invoke-CIFinish
         return New-LinuxPackage
     }
 
+    $artifacts = New-Object System.Collections.ArrayList
     try {
         $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/mainBuild"
 
@@ -481,6 +482,12 @@ function Invoke-CIFinish
                 Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             }
 
+            # Set a variable, both in the current process and in AzDevOps for the packaging stage to get the release tag
+            $env:CI_FINISH_RELASETAG=$preReleaseVersion
+            $vstsCommandString = "vso[task.setvariable variable=CI_FINISH_RELASETAG]$preReleaseVersion"
+            Write-Verbose -Message "$vstsCommandString" -Verbose
+            Write-Host -Object "##$vstsCommandString"
+
             $armBuildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/releaseArm32"
 
             # produce win-arm and win-arm64 packages if it is a daily build
@@ -493,11 +500,11 @@ function Invoke-CIFinish
 
         if ($Stage -contains "Package") {
             Restore-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            $preReleaseVersion = $env:CI_FINISH_RELASETAG
 
             # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
             $packages = Start-PSPackage -Type msi, nupkg, zip, zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
-            $artifacts = New-Object System.Collections.ArrayList
             foreach ($package in $packages) {
                 if (Test-Path $package -ErrorAction Ignore)
                 {
