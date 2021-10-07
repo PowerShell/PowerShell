@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            
+            //removed parameter check
         }
 
         private readonly List<object> _inputObjects = new();
