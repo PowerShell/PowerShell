@@ -42,6 +42,8 @@ variables:
     value:  ${{ parameters.ForceAzureBlobDelete }}
   - name: Github_Build_Repository_Uri
     value: https://github.com/powershell/powershell
+  - name: SBOMGenerator_Formats
+    value: spdx:2.2
 
 stages:
   - stage: prep
