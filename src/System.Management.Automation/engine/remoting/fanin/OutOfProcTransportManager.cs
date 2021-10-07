@@ -1788,7 +1788,8 @@ namespace System.Management.Automation.Remoting.Client
                             // So just report the messages but don't act on them.
                             System.Console.WriteLine(error);
                         }
-                        catch (IOException) { }
+                        catch (IOException)
+                        { }
 
                         continue;
                     }
