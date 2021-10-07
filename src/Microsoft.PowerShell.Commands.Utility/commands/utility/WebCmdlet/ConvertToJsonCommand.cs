@@ -27,15 +27,13 @@ namespace Microsoft.PowerShell.Commands
 
         private int _depth = 2;
 
-        private const int maxDepthAllowed = 100;
-
         private readonly CancellationTokenSource _cancellationSource = new();
 
         /// <summary>
         /// Gets or sets the Depth property.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, int.MaxValue)]
+        [ValidateRange(0, 100)]
         public int Depth
         {
             get { return _depth; }
@@ -105,15 +103,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (_depth > maxDepthAllowed)
-            {
-                string errorMessage = StringUtil.Format(WebCmdletStrings.ReachedMaximumDepthAllowed, maxDepthAllowed);
-                ThrowTerminatingError(new ErrorRecord(
-                                new InvalidOperationException(errorMessage),
-                                "ReachedMaximumDepthAllowed",
-                                ErrorCategory.InvalidOperation,
-                                null));
-            }
+            
         }
 
         private readonly List<object> _inputObjects = new();
