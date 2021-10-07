@@ -69,8 +69,13 @@ variables:
   - group: fakeNugetKey
 
 resources:
-- repo: self
-  clean: true
+  repositories:
+    - repository: ComplianceRepo
+      type: github
+      endpoint: ComplianceGHRepo
+      name: PowerShell/compliance
+      ref: master
+
 stages:
 - stage: PackagingWin
   displayName: Packaging for Windows
