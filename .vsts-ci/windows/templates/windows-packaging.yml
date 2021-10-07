@@ -53,7 +53,7 @@ jobs:
       Import-Module .\tools\ci.psm1
       New-CodeCoverageAndTestPackage
       Invoke-CIFinish -Runtime win7-${{ parameters.architecture }} -channel ${{ parameters.channel }} -Stage Build
-    displayName: Build and Test Package
+    displayName: Build
     workingDirectory: $(repoPath)
 
   - template: Sbom.yml@ComplianceRepo
