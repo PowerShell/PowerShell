@@ -4144,10 +4144,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
         }
 
         $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
-        Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder
-        $options = Get-PSOptions
-        $null = New-Item -ItemType Directory "${buildFolder}-meta"
-        Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $options
+        Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
 
         if ($BuildType -eq 'deb') {
             ## Build 'min-size'
@@ -4161,24 +4158,15 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             $buildParams['Crossgen'] = $false
             $buildParams['ForMinimalSize'] = $true
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${minSizeLinuxBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder
-            $options = Get-PSOptions
-            $null = New-Item -ItemType Directory "${buildFolder}-meta"
-            Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $options
+            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
 
             ## Build 'linux-arm' and create 'tar.gz' package for it.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm32LinuxBuildFolder}"
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder
-            $options = Get-PSOptions
-            $null = New-Item -ItemType Directory "${buildFolder}-meta"
-            Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $options
+            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
 
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder
-            $options = Get-PSOptions
-            $null = New-Item -ItemType Directory "${buildFolder}-meta"
-            Save-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json" -Options $options
+            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
         }
     }
     catch {
