@@ -8,18 +8,19 @@ parameters:
   - name: channel
     default: 'preview'
 
-variables:
-  - name: repoFolder
-    value: PowerShell
-  - name: repoPath
-    value: $(Agent.BuildDirectory)\$(repoFolder)
-  - name: complianceRepoFolder
-    value: compliance
-  - name: complianceRepoPath
-    value: $(Agent.BuildDirectory)\$(complianceRepoFolder)
-
 jobs:
 - job: ${{ parameters.jobName }}_${{ parameters.channel }}_${{ parameters.architecture }}
+
+  variables:
+    - name: repoFolder
+      value: PowerShell
+    - name: repoPath
+      value: $(Agent.BuildDirectory)\$(repoFolder)
+    - name: complianceRepoFolder
+      value: compliance
+    - name: complianceRepoPath
+      value: $(Agent.BuildDirectory)\$(complianceRepoFolder)
+
   pool:
     name: ${{ parameters.pool }}
 
@@ -32,7 +33,7 @@ jobs:
 
   - checkout: ComplianceRepo
     clean: true
-    path: $(complianceRepoPath)
+    path: $(complianceRepoFolder)
 
   - powershell: |
       Get-ChildItem -Path env:
