@@ -472,6 +472,9 @@ function Invoke-CIFinish
                 $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
                 # Build clean before backing to remove files from testing
                 Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+                $options = Get-PSOptions
+                # Remove symbol files.
+                Remove-Item "$($options.Output)\*.pdb" -Force
             }
             else {
                 $releaseTag = Get-ReleaseTag
@@ -479,6 +482,9 @@ function Invoke-CIFinish
                 $preReleaseVersion = $releaseTagParts[0]+ ".9.9"
                 Write-Verbose "newPSReleaseTag: $preReleaseVersion" -Verbose
                 Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+                $options = Get-PSOptions
+                # Remove symbol files.
+                Remove-Item "$($options.Output)\*.pdb" -Force
             }
 
             # Set a variable, both in the current process and in AzDevOps for the packaging stage to get the release tag
@@ -491,9 +497,15 @@ function Invoke-CIFinish
 
             # produce win-arm and win-arm64 packages if it is a daily build
             Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -output $armBuildFolder -PSOptionsPath "${armBuildFolder}-meta/psoptions.json"
+            $options = Get-PSOptions
+            # Remove symbol files.
+            Remove-Item "$($options.Output)\*.pdb" -Force
 
             $armBuildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/releaseArm64"
             Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -output $armBuildFolder -PSOptionsPath "${armBuildFolder}-meta/psoptions.json"
+            $options = Get-PSOptions
+            # Remove symbol files.
+            Remove-Item "$($options.Output)\*.pdb" -Force
         }
 
 
