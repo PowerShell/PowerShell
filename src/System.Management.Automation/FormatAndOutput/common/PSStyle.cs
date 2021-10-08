@@ -63,9 +63,9 @@ namespace System.Management.Automation
             public string Cyan { get; } = "\x1b[36m";
 
             /// <summary>
-            /// Gets the color dark gray.
+            /// Gets the color bright black.
             /// </summary>
-            public string DarkGray { get; } = "\x1b[90m";
+            public string BrightBlack { get; } = "\x1b[90m";
 
             /// <summary>
             /// Gets the color green.
@@ -73,39 +73,39 @@ namespace System.Management.Automation
             public string Green { get; } = "\x1b[32m";
 
             /// <summary>
-            /// Gets the color light blue.
+            /// Gets the color bright blue.
             /// </summary>
-            public string LightBlue { get; } = "\x1b[94m";
+            public string BrightBlue { get; } = "\x1b[94m";
 
             /// <summary>
-            /// Gets the color light cyan.
+            /// Gets the color bright cyan.
             /// </summary>
-            public string LightCyan { get; } = "\x1b[96m";
+            public string BrightCyan { get; } = "\x1b[96m";
 
             /// <summary>
-            /// Gets the color light gray.
+            /// Gets the color bright white.
             /// </summary>
-            public string LightGray { get; } = "\x1b[97m";
+            public string BrightWhite { get; } = "\x1b[97m";
 
             /// <summary>
-            /// Gets the color light green.
+            /// Gets the color bright green.
             /// </summary>
-            public string LightGreen { get; } = "\x1b[92m";
+            public string BrightGreen { get; } = "\x1b[92m";
 
             /// <summary>
-            /// Gets the color light magenta.
+            /// Gets the color bright magenta.
             /// </summary>
-            public string LightMagenta { get; } = "\x1b[95m";
+            public string BrightMagenta { get; } = "\x1b[95m";
 
             /// <summary>
-            /// Gets the color light red.
+            /// Gets the color bright red.
             /// </summary>
-            public string LightRed { get; } = "\x1b[91m";
+            public string BrightRed { get; } = "\x1b[91m";
 
             /// <summary>
-            /// Gets the color light yellow.
+            /// Gets the color bright yellow.
             /// </summary>
-            public string LightYellow { get; } = "\x1b[93m";
+            public string BrightYellow { get; } = "\x1b[93m";
 
             /// <summary>
             /// Gets the color magenta.
@@ -178,9 +178,9 @@ namespace System.Management.Automation
             public string Cyan { get; } = "\x1b[46m";
 
             /// <summary>
-            /// Gets the color dark gray.
+            /// Gets the color bright black.
             /// </summary>
-            public string DarkGray { get; } = "\x1b[100m";
+            public string BrightBlack { get; } = "\x1b[100m";
 
             /// <summary>
             /// Gets the color green.
@@ -188,39 +188,39 @@ namespace System.Management.Automation
             public string Green { get; } = "\x1b[42m";
 
             /// <summary>
-            /// Gets the color light blue.
+            /// Gets the color bright blue.
             /// </summary>
-            public string LightBlue { get; } = "\x1b[104m";
+            public string BrightBlue { get; } = "\x1b[104m";
 
             /// <summary>
-            /// Gets the color light cyan.
+            /// Gets the color bright cyan.
             /// </summary>
-            public string LightCyan { get; } = "\x1b[106m";
+            public string BrightCyan { get; } = "\x1b[106m";
 
             /// <summary>
-            /// Gets the color light gray.
+            /// Gets the color bright white.
             /// </summary>
-            public string LightGray { get; } = "\x1b[107m";
+            public string BrightWhite { get; } = "\x1b[107m";
 
             /// <summary>
-            /// Gets the color light green.
+            /// Gets the color bright green.
             /// </summary>
-            public string LightGreen { get; } = "\x1b[102m";
+            public string BrightGreen { get; } = "\x1b[102m";
 
             /// <summary>
-            /// Gets the color light magenta.
+            /// Gets the color bright magenta.
             /// </summary>
-            public string LightMagenta { get; } = "\x1b[105m";
+            public string BrightMagenta { get; } = "\x1b[105m";
 
             /// <summary>
-            /// Gets the color light red.
+            /// Gets the color bright red.
             /// </summary>
-            public string LightRed { get; } = "\x1b[101m";
+            public string BrightRed { get; } = "\x1b[101m";
 
             /// <summary>
-            /// Gets the color light yellow.
+            /// Gets the color bright yellow.
             /// </summary>
-            public string LightYellow { get; } = "\x1b[103m";
+            public string BrightYellow { get; } = "\x1b[103m";
 
             /// <summary>
             /// Gets the color magenta.
