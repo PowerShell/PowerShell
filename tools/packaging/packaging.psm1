@@ -314,9 +314,6 @@ function Start-PSPackage {
                 }
             }
             "min-size" {
-                # Remove symbol files, xml document files.
-                Remove-Item "$Source\*.pdb", "$Source\*.xml" -Force
-
                 # Add suffix '-gc' because this package is for the Guest Config team.
                 if ($Environment.IsWindows) {
                     $Arguments = @{
@@ -345,11 +342,6 @@ function Start-PSPackage {
                 }
             }
             { $_ -like "fxdependent*" } {
-                ## Remove PDBs from package to reduce size.
-                if(-not $IncludeSymbols.IsPresent) {
-                    Get-ChildItem $Source -Filter *.pdb | Remove-Item -Force
-                }
-
                 if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
@@ -691,7 +683,8 @@ function Update-PSSignedBuildFolder
         [Parameter(Mandatory)]
         [string]$BuildPath,
         [Parameter(Mandatory)]
-        [string]$SignedFilesPath
+        [string]$SignedFilesPath,
+        [string[]] $RemoveFilter = "*.pdb"
     )
 
     # Replace unsigned binaries with signed
@@ -701,6 +694,10 @@ function Update-PSSignedBuildFolder
         $destination = Join-Path -Path $BuildPath -ChildPath $relativePath
         Write-Log "replacing $destination with $_"
         Copy-Item -Path $_ -Destination $destination -Force
+    }
+
+    foreach($filter in $RemoveFilter) {
+        Remove-Item -Path $BuildPath -Filter $filter -Recurse -Force
     }
 }
 
@@ -1607,8 +1604,6 @@ function New-ZipPackage
             $staging = "$PSScriptRoot/staging"
             New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath
 
-            Get-ChildItem $staging -Filter *.pdb -Recurse | Remove-Item -Force
-
             Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
         }
 
@@ -1622,7 +1617,6 @@ function New-ZipPackage
             throw "Failed to create $zipLocationPath"
         }
     }
-    #TODO: Use .NET Api to do compresss-archive equivalent if the pscmdlet is not present
     else
     {
         Write-Error -Message "Compress-Archive cmdlet is missing in this PowerShell version"
@@ -1694,7 +1688,6 @@ function New-PdbZipPackage
             throw "Failed to create $zipLocationPath"
         }
     }
-    #TODO: Use .NET Api to do compresss-archive equivalent if the pscmdlet is not present
     else
     {
         Write-Error -Message "Compress-Archive cmdlet is missing in this PowerShell version"
@@ -3002,8 +2995,6 @@ function New-MSIPackage
     $staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath
 
-    Get-ChildItem $staging -Filter *.pdb -Recurse | Remove-Item -Force
-
     $assetsInSourcePath = Join-Path $staging 'assets'
 
     New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
@@ -4145,28 +4136,43 @@ function Invoke-AzDevOpsLinuxPackageBuild {
 
         $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
         Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+        $options = Get-PSOptions
+        # Remove symbol files.
+        Remove-Item "$($options.Output)\*.pdb" -Force
 
         if ($BuildType -eq 'deb') {
             ## Build 'min-size'
             Write-Verbose -Verbose "---- Min-Size ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
             Write-Verbose -Verbose "options.Top $($options.Top)"
-            #$binDir = Join-Path -Path $options.Top -ChildPath 'bin'
-            #Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
-            #Remove-Item -Path $binDir -Recurse -Force
+            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
+            if (Test-Path -Path $binDir) {
+                Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
+                Remove-Item -Path $binDir -Recurse -Force
+            }
 
             $buildParams['Crossgen'] = $false
             $buildParams['ForMinimalSize'] = $true
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${minSizeLinuxBuildFolder}"
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            $options = Get-PSOptions
+            # Remove symbol files, xml document files.
+            Remove-Item "$($options.Output)\*.pdb", "$($options.Output)\*.xml" -Force
+
 
             ## Build 'linux-arm' and create 'tar.gz' package for it.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm32LinuxBuildFolder}"
             Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            $options = Get-PSOptions
+            # Remove symbol files.
+            Remove-Item "$($options.Output)\*.pdb" -Force
 
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
             Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            $options = Get-PSOptions
+            # Remove symbol files.
+            Remove-Item "$($options.Output)\*.pdb" -Force
         }
     }
     catch {
