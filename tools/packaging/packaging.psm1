@@ -697,7 +697,8 @@ function Update-PSSignedBuildFolder
     }
 
     foreach($filter in $RemoveFilter) {
-        Remove-Item -Path $BuildPath -Filter $filter -Recurse -Force
+        $removePath = Join-Path -Path $BuildPath -ChildPath $filter
+        Remove-Item -Path $removePath -Recurse -Force
     }
 }
 
