@@ -3,7 +3,11 @@
 
 #nullable enable
 
+using System;
+using System.Collections.Generic;
 using System.Management.Automation;
+using System.Net;
+using System.Reflection;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -12,8 +16,41 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal sealed class HttpVersionCompletionsAttribute : ArgumentCompletionsAttribute
     {
+        public static readonly string[] AllowedVersions;
+
+        static HttpVersionCompletionsAttribute()
+        {
+            FieldInfo[] fields = typeof(HttpVersion).GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+
+            if (fields.Length == 0)
+            {
+                AllowedVersions = Array.Empty<string>();
+                return;
+            }
+
+            var versions = new List<string>(fields.Length - 1);
+
+            for (int i = 0; i < fields.Length; i++)
+            {
+                // skip field Unknown and not Version type
+                if (fields[i].Name == nameof(HttpVersion.Unknown) || fields[i].FieldType != typeof(Version))
+                {
+                    continue;
+                }
+
+                var version = (Version?)fields[i].GetValue(null);
+
+                if (version is not null)
+                {
+                    versions.Add(version.ToString());
+                }
+            }
+
+            AllowedVersions = versions.ToArray();
+        }
+
         /// <inheritdoc/>
-        public HttpVersionCompletionsAttribute() : base(HttpVersionUtils.AllowedVersions)
+        public HttpVersionCompletionsAttribute() : base(AllowedVersions)
         {
         } 
     }
