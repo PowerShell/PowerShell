@@ -684,7 +684,7 @@ function Update-PSSignedBuildFolder
         [string]$BuildPath,
         [Parameter(Mandatory)]
         [string]$SignedFilesPath,
-        [string[]] $RemoveFilter = ('*.pdb', '*.zip', 'psoptions.json')
+        [string[]] $RemoveFilter = ('*.pdb', '*.zip')
     )
 
     # Replace unsigned binaries with signed
