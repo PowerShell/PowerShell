@@ -53,7 +53,7 @@ namespace System.Management.Automation
             public string Black { get; } = "\x1b[30m";
 
             /// <summary>
-            /// Gets the color read.
+            /// Gets the color red.
             /// </summary>
             public string Red { get; } = "\x1b[31m";
 
@@ -168,7 +168,7 @@ namespace System.Management.Automation
             public string Black { get; } = "\x1b[40m";
 
             /// <summary>
-            /// Gets the color read.
+            /// Gets the color red.
             /// </summary>
             public string Red { get; } = "\x1b[41m";
 
