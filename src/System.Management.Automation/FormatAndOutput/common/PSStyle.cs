@@ -53,19 +53,9 @@ namespace System.Management.Automation
             public string Black { get; } = "\x1b[30m";
 
             /// <summary>
-            /// Gets the color blue.
+            /// Gets the color read.
             /// </summary>
-            public string Blue { get; } = "\x1b[34m";
-
-            /// <summary>
-            /// Gets the color cyan.
-            /// </summary>
-            public string Cyan { get; } = "\x1b[36m";
-
-            /// <summary>
-            /// Gets the color bright black.
-            /// </summary>
-            public string BrightBlack { get; } = "\x1b[90m";
+            public string Red { get; } = "\x1b[31m";
 
             /// <summary>
             /// Gets the color green.
@@ -73,9 +63,59 @@ namespace System.Management.Automation
             public string Green { get; } = "\x1b[32m";
 
             /// <summary>
+            /// Gets the color yellow.
+            /// </summary>
+            public string Yellow { get; } = "\x1b[33m";
+
+            /// <summary>
+            /// Gets the color blue.
+            /// </summary>
+            public string Blue { get; } = "\x1b[34m";
+
+            /// <summary>
+            /// Gets the color magenta.
+            /// </summary>
+            public string Magenta { get; } = "\x1b[35m";
+
+            /// <summary>
+            /// Gets the color cyan.
+            /// </summary>
+            public string Cyan { get; } = "\x1b[36m";
+
+            /// <summary>
+            /// Gets the color white.
+            /// </summary>
+            public string White { get; } = "\x1b[37m";
+
+            /// <summary>
+            /// Gets the color bright black.
+            /// </summary>
+            public string BrightBlack { get; } = "\x1b[90m";
+
+            /// <summary>
+            /// Gets the color bright red.
+            /// </summary>
+            public string BrightRed { get; } = "\x1b[91m";
+
+            /// <summary>
+            /// Gets the color bright green.
+            /// </summary>
+            public string BrightGreen { get; } = "\x1b[92m";
+
+            /// <summary>
+            /// Gets the color bright yellow.
+            /// </summary>
+            public string BrightYellow { get; } = "\x1b[93m";
+
+            /// <summary>
             /// Gets the color bright blue.
             /// </summary>
             public string BrightBlue { get; } = "\x1b[94m";
+
+            /// <summary>
+            /// Gets the color bright magenta.
+            /// </summary>
+            public string BrightMagenta { get; } = "\x1b[95m";
 
             /// <summary>
             /// Gets the color bright cyan.
@@ -86,46 +126,6 @@ namespace System.Management.Automation
             /// Gets the color bright white.
             /// </summary>
             public string BrightWhite { get; } = "\x1b[97m";
-
-            /// <summary>
-            /// Gets the color bright green.
-            /// </summary>
-            public string BrightGreen { get; } = "\x1b[92m";
-
-            /// <summary>
-            /// Gets the color bright magenta.
-            /// </summary>
-            public string BrightMagenta { get; } = "\x1b[95m";
-
-            /// <summary>
-            /// Gets the color bright red.
-            /// </summary>
-            public string BrightRed { get; } = "\x1b[91m";
-
-            /// <summary>
-            /// Gets the color bright yellow.
-            /// </summary>
-            public string BrightYellow { get; } = "\x1b[93m";
-
-            /// <summary>
-            /// Gets the color magenta.
-            /// </summary>
-            public string Magenta { get; } = "\x1b[35m";
-
-            /// <summary>
-            /// Gets the color read.
-            /// </summary>
-            public string Red { get; } = "\x1b[31m";
-
-            /// <summary>
-            /// Gets the color white.
-            /// </summary>
-            public string White { get; } = "\x1b[37m";
-
-            /// <summary>
-            /// Gets the color yellow.
-            /// </summary>
-            public string Yellow { get; } = "\x1b[33m";
 
             /// <summary>
             /// Set as RGB (Red, Green, Blue).
@@ -168,19 +168,9 @@ namespace System.Management.Automation
             public string Black { get; } = "\x1b[40m";
 
             /// <summary>
-            /// Gets the color blue.
+            /// Gets the color read.
             /// </summary>
-            public string Blue { get; } = "\x1b[44m";
-
-            /// <summary>
-            /// Gets the color cyan.
-            /// </summary>
-            public string Cyan { get; } = "\x1b[46m";
-
-            /// <summary>
-            /// Gets the color bright black.
-            /// </summary>
-            public string BrightBlack { get; } = "\x1b[100m";
+            public string Red { get; } = "\x1b[41m";
 
             /// <summary>
             /// Gets the color green.
@@ -188,9 +178,59 @@ namespace System.Management.Automation
             public string Green { get; } = "\x1b[42m";
 
             /// <summary>
+            /// Gets the color yellow.
+            /// </summary>
+            public string Yellow { get; } = "\x1b[43m";
+
+            /// <summary>
+            /// Gets the color blue.
+            /// </summary>
+            public string Blue { get; } = "\x1b[44m";
+
+            /// <summary>
+            /// Gets the color magenta.
+            /// </summary>
+            public string Magenta { get; } = "\x1b[45m";
+
+            /// <summary>
+            /// Gets the color cyan.
+            /// </summary>
+            public string Cyan { get; } = "\x1b[46m";
+
+            /// <summary>
+            /// Gets the color white.
+            /// </summary>
+            public string White { get; } = "\x1b[47m";
+
+            /// <summary>
+            /// Gets the color bright black.
+            /// </summary>
+            public string BrightBlack { get; } = "\x1b[100m";
+
+            /// <summary>
+            /// Gets the color bright red.
+            /// </summary>
+            public string BrightRed { get; } = "\x1b[101m";
+
+            /// <summary>
+            /// Gets the color bright green.
+            /// </summary>
+            public string BrightGreen { get; } = "\x1b[102m";
+
+            /// <summary>
+            /// Gets the color bright yellow.
+            /// </summary>
+            public string BrightYellow { get; } = "\x1b[103m";
+
+            /// <summary>
             /// Gets the color bright blue.
             /// </summary>
             public string BrightBlue { get; } = "\x1b[104m";
+
+            /// <summary>
+            /// Gets the color bright magenta.
+            /// </summary>
+            public string BrightMagenta { get; } = "\x1b[105m";
 
             /// <summary>
             /// Gets the color bright cyan.
@@ -201,46 +241,6 @@ namespace System.Management.Automation
             /// Gets the color bright white.
             /// </summary>
             public string BrightWhite { get; } = "\x1b[107m";
-
-            /// <summary>
-            /// Gets the color bright green.
-            /// </summary>
-            public string BrightGreen { get; } = "\x1b[102m";
-
-            /// <summary>
-            /// Gets the color bright magenta.
-            /// </summary>
-            public string BrightMagenta { get; } = "\x1b[105m";
-
-            /// <summary>
-            /// Gets the color bright red.
-            /// </summary>
-            public string BrightRed { get; } = "\x1b[101m";
-
-            /// <summary>
-            /// Gets the color bright yellow.
-            /// </summary>
-            public string BrightYellow { get; } = "\x1b[103m";
-
-            /// <summary>
-            /// Gets the color magenta.
-            /// </summary>
-            public string Magenta { get; } = "\x1b[45m";
-
-            /// <summary>
-            /// Gets the color read.
-            /// </summary>
-            public string Red { get; } = "\x1b[41m";
-
-            /// <summary>
-            /// Gets the color white.
-            /// </summary>
-            public string White { get; } = "\x1b[47m";
-
-            /// <summary>
-            /// Gets the color yellow.
-            /// </summary>
-            public string Yellow { get; } = "\x1b[43m";
 
             /// <summary>
             /// The color set as RGB (Red, Green, Blue).
