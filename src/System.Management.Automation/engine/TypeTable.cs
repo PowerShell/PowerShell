@@ -1747,7 +1747,7 @@ namespace System.Management.Automation.Runspaces
 
     /// <summary>
     /// This exception is used by TypeTable constructor to indicate errors
-    /// occured during construction time.
+    /// occurred during construction time.
     /// </summary>
     [Serializable]
     public class TypeTableLoadException : RuntimeException
@@ -1796,7 +1796,7 @@ namespace System.Management.Automation.Runspaces
         /// time.
         /// </summary>
         /// <param name="loadErrors">
-        /// The errors that occured
+        /// The errors that occurred
         /// </param>
         internal TypeTableLoadException(ConcurrentBag<string> loadErrors)
             : base(TypesXmlStrings.TypeTableLoadErrors)
