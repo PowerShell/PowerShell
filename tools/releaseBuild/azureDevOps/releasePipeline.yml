@@ -17,6 +17,8 @@ variables:
     value : false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
+  - name: skipComponentGovernanceDetection
+    value: true
 
 stages:
 - stage: MSIXBundle
