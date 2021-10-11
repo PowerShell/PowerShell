@@ -783,11 +783,6 @@ namespace System.Management.Automation
             return oldPipe;
         }
 
-        internal void RestoreErrorPipe(Pipe pipe)
-        {
-            ShellFunctionErrorOutputPipe = pipe;
-        }
-
         /// <summary>
         /// Reset all of the redirection book keeping variables. This routine should be called when starting to
         /// execute a script.
@@ -840,15 +835,13 @@ namespace System.Management.Automation
         internal void AppendDollarError(object obj)
         {
             ErrorRecord objAsErrorRecord = obj as ErrorRecord;
-            if (objAsErrorRecord == null && obj is not Exception)
+            if (objAsErrorRecord is null && obj is not Exception)
             {
                 Diagnostics.Assert(false, "Object to append was neither an ErrorRecord nor an Exception in ExecutionContext.AppendDollarError");
                 return;
             }
 
-            object old = this.DollarErrorVariable;
-            ArrayList arraylist = old as ArrayList;
-            if (arraylist == null)
+            if (DollarErrorVariable is not ArrayList arraylist)
             {
                 Diagnostics.Assert(false, "$error should be a global constant ArrayList");
                 return;

@@ -529,7 +529,7 @@ namespace System.Management.Automation
                 processor = scriptCommand != null
                     ? new CommandProcessor(scriptCommand, _context, useLocalScope: true, fromScriptFile: false,
                         sessionState: scriptCommand.ScriptBlock.SessionStateInternal ?? Context.EngineSessionState)
-                    : new CommandProcessor((CmdletInfo)this, _context) { UseLocalScope = true };
+                    : new CommandProcessor((CmdletInfo)this, _context);
 
                 ParameterBinderController.AddArgumentsToCommandProcessor(processor, Arguments);
                 CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;

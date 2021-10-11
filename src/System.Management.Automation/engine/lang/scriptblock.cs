@@ -1280,7 +1280,42 @@ namespace System.Management.Automation
             {
                 // then pop this pipeline and dispose it...
                 _context.PopPipelineProcessor(true);
-                _pipeline.Dispose();
+                Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Clean resources for script commands of this steppable pipeline.
+        /// </summary>
+        /// <remarks>
+        /// The way we handle 'Clean' blocks in a steppable pipeline makes sure that:
+        ///  1. The 'Clean' blocks get to run if any exception is thrown from 'Begin/Process/End'.
+        ///  2. The 'Clean' blocks get to run if 'End' finished successfully.
+        /// However, this is not enough for a steppable pipeline, because the function, where the steppable
+        /// pipeline gets used, may fail (think about a proxy function). And that may lead to the situation
+        /// where "no exception was thrown from the steppable pipeline" but "the steppable pipeline didn't
+        /// run to the end". In that case, 'Clean' won't run unless it's triggered explicitly on the steppable
+        /// pipeline. This method allows a user to do that from the 'Clean' block of the proxy function.
+        /// </remarks>
+        public void Clean()
+        {
+            if (_pipeline.Commands is null)
+            {
+                // The pipeline commands have been disposed. In this case, 'Clean'
+                // should have already been called on the pipeline processor.
+                return;
+            }
+
+            try
+            {
+                _context.PushPipelineProcessor(_pipeline);
+                _pipeline.DoCleanup();
+            }
+            finally
+            {
+                // then pop this pipeline and dispose it...
+                _context.PopPipelineProcessor(true);
+                Dispose();
             }
         }
 
@@ -1294,22 +1329,12 @@ namespace System.Management.Automation
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
             if (_disposed)
             {
                 return;
             }
 
-            if (disposing)
-            {
-                _pipeline.Dispose();
-            }
-
+            _pipeline.Dispose();
             _disposed = true;
         }
 
