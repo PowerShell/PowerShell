@@ -76,17 +76,26 @@ stages:
       globalToolExeName: 'pwsh'
       globalToolPackageName: 'PowerShell.Linux.x64'
 
-- stage: ValidatePkgNames
+- stage: StaticPkgValidation
   dependsOn: []
-  displayName: Package Names validation
+  displayName: Static package validation
   jobs:
   - job: ValidatePkgNames
+    displayName: Validate Package Names
     pool:
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
     steps:
       - template: templates/release-ValidatePackageNames.yml
+  - job: ValidatePkgBOM
+    displayName: Validate Package BOM
+    pool:
+      vmImage: ubuntu-latest
+    variables:
+    - group: 'Azure Blob variable group'
+    steps:
+      - template: templates/release-ValidatePackageBOM.yml
 
 - stage: StartDocker
   dependsOn: []
@@ -127,7 +136,7 @@ stages:
   - MSIXBundle
   - ValidateSDK
   - PRCreation
-  - ValidatePkgNames
+  - StaticPkgValidation
   - StartDocker
   - ManualValidation
   - ReleaseAutomation

@@ -4181,3 +4181,76 @@ function Invoke-AzDevOpsLinuxPackageBuild {
         throw
     }
 }
+
+enum PackageManifestResultStatus {
+    Mismatch
+    Match
+    MissingFromManifest
+    MissingFromPackage
+}
+
+class PackageManifestResult {
+    [string] $File
+    [string] $ExpectedHash
+    [string] $ActualHash
+    [PackageManifestResultStatus] $Status
+}
+
+function Test-PackageManifest {
+    param (
+        [Parameter(Mandatory)]
+        [string]
+        $PackagePath
+    )
+
+    Begin {
+        $spdxManifestPath = Join-Path $PackagePath -ChildPath "/_manifest/spdx_2.2/manifest.spdx.json"
+        $man = Get-Content $spdxManifestPath -ErrorAction Stop | convertfrom-json
+        $inManifest = @()
+    }
+
+    Process {
+        Write-Verbose "Processing $($man.files) files..." -verbose
+        $man.files | ForEach-Object {
+            $filePath = Join-Path $PackagePath -childPath $_.fileName
+            $checksumObj = $_.checksums | Where-Object {$_.algorithm -eq 'sha256'}
+            $sha256 = $checksumObj.checksumValue
+            $actualHash = $null
+            $actualHash = (Get-FileHash -Path $filePath -Algorithm sha256 -ErrorAction SilentlyContinue).Hash
+            $inManifest += $filePath
+            if($actualHash -ne $sha256) {
+                $status = [PackageManifestResultStatus]::Mismatch
+                if (!$actualHash) {
+                    $status = [PackageManifestResultStatus]::MissingFromPackage
+                }
+                Write-Output [PackageManifestResult] @{
+                    File         = $filePath
+                    ExpectedHash = $sha256
+                    ActualHash   = $actualHash
+                    Status       = $status
+                }
+            }
+            else {
+                Write-Output [PackageManifestResult] @{
+                    File         = $filePath
+                    ExpectedHash = $sha256
+                    ActualHash   = $actualHash
+                    Status       = [PackageManifestResultStatus]::Match
+                }
+            }
+        }
+
+
+        Get-ChildItem $PackagePath -recurse |select-object -ExpandProperty FullName | foreach-object {
+            if(!$inManifest -contains $_) {
+                $actualHash = (get-filehash -Path $_ -algorithm sha256 -erroraction silentlycontinue).Hash
+                Write-Output [PackageManifestResult] @{
+                    File         = $_
+                    ExpectedHash = $null
+                    ActualHash   = $actualHash
+                    Status       = [PackageManifestResultStatus]::MissingFromManifest
+                }
+            }
+        }
+    }
+}
