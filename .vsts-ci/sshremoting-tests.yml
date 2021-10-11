@@ -9,7 +9,6 @@ trigger:
     - feature*
   paths:
     include:
-    - '/.vsts-ci/*'
     - '/src/System.Management.Automation/engine/*'
     - '/test/SSHRemoting/*'
 pr:
