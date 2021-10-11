@@ -3064,6 +3064,9 @@
           </Component>
         </Directory>
       </Directory>
+      <Component Id="cmpA6276F9EAB41411AAAEC496E67A3DBAE">
+        <File Id="filC840646CDE814D33B16DA3A5BBDDC88D" KeyPath="yes" Source="$(var.ProductSourcePath)\psoptions.json" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -4050,6 +4053,7 @@
       <ComponentRef Id="cmp957498053E01454DA1E21E6D7317DCD6" />
       <ComponentRef Id="cmp2EB55EB6B44F4CF186F0BAFD6B33BCD6" />
       <ComponentRef Id="cmp408A3AF905EB47ADA35FBC5A6B1465A0" />
+      <ComponentRef Id="cmpA6276F9EAB41411AAAEC496E67A3DBAE" />
     </ComponentGroup>
   </Fragment>
 </Wix>
