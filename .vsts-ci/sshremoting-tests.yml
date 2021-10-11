@@ -7,10 +7,10 @@ trigger:
     - master
     - release*
     - feature*
-  paths:
-    include:
-    - '/src/System.Management.Automation/engine/*'
-    - '/test/SSHRemoting/*'
+  #paths:
+  #  include:
+  #  - '/src/System.Management.Automation/engine/*'
+  #  - '/test/SSHRemoting/*'
 pr:
   branches:
     include:
