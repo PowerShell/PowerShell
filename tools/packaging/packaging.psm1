@@ -4223,33 +4223,36 @@ function Test-PackageManifest {
                 if (!$actualHash) {
                     $status = [PackageManifestResultStatus]::MissingFromPackage
                 }
-                Write-Output [PackageManifestResult] @{
+                [PackageManifestResult] $result = @{
                     File         = $filePath
                     ExpectedHash = $sha256
                     ActualHash   = $actualHash
                     Status       = $status
                 }
+                Write-Output $result
             }
             else {
-                Write-Output [PackageManifestResult] @{
+                [PackageManifestResult] $result = @{
                     File         = $filePath
                     ExpectedHash = $sha256
                     ActualHash   = $actualHash
                     Status       = [PackageManifestResultStatus]::Match
                 }
+                Write-Output $result
             }
         }
 
 
-        Get-ChildItem $PackagePath -recurse |select-object -ExpandProperty FullName | foreach-object {
+        Get-ChildItem $PackagePath -recurse | Select-Object -ExpandProperty FullName | foreach-object {
             if(!$inManifest -contains $_) {
                 $actualHash = (get-filehash -Path $_ -algorithm sha256 -erroraction silentlycontinue).Hash
-                Write-Output [PackageManifestResult] @{
+                [PackageManifestResult] $result = @{
                     File         = $_
                     ExpectedHash = $null
                     ActualHash   = $actualHash
                     Status       = [PackageManifestResultStatus]::MissingFromManifest
                 }
+                Write-Output $result
             }
         }
     }
