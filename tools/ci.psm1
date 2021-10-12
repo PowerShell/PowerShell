@@ -474,7 +474,9 @@ function Invoke-CIFinish
                 Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
                 $options = Get-PSOptions
                 # Remove symbol files.
-                Remove-Item "$($options.Output)\*.pdb" -Force
+                $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
+                Write-Verbose "Removing symbol files from $filter" -Verbose
+                Remove-Item $filter -Force -Recurse
             }
             else {
                 $releaseTag = Get-ReleaseTag
@@ -484,7 +486,9 @@ function Invoke-CIFinish
                 Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
                 $options = Get-PSOptions
                 # Remove symbol files.
-                Remove-Item "$($options.Output)\*.pdb" -Force
+                $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
+                Write-Verbose "Removing symbol files from $filter" -Verbose
+                Remove-Item $filter -Force -Recurse
             }
 
             # Set a variable, both in the current process and in AzDevOps for the packaging stage to get the release tag
@@ -499,13 +503,17 @@ function Invoke-CIFinish
             Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -output $armBuildFolder -PSOptionsPath "${armBuildFolder}-meta/psoptions.json"
             $options = Get-PSOptions
             # Remove symbol files.
-            Remove-Item "$($options.Output)\*.pdb" -Force
+            $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
+            Write-Verbose "Removing symbol files from $filter" -Verbose
+            Remove-Item $filter -Force -Recurse
 
             $armBuildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/releaseArm64"
             Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -output $armBuildFolder -PSOptionsPath "${armBuildFolder}-meta/psoptions.json"
             $options = Get-PSOptions
             # Remove symbol files.
-            Remove-Item "$($options.Output)\*.pdb" -Force
+            $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
+            Write-Verbose "Removing symbol files from $filter" -Verbose
+            Remove-Item $filter -Force -Recurse
         }
 
 
