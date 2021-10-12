@@ -4142,6 +4142,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
 
         if ($BuildType -eq 'deb') {
             ## Build 'min-size'
+            $options = Get-PSOptions
             Write-Verbose -Verbose "---- Min-Size ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
             Write-Verbose -Verbose "options.Top $($options.Top)"
