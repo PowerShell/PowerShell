@@ -4139,7 +4139,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
         Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
         $options = Get-PSOptions
         # Remove symbol files.
-        Remove-Item "$($options.Output)\*.pdb" -Force
+        Remove-Item "${buildFolder}\*.pdb" -Force
 
         if ($BuildType -eq 'deb') {
             ## Build 'min-size'
@@ -4156,24 +4156,22 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             $buildParams['ForMinimalSize'] = $true
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${minSizeLinuxBuildFolder}"
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            $options = Get-PSOptions
             # Remove symbol files, xml document files.
-            Remove-Item "$($options.Output)\*.pdb", "$($options.Output)\*.xml" -Force
+            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
 
 
             ## Build 'linux-arm' and create 'tar.gz' package for it.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm32LinuxBuildFolder}"
             Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            $options = Get-PSOptions
             # Remove symbol files.
-            Remove-Item "$($options.Output)\*.pdb" -Force
+            Remove-Item "${buildFolder}\*.pdb" -Force
 
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
             Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             $options = Get-PSOptions
             # Remove symbol files.
-            Remove-Item "$($options.Output)\*.pdb" -Force
+            Remove-Item "${buildFolder}\*.pdb" -Force
         }
     }
     catch {
