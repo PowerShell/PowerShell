@@ -4137,7 +4137,6 @@ function Invoke-AzDevOpsLinuxPackageBuild {
 
         $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
         Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-        $options = Get-PSOptions
         # Remove symbol files.
         Remove-Item "${buildFolder}\*.pdb" -Force
 
@@ -4169,7 +4168,6 @@ function Invoke-AzDevOpsLinuxPackageBuild {
 
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
             Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            $options = Get-PSOptions
             # Remove symbol files.
             Remove-Item "${buildFolder}\*.pdb" -Force
         }
