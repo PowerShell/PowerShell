@@ -1,7 +1,6 @@
 steps:
-- pwsh: |
-    git clone --branch add-sbom  https://github.com/travisez13/powershell '$(Pipeline.Workspace)/powershell'
-  displayName: Clone powershell repository
+- checkout: self
+  clean: true
 
 - pwsh: |
     Get-ChildItem ENV:
@@ -31,10 +30,10 @@ steps:
   condition: succeededOrFailed()
 
 - pwsh: |
-    Import-module '$(Pipeline.Workspace)/powershell/tools/packaging'
+    Import-module './tools/packaging'
     $env:PACKAGE_FOLDER = '$(System.ArtifactsDirectory)'
     $path = Join-Path -Path $pwd -ChildPath './packageReleaseTests.xml'
-    $results = invoke-pester -Script '$(Pipeline.Workspace)/powershell/tools/packaging/releaseTests' -OutputFile $path -OutputFormat NUnitXml -PassThru
+    $results = invoke-pester -Script './tools/packaging/releaseTests' -OutputFile $path -OutputFormat NUnitXml -PassThru
     Write-Host "##vso[results.publish type=NUnit;mergeResults=true;runTitle=Package Release Tests;publishRunAttachments=true;resultFiles=$path;]"
     if($results.TotalCount -eq 0 -or $results.FailedCount -gt 0)
     {
