@@ -167,14 +167,15 @@ jobs:
           displayName: Sign RPM
 
   # requires windows
-  - task: AzureFileCopy@4
-    displayName: 'Upload to Azure - DEB and tar.gz'
-    inputs:
-      SourcePath: '$(System.ArtifactsDirectory)\finished\release\*'
-      azureSubscription: '$(AzureFileCopySubscription)'
-      Destination: AzureBlob
-      storage: '$(StorageAccount)'
-      ContainerName: '$(AzureVersion)'
+  - ${{ if ne(variables['buildName'], 'RPM') }}:
+    - task: AzureFileCopy@4
+      displayName: 'Upload to Azure - DEB and tar.gz'
+      inputs:
+        SourcePath: '$(System.ArtifactsDirectory)\finished\release\*'
+        azureSubscription: '$(AzureFileCopySubscription)'
+        Destination: AzureBlob
+        storage: '$(StorageAccount)'
+        ContainerName: '$(AzureVersion)'
 
   - template: upload-final-results.yml
     parameters:
