@@ -167,7 +167,7 @@ jobs:
       $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
 
       Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
-      $dlls = Get-ChildItem $BuildPath\*.dll -Recurse
+      $dlls = Get-ChildItem $BuildPath\*.dll, $BuildPath\*.exe -Recurse
       $signatures = $dlls | Get-AuthenticodeSignature
       $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned'}| select-object -ExpandProperty Path
 
