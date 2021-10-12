@@ -83,7 +83,7 @@ Describe "Verify SBOMs" {
             $status | Should -Be "Match" -Because  "$actualHash should be $expectedHash"
         }
 
-        It "<name> should have <file> with matching hash" -TestCases $missingFromPackageCases {
+        It "<name> should have <file> with matching hash" -TestCases $missingFromPackageCases -Skip:($missingFromPackageCases.Count -eq 0)  {
             param(
                 $Name,
                 $File,
