@@ -187,6 +187,20 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $e.Exception | Should -BeOfType System.IO.IOException
         }
 
+        It 'Verify Move-Item fails for destination that is subdir of source with trailing: <trailingChar>' -TestCases @(
+            @{ trailingChar = [System.IO.Path]::DirectorySeparatorChar }
+            @{ trailingChar = [System.IO.Path]::AltDirectorySeparatorChar }
+            @{ trailingChar = '' }
+        ) {
+            param($trailingChar)
+
+            $dest = Join-Path -Path $TestDrive -ChildPath dest
+            $null = New-item -ItemType Directory -Path $dest -Force -ErrorAction Stop
+            $src = "$TestDrive$trailingChar"
+
+            { Move-Item -Path $src -Destination $dest -ErrorAction Stop } | Should -Throw -ErrorId 'MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand'
+        }
+
         It "Verify Move-Item throws correct error for non-existent source" {
             { Move-Item -Path /does/not/exist -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.MoveItemCommand'
         }
