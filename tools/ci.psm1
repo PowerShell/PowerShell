@@ -500,7 +500,7 @@ function Invoke-CIFinish
             $armBuildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/releaseArm32"
 
             # produce win-arm and win-arm64 packages if it is a daily build
-            Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -output $armBuildFolder -PSOptionsPath "${armBuildFolder}-meta/psoptions.json"
+            Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -output $armBuildFolder -PSOptionsPath "${armBuildFolder}-meta/psoptions.json" -Crossgen
             $options = Get-PSOptions
             # Remove symbol files.
             $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
@@ -508,7 +508,7 @@ function Invoke-CIFinish
             Remove-Item $filter -Force -Recurse
 
             $armBuildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/releaseArm64"
-            Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -output $armBuildFolder -PSOptionsPath "${armBuildFolder}-meta/psoptions.json"
+            Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -output $armBuildFolder -PSOptionsPath "${armBuildFolder}-meta/psoptions.json" -Crossgen
             $options = Get-PSOptions
             # Remove symbol files.
             $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
