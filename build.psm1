@@ -296,8 +296,13 @@ function Start-PSBuild {
         [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
-        [switch]$Detailed
+        [switch]$Detailed,
+        [string]$PSOptionsPath
     )
+
+    if ($ReleaseTag -and $ReleaseTag -notmatch "^v\d+\.\d+\.\d+(-(preview|rc)(\.\d{1,2})?)?$") {
+        Write-Warning "Only preview or rc are supported for releasing pre-release version of PowerShell"
+    }
 
     if ($PsCmdlet.ParameterSetName -eq "Default" -and !$NoPSModuleRestore)
     {
@@ -588,6 +593,15 @@ Fix steps:
     # Restore the Pester module
     if ($CI) {
         Restore-PSPester -Destination (Join-Path $publishPath "Modules")
+    }
+
+    if ($PSOptionsPath) {
+        $resolvedPSOptionsPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($PSOptionsPath)
+        $parent = Split-Path -Path $resolvedPSOptionsPath
+        if (!(Test-Path $parent)) {
+            $null = New-Item -ItemType Directory -Path $parent
+        }
+        Save-PSOptions -PSOptionsPath $PSOptionsPath -Options $Options
     }
 }
 
