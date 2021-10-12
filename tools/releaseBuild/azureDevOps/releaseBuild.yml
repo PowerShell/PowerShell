@@ -13,6 +13,10 @@ pr:
 parameters:
   - name: ForceAzureBlobDelete
     displayName: Delete Azure Blob
+    type: string
+    values:
+      - true
+      - false
     default: false
 
 resources:
@@ -36,6 +40,10 @@ variables:
     value: $[counter(variables['branchCounterKey'], 1)]
   - name: ForceAzureBlobDelete
     value:  ${{ parameters.ForceAzureBlobDelete }}
+  - name: Github_Build_Repository_Uri
+    value: https://github.com/powershell/powershell
+  - name: SBOMGenerator_Formats
+    value: spdx:2.2
 
 stages:
   - stage: prep
