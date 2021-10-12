@@ -30,6 +30,7 @@ steps:
   condition: succeededOrFailed()
 
 - pwsh: |
+    Import-module './build.psm1'
     Import-module './tools/packaging'
     $env:PACKAGE_FOLDER = '$(System.ArtifactsDirectory)'
     $path = Join-Path -Path $pwd -ChildPath './packageReleaseTests.xml'
