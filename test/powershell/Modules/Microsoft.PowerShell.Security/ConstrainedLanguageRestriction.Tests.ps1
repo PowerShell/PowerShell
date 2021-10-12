@@ -672,6 +672,41 @@ try
         }
     }
 
+    Describe "Add-Type in no language mode on locked down system" -Tags 'Feature','RequireAdminOnWindows' {
+
+        It "Verifies Add-Type fails in no language mode when in system lock down" {
+
+            # Create No-Language session, that allows Add-Type cmdlet
+            $entry = [System.Management.Automation.Runspaces.SessionStateCmdletEntry]::new('Add-Type', [Microsoft.PowerShell.Commands.AddTypeCommand], $null)
+            $iss = [initialsessionstate]::CreateRestricted([System.Management.Automation.SessionCapabilities]::Language)
+            $iss.Commands.Add($entry)
+            $rs = [runspacefactory]::CreateRunspace($iss)
+            $rs.Open()
+
+            # Try to use Add-Type in No-Language session
+            $ps = [powershell]::Create($rs)
+            $ps.AddCommand('Add-Type').AddParameter('TypeDefinition', 'public class C1 { }')
+            $expectedError = $null
+            try
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
+                $ps.Invoke()
+            }
+            catch
+            {
+                $expectedError = $_
+            }
+            finally
+            {
+                Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                $rs.Dispose()
+                $ps.Dispose()
+            }
+
+            $expectedError.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'CannotDefineNewType,Microsoft.PowerShell.Commands.AddTypeCommand'
+        }
+    }
+
     Describe "Import-LocalizedData additional commands in constrained language" -Tags 'Feature','RequireAdminOnWindows' {
 
         It "Verifies Import-LocalizedData disallows Add-Type in constrained language" {
