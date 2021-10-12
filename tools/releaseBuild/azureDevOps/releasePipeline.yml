@@ -93,7 +93,7 @@ stages:
   - job: ValidatePkgBOM
     displayName: Validate Package BOM
     pool:
-      vmImage: ubuntu-latest
+      vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
     steps:
