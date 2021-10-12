@@ -321,7 +321,8 @@ function Start-PSBuild {
         [string]$ReleaseTag,
         [switch]$Detailed,
         [switch]$InteractiveAuth,
-        [switch]$SkipRoslynAnalyzers
+        [switch]$SkipRoslynAnalyzers,
+        [string]$PSOptionsPath
     )
 
     if ($ReleaseTag -and $ReleaseTag -notmatch "^v\d+\.\d+\.\d+(-(preview|rc)(\.\d{1,2})?)?$") {
@@ -667,6 +668,15 @@ Fix steps:
     # Restore the Pester module
     if ($CI) {
         Restore-PSPester -Destination (Join-Path $publishPath "Modules")
+    }
+
+    if ($PSOptionsPath) {
+        $resolvedPSOptionsPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($PSOptionsPath)
+        $parent = Split-Path -Path $resolvedPSOptionsPath
+        if (!(Test-Path $parent)) {
+            $null = New-Item -ItemType Directory -Path $parent
+        }
+        Save-PSOptions -PSOptionsPath $PSOptionsPath -Options $Options
     }
 }
 
