@@ -32,6 +32,11 @@
     <PackageReference Include="Microsoft.NETCore.Windows.ApiSets" Version="1.0.1" />
     <!-- do not update this one because it brings in minor version upgrades -->
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.0" />
+    <!-- these are Microsoft.Windows.Compatibility depenecies that need updating -->
+    <PackageReference Include="System.Diagnostics.EventLog" Version="5.0.1" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="5.0.1" />
+    <PackageReference Include="System.DirectoryServices.Protocols" Version="5.0.1" />
+    <PackageReference Include="System.Reflection.DispatchProxy" Version="4.5.1" />
   </ItemGroup>
 
 </Project>
