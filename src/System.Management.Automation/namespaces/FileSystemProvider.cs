@@ -8132,6 +8132,28 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets the target for a given file or directory, resolving symbolic links.
+        /// </summary>
+        /// <param name="instance">The FileInfo or DirectoryInfo type.</param>
+        /// <returns>The file path the instance points to.</returns>
+        public static string ResolvedTarget(PSObject instance)
+        {
+            if (instance.BaseObject is FileSystemInfo fileSysInfo)
+            {
+                string symbTarget = GetTarget(instance);
+                if (symbTarget == null) {
+                    return fileSysInfo.FullName;
+                } else if (File.Exists(symbTarget) || Directory.Exists(symbTarget)) {
+                    return symbTarget;
+                }
+                
+            }
+
+            return null;
+            
+        }
+
+        /// <summary>
         /// Gets the link type of the specified reparse point.
         /// </summary>
         /// <param name="instance">The object of FileInfo or DirectoryInfo type.</param>
