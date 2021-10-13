@@ -8140,15 +8140,14 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
-                string symbTarget = fileSysInfo.LinkTarget;
-                if (symbTarget == null) {
+                FileSystemInfo symbTarget = fileSysInfo.ResolveLinkTarget(true);
+                if (symbTarget != null && symbTarget.Exists) 
+                {
+                    return symbTarget;
+                } else if (fileSysInfo.LinkTarget == null) 
+                {
                     return fileSysInfo;
-                } else if (File.Exists(symbTarget)) {
-                    return new FileInfo(symbTarget);
-                } else if (Directory.Exists(symbTarget)) {
-                    return new DirectoryInfo(symbTarget);
                 }
-                
             }
 
             return null;
