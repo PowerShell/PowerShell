@@ -151,10 +151,12 @@ open {0}
     NuGetConfigFile = @'
 <configuration>
   <packageSources>
+    <clear />
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
-    <add key="dotnet-core" value="https://dotnet.myget.org/F/dotnet-core/api/v3/index.json" />
-    <add key="powershell-core" value="https://powershell.myget.org/F/powershell-core/api/v3/index.json" />
   </packageSources>
+  <disabledPackageSources>
+    <clear />
+  </disabledPackageSources>
 </configuration>
 '@
 
