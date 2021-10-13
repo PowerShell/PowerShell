@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+        "PowerShell Launch Current File"
         {
             "name": ".NET Core Launch",
             "type": "coreclr",
