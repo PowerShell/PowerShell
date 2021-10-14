@@ -17,11 +17,18 @@ steps:
     $dateTime = [datetime]::UtcNow
     $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
+    $metadata = Get-Content ./tools/metadata.json | ConvertFrom-Json
+    $stableRelease = $metadata.StableRelease
+
     $buildInfo = Get-Content $jsonFile | ConvertFrom-Json
     $buildInfo.ReleaseDate = $dateTime
 
     $targetFile = "$ENV:PIPELINE_WORKSPACE/$fileName"
     ConvertTo-Json -InputObject $buildInfo | Out-File $targetFile -Encoding ascii
+
+    if ($stableRelease) {
+      $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyStableBuildInfo]YES"
+    }
 
     $vstsCommandString = "vso[task.setvariable variable=BuildInfoJsonFile]$targetFile"
     Write-Host "sending " + $vstsCommandString
@@ -65,6 +72,7 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: BuildInfo
+  condition: and(succeeded(), eq(variables['CopyStableBuildInfo'], 'YES'))
 
 - task: AzureFileCopy@2
   displayName: 'AzureBlob build info ''lts.json'' Copy when needed'
