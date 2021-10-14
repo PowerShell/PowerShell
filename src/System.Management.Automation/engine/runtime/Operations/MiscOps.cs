@@ -531,12 +531,8 @@ namespace System.Management.Automation
                 var pipelineOffset = pipelineAst.Extent.StartOffset;
                 var variables = pipelineAst.FindAll(static x => x is VariableExpressionAst, true);
 
-                // Used to make sure that the job runs in the current directory
-                const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location -LiteralPath $using:pwd ; ";
-
                 // Minimize allocations by initializing the stringbuilder to the size of the source string + prefix + space for ${using:} * 2
-                System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(cmdPrefix.Length + scriptblockBodyString.Length + 18);
-                updatedScriptblock.Append(cmdPrefix);
+                System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(scriptblockBodyString.Length + 18);
                 int position = 0;
 
                 // Prefix variables in the scriptblock with $using:
@@ -568,15 +564,22 @@ namespace System.Management.Automation
                 var sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
                 commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
-                var parameter = CommandParameterInternal.CreateParameterWithArgument(
+                var workingDirectoryParameter = CommandParameterInternal.CreateParameterWithArgument(
+                    parameterAst: pipelineAst,
+                    "WorkingDirectory",
+                    null,
+                    argumentAst: pipelineAst,
+                    context.SessionState.Path.CurrentLocation.Path,
+                    false);
+                var scriptBlockParameter = CommandParameterInternal.CreateParameterWithArgument(
                     parameterAst: pipelineAst,
                     "ScriptBlock",
                     null,
                     argumentAst: pipelineAst,
                     sb,
                     false);
-                commandProcessor.AddParameter(parameter);
-                pipelineProcessor.Add(commandProcessor);
+                commandProcessor.AddParameter(workingDirectoryParameter);
+                commandProcessor.AddParameter(scriptBlockParameter);
                 pipelineProcessor.LinkPipelineSuccessOutput(outputPipe ?? new Pipe(new List<object>()));
 
                 context.PushPipelineProcessor(pipelineProcessor);

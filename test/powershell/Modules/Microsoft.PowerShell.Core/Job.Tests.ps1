@@ -178,7 +178,7 @@ Describe "Debug-job test" -Tag "Feature" {
     }
 }
 
-Describe "Ampersand background test" -Tag "CI","Slow" {
+Describe "Ampersand background test" -Tag "CI", "Slow" {
     Context "Simple background job" {
         AfterEach {
             Get-Job | Remove-Job -Force
@@ -217,6 +217,10 @@ Describe "Ampersand background test" -Tag "CI","Slow" {
         It "starts in the current directory" {
             $j = Get-Location | ForEach-Object -MemberName Path &
             Receive-Job -Wait $j | Should -Be ($PWD.Path)
+        }
+        It "Make sure Set-Location is not used in the job's script block to set the working directory" {
+            $j = (get-variable -value ExecutionContext).SessionState.PSVariable.Get("MyInvocation").Value.MyCommand.ScriptBlock & 
+            (Receive-Job -Wait $j).ToString() | Should -BeExactly "(get-variable -value ExecutionContext).SessionState.PSVariable.Get(`"MyInvocation`").Value.MyCommand.ScriptBlock"
         }
         It "Test that output redirection is done in the background job" {
             $j = Write-Output hello > $TESTDRIVE/hello.txt &
