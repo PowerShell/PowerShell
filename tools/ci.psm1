@@ -463,9 +463,8 @@ function Invoke-CIFinish
                 $previewPrefix = $previewVersion[0]
                 $previewLabel = $previewVersion[1].replace('.','')
 
-                if(Test-DailyBuild)
-                {
-                    $previewLabel= "daily{0}" -f $previewLabel
+                if (Test-DailyBuild) {
+                    $previewLabel = "daily{0}" -f $previewLabel
                 }
 
                 $prereleaseIteration = (get-date).Day
@@ -477,8 +476,7 @@ function Invoke-CIFinish
                 $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
                 Write-Verbose "Removing symbol files from $filter" -Verbose
                 Remove-Item $filter -Force -Recurse
-            }
-            else {
+            } else {
                 $releaseTag = Get-ReleaseTag
                 $releaseTagParts = $releaseTag.split('.')
                 $preReleaseVersion = $releaseTagParts[0]+ ".9.9"
@@ -516,7 +514,6 @@ function Invoke-CIFinish
             Remove-Item $filter -Force -Recurse
         }
 
-
         if ($Stage -contains "Package") {
             Restore-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             $preReleaseVersion = $env:CI_FINISH_RELASETAG
@@ -525,21 +522,15 @@ function Invoke-CIFinish
             $packages = Start-PSPackage -Type msi, nupkg, zip, zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
             foreach ($package in $packages) {
-                if (Test-Path $package -ErrorAction Ignore)
-                {
+                if (Test-Path $package -ErrorAction Ignore) {
                     Write-Log "Package found: $package"
-                }
-                else
-                {
+                } else {
                     Write-Warning -Message "Package NOT found: $package"
                 }
 
-                if($package -is [string])
-                {
+                if ($package -is [string]) {
                     $null = $artifacts.Add($package)
-                }
-                elseif($package -is [pscustomobject] -and $package.psobject.Properties['msi'])
-                {
+                } elseif ($package -is [pscustomobject] -and $package.psobject.Properties['msi']) {
                     $null = $artifacts.Add($package.msi)
                     $null = $artifacts.Add($package.wixpdb)
                 }
@@ -568,17 +559,14 @@ function Invoke-CIFinish
             Publish-TestResults -Title "win-package-$channel-$runtime" -Path $testResultPath
 
             # fail the CI job if the tests failed, or nothing passed
-            if(-not $packagingTestResult -is [pscustomobject] -or $packagingTestResult.FailedCount -ne 0 -or $packagingTestResult.PassedCount -eq 0)
-            {
+            if (-not $packagingTestResult -is [pscustomobject] -or $packagingTestResult.FailedCount -ne 0 -or $packagingTestResult.PassedCount -eq 0) {
                 throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
             }
 
             # only publish assembly nuget packages if it is a daily build and tests passed
-            if(Test-DailyBuild)
-            {
+            if (Test-DailyBuild) {
                 $nugetArtifacts = Get-ChildItem $PSScriptRoot\packaging\nugetOutput -ErrorAction SilentlyContinue -Filter *.nupkg | Select-Object -ExpandProperty FullName
-                if($nugetArtifacts)
-                {
+                if ($nugetArtifacts) {
                     $artifacts.AddRange(@($nugetArtifacts))
                 }
             }
@@ -594,8 +582,7 @@ function Invoke-CIFinish
         Restore-PSOptions -PSOptionsPath "${armBuildFolder}-meta/psoptions.json"
         $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
         $artifacts.Add($arm64Package)
-    }
-    finally {
+    } finally {
         $pushedAllArtifacts = $true
 
         $artifacts | ForEach-Object {
@@ -611,12 +598,9 @@ function Invoke-CIFinish
         if (!$pushedAllArtifacts) {
             throw "Some artifacts did not exist!"
         }
-    }
-    catch
-    {
-        Write-Host -Foreground Red $_
-        Write-Host -Foreground Red $_.ScriptStackTrace
-        throw $_
+    } catch {
+        Get-Error -InputObject $_
+        throw
     }
 }
 
