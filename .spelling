@@ -1389,6 +1389,10 @@ release-BuildJson
 yml
 centos-7
 PSDesiredStateConfiguration
+NoLanguage
+createdump
+vPack
+PkgES
  - test/perf/benchmarks/README.md
 benchmarked
 BenchmarkDotNet
