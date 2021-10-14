@@ -2174,7 +2174,6 @@ function New-ReferenceAssembly
     Write-Log "GenAPI nuget package saved and expanded."
 
     $genAPIFolder = New-TempFolder
-    $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
     Write-Log "Working directory: $genAPIFolder."
 
     $SMAReferenceAssembly = $null
