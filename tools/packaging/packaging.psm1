@@ -1240,7 +1240,6 @@ function Get-FpmArguments
     } else {
         $Arguments += @("--license", "MIT License")
     }
-    
 
     if ($Environment.IsMacOS) {
         $Arguments += @("--osxpkg-identifier-prefix", "com.microsoft")
