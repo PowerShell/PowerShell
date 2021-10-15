@@ -494,24 +494,6 @@ function Invoke-CIFinish
             $vstsCommandString = "vso[task.setvariable variable=CI_FINISH_RELASETAG]$preReleaseVersion"
             Write-Verbose -Message "$vstsCommandString" -Verbose
             Write-Host -Object "##$vstsCommandString"
-
-            $armBuildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/releaseArm32"
-
-            # produce win-arm and win-arm64 packages if it is a daily build
-            Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -output $armBuildFolder -PSOptionsPath "${armBuildFolder}-meta/psoptions.json" -Crossgen
-            $options = Get-PSOptions
-            # Remove symbol files.
-            $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
-            Write-Verbose "Removing symbol files from $filter" -Verbose
-            Remove-Item $filter -Force -Recurse
-
-            $armBuildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/releaseArm64"
-            Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag -output $armBuildFolder -PSOptionsPath "${armBuildFolder}-meta/psoptions.json" -Crossgen
-            $options = Get-PSOptions
-            # Remove symbol files.
-            $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
-            Write-Verbose "Removing symbol files from $filter" -Verbose
-            Remove-Item $filter -Force -Recurse
         }
 
         if ($Stage -contains "Package") {
@@ -519,7 +501,17 @@ function Invoke-CIFinish
             $preReleaseVersion = $env:CI_FINISH_RELASETAG
 
             # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
-            $packages = Start-PSPackage -Type msi, nupkg, zip, zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
+            switch -regex ($Runtime){
+                default {
+                    $runPackageTest = $true
+                    $packageTypes = 'msi', 'nupkg', 'zip', 'zip-pdb'
+                }
+                'win-arm.*' {
+                    $runPackageTest = $false
+                    $packageTypes = 'zip', 'zip-pdb'
+                }
+            }
+            $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
             foreach ($package in $packages) {
                 if (Test-Path $package -ErrorAction Ignore) {
@@ -536,31 +528,33 @@ function Invoke-CIFinish
                 }
             }
 
-            # the packaging tests find the MSI package using env:PSMsiX64Path
-            $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
-            $architechture = $Runtime.Split('-')[1]
-            $exePath = New-ExePackage -ProductVersion ($preReleaseVersion -replace '^v') -ProductTargetArchitecture $architechture -MsiLocationPath $env:PSMsiX64Path
-            Write-Verbose "exe Path: $exePath" -Verbose
-            $artifacts.Add($exePath)
-            $env:PSExePath = $exePath
-            $env:PSMsiChannel = $Channel
-            $env:PSMsiRuntime = $Runtime
+            if ($runPackageTest) {
+                # the packaging tests find the MSI package using env:PSMsiX64Path
+                $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
+                $architechture = $Runtime.Split('-')[1]
+                $exePath = New-ExePackage -ProductVersion ($preReleaseVersion -replace '^v') -ProductTargetArchitecture $architechture -MsiLocationPath $env:PSMsiX64Path
+                Write-Verbose "exe Path: $exePath" -Verbose
+                $artifacts.Add($exePath)
+                $env:PSExePath = $exePath
+                $env:PSMsiChannel = $Channel
+                $env:PSMsiRuntime = $Runtime
 
-            # Install the latest Pester and import it
-            $maximumPesterVersion = '4.99'
-            Install-Module Pester -Force -SkipPublisherCheck -MaximumVersion $maximumPesterVersion
-            Import-Module Pester -Force -MaximumVersion $maximumPesterVersion
+                # Install the latest Pester and import it
+                $maximumPesterVersion = '4.99'
+                Install-Module Pester -Force -SkipPublisherCheck -MaximumVersion $maximumPesterVersion
+                Import-Module Pester -Force -MaximumVersion $maximumPesterVersion
 
-            $testResultPath = Join-Path -Path $env:TEMP -ChildPath "win-package-$channel-$runtime.xml"
+                $testResultPath = Join-Path -Path $env:TEMP -ChildPath "win-package-$channel-$runtime.xml"
 
-            # start the packaging tests and get the results
-            $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru -OutputFormat NUnitXml -OutputFile $testResultPath
+                # start the packaging tests and get the results
+                $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru -OutputFormat NUnitXml -OutputFile $testResultPath
 
-            Publish-TestResults -Title "win-package-$channel-$runtime" -Path $testResultPath
+                Publish-TestResults -Title "win-package-$channel-$runtime" -Path $testResultPath
 
-            # fail the CI job if the tests failed, or nothing passed
-            if (-not $packagingTestResult -is [pscustomobject] -or $packagingTestResult.FailedCount -ne 0 -or $packagingTestResult.PassedCount -eq 0) {
-                throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
+                # fail the CI job if the tests failed, or nothing passed
+                if (-not $packagingTestResult -is [pscustomobject] -or $packagingTestResult.FailedCount -ne 0 -or $packagingTestResult.PassedCount -eq 0) {
+                    throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
+                }
             }
 
             # only publish assembly nuget packages if it is a daily build and tests passed
@@ -572,16 +566,6 @@ function Invoke-CIFinish
             }
         }
 
-        # produce win-arm and win-arm64 packages if it is a daily build
-        $armBuildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/releaseArm32"
-        Restore-PSOptions -PSOptionsPath "${armBuildFolder}-meta/psoptions.json"
-        $arm32Package = Start-PSPackage -Type zip -WindowsRuntime win-arm -ReleaseTag $releaseTag -SkipReleaseChecks
-        $artifacts.Add($arm32Package)
-
-        $armBuildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/releaseArm64"
-        Restore-PSOptions -PSOptionsPath "${armBuildFolder}-meta/psoptions.json"
-        $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
-        $artifacts.Add($arm64Package)
     } finally {
         $pushedAllArtifacts = $true
 
