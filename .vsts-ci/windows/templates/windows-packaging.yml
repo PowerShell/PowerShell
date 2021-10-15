@@ -42,9 +42,9 @@ jobs:
     displayName: Capture environment
     condition: succeededOrFailed()
 
-  - powershell: |
+  - pwsh: |
       $PSVersionTable
-    displayName: Capture environment
+    displayName: Capture PowerShell Version Table
     condition: succeededOrFailed()
 
 
