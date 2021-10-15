@@ -3095,6 +3095,9 @@
       </Component>
       <Directory Name="_manifest" Id="dir81094D6B916B4BC8B1BA0E1DADB93A02">
         <Directory Name="spdx_2.2" Id="dirA36413FB3A534FDF8657D62728080E9F">
+          <Component Id="cmp7266819DA2F1433CAF5A5F6B0FBC6577">
+            <File Id="fil628ED5A7BEA8431F8B768883000C4257" KeyPath="yes" Source="$(var.ProductSourcePath)\_manifest\spdx_2.2\manifest.spdx.json" />
+          </Component>
         </Directory>
       </Directory>
       <Component Id="cmpA6276F9EAB41411AAAEC496E67A3DBAE">
@@ -4110,6 +4113,7 @@
       <ComponentRef Id="cmpF8741E8E00864CA59C8D970EB44C53BA" />
       <ComponentRef Id="cmp6A3D0EEE6400489BAC00A985E73B5C4F" />
       <ComponentRef Id="cmp627DC08704BA483C89CDEF81DBD7C053" />
+      <ComponentRef Id="cmp7266819DA2F1433CAF5A5F6B0FBC6577" />
     </ComponentGroup>
   </Fragment>
 </Wix>
