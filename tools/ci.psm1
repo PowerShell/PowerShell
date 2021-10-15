@@ -504,11 +504,11 @@ function Invoke-CIFinish
             switch -regex ($Runtime){
                 default {
                     $runPackageTest = $true
-                    $packageTypes = 'msi', 'nupkg', 'zip', 'zip-pdb'
+                    $packageTypes = 'msi', 'nupkg', 'zip', 'zip-pdb', 'msix'
                 }
                 'win-arm.*' {
                     $runPackageTest = $false
-                    $packageTypes = 'zip', 'zip-pdb'
+                    $packageTypes = 'zip', 'zip-pdb', 'msix'
                 }
             }
             $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
