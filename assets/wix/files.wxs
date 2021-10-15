@@ -1987,6 +1987,9 @@
         <Component Id="cmp57D197B18F1F4A6AAB704B28CF61B535">
           <File Id="fil71B3802CB88348AC888B9902212CADA2" KeyPath="yes" Source="$(var.ProductSourcePath)\cs\Microsoft.VisualBasic.Forms.resources.dll" />
         </Component>
+        <Component Id="cmp22C3B5B8A6184AFB850166E46197AC63">
+          <File Id="fil87E89BB7FA60493EA7FD94B49C4EF88B" KeyPath="yes" Source="$(var.ProductSourcePath)\cs\System.Private.ServiceModel.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dirEA0127D6607E68B508B9DB9CE315A2CE" Name="de">
         <Component Id="cmpF2941A91B17EEA22CD6DAB34693D9AC0">
@@ -2045,6 +2048,9 @@
         </Component>
         <Component Id="cmpB40EE0CC916B4928987F62F5909AE709">
           <File Id="filA21E2DDEAEAE4E0D94346C5671D9D29F" KeyPath="yes" Source="$(var.ProductSourcePath)\de\System.Windows.Forms.Primitives.resources.dll" />
+        </Component>
+        <Component Id="cmp202739B4651B4A44A830278A9E705EB3">
+          <File Id="filBD7DCFDC585845638DB4B61F3E5E705D" KeyPath="yes" Source="$(var.ProductSourcePath)\de\System.Private.ServiceModel.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="dir5B65D7353FBDCD17AB60A674B3FDF93B" Name="es">
@@ -2105,6 +2111,9 @@
         <Component Id="cmpB944176DE7924A268269903DC0B5D510">
           <File Id="filBA47C41DFB3849228624C99949FB61FC" KeyPath="yes" Source="$(var.ProductSourcePath)\es\System.Windows.Forms.Primitives.resources.dll" />
         </Component>
+        <Component Id="cmpB459A8002DEB4FA29FF5ACC15DB2F0CE">
+          <File Id="filF353563DE1DB4A9DBB498174FFB48F35" KeyPath="yes" Source="$(var.ProductSourcePath)\es\System.Private.ServiceModel.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dir23063512FA8C884E1B4F08FDF0A44516" Name="fr">
         <Component Id="cmp1DEB513A065956086898BCDACC5887B6">
@@ -2163,6 +2172,9 @@
         </Component>
         <Component Id="cmp7B5948A1A366409F99B871F0E772B945">
           <File Id="filCCA6A5EE7ED9459C93A8C05B0A93880F" KeyPath="yes" Source="$(var.ProductSourcePath)\fr\System.Windows.Forms.Primitives.resources.dll" />
+        </Component>
+        <Component Id="cmp6E90AE95027049AC95E6FAFBF76AA3C9">
+          <File Id="fil06796B8B743847609BA8ABED87F26C39" KeyPath="yes" Source="$(var.ProductSourcePath)\fr\System.Private.ServiceModel.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="dir42B03840AE19D1498CC524F2B6C0389D" Name="it">
@@ -2223,6 +2235,9 @@
         <Component Id="cmp28349C4ACD6D42D3967853E0A1D7DC4E">
           <File Id="filDF0828378FCA4CAC8F7DA90DC4F802CC" KeyPath="yes" Source="$(var.ProductSourcePath)\it\Microsoft.VisualBasic.Forms.resources.dll" />
         </Component>
+        <Component Id="cmpF8741E8E00864CA59C8D970EB44C53BA">
+          <File Id="fil055411D14B664E4FA38785ADE48B1E5F" KeyPath="yes" Source="$(var.ProductSourcePath)\it\System.Private.ServiceModel.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dir086D21BE309BE4C7081FC60E3524890F" Name="ja">
         <Component Id="cmp867E4E51FE7BC09AAD5D59FD76716FBC">
@@ -2281,6 +2296,9 @@
         </Component>
         <Component Id="cmp26335B5D1FE94E87A6B6EBD56A22C2B9">
           <File Id="filD585A7E89ACF4E4CB9DB8EAD4ACB7092" KeyPath="yes" Source="$(var.ProductSourcePath)\ja\System.Windows.Forms.Primitives.resources.dll" />
+        </Component>
+        <Component Id="cmpD3180A4C59584495BB5A52C68A68B703">
+          <File Id="fil6B5C2D6417874E85B7B6F3DE48E49499" KeyPath="yes" Source="$(var.ProductSourcePath)\ja\System.Private.ServiceModel.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="dir43D6CAD5F3ED1060009918D06D84FB18" Name="ko">
@@ -2341,6 +2359,9 @@
         <Component Id="cmpF4093A1E8AB94B43AB0F852EB647CE7F">
           <File Id="filCE28F42A54C24F5DA508904E60E23BBD" KeyPath="yes" Source="$(var.ProductSourcePath)\ko\System.Windows.Forms.Primitives.resources.dll" />
         </Component>
+        <Component Id="cmp3FC997AAC6DE417094EE10B1716257BE">
+          <File Id="fil8BB6CAF4B29C408B8431F405A4BFDB1A" KeyPath="yes" Source="$(var.ProductSourcePath)\ko\System.Private.ServiceModel.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dirE8201C74A7184D11233BAD63C6DB37BD" Name="pl">
         <Component Id="cmpA656A18FE14D3C8EB02C31AE474054E3">
@@ -2399,6 +2420,9 @@
         </Component>
         <Component Id="cmp705598FEC8EA43D7A9B239787BA5DB09">
           <File Id="filD8ECB20D015F4477ABD58505B48D02D1" KeyPath="yes" Source="$(var.ProductSourcePath)\pl\System.Windows.Forms.Primitives.resources.dll" />
+        </Component>
+        <Component Id="cmp1EECA406D9D84467A64D77642CBC0D17">
+          <File Id="fil574377D71BB641CD8D983F616A8EA36F" KeyPath="yes" Source="$(var.ProductSourcePath)\pl\System.Private.ServiceModel.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="dir47ED939BFA870848E0764E862CD6B4D7" Name="pt-BR">
@@ -2459,6 +2483,9 @@
         <Component Id="cmpFAA0CCBA17FE4E8FAE5FE4B5F679DF52">
           <File Id="fil6A42B845F64A4B2490AFFA079E0FB086" KeyPath="yes" Source="$(var.ProductSourcePath)\pt-BR\System.Windows.Forms.Primitives.resources.dll" />
         </Component>
+        <Component Id="cmpC4D364BF809248F7AF9CB9A27671D2A8">
+          <File Id="filAF33B6FEE7524596A24EE4BC07B4DA8F" KeyPath="yes" Source="$(var.ProductSourcePath)\pt-BR\System.Private.ServiceModel.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dir37B8DFAE26D5F8E9948851F7D19F9E20" Name="ru">
         <Component Id="cmpFDCD51BD80926ABECCE27D0D66A47C8F">
@@ -2517,6 +2544,9 @@
         </Component>
         <Component Id="cmpA6FA5B27C61E482D8BBC5F1806D3B223">
           <File Id="filD4732A3ABFD342B890F75CCB5DE1CAE8" KeyPath="yes" Source="$(var.ProductSourcePath)\ru\System.Windows.Forms.Primitives.resources.dll" />
+        </Component>
+        <Component Id="cmp80A347F1BE0149BFBCFC8A5AEA6986A1">
+          <File Id="fil73EEF19FACE74DBE866CB656473F65FF" KeyPath="yes" Source="$(var.ProductSourcePath)\ru\System.Private.ServiceModel.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="dirA7E9CC01273A7FED89FC8D3A368E00CC" Name="tr">
@@ -2577,6 +2607,9 @@
         <Component Id="cmp10773057C33543FA93222022DEC0847D">
           <File Id="filD2D3E621E5C54C5EBF044078C9073C2B" KeyPath="yes" Source="$(var.ProductSourcePath)\tr\Microsoft.VisualBasic.Forms.resources.dll" />
         </Component>
+        <Component Id="cmp627DC08704BA483C89CDEF81DBD7C053">
+          <File Id="fil21F79669D7324760B5C255AC5D5FFC84" KeyPath="yes" Source="$(var.ProductSourcePath)\tr\System.Private.ServiceModel.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dir47E993970F74AA9F393D23500827D12C" Name="zh-Hans">
         <Component Id="cmp34C4A21743AC68583599BF2B139F39F2">
@@ -2636,6 +2669,9 @@
         <Component Id="cmp33364765C98D4BE09BD26DC1E6B95B86">
           <File Id="filB57C4C58936D4A7587CEA358B1AF57C2" KeyPath="yes" Source="$(var.ProductSourcePath)\zh-Hans\Microsoft.VisualBasic.Forms.resources.dll" />
         </Component>
+        <Component Id="cmp0F8C80DAC6D148AFB6B20466CCDDFC86">
+          <File Id="fil99EDEEF609474A02AE685C957A4462CA" KeyPath="yes" Source="$(var.ProductSourcePath)\zh-Hans\System.Private.ServiceModel.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dirB1FFB91EED6FD71EA866548CEA3A5298" Name="zh-Hant">
         <Component Id="cmpBC28FE8B65954B00AECA9C534639596D">
@@ -2694,6 +2730,9 @@
         </Component>
         <Component Id="cmpB9B22A80E70F414B8778B852E29D6492">
           <File Id="fil46C0F341CAB64BD390BEA73E1FE0F552" KeyPath="yes" Source="$(var.ProductSourcePath)\zh-Hant\Microsoft.VisualBasic.Forms.resources.dll" />
+        </Component>
+        <Component Id="cmpD6C346028F9D4ECEA977B46AA38C2FFC">
+          <File Id="filF6D5770E18524086B3950AD88588F240" KeyPath="yes" Source="$(var.ProductSourcePath)\zh-Hant\System.Private.ServiceModel.resources.dll" />
         </Component>
       </Directory>
       <Directory Name="Schemas" Id="dir1DB5B24CC3494785974A51F28F128069">
@@ -3054,18 +3093,21 @@
       <Component Id="cmp957498053E01454DA1E21E6D7317DCD6">
         <File Id="fil2AA6F0D8A51D4BB89F33F2B73AB12391" KeyPath="yes" Source="$(var.ProductSourcePath)\msquic.dll" />
       </Component>
-      <Component Id="cmp2EB55EB6B44F4CF186F0BAFD6B33BCD6">
-        <File Id="filC629C6EFCF314F9BB78C56E0876C08EB" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.21.45113.dll" />
-      </Component>
       <Directory Name="_manifest" Id="dir81094D6B916B4BC8B1BA0E1DADB93A02">
         <Directory Name="spdx_2.2" Id="dirA36413FB3A534FDF8657D62728080E9F">
-          <Component Id="cmp408A3AF905EB47ADA35FBC5A6B1465A0">
-            <File Id="fil2146848B6ACB45FCA8E9C8FEE3BECDD8" KeyPath="yes" Source="$(var.ProductSourcePath)\_manifest\spdx_2.2\manifest.spdx.json" />
-          </Component>
         </Directory>
       </Directory>
       <Component Id="cmpA6276F9EAB41411AAAEC496E67A3DBAE">
         <File Id="filC840646CDE814D33B16DA3A5BBDDC88D" KeyPath="yes" Source="$(var.ProductSourcePath)\psoptions.json" />
+      </Component>
+      <Component Id="cmp59CC5051528041CEAE44B77D3D81B521">
+        <File Id="filC3F844FC7E7043B2BE9E01C32951AD56" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.Bcl.AsyncInterfaces.dll" />
+      </Component>
+      <Component Id="cmp11D385FEBA0E42AB902B0D34CF66FCEC">
+        <File Id="filEBC1647F50104F82BF9FF69D22A0AD56" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.Extensions.ObjectPool.dll" />
+      </Component>
+      <Component Id="cmp6A3D0EEE6400489BAC00A985E73B5C4F">
+        <File Id="filE2F7C98F732E47468F3553A31D722732" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.21.48005.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4051,9 +4093,23 @@
       <ComponentRef Id="cmp708913639F7A46E784CC0FA862A1A2CE" />
       <ComponentRef Id="cmpA75DEF5617C54DA1937CB37D5824BF79" />
       <ComponentRef Id="cmp957498053E01454DA1E21E6D7317DCD6" />
-      <ComponentRef Id="cmp2EB55EB6B44F4CF186F0BAFD6B33BCD6" />
-      <ComponentRef Id="cmp408A3AF905EB47ADA35FBC5A6B1465A0" />
       <ComponentRef Id="cmpA6276F9EAB41411AAAEC496E67A3DBAE" />
+      <ComponentRef Id="cmpC4D364BF809248F7AF9CB9A27671D2A8" />
+      <ComponentRef Id="cmpD6C346028F9D4ECEA977B46AA38C2FFC" />
+      <ComponentRef Id="cmp6E90AE95027049AC95E6FAFBF76AA3C9" />
+      <ComponentRef Id="cmp59CC5051528041CEAE44B77D3D81B521" />
+      <ComponentRef Id="cmp80A347F1BE0149BFBCFC8A5AEA6986A1" />
+      <ComponentRef Id="cmp0F8C80DAC6D148AFB6B20466CCDDFC86" />
+      <ComponentRef Id="cmp11D385FEBA0E42AB902B0D34CF66FCEC" />
+      <ComponentRef Id="cmpB459A8002DEB4FA29FF5ACC15DB2F0CE" />
+      <ComponentRef Id="cmp22C3B5B8A6184AFB850166E46197AC63" />
+      <ComponentRef Id="cmpD3180A4C59584495BB5A52C68A68B703" />
+      <ComponentRef Id="cmp202739B4651B4A44A830278A9E705EB3" />
+      <ComponentRef Id="cmp3FC997AAC6DE417094EE10B1716257BE" />
+      <ComponentRef Id="cmp1EECA406D9D84467A64D77642CBC0D17" />
+      <ComponentRef Id="cmpF8741E8E00864CA59C8D970EB44C53BA" />
+      <ComponentRef Id="cmp6A3D0EEE6400489BAC00A985E73B5C4F" />
+      <ComponentRef Id="cmp627DC08704BA483C89CDEF81DBD7C053" />
     </ComponentGroup>
   </Fragment>
 </Wix>
