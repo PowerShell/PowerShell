@@ -13,7 +13,11 @@
     "MD033": false,
     "MD034": false,
     "MD038": false,
-    "MD042": false
+    "MD042": false,
+    "MD028": false,
+    "MD025": {
+      "front_matter_title": ""
+    }
   },
 
   "[powershell]": {
