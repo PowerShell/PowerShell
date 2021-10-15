@@ -565,7 +565,9 @@ function Invoke-CIFinish
                 }
             }
         }
-
+    } catch {
+        Get-Error -InputObject $_
+        throw
     } finally {
         $pushedAllArtifacts = $true
 
@@ -582,9 +584,6 @@ function Invoke-CIFinish
         if (!$pushedAllArtifacts) {
             throw "Some artifacts did not exist!"
         }
-    } catch {
-        Get-Error -InputObject $_
-        throw
     }
 }
 
