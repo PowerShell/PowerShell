@@ -497,7 +497,7 @@ function Invoke-CIFinish
         }
 
         if ($Stage -contains "Package") {
-            Restore-PSOptions -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            Restore-PSOptions -PSOptionsPath "${buildFolder}/psoptions.json"
             $preReleaseVersion = $env:CI_FINISH_RELASETAG
 
             # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
