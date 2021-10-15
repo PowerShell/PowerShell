@@ -97,7 +97,9 @@ stages:
     parameters:
       channel: preview
       architecture: arm
+      runtimePrefix: win
   - template: templates/windows-packaging.yml
     parameters:
       channel: preview
       architecture: arm32
+      runtimePrefix: win

@@ -3,6 +3,8 @@ parameters:
     default: 'Hosted VS2017'
   - name: jobName
     default: 'win_packaging'
+  - name: runtimePrefix
+    default: 'win7'
   - name: architecture
     default: 'x64'
   - name: channel
@@ -52,7 +54,7 @@ jobs:
   - pwsh: |
       Import-Module .\tools\ci.psm1
       New-CodeCoverageAndTestPackage
-      Invoke-CIFinish -Runtime win7-${{ parameters.architecture }} -channel ${{ parameters.channel }} -Stage Build
+      Invoke-CIFinish -Runtime ${{ parameters.runtimePrefix }}-${{ parameters.architecture }} -channel ${{ parameters.channel }} -Stage Build
     displayName: Build
     workingDirectory: $(repoPath)
 
@@ -65,6 +67,6 @@ jobs:
   - pwsh: |
       Import-Module .\tools\ci.psm1
       New-CodeCoverageAndTestPackage
-      Invoke-CIFinish -Runtime win7-${{ parameters.architecture }} -channel ${{ parameters.channel }} -Stage Package
+      Invoke-CIFinish -Runtime ${{ parameters.runtimePrefix }}-${{ parameters.architecture }} -channel ${{ parameters.channel }} -Stage Package
     displayName: Package and Test
     workingDirectory: $(repoPath)
