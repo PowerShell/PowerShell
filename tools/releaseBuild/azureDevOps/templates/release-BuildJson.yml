@@ -19,6 +19,7 @@ steps:
 
     $metadata = Get-Content ./tools/metadata.json | ConvertFrom-Json
     $stableRelease = $metadata.StableRelease
+    $ltsRelease = $metadata.LTSRelease
 
     $buildInfo = Get-Content $jsonFile | ConvertFrom-Json
     $buildInfo.ReleaseDate = $dateTime
@@ -39,19 +40,12 @@ steps:
 
     $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]NO"
 
-    if ($fileName -eq "stable.json")
+    if ($fileName -eq "stable.json" -and $ltsRelease)
     {
-        $releaseTag = $buildInfo.ReleaseTag
-        $version = $releaseTag -replace '^v'
-        $semVersion = [System.Management.Automation.SemanticVersion] $version
-
-        if ($semVersion.PreReleaseLabel -eq $null -and $semVersion.Minor % 2 -eq 0 -and $semVersion.Major -ge 7)
-        {
-            $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
-            Copy-Item -Path $targetFile -Destination $ltsFile -Force
-            $vstsCommandLtsJsonFile = "vso[task.setvariable variable=LtsBuildInfoJsonFile]$ltsFile"
-            $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]YES"
-        }
+      $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
+      Copy-Item -Path $targetFile -Destination $ltsFile -Force
+      $vstsCommandLtsJsonFile = "vso[task.setvariable variable=LtsBuildInfoJsonFile]$ltsFile"
+      $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]YES"
     }
 
     Write-Host "sending " + $vstsCommandCopyLTSBuildInfo
