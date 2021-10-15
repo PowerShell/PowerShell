@@ -93,3 +93,13 @@ stages:
     parameters:
       channel: preview
       architecture: x86
+  - template: templates/windows-packaging.yml
+    parameters:
+      channel: preview
+      architecture: arm
+      runtimePrefix: win
+  - template: templates/windows-packaging.yml
+    parameters:
+      channel: preview
+      architecture: arm64
+      runtimePrefix: win
