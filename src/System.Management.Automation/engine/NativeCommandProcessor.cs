@@ -12,13 +12,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
 using System.Xml;
 using Dbg = System.Management.Automation.Diagnostics;
+using PortableExecutable = System.Reflection.PortableExecutable;
 
 namespace System.Management.Automation
 {
@@ -1106,35 +1106,17 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // The function 'SHGetFileInfo()' does not understand reparse points and returns 0 ("non exe or error")
-            // for a symbolic link file, so we try to get the immediate link target in that case.
-            // Why not get the final target (use 'returnFinalTarget: true')? Because:
-            //  1. When starting a process on Windows, if the 'FileName' is a symbolic link, the immediate link target will automatically be used,
-            //     but the OS does not do recursive resolution when the immediate link target is also a symbolic link.
-            //  2. Keep the same behavior as before adopting the 'LinkTarget' and 'ResolveLinkTarget' APIs in .NET 6.
-            string linkTarget = File.ResolveLinkTarget(fileName, returnFinalTarget: false)?.FullName;
-            if (linkTarget is not null)
+            using var stream = new IO.FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            try
             {
-                fileName = linkTarget;
+                var peheaders = new PortableExecutable.PEHeaders(stream);
+                var peheader = peheaders.PEHeader;
+                return peheader is not null && peheader.Subsystem == PortableExecutable.Subsystem.WindowsGui;
             }
-
-            SHFILEINFO shinfo = new SHFILEINFO();
-            IntPtr type = SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), SHGFI_EXETYPE);
-
-            switch ((int)type)
+            catch
             {
-                case 0x0:
-                    // 0x0 = not an exe
-                    return false;
-                case 0x5a4d:
-                    // 0x5a4d - DOS .exe or .com file
-                    return false;
-                case 0x4550:
-                    // 0x4550 - windows console app or bat file
-                    return false;
-                default:
-                    // anything else - is a windows program...
-                    return true;
+                // It is not exe file.
+                return false;
             }
 #endif
         }
@@ -1644,38 +1626,6 @@ namespace System.Management.Automation
 
             return null;
         }
-
-        #endregion
-
-        #region Interop for SHGetFileInfo
-
-        private const int SCS_32BIT_BINARY = 0;  // A 32-bit Windows-based application
-        private const int SCS_DOS_BINARY = 1;  // An MS-DOS - based application
-        private const int SCS_WOW_BINARY = 2;  // A 16-bit Windows-based application
-        private const int SCS_PIF_BINARY = 3;  // A PIF file that executes an MS-DOS - based application
-        private const int SCS_POSIX_BINARY = 4;  // A POSIX - based application
-        private const int SCS_OS216_BINARY = 5;  // A 16-bit OS/2-based application
-        private const int SCS_64BIT_BINARY = 6;  // A 64-bit Windows-based application.
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-        private struct SHFILEINFO
-        {
-            public IntPtr hIcon;
-            public int iIcon;
-            public uint dwAttributes;
-
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-            public string szDisplayName;
-
-            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
-            public string szTypeName;
-        }
-
-        private const uint SHGFI_EXETYPE = 0x000002000; // flag used to ask to return exe type
-
-        [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-        private static extern IntPtr SHGetFileInfo(string pszPath, uint dwFileAttributes,
-            ref SHFILEINFO psfi, uint cbSizeFileInfo, uint uFlags);
 
         #endregion
 
