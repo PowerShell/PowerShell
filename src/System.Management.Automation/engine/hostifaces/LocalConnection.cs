@@ -363,7 +363,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private static readonly string s_debugPreferenceCachePath = Path.Combine(Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell"), "DebugPreference.clixml");
+        private static readonly string s_debugPreferenceCachePath = Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell", "DebugPreference.clixml");
         private static readonly object s_debugPreferenceLockObject = new object();
 
         /// <summary>
@@ -1241,8 +1241,6 @@ namespace System.Management.Automation.Runspaces
                         RunspaceOpening.Dispose();
                         RunspaceOpening = null;
                     }
-
-                    Platform.RemoveTemporaryDirectory();
 
                     // Dispose the event manager
                     if (this.ExecutionContext != null && this.ExecutionContext.Events != null)
