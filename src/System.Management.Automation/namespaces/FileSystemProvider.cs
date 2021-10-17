@@ -8136,16 +8136,21 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="instance">The FileInfo or DirectoryInfo type.</param>
         /// <returns>The file path the instance points to.</returns>
-        public static string ResolvedTarget(PSObject instance)
+        public static FileSystemInfo ResolvedTarget(PSObject instance)
         {
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
+                FileSystemInfo toRet = null;
                 string symbTarget = fileSysInfo.LinkTarget;
                 if (symbTarget == null) {
-                    return fileSysInfo.FullName;
-                } else if (File.Exists(symbTarget) || Directory.Exists(symbTarget)) {
-                    return symbTarget;
+                    return fileSysInfo;
+                } else if (File.Exists(symbTarget)) {
+                    toRet = new FileInfo(symbTarget);
+                } else if (Directory.Exists(symbTarget)) {
+                    toRet = new DirectoryInfo(symbTarget);
                 }
+
+                return toRet;
                 
             }
 
