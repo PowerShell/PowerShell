@@ -668,8 +668,8 @@ namespace StackTest {
         It "Same user should use the same temporary HOME directory for different sessions" -Skip:($IsWindows) {
             $results = bash -c @"
 unset HOME;
-pwsh -c '[System.Management.Automation.Platform]::SelectProductNameForDirectory(\`"default\`")';
-pwsh -c '[System.Management.Automation.Platform]::SelectProductNameForDirectory(\`"default\`")';
+$powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::DEFAULT)';
+$powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::DEFAULT)';
 "@
             $results | Should -HaveCount 2
             $results[0] | Should -BeExactly $results[1]
