@@ -1,0 +1,74 @@
+{
+  "Registrations": [
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Management.Infrastructure.Runtime.Unix",
+          "Version": "2.0.0"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.Management.Infrastructure",
+          "Version": "2.0.0"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "ThreadJob",
+          "Version": "2.0.3"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.PowerShell.Archive",
+          "Version": "1.2.5"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "PackageManagement",
+          "Version": "1.4.7"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "PowerShellGet",
+          "Version": "2.2.5"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "PSReadLine",
+          "Version": "2.1.0"
+        }
+      },
+      "DevelopmentDependency": false
+    }
+  ]
+}
