@@ -2505,7 +2505,6 @@ function Start-CrossGen {
         "System.Linq.dll"
         "System.Collections.Concurrent.dll"
         "System.Collections.dll"
-        "Newtonsoft.Json.dll"
         "System.IO.FileSystem.dll"
         "System.Diagnostics.Process.dll"
         "System.Threading.Tasks.Parallel.dll"
