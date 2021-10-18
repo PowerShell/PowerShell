@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
-
+using System.Management.Automation.Internal;
 using Microsoft.Win32;
 
 namespace System.Management.Automation
@@ -156,8 +156,6 @@ namespace System.Management.Automation
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
         internal static readonly string ConfigDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
-
-        private static string s_tempHome = null;
 #else
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
@@ -215,12 +213,14 @@ namespace System.Management.Automation
         }
 
 #if UNIX
+        private static string s_tempHome = null;
+
         /// <summary>
         /// Get the 'HOME' environment variable or create a temporary home diretory if the environment variable is not set.
         /// </summary>
-        internal static string GetHomeOrCreateTempHome()
+        private static string GetHomeOrCreateTempHome()
         {
-            const string tempHomeFolderName = "pwsh-tmp-98288ff9-5712-4a14-9a11-23693b9cd91a";
+            const string tempHomeFolderName = "pwsh-{0}-98288ff9-5712-4a14-9a11-23693b9cd91a";
 
             string envHome = Environment.GetEnvironmentVariable("HOME") ?? s_tempHome;
             if (envHome is not null)
@@ -230,7 +230,7 @@ namespace System.Management.Automation
 
             try
             {
-                s_tempHome = Path.Combine(Path.GetTempPath(), tempHomeFolderName);
+                s_tempHome = Path.Combine(Path.GetTempPath(), StringUtil.Format(tempHomeFolderName, Environment.UserName));
                 Directory.CreateDirectory(s_tempHome);
             }
             catch (UnauthorizedAccessException)
