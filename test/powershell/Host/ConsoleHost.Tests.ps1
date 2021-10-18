@@ -665,7 +665,7 @@ namespace StackTest {
             bash -c "unset HOME;$powershell -c '1+1'" | Should -BeExactly 2
         }
 
-        It "Same user should use the same temporary HOME directory for different sessions" {
+        It "Same user should use the same temporary HOME directory for different sessions" -Skip:($IsWindows) {
             $results = bash -c @"
 unset HOME;
 pwsh -c '[System.Management.Automation.Platform]::SelectProductNameForDirectory(\`"default\`")';
