@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# Requires the module dotnet.project.assets authored by @TravisEz13
+# Requires the module dotnet.project.assets from the PowerShell Gallery authored by @TravisEz13
 
 import-module dotnet.project.assets
 Class Registration {
