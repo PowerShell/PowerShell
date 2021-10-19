@@ -88,7 +88,7 @@ $existingRegistrationsJson.Registrations | ForEach-Object {
     $newRegistrations += $registration
 }
 
-Get-PSDrive -PSProvider SHiPS | Remove-PSDrive -Force
+Get-PSDrive -Name pwsh-win-core -ErrorAction Ignore | Remove-PSDrive
 Push-Location $PSScriptRoot\..\src\powershell-win-core
 $null = dotnet restore
 $null = New-PADrive -Path $PSScriptRoot\..\src\powershell-win-core\obj\project.assets.json -Name pwsh-win-core
@@ -100,6 +100,7 @@ $targets = Get-ChildItem -Path 'pwsh-win-core:/targets/net6.0-windows7.0|win7-x6
     $_.Name -notlike 'Microsoft.CodeAnalysis.NetAnalyzers*'
 }  | select-object -ExpandProperty name
 Pop-Location
+Get-PSDrive -Name pwsh-win-core | Remove-PSDrive
 
 $updateRegistrations = @()
 $targets | ForEach-Object {
