@@ -1,0 +1,32 @@
+name: UnifiedPackageBuild-$(Build.BuildId)
+
+trigger: none
+pr: none
+
+schedules:
+  - cron: '0 13 * * *'
+    branches:
+      include:
+      - master
+
+resources:
+  repositories:
+  - repository: ComplianceRepo
+    type: github
+    endpoint: ComplianceGHRepo
+    name: PowerShell/compliance
+    ref: master
+
+variables:
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+
+stages:
+  - stage: compliance
+    dependsOn: ['windows']
+    jobs:
+      - template: templates/compliance/compliance.yml

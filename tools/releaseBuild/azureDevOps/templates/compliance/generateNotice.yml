@@ -1,0 +1,62 @@
+parameters:
+  parentJobs: []
+
+jobs:
+- job: generateNotice
+  variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+
+  # Defines the variables AzureFileCopySubscription, StorageAccount, StorageAccountKey, StorageResourceGroup, StorageSubscriptionName
+  - group: 'Azure Blob variable group'
+
+  displayName: Generate Notice
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  pool:
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMSUbuntu20.04
+
+  # APIScan can take a long time
+  timeoutInMinutes: 15
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - pwsh: |
+      Get-Content ./assets/additionalAttributions.txt | Select-Object -Skip 4 | Out-File '$(System.ArtifactsDirectory)\additionalAttributions.txt' -Encoding utf8NoBOM -Force
+      Get-Content '$(System.ArtifactsDirectory)\additionalAttributions.txt'
+    displayName: Get Additional Attributions
+
+  - task: msospo.ospo-extension.8d7f9abb-6896-461d-9e25-4f74ed65ddb2.notice@0
+    displayName: 'NOTICE File Generator'
+    inputs:
+      outputfile: $(System.ArtifactsDirectory)\ThirdPartyNotices.txt
+      outputformat: text
+      additionaldata: '$(System.ArtifactsDirectory)\additionalAttributions.txt'
+
+  - task: AzureFileCopy@4
+    displayName: 'upload Notice'
+    inputs:
+      SourcePath: $(System.ArtifactsDirectory)\ThirdPartyNotices.txt
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: 'tpn'
+      resourceGroup: '$(StorageResourceGroup)'
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: $(System.ArtifactsDirectory)
+      artifactName: notice
+    displayName: Publish notice artifacts
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true
