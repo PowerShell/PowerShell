@@ -637,7 +637,7 @@ Describe "Parsing array that has too many dimensions" -Tag CI {
 
         $errs = Get-ParseResults -src $Script
         $errs.Count | Should -Be $ErrorId.Count
-        for ($i = 0; $i -lt $err.Count; $i++) {
+        for ($i = 0; $i -lt $errs.Count; $i++) {
             $errs[$i].ErrorId | Should -BeExactly $ErrorId[$i]
             $errs[$i].Extent.StartScriptPosition.Offset | Should -Be $StartOffset[$i]
             $errs[$i].Extent.EndScriptPosition.Offset | Should -Be $EndOffset[$i]
