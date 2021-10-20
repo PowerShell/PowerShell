@@ -69,9 +69,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
     }
 
     It "An error is returned when setting the depth to larger than 100" {
-        $p = Get-Process -id $PID
-        $p | ConvertTo-Json -Depth 101 -ErrorVariable badDepth
-        $badDepth.ErrorRecord.FullyQualifiedErrorId | Should -Be "ParameterValidationError,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
+        { dir | ConvertTo-Json -depth 101 } | Should -Throw -errorID "ParameterArgumentValidationError"
     }
 
     It "The result string is packed in an array symbols when AsArray parameter is used." {
