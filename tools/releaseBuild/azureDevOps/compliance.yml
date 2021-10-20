@@ -27,7 +27,7 @@ variables:
 
 stages:
   - stage: compliance
-    dependsOn: ['windows']
+    dependsOn: []
     jobs:
       - template: templates/compliance/compliance.yml
         parameters:
