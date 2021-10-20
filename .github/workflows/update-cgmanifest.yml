@@ -1,0 +1,52 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
+name: Update cgmanifest
+on:
+    workflow_dispatch:
+    schedule:
+    # At 13:00 UTC every day.
+    - cron:  '0 13 * * *'
+
+defaults:
+  run:
+    shell: pwsh
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+
+jobs:
+  update-cgmanifest:
+    name: Update cgmanifest
+    timeout-minutes: 15
+    runs-on: windows-latest
+    if: github.repository == 'PowerShell/PowerShell'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Ships provider to deal with project.assets.json
+        run: |
+          Install-Module -Name dotnet.project.assets -force
+      - name: Execute script to update cgmanifest
+        run: |
+          ./tools/findMissingNotices.ps1
+      - name: Microsoft Teams Notifier
+        uses: skitionek/notify-microsoft-teams@master
+        if: failure()
+        with:
+          webhook_url: ${{ secrets.PS_BUILD_TEAMS_CHANNEL }}
+          overwrite: "{title: `Failure in updating cgmanifest. Look at ${workflow_link}`}"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        id: cpr
+        if: env.CREATE_PR == 'true'
+        with:
+          commit-message: "Update the cgmanifest with missing or updated components"
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          title: "Update ${{ env.FORMULA_NAME }} formula to version ${{ env.NEW_FORMULA_VERSION }}"
+          reviewers: travisez13
+          base: master
+          draft: false
+          branch: update-cgmanifest
