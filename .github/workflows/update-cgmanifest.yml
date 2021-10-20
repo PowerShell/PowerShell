@@ -34,6 +34,10 @@ jobs:
           Install-Module -Name dotnet.project.assets -force
       - name: Execute script to update cgmanifest
         run: |
+          Import-Module ./build.psm1
+          Start-PSBootStrap
+      - name: Execute script to update cgmanifest
+        run: |
           ./tools/findMissingNotices.ps1
       - name: Microsoft Teams Notifier
         uses: skitionek/notify-microsoft-teams@master
