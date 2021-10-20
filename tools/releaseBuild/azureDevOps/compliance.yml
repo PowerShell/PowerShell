@@ -30,3 +30,9 @@ stages:
     dependsOn: ['windows']
     jobs:
       - template: templates/compliance/compliance.yml
+        parameters:
+          parentJobs: []
+      - template: templates/compliance/generateNotice.yml
+        parameters:
+          parentJobs: []
+

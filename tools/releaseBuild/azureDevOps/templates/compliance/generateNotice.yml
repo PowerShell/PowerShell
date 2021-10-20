@@ -1,5 +1,6 @@
 parameters:
-  parentJobs: []
+  - name: parentJobs
+    type: jobList
 
 jobs:
 - job: generateNotice
