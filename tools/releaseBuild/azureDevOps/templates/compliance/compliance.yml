@@ -28,7 +28,7 @@ jobs:
   - checkout: self
     clean: true
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@3
     displayName: 'Run CredScan'
     inputs:
       suppressionsFile: tools/credScan/suppress.json
@@ -62,6 +62,8 @@ jobs:
       uploadPREfast: false
       uploadRoslyn: false
       uploadTSLint: false
+      uploadCredScan: true
+      uploadPoliCheck: true
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-report.SdtReport@1
     displayName: 'Create Security Analysis Report'
