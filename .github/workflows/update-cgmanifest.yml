@@ -29,6 +29,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Sync tags
+        run: |
+          git fetch --prune --unshallow --tags
       - name: Install Ships provider to deal with project.assets.json
         run: |
           Install-Module -Name dotnet.project.assets -force
