@@ -4532,7 +4532,7 @@ namespace Microsoft.PowerShell.Commands
                 else if (moduleLogging.EnableModuleLogging == true)
                 {
                     status = ModuleLoggingGroupPolicyStatus.Enabled;
-                    moduleNames = moduleLogging.ModuleNames;
+                    moduleNames = moduleLogging.ModuleNames ?? Array.Empty<string>();
                 }
             }
 

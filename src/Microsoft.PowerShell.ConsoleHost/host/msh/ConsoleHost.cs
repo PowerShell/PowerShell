@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell
             }
 #endif
 
-            if (s_cpp.SettingsFile is not null)
+            if (!string.IsNullOrEmpty(s_cpp.SettingsFile))
             {
                 PowerShellConfig.Instance.SetSystemConfigFilePath(s_cpp.SettingsFile);
             }

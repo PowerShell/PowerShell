@@ -1,7 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 #if UNIX
 using System.Management.Automation.Internal;
@@ -66,8 +69,8 @@ namespace System.Management.Automation.Configuration
 
         // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
         // They are used as a cache to avoid hitting the disk for every read operation.
-        private readonly JsonObject[] configScopeRoots;
-        private readonly JsonObject emptyConfig;
+        private readonly JsonObject[] _configScopeRoots;
+        private readonly JsonObject _emptyConfig;
 
         /// <summary>
         /// Lock used to enable multiple concurrent readers and singular write locks within a single process.
@@ -88,8 +91,8 @@ namespace System.Management.Automation.Configuration
             perUserConfigDirectory = Platform.ConfigDirectory;
             perUserConfigFile = Path.Combine(perUserConfigDirectory, ConfigFileName);
 
-            emptyConfig = new JsonObject();
-            configScopeRoots = new JsonObject[2];
+            _emptyConfig = new JsonObject();
+            _configScopeRoots = new JsonObject[2];
 
             fileLock = new ReaderWriterLockSlim();
         }
@@ -109,14 +112,15 @@ namespace System.Management.Automation.Configuration
         /// </remarks>
         internal void SetSystemConfigFilePath(string value)
         {
-            if (!string.IsNullOrEmpty(value) && !File.Exists(value))
+            FileInfo info = new FileInfo(value);
+
+            if (!info.Exists)
             {
                 throw new FileNotFoundException(value);
             }
 
-            FileInfo info = new FileInfo(value);
             systemWideConfigFile = info.FullName;
-            systemWideConfigDirectory = info.Directory.FullName;
+            systemWideConfigDirectory = info.Directory!.FullName;
         }
 
         /// <summary>
@@ -126,9 +130,9 @@ namespace System.Management.Automation.Configuration
         /// </summary>
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
         /// <returns>Value if found, null otherwise. The behavior matches ModuleIntrinsics.GetExpandedEnvironmentVariable().</returns>
-        internal string GetModulePath(ConfigScope scope)
+        internal string? GetModulePath(ConfigScope scope)
         {
-            string modulePath = ReadValueFromFile<string>(scope, Constants.PSModulePathEnvVar);
+            string? modulePath = ReadValueFromFile<string>(scope, Constants.PSModulePathEnvVar);
             if (!string.IsNullOrEmpty(modulePath))
             {
                 modulePath = Environment.ExpandEnvironmentVariables(modulePath);
@@ -151,10 +155,10 @@ namespace System.Management.Automation.Configuration
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
         /// <param name="shellId">The shell associated with this policy. Typically, it is "Microsoft.PowerShell".</param>
         /// <returns>The execution policy if found. Null otherwise.</returns>
-        internal string GetExecutionPolicy(ConfigScope scope, string shellId)
+        internal string? GetExecutionPolicy(ConfigScope scope, string shellId)
         {
             string key = GetExecutionPolicySettingKey(shellId);
-            string execPolicy = ReadValueFromFile<string>(scope, key);
+            string? execPolicy = ReadValueFromFile<string>(scope, key);
             return string.IsNullOrEmpty(execPolicy) ? null : execPolicy;
         }
 
@@ -222,13 +226,13 @@ namespace System.Management.Automation.Configuration
             return !settingValue;
         }
 
-        internal string[] GetWindowsPowerShellCompatibilityModuleDenyList()
+        internal string[]? GetWindowsPowerShellCompatibilityModuleDenyList()
         {
             return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityModuleDenyListKey)
                 ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey);
         }
 
-        internal string[] GetWindowsPowerShellCompatibilityNoClobberModuleList()
+        internal string[]? GetWindowsPowerShellCompatibilityNoClobberModuleList()
         {
             return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityNoClobberModuleListKey)
                 ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityNoClobberModuleListKey);
@@ -237,7 +241,7 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// Corresponding settings of the original Group Policies.
         /// </summary>
-        internal PowerShellPolicies GetPowerShellPolicies(ConfigScope scope)
+        internal PowerShellPolicies? GetPowerShellPolicies(ConfigScope scope)
         {
             return ReadValueFromFile<PowerShellPolicies>(scope, nameof(PowerShellPolicies));
         }
@@ -251,7 +255,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal string GetSysLogIdentity()
         {
-            string identity = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogIdentity");
+            string? identity = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogIdentity");
 
             if (string.IsNullOrEmpty(identity) ||
                 identity.Equals(LogDefaultValue, StringComparison.OrdinalIgnoreCase))
@@ -270,7 +274,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal PSLevel GetLogLevel()
         {
-            string levelName = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogLevel");
+            string? levelName = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogLevel");
             PSLevel level;
 
             if (string.IsNullOrEmpty(levelName) ||
@@ -301,7 +305,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal PSChannel GetLogChannels()
         {
-            string values = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogChannels");
+            string? values = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogChannels");
 
             PSChannel result = 0;
             if (!string.IsNullOrEmpty(values))
@@ -340,7 +344,7 @@ namespace System.Management.Automation.Configuration
         /// </returns>
         internal PSKeyword GetLogKeywords()
         {
-            string values = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogKeywords");
+            string? values = ReadValueFromFile<string>(ConfigScope.AllUsers, "LogKeywords");
 
             PSKeyword result = 0;
             if (!string.IsNullOrEmpty(values))
@@ -379,10 +383,11 @@ namespace System.Management.Automation.Configuration
         /// <param name="scope">The ConfigScope of the configuration file to update.</param>
         /// <param name="key">The string key of the value.</param>
         /// <param name="defaultValue">The default value to return if the key is not present.</param>
-        private T ReadValueFromFile<T>(ConfigScope scope, string key, T defaultValue = default)
+        [return: NotNullIfNotNull("defaultValue")]
+        private T? ReadValueFromFile<T>(ConfigScope scope, string key, T? defaultValue = default)
         {
             string fileName = GetConfigFilePath(scope);
-            var configScopeData = configScopeRoots[(int)scope];
+            var configScopeData = _configScopeRoots[(int)scope];
 
             if (configScopeData is null)
             {
@@ -401,9 +406,10 @@ namespace System.Management.Automation.Configuration
                         {
                             configScopeData = JsonNode.Parse(jsonString) as JsonObject;
                         }
-                        else
+
+                        if (configScopeData is null)
                         {
-                            configScopeData = emptyConfig;
+                            configScopeData = _emptyConfig;
                         }
                     }
                     catch (Exception exc)
@@ -417,18 +423,18 @@ namespace System.Management.Automation.Configuration
                 }
                 else
                 {
-                    configScopeData = emptyConfig;
+                    configScopeData = _emptyConfig;
                 }
 
                 // Set the configuration cache only if another thread has not updated it.
-                var originalValue = Interlocked.CompareExchange(ref configScopeRoots[(int)scope], configScopeData, null);
+                var originalValue = Interlocked.CompareExchange(ref _configScopeRoots[(int)scope], configScopeData, null);
                 if (originalValue != null)
                 {
                     configScopeData = originalValue;
                 }
             }
 
-            if (!ReferenceEquals(configScopeData, emptyConfig))
+            if (!ReferenceEquals(configScopeData, _emptyConfig))
             {
                 var value = configScopeData[key];
                 if (value is null)
@@ -480,7 +486,7 @@ namespace System.Management.Automation.Configuration
         /// <param name="key">The string key of the value.</param>
         /// <param name="value">The value to set.</param>
         /// <param name="addValue">Whether the key-value pair should be added to or removed from the file.</param>
-        private void UpdateValueInFile<T>(ConfigScope scope, string key, T value, bool addValue)
+        private void UpdateValueInFile<T>(ConfigScope scope, string key, T? value, bool addValue)
         {
             try
             {
@@ -495,7 +501,7 @@ namespace System.Management.Automation.Configuration
                 using var reader = new StreamReader(stream);
                 string jsonString = reader.ReadToEnd();
 
-                JsonObject configScopeData = null;
+                JsonObject? configScopeData = null;
                 if (!string.IsNullOrEmpty(jsonString))
                 {
                     configScopeData = configScopeData = JsonNode.Parse(jsonString) as JsonObject;
@@ -524,7 +530,7 @@ namespace System.Management.Automation.Configuration
                 streamWriter.Write(jsonOutput);
 
                 // Refresh the configuration cache.
-                Interlocked.Exchange(ref configScopeRoots[(int)scope], configScopeData);
+                Interlocked.Exchange(ref _configScopeRoots[(int)scope], configScopeData);
             }
             finally
             {
@@ -614,19 +620,19 @@ namespace System.Management.Automation.Configuration
     /// </summary>
     internal sealed class PowerShellPolicies
     {
-        public ScriptExecution ScriptExecution { get; set; }
+        public ScriptExecution? ScriptExecution { get; set; }
 
-        public ScriptBlockLogging ScriptBlockLogging { get; set; }
+        public ScriptBlockLogging? ScriptBlockLogging { get; set; }
 
-        public ModuleLogging ModuleLogging { get; set; }
+        public ModuleLogging? ModuleLogging { get; set; }
 
-        public ProtectedEventLogging ProtectedEventLogging { get; set; }
+        public ProtectedEventLogging? ProtectedEventLogging { get; set; }
 
-        public Transcription Transcription { get; set; }
+        public Transcription? Transcription { get; set; }
 
-        public UpdatableHelp UpdatableHelp { get; set; }
+        public UpdatableHelp? UpdatableHelp { get; set; }
 
-        public ConsoleSessionConfiguration ConsoleSessionConfiguration { get; set; }
+        public ConsoleSessionConfiguration? ConsoleSessionConfiguration { get; set; }
     }
 
     internal abstract class PolicyBase { }
@@ -636,7 +642,7 @@ namespace System.Management.Automation.Configuration
     /// </summary>
     internal sealed class ScriptExecution : PolicyBase
     {
-        public string ExecutionPolicy { get; set; }
+        public string? ExecutionPolicy { get; set; }
 
         public bool? EnableScripts { get; set; }
     }
@@ -658,7 +664,7 @@ namespace System.Management.Automation.Configuration
     {
         public bool? EnableModuleLogging { get; set; }
 
-        public string[] ModuleNames { get; set; }
+        public string[]? ModuleNames { get; set; }
     }
 
     /// <summary>
@@ -670,7 +676,7 @@ namespace System.Management.Automation.Configuration
 
         public bool? EnableInvocationHeader { get; set; }
 
-        public string OutputDirectory { get; set; }
+        public string? OutputDirectory { get; set; }
     }
 
     /// <summary>
@@ -680,7 +686,7 @@ namespace System.Management.Automation.Configuration
     {
         public bool? EnableUpdateHelpDefaultSourcePath { get; set; }
 
-        public string DefaultSourcePath { get; set; }
+        public string? DefaultSourcePath { get; set; }
     }
 
     /// <summary>
@@ -690,7 +696,7 @@ namespace System.Management.Automation.Configuration
     {
         public bool? EnableConsoleSessionConfiguration { get; set; }
 
-        public string ConsoleSessionConfigurationName { get; set; }
+        public string? ConsoleSessionConfigurationName { get; set; }
     }
 
     /// <summary>
@@ -700,7 +706,7 @@ namespace System.Management.Automation.Configuration
     {
         public bool? EnableProtectedEventLogging { get; set; }
 
-        public string[] EncryptionCertificate { get; set; }
+        public string[]? EncryptionCertificate { get; set; }
     }
 
 #endregion
