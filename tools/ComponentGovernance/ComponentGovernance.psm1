@@ -19,6 +19,7 @@ function Get-Uri {
     )
     $cgData = Get-CgData
     $baseUri = "https://governance.dev.azure.com/$($cgData.Organization)/$($cgData.Organization.Project)/_apis/componentgovernance/$PathPortion"
+    Write-Verbose "uri: $baseUri" -Verbose
     return $baseUri
 }
 
