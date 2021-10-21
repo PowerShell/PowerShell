@@ -8,8 +8,6 @@ Class CgData {
     [string]$Project
 }
 function Get-CgData {
-    [output(CgData)]
-    param()
     if($Script:cgData){return $Script:cgData}
     throw "First call Set-CgCredentials"
 }
