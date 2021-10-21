@@ -1,5 +1,54 @@
 # Current preview release
 
+## [7.2.0-rc.1] - 2021-10-21
+
+### General Cmdlet Updates and Fixes
+
+- Disallow COM calls for AppLocker system lockdown (#16268)
+- Configure `Microsoft.ApplicationInsights` to not send cloud role name (#16246)
+- Disallow `Add-Type` in NoLanguage mode on a locked down machine (#16245)
+- Make property names for color VT100 sequences consistent with documentation (#16212)
+- Make moving a directory into itself with `Move-Item` an error (#16198)
+- Change `FileSystemInfo.Target` from a `CodeProperty` to an `AliasProperty` that points to `FileSystemInfo.LinkTarget` (#16165)
+
+### Tests
+
+- Removed deprecated docker-based tests for PowerShell release packages (#16224)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+<p>Bump .NET SDK to 6.0.100-rc.2</p>
+</summary>
+
+<ul>
+<li>Update .NET 6 to version 6.0.100-rc.2.21505.57 (#16249)</li>
+<li>Fix RPM packaging (Internal 17704)</li>
+<li>Update <code>ThirdPartyNotices.txt</code> (#16283)</li>
+<li>Update pipeline yaml file to use <code>ubuntu-latest</code> image (#16279)</li>
+<li>Add script to generate <code>cgmanifest.json</code> (#16278)</li>
+<li>Update version of <code>Microsoft.PowerShell.Native</code> and <code>Microsoft.PowerShell.MarkdownRender</code> packages (#16277)</li>
+<li>Add <code>cgmanifest.json</code> for generating correct third party notice file (#16266)</li>
+<li>Only upload stable <code>buildinfo</code> for stable releases (#16251)</li>
+<li>Don't upload <code>.dep</code> or <code>.tar.gz</code> for RPM because there are none (#16230)</li>
+<li>Ensure RPM license is recognized (#16189)</li>
+<li>Add condition to only generate release files in local dev build only (#16259)</li>
+<li>Ensure <code>psoptions.json</code> and <code>manifest.spdx.json</code> files always exist in packages (#16258)</li>
+<li>Fix CI script and split out ARM runs (#16252)</li>
+<li>Update vPack task version to 12 (#16250)</li>
+<li>Sign third party executables (#16229)</li>
+<li>Add Software Bill of Materials to the main packages (#16202)</li>
+<li>Upgrade <code>set-value</code> package for markdown test (#16196)</li>
+<li>Fix Microsoft update spelling issue (#16178)</li>
+<li>Move vPack build to 1ES Pool (#16169)</li>
+</ul>
+
+</details>
+
+[7.2.0-rc.1]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.10...v7.2.0-rc.1
+
 ## [7.2.0-preview.10] - 2021-09-28
 
 ### Engine Updates and Fixes
