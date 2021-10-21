@@ -1383,6 +1383,14 @@ lselden
 SethFalco
 CodeQL
 slowy07
+rc.2.21505.57
+ThirdPartyNotices.txt
+cgmanifest.json
+buildinfo
+tar.gz
+psoptions.json
+manifest.spdx.json
+vPack
  - CHANGELOG/7.0.md
 codesign
 release-BuildJson
