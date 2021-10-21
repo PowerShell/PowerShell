@@ -1247,9 +1247,8 @@ function Get-FpmArguments
         "-t", $Type,
         "-s", "dir"
     )
-    if ($Environment.IsRedHatFamily) {
+    if ($Distribution -eq 'rh') {
         $Arguments += @("--rpm-dist", $Distribution)
-        $Arguments += @("--rpm-os", "linux")
         $Arguments += @("--rpm-os", "linux")
         $Arguments += @("--license", "MIT")
     } else {
@@ -1368,7 +1367,7 @@ function New-AfterScripts
 
     Write-Verbose -Message "AfterScript Distribution: $Distribution" -Verbose
 
-    if ($Environment.IsRedHatFamily) {
+    if ($Distribution -eq 'rh') {
         $AfterInstallScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $AfterRemoveScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $packagingStrings.RedHatAfterInstallScript -f "$Link", $Destination  | Out-File -FilePath $AfterInstallScript -Encoding ascii
