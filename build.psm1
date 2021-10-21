@@ -441,6 +441,7 @@ Fix steps:
     # Add --self-contained due to "warning NETSDK1179: One of '--self-contained' or '--no-self-contained' options are required when '--runtime' is used."
     if ($Options.Runtime -like 'fxdependent*') {
         $Arguments += "--no-self-contained"
+        $Arguments += "/property:UseAppHost=false"
     }
     else {
         $Arguments += "--self-contained"
