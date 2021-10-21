@@ -26,6 +26,8 @@ variables:
     value: none
   # Defines the variables AzureFileCopySubscription, StorageAccount, StorageAccountKey, StorageResourceGroup, StorageSubscriptionName
   - group: 'Azure Blob variable group'
+  # Defines the variables CgPat, CgOrganization, and CgProject
+  - group: 'ComponentGovernance'
 
 stages:
   - stage: compliance

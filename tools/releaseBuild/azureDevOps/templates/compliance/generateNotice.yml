@@ -30,12 +30,22 @@ jobs:
       Get-Content '$(System.ArtifactsDirectory)\additionalAttributions.txt'
     displayName: Get Additional Attributions
 
-  - task: msospo.ospo-extension.8d7f9abb-6896-461d-9e25-4f74ed65ddb2.notice@0
-    displayName: 'NOTICE File Generator'
-    inputs:
-      outputfile: $(System.ArtifactsDirectory)\ThirdPartyNotices.txt
-      outputformat: text
-      additionaldata: '$(System.ArtifactsDirectory)\additionalAttributions.txt'
+  - pwsh: |
+      Import-Module ./tools/ComponentGovernance
+      Set-CgCredentials -Pat $(CgPat) -Organization $(CgOrganization) -Project $(CgProject)
+      $repo = Get-CgPsRepository
+      $typeId = (Get-CgSnapshotType -CgRepository $repo | where-object {$_.isTracked -eq 'True' -and $_.buildDisplayType -eq 'Coordinated Packages'}).typeId
+      $notice = Get-CgNotice -CgRepository $repo -SnapshotTypeId $typeId
+      $notice | Out-File '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt' -Encoding utf8NoBOM -Force
+      Get-Content '$(System.ArtifactsDirectory)\additionalAttributions.txt' | Out-File '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt' -Encoding utf8NoBOM -Force -Append
+    displayName: Get Notice
+
+  # - task: msospo.ospo-extension.8d7f9abb-6896-461d-9e25-4f74ed65ddb2.notice@0
+  #   displayName: 'NOTICE File Generator'
+  #   inputs:
+  #     outputfile: $(System.ArtifactsDirectory)\ThirdPartyNotices.txt
+  #     outputformat: text
+  #     additionaldata: '$(System.ArtifactsDirectory)\additionalAttributions.txt'
 
   - task: AzureFileCopy@4
     displayName: 'upload Notice'
