@@ -35,6 +35,9 @@ jobs:
         run: |
           Import-Module ./build.psm1
           Start-PSBootStrap
+      - name: Update Notices file
+        run: |
+          Invoke-WebRequest -Uri https://aka.ms/pwsh-daily-tpn -OutFile ./ThirdPartyNotices.txt
       - name: Execute script to update cgmanifest
         run: |
           Import-Module ./build.psm1
