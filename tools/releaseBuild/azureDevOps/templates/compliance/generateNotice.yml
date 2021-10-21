@@ -32,7 +32,8 @@ jobs:
 
   - pwsh: |
       Import-Module ./tools/ComponentGovernance
-      Set-CgCredentials -Pat $(CgPat) -Organization $(CgOrganization) -Project $(CgProject)
+      $pat = ConvertTo-SecureString -String "$(CgPat)" -AsPlainText -Force
+      Set-CgCredentials -Pat $pat -Organization $(CgOrganization) -Project $(CgProject)
       $repo = Get-CgPsRepository
       $typeId = (Get-CgSnapshotType -CgRepository $repo | where-object {$_.isTracked -eq 'True' -and $_.buildDisplayType -eq 'Coordinated Packages'}).typeId
       $notice = Get-CgNotice -CgRepository $repo -SnapshotTypeId $typeId
