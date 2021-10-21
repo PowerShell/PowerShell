@@ -119,6 +119,7 @@ jobs:
       uploadModernCop: false
       uploadPREfast: false
       uploadRoslyn: false
+      uploadBinSkim: false
       uploadTSLint: false
       uploadCredScan: false
       uploadPoliCheck: false
