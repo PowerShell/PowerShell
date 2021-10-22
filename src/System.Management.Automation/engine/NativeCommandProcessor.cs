@@ -1106,7 +1106,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            using var stream = new IO.FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+            using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
             try
             {
                 var peheaders = new PortableExecutable.PEHeaders(stream);
