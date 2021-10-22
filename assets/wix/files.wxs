@@ -3148,119 +3148,11 @@
       <Component Id="cmp09155DA101E1424B98832A789E93E835">
         <File Id="fil7D748565EBF5423A84CFC6D25D21F43C" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.Bcl.AsyncInterfaces.dll" />
       </Component>
-      <Component Id="cmp0CADA5C54D2A4ECDBF52659BC815C536">
-        <File Id="fil68BA1BEA1D484647A65AFC3AE02E925E" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.Win32.Registry.ni.pdb" />
-      </Component>
-      <Component Id="cmpE74ECAB3ACBA4DDB8200316AD19679CF">
-        <File Id="fil749097DC923241CFB6FC56315D8C03FD" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Diagnostics.Process.ni.pdb" />
-      </Component>
-      <Component Id="cmp968D66B9DC2F47F59CC519071F6D67D3">
-        <File Id="filA513F2D606A34282B1BF36689FF234E2" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.Management.Infrastructure.CimCmdlets.pdb" />
-      </Component>
-      <Component Id="cmpA58CE5DFEF404011B0D26C378490DB86">
-        <File Id="fil0D1DB50D349E4E6F801B9D2BFB85553B" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Threading.ni.pdb" />
-      </Component>
-      <Component Id="cmp837A0193630F4C53B62D52A536461984">
-        <File Id="filC0C54DA237D7408EAC60FF213441E1C1" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Console.ni.pdb" />
-      </Component>
-      <Component Id="cmp692A5938776941D1AE95BC1170BDF9B6">
-        <File Id="fil83747F92962C4246A9E4D2867EC9C708" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Text.Encoding.CodePages.ni.pdb" />
-      </Component>
-      <Component Id="cmp5A7E19A43CEC4B81B1FE1FE1E750706F">
-        <File Id="fil8A0FCB059476430F9DBE24797410A8BF" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Linq.ni.pdb" />
-      </Component>
-      <Component Id="cmpFB0C4BAB5C82453D81CAF4BF8534FC65">
-        <File Id="fil5E60D46D0C404023B922B41764C51D30" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.CodeAnalysis.ni.pdb" />
-      </Component>
-      <Component Id="cmp9312DB2FA13B4F43B60BA2FA7B0C181C">
-        <File Id="filE958FC6D87B645A1B550125500E2E513" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.SDK.pdb" />
-      </Component>
-      <Component Id="cmp891BAD28982C457587E087A5758CE4A6">
-        <File Id="fil835DAEF2937244099C1C9180F281E2C4" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.Security.pdb" />
-      </Component>
-      <Component Id="cmpEC1825DD766342D7997039BE39FDBE65">
-        <File Id="fil895B9A3F9432442AAFA14C1502C48B63" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.WSMan.Runtime.pdb" />
-      </Component>
       <Component Id="cmp6AA669F54C1F4675A8EA5E4BA331943F">
         <File Id="fil2EA0B4C8BC434DA89E4D521F692BCE3C" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Web.Services.Description.dll" />
       </Component>
-      <Component Id="cmp22A9125A4668408A8FC7BB4F18EC0F4C">
-        <File Id="fil6439C99F3B0B45019CFF72C60E2A2954" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Security.Principal.Windows.ni.pdb" />
-      </Component>
-      <Component Id="cmpA09BE75F73504BC69F7C8893E7DCBE71">
-        <File Id="fil560CB898557943B9AC6963CD835B2270" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.GraphicalHost.pdb" />
-      </Component>
-      <Component Id="cmp850C87C3B5584AA2A99D07ECC2E373CB">
-        <File Id="fil9A578901DF114ACA90B7274BA9EB40E2" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Security.AccessControl.ni.pdb" />
-      </Component>
-      <Component Id="cmpC186E7B3B64146C886F88E620B72EA15">
-        <File Id="fil4AF27DC20C9F42149A088C094610EA07" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Collections.Concurrent.ni.pdb" />
-      </Component>
-      <Component Id="cmp3E14943EBBC544B095089D48EF47C90B">
-        <File Id="fil8064FFFBA9894C1E84E93BD6A2F68671" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.Commands.Diagnostics.pdb" />
-      </Component>
-      <Component Id="cmpD0E30D93E33C4C508672F78291393E21">
-        <File Id="fil0C172ABC096F4B9283958D073108CA81" KeyPath="yes" Source="$(var.ProductSourcePath)\System.IO.FileSystem.ni.pdb" />
-      </Component>
-      <Component Id="cmp3D0B9285CBA542F99C22F49FCF14B789">
-        <File Id="filF44E838C3E62476987B8285AB49DE218" KeyPath="yes" Source="$(var.ProductSourcePath)\pwsh.pdb" />
-      </Component>
-      <Component Id="cmpDA15F54BDD544FDFB05BB834624396A8">
-        <File Id="fil83D998F4E720433BA031B83408405641" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Management.Automation.pdb" />
-      </Component>
-      <Component Id="cmp725D833881214D51AA5F7B93822A0DC2">
-        <File Id="fil191802DAFC8B45FA91E93427101DA9D8" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.WSMan.Management.pdb" />
-      </Component>
-      <Component Id="cmp0A2567B89ACF47A0ABE0D5A6F8519DF1">
-        <File Id="fil56C732389415457EBD5D131E6C4C3436" KeyPath="yes" Source="$(var.ProductSourcePath)\Newtonsoft.Json.ni.pdb" />
-      </Component>
-      <Component Id="cmp077EB2812EBE4A1CAA2601A32E6E51F7">
-        <File Id="fil192A6081695C4C0F84EAA2074B2C4E54" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Collections.Specialized.ni.pdb" />
-      </Component>
-      <Component Id="cmp379BBFE158044DF398AD204F92CF23FA">
-        <File Id="fil3C92586DA17547749B27633054056137" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.Commands.Management.pdb" />
-      </Component>
-      <Component Id="cmpA590FFB17B8744EE8C6E9CE4C57B6D2A">
-        <File Id="filCBBBC44316C541F3AA60AD504A7C8025" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Collections.ni.pdb" />
-      </Component>
-      <Component Id="cmpD2BB0829A5E74C10ACBAAD78BF74C46C">
-        <File Id="filFC06593417C14D9FB2C16BDFCE7098A0" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.CSharp.ni.pdb" />
-      </Component>
-      <Component Id="cmp6BBDE2DB739C44E7B21A7AB4C57EEB18">
-        <File Id="fil608A85DF5AEE4771BEB9AF90E25E56BC" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Diagnostics.FileVersionInfo.ni.pdb" />
-      </Component>
-      <Component Id="cmpCBB700ADF5D94E9AB1D39D96D2BD861A">
-        <File Id="filB96753E841B848B5AF0957E6F4BBAB60" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Threading.Tasks.Parallel.ni.pdb" />
-      </Component>
-      <Component Id="cmp45B9C83CC6EB48618143043051D4AEDC">
-        <File Id="filDC333F30745D422CBB2AAE1216E57441" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Linq.Expressions.ni.pdb" />
-      </Component>
-      <Component Id="cmp0C922F31B8A149C5B07552BA2F7A5383">
-        <File Id="fil731AB95DD1C84266A70BEFE0D8CC95A4" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Runtime.Extensions.ni.pdb" />
-      </Component>
-      <Component Id="cmpC91D65E0CC9F4AF48A7FA055AF9851F9">
-        <File Id="filF689FC23259C43DB8516D6896DB8A918" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.ApplicationInsights.ni.pdb" />
-      </Component>
-      <Component Id="cmpFC2E7C9B8A9748FFAAEA7228A5FE6D2E">
-        <File Id="fil2976CD8ECB6E4DF2A88791DAA6C46A91" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.CodeAnalysis.CSharp.ni.pdb" />
-      </Component>
-      <Component Id="cmp99D3FAB7EC62442994F86E522E48B76E">
-        <File Id="filAB8875A2DFE14DE083B901F3F1366C21" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.CoreCLR.Eventing.pdb" />
-      </Component>
-      <Component Id="cmpBF7FDA2AB6C94929A5D19D0A80BF3D2D">
-        <File Id="fil877A1767BF62499DA303249945F8EE78" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.ConsoleHost.pdb" />
-      </Component>
-      <Component Id="cmpBB8D1E726BC449D3997462D2605C36F3">
-        <File Id="fil799502D3A0A94085B0DC3DF0DB04E353" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Private.Uri.ni.pdb" />
-      </Component>
       <Component Id="cmp6AAE145D9E884A0491826ABA6D54FAF6">
         <File Id="filC52DF6FD7A0749FDAA47D64AD9713D8F" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.21.51407.dll" />
-      </Component>
-      <Component Id="cmpEBCA70400876435D8C08B046AA05122B">
-        <File Id="filF80D36D6900F4627B280EC0864C16777" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.Commands.Utility.pdb" />
-      </Component>
-      <Component Id="cmpF90CBE3818374704940E627AEAB76CCD">
-        <File Id="filB8A33B29D8EE4B6282737195FFC37B0B" KeyPath="yes" Source="$(var.ProductSourcePath)\System.IO.Pipes.ni.pdb" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4263,57 +4155,21 @@
       <ComponentRef Id="cmp529A2B5343FD466884FAF627E37C648D" />
       <ComponentRef Id="cmp4EE1633EE4864CE5B9015BF76BD31D14" />
       <ComponentRef Id="cmpE7BE9D8F63E04798870E57BA1EABB9A5" />
-      <ComponentRef Id="cmp0CADA5C54D2A4ECDBF52659BC815C536" />
-      <ComponentRef Id="cmpE74ECAB3ACBA4DDB8200316AD19679CF" />
       <ComponentRef Id="cmp04CCC1B8A47141999E07F6FF22CA41B4" />
-      <ComponentRef Id="cmp968D66B9DC2F47F59CC519071F6D67D3" />
-      <ComponentRef Id="cmpA58CE5DFEF404011B0D26C378490DB86" />
-      <ComponentRef Id="cmp837A0193630F4C53B62D52A536461984" />
-      <ComponentRef Id="cmp692A5938776941D1AE95BC1170BDF9B6" />
       <ComponentRef Id="cmp5F5236C855744C60AB9290A74E23D498" />
-      <ComponentRef Id="cmp5A7E19A43CEC4B81B1FE1FE1E750706F" />
-      <ComponentRef Id="cmpFB0C4BAB5C82453D81CAF4BF8534FC65" />
-      <ComponentRef Id="cmp9312DB2FA13B4F43B60BA2FA7B0C181C" />
-      <ComponentRef Id="cmp891BAD28982C457587E087A5758CE4A6" />
-      <ComponentRef Id="cmpEC1825DD766342D7997039BE39FDBE65" />
       <ComponentRef Id="cmp6AA669F54C1F4675A8EA5E4BA331943F" />
       <ComponentRef Id="cmp3EFF8D009863427AADCCEAB9E87DBE5B" />
-      <ComponentRef Id="cmp22A9125A4668408A8FC7BB4F18EC0F4C" />
       <ComponentRef Id="cmp0543A1DA92A9474084354B1BAD40631E" />
-      <ComponentRef Id="cmpA09BE75F73504BC69F7C8893E7DCBE71" />
       <ComponentRef Id="cmp611C7B0DC08E4454826C0D1196913CF4" />
       <ComponentRef Id="cmpB5C7A619973A4EFEA3D2B08832BD31F9" />
-      <ComponentRef Id="cmp850C87C3B5584AA2A99D07ECC2E373CB" />
-      <ComponentRef Id="cmpC186E7B3B64146C886F88E620B72EA15" />
-      <ComponentRef Id="cmp3E14943EBBC544B095089D48EF47C90B" />
-      <ComponentRef Id="cmpD0E30D93E33C4C508672F78291393E21" />
-      <ComponentRef Id="cmp3D0B9285CBA542F99C22F49FCF14B789" />
       <ComponentRef Id="cmpE12B8800744A4C3794F4BC8EE33DE5FE" />
       <ComponentRef Id="cmp9B5EDBAD7A8946358A874885C55C70B0" />
-      <ComponentRef Id="cmpDA15F54BDD544FDFB05BB834624396A8" />
-      <ComponentRef Id="cmp725D833881214D51AA5F7B93822A0DC2" />
-      <ComponentRef Id="cmp0A2567B89ACF47A0ABE0D5A6F8519DF1" />
-      <ComponentRef Id="cmp077EB2812EBE4A1CAA2601A32E6E51F7" />
       <ComponentRef Id="cmpEC101E06C62142BB8BB9DBD59DAB3D7D" />
-      <ComponentRef Id="cmp379BBFE158044DF398AD204F92CF23FA" />
-      <ComponentRef Id="cmpA590FFB17B8744EE8C6E9CE4C57B6D2A" />
       <ComponentRef Id="cmp9E908BEE2A0C4E388D536F08499298DE" />
-      <ComponentRef Id="cmpD2BB0829A5E74C10ACBAAD78BF74C46C" />
-      <ComponentRef Id="cmp6BBDE2DB739C44E7B21A7AB4C57EEB18" />
       <ComponentRef Id="cmp472CE35D99014E168ABDDA26D337D359" />
-      <ComponentRef Id="cmpCBB700ADF5D94E9AB1D39D96D2BD861A" />
-      <ComponentRef Id="cmp45B9C83CC6EB48618143043051D4AEDC" />
-      <ComponentRef Id="cmp0C922F31B8A149C5B07552BA2F7A5383" />
-      <ComponentRef Id="cmpC91D65E0CC9F4AF48A7FA055AF9851F9" />
-      <ComponentRef Id="cmpFC2E7C9B8A9748FFAAEA7228A5FE6D2E" />
-      <ComponentRef Id="cmp99D3FAB7EC62442994F86E522E48B76E" />
       <ComponentRef Id="cmp8270465B1B634BFF91B933889318C6D9" />
-      <ComponentRef Id="cmpBF7FDA2AB6C94929A5D19D0A80BF3D2D" />
-      <ComponentRef Id="cmpBB8D1E726BC449D3997462D2605C36F3" />
       <ComponentRef Id="cmp6AAE145D9E884A0491826ABA6D54FAF6" />
-      <ComponentRef Id="cmpEBCA70400876435D8C08B046AA05122B" />
       <ComponentRef Id="cmp145A39BC36CC45F982F5FE556EF8AD73" />
-      <ComponentRef Id="cmpF90CBE3818374704940E627AEAB76CCD" />
     </ComponentGroup>
   </Fragment>
 </Wix>
