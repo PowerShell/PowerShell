@@ -94,20 +94,20 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.5/powershell-7.1.5-linux-arm64.tar.gz
 [rl-snap]: https://snapcraft.io/powershell
 
-[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/PowerShell-7.2.0-preview.10-win-x64.msi
-[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/PowerShell-7.2.0-preview.10-win-x86.msi
-[pv-deb]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/powershell-preview_7.2.0-preview.10-1.deb_amd64.deb
-[pv-rpm]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/powershell-preview-7.2.0_preview.10-1.rh.x86_64.rpm
-[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/powershell-7.2.0-preview.10-osx-x64.pkg
-[pv-macos-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/powershell-7.2.0-preview.10-osx-arm64.pkg
-[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/PowerShell-7.2.0-preview.10-win-arm64.zip
-[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/PowerShell-7.2.0-preview.10-win-x86.zip
-[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/PowerShell-7.2.0-preview.10-win-x64.zip
-[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/powershell-7.2.0-preview.10-osx-x64.tar.gz
-[pv-macos-tar-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/powershell-7.2.0-preview.10-osx-arm64.tar.gz
-[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/powershell-7.2.0-preview.10-linux-x64.tar.gz
-[pv-arm32]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/powershell-7.2.0-preview.10-linux-arm32.tar.gz
-[pv-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.10/powershell-7.2.0-preview.10-linux-arm64.tar.gz
+[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/PowerShell-7.2.0-rc.1-win-x64.msi
+[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/PowerShell-7.2.0-rc.1-win-x86.msi
+[pv-deb]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/powershell-preview_7.2.0-rc.1-1.deb_amd64.deb
+[pv-rpm]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/powershell-preview-7.2.0_rc.1-1.rh.x86_64.rpm
+[pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/powershell-7.2.0-rc.1-osx-x64.pkg
+[pv-macos-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/powershell-7.2.0-rc.1-osx-arm64.pkg
+[pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/PowerShell-7.2.0-rc.1-win-arm64.zip
+[pv-winx86-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/PowerShell-7.2.0-rc.1-win-x86.zip
+[pv-winx64-zip]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/PowerShell-7.2.0-rc.1-win-x64.zip
+[pv-macos-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/powershell-7.2.0-rc.1-osx-x64.tar.gz
+[pv-macos-tar-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/powershell-7.2.0-rc.1-osx-arm64.tar.gz
+[pv-linux-tar]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/powershell-7.2.0-rc.1-linux-x64.tar.gz
+[pv-arm32]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/powershell-7.2.0-rc.1-linux-arm32.tar.gz
+[pv-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/powershell-7.2.0-rc.1-linux-arm64.tar.gz
 [pv-snap]: https://snapcraft.io/powershell-preview
 
 [in-windows]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-windows
