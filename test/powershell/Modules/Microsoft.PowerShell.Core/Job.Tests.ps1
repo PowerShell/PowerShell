@@ -222,6 +222,12 @@ Describe "Ampersand background test" -Tag "CI", "Slow" {
             $j = (get-variable -value ExecutionContext).SessionState.PSVariable.Get("MyInvocation").Value.MyCommand.ScriptBlock & 
             (Receive-Job -Wait $j).ToString() | Should -BeExactly "(get-variable -value ExecutionContext).SessionState.PSVariable.Get(`"MyInvocation`").Value.MyCommand.ScriptBlock"
         }
+        It "Test that changing working directory also changes background job's working directory" {
+            Set-Location ..
+            $wd = (Get-Location).ToString()
+            $j = (Get-Location &) 
+            (Receive-Job -Wait $j).ToString() | Should -BeExactly $wd
+        }
         It "Test that output redirection is done in the background job" {
             $j = Write-Output hello > $TESTDRIVE/hello.txt &
             Receive-Job -Wait $j | Should -BeNullOrEmpty
