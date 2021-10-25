@@ -251,4 +251,40 @@ Categories=Application;
     It "Opening a file with an unregistered extension on Windows should fail" -Skip:(!$IsWindows) {
         { $dllFile = "$PSHOME\System.Management.Automation.dll"; & $dllFile } | Should -Throw -ErrorId "NativeCommandFailed"
     }
+
+Describe "Native Command Processor" -tags @("Feature", "RequireAdminOnWindows") {
+    BeforeAll {
+        $vhdx = Join-Path -Path $TestDrive -ChildPath ncp.vhdx
+        if (Test-Path -Path $vhdx) {
+            Remove-item -Path $vhdx -Force
+        }
+
+        $create_vhdx = Join-Path -Path $TestDrive -ChildPath create_vhdx.txt
+
+        Set-Content -Path $create_vhdx -Force -Value @"
+            create vdisk file="$vhdx" maximum=20 type=fixed
+            select vdisk file="$vhdx"
+            attach vdisk
+            convert mbr
+            create partition primary
+            format fs=fat
+            assign letter="T"
+            detach vdisk
+"@
+
+        diskpart.exe /s $create_vhdx
+        Mount-DiskImage -ImagePath $vhdx | Out-Null
+
+        Copy-Item C:\Windows\System32\whoami.exe T:\whoami.exe
+    }
+
+    AfterAll {
+        Dismount-DiskImage -ImagePath $vhdx
+    }
+
+    It "Should run application from FAT file system without error" -Skip:(!$IsWindows) {
+        $expected = C:\Windows\System32\whoami.exe
+        $result = T:\whoami.exe
+        $result | Should -BeExactly $expected
+    }
 }
