@@ -258,34 +258,38 @@ Describe "Native Command Processor" -tags @("Feature", "RequireAdminOnWindows") 
         $defaultParamValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["It:Skip"] = !$IsWindows
 
-        $vhdx = Join-Path -Path $TestDrive -ChildPath ncp.vhdx
+        if ($IsWindows) {
+            $vhdx = Join-Path -Path $TestDrive -ChildPath ncp.vhdx
 
-        if (Test-Path -Path $vhdx) {
-            Remove-item -Path $vhdx -Force
-        }
+            if (Test-Path -Path $vhdx) {
+                Remove-item -Path $vhdx -Force
+            }
 
-        $create_vhdx = Join-Path -Path $TestDrive -ChildPath 'create_vhdx.txt'
+            $create_vhdx = Join-Path -Path $TestDrive -ChildPath 'create_vhdx.txt'
 
-        Set-Content -Path $create_vhdx -Force -Value @"
-            create vdisk file="$vhdx" maximum=20 type=fixed
-            select vdisk file="$vhdx"
-            attach vdisk
-            convert mbr
-            create partition primary
-            format fs=fat
-            assign letter="T"
-            detach vdisk
+            Set-Content -Path $create_vhdx -Force -Value @"
+                create vdisk file="$vhdx" maximum=20 type=fixed
+                select vdisk file="$vhdx"
+                attach vdisk
+                convert mbr
+                create partition primary
+                format fs=fat
+                assign letter="T"
+                detach vdisk
 "@
 
-        diskpart.exe /s $create_vhdx
-        Mount-DiskImage -ImagePath $vhdx | Out-Null
+            diskpart.exe /s $create_vhdx
+            Mount-DiskImage -ImagePath $vhdx | Out-Null
 
-        Copy-Item C:\Windows\System32\whoami.exe T:\whoami.exe
+            Copy-Item C:\Windows\System32\whoami.exe T:\whoami.exe
+        }
     }
 
     AfterAll {
-        Dismount-DiskImage -ImagePath $vhdx
-        $global:PSDefaultParameterValues = $defaultParamValues
+        if ($IsWindows) {
+            Dismount-DiskImage -ImagePath $vhdx
+            $global:PSDefaultParameterValues = $defaultParamValues
+        }
     }
 
     It "Should run application from FAT file system without error" {
