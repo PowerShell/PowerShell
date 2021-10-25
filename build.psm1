@@ -1995,6 +1995,9 @@ function Start-PSBootstrap {
                 # Build tools
                 $Deps += "cmake"
 
+                # wget for downloading dotnet
+                $Deps += "wget"
+
                 # .NET Core required runtime libraries
                 $Deps += "openssl"
 
