@@ -17,11 +17,19 @@ steps:
     $dateTime = [datetime]::UtcNow
     $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
+    $metadata = Get-Content ./tools/metadata.json | ConvertFrom-Json
+    $stableRelease = $metadata.StableRelease
+    $ltsRelease = $metadata.LTSRelease
+
     $buildInfo = Get-Content $jsonFile | ConvertFrom-Json
     $buildInfo.ReleaseDate = $dateTime
 
     $targetFile = "$ENV:PIPELINE_WORKSPACE/$fileName"
     ConvertTo-Json -InputObject $buildInfo | Out-File $targetFile -Encoding ascii
+
+    if ($stableRelease) {
+      $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyStableBuildInfo]YES"
+    }
 
     $vstsCommandString = "vso[task.setvariable variable=BuildInfoJsonFile]$targetFile"
     Write-Host "sending " + $vstsCommandString
@@ -32,19 +40,12 @@ steps:
 
     $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]NO"
 
-    if ($fileName -eq "stable.json")
+    if ($fileName -eq "stable.json" -and $ltsRelease)
     {
-        $releaseTag = $buildInfo.ReleaseTag
-        $version = $releaseTag -replace '^v'
-        $semVersion = [System.Management.Automation.SemanticVersion] $version
-
-        if ($semVersion.PreReleaseLabel -eq $null -and $semVersion.Minor % 2 -eq 0 -and $semVersion.Major -ge 7)
-        {
-            $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
-            Copy-Item -Path $targetFile -Destination $ltsFile -Force
-            $vstsCommandLtsJsonFile = "vso[task.setvariable variable=LtsBuildInfoJsonFile]$ltsFile"
-            $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]YES"
-        }
+      $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
+      Copy-Item -Path $targetFile -Destination $ltsFile -Force
+      $vstsCommandLtsJsonFile = "vso[task.setvariable variable=LtsBuildInfoJsonFile]$ltsFile"
+      $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]YES"
     }
 
     Write-Host "sending " + $vstsCommandCopyLTSBuildInfo
@@ -65,6 +66,7 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: BuildInfo
+  condition: and(succeeded(), eq(variables['CopyStableBuildInfo'], 'YES'))
 
 - task: AzureFileCopy@2
   displayName: 'AzureBlob build info ''lts.json'' Copy when needed'

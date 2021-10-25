@@ -225,6 +225,22 @@ function Start-PSPackage {
         # Copy the default.help.txt so it's part of the package
         Copy-Item "$RepoRoot/assets/default.help.txt" -Destination "$Source/en-US" -Force
 
+        if (-not $SkipGenerateReleaseFiles -and -not $env:TF_BUILD) {
+            # Make sure psoptions.json file exists so appropriate files.wsx is generated
+            $psOptionsPath = (Join-Path -Path $Source "psoptions.json")
+            if (-not (Test-Path -Path $psOptionsPath)) {
+                $createdOptionsFile = New-Item -Path $psOptionsPath -Force
+                Write-Verbose -Verbose "Created psoptions file: $createdOptionsFile"
+            }
+
+            # Make sure _manifest\spdx_2.2\manifest.spdx.json file exists so appropriate files.wxs is generated
+            $manifestSpdxPath = (Join-Path -Path $Source "_manifest\spdx_2.2\manifest.spdx.json")
+            if (-not (Test-Path -Path $manifestSpdxPath)) {
+                $createdSpdxPath = New-Item -Path $manifestSpdxPath -Force
+                Write-Verbose -Verbose "Created manifest.spdx.json file: $createdSpdxPath"
+            }
+        }
+
         # If building a symbols package, we add a zip of the parent to publish
         if ($IncludeSymbols.IsPresent)
         {
@@ -1226,15 +1242,17 @@ function Get-FpmArguments
         "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
         "--vendor", "Microsoft Corporation",
         "--url", "https://microsoft.com/powershell",
-        "--license", "MIT License",
         "--description", $Description,
         "--category", "shells",
         "-t", $Type,
         "-s", "dir"
     )
-    if ($Environment.IsRedHatFamily) {
+    if ($Distribution -eq 'rh') {
         $Arguments += @("--rpm-dist", $Distribution)
         $Arguments += @("--rpm-os", "linux")
+        $Arguments += @("--license", "MIT")
+    } else {
+        $Arguments += @("--license", "MIT License")
     }
 
     if ($Environment.IsMacOS) {
@@ -1349,7 +1367,7 @@ function New-AfterScripts
 
     Write-Verbose -Message "AfterScript Distribution: $Distribution" -Verbose
 
-    if ($Environment.IsRedHatFamily) {
+    if ($Distribution -eq 'rh') {
         $AfterInstallScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $AfterRemoveScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $packagingStrings.RedHatAfterInstallScript -f "$Link", $Destination  | Out-File -FilePath $AfterInstallScript -Encoding ascii
@@ -2174,7 +2192,6 @@ function New-ReferenceAssembly
     Write-Log "GenAPI nuget package saved and expanded."
 
     $genAPIFolder = New-TempFolder
-    $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
     Write-Log "Working directory: $genAPIFolder."
 
     $SMAReferenceAssembly = $null

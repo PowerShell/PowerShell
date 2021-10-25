@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Security;
@@ -549,8 +550,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            // Prevent code compilation in ConstrainedLanguage mode
-            if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+            // Prevent code compilation in ConstrainedLanguage mode, or NoLanguage mode under system lock down.
+            if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage ||
+                (SessionState.LanguageMode == PSLanguageMode.NoLanguage && 
+                 SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce))
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
