@@ -196,11 +196,9 @@ Function Get-CGRegistrations {
         # Add the registration to the cgmanifest if the TPN does not contain the name of the target OR
         # the exisitng CG contains the registration, because if the existing CG contains the registration,
         # that might be the only reason it is in the TPN.
-        if (!$tpnMatch -or $existingRegistrationTable.ContainsKey($name)) {
-            if (!$RegistrationTable.ContainsKey($target)) {
-                $registration = New-NugetComponent -Name $name -Version $targetVersion
-                $RegistrationTable.Add($target, $registration)
-            }
+        if ((!$tpnMatch -or $existingRegistrationTable.ContainsKey($name)) -and !$RegistrationTable.ContainsKey($target)) {
+            $registration = New-NugetComponent -Name $name -Version $targetVersion
+            $RegistrationTable.Add($target, $registration)
         }
     }
 }
