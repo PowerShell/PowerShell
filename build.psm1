@@ -16,6 +16,8 @@ $script:Options = $null
 $dotnetMetadata = Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json
 $dotnetCLIChannel = $dotnetMetadata.Sdk.Channel
 $dotnetCLIQuality = $dotnetMetadata.Sdk.Quality
+$dotnetAzureFeed = $dotnetMetadata.Sdk.azureFeed
+$dotnetSDKVersionOveride = $dotnetMetadata.Sdk.sdkImageOverride
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
 # Track if tags have been sync'ed
@@ -392,7 +394,9 @@ function Start-PSBuild {
     }
 
     # Verify if the dotnet in-use is the required version
-    $dotnetCLIInstalledVersion = Start-NativeExecution -sb { dotnet --version } -IgnoreExitcode
+    $dotnetCLIInstalledVersion = Start-NativeExecution -sb {
+        dotnet --list-sdks | select-string -Pattern '\d.\d.\d*|-\w*\.\d*' | ForEach-Object { $_.matches.value } | Sort-Object -Descending | Select-Object -First 1
+    } -IgnoreExitcode
     If ($dotnetCLIInstalledVersion -ne $dotnetCLIRequiredVersion) {
         Write-Warning @"
 The currently installed .NET Command Line Tools is not the required version.
@@ -1759,8 +1763,13 @@ function Install-Dotnet {
         [switch]$NoSudo,
         [string]$InstallDir,
         [string]$AzureFeed,
-        [string]$FeedCredential
+        [string]$FeedCredential = [string]::Empty
     )
+
+    # This is needed workaround for RTM pre-release build as the SDK version is always 6.0.100 after installation for every pre-release
+    if ($dotnetCLIRequiredVersion -like '6.0.100-rtm.*') {
+        $dotnetCLIRequiredVersion = '6.0.100'
+    }
 
     # This allows sudo install to be optional; needed when running in containers / as root
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
@@ -1811,7 +1820,11 @@ function Install-Dotnet {
             }
 
             if ($AzureFeed) {
-                $bashArgs += @('-AzureFeed', $AzureFeed, '-FeedCredential', $FeedCredential)
+                $bashArgs += @('-AzureFeed', $AzureFeed)
+            }
+
+            if ($FeedCredential) {
+                $bashArgs += @('-FeedCredential', $FeedCredential)
             }
 
             bash @bashArgs
@@ -1836,10 +1849,11 @@ function Install-Dotnet {
             }
 
             if ($AzureFeed) {
-                $installArgs += @{
-                    AzureFeed       = $AzureFeed
-                    $FeedCredential = $FeedCredential
-                }
+                $installArgs += @('-AzureFeed', $AzureFeed)
+            }
+
+            if ($FeedCredential) {
+                $installArgs += @('-FeedCredential', $FeedCredential)
             }
 
             & ./$installScript @installArgs
@@ -1862,7 +1876,11 @@ function Install-Dotnet {
                 }
 
                 if ($AzureFeed) {
-                    $psArgs += @('-AzureFeed', $AzureFeed, '-FeedCredential', $FeedCredential)
+                    $psArgs += @('-AzureFeed', $AzureFeed)
+                }
+
+                if ($FeedCredential) {
+                    $psArgs += @('-FeedCredential', $FeedCredential)
                 }
 
                 & $fullPSPath @psArgs
@@ -1897,6 +1915,10 @@ function Start-PSBootstrap {
     Write-Log -message "Installing PowerShell build dependencies"
 
     Push-Location $PSScriptRoot/tools
+
+    if ($dotnetSDKVersionOveride) {
+        $Version = $dotnetSDKVersionOveride
+    }
 
     try {
         if ($environment.IsLinux -or $environment.IsMacOS) {
@@ -2037,7 +2059,9 @@ function Start-PSBootstrap {
         $dotNetExists = precheck 'dotnet' $null
         $dotNetVersion = [string]::Empty
         if($dotNetExists) {
-            $dotNetVersion = Start-NativeExecution -sb { dotnet --version } -IgnoreExitcode
+            $dotNetVersion = Start-NativeExecution -sb {
+                dotnet --list-sdks | select-string -Pattern '\d.\d.\d*|-\w*\.\d*' | ForEach-Object { $_.matches.value } | Sort-Object -Descending | Select-Object -First 1
+            } -IgnoreExitcode
         }
 
         if(!$dotNetExists -or $dotNetVersion -ne $dotnetCLIRequiredVersion -or $Force.IsPresent) {
@@ -2052,6 +2076,12 @@ function Start-PSBootstrap {
             }
 
             $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
+
+            if ($dotnetAzureFeed) {
+                $null = $DotnetArguments.Add("AzureFeed", $dotnetAzureFeed)
+                $null = $DotnetArguments.Add("FeedCredential", $null)
+            }
+
             Install-Dotnet @DotnetArguments
         }
         else {
@@ -2208,14 +2238,23 @@ function Find-Dotnet() {
     $originalPath = $env:PATH
     $dotnetPath = if ($environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
 
+    $chosenDotNetVersion = if($dotnetSDKVersionOveride) {
+        $dotnetSDKVersionOveride
+    }
+    else {
+        $dotnetCLIRequiredVersion
+    }
+
     # If there dotnet is already in the PATH, check to see if that version of dotnet can find the required SDK
     # This is "typically" the globally installed dotnet
     if (precheck dotnet) {
         # Must run from within repo to ensure global.json can specify the required SDK version
         Push-Location $PSScriptRoot
-        $dotnetCLIInstalledVersion = Start-NativeExecution -sb { dotnet --version } -IgnoreExitcode 2> $null
+        $dotnetCLIInstalledVersion = Start-NativeExecution -sb {
+            dotnet --list-sdks | select-string -Pattern '\d.\d.\d*|-\w*\.\d*' | ForEach-Object { $_.matches.value } | Sort-Object -Descending | Select-Object -First 1
+         } -IgnoreExitcode 2> $null
         Pop-Location
-        if ($dotnetCLIInstalledVersion -ne $dotnetCLIRequiredVersion) {
+        if ($dotnetCLIInstalledVersion -ne $chosenDotNetVersion) {
             Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."
             # Globally installed dotnet doesn't have the required SDK version, prepend the user local dotnet location
             $env:PATH = $dotnetPath + [IO.Path]::PathSeparator + $env:PATH
