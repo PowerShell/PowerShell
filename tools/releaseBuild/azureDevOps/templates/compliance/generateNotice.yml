@@ -27,7 +27,7 @@ jobs:
 
   - pwsh: |
       Get-Content ./assets/additionalAttributions.txt | Select-Object -Skip 4 | Out-File '$(System.ArtifactsDirectory)\additionalAttributions.txt' -Encoding utf8NoBOM -Force
-      Get-Content '$(System.ArtifactsDirectory)\additionalAttributions.txt'
+      Get-Content -Raw -Path  '$(System.ArtifactsDirectory)\additionalAttributions.txt'
     displayName: Get Additional Attributions
 
   - pwsh: |
