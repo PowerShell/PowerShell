@@ -38,12 +38,19 @@ jobs:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
     displayName: 'Run PoliCheck'
     inputs:
+      # targetType F means file or folder and is the only applicable value and the default
       targetType: F
-      optionsFC: 0
+      # 1 to enable source code comment scanning, which is what we should do for open source
+      optionsFC: 1
+      # recurse
       optionsXS: 1
+      # run for severity 1, 2, 3 and 4 issues
       optionsPE: '1|2|3|4'
+      # disable history management
       optionsHMENABLE: 0
+      # Excluclusion access database
       optionsRulesDBPath: '$(Build.SourcesDirectory)\tools\terms\PowerShell-Terms-Rules.mdb'
+      # Terms Exclusion xml file
       optionsUEPath: $(Build.SourcesDirectory)\tools\terms\TermsExclusion.xml
     continueOnError: true
 

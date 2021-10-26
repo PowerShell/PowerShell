@@ -2,10 +2,15 @@
 # Licensed under the MIT License.
 
 Class CgData {
-    [pscredential]
-    $Pat
+    [pscredential]$Pat
     [string]$Organization
     [string]$Project
+
+    CgData ([pscredential]$Pat, [string]$Organization, [string]$Project) {
+        $this.Pat = $Pat
+        $this.Organization = $Organization
+        $this.Project = $Project
+    }
 }
 
 # Get the Component Governance data needed to connect to the API
@@ -72,7 +77,7 @@ function Get-CgRepositories {
 
 # Gets this PowerShell master repository
 Function Get-CgPsRepository {
-    @(Get-CgRepositories | Where-Object {$_.name -eq 'PowerShell' -and $_.repositoryMoniker -notlike '*/*'})
+    Get-CgRepositories | Where-Object {$_.name -eq 'PowerShell' -and $_.repositoryMoniker -notlike '*/*'}
 }
 
 # Gets the Component Governance Snapshot Type (unique to each Pipeline and Job) in the repository
@@ -117,11 +122,7 @@ function Set-CgCredentials {
     )
 
     $pscred = [PSCredential]::new("PAT",$Pat)
-    $script:cgData = [CgData]@{
-        "PAT" = $pscred
-        "Organization" = $Organization
-        "Project" = $Project
-    }
+    $script:cgData = [CgData]::new($pscred, $Organization, $Project)
 }
 
 Export-ModuleMember -Function @(

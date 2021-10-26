@@ -1,7 +1,3 @@
-## Used to generate a new TPN
-## Copy this into the additional attributions fields
-## Copy everything below here, but do not include this line
-## DO NOT CHANGE THE NUMBER OF COMMENT LINES HERE WITHOUT UPDATING tools/releaseBuild/azureDevOps/templates/compliance/generateNotice.yml
 
 -------------------------------------------------------------------
 
