@@ -1434,9 +1434,6 @@ namespace System.Management.Automation.Runspaces
             return iss;
         }
 
-        // Porting note: moved to Platform so we have one list to maintain
-        private static readonly string[] s_PSCoreFormatFileNames = Platform.FormatFileNames.ToArray();
-
         private static void IncludePowerShellCoreFormats(InitialSessionState iss)
         {
             string psHome = Utils.DefaultPowerShellAppBase;
@@ -1446,7 +1443,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             iss.Formats.Clear();
-            foreach (var coreFormat in s_PSCoreFormatFileNames)
+            foreach (var coreFormat in Platform.FormatFileNames)
             {
                 iss.Formats.Add(new SessionStateFormatEntry(Path.Combine(psHome, coreFormat)));
             }
