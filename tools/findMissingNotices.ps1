@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# This script is used to completely rebuild the
+# This script is used to completely rebuild the cgmanifgest.json file, 
+# which is used to generate the notice file.
 # Requires the module dotnet.project.assets from the PowerShell Gallery authored by @TravisEz13
 
 Import-Module dotnet.project.assets
@@ -164,8 +165,6 @@ Function Get-CGRegistrations {
     $windowsProjectName = 'powershell-win-core'
     $actualRuntime = $Runtime
 
-
-
     switch -regex ($Runtime) {
         "alpine-.*" {
             $folder = $unixProjectName
@@ -197,6 +196,7 @@ Function Get-CGRegistrations {
             throw "Invalid runtime name: $Runtime"
         }
     }
+
     Write-Verbose "Getting registrations for $folder - $actualRuntime ..." -Verbose
     Get-PSDrive -Name $folder -ErrorAction Ignore | Remove-PSDrive
     Push-Location $PSScriptRoot\..\src\$folder
@@ -242,9 +242,9 @@ Function Get-CGRegistrations {
     }
 }
 
-[System.Collections.Generic.Dictionary[string, Registration]]$registrations = @{}
+$registrations = [System.Collections.Generic.Dictionary[string, Registration]]::new()
 $lastCount = 0
-foreach ($runtime in @("win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win-arm", "linux-arm", "linux-arm64", "osx-arm64", "win-arm64", "win7-x86")) {
+foreach ($runtime in "win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win-arm", "linux-arm", "linux-arm64", "osx-arm64", "win-arm64", "win7-x86") {
     Get-CGRegistrations -Runtime $runtime -RegistrationTable $registrations
     $count = $registrations.Count
     $newCount = $count - $lastCount
@@ -252,10 +252,7 @@ foreach ($runtime in @("win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win-ar
     Write-Verbose "$newCount new registrations, $count total..." -Verbose
 }
 
-$newRegistrations = @()
-foreach ($target in ($registrations.Keys | Sort-Object)) {
-    $newRegistrations += $registrations[$target]
-}
+$newRegistrations = $registrations.Keys | Sort-Object | ForEach-Object { $registrations[$_] }
 
 $count = $newRegistrations.Count
 @{Registrations = $newRegistrations } | ConvertTo-Json -depth 99 | Set-Content $PSScriptRoot\..\cgmanifest.json
