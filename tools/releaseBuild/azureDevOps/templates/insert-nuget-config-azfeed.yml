@@ -5,7 +5,7 @@ parameters:
 steps:
 - pwsh: |
       Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination '${{ parameters.repoRoot }}/src/Modules'
+      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination '${{ parameters.repoRoot }}/src/Modules'
 
       if(-not (Test-Path "${{ parameters.repoRoot }}/src/Modules/nuget.config"))
       {

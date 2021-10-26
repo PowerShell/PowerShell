@@ -1,13 +1,13 @@
 {
   "sdk": {
-    "channel": "6.0.1xx",
+    "channel": "6.0.1xx-rc1",
     "quality": "signed",
     "qualityFallback": "daily",
-    "packageVersionPattern": "6.0.0",
+    "packageVersionPattern": "6.0.0-rc.1",
     "sdkImageVersion": "6.0.100",
-    "nextChannel": "6.0.1xx"
+    "nextChannel": "6.0.1xx-rc1"
   },
   "internalfeed" : {
-    "url": "https://pkgs.dev.azure.com/dnceng/public/_packaging/6.0.100-rtm.21515.2-shipping/nuget/v2"
+    "url": "https://pkgs.dev.azure.com/dnceng/public/_packaging/6.0.100-rc.1.21458.32-shipping/nuget/v2"
   }
 }
