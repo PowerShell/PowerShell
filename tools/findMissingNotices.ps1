@@ -1,57 +1,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# This script is used to completely rebuild the cgmanifgest.json file, 
+# This script is used to completely rebuild the cgmanifgest.json file,
 # which is used to generate the notice file.
 # Requires the module dotnet.project.assets from the PowerShell Gallery authored by @TravisEz13
 
 Import-Module dotnet.project.assets
+Import-Module $PSScriptRoot/../tools/buildCommon
 
 $existingRegistrationTable = @{}
 $existingRegistrationsJson = Get-Content $PSScriptRoot\..\cgmanifest.json | ConvertFrom-Json -AsHashtable
 $existingRegistrationsJson.Registrations | ForEach-Object {
     $registration = [Registration]$_
-    $existingRegistrationTable.Add($registration.Component.Name(), $registration)
-}
-
-# this function wraps native command Execution
-# for more information, read https://mnaoumov.wordpress.com/2015/01/11/execution-of-external-commands-in-powershell-done-right/
-function script:Start-NativeExecution {
-    param(
-        [scriptblock]$sb,
-        [switch]$IgnoreExitcode,
-        [switch]$VerboseOutputOnError
-    )
-    $backupEAP = $ErrorActionPreference
-    $ErrorActionPreference = "Continue"
-    try {
-        if ($VerboseOutputOnError.IsPresent) {
-            $output = & $sb 2>&1
-        } else {
-            & $sb
-        }
-
-        # note, if $sb doesn't have a native invocation, $LASTEXITCODE will
-        # point to the obsolete value
-        if ($LASTEXITCODE -ne 0 -and -not $IgnoreExitcode) {
-            if ($VerboseOutputOnError.IsPresent -and $output) {
-                $output | Out-String | Write-Verbose -Verbose
-            }
-
-            # Get caller location for easier debugging
-            $caller = Get-PSCallStack -ErrorAction SilentlyContinue
-            if ($caller) {
-                $callerLocationParts = $caller[1].Location -split ":\s*line\s*"
-                $callerFile = $callerLocationParts[0]
-                $callerLine = $callerLocationParts[1]
-
-                $errorMessage = "Execution of {$sb} by ${callerFile}: line $callerLine failed with exit code $LASTEXITCODE"
-                throw $errorMessage
-            }
-            throw "Execution of {$sb} failed with exit code $LASTEXITCODE"
-        }
-    } finally {
-        $ErrorActionPreference = $backupEAP
+    if($registration.Component) {
+        $name = $registration.Component.Name()
+        $existingRegistrationTable.Add($name, $registration)
     }
 }
 
@@ -201,7 +164,7 @@ Function Get-CGRegistrations {
     Get-PSDrive -Name $folder -ErrorAction Ignore | Remove-PSDrive
     Push-Location $PSScriptRoot\..\src\$folder
     try {
-        script:Start-NativeExecution -VerboseOutputOnError -sb {
+        Start-NativeExecution -VerboseOutputOnError -sb {
             dotnet restore --runtime $actualRuntime  "/property:SDKToUse=$sdkToUse"
         }
         $null = New-PADrive -Path $PSScriptRoot\..\src\$folder\obj\project.assets.json -Name $folder
