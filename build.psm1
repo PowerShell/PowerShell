@@ -1995,6 +1995,9 @@ function Start-PSBootstrap {
                 # Build tools
                 $Deps += "cmake"
 
+                # wget for downloading dotnet
+                $Deps += "wget"
+
                 # .NET Core required runtime libraries
                 $Deps += "openssl"
 
@@ -2002,7 +2005,7 @@ function Start-PSBootstrap {
                 # ignore exitcode, because they may be already installed
                 Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
             } elseif ($environment.IsLinux -and $environment.IsAlpine) {
-                $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
+                $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl', 'wget'
 
                 Start-NativeExecution {
                     Invoke-Expression "apk add $Deps"
