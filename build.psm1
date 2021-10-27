@@ -1763,7 +1763,7 @@ function Install-Dotnet {
         [switch]$NoSudo,
         [string]$InstallDir,
         [string]$AzureFeed,
-        [string]$FeedCredential = [string]::Empty
+        [string]$FeedCredential
     )
 
     Write-Verbose -Verbose "In install-dotnet"
@@ -2074,7 +2074,7 @@ function Start-PSBootstrap {
         $dotNetVersion = [string]::Empty
         if($dotNetExists) {
             $dotNetVersion = Start-NativeExecution -sb {
-                dotnet --list-sdks | select-string -Pattern '\d.\d.\d*|-\w*\.\d*' | ForEach-Object { $_.matches.value } | Sort-Object -Descending | Select-Object -First 1
+                dotnet --list-sdks | Select-String -Pattern '\d*.\d*.\d*(-\w*\.\d*)?' | ForEach-Object { [System.Management.Automation.SemanticVersion]::new($_.matches.value) } | Sort-Object -Descending | Select-Object -First 1
             } -IgnoreExitcode
         }
 
@@ -2093,7 +2093,10 @@ function Start-PSBootstrap {
 
             if ($dotnetAzureFeed) {
                 $null = $DotnetArguments.Add("AzureFeed", $dotnetAzureFeed)
-                $null = $DotnetArguments.Add("FeedCredential", $null)
+            }
+            
+            if ($FeedCredential) {
+                $null = $DotnetArguments.Add("FeedCredential", $FeedCredential)
             }
 
             Install-Dotnet @DotnetArguments
