@@ -104,8 +104,7 @@ jobs:
 
       $metadata = Get-Content "$env:POWERSHELLROOT/tools/metadata.json" -Raw | ConvertFrom-Json
 
-      # LTSRelease indicates that the release is THE LATEST LTS release.
-      # This should actually be if this is AN LTS release.
+      # LTSRelease.Package indicates that the release should be packaged as an LTS
       $LTS = $metadata.LTSRelease.Package
       Write-Verbose -Verbose -Message "LTS is set to: $LTS"
 
