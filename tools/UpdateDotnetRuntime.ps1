@@ -339,6 +339,9 @@ if ($dotnetUpdate.ShouldUpdate) {
         Start-PSBootstrap -Package
         Start-PSBuild -Clean -Configuration Release -CrossGen -InteractiveAuth:$InteractiveAuth
 
+        $publishPath = Split-Path (Get-PSOutput)
+        Remove-Item -Path "$publishPath\*.pdb"
+
         try {
             Start-PSPackage -Type msi -SkipReleaseChecks -InformationVariable wxsData
         } catch {
