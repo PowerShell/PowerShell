@@ -171,6 +171,7 @@ function Invoke-CIInstall
     }
 
     Set-BuildVariable -Name TestPassed -Value False
+    Write-Verbose -Verbose -Message "Calling Start-PSBootstrap from Invoke-CIInstall"
     Start-PSBootstrap
 }
 

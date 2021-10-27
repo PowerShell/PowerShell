@@ -1766,6 +1766,8 @@ function Install-Dotnet {
         [string]$FeedCredential = [string]::Empty
     )
 
+    Write-Verbose -Verbose "In install-dotnet"
+
     # This is needed workaround for RTM pre-release build as the SDK version is always 6.0.100 after installation for every pre-release
     if ($dotnetCLIRequiredVersion -like '6.0.100-rtm.*') {
         $dotnetCLIRequiredVersion = '6.0.100'
@@ -1798,6 +1800,8 @@ function Install-Dotnet {
             Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
         }
 
+        Write-Verbose -Verbose "Invoking install script"
+
         # Install new dotnet 1.1.0 preview packages
         $installScript = "dotnet-install.sh"
         Start-NativeExecution {
@@ -1826,6 +1830,8 @@ function Install-Dotnet {
             if ($FeedCredential) {
                 $bashArgs += @('-FeedCredential', $FeedCredential)
             }
+
+            $bashArgs | Out-String | Write-Verbose -Verbose
 
             bash @bashArgs
         }
@@ -1856,6 +1862,8 @@ function Install-Dotnet {
                 $installArgs += @('-FeedCredential', $FeedCredential)
             }
 
+            $installArgs | Out-String | Write-Verbose -Verbose
+
             & ./$installScript @installArgs
         }
         else {
@@ -1882,6 +1890,8 @@ function Install-Dotnet {
                 if ($FeedCredential) {
                     $psArgs += @('-FeedCredential', $FeedCredential)
                 }
+
+                $psArgs | Out-String | Write-Verbose -Verbose
 
                 & $fullPSPath @psArgs
             }
