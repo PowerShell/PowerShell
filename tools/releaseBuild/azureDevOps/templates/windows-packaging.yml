@@ -251,7 +251,7 @@ jobs:
       Write-Host "##$vstsCommandString"
     displayName: Compress signed files
 
-  - powershell: |
+  - pwsh: |
       $runtime = switch ($env:Architecture)
         {
           "x64" { "win7-x64" }
