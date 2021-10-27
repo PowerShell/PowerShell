@@ -218,7 +218,7 @@ stages:
         - powershell: |
             $metadata = Get-Content '$(Build.SourcesDirectory)/tools/metadata.json' -Raw | ConvertFrom-Json
             # LTSRelease indicates that the release is THE LATEST LTS release.
-            $LTS = $metadata.LTSRelease
+            $LTS = $metadata.LTSRelease.Latest
             @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
             Get-Content "$(Build.StagingDirectory)\release.json"
             Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"
