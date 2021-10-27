@@ -99,7 +99,7 @@ function Invoke-CIBuild
         Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
     }
 
-    Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
+    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
     Save-PSOptions
 
     $options = (Get-PSOptions)
@@ -470,7 +470,7 @@ function Invoke-CIFinish
                 $prereleaseIteration = (get-date).Day
                 $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
                 # Build clean before backing to remove files from testing
-                Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}/psoptions.json"
+                Start-PSBuild -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}/psoptions.json"
                 $options = Get-PSOptions
                 # Remove symbol files.
                 $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
@@ -481,7 +481,7 @@ function Invoke-CIFinish
                 $releaseTagParts = $releaseTag.split('.')
                 $preReleaseVersion = $releaseTagParts[0]+ ".9.9"
                 Write-Verbose "newPSReleaseTag: $preReleaseVersion" -Verbose
-                Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}/psoptions.json"
+                Start-PSBuild -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}/psoptions.json"
                 $options = Get-PSOptions
                 # Remove symbol files.
                 $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
