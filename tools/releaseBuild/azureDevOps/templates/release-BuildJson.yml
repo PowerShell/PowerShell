@@ -18,8 +18,6 @@ steps:
     $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
     $metadata = Get-Content ./tools/metadata.json | ConvertFrom-Json
-    # StableRelease indicates that the release is THE LATEST stable release.
-    # LTSRelease indicates that the release is THE LATEST LTS release.
     $stableRelease = $metadata.StableRelease.Latest
     $ltsRelease = $metadata.LTSRelease.Latest
 
