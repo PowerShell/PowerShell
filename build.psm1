@@ -394,9 +394,8 @@ function Start-PSBuild {
     }
 
     # Verify if the dotnet in-use is the required version
-    $dotnetCLIInstalledVersion = Start-NativeExecution -sb {
-        dotnet --list-sdks | select-string -Pattern '\d.\d.\d*|-\w*\.\d*' | ForEach-Object { $_.matches.value } | Sort-Object -Descending | Select-Object -First 1
-    } -IgnoreExitcode
+    $dotnetCLIInstalledVersion = Get-LatestInstalledSDK
+
     If ($dotnetCLIInstalledVersion -ne $dotnetCLIRequiredVersion) {
         Write-Warning @"
 The currently installed .NET Command Line Tools is not the required version.
@@ -2073,9 +2072,7 @@ function Start-PSBootstrap {
         $dotNetExists = precheck 'dotnet' $null
         $dotNetVersion = [string]::Empty
         if($dotNetExists) {
-            $dotNetVersion = Start-NativeExecution -sb {
-                dotnet --list-sdks | Select-String -Pattern '\d*.\d*.\d*(-\w*\.\d*)?' | ForEach-Object { [System.Management.Automation.SemanticVersion]::new($_.matches.value) } | Sort-Object -Descending | Select-Object -First 1
-            } -IgnoreExitcode
+            $dotNetVersion = Get-LatestInstalledSDK
         }
 
         if(!$dotNetExists -or $dotNetVersion -ne $dotnetCLIRequiredVersion -or $Force.IsPresent) {
@@ -2093,10 +2090,7 @@ function Start-PSBootstrap {
 
             if ($dotnetAzureFeed) {
                 $null = $DotnetArguments.Add("AzureFeed", $dotnetAzureFeed)
-            }
-            
-            if ($FeedCredential) {
-                $null = $DotnetArguments.Add("FeedCredential", $FeedCredential)
+                $null = $DotnetArguments.Add("FeedCredential", $null)
             }
 
             Install-Dotnet @DotnetArguments
@@ -2118,6 +2112,12 @@ function Start-PSBootstrap {
     } finally {
         Pop-Location
     }
+}
+
+function Get-LatestInstalledSDK {
+    Start-NativeExecution -sb {
+        dotnet --list-sdks | Select-String -Pattern '\d*.\d*.\d*(-\w*\.\d*)?' | ForEach-Object { [System.Management.Automation.SemanticVersion]::new($_.matches.value) } | Sort-Object -Descending | Select-Object -First 1
+    } -IgnoreExitcode 2> $null
 }
 
 function Start-DevPowerShell {
@@ -2269,9 +2269,7 @@ function Find-Dotnet() {
     if (precheck dotnet) {
         # Must run from within repo to ensure global.json can specify the required SDK version
         Push-Location $PSScriptRoot
-        $dotnetCLIInstalledVersion = Start-NativeExecution -sb {
-            dotnet --list-sdks | select-string -Pattern '\d.\d.\d*|-\w*\.\d*' | ForEach-Object { $_.matches.value } | Sort-Object -Descending | Select-Object -First 1
-        } -IgnoreExitcode 2> $null
+        $dotnetCLIInstalledVersion = Get-LatestInstalledSDK
         Pop-Location
 
         Write-Verbose -Verbose "dotnetCLIInstalledVersion = $dotnetCLIInstalledVersion`nchosenDotNetVersion = $chosenDotNetVersion"
