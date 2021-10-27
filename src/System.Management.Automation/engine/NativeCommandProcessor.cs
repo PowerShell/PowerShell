@@ -1122,7 +1122,9 @@ namespace System.Management.Automation
             }
             catch
             {
-                // Swallow any exception thrown from 'ResolveLinkTarget'. Just use the original file name when it fails.
+                // An exception may be thrown from 'File.ResolveLinkTarget' when it fails to resolve a link path,
+                // for example, when the underlying file system doesn't support reparse points.
+                // Just use the original file name in this case.
             }
 
             SHFILEINFO shinfo = new SHFILEINFO();
