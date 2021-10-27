@@ -2062,8 +2062,12 @@ function Start-PSBootstrap {
             }
         }
 
+        Write-Verbose -Verbose "Calling Find-Dotnet from Start-PSBootstrap"
+
         # Try to locate dotnet-SDK before installing it
         Find-Dotnet
+
+        Write-Verbose -Verbose "Back from calling Find-Dotnet from Start-PSBootstrap"
 
         # Install dotnet-SDK
         $dotNetExists = precheck 'dotnet' $null
@@ -2245,6 +2249,8 @@ function Start-ResGen
 }
 
 function Find-Dotnet() {
+    Write-Verbose -Verbose "In Find-DotNet"
+
     $originalPath = $env:PATH
     $dotnetPath = if ($environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
 
@@ -2264,6 +2270,9 @@ function Find-Dotnet() {
             dotnet --list-sdks | select-string -Pattern '\d.\d.\d*|-\w*\.\d*' | ForEach-Object { $_.matches.value } | Sort-Object -Descending | Select-Object -First 1
          } -IgnoreExitcode 2> $null
         Pop-Location
+
+        Write-Verbose -Verbose "dotnetCLIInstalledVersion = $dotnetCLIInstalledVersion`nchosenDotNetVersion = $chosenDotNetVersion"
+
         if ($dotnetCLIInstalledVersion -ne $chosenDotNetVersion) {
             Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."
             # Globally installed dotnet doesn't have the required SDK version, prepend the user local dotnet location
