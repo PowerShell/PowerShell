@@ -1855,11 +1855,11 @@ function Install-Dotnet {
             }
 
             if ($AzureFeed) {
-                $installArgs += @('-AzureFeed', $AzureFeed)
+                $installArgs += @{AzureFeed = $AzureFeed}
             }
 
             if ($FeedCredential) {
-                $installArgs += @('-FeedCredential', $FeedCredential)
+                $installArgs += @{FeedCredential = $FeedCredential}
             }
 
             $installArgs | Out-String | Write-Verbose -Verbose
@@ -2268,7 +2268,7 @@ function Find-Dotnet() {
         Push-Location $PSScriptRoot
         $dotnetCLIInstalledVersion = Start-NativeExecution -sb {
             dotnet --list-sdks | select-string -Pattern '\d.\d.\d*|-\w*\.\d*' | ForEach-Object { $_.matches.value } | Sort-Object -Descending | Select-Object -First 1
-         } -IgnoreExitcode 2> $null
+        } -IgnoreExitcode 2> $null
         Pop-Location
 
         Write-Verbose -Verbose "dotnetCLIInstalledVersion = $dotnetCLIInstalledVersion`nchosenDotNetVersion = $chosenDotNetVersion"
