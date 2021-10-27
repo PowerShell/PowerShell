@@ -6,10 +6,10 @@
     "packageVersionPattern": "6.0.0",
     "sdkImageVersion": "6.0.100",
     "nextChannel": "6.0.1xx",
-    "azureFeed": "https://dotnetstage.blob.core.windows.net/6-0-100-rtm-21524-1-public",
+    "azureFeed": "https://dotnetstage.blob.core.windows.net/6-0-100-rtm-21526-10-public",
     "sdkImageOverride": "6.0.100-rtm.21524.1"
   },
   "internalfeed" : {
-    "url": "https://pkgs.dev.azure.com/dnceng/public/_packaging/6.0.100-rtm.21524.1-shipping/nuget/v2"
+    "url": "https://pkgs.dev.azure.com/dnceng/public/_packaging/6.0.100-rtm.21526.10-shipping/nuget/v2"
   }
 }
