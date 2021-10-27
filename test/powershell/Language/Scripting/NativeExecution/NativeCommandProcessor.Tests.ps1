@@ -291,7 +291,7 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
         }
     }
 
-    It "Should run 'whoami.exe' from FAT file system without error" {
+    It "Should run 'whoami.exe' from FAT file system without error" -Skip:(!$IsWindows) {
         $expected = C:\Windows\System32\whoami.exe
         $result = T:\whoami.exe
         $result | Should -BeExactly $expected
