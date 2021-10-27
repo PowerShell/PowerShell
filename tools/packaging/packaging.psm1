@@ -117,17 +117,6 @@ function Start-PSPackage {
         $Script:Options = Get-PSOptions
         $actualParams = @()
 
-        $crossGenCorrect = $false
-        if ($Runtime -match "arm" -or $Type -eq 'min-size') {
-            ## crossgen doesn't support arm32/64;
-            ## For the min-size package, we intentionally avoid crossgen.
-            $crossGenCorrect = $true
-        }
-        elseif ($Script:Options.CrossGen) {
-            $actualParams += '-CrossGen'
-            $crossGenCorrect = $true
-        }
-
         $PSModuleRestoreCorrect = $false
 
         # Require PSModuleRestore for packaging without symbols
@@ -144,14 +133,13 @@ function Start-PSPackage {
         }
 
         $precheckFailed = if ($Type -like 'fxdependent*' -or $Type -eq 'tar-alpine') {
-            ## We do not check for runtime and crossgen for framework dependent package.
+            ## We do not check on runtime for framework dependent package.
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
             $Script:Options.Framework -ne $script:netCoreRuntime    ## Last build wasn't for CoreCLR
         } else {
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
-            -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
@@ -171,13 +159,7 @@ function Start-PSPackage {
             # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
             # are generated, it'll be hard to verify if they were built from the correct content.
 
-
             $params = @('-Clean')
-
-            # CrossGen cannot be done for framework dependent package as it is runtime agnostic.
-            if ($Type -notlike 'fxdependent*') {
-                $params += '-CrossGen'
-            }
 
             if (!$IncludeSymbols.IsPresent) {
                 $params += '-PSModuleRestore'
@@ -4147,9 +4129,6 @@ function Invoke-AzDevOpsLinuxPackageBuild {
                 # We are cross compiling, so we can't generate experimental features
                 $buildParams.Add("SkipExperimentalFeatureGeneration", $true)
             }
-            default {
-                $buildParams.Add("Crossgen", $true)
-            }
         }
 
         $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
@@ -4169,7 +4148,6 @@ function Invoke-AzDevOpsLinuxPackageBuild {
                 Remove-Item -Path $binDir -Recurse -Force
             }
 
-            $buildParams['Crossgen'] = $false
             $buildParams['ForMinimalSize'] = $true
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${minSizeLinuxBuildFolder}"
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"

@@ -314,8 +314,6 @@ function Start-PSBuild {
         [ValidateSet('Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
         [string]$Configuration,
 
-        [switch]$CrossGen,
-
         [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
@@ -343,10 +341,6 @@ function Start-PSBuild {
     }
 
     if ($ForMinimalSize) {
-        if ($CrossGen) {
-            throw "Build for the minimal size requires the minimal disk footprint, so `CrossGen` is not allowed"
-        }
-
         if ($Runtime -and "linux-x64", "win7-x64", "osx-x64" -notcontains $Runtime) {
             throw "Build for the minimal size is enabled only for following runtimes: 'linux-x64', 'win7-x64', 'osx-x64'"
         }
@@ -414,7 +408,6 @@ Fix steps:
 
     # set output options
     $OptionsArguments = @{
-        CrossGen=$CrossGen
         Output=$Output
         Runtime=$Runtime
         Configuration=$Configuration
@@ -529,12 +522,6 @@ Fix steps:
             Write-Log -message "Run dotnet $Arguments from $PWD"
             Start-NativeExecution { dotnet $Arguments }
             Write-Log -message "PowerShell output: $($Options.Output)"
-
-            if ($CrossGen) {
-                # fxdependent package cannot be CrossGen'ed
-                Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
-                Write-Log -message "pwsh.exe with ngen binaries is available at: $($Options.Output)"
-            }
         } else {
             $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
 
@@ -837,8 +824,6 @@ function New-PSOptions {
                      "win7-x86")]
         [string]$Runtime,
 
-        [switch]$CrossGen,
-
         # Accept a path to the output directory
         # If not null or empty, name of the executable will be appended to
         # this path, otherwise, to the default path, and then the full path
@@ -944,7 +929,6 @@ function New-PSOptions {
                 -RootInfo ([PSCustomObject]$RootInfo) `
                 -Top $Top `
                 -Runtime $Runtime `
-                -Crossgen $Crossgen.IsPresent `
                 -Configuration $Configuration `
                 -PSModuleRestore $PSModuleRestore.IsPresent `
                 -Framework $Framework `
@@ -2360,211 +2344,6 @@ function script:Start-NativeExecution
     }
 }
 
-function Start-CrossGen {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory= $true)]
-        [ValidateNotNullOrEmpty()]
-        [String]
-        $PublishPath,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateSet("alpine-x64",
-                     "linux-arm",
-                     "linux-arm64",
-                     "linux-x64",
-                     "osx-arm64",
-                     "osx-x64",
-                     "win-arm",
-                     "win-arm64",
-                     "win7-x64",
-                     "win7-x86")]
-        [string]
-        $Runtime
-    )
-
-    function New-CrossGenAssembly {
-        param (
-            [Parameter(Mandatory = $true)]
-            [ValidateNotNullOrEmpty()]
-            [String[]]
-            $AssemblyPath,
-
-            [Parameter(Mandatory = $true)]
-            [ValidateNotNullOrEmpty()]
-            [String]
-            $CrossgenPath,
-
-            [Parameter(Mandatory = $true)]
-            [ValidateSet("alpine-x64",
-                "linux-arm",
-                "linux-arm64",
-                "linux-x64",
-                "osx-arm64",
-                "osx-x64",
-                "win-arm",
-                "win-arm64",
-                "win7-x64",
-                "win7-x86")]
-            [string]
-            $Runtime
-        )
-
-        $platformAssembliesPath = Split-Path $AssemblyPath[0] -Parent
-
-        $targetOS, $targetArch = $Runtime -split '-'
-
-        # Special cases where OS / Arch does not conform with runtime names
-        switch ($Runtime) {
-            'alpine-x64' {
-                $targetOS = 'linux'
-                $targetArch = 'x64'
-             }
-            'win-arm' {
-                $targetOS = 'windows'
-                $targetArch = 'arm'
-            }
-            'win-arm64' {
-                $targetOS = 'windows'
-                $targetArch = 'arm64'
-            }
-            'win7-x64' {
-                $targetOS = 'windows'
-                $targetArch = 'x64'
-            }
-            'win7-x86' {
-                $targetOS = 'windows'
-                $targetArch = 'x86'
-            }
-        }
-
-        $generatePdb = $targetos -eq 'windows'
-
-        # The path to folder must end with directory separator
-        $dirSep = [System.IO.Path]::DirectorySeparatorChar
-        $platformAssembliesPath = if (-not $platformAssembliesPath.EndsWith($dirSep)) { $platformAssembliesPath + $dirSep }
-
-        Start-NativeExecution {
-            $crossgen2Params = @(
-                "-r"
-                $platformAssembliesPath
-                "--out-near-input"
-                "--single-file-compilation"
-                "-O"
-                "--targetos"
-                $targetOS
-                "--targetarch"
-                $targetArch
-            )
-
-            if ($generatePdb) {
-                $crossgen2Params += "--pdb"
-            }
-
-            $crossgen2Params += $AssemblyPath
-
-            & $CrossgenPath $crossgen2Params
-        }
-    }
-
-    if (-not (Test-Path $PublishPath)) {
-        throw "Path '$PublishPath' does not exist."
-    }
-
-    # Get the path to crossgen
-    $crossGenExe = if ($environment.IsWindows) { "crossgen2.exe" } else { "crossgen2" }
-
-    # The crossgen tool is only published for these particular runtimes
-    $crossGenRuntime = if ($environment.IsWindows) {
-        # for windows the tool architecture is the host machine architecture, so it is always x64.
-        # we can cross compile for x86, arm and arm64
-        "win-x64"
-    } else {
-        $Runtime
-    }
-
-    if (-not $crossGenRuntime) {
-        throw "crossgen is not available for this platform"
-    }
-
-    $dotnetRuntimeVersion = $script:Options.Framework -replace 'net'
-
-    # Get the CrossGen.exe for the correct runtime with the latest version
-    $crossGenPath = Get-ChildItem $script:Environment.nugetPackagesRoot $crossGenExe -Recurse | `
-                        Where-Object { $_.FullName -match $crossGenRuntime } | `
-                        Where-Object { $_.FullName -match $dotnetRuntimeVersion } | `
-                        Where-Object { (Split-Path $_.FullName -Parent).EndsWith('tools') } | `
-                        Sort-Object -Property FullName -Descending | `
-                        Select-Object -First 1 | `
-                        ForEach-Object { $_.FullName }
-    if (-not $crossGenPath) {
-        throw "Unable to find latest version of crossgen2.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
-    }
-    Write-Verbose "Matched CrossGen2.exe: $crossGenPath" -Verbose
-
-    # Common assemblies used by Add-Type or assemblies with high JIT and no pdbs to crossgen
-    $commonAssembliesForAddType = @(
-        "Microsoft.CodeAnalysis.CSharp.dll"
-        "Microsoft.CodeAnalysis.dll"
-        "System.Linq.Expressions.dll"
-        "Microsoft.CSharp.dll"
-        "System.Runtime.Extensions.dll"
-        "System.Linq.dll"
-        "System.Collections.Concurrent.dll"
-        "System.Collections.dll"
-        "Newtonsoft.Json.dll"
-        "System.IO.FileSystem.dll"
-        "System.Diagnostics.Process.dll"
-        "System.Threading.Tasks.Parallel.dll"
-        "System.Security.AccessControl.dll"
-        "System.Text.Encoding.CodePages.dll"
-        "System.Private.Uri.dll"
-        "System.Threading.dll"
-        "System.Security.Principal.Windows.dll"
-        "System.Console.dll"
-        "Microsoft.Win32.Registry.dll"
-        "System.IO.Pipes.dll"
-        "System.Diagnostics.FileVersionInfo.dll"
-        "System.Collections.Specialized.dll"
-        "Microsoft.ApplicationInsights.dll"
-    )
-
-    $fullAssemblyList = $commonAssembliesForAddType
-
-    $assemblyFullPaths = @()
-    $assemblyFullPaths += foreach ($assemblyName in $fullAssemblyList) {
-        Join-Path $PublishPath $assemblyName
-    }
-
-    New-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyFullPaths -Runtime $Runtime
-
-    #
-    # With the latest dotnet.exe, the default load context is only able to load TPAs, and TPA
-    # only contains IL assembly names. In order to make the default load context able to load
-    # the NI PS assemblies, we need to replace the IL PS assemblies with the corresponding NI
-    # PS assemblies, but with the same IL assembly names.
-    #
-    Write-Verbose "PowerShell Ngen assemblies have been generated. Deploying ..." -Verbose
-    foreach ($assemblyName in $fullAssemblyList) {
-
-        # Remove the IL assembly and its symbols.
-        $assemblyPath = Join-Path $PublishPath $assemblyName
-        $symbolsPath = [System.IO.Path]::ChangeExtension($assemblyPath, ".pdb")
-
-        Remove-Item $assemblyPath -Force -ErrorAction Stop
-
-        # Rename the corresponding ni.dll assembly to be the same as the IL assembly
-        $niAssemblyPath = [System.IO.Path]::ChangeExtension($assemblyPath, "ni.dll")
-        Rename-Item $niAssemblyPath $assemblyPath -Force -ErrorAction Stop
-
-        # No symbols are available for Microsoft.CodeAnalysis.CSharp.dll, Microsoft.CodeAnalysis.dll,
-        # Microsoft.CodeAnalysis.VisualBasic.dll, and Microsoft.CSharp.dll.
-        if ($commonAssembliesForAddType -notcontains $assemblyName) {
-            Remove-Item $symbolsPath -Force -ErrorAction Stop
-        }
-    }
-}
-
 # Cleans the PowerShell repo - everything but the root folder
 function Clear-PSRepo
 {
@@ -3087,7 +2866,6 @@ function Restore-PSOptions {
                     -RootInfo $options.RootInfo `
                     -Top $options.Top `
                     -Runtime $options.Runtime `
-                    -Crossgen $options.Crossgen `
                     -Configuration $options.Configuration `
                     -PSModuleRestore $options.PSModuleRestore `
                     -Framework $options.Framework `
@@ -3110,10 +2888,6 @@ function New-PSOptionsObject
         [Parameter(Mandatory)]
         [String]
         $Runtime,
-
-        [Parameter(Mandatory)]
-        [Bool]
-        $CrossGen,
 
         [Parameter(Mandatory)]
         [String]
@@ -3143,7 +2917,6 @@ function New-PSOptionsObject
         Framework = $Framework
         Runtime = $Runtime
         Output = $Output
-        CrossGen = $CrossGen
         PSModuleRestore = $PSModuleRestore
         ForMinimalSize = $ForMinimalSize
     }

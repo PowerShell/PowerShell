@@ -63,7 +63,6 @@ function BuildPackages {
         } else {
             # make the artifact name unique
             $projectAssetsZipName = "linuxProjectAssets-$((Get-Date).Ticks)-symbols.zip"
-            $buildParams.Add("Crossgen", $true)
         }
 
         Start-PSBuild @buildParams @releaseTagParam
@@ -89,7 +88,6 @@ function BuildPackages {
             Remove-Item -Path $binDir -Recurse -Force
 
             ## Build 'min-size' and create 'tar.gz' package for it.
-            $buildParams['Crossgen'] = $false
             $buildParams['ForMinimalSize'] = $true
             Start-PSBuild @buildParams @releaseTagParam
             Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
