@@ -97,10 +97,6 @@ stages:
       vmImage: macOS-latest
     steps:
     - pwsh: |
-        # Remove old .NET SDKs
-        if (Test-Path -Path $HOME/.dotnet) {
-            Remove-Item $HOME/.dotnet -Recurse -Force
-        }
         Import-Module .\tools\ci.psm1
         New-CodeCoverageAndTestPackage
       displayName: CodeCoverage and Test Package
