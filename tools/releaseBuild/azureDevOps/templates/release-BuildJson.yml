@@ -40,12 +40,13 @@ steps:
     $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]NO"
     $vstsCommandCopyVersionBuildInfo = "vso[task.setvariable variable=CopyVersionBuildInfo]NO"
 
-    if ($fileName -eq "stable.json" -and $ltsRelease)
-    {
-      $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
-      Copy-Item -Path $targetFile -Destination $ltsFile -Force
-      $vstsCommandLtsJsonFile = "vso[task.setvariable variable=LtsBuildInfoJsonFile]$ltsFile"
-      $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]YES"
+    if ($fileName -eq "stable.json") {
+      if ($ltsRelease) {
+        $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
+        Copy-Item -Path $targetFile -Destination $ltsFile -Force
+        $vstsCommandLtsJsonFile = "vso[task.setvariable variable=LtsBuildInfoJsonFile]$ltsFile"
+        $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]YES"
+      }
 
       $releaseTag = $buildInfo.ReleaseTag
       $version = $releaseTag -replace '^v'
