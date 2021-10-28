@@ -5,7 +5,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.0.0-5.final"
+          "Version": "4.0.0-6.final"
         }
       },
       "DevelopmentDependency": false
@@ -15,7 +15,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.0.0-5.final"
+          "Version": "4.0.0-6.final"
         }
       },
       "DevelopmentDependency": false
@@ -224,8 +224,8 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni",
-          "Version": "4.4.0"
+          "Name": "runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
         }
       },
       "DevelopmentDependency": false
@@ -234,8 +234,8 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "runtime.win-x64.runtime.native.System.Data.SqlClient.sni",
-          "Version": "4.4.0"
+          "Name": "runtime.fedora.23-x64.runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
         }
       },
       "DevelopmentDependency": false
@@ -244,8 +244,138 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "runtime.win-x86.runtime.native.System.Data.SqlClient.sni",
-          "Version": "4.4.0"
+          "Name": "runtime.fedora.24-x64.runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.native.System",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.opensuse.13.2-x64.runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.opensuse.42.1-x64.runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.osx-arm64.runtime.native.System.IO.Ports",
+          "Version": "6.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.rhel.7-x64.runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.ubuntu.14.04-x64.runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.ubuntu.16.04-x64.runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.ubuntu.16.10-x64.runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.unix.System.Diagnostics.Debug",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.unix.System.Private.Uri",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.unix.System.Runtime.Extensions",
+          "Version": "4.3.0"
         }
       },
       "DevelopmentDependency": false
@@ -274,6 +404,16 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "runtime.win7.System.Private.Uri",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "runtime.win7-x64.Microsoft.NETCore.Windows.ApiSets",
           "Version": "1.0.1"
         }
@@ -284,8 +424,38 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "runtime.win7.System.Private.Uri",
-          "Version": "4.3.0"
+          "Name": "runtime.win7-x86.Microsoft.NETCore.Windows.ApiSets",
+          "Version": "1.0.1"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni",
+          "Version": "4.4.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.win-x64.runtime.native.System.Data.SqlClient.sni",
+          "Version": "4.4.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.win-x86.runtime.native.System.Data.SqlClient.sni",
+          "Version": "4.4.0"
         }
       },
       "DevelopmentDependency": false
@@ -565,7 +735,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Principal.Windows",
-          "Version": "6.0.0-preview.5.21301.5"
+          "Version": "5.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -575,7 +745,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Text.Encoding.CodePages",
-          "Version": "6.0.0-rc.2.21480.5"
+          "Version": "6.0.0"
         }
       },
       "DevelopmentDependency": false
@@ -616,6 +786,16 @@
         "Nuget": {
           "Name": "System.Threading",
           "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "System.Web.Services.Description",
+          "Version": "4.9.0"
         }
       },
       "DevelopmentDependency": false
