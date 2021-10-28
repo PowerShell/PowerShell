@@ -52,12 +52,12 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         id: cpr
-        if: env.CREATE_PR == 'true'
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
-          commit-message: "Update the cgmanifest with missing or updated components"
+          commit-message: "Update to the latest license and the cgmanifest with missing or updated components"
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          title: "Update ${{ env.FORMULA_NAME }} formula to version ${{ env.NEW_FORMULA_VERSION }}"
+          title: "Update to the latest license and the cgmanifest with missing or updated components"
           reviewers: travisez13
           base: master
           draft: false
