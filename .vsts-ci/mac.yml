@@ -11,10 +11,10 @@ trigger:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/**/*
-    - /.vsts-ci/misc-analysis.yml
-    - /.github/ISSUE_TEMPLATE/*
-    - /.dependabot/config.yml
+    - tools/releaseBuild/**/*
+    - .vsts-ci/misc-analysis.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .dependabot/config.yml
     - test/perf/*
 pr:
   branches:
@@ -29,8 +29,10 @@ pr:
     - .dependabot/config.yml
     - .github/ISSUE_TEMPLATE/*
     - .vsts-ci/misc-analysis.yml
-    - /.vsts-ci/windows.yml
-    - /.vsts-ci/windows/*
+    - .vsts-ci/windows.yml
+    - .vsts-ci/windows/*
+    - cgmanifest.json
+    - LICENSE.txt
     - test/common/markdown/*
     - test/perf/*
     - tools/packaging/*
