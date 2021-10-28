@@ -103,7 +103,9 @@ jobs:
       Import-Module "$env:POWERSHELLROOT/tools/packaging"
 
       $metadata = Get-Content "$env:POWERSHELLROOT/tools/metadata.json" -Raw | ConvertFrom-Json
-      $LTS = $metadata.LTSRelease
+
+      # LTSRelease.Package indicates that the release should be packaged as an LTS
+      $LTS = $metadata.LTSRelease.Package
       Write-Verbose -Verbose -Message "LTS is set to: $LTS"
 
       Invoke-AzDevOpsLinuxPackageCreation -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
