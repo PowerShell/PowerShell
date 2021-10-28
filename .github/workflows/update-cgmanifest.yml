@@ -52,7 +52,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         id: cpr
-        if: env.CREATE_PR == 'true'
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
           commit-message: "Update the cgmanifest with missing or updated components"
           committer: GitHub <noreply@github.com>
