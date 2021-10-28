@@ -1762,7 +1762,39 @@ namespace System.Management.Automation.Remoting.Client
 
                 while (true)
                 {
-                    string error = ReadError(reader);
+                    string error;
+
+                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSRemotingSSHTransportErrorHandling))
+                    {
+                        // Blocking read from StdError stream
+                        error = reader.ReadLine();
+
+                        if (error == null)
+                        {
+                            // Stream is closed unexpectedly.
+                            throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
+                        }
+
+                        if (error.Length == 0)
+                        {
+                            // Ignore
+                            continue;
+                        }
+
+                        try
+                        {
+                            // Messages in error stream from ssh are unreliable, and may just be warnings or
+                            // banner text.
+                            // So just report the messages but don't act on them.
+                            System.Console.WriteLine(error);
+                        }
+                        catch (IOException)
+                        { }
+
+                        continue;
+                    }
+
+                    error = ReadError(reader);
 
                     if (error.Length == 0)
                     {
