@@ -65,7 +65,8 @@ if ($Build -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
         $semVersion = [System.Management.Automation.SemanticVersion] $version
 
         $metadata = Get-Content "$location/tools/metadata.json" -Raw | ConvertFrom-Json
-        $LTS = $metadata.LTSRelease
+
+        $LTS = $metadata.LTSRelease.Package
 
         Write-Verbose -Verbose -Message "LTS is set to: $LTS"
     }
