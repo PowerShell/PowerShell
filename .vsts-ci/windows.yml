@@ -11,9 +11,9 @@ trigger:
     include:
     - '*'
     exclude:
-    - /.vsts-ci/misc-analysis.yml
-    - /.github/ISSUE_TEMPLATE/*
-    - /.dependabot/config.yml
+    - .vsts-ci/misc-analysis.yml
+    - .github/ISSUE_TEMPLATE/*
+    - .dependabot/config.yml
     - test/perf/*
 pr:
   branches:
@@ -28,6 +28,8 @@ pr:
     - .dependabot/config.yml
     - .github/ISSUE_TEMPLATE/*
     - .vsts-ci/misc-analysis.yml
+    - cgmanifest.json
+    - LICENSE.txt
     - test/common/markdown/*
     - test/perf/*
     - tools/packaging/*
