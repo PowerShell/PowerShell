@@ -133,7 +133,7 @@ namespace System.Management.Automation
                     description: "Removes the SSH remoting transport stdErr stream message handling as terminating errors, and instead just writes error messages to console."),
                 new ExperimentalFeature(
                     name: PSCleanBlockFeatureName,
-                    description: "Add support of a 'Clean' block to functions and script cmdlets for easy resource cleanup")
+                    description: "Add support of a 'Clean' block to functions and script cmdlets for easy resource cleanup"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
