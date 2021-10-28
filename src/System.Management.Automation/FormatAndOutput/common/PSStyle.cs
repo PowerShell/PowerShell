@@ -35,7 +35,7 @@ namespace System.Management.Automation
         /// <summary>Classic rendering of progress.</summary>
         Classic = 1,
     }
-    
+
     #region PSStyle
     /// <summary>
     /// Contains configuration for how PowerShell renders text.
@@ -365,7 +365,7 @@ namespace System.Management.Automation
                 get => _error;
                 set => _error = ValidateNoContent(value);
             }
-            
+
             private string _error = "\x1b[31;1m";
 
             /// <summary>
@@ -397,7 +397,7 @@ namespace System.Management.Automation
             {
                 get => _debug;
                 set => _debug = ValidateNoContent(value);
-            }   
+            }
 
             private string _debug = "\x1b[33;1m";
         }
@@ -465,6 +465,16 @@ namespace System.Management.Automation
                 public void Add(string extension, string decoration)
                 {
                     _extensionDictionary.Add(ValidateExtension(extension), ValidateNoContent(decoration));
+                }
+
+                /// <summary>
+                /// Add new extension and decoration to dictionary without validation.
+                /// </summary>
+                /// <param name="extension">Extension to add.</param>
+                /// <param name="decoration">ANSI string value to add.</param>
+                internal void AddWithoutValidate(string extension, string decoration)
+                {
+                    _extensionDictionary.Add(extension, decoration);
                 }
 
                 /// <summary>
@@ -543,19 +553,19 @@ namespace System.Management.Automation
                 Extension = new FileExtensionDictionary();
 
                 // archives
-                Extension.Add(".zip", "\x1b[31;1m");
-                Extension.Add(".tgz", "\x1b[31;1m");
-                Extension.Add(".gz", "\x1b[31;1m");
-                Extension.Add(".tar", "\x1b[31;1m");
-                Extension.Add(".nupkg", "\x1b[31;1m");
-                Extension.Add(".cab", "\x1b[31;1m");
-                Extension.Add(".7z", "\x1b[31;1m");
+                Extension.AddWithoutValidate(".zip", "\x1b[31;1m");
+                Extension.AddWithoutValidate(".tgz", "\x1b[31;1m");
+                Extension.AddWithoutValidate(".gz", "\x1b[31;1m");
+                Extension.AddWithoutValidate(".tar", "\x1b[31;1m");
+                Extension.AddWithoutValidate(".nupkg", "\x1b[31;1m");
+                Extension.AddWithoutValidate(".cab", "\x1b[31;1m");
+                Extension.AddWithoutValidate(".7z", "\x1b[31;1m");
 
                 // powershell
-                Extension.Add(".ps1", "\x1b[33;1m");
-                Extension.Add(".psd1", "\x1b[33;1m");
-                Extension.Add(".psm1", "\x1b[33;1m");
-                Extension.Add(".ps1xml", "\x1b[33;1m");
+                Extension.AddWithoutValidate(".ps1", "\x1b[33;1m");
+                Extension.AddWithoutValidate(".psd1", "\x1b[33;1m");
+                Extension.AddWithoutValidate(".psm1", "\x1b[33;1m");
+                Extension.AddWithoutValidate(".ps1xml", "\x1b[33;1m");
             }
         }
 
