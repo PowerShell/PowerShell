@@ -6,7 +6,7 @@ param(
     [parameter(Mandatory = $false)][switch]$SkipLinuxDistroCheck = $false
 )
 
-Import-Module "$PSScriptRoot\tools\buildCommon"
+. "$PSScriptRoot\tools\buildCommon\startNativeExecution.ps1"
 
 Set-StrictMode -Version 3.0
 

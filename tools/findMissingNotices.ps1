@@ -6,7 +6,7 @@
 # Requires the module dotnet.project.assets from the PowerShell Gallery authored by @TravisEz13
 
 Import-Module dotnet.project.assets
-Import-Module $PSScriptRoot/../tools/buildCommon
+. "$PSScriptRoot\..\tools\buildCommon\startNativeExecution.ps1"
 
 $existingRegistrationTable = @{}
 $existingRegistrationsJson = Get-Content $PSScriptRoot\..\cgmanifest.json | ConvertFrom-Json -AsHashtable

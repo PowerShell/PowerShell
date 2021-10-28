@@ -3,7 +3,7 @@
 
 # this function wraps native command Execution
 # for more information, read https://mnaoumov.wordpress.com/2015/01/11/execution-of-external-commands-in-powershell-done-right/
-function Start-NativeExecution {
+function script:Start-NativeExecution {
     param(
         [Alias('sb')]
         [Parameter(Mandatory=$true)]
@@ -44,5 +44,3 @@ function Start-NativeExecution {
         $ErrorActionPreference = $backupEAP
     }
 }
-
-Export-ModuleMember -Function Start-NativeExecution
