@@ -62,13 +62,6 @@ jobs:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
     displayName: 'Run Defender Scan'
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@2
-    displayName: 'Run CredScan'
-    inputs:
-      suppressionsFile: tools/credScan/suppress.json
-      debugMode: false
-    continueOnError: true
-
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-binskim.BinSkim@3
     displayName: 'Run BinSkim '
     inputs:
@@ -78,18 +71,6 @@ jobs:
       AnalyzeVerbose: true
       AnalyzeHashes: true
       AnalyzeStatistics: true
-    continueOnError: true
-
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
-    displayName: 'Run PoliCheck'
-    inputs:
-      targetType: F
-      optionsFC: 0
-      optionsXS: 1
-      optionsPE: '1|2|3|4'
-      optionsHMENABLE: 0
-      optionsRulesDBPath: '$(Build.SourcesDirectory)\tools\terms\PowerShell-Terms-Rules.mdb'
-      optionsUEPath: $(Build.SourcesDirectory)\tools\terms\TermsExclusion.xml
     continueOnError: true
 
   # add RoslynAnalyzers
@@ -138,7 +119,10 @@ jobs:
       uploadModernCop: false
       uploadPREfast: false
       uploadRoslyn: false
+      uploadBinSkim: false
       uploadTSLint: false
+      uploadCredScan: false
+      uploadPoliCheck: false
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-report.SdtReport@1
     displayName: 'Create Security Analysis Report'

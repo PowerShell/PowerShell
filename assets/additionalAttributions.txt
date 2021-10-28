@@ -1,6 +1,9 @@
-## Used to generate a new TPN
-## Copy this into the additional attributions fields
-## Copy everything below here, but do not include this line
+
+-------------------------------------------------------------------
+
+-------------------------------------------------------------------
+
+Additional  -
 
 -------------------------------------------------
 Microsoft.PowerShell.Archive
@@ -35,7 +38,7 @@ Microsoft.Management.Infrastructure
 
 Copyright (c) Microsoft Corporation
 
-All rights reserved. 
+All rights reserved.
 
 MIT License
 

@@ -1,0 +1,90 @@
+parameters:
+  - name: parentJobs
+    type: jobList
+
+jobs:
+- job: compliance
+  variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+
+  # Defines the variables APIScanClient, APIScanTenant and APIScanSecret
+  - group: PS-PS-APIScan
+
+  displayName: Compliance
+  dependsOn:
+    ${{ parameters.parentJobs }}
+  pool:
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
+
+  # APIScan can take a long time
+  timeoutInMinutes: 180
+
+  steps:
+  - checkout: self
+    clean: true
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-credscan.CredScan@3
+    displayName: 'Run CredScan'
+    inputs:
+      suppressionsFile: tools/credScan/suppress.json
+      debugMode: false
+    continueOnError: true
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
+    displayName: 'Run PoliCheck'
+    inputs:
+      # targetType F means file or folder and is the only applicable value and the default
+      targetType: F
+      # 1 to enable source code comment scanning, which is what we should do for open source
+      optionsFC: 1
+      # recurse
+      optionsXS: 1
+      # run for severity 1, 2, 3 and 4 issues
+      optionsPE: '1|2|3|4'
+      # disable history management
+      optionsHMENABLE: 0
+      # Excluclusion access database
+      optionsRulesDBPath: '$(Build.SourcesDirectory)\tools\terms\PowerShell-Terms-Rules.mdb'
+      # Terms Exclusion xml file
+      optionsUEPath: $(Build.SourcesDirectory)\tools\terms\TermsExclusion.xml
+    continueOnError: true
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
+    displayName: 'Publish Security Analysis Logs to Build Artifacts'
+    continueOnError: true
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@1
+    displayName: 'TSA upload to Codebase: PowerShellCore_201906'
+    inputs:
+      tsaVersion: TsaV2
+      codeBaseName: 'PowerShellCore_201906'
+      uploadFortifySCA: false
+      uploadFxCop: false
+      uploadModernCop: false
+      uploadPREfast: false
+      uploadRoslyn: false
+      uploadTSLint: false
+      uploadCredScan: true
+      uploadPoliCheck: true
+      uploadBinSkim: false
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-report.SdtReport@1
+    displayName: 'Create Security Analysis Report'
+    inputs:
+      TsvFile: false
+      APIScan: false
+      BinSkim: false
+      CredScan: true
+      PoliCheck: true
+      PoliCheckBreakOn: Severity2Above
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

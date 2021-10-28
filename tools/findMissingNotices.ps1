@@ -109,7 +109,7 @@ $targets | ForEach-Object {
     $name = $parts[0]
     $targetVersion = $parts[1]
     $pattern = [regex]::Escape($name) + " "
-    $tpnMatch = select-string -Path $PSScriptRoot\..\ThirdPartyNotices.txt -Pattern $pattern
+    $tpnMatch = Select-String -Path $PSScriptRoot\..\ThirdPartyNotices.txt -Pattern $pattern
     if (!$tpnMatch) {
         if ($existingRegistrationTable.ContainsKey($name)) {
             $registrationVersion = $existingRegistrationTable.$name.Component.Version()
