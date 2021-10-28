@@ -1803,8 +1803,8 @@ function Install-Dotnet {
 
         # Install new dotnet 1.1.0 preview packages
         $installScript = "dotnet-install.sh"
-        Start-NativeExecution {
-            Write-Verbose -Message "downloading install script from $installObtainUrl/$installScript ..." -Verbose
+
+        Write-Verbose -Message "downloading install script from $installObtainUrl/$installScript ..." -Verbose
             & $wget $installObtainUrl/$installScript
 
             if ((Get-ChildItem "./$installScript").Length -eq 0) {
@@ -1832,6 +1832,7 @@ function Install-Dotnet {
 
             $bashArgs | Out-String | Write-Verbose -Verbose
 
+        Start-NativeExecution {
             bash @bashArgs
         }
     } elseif ($environment.IsWindows) {
@@ -1869,29 +1870,29 @@ function Install-Dotnet {
             # dotnet-install.ps1 uses APIs that are not supported in .NET Core, so we run it with Windows PowerShell
             $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
             $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
+
+            if ($Version) {
+                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version, '-Quality', $Quality)
+            }
+            elseif ($Channel) {
+                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Channel', $Channel, '-Quality', $Quality)
+            }
+
+            if ($InstallDir) {
+                $psArgs += @('-InstallDir', $InstallDir)
+            }
+
+            if ($AzureFeed) {
+                $psArgs += @('-AzureFeed', $AzureFeed)
+            }
+
+            if ($FeedCredential) {
+                $psArgs += @('-FeedCredential', $FeedCredential)
+            }
+
+            $psArgs | Out-String | Write-Verbose -Verbose
+
             Start-NativeExecution {
-
-                if ($Version) {
-                    $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version, '-Quality', $Quality)
-                }
-                elseif ($Channel) {
-                    $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Channel', $Channel, '-Quality', $Quality)
-                }
-
-                if ($InstallDir) {
-                    $psArgs += @('-InstallDir', $InstallDir)
-                }
-
-                if ($AzureFeed) {
-                    $psArgs += @('-AzureFeed', $AzureFeed)
-                }
-
-                if ($FeedCredential) {
-                    $psArgs += @('-FeedCredential', $FeedCredential)
-                }
-
-                $psArgs | Out-String | Write-Verbose -Verbose
-
                 & $fullPSPath @psArgs
             }
         }

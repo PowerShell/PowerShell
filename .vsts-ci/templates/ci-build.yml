@@ -11,12 +11,12 @@ jobs:
   displayName: ${{ parameters.displayName }}
 
   steps:
-  - powershell: |
+  - pwsh: |
       Get-ChildItem -Path env:
     displayName: Capture Environment
     condition: succeededOrFailed()
 
-  - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
+  - pwsh:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
     displayName: Set Build Name for Non-PR
     condition: ne(variables['Build.Reason'], 'PullRequest')
 
@@ -29,13 +29,13 @@ jobs:
     displayName: Bootstrap
     condition: succeeded()
 
-  - powershell: |
+  - pwsh: |
       Import-Module .\tools\ci.psm1
       Invoke-CIBuild
     displayName: Build
     condition: succeeded()
 
-  - powershell: |
+  - pwsh: |
       Import-Module .\tools\ci.psm1
       Restore-PSOptions
       Invoke-CIxUnit -SkipFailing
