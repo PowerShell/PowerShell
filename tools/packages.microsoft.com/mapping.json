@@ -1,0 +1,25 @@
+{
+  "Packages" : [
+      {
+          "url": "microsoft-rhel7.3-prod",
+          "distribution" : ["trusty"],
+          "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.rhel.7.x86_64.rpm"
+      },
+      {
+          "distribution" : ["stretch"],
+          "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.debian.9_amd64.deb"
+      },
+      {
+          "distribution" : ["buster"],
+          "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.debian.10_amd64.deb"
+      },
+      {
+          "distribution" : ["bionic"],
+          "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.ubuntu.18.04_amd64.deb"
+      },
+      {
+          "distribution": ["xenial"],
+          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.ubuntu.16.04_amd64.deb"
+      }
+  ]
+}
