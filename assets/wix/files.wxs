@@ -1990,6 +1990,9 @@
         <Component Id="cmp690BAC3241424F59B5D30DE0E846D03E">
           <File Id="filDBDCB9BFFF9F425B8CF7F7A5F05D42B1" KeyPath="yes" Source="$(var.ProductSourcePath)\cs\System.Private.ServiceModel.resources.dll" />
         </Component>
+        <Component Id="cmp5B67AE2852E04C26970FD2016CA76E07">
+          <File Id="fil42D10EBCB41B426BAFBF26BB053A9E84" KeyPath="yes" Source="$(var.ProductSourcePath)\cs\System.Web.Services.Description.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dirEA0127D6607E68B508B9DB9CE315A2CE" Name="de">
         <Component Id="cmpF2941A91B17EEA22CD6DAB34693D9AC0">
@@ -2051,6 +2054,9 @@
         </Component>
         <Component Id="cmpB43ED7BA30C844E2B5C38F7B747EEFDC">
           <File Id="filE106C77258F047E8A384E1E75B7EF6B8" KeyPath="yes" Source="$(var.ProductSourcePath)\de\System.Private.ServiceModel.resources.dll" />
+        </Component>
+        <Component Id="cmp777DF202EF2542F2ACFCCF0481E8D6EE">
+          <File Id="filFCCE95BFDDD540E1AA243049872EF5D0" KeyPath="yes" Source="$(var.ProductSourcePath)\de\System.Web.Services.Description.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="dir5B65D7353FBDCD17AB60A674B3FDF93B" Name="es">
@@ -2114,6 +2120,9 @@
         <Component Id="cmpCC4A42AA70EE4418926986F5A4B8D3FA">
           <File Id="fil186134FCB6984F1484A8308DF4F2B917" KeyPath="yes" Source="$(var.ProductSourcePath)\es\System.Private.ServiceModel.resources.dll" />
         </Component>
+        <Component Id="cmpF96C036EAE3B436DB096888697193FAF">
+          <File Id="fil761ECB84FAFA4674AB5712669532C569" KeyPath="yes" Source="$(var.ProductSourcePath)\es\System.Web.Services.Description.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dir23063512FA8C884E1B4F08FDF0A44516" Name="fr">
         <Component Id="cmp1DEB513A065956086898BCDACC5887B6">
@@ -2175,6 +2184,9 @@
         </Component>
         <Component Id="cmpE7BE9D8F63E04798870E57BA1EABB9A5">
           <File Id="fil93C038D9EED945F5A984CF3C98EDB72B" KeyPath="yes" Source="$(var.ProductSourcePath)\fr\System.Private.ServiceModel.resources.dll" />
+        </Component>
+        <Component Id="cmp789F545EA2CB4AC5A2688CF730A5F6B4">
+          <File Id="fil70A83BE26FCF4905B220521A6B75198D" KeyPath="yes" Source="$(var.ProductSourcePath)\fr\System.Web.Services.Description.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="dir42B03840AE19D1498CC524F2B6C0389D" Name="it">
@@ -2238,6 +2250,9 @@
         <Component Id="cmp166B17F72C954B0087DF991E560B399A">
           <File Id="fil528F0FBF10C246568FCE1F5B10E541D1" KeyPath="yes" Source="$(var.ProductSourcePath)\it\System.Private.ServiceModel.resources.dll" />
         </Component>
+        <Component Id="cmp0173AE0CBFA44C269D93361F6C98F99B">
+          <File Id="fil3767F5D3C1264EC596A9F335355521C6" KeyPath="yes" Source="$(var.ProductSourcePath)\it\System.Web.Services.Description.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dir086D21BE309BE4C7081FC60E3524890F" Name="ja">
         <Component Id="cmp867E4E51FE7BC09AAD5D59FD76716FBC">
@@ -2299,6 +2314,9 @@
         </Component>
         <Component Id="cmp529A2B5343FD466884FAF627E37C648D">
           <File Id="fil265B2A6A67EF4C6E8C17BDC3AAD8F729" KeyPath="yes" Source="$(var.ProductSourcePath)\ja\System.Private.ServiceModel.resources.dll" />
+        </Component>
+        <Component Id="cmp5492F78ACB1A4391BBED371FDFC06B9E">
+          <File Id="fil54F7909E28E54B0687222DFD1D95009D" KeyPath="yes" Source="$(var.ProductSourcePath)\ja\System.Web.Services.Description.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="dir43D6CAD5F3ED1060009918D06D84FB18" Name="ko">
@@ -2362,6 +2380,9 @@
         <Component Id="cmp4EE1633EE4864CE5B9015BF76BD31D14">
           <File Id="fil688FE14A80204086A48DE1BDC6591EB0" KeyPath="yes" Source="$(var.ProductSourcePath)\ko\System.Private.ServiceModel.resources.dll" />
         </Component>
+        <Component Id="cmp3B07F4E4B6034F3284288C18F4638CA7">
+          <File Id="filA52AFEA335CA41D98DB28358CE344EB5" KeyPath="yes" Source="$(var.ProductSourcePath)\ko\System.Web.Services.Description.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dirE8201C74A7184D11233BAD63C6DB37BD" Name="pl">
         <Component Id="cmpA656A18FE14D3C8EB02C31AE474054E3">
@@ -2423,6 +2444,9 @@
         </Component>
         <Component Id="cmpC8C68DB0DEE44CF49D98532D2C26395E">
           <File Id="fil1959B05E9F214DCFA6670F1892EE2E7D" KeyPath="yes" Source="$(var.ProductSourcePath)\pl\System.Private.ServiceModel.resources.dll" />
+        </Component>
+        <Component Id="cmpA8A66545C44F428BB552B55EEE353BB0">
+          <File Id="filC0107BEFC31E4F9AB5037537B82D92EF" KeyPath="yes" Source="$(var.ProductSourcePath)\pl\System.Web.Services.Description.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="dir47ED939BFA870848E0764E862CD6B4D7" Name="pt-BR">
@@ -2486,6 +2510,9 @@
         <Component Id="cmpF3C18F07C6A148638CBC858EB02E3A6D">
           <File Id="filE6672552F1EE45D3AC3021E02DB093CB" KeyPath="yes" Source="$(var.ProductSourcePath)\pt-BR\System.Private.ServiceModel.resources.dll" />
         </Component>
+        <Component Id="cmp0C4751F9D5C14419A45F234152D21DA9">
+          <File Id="filF6E3EF23DEEF4D3BB3CA9C9D084FB607" KeyPath="yes" Source="$(var.ProductSourcePath)\pt-BR\System.Web.Services.Description.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dir37B8DFAE26D5F8E9948851F7D19F9E20" Name="ru">
         <Component Id="cmpFDCD51BD80926ABECCE27D0D66A47C8F">
@@ -2547,6 +2574,9 @@
         </Component>
         <Component Id="cmpBD958F4B8F9146499DE2CA6321C65F96">
           <File Id="fil6A1EB9311FE546F69F28948794DC43BF" KeyPath="yes" Source="$(var.ProductSourcePath)\ru\System.Private.ServiceModel.resources.dll" />
+        </Component>
+        <Component Id="cmp6ADB50DF9F2D4BCA9E682AA6D1C7C03B">
+          <File Id="fil7FECA5AED84D4C84968358F2C065BBEC" KeyPath="yes" Source="$(var.ProductSourcePath)\ru\System.Web.Services.Description.resources.dll" />
         </Component>
       </Directory>
       <Directory Id="dirA7E9CC01273A7FED89FC8D3A368E00CC" Name="tr">
@@ -2610,6 +2640,9 @@
         <Component Id="cmp2B8239B905B146A69CD5D55A353AC131">
           <File Id="fil618AA430D1794A45A1D2BAA2451BECB2" KeyPath="yes" Source="$(var.ProductSourcePath)\tr\System.Private.ServiceModel.resources.dll" />
         </Component>
+        <Component Id="cmp9FCFAEB797D9475C873E21B4B5A89E28">
+          <File Id="filC4BDA69F669843EAAD7B6D8714CB1420" KeyPath="yes" Source="$(var.ProductSourcePath)\tr\System.Web.Services.Description.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dir47E993970F74AA9F393D23500827D12C" Name="zh-Hans">
         <Component Id="cmp34C4A21743AC68583599BF2B139F39F2">
@@ -2672,6 +2705,9 @@
         <Component Id="cmp582595AE8291444E837793472E0A259C">
           <File Id="fil7044506B31FA4130B2E375147032298D" KeyPath="yes" Source="$(var.ProductSourcePath)\zh-Hans\System.Private.ServiceModel.resources.dll" />
         </Component>
+        <Component Id="cmpF24D3B9F29F84B4D9C47577B7926FC2E">
+          <File Id="fil0AF0C0F933404EABBC94B10ED8740042" KeyPath="yes" Source="$(var.ProductSourcePath)\zh-Hans\System.Web.Services.Description.resources.dll" />
+        </Component>
       </Directory>
       <Directory Id="dirB1FFB91EED6FD71EA866548CEA3A5298" Name="zh-Hant">
         <Component Id="cmpBC28FE8B65954B00AECA9C534639596D">
@@ -2733,6 +2769,9 @@
         </Component>
         <Component Id="cmp91C27D1766E84B8BB0F0C70888F03C2E">
           <File Id="filC888727CE05A4A9FA0DB66EE0F15097C" KeyPath="yes" Source="$(var.ProductSourcePath)\zh-Hant\System.Private.ServiceModel.resources.dll" />
+        </Component>
+        <Component Id="cmpD55F08F6CF51498E9E8551067BA57040">
+          <File Id="fil46C47F01171F45A898A7AD6A14ACE432" KeyPath="yes" Source="$(var.ProductSourcePath)\zh-Hant\System.Web.Services.Description.resources.dll" />
         </Component>
       </Directory>
       <Directory Name="Schemas" Id="dir1DB5B24CC3494785974A51F28F128069">
@@ -3109,8 +3148,11 @@
       <Component Id="cmp09155DA101E1424B98832A789E93E835">
         <File Id="fil7D748565EBF5423A84CFC6D25D21F43C" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.Bcl.AsyncInterfaces.dll" />
       </Component>
-      <Component Id="cmpDAFCD776C56B4CF78A4534704588E38B">
-        <File Id="fil0734B55E8FC6480B97679A249A892D54" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.21.48005.dll" />
+      <Component Id="cmp22840874A8C84AA796496634FBEBF09C">
+        <File Id="fil2067B616D1FA4B30932A0240ABE06089" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Web.Services.Description.dll" />
+      </Component>
+      <Component Id="cmpFB17CABA17334B2BBA1ED6CBF757B310">
+        <File Id="fil1621E0132D2C49B89068166196075157" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.21.52210.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4110,10 +4152,24 @@
       <ComponentRef Id="cmp2B8239B905B146A69CD5D55A353AC131" />
       <ComponentRef Id="cmpBD958F4B8F9146499DE2CA6321C65F96" />
       <ComponentRef Id="cmp166B17F72C954B0087DF991E560B399A" />
-      <ComponentRef Id="cmpDAFCD776C56B4CF78A4534704588E38B" />
       <ComponentRef Id="cmp529A2B5343FD466884FAF627E37C648D" />
       <ComponentRef Id="cmp4EE1633EE4864CE5B9015BF76BD31D14" />
       <ComponentRef Id="cmpE7BE9D8F63E04798870E57BA1EABB9A5" />
+      <ComponentRef Id="cmp5B67AE2852E04C26970FD2016CA76E07" />
+      <ComponentRef Id="cmp6ADB50DF9F2D4BCA9E682AA6D1C7C03B" />
+      <ComponentRef Id="cmpA8A66545C44F428BB552B55EEE353BB0" />
+      <ComponentRef Id="cmp5492F78ACB1A4391BBED371FDFC06B9E" />
+      <ComponentRef Id="cmp22840874A8C84AA796496634FBEBF09C" />
+      <ComponentRef Id="cmp0173AE0CBFA44C269D93361F6C98F99B" />
+      <ComponentRef Id="cmpFB17CABA17334B2BBA1ED6CBF757B310" />
+      <ComponentRef Id="cmpD55F08F6CF51498E9E8551067BA57040" />
+      <ComponentRef Id="cmp777DF202EF2542F2ACFCCF0481E8D6EE" />
+      <ComponentRef Id="cmpF24D3B9F29F84B4D9C47577B7926FC2E" />
+      <ComponentRef Id="cmp3B07F4E4B6034F3284288C18F4638CA7" />
+      <ComponentRef Id="cmp9FCFAEB797D9475C873E21B4B5A89E28" />
+      <ComponentRef Id="cmp0C4751F9D5C14419A45F234152D21DA9" />
+      <ComponentRef Id="cmpF96C036EAE3B436DB096888697193FAF" />
+      <ComponentRef Id="cmp789F545EA2CB4AC5A2688CF730A5F6B4" />
     </ComponentGroup>
   </Fragment>
 </Wix>

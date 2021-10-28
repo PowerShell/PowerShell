@@ -9,7 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
-    <PackageReference Include="System.Security.AccessControl" Version="6.0.0-rc.2.21480.5" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="6.0.0-preview.5.21301.5" />
+    <PackageReference Include="System.Security.AccessControl" Version="6.0.0" />
   </ItemGroup>
 </Project>
