@@ -11,9 +11,10 @@ function script:Start-NativeExecution {
         [switch]$IgnoreExitcode,
         [switch]$VerboseOutputOnError
     )
+
     $backupEAP = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
-    Write-Verbose "Executing: $ScriptBlock" -Verbose
+    Write-Verbose "Executing: $ScriptBlock"
     try {
         if ($VerboseOutputOnError.IsPresent) {
             $output = & $ScriptBlock 2>&1
