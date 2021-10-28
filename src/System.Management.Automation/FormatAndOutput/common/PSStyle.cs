@@ -472,7 +472,7 @@ namespace System.Management.Automation
                 /// </summary>
                 /// <param name="extension">Extension to add.</param>
                 /// <param name="decoration">ANSI string value to add.</param>
-                internal void AddWithoutValidate(string extension, string decoration)
+                internal void AddWithoutValidation(string extension, string decoration)
                 {
                     _extensionDictionary.Add(extension, decoration);
                 }
@@ -553,19 +553,19 @@ namespace System.Management.Automation
                 Extension = new FileExtensionDictionary();
 
                 // archives
-                Extension.AddWithoutValidate(".zip", "\x1b[31;1m");
-                Extension.AddWithoutValidate(".tgz", "\x1b[31;1m");
-                Extension.AddWithoutValidate(".gz", "\x1b[31;1m");
-                Extension.AddWithoutValidate(".tar", "\x1b[31;1m");
-                Extension.AddWithoutValidate(".nupkg", "\x1b[31;1m");
-                Extension.AddWithoutValidate(".cab", "\x1b[31;1m");
-                Extension.AddWithoutValidate(".7z", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".zip", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".tgz", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".gz", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".tar", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".nupkg", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".cab", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".7z", "\x1b[31;1m");
 
                 // powershell
-                Extension.AddWithoutValidate(".ps1", "\x1b[33;1m");
-                Extension.AddWithoutValidate(".psd1", "\x1b[33;1m");
-                Extension.AddWithoutValidate(".psm1", "\x1b[33;1m");
-                Extension.AddWithoutValidate(".ps1xml", "\x1b[33;1m");
+                Extension.AddWithoutValidation(".ps1", "\x1b[33;1m");
+                Extension.AddWithoutValidation(".psd1", "\x1b[33;1m");
+                Extension.AddWithoutValidation(".psm1", "\x1b[33;1m");
+                Extension.AddWithoutValidation(".ps1xml", "\x1b[33;1m");
             }
         }
 
@@ -698,7 +698,7 @@ namespace System.Management.Automation
 
         private static string ValidateNoContent(string text)
         {
-            var decorartedString = new StringDecorated(text);
+            var decorartedString = new ValueStringDecorated(text);
             if (decorartedString.ContentLength > 0)
             {
                 throw new ArgumentException(string.Format(PSStyleStrings.TextContainsContent, decorartedString.ToString(OutputRendering.PlainText)));
