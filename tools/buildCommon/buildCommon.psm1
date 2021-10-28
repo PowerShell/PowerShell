@@ -13,6 +13,7 @@ function Start-NativeExecution {
     )
     $backupEAP = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
+    Write-Verbose "Executing: $ScriptBlock" -Verbose
     try {
         if ($VerboseOutputOnError.IsPresent) {
             $output = & $ScriptBlock 2>&1
