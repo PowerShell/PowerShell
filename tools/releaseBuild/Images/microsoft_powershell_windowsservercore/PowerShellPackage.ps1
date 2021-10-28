@@ -97,7 +97,6 @@ try
     {
         Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -Verbose
         $buildParams = @{
-            CrossGen = !$ForMinimalSize -and $Runtime -notmatch "arm" -and $Runtime -notlike "fxdependent*"
             ForMinimalSize = $ForMinimalSize
         }
 

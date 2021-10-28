@@ -17,34 +17,45 @@ steps:
     $dateTime = [datetime]::UtcNow
     $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
+    $metadata = Get-Content ./tools/metadata.json | ConvertFrom-Json
+    $stableRelease = $metadata.StableRelease.Latest
+    $ltsRelease = $metadata.LTSRelease.Latest
+
     $buildInfo = Get-Content $jsonFile | ConvertFrom-Json
     $buildInfo.ReleaseDate = $dateTime
 
     $targetFile = "$ENV:PIPELINE_WORKSPACE/$fileName"
     ConvertTo-Json -InputObject $buildInfo | Out-File $targetFile -Encoding ascii
 
+    if ($stableRelease) {
+      $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyStableBuildInfo]YES"
+    }
+
     $vstsCommandString = "vso[task.setvariable variable=BuildInfoJsonFile]$targetFile"
     Write-Host "sending " + $vstsCommandString
     Write-Host "##$vstsCommandString"
 
-
     ## Create 'lts.json' if it's the latest stable and also a LTS release.
 
     $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]NO"
+    $vstsCommandCopyVersionBuildInfo = "vso[task.setvariable variable=CopyVersionBuildInfo]NO"
 
-    if ($fileName -eq "stable.json")
-    {
-        $releaseTag = $buildInfo.ReleaseTag
-        $version = $releaseTag -replace '^v'
-        $semVersion = [System.Management.Automation.SemanticVersion] $version
+    if ($fileName -eq "stable.json") {
+      if ($ltsRelease) {
+        $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
+        Copy-Item -Path $targetFile -Destination $ltsFile -Force
+        $vstsCommandLtsJsonFile = "vso[task.setvariable variable=LtsBuildInfoJsonFile]$ltsFile"
+        $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]YES"
+      }
 
-        if ($semVersion.PreReleaseLabel -eq $null -and $semVersion.Minor % 2 -eq 0 -and $semVersion.Major -ge 7)
-        {
-            $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
-            Copy-Item -Path $targetFile -Destination $ltsFile -Force
-            $vstsCommandLtsJsonFile = "vso[task.setvariable variable=LtsBuildInfoJsonFile]$ltsFile"
-            $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]YES"
-        }
+      $releaseTag = $buildInfo.ReleaseTag
+      $version = $releaseTag -replace '^v'
+      $semVersion = [System.Management.Automation.SemanticVersion] $version
+
+      $versionFile = "$ENV:PIPELINE_WORKSPACE/$($semVersion.Major)-$($semVersion.Minor).json"
+      Copy-Item -Path $targetFile -Destination $versionFile -Force
+      $vstsCommandVersionJsonFile = "vso[task.setvariable variable=VersionBuildInfoJsonFile]$versionFile"
+      $vstsCommandCopyVersionBuildInfo = "vso[task.setvariable variable=CopyVersionBuildInfo]YES"
     }
 
     Write-Host "sending " + $vstsCommandCopyLTSBuildInfo
@@ -54,6 +65,15 @@ steps:
     {
         Write-Host "sending " + $vstsCommandLtsJsonFile
         Write-Host "##$vstsCommandLtsJsonFile"
+    }
+
+    Write-Host "sending " + $vstsCommandCopyVersionBuildInfo
+    Write-Host "##$vstsCommandCopyVersionBuildInfo"
+
+    if ($vstsCommandVersionJsonFile)
+    {
+        Write-Host "sending " + $vstsCommandVersionJsonFile
+        Write-Host "##$vstsCommandVersionJsonFile"
     }
   displayName: Download and Capture NuPkgs
 
@@ -65,6 +85,7 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: BuildInfo
+  condition: and(succeeded(), eq(variables['CopyStableBuildInfo'], 'YES'))
 
 - task: AzureFileCopy@2
   displayName: 'AzureBlob build info ''lts.json'' Copy when needed'
@@ -75,3 +96,13 @@ steps:
     storage: '$(StorageAccount)'
     ContainerName: BuildInfo
   condition: and(succeeded(), eq(variables['CopyLTSBuildInfo'], 'YES'))
+
+- task: AzureFileCopy@2
+  displayName: 'AzureBlob build info ''Major-Minor.json'' Copy when needed'
+  inputs:
+    SourcePath: '$(VersionBuildInfoJsonFile)'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: BuildInfo
+  condition: and(succeeded(), eq(variables['CopyVersionBuildInfo'], 'YES'))

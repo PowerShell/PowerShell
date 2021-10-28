@@ -945,25 +945,11 @@ namespace System.Management.Automation.Language
         {
             _currentBlock = _entryBlock;
 
-            if (scriptBlockAst.DynamicParamBlock != null)
-            {
-                scriptBlockAst.DynamicParamBlock.Accept(this);
-            }
-
-            if (scriptBlockAst.BeginBlock != null)
-            {
-                scriptBlockAst.BeginBlock.Accept(this);
-            }
-
-            if (scriptBlockAst.ProcessBlock != null)
-            {
-                scriptBlockAst.ProcessBlock.Accept(this);
-            }
-
-            if (scriptBlockAst.EndBlock != null)
-            {
-                scriptBlockAst.EndBlock.Accept(this);
-            }
+            scriptBlockAst.DynamicParamBlock?.Accept(this);
+            scriptBlockAst.BeginBlock?.Accept(this);
+            scriptBlockAst.ProcessBlock?.Accept(this);
+            scriptBlockAst.EndBlock?.Accept(this);
+            scriptBlockAst.CleanBlock?.Accept(this);
 
             _currentBlock.FlowsTo(_exitBlock);
 

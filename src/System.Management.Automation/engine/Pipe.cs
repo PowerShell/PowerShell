@@ -110,6 +110,13 @@ namespace System.Management.Automation.Internal
         internal int OutBufferCount { get; set; } = 0;
 
         /// <summary>
+        /// Gets whether the out variable list should be ignored.
+        /// This is used for scenarios like the `clean` block, where writing to output stream is intentionally
+        /// disabled and thus out variables should also be ignored.
+        /// </summary>
+        internal bool IgnoreOutVariableList { get; set; }
+
+        /// <summary>
         /// If true, then all input added to this pipe will simply be discarded...
         /// </summary>
         internal bool NullPipe

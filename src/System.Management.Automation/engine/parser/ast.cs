@@ -818,6 +818,46 @@ namespace System.Management.Automation.Language
                               NamedBlockAst processBlock,
                               NamedBlockAst endBlock,
                               NamedBlockAst dynamicParamBlock)
+            : this(
+                extent,
+                usingStatements,
+                attributes,
+                paramBlock,
+                beginBlock,
+                processBlock,
+                endBlock,
+                cleanBlock: null,
+                dynamicParamBlock)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScriptBlockAst"/> class.
+        /// This construction uses explicitly named begin/process/end/clean blocks.
+        /// </summary>
+        /// <param name="extent">The extent of the script block.</param>
+        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="attributes">The set of attributes for the script block.</param>
+        /// <param name="paramBlock">The ast for the param block, may be null.</param>
+        /// <param name="beginBlock">The ast for the begin block, may be null.</param>
+        /// <param name="processBlock">The ast for the process block, may be null.</param>
+        /// <param name="endBlock">The ast for the end block, may be null.</param>
+        /// <param name="cleanBlock">The ast for the clean block, may be null.</param>
+        /// <param name="dynamicParamBlock">The ast for the dynamicparam block, may be null.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "param")]
+        public ScriptBlockAst(
+            IScriptExtent extent,
+            IEnumerable<UsingStatementAst> usingStatements,
+            IEnumerable<AttributeAst> attributes,
+            ParamBlockAst paramBlock,
+            NamedBlockAst beginBlock,
+            NamedBlockAst processBlock,
+            NamedBlockAst endBlock,
+            NamedBlockAst cleanBlock,
+            NamedBlockAst dynamicParamBlock)
             : base(extent)
         {
             SetUsingStatements(usingStatements);
@@ -856,6 +896,12 @@ namespace System.Management.Automation.Language
                 SetParent(endBlock);
             }
 
+            if (cleanBlock != null)
+            {
+                this.CleanBlock = cleanBlock;
+                SetParent(cleanBlock);
+            }
+
             if (dynamicParamBlock != null)
             {
                 this.DynamicParamBlock = dynamicParamBlock;
@@ -889,6 +935,35 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ScriptBlockAst"/> class.
+        /// This construction uses explicitly named begin/process/end/clean blocks.
+        /// </summary>
+        /// <param name="extent">The extent of the script block.</param>
+        /// <param name="usingStatements">The list of using statments, may be null.</param>
+        /// <param name="paramBlock">The ast for the param block, may be null.</param>
+        /// <param name="beginBlock">The ast for the begin block, may be null.</param>
+        /// <param name="processBlock">The ast for the process block, may be null.</param>
+        /// <param name="endBlock">The ast for the end block, may be null.</param>
+        /// <param name="cleanBlock">The ast for the clean block, may be null.</param>
+        /// <param name="dynamicParamBlock">The ast for the dynamicparam block, may be null.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "param")]
+        public ScriptBlockAst(
+            IScriptExtent extent,
+            IEnumerable<UsingStatementAst> usingStatements,
+            ParamBlockAst paramBlock,
+            NamedBlockAst beginBlock,
+            NamedBlockAst processBlock,
+            NamedBlockAst endBlock,
+            NamedBlockAst cleanBlock,
+            NamedBlockAst dynamicParamBlock)
+            : this(extent, usingStatements, null, paramBlock, beginBlock, processBlock, endBlock, cleanBlock, dynamicParamBlock)
+        {
+        }
+
+        /// <summary>
         /// Construct a ScriptBlockAst that uses explicitly named begin/process/end blocks.
         /// </summary>
         /// <param name="extent">The extent of the script block.</param>
@@ -908,6 +983,33 @@ namespace System.Management.Automation.Language
                               NamedBlockAst endBlock,
                               NamedBlockAst dynamicParamBlock)
             : this(extent, null, paramBlock, beginBlock, processBlock, endBlock, dynamicParamBlock)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScriptBlockAst"/> class.
+        /// This construction uses explicitly named begin/process/end/clean blocks.
+        /// </summary>
+        /// <param name="extent">The extent of the script block.</param>
+        /// <param name="paramBlock">The ast for the param block, may be null.</param>
+        /// <param name="beginBlock">The ast for the begin block, may be null.</param>
+        /// <param name="processBlock">The ast for the process block, may be null.</param>
+        /// <param name="endBlock">The ast for the end block, may be null.</param>
+        /// <param name="cleanBlock">The ast for the clean block, may be null.</param>
+        /// <param name="dynamicParamBlock">The ast for the dynamicparam block, may be null.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "param")]
+        public ScriptBlockAst(
+            IScriptExtent extent,
+            ParamBlockAst paramBlock,
+            NamedBlockAst beginBlock,
+            NamedBlockAst processBlock,
+            NamedBlockAst endBlock,
+            NamedBlockAst cleanBlock,
+            NamedBlockAst dynamicParamBlock)
+            : this(extent, null, paramBlock, beginBlock, processBlock, endBlock, cleanBlock, dynamicParamBlock)
         {
         }
 
@@ -1116,6 +1218,11 @@ namespace System.Management.Automation.Language
         public NamedBlockAst EndBlock { get; }
 
         /// <summary>
+        /// Gets the ast representing the clean block for a script block, or null if no clean block was specified.
+        /// </summary>
+        public NamedBlockAst CleanBlock { get; }
+
+        /// <summary>
         /// The ast representing the dynamicparam block for a script block, or null if no dynamicparam block was specified.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Param")]
@@ -1194,17 +1301,25 @@ namespace System.Management.Automation.Language
             var newBeginBlock = CopyElement(this.BeginBlock);
             var newProcessBlock = CopyElement(this.ProcessBlock);
             var newEndBlock = CopyElement(this.EndBlock);
+            var newCleanBlock = CopyElement(this.CleanBlock);
             var newDynamicParamBlock = CopyElement(this.DynamicParamBlock);
             var newAttributes = CopyElements(this.Attributes);
             var newUsingStatements = CopyElements(this.UsingStatements);
 
-            var scriptBlockAst = new ScriptBlockAst(this.Extent, newUsingStatements, newAttributes, newParamBlock, newBeginBlock, newProcessBlock,
-                                                    newEndBlock, newDynamicParamBlock)
+            return new ScriptBlockAst(
+                this.Extent,
+                newUsingStatements,
+                newAttributes,
+                newParamBlock,
+                newBeginBlock,
+                newProcessBlock,
+                newEndBlock,
+                newCleanBlock,
+                newDynamicParamBlock)
             {
                 IsConfiguration = this.IsConfiguration,
                 ScriptRequirements = this.ScriptRequirements
             };
-            return scriptBlockAst;
         }
 
         internal string ToStringForSerialization()
@@ -1261,7 +1376,8 @@ namespace System.Management.Automation.Language
                 var varAst = ast as VariableExpressionAst;
                 if (varAst != null)
                 {
-                    string varName = varAst.VariablePath.UserPath;
+                    VariablePath varPath = varAst.VariablePath;
+                    string varName = varPath.IsDriveQualified ? $"{varPath.DriveName}_{varPath.UnqualifiedPath}" : $"{varPath.UnqualifiedPath}";
                     string varSign = varAst.Splatted ? "@" : "$";
                     string newVarName = varSign + UsingExpressionAst.UsingPrefix + varName;
 
@@ -1366,17 +1482,27 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (action == AstVisitAction.Continue && ParamBlock != null)
-                action = ParamBlock.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && DynamicParamBlock != null)
-                action = DynamicParamBlock.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && BeginBlock != null)
-                action = BeginBlock.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && ProcessBlock != null)
-                action = ProcessBlock.InternalVisit(visitor);
-            if (action == AstVisitAction.Continue && EndBlock != null)
-                action = EndBlock.InternalVisit(visitor);
+            if (action == AstVisitAction.Continue)
+            {
+                _ = VisitAndShallContinue(ParamBlock) &&
+                    VisitAndShallContinue(DynamicParamBlock) &&
+                    VisitAndShallContinue(BeginBlock) &&
+                    VisitAndShallContinue(ProcessBlock) &&
+                    VisitAndShallContinue(EndBlock) &&
+                    VisitAndShallContinue(CleanBlock);
+            }
+
             return visitor.CheckForPostAction(this, action);
+
+            bool VisitAndShallContinue(Ast ast)
+            {
+                if (ast is not null)
+                {
+                    action = ast.InternalVisit(visitor);
+                }
+
+                return action == AstVisitAction.Continue;
+            }
         }
 
         #endregion Visitors
@@ -1580,9 +1706,12 @@ namespace System.Management.Automation.Language
 
         internal PipelineAst GetSimplePipeline(bool allowMultiplePipelines, out string errorId, out string errorMsg)
         {
-            if (BeginBlock != null || ProcessBlock != null || DynamicParamBlock != null)
+            if (BeginBlock != null
+                || ProcessBlock != null
+                || CleanBlock != null
+                || DynamicParamBlock != null)
             {
-                errorId = "CanConvertOneClauseOnly";
+                errorId = nameof(AutomationExceptions.CanConvertOneClauseOnly);
                 errorMsg = AutomationExceptions.CanConvertOneClauseOnly;
                 return null;
             }
@@ -1748,7 +1877,7 @@ namespace System.Management.Automation.Language
     public class NamedBlockAst : Ast
     {
         /// <summary>
-        /// Construct the ast for a begin, process, end, or dynamic param block.
+        /// Construct the ast for a begin, process, end, clean, or dynamic param block.
         /// </summary>
         /// <param name="extent">
         /// The extent of the block.  If <paramref name="unnamed"/> is false, the extent includes
@@ -1760,6 +1889,7 @@ namespace System.Management.Automation.Language
         /// <item><see cref="TokenKind.Begin"/></item>
         /// <item><see cref="TokenKind.Process"/></item>
         /// <item><see cref="TokenKind.End"/></item>
+        /// <item><see cref="TokenKind.Clean"/></item>
         /// <item><see cref="TokenKind.Dynamicparam"/></item>
         /// </list>
         /// </param>
@@ -1778,8 +1908,7 @@ namespace System.Management.Automation.Language
         {
             // Validate the block name.  If the block is unnamed, it must be an End block (for a function)
             // or Process block (for a filter).
-            if (!blockName.HasTrait(TokenFlags.ScriptBlockBlockName)
-                || (unnamed && (blockName == TokenKind.Begin || blockName == TokenKind.Dynamicparam)))
+            if (HasInvalidBlockName(blockName, unnamed))
             {
                 throw PSTraceSource.NewArgumentException(nameof(blockName));
             }
@@ -1837,6 +1966,7 @@ namespace System.Management.Automation.Language
         /// <item><see cref="TokenKind.Begin"/></item>
         /// <item><see cref="TokenKind.Process"/></item>
         /// <item><see cref="TokenKind.End"/></item>
+        /// <item><see cref="TokenKind.Clean"/></item>
         /// <item><see cref="TokenKind.Dynamicparam"/></item>
         /// </list>
         /// </summary>
@@ -1874,6 +2004,14 @@ namespace System.Management.Automation.Language
 
             var statementBlock = new StatementBlockAst(statementBlockExtent, newStatements, newTraps);
             return new NamedBlockAst(this.Extent, this.BlockKind, statementBlock, this.Unnamed);
+        }
+
+        private static bool HasInvalidBlockName(TokenKind blockName, bool unnamed)
+        {
+            return !blockName.HasTrait(TokenFlags.ScriptBlockBlockName)
+                || (unnamed
+                    && blockName != TokenKind.Process
+                    && blockName != TokenKind.End);
         }
 
         // Used by the debugger for command breakpoints
@@ -2329,7 +2467,8 @@ namespace System.Management.Automation.Language
                 // We are done processing the current ParameterAst
                 if (astStartOffset >= endOffset) { break; }
 
-                string varName = varAst.VariablePath.UserPath;
+                VariablePath varPath = varAst.VariablePath;
+                string varName = varPath.IsDriveQualified ? $"{varPath.DriveName}_{varPath.UnqualifiedPath}" : $"{varPath.UnqualifiedPath}";
                 string varSign = varAst.Splatted ? "@" : "$";
                 string newVarName = varSign + UsingExpressionAst.UsingPrefix + varName;
 

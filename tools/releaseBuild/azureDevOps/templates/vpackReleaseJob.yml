@@ -3,6 +3,9 @@ parameters:
 
 jobs:
 - job: vpack_${{ parameters.architecture }}
+  variables:
+    - group: vPack
+
   displayName: Build and Publish VPack - ${{ parameters.architecture }}
   condition: succeeded()
   pool: PowerShell1ES
@@ -71,10 +74,8 @@ jobs:
     displayName: Capture Environment
     condition: succeededOrFailed()
 
-  - task: PkgESVPack@10
+  - task: PkgESVPack@12
     displayName: 'Package ES - VPack '
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
       sourceDirectory: '$(vpackDir)'
       description: PowerShell ${{ parameters.architecture }} $(version)
@@ -85,4 +86,5 @@ jobs:
       owner: tplunk
       provData: false
       version: '$(vpackVersion)'
+      vpackToken: $(vPackPat)
     condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))

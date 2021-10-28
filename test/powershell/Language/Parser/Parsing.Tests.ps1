@@ -148,17 +148,21 @@ Describe 'named blocks parsing' -Tags "CI" {
     ShouldBeParseError 'begin' MissingNamedStatementBlock 5
     ShouldBeParseError 'process' MissingNamedStatementBlock 7
     ShouldBeParseError 'end' MissingNamedStatementBlock 3
+    ShouldBeParseError 'clean' MissingNamedStatementBlock 5
     ShouldBeParseError 'dynamicparam' MissingNamedStatementBlock 12
     ShouldBeParseError 'begin process {}' MissingNamedStatementBlock 6 -CheckColumnNumber
     ShouldBeParseError 'end process {}' MissingNamedStatementBlock 4 -CheckColumnNumber
+    ShouldBeParseError 'clean process {}' MissingNamedStatementBlock 6 -CheckColumnNumber
     ShouldBeParseError 'dynamicparam process {}' MissingNamedStatementBlock 13 -CheckColumnNumber
     ShouldBeParseError 'process begin {}' MissingNamedStatementBlock 8 -CheckColumnNumber
-    ShouldBeParseError 'begin process end' MissingNamedStatementBlock,MissingNamedStatementBlock,MissingNamedStatementBlock 6,14,18 -CheckColumnNumber
+    ShouldBeParseError 'begin process end clean' MissingNamedStatementBlock, MissingNamedStatementBlock, MissingNamedStatementBlock, MissingNamedStatementBlock 6, 14, 18, 24 -CheckColumnNumber
 
     Test-Ast 'begin' 'begin' 'begin'
     Test-Ast 'begin end' 'begin end' 'begin' 'end'
     Test-Ast 'begin end process' 'begin end process' 'begin' 'end' 'process'
     Test-Ast 'begin {} end' 'begin {} end' 'begin {}' 'end'
+    Test-Ast 'begin process end clean' 'begin process end clean' 'begin' 'clean' 'end' 'process'
+    Test-Ast 'begin {} process end clean {}' 'begin {} process end clean {}' 'begin {}' 'clean {}' 'end' 'process'
 }
 
 #

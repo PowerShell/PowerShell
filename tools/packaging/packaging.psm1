@@ -77,11 +77,11 @@ function Start-PSPackage {
             $WindowsRuntime, "Release"
         } elseif ($MacOSRuntime) {
            $MacOSRuntime, "Release"
-        } elseif ($Type -eq "tar-alpine") {
+        } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-alpine") {
             New-PSOptions -Configuration "Release" -Runtime "alpine-x64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
-        } elseif ($Type -eq "tar-arm") {
+        } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm") {
             New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
-        } elseif ($Type -eq "tar-arm64") {
+        } elseif ($Type.Count -eq 1 -and $Type[0] -eq "tar-arm64") {
             if ($IsMacOS) {
                 New-PSOptions -Configuration "Release" -Runtime "osx-arm64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             } else {
@@ -103,29 +103,19 @@ function Start-PSPackage {
 
         if ($Type -eq 'fxdependent') {
             $NameSuffix = "win-fxdependent"
-            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
+            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration', Runtime: '$Runtime'"
         } elseif ($Type -eq 'fxdependent-win-desktop') {
             $NameSuffix = "win-fxdependentWinDesktop"
-            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration'"
+            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration', Runtime: '$Runtime'"
         } elseif ($MacOSRuntime) {
             $NameSuffix = $MacOSRuntime
+            Write-Log "Packaging : '$Type'; Packaging Configuration: '$Configuration', Runtime: '$Runtime'"
         } else {
             Write-Log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
         }
 
         $Script:Options = Get-PSOptions
         $actualParams = @()
-
-        $crossGenCorrect = $false
-        if ($Runtime -match "arm" -or $Type -eq 'min-size') {
-            ## crossgen doesn't support arm32/64;
-            ## For the min-size package, we intentionally avoid crossgen.
-            $crossGenCorrect = $true
-        }
-        elseif ($Script:Options.CrossGen) {
-            $actualParams += '-CrossGen'
-            $crossGenCorrect = $true
-        }
 
         $PSModuleRestoreCorrect = $false
 
@@ -143,14 +133,13 @@ function Start-PSPackage {
         }
 
         $precheckFailed = if ($Type -like 'fxdependent*' -or $Type -eq 'tar-alpine') {
-            ## We do not check for runtime and crossgen for framework dependent package.
+            ## We do not check on runtime for framework dependent package.
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
             $Script:Options.Framework -ne $script:netCoreRuntime    ## Last build wasn't for CoreCLR
         } else {
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
-            -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
@@ -170,13 +159,7 @@ function Start-PSPackage {
             # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
             # are generated, it'll be hard to verify if they were built from the correct content.
 
-
             $params = @('-Clean')
-
-            # CrossGen cannot be done for framework dependent package as it is runtime agnostic.
-            if ($Type -notlike 'fxdependent*') {
-                $params += '-CrossGen'
-            }
 
             if (!$IncludeSymbols.IsPresent) {
                 $params += '-PSModuleRestore'
@@ -223,6 +206,22 @@ function Start-PSPackage {
 
         # Copy the default.help.txt so it's part of the package
         Copy-Item "$RepoRoot/assets/default.help.txt" -Destination "$Source/en-US" -Force
+
+        if (-not $SkipGenerateReleaseFiles -and -not $env:TF_BUILD) {
+            # Make sure psoptions.json file exists so appropriate files.wsx is generated
+            $psOptionsPath = (Join-Path -Path $Source "psoptions.json")
+            if (-not (Test-Path -Path $psOptionsPath)) {
+                $createdOptionsFile = New-Item -Path $psOptionsPath -Force
+                Write-Verbose -Verbose "Created psoptions file: $createdOptionsFile"
+            }
+
+            # Make sure _manifest\spdx_2.2\manifest.spdx.json file exists so appropriate files.wxs is generated
+            $manifestSpdxPath = (Join-Path -Path $Source "_manifest\spdx_2.2\manifest.spdx.json")
+            if (-not (Test-Path -Path $manifestSpdxPath)) {
+                $createdSpdxPath = New-Item -Path $manifestSpdxPath -Force
+                Write-Verbose -Verbose "Created manifest.spdx.json file: $createdSpdxPath"
+            }
+        }
 
         # If building a symbols package, we add a zip of the parent to publish
         if ($IncludeSymbols.IsPresent)
@@ -313,9 +312,6 @@ function Start-PSPackage {
                 }
             }
             "min-size" {
-                # Remove symbol files, xml document files.
-                Remove-Item "$Source\*.pdb", "$Source\*.xml" -Force
-
                 # Add suffix '-gc' because this package is for the Guest Config team.
                 if ($Environment.IsWindows) {
                     $Arguments = @{
@@ -344,11 +340,6 @@ function Start-PSPackage {
                 }
             }
             { $_ -like "fxdependent*" } {
-                ## Remove PDBs from package to reduce size.
-                if(-not $IncludeSymbols.IsPresent) {
-                    Get-ChildItem $Source -Filter *.pdb | Remove-Item -Force
-                }
-
                 if ($Environment.IsWindows) {
                     $Arguments = @{
                         PackageNameSuffix = $NameSuffix
@@ -690,7 +681,8 @@ function Update-PSSignedBuildFolder
         [Parameter(Mandatory)]
         [string]$BuildPath,
         [Parameter(Mandatory)]
-        [string]$SignedFilesPath
+        [string]$SignedFilesPath,
+        [string[]] $RemoveFilter = ('*.pdb', '*.zip')
     )
 
     # Replace unsigned binaries with signed
@@ -700,6 +692,11 @@ function Update-PSSignedBuildFolder
         $destination = Join-Path -Path $BuildPath -ChildPath $relativePath
         Write-Log "replacing $destination with $_"
         Copy-Item -Path $_ -Destination $destination -Force
+    }
+
+    foreach($filter in $RemoveFilter) {
+        $removePath = Join-Path -Path $BuildPath -ChildPath $filter
+        Remove-Item -Path $removePath -Recurse -Force
     }
 }
 
@@ -735,7 +732,7 @@ function Expand-PSSignedBuild
     Restore-PSModuleToBuild -PublishPath $buildPath
 
     $psOptionsPath = Join-Path $buildPath -ChildPath 'psoptions.json'
-    Restore-PSOptions -PSOptionsPath $psOptionsPath -Remove
+    Restore-PSOptions -PSOptionsPath $psOptionsPath
 
     $options = Get-PSOptions
 
@@ -1227,15 +1224,17 @@ function Get-FpmArguments
         "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
         "--vendor", "Microsoft Corporation",
         "--url", "https://microsoft.com/powershell",
-        "--license", "MIT License",
         "--description", $Description,
         "--category", "shells",
         "-t", $Type,
         "-s", "dir"
     )
-    if ($Environment.IsRedHatFamily) {
+    if ($Distribution -eq 'rh') {
         $Arguments += @("--rpm-dist", $Distribution)
         $Arguments += @("--rpm-os", "linux")
+        $Arguments += @("--license", "MIT")
+    } else {
+        $Arguments += @("--license", "MIT License")
     }
 
     if ($Environment.IsMacOS) {
@@ -1350,7 +1349,7 @@ function New-AfterScripts
 
     Write-Verbose -Message "AfterScript Distribution: $Distribution" -Verbose
 
-    if ($Environment.IsRedHatFamily) {
+    if ($Distribution -eq 'rh') {
         $AfterInstallScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $AfterRemoveScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $packagingStrings.RedHatAfterInstallScript -f "$Link", $Destination  | Out-File -FilePath $AfterInstallScript -Encoding ascii
@@ -1606,8 +1605,6 @@ function New-ZipPackage
             $staging = "$PSScriptRoot/staging"
             New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath
 
-            Get-ChildItem $staging -Filter *.pdb -Recurse | Remove-Item -Force
-
             Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
         }
 
@@ -1621,7 +1618,6 @@ function New-ZipPackage
             throw "Failed to create $zipLocationPath"
         }
     }
-    #TODO: Use .NET Api to do compresss-archive equivalent if the pscmdlet is not present
     else
     {
         Write-Error -Message "Compress-Archive cmdlet is missing in this PowerShell version"
@@ -1693,7 +1689,6 @@ function New-PdbZipPackage
             throw "Failed to create $zipLocationPath"
         }
     }
-    #TODO: Use .NET Api to do compresss-archive equivalent if the pscmdlet is not present
     else
     {
         Write-Error -Message "Compress-Archive cmdlet is missing in this PowerShell version"
@@ -2179,7 +2174,6 @@ function New-ReferenceAssembly
     Write-Log "GenAPI nuget package saved and expanded."
 
     $genAPIFolder = New-TempFolder
-    $packagingStrings.NugetConfigFile | Out-File -FilePath "$genAPIFolder/Nuget.config" -Force
     Write-Log "Working directory: $genAPIFolder."
 
     $SMAReferenceAssembly = $null
@@ -3000,8 +2994,6 @@ function New-MSIPackage
 
     $staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath
-
-    Get-ChildItem $staging -Filter *.pdb -Recurse | Remove-Item -Force
 
     $assetsInSourcePath = Join-Path $staging 'assets'
 
@@ -4021,5 +4013,239 @@ function New-GlobalToolNupkg
 
         Write-Log "Creating a package: $packageName"
         New-NugetPackage -NuSpecPath $_.RootFolder -PackageDestinationPath $DestinationPath
+    }
+}
+
+${mainLinuxBuildFolder} = 'pwshLinuxBuild'
+${minSizeLinuxBuildFolder} = 'pwshLinuxBuildMinSize'
+${arm32LinuxBuildFolder} = 'pwshLinuxBuildArm32'
+${arm64LinuxBuildFolder} = 'pwshLinuxBuildArm64'
+
+<#
+    Used in Azure DevOps Yaml to package all the linux packages for a channel.
+#>
+function Invoke-AzDevOpsLinuxPackageCreation {
+    param(
+        [switch]
+        $LTS,
+
+        [Parameter(Mandatory)]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ReleaseTag,
+
+        [Parameter(Mandatory)]
+        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
+        [String]$BuildType
+    )
+
+    if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
+        throw "Must be run in Azure DevOps"
+    }
+
+    try {
+        Write-Verbose "Packaging '$BuildType'-LTS:$LTS for $ReleaseTag ..." -Verbose
+
+        Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\psoptions.json"
+
+        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
+
+        switch ($BuildType) {
+            'fxdependent' {
+                Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
+            }
+            'alpine' {
+                Start-PSPackage -Type 'tar-alpine' @releaseTagParam -LTS:$LTS
+            }
+            'rpm' {
+                Start-PSPackage -Type 'rpm' @releaseTagParam -LTS:$LTS
+            }
+            default {
+                Start-PSPackage @releaseTagParam -LTS:$LTS -Type 'deb', 'tar'
+            }
+        }
+
+        if ($BuildType -eq 'deb') {
+            Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS
+
+            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\psoptions.json"
+
+            Write-Verbose -Verbose "---- Min-Size ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+
+            Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
+
+            ## Create 'linux-arm' 'tar.gz' package.
+            ## Note that 'linux-arm' can only be built on Ubuntu environment.
+            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\psoptions.json"
+            Start-PSPackage -Type tar-arm @releaseTagParam -LTS:$LTS
+
+            ## Create 'linux-arm64' 'tar.gz' package.
+            ## Note that 'linux-arm64' can only be built on Ubuntu environment.
+            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\psoptions.json"
+            Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
+        }
+    }
+    catch {
+        Get-Error
+        throw
+    }
+}
+
+<#
+    Used in Azure DevOps Yaml to do all the builds needed for all Linux packages for a channel.
+#>
+function Invoke-AzDevOpsLinuxPackageBuild {
+    param (
+        [Parameter(Mandatory)]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ReleaseTag,
+
+        [Parameter(Mandatory)]
+        [ValidateSet('fxdependent', 'alpine', 'deb', 'rpm')]
+        [String]$BuildType
+    )
+
+    if (!${env:SYSTEM_ARTIFACTSDIRECTORY}) {
+        throw "Must be run in Azure DevOps"
+    }
+
+    try {
+
+        Write-Verbose "Building '$BuildType' for $ReleaseTag ..." -Verbose
+
+        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
+
+        $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true; Restore = $true }
+
+        switch ($BuildType) {
+            'fxdependent' {
+                $buildParams.Add("Runtime", "fxdependent")
+            }
+            'alpine' {
+                $buildParams.Add("Runtime", 'alpine-x64')
+                # We are cross compiling, so we can't generate experimental features
+                $buildParams.Add("SkipExperimentalFeatureGeneration", $true)
+            }
+        }
+
+        $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${mainLinuxBuildFolder}"
+        Start-PSBuild @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+        # Remove symbol files.
+        Remove-Item "${buildFolder}\*.pdb" -Force
+
+        if ($BuildType -eq 'deb') {
+            ## Build 'min-size'
+            $options = Get-PSOptions
+            Write-Verbose -Verbose "---- Min-Size ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
+            if (Test-Path -Path $binDir) {
+                Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
+                Remove-Item -Path $binDir -Recurse -Force
+            }
+
+            $buildParams['ForMinimalSize'] = $true
+            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${minSizeLinuxBuildFolder}"
+            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            # Remove symbol files, xml document files.
+            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
+
+
+            ## Build 'linux-arm' and create 'tar.gz' package for it.
+            ## Note that 'linux-arm' can only be built on Ubuntu environment.
+            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm32LinuxBuildFolder}"
+            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            # Remove symbol files.
+            Remove-Item "${buildFolder}\*.pdb" -Force
+
+            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
+            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            # Remove symbol files.
+            Remove-Item "${buildFolder}\*.pdb" -Force
+        }
+    }
+    catch {
+        Get-Error
+        throw
+    }
+}
+
+enum PackageManifestResultStatus {
+    Mismatch
+    Match
+    MissingFromManifest
+    MissingFromPackage
+}
+
+class PackageManifestResult {
+    [string] $File
+    [string] $ExpectedHash
+    [string] $ActualHash
+    [PackageManifestResultStatus] $Status
+}
+
+function Test-PackageManifest {
+    param (
+        [Parameter(Mandatory)]
+        [string]
+        $PackagePath
+    )
+
+    Begin {
+        $spdxManifestPath = Join-Path $PackagePath -ChildPath "/_manifest/spdx_2.2/manifest.spdx.json"
+        $man = Get-Content $spdxManifestPath -ErrorAction Stop | convertfrom-json
+        $inManifest = @()
+    }
+
+    Process {
+        Write-Verbose "Processing $($man.files) files..." -verbose
+        $man.files | ForEach-Object {
+            $filePath = Join-Path $PackagePath -childPath $_.fileName
+            $checksumObj = $_.checksums | Where-Object {$_.algorithm -eq 'sha256'}
+            $sha256 = $checksumObj.checksumValue
+            $actualHash = $null
+            $actualHash = (Get-FileHash -Path $filePath -Algorithm sha256 -ErrorAction SilentlyContinue).Hash
+            $inManifest += $filePath
+            if($actualHash -ne $sha256) {
+                $status = [PackageManifestResultStatus]::Mismatch
+                if (!$actualHash) {
+                    $status = [PackageManifestResultStatus]::MissingFromPackage
+                }
+                [PackageManifestResult] $result = @{
+                    File         = $filePath
+                    ExpectedHash = $sha256
+                    ActualHash   = $actualHash
+                    Status       = $status
+                }
+                Write-Output $result
+            }
+            else {
+                [PackageManifestResult] $result = @{
+                    File         = $filePath
+                    ExpectedHash = $sha256
+                    ActualHash   = $actualHash
+                    Status       = [PackageManifestResultStatus]::Match
+                }
+                Write-Output $result
+            }
+        }
+
+
+        Get-ChildItem $PackagePath -recurse | Select-Object -ExpandProperty FullName | foreach-object {
+            if(!$inManifest -contains $_) {
+                $actualHash = (get-filehash -Path $_ -algorithm sha256 -erroraction silentlycontinue).Hash
+                [PackageManifestResult] $result = @{
+                    File         = $_
+                    ExpectedHash = $null
+                    ActualHash   = $actualHash
+                    Status       = [PackageManifestResultStatus]::MissingFromManifest
+                }
+                Write-Output $result
+            }
+        }
     }
 }

@@ -13,6 +13,10 @@ pr:
 parameters:
   - name: ForceAzureBlobDelete
     displayName: Delete Azure Blob
+    type: string
+    values:
+      - true
+      - false
     default: false
 
 resources:
@@ -36,6 +40,10 @@ variables:
     value: $[counter(variables['branchCounterKey'], 1)]
   - name: ForceAzureBlobDelete
     value:  ${{ parameters.ForceAzureBlobDelete }}
+  - name: Github_Build_Repository_Uri
+    value: https://github.com/powershell/powershell
+  - name: SBOMGenerator_Formats
+    value: spdx:2.2
 
 stages:
   - stage: prep
@@ -209,7 +217,7 @@ stages:
 
         - powershell: |
             $metadata = Get-Content '$(Build.SourcesDirectory)/tools/metadata.json' -Raw | ConvertFrom-Json
-            $LTS = $metadata.LTSRelease
+            $LTS = $metadata.LTSRelease.Latest
             @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
             Get-Content "$(Build.StagingDirectory)\release.json"
             Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"

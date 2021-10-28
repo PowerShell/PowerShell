@@ -233,6 +233,13 @@ namespace System.Management.Automation.Internal
         {
         }
 
+        /// <summary>
+        /// When overridden in the derived class, performs clean-up after the command execution.
+        /// </summary>
+        internal virtual void DoCleanResource()
+        {
+        }
+
         #endregion Override
 
         /// <summary>
