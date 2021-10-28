@@ -531,7 +531,7 @@ namespace System.Management.Automation
                 var pipelineOffset = pipelineAst.Extent.StartOffset;
                 var variables = pipelineAst.FindAll(static x => x is VariableExpressionAst, true);
 
-                // Minimize allocations by initializing the stringbuilder to the size of the source string + prefix + space for ${using:} * 2
+                // Minimize allocations by initializing the stringbuilder to the size of the source string + space for ${using:} * 2
                 System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(scriptblockBodyString.Length + 18);
                 int position = 0;
 
@@ -580,6 +580,7 @@ namespace System.Management.Automation
                     false);
                 commandProcessor.AddParameter(workingDirectoryParameter);
                 commandProcessor.AddParameter(scriptBlockParameter);
+                pipelineProcessor.Add(commandProcessor);
                 pipelineProcessor.LinkPipelineSuccessOutput(outputPipe ?? new Pipe(new List<object>()));
 
                 context.PushPipelineProcessor(pipelineProcessor);
