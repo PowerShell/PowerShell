@@ -200,7 +200,6 @@ Function Get-CGRegistrations {
                 $registrationChanged = $true
             }
             if ($existingRegistrationTable.ContainsKey($name) -and $existingRegistrationTable.$name.DevelopmentDependency) {
-                Write-Verbose "$name is a development dependency"
                 $DevelopmentDependency = $true
             }
 
