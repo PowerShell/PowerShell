@@ -42,10 +42,12 @@ jobs:
   - pwsh: |
       Get-Content -Raw -Path '$(Build.SourcesDirectory)\assets\additionalAttributions.txt'
     displayName: Capture Additional Attributions
+    continueOnError: true
 
   - pwsh: |
-      Get-Content -Raw -Path '$(System.ArtifactsDirectory)\additionalAttributions.txt'
+      Get-Content -Raw -Path '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt'
     displayName: Capture Notice
+    continueOnError: true
 
   - task: AzureFileCopy@4
     displayName: 'upload Notice'
