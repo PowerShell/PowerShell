@@ -15,11 +15,11 @@ steps:
   condition: and(succeededOrFailed(), ne(variables['AzDevOpsFeed'], ''))
 - pwsh: |
       Import-Module ${{ parameters.repoRoot }}/build.psm1 -Force
-      New-NugetConfigFile -NugetFeedUrl $(AzDevOpsPackageFeed) -UserName $(AzDevOpsFeedUserName) -ClearTextPAT $(AzDevOpsFeedPAT2) -FeedName AzDevOpsFeed -Destination '${{ parameters.repoRoot }}'
+      New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination '${{ parameters.repoRoot }}'
 
       if(-not (Test-Path "${{ parameters.repoRoot }}/nuget.config"))
       {
           throw "nuget.config is not created"
       }
   displayName: 'Add nuget.config for Azure DevOps feed for packages'
-  condition: and(succeededOrFailed(), ne(variables['AzDevOpsPackageFeed'], ''))
+  condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
