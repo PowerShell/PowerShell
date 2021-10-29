@@ -4,6 +4,36 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "DotNetAnalyzers.DocumentationAnalyzers.Unstable",
+          "Version": "1.0.0.59"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "DotNetAnalyzers.DocumentationAnalyzers",
+          "Version": "1.0.0-beta.59"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.CodeAnalysis.Analyzers",
+          "Version": "3.3.2"
+        }
+      },
+      "DevelopmentDependency": true
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
           "Version": "4.0.0-6.final"
         }
@@ -19,6 +49,16 @@
         }
       },
       "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "Microsoft.CodeAnalysis.NetAnalyzers",
+          "Version": "6.0.0-rtm.21518.1"
+        }
+      },
+      "DevelopmentDependency": true
     },
     {
       "Component": {
@@ -444,21 +484,21 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "runtime.win-x64.runtime.native.System.Data.SqlClient.sni",
-          "Version": "4.4.0"
+          "Name": "StyleCop.Analyzers.Unstable",
+          "Version": "1.2.0.354"
         }
       },
-      "DevelopmentDependency": false
+      "DevelopmentDependency": true
     },
     {
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "runtime.win-x86.runtime.native.System.Data.SqlClient.sni",
-          "Version": "4.4.0"
+          "Name": "StyleCop.Analyzers",
+          "Version": "1.2.0-beta.354"
         }
       },
-      "DevelopmentDependency": false
+      "DevelopmentDependency": true
     },
     {
       "Component": {
