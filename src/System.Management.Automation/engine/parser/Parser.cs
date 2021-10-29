@@ -1535,6 +1535,25 @@ namespace System.Management.Automation.Language
                             token = NextToken();
                         } while (token.Kind == TokenKind.Comma);
 
+                        // The dimensions for an array must be less than or equal to 32.
+                        // Search the doc for 'Type.MakeArrayType(int rank)' for more details.
+                        if (dim > 32)
+                        {
+                            // If the next token is right bracket, we swallow it to make it easier to parse the rest of script.
+                            // Otherwise, we unget the token for the subsequent parsing to consume.
+                            if (token.Kind != TokenKind.RBracket)
+                            {
+                                UngetToken(token);
+                            }
+
+                            ReportError(
+                                ExtentOf(firstTokenAfterLBracket, lastComma),
+                                nameof(ParserStrings.ArrayHasTooManyDimensions),
+                                ParserStrings.ArrayHasTooManyDimensions,
+                                arg: dim);
+                            break;
+                        }
+
                         if (token.Kind != TokenKind.RBracket)
                         {
                             // ErrorRecovery: just pretend we saw a ']'.

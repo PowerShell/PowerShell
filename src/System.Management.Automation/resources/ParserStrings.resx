@@ -296,6 +296,9 @@ Possible matches are</value>
   <data name="CannotIndexWithByRefLikeReturnType" xml:space="preserve">
     <value>Unable to index into an object of type "{0}" with the ByRef-like return type "{1}". ByRef-like types are not supported in PowerShell.</value>
   </data>
+  <data name="ArrayHasTooManyDimensions" xml:space="preserve">
+    <value>The array has too many dimensions: {0}. The number of dimensions for an array must be less than or equal to 32.</value>
+  </data>
   <data name="ArrayAssignmentFailed" xml:space="preserve">
     <value>Array assignment to [{0}] failed: {1}.</value>
   </data>

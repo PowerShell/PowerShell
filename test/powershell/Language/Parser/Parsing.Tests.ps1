@@ -626,3 +626,21 @@ Describe "Keywords 'default', 'hidden', 'in', 'static' Token parsing" -Tags CI {
         . $Keyword | Should -BeExactly $Keyword
     }
 }
+
+Describe "Parsing array that has too many dimensions" -Tag CI {
+    It "ParseError for '<Script>'" -TestCases @(
+        @{ Script = '[int[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,'; ErrorId = @('ArrayHasTooManyDimensions', 'EndSquareBracketExpectedAtEndOfAttribute'); StartOffset = @(5, 37); EndOffset = @(37, 37) }
+        @{ Script = '[int[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]'; ErrorId = @('ArrayHasTooManyDimensions', 'EndSquareBracketExpectedAtEndOfAttribute'); StartOffset = @(5, 38); EndOffset = @(37, 38) }
+        @{ Script = '[int[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]]'; ErrorId = @('ArrayHasTooManyDimensions'); StartOffset = @(5); EndOffset = @(37) }
+    ) {
+        param($Script, $ErrorId, $StartOffset, $EndOffset)
+
+        $errs = Get-ParseResults -src $Script
+        $errs.Count | Should -Be $ErrorId.Count
+        for ($i = 0; $i -lt $errs.Count; $i++) {
+            $errs[$i].ErrorId | Should -BeExactly $ErrorId[$i]
+            $errs[$i].Extent.StartScriptPosition.Offset | Should -Be $StartOffset[$i]
+            $errs[$i].Extent.EndScriptPosition.Offset | Should -Be $EndOffset[$i]
+        }
+    }
+}
