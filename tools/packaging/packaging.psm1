@@ -3882,8 +3882,16 @@ function New-GlobalToolNupkg
 
     $packageInfo = @()
 
-    Remove-Item -Path (Join-Path $LinuxBinPath 'libcrypto.so.1.0.0') -Verbose -Force -Recurse
-    Remove-Item -Path (Join-Path $LinuxBinPath 'libssl.so.1.0.0') -Verbose -Force -Recurse
+    $libCryptoPath = Join-Path $LinuxBinPath 'libcrypto.so.1.0.0'
+    $libSSLPath = Join-Path $LinuxBinPath 'libssl.so.1.0.0'
+
+    if (Test-Path $libCryptoPath) {
+        Remove-Item -Path $libCryptoPath -Verbose -Force
+    }
+
+    if (Test-Path $libSSLPath) {
+        Remove-Item -Path $libSSLPath -Verbose -Force
+    }
 
     ## Remove unnecessary xml files
     Get-ChildItem -Path $LinuxBinPath, $WindowsBinPath, $WindowsDesktopBinPath -Filter *.xml | Remove-Item -Verbose
