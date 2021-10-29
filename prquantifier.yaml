@@ -1,0 +1,9 @@
+# https://github.com/microsoft/PullRequestQuantifier/blob/main/docs/prquantifier-yaml.md
+Excluded:
+- '*.csproj'
+- prquantifier.yaml
+- package-lock.json
+- '*.md'
+- '*.sln'
+- cgmanifest.json
+- assets/wix/files.wxs
