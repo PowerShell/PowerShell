@@ -85,7 +85,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.NetAnalyzers",
-          "Version": "6.0.0-rtm.21518.1"
+          "Version": "6.0.0"
         }
       },
       "DevelopmentDependency": true
