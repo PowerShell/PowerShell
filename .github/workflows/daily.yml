@@ -69,7 +69,7 @@ jobs:
           Invoke-WebRequest -Uri https://aka.ms/pwsh-daily-tpn -OutFile ./ThirdPartyNotices.txt
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
-        id: cpr
+        id: cprtpn
         with:
           commit-message: "Update to the latest license and the cgmanifest with missing or updated components"
           committer: GitHub <noreply@github.com>
