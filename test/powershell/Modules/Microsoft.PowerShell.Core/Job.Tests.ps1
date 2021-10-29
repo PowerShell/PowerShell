@@ -219,14 +219,14 @@ Describe "Ampersand background test" -Tag "CI", "Slow" {
             Receive-Job -Wait $j | Should -Be ($PWD.Path)
         }
         It "Make sure Set-Location is not used in the job's script block to set the working directory" {
-            $j = (get-variable -value ExecutionContext).SessionState.PSVariable.Get("MyInvocation").Value.MyCommand.ScriptBlock & 
-            (Receive-Job -Wait $j).ToString() | Should -BeExactly "(get-variable -value ExecutionContext).SessionState.PSVariable.Get(`"MyInvocation`").Value.MyCommand.ScriptBlock"
+            $j = (Get-Variable -Value ExecutionContext).SessionState.PSVariable.Get("MyInvocation").Value.MyCommand.ScriptBlock & 
+            (Receive-Job -Wait $j).ToString() | Should -BeExactly "(Get-Variable -Value ExecutionContext).SessionState.PSVariable.Get(`"MyInvocation`").Value.MyCommand.ScriptBlock"
         }
         It "Test that changing working directory also changes background job's working directory" {
             Set-Location ..
-            $wd = (Get-Location).ToString()
-            $j = (Get-Location &) 
-            (Receive-Job -Wait $j).ToString() | Should -BeExactly $wd
+            $WorkingDirectory = (Get-Location).ToString()
+            $BackgroundJob = (Get-Location &) 
+            (Receive-Job -Wait $BackgroundJob).ToString() | Should -BeExactly $WorkingDirectory
         }
         It "Test that output redirection is done in the background job" {
             $j = Write-Output hello > $TESTDRIVE/hello.txt &
