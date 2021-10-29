@@ -18,6 +18,7 @@ defaults:
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
+  CGMANIFEST_PATH: ''
 
 jobs:
   update-cgmanifest:
@@ -54,6 +55,11 @@ jobs:
           Import-Module ./build.psm1
           Find-Dotnet
           ./tools/findMissingNotices.ps1 -Fix
+      - uses: actions/upload-artifact@v2
+        if: env.CGMANIFEST_PATH != ''
+        with:
+          name: cgmanifest
+          path: ${{ env.CGMANIFEST_PATH }}
       - name: (Scheduled) Create Pull Request
         uses: peter-evans/create-pull-request@v3
         id: cpr
