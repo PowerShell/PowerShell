@@ -62,7 +62,7 @@ jobs:
           Find-Dotnet
           ./tools/findMissingNotices.ps1 -Fix
       - uses: actions/upload-artifact@v2
-        if: env.CGMANIFEST_PATH != ''
+        if: always() && env.CGMANIFEST_PATH != ''
         with:
           name: cgmanifest
           path: ${{ env.CGMANIFEST_PATH }}
