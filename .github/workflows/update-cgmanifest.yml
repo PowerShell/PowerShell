@@ -19,6 +19,7 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
   CGMANIFEST_PATH: ''
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
   update-cgmanifest:
@@ -34,7 +35,8 @@ jobs:
         with:
           path: |
             ~\AppData\Local\Microsoft\dotnet
-          key: ${{ runner.os }}-${{ hashFiles('**/DotnetRuntimeMetadata.json') }}
+            ${{ github.workspace }}\.nuget\packages
+          key: ${{ runner.os }}-${{ hashFiles('**\DotnetRuntimeMetadata.json') }}
       - name: Sync tags
         run: |
           git fetch --prune --unshallow --tags
@@ -61,7 +63,8 @@ jobs:
           Import-Module ./build.psm1
           Find-Dotnet
           ./tools/findMissingNotices.ps1 -Fix
-      - uses: actions/upload-artifact@v2
+      - name: Upload cgmanifest
+        uses: actions/upload-artifact@v2
         if: always() && env.CGMANIFEST_PATH != ''
         with:
           name: cgmanifest
