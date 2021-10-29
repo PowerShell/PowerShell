@@ -34,7 +34,7 @@ jobs:
   - task: msospo.ospo-extension.8d7f9abb-6896-461d-9e25-4f74ed65ddb2.notice@0
     displayName: 'NOTICE File Generator'
     inputs:
-      outputfile: tpn.txt
+      outputfile: '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt'
       # output format can be html or text
       outputformat: text
       additionaldata: $(Build.SourcesDirectory)\ThirdPartyNotices.txt
