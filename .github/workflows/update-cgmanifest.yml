@@ -7,6 +7,9 @@ on:
     schedule:
     # At 13:00 UTC every day.
     - cron:  '0 13 * * *'
+    pull_request:
+      branches:
+      - master
 
 defaults:
   run:
@@ -35,21 +38,23 @@ jobs:
         run: |
           Import-Module ./build.psm1
           Start-PSBootStrap
-      - name: Update Notices file
-        run: |
-          Invoke-WebRequest -Uri https://aka.ms/pwsh-daily-tpn -OutFile ./ThirdPartyNotices.txt
-      - name: Execute script to update cgmanifest
+      - name: (PR) Verify cgmanifest is up to date
+        if: github.event_name == 'pull_request'
         run: |
           Import-Module ./build.psm1
           Find-Dotnet
           ./tools/findMissingNotices.ps1
-      - name: Microsoft Teams Notifier
-        uses: skitionek/notify-microsoft-teams@master
-        if: failure()
-        with:
-          webhook_url: ${{ secrets.PS_BUILD_TEAMS_CHANNEL }}
-          overwrite: "{title: `Failure in updating cgmanifest. Look at ${workflow_link}`}"
-      - name: Create Pull Request
+      - name: (Scheduled) Update Notices file
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          Invoke-WebRequest -Uri https://aka.ms/pwsh-daily-tpn -OutFile ./ThirdPartyNotices.txt
+      - name: (Scheduled) Update cgmanifest
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          Import-Module ./build.psm1
+          Find-Dotnet
+          ./tools/findMissingNotices.ps1 -Fix
+      - name: (Scheduled) Create Pull Request
         uses: peter-evans/create-pull-request@v3
         id: cpr
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
