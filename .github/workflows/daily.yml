@@ -30,18 +30,16 @@ jobs:
           git fetch --prune --unshallow --tags
       - name: Execute Update .NET script
         run: |
+          Import-Module .github/workflows/GHWorkflowHelper
           $currentVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
-          Write-Verbose "OLD_VERSION=$currentVersion" -Verbose
-          "OLD_VERSION=$currentVersion" | Out-File $env:GITHUB_ENV -Append
+          Set-GWVariable -Name OLD_VERSION -Value $currentVersion
 
           ./tools/UpdateDotnetRuntime.ps1 -UpdateMSIPackaging -UseInternalFeed
           $newVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
-          Write-Verbose "NEW_VERSION=$newVersion" -Verbose
-          "NEW_VERSION=$newVersion" | Out-File $env:GITHUB_ENV -Append
+          Set-GWVariable -Name NEW_VERSION -Value $newVersion
 
           if ($currentVersion -ne $newVersion) {
-            Write-Verbose "CREATE_PR=true" -Verbose
-            "CREATE_PR=true" | Out-File $env:GITHUB_ENV -Append
+            Set-GWVariable -Name CREATE_PR -Value 'true'
           }
       - name: Microsoft Teams Notifier
         uses: skitionek/notify-microsoft-teams@master
