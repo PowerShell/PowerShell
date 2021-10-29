@@ -27,8 +27,8 @@ steps:
     $targetFile = "$ENV:PIPELINE_WORKSPACE/$fileName"
     ConvertTo-Json -InputObject $buildInfo | Out-File $targetFile -Encoding ascii
 
-    if ($stableRelease) {
-      $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyStableBuildInfo]YES"
+    if ($stableRelease -or $fileName -eq "preview.json") {
+      $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyMainBuildInfo]YES"
     }
 
     $vstsCommandString = "vso[task.setvariable variable=BuildInfoJsonFile]$targetFile"
@@ -85,7 +85,7 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: BuildInfo
-  condition: and(succeeded(), eq(variables['CopyStableBuildInfo'], 'YES'))
+  condition: and(succeeded(), eq(variables['CopyMainBuildInfo'], 'YES'))
 
 - task: AzureFileCopy@2
   displayName: 'AzureBlob build info ''lts.json'' Copy when needed'
