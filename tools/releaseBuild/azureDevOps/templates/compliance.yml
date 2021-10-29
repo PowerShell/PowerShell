@@ -133,9 +133,13 @@ jobs:
     inputs:
       tsaVersion: TsaV2
       codeBaseName: 'PowerShellCore_201906'
+      uploadAPIScan: false
+      uploadBinSkim: true
+      uploadCredScan: false
       uploadFortifySCA: false
       uploadFxCop: false
       uploadModernCop: false
+      uploadPoliCheck: false
       uploadPREfast: false
       uploadRoslyn: false
       uploadTSLint: false
