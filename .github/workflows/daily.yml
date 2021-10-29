@@ -30,18 +30,16 @@ jobs:
           git fetch --prune --unshallow --tags
       - name: Execute Update .NET script
         run: |
+          Import-Module .github/workflows/GHWorkflowHelper
           $currentVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
-          Write-Verbose "OLD_VERSION=$currentVersion" -Verbose
-          "OLD_VERSION=$currentVersion" | Out-File $env:GITHUB_ENV -Append
+          Set-GWVariable -Name OLD_VERSION -Value $currentVersion
 
           ./tools/UpdateDotnetRuntime.ps1 -UpdateMSIPackaging -UseInternalFeed
           $newVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
-          Write-Verbose "NEW_VERSION=$newVersion" -Verbose
-          "NEW_VERSION=$newVersion" | Out-File $env:GITHUB_ENV -Append
+          Set-GWVariable -Name NEW_VERSION -Value $newVersion
 
           if ($currentVersion -ne $newVersion) {
-            Write-Verbose "CREATE_PR=true" -Verbose
-            "CREATE_PR=true" | Out-File $env:GITHUB_ENV -Append
+            Set-GWVariable -Name CREATE_PR -Value 'true'
           }
       - name: Microsoft Teams Notifier
         uses: skitionek/notify-microsoft-teams@master
@@ -58,5 +56,26 @@ jobs:
           title: "Update .NET SDK version from `${{ env.OLD_VERSION }}` to `${{ env.NEW_VERSION }}`"
           base: master
           branch: dotnet_update
-
-
+  update-tpn:
+    name: Update Notices File
+    timeout-minutes: 15
+    runs-on: windows-latest
+    if: github.repository == 'PowerShell/PowerShell'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Update Notices file
+        run: |
+          Invoke-WebRequest -Uri https://aka.ms/pwsh-daily-tpn -OutFile ./ThirdPartyNotices.txt
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        id: cprtpn
+        with:
+          commit-message: "Update to the latest license and the cgmanifest with missing or updated components"
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          title: "Update to the latest license and the cgmanifest with missing or updated components"
+          reviewers: travisez13
+          base: master
+          draft: false
+          branch: update-cgmanifest

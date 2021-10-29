@@ -4210,7 +4210,7 @@ function Test-PackageManifest {
     }
 
     Process {
-        Write-Verbose "Processing $($man.files) files..." -verbose
+        Write-Verbose "Processing $($man.files.count) files..." -verbose
         $man.files | ForEach-Object {
             $filePath = Join-Path $PackagePath -childPath $_.fileName
             $checksumObj = $_.checksums | Where-Object {$_.algorithm -eq 'sha256'}
