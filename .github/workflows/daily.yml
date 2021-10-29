@@ -79,5 +79,3 @@ jobs:
           base: master
           draft: false
           branch: update-cgmanifest
-
-
