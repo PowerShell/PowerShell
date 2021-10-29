@@ -56,5 +56,30 @@ jobs:
           title: "Update .NET SDK version from `${{ env.OLD_VERSION }}` to `${{ env.NEW_VERSION }}`"
           base: master
           branch: dotnet_update
+  update-tpn:
+    name: Update Notices File
+    timeout-minutes: 15
+    runs-on: windows-latest
+    if: github.repository == 'PowerShell/PowerShell'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: (Scheduled) Update Notices file
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          Invoke-WebRequest -Uri https://aka.ms/pwsh-daily-tpn -OutFile ./ThirdPartyNotices.txt
+      - name: (Scheduled) Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        id: cpr
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        with:
+          commit-message: "Update to the latest license and the cgmanifest with missing or updated components"
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          title: "Update to the latest license and the cgmanifest with missing or updated components"
+          reviewers: travisez13
+          base: master
+          draft: false
+          branch: update-cgmanifest
 
 
