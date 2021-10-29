@@ -64,14 +64,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: (Scheduled) Update Notices file
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+      - name: Update Notices file
         run: |
           Invoke-WebRequest -Uri https://aka.ms/pwsh-daily-tpn -OutFile ./ThirdPartyNotices.txt
-      - name: (Scheduled) Create Pull Request
+      - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         id: cpr
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
           commit-message: "Update to the latest license and the cgmanifest with missing or updated components"
           committer: GitHub <noreply@github.com>

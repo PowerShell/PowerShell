@@ -45,7 +45,6 @@ jobs:
           Import-Module ./build.psm1
           Start-PSBootStrap
       - name: Verify cgmanifest is up to date
-        if: github.event_name == 'pull_request'
         run: |
           Import-Module ./build.psm1
           Find-Dotnet
