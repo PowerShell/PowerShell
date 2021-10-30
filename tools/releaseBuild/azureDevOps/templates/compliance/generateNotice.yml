@@ -37,11 +37,14 @@ jobs:
       outputfile: '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt'
       # output format can be html or text
       outputformat: text
-      additionaldata: $(Build.SourcesDirectory)\assets\additionalAttributions.txt
+      # this isn't working
+      # additionaldata: $(Build.SourcesDirectory)\assets\additionalAttributions.txt
+
 
   - pwsh: |
+      Get-Content -Raw -Path $(Build.SourcesDirectory)\assets\additionalAttributions.txt | Out-File '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt' -Encoding utf8NoBOM -Force -Append
       Get-Content -Raw -Path '$(Build.SourcesDirectory)\assets\additionalAttributions.txt'
-    displayName: Capture Additional Attributions
+    displayName: Append Additional Attributions
     continueOnError: true
 
   - pwsh: |
