@@ -281,7 +281,7 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
         diskpart.exe /s $create_vhdx
         Mount-DiskImage -ImagePath $vhdx > $null
 
-        Copy-Item "$env:WinDir\System32\whoami.exe T:\whoami.exe"
+        Copy-Item "$env:WinDir\System32\whoami.exe" T:\whoami.exe
     }
 
     AfterAll {
@@ -292,7 +292,7 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
     }
 
     It "Should run 'whoami.exe' from FAT file system without error" -Skip:(!$IsWindows) {
-        $expected = "$env:WinDir\System32\whoami.exe"
+        $expected = & "$env:WinDir\System32\whoami.exe"
         $result = T:\whoami.exe
         $result | Should -BeExactly $expected
     }
