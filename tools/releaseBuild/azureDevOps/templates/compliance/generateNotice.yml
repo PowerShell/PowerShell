@@ -37,7 +37,7 @@ jobs:
       outputfile: '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt'
       # output format can be html or text
       outputformat: text
-      additionaldata: $(Build.SourcesDirectory)\ThirdPartyNotices.txt
+      additionaldata: $(Build.SourcesDirectory)\assets\additionalAttributions.txt
 
   - pwsh: |
       Get-Content -Raw -Path '$(Build.SourcesDirectory)\assets\additionalAttributions.txt'
