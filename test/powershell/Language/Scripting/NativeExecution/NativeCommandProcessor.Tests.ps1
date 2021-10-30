@@ -252,3 +252,48 @@ Categories=Application;
         { $dllFile = "$PSHOME\System.Management.Automation.dll"; & $dllFile } | Should -Throw -ErrorId "NativeCommandFailed"
     }
 }
+
+Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "RequireAdminOnWindows") {
+    BeforeAll {
+        if (-not $IsWindows) {
+            return;
+        }
+
+        $vhdx = Join-Path -Path $TestDrive -ChildPath ncp.vhdx
+
+        if (Test-Path -Path $vhdx) {
+            Remove-item -Path $vhdx -Force
+        }
+
+        $create_vhdx = Join-Path -Path $TestDrive -ChildPath 'create_vhdx.txt'
+
+        Set-Content -Path $create_vhdx -Force -Value @"
+            create vdisk file="$vhdx" maximum=20 type=fixed
+            select vdisk file="$vhdx"
+            attach vdisk
+            convert mbr
+            create partition primary
+            format fs=fat
+            assign letter="T"
+            detach vdisk
+"@
+
+        diskpart.exe /s $create_vhdx
+        Mount-DiskImage -ImagePath $vhdx > $null
+
+        Copy-Item "$env:WinDir\System32\whoami.exe" T:\whoami.exe
+    }
+
+    AfterAll {
+        if ($IsWindows) {
+            Dismount-DiskImage -ImagePath $vhdx
+            Remove-Item $vhdx, $create_vhdx -Force
+        }
+    }
+
+    It "Should run 'whoami.exe' from FAT file system without error" -Skip:(!$IsWindows) {
+        $expected = & "$env:WinDir\System32\whoami.exe"
+        $result = T:\whoami.exe
+        $result | Should -BeExactly $expected
+    }
+}
