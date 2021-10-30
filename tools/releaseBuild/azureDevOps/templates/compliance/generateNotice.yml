@@ -18,28 +18,38 @@ jobs:
     demands:
     - ImageOverride -equals MMS2019
 
-  # APIScan can take a long time
   timeoutInMinutes: 15
 
   steps:
   - checkout: self
     clean: true
 
-  - pwsh: |
-      Get-Content ./assets/additionalAttributions.txt | Out-File '$(System.ArtifactsDirectory)\additionalAttributions.txt' -Encoding utf8NoBOM -Force
-      Get-Content -Raw -Path  '$(System.ArtifactsDirectory)\additionalAttributions.txt'
-    displayName: Get Additional Attributions
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      ignoreDirectories: '$(Build.SourcesDirectory)\test,$(Build.SourcesDirectory)\docs'
+
+  - task: msospo.ospo-extension.8d7f9abb-6896-461d-9e25-4f74ed65ddb2.notice@0
+    displayName: 'NOTICE File Generator'
+    inputs:
+      outputfile: '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt'
+      # output format can be html or text
+      outputformat: text
+      # this isn't working
+      # additionaldata: $(Build.SourcesDirectory)\assets\additionalAttributions.txt
+
 
   - pwsh: |
-      Import-Module ./tools/ComponentGovernance
-      $pat = ConvertTo-SecureString -String "$(CgPat)" -AsPlainText -Force
-      Set-CgCredentials -Pat $pat -Organization $(CgOrganization) -Project $(CgProject)
-      $repo = Get-CgPsRepository
-      $typeId = (Get-CgSnapshotType -CgRepository $repo | where-object {$_.isTracked -eq 'True' -and $_.buildDisplayType -eq 'Coordinated Packages'}).typeId
-      $notice = Get-CgNotice -CgRepository $repo -SnapshotTypeId $typeId
-      $notice | Out-File '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt' -Encoding utf8NoBOM -Force
-      Get-Content '$(System.ArtifactsDirectory)\additionalAttributions.txt' | Out-File '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt' -Encoding utf8NoBOM -Force -Append
-    displayName: Get Notice
+      Get-Content -Raw -Path $(Build.SourcesDirectory)\assets\additionalAttributions.txt | Out-File '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt' -Encoding utf8NoBOM -Force -Append
+      Get-Content -Raw -Path '$(Build.SourcesDirectory)\assets\additionalAttributions.txt'
+    displayName: Append Additional Attributions
+    continueOnError: true
+
+  - pwsh: |
+      Get-Content -Raw -Path '$(System.ArtifactsDirectory)\ThirdPartyNotices.txt'
+    displayName: Capture Notice
+    continueOnError: true
 
   - task: AzureFileCopy@4
     displayName: 'upload Notice'

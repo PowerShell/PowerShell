@@ -33,12 +33,16 @@ variables:
 
 stages:
   - stage: compliance
+    displayName: 'Compliance'
     dependsOn: []
     jobs:
       - template: templates/compliance/compliance.yml
         parameters:
           parentJobs: []
+  - stage: notice
+    displayName: Generate Notice File
+    dependsOn: []
+    jobs:
       - template: templates/compliance/generateNotice.yml
         parameters:
           parentJobs: []
-
