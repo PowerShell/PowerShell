@@ -18,7 +18,6 @@ jobs:
     demands:
     - ImageOverride -equals MMS2019
 
-  # APIScan can take a long time
   timeoutInMinutes: 15
 
   steps:
