@@ -11,6 +11,7 @@ steps:
     path: '$(Pipeline.Workspace)/releasePipeline/BuildInfoJson'
 
 - pwsh: |
+    Import-Module '$(Build.SourcesDirectory)/tools/ci.psm1'
     $jsonFile = Get-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/BuildInfoJson/*.json"
     $fileName = Split-Path $jsonFile -Leaf
 
@@ -27,25 +28,24 @@ steps:
     $targetFile = "$ENV:PIPELINE_WORKSPACE/$fileName"
     ConvertTo-Json -InputObject $buildInfo | Out-File $targetFile -Encoding ascii
 
-    if ($stableRelease) {
-      $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyStableBuildInfo]YES"
+    if ($stableRelease -or $fileName -eq "preview.json") {
+      Set-BuildVariable -Name CopyMainBuildInfo -Value YES
+    } else {
+      Set-BuildVariable -Name CopyMainBuildInfo -Value NO
     }
 
-    $vstsCommandString = "vso[task.setvariable variable=BuildInfoJsonFile]$targetFile"
-    Write-Host "sending " + $vstsCommandString
-    Write-Host "##$vstsCommandString"
+    Set-BuildVariable -Name BuildInfoJsonFile -Value $targetFile
 
     ## Create 'lts.json' if it's the latest stable and also a LTS release.
-
-    $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]NO"
-    $vstsCommandCopyVersionBuildInfo = "vso[task.setvariable variable=CopyVersionBuildInfo]NO"
 
     if ($fileName -eq "stable.json") {
       if ($ltsRelease) {
         $ltsFile = "$ENV:PIPELINE_WORKSPACE/lts.json"
         Copy-Item -Path $targetFile -Destination $ltsFile -Force
-        $vstsCommandLtsJsonFile = "vso[task.setvariable variable=LtsBuildInfoJsonFile]$ltsFile"
-        $vstsCommandCopyLTSBuildInfo = "vso[task.setvariable variable=CopyLTSBuildInfo]YES"
+        Set-BuildVariable -Name LtsBuildInfoJsonFile -Value $ltsFile
+        Set-BuildVariable -Name CopyLTSBuildInfo -Value YES
+      } else {
+        Set-BuildVariable -Name CopyLTSBuildInfo -Value NO
       }
 
       $releaseTag = $buildInfo.ReleaseTag
@@ -54,26 +54,10 @@ steps:
 
       $versionFile = "$ENV:PIPELINE_WORKSPACE/$($semVersion.Major)-$($semVersion.Minor).json"
       Copy-Item -Path $targetFile -Destination $versionFile -Force
-      $vstsCommandVersionJsonFile = "vso[task.setvariable variable=VersionBuildInfoJsonFile]$versionFile"
-      $vstsCommandCopyVersionBuildInfo = "vso[task.setvariable variable=CopyVersionBuildInfo]YES"
-    }
-
-    Write-Host "sending " + $vstsCommandCopyLTSBuildInfo
-    Write-Host "##$vstsCommandCopyLTSBuildInfo"
-
-    if ($vstsCommandLtsJsonFile)
-    {
-        Write-Host "sending " + $vstsCommandLtsJsonFile
-        Write-Host "##$vstsCommandLtsJsonFile"
-    }
-
-    Write-Host "sending " + $vstsCommandCopyVersionBuildInfo
-    Write-Host "##$vstsCommandCopyVersionBuildInfo"
-
-    if ($vstsCommandVersionJsonFile)
-    {
-        Write-Host "sending " + $vstsCommandVersionJsonFile
-        Write-Host "##$vstsCommandVersionJsonFile"
+      Set-BuildVariable -Name VersionBuildInfoJsonFile -Value $versionFile
+      Set-BuildVariable -Name CopyVersionBuildInfo -Value YES
+    } else {
+      Set-BuildVariable -Name CopyVersionBuildInfo -Value NO
     }
   displayName: Download and Capture NuPkgs
 
@@ -85,7 +69,7 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: BuildInfo
-  condition: and(succeeded(), eq(variables['CopyStableBuildInfo'], 'YES'))
+  condition: and(succeeded(), eq(variables['CopyMainBuildInfo'], 'YES'))
 
 - task: AzureFileCopy@2
   displayName: 'AzureBlob build info ''lts.json'' Copy when needed'
