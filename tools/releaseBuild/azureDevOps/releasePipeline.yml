@@ -268,13 +268,18 @@ stages:
   dependsOn: GitHubManualTasks
   displayName: Upload BuildInfoJson
   jobs:
-  - job: UploadJson
+  - deployment: UploadJson
+    displayName: Upload BuildInfoJson
     pool:
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
-    steps:
-    - template: templates/release-BuildJson.yml
+    environment: PSReleaseBuildInfoJson
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: templates/release-BuildJson.yml
 
 - stage: ReleaseVPack
   dependsOn: GitHubManualTasks
