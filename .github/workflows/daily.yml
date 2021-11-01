@@ -30,7 +30,7 @@ jobs:
           git fetch --prune --unshallow --tags
       - name: Execute Update .NET script
         run: |
-          Import-Module .github/workflows/GHWorkflowHelper
+          Import-Module ./.github/workflows/GHWorkflowHelper
           $currentVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
           Set-GWVariable -Name OLD_VERSION -Value $currentVersion
 
