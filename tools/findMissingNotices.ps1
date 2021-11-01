@@ -113,7 +113,6 @@ function Get-NuGetPublicVersion {
     )
 
     if($nugetPublicVersionCache.ContainsKey($Name)) {
-        Write-Verbose "Using cached version of ${Name}: $($nugetPublicVersionCache[$Name])" -Verbose
         return $nugetPublicVersionCache[$Name]
     }
 
