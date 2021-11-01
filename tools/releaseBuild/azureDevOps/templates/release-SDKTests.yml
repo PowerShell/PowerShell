@@ -8,6 +8,8 @@ jobs:
   displayName: ${{ parameters.displayName }}
   pool:
     vmImage: ${{ parameters.imageName }}
+  variables:
+  - group: AzDevOpsArtifacts
   steps:
     - checkout: self
       clean: true
@@ -34,6 +36,33 @@ jobs:
         runBranch: '$(Build.SourceBranch)'
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+
+    - pwsh:  |
+        Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
+        New-NugetConfigFile -NugetFeedUrl $(PSInternalNugetFeed) -UserName $(PSInternalNugetFeedUserName) -ClearTextPAT $(PSInternalNugetFeedPAT) -FeedName AzDevOpsFeed -Destination '$(Build.SourcesDirectory)/test/hosting'
+
+        Write-Verbose -Verbose "Capture hosting folder files"
+        Get-ChildItem '$(Build.SourcesDirectory)/test/hosting'
+
+        # The above cmdlet creates a lower-case nuget.config. There also exists a NuGet.config which we needed to replace.
+        # Hence the following workaround
+
+        if (-not $IsWindows) {
+            Move-Item -Path '$(Build.SourcesDirectory)/test/hosting/nuget.config' -Destination '$(Build.SourcesDirectory)/test/hosting/NuGet.Config' -Force -ErrorAction Continue
+            Write-Verbose -Verbose "Capture hosting folder files after Move-Item"
+            Get-ChildItem '$(Build.SourcesDirectory)/test/hosting'
+        }
+
+        if(-not (Test-Path "$(Build.SourcesDirectory)/test/hosting/NuGet.Config"))
+        {
+            throw "NuGet.Config is not created"
+        }
+        else
+        {
+            Write-Verbose -Verbose "Capture NuGet.Config contents"
+            Get-Content "$(Build.SourcesDirectory)/test/hosting/NuGet.Config" -Raw
+        }
+      displayName: Insert internal nuget feed
 
     - pwsh: |
         $dotnetMetadataPath = "$(Build.SourcesDirectory)/DotnetRuntimeMetadata.json"
