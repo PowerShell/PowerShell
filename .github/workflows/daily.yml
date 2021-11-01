@@ -70,9 +70,18 @@ jobs:
       - name: Capture Git Status
         run: |
           git status --short
+      - name: Check if we need to create a PR
+        run: |
+          git diff --quiet ThirdPartyNotices.txt
+          $exitCode = $LASTEXITCODE
+          Write-Verbose -Message "Exit code: $exitCode" -Verbose
+          if ($LASTEXITCODE -ne 0) {
+            Set-GWVariable -Name CREATE_PR -Value 'true'
+          }
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         id: cprtpn
+        if: env.CREATE_PR == 'true'
         with:
           commit-message: "Update to the latest notice file"
           committer: GitHub <noreply@github.com>
