@@ -67,6 +67,9 @@ jobs:
       - name: Update Notices file
         run: |
           Invoke-WebRequest -Uri https://aka.ms/pwsh-daily-tpn -OutFile ./ThirdPartyNotices.txt
+      - name: Capture Git Status
+        run: |
+          git status --short
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         id: cprtpn
