@@ -125,10 +125,12 @@ function Get-NuGetPublicVersion {
 
     $publicVersion = $null
     $publicVersion = Find-Package -Name $Name -AllowPrereleaseVersions -source nuget.org -AllVersions -ErrorAction SilentlyContinue | ForEach-Object {
-        $packageVersion = $_.Version
         try {
-            $packageVersion = [System.Management.Automation.SemanticVersion]$packageVersion
-        } catch {}
+            $packageVersion = [System.Management.Automation.SemanticVersion]$_.Version
+        } catch {
+            # Fall back to using [version] if it is not a semantic version
+            $packageVersion = $_.Version
+        }
 
         $_ | Add-Member -Name SemVer -MemberType NoteProperty -Value $packageVersion -PassThru
     } | Where-Object { $_.SemVer -le $desiredVersion } | Sort-Object -Property semver -Descending | Select-Object -First 1 -ExpandProperty Version
