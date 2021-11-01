@@ -71,10 +71,10 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         id: cprtpn
         with:
-          commit-message: "Update to the latest license and the cgmanifest with missing or updated components"
+          commit-message: "Update to the latest notice file"
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          title: "Update to the latest license and the cgmanifest with missing or updated components"
+          title: "Update to the latest notice file"
           reviewers: travisez13
           base: master
           draft: false

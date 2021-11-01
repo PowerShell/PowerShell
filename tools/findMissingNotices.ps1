@@ -75,6 +75,12 @@ Class Nuget {
     }
 }
 
+$winDesktopSdk = 'Microsoft.NET.Sdk.WindowsDesktop'
+if (!$IsWindows) {
+    $winDesktopSdk = 'Microsoft.NET.Sdk'
+    Write-Warning "Always using $winDesktopSdk since this is not windows!!!"
+}
+
 function New-NugetComponent {
     param(
         [string]$name,
@@ -99,13 +105,48 @@ function New-NugetComponent {
     return $registration
 }
 
-$winDesktopSdk = 'Microsoft.NET.Sdk.WindowsDesktop'
-if (!$IsWindows) {
-    $winDesktopSdk = 'Microsoft.NET.Sdk'
-    Write-Warning "Always using $winDesktopSdk since this is not windows!!!"
+$nugetPublicVersionCache = [System.Collections.Generic.Dictionary[string, string]]::new()
+function Get-NuGetPublicVersion {
+    param(
+        [string]$Name,
+        [string]$Version
+    )
+
+    if($nugetPublicVersionCache.ContainsKey($Name)) {
+        return $nugetPublicVersionCache[$Name]
+    }
+
+    try {
+        [System.Management.Automation.SemanticVersion]$desiredVersion = $Version
+    } catch {
+        [Version]$desiredVersion = $Version
+    }
+
+    $publicVersion = $null
+    $publicVersion = Find-Package -Name $Name -AllowPrereleaseVersions -source nuget.org -AllVersions -ErrorAction SilentlyContinue | ForEach-Object {
+        try {
+            $packageVersion = [System.Management.Automation.SemanticVersion]$_.Version
+        } catch {
+            # Fall back to using [version] if it is not a semantic version
+            $packageVersion = $_.Version
+        }
+
+        $_ | Add-Member -Name SemVer -MemberType NoteProperty -Value $packageVersion -PassThru
+    } | Where-Object { $_.SemVer -le $desiredVersion } | Sort-Object -Property semver -Descending | Select-Object -First 1 -ExpandProperty Version
+
+    if(!$publicVersion) {
+        Write-Warning "No public version found for $Name, using $Version"
+        $publicVersion = $Version
+    }
+
+    if(!$nugetPublicVersionCache.ContainsKey($Name)) {
+        $nugetPublicVersionCache.Add($Name, $publicVersion)
+    }
+
+    return $publicVersion
 }
 
-Function Get-CGRegistrations {
+function Get-CGRegistrations {
     param(
         [Parameter(Mandatory)]
         [ValidateSet(
@@ -190,20 +231,21 @@ Function Get-CGRegistrations {
         $parts = ($target -split '\|')
         $name = $parts[0]
         $targetVersion = $parts[1]
+        $publicVersion = Get-NuGetPublicVersion -Name $name -Version $targetVersion
 
         # Add the registration to the cgmanifest if the TPN does not contain the name of the target OR
         # the exisitng CG contains the registration, because if the existing CG contains the registration,
         # that might be the only reason it is in the TPN.
         if (!$RegistrationTable.ContainsKey($target)) {
             $DevelopmentDependency = $false
-            if (!$existingRegistrationTable.ContainsKey($name) -or $existingRegistrationTable.$name.Component.Version() -ne $targetVersion) {
+            if (!$existingRegistrationTable.ContainsKey($name) -or $existingRegistrationTable.$name.Component.Version() -ne $publicVersion) {
                 $registrationChanged = $true
             }
             if ($existingRegistrationTable.ContainsKey($name) -and $existingRegistrationTable.$name.DevelopmentDependency) {
                 $DevelopmentDependency = $true
             }
 
-            $registration = New-NugetComponent -Name $name -Version $targetVersion -DevelopmentDependency:$DevelopmentDependency
+            $registration = New-NugetComponent -Name $name -Version $publicVersion -DevelopmentDependency:$DevelopmentDependency
             $RegistrationTable.Add($target, $registration)
         }
     }
