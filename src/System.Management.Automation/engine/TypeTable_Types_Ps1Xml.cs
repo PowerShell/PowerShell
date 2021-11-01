@@ -7,6 +7,8 @@ using System.Management.Automation.Language;
 using System.Reflection;
 using System.Threading;
 
+using Microsoft.PowerShell.Commands.Internal;
+
 namespace System.Management.Automation.Runspaces
 {
     public sealed partial class TypeTable
@@ -4063,7 +4065,6 @@ namespace System.Management.Automation.Runspaces
 
             typeName = @"System.Security.AccessControl.ObjectSecurity";
             typeMembers = _extendedMembers.GetOrAdd(typeName, static key => new PSMemberInfoInternalCollection<PSMemberInfo>(capacity: 7));
-            Type securityDescriptorCommandsBaseType = TypeResolver.ResolveType("Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase", exception: out _);
 
             // Process regular members.
             newMembers.Add(@"Path");
@@ -4072,7 +4073,7 @@ namespace System.Management.Automation.Runspaces
                 typeName,
                 new PSCodeProperty(
                     @"Path",
-                    GetMethodInfo(securityDescriptorCommandsBaseType, @"GetPath"),
+                    GetMethodInfo(typeof(SecurityDescriptorCommandsHelperBase), @"GetPath"),
                     setterCodeReference: null),
                 typeMembers,
                 isOverride: false);
@@ -4083,7 +4084,7 @@ namespace System.Management.Automation.Runspaces
                 typeName,
                 new PSCodeProperty(
                     @"Owner",
-                    GetMethodInfo(securityDescriptorCommandsBaseType, @"GetOwner"),
+                    GetMethodInfo(typeof(SecurityDescriptorCommandsHelperBase), @"GetOwner"),
                     setterCodeReference: null),
                 typeMembers,
                 isOverride: false);
@@ -4094,7 +4095,7 @@ namespace System.Management.Automation.Runspaces
                 typeName,
                 new PSCodeProperty(
                     @"Group",
-                    GetMethodInfo(securityDescriptorCommandsBaseType, @"GetGroup"),
+                    GetMethodInfo(typeof(SecurityDescriptorCommandsHelperBase), @"GetGroup"),
                     setterCodeReference: null),
                 typeMembers,
                 isOverride: false);
@@ -4105,7 +4106,7 @@ namespace System.Management.Automation.Runspaces
                 typeName,
                 new PSCodeProperty(
                     @"Access",
-                    GetMethodInfo(securityDescriptorCommandsBaseType, @"GetAccess"),
+                    GetMethodInfo(typeof(SecurityDescriptorCommandsHelperBase), @"GetAccess"),
                     setterCodeReference: null),
                 typeMembers,
                 isOverride: false);
@@ -4116,7 +4117,7 @@ namespace System.Management.Automation.Runspaces
                 typeName,
                 new PSCodeProperty(
                     @"Sddl",
-                    GetMethodInfo(securityDescriptorCommandsBaseType, @"GetSddl"),
+                    GetMethodInfo(typeof(SecurityDescriptorCommandsHelperBase), @"GetSddl"),
                     setterCodeReference: null),
                 typeMembers,
                 isOverride: false);
