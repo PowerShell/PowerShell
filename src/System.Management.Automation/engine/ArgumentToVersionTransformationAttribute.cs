@@ -15,26 +15,6 @@ namespace System.Management.Automation
     /// </summary>
     internal class ArgumentToVersionTransformationAttribute : ArgumentTransformationAttribute
     {
-        private static readonly IReadOnlyDictionary<string, Version> _empty = new Dictionary<string, Version>();
-
-        private readonly IReadOnlyDictionary<string, Version> _map;
-
-        /// <summary>
-        /// Initializes a new instance of the ArgumentToVersionTransformationAttribute class with empty version map.
-        /// </summary>
-        public ArgumentToVersionTransformationAttribute() : this(_empty)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the ArgumentToVersionTransformationAttribute class.
-        /// </summary>
-        /// <param name="map">Version mapping.</param>
-        public ArgumentToVersionTransformationAttribute(IReadOnlyDictionary<string, Version> map)
-        {
-            _map = map ?? _empty;
-        }
-
         /// <inheritdoc/>
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
@@ -42,9 +22,9 @@ namespace System.Management.Automation
 
             if (version is string versionStr)
             {
-                if (TryMap(versionStr, out var fromMap))
+                if (TryConvertFromString(versionStr, out var convertedVersion))
                 {
-                    return fromMap;
+                    return convertedVersion;
                 }
 
                 if (versionStr.Contains('.'))
@@ -69,9 +49,10 @@ namespace System.Management.Automation
             return inputData;
         }
 
-        private bool TryMap(string versionName, [NotNullWhen(true)] out Version? version)
+        protected virtual bool TryConvertFromString(string versionString, [NotNullWhen(true)] out Version? version)
         {
-            return _map.TryGetValue(versionName, out version);
+            version = null;
+            return false;
         }
     }
 }

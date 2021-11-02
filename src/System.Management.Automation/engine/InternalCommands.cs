@@ -6,7 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -15,8 +14,10 @@ using System.Management.Automation.PSTasks;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+
 using CommonParamSet = System.Management.Automation.Internal.CommonParameters;
 using Dbg = System.Management.Automation.Diagnostics;
+using NotNullWhen = System.Diagnostics.CodeAnalysis.NotNullWhenAttribute;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -2649,15 +2650,17 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handle 'latest', which we interpret to be the current version of PowerShell.
         /// </summary>
-        private sealed class CommandArgumentToVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
+        private sealed class ArgumentToPSVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
         {
-            private static readonly IReadOnlyDictionary<string, Version> s_versionMap = new Dictionary<string, Version>(StringComparer.OrdinalIgnoreCase)
+            protected override bool TryConvertFromString(string versionString, [NotNullWhen(true)] out Version version)
             {
-                ["latest"] = PSVersionInfo.PSVersion,
-            };
+                if (string.Equals("latest", versionString, StringComparison.OrdinalIgnoreCase))
+                {
+                    version = PSVersionInfo.PSVersion;
+                    return true;
+                }
 
-            public CommandArgumentToVersionTransformationAttribute() : base(s_versionMap)
-            {
+                return base.TryConvertFromString(versionString, out version);
             }
         }
 
@@ -2682,7 +2685,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets strict mode in the current scope.
         /// </summary>
         [Parameter(ParameterSetName = "Version", Mandatory = true)]
-        [CommandArgumentToVersionTransformation]
+        [ArgumentToPSVersionTransformation]
         [ValidateVersion]
         [Alias("v")]
         public Version Version

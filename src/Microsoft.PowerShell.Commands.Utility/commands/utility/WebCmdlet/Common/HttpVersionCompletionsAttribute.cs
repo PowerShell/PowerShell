@@ -20,13 +20,7 @@ namespace Microsoft.PowerShell.Commands
 
         static HttpVersionCompletionsAttribute()
         {
-            FieldInfo[] fields = typeof(HttpVersion).GetFields(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
-
-            if (fields.Length == 0)
-            {
-                AllowedVersions = Array.Empty<string>();
-                return;
-            }
+            FieldInfo[] fields = typeof(HttpVersion).GetFields(BindingFlags.Static | BindingFlags.Public);
 
             var versions = new List<string>(fields.Length - 1);
 
