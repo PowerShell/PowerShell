@@ -7,7 +7,6 @@ Describe "Validate start of console host" -Tag CI {
             'Microsoft.ApplicationInsights.dll'
             'Microsoft.Management.Infrastructure.dll'
             'Microsoft.PowerShell.ConsoleHost.dll'
-            'Microsoft.PowerShell.Security.dll'
             'Microsoft.Win32.Primitives.dll'
             'Microsoft.Win32.Registry.dll'
             'netstandard.dll'
