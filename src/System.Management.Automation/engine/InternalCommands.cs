@@ -6,7 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -15,8 +14,10 @@ using System.Management.Automation.PSTasks;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+
 using CommonParamSet = System.Management.Automation.Internal.CommonParameters;
 using Dbg = System.Management.Automation.Diagnostics;
+using NotNullWhen = System.Diagnostics.CodeAnalysis.NotNullWhenAttribute;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -2647,46 +2648,19 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter _off;
 
         /// <summary>
-        /// To make it easier to specify a version, we add some conversions that wouldn't happen otherwise:
-        ///   * A simple integer, i.e. 2
-        ///   * A string without a dot, i.e. "2"
-        ///   * The string 'latest', which we interpret to be the current version of PowerShell.
+        /// Handle 'latest', which we interpret to be the current version of PowerShell.
         /// </summary>
-        private sealed class ArgumentToVersionTransformationAttribute : ArgumentTransformationAttribute
+        private sealed class ArgumentToPSVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
         {
-            public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
+            protected override bool TryConvertFromString(string versionString, [NotNullWhen(true)] out Version version)
             {
-                object version = PSObject.Base(inputData);
-
-                string versionStr = version as string;
-                if (versionStr != null)
+                if (string.Equals("latest", versionString, StringComparison.OrdinalIgnoreCase))
                 {
-                    if (versionStr.Equals("latest", StringComparison.OrdinalIgnoreCase))
-                    {
-                        return PSVersionInfo.PSVersion;
-                    }
-
-                    if (versionStr.Contains('.'))
-                    {
-                        // If the string contains a '.', let the Version constructor handle the conversion.
-                        return inputData;
-                    }
+                    version = PSVersionInfo.PSVersion;
+                    return true;
                 }
 
-                if (version is double)
-                {
-                    // The conversion to int below is wrong, but the usual conversions will turn
-                    // the double into a string, so just return the original object.
-                    return inputData;
-                }
-
-                int majorVersion;
-                if (LanguagePrimitives.TryConvertTo<int>(version, out majorVersion))
-                {
-                    return new Version(majorVersion, 0);
-                }
-
-                return inputData;
+                return base.TryConvertFromString(versionString, out version);
             }
         }
 
@@ -2711,7 +2685,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets strict mode in the current scope.
         /// </summary>
         [Parameter(ParameterSetName = "Version", Mandatory = true)]
-        [ArgumentToVersionTransformation]
+        [ArgumentToPSVersionTransformation]
         [ValidateVersion]
         [Alias("v")]
         public Version Version

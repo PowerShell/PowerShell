@@ -469,6 +469,23 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.Headers.Connection | Should -Be "Close"
     }
 
+    It "Validate Invoke-WebRequest -HttpVersion '<httpVersion>'" -Skip:(!$IsWindows) -TestCases @(
+        @{ httpVersion = '1.1'},
+        @{ httpVersion = '2'}
+    ) {
+        param($httpVersion)
+        # Operation options
+        $uri = Get-WebListenerUrl -Test 'Get' -Https
+        $command = "Invoke-WebRequest -Uri $uri -HttpVersion $httpVersion -SkipCertificateCheck"
+
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse -response $result
+
+        # Validate response content
+        $jsonContent = $result.Output.Content | ConvertFrom-Json
+        $jsonContent.protocol | Should -Be "HTTP/$httpVersion"
+    }
+
     It "Validate Invoke-WebRequest -MaximumRedirection" {
         $uri = Get-WebListenerUrl -Test 'Redirect' -TestValue '3'
         $command = "Invoke-WebRequest -Uri '$uri' -MaximumRedirection 4"
@@ -2116,6 +2133,21 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         # Validate response
         $result.Output.headers.Host | Should -Be $uri.Authority
         $result.Output.Headers.Connection | Should -Be "Close"
+    }
+
+    It "Validate Invoke-RestMethod -HttpVersion '<httpVersion>'" -Skip:(!$IsWindows) -TestCases @(
+        @{ httpVersion = '1.1'},
+        @{ httpVersion = '2'}
+    ) {
+        param($httpVersion)
+        # Operation options
+        $uri = Get-WebListenerUrl -Test 'Get' -Https
+        $command = "Invoke-RestMethod -Uri $uri -HttpVersion $httpVersion -SkipCertificateCheck"
+
+        $result = ExecuteWebCommand -command $command
+
+        # Validate response
+        $result.Output.protocol | Should -Be "HTTP/$httpVersion"
     }
 
     It "Validate Invoke-RestMethod -MaximumRedirection" {
