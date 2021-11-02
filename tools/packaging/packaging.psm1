@@ -3096,7 +3096,7 @@ function Get-WindowsNames {
     Write-Verbose -Message "Getting Windows Names for ProductName: $ProductName; ProductNameSuffix: $ProductNameSuffix; ProductVersion: $ProductVersion" -Verbose
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion  -IncrementBuildNumber
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion -IncrementBuildNumber
 
     $productVersionWithName = $ProductName + '_' + $ProductVersion
     $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
