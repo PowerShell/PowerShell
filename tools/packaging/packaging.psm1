@@ -3096,7 +3096,7 @@ function Get-WindowsNames {
     Write-Verbose -Message "Getting Windows Names for ProductName: $ProductName; ProductNameSuffix: $ProductNameSuffix; ProductVersion: $ProductVersion" -Verbose
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion  -IncrementBuildNumber
 
     $productVersionWithName = $ProductName + '_' + $ProductVersion
     $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
@@ -3748,8 +3748,9 @@ function Get-PackageVersionAsMajorMinorBuildRevision
         # Version of the Package
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $Version
-        )
+        [string] $Version,
+        [switch] $IncrementBuildNumber
+    )
 
     Write-Verbose "Extract the version in the form of major.minor[.build[.revision]] for $Version"
     $packageVersionTokens = $Version.Split('-')
@@ -3768,6 +3769,10 @@ function Get-PackageVersionAsMajorMinorBuildRevision
             {
                 # MSIX will fail if it is more characters
                 $packageBuildTokens = $packageBuildTokens.Substring(0,4)
+            }
+
+            if ($packageVersionTokens[1] -match 'rc' -and $IncrementBuildNumber) {
+                $packageBuildTokens = [int]$packageBuildTokens + 100
             }
 
             $packageVersion = $packageVersion + '.' + $packageBuildTokens
@@ -4210,7 +4215,7 @@ function Test-PackageManifest {
     }
 
     Process {
-        Write-Verbose "Processing $($man.files.count) files..." -verbose
+        Write-Verbose "Processing $($man.files) files..." -verbose
         $man.files | ForEach-Object {
             $filePath = Join-Path $PackagePath -childPath $_.fileName
             $checksumObj = $_.checksums | Where-Object {$_.algorithm -eq 'sha256'}
