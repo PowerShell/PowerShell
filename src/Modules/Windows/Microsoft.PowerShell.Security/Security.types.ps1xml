@@ -15,6 +15,7 @@ OR RESULTS IN CONNECTION WITH THE USE OF THIS CODE AND INFORMATION
 REMAINS WITH THE USER.
 ******************************************************************** -->
 
+<Types>
   <Type>
     <Name>System.Security.AccessControl.ObjectSecurity</Name>
     <Members>
