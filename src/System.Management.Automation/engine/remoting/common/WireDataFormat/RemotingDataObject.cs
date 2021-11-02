@@ -267,7 +267,7 @@ namespace System.Management.Automation.Remoting
         #endregion
     }
 
-    internal class RemoteDataObject : RemoteDataObject<object>
+    internal sealed class RemoteDataObject : RemoteDataObject<object>
     {
         #region Constructors / Factory
 

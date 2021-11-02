@@ -2,12 +2,17 @@
 jobs:
 - job: ComponentRegistrationJob
   variables:
-    runCodesignValidationInjection: false
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
   displayName: Component Registration
   condition: succeeded()
 
   pool:
-    name: Package ES Standard Build
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
 
   steps:
   - checkout: self

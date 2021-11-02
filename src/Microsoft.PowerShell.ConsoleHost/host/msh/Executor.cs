@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell
             _parent.ErrorSerializer.Serialize(er);
         }
 
-        private class PipelineFinishedWaitHandle
+        private sealed class PipelineFinishedWaitHandle
         {
             internal PipelineFinishedWaitHandle(Pipeline p)
             {
@@ -320,22 +320,6 @@ namespace Microsoft.PowerShell
         internal Collection<PSObject> ExecuteCommand(string command, out Exception exceptionThrown, ExecutionOptions options)
         {
             Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
-
-            // Experimental:
-            // Check for implicit remoting commands that can be batched, and execute as batched if able.
-            if (ExperimentalFeature.IsEnabled("PSImplicitRemotingBatching"))
-            {
-                var addOutputter = ((options & ExecutionOptions.AddOutputter) > 0);
-                if (addOutputter &&
-                    !_parent.RunspaceRef.IsRunspaceOverridden &&
-                    _parent.RunspaceRef.Runspace.ExecutionContext.Modules != null &&
-                    _parent.RunspaceRef.Runspace.ExecutionContext.Modules.IsImplicitRemotingModuleLoaded &&
-                    Utils.TryRunAsImplicitBatch(command, _parent.RunspaceRef.Runspace))
-                {
-                    exceptionThrown = null;
-                    return null;
-                }
-            }
 
             Pipeline tempPipeline = CreatePipeline(command, (options & ExecutionOptions.AddToHistory) > 0);
 

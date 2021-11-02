@@ -682,6 +682,19 @@ Describe 'ScriptScopeAccessFromClassMethod' -Tags "CI" {
 }
 
 Describe 'Hidden Members Test ' -Tags "CI" {
+    BeforeAll {
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+    }
+
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+    }
+
         class C1
         {
             [int]$visibleX

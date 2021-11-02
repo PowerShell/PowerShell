@@ -156,6 +156,15 @@
   <data name="PauseHelpMessage" xml:space="preserve">
     <value>Pause the current pipeline and return to the command prompt. Type "{0}" to resume the pipeline.</value>
   </data>
+  <data name="ProgramExitedWithNonZeroCode" xml:space="preserve">
+    <!-- NOTE:
+      This string was added for the native command error action preference integration feature.
+      ParserStrings already declares a ProgramFailedToExecute string,
+      however that is used for ApplicationFailedExceptions thrown when the NativeCommandProcessor fails in an unexpected way.
+      In this case, we have a more specific error for the native command scenario, so the two are not conflated.
+    -->
+    <value>Program "{0}" ended with non-zero exit code: {1}.</value>
+  </data>
   <data name="ShouldProcessMessage" xml:space="preserve">
     <value>Performing the operation "{0}" on target "{1}".</value>
   </data>

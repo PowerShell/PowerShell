@@ -54,7 +54,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public CimSession[] CimSession
         {
-            get { return cimsession; }
+            get
+            {
+                return cimsession;
+            }
 
             set
             {
@@ -81,7 +84,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -102,9 +108,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = SessionIdSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public UInt32[] Id
+        public uint[] Id
         {
-            get { return id; }
+            get
+            {
+                return id;
+            }
 
             set
             {
@@ -113,7 +122,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private UInt32[] id;
+        private uint[] id;
 
         /// <summary>
         /// The following is the definition of the input parameter "InstanceId".
@@ -127,7 +136,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Guid[] InstanceId
         {
-            get { return instanceid; }
+            get
+            {
+                return instanceid;
+            }
 
             set
             {
@@ -150,7 +162,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
-            get { return name; }
+            get
+            {
+                return name;
+            }
 
             set
             {

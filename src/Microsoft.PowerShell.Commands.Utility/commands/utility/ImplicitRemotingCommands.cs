@@ -1989,9 +1989,9 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder result = new(name.Length);
             foreach (char c in name)
             {
-                if (("\"'`$".IndexOf(c) == (-1)) &&
-                    (!char.IsControl(c)) &&
-                    (!char.IsWhiteSpace(c)))
+                if (!"\"'`$".Contains(c)
+                    && !char.IsControl(c)
+                    && !char.IsWhiteSpace(c))
                 {
                     result.Append(c);
                 }
@@ -2024,7 +2024,6 @@ namespace Microsoft.PowerShell.Commands
 
     PrivateData = @{{
         ImplicitRemoting = $true
-        ImplicitSessionId = '{4}'
     }}
 }}
         ";
@@ -2043,8 +2042,7 @@ namespace Microsoft.PowerShell.Commands
                 CodeGeneration.EscapeSingleQuotedStringContent(_moduleGuid.ToString()),
                 CodeGeneration.EscapeSingleQuotedStringContent(StringUtil.Format(ImplicitRemotingStrings.ProxyModuleDescription, this.GetConnectionString())),
                 CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(psm1fileName)),
-                CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(formatPs1xmlFileName)),
-                _remoteRunspaceInfo.InstanceId);
+                CodeGeneration.EscapeSingleQuotedStringContent(Path.GetFileName(formatPs1xmlFileName)));
         }
 
         #endregion
@@ -2825,13 +2823,14 @@ function Get-PSImplicitRemotingClientSideParameters
 
             $clientSideParameters = Get-PSImplicitRemotingClientSideParameters $PSBoundParameters ${8}
 
-            $scriptCmd = {{ & $script:InvokeCommand `
-                            @clientSideParameters `
-                            -HideComputerName `
-                            -Session (Get-PSImplicitRemotingSession -CommandName '{0}') `
-                            -Arg ('{0}', $PSBoundParameters, $positionalArguments) `
-                            -Script {{ param($name, $boundParams, $unboundParams) & $name @boundParams @unboundParams }} `
-                         }}
+            $scriptCmd = {{
+                & $script:InvokeCommand `
+                    @clientSideParameters `
+                    -HideComputerName `
+                    -Session (Get-PSImplicitRemotingSession -CommandName '{0}') `
+                    -Arg ('{0}', $PSBoundParameters, $positionalArguments) `
+                    -Script {{ param($name, $boundParams, $unboundParams) & $name @boundParams @unboundParams }} `
+            }}
 
             $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
             $steppablePipeline.Begin($myInvocation.ExpectingInput, $ExecutionContext)

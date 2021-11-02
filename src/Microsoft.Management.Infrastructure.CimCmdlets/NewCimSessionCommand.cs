@@ -33,7 +33,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CredentialParameterSet)]
         public PasswordAuthenticationMechanism Authentication
         {
-            get { return authentication; }
+            get
+            {
+                return authentication;
+            }
 
             set
             {
@@ -101,9 +104,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(AliasOT)]
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public UInt32 OperationTimeoutSec
+        public uint OperationTimeoutSec
         {
-            get { return operationTimeout; }
+            get
+            {
+                return operationTimeout;
+            }
 
             set
             {
@@ -112,7 +118,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private UInt32 operationTimeout;
+        private uint operationTimeout;
         internal bool operationTimeoutSet = false;
 
         /// <summary>
@@ -130,9 +136,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// This is specificly for wsman protocol.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public UInt32 Port
+        public uint Port
         {
-            get { return port; }
+            get
+            {
+                return port;
+            }
 
             set
             {
@@ -141,7 +150,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private UInt32 port;
+        private uint port;
         private bool portSet = false;
 
         /// <summary>
@@ -225,7 +234,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             outputCredential = null;
             if (options != null)
             {
-                DComSessionOptions dcomOptions = (options as DComSessionOptions);
+                DComSessionOptions dcomOptions = options as DComSessionOptions;
                 if (dcomOptions != null)
                 {
                     bool conflict = false;

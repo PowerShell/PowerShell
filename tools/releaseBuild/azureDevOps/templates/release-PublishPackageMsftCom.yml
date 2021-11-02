@@ -25,14 +25,14 @@ steps:
 
 - pwsh: |
     $metadata = Get-Content -Path "$ENV:PIPELINE_WORKSPACE/releasePipeline/metadata/release.json" -Raw | ConvertFrom-Json
-    Write-Verbose -Verbose "$(ReleaseTag) $(RepoClientCliClientID) $(RepoClientCliSecret) $(AzureVersion) $($metadata.LTSRelease)"
+    Write-Verbose -Verbose "$(ReleaseTag) $(RepoClientCliClientID) $(RepoClientCliSecret) $(AzureVersion) $($metadata.LTSRelease.Latest)"
     $params = @{
         ReleaseTag = "$(ReleaseTag)"
         AadClientId = "$(RepoClientCliClientID)"
         AadClientSecret = "$(RepoClientCliSecret)"
         BlobFolderName = "$(AzureVersion)"
-        LTS = $metadata.LTSRelease
+        LTS = $metadata.LTSRelease.Latest
         ForProduction = $true
     }
-    & '$(Pipeline.Workspace)/tools/packages.microsoft.com/releaseLinuxPackages.ps1' @params
+    & '$(Pipeline.Workspace)/tools/packages.microsoft.com/releaseLinuxPackages.ps1' -MappingFilePath '$(System.DefaultWorkingDirectory)/tools/packages.microsoft.com/mapping.json'  @params
   displayName: Run release script

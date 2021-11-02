@@ -591,7 +591,7 @@ namespace System.Management.Automation.Remoting.Client
                 // start the timer..so client can fail deterministically
                 _closeTimeOutTimer.Change(60 * 1000, Timeout.Infinite);
             }
-            catch (IOException)
+            catch (Exception ex) when (ex is IOException || ex is ObjectDisposedException)
             {
                 // Cannot communicate with server.  Allow client to complete close operation.
                 shouldRaiseCloseCompleted = true;
@@ -635,30 +635,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 _cmdTransportManagers.Clear();
                 _closeTimeOutTimer.Dispose();
-
-                // Stop session processing thread.
-                try
-                {
-                    _sessionMessageQueue.CompleteAdding();
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Object already disposed.
-                }
-
-                _sessionMessageQueue.Dispose();
-
-                // Stop command processing thread.
-                try
-                {
-                    _commandMessageQueue.CompleteAdding();
-                }
-                catch (ObjectDisposedException)
-                {
-                    // Object already disposed.
-                }
-
-                _commandMessageQueue.Dispose();
+                DisposeMessageQueue();
             }
         }
 
@@ -1055,6 +1032,37 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         #endregion
+    
+        #region Protected Methods
+
+        protected void DisposeMessageQueue()
+        {
+            // Stop session processing thread.
+            try
+            {
+                _sessionMessageQueue.CompleteAdding();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Object already disposed.
+            }
+
+            _sessionMessageQueue.Dispose();
+
+            // Stop command processing thread.
+            try
+            {
+                _commandMessageQueue.CompleteAdding();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Object already disposed.
+            }
+
+            _commandMessageQueue.Dispose();
+        }
+
+        #endregion
     }
 
     internal class OutOfProcessClientSessionTransportManager : OutOfProcessClientSessionTransportManagerBase
@@ -1414,7 +1422,7 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
                 }
 
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = e.Message ?? string.Empty;
                 _tracer.WriteMessage("HyperVSocketClientSessionTransportManager", "StartReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
 
@@ -1584,6 +1592,7 @@ namespace System.Management.Automation.Remoting.Client
         private StreamReader _stdOutReader;
         private StreamReader _stdErrReader;
         private bool _connectionEstablished;
+        private Timer _connectionTimer;
 
         private const string _threadName = "SSHTransport Reader Thread";
 
@@ -1641,6 +1650,49 @@ namespace System.Management.Automation.Remoting.Client
 
             // Create reader thread and send first PSRP message.
             StartReaderThread(_stdOutReader);
+
+            if (_connectionInfo.ConnectingTimeout < 0)
+            {
+                return;
+            }
+
+            // Start connection timeout timer if requested.
+            // Timer callback occurs only once after timeout time.
+            _connectionTimer = new Timer(
+                callback: (_) => 
+                {
+                    if (_connectionEstablished)
+                    {
+                        return;
+                    }
+
+                    // Detect if SSH client process terminates prematurely.
+                    bool sshTerminated = false;
+                    try
+                    {
+                        using (var sshProcess = System.Diagnostics.Process.GetProcessById(_sshProcessId))
+                        {
+                            sshTerminated = sshProcess == null || sshProcess.Handle == IntPtr.Zero || sshProcess.HasExited;
+                        }
+                    }
+                    catch
+                    {
+                        sshTerminated = true;
+                    }
+
+                    var errorMessage = StringUtil.Format(RemotingErrorIdStrings.SSHClientConnectTimeout, _connectionInfo.ConnectingTimeout / 1000);
+                    if (sshTerminated)
+                    {
+                        errorMessage += RemotingErrorIdStrings.SSHClientConnectProcessTerminated;
+                    }
+
+                    // Report error and terminate connection attempt.
+                    HandleSSHError(
+                        new PSRemotingTransportException(errorMessage));
+                },
+                state: null,
+                dueTime: _connectionInfo.ConnectingTimeout,
+                period: Timeout.Infinite);
         }
 
         internal override void CloseAsync()
@@ -1660,14 +1712,20 @@ namespace System.Management.Automation.Remoting.Client
 
         private void CloseConnection()
         {
+            // Ensure message queue is disposed.
+            DisposeMessageQueue();
+
+            var connectionTimer = Interlocked.Exchange(ref _connectionTimer, null);
+            connectionTimer?.Dispose();
+
             var stdInWriter = Interlocked.Exchange(ref _stdInWriter, null);
-            if (stdInWriter != null) { stdInWriter.Dispose(); }
+            stdInWriter?.Dispose();
 
             var stdOutReader = Interlocked.Exchange(ref _stdOutReader, null);
-            if (stdOutReader != null) { stdOutReader.Dispose(); }
+            stdOutReader?.Dispose();
 
             var stdErrReader = Interlocked.Exchange(ref _stdErrReader, null);
-            if (stdErrReader != null) { stdErrReader.Dispose(); }
+            stdErrReader?.Dispose();
 
             // The CloseConnection() method can be called multiple times from multiple places.
             // Set the _sshProcessId to zero here so that we go through the work of finding
@@ -1677,11 +1735,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 try
                 {
-                    var sshProcess = System.Diagnostics.Process.GetProcessById(sshProcessId);
-                    if ((sshProcess != null) && (sshProcess.Handle != IntPtr.Zero) && !sshProcess.HasExited)
-                    {
-                        sshProcess.Kill();
-                    }
+                    _connectionInfo.KillSSHProcess(sshProcessId);
                 }
                 catch (ArgumentException) { }
                 catch (InvalidOperationException) { }
@@ -1708,7 +1762,39 @@ namespace System.Management.Automation.Remoting.Client
 
                 while (true)
                 {
-                    string error = ReadError(reader);
+                    string error;
+
+                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSRemotingSSHTransportErrorHandling))
+                    {
+                        // Blocking read from StdError stream
+                        error = reader.ReadLine();
+
+                        if (error == null)
+                        {
+                            // Stream is closed unexpectedly.
+                            throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
+                        }
+
+                        if (error.Length == 0)
+                        {
+                            // Ignore
+                            continue;
+                        }
+
+                        try
+                        {
+                            // Messages in error stream from ssh are unreliable, and may just be warnings or
+                            // banner text.
+                            // So just report the messages but don't act on them.
+                            System.Console.WriteLine(error);
+                        }
+                        catch (IOException)
+                        { }
+
+                        continue;
+                    }
+
+                    error = ReadError(reader);
 
                     if (error.Length == 0)
                     {
@@ -1730,7 +1816,7 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (Exception e)
             {
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = e.Message ?? string.Empty;
                 _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessErrorThread", Guid.Empty,
                     "Transport manager error thread ended with error: {0}", errorMsg);
 
@@ -1854,7 +1940,7 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
                 }
 
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = e.Message ?? string.Empty;
                 _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
             }
@@ -1981,7 +2067,7 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accommodate read buffer size.");
                 }
 
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = e.Message ?? string.Empty;
                 _tracer.WriteMessage("NamedPipeClientSessionTransportManager", "StartReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
             }

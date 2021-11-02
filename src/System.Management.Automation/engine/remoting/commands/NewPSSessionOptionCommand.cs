@@ -136,11 +136,13 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _openTimeout.HasValue ? _openTimeout.Value :
-                    RunspaceConnectionInfo.DefaultOpenTimeout;
+                return _openTimeout ?? RunspaceConnectionInfo.DefaultOpenTimeout;
             }
 
-            set { _openTimeout = value; }
+            set
+            {
+                _openTimeout = value;
+            }
         }
 
         private int? _openTimeout;
@@ -161,11 +163,13 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _cancelTimeout.HasValue ? _cancelTimeout.Value :
-                    BaseTransportManager.ClientCloseTimeoutMs;
+                return _cancelTimeout ?? BaseTransportManager.ClientCloseTimeoutMs;
             }
 
-            set { _cancelTimeout = value; }
+            set
+            {
+                _cancelTimeout = value;
+            }
         }
 
         private int? _cancelTimeout;
@@ -183,11 +187,13 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _idleTimeout.HasValue ? _idleTimeout.Value
-                    : RunspaceConnectionInfo.DefaultIdleTimeout;
+                return _idleTimeout ?? RunspaceConnectionInfo.DefaultIdleTimeout;
             }
 
-            set { _idleTimeout = value; }
+            set
+            {
+                _idleTimeout = value;
+            }
         }
 
         private int? _idleTimeout;
@@ -290,11 +296,13 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (_operationtimeout.HasValue ? _operationtimeout.Value :
-                    BaseTransportManager.ClientDefaultOperationTimeoutMs);
+                return _operationtimeout ?? BaseTransportManager.ClientDefaultOperationTimeoutMs;
             }
 
-            set { _operationtimeout = value; }
+            set
+            {
+                _operationtimeout = value;
+            }
         }
 
         private int? _operationtimeout;
@@ -308,7 +316,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public SwitchParameter NoEncryption
         {
-            get { return _noencryption; }
+            get
+            {
+                return _noencryption;
+            }
 
             set
             {
@@ -327,7 +338,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
         public SwitchParameter UseUTF16
         {
-            get { return _useutf16; }
+            get
+            {
+                return _useutf16;
+            }
 
             set
             {

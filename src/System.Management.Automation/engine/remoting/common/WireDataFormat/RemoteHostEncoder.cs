@@ -24,7 +24,7 @@ namespace System.Management.Automation.Remoting
     /// guarantees that transmitting on the wire will not change the encoded
     /// object's type.
     /// </summary>
-    internal class RemoteHostEncoder
+    internal static class RemoteHostEncoder
     {
         /// <summary>
         /// Is known type.

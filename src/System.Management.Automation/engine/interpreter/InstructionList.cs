@@ -95,7 +95,9 @@ namespace System.Management.Automation.Interpreter
         private List<BranchLabel> _labels;
 
         // list of (instruction index, cookie) sorted by instruction index:
+#pragma warning disable IDE0044 // Add readonly modifier
         private List<KeyValuePair<int, object>> _debugCookies = null;
+#pragma warning restore IDE0044 // Variable is assigned when DEBUG is defined.
 
         #region Debug View
 
@@ -273,7 +275,7 @@ namespace System.Management.Automation.Interpreter
         static InstructionList() {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler((_, __) => {
                 PerfTrack.DumpHistogram(_executedInstructions);
-                Console.WriteLine("-- Total executed: {0}", _executedInstructions.Values.Aggregate(0, (sum, value) => sum + value));
+                Console.WriteLine("-- Total executed: {0}", _executedInstructions.Values.Aggregate(0, static (sum, value) => sum + value));
                 Console.WriteLine("-----");
 
                 var referenced = new Dictionary<string, int>();

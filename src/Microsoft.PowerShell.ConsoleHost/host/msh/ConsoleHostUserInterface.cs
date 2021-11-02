@@ -60,9 +60,41 @@ namespace Microsoft.PowerShell
 
             _parent = parent;
             _rawui = new ConsoleHostRawUserInterface(this);
-
-#if UNIX
             SupportsVirtualTerminal = true;
+            _isInteractiveTestToolListening = false;
+
+            // check if TERM env var is set
+            // `dumb` means explicitly don't use VT
+            // `xterm-mono` and `xtermm` means support VT, but emit plaintext
+            switch (Environment.GetEnvironmentVariable("TERM"))
+            {
+                case "dumb":
+                    SupportsVirtualTerminal = false;
+                    break;
+                case "xterm-mono":
+                case "xtermm":
+                    PSStyle.Instance.OutputRendering = OutputRendering.PlainText;
+                    break;
+                default:
+                    break;
+            }
+
+            // widely supported by CLI tools via https://no-color.org/
+            if (Environment.GetEnvironmentVariable("NO_COLOR") != null)
+            {
+                PSStyle.Instance.OutputRendering = OutputRendering.PlainText;
+            }
+
+            if (SupportsVirtualTerminal)
+            {
+                SupportsVirtualTerminal = TryTurnOnVtMode();
+            }
+        }
+
+        internal bool TryTurnOnVtMode()
+        {
+#if UNIX
+            return true;
 #else
             try
             {
@@ -76,15 +108,16 @@ namespace Microsoft.PowerShell
                     // We only know if vt100 is supported if the previous call actually set the new flag, older
                     // systems ignore the setting.
                     m = ConsoleControl.GetMode(handle);
-                    this.SupportsVirtualTerminal = (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
+                    return (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
                 }
             }
             catch
             {
+                // Do nothing if failed
             }
-#endif
 
-            _isInteractiveTestToolListening = false;
+            return false;
+#endif
         }
 
         /// <summary>
@@ -696,7 +729,7 @@ namespace Microsoft.PowerShell
             }
 
             TextWriter writer = Console.IsOutputRedirected ? Console.Out : _parent.ConsoleTextWriter;
-            value = Utils.GetOutputString(value, isHost: true, SupportsVirtualTerminal, Console.IsOutputRedirected);
+            value = GetOutputString(value, SupportsVirtualTerminal, Console.IsOutputRedirected);
 
             if (_parent.IsRunningAsync)
             {
@@ -925,7 +958,7 @@ namespace Microsoft.PowerShell
                     int w = maxWidthInBufferCells - cellCounter;
                     Dbg.Assert(w < e.Current.CellCount, "width remaining should be less than size of word");
 
-                    line.Append(e.Current.Text.Substring(0, w));
+                    line.Append(e.Current.Text.AsSpan(0, w));
 
                     l = line.ToString();
                     Dbg.Assert(RawUI.LengthInBufferCells(l) == maxWidthInBufferCells, "line should exactly fit");
@@ -1180,9 +1213,9 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                if (SupportsVirtualTerminal)
                 {
-                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Debug) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message));
+                    WriteLine(GetFormatStyleString(FormatStyle.Debug, Console.IsOutputRedirected) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1241,9 +1274,9 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                if (SupportsVirtualTerminal)
                 {
-                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Verbose) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message));
+                    WriteLine(GetFormatStyleString(FormatStyle.Verbose, Console.IsOutputRedirected) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1285,9 +1318,9 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                if (SupportsVirtualTerminal)
                 {
-                    WriteLine(Utils.GetFormatStyleString(Utils.FormatStyle.Warning) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message));
+                    WriteLine(GetFormatStyleString(FormatStyle.Warning, Console.IsOutputRedirected) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1302,35 +1335,36 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Invoked by CommandBase.WriteProgress to display a progress record.
         /// </summary>
-        public override void WriteProgress(Int64 sourceId, ProgressRecord record)
+        public override void WriteProgress(long sourceId, ProgressRecord record)
         {
-            if (record == null)
+            Dbg.Assert(record != null, "WriteProgress called with null ProgressRecord");
+
+            if (Console.IsOutputRedirected)
             {
-                Dbg.Assert(false, "WriteProgress called with null ProgressRecord");
+                // Do not write progress bar when the stdout is redirected.
+                return;
+            }
+
+            bool matchPattern;
+            string currentOperation = HostUtilities.RemoveIdentifierInfoFromMessage(record.CurrentOperation, out matchPattern);
+            if (matchPattern)
+            {
+                record = new ProgressRecord(record) { CurrentOperation = currentOperation };
+            }
+
+            // We allow only one thread at a time to update the progress state.)
+            if (_parent.ErrorFormat == Serialization.DataFormat.XML)
+            {
+                PSObject obj = new PSObject();
+                obj.Properties.Add(new PSNoteProperty("SourceId", sourceId));
+                obj.Properties.Add(new PSNoteProperty("Record", record));
+                _parent.ErrorSerializer.Serialize(obj, "progress");
             }
             else
             {
-                bool matchPattern;
-                string currentOperation = HostUtilities.RemoveIdentifierInfoFromMessage(record.CurrentOperation, out matchPattern);
-                if (matchPattern)
+                lock (_instanceLock)
                 {
-                    record = new ProgressRecord(record) { CurrentOperation = currentOperation };
-                }
-
-                // We allow only one thread at a time to update the progress state.)
-                if (_parent.ErrorFormat == Serialization.DataFormat.XML)
-                {
-                    PSObject obj = new PSObject();
-                    obj.Properties.Add(new PSNoteProperty("SourceId", sourceId));
-                    obj.Properties.Add(new PSNoteProperty("Record", record));
-                    _parent.ErrorSerializer.Serialize(obj, "progress");
-                }
-                else
-                {
-                    lock (_instanceLock)
-                    {
-                        HandleIncomingProgressRecord(sourceId, record);
-                    }
+                    HandleIncomingProgressRecord(sourceId, record);
                 }
             }
         }
@@ -1356,7 +1390,7 @@ namespace Microsoft.PowerShell
             {
                 if (writer == _parent.ConsoleTextWriter)
                 {
-                    if (SupportsVirtualTerminal && ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    if (SupportsVirtualTerminal)
                     {
                         WriteLine(value);
                     }
@@ -1982,8 +2016,7 @@ namespace Microsoft.PowerShell
                     var completionResult = commandCompletion.GetNextResult(rlResult == ReadLineResult.endedOnTab);
                     if (completionResult != null)
                     {
-                        completedInput = completionInput.Substring(0, commandCompletion.ReplacementIndex)
-                                         + completionResult.CompletionText;
+                        completedInput = string.Concat(completionInput.AsSpan(0, commandCompletion.ReplacementIndex), completionResult.CompletionText);
                     }
                     else
                     {
@@ -2080,20 +2113,20 @@ namespace Microsoft.PowerShell
             for (int i = 0; i < length; i++)
             {
                 var down = new ConsoleControl.INPUT();
-                down.Type = (UInt32)ConsoleControl.InputType.Keyboard;
+                down.Type = (uint)ConsoleControl.InputType.Keyboard;
                 down.Data.Keyboard = new ConsoleControl.KeyboardInput();
-                down.Data.Keyboard.Vk = (UInt16)ConsoleControl.VirtualKeyCode.Left;
+                down.Data.Keyboard.Vk = (ushort)ConsoleControl.VirtualKeyCode.Left;
                 down.Data.Keyboard.Scan = 0;
                 down.Data.Keyboard.Flags = 0;
                 down.Data.Keyboard.Time = 0;
                 down.Data.Keyboard.ExtraInfo = IntPtr.Zero;
 
                 var up = new ConsoleControl.INPUT();
-                up.Type = (UInt32)ConsoleControl.InputType.Keyboard;
+                up.Type = (uint)ConsoleControl.InputType.Keyboard;
                 up.Data.Keyboard = new ConsoleControl.KeyboardInput();
-                up.Data.Keyboard.Vk = (UInt16)ConsoleControl.VirtualKeyCode.Left;
+                up.Data.Keyboard.Vk = (ushort)ConsoleControl.VirtualKeyCode.Left;
                 up.Data.Keyboard.Scan = 0;
-                up.Data.Keyboard.Flags = (UInt32)ConsoleControl.KeyboardFlag.KeyUp;
+                up.Data.Keyboard.Flags = (uint)ConsoleControl.KeyboardFlag.KeyUp;
                 up.Data.Keyboard.Time = 0;
                 up.Data.Keyboard.ExtraInfo = IntPtr.Zero;
 

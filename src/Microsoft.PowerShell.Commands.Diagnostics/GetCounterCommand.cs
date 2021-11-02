@@ -55,7 +55,10 @@ namespace Microsoft.PowerShell.Commands
                             Justification = "A string[] is required here because that is the type Powershell supports")]
         public string[] Counter
         {
-            get { return _counter; }
+            get
+            {
+                return _counter;
+            }
 
             set
             {
@@ -100,7 +103,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateRange((Int64)1, Int64.MaxValue)]
         public Int64 MaxSamples
         {
-            get { return _maxSamples; }
+            get
+            {
+                return _maxSamples;
+            }
 
             set
             {
@@ -581,13 +587,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (string machine in ComputerName)
                     {
+                        string slashBeforePath = path.Length > 0 && path[0] == '\\' ? string.Empty : "\\";
                         if (machine.StartsWith("\\\\", StringComparison.OrdinalIgnoreCase))
                         {
-                            retColl.Add(machine + "\\" + path);
+                            retColl.Add(machine + slashBeforePath + path);
                         }
                         else
                         {
-                            retColl.Add("\\\\" + machine + "\\" + path);
+                            retColl.Add("\\\\" + machine + slashBeforePath + path);
                         }
                     }
                 }

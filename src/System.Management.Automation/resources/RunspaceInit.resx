@@ -186,8 +186,14 @@
   <data name="NestedPromptLevelDescription" xml:space="preserve">
     <value>Dictates what type of prompt should be displayed for the current nesting level</value>
   </data>
+  <data name="PSNativeCommandUseErrorActionPreferenceDescription" xml:space="preserve">
+    <value>If true, $ErrorActionPreference applies to native executables, so that non-zero exit codes will generate cmdlet-style errors governed by error action settings</value>
+  </data>
   <data name="WhatIfPreferenceDescription" xml:space="preserve">
     <value>If true, WhatIf is considered to be enabled for all commands.</value>
+  </data>
+  <data name="NativeCommandArgumentPassingDescription" xml:space="preserve">
+    <value>Dictates how arguments are passed to native executables.</value>
   </data>
   <data name="FormatEnumerationLimitDescription" xml:space="preserve">
     <value>Dictates the limit of enumeration on formatting IEnumerable objects</value>

@@ -4,10 +4,13 @@
 Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
     BeforeAll {
         $originalSuppressPref = $env:__SuppressAnsiEscapeSequences
+        $originalRendering = $PSStyle.OutputRendering
+        $PSStyle.OutputRendering = 'Ansi'
     }
 
     AfterAll {
         $env:__SuppressAnsiEscapeSequences = $originalSuppressPref
+        $PSStyle.OutputRendering = $originalRendering
     }
 
 

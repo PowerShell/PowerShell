@@ -769,7 +769,10 @@ namespace System.Management.Automation
         /// </remarks>
         public string RecommendedAction
         {
-            get { return ErrorRecord.NotNull(_recommendedAction); }
+            get
+            {
+                return ErrorRecord.NotNull(_recommendedAction);
+            }
 
             set
             {
@@ -1761,6 +1764,7 @@ namespace System.Management.Automation
     /// <seealso cref="Provider.CmdletProvider"/>
     /// is no longer available.
     /// </remarks>
+#nullable enable
     public interface IContainsErrorRecord
     {
         /// <summary>
@@ -1789,6 +1793,7 @@ namespace System.Management.Automation
         /// </remarks>
         ErrorRecord ErrorRecord { get; }
     }
+#nullable restore
 
     /// <summary>
     /// Objects implementing this interface can be used by
@@ -1810,6 +1815,7 @@ namespace System.Management.Automation
     /// since the improved
     /// information about the error may help enable future scenarios.
     /// </remarks>
+#nullable enable
     public interface IResourceSupplier
     {
         /// <summary>

@@ -529,7 +529,7 @@ namespace System.Management.Automation
                 // For background jobs rewrite the pipeline as a Start-Job command
                 var scriptblockBodyString = pipelineAst.Extent.Text;
                 var pipelineOffset = pipelineAst.Extent.StartOffset;
-                var variables = pipelineAst.FindAll(x => x is VariableExpressionAst, true);
+                var variables = pipelineAst.FindAll(static x => x is VariableExpressionAst, true);
 
                 // Used to make sure that the job runs in the current directory
                 const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location -LiteralPath $using:pwd ; ";
@@ -1379,7 +1379,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Represent a handler search result.
         /// </summary>
-        private class HandlerSearchResult
+        private sealed class HandlerSearchResult
         {
             internal HandlerSearchResult()
             {
@@ -1578,23 +1578,33 @@ namespace System.Management.Automation
 
         internal static bool SuspendStoppingPipeline(ExecutionContext context)
         {
-            LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            if (lpl != null)
+            var localPipeline = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
+            return SuspendStoppingPipelineImpl(localPipeline);
+        }
+
+        internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
+        {
+            var localPipeline = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
+            RestoreStoppingPipelineImpl(localPipeline, oldIsStopping);
+        }
+
+        internal static bool SuspendStoppingPipelineImpl(LocalPipeline localPipeline)
+        {
+            if (localPipeline is not null)
             {
-                bool oldIsStopping = lpl.Stopper.IsStopping;
-                lpl.Stopper.IsStopping = false;
+                bool oldIsStopping = localPipeline.Stopper.IsStopping;
+                localPipeline.Stopper.IsStopping = false;
                 return oldIsStopping;
             }
 
             return false;
         }
 
-        internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
+        internal static void RestoreStoppingPipelineImpl(LocalPipeline localPipeline, bool oldIsStopping)
         {
-            LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            if (lpl != null)
+            if (localPipeline is not null)
             {
-                lpl.Stopper.IsStopping = oldIsStopping;
+                localPipeline.Stopper.IsStopping = oldIsStopping;
             }
         }
 
@@ -2855,6 +2865,11 @@ namespace System.Management.Automation
             ScriptBlock sb = expression as ScriptBlock;
             if (sb != null)
             {
+                if (sb.HasCleanBlock)
+                {
+                    throw new PSNotSupportedException(ParserStrings.ForEachNotSupportCleanBlock);
+                }
+
                 Pipe outputPipe = new Pipe(result);
                 if (sb.HasBeginBlock)
                 {

@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Subsystem.DSC;
+using System.Management.Automation.Subsystem.Prediction;
 
 namespace System.Management.Automation.Subsystem
 {
@@ -28,6 +30,11 @@ namespace System.Management.Automation.Subsystem
                     SubsystemKind.CommandPredictor,
                     allowUnregistration: true,
                     allowMultipleRegistration: true),
+
+                SubsystemInfo.Create<ICrossPlatformDsc>(
+                    SubsystemKind.CrossPlatformDsc,
+                    allowUnregistration: true,
+                    allowMultipleRegistration: false),
             };
 
             var subSystemTypeMap = new Dictionary<Type, SubsystemInfo>(subsystems.Length);
@@ -59,7 +66,7 @@ namespace System.Management.Automation.Subsystem
         /// directly interacting with the implementation proxy object of `IPrediction`.
         /// </remarks>
         /// <typeparam name="TConcreteSubsystem">The concrete subsystem base type.</typeparam>
-        /// <returns>The most recently registered implmentation object of the concrete subsystem.</returns>
+        /// <returns>The most recently registered implementation object of the concrete subsystem.</returns>
         internal static TConcreteSubsystem? GetSubsystem<TConcreteSubsystem>()
             where TConcreteSubsystem : class, ISubsystem
         {
@@ -80,7 +87,7 @@ namespace System.Management.Automation.Subsystem
         /// Return an empty collection when the given subsystem is not registered.
         /// </summary>
         /// <typeparam name="TConcreteSubsystem">The concrete subsystem base type.</typeparam>
-        /// <returns>A readonly collection of all implmentation objects registered for the concrete subsystem.</returns>
+        /// <returns>A readonly collection of all implementation objects registered for the concrete subsystem.</returns>
         internal static ReadOnlyCollection<TConcreteSubsystem> GetSubsystems<TConcreteSubsystem>()
             where TConcreteSubsystem : class, ISubsystem
         {
@@ -273,7 +280,14 @@ namespace System.Management.Automation.Subsystem
             ISubsystem impl = subsystemInfo.UnregisterImplementation(id);
             if (impl is IDisposable disposable)
             {
-                disposable.Dispose();
+                try
+                {
+                    disposable.Dispose();
+                }
+                catch
+                {
+                    // It's OK to ignore all exceptions when disposing the object.
+                }
             }
         }
 

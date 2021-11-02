@@ -208,7 +208,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public int OpenTimeout
         {
-            get { return _openTimeout; }
+            get
+            {
+                return _openTimeout;
+            }
 
             set
             {
@@ -598,7 +601,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override string CertificateThumbprint
         {
-            get { return _thumbPrint; }
+            get
+            {
+                return _thumbPrint;
+            }
 
             set
             {
@@ -675,7 +681,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public AuthenticationMechanism ProxyAuthentication
         {
-            get { return _proxyAuthentication; }
+            get
+            {
+                return _proxyAuthentication;
+            }
 
             set
             {
@@ -702,7 +711,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public PSCredential ProxyCredential
         {
-            get { return _proxyCredential; }
+            get
+            {
+                return _proxyCredential;
+            }
 
             set
             {
@@ -1142,10 +1154,9 @@ namespace System.Management.Automation.Runspaces
                 resolvedShellUri = DefaultShellUri;
             }
 
-            if (resolvedShellUri.IndexOf(
-                System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase) == -1)
+            if (!resolvedShellUri.Contains(WSManNativeApi.ResourceURIPrefix, StringComparison.OrdinalIgnoreCase))
             {
-                resolvedShellUri = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + resolvedShellUri;
+                resolvedShellUri = WSManNativeApi.ResourceURIPrefix + resolvedShellUri;
             }
 
             return resolvedShellUri;
@@ -1452,8 +1463,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Default value for shell.
         /// </summary>
-        private const string DefaultShellUri =
-             System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + RemotingConstants.DefaultShellName;
+        private const string DefaultShellUri = WSManNativeApi.ResourceURIPrefix + RemotingConstants.DefaultShellName;
 
         /// <summary>
         /// Default credentials - null indicates credentials of
@@ -1583,7 +1593,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {
@@ -1705,7 +1718,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public string AppDomainName
         {
-            get { return _appDomainName; }
+            get
+            {
+                return _appDomainName;
+            }
 
             set
             {
@@ -1812,7 +1828,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {
@@ -1888,6 +1907,20 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     public sealed class SSHConnectionInfo : RunspaceConnectionInfo
     {
+        #region Constants
+
+        /// <summary>
+        /// Default value for subsystem.
+        /// </summary>
+        private const string DefaultSubsystem = "powershell";
+        
+        /// <summary>
+        /// Default value is infinite timeout.
+        /// </summary>
+        private const int DefaultConnectingTimeoutTime = Timeout.Infinite;
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -1926,6 +1959,16 @@ namespace System.Management.Automation.Runspaces
             set;
         }
 
+        /// <summary>
+        /// Gets or sets a time in milliseconds after which a connection attempt is terminated.
+        /// Default value (-1) never times out and a connection attempt waits indefinitely.
+        /// </summary>
+        public int ConnectingTimeout
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Constructors
@@ -1949,11 +1992,12 @@ namespace System.Management.Automation.Runspaces
         {
             if (computerName == null) { throw new PSArgumentNullException(nameof(computerName)); }
 
-            this.UserName = userName;
-            this.ComputerName = computerName;
-            this.KeyFilePath = keyFilePath;
-            this.Port = 0;
-            this.Subsystem = DefaultSubsystem;
+            UserName = userName;
+            ComputerName = computerName;
+            KeyFilePath = keyFilePath;
+            Port = 0;
+            Subsystem = DefaultSubsystem;
+            ConnectingTimeout = DefaultConnectingTimeoutTime;
         }
 
         /// <summary>
@@ -1970,8 +2014,7 @@ namespace System.Management.Automation.Runspaces
             int port) : this(userName, computerName, keyFilePath)
         {
             ValidatePortInRange(port);
-
-            this.Port = port;
+            Port = port;
         }
 
         /// <summary>
@@ -1987,12 +2030,29 @@ namespace System.Management.Automation.Runspaces
             string computerName,
             string keyFilePath,
             int port,
-            string subsystem) : this(userName, computerName, keyFilePath)
+            string subsystem) : this(userName, computerName, keyFilePath, port)
         {
-            ValidatePortInRange(port);
+            Subsystem = string.IsNullOrEmpty(subsystem) ? DefaultSubsystem : subsystem;
+        }
 
-            this.Port = port;
-            this.Subsystem = (string.IsNullOrEmpty(subsystem)) ? DefaultSubsystem : subsystem;
+        /// <summary>
+        /// Initializes a new instance of SSHConnectionInfo.
+        /// </summary>
+        /// <param name="userName">Name of user.</param>
+        /// <param name="computerName">Name of computer.</param>
+        /// <param name="keyFilePath">Path of key file.</param>
+        /// <param name="port">Port number for connection (default 22).</param>
+        /// <param name="subsystem">Subsystem to use (default 'powershell').</param>
+        /// <param name="connectingTimeout">Timeout time for terminating connection attempt.</param>
+        public SSHConnectionInfo(
+            string userName,
+            string computerName,
+            string keyFilePath,
+            int port,
+            string subsystem,
+            int connectingTimeout) : this(userName, computerName, keyFilePath, port, subsystem)
+        {
+            ConnectingTimeout = connectingTimeout;
         }
 
         #endregion
@@ -2045,11 +2105,12 @@ namespace System.Management.Automation.Runspaces
         internal override RunspaceConnectionInfo InternalCopy()
         {
             SSHConnectionInfo newCopy = new SSHConnectionInfo();
-            newCopy.ComputerName = this.ComputerName;
-            newCopy.UserName = this.UserName;
-            newCopy.KeyFilePath = this.KeyFilePath;
-            newCopy.Port = this.Port;
-            newCopy.Subsystem = this.Subsystem;
+            newCopy.ComputerName = ComputerName;
+            newCopy.UserName = UserName;
+            newCopy.KeyFilePath = KeyFilePath;
+            newCopy.Port = Port;
+            newCopy.Subsystem = Subsystem;
+            newCopy.ConnectingTimeout = ConnectingTimeout;
 
             return newCopy;
         }
@@ -2130,7 +2191,7 @@ namespace System.Management.Automation.Runspaces
                 startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-i ""{0}""", this.KeyFilePath));
             }
 
-            // pass "-l login_name" commmand line argument to ssh if UserName is set
+            // pass "-l login_name" command line argument to ssh if UserName is set
             // if UserName is not set, then ssh will use User from ssh_config if defined else the environment user by default
             if (!string.IsNullOrEmpty(this.UserName))
             {
@@ -2166,14 +2227,10 @@ namespace System.Management.Automation.Runspaces
             return StartSSHProcessImpl(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
         }
 
-        #endregion
-
-        #region Constants
-
-        /// <summary>
-        /// Default value for subsystem.
-        /// </summary>
-        private const string DefaultSubsystem = "powershell";
+        internal void KillSSHProcess(int pid)
+        {
+            KillSSHProcessImpl(pid);
+        }
 
         #endregion
 
@@ -2211,6 +2268,16 @@ namespace System.Management.Automation.Runspaces
             stdErrReaderVar = stdErrReader;
 
             return pid;
+        }
+
+        private static void KillSSHProcessImpl(int pid)
+        {
+            // killing a zombie might or might not return ESRCH, so we ignore kill's return value
+            Platform.NonWindowsKillProcess(pid);
+
+            // block while waiting for process to die
+            // shouldn't take long after SIGKILL
+            Platform.NonWindowsWaitPid(pid, false);
         }
 
         #region UNIX Create Process
@@ -2518,6 +2585,17 @@ namespace System.Management.Automation.Runspaces
             return sshProcess.Id;
         }
 
+        private static void KillSSHProcessImpl(int pid)
+        {
+            using (var sshProcess = System.Diagnostics.Process.GetProcessById(pid))
+            {
+                if ((sshProcess != null) && (sshProcess.Handle != IntPtr.Zero) && !sshProcess.HasExited)
+                {
+                    sshProcess.Kill();
+                }
+            }
+        }
+
         // Process creation flags
         private const int CREATE_NEW_PROCESS_GROUP = 0x00000200;
         private const int CREATE_SUSPENDED = 0x00000004;
@@ -2795,7 +2873,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {
@@ -2920,7 +3001,10 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override PSCredential Credential
         {
-            get { return _credential; }
+            get
+            {
+                return _credential;
+            }
 
             set
             {

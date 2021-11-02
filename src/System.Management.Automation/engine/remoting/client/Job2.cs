@@ -533,7 +533,10 @@ namespace System.Management.Automation
 
         internal PSEventManager EventManager
         {
-            get { return _eventManager; }
+            get
+            {
+                return _eventManager;
+            }
 
             set
             {
@@ -2035,7 +2038,7 @@ namespace System.Management.Automation
         {
             if (ChildJobs == null || ChildJobs.Count == 0)
                 return string.Empty;
-            string location = ChildJobs.Select((job) => job.Location).Aggregate((s1, s2) => s1 + ',' + s2);
+            string location = ChildJobs.Select(static (job) => job.Location).Aggregate((s1, s2) => s1 + ',' + s2);
             return location;
         }
 

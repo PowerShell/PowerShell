@@ -74,6 +74,16 @@ namespace Microsoft.PowerShell.Commands
         private bool _append;
 
         /// <summary>
+        /// Gets or sets the Encoding.
+        /// </summary>
+        [Parameter(ParameterSetName = "File")]
+        [Parameter(ParameterSetName = "LiteralFile")]
+        [ArgumentToEncodingTransformationAttribute]
+        [ArgumentEncodingCompletionsAttribute]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
+
+        /// <summary>
         /// Variable parameter.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Variable")]
@@ -106,14 +116,14 @@ namespace Microsoft.PowerShell.Commands
                 _commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
                 _commandWrapper.AddNamedParameter("filepath", _fileName);
                 _commandWrapper.AddNamedParameter("append", _append);
-                _commandWrapper.AddNamedParameter("Encoding", Encoding);
+                _commandWrapper.AddNamedParameter("encoding", Encoding);
             }
             else if (string.Equals(ParameterSetName, "LiteralFile", StringComparison.OrdinalIgnoreCase))
             {
                 _commandWrapper.Initialize(Context, "out-file", typeof(OutFileCommand));
                 _commandWrapper.AddNamedParameter("LiteralPath", _fileName);
                 _commandWrapper.AddNamedParameter("append", _append);
-                _commandWrapper.AddNamedParameter("Encoding", Encoding);
+                _commandWrapper.AddNamedParameter("encoding", Encoding);
             }
             else
             {

@@ -147,7 +147,7 @@ namespace System.Management.Automation.Interpreter
 
             // Can only used predefined delegates if we have no byref types and
             // the arity is small enough to fit in Func<...> or Action<...>
-            if (types.Length > MaximumArity || types.Any(t => t.IsByRef))
+            if (types.Length > MaximumArity || types.Any(static t => t.IsByRef))
             {
                 throw Assert.Unreachable;
                 // return MakeCustomDelegate(types);
@@ -224,7 +224,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal class ScriptingRuntimeHelpers
+    internal static class ScriptingRuntimeHelpers
     {
         internal static object Int32ToObject(int i)
         {

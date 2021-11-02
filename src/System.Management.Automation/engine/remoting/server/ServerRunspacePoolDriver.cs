@@ -28,6 +28,7 @@ namespace System.Management.Automation
     /// Interface exposing driver single thread invoke enter/exit
     /// nested pipeline.
     /// </summary>
+#nullable enable
     internal interface IRSPDriverInvoke
     {
         void EnterNestedPipeline();
@@ -36,6 +37,7 @@ namespace System.Management.Automation
 
         bool HandleStopSignal();
     }
+#nullable restore
 
     /// <summary>
     /// This class wraps a RunspacePoolInternal object. It is used to function
@@ -166,7 +168,7 @@ namespace System.Management.Automation
             // The default server settings is to make new commands execute in the calling thread...this saves
             // thread switching time and thread pool pressure on the service.
             // Users can override the server settings only if they are administrators
-            PSThreadOptions serverThreadOptions = configData.ShellThreadOptions.HasValue ? configData.ShellThreadOptions.Value : PSThreadOptions.UseCurrentThread;
+            PSThreadOptions serverThreadOptions = configData.ShellThreadOptions ?? PSThreadOptions.UseCurrentThread;
             if (threadOptions == PSThreadOptions.Default || threadOptions == serverThreadOptions)
             {
                 RunspacePool.ThreadOptions = serverThreadOptions;
@@ -182,7 +184,7 @@ namespace System.Management.Automation
             }
 
             // Set Thread ApartmentState for this RunspacePool
-            ApartmentState serverApartmentState = configData.ShellThreadApartmentState.HasValue ? configData.ShellThreadApartmentState.Value : Runspace.DefaultApartmentState;
+            ApartmentState serverApartmentState = configData.ShellThreadApartmentState ?? Runspace.DefaultApartmentState;
 
             if (apartmentState == ApartmentState.Unknown || apartmentState == serverApartmentState)
             {
@@ -559,7 +561,7 @@ namespace System.Management.Automation
                     Exception lastException = errorList[0] as Exception;
                     if (lastException != null)
                     {
-                        exceptionThrown = (lastException.Message != null) ? lastException.Message : string.Empty;
+                        exceptionThrown = lastException.Message ?? string.Empty;
                     }
                     else
                     {
@@ -962,7 +964,7 @@ namespace System.Management.Automation
                         {
                             IEnumerable<SessionStateCommandEntry> publicGetCommandEntries = iss
                                 .Commands["Get-Command"]
-                                .Where(entry => entry.Visibility == SessionStateEntryVisibility.Public);
+                                .Where(static entry => entry.Visibility == SessionStateEntryVisibility.Public);
                             SessionStateFunctionEntry getCommandProxy = publicGetCommandEntries.OfType<SessionStateFunctionEntry>().FirstOrDefault();
                             if (getCommandProxy != null)
                             {
@@ -1250,7 +1252,7 @@ namespace System.Management.Automation
             BreakpointManagement,
         }
 
-        private class DebuggerCommandArgument
+        private sealed class DebuggerCommandArgument
         {
             public DebugModes? Mode { get; set; }
 

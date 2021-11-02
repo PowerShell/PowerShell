@@ -1,17 +1,22 @@
 parameters:
   parentJob: ''
-  jobName: 'package_macOS'
+  buildArchitecture: x64
 
 jobs:
-- job: ${{ parameters.jobName }}
-  displayName: Package macOS
-  dependsOn: ${{ parameters.parentJob }}
+- job: package_macOS_${{ parameters.buildArchitecture }}
+  displayName: Package macOS ${{ parameters.buildArchitecture }}
+  dependsOn: MacFileSigningJob_${{ parameters.buildArchitecture }}
   condition: succeeded()
-  pool: Hosted Mac Internal
+  pool:
+    vmImage: internal-macos-10.14
   variables:
     # Turn off Homebrew analytics
-    HOMEBREW_NO_ANALYTICS: 1
-    runCodesignValidationInjection: false
+    - name: HOMEBREW_NO_ANALYTICS
+      value: 1
+    - name: runCodesignValidationInjection
+      value: false
+    - name: NugetSecurityAnalysisWarningLevel
+      value: none
   steps:
   - checkout: self
     clean: true
@@ -24,15 +29,11 @@ jobs:
       sudo chown $env:USER /PowerShell
     displayName: 'Create /PowerShell'
 
-  - template: shouldSign.yml
-
-  #- task: <task type name>@<version>
-  #  inputs:
-  #    <task specific inputs>
-  #  displayName: '<display name of task>'
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: shouldSign.yml
 
   - template: cloneToOfficialPath.yml
 
@@ -40,13 +41,13 @@ jobs:
     displayName: Download macosBinResults
     inputs:
       artifactName: 'macosBinResults'
-      itemPattern: '**/*.zip'
+      itemPattern: '**/*${{ parameters.buildArchitecture }}.zip'
       downloadPath: '$(System.ArtifactsDirectory)/Symbols'
 
   - task: DownloadBuildArtifacts@0
     displayName: Download signedMacOsBins
     inputs:
-      artifactName: 'signedMacOsBins'
+      artifactName: 'signedMacOsBins_${{ parameters.buildArchitecture }}'
       itemPattern: '**/*'
       downloadPath: '$(System.ArtifactsDirectory)/macOsBins'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
@@ -58,7 +59,7 @@ jobs:
     continueOnError: true
 
   - pwsh: |
-      $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*.zip'
+      $zipPath = Get-Item '$(System.ArtifactsDirectory)\Symbols\macosBinResults\*symbol*${{ parameters.buildArchitecture }}.zip'
       Write-Verbose -Verbose "Zip Path: $zipPath"
 
       $expandedFolder = $zipPath.BaseName
@@ -71,12 +72,17 @@ jobs:
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
       Import-Module $(PowerShellRoot)/tools/packaging -Force
-      $signedFilesPath = '$(System.ArtifactsDirectory)/macOsBins/signedMacOsBins/'
+      $signedFilesPath = '$(System.ArtifactsDirectory)/macOsBins/signedMacOsBins_${{ parameters.buildArchitecture }}/'
       $BuildPath = '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
 
       Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
     displayName: Merge signed files with Build
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - template: Sbom.yml@ComplianceRepo
+    parameters:
+      BuildDropPath: '$(System.ArtifactsDirectory)/$(SymbolsFolder)'
+      Build_Repository_Uri: $(Github_Build_Repository_Uri)
 
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
@@ -102,7 +108,7 @@ jobs:
     displayName: 'Bootstrap VM'
 
   - pwsh: |
-      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar"
+      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar" -Runtime 'osx-${{ parameters.buildArchitecture }}'
     displayName: 'Package'
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0

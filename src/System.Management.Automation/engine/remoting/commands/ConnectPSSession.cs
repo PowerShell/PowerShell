@@ -92,7 +92,10 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
         public string ApplicationName
         {
-            get { return _appName; }
+            get
+            {
+                return _appName;
+            }
 
             set
             {
@@ -117,7 +120,10 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         public string ConfigurationName
         {
-            get { return _shell; }
+            get
+            {
+                return _shell;
+            }
 
             set
             {
@@ -202,7 +208,10 @@ namespace Microsoft.PowerShell.Commands
         [Credential()]
         public PSCredential Credential
         {
-            get { return _psCredential; }
+            get
+            {
+                return _psCredential;
+            }
 
             set
             {
@@ -223,7 +232,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         public AuthenticationMechanism Authentication
         {
-            get { return _authentication; }
+            get
+            {
+                return _authentication;
+            }
 
             set
             {
@@ -245,7 +257,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ConnectionUriGuidParameterSet)]
         public string CertificateThumbprint
         {
-            get { return _thumbprint; }
+            get
+            {
+                return _thumbprint;
+            }
 
             set
             {
@@ -472,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Throttle class to perform a remoterunspace connect operation.
         /// </summary>
-        private class ConnectRunspaceOperation : IThrottleOperation
+        private sealed class ConnectRunspaceOperation : IThrottleOperation
         {
             private PSSession _session;
             private PSSession _oldSession;

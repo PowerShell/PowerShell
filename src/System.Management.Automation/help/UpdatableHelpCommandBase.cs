@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal bool _useDefaultCredentials = false;
+        private bool _useDefaultCredentials = false;
 
         /// <summary>
         /// Forces the operation to complete.
@@ -397,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="fullyQualifiedNames">FullyQualifiedNames.</param>
         internal void Process(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> fullyQualifiedNames)
         {
-            _helpSystem.WebClient.UseDefaultCredentials = _useDefaultCredentials;
+            _helpSystem.UseDefaultCredentials = _useDefaultCredentials;
 
             if (moduleNames != null)
             {

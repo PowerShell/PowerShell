@@ -18,7 +18,7 @@ namespace mvc.Controllers
 {
     public class MultipartController : Controller
     {
-        private IWebHostEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
 
         public MultipartController(IWebHostEnvironment environment)
         {
@@ -36,7 +36,7 @@ namespace mvc.Controllers
             if (!Request.HasFormContentType)
             {
                 Response.StatusCode = 415;
-                Hashtable error = new Hashtable {{"error","Unsupported media type"}};
+                Hashtable error = new Hashtable { { "error", "Unsupported media type" } };
                 return  Json(error);
             }
 
@@ -54,13 +54,13 @@ namespace mvc.Controllers
 
                 Hashtable fileHash = new Hashtable
                 {
-                    {"ContentDisposition" , file.ContentDisposition},
-                    {"ContentType"        , file.ContentType},
-                    {"FileName"           , file.FileName},
-                    {"Length"             , file.Length},
-                    {"Name"               , file.Name},
-                    {"Content"            , result},
-                    {"Headers"            , file.Headers}
+                    {"ContentDisposition", file.ContentDisposition},
+                    {"ContentType", file.ContentType},
+                    {"FileName", file.FileName},
+                    {"Length", file.Length},
+                    {"Name", file.Name},
+                    {"Content", result},
+                    {"Headers", file.Headers}
                 };
                 fileList.Add(fileHash);
             }
@@ -68,7 +68,7 @@ namespace mvc.Controllers
             Hashtable itemsHash = new Hashtable();
             foreach (var key in collection.Keys)
             {
-                itemsHash.Add(key,collection[key]);
+                itemsHash.Add(key, collection[key]);
             }
 
             MediaTypeHeaderValue mediaContentType = MediaTypeHeaderValue.Parse(Request.ContentType);
@@ -80,10 +80,10 @@ namespace mvc.Controllers
 
             Hashtable output = new Hashtable
             {
-                {"Files"   , fileList},
-                {"Items"   , itemsHash},
+                {"Files", fileList},
+                {"Items", itemsHash},
                 {"Boundary", HeaderUtilities.RemoveQuotes(mediaContentType.Boundary).Value},
-                {"Headers" , headers}
+                {"Headers", headers}
             };
             return Json(output);
         }

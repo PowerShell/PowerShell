@@ -240,7 +240,9 @@ namespace System.Management.Automation.Help
         private readonly UpdatableHelpCommandBase _cmdlet;
         private readonly CancellationTokenSource _cancelTokenSource;
 
-        internal WebClient WebClient { get; }
+        internal HttpClient HttpClient { get; }
+
+        internal bool UseDefaultCredentials;
 
         internal string CurrentModule { get; set; }
 
@@ -249,7 +251,7 @@ namespace System.Management.Automation.Help
         /// </summary>
         internal UpdatableHelpSystem(UpdatableHelpCommandBase cmdlet, bool useDefaultCredentials)
         {
-            WebClient = new WebClient();
+            HttpClient = new HttpClient();
             _defaultTimeout = new TimeSpan(0, 0, 30);
             _progressEvents = new Collection<UpdatableHelpProgressEventArgs>();
             Errors = new Collection<Exception>();
@@ -258,7 +260,7 @@ namespace System.Management.Automation.Help
             _cmdlet = cmdlet;
             _cancelTokenSource = new CancellationTokenSource();
 
-            WebClient.UseDefaultCredentials = useDefaultCredentials;
+            UseDefaultCredentials = useDefaultCredentials;
 
 #if !CORECLR
             WebClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(HandleDownloadProgressChanged);
@@ -275,7 +277,7 @@ namespace System.Management.Automation.Help
             _completionEvent.Dispose();
 #endif
             _cancelTokenSource.Dispose();
-            WebClient.Dispose();
+            HttpClient.Dispose();
             GC.SuppressFinalize(this);
         }
 
@@ -339,7 +341,7 @@ namespace System.Management.Automation.Help
                 string xml;
                 using (HttpClientHandler handler = new HttpClientHandler())
                 {
-                    handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
+                    handler.UseDefaultCredentials = UseDefaultCredentials;
                     using (HttpClient client = new HttpClient(handler))
                     {
                         client.Timeout = _defaultTimeout;
@@ -420,7 +422,7 @@ namespace System.Management.Automation.Help
                     using (HttpClientHandler handler = new HttpClientHandler())
                     {
                         handler.AllowAutoRedirect = false;
-                        handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
+                        handler.UseDefaultCredentials = UseDefaultCredentials;
                         using (HttpClient client = new HttpClient(handler))
                         {
                             client.Timeout = new TimeSpan(0, 0, 30); // Set 30 second timeout
@@ -785,7 +787,7 @@ namespace System.Management.Automation.Help
             using (HttpClientHandler handler = new HttpClientHandler())
             {
                 handler.AllowAutoRedirect = false;
-                handler.UseDefaultCredentials = WebClient.UseDefaultCredentials;
+                handler.UseDefaultCredentials = UseDefaultCredentials;
                 using (HttpClient client = new HttpClient(handler))
                 {
                     client.Timeout = _defaultTimeout;

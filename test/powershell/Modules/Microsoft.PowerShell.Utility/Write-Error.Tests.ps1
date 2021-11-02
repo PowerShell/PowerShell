@@ -105,4 +105,31 @@ Describe "Write-Error Tests" -Tags "CI" {
         $result.Count | Should -BeExactly 3
         $result[0] | Should -Match $longtext
     }
+
+    It "Should be able to pass ErrorRecord to parameter position 0." {
+        try {
+            [int]::parse('foo')
+        } catch { }
+
+        (Write-Error $Error[0] 2>&1).Exception.GetType().FullName |
+            Should -Be System.Management.Automation.MethodInvocationException
+    }
+
+    It "Should be able to pass Exception to parameter position 0." {
+        try {
+            [int]::parse('foo')
+        } catch { }
+
+        (Write-Error $Error[0].Exception.InnerException 2>&1).Exception.GetType().FullName |
+            Should -Be System.FormatException
+    }
+
+    It "Should be able to pass string to parameter position 0." {
+        try {
+            [int]::parse('foo')
+        } catch { }
+
+        (Write-Error "$($Error[0])" 2>&1).Exception.GetType().FullName |
+            Should -Be Microsoft.PowerShell.Commands.WriteErrorException
+    }
 }

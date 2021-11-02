@@ -784,7 +784,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return this.GetChildJobsSnapshot().Any(childJob => childJob.HasMoreData) || (this.Results.Count != 0);
+                return this.GetChildJobsSnapshot().Any(static childJob => childJob.HasMoreData) || (this.Results.Count != 0);
             }
         }
 
@@ -846,7 +846,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ForwardingHelper : IDisposable
+        private sealed class ForwardingHelper : IDisposable
         {
             // This is higher than 1000 used in
             //      RxExtensionMethods+ToEnumerableObserver<T>.BlockingCollectionCapacity

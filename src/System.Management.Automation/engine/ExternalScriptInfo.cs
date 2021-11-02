@@ -193,7 +193,10 @@ namespace System.Management.Automation
                 return Context.EngineSessionState.CheckScriptVisibility(_path);
             }
 
-            set { throw PSTraceSource.NewNotImplementedException(); }
+            set
+            {
+                throw PSTraceSource.NewNotImplementedException();
+            }
         }
 
         /// <summary>

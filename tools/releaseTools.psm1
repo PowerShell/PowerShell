@@ -24,7 +24,7 @@ class CommitNode {
         $this.Body = $body
         $this.IsBreakingChange = $body -match "\[breaking change\]"
 
-        if ($subject -match "\(#(\d+)\)") {
+        if ($subject -match "\(#(\d+)\)$") {
             $this.PullRequest = $Matches[1]
         }
     }
@@ -36,8 +36,12 @@ $Script:powershell_team = @(
     "Robert Holt"
     "Travis Plunk"
     "dependabot-preview[bot]"
+    "dependabot[bot]"
     "Joey Aiello"
     "Tyler James Leonhardt"
+    "Anam Navied"
+    "Andrew Schwartzmeyer"
+    "Jason Helmick"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -593,12 +597,12 @@ function Update-PsVersionInCode
 {
     param(
         [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
         [String]
         $NewReleaseTag,
 
         [Parameter(Mandatory)]
-        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
         [String]
         $NextReleaseTag,
 

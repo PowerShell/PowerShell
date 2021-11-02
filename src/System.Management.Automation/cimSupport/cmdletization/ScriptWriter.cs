@@ -240,7 +240,7 @@ function __cmdletization_BindCommonParameters
             StringBuilder attributes = new(150);
             if (cmdletMetadata.Aliases != null)
             {
-                attributes.Append("[Alias('" + string.Join("','", cmdletMetadata.Aliases.Select(alias => CodeGeneration.EscapeSingleQuotedStringContent(alias))) + "')]");
+                attributes.Append("[Alias('" + string.Join("','", cmdletMetadata.Aliases.Select(static alias => CodeGeneration.EscapeSingleQuotedStringContent(alias))) + "')]");
             }
 
             if (cmdletMetadata.Obsolete != null)
@@ -386,7 +386,7 @@ function __cmdletization_BindCommonParameters
             return new List<string>(parameterSetNames.Keys);
         }
 
-        private Dictionary<CommonMethodMetadata, int> _staticMethodMetadataToUniqueId = new();
+        private readonly Dictionary<CommonMethodMetadata, int> _staticMethodMetadataToUniqueId = new();
 
         private string GetMethodParameterSet(CommonMethodMetadata methodMetadata)
         {
@@ -832,9 +832,9 @@ function __cmdletization_BindCommonParameters
             StringBuilder result = new(name.Length);
             foreach (char c in name)
             {
-                if (("\"'`$#".IndexOf(c) == (-1)) &&
-                    (!char.IsControl(c)) &&
-                    (!char.IsWhiteSpace(c)))
+                if (!"\"'`$#".Contains(c)
+                    && !char.IsControl(c)
+                    && !char.IsWhiteSpace(c))
                 {
                     result.Append(c);
                 }
@@ -1622,7 +1622,7 @@ function __cmdletization_BindCommonParameters
             GetCmdletParameters getCmdletParameters = GetGetCmdletParameters(instanceCmdlet);
             if (getCmdletParameters.QueryableProperties != null)
             {
-                foreach (PropertyMetadata property in getCmdletParameters.QueryableProperties.Where(p => p.Items != null))
+                foreach (PropertyMetadata property in getCmdletParameters.QueryableProperties.Where(static p => p.Items != null))
                 {
                     for (int i = 0; i < property.Items.Length; i++)
                     {
@@ -1681,7 +1681,7 @@ function __cmdletization_BindCommonParameters
 
             if (getCmdletParameters.QueryableAssociations != null)
             {
-                foreach (Association association in getCmdletParameters.QueryableAssociations.Where(a => a.AssociatedInstance != null))
+                foreach (Association association in getCmdletParameters.QueryableAssociations.Where(static a => a.AssociatedInstance != null))
                 {
                     ParameterMetadata parameterMetadata = GenerateAssociationClause(
                         commonParameterSets, queryParameterSets, methodParameterSets, association, association.AssociatedInstance, output);
@@ -1983,7 +1983,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             }
             else if (queryParameterSets.Count == 1)
             {
-                commandMetadata.DefaultParameterSetName = queryParameterSets.Single();
+                commandMetadata.DefaultParameterSetName = queryParameterSets[0];
             }
 
             AddPassThruParameter(commonParameters, instanceCmdlet);
@@ -2100,7 +2100,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                 /* 1 */ CodeGeneration.EscapeSingleQuotedStringContent(commandMetadata.Name));
         }
 
-        private static object s_enumCompilationLock = new();
+        private static readonly object s_enumCompilationLock = new();
 
         private static void CompileEnum(EnumMetadataEnum enumMetadata)
         {
@@ -2203,7 +2203,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
                 {
                     cmdletMetadatas =
                         cmdletMetadatas.Concat(
-                            _cmdletizationMetadata.Class.InstanceCmdlets.Cmdlet.Select(c => c.CmdletMetadata));
+                            _cmdletizationMetadata.Class.InstanceCmdlets.Cmdlet.Select(static c => c.CmdletMetadata));
                 }
             }
 
@@ -2211,7 +2211,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             {
                 cmdletMetadatas =
                     cmdletMetadatas.Concat(
-                        _cmdletizationMetadata.Class.StaticCmdlets.Select(c => c.CmdletMetadata));
+                        _cmdletizationMetadata.Class.StaticCmdlets.Select(static c => c.CmdletMetadata));
             }
 
             foreach (CommonCmdletMetadata cmdletMetadata in cmdletMetadatas)

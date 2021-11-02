@@ -68,7 +68,7 @@ namespace System.Management.Automation.Security
             return s_systemLockdownPolicy.Value;
         }
 
-        private static object s_systemLockdownPolicyLock = new object();
+        private static readonly object s_systemLockdownPolicyLock = new object();
         private static SystemEnforcementMode? s_systemLockdownPolicy = null;
         private static bool s_allowDebugOverridePolicy = false;
 
@@ -361,7 +361,7 @@ namespace System.Management.Automation.Security
             {
                 // Assume everything under SYSTEM32 is trusted, with a purposefully sloppy
                 // check so that we can actually put it in the filename during testing.
-                if (path.IndexOf("System32", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (path.Contains("System32", StringComparison.OrdinalIgnoreCase))
                 {
                     return SystemEnforcementMode.None;
                 }
@@ -391,6 +391,14 @@ namespace System.Management.Automation.Security
         /// <returns>True if the COM object is allowed, False otherwise.</returns>
         internal static bool IsClassInApprovedList(Guid clsid)
         {
+            // This method is called only if there is an AppLocker and/or WLDP system wide lock down enforcement policy.
+            if (s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None) != SystemEnforcementMode.Enforce)
+            {
+                // No WLDP policy implies only AppLocker policy enforcement. Disallow all COM object instantiation.
+                return false;
+            }
+
+            // WLDP policy must be in system wide enforcement, look up COM Id in WLDP approval list.
             try
             {
                 WLDP_HOST_INFORMATION hostInformation = new WLDP_HOST_INFORMATION();
@@ -491,7 +499,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Native constants for dealing with the lockdown policy.
         /// </summary>
-        internal class WldpNativeConstants
+        internal static class WldpNativeConstants
         {
             internal const uint WLDP_HOST_INFORMATION_REVISION = 0x00000001;
 
@@ -541,7 +549,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Native methods for dealing with the lockdown policy.
         /// </summary>
-        internal class WldpNativeMethods
+        internal static class WldpNativeMethods
         {
             /// Return Type: HRESULT->LONG->int
             /// pHostInformation: PWLDP_HOST_INFORMATION->_WLDP_HOST_INFORMATION*

@@ -82,10 +82,8 @@ namespace System.Management.Automation
     /// <summary>
     /// This class provides public functionality for serializing a PSObject.
     /// </summary>
-    public class PSSerializer
+    public static class PSSerializer
     {
-        internal PSSerializer() { }
-
         /// <summary>
         /// Serializes an object into PowerShell CliXml.
         /// </summary>
@@ -1610,8 +1608,8 @@ namespace System.Management.Automation
             // ATTACH INSTANCE METADATA TO THE OBJECT BEING SERIALIZED
             List<string> namesOfModifiedProperties = cimInstance
                 .CimInstanceProperties
-                .Where(p => p.IsValueModified)
-                .Select(p => p.Name)
+                .Where(static p => p.IsValueModified)
+                .Select(static p => p.Name)
                 .ToList();
             if (namesOfModifiedProperties.Count != 0)
             {
@@ -5639,7 +5637,7 @@ namespace System.Management.Automation
     /// <typeparam name="T">type of dictionary values</typeparam>
     internal class WeakReferenceDictionary<T> : IDictionary<object, T>
     {
-        private class WeakReferenceEqualityComparer : IEqualityComparer<WeakReference>
+        private sealed class WeakReferenceEqualityComparer : IEqualityComparer<WeakReference>
         {
             public bool Equals(WeakReference x, WeakReference y)
             {

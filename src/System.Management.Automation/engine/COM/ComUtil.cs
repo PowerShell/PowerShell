@@ -16,7 +16,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines a utility class that is used by COM adapter.
     /// </summary>
-    internal class ComUtil
+    internal static class ComUtil
     {
         // HResult error code '-2147352573' - Member not found.
         internal const int DISP_E_MEMBERNOTFOUND = unchecked((int)0x80020003);

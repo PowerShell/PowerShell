@@ -390,7 +390,10 @@ namespace System.Management.Automation
         /// </summary>
         public int DataAddedCount
         {
-            get { return _dataAddedFrequency; }
+            get
+            {
+                return _dataAddedFrequency;
+            }
 
             set
             {
@@ -2028,7 +2031,10 @@ namespace System.Management.Automation
         /// </summary>
         internal PSDataCollection<ProgressRecord> Progress
         {
-            get { return progress; }
+            get
+            {
+                return progress;
+            }
 
             set
             {
@@ -2044,7 +2050,10 @@ namespace System.Management.Automation
         /// </summary>
         internal PSDataCollection<VerboseRecord> Verbose
         {
-            get { return verbose; }
+            get
+            {
+                return verbose;
+            }
 
             set
             {
@@ -2060,7 +2069,10 @@ namespace System.Management.Automation
         /// </summary>
         internal PSDataCollection<DebugRecord> Debug
         {
-            get { return debug; }
+            get
+            {
+                return debug;
+            }
 
             set
             {

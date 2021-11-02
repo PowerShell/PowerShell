@@ -83,7 +83,10 @@ namespace System.Management.Automation
                 return IgnoreScriptDebug ? 0 : _debugTraceLevel;
             }
 
-            set { _debugTraceLevel = value; }
+            set
+            {
+                _debugTraceLevel = value;
+            }
         }
 
         private int _debugTraceLevel;
@@ -100,7 +103,10 @@ namespace System.Management.Automation
                 return !IgnoreScriptDebug && _debugTraceStep;
             }
 
-            set { _debugTraceStep = value; }
+            set
+            {
+                _debugTraceStep = value;
+            }
         }
 
         private bool _debugTraceStep;
@@ -198,40 +204,6 @@ namespace System.Management.Automation
         /// allows you to skip this module when doing a lookup.
         /// </summary>
         internal string ModuleBeingProcessed { get; set; }
-
-        private bool _responsibilityForModuleAnalysisAppDomainOwned;
-
-        internal bool TakeResponsibilityForModuleAnalysisAppDomain()
-        {
-            if (_responsibilityForModuleAnalysisAppDomainOwned)
-            {
-                return false;
-            }
-
-            Diagnostics.Assert(AppDomainForModuleAnalysis == null, "Invalid module analysis app domain state");
-            _responsibilityForModuleAnalysisAppDomainOwned = true;
-            return true;
-        }
-
-        internal void ReleaseResponsibilityForModuleAnalysisAppDomain()
-        {
-            Diagnostics.Assert(_responsibilityForModuleAnalysisAppDomainOwned, "Invalid module analysis app domain state");
-
-            if (AppDomainForModuleAnalysis != null)
-            {
-                AppDomain.Unload(AppDomainForModuleAnalysis);
-                AppDomainForModuleAnalysis = null;
-            }
-
-            _responsibilityForModuleAnalysisAppDomainOwned = false;
-        }
-
-        /// <summary>
-        /// The AppDomain currently being used for module analysis.  It should only be created if needed,
-        /// but various callers need to take responsibility for unloading the domain via
-        /// the TakeResponsibilityForModuleAnalysisAppDomain.
-        /// </summary>
-        internal AppDomain AppDomainForModuleAnalysis { get; set; }
 
         /// <summary>
         /// Authorization manager for this runspace.
@@ -424,7 +396,7 @@ namespace System.Management.Automation
             if (baseValue != null && baseValue != NullString.Value)
             {
                 // It's actually setting a key value pair when the key doesn't exist
-                UntrustedObjects.GetValue(baseValue, key => null);
+                UntrustedObjects.GetValue(baseValue, static key => null);
 
                 try
                 {
@@ -553,9 +525,7 @@ namespace System.Management.Automation
         /// </summary>
         internal object GetVariableValue(VariablePath path, object defaultValue)
         {
-            CmdletProviderContext context;
-            SessionStateScope scope;
-            return EngineSessionState.GetVariableValue(path, out context, out scope) ?? defaultValue;
+            return EngineSessionState.GetVariableValue(path, out _, out _) ?? defaultValue;
         }
 
         /// <summary>
@@ -640,19 +610,15 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal bool GetBooleanPreference(VariablePath preferenceVariablePath, bool defaultPref, out bool defaultUsed)
         {
-            CmdletProviderContext context = null;
-            SessionStateScope scope = null;
-            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out context, out scope);
-            if (val == null)
+            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out _, out _);
+            if (val is null)
             {
                 defaultUsed = true;
                 return defaultPref;
             }
 
-            bool converted = defaultPref;
-            defaultUsed = !LanguagePrimitives.TryConvertTo<bool>
-                (val, out converted);
-            return (defaultUsed) ? defaultPref : converted;
+            defaultUsed = !LanguagePrimitives.TryConvertTo(val, out bool converted);
+            return defaultUsed ? defaultPref : converted;
         }
         #endregion GetSetVariable methods
 
@@ -817,11 +783,6 @@ namespace System.Management.Automation
             return oldPipe;
         }
 
-        internal void RestoreErrorPipe(Pipe pipe)
-        {
-            ShellFunctionErrorOutputPipe = pipe;
-        }
-
         /// <summary>
         /// Reset all of the redirection book keeping variables. This routine should be called when starting to
         /// execute a script.
@@ -874,15 +835,13 @@ namespace System.Management.Automation
         internal void AppendDollarError(object obj)
         {
             ErrorRecord objAsErrorRecord = obj as ErrorRecord;
-            if (objAsErrorRecord == null && obj is not Exception)
+            if (objAsErrorRecord is null && obj is not Exception)
             {
                 Diagnostics.Assert(false, "Object to append was neither an ErrorRecord nor an Exception in ExecutionContext.AppendDollarError");
                 return;
             }
 
-            object old = this.DollarErrorVariable;
-            ArrayList arraylist = old as ArrayList;
-            if (arraylist == null)
+            if (DollarErrorVariable is not ArrayList arraylist)
             {
                 Diagnostics.Assert(false, "$error should be a global constant ArrayList");
                 return;
@@ -1596,23 +1555,6 @@ namespace System.Management.Automation
         private void InitializeCommon(AutomationEngine engine, PSHost hostInterface)
         {
             Engine = engine;
-#if !CORECLR// System.AppDomain is not in CoreCLR
-            // Set the assembly resolve handler if it isn't already set...
-            if (!_assemblyEventHandlerSet)
-            {
-                // we only want to set the event handler once for the entire app domain...
-                lock (lockObject)
-                {
-                    // Need to check again inside the lock due to possibility of a race condition...
-                    if (!_assemblyEventHandlerSet)
-                    {
-                        AppDomain currentAppDomain = AppDomain.CurrentDomain;
-                        currentAppDomain.AssemblyResolve += new ResolveEventHandler(PowerShellAssemblyResolveHandler);
-                        _assemblyEventHandlerSet = true;
-                    }
-                }
-            }
-#endif
             Events = new PSLocalEventManager(this);
             transactionManager = new PSTransactionManager();
             _debugger = new ScriptDebugger(this);
@@ -1637,35 +1579,6 @@ namespace System.Management.Automation
         }
 
         private static readonly object lockObject = new object();
-
-#if !CORECLR // System.AppDomain is not in CoreCLR
-        private static bool _assemblyEventHandlerSet = false;
-
-        /// <summary>
-        /// AssemblyResolve event handler that will look in the assembly cache to see
-        /// if the named assembly has been loaded. This is necessary so that assemblies loaded
-        /// with LoadFrom, which are in a different loaded context than Load, can still be used to
-        /// resolve types.
-        /// </summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="args">The event args.</param>
-        /// <returns>The resolve assembly or null if not found.</returns>
-        private static Assembly PowerShellAssemblyResolveHandler(object sender, ResolveEventArgs args)
-        {
-            ExecutionContext ecFromTLS = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-            if (ecFromTLS != null)
-            {
-                if (ecFromTLS.AssemblyCache != null)
-                {
-                    Assembly assembly;
-                    ecFromTLS.AssemblyCache.TryGetValue(args.Name, out assembly);
-                    return assembly;
-                }
-            }
-
-            return null;
-        }
-#endif
     }
 
     /// <summary>

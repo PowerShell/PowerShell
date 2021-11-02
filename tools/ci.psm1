@@ -16,8 +16,8 @@ if(Test-Path $dotNetPath)
 }
 
 # import build into the global scope so it can be used by packaging
-Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global
-Import-Module (Join-Path $repoRoot 'tools\packaging') -Scope Global
+Import-Module (Join-Path $repoRoot 'build.psm1') -Verbose -Scope Global
+Import-Module (Join-Path $repoRoot 'tools\packaging') -Verbose -Scope Global
 
 # import the windows specific functcion only in Windows PowerShell or on Windows
 if($PSVersionTable.PSEdition -eq 'Desktop' -or $IsWindows)
@@ -99,7 +99,7 @@ function Invoke-CIBuild
         Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
     }
 
-    Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
+    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
     Save-PSOptions
 
     $options = (Get-PSOptions)
@@ -171,7 +171,8 @@ function Invoke-CIInstall
     }
 
     Set-BuildVariable -Name TestPassed -Value False
-    Start-PSBootstrap -Confirm:$false
+    Write-Verbose -Verbose -Message "Calling Start-PSBootstrap from Invoke-CIInstall"
+    Start-PSBootstrap
 }
 
 function Invoke-CIxUnit
@@ -214,6 +215,9 @@ function Invoke-CITest
         [ValidateSet('CI', 'Others')]
         [string] $TagSet
     )
+
+    # Set locale correctly for Linux CIs
+    Set-CorrectLocale
 
     # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
     # https://github.com/pester/Pester/issues/608
@@ -438,122 +442,149 @@ function Get-ReleaseTag
 function Invoke-CIFinish
 {
     param(
-        [string] $NuGetKey
+        [string] $Runtime = 'win7-x64',
+        [string] $Channel = 'preview',
+        [Validateset('Build','Package')]
+        [string[]] $Stage = ('Build','Package')
     )
 
-    if($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS))
-    {
-        return New-LinuxPackage -NugetKey $NugetKey
+    if ($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS) -and $Stage -contains 'Build') {
+        return New-LinuxPackage
     }
 
+    $artifacts = New-Object System.Collections.ArrayList
     try {
-        $releaseTag = Get-ReleaseTag
+        $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/mainBuild"
 
-        $previewVersion = $releaseTag.Split('-')
-        $previewPrefix = $previewVersion[0]
-        $previewLabel = $previewVersion[1].replace('.','')
+        if ($Stage -contains "Build") {
+            if ($Channel -eq 'preview') {
+                $releaseTag = Get-ReleaseTag
 
-        if(Test-DailyBuild)
-        {
-            $previewLabel= "daily{0}" -f $previewLabel
+                $previewVersion = $releaseTag.Split('-')
+                $previewPrefix = $previewVersion[0]
+                $previewLabel = $previewVersion[1].replace('.','')
+
+                if (Test-DailyBuild) {
+                    $previewLabel = "daily{0}" -f $previewLabel
+                }
+
+                $prereleaseIteration = (get-date).Day
+                $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
+                # Build clean before backing to remove files from testing
+                Start-PSBuild -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}/psoptions.json"
+                $options = Get-PSOptions
+                # Remove symbol files.
+                $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
+                Write-Verbose "Removing symbol files from $filter" -Verbose
+                Remove-Item $filter -Force -Recurse
+            } else {
+                $releaseTag = Get-ReleaseTag
+                $releaseTagParts = $releaseTag.split('.')
+                $preReleaseVersion = $releaseTagParts[0]+ ".9.9"
+                Write-Verbose "newPSReleaseTag: $preReleaseVersion" -Verbose
+                Start-PSBuild -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}/psoptions.json"
+                $options = Get-PSOptions
+                # Remove symbol files.
+                $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
+                Write-Verbose "Removing symbol files from $filter" -Verbose
+                Remove-Item $filter -Force -Recurse
+            }
+
+            # Set a variable, both in the current process and in AzDevOps for the packaging stage to get the release tag
+            $env:CI_FINISH_RELASETAG=$preReleaseVersion
+            $vstsCommandString = "vso[task.setvariable variable=CI_FINISH_RELASETAG]$preReleaseVersion"
+            Write-Verbose -Message "$vstsCommandString" -Verbose
+            Write-Host -Object "##$vstsCommandString"
         }
 
-        $preReleaseVersion = "$previewPrefix-$previewLabel.$env:BUILD_BUILDID"
+        if ($Stage -contains "Package") {
+            Restore-PSOptions -PSOptionsPath "${buildFolder}/psoptions.json"
+            $preReleaseVersion = $env:CI_FINISH_RELASETAG
 
-        # Build clean before backing to remove files from testing
-        Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean
-
-        # Build packages
-        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks
-
-        $artifacts = New-Object System.Collections.ArrayList
-        foreach ($package in $packages) {
-            if (Test-Path $package -ErrorAction Ignore)
-            {
-                Write-Log "Package found: $package"
+            # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
+            switch -regex ($Runtime){
+                default {
+                    $runPackageTest = $true
+                    $packageTypes = 'msi', 'nupkg', 'zip', 'zip-pdb', 'msix'
+                }
+                'win-arm.*' {
+                    $runPackageTest = $false
+                    $packageTypes = 'zip', 'zip-pdb', 'msix'
+                }
             }
-            else
-            {
-                Write-Warning -Message "Package NOT found: $package"
+            $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
+
+            foreach ($package in $packages) {
+                if (Test-Path $package -ErrorAction Ignore) {
+                    Write-Log "Package found: $package"
+                } else {
+                    Write-Warning -Message "Package NOT found: $package"
+                }
+
+                if ($package -is [string]) {
+                    $null = $artifacts.Add($package)
+                } elseif ($package -is [pscustomobject] -and $package.psobject.Properties['msi']) {
+                    $null = $artifacts.Add($package.msi)
+                    $null = $artifacts.Add($package.wixpdb)
+                }
             }
 
-            if($package -is [string])
-            {
-                $null = $artifacts.Add($package)
+            if ($runPackageTest) {
+                # the packaging tests find the MSI package using env:PSMsiX64Path
+                $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
+                $architechture = $Runtime.Split('-')[1]
+                $exePath = New-ExePackage -ProductVersion ($preReleaseVersion -replace '^v') -ProductTargetArchitecture $architechture -MsiLocationPath $env:PSMsiX64Path
+                Write-Verbose "exe Path: $exePath" -Verbose
+                $artifacts.Add($exePath)
+                $env:PSExePath = $exePath
+                $env:PSMsiChannel = $Channel
+                $env:PSMsiRuntime = $Runtime
+
+                # Install the latest Pester and import it
+                $maximumPesterVersion = '4.99'
+                Install-Module Pester -Force -SkipPublisherCheck -MaximumVersion $maximumPesterVersion
+                Import-Module Pester -Force -MaximumVersion $maximumPesterVersion
+
+                $testResultPath = Join-Path -Path $env:TEMP -ChildPath "win-package-$channel-$runtime.xml"
+
+                # start the packaging tests and get the results
+                $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru -OutputFormat NUnitXml -OutputFile $testResultPath
+
+                Publish-TestResults -Title "win-package-$channel-$runtime" -Path $testResultPath
+
+                # fail the CI job if the tests failed, or nothing passed
+                if (-not $packagingTestResult -is [pscustomobject] -or $packagingTestResult.FailedCount -ne 0 -or $packagingTestResult.PassedCount -eq 0) {
+                    throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
+                }
             }
-            elseif($package -is [pscustomobject] -and $package.psobject.Properties['msi'])
-            {
-                $null = $artifacts.Add($package.msi)
-                $null = $artifacts.Add($package.wixpdb)
+
+            # only publish assembly nuget packages if it is a daily build and tests passed
+            if (Test-DailyBuild) {
+                $nugetArtifacts = Get-ChildItem $PSScriptRoot\packaging\nugetOutput -ErrorAction SilentlyContinue -Filter *.nupkg | Select-Object -ExpandProperty FullName
+                if ($nugetArtifacts) {
+                    $artifacts.AddRange(@($nugetArtifacts))
+                }
             }
         }
-
-        # the packaging tests find the MSI package using env:PSMsiX64Path
-        $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
-
-        # Install the latest Pester and import it
-        $maximumPesterVersion = '4.99'
-        Install-Module Pester -Force -SkipPublisherCheck -MaximumVersion $maximumPesterVersion
-        Import-Module Pester -Force -MaximumVersion $maximumPesterVersion
-
-        # start the packaging tests and get the results
-        $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru
-
-        # fail the CI job if the tests failed, or nothing passed
-        if(-not $packagingTestResult -is [pscustomobject] -or $packagingTestResult.FailedCount -ne 0 -or $packagingTestResult.PassedCount -eq 0)
-        {
-            throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
-        }
-
-        # only publish assembly nuget packages if it is a daily build and tests passed
-        if(Test-DailyBuild)
-        {
-            $nugetArtifacts = Get-ChildItem $PSScriptRoot\packaging\nugetOutput -ErrorAction SilentlyContinue -Filter *.nupkg | Select-Object -ExpandProperty FullName
-            if($nugetArtifacts)
-            {
-                $artifacts.AddRange(@($nugetArtifacts))
-            }
-        }
-
-        # produce win-arm and win-arm64 packages if it is a daily build
-        Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
-        $arm32Package = Start-PSPackage -Type zip -WindowsRuntime win-arm -ReleaseTag $releaseTag -SkipReleaseChecks
-        $artifacts.Add($arm32Package)
-
-        Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
-        $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
-        $artifacts.Add($arm64Package)
-
+    } catch {
+        Get-Error -InputObject $_
+        throw
+    } finally {
         $pushedAllArtifacts = $true
 
         $artifacts | ForEach-Object {
             Write-Log -Message "Pushing $_ as CI artifact"
-            if(Test-Path $_)
-            {
+            if (Test-Path $_) {
                 Push-Artifact -Path $_ -Name 'artifacts'
-            }
-            else
-            {
+            } else {
                 $pushedAllArtifacts = $false
                 Write-Warning "Artifact $_ does not exist."
             }
-
-            if($NuGetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
-            {
-                Write-Log "pushing $_ to $env:NUGET_URL"
-                Start-NativeExecution -sb {dotnet nuget push $_ --api-key $NuGetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
-            }
         }
-        if(!$pushedAllArtifacts)
-        {
+
+        if (!$pushedAllArtifacts) {
             throw "Some artifacts did not exist!"
         }
-    }
-    catch
-    {
-        Write-Host -Foreground Red $_
-        Write-Host -Foreground Red $_.ScriptStackTrace
-        throw $_
     }
 }
 
@@ -692,10 +723,6 @@ function Invoke-LinuxTestsCore
 
 function New-LinuxPackage
 {
-    param(
-        [string]
-        $NugetKey
-    )
 
     $isFullBuild = Test-DailyBuild
     $releaseTag = Get-ReleaseTag
@@ -704,7 +731,7 @@ function New-LinuxPackage
 
     # Only build packages for PowerShell/PowerShell repository
     # branches, not pull requests
-    $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks)
+    $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks -Type deb, rpm, tar)
     foreach($package in $packages)
     {
         if (Test-Path $package)
@@ -716,31 +743,18 @@ function New-LinuxPackage
             Write-Error -Message "Package NOT found: $package"
         }
 
-        # Publish the packages to the nuget feed if:
-        # 1 - It's a Daily build (already checked, for not a PR)
-        # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
-        # 3 - it's a nupkg file
-        if($isFullBuild -and $NugetKey -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
+        if ($package -isnot [System.IO.FileInfo])
         {
-            Write-Log "pushing $package to $env:NUGET_URL"
-            Start-NativeExecution -sb {dotnet nuget push $package --api-key $NugetKey --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+            $packageObj = Get-Item $package
+            Write-Error -Message "The PACKAGE is not a FileInfo object"
+        }
+        else
+        {
+            $packageObj = $package
         }
 
-        if($isFullBuild)
-        {
-            if ($package -isnot [System.IO.FileInfo])
-            {
-                $packageObj = Get-Item $package
-                Write-Error -Message "The PACKAGE is not a FileInfo object"
-            }
-            else
-            {
-                $packageObj = $package
-            }
-
-            Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
-            Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
-        }
+        Write-Log -message "Artifacts directory: ${env:BUILD_ARTIFACTSTAGINGDIRECTORY}"
+        Copy-Item $packageObj.FullName -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
     }
 
     if ($IsLinux)

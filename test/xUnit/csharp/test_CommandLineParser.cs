@@ -48,7 +48,15 @@ namespace PSTests.Parallel
             Assert.False(cpp.SkipProfiles);
             Assert.False(cpp.SocketServerMode);
             Assert.False(cpp.SSHServerMode);
-            Assert.True(cpp.StaMode);
+            if (Platform.IsWindows)
+            {
+                Assert.True(cpp.StaMode);
+            }
+            else
+            {
+                Assert.False(cpp.StaMode);
+            }
+
             Assert.False(cpp.ThrowOnReadAndPrompt);
             Assert.False(cpp.WasInitialCommandEncoded);
             Assert.Null(cpp.WorkingDirectory);
@@ -95,18 +103,27 @@ namespace PSTests.Parallel
         [Fact]
         public static void TestDefaultParameterIsFileName_Exist()
         {
-            var fileName = System.IO.Path.GetTempFileName();
+            var tempFile = System.IO.Path.GetTempFileName();
+            var tempPs1 = tempFile + ".ps1";
+            File.Move(tempFile, tempPs1);
 
             var cpp = new CommandLineParameterParser();
 
-            cpp.Parse(new string[] { fileName });
+            cpp.Parse(new string[] { tempPs1 });
 
-            Assert.False(cpp.AbortStartup);
-            Assert.False(cpp.NoExit);
-            Assert.False(cpp.ShowShortHelp);
-            Assert.False(cpp.ShowBanner);
-            Assert.Equal(CommandLineParameterParser.NormalizeFilePath(fileName), cpp.File);
-            Assert.Null(cpp.ErrorMessage);
+            try
+            {
+                Assert.False(cpp.AbortStartup);
+                Assert.False(cpp.NoExit);
+                Assert.False(cpp.ShowShortHelp);
+                Assert.False(cpp.ShowBanner);
+                Assert.Equal(CommandLineParameterParser.NormalizeFilePath(tempPs1), cpp.File);
+                Assert.Null(cpp.ErrorMessage);
+            }
+            finally
+            {
+                File.Delete(tempPs1);
+            }
         }
 
         [Theory]
@@ -141,6 +158,47 @@ namespace PSTests.Parallel
             Assert.False(cpp.NoPrompt);
             Assert.Contains(commandLine[0], cpp.ErrorMessage);
             Assert.Contains("-noprofile", cpp.ErrorMessage);
+        }
+
+        [Theory]
+        [InlineData("-Version")]
+        [InlineData("--Version")]
+        [InlineData("/Version")]
+        public static void TestParameter_Dash_Or_Slash(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.False(cpp.AbortStartup);
+            Assert.False(cpp.NoExit);
+            Assert.True(cpp.NonInteractive);
+            Assert.False(cpp.ShowBanner);
+            Assert.False(cpp.ShowShortHelp);
+            Assert.False(cpp.NoPrompt);
+            Assert.True(cpp.ShowVersion);
+            Assert.True(cpp.SkipProfiles);
+            Assert.Null(cpp.ErrorMessage);
+        }
+
+        [Theory]
+        [InlineData("/-Version")]
+        [InlineData("-/Version")]
+        public static void TestParameter_Wrong_Dash_And_Slash(params string[] commandLine)
+        {
+            var cpp = new CommandLineParameterParser();
+
+            cpp.Parse(commandLine);
+
+            Assert.True(cpp.AbortStartup);
+            Assert.False(cpp.NoExit);
+            Assert.False(cpp.NonInteractive);
+            Assert.False(cpp.ShowBanner);
+            Assert.True(cpp.ShowShortHelp);
+            Assert.False(cpp.NoPrompt);
+            Assert.False(cpp.ShowVersion);
+            Assert.False(cpp.SkipProfiles);
+            Assert.Contains(commandLine[0], cpp.ErrorMessage);
         }
 
         [Theory]
@@ -1163,7 +1221,16 @@ namespace PSTests.Parallel
 
         public class TestDataLastFile : IEnumerable<object[]>
         {
-            private readonly string _fileName = Path.GetTempFileName();
+            private static string _fileName
+            {
+                get
+                {
+                    var tempFile = Path.GetTempFileName();
+                    var tempPs1 = tempFile + ".ps1";
+                    File.Move(tempFile, tempPs1);
+                    return tempPs1;
+                }
+            }
 
             public IEnumerator<object[]> GetEnumerator()
             {
@@ -1181,13 +1248,28 @@ namespace PSTests.Parallel
 
             cpp.Parse(commandLine);
 
-            Assert.False(cpp.AbortStartup);
-            Assert.False(cpp.NoExit);
-            Assert.False(cpp.ShowShortHelp);
-            Assert.False(cpp.ShowBanner);
-            Assert.True(cpp.StaMode);
-            Assert.Equal(CommandLineParameterParser.NormalizeFilePath(commandLine[commandLine.Length - 1]), cpp.File);
-            Assert.Null(cpp.ErrorMessage);
+            try
+            {
+                Assert.False(cpp.AbortStartup);
+                Assert.False(cpp.NoExit);
+                Assert.False(cpp.ShowShortHelp);
+                Assert.False(cpp.ShowBanner);
+                if (Platform.IsWindows)
+                {
+                    Assert.True(cpp.StaMode);
+                }
+                else
+                {
+                    Assert.False(cpp.StaMode);
+                }
+
+                Assert.Equal(CommandLineParameterParser.NormalizeFilePath(commandLine[commandLine.Length - 1]), cpp.File);
+                Assert.Null(cpp.ErrorMessage);
+            }
+            finally
+            {
+                File.Delete(cpp.File);
+            }
         }
     }
 }

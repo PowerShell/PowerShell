@@ -289,7 +289,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Finalizes an instance of the ShowCommandHelper class.
+        /// Finalizes an instance of the <see cref="ShowCommandHelper"/> class.
         /// </summary>
         ~ShowCommandHelper()
         {
@@ -750,7 +750,7 @@ Function PSGetSerializedShowCommandInfo
 
             try
             {
-                return property.GetValue(obj, new object[] { });
+                return property.GetValue(obj, Array.Empty<object>());
             }
             catch (ArgumentException)
             {
@@ -794,7 +794,7 @@ Function PSGetSerializedShowCommandInfo
 
             try
             {
-                property.SetValue(obj, value, new object[] { });
+                property.SetValue(obj, value, Array.Empty<object>());
             }
             catch (ArgumentException)
             {
@@ -1000,7 +1000,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate (object ignored)
+                        delegate(object ignored)
                         {
                             this.allModulesViewModel = ShowCommandHelper.GetNewAllModulesViewModel(
                                 this.allModulesViewModel,
@@ -1050,7 +1050,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate (object ignored)
+                        delegate(object ignored)
                         {
                             HelpWindow help = new HelpWindow(getHelpResults[0]);
                             help.Owner = this.window;

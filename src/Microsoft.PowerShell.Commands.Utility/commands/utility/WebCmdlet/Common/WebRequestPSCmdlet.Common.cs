@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
         public virtual SwitchParameter AllowUnencryptedAuthentication { get; set; }
 
         /// <summary>
-        /// Gets or sets the Authentication property used to determin the Authentication method for the web session.
+        /// Gets or sets the Authentication property used to determine the Authentication method for the web session.
         /// Authentication does not work with UseDefaultCredentials.
         /// Authentication over unencrypted sessions requires AllowUnencryptedAuthentication.
         /// Basic: Requires Credential.
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the TimeOut property.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public virtual int TimeoutSec { get; set; }
 
         /// <summary>
@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the RedirectMax property.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public virtual int MaximumRedirection
         {
             get { return _maximumRedirection; }
@@ -238,14 +238,14 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the MaximumRetryCount property, which determines the number of retries of a failed web request.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, Int32.MaxValue)]
+        [ValidateRange(0, int.MaxValue)]
         public virtual int MaximumRetryCount { get; set; }
 
         /// <summary>
         /// Gets or sets the RetryIntervalSec property, which determines the number seconds between retries.
         /// </summary>
         [Parameter]
-        [ValidateRange(1, Int32.MaxValue)]
+        [ValidateRange(1, int.MaxValue)]
         public virtual int RetryIntervalSec { get; set; } = 5;
 
         #endregion
@@ -815,12 +815,12 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsStandardMethodSet()
         {
-            return (ParameterSetName == "StandardMethod");
+            return (ParameterSetName == "StandardMethod" || ParameterSetName == "StandardMethodNoProxy");
         }
 
         private bool IsCustomMethodSet()
         {
-            return (ParameterSetName == "CustomMethod");
+            return (ParameterSetName == "CustomMethod" || ParameterSetName == "CustomMethodNoProxy");
         }
 
         private string GetBasicAuthorizationHeader()
@@ -940,7 +940,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Maximum number of Rel Links to follow.
         /// </summary>
-        internal int _maximumFollowRelLink = Int32.MaxValue;
+        internal int _maximumFollowRelLink = int.MaxValue;
 
         /// <summary>
         /// The remote endpoint returned a 206 status code indicating successful resume.
@@ -1508,7 +1508,6 @@ namespace Microsoft.PowerShell.Commands
                                 string reqVerboseMsg = string.Format(CultureInfo.CurrentCulture,
                                     WebCmdletStrings.WebMethodInvocationVerboseMsg,
                                     request.Method,
-                                    request.RequestUri,
                                     requestContentLength);
                                 WriteVerbose(reqVerboseMsg);
 
@@ -1831,7 +1830,7 @@ namespace Microsoft.PowerShell.Commands
 
             // we only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
-            const string pattern = "<(?<url>.*?)>;\\s*rel=(\"?)(?<rel>.*?)\\1[^\\w -.]?";
+            const string pattern = "<(?<url>.*?)>;\\s*rel=(?<quoted>\")?(?<rel>(?(quoted).*?|[^,;]*))(?(quoted)\")";
             IEnumerable<string> links;
             if (response.Headers.TryGetValues("Link", out links))
             {
@@ -1866,7 +1865,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (formData == null)
             {
-                throw new ArgumentNullException("formDate");
+                throw new ArgumentNullException(nameof(formData));
             }
 
             // It is possible that the dictionary keys or values are PSObject wrapped depending on how the dictionary is defined and assigned.

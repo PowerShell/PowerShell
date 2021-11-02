@@ -1,8 +1,0 @@
-[ClassVersion("1.0.0"), Description("The configuration provider for environment variable control."), FriendlyName("nxEnvironment")]
-class MSFT_nxEnvironmentResource:OMI_BaseResource
-{
-  [Key] string Name;
-  [write] string Value;
-  [Write,ValueMap{"Present", "Absent"},Values{"Present", "Absent"}] string Ensure;
-  [Write] boolean Path;
-};

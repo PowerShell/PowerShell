@@ -47,7 +47,7 @@ Install-Dotnet
 It removes the previously installed version of .NET CLI and installs the version that PowerShell Core depends on.
 If you have any problems installing `dotnet`, please see their [documentation][cli-docs].
 
-[dotnet-cli]: https://github.com/dotnet/cli
+[dotnet-cli]: https://docs.microsoft.com/dotnet/core/tools/
 [cli-docs]: https://www.microsoft.com/net/core#windowscmd
 
 ## Build using our module
@@ -59,11 +59,11 @@ Import-Module ./build.psm1
 Start-PSBuild
 ```
 
-Congratulations! If everything went right, PowerShell is now built and executable as `./src/powershell-win-core/bin/Debug/net5.0/win7-x64/publish/pwsh.exe`.
+Congratulations! If everything went right, PowerShell is now built and executable as `./src/powershell-win-core/bin/Debug/net6.0/win7-x64/publish/pwsh.exe`.
 
 This location is of the form `./[project]/bin/[configuration]/[framework]/[rid]/publish/[binary name]`,
 and our project is `powershell`, configuration is `Debug` by default,
-framework is `net5.0`, runtime identifier is `win7-x64` by default,
+framework is `net6.0`, runtime identifier is `win7-x64` by default,
 and binary name is `pwsh`.
 The function `Get-PSOutput` will return the path to the executable;
 thus you can execute the development copy via `& (Get-PSOutput)`.

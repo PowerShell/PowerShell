@@ -27,7 +27,7 @@ namespace System.Management.Automation
     /// The above statement retrieves the PowerShell edition.
     /// </para>
     /// </summary>
-    public class PSVersionInfo
+    public static class PSVersionInfo
     {
         internal const string PSVersionTableName = "PSVersionTable";
         internal const string PSRemotingProtocolVersionName = "PSRemotingProtocolVersion";
@@ -78,7 +78,7 @@ namespace System.Management.Automation
             s_psVersionTable = new PSVersionHashTable(StringComparer.OrdinalIgnoreCase);
 
             Assembly currentAssembly = typeof(PSVersionInfo).Assembly;
-            string productVersion = currentAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+            ProductVersion = currentAssembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
 
             // Get 'GitCommitId' and 'PSVersion' from the 'productVersion' assembly attribute.
             //
@@ -93,11 +93,11 @@ namespace System.Management.Automation
             //      productVersion = '6.0.0 SHA: f1ec9...'                    convert to GitCommitId = 'v6.0.0'
             //                                                                           PSVersion   = '6.0.0'
             string rawGitCommitId;
-            string mainVersion = productVersion.Substring(0, productVersion.IndexOf(' '));
+            string mainVersion = ProductVersion.Substring(0, ProductVersion.IndexOf(' '));
 
-            if (productVersion.Contains(" Commits: "))
+            if (ProductVersion.Contains(" Commits: "))
             {
-                rawGitCommitId = productVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
+                rawGitCommitId = ProductVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
             }
             else
             {
@@ -181,6 +181,8 @@ namespace System.Management.Automation
                 return s_psVersion;
             }
         }
+
+        internal static string ProductVersion { get; }
 
         internal static string GitCommitId
         {
@@ -374,7 +376,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class PSVersionTableComparer : IComparer
+        private sealed class PSVersionTableComparer : IComparer
         {
             public int Compare(object x, object y)
             {

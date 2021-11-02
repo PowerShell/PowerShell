@@ -113,7 +113,10 @@ namespace System.Management.Automation
                 return _context.EngineSessionState.CheckApplicationVisibility(Path);
             }
 
-            set { throw PSTraceSource.NewNotImplementedException(); }
+            set
+            {
+                throw PSTraceSource.NewNotImplementedException();
+            }
         }
 
         /// <summary>

@@ -10,6 +10,15 @@ pr:
     - master
     - release*
 
+parameters:
+  - name: ForceAzureBlobDelete
+    displayName: Delete Azure Blob
+    type: string
+    values:
+      - true
+      - false
+    default: false
+
 resources:
   repositories:
   - repository: ComplianceRepo
@@ -23,6 +32,18 @@ variables:
     value: 1
   - name: POWERSHELL_TELEMETRY_OPTOUT
     value: 1
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: branchCounterKey
+    value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
+  - name: branchCounter
+    value: $[counter(variables['branchCounterKey'], 1)]
+  - name: ForceAzureBlobDelete
+    value:  ${{ parameters.ForceAzureBlobDelete }}
+  - name: Github_Build_Repository_Uri
+    value: https://github.com/powershell/powershell
+  - name: SBOMGenerator_Formats
+    value: spdx:2.2
 
 stages:
   - stage: prep
@@ -33,18 +54,36 @@ stages:
     dependsOn: ['prep']
     jobs:
       - template: templates/mac.yml
+        parameters:
+          buildArchitecture: x64
+
+      - template: templates/mac.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-file-signing.yml
         parameters:
-          parentJob: build_macOS
+          buildArchitecture: x64
+
+      - template: templates/mac-file-signing.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-package-build.yml
         parameters:
-          parentJob: MacFileSigningJob
+          buildArchitecture: x64
+
+      - template: templates/mac-package-build.yml
+        parameters:
+          buildArchitecture: arm64
 
       - template: templates/mac-package-signing.yml
         parameters:
-          parentJob: package_macOS
+          buildArchitecture: x64
+
+      - template: templates/mac-package-signing.yml
+        parameters:
+          buildArchitecture: arm64
 
   - stage: linux
     dependsOn: ['prep']
@@ -76,6 +115,11 @@ stages:
 
       - template: templates/windows-hosted-build.yml
         parameters:
+          Architecture: x64
+          BuildConfiguration: minSize
+
+      - template: templates/windows-hosted-build.yml
+        parameters:
           Architecture: x86
 
       - template: templates/windows-hosted-build.yml
@@ -97,42 +141,49 @@ stages:
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: x64
-          parentJob: build_windows_x64
+          parentJob: build_windows_x64_release
+
+      - template: templates/windows-packaging.yml
+        parameters:
+          Architecture: x64
+          BuildConfiguration: minSize
+          parentJob: build_windows_x64_minSize
 
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: x86
-          parentJob: build_windows_x86
+          parentJob: build_windows_x86_release
 
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: arm
-          parentJob: build_windows_arm
+          parentJob: build_windows_arm_release
 
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: arm64
-          parentJob: build_windows_arm64
+          parentJob: build_windows_arm64_release
 
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: fxdependent
-          parentJob: build_windows_fxdependent
+          parentJob: build_windows_fxdependent_release
 
       - template: templates/windows-packaging.yml
         parameters:
           Architecture: fxdependentWinDesktop
-          parentJob: build_windows_fxdependentWinDesktop
+          parentJob: build_windows_fxdependentWinDesktop_release
 
       - template: templates/windows-package-signing.yml
         parameters:
           parentJobs:
-            - sign_windows_x64
-            - sign_windows_x86
-            - sign_windows_arm
-            - sign_windows_arm64
-            - sign_windows_fxdependent
-            - sign_windows_fxdependentWinDesktop
+            - sign_windows_x64_release
+            - sign_windows_x64_minSize
+            - sign_windows_x86_release
+            - sign_windows_arm_release
+            - sign_windows_arm64_release
+            - sign_windows_fxdependent_release
+            - sign_windows_fxdependentWinDesktop_release
 
   - stage: compliance
     dependsOn: ['windows']
@@ -154,7 +205,9 @@ stages:
       - job: release_json
         displayName: Create and Upload release.json
         pool:
-          vmImage: 'windows-latest'
+          name: PowerShell1ES
+          demands:
+          - ImageOverride -equals MMS2019
         steps:
         - checkout: self
           clean: true
@@ -164,7 +217,7 @@ stages:
 
         - powershell: |
             $metadata = Get-Content '$(Build.SourcesDirectory)/tools/metadata.json' -Raw | ConvertFrom-Json
-            $LTS = $metadata.LTSRelease
+            $LTS = $metadata.LTSRelease.Latest
             @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
             Get-Content "$(Build.StagingDirectory)\release.json"
             Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"

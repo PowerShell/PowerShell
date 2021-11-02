@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the unsecured string to be imported.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, Mandatory = true)]
-        public String String
+        public string String
         {
             get
             {
@@ -359,8 +359,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    importedString = new SecureString();
-                    foreach (char currentChar in String) { importedString.AppendChar(currentChar); }
+                    importedString = SecureStringHelper.FromPlainTextString(String);
                 }
             }
             catch (ArgumentException e)

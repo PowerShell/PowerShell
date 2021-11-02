@@ -70,8 +70,7 @@ Describe "Get-Process" -Tags "CI" {
         { (Get-Process -Id $idleProcessPid).Name } | Should -Not -Throw
     }
 
-    It "Test for process property = Name" -Pending {
-        # Bug in .Net 5.0 Preview4. See https://github.com/PowerShell/PowerShell/pull/12894
+    It "Test for process property = Name" {
         (Get-Process -Id $PID).Name | Should -BeExactly "pwsh"
     }
 
@@ -85,6 +84,11 @@ Describe "Get-Process" -Tags "CI" {
 
     It "Should fail to run Get-Process with -Module without admin" -Skip:(!$IsWindows) {
         { Get-Process -Module -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateModules,Microsoft.PowerShell.Commands.GetProcessCommand"
+    }
+
+    It "Should not fail to stop Get-Process with -Module when piped to Select-Object" {
+        Get-Process -Module -Id $PID -ErrorVariable errs | Select-Object -First 1
+        $errs | Should -HaveCount 0
     }
 
     It "Should fail to run Get-Process with -FileVersionInfo without admin" -Skip:(!$IsWindows) {
@@ -124,8 +128,7 @@ Describe "Get-Process Formatting" -Tags "Feature" {
 }
 
 Describe "Process Parent property" -Tags "CI" {
-    It "Has Parent process property" -Pending {
-        # Bug in .Net 5.0 Preview4. See https://github.com/PowerShell/PowerShell/pull/12894
+    It "Has Parent process property" {
         $powershellexe = (Get-Process -Id $PID).mainmodule.filename
         & $powershellexe -noprofile -command '(Get-Process -Id $PID).Parent' | Should -Not -BeNullOrEmpty
     }

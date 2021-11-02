@@ -13,9 +13,20 @@ resources:
       - release/*
 
 variables:
-  runCodesignValidationInjection: false
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - name: skipComponentGovernanceDetection
+    value: true
 
 stages:
+- stage: MSIXBundle
+  displayName: Create MSIX Bundle package
+  dependsOn: []
+  jobs:
+  - template: templates/release-MsixBundle.yml
+
 - stage: ValidateSDK
   displayName: Validate SDK
   dependsOn: []
@@ -67,17 +78,26 @@ stages:
       globalToolExeName: 'pwsh'
       globalToolPackageName: 'PowerShell.Linux.x64'
 
-- stage: ValidatePkgNames
+- stage: StaticPkgValidation
   dependsOn: []
-  displayName: Package Names validation
+  displayName: Static package validation
   jobs:
   - job: ValidatePkgNames
+    displayName: Validate Package Names
     pool:
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
     steps:
       - template: templates/release-ValidatePackageNames.yml
+  - job: ValidatePkgBOM
+    displayName: Validate Package BOM
+    pool:
+      vmImage: windows-latest
+    variables:
+    - group: 'Azure Blob variable group'
+    steps:
+      - template: templates/release-ValidatePackageBOM.yml
 
 - stage: StartDocker
   dependsOn: []
@@ -115,9 +135,10 @@ stages:
   displayName: Create GitHub draft release
   # do not include stages that are likely to fail in dependency as there is no way to force deploy.
   dependsOn:
+  - MSIXBundle
   - ValidateSDK
   - PRCreation
-  - ValidatePkgNames
+  - StaticPkgValidation
   - StartDocker
   - ManualValidation
   - ReleaseAutomation
@@ -225,17 +246,40 @@ stages:
     pool: server
     environment: PSReleaseUpdateDotnetDocker
 
+- stage: UpdateWinGet
+  dependsOn: GitHubManualTasks
+  displayName: Add manifest entry to winget
+  jobs:
+  - deployment: UpdateWinGet
+    displayName: Add manifest entry to winget
+    pool: server
+    environment: PSReleaseUpdateWinGet
+
+- stage: PublishMsix
+  dependsOn: GitHubManualTasks
+  displayName: Publish MSIX to store
+  jobs:
+  - deployment: PublishMsix
+    displayName: Publish the MSIX Bundle package to store
+    pool: server
+    environment: PSReleasePublishMsix
+
 - stage: BuildInfoJson
   dependsOn: GitHubManualTasks
   displayName: Upload BuildInfoJson
   jobs:
-  - job: UploadJson
+  - deployment: UploadJson
+    displayName: Upload BuildInfoJson
     pool:
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
-    steps:
-    - template: templates/release-BuildJson.yml
+    environment: PSReleaseBuildInfoJson
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: templates/release-BuildJson.yml
 
 - stage: ReleaseVPack
   dependsOn: GitHubManualTasks

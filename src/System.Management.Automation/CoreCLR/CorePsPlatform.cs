@@ -16,8 +16,6 @@ namespace System.Management.Automation
     /// </summary>
     public static class Platform
     {
-        private static string _tempDirectory = null;
-
         /// <summary>
         /// True if the current platform is Linux.
         /// </summary>
@@ -140,6 +138,21 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the underlying system supports single-threaded apartment.
+        /// </summary>
+        public static bool IsStaSupported
+        {
+            get
+            {
+#if UNIX
+                return false;
+#else
+                return _isStaSupported.Value;
+#endif
+            }
+        }
+
 #if UNIX
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Platform.SelectProductNameForDirectory(Platform.XDG_Type.CACHE);
@@ -148,6 +161,22 @@ namespace System.Management.Automation
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
         internal static readonly string ConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
+        private static readonly Lazy<bool> _isStaSupported = new Lazy<bool>(() =>
+        {
+            // See objbase.h
+            const int COINIT_APARTMENTTHREADED = 0x2;
+            const int E_NOTIMPL = unchecked((int)0X80004001);
+            int result = Windows.NativeMethods.CoInitializeEx(IntPtr.Zero, COINIT_APARTMENTTHREADED);
+
+            // If 0 is returned the thread has been initialized for the first time
+            // as an STA and thus supported and needs to be uninitialized.
+            if (result > 0)
+            {
+                Windows.NativeMethods.CoUninitialize();
+            }
+
+            return result != E_NOTIMPL;
+        });
 
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
@@ -155,7 +184,7 @@ namespace System.Management.Automation
 #endif
 
         // format files
-        internal static readonly List<string> FormatFileNames = new()
+        internal static readonly string[] FormatFileNames = new string[]
         {
             "Certificate.format.ps1xml",
             "Diagnostics.format.ps1xml",
@@ -169,6 +198,8 @@ namespace System.Management.Automation
             "Registry.format.ps1xml",
             "WSMan.format.ps1xml"
         };
+
+        private static string _tempDirectory = null;
 
         /// <summary>
         /// Some common environment variables used in PS have different
@@ -485,11 +516,6 @@ namespace System.Management.Automation
             return Unix.IsHardLink(fileInfo);
         }
 
-        internal static string NonWindowsInternalGetTarget(string path)
-        {
-            return Unix.NativeMethods.FollowSymLink(path);
-        }
-
         internal static string NonWindowsGetUserFromPid(int path)
         {
             return Unix.NativeMethods.GetUserFromPid(path);
@@ -557,6 +583,31 @@ namespace System.Management.Automation
             return IsMacOS ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
+        internal static bool NonWindowsKillProcess(int pid)
+        {
+            return Unix.NativeMethods.KillProcess(pid);
+        }
+
+        internal static int NonWindowsWaitPid(int pid, bool nohang)
+        {
+            return Unix.NativeMethods.WaitPid(pid, nohang);
+        }
+
+        internal static class Windows
+        {
+            /// <summary>The native methods class.</summary>
+            internal static class NativeMethods
+            {
+                private const string ole32Lib = "api-ms-win-core-com-l1-1-0.dll";
+
+                [DllImport(ole32Lib)]
+                internal static extern int CoInitializeEx(IntPtr reserve, int coinit);
+
+                [DllImport(ole32Lib)]
+                internal static extern void CoUninitialize();
+            }
+        }
+
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
         // works *correctly* on Linux in that it creates an exception with
         // the string perror would give you for the last set value of errno.
@@ -566,8 +617,8 @@ namespace System.Management.Automation
         /// <summary>Unix specific implementations of required functionality.</summary>
         internal static class Unix
         {
-            private static Dictionary<int, string> usernameCache = new();
-            private static Dictionary<int, string> groupnameCache = new();
+            private static readonly Dictionary<int, string> usernameCache = new();
+            private static readonly Dictionary<int, string> groupnameCache = new();
 
             /// <summary>The type of a Unix file system item.</summary>
             public enum ItemType
@@ -699,7 +750,7 @@ namespace System.Management.Automation
                 private const char CanExecute = 'x';
 
                 // helper for getting unix mode
-                private Dictionary<StatMask, char> modeMap = new()
+                private readonly Dictionary<StatMask, char> modeMap = new()
                 {
                         { StatMask.OwnerRead, CanRead },
                         { StatMask.OwnerWrite, CanWrite },
@@ -712,7 +763,7 @@ namespace System.Management.Automation
                         { StatMask.OtherExecute, CanExecute },
                 };
 
-                private StatMask[] permissions = new StatMask[]
+                private readonly StatMask[] permissions = new StatMask[]
                 {
                     StatMask.OwnerRead,
                     StatMask.OwnerWrite,
@@ -726,7 +777,7 @@ namespace System.Management.Automation
                 };
 
                 // The item type and the character representation for the first element in the stat string
-                private Dictionary<ItemType, char> itemTypeTable = new()
+                private readonly Dictionary<ItemType, char> itemTypeTable = new()
                 {
                     { ItemType.BlockDevice, 'b' },
                     { ItemType.CharacterDevice, 'c' },
@@ -1017,6 +1068,13 @@ namespace System.Management.Automation
                 [DllImport(psLib, CharSet = CharSet.Ansi)]
                 internal static extern uint GetCurrentThreadId();
 
+                [DllImport(psLib)]
+                [return: MarshalAs(UnmanagedType.Bool)]
+                internal static extern bool KillProcess(int pid);
+
+                [DllImport(psLib)]
+                internal static extern int WaitPid(int pid, bool nohang);
+
                 // This is a struct tm from <time.h>.
                 [StructLayout(LayoutKind.Sequential)]
                 internal unsafe struct UnixTm
@@ -1075,10 +1133,6 @@ namespace System.Management.Automation
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)] string filePath,
                                                           [MarshalAs(UnmanagedType.LPStr)] string target);
-
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.LPStr)]
-                internal static extern string FollowSymLink([MarshalAs(UnmanagedType.LPStr)] string filePath);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]

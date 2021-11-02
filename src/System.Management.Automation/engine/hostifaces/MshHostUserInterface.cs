@@ -232,6 +232,161 @@ namespace System.Management.Automation.Host
         /// </summary>
         public virtual void WriteInformation(InformationRecord record) { }
 
+        private static bool ShouldOutputPlainText(bool isHost, bool? supportsVirtualTerminal)
+        {
+            var outputRendering = OutputRendering.PlainText;
+
+            if (supportsVirtualTerminal != false)
+            {
+                switch (PSStyle.Instance.OutputRendering)
+                {
+                    case OutputRendering.Host:
+                        outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
+                        break;
+                    default:
+                        outputRendering = PSStyle.Instance.OutputRendering;
+                        break;
+                }
+            }
+
+            return outputRendering == OutputRendering.PlainText;
+        }
+
+        /// <summary>
+        /// The format styles that are supported by the host.
+        /// </summary>
+        public enum FormatStyle
+        {
+            /// <summary>
+            /// Reset the formatting to the default.
+            /// </summary>
+            Reset,
+
+            /// <summary>
+            /// Highlight text used in output formatting.
+            /// </summary>
+            FormatAccent,
+
+            /// <summary>
+            /// Highlight for table headers.
+            /// </summary>
+            TableHeader,
+
+            /// <summary>
+            /// Highlight for detailed error view.
+            /// </summary>
+            ErrorAccent,
+
+            /// <summary>
+            /// Style for error messages.
+            /// </summary>
+            Error,
+
+            /// <summary>
+            /// Style for warning messages.
+            /// </summary>
+            Warning,
+
+            /// <summary>
+            /// Style for verbose messages.
+            /// </summary>
+            Verbose,
+
+            /// <summary>
+            /// Style for debug messages.
+            /// </summary>
+            Debug,
+        }
+
+        /// <summary>
+        /// Get the ANSI escape sequence for the given format style.
+        /// </summary>
+        /// <param name="formatStyle">
+        /// The format style to get the escape sequence for.
+        /// </param>
+        /// <param name="isOutputRedirected">
+        /// True if the output is redirected.
+        /// </param>
+        /// <returns>
+        /// The ANSI escape sequence for the given format style.
+        /// </returns>
+        public static string GetFormatStyleString(FormatStyle formatStyle, bool isOutputRedirected)
+        {
+            // redirected console gets plaintext output to preserve existing behavior
+            if (!InternalTestHooks.BypassOutputRedirectionCheck &&
+                (PSStyle.Instance.OutputRendering == OutputRendering.PlainText ||
+                isOutputRedirected))
+            {
+                return string.Empty;
+            }
+
+            PSStyle psstyle = PSStyle.Instance;                
+            switch (formatStyle)
+            {
+                case FormatStyle.Reset:
+                    return psstyle.Reset;
+                case FormatStyle.FormatAccent:
+                    return psstyle.Formatting.FormatAccent;
+                case FormatStyle.TableHeader:
+                    return psstyle.Formatting.TableHeader;
+                case FormatStyle.ErrorAccent:
+                    return psstyle.Formatting.ErrorAccent;
+                case FormatStyle.Error:
+                    return psstyle.Formatting.Error;
+                case FormatStyle.Warning:
+                    return psstyle.Formatting.Warning;
+                case FormatStyle.Verbose:
+                    return psstyle.Formatting.Verbose;
+                case FormatStyle.Debug:
+                    return psstyle.Formatting.Debug;
+                default:
+                    return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Get the appropriate output string based on different criteria.
+        /// </summary>
+        /// <param name="text">
+        /// The text to format.
+        /// </param>
+        /// <param name="supportsVirtualTerminal">
+        /// True if the host supports virtual terminal.
+        /// </param>
+        /// <param name="isOutputRedirected">
+        /// True if the output is redirected.
+        /// </param>
+        /// <returns>
+        /// The formatted text.
+        /// </returns>
+        public static string GetOutputString(string text, bool supportsVirtualTerminal, bool isOutputRedirected)
+        {
+            return GetOutputString(text, isHost: true, supportsVirtualTerminal: supportsVirtualTerminal, isOutputRedirected: isOutputRedirected);
+        }
+
+        internal static string GetOutputString(string text, bool isHost, bool? supportsVirtualTerminal = null, bool isOutputRedirected = false)
+        {
+            var sd = new ValueStringDecorated(text);
+
+            if (sd.IsDecorated)
+            {
+                var outputRendering = OutputRendering.Ansi;
+                if (InternalTestHooks.BypassOutputRedirectionCheck)
+                {
+                    isOutputRedirected = false;
+                }
+
+                if (isOutputRedirected || ShouldOutputPlainText(isHost, supportsVirtualTerminal))
+                {
+                    outputRendering = OutputRendering.PlainText;
+                }
+
+                text = sd.ToString(outputRendering);
+            }
+
+            return text;
+        }
+
         // Gets the state associated with PowerShell transcription.
         //
         // Ideally, this would be associated with the host instance, but remoting recycles host instances
@@ -438,7 +593,7 @@ namespace System.Management.Automation.Host
             {
                 if (TranscriptionData.SystemTranscript == null)
                 {
-                    TranscriptionData.SystemTranscript = PSHostUserInterface.GetSystemTranscriptOption(TranscriptionData.SystemTranscript);
+                    TranscriptionData.SystemTranscript = GetSystemTranscriptOption(TranscriptionData.SystemTranscript);
                     if (TranscriptionData.SystemTranscript != null)
                     {
                         LogTranscriptHeader(null, TranscriptionData.SystemTranscript);
@@ -620,13 +775,10 @@ namespace System.Management.Automation.Host
 
                     resultText = resultText.TrimEnd();
 
-                    if (ExperimentalFeature.IsEnabled("PSAnsiRendering"))
+                    var text = new ValueStringDecorated(resultText);
+                    if (text.IsDecorated)
                     {
-                        var text = new ValueStringDecorated(resultText);
-                        if (text.IsDecorated)
-                        {
-                            resultText = text.ToString(OutputRendering.PlainText);
-                        }
+                        resultText = text.ToString(OutputRendering.PlainText);
                     }
 
                     foreach (TranscriptionOption transcript in TranscriptionData.Transcripts.Prepend<TranscriptionOption>(TranscriptionData.SystemTranscript))
@@ -966,7 +1118,7 @@ namespace System.Management.Automation.Host
         private static readonly object s_systemTranscriptLock = new object();
 
         private static readonly Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
-            () => Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig),
+            static () => Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);
 
         private static TranscriptionOption GetTranscriptOptionFromSettings(Transcription transcriptConfig, TranscriptionOption currentTranscript)
@@ -1202,6 +1354,7 @@ namespace System.Management.Automation.Host
     /// by giving the user ability to select more than one choice. The PromptForChoice method available
     /// in PSHostUserInterface class supports only one choice selection.
     /// </summary>
+#nullable enable
     public interface IHostUISupportsMultipleChoiceSelection
     {
         /// <summary>
@@ -1226,9 +1379,10 @@ namespace System.Management.Automation.Host
         /// implementation.
         /// </returns>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
-        Collection<int> PromptForChoice(string caption, string message,
-            Collection<ChoiceDescription> choices, IEnumerable<int> defaultChoices);
+        Collection<int> PromptForChoice(string? caption, string? message,
+            Collection<ChoiceDescription> choices, IEnumerable<int>? defaultChoices);
     }
+#nullable restore
 
     /// <summary>
     /// Helper methods used by PowerShell's Hosts: ConsoleHost and InternalHost to process
@@ -1260,7 +1414,7 @@ namespace System.Management.Automation.Host
                     Text.StringBuilder splitLabel = new Text.StringBuilder(choices[i].Label.Substring(0, andPos), choices[i].Label.Length);
                     if (andPos + 1 < choices[i].Label.Length)
                     {
-                        splitLabel.Append(choices[i].Label.Substring(andPos + 1));
+                        splitLabel.Append(choices[i].Label.AsSpan(andPos + 1));
                         hotkeysAndPlainLabels[0, i] = CultureInfo.CurrentCulture.TextInfo.ToUpper(choices[i].Label.AsSpan(andPos + 1, 1).Trim().ToString());
                     }
 

@@ -1575,7 +1575,7 @@ namespace System.Management.Automation
         #region private members
 
         [DebuggerDisplay("{FunctionContext.CurrentPosition}")]
-        private class CallStackInfo
+        private sealed class CallStackInfo
         {
             internal InvocationInfo InvocationInfo { get; set; }
 
@@ -1807,7 +1807,8 @@ namespace System.Management.Automation
                 {
                     // Fix up prompt.
                     ++index;
-                    string debugPrompt = "\"[DBG]: " + originalPromptString.Substring(index, originalPromptString.Length - index);
+                    string debugPrompt = string.Concat("\"[DBG]: ", originalPromptString.AsSpan(index, originalPromptString.Length - index));
+
                     defaultPromptInfo.Update(
                         ScriptBlock.Create(debugPrompt), true, ScopedItemOptions.Unspecified);
                 }

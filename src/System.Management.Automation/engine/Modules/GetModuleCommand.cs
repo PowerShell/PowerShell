@@ -265,7 +265,7 @@ namespace Microsoft.PowerShell.Commands
 
             IEnumerable<PSModuleInfo> remoteModuleInfos = remoteModules
                 .Select(cimModule => this.ConvertCimModuleInfoToPSModuleInfo(cimModule, cimSession.ComputerName))
-                .Where(moduleInfo => moduleInfo != null);
+                .Where(static moduleInfo => moduleInfo != null);
 
             return remoteModuleInfos;
         }
@@ -382,8 +382,8 @@ namespace Microsoft.PowerShell.Commands
                     FullyQualifiedName[modSpecIndex] = FullyQualifiedName[modSpecIndex].WithNormalizedName(Context, SessionState.Path.CurrentLocation.Path);
                 }
 
-                moduleSpecTable = FullyQualifiedName.ToDictionary(moduleSpecification => moduleSpecification.Name, StringComparer.OrdinalIgnoreCase);
-                strNames.AddRange(FullyQualifiedName.Select(spec => spec.Name));
+                moduleSpecTable = FullyQualifiedName.ToDictionary(static moduleSpecification => moduleSpecification.Name, StringComparer.OrdinalIgnoreCase);
+                strNames.AddRange(FullyQualifiedName.Select(static spec => spec.Name));
             }
 
             string[] names = strNames.Count > 0 ? strNames.ToArray() : null;
@@ -515,7 +515,7 @@ namespace Microsoft.PowerShell.Commands
             // Edition check only applies to Windows System32 module path
             if (!SkipEditionCheck && ListAvailable && !All)
             {
-                modules = modules.Where(module => module.IsConsideredEditionCompatible);
+                modules = modules.Where(static module => module.IsConsideredEditionCompatible);
             }
 #endif
 

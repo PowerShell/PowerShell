@@ -670,7 +670,10 @@ namespace System.Management.Automation
         /// </summary>
         public string PSJobTypeName
         {
-            get { return _jobTypeName; }
+            get
+            {
+                return _jobTypeName;
+            }
 
             protected internal set
             {
@@ -2045,7 +2048,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Simple throttle operation class for connecting jobs.
         /// </summary>
-        private class ConnectJobOperation : IThrottleOperation
+        private sealed class ConnectJobOperation : IThrottleOperation
         {
             private readonly PSRemotingChildJob _psRemoteChildJob;
 
@@ -2286,7 +2289,10 @@ namespace System.Management.Automation
         /// </summary>
         internal bool HideComputerName
         {
-            get { return _hideComputerName; }
+            get
+            {
+                return _hideComputerName;
+            }
 
             set
             {
@@ -2934,7 +2940,10 @@ namespace System.Management.Automation
         /// </summary>
         internal bool HideComputerName
         {
-            get { return _hideComputerName; }
+            get
+            {
+                return _hideComputerName;
+            }
 
             set
             {
