@@ -1933,6 +1933,48 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response = Invoke-WebRequest -Uri $dosUri
             $response.Images | Should -Not -BeNullOrEmpty
         }
+
+        $singleInputExpected = @(
+            @{ Name = 'foo'; Value = 'bar' }
+        )
+
+        It 'correctly parses input tag(s) for `<markup>`' -TestCases @(
+            @{
+                Markup = "<input name='foo' value='bar'>";
+                ExpectedFields = $singleInputExpected
+            },
+            @{
+                Markup = "<input name='foo' value='bar'/>";
+                ExpectedFields = $singleInputExpected
+            },
+            @{
+                Markup = "<input name='foo' value='bar'>baz</input>";
+                ExpectedFields = $singleInputExpected
+            }
+            @{
+                Markup = "<input name='item1' value='bar'><input name='item2' value='foo'><input name='item3'></input><input name='item4' value='fu'><input name='item5' value='bahr'/>";
+                ExpectedFields = @(
+                    @{ Name = 'item1'; Value = 'bar'},
+                    @{ Name = 'item2'; Value = 'foo' },
+                    @{ Name = 'item3'; Value = $null },
+                    @{ Name = 'item4'; Value = 'fu' },
+                    @{ Name = 'item5'; Value = 'bahr' }
+                )
+            }
+        ) {
+            param($markup, $expectedFields)
+            $query = @{
+                contenttype = 'text/html'
+                body        = "<html><body>${markup}</body></html>"
+            }
+            $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+            $response = Invoke-WebRequest -Uri $uri -UseBasicParsing
+            $response.Error | Should -BeNullOrEmpty
+            ForEach ($expectedField in $expectedFields) {
+                $actualField = $response.InputFields.FindByName($expectedField.Name)
+                $actualField.Value | Should -Be $expectedField.Value
+            }
+        }
     }
 
     Context "Denial of service" -Tag 'DOS' {
