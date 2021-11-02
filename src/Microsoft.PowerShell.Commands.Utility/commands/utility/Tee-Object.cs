@@ -97,16 +97,6 @@ namespace Microsoft.PowerShell.Commands
         private string _variable;
 
         /// <summary>
-        /// Gets or sets the encoding to use when writing the file.
-        /// </summary>
-        [Parameter(ParameterSetName = "File")]
-        [Parameter(ParameterSetName = "LiteralFile")]
-        [ArgumentToEncodingTransformationAttribute]
-        [ArgumentEncodingCompletionsAttribute]
-        [ValidateNotNullOrEmpty]
-        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
-
-        /// <summary>
         /// </summary>
         protected override void BeginProcessing()
         {
