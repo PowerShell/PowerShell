@@ -118,20 +118,20 @@ jobs:
   - task: NuGetToolInstaller@1
     displayName: 'Install NuGet.exe'
 
-  - powershell: |
+  - pwsh: |
       Import-Module $env:REPOROOT\build.psm1
       Import-Module $env:REPOROOT\tools\packaging
       Find-Dotnet
       New-ILNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -WinFxdBinPath '$(winFxdPath)' -LinuxFxdBinPath '$(linuxFxdPath)' -GenAPIToolPath "$(GenAPIToolPath)"
     displayName: 'Create Nuget Package Folders'
 
-  - powershell: |
+  - pwsh: |
       Get-ChildItem $(linuxFxdPath)
       Get-ChildItem $(winFxdPath)
       Get-ChildItem $(winFxdWinDesktopPath)
     displayName: Capture fxd folders
 
-  - powershell: |
+  - pwsh: |
       Import-Module $env:REPOROOT\build.psm1
       Import-Module $env:REPOROOT\tools\packaging
       Find-Dotnet
@@ -142,7 +142,7 @@ jobs:
       New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
     displayName: 'Create Global tool packages'
 
-  - powershell: |
+  - pwsh: |
       Get-ChildItem "$(PackagePath)" -Recurse
     displayName: Capture generated packages
 
@@ -164,7 +164,7 @@ jobs:
     displayName: Fake copy when not signing
     condition: eq(variables['SHOULD_SIGN'], 'false')
 
-  - powershell: |
+  - pwsh: |
       Import-Module "${env:REPOROOT}\build.psm1" -Force
       Get-ChildItem -Recurse "$(System.ArtifactsDirectory)\signed\*.nupkg" -Verbose | ForEach-Object {  Start-NativeExecution -sb { nuget.exe verify -All $_.FullName } }
     displayName: Verify all packages are signed
@@ -183,7 +183,7 @@ jobs:
     parameters:
       artifactPath: '$(System.ArtifactsDirectory)\signed'
 
-  - powershell: |
+  - pwsh: |
       if (-not (Test-Path "$(System.ArtifactsDirectory)\signed\globaltool"))
       {
         $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory -Force

@@ -97,6 +97,11 @@ jobs:
 
         $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/${{ parameters.globalToolExeName }}"
 
+        $env:DOTNET_ROOT = if ($IsWindows) { "$env:LOCALAPPDATA\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
+
+        Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
+        Get-ChildItem $env:DOTNET_ROOT
+
         $versionFound = & $toolPath -c '$PSVersionTable.PSVersion.ToString()'
 
         if ( '$(PowerShellVersion)' -ne $versionFound)

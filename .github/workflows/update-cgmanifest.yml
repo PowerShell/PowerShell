@@ -4,9 +4,9 @@
 name: Update cgmanifest
 on:
     workflow_dispatch:
-    schedule:
-    # At 13:00 UTC every day.
-    - cron:  '0 13 * * *'
+    pull_request:
+      branches:
+      - master
 
 defaults:
   run:
@@ -15,6 +15,8 @@ defaults:
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
+  CGMANIFEST_PATH: ''
+  NUGET_PACKAGES: ${{ github.workspace }}\.nuget\packages
 
 jobs:
   update-cgmanifest:
@@ -25,6 +27,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Cache DotNet
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~\AppData\Local\Microsoft\dotnet
+            ${{ github.workspace }}\.nuget\packages
+          key: ${{ runner.os }}-${{ hashFiles('**\DotnetRuntimeMetadata.json') }}-${{ hashFiles('**\nuget.config') }}
       - name: Sync tags
         run: |
           git fetch --prune --unshallow --tags
@@ -35,30 +44,14 @@ jobs:
         run: |
           Import-Module ./build.psm1
           Start-PSBootStrap
-      - name: Update Notices file
-        run: |
-          Invoke-WebRequest -Uri https://aka.ms/pwsh-daily-tpn -OutFile ./ThirdPartyNotices.txt
-      - name: Execute script to update cgmanifest
+      - name: Verify cgmanifest is up to date
         run: |
           Import-Module ./build.psm1
           Find-Dotnet
           ./tools/findMissingNotices.ps1
-      - name: Microsoft Teams Notifier
-        uses: skitionek/notify-microsoft-teams@master
-        if: failure()
+      - name: Upload cgmanifest
+        uses: actions/upload-artifact@v2
+        if: always() && env.CGMANIFEST_PATH != ''
         with:
-          webhook_url: ${{ secrets.PS_BUILD_TEAMS_CHANNEL }}
-          overwrite: "{title: `Failure in updating cgmanifest. Look at ${workflow_link}`}"
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        id: cpr
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        with:
-          commit-message: "Update to the latest license and the cgmanifest with missing or updated components"
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          title: "Update to the latest license and the cgmanifest with missing or updated components"
-          reviewers: travisez13
-          base: master
-          draft: false
-          branch: update-cgmanifest
+          name: cgmanifest
+          path: ${{ env.CGMANIFEST_PATH }}

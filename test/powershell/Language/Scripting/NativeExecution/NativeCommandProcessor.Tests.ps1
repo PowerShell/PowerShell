@@ -253,47 +253,46 @@ Categories=Application;
     }
 }
 
-Describe "Native Command Processor" -tags @("Feature", "RequireAdminOnWindows") {
+Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "RequireAdminOnWindows") {
     BeforeAll {
-        $defaultParamValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["It:Skip"] = !$IsWindows
+        if (-not $IsWindows) {
+            return;
+        }
 
-        if ($IsWindows) {
-            $vhdx = Join-Path -Path $TestDrive -ChildPath ncp.vhdx
+        $vhdx = Join-Path -Path $TestDrive -ChildPath ncp.vhdx
 
-            if (Test-Path -Path $vhdx) {
-                Remove-item -Path $vhdx -Force
-            }
+        if (Test-Path -Path $vhdx) {
+            Remove-item -Path $vhdx -Force
+        }
 
-            $create_vhdx = Join-Path -Path $TestDrive -ChildPath 'create_vhdx.txt'
+        $create_vhdx = Join-Path -Path $TestDrive -ChildPath 'create_vhdx.txt'
 
-            Set-Content -Path $create_vhdx -Force -Value @"
-                create vdisk file="$vhdx" maximum=20 type=fixed
-                select vdisk file="$vhdx"
-                attach vdisk
-                convert mbr
-                create partition primary
-                format fs=fat
-                assign letter="T"
-                detach vdisk
+        Set-Content -Path $create_vhdx -Force -Value @"
+            create vdisk file="$vhdx" maximum=20 type=fixed
+            select vdisk file="$vhdx"
+            attach vdisk
+            convert mbr
+            create partition primary
+            format fs=fat
+            assign letter="T"
+            detach vdisk
 "@
 
-            diskpart.exe /s $create_vhdx
-            Mount-DiskImage -ImagePath $vhdx | Out-Null
+        diskpart.exe /s $create_vhdx
+        Mount-DiskImage -ImagePath $vhdx > $null
 
-            Copy-Item C:\Windows\System32\whoami.exe T:\whoami.exe
-        }
+        Copy-Item "$env:WinDir\System32\whoami.exe" T:\whoami.exe
     }
 
     AfterAll {
         if ($IsWindows) {
             Dismount-DiskImage -ImagePath $vhdx
-            $global:PSDefaultParameterValues = $defaultParamValues
+            Remove-Item $vhdx, $create_vhdx -Force
         }
     }
 
-    It "Should run application from FAT file system without error" {
-        $expected = C:\Windows\System32\whoami.exe
+    It "Should run 'whoami.exe' from FAT file system without error" -Skip:(!$IsWindows) {
+        $expected = & "$env:WinDir\System32\whoami.exe"
         $result = T:\whoami.exe
         $result | Should -BeExactly $expected
     }

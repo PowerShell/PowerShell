@@ -129,7 +129,7 @@
   <data name="AuthenticationCredentialNotSupplied" xml:space="preserve">
     <value>The cmdlet cannot run because the following parameter is not specified: Credential. The supplied Authentication type requires a Credential. Specify Credential, then retry.</value>
   </data>
-    <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
+  <data name="AuthenticationTokenNotSupplied" xml:space="preserve">
     <value>The cmdlet cannot run because the following parameter is not specified: Token. The supplied Authentication type requires a Token. Specify Token, then retry.</value>
   </data>
   <data name="AuthenticationTokenConflict" xml:space="preserve">
@@ -247,7 +247,7 @@
     <value>Following rel link {0}</value>
   </data>
   <data name="WebMethodInvocationVerboseMsg" xml:space="preserve">
-    <value>{0} with {1}-byte payload</value>
+    <value>HTTP/{0} {1} {2} with {3}-byte payload</value>
   </data>
   <data name="WebMethodResumeFailedVerboseMsg" xml:space="preserve">
     <value>The remote server indicated it could not resume downloading. The local file will be overwritten.</value>
