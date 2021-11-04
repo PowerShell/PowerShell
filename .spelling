@@ -1269,7 +1269,7 @@ package.json
 jcotton42
 RPMs
 PSDesiredStateConfiguration
- - CHANGELOG/preview.md
+ - CHANGELOG/7.2.md
 Gimly
 jborean93
 mkswd
@@ -1391,6 +1391,14 @@ tar.gz
 psoptions.json
 manifest.spdx.json
 vPack
+kondratyev-nv
+v7.2.0
+cgmanifest.json
+pwsh.exe
+6.0.100-rtm.21527.11
+6.0.100-rc.2.21505.57
+ThirdPartyNotices.txt
+rtm.21527.11
  - CHANGELOG/7.0.md
 codesign
 release-BuildJson
