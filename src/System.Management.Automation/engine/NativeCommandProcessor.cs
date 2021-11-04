@@ -1106,27 +1106,6 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // The function 'SHGetFileInfo()' does not understand reparse points and returns 0 ("non exe or error")
-            // for a symbolic link file, so we try to get the immediate link target in that case.
-            // Why not get the final target (use 'returnFinalTarget: true')? Because:
-            //  1. When starting a process on Windows, if the 'FileName' is a symbolic link, the immediate link target will automatically be used,
-            //     but the OS does not do recursive resolution when the immediate link target is also a symbolic link.
-            //  2. Keep the same behavior as before adopting the 'LinkTarget' and 'ResolveLinkTarget' APIs in .NET 6.
-            try
-            {
-                string linkTarget = File.ResolveLinkTarget(fileName, returnFinalTarget: false)?.FullName;
-                if (linkTarget is not null)
-                {
-                    fileName = linkTarget;
-                }
-            }
-            catch
-            {
-                // An exception may be thrown from 'File.ResolveLinkTarget' when it fails to resolve a link path,
-                // for example, when the underlying file system doesn't support reparse points.
-                // Just use the original file name in this case.
-            }
-
             SHFILEINFO shinfo = new SHFILEINFO();
             IntPtr type = SHGetFileInfo(fileName, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), SHGFI_EXETYPE);
 
