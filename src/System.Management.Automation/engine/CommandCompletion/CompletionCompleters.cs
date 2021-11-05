@@ -2210,11 +2210,20 @@ namespace System.Management.Automation
                             }
                         }
 
+                        if (parameterName.Equals("Scope", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionScope(context, result);
+                        }
                         break;
                     }
                 case "New-PSDrive":
                     {
                         NativeCompletionProviderCommands(context, parameterName, result);
+
+                        if (parameterName.Equals("Scope", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionScope(context, result);
+                        }
                         break;
                     }
                 case "Get-PSProvider":
@@ -2239,11 +2248,21 @@ namespace System.Management.Automation
                 case "Set-Variable":
                     {
                         NativeCompletionVariableCommands(context, parameterName, result);
+
+                        if (parameterName.Equals("Scope", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionScope(context, result);
+                        }
                         break;
                     }
                 case "Get-Alias":
                     {
                         NativeCompletionAliasCommands(context, parameterName, result);
+
+                        if (parameterName.Equals("Scope", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionScope(context, result);
+                        }
                         break;
                     }
                 case "Get-TraceSource":
@@ -2337,6 +2356,20 @@ namespace System.Management.Automation
                 case "Register-CimIndicationEvent":
                     {
                         NativeCompletionCimCommands(parameterName, boundArguments, result, commandAst, context);
+                        break;
+                    }
+
+                case "Export-Alias":
+                case "Import-Alias":
+                case "New-Alias":
+                case "New-Variable":
+                case "Remove-Alias":
+                case "Set-Alias":
+                    {
+                        if (parameterName.Equals("Scope", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionScope(context, result);
+                        }
                         break;
                     }
 
@@ -2500,6 +2533,48 @@ namespace System.Management.Automation
             {
                 result.RemoveAt(result.Count - 1);
             }
+        }
+
+        private static void NativeCompletionScope(CompletionContext context, List<CompletionResult> result)
+        {
+            var wordToComplete = context.WordToComplete;
+
+            var typeResults = CompleteScope(wordToComplete, context);
+            if (typeResults != null)
+            {
+                result.AddRange(typeResults);
+            }
+
+            result.Add(CompletionResult.Null);
+        }
+
+        internal static List<CompletionResult> CompleteScope(string wordToComplete, CompletionContext context)
+        {
+            var results = new List<CompletionResult>();
+            var scopes = new List<string>() {"Global", "Local", "Script"};
+
+            wordToComplete = wordToComplete.ToLower();
+
+            // handle named scopes in the list above
+            foreach (var scopeName in scopes)
+            {
+                if ((scopeName.ToLower()).StartsWith(wordToComplete)) {
+                    results.Add(new CompletionResult(scopeName, scopeName, CompletionResultType.ParameterValue, "named scope"));
+                }
+            }
+
+            // handle the numbered scopes
+            for (int i = 0; i < 50; i++) {
+                try {
+                    var tmp = context.ExecutionContext.EngineSessionState.GetScopeByID(i);
+                    results.Add(new CompletionResult((i).ToString(), (i).ToString(), CompletionResultType.ParameterValue, "numbered scope"));
+                } catch {
+                    break;
+                }
+
+            }
+
+            return results;
         }
 
         private static void NativeCompletionCimCommands(

@@ -1421,6 +1421,111 @@ dir -Recurse `
         }
     }
 
+    Context "Scope completion tests" {
+        BeforeAll {
+            $cmdletsWithScope = @(
+                "Remove-PSDrive"
+                "Get-PSDrive"
+                "New-PSDrive"
+                "Clear-Variable"
+                "Get-Variable"
+                "Remove-Variable"
+                "Set-Variable"
+                "Get-Alias"
+                "Export-Alias"
+                "Import-Alias"
+                "New-Alias"
+                "New-Variable"
+                "Remove-Alias"
+                "Set-Alias"
+                )
+
+            $curScope = 0; while( $(try { get-variable PSHOME -scope $curScope -erroraction stop} catch { $false }; $curScope++)) { };$curScope - 1
+
+            function Test-Scope-Results {
+                # 0 indicates script scope, higher levels indicate further nested function calls
+                param (
+                    $level,
+                    $results
+                )
+
+                # should always have global, local, script, 0, and 1 since we are in a script
+                # add 1 because the scope numbers go from 0...curScope inclusive. Add 3 for global, local, and script
+                $correctCount = $level + $curScope + 1 + 3
+                ($results | Measure-Object).Count | Should -BeExactly $correctCount
+
+                $i = 0
+                while ($null -ne $results[$i])
+                {
+                    if ($i -eq 0)
+                    {
+                        $results[$i].CompletionText | Should -BeExactly 'Global'
+                    } elseif ($i -eq 1)
+                    {
+                        $results[$i].CompletionText | Should -BeExactly 'Local'
+                    } elseif ($i -eq 2)
+                    {
+                        $results[$i].CompletionText | Should -BeExactly 'Script'
+                    } else
+                    {
+                        $j = $i - 3
+                        $results[$i].CompletionText | Should -BeExactly $j.ToString()
+                    }
+                    $i++
+                }
+            }
+
+            function Test-Scopes-1 {
+                param (
+                    $level
+                )
+
+                foreach ($cmdlet in $cmdletsWithScope) {
+                    $str = $cmdlet + " -Scope "
+                    $c2 = [System.Management.Automation.CommandCompletion]::CompleteInput($str, $str.length, $null)
+                    $r2 = $c2.CompletionMatches
+                    Test-Scope-Results -level $level -results $r2
+                }
+            }
+
+            function Test-Scopes-2 {
+                param (
+                    $level
+                )
+                Test-Scopes-1 -level $level
+            }
+
+            function Test-Scopes-3 {
+                Test-Scopes-2 -level 3
+            }
+        }
+
+        It "Correctly tab completes scope values at the script level" {
+            # test 1: script scope
+            foreach ($cmdlet in $cmdletsWithScope) {
+                $str = $cmdlet + " -Scope "
+                $c2 = [System.Management.Automation.CommandCompletion]::CompleteInput($str, $str.length, $null)
+                $r2 = $c2.CompletionMatches
+                Test-Scope-Results -level 0 -results $r2
+            }
+        }
+
+        It "Correctly tab completes scope values at a single nested function level" {
+            # test 2: single function scope
+            Test-Scopes-1 -level 1
+        }
+
+        It "Correctly tab completes scope values at a double nested function level" {
+            # test 3: double function scope
+            Test-Scopes-2 -level 2
+        }
+
+        It "Correctly tab completes scope values at a triple nested function level" {
+            # test 4: triple function scope
+            Test-Scopes-3
+        }
+    }
+
     Context "CIM cmdlet completion tests" {
         BeforeAll {
             $testCases = @(
