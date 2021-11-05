@@ -256,7 +256,7 @@ The following is sent when the shell starts:
 
 During shell operation the following is sent periodically:
 
-- The name of a module when loaded if it is in the list of modules (see line 128 in src/System.Management.Automation/utils/Telemetry.cs).
+- The name of a module when loaded if it is in the pre-approved list of modules (see line 128 in src/System.Management.Automation/utils/Telemetry.cs).
 Modules which are not in this predetermined list are reported as "Anonymous".
 - The type of item being executed (Alias, Function, Filter, Cmdlet, ExternalScript, Application, Script, or Configuration).
 We do not collect the name of the executed item, the parameters used, or values for any parameter.
