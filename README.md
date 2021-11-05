@@ -263,7 +263,7 @@ We do not collect the name of the executed item, the parameters used, or values 
 - When a `PowerShell` object is created
 - When a remote session is created
 
-In addition to the caveats above, the following is _not_ collected:
+In addition to the caveats above, no personally identifiable information is collected.  For example, the following is _not_ collected:
 
 - IP Address
 - User names
