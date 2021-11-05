@@ -239,25 +239,25 @@ License: By requesting and using the Container OS Image for Windows containers, 
 
 ### Telemetry
 
-Telemetry is controlled via an environment variable called `POWERSHELL_TELEMETRY_OPTOUT`.
+Sending telemetry is controlled via an environment variable called `POWERSHELL_TELEMETRY_OPTOUT`.
 Set the value to `1`, `yes`, or `true` before starting PowerShell to disable telemetry.
 Setting the value to `0`, `no`, `false`, or not creating the variable will enable telemetry.
 The telemetry we collect falls under the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement/).
 
 The following is sent when the shell starts:
 
-- The operating system information
+- Operating system information
 - The commit id of the build
 - The enabled experimental features
-- A random guid representing the session
-- A random guid representing the system
-- Geo-location information as supplied by Application Insights (Country, Region, State, City, if available)
+- A randomly generated guid representing the session
+- A randomly generated guid representing the system
+- Geo-location information is supplied by Application Insights (Country, Region, State, City, if available)
 - The value of the environment variable `POWERSHELL_DISTRIBUTION_CHANNEL`
 
-During shell operation the following telemetry is sent periodically:
+During shell operation the following is sent periodically:
 
-- The name of a module when loaded if it is in the list of modules (listed starting at line 128 in src/System.Management.Automation/utils/Telemetry.cs).
-Modules not in this predetermined list are reported as "Anonymous".
+- The name of a module when loaded if it is in the list of modules (see line 128 in src/System.Management.Automation/utils/Telemetry.cs).
+Modules which are not in this predetermined list are reported as "Anonymous".
 - The type of item being executed (Alias, Function, Filter, Cmdlet, ExternalScript, Application, Script, or Configuration).
 We do not collect the name of the executed item, the parameters used, or values for any parameter.
 - When a `PowerShell` object is created
@@ -266,10 +266,9 @@ We do not collect the name of the executed item, the parameters used, or values 
 In addition to the caveats above, the following is _not_ collected:
 
 - IP Address
-- User name
+- User names
 - Domain names
 - System names
-- Executable names
 
 ## Governance
 
