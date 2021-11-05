@@ -12,19 +12,8 @@ steps:
    git clone https://$(AzureDevOpsPat)@mscodehub.visualstudio.com/PowerShellCore/_git/Internal-PowerShellTeam-Tools '$(Pipeline.Workspace)/tools'
   displayName: Clone Internal-PowerShellTeam-Tools from MSCodeHub
 
-- task: DownloadPipelineArtifact@2
-  inputs:
-    source: specific
-    project: PowerShellCore
-    pipeline: '696'
-    preferTriggeringPipeline: true
-    runVersion: latestFromBranch
-    runBranch: '$(Build.SourceBranch)'
-    artifact: metadata
-    path: '$(Pipeline.Workspace)/releasePipeline/metadata'
-
 - pwsh: |
-    $metadata = Get-Content -Path "$ENV:PIPELINE_WORKSPACE/releasePipeline/metadata/release.json" -Raw | ConvertFrom-Json
+    $metadata = Get-Content -Path "$(Build.SourcesDirectory)/tools/metadata.json" -Raw | ConvertFrom-Json
     Write-Verbose -Verbose "$(ReleaseTag) $(RepoClientCliClientID) $(RepoClientCliSecret) $(AzureVersion) $($metadata.LTSRelease.Latest)"
     $params = @{
         ReleaseTag = "$(ReleaseTag)"
