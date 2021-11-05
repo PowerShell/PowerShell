@@ -239,36 +239,8 @@ License: By requesting and using the Container OS Image for Windows containers, 
 
 ### Telemetry
 
-Sending telemetry is controlled via an environment variable called `POWERSHELL_TELEMETRY_OPTOUT`.
-Set the value to `1`, `yes`, or `true` before starting PowerShell to disable telemetry.
-Setting the value to `0`, `no`, `false`, or not creating the variable will enable telemetry.
-The telemetry we collect falls under the [Microsoft Privacy Statement](https://privacy.microsoft.com/privacystatement/).
-
-The following is sent when the shell starts:
-
-- Operating system information
-- The commit id of the build
-- The enabled experimental features
-- A randomly generated guid representing the session
-- A randomly generated guid representing the system
-- Geo-location information is supplied by Application Insights (Country, Region, State, City, if available)
-- The value of the environment variable `POWERSHELL_DISTRIBUTION_CHANNEL`
-
-During shell operation the following is sent periodically:
-
-- The name of a module when loaded if it is in the pre-approved list of modules (see line 128 in src/System.Management.Automation/utils/Telemetry.cs).
-Modules which are not in this predetermined list are reported as "Anonymous".
-- The type of item being executed (Alias, Function, Filter, Cmdlet, ExternalScript, Application, Script, or Configuration).
-We do not collect the name of the executed item, the parameters used, or values for any parameter.
-- When a `PowerShell` object is created
-- When a remote session is created
-
-In addition to the caveats above, no personally identifiable information is collected.  For example, the following is _not_ collected:
-
-- IP Address
-- User names
-- Domain names
-- System names
+Please visit our [about_Telemetry](https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_telemetry)
+topic to read details about telemetry gathered by PowerShell.
 
 ## Governance
 
