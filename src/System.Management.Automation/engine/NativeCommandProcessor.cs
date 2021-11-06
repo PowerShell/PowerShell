@@ -12,7 +12,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Runspaces;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
@@ -682,16 +681,24 @@ namespace System.Management.Automation
                     _isRunningInBackground = startInfo.UseShellExecute || _nativeProcess.HasExited;
                     if (!_isRunningInBackground)
                     {
-                        var mainModuleFileName = _nativeProcess.MainModule?.FileName;
-                        if (mainModuleFileName is not null && !string.Equals(startInfo.FileName, mainModuleFileName, StringComparison.OrdinalIgnoreCase))
+                        try
                         {
-                            using var exeStream = new FileStream(mainModuleFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-                            var exeHeader = new System.Reflection.PortableExecutable.PEHeaders(exeStream);
-                            _isRunningInBackground = !exeHeader.IsConsoleApplication;
+                            var mainModuleFileName = _nativeProcess.MainModule?.FileName;
+                            if (mainModuleFileName is not null && !string.Equals(startInfo.FileName, mainModuleFileName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                using var exeStream = new FileStream(mainModuleFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+                                var exeHeader = new System.Reflection.PortableExecutable.PEHeaders(exeStream);
+                                _isRunningInBackground = !exeHeader.IsConsoleApplication;
+                            }
+                            else
+                            {
+                                _isRunningInBackground = isWindowsApplication;
+                            }
                         }
-                        else
+                        catch (Win32Exception)
                         {
-                            _isRunningInBackground = isWindowsApplication;
+                            // We can not get MainModule, assume that the process has already been completed.
+                            _isRunningInBackground = true;
                         }
                     }
 #endif
