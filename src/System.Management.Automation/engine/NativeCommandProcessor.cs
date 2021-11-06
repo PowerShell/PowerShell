@@ -662,6 +662,13 @@ namespace System.Management.Automation
                 }
                 else
                 {
+#if UNIX
+                    _isRunningInBackground = true;
+                    if (!startInfo.UseShellExecute)
+                    {
+                        _isRunningInBackground = isWindowsApplication;
+                    }
+#else
                     // Notice about Windows Store applications.
                     //   If we run a process like Windows Terminal with wt.exe
                     // the wt.exe process is replaced with WindowsTerminal.exe process
@@ -687,6 +694,7 @@ namespace System.Management.Automation
                             _isRunningInBackground = isWindowsApplication;
                         }
                     }
+#endif
                 }
 
                 try
