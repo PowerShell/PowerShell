@@ -662,10 +662,30 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    _isRunningInBackground = true;
-                    if (!startInfo.UseShellExecute)
+                    // Notice about Windows Store applications.
+                    //   If we run a process like Windows Terminal with wt.exe
+                    // the wt.exe process is replaced with WindowsTerminal.exe process
+                    // so wt.exe process is already terminated (HasExited is true)
+                    // and it makes no sense to wait the process - we consider it as a background process.
+                    //   If we run a process like Skype with skype.exe
+                    // the process is not terminated so we can get real path to the exe file:
+                    // - before run "c:\users\username\appdata\local\microsoft\windowsapps\skype.exe"
+                    // - after run the real path is "C:\Program Files\WindowsApps\Microsoft.SkypeApp_15.78.159.0_x86__kzf8qxf38zg5c\Skype\Skype.exe"
+                    // With the real path we can read the exe file and analyze its header.
+                    _isRunningInBackground = startInfo.UseShellExecute || _nativeProcess.HasExited;
+                    if (!_isRunningInBackground)
                     {
-                        _isRunningInBackground = isWindowsApplication;
+                        var mainModuleFileName = _nativeProcess.MainModule?.FileName;
+                        if (mainModuleFileName is not null && !string.Equals(startInfo.FileName, mainModuleFileName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            using var exeStream = new FileStream(mainModuleFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+                            var exeHeader = new System.Reflection.PortableExecutable.PEHeaders(exeStream);
+                            _isRunningInBackground = !exeHeader.IsConsoleApplication;
+                        }
+                        else
+                        {
+                            _isRunningInBackground = isWindowsApplication;
+                        }
                     }
                 }
 
