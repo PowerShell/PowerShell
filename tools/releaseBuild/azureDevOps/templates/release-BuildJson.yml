@@ -20,7 +20,11 @@ steps:
     $dateTime = [datetime]::UtcNow
     $dateTime = [datetime]::new($dateTime.Ticks - ($dateTime.Ticks % [timespan]::TicksPerSecond), $dateTime.Kind)
 
-    $buildInfo = Get-Content $jsonFile | ConvertFrom-Json
+    Write-Verbose -Verbose "Writing $jsonFile contents:"
+    $buildInfoJsonContent = Get-Content $jsonFile -Encoding UTF8NoBom -Raw
+    Write-Verbose -Verbose $buildInfoJsonContent
+
+    $buildInfo =  $buildInfoJsonContent | ConvertFrom-Json
     $buildInfo.ReleaseDate = $dateTime
 
     $targetFile = "$ENV:PIPELINE_WORKSPACE/$fileName"
