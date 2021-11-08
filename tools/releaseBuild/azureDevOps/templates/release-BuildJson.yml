@@ -25,7 +25,11 @@ steps:
     $stableRelease = $metadata.StableRelease.Latest
     $ltsRelease = $metadata.LTSRelease.Latest
 
-    $buildInfo = Get-Content $jsonFile | ConvertFrom-Json
+    Write-Verbose -Verbose "Writing $jsonFile contents:"
+    $buildInfoJsonContent = Get-Content $jsonFile -Encoding UTF8NoBom -Raw
+    Write-Verbose -Verbose $buildInfoJsonContent
+
+    $buildInfo =  $buildInfoJsonContent | ConvertFrom-Json
     $buildInfo.ReleaseDate = $dateTime
 
     $targetFile = "$ENV:PIPELINE_WORKSPACE/$fileName"
