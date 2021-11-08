@@ -27,7 +27,7 @@ Describe "Verify Markdown Links" {
 
     $gciParams = @{}
     if ($env:MARKDOWN_FOLDER) {
-        $gciParams["Path"] = (Join-Path -PipelineVariable $env:MARKDOWN_FOLDER -ChildPath '*.md')
+        $gciParams["Path"] = (Join-Path -Path $env:MARKDOWN_FOLDER -ChildPath '*.md')
     } else {
         $gciParams["Path"] = "$PSScriptRoot\..\..\..\*.md"
     }
