@@ -75,7 +75,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/PowerShell-7.2.0-win-x86.msi
 [rl-ubuntu20]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.deb_amd64.deb
 [rl-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.deb_amd64.deb
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.ubuntu.16.04_amd64.deb
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.deb_amd64.deb
 [rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.deb_amd64.deb
 [rl-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.deb_amd64.deb
 [rl-debian11]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.deb_amd64.deb
