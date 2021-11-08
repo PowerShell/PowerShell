@@ -73,14 +73,14 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 
 [rl-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/PowerShell-7.2.0-win-x64.msi
 [rl-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/PowerShell-7.2.0-win-x86.msi
-[rl-ubuntu20]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.ubuntu.20.04_amd64.deb
-[rl-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.ubuntu.18.04_amd64.deb
+[rl-ubuntu20]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.deb_amd64.deb
+[rl-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.deb_amd64.deb
 [rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.ubuntu.16.04_amd64.deb
-[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.debian.9_amd64.deb
-[rl-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.debian.10_amd64.deb
-[rl-debian11]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.debian.11_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell-7.2.0-1.rhel.7.x86_64.rpm
-[rl-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell-7.2.0-1.centos.8.x86_64.rpm
+[rl-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.deb_amd64.deb
+[rl-debian10]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.deb_amd64.deb
+[rl-debian11]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell_7.2.0-1.deb_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell-7.2.0-1.rh.x86_64.rpm
+[rl-centos8]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell-7.2.0-1.rh.x86_64.rpm
 [rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell-7.2.0-osx-x64.pkg
 [rl-macos-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/powershell-7.2.0-osx-arm64.pkg
 [rl-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.2.0/PowerShell-7.2.0-win-arm64.zip
