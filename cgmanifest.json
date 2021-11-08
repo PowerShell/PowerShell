@@ -85,7 +85,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.NetAnalyzers",
-          "Version": "5.0.3"
+          "Version": "6.0.0"
         }
       },
       "DevelopmentDependency": true
