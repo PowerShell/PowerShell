@@ -18,6 +18,10 @@ jobs:
   variables:
     - name: repoPath
       value: $(Agent.BuildDirectory)/$(repoFolder)
+    - name: YARN_CACHE_FOLDER
+      value: $(Pipeline.Workspace)/.yarn
+    - name: YARN_GLOBAL_CACHE_FOLDER
+      value: $(Pipeline.Workspace)/.yarn-global
 
   steps:
   - checkout: self
@@ -26,20 +30,23 @@ jobs:
 
   - checkout: ComplianceRepo
 
-  - powershell: |
-      Get-ChildItem -Path env:
-    displayName: Capture Environment
-    condition: succeededOrFailed()
+  - task: Cache@2
+    inputs:
+      key: '"markdown-link-check" | "$(Agent.OS)" | $(repoPath)/test/common/markdown-link/markdown-link.tests.ps1'
+      path: $(YARN_GLOBAL_CACHE_FOLDER)
+    displayName: Cache Yarn packages
 
   - powershell: |
       Install-module Pester -Scope CurrentUser -Force -MaximumVersion 4.99
     displayName: Install Pester
-    condition: succeededOrFailed()
 
   - bash: |
       curl -o- --progress-bar -L https://yarnpkg.com/install.sh | bash
     displayName: Bootstrap Yarn
-    condition: succeededOrFailed()
+
+  - bash: |
+      yarn config  set global-folder "$(YARN_GLOBAL_CACHE_FOLDER)"
+    displayName: Set Yarn global cache folder
 
   - ${{ if not(contains(variables['SYSTEM.COLLECTIONURI'],'mscodehub')) }}:
     - pwsh: |

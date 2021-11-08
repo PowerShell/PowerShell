@@ -21,9 +21,9 @@ jobs:
   - powershell: |
       $matrix = @{}
       $matrix += @{
-        root = @{
-          path = "$(repoPath)"
-          recurse = $false
+        'root' = @{
+          markdown_folder = "$(repoPath)"
+          markdown_recurse = $false
         }
       }
       Get-ChildItem -path '$(repoPath)' -Directory | Foreach-Object {
