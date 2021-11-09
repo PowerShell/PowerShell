@@ -668,6 +668,13 @@ namespace System.Management.Automation
                         _isRunningInBackground = isWindowsApplication;
                     }
 #else
+                    // We can not detect a type of AppX application before the app started
+                    // because we haven't public API and can not resolve AppX reparse points
+                    // early in IsWindowsApplication().
+                    // (See https://github.com/PowerShell/PowerShell/issues/9970)
+                    // Here we can get already resolved path to app image after the app started
+                    // and try to detect a AppX type again.
+                    //
                     // Notice about Windows Store applications.
                     //   If we run a process like Windows Terminal with wt.exe
                     // the wt.exe process is replaced with WindowsTerminal.exe process
@@ -686,9 +693,7 @@ namespace System.Management.Automation
                             var mainModuleFileName = _nativeProcess.MainModule?.FileName;
                             if (mainModuleFileName is not null && !string.Equals(startInfo.FileName, mainModuleFileName, StringComparison.OrdinalIgnoreCase))
                             {
-                                using var exeStream = new FileStream(mainModuleFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-                                var exeHeader = new System.Reflection.PortableExecutable.PEHeaders(exeStream);
-                                _isRunningInBackground = !exeHeader.IsConsoleApplication;
+                                _isRunningInBackground = IsWindowsApplication(mainModuleFileName);
                             }
                             else
                             {
