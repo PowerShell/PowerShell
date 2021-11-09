@@ -361,7 +361,7 @@
         <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-FAQ">See the Microsoft Update FAQ</a>]]></Text>
       </Control>
       <Control Id="PrivacyLink" Type="Hyperlink" X="20" Y="210" Width="290" Height="17">
-        <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-Privacy-Statement">Read the Microsoft Update Priacy Statement</a>]]></Text>
+        <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-Privacy-Statement">Read the Microsoft Update Privacy Statement</a>]]></Text>
       </Control>
       <!-- divider and bottom buttons -->
       <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>
