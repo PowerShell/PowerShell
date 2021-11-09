@@ -3687,7 +3687,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Secure Memory Overwrite.
         /// </summary>
-        SecureMemoryOverwrite = 4
+        SecureMemoryOverwrite = 4,
+        
+        /// <summary>
+        /// UEFI Code Readonly.
+        /// </summary>
+        UEFICodeReadonly = 5,
+
+        /// <summary>
+        /// SMM Security Mitigations 1.0.
+        /// </summary>
+        SMMSecurityMitigations = 6,
+
+        /// <summary>
+        /// Mode Based Execution Control.
+        /// </summary>
+        ModeBasedExecutionControl = 7
     }
 
     /// <summary>
