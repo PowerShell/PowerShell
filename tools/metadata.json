@@ -3,7 +3,7 @@
   "PreviewReleaseTag": "v7.2.0-rc.1",
   "ServicingReleaseTag": "v7.0.8",
   "ReleaseTag": "v7.2.0",
-  "LTSReleaseTag" : ["v7.0.8", "7.2.0"],
+  "LTSReleaseTag" : ["v7.2.0", "v7.0.8"],
   "NextReleaseTag": "v7.3.0-preview.1",
   "LTSRelease": { "Latest": false, "Package": false },
   "StableRelease":  { "Latest": false, "Package": false }
