@@ -25,7 +25,18 @@ Describe "Verify Markdown Links" {
         Get-Job | Remove-Job -Force
     }
 
-    $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | Where-Object {$_.DirectoryName -notlike '*node_modules*'} | Group-Object -Property directory
+    $gciParams = @{}
+    if ($env:MARKDOWN_FOLDER) {
+        $gciParams["Path"] = (Join-Path -Path $env:MARKDOWN_FOLDER -ChildPath '*.md')
+    } else {
+        $gciParams["Path"] = "$PSScriptRoot\..\..\..\*.md"
+    }
+
+    if ($env:MARKDOWN_RECURSE -ne 'False') {
+        $gciParams["Recurse"] = $true
+    }
+
+    $groups = Get-ChildItem @gciParams | Where-Object {$_.DirectoryName -notlike '*node_modules*'} | Group-Object -Property directory
 
     $jobs = @{}
     # start all link verification in parallel
