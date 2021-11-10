@@ -1813,9 +1813,14 @@ namespace System.Management.Automation
                     }
                 }
             }
-
-            result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
-            if (result != null) return result;
+            if (completionContext.TokenAtCursor.TokenFlags == TokenFlags.MemberName)
+            {
+                result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                if (result is not null)
+                {
+                    return result;
+                }
+            }
 
             if ((tokenAtCursor.TokenFlags & TokenFlags.CommandName) != 0)
             {
