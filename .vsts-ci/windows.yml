@@ -35,6 +35,8 @@ pr:
     - tools/packaging/*
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
+    - README.md
+    - .spelling
 
 variables:
   GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
