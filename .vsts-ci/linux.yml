@@ -36,6 +36,8 @@ pr:
     - test/perf/*
     - tools/releaseBuild/*
     - tools/releaseBuild/azureDevOps/templates/*
+    - README.md
+    - .spelling
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
