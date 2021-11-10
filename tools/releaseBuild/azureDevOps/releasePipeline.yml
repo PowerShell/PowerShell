@@ -231,11 +231,32 @@ stages:
   dependsOn:
     - PublishPackages
     - ChangesToMaster
+  variables:
+    # adds newPwshOrgName (exists in new and old org)
+    - group: PowerShellRelease
   jobs:
-  - deployment: ReleaseSnap
-    displayName: Release Snap
-    pool: server
-    environment: PSReleaseSnapRelease
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Start the release build
+      instructions: |
+        Start the snap pipeline at: https://dev.azure.com/$(newPwshOrgName)/PowerShell/_build?definitionId=49&_a=summary
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Approve the release
+      instructions: |
+        Once the build is finished, approve the release of all channels.
+
+- stage: ReleaseToMU
+  displayName: Release to MU
+  dependsOn:
+    - PublishPackages
+    - ChangesToMaster
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Release to MU
+      instructions: |
+        Notify the PM team to start the process of releasing to MU.
 
 - stage: UpdateDotnetDocker
   dependsOn: GitHubManualTasks
