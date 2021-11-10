@@ -71,9 +71,8 @@ jobs:
         run: |
           git status --short
       - name: Check if we need to create a PR
-        # this overide the fail fast behavior so that the git diff can fail and continue
-        shell: pwsh -File {0}
         run: |
+          $ErrorActionPreference = 'continue'
           git diff --quiet ThirdPartyNotices.txt
           $exitCode = $LASTEXITCODE
           Write-Verbose -Message "Exit code: $exitCode" -Verbose
