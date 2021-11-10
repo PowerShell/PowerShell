@@ -72,14 +72,17 @@ jobs:
           git status --short
       - name: Check if we need to create a PR
         run: |
+          $ErrorActionPreference = 'continue'
           git diff --quiet ThirdPartyNotices.txt
           $exitCode = $LASTEXITCODE
           Write-Verbose -Message "Exit code: $exitCode" -Verbose
           if ($LASTEXITCODE -ne 0) {
+            Import-Module ./.github/workflows/GHWorkflowHelper
             Set-GWVariable -Name CREATE_PR -Value 'true'
           } else {
             Write-Verbose "No difference found.  Not creating a PR." -Verbose
           }
+          exit 0
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         id: cprtpn
