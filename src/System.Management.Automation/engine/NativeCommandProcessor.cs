@@ -662,11 +662,7 @@ namespace System.Management.Automation
                 else
                 {
 #if UNIX
-                    _isRunningInBackground = true;
-                    if (!startInfo.UseShellExecute)
-                    {
-                        _isRunningInBackground = isWindowsApplication;
-                    }
+                    _isRunningInBackground = startInfo.UseShellExecute;
 #else
                     // We can not detect a type of AppX application before the app started
                     // because we haven't public API and can not resolve AppX reparse points
@@ -685,7 +681,7 @@ namespace System.Management.Automation
                     // - before run "c:\users\username\appdata\local\microsoft\windowsapps\skype.exe"
                     // - after run the real path is "C:\Program Files\WindowsApps\Microsoft.SkypeApp_15.78.159.0_x86__kzf8qxf38zg5c\Skype\Skype.exe"
                     // With the real path we can read the exe file and analyze its header.
-                    _isRunningInBackground = startInfo.UseShellExecute || _nativeProcess.HasExited;
+                    _isRunningInBackground = startInfo.UseShellExecute || isWindowsApplication || _nativeProcess.HasExited;
                     if (!_isRunningInBackground)
                     {
                         try
