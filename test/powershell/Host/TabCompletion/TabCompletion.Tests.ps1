@@ -1707,6 +1707,38 @@ function MyFunction ($param1, $param2)
             $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
             $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
         }
+        It '<Intent>' -TestCases @(
+            @{
+                Intent = 'Complete loop labels with no input'
+                Expected = 'Outer','Inner'
+                TestString = ':Outer while ($true){:Inner while ($true){ break ^ }}'
+            }
+            @{
+                Intent = 'Complete loop labels that are accessible'
+                Expected = 'Outer'
+                TestString = ':Outer do {:Inner while ($true){ break } continue ^ } until ($false)'
+            }
+            @{
+                Intent = 'Complete loop labels with partial input'
+                Expected = 'Outer'
+                TestString = ':Outer do {:Inner while ($true){ break } continue o^ut } while ($true)'
+            }
+            @{
+                Intent = 'Not Complete loop labels with colon'
+                Expected = $null
+                TestString = ':Outer foreach ($x in $y){:Inner for ($i = 0; $i -lt $X.Count; $i++){ break :O^}}'
+            }
+            @{
+                Intent = 'Not Complete loop labels if cursor is in front of existing label'
+                Expected = $null
+                TestString = ':Outer switch ($x){"Value1"{break ^ Outer}}'
+            }
+        ){
+            param($Expected, $TestString)
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+            $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
+        }
     }
 }
 
