@@ -72,6 +72,7 @@ jobs:
           git status --short
       - name: Check if we need to create a PR
         run: |
+          $ErrorActionPreference = 'continue'
           git diff --quiet ThirdPartyNotices.txt
           $exitCode = $LASTEXITCODE
           Write-Verbose -Message "Exit code: $exitCode" -Verbose
