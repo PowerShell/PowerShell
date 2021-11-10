@@ -76,6 +76,7 @@ jobs:
           $exitCode = $LASTEXITCODE
           Write-Verbose -Message "Exit code: $exitCode" -Verbose
           if ($LASTEXITCODE -ne 0) {
+            Import-Module ./.github/workflows/GHWorkflowHelper
             Set-GWVariable -Name CREATE_PR -Value 'true'
           } else {
             Write-Verbose "No difference found.  Not creating a PR." -Verbose
