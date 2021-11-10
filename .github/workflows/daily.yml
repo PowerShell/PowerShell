@@ -82,6 +82,7 @@ jobs:
           } else {
             Write-Verbose "No difference found.  Not creating a PR." -Verbose
           }
+          exit 0
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         id: cprtpn
