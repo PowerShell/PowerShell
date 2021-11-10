@@ -24,6 +24,22 @@ jobs:
   - checkout: self
     clean: true
 
+  - pwsh: |
+      [string]$Branch=$env:BUILD_SOURCEBRANCH
+      $branchOnly = $Branch -replace '^refs/heads/';
+      $branchOnly = $branchOnly -replace '[_\-]'
+
+      if ($branchOnly -eq 'master') {
+        $container = 'tpn'
+      } else {
+        $container = "tpn-$branchOnly"
+      }
+
+      $vstsCommandString = "vso[task.setvariable variable=tpnContainer]$container"
+      Write-Verbose -Message $vstsCommandString -Verbose
+      Write-Host -Object "##$vstsCommandString"
+    displayName: Set ContainerName
+
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
@@ -58,7 +74,7 @@ jobs:
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
-      ContainerName: 'tpn'
+      ContainerName: $(tpnContainer)
       resourceGroup: '$(StorageResourceGroup)'
 
   - task: PublishPipelineArtifact@1
