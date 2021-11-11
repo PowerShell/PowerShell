@@ -2551,7 +2551,7 @@ namespace System.Management.Automation
         internal static List<CompletionResult> CompleteScope(string wordToComplete, CompletionContext context)
         {
             var results = new List<CompletionResult>();
-            var scopes = new List<string>() {"Global", "Local", "Script"};
+            string[] scopes = {"Global", "Local", "Script"};
 
             wordToComplete = wordToComplete.ToLower();
 
