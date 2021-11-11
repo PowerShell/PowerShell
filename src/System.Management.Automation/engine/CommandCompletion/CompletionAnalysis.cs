@@ -2222,7 +2222,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Complete loop labels after labeled control flow statements such as Break and Continue
+        /// Complete loop labels after labeled control flow statements such as Break and Continue.
         /// </summary>
         private static List<CompletionResult> CompleteLoopLabel(CompletionContext completionContext)
         {
