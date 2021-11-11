@@ -2320,7 +2320,7 @@ else
 
             set
             {
-                // PowerShell Core remoting endpoints do not support PSVersion.
+                // PowerShell 7 remoting endpoints do not support PSVersion.
                 throw new PSNotSupportedException(RemotingErrorIdStrings.PowerShellVersionNotSupported);
             }
         }

@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 // PSVersion value can only be 5.1 for Start-Job.
-                if (value.Major != 5 || value.Minor != 1)
+                if (!(value.Major == 5 && value.Minor == 1))
                 {
                     throw new ArgumentException(
                         StringUtil.Format(RemotingErrorIdStrings.PSVersionParameterOutOfRange, value, "PSVersion"));
