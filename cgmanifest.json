@@ -65,7 +65,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.0.0-6.final"
+          "Version": "4.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -75,7 +75,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.0.0-6.final"
+          "Version": "4.0.1"
         }
       },
       "DevelopmentDependency": false
