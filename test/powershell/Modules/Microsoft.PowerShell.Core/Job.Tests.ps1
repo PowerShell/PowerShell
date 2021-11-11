@@ -246,7 +246,7 @@ Describe "Ampersand background test" -Tag "CI","Slow" {
 
 Describe "Start-Job with -PSVersion parameter" -Tag "CI" {
 
-    It "Verifies that -PSVersion is not supported except for version 5.1" -Skip:(-not $IsWindows) {
+    It "Verifies that -PSVersion is not supported except for version 5.1" {
         { Start-Job -PSVersion 2.0 } | Should -Throw -ErrorId 'ParameterBindingFailed,Microsoft.PowerShell.Commands.StartJobCommand'
     }
 
