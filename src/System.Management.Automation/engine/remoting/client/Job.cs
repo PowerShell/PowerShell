@@ -3226,7 +3226,7 @@ namespace System.Management.Automation
             // no pipeline is created and no pipeline state changed event is raised.
             // We can wait for throttle complete, but it is raised only when all the
             // operations are completed and this means that status of job is not updated
-            // untill Operation Complete.
+            // until Operation Complete.
             ExecutionCmdletHelper helper = sender as ExecutionCmdletHelper;
             Dbg.Assert(helper != null, "Sender of OperationComplete has to be ExecutionCmdletHelper");
 
