@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell
                 // We calculate how much whitespace we need to make it look nice
                 if (hostUI.SupportsVirtualTerminal)
                 {
-                    // Use Warning Color
+                    // Swaps foreground and background colors.
                     notificationColor = "\x1B[7m";
                     resetColor = "\x1B[0m";
 
