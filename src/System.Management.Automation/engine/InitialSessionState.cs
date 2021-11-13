@@ -4150,7 +4150,10 @@ End
         {
             return @"
                 param($command)
-                & $command @args
+
+                if ($null -ne $command) {
+                    & $command @args
+                }
             ";
         }
 
