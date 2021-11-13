@@ -10,5 +10,5 @@ FunctionsToExport = @()
 CmdletsToExport="Get-Acl", "Set-Acl", "Get-PfxCertificate", "Get-Credential", "Get-ExecutionPolicy", "Set-ExecutionPolicy", "Get-AuthenticodeSignature", "Set-AuthenticodeSignature", "ConvertFrom-SecureString", "ConvertTo-SecureString", "Get-CmsMessage", "Unprotect-CmsMessage", "Protect-CmsMessage" , "New-FileCatalog" , "Test-FileCatalog"
 AliasesToExport = @()
 NestedModules="Microsoft.PowerShell.Security.dll"
-HelpInfoURI = 'https://aka.ms/powershell71-help'
+HelpInfoURI = 'https://aka.ms/powershell72-help'
 }
