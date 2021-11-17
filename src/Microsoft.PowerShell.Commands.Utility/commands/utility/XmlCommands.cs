@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implements ConvertTo-Clixml command.
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Clixml", SupportsPaging = true, DefaultParameterSetName = "ByPath", HelpUri = "")]
-    public sealed class ConvertToClicmlCommand : PSCmdlet, IDisposable
+    public sealed class ConvertToClixmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
 
