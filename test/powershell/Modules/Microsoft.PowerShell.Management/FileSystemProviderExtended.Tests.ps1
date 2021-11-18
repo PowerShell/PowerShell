@@ -666,13 +666,13 @@ Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI
             Push-Location $rootDir
             $null = New-Item -Path "realDir" -ItemType Directory
             $null = New-Item -Path "toDel" -ItemType Directory
-            $null = New-Item -Path "brokenLinkedDir" -ItemType SymbolicLink -Value "toDel"
-            $null = New-Item -Path "linkedDir" -ItemType SymbolicLink -Value "realDir"
-            Remove-Item "toDel"
+            $null = New-Item -Path "brokenLinkedDir" -ItemType SymbolicLink -Value ".\toDel"
+            $null = New-Item -Path "linkedDir" -ItemType SymbolicLink -Value ".\realDir"
+            Remove-Item
             $null = New-Item -Path "realFile.fil" -ItemType File
             $null = New-Item -Path "toDel.fil" -ItemType File
-            $null = New-Item -Path "brokenLinkedFile.fil" -ItemType SymbolicLink -Value "toDel.fil"
-            $null = New-Item -Path "linkedFile.fil" -ItemType SymbolicLink -Value "realFile.fil"
+            $null = New-Item -Path "brokenLinkedFile.fil" -ItemType SymbolicLink -Value ".\toDel.fil"
+            $null = New-Item -Path "linkedFile.fil" -ItemType SymbolicLink -Value ".\realFile.fil"
             Remove-Item "toDel.fil"
         }
 
