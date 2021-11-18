@@ -2291,6 +2291,7 @@ function CleanupGeneratedSourceCode
         '[System.Runtime.CompilerServices.NullableAttribute((byte)0)]'
         '[System.Runtime.CompilerServices.NullableAttribute(new byte[]{ (byte)2, (byte)1, (byte)1})]'
         '[System.Runtime.CompilerServices.AsyncStateMachineAttribute'
+        '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ArgumentToPSVersionTransformationAttribute]'
         )
 
     $patternsToReplace = @(
