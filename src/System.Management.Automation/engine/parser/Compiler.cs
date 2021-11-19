@@ -639,7 +639,9 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo ArgumentTransformationAttribute_Transform =
             typeof(ArgumentTransformationAttribute).GetMethod(nameof(ArgumentTransformationAttribute.Transform), InstancePublicFlags);
-        // ReSharper restore InconsistentNaming
+        
+        internal static readonly MethodInfo MemberInvocationLoggingOps_LogMemberInvocation =
+            typeof(MemberInvocationLoggingOps).GetMethod(nameof(MemberInvocationLoggingOps.LogMemberInvocation), StaticFlags);
     }
 
     internal static class ExpressionCache
