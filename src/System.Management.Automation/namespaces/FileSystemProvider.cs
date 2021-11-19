@@ -8260,7 +8260,7 @@ namespace Microsoft.PowerShell.Commands
 
             WIN32_FIND_DATA data = default;
             string fullPath = Path.TrimEndingDirectorySeparator(fileInfo.FullName);
-            if (fullPath.Length > MAX_PATH)
+            if (fullPath.Length >= MAX_PATH)
             {
                 fullPath = PathUtils.EnsureExtendedPrefix(fullPath);
             }
