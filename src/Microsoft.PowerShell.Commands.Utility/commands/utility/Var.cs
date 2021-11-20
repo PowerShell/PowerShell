@@ -706,7 +706,14 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _append = value;
+                if (ExperimentalFeature.IsEnabled("PSRedirectToVariable"))
+                {
+                    _append = value;
+                }
+                else
+                {
+                    throw new ArgumentException("ExperimentalFeature 'PSRedirectToVariable' is not enabled");
+                }
             }
         }
 
@@ -737,10 +744,10 @@ namespace Microsoft.PowerShell.Commands
                 // but if they have more than one name, produce an error
                 if (Name.Length != 1)
                 {
-                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(), "SetVariableAppend", ErrorCategory.InvalidOperation, Name);
-                    er.ErrorDetails = new ErrorDetails("SetVariable");
-                    er.ErrorDetails.RecommendedAction = "Use a single variable rather than a collection";
-                    ThrowTerminatingError(er);
+                    ErrorRecord appendVariableError = new ErrorRecord(new InvalidOperationException(), "SetVariableAppend", ErrorCategory.InvalidOperation, Name);
+                    appendVariableError.ErrorDetails = new ErrorDetails("SetVariable");
+                    appendVariableError.ErrorDetails.RecommendedAction = "Use a single variable rather than a collection";
+                    ThrowTerminatingError(appendVariableError);
                 }
                 _valueList = new List<object>();
                 var currentValue = Context.SessionState.PSVariable.Get(Name[0]);
