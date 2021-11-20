@@ -43,6 +43,7 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
 
     It 'Exec will replace the process' {
         $sleep = Get-Command sleep -CommandType Application
+        write-verbose -verbose ($sleep | fl | out-string)
         $p = start-process pwsh -ArgumentList "-noprofile -command exec $($sleep.Source) 90" -PassThru
         Wait-UntilTrue {
             ($p | Get-Process).Name -eq 'sleep'
