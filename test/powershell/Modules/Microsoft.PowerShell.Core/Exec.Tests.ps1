@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Switch-Process tests for Unix' {
+Describe 'Switch-Process tests for Unix' -Tags 'CI' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if (-not [ExperimentalFeature]::IsEnabled('PSExec') -or $IsWindows)
@@ -31,14 +31,22 @@ Describe 'Switch-Process tests for Unix' {
 
     It 'Exec given an exe should work' {
         $id, $uname = pwsh -noprofile -noexit -outputformat text -command { $pid; exec uname }
-        { Get-Process -Id $id -ErrorAction Stop } | Should -Throw -ErrorId 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
+        Get-Process -Id $id -ErrorAction Ignore| Should -BeNullOrEmpty
         $uname | Should -BeExactly (uname)
     }
 
     It 'Exec given an exe and arguments should work' {
         $id, $uname = pwsh -noprofile -noexit -outputformat text -command { $pid; exec uname -a }
-        { Get-Process -Id $id -ErrorAction Stop } | Should -Throw -ErrorId 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
+        Get-Process -Id $id -ErrorAction Ignore| Should -BeNullOrEmpty
         $uname | Should -BeExactly (uname -a)
+    }
+
+    It 'Exec will replace the process' {
+        $sleep = Get-Command sleep -CommandType Application
+        $p = start-process pwsh -ArgumentList '-noprofile','-command','exec',$sleep.Source,'90' -PassThru
+        Wait-UntilTrue {
+            ($p | Get-Process).Name -eq 'sleep'
+        } -timeout 60000 -interval 100 | Should -BeTrue
     }
 }
 

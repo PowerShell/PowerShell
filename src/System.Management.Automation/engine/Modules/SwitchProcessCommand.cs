@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class SwitchProcessCommand : PSCmdlet
     {
         /// <summary>
-        /// Command to execute.
+        /// Get or set the command and arguments to replace the current pwsh process.
         /// </summary>
         [Parameter(Position = 0, Mandatory = false, ValueFromPipeline = true, ValueFromRemainingArguments = true)]
         public string[] WithCommand { get; set; } = Array.Empty<string>();
