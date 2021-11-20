@@ -1215,7 +1215,7 @@ namespace System.Management.Automation
             CommandProcessorBase commandProcessor;
             var name = context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(File, out p, out d);
 
-            if (ExperimentalFeature.IsEnabled("PSRedirectToVariable") && p.NameEquals(context.ProviderNames.Variable))
+            if (ExperimentalFeature.IsEnabled("PSRedirectToVariable") && p != null && p.NameEquals(context.ProviderNames.Variable))
             {
                 commandProcessor = context.CreateCommand("Set-Variable", false);
                 Diagnostics.Assert(commandProcessor != null, "CreateCommand returned null");
