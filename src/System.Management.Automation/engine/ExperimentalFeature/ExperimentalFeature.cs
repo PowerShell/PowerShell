@@ -25,6 +25,7 @@ namespace System.Management.Automation
         internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
         internal const string PSRemotingSSHTransportErrorHandling = "PSRemotingSSHTransportErrorHandling";
         internal const string PSCleanBlockFeatureName = "PSCleanBlock";
+        internal const string PSRedirectToVariable = "PSRedirectToVariable";
 
         #endregion
 
@@ -134,6 +135,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSCleanBlockFeatureName,
                     description: "Add support of a 'Clean' block to functions and script cmdlets for easy resource cleanup"),
+                new ExperimentalFeature(
+                    name: PSRedirectToVariable,
+                    description: "Add support for redirecting to the variable drive"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
