@@ -4146,17 +4146,6 @@ End
 }
         ";
 
-        internal static string GetExecFunctionText()
-        {
-            return @"
-                param($command)
-
-                if ($null -ne $command) {
-                    & $command @args
-                }
-            ";
-        }
-
         /// <summary>
         /// This is the default function to use for clear-host.
         /// </summary>
@@ -4645,7 +4634,7 @@ end {
                 const ScopedItemOptions ReadOnly_AllScope = ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope;
                 const ScopedItemOptions ReadOnly = ScopedItemOptions.ReadOnly;
 
-                return new SessionStateAliasEntry[] {
+                var builtInAliases = new List<SessionStateAliasEntry> {
                     new SessionStateAliasEntry("foreach", "ForEach-Object", string.Empty, ReadOnly_AllScope),
                     new SessionStateAliasEntry("%", "ForEach-Object", string.Empty, ReadOnly_AllScope),
                     new SessionStateAliasEntry("where", "Where-Object", string.Empty, ReadOnly_AllScope),
@@ -4812,6 +4801,13 @@ end {
                     //   - do not use AllScope - this causes errors in profiles that set this somewhat commonly used alias.
                     new SessionStateAliasEntry("sls", "Select-String"),
                 };
+
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
+                {
+                    builtInAliases.Add(new SessionStateAliasEntry("exec", "Switch-Process"));
+                }
+
+                return builtInAliases.ToArray();
             }
         }
 
@@ -4833,7 +4829,6 @@ end {
            // Functions that don't require full language mode
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true, languageMode: systemLanguageMode),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd\\", "Set-Location \\", isProductCode: true, languageMode: systemLanguageMode),
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("exec", GetExecFunctionText(), isProductCode: true, languageMode: systemLanguageMode),
             // Win8: 320909. Retaining the original definition to ensure backward compatability.
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Pause",
                 string.Concat("$null = Read-Host '", CodeGeneration.EscapeSingleQuotedStringContent(RunspaceInit.PauseDefinitionString), "'"), isProductCode: true, languageMode: systemLanguageMode),
@@ -5450,6 +5445,13 @@ end {
             {
                 cmdlets.Add("Get-PSSubsystem", new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile));
             }
+
+#if UNIX
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
+            {
+                cmdlets.Add("Switch-Process", new SessionStateCmdletEntry("Switch-Process", typeof(SwitchProcessCommand), helpFile));
+            }
+#endif
 
             foreach (var val in cmdlets.Values)
             {
