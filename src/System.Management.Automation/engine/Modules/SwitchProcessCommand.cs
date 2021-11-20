@@ -15,7 +15,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Implements a cmdlet that allows use of execv API
+    /// Implements a cmdlet that allows use of execv API.
     /// </summary>
     [Experimental(ExperimentalFeature.PSExecFeatureName, ExperimentAction.Show)]
     [Cmdlet(VerbsCommon.Switch, "Process", HelpUri = "https://replace")]
