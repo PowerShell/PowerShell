@@ -4802,10 +4802,12 @@ end {
                     new SessionStateAliasEntry("sls", "Select-String"),
                 };
 
+#if UNIX
                 if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
                 {
                     builtInAliases.Add(new SessionStateAliasEntry("exec", "Switch-Process"));
                 }
+#endif
 
                 return builtInAliases.ToArray();
             }
