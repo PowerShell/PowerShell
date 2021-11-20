@@ -58,7 +58,11 @@ namespace Microsoft.PowerShell.Commands
             }
 
             var execArgs = new string?[WithCommand.Length + 1];
-            for (int i = 0; i < WithCommand.Length; i++)
+
+            // execv convention is the first arg is the program name
+            execArgs[0] = command.Name;
+
+            for (int i = 1; i < WithCommand.Length; i++)
             {
                 execArgs[i] = WithCommand[i].ToString();
             }
@@ -85,7 +89,7 @@ namespace Microsoft.PowerShell.Commands
                     )
                 );
             }
-        }        
+        }
 
         /// <summary>
         /// The `execv` POSIX syscall we use to exec /bin/sh.
