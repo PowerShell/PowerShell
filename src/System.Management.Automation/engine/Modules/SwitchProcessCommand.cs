@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
 
             // execv requires command to be full path so resolve command to first match
             var command = this.SessionState.InvokeCommand.GetCommand(WithCommand[0], CommandTypes.Application);
-            if (command == null)
+            if (command is null)
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
