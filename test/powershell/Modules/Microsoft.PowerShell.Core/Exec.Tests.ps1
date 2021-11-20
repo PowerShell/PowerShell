@@ -65,10 +65,10 @@ Describe 'Switch-Process for Windows' {
     }
 
     It 'Switch-Process should not be available' {
-        { Get-Command -Name Switch-Process } | Should -Throw -ErrorId 'CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand'
+        Get-Command -Name Switch-Process -ErrorAction Ignore | Should -BeNullOrEmpty
     }
 
     It 'Exec alias should not be available' {
-        { Get-Alias -Name exec } | Should -Throw -ErrorId 'CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand'
+        Get-Alias -Name exec -ErrorAction Ignore | Should -BeNullOrEmpty
     }
 }
