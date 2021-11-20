@@ -460,7 +460,7 @@ try
             $rs.Open()
             $pl = $rs.CreatePipeline('"Hello" > c:\temp\foo.txt')
 
-            $e = { $pl.Invoke() } | Should -Throw -ErrorId "CmdletInvocationException"
+            $e = { $pl.Invoke() } | Should -Throw -ErrorId "DriveNotFoundException"
 
             $rs.Dispose()
         }
