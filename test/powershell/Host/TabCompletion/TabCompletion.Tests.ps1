@@ -128,6 +128,43 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches | Should -HaveCount 3
         $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
     }
+    It 'Complete hashtable key without duplicate keys' {
+        class X {
+            $A
+            $B
+            $C
+        }
+        $TestString = '[x]@{A="";^}'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches | Should -HaveCount 2
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'B C'
+    }
+    It 'Complete hashtable key on empty line after key/value pair' {
+        class X {
+            $A
+            $B
+            $C
+        }
+        $TestString = @'
+[x]@{
+    B=""
+    ^
+}
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches | Should -HaveCount 2
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A C'
+    }
+
+    It 'Complete hashtable keys for Get-WinEvent FilterHashtable' {
+        $TestString = 'Get-WinEvent -FilterHashtable @{^'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches | Should -HaveCount 11
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'LogName ProviderName Path Keywords ID Level StartTime EndTime UserID Data SuppressHashFilter'
+    }
 
     It 'Should complete "Get-Process -Id " with Id and name in tooltip' {
         Set-StrictMode -Version 3.0
@@ -1457,6 +1494,9 @@ dir -Recurse `
                 @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassNam'; expected = 'CimClassName' }
                 @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassName.Substrin'; expected = 'Substring(' }
                 @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | %{ $_.ExecutableP'; expected = 'ExecutablePath' }
+                @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName SetPriority -Arguments @{'; expected = 'Priority' }
+                @{ inputStr = 'Get-CimInstance -ClassName Win32_Service | Invoke-CimMethod -MethodName Change -Arguments @{d'; expected = 'DesktopInteract' }
+                @{ inputStr = 'Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{'; expected = 'CommandLine' }
             )
         }
 

@@ -416,7 +416,7 @@ namespace System.Management.Automation
                     case TokenKind.Generic:
                     case TokenKind.MinusMinus: // for native commands '--'
                     case TokenKind.Identifier:
-                        result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
+                            result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
                         break;
 
                     case TokenKind.Parameter:
@@ -918,6 +918,11 @@ namespace System.Management.Automation
             if (result == null || result.Count == 0)
             {
                 result = GetResultForHashtable(completionContext);
+                if (result is not null && result.Count > 0)
+                {
+                    completionContext.ReplacementIndex = replacementIndex = completionContext.CursorPosition.Offset;
+                    completionContext.ReplacementLength = replacementLength = 0;
+                }
             }
 
             if (result == null || result.Count == 0)
@@ -940,61 +945,46 @@ namespace System.Management.Automation
         // Helper method to auto complete hashtable key
         private static List<CompletionResult> GetResultForHashtable(CompletionContext completionContext)
         {
-            var lastAst = completionContext.RelatedAsts.Last();
-            HashtableAst tempHashtableAst = null;
-            IScriptPosition cursor = completionContext.CursorPosition;
-            var hashTableAst = lastAst as HashtableAst;
-            if (hashTableAst != null)
+            Ast lastRelatedAst = null;
+            var cursorPosition = completionContext.CursorPosition;
+
+            for (int i = completionContext.RelatedAsts.Count - 1; i >= 0; i--)
             {
-                // Check if the cursor within the hashtable
-                if (cursor.Offset < hashTableAst.Extent.EndOffset)
+                Ast ast = completionContext.RelatedAsts[i];
+                if (cursorPosition.Offset >= ast.Extent.StartOffset && cursorPosition.Offset <= ast.Extent.EndOffset)
                 {
-                    tempHashtableAst = hashTableAst;
-                }
-                else if (cursor.Offset == hashTableAst.Extent.EndOffset)
-                {
-                    // Exclude the scenario that cursor at the end of hashtable, i.e. after '}'
-                    if (completionContext.TokenAtCursor == null ||
-                        completionContext.TokenAtCursor.Kind != TokenKind.RCurly)
-                    {
-                        tempHashtableAst = hashTableAst;
-                    }
+                    lastRelatedAst = ast;
+                    break;
                 }
             }
-            else
+            if (lastRelatedAst is HashtableAst hashtableAst)
             {
-                // Handle property completion on a blank line for DynamicKeyword statement
-                Ast lastChildofHashtableAst;
-                hashTableAst = Ast.GetAncestorHashtableAst(lastAst, out lastChildofHashtableAst);
-
-                // Check if the hashtable within a DynamicKeyword statement
-                if (hashTableAst != null)
+                if (completionContext.TokenAtCursor is not null && completionContext.TokenAtCursor.Kind == TokenKind.RCurly)
                 {
-                    var keywordAst = Ast.GetAncestorAst<DynamicKeywordStatementAst>(hashTableAst);
-                    if (keywordAst != null)
+                    return null;
+                }
+                bool cursorIsWithinOrOnSameLineAsKeypair = false;
+                foreach (var pair in hashtableAst.KeyValuePairs)
+                {
+                    if (cursorPosition.Offset >= pair.Item1.Extent.StartOffset
+                        && (cursorPosition.Offset <= pair.Item2.Extent.EndOffset || cursorPosition.LineNumber == pair.Item2.Extent.EndLineNumber))
                     {
-                        // Handle only empty line
-                        if (string.IsNullOrWhiteSpace(cursor.Line))
-                        {
-                            // Check if the cursor outside of last child of hashtable and within the hashtable
-                            if (cursor.Offset > lastChildofHashtableAst.Extent.EndOffset &&
-                                cursor.Offset <= hashTableAst.Extent.EndOffset)
-                            {
-                                tempHashtableAst = hashTableAst;
-                            }
-                        }
+                        cursorIsWithinOrOnSameLineAsKeypair = true;
+                        break;
                     }
                 }
-            }
-
-            hashTableAst = tempHashtableAst;
-            if (hashTableAst != null)
-            {
+                if (cursorIsWithinOrOnSameLineAsKeypair)
+                {
+                    var tokenBeforeOrAtCursor = completionContext.TokenBeforeCursor ?? completionContext.TokenAtCursor;
+                    if (tokenBeforeOrAtCursor.Kind != TokenKind.Semi)
+                    {
+                        return null;
+                    }
+                }
                 completionContext.ReplacementIndex = completionContext.CursorPosition.Offset;
                 completionContext.ReplacementLength = 0;
-                return CompletionCompleters.CompleteHashtableKey(completionContext, hashTableAst);
+                return CompletionCompleters.CompleteHashtableKey(completionContext, hashtableAst);
             }
-
             return null;
         }
 
