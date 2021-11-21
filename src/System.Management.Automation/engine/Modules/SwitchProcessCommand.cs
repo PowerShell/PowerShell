@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implements a cmdlet that allows use of execv API.
     /// </summary>
     [Experimental(ExperimentalFeature.PSExecFeatureName, ExperimentAction.Show)]
-    [Cmdlet(VerbsCommon.Switch, "Process", HelpUri = "https://replace")]
+    [Cmdlet(VerbsCommon.Switch, "Process", HelpUri = "https://go.microsoft.com/fwlink/?linkid=2181448")]
     public sealed class SwitchProcessCommand : PSCmdlet
     {
         /// <summary>
