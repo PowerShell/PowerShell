@@ -416,7 +416,7 @@ namespace System.Management.Automation
                     case TokenKind.Generic:
                     case TokenKind.MinusMinus: // for native commands '--'
                     case TokenKind.Identifier:
-                            result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
+                        result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
                         break;
 
                     case TokenKind.Parameter:
