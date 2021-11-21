@@ -158,7 +158,7 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A C'
     }
 
-    It 'Complete hashtable keys for Get-WinEvent FilterHashtable' {
+    It 'Complete hashtable keys for Get-WinEvent FilterHashtable' -Skip:(!$IsWindows) {
         $TestString = 'Get-WinEvent -FilterHashtable @{^'
         $CursorIndex = $TestString.IndexOf('^')
         $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
