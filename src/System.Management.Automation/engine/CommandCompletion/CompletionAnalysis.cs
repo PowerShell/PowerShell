@@ -416,7 +416,10 @@ namespace System.Management.Automation
                     case TokenKind.Generic:
                     case TokenKind.MinusMinus: // for native commands '--'
                     case TokenKind.Identifier:
-                        result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
+                        if (tokenAtCursor.TokenFlags != TokenFlags.TypeName)
+                        {
+                            result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
+                        }
                         break;
 
                     case TokenKind.Parameter:
@@ -466,7 +469,7 @@ namespace System.Management.Automation
                     case TokenKind.QuestionDot:
                         replacementIndex += tokenAtCursor.Text.Length;
                         replacementLength = 0;
-                        result = CompletionCompleters.CompleteMember(completionContext, @static: tokenAtCursor.Kind == TokenKind.ColonColon);
+                        result = CompletionCompleters.CompleteMember(completionContext, @static: tokenAtCursor.Kind == TokenKind.ColonColon, ref replacementLength);
                         break;
 
                     case TokenKind.Comment:
@@ -805,6 +808,31 @@ namespace System.Management.Automation
                                 result = GetResultForIdentifierInConfiguration(completionContext, configAst, keywordAst, out matched);
                             }
                         }
+                        if (result == null && completionContext.TokenBeforeCursor is not null)
+                        {
+                            switch (completionContext.TokenBeforeCursor.Kind)
+                            {
+                               
+                                case TokenKind.Dot:
+                                case TokenKind.ColonColon:
+                                case TokenKind.QuestionDot:
+                                    replacementIndex = cursor.Offset;
+                                    replacementLength = 0;
+                                    result = CompletionCompleters.CompleteMember(completionContext, @static: completionContext.TokenBeforeCursor.Kind == TokenKind.ColonColon, ref replacementLength);
+                                    break;
+
+                                case TokenKind.LParen:
+                                case TokenKind.Comma:
+                                    if (lastAst is AttributeAst)
+                                    {
+                                        result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
+                                    }
+                                    break;
+
+                                default:
+                                    break;
+                            }
+                        }
                     }
                     else if (completionContext.TokenAtCursor == null)
                     {
@@ -850,6 +878,17 @@ namespace System.Management.Automation
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                                         break;
                                     }
+                                case TokenKind.Dot:
+                                case TokenKind.ColonColon:
+                                case TokenKind.QuestionDot:
+                                    replacementIndex = cursor.Offset;
+                                    replacementLength = 0;
+                                    result = CompletionCompleters.CompleteMember(completionContext, @static: completionContext.TokenBeforeCursor.Kind == TokenKind.ColonColon, ref replacementLength);
+                                    if (result is not null && result.Count > 0)
+                                    {
+                                        return result;
+                                    }
+                                    break;
                                 default:
                                     break;
                             }
@@ -1971,8 +2010,24 @@ namespace System.Management.Automation
             }
 
             TokenKind memberOperator = TokenKind.Unknown;
-            bool isMemberCompletion = (lastAst.Parent is MemberExpressionAst);
-            bool isStatic = isMemberCompletion && ((MemberExpressionAst)lastAst.Parent).Static;
+            bool isMemberCompletion = lastAst.Parent is MemberExpressionAst;
+            bool isStatic = false;
+            if (isMemberCompletion)
+            {
+                var currentExpression = (MemberExpressionAst)lastAst.Parent;
+                while (currentExpression.Extent.EndOffset >= completionContext.CursorPosition.Offset)
+                {
+                    if (currentExpression.Expression is MemberExpressionAst memberExpression && memberExpression.Member.Extent.EndOffset >= completionContext.CursorPosition.Offset)
+                    {
+                        currentExpression = memberExpression;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                isStatic = currentExpression.Static;
+            }
             bool isWildcard = false;
 
             if (!isMemberCompletion)
@@ -2023,7 +2078,7 @@ namespace System.Management.Automation
 
             if (isMemberCompletion)
             {
-                result = CompletionCompleters.CompleteMember(completionContext, @static: (isStatic || memberOperator == TokenKind.ColonColon));
+                result = CompletionCompleters.CompleteMember(completionContext, @static: (isStatic || memberOperator == TokenKind.ColonColon), ref replacementLength);
 
                 // If the last token was just a '.', we tried to complete members.  That may
                 // have failed because it wasn't really an attempt to complete a member, in
@@ -2117,9 +2172,11 @@ namespace System.Management.Automation
             string argName = string.Empty;
             Ast argAst = completionContext.RelatedAsts.Find(static ast => ast is NamedAttributeArgumentAst);
             NamedAttributeArgumentAst namedArgAst = argAst as NamedAttributeArgumentAst;
-            if (argAst != null && namedArgAst != null)
+            AttributeAst attAst;
+            if (argAst is not null && namedArgAst is not null)
             {
-                attributeType = ((AttributeAst)namedArgAst.Parent).TypeName.GetReflectionAttributeType();
+                attAst = (AttributeAst)namedArgAst.Parent;
+                attributeType = attAst.TypeName.GetReflectionAttributeType();
                 argName = namedArgAst.ArgumentName;
                 replacementIndex = namedArgAst.Extent.StartOffset;
                 replacementLength = argName.Length;
@@ -2127,21 +2184,33 @@ namespace System.Management.Automation
             else
             {
                 Ast astAtt = completionContext.RelatedAsts.Find(static ast => ast is AttributeAst);
-                AttributeAst attAst = astAtt as AttributeAst;
-                if (astAtt != null && attAst != null)
+                attAst = astAtt as AttributeAst;
+                if (astAtt is not null && attAst is not null)
                 {
                     attributeType = attAst.TypeName.GetReflectionAttributeType();
                 }
             }
 
-            if (attributeType != null)
+            if (attributeType is not null)
             {
+                int cursorPosition = completionContext.CursorPosition.Offset;
+                var existingArguments = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var namedArgument in attAst.NamedArguments)
+                {
+                    if (!(cursorPosition >= namedArgument.Extent.StartOffset && cursorPosition <= namedArgument.Extent.EndOffset))
+                    {
+                        _ = existingArguments.Add(namedArgument.ArgumentName);
+                    }
+                }
                 PropertyInfo[] propertyInfos = attributeType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
                 List<CompletionResult> result = new List<CompletionResult>();
                 foreach (PropertyInfo property in propertyInfos)
                 {
-                    // Ignore getter-only properties, including 'TypeId' (all attributes inherit it).
-                    if (!property.CanWrite) { continue; }
+                    // Ignore getter-only properties and properties that have already been set.
+                    if (!property.CanWrite || existingArguments.Contains(property.Name))
+                    {
+                        continue; 
+                    }
 
                     if (property.Name.StartsWith(argName, StringComparison.OrdinalIgnoreCase))
                     {
