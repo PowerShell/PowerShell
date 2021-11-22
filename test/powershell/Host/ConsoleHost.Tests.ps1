@@ -664,6 +664,20 @@ namespace StackTest {
         It "Should start if HOME is not defined" -Skip:($IsWindows) {
             bash -c "unset HOME;$powershell -c '1+1'" | Should -BeExactly 2
         }
+
+        It "Same user should use the same temporary HOME directory for different sessions" -Skip:($IsWindows) {
+            $results = bash -c @"
+unset HOME;
+$powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::DEFAULT)';
+$powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDirectory([System.Management.Automation.Platform+XDG_Type]::DEFAULT)';
+"@
+            $results | Should -HaveCount 2
+            $results[0] | Should -BeExactly $results[1]
+
+            $tempHomeName = "pwsh-{0}-98288ff9-5712-4a14-9a11-23693b9cd91a" -f [System.Environment]::UserName
+            $defaultPath = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath "$tempHomeName/.config/powershell"
+            $results[0] | Should -BeExactly $defaultPath
+        }
     }
 
     Context "PATH environment variable" {
