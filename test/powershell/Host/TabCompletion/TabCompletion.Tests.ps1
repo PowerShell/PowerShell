@@ -1707,6 +1707,18 @@ function MyFunction ($param1, $param2)
             $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
             $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
         }
+        It 'Should complete parameter in param block' {
+            $res = TabExpansion2 -inputScript 'Param($Param1=(Get-ChildItem -))' -cursorColumn 30
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Path'
+        }
+        It 'Should complete member in param block' {
+            $res = TabExpansion2 -inputScript 'Param($Param1=($PSVersionTable.))' -cursorColumn 31
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Count'
+        }
+        It 'Should complete attribute argument in param block' {
+            $res = TabExpansion2 -inputScript 'Param([Parameter()]$Param1)' -cursorColumn 17
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Position'
+        }
     }
 }
 

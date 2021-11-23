@@ -394,7 +394,12 @@ namespace System.Management.Automation
             replacementLength = -1;
 
             var tokenAtCursor = completionContext.TokenAtCursor;
-            var lastAst = completionContext.RelatedAsts.Last();
+            Ast lastAst = completionContext.RelatedAsts[^1];
+            if (lastAst.Extent.Text.StartsWith("param", StringComparison.OrdinalIgnoreCase) && lastAst is NamedBlockAst namedBlock && namedBlock.Unnamed)
+            {
+                completionContext.RelatedAsts.RemoveAt(completionContext.RelatedAsts.Count - 1);
+                lastAst = completionContext.RelatedAsts[^1];
+            }
             List<CompletionResult> result = null;
             if (tokenAtCursor != null)
             {
