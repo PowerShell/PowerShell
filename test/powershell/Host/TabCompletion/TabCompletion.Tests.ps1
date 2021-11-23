@@ -1747,6 +1747,11 @@ function MyFunction ($param1, $param2)
             $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
             $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
         }
+
+        It 'Should complete Select-Object properties without duplicates' {
+            $res = TabExpansion2 -inputScript '$PSVersionTable | select Count,' -cursorColumn '$PSVersionTable | select Count,'.Length
+            $res.CompletionMatches.CompletionText | Should -Not -Contain "Count"
+        }
     }
 }
 

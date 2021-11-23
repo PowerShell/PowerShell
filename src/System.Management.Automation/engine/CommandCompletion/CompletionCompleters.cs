@@ -2740,7 +2740,9 @@ namespace System.Management.Automation
             CimClass cimClass;
             using (var cimSession = CimSession.Create(null))
             {
-                cimClass = cimSession.GetClass(pseudoboundNamespace ?? "root/cimv2", pseudoboundClassName);
+                using var options = new CimOperationOptions();
+                options.Flags |= CimOperationFlags.LocalizedQualifiers;
+                cimClass = cimSession.GetClass(pseudoboundNamespace ?? "root/cimv2", pseudoboundClassName, options);
             }
             var methodParameters = cimClass.CimClassMethods[pseudoboundMethodName]?.Parameters;
             if (methodParameters is null)
@@ -2750,10 +2752,11 @@ namespace System.Management.Automation
             foreach (var parameter in methodParameters)
             {
                 if ((string.IsNullOrEmpty(context.WordToComplete) || parameter.Name.StartsWith(context.WordToComplete, StringComparison.OrdinalIgnoreCase))
-                        && !excludedParameters.Contains(parameter.Name)
+                        && (excludedParameters is null || !excludedParameters.Contains(parameter.Name))
                         && parameter.Qualifiers["In"]?.Value is true)
                 {
-                    string toolTip = $"[{CimInstanceAdapter.CimTypeToTypeNameDisplayString(parameter.CimType)}]";
+                    string parameterDescription = parameter.Qualifiers["Description"]?.Value as string ?? string.Empty;
+                    string toolTip = $"[{CimInstanceAdapter.CimTypeToTypeNameDisplayString(parameter.CimType)}] {parameterDescription}";
                     result.Add(new CompletionResult(parameter.Name, parameter.Name, CompletionResultType.Property, toolTip));
                 }
             }
