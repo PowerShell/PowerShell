@@ -133,7 +133,7 @@ Describe "Format-Table" -Tags "CI" {
         }
 
         It "Format-Table output should not be greater than console width" {
-            $consoleWidth = (Get-Host).UI.RawUI.BufferSize.Width
+            $consoleWidth = [console]::WindowWidth
             $longName = [System.Text.StringBuilder]::new()
             for ($i = 0; $i -lt $consoleWidth+1; $i+=8) {
                 [void]$longName.Append("LongName")
