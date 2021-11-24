@@ -682,6 +682,11 @@ namespace System.Management.Automation
                             break;
                         }
                     default:
+                        result = CompleteUsingKeywords(completionContext.CursorPosition.Offset, _tokens, ref replacementIndex, ref replacementLength);
+                        if (result is not null)
+                        {
+                            return result;
+                        }
                         if ((tokenAtCursor.TokenFlags & TokenFlags.Keyword) != 0)
                         {
                             completionContext.WordToComplete = tokenAtCursor.Text;
@@ -850,6 +855,8 @@ namespace System.Management.Automation
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                                         break;
                                     }
+                                case TokenKind.Using:
+                                    return CompleteUsingKeywords(completionContext.CursorPosition.Offset, _tokens, ref replacementIndex, ref replacementLength);
                                 default:
                                     break;
                             }
@@ -1752,10 +1759,14 @@ namespace System.Management.Automation
 
         private List<CompletionResult> GetResultForIdentifier(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength, bool isQuotedString)
         {
+            List<CompletionResult> result = CompleteUsingKeywords(completionContext.CursorPosition.Offset, _tokens, ref replacementIndex, ref replacementLength);
+            if (result is not null)
+            {
+                return result;
+            }
             var tokenAtCursor = completionContext.TokenAtCursor;
             var lastAst = completionContext.RelatedAsts.Last();
 
-            List<CompletionResult> result = null;
             var tokenAtCursorText = tokenAtCursor.Text;
             completionContext.WordToComplete = tokenAtCursorText;
 
@@ -2205,5 +2216,61 @@ namespace System.Management.Automation
 
             return result;
         }
+
+        private static List<CompletionResult> CompleteUsingKeywords(int cursorOffset, Token[] tokens, ref int replacementIndex, ref int replacementLength)
+        {
+            var result = new List<CompletionResult>();
+            Token tokenBeforeCursor = null;
+            Token tokenAtCursor = null;
+
+            for (int i = tokens.Length - 1; i >= 0; i--)
+            {
+                if (tokens[i].Extent.EndOffset < cursorOffset && tokens[i].Kind != TokenKind.LineContinuation)
+                {
+                    tokenBeforeCursor = tokens[i];
+                    break;
+                }
+                else if (tokens[i].Extent.StartOffset <= cursorOffset && tokens[i].Extent.EndOffset >= cursorOffset && tokens[i].Kind != TokenKind.LineContinuation)
+                {
+                    tokenAtCursor = tokens[i];
+                }
+            }
+
+            if (tokenBeforeCursor is not null && tokenBeforeCursor.Kind == TokenKind.Using)
+            {
+                string wordToComplete = null;
+                if (tokenAtCursor is not null)
+                {
+                    replacementIndex = tokenAtCursor.Extent.StartOffset;
+                    replacementLength = tokenAtCursor.Extent.Text.Length;
+                    wordToComplete = tokenAtCursor.Text;
+                }
+                else
+                {
+                    replacementIndex = cursorOffset;
+                    replacementLength = 0;
+                }
+
+                foreach (var keyword in s_usingKeywords.Keys)
+                {
+                    if (string.IsNullOrEmpty(wordToComplete) || keyword.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, s_usingKeywords[keyword]));
+                    }
+                }
+            }
+            if (result.Count > 0)
+            {
+                return result;
+            }
+            return null;
+        }
+
+        private static readonly IReadOnlyDictionary<string, string> s_usingKeywords = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "assembly", "Specifies the path to a .NET assembly to load." },
+            { "module", "Specifies a PowerShell module to load classes from." },
+            { "namespace", "Specifies a .NET namespace to resolve types from." },
+        };
     }
 }
