@@ -154,7 +154,10 @@ namespace System.Management.Automation
                 inputAst,
                 ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent),
                 searchNestedScriptBlocks: true).ToList();
-
+            if (relatedAsts[^1].Extent.Text.StartsWith("param", StringComparison.OrdinalIgnoreCase) && relatedAsts[^1] is NamedBlockAst namedBlock && namedBlock.Unnamed)
+            {
+                relatedAsts.RemoveAt(relatedAsts.Count - 1);
+            }
             Diagnostics.Assert(tokenAtCursor == null || tokenBeforeCursor == null, "Only one of these tokens can be non-null");
 
             return new AstAnalysisContext(tokenAtCursor, tokenBeforeCursor, relatedAsts, replacementIndex);
@@ -395,11 +398,6 @@ namespace System.Management.Automation
 
             var tokenAtCursor = completionContext.TokenAtCursor;
             Ast lastAst = completionContext.RelatedAsts[^1];
-            if (lastAst.Extent.Text.StartsWith("param", StringComparison.OrdinalIgnoreCase) && lastAst is NamedBlockAst namedBlock && namedBlock.Unnamed)
-            {
-                completionContext.RelatedAsts.RemoveAt(completionContext.RelatedAsts.Count - 1);
-                lastAst = completionContext.RelatedAsts[^1];
-            }
             List<CompletionResult> result = null;
             if (tokenAtCursor != null)
             {
