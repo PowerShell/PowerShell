@@ -68,7 +68,7 @@ namespace System.Management.Automation.Security
             return s_systemLockdownPolicy.Value;
         }
 
-        private static object s_systemLockdownPolicyLock = new object();
+        private static readonly object s_systemLockdownPolicyLock = new object();
         private static SystemEnforcementMode? s_systemLockdownPolicy = null;
         private static bool s_allowDebugOverridePolicy = false;
 
@@ -391,6 +391,14 @@ namespace System.Management.Automation.Security
         /// <returns>True if the COM object is allowed, False otherwise.</returns>
         internal static bool IsClassInApprovedList(Guid clsid)
         {
+            // This method is called only if there is an AppLocker and/or WLDP system wide lock down enforcement policy.
+            if (s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None) != SystemEnforcementMode.Enforce)
+            {
+                // No WLDP policy implies only AppLocker policy enforcement. Disallow all COM object instantiation.
+                return false;
+            }
+
+            // WLDP policy must be in system wide enforcement, look up COM Id in WLDP approval list.
             try
             {
                 WLDP_HOST_INFORMATION hostInformation = new WLDP_HOST_INFORMATION();

@@ -1410,7 +1410,7 @@ namespace System.Management.Automation
             lock (s_lockObject)
             {
                 s_cachedPathExtCollection = pathExt != null
-                    ? pathExt.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
+                    ? pathExt.ToLower().Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)
                     : Array.Empty<string>();
                 s_cachedPathExtCollectionWithPs1 = new string[s_cachedPathExtCollection.Length + 1];
                 s_cachedPathExtCollectionWithPs1[0] = StringLiterals.PowerShellScriptFileExtension;

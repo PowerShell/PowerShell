@@ -13,7 +13,7 @@ namespace System.Management.Automation.Remoting
     /// version on the server. These capabilities will be used in remote debugging sessions to
     /// determine what is supported by the server.
     /// </summary>
-    internal class RemoteDebuggingCapability
+    internal sealed class RemoteDebuggingCapability
     {
         private readonly HashSet<string> _supportedCommands = new HashSet<string>();
 

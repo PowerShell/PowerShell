@@ -124,7 +124,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(CimBaseCommand.AliasOT)]
         [Parameter]
-        public UInt32 OperationTimeoutSec { get; set; }
+        public uint OperationTimeoutSec { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Session".

@@ -214,9 +214,9 @@ namespace Microsoft.PowerShell.Commands
             // to differ only by upper/lower case.  If they do, that's really
             // a code bug, and the effect is to just display both strings.
 
-            return string.Equals(_punycodeName, _unicodeName) ?
-                        _punycodeName :
-                        _unicodeName + " (" + _punycodeName + ")";
+            return string.Equals(_punycodeName, _unicodeName, StringComparison.Ordinal)
+                ? _punycodeName
+                : _unicodeName + " (" + _punycodeName + ")";
         }
     }
 

@@ -265,7 +265,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private class DefineTypeHelper
+        private sealed class DefineTypeHelper
         {
             private readonly Parser _parser;
             internal readonly TypeDefinitionAst _typeDefinitionAst;
@@ -1007,7 +1007,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private class DefineEnumHelper
+        private sealed class DefineEnumHelper
         {
             private readonly Parser _parser;
             private readonly TypeDefinitionAst _enumDefinitionAst;

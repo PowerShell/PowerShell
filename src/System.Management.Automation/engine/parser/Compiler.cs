@@ -2026,6 +2026,7 @@ namespace System.Management.Automation.Language
                 scriptBlock.BeginBlock = CompileTree(_beginBlockLambda, compileInterpretChoice);
                 scriptBlock.ProcessBlock = CompileTree(_processBlockLambda, compileInterpretChoice);
                 scriptBlock.EndBlock = CompileTree(_endBlockLambda, compileInterpretChoice);
+                scriptBlock.CleanBlock = CompileTree(_cleanBlockLambda, compileInterpretChoice);
                 scriptBlock.LocalsMutableTupleType = LocalVariablesTupleType;
                 scriptBlock.LocalsMutableTupleCreator = MutableTuple.TupleCreator(LocalVariablesTupleType);
                 scriptBlock.NameToIndexMap = nameToIndexMap;
@@ -2036,6 +2037,7 @@ namespace System.Management.Automation.Language
                 scriptBlock.UnoptimizedBeginBlock = CompileTree(_beginBlockLambda, compileInterpretChoice);
                 scriptBlock.UnoptimizedProcessBlock = CompileTree(_processBlockLambda, compileInterpretChoice);
                 scriptBlock.UnoptimizedEndBlock = CompileTree(_endBlockLambda, compileInterpretChoice);
+                scriptBlock.UnoptimizedCleanBlock = CompileTree(_cleanBlockLambda, compileInterpretChoice);
                 scriptBlock.UnoptimizedLocalsMutableTupleType = LocalVariablesTupleType;
                 scriptBlock.UnoptimizedLocalsMutableTupleCreator = MutableTuple.TupleCreator(LocalVariablesTupleType);
             }
@@ -2200,7 +2202,7 @@ namespace System.Management.Automation.Language
             return Expression.Lambda<Func<FunctionContext, object>>(body, parameters).Compile();
         }
 
-        private class LoopGotoTargets
+        private sealed class LoopGotoTargets
         {
             internal LoopGotoTargets(string label, LabelTarget breakLabel, LabelTarget continueLabel)
             {
@@ -2221,6 +2223,7 @@ namespace System.Management.Automation.Language
         private Expression<Action<FunctionContext>> _beginBlockLambda;
         private Expression<Action<FunctionContext>> _processBlockLambda;
         private Expression<Action<FunctionContext>> _endBlockLambda;
+        private Expression<Action<FunctionContext>> _cleanBlockLambda;
 
         private readonly List<LoopGotoTargets> _loopTargets = new List<LoopGotoTargets>();
         private bool _generatingWhileOrDoLoop;
@@ -2463,6 +2466,13 @@ namespace System.Management.Automation.Language
                 }
 
                 _endBlockLambda = CompileNamedBlock(scriptBlockAst.EndBlock, funcName, rootForDefiningTypesAndUsings);
+                rootForDefiningTypesAndUsings = null;
+            }
+
+            if (scriptBlockAst.CleanBlock != null)
+            {
+                _cleanBlockLambda = CompileNamedBlock(scriptBlockAst.CleanBlock, funcName + "<Clean>", rootForDefiningTypesAndUsings);
+                rootForDefiningTypesAndUsings = null;
             }
 
             return null;
@@ -3279,9 +3289,9 @@ namespace System.Management.Automation.Language
         /// <returns>True is the compiler should add the success setting, false otherwise.</returns>
         private bool ShouldSetExecutionStatusToSuccess(PipelineAst pipelineAst)
         {
-            ExpressionAst expressionAst = pipelineAst.GetPureExpression();
+            ExpressionAst expressionAst = GetSingleExpressionFromPipeline(pipelineAst);
 
-            // If the pipeline is not a simple expression, it will set $?
+            // If the pipeline is not a single expression, it will set $?
             if (expressionAst == null)
             {
                 return false;
@@ -3289,6 +3299,22 @@ namespace System.Management.Automation.Language
 
             // Expressions may still set $? themselves, so dig deeper
             return ShouldSetExecutionStatusToSuccess(expressionAst);
+        }
+
+        /// <summary>
+        /// If the pipeline contains a single expression, the expression is returned, otherwise null is returned.
+        /// This method is different from <see cref="PipelineAst.GetPureExpression"/> in that it allows the single
+        /// expression to have redirections.
+        /// </summary>
+        private static ExpressionAst GetSingleExpressionFromPipeline(PipelineAst pipelineAst)
+        {
+            var pipelineElements = pipelineAst.PipelineElements;
+            if (pipelineElements.Count == 1 && pipelineElements[0] is CommandExpressionAst expr)
+            {
+                return expr.Expression;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -5154,7 +5180,7 @@ namespace System.Management.Automation.Language
         //    }
         //
         // This is a little convoluted because an automatic variable isn't necessarily set.
-        private class AutomaticVarSaver
+        private sealed class AutomaticVarSaver
         {
             private readonly Compiler _compiler;
             private readonly int _automaticVar;

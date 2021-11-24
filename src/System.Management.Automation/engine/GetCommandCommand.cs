@@ -287,12 +287,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
-
-                _parameterNames = value;
+                _parameterNames = value ?? throw new ArgumentNullException(nameof(value));
                 _parameterNameWildcards = SessionStateUtilities.CreateWildcardsFromStrings(
                     _parameterNames,
                     WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
@@ -319,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 // if '...CimInstance#Win32_Process' is specified, then exclude '...CimInstance'
@@ -650,7 +645,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The comparer to sort CommandInfo objects in the result list.
         /// </summary>
-        private class CommandInfoComparer : IComparer<CommandInfo>
+        private sealed class CommandInfoComparer : IComparer<CommandInfo>
         {
             /// <summary>
             /// Compare two CommandInfo objects first by their command types, and if they

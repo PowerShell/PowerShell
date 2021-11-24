@@ -374,7 +374,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     return false;
                 }
 
-                UInt16 perceivedSeverityValue = (UInt16)perceivedSeverityProperty.Value;
+                ushort perceivedSeverityValue = (ushort)perceivedSeverityProperty.Value;
                 if (perceivedSeverityValue != 7)
                 {
                     /* from CIM Schema: Interop\CIM_Error.mof:

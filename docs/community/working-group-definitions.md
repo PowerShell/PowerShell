@@ -19,7 +19,6 @@ Today, DSC is integrated into the PowerShell language, and we need to manage it 
 
 * @TravisEz13
 * @theJasonHelmick
-* @joeyaiello
 * @anmenaga
 
 ## Developer Experience
@@ -109,10 +108,10 @@ Given the commonality of serialization boundaries, the Remoting WG should also f
 
 ### Members
 
-* @PaulHigin
-* @SteveL-MSFT
-* @TravisEz13
 * @anmenaga
+* @jborean93
+* @PaulHigin
+* @TravisEz13
 
 ## Cmdlets and Modules
 

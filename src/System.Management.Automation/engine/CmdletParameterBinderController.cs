@@ -4047,7 +4047,7 @@ namespace System.Management.Automation
 
         private ReflectionParameterBinder _commonParametersBinder;
 
-        private class DelayedScriptBlockArgument
+        private sealed class DelayedScriptBlockArgument
         {
             // Remember the parameter binder so we know when to invoke the script block
             // and when to use the evaluated argument.

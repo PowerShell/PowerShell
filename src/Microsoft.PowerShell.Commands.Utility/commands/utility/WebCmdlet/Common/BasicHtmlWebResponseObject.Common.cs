@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (s_inputFieldRegex == null)
             {
-                s_inputFieldRegex = new Regex(@"<input\s+[^>]*(/>|>.*?</input>)",
+                s_inputFieldRegex = new Regex(@"<input\s+[^>]*(/?>|>.*?</input>)",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
 

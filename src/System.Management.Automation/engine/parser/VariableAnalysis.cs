@@ -41,7 +41,7 @@ namespace System.Management.Automation.Language
         public List<Ast> AssociatedAsts { get; }
     }
 
-    internal class FindAllVariablesVisitor : AstVisitor
+    internal sealed class FindAllVariablesVisitor : AstVisitor
     {
         private static readonly HashSet<string> s_hashOfPessimizingCmdlets = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -338,7 +338,7 @@ namespace System.Management.Automation.Language
         // in these cases, we rely on the setter PSVariable.Value to handle those attributes.
         internal const int ForceDynamic = -2;
 
-        private class LoopGotoTargets
+        private sealed class LoopGotoTargets
         {
             internal LoopGotoTargets(string label, Block breakTarget, Block continueTarget)
             {
@@ -354,7 +354,7 @@ namespace System.Management.Automation.Language
             internal Block ContinueTarget { get; }
         }
 
-        private class Block
+        private sealed class Block
         {
             internal readonly List<Ast> _asts = new List<Ast>();
             private readonly List<Block> _successors = new List<Block>();
@@ -439,7 +439,7 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private class AssignmentTarget : Ast
+        private sealed class AssignmentTarget : Ast
         {
             internal readonly ExpressionAst _targetAst;
             internal readonly string _variableName;
@@ -945,25 +945,11 @@ namespace System.Management.Automation.Language
         {
             _currentBlock = _entryBlock;
 
-            if (scriptBlockAst.DynamicParamBlock != null)
-            {
-                scriptBlockAst.DynamicParamBlock.Accept(this);
-            }
-
-            if (scriptBlockAst.BeginBlock != null)
-            {
-                scriptBlockAst.BeginBlock.Accept(this);
-            }
-
-            if (scriptBlockAst.ProcessBlock != null)
-            {
-                scriptBlockAst.ProcessBlock.Accept(this);
-            }
-
-            if (scriptBlockAst.EndBlock != null)
-            {
-                scriptBlockAst.EndBlock.Accept(this);
-            }
+            scriptBlockAst.DynamicParamBlock?.Accept(this);
+            scriptBlockAst.BeginBlock?.Accept(this);
+            scriptBlockAst.ProcessBlock?.Accept(this);
+            scriptBlockAst.EndBlock?.Accept(this);
+            scriptBlockAst.CleanBlock?.Accept(this);
 
             _currentBlock.FlowsTo(_exitBlock);
 

@@ -362,7 +362,7 @@ namespace System.Management.Automation
         /// implementation of an object when we can't use it's non-generic
         /// implementation.
         /// </summary>
-        private class EnumerableTWrapper : IEnumerable
+        private sealed class EnumerableTWrapper : IEnumerable
         {
             private readonly object _enumerable;
             private readonly Type _enumerableType;
@@ -1889,7 +1889,7 @@ namespace System.Management.Automation
 
         internal class EnumSingleTypeConverter : PSTypeConverter
         {
-            private class EnumHashEntry
+            private sealed class EnumHashEntry
             {
                 internal EnumHashEntry(string[] names, Array values, UInt64 allValues, bool hasNegativeValue, bool hasFlagsAttribute)
                 {
@@ -3684,7 +3684,7 @@ namespace System.Management.Automation
             return ConvertStringToEnum(sbResult.ToString(), resultType, recursion, originalValueToConvert, formatProvider, backupTable);
         }
 
-        private class PSMethodToDelegateConverter
+        private sealed class PSMethodToDelegateConverter
         {
             // Index of the matching overload method.
             private readonly int _matchIndex;
@@ -3744,7 +3744,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaParseMethod
+        private sealed class ConvertViaParseMethod
         {
             // TODO - use an ETS wrapper that generates a dynamic method
             internal MethodInfo parse;
@@ -3810,7 +3810,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaConstructor
+        private sealed class ConvertViaConstructor
         {
             internal Func<object, object> TargetCtorLambda;
 
@@ -3854,7 +3854,7 @@ namespace System.Management.Automation
         /// 1. toType is a closed generic type and it has a constructor that takes IEnumerable[T], ICollection[T] or IList[T]
         /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType
         /// </remark>
-        private class ConvertViaIEnumerableConstructor
+        private sealed class ConvertViaIEnumerableConstructor
         {
             internal Func<int, IList> ListCtorLambda;
             internal Func<IList, object> TargetCtorLambda;
@@ -3947,7 +3947,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaNoArgumentConstructor
+        private sealed class ConvertViaNoArgumentConstructor
         {
             private readonly Func<object> _constructor;
 
@@ -4050,7 +4050,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaCast
+        private sealed class ConvertViaCast
         {
             internal MethodInfo cast;
 
@@ -4130,7 +4130,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertCheckingForCustomConverter
+        private sealed class ConvertCheckingForCustomConverter
         {
             internal PSConverter<object> tryfirstConverter;
             internal PSConverter<object> fallbackConverter;
@@ -5649,15 +5649,6 @@ namespace System.Management.Automation
                         return CacheConversion(fromType, toType, converter, rank);
                     }
                 }
-            }
-
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types.
-            if (!TypeResolver.IsPublic(toType) && DotNetAdapter.DisallowPrivateReflection(toType))
-            {
-                // If the type is non-public and reflection execution is not allowed on it, then we return
-                // 'ConvertNoConversion', because we won't be able to invoke constructor, methods or set
-                // properties on an instance of this type through reflection.
-                return CacheConversion(fromType, toType, ConvertNoConversion, ConversionRank.None);
             }
 
             PSConverter<object> valueDependentConversion = null;

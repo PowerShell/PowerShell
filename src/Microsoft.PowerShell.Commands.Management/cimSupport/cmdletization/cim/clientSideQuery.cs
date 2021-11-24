@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        private class CimInstanceRegularFilter : CimInstancePropertyBasedFilter
+        private sealed class CimInstanceRegularFilter : CimInstancePropertyBasedFilter
         {
             public CimInstanceRegularFilter(string propertyName, IEnumerable allowedPropertyValues, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
             {
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
                 if (valueBehaviors.Count == 1)
                 {
-                    this.BehaviorOnNoMatch = valueBehaviors.Single();
+                    this.BehaviorOnNoMatch = valueBehaviors.First();
                 }
                 else
                 {
@@ -247,7 +247,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        private class CimInstanceExcludeFilter : CimInstancePropertyBasedFilter
+        private sealed class CimInstanceExcludeFilter : CimInstancePropertyBasedFilter
         {
             public CimInstanceExcludeFilter(string propertyName, IEnumerable excludedPropertyValues, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
             {
@@ -272,7 +272,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        private class CimInstanceMinFilter : CimInstancePropertyBasedFilter
+        private sealed class CimInstanceMinFilter : CimInstancePropertyBasedFilter
         {
             public CimInstanceMinFilter(string propertyName, object minPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
             {
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        private class CimInstanceMaxFilter : CimInstancePropertyBasedFilter
+        private sealed class CimInstanceMaxFilter : CimInstancePropertyBasedFilter
         {
             public CimInstanceMaxFilter(string propertyName, object minPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
             {
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
         }
 
-        private class CimInstanceAssociationFilter : CimInstanceFilterBase
+        private sealed class CimInstanceAssociationFilter : CimInstanceFilterBase
         {
             public CimInstanceAssociationFilter(BehaviorOnNoMatch behaviorOnNoMatch)
             {

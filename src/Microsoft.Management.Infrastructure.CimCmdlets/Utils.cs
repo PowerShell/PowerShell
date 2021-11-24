@@ -88,7 +88,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal static IEnumerable<string> GetComputerNames(IEnumerable<string> computerNames)
         {
-            return (computerNames == null) ? NullComputerNames : computerNames;
+            return computerNames ?? NullComputerNames;
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal static string GetNamespace(string nameSpace)
         {
-            return (nameSpace == null) ? DefaultNameSpace : nameSpace;
+            return nameSpace ?? DefaultNameSpace;
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal static string GetQueryDialectWithDefault(string queryDialect)
         {
-            return (queryDialect == null) ? DefaultQueryDialect : queryDialect;
+            return queryDialect ?? DefaultQueryDialect;
         }
     }
 

@@ -8,6 +8,6 @@ If you know how to fix the issue, feel free to send a pull request our way. (The
 [Official Support Policy]: https://docs.microsoft.com/powershell/scripting/powershell-support-lifecycle
 [FAQ]: https://github.com/PowerShell/PowerShell/tree/master/docs/FAQ.md
 [Contribution Guides]: https://github.com/PowerShell/PowerShell/tree/master/.github/CONTRIBUTING.md
-[known issues]: https://docs.microsoft.com/powershell/scripting/whats-new/known-issues-ps6
+[known issues]: https://docs.microsoft.com/powershell/scripting/whats-new/differences-from-windows-powershell
 [GitHub issues]: https://github.com/PowerShell/PowerShell/issues
 [new issue]: https://github.com/PowerShell/PowerShell/issues/new/choose

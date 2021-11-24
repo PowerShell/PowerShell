@@ -928,7 +928,8 @@ namespace System.Management.Automation
         /// </summary>
         internal string PipelineVariable { get; set; }
 
-        private PSVariable _pipelineVarReference = null;
+        private PSVariable _pipelineVarReference;
+        private bool _shouldRemovePipelineVariable;
 
         internal void SetupOutVariable()
         {
@@ -941,10 +942,8 @@ namespace System.Management.Automation
 
             // Handle the creation of OutVariable in the case of Out-Default specially,
             // as it needs to handle much of its OutVariable support itself.
-            if (
-                (!string.IsNullOrEmpty(this.OutVariable)) &&
-                (!(this.OutVariable.StartsWith('+'))) &&
-                string.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
+            if (!OutVariable.StartsWith('+') &&
+                string.Equals("Out-Default", _commandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
                 if (_state == null)
                     _state = new SessionState(Context.EngineSessionState);
@@ -972,7 +971,7 @@ namespace System.Management.Automation
             // This can't use the common SetupVariable implementation, as this needs to persist for an entire
             // pipeline.
 
-            if (string.IsNullOrEmpty(this.PipelineVariable))
+            if (string.IsNullOrEmpty(PipelineVariable))
             {
                 return;
             }
@@ -983,16 +982,37 @@ namespace System.Management.Automation
                 _state = new SessionState(Context.EngineSessionState);
 
             // Create the pipeline variable
-            _pipelineVarReference = new PSVariable(this.PipelineVariable);
-            _state.PSVariable.Set(_pipelineVarReference);
+            _pipelineVarReference = new PSVariable(PipelineVariable);
+            object varToUse = _state.Internal.SetVariable(
+                _pipelineVarReference,
+                force: false,
+                CommandOrigin.Internal);
 
-            // Get the reference again in case we re-used one from the
-            // same scope.
-            _pipelineVarReference = _state.PSVariable.Get(this.PipelineVariable);
+            if (ReferenceEquals(_pipelineVarReference, varToUse))
+            {
+                // The returned variable is the exact same instance, which means we set a new variable.
+                // In this case, we will try removing the pipeline variable in the end.
+                _shouldRemovePipelineVariable = true;
+            }
+            else
+            {
+                // A variable with the same name already exists in the same scope and it was returned.
+                // In this case, we update the reference and don't remove the variable in the end.
+                _pipelineVarReference = (PSVariable)varToUse;
+            }
 
             if (_thisCommand is not PSScriptCmdlet)
             {
                 this.OutputPipe.SetPipelineVariable(_pipelineVarReference);
+            }
+        }
+
+        internal void RemovePipelineVariable()
+        {
+            if (_shouldRemovePipelineVariable)
+            {
+                // Remove pipeline variable when a pipeline is being torn down.
+                _state.PSVariable.Remove(PipelineVariable);
             }
         }
 
@@ -1063,7 +1083,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype1")]
@@ -1086,7 +1106,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string,string)"/>
@@ -1157,7 +1177,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype2")]
@@ -1180,7 +1200,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string,string)"/>
@@ -1260,7 +1280,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
@@ -1286,7 +1306,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
@@ -1375,7 +1395,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype3")]
@@ -1403,7 +1423,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string,string)"/>
@@ -1681,7 +1701,7 @@ namespace System.Management.Automation
         /// to ShouldProcess for the Cmdlet instance.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
@@ -1725,7 +1745,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldContinue(string,string,ref bool,ref bool)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
@@ -1863,7 +1883,7 @@ namespace System.Management.Automation
         /// to ShouldProcess for the Cmdlet instance.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         namespace Microsoft.Samples.MSH.Cmdlet
         ///         {
         ///             [Cmdlet(VerbsCommon.Remove,"myobjecttype4")]
@@ -1912,7 +1932,7 @@ namespace System.Management.Automation
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldContinue(string,string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.ShouldProcess(string)"/>
@@ -2318,7 +2338,7 @@ namespace System.Management.Automation
             return new AllowWrite(_thisCommand, permittedToWriteToPipeline);
         }
 
-        private class AllowWrite : IDisposable
+        private sealed class AllowWrite : IDisposable
         {
             /// <summary>
             /// Begin the scope where WriteObject/WriteError is permitted.
@@ -2404,7 +2424,6 @@ namespace System.Management.Automation
                 }
 
                 // Log a command health event
-
                 MshLog.LogCommandHealthEvent(
                     Context,
                     e,
@@ -2804,8 +2823,16 @@ namespace System.Management.Automation
             _WriteErrorSkipAllowCheck(errorRecord, preference);
         }
 
-        // NOTICE-2004/06/08-JonN 959638
-        // Use this variant to skip the ThrowIfWriteNotPermitted check
+        /// <summary>
+        /// Write an error, skipping the ThrowIfWriteNotPermitted check.
+        /// </summary>
+        /// <param name="errorRecord">The error record to write.</param>
+        /// <param name="actionPreference">The configured error action preference.</param>
+        /// <param name="isFromNativeStdError">
+        /// True when this method is called to write from a native command's stderr stream.
+        /// When errors are written through a native stderr stream, they do not interact with the error preference system,
+        /// but must still present as errors in PowerShell.
+        /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -2819,7 +2846,7 @@ namespace System.Management.Automation
         /// but the command failure will ultimately be
         /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
         /// </remarks>
-        internal void _WriteErrorSkipAllowCheck(ErrorRecord errorRecord, ActionPreference? actionPreference = null, bool isNativeError = false)
+        internal void _WriteErrorSkipAllowCheck(ErrorRecord errorRecord, ActionPreference? actionPreference = null, bool isFromNativeStdError = false)
         {
             ThrowIfStopping();
 
@@ -2839,7 +2866,7 @@ namespace System.Management.Automation
                 this.PipelineProcessor.LogExecutionError(_thisCommand.MyInvocation, errorRecord);
             }
 
-            if (!(ExperimentalFeature.IsEnabled("PSNotApplyErrorActionToStderr") && isNativeError))
+            if (!isFromNativeStdError)
             {
                 this.PipelineProcessor.ExecutionFailed = true;
 
@@ -2905,7 +2932,7 @@ namespace System.Management.Automation
             // when tracing), so don't add the member again.
 
             // We don't add a note property on messages that comes from stderr stream.
-            if (!isNativeError)
+            if (!isFromNativeStdError)
             {
                 errorWrap.WriteStream = WriteStreamType.Error;
             }
@@ -3242,8 +3269,7 @@ namespace System.Management.Automation
             {
                 if (!IsWhatIfFlagSet && !_isWhatIfPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _whatIfFlag = Context.GetBooleanPreference(SpecialVariables.WhatIfPreferenceVarPath, _whatIfFlag, out defaultUsed);
+                    _whatIfFlag = Context.GetBooleanPreference(SpecialVariables.WhatIfPreferenceVarPath, _whatIfFlag, out _);
                     _isWhatIfPreferenceCached = true;
                 }
 
@@ -3736,8 +3762,10 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(_thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
 
-            if (_outVarList != null)
+            if (_outVarList != null && !OutputPipe.IgnoreOutVariableList)
             {
+                // A null pipe is used when executing the 'Clean' block of a PSScriptCmdlet.
+                // In such a case, we don't capture output to the out variable list.
                 this.OutputPipe.AddVariableList(VariableStreamKind.Output, _outVarList);
             }
 
@@ -3758,26 +3786,13 @@ namespace System.Management.Automation
 
             if (this.PipelineVariable != null)
             {
-                // _state can be null if the current script block is dynamicparam, etc.
-                if (_state != null)
-                {
-                    // Create the pipeline variable
-                    _state.PSVariable.Set(_pipelineVarReference);
-
-                    // Get the reference again in case we re-used one from the
-                    // same scope.
-                    _pipelineVarReference = _state.PSVariable.Get(this.PipelineVariable);
-                }
-
                 this.OutputPipe.SetPipelineVariable(_pipelineVarReference);
             }
         }
 
         internal void RemoveVariableListsInPipe()
         {
-            // Diagnostics.Assert(thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
-
-            if (_outVarList != null)
+            if (_outVarList != null && !OutputPipe.IgnoreOutVariableList)
             {
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Output, _outVarList);
             }
@@ -3800,9 +3815,6 @@ namespace System.Management.Automation
             if (this.PipelineVariable != null)
             {
                 this.OutputPipe.RemovePipelineVariable();
-                // '_state' could be null when a 'DynamicParam' block runs because the 'DynamicParam' block runs in 'DoPrepare',
-                // before 'PipelineProcessor.SetupParameterVariables' is called, where '_state' is initialized.
-                _state?.PSVariable.Remove(this.PipelineVariable);
             }
         }
     }

@@ -54,15 +54,6 @@ namespace System.Management.Automation
 
         private const int MaxModuleNestingDepth = 10;
 
-        /// <summary>
-        /// Gets and sets boolean that indicates when an implicit remoting module is loaded.
-        /// </summary>
-        internal bool IsImplicitRemotingModuleLoaded
-        {
-            get;
-            set;
-        }
-
         internal void IncrementModuleNestingDepth(PSCmdlet cmdlet, string path)
         {
             if (++ModuleNestingDepth > MaxModuleNestingDepth)
@@ -1432,22 +1423,13 @@ namespace System.Management.Automation
             if ((input == null) || (input.Count == 0))
             { return; }
 
-            List<FunctionInfo> output = new List<FunctionInfo>(input.Count);
-            foreach (var fnInfo in input)
-            {
-                if (module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase))
-                {
-                    output.Add(fnInfo);
-                }
-            }
-
-            input.Clear();
-            input.AddRange(output);
+            input.RemoveAll(fnInfo => !module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase));
         }
 
+#nullable enable
         private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
         {
-            Dbg.Assert(input != null, "Caller should verify that input != null");
+            Dbg.Assert(input is not null, "Caller should verify that input != null");
 
             input.Sort(
                 (T x, T y) =>
@@ -1458,24 +1440,19 @@ namespace System.Management.Automation
                 }
             );
 
-            bool firstItem = true;
-            string previousKey = null;
-            List<T> output = new List<T>(input.Count);
-            foreach (T item in input)
+            string? previousKey = null;
+            input.RemoveAll(ShouldRemove);
+
+            bool ShouldRemove(T item)
             {
                 string currentKey = keyGetter(item);
-                if ((firstItem) || !currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase))
-                {
-                    output.Add(item);
-                }
-
+                bool match = previousKey is not null
+                    && currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase);
                 previousKey = currentKey;
-                firstItem = false;
+                return match;
             }
-
-            input.Clear();
-            input.AddRange(output);
         }
+#nullable restore
 
         /// <summary>
         /// Mark stuff to be exported from the current environment using the various patterns.

@@ -8,7 +8,6 @@ using System.Threading;
 #if !UNIX
 using System.Security.Principal;
 #endif
-using Microsoft.Win32.SafeHandles;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -73,14 +72,6 @@ namespace System.Management.Automation.Remoting.Server
         {
             try
             {
-#if !CORECLR
-                // CurrentUICulture is not available in Thread Class in CSS
-                // WinBlue: 621775. Thread culture is not properly set
-                // for local background jobs causing experience differences
-                // between local console and local background jobs.
-                Thread.CurrentThread.CurrentUICulture = Microsoft.PowerShell.NativeCultureResolver.UICulture;
-                Thread.CurrentThread.CurrentCulture = Microsoft.PowerShell.NativeCultureResolver.Culture;
-#endif
                 string data = state as string;
                 OutOfProcessUtils.ProcessData(data, callbacks);
             }
@@ -307,7 +298,10 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Methods
 
-        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper, string workingDirectory)
+        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(
+            string configurationName,
+            PSRemotingCryptoHelperServer cryptoHelper,
+            string workingDirectory)
         {
             PSSenderInfo senderInfo;
 #if !UNIX
@@ -335,7 +329,11 @@ namespace System.Management.Automation.Remoting.Server
             return tm;
         }
 
-        protected void Start(string initialCommand, PSRemotingCryptoHelperServer cryptoHelper, string workingDirectory = null, string configurationName = null)
+        protected void Start(
+            string initialCommand,
+            PSRemotingCryptoHelperServer cryptoHelper,
+            string workingDirectory,
+            string configurationName)
         {
             _initialCommand = initialCommand;
 
@@ -417,35 +415,13 @@ namespace System.Management.Automation.Remoting.Server
         }
 
         #endregion
-
-        #region Static Methods
-
-        internal static void AppDomainUnhandledException(object sender, UnhandledExceptionEventArgs args)
-        {
-            // args can never be null.
-            Exception exception = (Exception)args.ExceptionObject;
-            // log the exception to crimson event logs
-            PSEtwLog.LogOperationalError(PSEventId.AppDomainUnhandledException,
-                PSOpcode.Close, PSTask.None,
-                PSKeyword.UseAlwaysOperational,
-                exception.GetType().ToString(), exception.Message,
-                exception.StackTrace);
-
-            PSEtwLog.LogAnalyticError(PSEventId.AppDomainUnhandledException_Analytic,
-                    PSOpcode.Close, PSTask.None,
-                    PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                    exception.GetType().ToString(), exception.Message,
-                    exception.StackTrace);
-        }
-
-        #endregion
     }
 
-    internal sealed class OutOfProcessMediator : OutOfProcessMediatorBase
+    internal sealed class StdIOProcessMediator : OutOfProcessMediatorBase
     {
         #region Private Data
 
-        private static OutOfProcessMediator s_singletonInstance;
+        private static StdIOProcessMediator s_singletonInstance;
 
         #endregion
 
@@ -453,10 +429,10 @@ namespace System.Management.Automation.Remoting.Server
 
         /// <summary>
         /// The mediator will take actions from the StdIn stream and responds to them.
-        /// It will replace StdIn,StdOut and StdErr stream with TextWriter.Null's. This is
+        /// It will replace StdIn,StdOut and StdErr stream with TextWriter.Null. This is
         /// to make sure these streams are totally used by our Mediator.
         /// </summary>
-        private OutOfProcessMediator() : base(true)
+        private StdIOProcessMediator() : base(true)
         {
             // Create input stream reader from Console standard input stream.
             // We don't use the provided Console.In TextReader because it can have
@@ -465,9 +441,6 @@ namespace System.Management.Automation.Remoting.Server
             // stream encoding.  This way the stream encoding is determined by the
             // stream BOM as needed.
             originalStdIn = new StreamReader(Console.OpenStandardInput(), true);
-
-            // replacing StdIn with Null so that no other app messes with the
-            // original stream.
             Console.SetIn(TextReader.Null);
 
             // replacing StdOut with Null so that no other app messes with the
@@ -490,7 +463,11 @@ namespace System.Management.Automation.Remoting.Server
         /// </summary>
         /// <param name="initialCommand">Specifies the initialization script.</param>
         /// <param name="workingDirectory">Specifies the initial working directory. The working directory is set before the initial command.</param>
-        internal static void Run(string initialCommand, string workingDirectory)
+        /// <param name="configurationName">Specifies an optional configuration name that configures the endpoint session.</param>
+        internal static void Run(
+            string initialCommand,
+            string workingDirectory,
+            string configurationName)
         {
             lock (SyncObject)
             {
@@ -500,64 +477,14 @@ namespace System.Management.Automation.Remoting.Server
                     return;
                 }
 
-                s_singletonInstance = new OutOfProcessMediator();
+                s_singletonInstance = new StdIOProcessMediator();
             }
 
-#if !CORECLR // AppDomain is not available in CoreCLR
-            // Setup unhandled exception to log events
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
-#endif
-            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer(), workingDirectory);
-        }
-
-        #endregion
-    }
-
-    internal sealed class SSHProcessMediator : OutOfProcessMediatorBase
-    {
-        #region Private Data
-
-        private static SSHProcessMediator s_singletonInstance;
-
-        #endregion
-
-        #region Constructors
-
-        private SSHProcessMediator() : base(true)
-        {
-            originalStdIn = new StreamReader(Console.OpenStandardInput(), true);
-            originalStdOut = new OutOfProcessTextWriter(
-                new StreamWriter(Console.OpenStandardOutput()));
-            originalStdErr = new OutOfProcessTextWriter(
-                new StreamWriter(Console.OpenStandardError()));
-
-            // Disable console from writing to the PSRP streams.
-            Console.SetIn(TextReader.Null);
-            Console.SetOut(TextWriter.Null);
-            Console.SetError(TextWriter.Null);
-        }
-
-        #endregion
-
-        #region Static Methods
-
-        /// <summary>
-        /// </summary>
-        /// <param name="initialCommand"></param>
-        internal static void Run(string initialCommand)
-        {
-            lock (SyncObject)
-            {
-                if (s_singletonInstance != null)
-                {
-                    Dbg.Assert(false, "Run should not be called multiple times");
-                    return;
-                }
-
-                s_singletonInstance = new SSHProcessMediator();
-            }
-
-            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer());
+            s_singletonInstance.Start(
+                initialCommand: initialCommand,
+                cryptoHelper: new PSRemotingCryptoHelperServer(),
+                workingDirectory: workingDirectory,
+                configurationName: configurationName);
         }
 
         #endregion
@@ -626,11 +553,11 @@ namespace System.Management.Automation.Remoting.Server
                 s_singletonInstance = new NamedPipeProcessMediator(namedPipeServer);
             }
 
-#if !CORECLR
-            // AppDomain is not available in CoreCLR
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
-#endif
-            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer(), namedPipeServer.ConfigurationName);
+            s_singletonInstance.Start(
+                initialCommand: initialCommand,
+                cryptoHelper: new PSRemotingCryptoHelperServer(),
+                workingDirectory: null,
+                configurationName: namedPipeServer.ConfigurationName);
         }
 
         #endregion
@@ -716,12 +643,11 @@ namespace System.Management.Automation.Remoting.Server
                 s_instance = new HyperVSocketMediator();
             }
 
-#if !CORECLR
-            // AppDomain is not available in CoreCLR
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
-#endif
-
-            s_instance.Start(initialCommand, new PSRemotingCryptoHelperServer(), configurationName);
+            s_instance.Start(
+                initialCommand: initialCommand,
+                cryptoHelper: new PSRemotingCryptoHelperServer(),
+                workingDirectory: null,
+                configurationName: configurationName);
         }
 
         #endregion

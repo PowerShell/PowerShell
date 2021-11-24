@@ -17,6 +17,8 @@ variables:
     value : false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
+  - name: skipComponentGovernanceDetection
+    value: true
 
 stages:
 - stage: MSIXBundle
@@ -76,17 +78,26 @@ stages:
       globalToolExeName: 'pwsh'
       globalToolPackageName: 'PowerShell.Linux.x64'
 
-- stage: ValidatePkgNames
+- stage: StaticPkgValidation
   dependsOn: []
-  displayName: Package Names validation
+  displayName: Static package validation
   jobs:
   - job: ValidatePkgNames
+    displayName: Validate Package Names
     pool:
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
     steps:
       - template: templates/release-ValidatePackageNames.yml
+  - job: ValidatePkgBOM
+    displayName: Validate Package BOM
+    pool:
+      vmImage: windows-latest
+    variables:
+    - group: 'Azure Blob variable group'
+    steps:
+      - template: templates/release-ValidatePackageBOM.yml
 
 - stage: StartDocker
   dependsOn: []
@@ -127,7 +138,7 @@ stages:
   - MSIXBundle
   - ValidateSDK
   - PRCreation
-  - ValidatePkgNames
+  - StaticPkgValidation
   - StartDocker
   - ManualValidation
   - ReleaseAutomation
@@ -220,11 +231,32 @@ stages:
   dependsOn:
     - PublishPackages
     - ChangesToMaster
+  variables:
+    # adds newPwshOrgName (exists in new and old org)
+    - group: PowerShellRelease
   jobs:
-  - deployment: ReleaseSnap
-    displayName: Release Snap
-    pool: server
-    environment: PSReleaseSnapRelease
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Start the release build
+      instructions: |
+        Start the snap pipeline at: https://dev.azure.com/$(newPwshOrgName)/PowerShell/_build?definitionId=49&_a=summary
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Approve the release
+      instructions: |
+        Once the build is finished, approve the release of all channels.
+
+- stage: ReleaseToMU
+  displayName: Release to MU
+  dependsOn:
+    - PublishPackages
+    - ChangesToMaster
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Release to MU
+      instructions: |
+        Notify the PM team to start the process of releasing to MU.
 
 - stage: UpdateDotnetDocker
   dependsOn: GitHubManualTasks
@@ -257,13 +289,18 @@ stages:
   dependsOn: GitHubManualTasks
   displayName: Upload BuildInfoJson
   jobs:
-  - job: UploadJson
+  - deployment: UploadJson
+    displayName: Upload BuildInfoJson
     pool:
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
-    steps:
-    - template: templates/release-BuildJson.yml
+    environment: PSReleaseBuildInfoJson
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: templates/release-BuildJson.yml
 
 - stage: ReleaseVPack
   dependsOn: GitHubManualTasks

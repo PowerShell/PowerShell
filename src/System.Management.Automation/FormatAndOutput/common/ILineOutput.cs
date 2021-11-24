@@ -4,6 +4,7 @@
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Text;
 
@@ -413,7 +414,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             CheckStopProcessing();
 
-            s = Utils.GetOutputString(s, isHost: false);
+            s = PSHostUserInterface.GetOutputString(s, isHost: false);
 
             if (_suppressNewline)
             {

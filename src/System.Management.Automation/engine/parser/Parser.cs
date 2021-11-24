@@ -724,12 +724,13 @@ namespace System.Management.Automation.Language
             ParseError[] parseErrors;
             var ast = Parser.ParseInput(input, out throwAwayTokens, out parseErrors);
 
-            if ((ast == null) ||
-                parseErrors.Length > 0 ||
-                ast.BeginBlock != null ||
-                ast.ProcessBlock != null ||
-                ast.DynamicParamBlock != null ||
-                ast.EndBlock.Traps != null)
+            if (ast == null
+                || parseErrors.Length > 0
+                || ast.BeginBlock != null
+                || ast.ProcessBlock != null
+                || ast.CleanBlock != null
+                || ast.DynamicParamBlock != null
+                || ast.EndBlock.Traps != null)
             {
                 return false;
             }
@@ -1534,6 +1535,25 @@ namespace System.Management.Automation.Language
                             token = NextToken();
                         } while (token.Kind == TokenKind.Comma);
 
+                        // The dimensions for an array must be less than or equal to 32.
+                        // Search the doc for 'Type.MakeArrayType(int rank)' for more details.
+                        if (dim > 32)
+                        {
+                            // If the next token is right bracket, we swallow it to make it easier to parse the rest of script.
+                            // Otherwise, we unget the token for the subsequent parsing to consume.
+                            if (token.Kind != TokenKind.RBracket)
+                            {
+                                UngetToken(token);
+                            }
+
+                            ReportError(
+                                ExtentOf(firstTokenAfterLBracket, lastComma),
+                                nameof(ParserStrings.ArrayHasTooManyDimensions),
+                                ParserStrings.ArrayHasTooManyDimensions,
+                                arg: dim);
+                            break;
+                        }
+
                         if (token.Kind != TokenKind.RBracket)
                         {
                             // ErrorRecovery: just pretend we saw a ']'.
@@ -1713,9 +1733,9 @@ namespace System.Management.Automation.Language
             NamedBlockAst beginBlock = null;
             NamedBlockAst processBlock = null;
             NamedBlockAst endBlock = null;
-            IScriptExtent startExtent = lCurly != null
-                                            ? lCurly.Extent
-                                            : paramBlockAst?.Extent;
+            NamedBlockAst cleanBlock = null;
+
+            IScriptExtent startExtent = lCurly?.Extent ?? paramBlockAst?.Extent;
             IScriptExtent endExtent = null;
             IScriptExtent extent = null;
             IScriptExtent scriptBlockExtent = null;
@@ -1757,6 +1777,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.Begin:
                     case TokenKind.Process:
                     case TokenKind.End:
+                    case TokenKind.Clean:
                         break;
                 }
 
@@ -1797,6 +1818,10 @@ namespace System.Management.Automation.Language
                 {
                     endBlock = new NamedBlockAst(extent, TokenKind.End, statementBlock, false);
                 }
+                else if (blockNameToken.Kind == TokenKind.Clean && cleanBlock == null)
+                {
+                    cleanBlock = new NamedBlockAst(extent, TokenKind.Clean, statementBlock, false);
+                }
                 else if (blockNameToken.Kind == TokenKind.Dynamicparam && dynamicParamBlock == null)
                 {
                     dynamicParamBlock = new NamedBlockAst(extent, TokenKind.Dynamicparam, statementBlock, false);
@@ -1818,7 +1843,14 @@ namespace System.Management.Automation.Language
             CompleteScriptBlockBody(lCurly, ref extent, out scriptBlockExtent);
 
         return_script_block_ast:
-            return new ScriptBlockAst(scriptBlockExtent, usingStatements, paramBlockAst, beginBlock, processBlock, endBlock,
+            return new ScriptBlockAst(
+                scriptBlockExtent,
+                usingStatements,
+                paramBlockAst,
+                beginBlock,
+                processBlock,
+                endBlock,
+                cleanBlock,
                 dynamicParamBlock);
         }
 

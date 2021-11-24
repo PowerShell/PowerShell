@@ -680,10 +680,7 @@ namespace System.Management.Automation.Runspaces
             AddMember(
                 errors,
                 typeName,
-                new PSCodeProperty(
-                    @"Target",
-                    GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), @"GetTarget"),
-                    setterCodeReference: null),
+                new PSAliasProperty(@"Target", @"LinkTarget", conversionType: null),
                 typeMembers,
                 isOverride: false);
 
@@ -808,10 +805,7 @@ namespace System.Management.Automation.Runspaces
             AddMember(
                 errors,
                 typeName,
-                new PSCodeProperty(
-                    @"Target",
-                    GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), @"GetTarget"),
-                    setterCodeReference: null),
+                new PSAliasProperty(@"Target", @"LinkTarget", conversionType: null),
                 typeMembers,
                 isOverride: false);
 
@@ -9227,45 +9221,42 @@ namespace System.Management.Automation.Runspaces
 #if UNIX
             #region UnixStat
 
-            if (ExperimentalFeature.IsEnabled("PSUnixFileStat"))
-            {
-                typeName = @"System.IO.FileSystemInfo";
-                typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
+            typeName = @"System.IO.FileSystemInfo";
+            typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
-                // Where we have a method to invoke below, first check to be sure that the object is present
-                // to avoid null reference issues
-                newMembers.Add(@"UnixMode");
-                AddMember(
-                    errors,
-                    typeName,
-                    new PSScriptProperty(@"UnixMode", GetScriptBlock(@"if ($this.UnixStat) { $this.UnixStat.GetModeString() }")),
-                    typeMembers,
-                    isOverride: false);
+            // Where we have a method to invoke below, first check to be sure that the object is present
+            // to avoid null reference issues
+            newMembers.Add(@"UnixMode");
+            AddMember(
+                errors,
+                typeName,
+                new PSScriptProperty(@"UnixMode", GetScriptBlock(@"if ($this.UnixStat) { $this.UnixStat.GetModeString() }")),
+                typeMembers,
+                isOverride: false);
 
-                newMembers.Add(@"User");
-                AddMember(
-                    errors,
-                    typeName,
-                    new PSScriptProperty(@"User", GetScriptBlock(@" if ($this.UnixStat) { $this.UnixStat.GetUserName() } ")),
-                    typeMembers,
-                    isOverride: false);
+            newMembers.Add(@"User");
+            AddMember(
+                errors,
+                typeName,
+                new PSScriptProperty(@"User", GetScriptBlock(@" if ($this.UnixStat) { $this.UnixStat.GetUserName() } ")),
+                typeMembers,
+                isOverride: false);
 
-                newMembers.Add(@"Group");
-                AddMember(
-                    errors,
-                    typeName,
-                    new PSScriptProperty(@"Group", GetScriptBlock(@" if ($this.UnixStat) { $this.UnixStat.GetGroupName() } ")),
-                    typeMembers,
-                    isOverride: false);
+            newMembers.Add(@"Group");
+            AddMember(
+                errors,
+                typeName,
+                new PSScriptProperty(@"Group", GetScriptBlock(@" if ($this.UnixStat) { $this.UnixStat.GetGroupName() } ")),
+                typeMembers,
+                isOverride: false);
 
-                newMembers.Add(@"Size");
-                AddMember(
-                    errors,
-                    typeName,
-                    new PSScriptProperty(@"Size", GetScriptBlock(@"$this.UnixStat.Size")),
-                    typeMembers,
-                    isOverride: false);
-            }
+            newMembers.Add(@"Size");
+            AddMember(
+                errors,
+                typeName,
+                new PSScriptProperty(@"Size", GetScriptBlock(@"$this.UnixStat.Size")),
+                typeMembers,
+                isOverride: false);
 
             #endregion
 #endif

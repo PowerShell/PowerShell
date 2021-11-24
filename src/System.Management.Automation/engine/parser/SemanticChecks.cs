@@ -17,7 +17,7 @@ using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
 {
-    internal class SemanticChecks : AstVisitor2, IAstPostVisitHandler
+    internal sealed class SemanticChecks : AstVisitor2, IAstPostVisitHandler
     {
         private readonly Parser _parser;
 
@@ -406,10 +406,11 @@ namespace System.Management.Automation.Language
                     ParserStrings.ParamBlockNotAllowedInMethod);
             }
 
-            if (body.BeginBlock != null ||
-                body.ProcessBlock != null ||
-                body.DynamicParamBlock != null ||
-                !body.EndBlock.Unnamed)
+            if (body.BeginBlock != null
+                || body.ProcessBlock != null
+                || body.CleanBlock != null
+                || body.DynamicParamBlock != null
+                || !body.EndBlock.Unnamed)
             {
                 _parser.ReportError(Parser.ExtentFromFirstOf(body.DynamicParamBlock, body.BeginBlock, body.ProcessBlock, body.EndBlock),
                     nameof(ParserStrings.NamedBlockNotAllowedInMethod),

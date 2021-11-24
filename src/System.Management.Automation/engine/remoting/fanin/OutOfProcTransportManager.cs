@@ -1422,7 +1422,7 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
                 }
 
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = e.Message ?? string.Empty;
                 _tracer.WriteMessage("HyperVSocketClientSessionTransportManager", "StartReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
 
@@ -1762,7 +1762,39 @@ namespace System.Management.Automation.Remoting.Client
 
                 while (true)
                 {
-                    string error = ReadError(reader);
+                    string error;
+
+                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSRemotingSSHTransportErrorHandling))
+                    {
+                        // Blocking read from StdError stream
+                        error = reader.ReadLine();
+
+                        if (error == null)
+                        {
+                            // Stream is closed unexpectedly.
+                            throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
+                        }
+
+                        if (error.Length == 0)
+                        {
+                            // Ignore
+                            continue;
+                        }
+
+                        try
+                        {
+                            // Messages in error stream from ssh are unreliable, and may just be warnings or
+                            // banner text.
+                            // So just report the messages but don't act on them.
+                            System.Console.WriteLine(error);
+                        }
+                        catch (IOException)
+                        { }
+
+                        continue;
+                    }
+
+                    error = ReadError(reader);
 
                     if (error.Length == 0)
                     {
@@ -1784,7 +1816,7 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (Exception e)
             {
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = e.Message ?? string.Empty;
                 _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessErrorThread", Guid.Empty,
                     "Transport manager error thread ended with error: {0}", errorMsg);
 
@@ -1908,7 +1940,7 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
                 }
 
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = e.Message ?? string.Empty;
                 _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
             }
@@ -2035,7 +2067,7 @@ namespace System.Management.Automation.Remoting.Client
                     Dbg.Assert(false, "Need to adjust transport fragmentor to accommodate read buffer size.");
                 }
 
-                string errorMsg = (e.Message != null) ? e.Message : string.Empty;
+                string errorMsg = e.Message ?? string.Empty;
                 _tracer.WriteMessage("NamedPipeClientSessionTransportManager", "StartReaderThread", Guid.Empty,
                     "Transport manager reader thread ended with error: {0}", errorMsg);
             }

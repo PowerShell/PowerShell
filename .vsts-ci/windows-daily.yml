@@ -132,6 +132,8 @@ stages:
       condition: succeeded()
 
     - pwsh: |
+        Import-Module .\build.psm1
+        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose UnelevatedPesterTests -TagSet CI
@@ -139,6 +141,8 @@ stages:
       condition: succeeded()
 
     - pwsh: |
+        Import-Module .\build.psm1
+        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose ElevatedPesterTests -TagSet CI
@@ -146,6 +150,8 @@ stages:
       condition: succeededOrFailed()
 
     - pwsh: |
+        Import-Module .\build.psm1
+        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose UnelevatedPesterTests -TagSet Others
@@ -153,6 +159,8 @@ stages:
       condition: succeededOrFailed()
 
     - pwsh: |
+        Import-Module .\build.psm1
+        Start-PSBootstrap
         Import-Module .\tools\ci.psm1
         Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
         Invoke-CITest -Purpose ElevatedPesterTests -TagSet Others
