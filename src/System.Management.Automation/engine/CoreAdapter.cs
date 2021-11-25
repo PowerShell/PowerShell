@@ -2788,6 +2788,14 @@ namespace System.Management.Automation
                 if (propertySetter != null && (propertySetter.IsPublic || propertySetter.IsFamily))
                 {
                     this.isStatic = propertySetter.IsStatic;
+                    foreach (var requiredCustomModifier in propertySetter.ReturnParameter.GetRequiredCustomModifiers())
+                    {
+                        if (!requiredCustomModifier.IsNested && requiredCustomModifier.Name == "IsExternalInit" && requiredCustomModifier.Namespace == "System.Runtime.CompilerServices")
+                        {
+                            this.initOnly = true;
+                            break;
+                        }
+                    }
                 }
                 else
                 {
@@ -2912,7 +2920,7 @@ namespace System.Management.Automation
                             errType = typeof(object);
                         }
                     }
-                    else if (readOnly)
+                    else if (readOnly || initOnly)
                     {
                         errMessage = ParserStrings.PropertyIsReadOnly;
                     }
@@ -2982,6 +2990,7 @@ namespace System.Management.Automation
             internal bool useReflection;
             internal bool readOnly;
             internal bool writeOnly;
+            internal bool initOnly;
             internal bool isStatic;
             internal Type propertyType;
 
@@ -4058,7 +4067,7 @@ namespace System.Management.Automation
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
-            return !((PropertyCacheEntry)property.adapterData).readOnly;
+            return !((PropertyCacheEntry)property.adapterData).readOnly && !((PropertyCacheEntry)property.adapterData).initOnly;
         }
 
         /// <summary>
