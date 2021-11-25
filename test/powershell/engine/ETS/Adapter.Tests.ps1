@@ -24,6 +24,30 @@ Describe "Adapter Tests" -tags "CI" {
             $document = New-Object System.Xml.XmlDocument
             $document.LoadXml("<book ISBN='12345'><title>Pride And Prejudice</title><price>19.95</price></book>")
             $doc = $document.DocumentElement
+
+            $initOnlyPropertyTypeDefinition = @'
+public class InitOnlyTestClass
+{
+    // default constructor to allow cast-initialization
+    public InitOnlyTestClass()
+    {
+    }
+
+    // native initialization during runtime .ctor call
+    public InitOnlyTestClass(long value)
+    {
+        Value = value;
+    }
+
+    public long Value { get; init; }
+}
+'@
+            try {
+                $null = [InitOnlyTestClass]
+            }
+            catch {
+                Add-Type -TypeDefinition $initOnlyPropertyTypeDefinition
+            }
         }
 
         It "Can get a Dotnet parameterized property" {
@@ -199,6 +223,20 @@ Describe "Adapter Tests" -tags "CI" {
             $results[1] | Should -Be 123
 
             # TODO: dynamic method calls
+        }
+    }
+
+    Context "Init-only Property DotNetAdapter Tests" {
+        It "Init-only properties are settable during instantiation" {
+            $iotc = [InitOnlyTestClass]@{ Value = 123 }
+            $ioProperty = $iotc.psobject.Properties['Value']
+            $ioProperty.Value | Should -BeExactly 123l
+            $ioProperty.IsSettable | Should -BeFalse
+        }
+
+        It "Init-only properties are not settable via ETS" {
+            $iotc = [InitOnlyTestClass]@{ Value = 123 }
+            { $iotc.Value = 456 } | Should -Throw -ExceptionType ([System.InvalidOperationException])
         }
     }
 
