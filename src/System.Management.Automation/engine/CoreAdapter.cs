@@ -2788,7 +2788,7 @@ namespace System.Management.Automation
                 if (propertySetter != null && (propertySetter.IsPublic || propertySetter.IsFamily))
                 {
                     this.isStatic = propertySetter.IsStatic;
-                    foreach (var requiredCustomModifier in propertySetter.ReturnParameter.GetRequiredCustomModifiers())
+                    foreach (Type requiredCustomModifier in propertySetter.ReturnParameter.GetRequiredCustomModifiers())
                     {
                         if (!requiredCustomModifier.IsNested && requiredCustomModifier.Name == "IsExternalInit" && requiredCustomModifier.Namespace == "System.Runtime.CompilerServices")
                         {
