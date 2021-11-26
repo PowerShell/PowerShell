@@ -2790,7 +2790,7 @@ namespace System.Management.Automation
                     this.isStatic = propertySetter.IsStatic;
                     foreach (Type requiredCustomModifier in propertySetter.ReturnParameter.GetRequiredCustomModifiers())
                     {
-                        if (!requiredCustomModifier.IsNested && requiredCustomModifier.Name == "IsExternalInit" && requiredCustomModifier.Namespace == "System.Runtime.CompilerServices")
+                        if (!requiredCustomModifier.IsNested && requiredCustomModifier.FullName == "System.Runtime.CompilerServices.IsExternalInit")
                         {
                             this.initOnly = true;
                             break;
