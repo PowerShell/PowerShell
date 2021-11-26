@@ -236,7 +236,7 @@ public class InitOnlyTestClass
 
         It "Init-only properties are not settable via ETS" {
             $iotc = [InitOnlyTestClass]@{ Value = 123 }
-            { $iotc.Value = 456 } | Should -Throw -ErrorId PropertyAssignmentException -ExpectedMessage "'Value' is a ReadOnly property."
+            { $iotc.Value = 456 } | Should -Throw -ErrorId PropertyAssignmentException
         }
     }
 
