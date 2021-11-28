@@ -30,10 +30,4 @@ FunctionsToExport = @()
 AliasesToExport = @('fhx')
 NestedModules = @("Microsoft.PowerShell.Commands.Utility.dll")
 HelpInfoURI = 'https://aka.ms/powershell71-help'
-PrivateData = @{
-  PSData = @{
-    ExperimentalFeatures = @(
-    )
-  }
-}
 }
