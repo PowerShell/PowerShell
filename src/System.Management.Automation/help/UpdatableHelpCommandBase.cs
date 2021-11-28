@@ -166,22 +166,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Static constructor
         ///
-        /// NOTE: FWLinks for core PowerShell modules are needed since they get loaded as snapins in a Remoting Endpoint.
+        /// NOTE: HelpInfoUri for core PowerShell modules are needed since they get loaded as snapins in a Remoting Endpoint.
         /// When we moved to modules in V3, we were not able to make this change as it was a risky change to make at that time.
         /// </summary>
         static UpdatableHelpCommandBase()
         {
             s_metadataCache = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            // TODO: assign real TechNet addresses
+            // NOTE: The HelpInfoUri must be updated with each release.
 
-            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.WSMan.Management", "https://aka.ms/powershell71-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://aka.ms/powershell72-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://aka.ms/powershell72-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://aka.ms/powershell72-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://aka.ms/powershell72-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://aka.ms/powershell72-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://aka.ms/powershell72-help");
+            s_metadataCache.Add("Microsoft.WSMan.Management", "https://aka.ms/powershell72-help");
         }
 
         /// <summary>

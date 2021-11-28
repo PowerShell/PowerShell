@@ -29,5 +29,5 @@ CmdletsToExport = @(
 FunctionsToExport = @()
 AliasesToExport = @('fhx')
 NestedModules = @("Microsoft.PowerShell.Commands.Utility.dll")
-HelpInfoURI = 'https://aka.ms/powershell71-help'
+HelpInfoURI = 'https://aka.ms/powershell72-help'
 }
