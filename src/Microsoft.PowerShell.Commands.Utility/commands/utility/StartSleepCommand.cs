@@ -58,7 +58,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Allows sleep time to be specified as a TimeSpan
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "FromTimeSpan", ValueFromPipeline = true)]
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "FromTimeSpan", ValueFromPipeline = true,
+                   ValueFromPipelineByPropertyName = true)]
         [ValidateRange(ValidateRangeKind.NonNegative)]
         [Alias("ts")]
         public TimeSpan Duration { get; set; }
