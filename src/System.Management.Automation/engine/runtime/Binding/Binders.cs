@@ -6911,7 +6911,7 @@ namespace System.Management.Automation.Language
                     expr = Expression.Block(
                         Expression.Call(
                             CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
-                            target.Expression,
+                            target.Expression.Cast(typeof(object)),
                             Expression.Constant(name),
                             Expression.NewArrayInit(
                                 typeof(object),
