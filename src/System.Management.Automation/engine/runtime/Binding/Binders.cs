@@ -6908,10 +6908,11 @@ namespace System.Management.Automation.Language
                     // Expression block runs two expressions in order:
                     //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
                     //  - Invoke method
+                    string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
                     expr = Expression.Block(
                         Expression.Call(
                             CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
-                            target.Expression.Cast(typeof(object)),
+                            Expression.Constant(targetName),
                             Expression.Constant(name),
                             Expression.NewArrayInit(
                                 typeof(object),

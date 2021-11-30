@@ -3560,7 +3560,7 @@ namespace System.Management.Automation
             }
         );
 
-        internal static void LogMemberInvocation(object target, string name, object[] args)
+        internal static void LogMemberInvocation(string targetName, string name, object[] args)
         {
             try
             {
@@ -3579,7 +3579,7 @@ namespace System.Management.Automation
                     argsBuilder.Append($"<{value}>");
                 }
 
-                string content = $"<{target}>.{name}({argsBuilder})";
+                string content = $"<{targetName}>.{name}({argsBuilder})";
 
                 if (DumpLogAMSIContent.Value)
                 {
