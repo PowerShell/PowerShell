@@ -2,15 +2,13 @@
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 
 using Microsoft.Win32.SafeHandles;
 
 namespace System.Management.Automation
 {
-    internal class PlatformInvokes
+    internal static class PlatformInvokes
     {
         [StructLayout(LayoutKind.Sequential)]
         internal class FILETIME
@@ -34,7 +32,7 @@ namespace System.Management.Automation
             {
                 return ((long)dwHighDateTime << 32) + dwLowDateTime;
             }
-        };
+        }
 
         [Flags]
         // dwDesiredAccess of CreateFile
@@ -116,14 +114,13 @@ namespace System.Management.Automation
             {
             }
 
-            [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
             internal SafeLocalMemHandle(IntPtr existingHandle, bool ownsHandle)
                 : base(ownsHandle)
             {
                 base.SetHandle(existingHandle);
             }
 
-            [DllImport(PinvokeDllNames.LocalFreeDllName), ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+            [DllImport(PinvokeDllNames.LocalFreeDllName)]
             private static extern IntPtr LocalFree(IntPtr hMem);
 
             protected override bool ReleaseHandle()
@@ -236,7 +233,7 @@ namespace System.Management.Automation
         /// This can happen if you close a handle twice, or if you call CloseHandle on a handle
         /// returned by the FindFirstFile function.
         /// </returns>
-        [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]//, ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+        [DllImport(PinvokeDllNames.CloseHandleDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         // [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         internal static extern bool CloseHandle(IntPtr handle);
@@ -690,24 +687,6 @@ namespace System.Management.Automation
             UInt32 dwCreationDisposition,
             UInt32 dwFlagsAndAttributes,
             System.IntPtr hTemplateFile);
-
-#endif
-
-        #endregion
-
-        #region GetStdHandle
-
-#if !UNIX
-
-        internal enum StandardHandleId : uint
-        {
-            Error = unchecked((uint)-12),
-            Output = unchecked((uint)-11),
-            Input = unchecked((uint)-10),
-        }
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern IntPtr GetStdHandle(uint handleId);
 
 #endif
 

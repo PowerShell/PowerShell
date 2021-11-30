@@ -40,7 +40,7 @@ namespace System.Management.Automation
         /// of wildcard search patterns. This is currently not achievable
         /// through _commandDiscovery.
         /// </remarks>
-        private SessionState _sessionState;
+        private readonly SessionState _sessionState;
 
         /// <summary>
         /// Command Discovery object for current session.
@@ -50,7 +50,7 @@ namespace System.Management.Automation
         /// The AliasInfo object returned from _commandDiscovery is essential
         /// in creating AliasHelpInfo.
         /// </remarks>
-        private CommandDiscovery _commandDiscovery;
+        private readonly CommandDiscovery _commandDiscovery;
 
         #region Common Properties
 
@@ -261,7 +261,7 @@ namespace System.Management.Automation
             if (helpRequest == null)
                 return true;
 
-            if (0 == (helpRequest.HelpCategory & helpInfo.HelpCategory))
+            if ((helpRequest.HelpCategory & helpInfo.HelpCategory) == 0)
             {
                 return false;
             }

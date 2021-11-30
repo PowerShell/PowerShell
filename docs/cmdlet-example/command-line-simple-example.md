@@ -133,7 +133,7 @@ Creators Update. This version of the .NET Framework allows existing applications
 However, for Windows systems that have not been updated to .NET Framework 4.7.1 such a
 binary module will not run correctly in Windows PowerShell.
 
-Let's see what happens when you attempt use this module in **Windows PowerShell** on
+Let's see what happens when you attempt to use this module in **Windows PowerShell** on
 Windows 10 CU (1703 or lower) without .NET Framework 4.7.1 installed.
 
 1. Copy `MyModule.dll` to a folder on a Windows machine.

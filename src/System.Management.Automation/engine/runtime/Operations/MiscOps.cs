@@ -104,7 +104,7 @@ namespace System.Management.Automation
                 else
                 {
                     var commandName = command as string ?? PSObject.ToStringParser(context, command);
-                    invocationName = invocationName ?? commandName;
+                    invocationName ??= commandName;
 
                     if (string.IsNullOrEmpty(commandName))
                     {
@@ -174,7 +174,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (cpi.ArgumentSplatted)
+                if (cpi.ArgumentToBeSplatted)
                 {
                     foreach (var splattedCpi in Splat(cpi.ArgumentValue, cpi.ArgumentAst))
                     {
@@ -338,8 +338,13 @@ namespace System.Management.Automation
                     }
 
                     yield return CommandParameterInternal.CreateParameterWithArgument(
-                        splatAst, parameterName, parameterText,
-                        splatAst, parameterValue, false);
+                        parameterAst: splatAst,
+                        parameterName: parameterName,
+                        parameterText: parameterText,
+                        argumentAst: splatAst,
+                        value: parameterValue,
+                        spaceAfterParameter: false,
+                        fromSplatting: true);
                 }
             }
             else
@@ -402,7 +407,7 @@ namespace System.Management.Automation
             else
             {
                 string whitespaces = parameterName.Substring(endPosition);
-                parameterText = "-" + parameterName.Substring(0, endPosition) + ":" + whitespaces;
+                parameterText = string.Concat("-", parameterName.AsSpan(0, endPosition), ":", whitespaces);
             }
 
             return parameterText;
@@ -444,7 +449,7 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < pipeElements.Length; i++)
                 {
-                    commandRedirection = commandRedirections != null ? commandRedirections[i] : null;
+                    commandRedirection = commandRedirections?[i];
                     commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
                                                   commandRedirection, context);
                 }
@@ -524,7 +529,7 @@ namespace System.Management.Automation
                 // For background jobs rewrite the pipeline as a Start-Job command
                 var scriptblockBodyString = pipelineAst.Extent.Text;
                 var pipelineOffset = pipelineAst.Extent.StartOffset;
-                var variables = pipelineAst.FindAll(x => x is VariableExpressionAst, true);
+                var variables = pipelineAst.FindAll(static x => x is VariableExpressionAst, true);
 
                 // Used to make sure that the job runs in the current directory
                 const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location -LiteralPath $using:pwd ; ";
@@ -546,10 +551,10 @@ namespace System.Management.Automation
                     }
 
                     // Skip PowerShell magic variables
-                    if (Regex.Match(
+                    if (!Regex.Match(
                             variableName,
                             "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
-                            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success == false)
+                            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success)
                     {
                         updatedScriptblock.Append(scriptblockBodyString.AsSpan(position, v.Extent.StartOffset - pipelineOffset - position));
                         updatedScriptblock.Append("${using:");
@@ -853,7 +858,7 @@ namespace System.Management.Automation
             this.FromStream = from;
         }
 
-        internal RedirectionStream FromStream { get; private set; }
+        internal RedirectionStream FromStream { get; }
 
         internal abstract void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context);
 
@@ -1034,9 +1039,9 @@ namespace System.Management.Automation
                                  File);
         }
 
-        internal string File { get; private set; }
+        internal string File { get; }
 
-        internal bool Appending { get; private set; }
+        internal bool Appending { get; }
 
         private PipelineProcessor PipelineProcessor { get; set; }
 
@@ -1275,8 +1280,7 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                var rte = exception as RuntimeException;
-                if (rte == null)
+                if (!(exception is RuntimeException rte))
                 {
                     throw ExceptionHandlingOps.ConvertToRuntimeException(exception, functionDefinitionAst.Extent);
                 }
@@ -1304,7 +1308,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(_scriptBlock == null || _scriptBlock.SessionStateInternal == null,
                 "Cached script block should not hold on to session state");
 
-            var result = (_scriptBlock ?? (_scriptBlock = new ScriptBlock(_ast, isFilter))).Clone();
+            var result = (_scriptBlock ??= new ScriptBlock(_ast, isFilter)).Clone();
             result.SessionStateInternal = context.EngineSessionState;
             return result;
         }
@@ -1375,7 +1379,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Represent a handler search result.
         /// </summary>
-        private class HandlerSearchResult
+        private sealed class HandlerSearchResult
         {
             internal HandlerSearchResult()
             {
@@ -1414,7 +1418,7 @@ namespace System.Management.Automation
             if (types[length - 1].Equals(typeof(CatchAll)))
             {
                 ranks[length - 1] = length - 1;
-                length = length - 1;
+                length -= 1;
             }
 
             // For each type check if it's a sub-class of any types after it.
@@ -1574,23 +1578,33 @@ namespace System.Management.Automation
 
         internal static bool SuspendStoppingPipeline(ExecutionContext context)
         {
-            LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            if (lpl != null)
+            var localPipeline = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
+            return SuspendStoppingPipelineImpl(localPipeline);
+        }
+
+        internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
+        {
+            var localPipeline = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
+            RestoreStoppingPipelineImpl(localPipeline, oldIsStopping);
+        }
+
+        internal static bool SuspendStoppingPipelineImpl(LocalPipeline localPipeline)
+        {
+            if (localPipeline is not null)
             {
-                bool oldIsStopping = lpl.Stopper.IsStopping;
-                lpl.Stopper.IsStopping = false;
+                bool oldIsStopping = localPipeline.Stopper.IsStopping;
+                localPipeline.Stopper.IsStopping = false;
                 return oldIsStopping;
             }
 
             return false;
         }
 
-        internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
+        internal static void RestoreStoppingPipelineImpl(LocalPipeline localPipeline, bool oldIsStopping)
         {
-            LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            if (lpl != null)
+            if (localPipeline is not null)
             {
-                lpl.Stopper.IsStopping = oldIsStopping;
+                localPipeline.Stopper.IsStopping = oldIsStopping;
             }
         }
 
@@ -1917,7 +1931,7 @@ namespace System.Management.Automation
             InterpreterError.UpdateExceptionErrorRecordPosition(rte, extent);
             ErrorRecord errRec = rte.ErrorRecord.WrapException(rte);
 
-            if (!(rte is PipelineStoppedException))
+            if (rte is not PipelineStoppedException)
             {
                 if (outputPipe != null)
                 {
@@ -2851,6 +2865,11 @@ namespace System.Management.Automation
             ScriptBlock sb = expression as ScriptBlock;
             if (sb != null)
             {
+                if (sb.HasCleanBlock)
+                {
+                    throw new PSNotSupportedException(ParserStrings.ForEachNotSupportCleanBlock);
+                }
+
                 Pipe outputPipe = new Pipe(result);
                 if (sb.HasBeginBlock)
                 {
@@ -3223,7 +3242,10 @@ namespace System.Management.Automation
 
             if (originalList.Count == 0)
             {
-                return new object[0]; // don't use Utils.EmptyArray, always return a new array
+#pragma warning disable CA1825 // Avoid zero-length array allocations
+                // Don't use Array.Empty<object>(); always return a new instance.
+                return new object[0];
+#pragma warning restore CA1825 // Avoid zero-length array allocations
             }
 
             return ArrayOps.Multiply(originalList.ToArray(), times);
@@ -3311,17 +3333,7 @@ namespace System.Management.Automation
             {
             }
 
-            // We use ComEnumerator to enumerate COM collections because the following code doesn't work in .NET Core
-            //   IEnumerator enumerator = targetValue as IEnumerator;
-            //   if (enumerator != null)
-            //   {
-            //       enumerable.MoveNext();
-            //       ...
-            //   }
-            // The call to 'MoveNext()' throws exception because COM is not fully supported in .NET Core.
-            // See https://github.com/dotnet/runtime/issues/21690 for more information.
-            // When COM support is fully back to .NET Core, we need to change back to directly use the type cast.
-            return ComEnumerator.Create(targetValue) ?? NonEnumerableObjectEnumerator.Create(obj);
+            return targetValue as IEnumerator ?? NonEnumerableObjectEnumerator.Create(obj);
         }
 
         internal static IEnumerator GetGenericEnumerator<T>(IEnumerable<T> enumerable)

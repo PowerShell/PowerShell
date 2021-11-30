@@ -90,7 +90,7 @@ namespace Microsoft.Management.UI.Internal
 
             foreach (object item in items)
             {
-                if (!(item is T))
+                if (item is not T)
                 {
                     return false;
                 }

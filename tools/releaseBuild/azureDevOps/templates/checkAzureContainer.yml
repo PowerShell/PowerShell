@@ -1,12 +1,25 @@
 jobs:
 - job: DeleteBlob
+  variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
+  - group: Azure Blob variable group
   displayName: Delete blob is exists
   pool:
-    vmImage: windows-latest
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
   steps:
+  - checkout: self
+    clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
+      CreateJson: yes
+      UseJson: no
 
   - task: AzurePowerShell@4
     inputs:

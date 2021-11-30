@@ -112,15 +112,37 @@ Describe "Get-Item" -Tags "CI" {
                 return
             }
             $altStreamPath = "$TESTDRIVE/altStream.txt"
+            $altStreamDirectory = "$TESTDRIVE/altstreamdir"
+            $noAltStreamDirectory = "$TESTDRIVE/noaltstreamdir"
             $stringData = "test data"
             $streamName = "test"
-            $item = New-Item -type file $altStreamPath
+            $absentStreamName = "noExist"
+            $null = New-Item -type file $altStreamPath
             Set-Content -Path $altStreamPath -Stream $streamName -Value $stringData
+            $null = New-Item -type directory $altStreamDirectory
+            Set-Content -Path $altStreamDirectory -Stream $streamName -Value $stringData
+            $null = New-Item -type directory $noAltStreamDirectory
         }
-        It "Should find an alternate stream if present" -Skip:$skipNotWindows {
+        It "Should find an alternate stream on a file if present" -Skip:$skipNotWindows {
             $result = Get-Item $altStreamPath -Stream $streamName
             $result.Length | Should -Be ($stringData.Length + [Environment]::NewLine.Length)
             $result.Stream | Should -Be $streamName
+        }
+        It "Should error if it cannot find alternate stream on an existing file" -Skip:$skipNotWindows {
+            { Get-Item $altStreamPath -Stream $absentStreamName -ErrorAction Stop } | Should -Throw -ErrorId "AlternateDataStreamNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+        }
+        It "Should find an alternate stream on a directory if present, and it should not be a container" -Skip:$skipNotWindows {
+            $result = Get-Item $altStreamDirectory -Stream $streamName
+            $result.Length | Should -Be ($stringData.Length + [Environment]::NewLine.Length )
+            $result.Stream | Should -Be $streamName
+            $result.PSIsContainer | Should -BeExactly $false
+        }
+        It "Should not find an alternate stream on a directory if not present" -Skip:$skipNotWindows {
+            { Get-Item $noAltStreamDirectory -Stream $absentStreamName -ErrorAction Stop } | Should -Throw -ErrorId "AlternateDataStreamNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+        }
+        It "Should find zero alt streams and not fail on a directory with a wildcard stream name if no alt streams are present" -Skip:$skipNotWindows {
+            $result = Get-Item $noAltStreamDirectory -Stream * -ErrorAction Stop
+            $result | Should -BeExactly $null
         }
     }
 
@@ -181,5 +203,64 @@ Describe "Get-Item environment provider on Windows with accidental case-variant 
 "@
             $valGetItem | Should -BeExactly $valDirect
         }
+    }
+}
+
+Describe 'Formatting for FileInfo objects' -Tags 'CI' {
+    BeforeAll {
+        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRenderingFileInfo')))
+        $extensionTests = [System.Collections.Generic.List[HashTable]]::new()
+        foreach ($extension in @('.zip', '.tgz', '.tar', '.gz', '.nupkg', '.cab', '.7z', '.ps1', '.psd1', '.psm1', '.ps1xml')) {
+            $extensionTests.Add(@{extension = $extension})
+        }
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove('It:Skip')
+    }
+
+    It 'File type <extension> should have correct color' -TestCases $extensionTests {
+        param($extension)
+
+        $testFile = Join-Path -Path $TestDrive -ChildPath "test$extension"
+        $file = New-Item -ItemType File -Path $testFile
+        $file.NameString | Should -BeExactly "$($PSStyle.FileInfo.Extension[$extension] + $file.Name + $PSStyle.Reset)"
+    }
+
+    It 'Directory should have correct color' {
+        $dirPath = Join-Path -Path $TestDrive -ChildPath 'myDir'
+        $dir = New-Item -ItemType Directory -Path $dirPath
+        $dir.NameString | Should -BeExactly "$($PSStyle.FileInfo.Directory + $dir.Name + $PSStyle.Reset)"
+    }
+
+    It 'Executable should have correct color' {
+        if ($IsWindows) {
+            $exePath = Join-Path -Path $TestDrive -ChildPath 'myExe.exe'
+            $exe = New-Item -ItemType File -Path $exePath
+        }
+        else {
+            $exePath = Join-Path -Path $TestDrive -ChildPath 'myExe'
+            $null = New-Item -ItemType File -Path $exePath
+            chmod +x $exePath
+            $exe = Get-Item -Path $exePath
+        }
+
+        $exe.NameString | Should -BeExactly "$($PSStyle.FileInfo.Executable + $exe.Name + $PSStyle.Reset)"
+    }
+}
+
+Describe 'Formatting for FileInfo requiring admin' -Tags 'CI','RequireAdminOnWindows' {
+    BeforeAll {
+        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRenderingFileInfo')))
+    }
+
+    AfterAll {
+        $PSDefaultParameterValues.Remove('It:Skip')
+    }
+
+    It 'Symlink should have correct color' {
+        $linkPath = Join-Path -Path $TestDrive -ChildPath 'link'
+        $link = New-Item -ItemType SymbolicLink -Name 'link' -Value $TestDrive -Path $TestDrive
+        $link.NameString | Should -BeExactly "$($PSStyle.FileInfo.SymbolicLink + $link.Name + $PSStyle.Reset) -> $TestDrive"
     }
 }

@@ -49,8 +49,7 @@ namespace System.Management.Automation.Internal.Host
             _internalRawUI.ThrowNotInteractive();
         }
 
-        private
-        void
+        private static void
         ThrowPromptNotInteractive(string promptMessage)
         {
             string message = StringUtil.Format(HostInterfaceExceptionsStrings.HostFunctionPromptNotImplemented, promptMessage);
@@ -67,7 +66,6 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         /// <value></value>
         /// <exception/>
-
         public override
         System.Management.Automation.Host.PSHostRawUserInterface
         RawUI
@@ -80,7 +78,7 @@ namespace System.Management.Automation.Internal.Host
 
         public override bool SupportsVirtualTerminal
         {
-            get { return (_externalUI != null) ? _externalUI.SupportsVirtualTerminal : false; }
+            get { return _externalUI != null && _externalUI.SupportsVirtualTerminal; }
         }
 
         /// <summary>
@@ -123,52 +121,10 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// See base class.
         /// </summary>
-        /// <returns>
-        /// The characters typed by the user.
-        /// </returns>
-        /// <exception cref="HostException">
-        /// If the UI property of the external host is null, possibly because the PSHostUserInterface is not
-        /// implemented by the external host.
-        /// </exception>
-        public override
-        string
-        ReadLineMaskedAsString()
-        {
-            if (_externalUI == null)
-            {
-                ThrowNotInteractive();
-            }
-
-            string result = null;
-
-            try
-            {
-                result = _externalUI.ReadLineMaskedAsString();
-            }
-            catch (PipelineStoppedException)
-            {
-                // PipelineStoppedException is thrown by host when it wants
-                // to stop the pipeline.
-                LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
-                if (lpl == null)
-                {
-                    throw;
-                }
-
-                lpl.Stopper.Stop();
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// See base class.
-        /// </summary>
         /// <exception cref="HostException">
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
         /// implemented by the external host.
         /// </exception>
-
         public override
         SecureString
         ReadLineAsSecureString()
@@ -209,7 +165,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="value"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         Write(string value)
@@ -240,7 +195,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="value"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
@@ -267,7 +221,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the UI property of the external host is null, possibly because the PSHostUserInterface is not
         ///     implemented by the external host
         /// </exception>
-
         public override
         void
         WriteLine()
@@ -289,7 +242,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="value"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         WriteLine(string value)
@@ -337,7 +289,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="value"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         WriteLine(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
@@ -362,7 +313,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="message"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         WriteDebugLine(string message)
@@ -410,7 +360,6 @@ namespace System.Management.Automation.Internal.Host
         /// <exception cref="ArgumentException">
         /// If the debug preference is not a valid ActionPreference value.
         /// </exception>
-
         internal
         void
         WriteDebugLine(string message, ref ActionPreference preference)
@@ -510,7 +459,6 @@ namespace System.Management.Automation.Internal.Host
         /// Preference setting which determines the behaviour.  This is by-ref and will be modified based upon what the user
         /// types. (e.g. YesToAll will change Inquire => NotifyContinue)
         /// </param>
-
         private
         bool
         DebugShouldContinue(string message, ref ActionPreference actionPreference)
@@ -568,7 +516,7 @@ namespace System.Management.Automation.Internal.Host
                         endLoop = false;
                         break;
                 }
-            } while (endLoop != true);
+            } while (!endLoop);
 
             return shouldContinue;
         }
@@ -580,7 +528,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="record"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         WriteProgress(Int64 sourceId, ProgressRecord record)
@@ -611,7 +558,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="message"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         void
         WriteVerboseLine(string message)
@@ -657,7 +603,6 @@ namespace System.Management.Automation.Internal.Host
         /// if <paramref name="message"/> is not null and the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override void WriteWarningLine(string message)
         {
             if (message == null)
@@ -734,12 +679,12 @@ namespace System.Management.Automation.Internal.Host
 
         internal static bool IsSecuritySensitiveType(string typeName)
         {
-            if (typeName.Equals(typeof(PSCredential).Name, StringComparison.OrdinalIgnoreCase))
+            if (typeName.Equals(nameof(PSCredential), StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            if (typeName.Equals(typeof(SecureString).Name, StringComparison.OrdinalIgnoreCase))
+            if (typeName.Equals(nameof(SecureString), StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -766,7 +711,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         Dictionary<string, PSObject>
         Prompt(string caption, string message, Collection<FieldDescription> descriptions)
@@ -820,7 +764,6 @@ namespace System.Management.Automation.Internal.Host
         /// if the UI property of the external host is null,
         ///     possibly because the PSHostUserInterface is not implemented by the external host
         /// </exception>
-
         public override
         int
         PromptForChoice(string caption, string message, Collection<ChoiceDescription> choices, int defaultChoice)
@@ -968,7 +911,7 @@ namespace System.Management.Automation.Internal.Host
 
             // Construct the caption + message + list of choices + default choices
             Text.StringBuilder choicesMessage = new Text.StringBuilder();
-            char newLine = '\n';
+            const char newLine = '\n';
             if (!string.IsNullOrEmpty(caption))
             {
                 choicesMessage.Append(caption);
@@ -984,7 +927,7 @@ namespace System.Management.Automation.Internal.Host
             string[,] hotkeysAndPlainLabels = null;
             HostUIHelperMethods.BuildHotkeysAndPlainLabels(choices, out hotkeysAndPlainLabels);
 
-            string choiceTemplate = "[{0}] {1}  ";
+            const string choiceTemplate = "[{0}] {1}  ";
             for (int i = 0; i < hotkeysAndPlainLabels.GetLength(1); ++i)
             {
                 string choice =
@@ -1034,7 +977,7 @@ namespace System.Management.Automation.Internal.Host
             // read choices from the user
             Collection<int> result = new Collection<int>();
             int choicesSelected = 0;
-            do
+            while (true)
             {
                 string choiceMsg = StringUtil.Format(InternalHostUserInterfaceStrings.ChoiceMessage, choicesSelected);
                 messageToBeDisplayed += choiceMsg;
@@ -1050,7 +993,7 @@ namespace System.Management.Automation.Internal.Host
                     // choices to be picked.
 
                     // user did not pick up any choices..choose the default
-                    if ((result.Count == 0) && (defaultChoiceKeys.Keys.Count >= 0))
+                    if (result.Count == 0)
                     {
                         // if there's a default, pick that one.
                         foreach (int defaultChoice in defaultChoiceKeys.Keys)
@@ -1071,15 +1014,14 @@ namespace System.Management.Automation.Internal.Host
                 }
                 // reset messageToBeDisplayed
                 messageToBeDisplayed = string.Empty;
-            } while (true);
+            }
 
             return result;
         }
 
-        private PSHostUserInterface _externalUI = null;
-        private InternalHostRawUserInterface _internalRawUI = null;
-        private InternalHost _parent = null;
+        private readonly PSHostUserInterface _externalUI = null;
+        private readonly InternalHostRawUserInterface _internalRawUI = null;
+        private readonly InternalHost _parent = null;
         private PSInformationalBuffers _informationalBuffers = null;
     }
 }
-

@@ -8,7 +8,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Stores help information related to Alias Commands.
     /// </summary>
-    internal class AliasHelpInfo : HelpInfo
+    internal sealed class AliasHelpInfo : HelpInfo
     {
         /// <summary>
         /// Initializes a new instance of the AliasHelpInfo class.
@@ -70,7 +70,7 @@ namespace System.Management.Automation
             }
         }
 
-        private PSObject _fullHelpObject;
+        private readonly PSObject _fullHelpObject;
 
         /// <summary>
         /// Returns full help object for alias help.

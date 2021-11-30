@@ -4,6 +4,8 @@
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Host;
+using System.Management.Automation.Internal;
 using System.Text;
 
 // interfaces for host interaction
@@ -258,17 +260,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Instance of the delegate previously defined
         /// for line that has EXACTLY this.ncols characters.
         /// </summary>
-        private WriteCallback _writeCall = null;
+        private readonly WriteCallback _writeCall = null;
 
         /// <summary>
         /// Instance of the delegate previously defined
         /// for generic line, less that this.ncols characters.
         /// </summary>
-        private WriteCallback _writeLineCall = null;
+        private readonly WriteCallback _writeLineCall = null;
 
         #endregion
 
-        private bool _lineWrap;
+        private readonly bool _lineWrap;
 
         /// <summary>
         /// Construct an instance, given the two callbacks
@@ -367,7 +369,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
         }
 
-        private DisplayCells _displayCells;
+        private readonly DisplayCells _displayCells;
     }
 
     /// <summary>
@@ -411,6 +413,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal override void WriteLine(string s)
         {
             CheckStopProcessing();
+
+            s = PSHostUserInterface.GetOutputString(s, isHost: false);
+
             if (_suppressNewline)
             {
                 _writer.Write(s);
@@ -447,11 +452,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _suppressNewline = suppressNewline;
         }
 
-        private int _columns = 0;
+        private readonly int _columns = 0;
 
-        private TextWriter _writer = null;
+        private readonly TextWriter _writer = null;
 
-        private bool _suppressNewline = false;
+        private readonly bool _suppressNewline = false;
     }
 
     /// <summary>
@@ -462,7 +467,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("StreamingTextWriter", "StreamingTextWriter")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("StreamingTextWriter", "StreamingTextWriter");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("StreamingTextWriter", "StreamingTextWriter");
         #endregion tracer
 
         /// <summary>
@@ -499,6 +504,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Instance of the delegate previously defined.
         /// </summary>
-        private WriteLineCallback _writeCall = null;
+        private readonly WriteLineCallback _writeCall = null;
     }
 }

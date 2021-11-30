@@ -20,7 +20,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Server method executor.
         /// </summary>
-        private ServerMethodExecutor _serverMethodExecutor;
+        private readonly ServerMethodExecutor _serverMethodExecutor;
 
         /// <summary>
         /// Constructor for ServerRemoteHostUserInterface.
@@ -195,17 +195,6 @@ namespace System.Management.Automation.Remoting
         public override void WriteWarningLine(string message)
         {
             _serverMethodExecutor.ExecuteVoidMethod(RemoteHostMethodId.WriteWarningLine, new object[] { message });
-        }
-
-        /// <summary>
-        /// Read line as string masked.
-        /// </summary>
-        /// <returns>
-        /// Not implemented. It throws an exception.
-        /// </returns>
-        public override string ReadLineMaskedAsString()
-        {
-            throw new PSNotImplementedException();
         }
 
         /// <summary>

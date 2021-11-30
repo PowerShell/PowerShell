@@ -1,10 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.IO;
 using System.Management.Automation;
-using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Text;
 
@@ -27,7 +25,8 @@ namespace Microsoft.PowerShell.Commands
     public class OutFileCommand : FrontEndCommandBase
     {
         /// <summary>
-        /// Set inner command.
+        /// Initializes a new instance of the <see cref="OutFileCommand"/> class
+        /// and sets the inner command.
         /// </summary>
         public OutFileCommand()
         {
@@ -78,7 +77,21 @@ namespace Microsoft.PowerShell.Commands
         [ArgumentToEncodingTransformationAttribute()]
         [ArgumentEncodingCompletionsAttribute]
         [ValidateNotNullOrEmpty]
-        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
+        public Encoding Encoding
+        {
+            get
+            {
+                return _encoding;
+            }
+
+            set
+            {
+                EncodingConversion.WarnIfObsolete(this, value);
+                _encoding = value;
+            }
+        }
+
+        private Encoding _encoding = ClrFacade.GetDefaultEncoding();
 
         /// <summary>
         /// Property that sets append parameter.
@@ -160,7 +173,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            // set up the Scree Host interface
+            // set up the Screen Host interface
             OutputManagerInner outInner = (OutputManagerInner)this.implementation;
 
             // NOTICE: if any exception is thrown from here to the end of the method, the
@@ -215,7 +228,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // use the stream writer to create and initialize the Line Output writer
-            TextWriterLineOutput twlo = new TextWriterLineOutput(_sw, computedWidth, _suppressNewline);
+            TextWriterLineOutput twlo = new(_sw, computedWidth, _suppressNewline);
 
             // finally have the ILineOutput interface extracted
             return (LineOutput)twlo;

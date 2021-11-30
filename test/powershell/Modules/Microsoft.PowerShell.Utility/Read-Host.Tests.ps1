@@ -12,6 +12,7 @@ Describe "Read-Host Test" -Tag "CI" {
 
     AfterEach {
         $ps.Commands.Clear()
+        $th.UI.Streams.Clear()
     }
 
     AfterAll {
@@ -30,17 +31,26 @@ Describe "Read-Host Test" -Tag "CI" {
         $prompt = $th.ui.streams.prompt[0]
         $prompt | Should -Not -BeNullOrEmpty
         $prompt.split(":")[-1] | Should -Be myprompt
+        $result | Should -BeExactly 'this is a prompt response'
     }
 
     It "Read-Host returns a secure string when using -AsSecureString parameter" {
         $result = $ps.AddScript("Read-Host -AsSecureString").Invoke() | Select-Object -First 1
         $result | Should -BeOfType SecureString
-        [pscredential]::New("foo",$result).GetNetworkCredential().Password | Should -BeExactly TEST
+        $result | ConvertFrom-SecureString -AsPlainText | Should -BeExactly 'TEST'
     }
 
     It "Read-Host returns a string when using -MaskInput parameter" {
         $result = $ps.AddScript("Read-Host -MaskInput").Invoke()
-        $result | Should -Be $th.UI.ReadLineData
+        $result | Should -BeExactly 'TEST'
+    }
+
+    It "Read-Host returns a string when using -MaskInput parameter used with -Prompt" {
+        $result = $ps.AddScript("Read-Host -MaskInput -Prompt Test").Invoke()
+        $prompt = $th.ui.streams.prompt[0]
+        $prompt | Should -Not -BeNullOrEmpty
+        $prompt.split(":")[-1] | Should -BeExactly 'Test'
+        $result | Should -BeExactly 'this is a prompt response'
     }
 
     It "Read-Host throws an error when both -AsSecureString parameter and -MaskInput parameter are used" {

@@ -77,14 +77,14 @@ namespace Microsoft.PowerShell.Commands
                 }
 #else
                 // build up the SystemTime struct to pass to SetSystemTime
-                NativeMethods.SystemTime systemTime = new NativeMethods.SystemTime();
-                systemTime.Year = (UInt16)dateToUse.Year;
-                systemTime.Month = (UInt16)dateToUse.Month;
-                systemTime.Day = (UInt16)dateToUse.Day;
-                systemTime.Hour = (UInt16)dateToUse.Hour;
-                systemTime.Minute = (UInt16)dateToUse.Minute;
-                systemTime.Second = (UInt16)dateToUse.Second;
-                systemTime.Milliseconds = (UInt16)dateToUse.Millisecond;
+                NativeMethods.SystemTime systemTime = new();
+                systemTime.Year = (ushort)dateToUse.Year;
+                systemTime.Month = (ushort)dateToUse.Month;
+                systemTime.Day = (ushort)dateToUse.Day;
+                systemTime.Hour = (ushort)dateToUse.Hour;
+                systemTime.Minute = (ushort)dateToUse.Minute;
+                systemTime.Second = (ushort)dateToUse.Second;
+                systemTime.Milliseconds = (ushort)dateToUse.Millisecond;
 #pragma warning disable 56523
                 if (!NativeMethods.SetLocalTime(ref systemTime))
                 {
@@ -102,8 +102,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // output DateTime object wrapped in an PSObject with DisplayHint attached
-            PSObject outputObj = new PSObject(dateToUse);
-            PSNoteProperty note = new PSNoteProperty("DisplayHint", DisplayHint);
+            PSObject outputObj = new(dateToUse);
+            PSNoteProperty note = new("DisplayHint", DisplayHint);
             outputObj.Properties.Add(note);
 
             WriteObject(outputObj);
@@ -118,14 +118,14 @@ namespace Microsoft.PowerShell.Commands
             [StructLayout(LayoutKind.Sequential)]
             public struct SystemTime
             {
-                public UInt16 Year;
-                public UInt16 Month;
-                public UInt16 DayOfWeek;
-                public UInt16 Day;
-                public UInt16 Hour;
-                public UInt16 Minute;
-                public UInt16 Second;
-                public UInt16 Milliseconds;
+                public ushort Year;
+                public ushort Month;
+                public ushort DayOfWeek;
+                public ushort Day;
+                public ushort Hour;
+                public ushort Minute;
+                public ushort Second;
+                public ushort Milliseconds;
             }
 
             [DllImport(PinvokeDllNames.SetLocalTimeDllName, SetLastError = true)]

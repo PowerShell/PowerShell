@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
             _typeInfoDatabase = db;
 
             // Initialize Format Error Manager.
-            FormatErrorPolicy formatErrorPolicy = new FormatErrorPolicy();
+            FormatErrorPolicy formatErrorPolicy = new();
 
             formatErrorPolicy.ShowErrorsAsMessages = _typeInfoDatabase.defaultSettingsSection.formatErrorPolicy.ShowErrorsAsMessages;
             formatErrorPolicy.ShowErrorsInFormattedOutput = _typeInfoDatabase.defaultSettingsSection.formatErrorPolicy.ShowErrorsInFormattedOutput;
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal HeaderInfo GenerateHeaderInfo(PSObject input, TableControlBody tableBody, OutGridViewCommand parentCmdlet)
         {
-            HeaderInfo headerInfo = new HeaderInfo();
+            HeaderInfo headerInfo = new();
 
             // This verification is needed because the database returns "LastWriteTime" value for file system objects
             // as strings and it is used to detect this situation and use the actual field value.
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal HeaderInfo GenerateHeaderInfo(PSObject input, OutGridViewCommand parentCmdlet)
         {
-            HeaderInfo headerInfo = new HeaderInfo();
+            HeaderInfo headerInfo = new();
             List<MshResolvedExpressionParameterAssociation> activeAssociationList;
 
             // Get properties from the default property set of the object
@@ -191,17 +191,17 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <returns>None.</returns>
         /// <remarks>This method updates "activeAssociationList" instance property.</remarks>
-        private void FilterActiveAssociationList(List<MshResolvedExpressionParameterAssociation> activeAssociationList)
+        private static void FilterActiveAssociationList(List<MshResolvedExpressionParameterAssociation> activeAssociationList)
         {
             // we got a valid set of properties from the default property set
             // make sure we do not have too many properties
 
             // NOTE: this is an arbitrary number, chosen to be a sensitive default
-            int nMax = 256;
+            const int nMax = 256;
 
             if (activeAssociationList.Count > nMax)
             {
-                List<MshResolvedExpressionParameterAssociation> tmp = new List<MshResolvedExpressionParameterAssociation>(activeAssociationList);
+                List<MshResolvedExpressionParameterAssociation> tmp = new(activeAssociationList);
                 activeAssociationList.Clear();
                 for (int k = 0; k < nMax; k++)
                     activeAssociationList.Add(tmp[k]);
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
             TableRowDefinition matchingRowDefinition = null;
 
             var typeNames = so.InternalTypeNames;
-            TypeMatch match = new TypeMatch(_expressionFactory, _typeInfoDatabase, typeNames);
+            TypeMatch match = new(_expressionFactory, _typeInfoDatabase, typeNames);
 
             foreach (TableRowDefinition x in tableBody.optionalDefinitionList)
             {
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // we have an override, we need to compute the merge of the active cells
-            List<TableRowItemDefinition> activeRowItemDefinitionList = new List<TableRowItemDefinition>();
+            List<TableRowItemDefinition> activeRowItemDefinitionList = new();
             int col = 0;
             foreach (TableRowItemDefinition rowItem in matchingRowDefinition.rowItemDefinitionList)
             {

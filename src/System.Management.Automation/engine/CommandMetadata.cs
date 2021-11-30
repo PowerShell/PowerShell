@@ -464,7 +464,10 @@ namespace System.Management.Automation
         /// </summary>
         public string DefaultParameterSetName
         {
-            get { return _defaultParameterSetName; }
+            get
+            {
+                return _defaultParameterSetName;
+            }
 
             set
             {
@@ -528,7 +531,10 @@ namespace System.Management.Automation
                 return _remotingCapability;
             }
 
-            set { _remotingCapability = value; }
+            set
+            {
+                _remotingCapability = value;
+            }
         }
 
         private RemotingCapability _remotingCapability = RemotingCapability.PowerShell;
@@ -680,7 +686,7 @@ namespace System.Management.Automation
 
             // Determine if the cmdlet implements dynamic parameters by looking for the interface
 
-            Type dynamicParametersType = CommandType.GetInterface(typeof(IDynamicParameters).Name, true);
+            Type dynamicParametersType = CommandType.GetInterface(nameof(IDynamicParameters), true);
 
             if (dynamicParametersType != null)
             {
@@ -869,8 +875,11 @@ process
 
 end
 {{{5}}}
+
+clean
+{{{6}}}
 <#
-{6}
+{7}
 #>
 ",
                 GetDecl(),
@@ -879,6 +888,7 @@ end
                 GetBeginBlock(),
                 GetProcessBlock(),
                 GetEndBlock(),
+                GetCleanBlock(),
                 CodeGeneration.EscapeBlockCommentContent(helpComment));
 
             return result;
@@ -897,7 +907,7 @@ end
                     decl.Append(separator);
                     decl.Append("DefaultParameterSetName='");
                     decl.Append(CodeGeneration.EscapeSingleQuotedStringContent(_defaultParameterSetName));
-                    decl.Append("'");
+                    decl.Append('\'');
                     separator = ", ";
                 }
 
@@ -909,7 +919,7 @@ end
                     decl.Append(separator);
                     decl.Append("ConfirmImpact='");
                     decl.Append(ConfirmImpact);
-                    decl.Append("'");
+                    decl.Append('\'');
                 }
 
                 if (SupportsPaging)
@@ -926,7 +936,7 @@ end
                     separator = ", ";
                 }
 
-                if (PositionalBinding == false)
+                if (!PositionalBinding)
                 {
                     decl.Append(separator);
                     decl.Append("PositionalBinding=$false");
@@ -938,7 +948,7 @@ end
                     decl.Append(separator);
                     decl.Append("HelpUri='");
                     decl.Append(CodeGeneration.EscapeSingleQuotedStringContent(HelpUri));
-                    decl.Append("'");
+                    decl.Append('\'');
                     separator = ", ";
                 }
 
@@ -947,7 +957,7 @@ end
                     decl.Append(separator);
                     decl.Append("RemotingCapability='");
                     decl.Append(_remotingCapability);
-                    decl.Append("'");
+                    decl.Append('\'');
                     separator = ", ";
                 }
 
@@ -1057,6 +1067,11 @@ end
 
         internal string GetProcessBlock()
         {
+            // The reason we wrap scripts in 'try { } catch { throw }' (here and elsewhere) is to turn
+            // an exception that could be thrown from .NET method invocation into a terminating error
+            // that can be propagated up.
+            // By default, an exception thrown from .NET method is not terminating, but when enclosed
+            // in try/catch, it will be turned into a terminating error.
             return @"
     try {
         $steppablePipeline.Process($_)
@@ -1104,6 +1119,16 @@ end
     } catch {
         throw
     }
+";
+        }
+
+        internal string GetCleanBlock()
+        {
+            // Here we don't need to enclose the script in a 'try/catch' like elsewhere, because
+            //  1. the 'Clean' block doesn't propagate up any exception (terminating error);
+            //  2. only one expression in the script, so nothing else needs to be stopped when invoking the method fails.
+            return @"
+    $steppablePipeline.Clean()
 ";
         }
 
@@ -1316,7 +1341,7 @@ end
             List<CommandMetadata> restrictedCommands = new List<CommandMetadata>();
 
             // all remoting cmdlets need to be included for workflow scenarios as wel
-            if (SessionCapabilities.RemoteServer == (sessionCapabilities & SessionCapabilities.RemoteServer))
+            if ((sessionCapabilities & SessionCapabilities.RemoteServer) == SessionCapabilities.RemoteServer)
             {
                 restrictedCommands.AddRange(GetRestrictedRemotingCommands());
             }
@@ -1533,7 +1558,7 @@ end
         /// The command metadata cache. This is separate from the parameterMetadata cache
         /// because it is specific to cmdlets.
         /// </summary>
-        private static System.Collections.Concurrent.ConcurrentDictionary<string, CommandMetadata> s_commandMetadataCache =
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, CommandMetadata> s_commandMetadataCache =
             new System.Collections.Concurrent.ConcurrentDictionary<string, CommandMetadata>(StringComparer.OrdinalIgnoreCase);
 
         #endregion

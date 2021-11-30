@@ -470,7 +470,7 @@ namespace System.Management.Automation.Language {
         private static bool IsSimpleExpression(Expression node) {
             var binary = node as BinaryExpression;
             if (binary != null) {
-                return !(binary.Left is BinaryExpression || binary.Right is BinaryExpression);
+                return binary.Left is not BinaryExpression && binary.Right is not BinaryExpression;
             }
 
             return false;

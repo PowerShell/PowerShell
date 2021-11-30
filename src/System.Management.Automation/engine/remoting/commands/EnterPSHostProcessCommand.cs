@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell.Commands
             return remoteRunspace;
         }
 
-        private void PrepareRunspace(Runspace runspace)
+        private static void PrepareRunspace(Runspace runspace)
         {
             string promptFn = StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessPrompt,
                 @"function global:prompt { """,
@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void VerifyProcess(Process process)
         {
-            if (process.Id == Process.GetCurrentProcess().Id)
+            if (process.Id == Environment.ProcessId)
             {
                 ThrowTerminatingError(
                         new ErrorRecord(
@@ -574,7 +574,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
 
-        private int[] GetProcIdsFromProcs(Process[] processes)
+        private static int[] GetProcIdsFromProcs(Process[] processes)
         {
             List<int> returnIds = new List<int>();
             foreach (Process process in processes)
@@ -585,7 +585,7 @@ namespace Microsoft.PowerShell.Commands
             return returnIds.ToArray();
         }
 
-        private int[] GetProcIdsFromNames(string[] names)
+        private static int[] GetProcIdsFromNames(string[] names)
         {
             if ((names == null) || (names.Length == 0))
             {
@@ -747,38 +747,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Name of process.
         /// </summary>
-        public string ProcessName
-        {
-            get;
-            private set;
-        }
+        public string ProcessName { get; }
 
         /// <summary>
         /// Id of process.
         /// </summary>
-        public int ProcessId
-        {
-            get;
-            private set;
-        }
+        public int ProcessId { get; }
 
         /// <summary>
         /// Name of PowerShell AppDomain in process.
         /// </summary>
-        public string AppDomainName
-        {
-            get;
-            private set;
-        }
+        public string AppDomainName { get; }
 
         /// <summary>
         /// Main window title of the process.
         /// </summary>
-        public string MainWindowTitle
-        {
-            get;
-            private set;
-        }
+        public string MainWindowTitle { get; }
 
         #endregion
 

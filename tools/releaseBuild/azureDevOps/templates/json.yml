@@ -3,18 +3,28 @@ parameters:
 
 jobs:
 - job: json
+  variables:
+  - name: runCodesignValidationInjection
+    value : false
+  - name: NugetSecurityAnalysisWarningLevel
+    value: none
   displayName: Create Json for Blob
   dependsOn:
     ${{ parameters.parentJobs }}
   condition: succeeded()
   pool:
-    vmImage: windows-latest
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019
 
   steps:
   #- task: <task type name>@<version>
   #  inputs:
   #    <task specific inputs>
   #  displayName: '<display name of task>'
+  - checkout: self
+    clean: true
+
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)

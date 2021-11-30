@@ -23,7 +23,6 @@ namespace System.Management.Automation.Host
     /// </summary>
     /// <seealso cref="System.Management.Automation.Host.PSHost"/>
     /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface"/>
-
     public abstract class PSHostUserInterface
     {
         /// <summary>
@@ -59,29 +58,6 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         public abstract string ReadLine();
-
-        /// <summary>
-        /// Same as ReadLine except that the input is not echoed to the user while it is collected
-        /// or is echoed in some obfuscated way, such as showing a dot for each character.
-        /// </summary>
-        /// <returns>
-        /// The characters typed by the user.
-        /// </returns>
-        /// <remarks>
-        /// Note that credentials (a user name and password) should be gathered with
-        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
-        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        /// </remarks>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
-        public virtual string ReadLineMaskedAsString()
-        {
-            // Default implementation of the function to maintain backwards compatibility of the base class.
-            throw new PSNotImplementedException();
-        }
 
         /// <summary>
         /// Same as ReadLine, except that the result is a SecureString, and that the input is not echoed to the user while it is
@@ -256,6 +232,161 @@ namespace System.Management.Automation.Host
         /// </summary>
         public virtual void WriteInformation(InformationRecord record) { }
 
+        private static bool ShouldOutputPlainText(bool isHost, bool? supportsVirtualTerminal)
+        {
+            var outputRendering = OutputRendering.PlainText;
+
+            if (supportsVirtualTerminal != false)
+            {
+                switch (PSStyle.Instance.OutputRendering)
+                {
+                    case OutputRendering.Host:
+                        outputRendering = isHost ? OutputRendering.Ansi : OutputRendering.PlainText;
+                        break;
+                    default:
+                        outputRendering = PSStyle.Instance.OutputRendering;
+                        break;
+                }
+            }
+
+            return outputRendering == OutputRendering.PlainText;
+        }
+
+        /// <summary>
+        /// The format styles that are supported by the host.
+        /// </summary>
+        public enum FormatStyle
+        {
+            /// <summary>
+            /// Reset the formatting to the default.
+            /// </summary>
+            Reset,
+
+            /// <summary>
+            /// Highlight text used in output formatting.
+            /// </summary>
+            FormatAccent,
+
+            /// <summary>
+            /// Highlight for table headers.
+            /// </summary>
+            TableHeader,
+
+            /// <summary>
+            /// Highlight for detailed error view.
+            /// </summary>
+            ErrorAccent,
+
+            /// <summary>
+            /// Style for error messages.
+            /// </summary>
+            Error,
+
+            /// <summary>
+            /// Style for warning messages.
+            /// </summary>
+            Warning,
+
+            /// <summary>
+            /// Style for verbose messages.
+            /// </summary>
+            Verbose,
+
+            /// <summary>
+            /// Style for debug messages.
+            /// </summary>
+            Debug,
+        }
+
+        /// <summary>
+        /// Get the ANSI escape sequence for the given format style.
+        /// </summary>
+        /// <param name="formatStyle">
+        /// The format style to get the escape sequence for.
+        /// </param>
+        /// <param name="isOutputRedirected">
+        /// True if the output is redirected.
+        /// </param>
+        /// <returns>
+        /// The ANSI escape sequence for the given format style.
+        /// </returns>
+        public static string GetFormatStyleString(FormatStyle formatStyle, bool isOutputRedirected)
+        {
+            // redirected console gets plaintext output to preserve existing behavior
+            if (!InternalTestHooks.BypassOutputRedirectionCheck &&
+                (PSStyle.Instance.OutputRendering == OutputRendering.PlainText ||
+                isOutputRedirected))
+            {
+                return string.Empty;
+            }
+
+            PSStyle psstyle = PSStyle.Instance;                
+            switch (formatStyle)
+            {
+                case FormatStyle.Reset:
+                    return psstyle.Reset;
+                case FormatStyle.FormatAccent:
+                    return psstyle.Formatting.FormatAccent;
+                case FormatStyle.TableHeader:
+                    return psstyle.Formatting.TableHeader;
+                case FormatStyle.ErrorAccent:
+                    return psstyle.Formatting.ErrorAccent;
+                case FormatStyle.Error:
+                    return psstyle.Formatting.Error;
+                case FormatStyle.Warning:
+                    return psstyle.Formatting.Warning;
+                case FormatStyle.Verbose:
+                    return psstyle.Formatting.Verbose;
+                case FormatStyle.Debug:
+                    return psstyle.Formatting.Debug;
+                default:
+                    return string.Empty;
+            }
+        }
+
+        /// <summary>
+        /// Get the appropriate output string based on different criteria.
+        /// </summary>
+        /// <param name="text">
+        /// The text to format.
+        /// </param>
+        /// <param name="supportsVirtualTerminal">
+        /// True if the host supports virtual terminal.
+        /// </param>
+        /// <param name="isOutputRedirected">
+        /// True if the output is redirected.
+        /// </param>
+        /// <returns>
+        /// The formatted text.
+        /// </returns>
+        public static string GetOutputString(string text, bool supportsVirtualTerminal, bool isOutputRedirected)
+        {
+            return GetOutputString(text, isHost: true, supportsVirtualTerminal: supportsVirtualTerminal, isOutputRedirected: isOutputRedirected);
+        }
+
+        internal static string GetOutputString(string text, bool isHost, bool? supportsVirtualTerminal = null, bool isOutputRedirected = false)
+        {
+            var sd = new ValueStringDecorated(text);
+
+            if (sd.IsDecorated)
+            {
+                var outputRendering = OutputRendering.Ansi;
+                if (InternalTestHooks.BypassOutputRedirectionCheck)
+                {
+                    isOutputRedirected = false;
+                }
+
+                if (isOutputRedirected || ShouldOutputPlainText(isHost, supportsVirtualTerminal))
+                {
+                    outputRendering = OutputRendering.PlainText;
+                }
+
+                text = sd.ToString(outputRendering);
+            }
+
+            return text;
+        }
+
         // Gets the state associated with PowerShell transcription.
         //
         // Ideally, this would be associated with the host instance, but remoting recycles host instances
@@ -422,7 +553,7 @@ namespace System.Management.Automation.Host
 
         private sealed class TranscribeOnlyCookie : IDisposable
         {
-            private PSHostUserInterface _ui;
+            private readonly PSHostUserInterface _ui;
             private bool _disposed = false;
 
             public TranscribeOnlyCookie(PSHostUserInterface ui)
@@ -462,7 +593,7 @@ namespace System.Management.Automation.Host
             {
                 if (TranscriptionData.SystemTranscript == null)
                 {
-                    TranscriptionData.SystemTranscript = PSHostUserInterface.GetSystemTranscriptOption(TranscriptionData.SystemTranscript);
+                    TranscriptionData.SystemTranscript = GetSystemTranscriptOption(TranscriptionData.SystemTranscript);
                     if (TranscriptionData.SystemTranscript != null)
                     {
                         LogTranscriptHeader(null, TranscriptionData.SystemTranscript);
@@ -535,7 +666,7 @@ namespace System.Management.Automation.Host
                         Environment.MachineName,
                         Environment.OSVersion.VersionString,
                         string.Join(" ", Environment.GetCommandLineArgs()),
-                        System.Diagnostics.Process.GetCurrentProcess().Id,
+                        Environment.ProcessId,
                         versionInfoFooter.ToString().TrimEnd());
             }
 
@@ -643,6 +774,13 @@ namespace System.Management.Automation.Host
                     }
 
                     resultText = resultText.TrimEnd();
+
+                    var text = new ValueStringDecorated(resultText);
+                    if (text.IsDecorated)
+                    {
+                        resultText = text.ToString(OutputRendering.PlainText);
+                    }
+
                     foreach (TranscriptionOption transcript in TranscriptionData.Transcripts.Prepend<TranscriptionOption>(TranscriptionData.SystemTranscript))
                     {
                         if (transcript != null)
@@ -977,10 +1115,10 @@ namespace System.Management.Automation.Host
         }
 
         internal static TranscriptionOption systemTranscript = null;
-        private static object s_systemTranscriptLock = new object();
+        private static readonly object s_systemTranscriptLock = new object();
 
-        private static Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
-            () => Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig),
+        private static readonly Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
+            static () => Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);
 
         private static TranscriptionOption GetTranscriptOptionFromSettings(Transcription transcriptConfig, TranscriptionOption currentTranscript)
@@ -1072,15 +1210,14 @@ namespace System.Management.Automation.Host
             PromptText = "PS>";
         }
 
-        internal List<TranscriptionOption> Transcripts
-        {
-            get;
-            private set;
-        }
+        internal List<TranscriptionOption> Transcripts { get; }
 
         internal TranscriptionOption SystemTranscript { get; set; }
+
         internal string CommandBeingIgnored { get; set; }
+
         internal bool IsHelperCommand { get; set; }
+
         internal string PromptText { get; set; }
     }
 
@@ -1096,32 +1233,17 @@ namespace System.Management.Automation.Host
         /// <summary>
         /// The path that this transcript is being logged to.
         /// </summary>
-        internal string Path
-        {
-            get
-            {
-                return _path;
-            }
-
-            set
-            {
-                _path = value;
-                // Get the encoding from the file, or default (UTF8-NoBom)
-                Encoding = Utils.GetEncoding(value);
-            }
-        }
-
-        private string _path;
+        internal string Path { get; set; }
 
         /// <summary>
         /// Any output to log for this transcript.
         /// </summary>
-        internal List<string> OutputToLog { get; private set; }
+        internal List<string> OutputToLog { get; }
 
         /// <summary>
         /// Any output currently being logged for this transcript.
         /// </summary>
-        internal List<string> OutputBeingLogged { get; private set; }
+        internal List<string> OutputBeingLogged { get; }
 
         /// <summary>
         /// Whether to include time stamp / command separators in
@@ -1130,18 +1252,19 @@ namespace System.Management.Automation.Host
         internal bool IncludeInvocationHeader { get; set; }
 
         /// <summary>
-        /// The encoding of this transcript, so that appending to it
-        /// can be done correctly.
-        /// </summary>
-        internal Encoding Encoding { get; private set; }
-
-        /// <summary>
         /// Logs buffered content to disk. We use this instead of File.AppendAllLines
         /// so that we don't need to pay seek penalties all the time, and so that we
         /// don't need append permission to our own files.
         /// </summary>
         internal void FlushContentToDisk()
         {
+            static Encoding GetPathEncoding(string path)
+            {
+                using StreamReader reader = new StreamReader(path, Utils.utf8NoBom, detectEncodingFromByteOrderMarks: true);
+                _ = reader.Read();
+                return reader.CurrentEncoding;
+            }
+
             lock (OutputBeingLogged)
             {
                 if (!_disposed)
@@ -1150,11 +1273,13 @@ namespace System.Management.Automation.Host
                     {
                         try
                         {
+                            var currentEncoding = GetPathEncoding(this.Path);
+
                             // Try to first open the file with permissions that will allow us to read from it
                             // later.
                             _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.Read),
-                                this.Encoding);
+                                currentEncoding);
                             _contentWriter.BaseStream.Seek(0, SeekOrigin.End);
                         }
                         catch (IOException)
@@ -1163,7 +1288,7 @@ namespace System.Management.Automation.Host
                             // file permissions.
                             _contentWriter = new StreamWriter(
                                 new FileStream(this.Path, FileMode.Append, FileAccess.Write, FileShare.Read),
-                                this.Encoding);
+                                Utils.utf8NoBom);
                         }
 
                         _contentWriter.AutoFlush = true;
@@ -1201,8 +1326,20 @@ namespace System.Management.Automation.Host
 
             if (_contentWriter != null)
             {
-                _contentWriter.Flush();
-                _contentWriter.Dispose();
+                try
+                {
+                    _contentWriter.Flush();
+                    _contentWriter.Dispose();
+                }
+                catch (ObjectDisposedException)
+                {
+                    // Do nothing
+                }
+                catch (IOException)
+                {
+                    // Do nothing
+                }
+
                 _contentWriter = null;
             }
 
@@ -1217,6 +1354,7 @@ namespace System.Management.Automation.Host
     /// by giving the user ability to select more than one choice. The PromptForChoice method available
     /// in PSHostUserInterface class supports only one choice selection.
     /// </summary>
+#nullable enable
     public interface IHostUISupportsMultipleChoiceSelection
     {
         /// <summary>
@@ -1241,9 +1379,10 @@ namespace System.Management.Automation.Host
         /// implementation.
         /// </returns>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
-        Collection<int> PromptForChoice(string caption, string message,
-            Collection<ChoiceDescription> choices, IEnumerable<int> defaultChoices);
+        Collection<int> PromptForChoice(string? caption, string? message,
+            Collection<ChoiceDescription> choices, IEnumerable<int>? defaultChoices);
     }
+#nullable restore
 
     /// <summary>
     /// Helper methods used by PowerShell's Hosts: ConsoleHost and InternalHost to process
@@ -1275,7 +1414,7 @@ namespace System.Management.Automation.Host
                     Text.StringBuilder splitLabel = new Text.StringBuilder(choices[i].Label.Substring(0, andPos), choices[i].Label.Length);
                     if (andPos + 1 < choices[i].Label.Length)
                     {
-                        splitLabel.Append(choices[i].Label.Substring(andPos + 1));
+                        splitLabel.Append(choices[i].Label.AsSpan(andPos + 1));
                         hotkeysAndPlainLabels[0, i] = CultureInfo.CurrentCulture.TextInfo.ToUpper(choices[i].Label.AsSpan(andPos + 1, 1).Trim().ToString());
                     }
 
@@ -1348,4 +1487,3 @@ namespace System.Management.Automation.Host
         }
     }
 }
-

@@ -3,7 +3,7 @@
 Repository Maintainers are trusted stewards of the PowerShell repository responsible for maintaining consistency and quality of PowerShell code.
 One of their primary responsibilities is merging pull requests after all requirements have been fulfilled.
 
-They have [write access](https://help.github.com/articles/repository-permission-levels-for-an-organization/) to the PowerShell repositories which gives them the power to:
+They have [write access](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-organizations-and-teams/repository-permission-levels-for-an-organization) to the PowerShell repositories which gives them the power to:
 
 1. `git push` to the official PowerShell repository
 1. Merge [pull requests](https://www.thinkful.com/learn/github-pull-request-tutorial/)

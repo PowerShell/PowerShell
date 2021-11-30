@@ -280,16 +280,14 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string[] ParameterName
         {
-            get { return _parameterNames; }
+            get
+            {
+                return _parameterNames;
+            }
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
-
-                _parameterNames = value;
+                _parameterNames = value ?? throw new ArgumentNullException(nameof(value));
                 _parameterNameWildcards = SessionStateUtilities.CreateWildcardsFromStrings(
                     _parameterNames,
                     WildcardOptions.CultureInvariant | WildcardOptions.IgnoreCase);
@@ -316,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 // if '...CimInstance#Win32_Process' is specified, then exclude '...CimInstance'
@@ -350,7 +348,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "AllCommandSet")]
         public SwitchParameter UseFuzzyMatching { get; set; }
 
-        private List<CommandScore> _commandScores = new List<CommandScore>();
+        private readonly List<CommandScore> _commandScores = new List<CommandScore>();
 
         /// <summary>
         /// Gets or sets the parameter that determines if return cmdlets based on abbreviation expansion.
@@ -484,7 +482,7 @@ namespace Microsoft.PowerShell.Commands
             if ((_names == null) || (_nameContainsWildcard))
             {
                 // Use the stable sorting to sort the result list
-                _accumulatedResults = _accumulatedResults.OrderBy(a => a, new CommandInfoComparer()).ToList();
+                _accumulatedResults = _accumulatedResults.OrderBy(static a => a, new CommandInfoComparer()).ToList();
             }
 
             OutputResultsHelper(_accumulatedResults);
@@ -515,7 +513,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (UseFuzzyMatching)
             {
-                results = _commandScores.OrderBy(x => x.Score).Select(x => x.Command).ToList();
+                results = _commandScores.OrderBy(static x => x.Score).Select(static x => x.Command).ToList();
             }
 
             int count = 0;
@@ -647,7 +645,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The comparer to sort CommandInfo objects in the result list.
         /// </summary>
-        private class CommandInfoComparer : IComparer<CommandInfo>
+        private sealed class CommandInfoComparer : IComparer<CommandInfo>
         {
             /// <summary>
             /// Compare two CommandInfo objects first by their command types, and if they
@@ -872,7 +870,7 @@ namespace Microsoft.PowerShell.Commands
                                         _commandScores.Add(commandScore);
                                     }
 
-                                    commands = _commandScores.Select(x => x.Command).ToList();
+                                    commands = _commandScores.Select(static x => x.Command).ToList();
                                 }
                                 else
                                 {
@@ -950,7 +948,7 @@ namespace Microsoft.PowerShell.Commands
             bool resultFound = false;
             isDuplicate = false;
 
-            do
+            while (true)
             {
                 try
                 {
@@ -1057,7 +1055,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
                 }
-            } while (true);
+            }
 
             if (All)
             {
@@ -1320,7 +1318,9 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (ArgumentList != null && !(current is CmdletInfo || current is IScriptCommandInfo))
+                    if (ArgumentList != null
+                        && current is not CmdletInfo
+                        && current is not IScriptCommandInfo)
                     {
                         // If current is not a cmdlet or script, we need to throw a terminating error.
                         ThrowTerminatingError(
@@ -1421,7 +1421,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 PSModuleInfo module = null;
 
-                if (Context.EngineSessionState.ModuleTable.TryGetValue(Context.EngineSessionState.ModuleTableKeys[i], out module) == false)
+                if (!Context.EngineSessionState.ModuleTable.TryGetValue(Context.EngineSessionState.ModuleTableKeys[i], out module))
                 {
                     Dbg.Assert(false, "ModuleTableKeys should be in sync with ModuleTable");
                 }
@@ -1487,22 +1487,31 @@ namespace Microsoft.PowerShell.Commands
         private bool IsCommandInResult(CommandInfo command)
         {
             bool isPresent = false;
-            bool commandHasModule = command.Module != null;
-            foreach (CommandInfo commandInfo in _accumulatedResults)
+
+            if (command.Module is not null)
             {
-                if ((command.CommandType == commandInfo.CommandType &&
-                     (string.Equals(command.Name, commandInfo.Name, StringComparison.OrdinalIgnoreCase) ||
-                      // If the command has been imported with a prefix, then just checking the names for duplication will not be enough.
-                      // Hence, an additional check is done with the prefix information
-                      string.Equals(ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix), command.Name, StringComparison.OrdinalIgnoreCase))
-                    ) && commandInfo.Module != null && commandHasModule &&
-                    ( // We do reference equal comparison if both command are imported. If either one is not imported, we compare the module path
-                     (commandInfo.IsImported && command.IsImported && commandInfo.Module.Equals(command.Module)) ||
-                     ((!commandInfo.IsImported || !command.IsImported) && commandInfo.Module.Path.Equals(command.Module.Path, StringComparison.OrdinalIgnoreCase))
-                    ))
+                foreach (CommandInfo commandInfo in _accumulatedResults)
                 {
-                    isPresent = true;
-                    break;
+                    if (commandInfo.Module is null || commandInfo.CommandType != command.CommandType)
+                    {
+                        continue;
+                    }
+
+                    // We do reference equal comparison if both command are imported. If either one is not imported, we compare the module path
+                    if ((!commandInfo.IsImported || !command.IsImported || !commandInfo.Module.Equals(command.Module))
+                        && ((commandInfo.IsImported && command.IsImported) || !commandInfo.Module.Path.Equals(command.Module.Path, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        continue;
+                    }
+
+                    // If the command has been imported with a prefix, then just checking the names for duplication will not be enough.
+                    // Hence, an additional check is done with the prefix information
+                    if (commandInfo.Name.Equals(command.Name, StringComparison.OrdinalIgnoreCase)
+                        || ModuleCmdletBase.RemovePrefixFromCommandName(commandInfo.Name, commandInfo.Prefix).Equals(command.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        isPresent = true;
+                        break;
+                    }
                 }
             }
 
@@ -1513,7 +1522,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Members
 
-        private Dictionary<string, CommandInfo> _commandsWritten =
+        private readonly Dictionary<string, CommandInfo> _commandsWritten =
             new Dictionary<string, CommandInfo>(StringComparer.OrdinalIgnoreCase);
 
         private List<CommandInfo> _accumulatedResults = new List<CommandInfo>();
@@ -1630,8 +1639,7 @@ namespace Microsoft.PowerShell.Commands
                 new ArrayList(Enum.GetValues(parameterType)) : new ArrayList();
             returnParameterType.Properties.Add(new PSNoteProperty("EnumValues", enumValues));
 
-            bool hasFlagAttribute = (isArray) ?
-                ((parameterType.GetCustomAttributes(typeof(FlagsAttribute), true)).Length > 0) : false;
+            bool hasFlagAttribute = (isArray) && ((parameterType.GetCustomAttributes(typeof(FlagsAttribute), true)).Length > 0);
             returnParameterType.Properties.Add(new PSNoteProperty("HasFlagAttribute", hasFlagAttribute));
 
             // Recurse into array elements.
@@ -1682,7 +1690,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            return nouns.OrderBy(noun => noun).Select(noun => new CompletionResult(noun, noun, CompletionResultType.Text, noun));
+            return nouns.OrderBy(static noun => noun).Select(static noun => new CompletionResult(noun, noun, CompletionResultType.Text, noun));
         }
     }
 }

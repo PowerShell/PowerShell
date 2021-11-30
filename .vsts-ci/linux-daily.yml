@@ -47,7 +47,7 @@ stages:
   jobs:
   - template: templates/ci-build.yml
     parameters:
-      pool: ubuntu-16.04
+      pool: ubuntu-20.04
       jobName: linux_build
       displayName: linux Build
 
@@ -56,7 +56,7 @@ stages:
   jobs:
   - job: linux_test
     pool:
-      vmImage: ubuntu-16.04
+      vmImage: ubuntu-20.04
     displayName: Linux Test
 
     steps:
@@ -149,7 +149,7 @@ stages:
   - job: CodeCovTestPackage
     displayName: CodeCoverage and Test Packages
     pool:
-      vmImage: ubuntu-16.04
+      vmImage: ubuntu-20.04
     steps:
     - pwsh: |
         Import-Module .\tools\ci.psm1
