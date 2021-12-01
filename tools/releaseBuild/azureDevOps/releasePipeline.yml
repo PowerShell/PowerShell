@@ -167,6 +167,8 @@ stages:
   - StartDocker
   - ManualValidation
   - ReleaseAutomation
+  - ValidateFxdPackage
+  - ValidateGlobalTool
 
 # The environment here is used for approval.
   jobs:
