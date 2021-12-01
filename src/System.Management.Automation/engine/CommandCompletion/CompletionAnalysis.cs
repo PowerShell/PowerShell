@@ -2259,10 +2259,12 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             if (result.Count > 0)
             {
                 return result;
             }
+
             return null;
         }
 
