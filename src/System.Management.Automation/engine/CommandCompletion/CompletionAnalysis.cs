@@ -2251,11 +2251,14 @@ namespace System.Management.Automation
                     replacementLength = 0;
                 }
 
-                foreach (var keyword in s_usingKeywords.Keys)
+                foreach (var keyword in s_usingKeywords)
                 {
                     if (string.IsNullOrEmpty(wordToComplete) || keyword.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
                     {
-                        result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, s_usingKeywords[keyword]));
+                        string toolTip = ResourceManagerCache.GetResourceString(typeof(CompletionAnalysis).Assembly,
+                            "System.Management.Automation.resources.TabCompletionStrings",
+                            $"{keyword}KeywordDescription");
+                        result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, toolTip));
                     }
                 }
             }
@@ -2268,11 +2271,11 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static readonly IReadOnlyDictionary<string, string> s_usingKeywords = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly string[] s_usingKeywords = new string[]
         {
-            { "assembly", "Specifies the path to a .NET assembly to load." },
-            { "module", "Specifies a PowerShell module to load classes from." },
-            { "namespace", "Specifies a .NET namespace to resolve types from." },
+            "assembly",
+            "module",
+            "namespace"
         };
     }
 }
