@@ -1,0 +1,60 @@
+parameters:
+  jobName: ""
+  displayName: ""
+  imageName: ""
+  packageNamePattern: ""
+
+jobs:
+- job: ${{ parameters.jobName }}
+  displayName: ${{ parameters.displayName }}
+  pool:
+    vmImage: ${{ parameters.imageName }}
+  steps:
+    - checkout: self
+      clean: true
+
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        source: specific
+        project: PowerShellCore
+        pipeline: '696'
+        preferTriggeringPipeline: true
+        runVersion: latestFromBranch
+        runBranch: '$(Build.SourceBranch)'
+        artifact: finalResults
+        patterns: '${{ parameters.packageNamePattern }}'
+        path: '$(Pipeline.Workspace)/releasePipeline/finalResults'
+
+    - pwsh: |
+        Get-ChildItem -Path '$(Pipeline.Workspace)/releasePipeline/finalResults' -Recurse
+      displayName: Capture downloaded package
+
+    - pwsh: |
+        $destPath = New-Item '$(Pipeline.Workspace)/releasePipeline/finalResults/fxd'
+        $packageNameFilter = ${{ parameters.packageNamePattern }}
+
+        if ($packageNameFilter.EndsWith('tar.gz')) {
+            $package = @(Get-ChildItem -Path '$(Pipeline.Workspace)/releasePipeline/finalResults/*.tar.gz')
+            if ($package.Count -ne 1) {
+                throw 'Only 1 package was expected.'
+            }
+            tar -xvf -C $destPath
+        }
+        else
+        {
+            $package = @(Get-ChildItem -Path '$(Pipeline.Workspace)/releasePipeline/finalResults/*.zip')
+            if ($package.Count -ne 1) {
+                throw 'Only 1 package was expected.'
+            }
+            Expand-Archive -Path $package -Destination $destPath -Verbose
+        }
+      displayName: Expand fxd package
+
+    - pwsh: |
+        $pwshExeName = if ($packageNameFilter.EndsWith('tar.gz')) { 'pwsh' } else { 'pwsh.exe' }
+        $actualOutput = & $pwshExeName -c 'Start-Job -ScriptBlock { "1" } | Wait-Job | Receive-Job'
+        Write-Verbose -Verbose "Actual output: $actualOutput"
+        if ($actualOutput -ne 1) {
+            throw "Actual output is not as expected"
+        }
+      displayName: Test package

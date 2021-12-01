@@ -78,6 +78,31 @@ stages:
       globalToolExeName: 'pwsh'
       globalToolPackageName: 'PowerShell.Linux.x64'
 
+- stage: ValidateFxdPackage
+  displayName: Validate Fxd Package
+  dependsOn: []
+  jobs:
+  - template: release/FxdPackage.yml
+    parameters:
+      jobName: WinFxdPackage
+      displayName: Fxd Pacakge Test
+      imageName: windows-latest
+      packageName: '**/*win-fxdependent.zip'
+
+  - template: release/FxdPackage.yml
+    parameters:
+      jobName: FxdPackageWindDesktop
+      displayName: Fxd Pacakge Test
+      imageName: windows-latest
+      packageName: '**/*win-fxdependentWinDesktop.zip'
+
+  - template: release/FxdPackage.yml
+    parameters:
+      jobName: FxdPackageLinux
+      displayName: Fxd Pacakge Test
+      imageName: ubuntu-latest
+      packageName: '**/*fxdependent.tar.gz'
+
 - stage: StaticPkgValidation
   dependsOn: []
   displayName: Static package validation
