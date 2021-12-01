@@ -5637,6 +5637,7 @@ namespace System.Management.Automation
                         break;
                     }
                 }
+
                 if (astBeforeMemberAccessToken is ExpressionAst expression)
                 {
                     targetExpr = expression;
@@ -5735,6 +5736,7 @@ namespace System.Management.Automation
                 // -1 because membername always has a trailing wildcard *
                 replacementLength = memberName.Length - 1;
             }
+
             return results;
         }
 

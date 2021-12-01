@@ -420,6 +420,7 @@ namespace System.Management.Automation
                         {
                             result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
                         }
+
                         break;
 
                     case TokenKind.Parameter:
@@ -470,6 +471,7 @@ namespace System.Management.Automation
                         replacementIndex += tokenAtCursor.Text.Length;
                         replacementLength = 0;
                         result = CompletionCompleters.CompleteMember(completionContext, @static: tokenAtCursor.Kind == TokenKind.ColonColon, ref replacementLength);
+                        
                         break;
 
                     case TokenKind.Comment:
@@ -808,7 +810,8 @@ namespace System.Management.Automation
                                 result = GetResultForIdentifierInConfiguration(completionContext, configAst, keywordAst, out matched);
                             }
                         }
-                        if (result == null && completionContext.TokenBeforeCursor is not null)
+
+                        if (result is null && completionContext.TokenBeforeCursor is not null)
                         {
                             switch (completionContext.TokenBeforeCursor.Kind)
                             {
@@ -827,6 +830,7 @@ namespace System.Management.Automation
                                     {
                                         result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                                     }
+
                                     break;
 
                                 default:
@@ -888,6 +892,7 @@ namespace System.Management.Automation
                                     {
                                         return result;
                                     }
+
                                     break;
                                 default:
                                     break;
@@ -2026,8 +2031,10 @@ namespace System.Management.Automation
                         break;
                     }
                 }
+
                 isStatic = currentExpression.Static;
             }
+
             bool isWildcard = false;
 
             if (!isMemberCompletion)
@@ -2202,6 +2209,7 @@ namespace System.Management.Automation
                         _ = existingArguments.Add(namedArgument.ArgumentName);
                     }
                 }
+
                 PropertyInfo[] propertyInfos = attributeType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
                 List<CompletionResult> result = new List<CompletionResult>();
                 foreach (PropertyInfo property in propertyInfos)
