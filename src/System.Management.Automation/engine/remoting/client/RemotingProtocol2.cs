@@ -824,7 +824,12 @@ namespace System.Management.Automation.Internal
         /// <param name="state"></param>
         private void StartDisconnectAsync(object state)
         {
-            RemoteSession?.DisconnectAsync();
+            var remoteSession = RemoteSession;
+            try
+            {
+                remoteSession?.DisconnectAsync();
+            }
+            catch { }
         }
 
         /// <summary>
