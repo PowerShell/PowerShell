@@ -821,7 +821,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// WaitCallback method to start an asynchronous disconnect.
         /// </summary>
-        /// <param name="remoteSession"></param>
+        /// <param name="state"></param>
         private void StartDisconnectAsync(object state)
         {
             RemoteSession?.DisconnectAsync();
