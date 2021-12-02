@@ -829,7 +829,10 @@ namespace System.Management.Automation.Internal
             {
                 remoteSession?.DisconnectAsync();
             }
-            catch { }
+            catch 
+            {
+                // remoteSession may have already been disposed resulting in unexpected exceptions.
+            }
         }
 
         /// <summary>
