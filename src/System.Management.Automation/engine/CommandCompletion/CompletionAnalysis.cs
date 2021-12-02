@@ -687,6 +687,7 @@ namespace System.Management.Automation
                         {
                             return result;
                         }
+
                         if ((tokenAtCursor.TokenFlags & TokenFlags.Keyword) != 0)
                         {
                             completionContext.WordToComplete = tokenAtCursor.Text;
@@ -1764,6 +1765,7 @@ namespace System.Management.Automation
             {
                 return result;
             }
+
             var tokenAtCursor = completionContext.TokenAtCursor;
             var lastAst = completionContext.RelatedAsts.Last();
 
