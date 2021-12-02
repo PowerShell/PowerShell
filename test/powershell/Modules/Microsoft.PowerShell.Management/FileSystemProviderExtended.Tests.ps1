@@ -657,8 +657,10 @@ Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI
             $result.Where({ $_.Name -like "*2.*" -or $_.Name -like "*3.*" }) | Should -BeOfType System.IO.FileInfo
         }
     }
+}
 
-    Context 'Validate Get-Item ResolvedTarget property points to resolution of symbolic link (or null if resolution does not exist)' {
+Describe "Validate Get-Item ResolvedTarget property" -Tag RequireAdminOnWindows {
+    Context "Validate Get-Item ResolvedTarget property points to resolution of symbolic link (or null if resolution does not exist)" {
 
         BeforeAll {
             $rootDir = Join-Path "TestDrive:" "TestDir"
