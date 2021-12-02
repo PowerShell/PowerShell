@@ -212,27 +212,6 @@ Describe -Name "Windows MSI" -Fixture {
         }
     }
 
-    Context "USE_MU disabled" {
-        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
-            {
-                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{USE_MU = 0}
-            } | Should -Not -Throw
-        }
-
-        It "UseMU should be 0" -Skip:(!(Test-Elevated)) {
-            Invoke-TestAndUploadLogOnFailure -Test {
-                $useMu = Get-UseMU
-                $useMu | Should -Be 0
-            }
-        }
-
-        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
-            {
-                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
-            } | Should -Not -Throw
-        }
-    }
-
     Context "Add Path enabled" {
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
             {
