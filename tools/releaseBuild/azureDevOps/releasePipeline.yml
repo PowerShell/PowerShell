@@ -78,6 +78,31 @@ stages:
       globalToolExeName: 'pwsh'
       globalToolPackageName: 'PowerShell.Linux.x64'
 
+- stage: ValidateFxdPackage
+  displayName: Validate Fxd Package
+  dependsOn: []
+  jobs:
+  - template: templates/release-ValidateFxdPackage.yml
+    parameters:
+      jobName: WinFxdPackage
+      displayName: Fxd Package Test Win
+      imageName: windows-latest
+      packageNamePattern: '**/*win-fxdependent.zip'
+
+  - template: templates/release-ValidateFxdPackage.yml
+    parameters:
+      jobName: FxdPackageWindDesktop
+      displayName: Fxd Package Test WinDesktop
+      imageName: windows-latest
+      packageNamePattern: '**/*win-fxdependentWinDesktop.zip'
+
+  - template: templates/release-ValidateFxdPackage.yml
+    parameters:
+      jobName: FxdPackageLinux
+      displayName: Fxd Package Test Linux
+      imageName: ubuntu-latest
+      packageNamePattern: '**/*fxdependent.tar.gz'
+
 - stage: StaticPkgValidation
   dependsOn: []
   displayName: Static package validation
@@ -142,6 +167,8 @@ stages:
   - StartDocker
   - ManualValidation
   - ReleaseAutomation
+  - ValidateFxdPackage
+  - ValidateGlobalTool
 
 # The environment here is used for approval.
   jobs:
