@@ -329,13 +329,13 @@
   <data name="shrOperatorDescription" xml:space="preserve">
     <value>Shift Right bit operator. Inserts zero in the left-most bit position. For signed values, sign bit is preserved.</value>
   </data>
-  <data name="assemblyKeywordDescription" xml:space="preserve">
+  <data name="AssemblyKeywordDescription" xml:space="preserve">
     <value>Specifies the path to a .NET assembly to load.</value>
   </data>
-  <data name="moduleKeywordDescription" xml:space="preserve">
+  <data name="ModuleKeywordDescription" xml:space="preserve">
     <value>Specifies a PowerShell module to load classes from.</value>
   </data>
-  <data name="namespaceKeywordDescription" xml:space="preserve">
+  <data name="NamespaceKeywordDescription" xml:space="preserve">
     <value>Specifies a .NET namespace to resolve types from.</value>
   </data>
 </root>

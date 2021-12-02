@@ -2255,10 +2255,7 @@ namespace System.Management.Automation
                 {
                     if (string.IsNullOrEmpty(wordToComplete) || keyword.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
                     {
-                        string toolTip = ResourceManagerCache.GetResourceString(typeof(CompletionAnalysis).Assembly,
-                            "System.Management.Automation.resources.TabCompletionStrings",
-                            $"{keyword}KeywordDescription");
-                        result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, toolTip));
+                        result.Add(new CompletionResult(keyword, keyword, CompletionResultType.Keyword, GetUsingKeywordToolTip(keyword)));
                     }
                 }
             }
@@ -2269,6 +2266,21 @@ namespace System.Management.Automation
             }
 
             return null;
+        }
+
+        private static string GetUsingKeywordToolTip(string keyword)
+        {
+            switch (keyword)
+            {
+                case "assembly":
+                    return TabCompletionStrings.AssemblyKeywordDescription;
+                case "module":
+                    return TabCompletionStrings.ModuleKeywordDescription;
+                case "namespace":
+                    return TabCompletionStrings.NamespaceKeywordDescription;
+                default:
+                    return null;
+            }
         }
 
         private static readonly string[] s_usingKeywords = new string[]
