@@ -129,7 +129,7 @@ jobs:
         "$($fullSymbolsFolder)\Modules\PSDiagnostics\PSDiagnostics.ps?1" = "Modules\PSDiagnostics"
         "$($fullSymbolsFolder)\pwsh.dll" = ""
         "$($fullSymbolsFolder)\System.Management.Automation.dll" = ""
-        "$($fullSymbolsFolder)\pwsh.exe"
+        "$($fullSymbolsFolder)\pwsh.exe" = ""
       }
 
       $itemsToExclude = @(
