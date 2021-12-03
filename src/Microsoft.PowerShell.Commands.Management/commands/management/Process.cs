@@ -1154,6 +1154,15 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public SwitchParameter Force { get; set; }
 
+        /// <summary>
+        /// Specifies whether to stop all child processes.
+        /// This will not work if the target process is the
+        /// current process.
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        [Alias("Recurse")]
+        public SwitchParameter IncludeChildProcess { get; set; }
+
         #endregion Parameters
 
         #region Overrides
@@ -1240,7 +1249,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!process.HasExited)
                     {
-                        process.Kill();
+                        process.Kill(IncludeChildProcess);
                     }
                 }
                 catch (Win32Exception exception)
@@ -1262,6 +1271,13 @@ namespace Microsoft.PowerShell.Commands
                             "CouldNotStopProcess", ErrorCategory.CloseError);
                         continue;
                     }
+                }
+                catch (AggregateException exception)
+                {
+                    WriteNonTerminatingError(
+                            process, exception, ProcessResources.CouldNotStopProcess,
+                            "CouldNotStopProcess", ErrorCategory.CloseError);
+                    continue;
                 }
 
                 if (PassThru)
