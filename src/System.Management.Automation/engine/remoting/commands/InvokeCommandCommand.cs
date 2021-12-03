@@ -264,6 +264,25 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets or sets strict mode.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.InProcParameterSet)]
+        public Version StrictModeVersion
+        {
+            get
+            {
+                return _strictmodeversion;
+            }
+
+            set
+            {
+                _strictmodeversion = value;
+            }
+        }
+
+        private Version _strictmodeversion = null;
+
+        /// <summary>
         /// For WSMan session:
         /// If this parameter is not specified then the value specified in
         /// the environment variable DEFAULTREMOTESHELLNAME will be used. If
@@ -1193,20 +1212,35 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet))
                 {
-                    if (_steppablePipeline != null)
+                    Version CurrentStrictModeVersion = Context.EngineSessionState.CurrentScope.StrictModeVersion;
+                    try
                     {
-                        _steppablePipeline.End();
+                        if (_strictmodeversion != null)
+                        {
+                            Context.EngineSessionState.CurrentScope.StrictModeVersion = _strictmodeversion;
+                        }
+                        if (_steppablePipeline != null)
+                        {
+                            _steppablePipeline.End();
+                        }
+                        else
+                        {
+                            ScriptBlock.InvokeUsingCmdlet(
+                                contextCmdlet: this,
+                                useLocalScope: !NoNewScope,
+                                errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                                dollarUnder: AutomationNull.Value,
+                                input: _input,
+                                scriptThis: AutomationNull.Value,
+                                args: ArgumentList);
+                        }
                     }
-                    else
+                    finally
                     {
-                        ScriptBlock.InvokeUsingCmdlet(
-                            contextCmdlet: this,
-                            useLocalScope: !NoNewScope,
-                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                            dollarUnder: AutomationNull.Value,
-                            input: _input,
-                            scriptThis: AutomationNull.Value,
-                            args: ArgumentList);
+                        if (_strictmodeversion != null)
+                        {
+                            Context.EngineSessionState.CurrentScope.StrictModeVersion = CurrentStrictModeVersion;
+                        }
                     }
                 }
                 else
