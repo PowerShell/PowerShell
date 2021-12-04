@@ -452,7 +452,7 @@ namespace System.Management.Automation
                 currentParent = currentParent.Parent;
             }
 
-            return foreachNestedCount == 1;
+            return foreachNestedCount <= 1;
         }
 
         /// <summary>

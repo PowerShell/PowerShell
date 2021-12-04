@@ -192,6 +192,7 @@ namespace System.Management.Automation.PSTasks
         /// <param name="dollarUnderbar">Dollar underbar variable value for script block.</param>
         /// <param name="currentLocationPath">Current working directory.</param>
         /// <param name="job">Job object associated with task.</param>
+        /// </summary>
         public PSJobTask(
             ScriptBlock scriptBlock,
             Dictionary<string, object> usingValuesMap,
