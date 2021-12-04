@@ -214,10 +214,8 @@ Describe -Name "Windows MSI" -Fixture {
 
     Context "USE_MU disabled" {
         It "UseMU should be 0 before install" -Skip:(!(Test-Elevated)) {
-            Invoke-TestAndUploadLogOnFailure -Test {
-                $useMu = Get-UseMU
-                $useMu | Should -Be 0
-            }
+            $useMu = Get-UseMU
+            $useMu | Should -Be 0
         }
 
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
