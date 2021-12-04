@@ -39,7 +39,7 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         function Get-UseMU {
-            $useMu = 0
+            $useMu = $null
             $key = 'HKLM:\SOFTWARE\Microsoft\PowerShellCore\'
             if ($runtime -like '*x86*') {
                 $key = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\PowerShellCore\'
@@ -48,6 +48,10 @@ Describe -Name "Windows MSI" -Fixture {
             try {
                 $useMu = Get-ItemPropertyValue -Path $key -Name UseMU -ErrorAction SilentlyContinue
             } catch {}
+
+            if (!$useMu) {
+                $useMu = 0
+            }
 
             return $useMu
         }
