@@ -52,6 +52,22 @@ Describe -Name "Windows MSI" -Fixture {
             return $useMu
         }
 
+        function Set-UseMU {
+            param(
+                [int]
+                $Value
+            )
+            $useMu = 0
+            $key = 'HKLM:\SOFTWARE\Microsoft\PowerShellCore\'
+            if ($runtime -like '*x86*') {
+                $key = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\PowerShellCore\'
+            }
+
+            Sett-ItemProperty -Path $key -Name UseMU -Value $useMu -Type DWord
+
+            return $useMu
+        }
+
         function Invoke-Msiexec {
             param(
                 [Parameter(ParameterSetName = 'Install', Mandatory)]
@@ -213,6 +229,10 @@ Describe -Name "Windows MSI" -Fixture {
     }
 
     Context "USE_MU disabled" {
+        BeforeAll {
+            Set-UseMU -Value 0
+        }
+
         It "UseMU should be 0 before install" -Skip:(!(Test-Elevated)) {
             $useMu = Get-UseMU
             $useMu | Should -Be 0
