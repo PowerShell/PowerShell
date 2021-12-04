@@ -63,7 +63,7 @@ Describe -Name "Windows MSI" -Fixture {
                 $key = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\PowerShellCore\'
             }
 
-            Sett-ItemProperty -Path $key -Name UseMU -Value $useMu -Type DWord
+            Set-ItemProperty -Path $key -Name UseMU -Value $useMu -Type DWord
 
             return $useMu
         }
