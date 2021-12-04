@@ -201,6 +201,15 @@ Describe -Name "Windows MSI" -Fixture {
     }
 
     Context "Add Path disabled" {
+        BeforeAll {
+            Set-UseMU -Value 0
+        }
+
+        It "UseMU should be 0 before install" -Skip:(!(Test-Elevated)) {
+            $useMu = Get-UseMU
+            $useMu | Should -Be 0
+        }
+
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
             {
                 Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 0; USE_MU = 1; ENABLE_MU = 1}
