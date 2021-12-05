@@ -5517,7 +5517,7 @@ namespace System.Management.Automation
             //   * the last ast is a string constant, with something like:   echo $foo.
 
             var results = new List<CompletionResult>();
-            var lastAst = context.RelatedAsts[^1];
+            var lastAst = context.RelatedAsts.Last();
             var memberName = "*";
             Ast memberNameCandidateAst = null;
             ExpressionAst targetExpr = null;
@@ -5625,7 +5625,7 @@ namespace System.Management.Automation
                 // Handles switches like:
                 // switch ($x)
                 // {
-                //     'value1'.^
+                //     'RandomString'.^
                 //     { }
                 // }
                 Ast astBeforeMemberAccessToken = null;

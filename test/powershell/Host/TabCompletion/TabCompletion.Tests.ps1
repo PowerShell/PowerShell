@@ -108,7 +108,7 @@ Describe "TabCompletion" -Tags CI {
             TestString = @'
 switch ($x)
 {
-    'value1'.^
+    'RandomString'.^
     {}
 }
 '@
