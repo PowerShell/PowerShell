@@ -1277,8 +1277,10 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Add the content headers
-            if (request.Content == null)
+            // Add the content headers except for Get Method
+            if ((request.Content == null)
+                && !((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
+                     || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
             {
                 request.Content = new StringContent(string.Empty);
                 request.Content.Headers.Clear();
