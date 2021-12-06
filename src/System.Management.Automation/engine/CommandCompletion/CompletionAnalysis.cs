@@ -918,6 +918,7 @@ namespace System.Management.Automation
             if (result == null || result.Count == 0)
             {
                 result = GetResultForHashtable(completionContext);
+                // Handles the following scenario: [ipaddress]@{Address=""; <Tab> }
                 if (result is not null && result.Count > 0)
                 {
                     completionContext.ReplacementIndex = replacementIndex = completionContext.CursorPosition.Offset;
@@ -948,6 +949,13 @@ namespace System.Management.Automation
             Ast lastRelatedAst = null;
             var cursorPosition = completionContext.CursorPosition;
 
+            // Enumeration is used over the LastAst pattern because empty lines following a key-value pair will set LastAst to the value.
+            // Example:
+            // @{
+            //     Key1="Value1"
+            //     <Tab>
+            // }
+            // In this case the last 3 Asts will be StringConstantExpression, CommandExpression, and Pipeline instead of the expected Hashtable
             for (int i = completionContext.RelatedAsts.Count - 1; i >= 0; i--)
             {
                 Ast ast = completionContext.RelatedAsts[i];

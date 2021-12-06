@@ -1207,6 +1207,10 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount 2
             [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "1.0,1.1"
         }
+        It 'Should complete Select-Object properties without duplicates' {
+            $res = TabExpansion2 -inputScript '$PSVersionTable | Select-Object -Property Count,'
+            $res.CompletionMatches.CompletionText | Should -Not -Contain "Count"
+        }
     }
 
     Context "Module completion for 'using module'" {
@@ -1769,11 +1773,6 @@ function MyFunction ($param1, $param2)
             $CursorIndex = $TestString.IndexOf('^')
             $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
             $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
-        }
-
-        It 'Should complete Select-Object properties without duplicates' {
-            $res = TabExpansion2 -inputScript '$PSVersionTable | select Count,' -cursorColumn '$PSVersionTable | select Count,'.Length
-            $res.CompletionMatches.CompletionText | Should -Not -Contain "Count"
         }
     }
 }
