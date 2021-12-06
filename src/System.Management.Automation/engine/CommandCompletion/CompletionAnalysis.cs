@@ -2019,16 +2019,11 @@ namespace System.Management.Automation
             if (isMemberCompletion)
             {
                 var currentExpression = (MemberExpressionAst)lastAst.Parent;
-                while (currentExpression.Extent.EndOffset >= completionContext.CursorPosition.Offset)
+                while (currentExpression.Extent.EndOffset >= completionContext.CursorPosition.Offset
+                    && currentExpression.Expression is MemberExpressionAst memberExpression
+                    && memberExpression.Member.Extent.EndOffset >= completionContext.CursorPosition.Offset)
                 {
-                    if (currentExpression.Expression is MemberExpressionAst memberExpression && memberExpression.Member.Extent.EndOffset >= completionContext.CursorPosition.Offset)
-                    {
-                        currentExpression = memberExpression;
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    currentExpression = memberExpression;
                 }
 
                 isStatic = currentExpression.Static;
@@ -2177,9 +2172,8 @@ namespace System.Management.Automation
             Type attributeType = null;
             string argName = string.Empty;
             Ast argAst = completionContext.RelatedAsts.Find(static ast => ast is NamedAttributeArgumentAst);
-            NamedAttributeArgumentAst namedArgAst = argAst as NamedAttributeArgumentAst;
             AttributeAst attAst;
-            if (argAst is not null && namedArgAst is not null)
+            if (argAst is NamedAttributeArgumentAst namedArgAst)
             {
                 attAst = (AttributeAst)namedArgAst.Parent;
                 attributeType = attAst.TypeName.GetReflectionAttributeType();
