@@ -996,6 +996,7 @@ namespace System.Management.Automation
                 completionContext.ReplacementLength = 0;
                 return CompletionCompleters.CompleteHashtableKey(completionContext, hashtableAst);
             }
+
             return null;
         }
 
