@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "Stop-Process" -Tags "CI" {
     # Parameter validation
     $command = Get-Command -Name Stop-Process
