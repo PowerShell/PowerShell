@@ -350,7 +350,10 @@ namespace System.Management.Automation
                 for (int i = 0; i < usingAsts.Count; ++i)
                 {
                     usingAst = (UsingExpressionAst)usingAsts[i];
-                    if (IsInForeachParallelCallingScope(usingAst, foreachNames))
+                    if (IsInForeachParallelCallingScope(
+                        usingAst: usingAst,
+                        astIncludesForEachCommand: scriptBlock.Ast.Parent is not null,
+                        foreachNames: foreachNames))
                     {
                         var value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
                         string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
@@ -387,10 +390,17 @@ namespace System.Management.Automation
         /// and parameter set scope, and not from within a nested foreach-object -parallel call.
         /// </summary>
         /// <param name="usingAst">Using Ast to check.</param>
+        /// <param name="astIncludesForEachCommand">
+        /// True when the provided ast includes a parent containing the originating ForEach-Object command
+        /// e.g.,
+        ///     '1 | ForEach-Object -Parallel { }'          - script block ast includes parent with initial 'ForEach-Object'
+        ///     '1 | ForEach-Object -Parallel $scriptBlock' - script block ast *does not* include parent with initial 'ForEach-Object'
+        /// </param>
         /// <param name-"foreachNames">List of foreach-object command names.</param>
         /// <returns>True if using expression is in current call scope.</returns>
         private static bool IsInForeachParallelCallingScope(
             UsingExpressionAst usingAst,
+            bool astIncludesForEachCommand,
             string[] foreachNames)
         {
             /*
@@ -452,7 +462,8 @@ namespace System.Management.Automation
                 currentParent = currentParent.Parent;
             }
 
-            return foreachNestedCount <= 1;
+            // Expected foreachNestedCount depends on provided script block ast (see above).
+            return astIncludesForEachCommand ? foreachNestedCount == 1 : foreachNestedCount == 0;
         }
 
         /// <summary>
