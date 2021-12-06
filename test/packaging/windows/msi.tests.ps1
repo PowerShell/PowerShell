@@ -61,13 +61,12 @@ Describe -Name "Windows MSI" -Fixture {
                 [int]
                 $Value
             )
-            $useMu = 0
             $key = 'HKLM:\SOFTWARE\Microsoft\PowerShellCore\'
             if ($runtime -like '*x86*') {
                 $key = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\PowerShellCore\'
             }
 
-            Set-ItemProperty -Path $key -Name UseMU -Value $useMu -Type DWord
+            Set-ItemProperty -Path $key -Name UseMU -Value $Value -Type DWord
 
             return $useMu
         }
