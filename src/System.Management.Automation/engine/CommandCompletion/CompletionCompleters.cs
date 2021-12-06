@@ -2347,6 +2347,7 @@ namespace System.Management.Automation
                             }
                             NativeCompletionCimCommands(parameterName, boundArguments, result, commandAst, context, excludedValues, commandName);
                         }
+
                         break;
                     }
 
@@ -2758,11 +2759,13 @@ namespace System.Management.Automation
                 options.Flags |= CimOperationFlags.LocalizedQualifiers;
                 cimClass = cimSession.GetClass(pseudoboundNamespace ?? "root/cimv2", pseudoboundClassName, options);
             }
+
             var methodParameters = cimClass.CimClassMethods[pseudoboundMethodName]?.Parameters;
             if (methodParameters is null)
             {
                 return;
             }
+
             foreach (var parameter in methodParameters)
             {
                 if ((string.IsNullOrEmpty(context.WordToComplete) || parameter.Name.StartsWith(context.WordToComplete, StringComparison.OrdinalIgnoreCase))
@@ -3951,6 +3954,7 @@ namespace System.Management.Automation
                 {
                     excludedMembers = GetParameterValues(pair, context.CursorPosition.Offset);
                 }
+
                 CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false, excludedMembers);
             }
 
@@ -3968,6 +3972,7 @@ namespace System.Management.Automation
             {
                 _ = result.Add(ast.Extent.Text);
             }
+
             return result;
         }
 
@@ -6941,6 +6946,7 @@ namespace System.Management.Automation
                     _ = excludedKeys.Add(keyPair.Item1.Extent.Text);
                 }
             }
+
             var typeAst = hashtableAst.Parent as ConvertExpressionAst;
             if (typeAst != null)
             {
@@ -7088,6 +7094,7 @@ namespace System.Management.Automation
                                     results.RemoveAt(results.Count - 1);
                                     return results;
                                 }
+
                                 return null;
                         }
                     }
@@ -7115,6 +7122,7 @@ namespace System.Management.Automation
                                     result.RemoveAt(result.Count - 1);
                                     return result;
                                 }
+
                                 return null;
                         }
                     }
@@ -7170,10 +7178,12 @@ namespace System.Management.Automation
                     result.Add(new CompletionResult(key, key, CompletionResultType.Property, key));
                 }
             }
+
             if (result.Count == 0)
             {
                 return null;
             }
+
             return result;
         }
 

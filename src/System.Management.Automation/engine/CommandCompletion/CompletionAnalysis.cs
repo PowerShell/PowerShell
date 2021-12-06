@@ -957,12 +957,14 @@ namespace System.Management.Automation
                     break;
                 }
             }
+
             if (lastRelatedAst is HashtableAst hashtableAst)
             {
                 if (completionContext.TokenAtCursor is not null && completionContext.TokenAtCursor.Kind == TokenKind.RCurly)
                 {
                     return null;
                 }
+
                 bool cursorIsWithinOrOnSameLineAsKeypair = false;
                 foreach (var pair in hashtableAst.KeyValuePairs)
                 {
@@ -973,6 +975,7 @@ namespace System.Management.Automation
                         break;
                     }
                 }
+
                 if (cursorIsWithinOrOnSameLineAsKeypair)
                 {
                     var tokenBeforeOrAtCursor = completionContext.TokenBeforeCursor ?? completionContext.TokenAtCursor;
