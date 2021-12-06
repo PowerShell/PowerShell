@@ -2185,7 +2185,7 @@ namespace System.Management.Automation
             {
                 Ast astAtt = completionContext.RelatedAsts.Find(static ast => ast is AttributeAst);
                 attAst = astAtt as AttributeAst;
-                if (astAtt is not null && attAst is not null)
+                if (attAst is not null)
                 {
                     attributeType = attAst.TypeName.GetReflectionAttributeType();
                 }
