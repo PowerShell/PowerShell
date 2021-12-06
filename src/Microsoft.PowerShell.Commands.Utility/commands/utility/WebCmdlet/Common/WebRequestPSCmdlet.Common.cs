@@ -1277,7 +1277,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Add the content headers except for Get Method
+            // Add the content headers except for Get Method per RFC7230
             if ((request.Content == null)
                 && !((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
                      || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
