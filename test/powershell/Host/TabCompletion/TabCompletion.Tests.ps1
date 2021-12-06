@@ -130,8 +130,8 @@ switch ($x)
         $CursorIndex = $TestString.IndexOf('^')
         $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
         $res.ReplacementIndex | Should -BeExactly $CursorIndex
-        $res.ReplacementLength | Should -BeExactly 5
-        $res.CompletionMatches[0].CompletionText | Should -BeExactly Break
+        $res.ReplacementLength | Should -Be 5
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Break'
     }
 
     It 'Complete and replace existing member with colons in front of cursor and cursor in front of word' {
@@ -139,8 +139,8 @@ switch ($x)
         $CursorIndex = $TestString.IndexOf('^')
         $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
         $res.ReplacementIndex | Should -BeExactly $CursorIndex
-        $res.ReplacementLength | Should -BeExactly 5
-        $res.CompletionMatches[0].CompletionText | Should -BeExactly Break
+        $res.ReplacementLength | Should -Be 5
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Break'
     }
 
     It 'Should complete namespaces' {

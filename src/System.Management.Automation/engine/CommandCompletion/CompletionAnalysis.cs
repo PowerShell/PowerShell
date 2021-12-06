@@ -832,7 +832,6 @@ namespace System.Management.Automation
                                     }
 
                                     break;
-
                                 default:
                                     break;
                             }
