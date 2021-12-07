@@ -99,11 +99,11 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
 
     It 'Verifies in scope using same-name variables in nested calls for passed-in script block objects' {
 
-        $Test = "Test1"
+        $Test1 = "Test1"
         $sBlock = [scriptblock]::Create(@'
             $using:Test1
-            $Test = "Test2"
-            $sBlock2 = [scriptblock]::Create('$using:Test')
+            $Test2 = "Test2"
+            $sBlock2 = [scriptblock]::Create('$using:Test2')
             1..2 | ForEach-Object -Parallel $sBlock2
 '@)
         $results = 1..2 | ForEach-Object -Parallel $sBlock
@@ -115,11 +115,11 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
 
     It 'Verifies in scope using same-name variables in nested calls for mixed script block objects' {
 
-        $Test = "Test1"
+        $Test1 = "Test1"
         $sBlock = [scriptblock]::Create(@'
             $using:Test1
-            $Test = "Test2"
-            1..2 | ForEach-Object -Parallel { $using:Test }
+            $Test2 = "Test2"
+            1..2 | ForEach-Object -Parallel { $using:Test2 }
 '@)
         $results = 1..2 | ForEach-Object -Parallel $sBlock
         $results.Count | Should -BeExactly 6

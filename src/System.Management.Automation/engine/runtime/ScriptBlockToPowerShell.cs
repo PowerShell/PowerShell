@@ -336,6 +336,9 @@ namespace System.Management.Automation
             // Foreach-Object -Parallel call scope. This will filter the using variable map to variables 
             // only within the current (outer) Foreach-Object -Parallel call scope.
             var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(scriptBlock.Ast).ToList();
+            // If the scriptblock ast parent is null, then it comes from a scriptblock variable and does
+            // not include the initiating Foreach-Object -Parallel command.
+            bool astIncludesForEachCommand = scriptBlock.Ast.Parent is not null;
             UsingExpressionAst usingAst = null;
             var usingValueMap = new Dictionary<string, object>(usingAsts.Count);
             Version oldStrictVersion = null;
@@ -352,7 +355,7 @@ namespace System.Management.Automation
                     usingAst = (UsingExpressionAst)usingAsts[i];
                     if (IsInForeachParallelCallingScope(
                         usingAst: usingAst,
-                        astIncludesForEachCommand: scriptBlock.Ast.Parent is not null,
+                        astIncludesForEachCommand: astIncludesForEachCommand,
                         foreachNames: foreachNames))
                     {
                         var value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
