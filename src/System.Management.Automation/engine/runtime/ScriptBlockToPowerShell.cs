@@ -336,6 +336,7 @@ namespace System.Management.Automation
             // Foreach-Object -Parallel call scope. This will filter the using variable map to variables 
             // only within the current (outer) Foreach-Object -Parallel call scope.
             var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(scriptBlock.Ast).ToList();
+            
             // If the scriptblock ast parent is null, then it comes from a scriptblock variable and does
             // not include the initiating Foreach-Object -Parallel command.
             bool astIncludesForEachCommand = scriptBlock.Ast.Parent is not null;
