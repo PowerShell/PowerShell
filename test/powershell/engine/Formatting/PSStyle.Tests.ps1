@@ -83,7 +83,7 @@ Describe 'Tests for $PSStyle automatic variable' {
 
     It '$PSStyle has correct default for OutputRendering' {
         $PSStyle | Should -Not -BeNullOrEmpty
-        $PSStyle.OutputRendering | Should -BeExactly 'Host'
+        $PSStyle.OutputRendering | Should -BeExactly 'Ansi'
     }
 
     It '$PSStyle has correct defaults for style <key>' -TestCases (Get-TestCases $styleDefaults) {
