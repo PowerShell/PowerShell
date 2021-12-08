@@ -123,10 +123,7 @@ jobs:
       uploadPoliCheck: false
       uploadPREfast: false
       uploadRoslyn: false
-      uploadBinSkim: false
       uploadTSLint: false
-      uploadCredScan: false
-      uploadPoliCheck: false
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-report.SdtReport@1
     displayName: 'Create Security Analysis Report'
