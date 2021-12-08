@@ -7,6 +7,7 @@ jobs:
 - job: ${{ parameters.jobName }}
   displayName: ${{ parameters.displayName }}
   pool:
+    # testing
     vmImage: ${{ parameters.imageName }}
   variables:
   - group: AzDevOpsArtifacts

@@ -110,6 +110,7 @@ stages:
   - job: ValidatePkgNames
     displayName: Validate Package Names
     pool:
+      # testing
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
@@ -118,6 +119,7 @@ stages:
   - job: ValidatePkgBOM
     displayName: Validate Package BOM
     pool:
+      # testing
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
@@ -175,6 +177,7 @@ stages:
   - deployment: AzureBlobPublic
     displayName: Make Azure Blob Public
     pool:
+      # release
       vmImage: windows-latest
     variables:
     - group: 'Staging_ACR'
@@ -188,6 +191,7 @@ stages:
   - job: GitHubDraft
     displayName: Create GitHub Draft release
     pool:
+      # release
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
@@ -221,12 +225,14 @@ stages:
   jobs:
   - job: PublishNuget
     pool:
+      # release
       vmImage: windows-latest
     steps:
     - template: templates/release-ReleaseToNuGet.yml
 
   - job: PublishPkgsMsftCom
     pool:
+      # release
       vmImage: ubuntu-latest
     variables:
     - group: 'AzDevOpsArtifacts'
@@ -321,6 +327,7 @@ stages:
   - deployment: UploadJson
     displayName: Upload BuildInfoJson
     pool:
+      # release
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'

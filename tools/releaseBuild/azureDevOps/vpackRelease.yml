@@ -25,6 +25,7 @@ stages:
     displayName: Name the build
     condition: succeeded()
     pool:
+      # release
       vmImage: 'windows-latest'
     steps:
     - checkout: self

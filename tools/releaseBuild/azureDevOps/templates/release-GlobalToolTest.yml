@@ -10,6 +10,7 @@ jobs:
 - job: ${{ parameters.jobName }}
   displayName: ${{ parameters.displayName }}
   pool:
+    # release
     vmImage: ${{ parameters.imageName }}
   steps:
     - checkout: self

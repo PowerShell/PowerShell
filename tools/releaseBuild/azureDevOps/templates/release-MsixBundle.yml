@@ -2,6 +2,7 @@ jobs:
 - job: CreateMSIXBundle
   displayName: Create .msixbundle file
   pool:
+    # release
     vmImage: windows-latest
   variables:
     - group: msixTools
