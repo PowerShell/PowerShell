@@ -265,11 +265,13 @@ stages:
   - template: templates/release/approvalJob.yml
     parameters:
       displayName: Start the release build
+      jobName: SnapStart
       instructions: |
         Start the snap pipeline at: https://dev.azure.com/$(newPwshOrgName)/PowerShell/_build?definitionId=49&_a=summary
   - template: templates/release/approvalJob.yml
     parameters:
       displayName: Approve the release
+      jobName: SnapEnd
       instructions: |
         Once the build is finished, approve the release of all channels.
 
