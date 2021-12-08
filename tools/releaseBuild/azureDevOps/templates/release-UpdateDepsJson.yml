@@ -2,6 +2,7 @@ jobs:
 - job: UpdateDepsFiles
   displayName: Update deps files
   pool:
+    # release
     vmImage: windows-latest
   variables:
   - group: 'Azure Blob variable group'

@@ -9,6 +9,8 @@ jobs:
   displayName: Build and Publish VPack - ${{ parameters.architecture }}
   condition: succeeded()
   pool: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019TLS
   steps:
   - checkout: self
     clean: true
