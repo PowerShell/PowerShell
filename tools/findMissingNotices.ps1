@@ -1,9 +1,28 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+# This script is used to completely rebuild the cgmanifgest.json file,
+# which is used to generate the notice file.
 # Requires the module dotnet.project.assets from the PowerShell Gallery authored by @TravisEz13
 
-import-module dotnet.project.assets
+param(
+    [switch] $Fix
+)
+
+Import-Module dotnet.project.assets
+Import-Module "$PSScriptRoot\..\.github\workflows\GHWorkflowHelper" -Force
+. "$PSScriptRoot\..\tools\buildCommon\startNativeExecution.ps1"
+
+$existingRegistrationTable = @{}
+$existingRegistrationsJson = Get-Content $PSScriptRoot\..\cgmanifest.json | ConvertFrom-Json -AsHashtable
+$existingRegistrationsJson.Registrations | ForEach-Object {
+    $registration = [Registration]$_
+    if ($registration.Component) {
+        $name = $registration.Component.Name()
+        $existingRegistrationTable.Add($name, $registration)
+    }
+}
+
 Class Registration {
     [Component]$Component
     [bool]$DevelopmentDependency
@@ -56,10 +75,17 @@ Class Nuget {
     }
 }
 
+$winDesktopSdk = 'Microsoft.NET.Sdk.WindowsDesktop'
+if (!$IsWindows) {
+    $winDesktopSdk = 'Microsoft.NET.Sdk'
+    Write-Warning "Always using $winDesktopSdk since this is not windows!!!"
+}
+
 function New-NugetComponent {
     param(
         [string]$name,
-        [string]$version
+        [string]$version,
+        [switch]$DevelopmentDependency
     )
 
     $nuget = [Nuget]@{
@@ -73,64 +99,188 @@ function New-NugetComponent {
 
     $registration = [Registration]@{
         Component             = $Component
-        DevelopmentDependency = $false
+        DevelopmentDependency = $DevelopmentDependency
     }
 
     return $registration
 }
 
-$existingRegistrationTable = @{}
-$newRegistrations = @()
-$existingRegistrationsJson = Get-Content $PSScriptRoot\..\cgmanifest.json | ConvertFrom-Json -AsHashtable
-$existingRegistrationsJson.Registrations | ForEach-Object {
-    $registration = [Registration]$_
-    $existingRegistrationTable.Add($registration.Component.Name(), $registration)
-    $newRegistrations += $registration
+$nugetPublicVersionCache = [System.Collections.Generic.Dictionary[string, string]]::new()
+function Get-NuGetPublicVersion {
+    param(
+        [string]$Name,
+        [string]$Version
+    )
+
+    if($nugetPublicVersionCache.ContainsKey($Name)) {
+        return $nugetPublicVersionCache[$Name]
+    }
+
+    try {
+        [System.Management.Automation.SemanticVersion]$desiredVersion = $Version
+    } catch {
+        [Version]$desiredVersion = $Version
+    }
+
+    $publicVersion = $null
+    $publicVersion = Find-Package -Name $Name -AllowPrereleaseVersions -source nuget.org -AllVersions -ErrorAction SilentlyContinue | ForEach-Object {
+        try {
+            $packageVersion = [System.Management.Automation.SemanticVersion]$_.Version
+        } catch {
+            # Fall back to using [version] if it is not a semantic version
+            $packageVersion = $_.Version
+        }
+
+        $_ | Add-Member -Name SemVer -MemberType NoteProperty -Value $packageVersion -PassThru
+    } | Where-Object { $_.SemVer -le $desiredVersion } | Sort-Object -Property semver -Descending | Select-Object -First 1 -ExpandProperty Version
+
+    if(!$publicVersion) {
+        Write-Warning "No public version found for $Name, using $Version"
+        $publicVersion = $Version
+    }
+
+    if(!$nugetPublicVersionCache.ContainsKey($Name)) {
+        $nugetPublicVersionCache.Add($Name, $publicVersion)
+    }
+
+    return $publicVersion
 }
 
-Get-PSDrive -Name pwsh-win-core -ErrorAction Ignore | Remove-PSDrive
-Push-Location $PSScriptRoot\..\src\powershell-win-core
-$null = dotnet restore
-$null = New-PADrive -Path $PSScriptRoot\..\src\powershell-win-core\obj\project.assets.json -Name pwsh-win-core
-$targets = Get-ChildItem -Path 'pwsh-win-core:/targets/net6.0-windows7.0|win7-x64' | Where-Object {
-    $_.Type -eq 'package' -and
-    $_.Name -notlike 'DotNetAnalyzers.DocumentationAnalyzers*' -and
-    $_.Name -notlike 'StyleCop*' -and
-    $_.Name -notlike 'Microsoft.CodeAnalysis.Analyzers*' -and
-    $_.Name -notlike 'Microsoft.CodeAnalysis.NetAnalyzers*'
-}  | select-object -ExpandProperty name
-Pop-Location
-Get-PSDrive -Name pwsh-win-core | Remove-PSDrive
+function Get-CGRegistrations {
+    param(
+        [Parameter(Mandatory)]
+        [ValidateSet(
+            "alpine-x64",
+            "linux-arm",
+            "linux-arm64",
+            "linux-x64",
+            "osx-arm64",
+            "osx-x64",
+            "win-arm",
+            "win-arm64",
+            "win7-x64",
+            "win7-x86",
+            "modules")]
+        [string]$Runtime,
 
-$updateRegistrations = @()
-$targets | ForEach-Object {
-    $target = $_
-    $parts = ($target -split '\|')
-    $name = $parts[0]
-    $targetVersion = $parts[1]
-    $pattern = [regex]::Escape($name) + " "
-    $tpnMatch = Select-String -Path $PSScriptRoot\..\ThirdPartyNotices.txt -Pattern $pattern
-    if (!$tpnMatch) {
-        if ($existingRegistrationTable.ContainsKey($name)) {
-            $registrationVersion = $existingRegistrationTable.$name.Component.Version()
-            if ($registrationVersion -ne $targetVersion) {
-                $registration = New-NugetComponent -Name $name -Version $targetVersion
-                $updateRegistrations += $registration
-            } else {
-                Write-Verbose "$target already registered: $registrationVersion" -Verbose
-            }
-        } else {
-            $registration = New-NugetComponent -Name $name -Version $targetVersion
-            $newRegistrations += $registration
+        [Parameter(Mandatory)]
+        [System.Collections.Generic.Dictionary[string, Registration]] $RegistrationTable
+    )
+
+    $registrationChanged = $false
+
+    $dotnetTargetName = 'net6.0'
+    $dotnetTargetNameWin7 = 'net6.0-windows7.0'
+    $unixProjectName = 'powershell-unix'
+    $windowsProjectName = 'powershell-win-core'
+    $actualRuntime = $Runtime
+
+    switch -regex ($Runtime) {
+        "alpine-.*" {
+            $folder = $unixProjectName
+            $target = "$dotnetTargetName|$Runtime"
+        }
+        "linux-.*" {
+            $folder = $unixProjectName
+            $target = "$dotnetTargetName|$Runtime"
+        }
+        "osx-.*" {
+            $folder = $unixProjectName
+            $target = "$dotnetTargetName|$Runtime"
+        }
+        "win7-.*" {
+            $sdkToUse = $winDesktopSdk
+            $folder = $windowsProjectName
+            $target = "$dotnetTargetNameWin7|$Runtime"
+        }
+        "win-.*" {
+            $folder = $windowsProjectName
+            $target = "$dotnetTargetNameWin7|$Runtime"
+        }
+        "modules" {
+            $folder = "modules"
+            $actualRuntime = 'linux-x64'
+            $target = "$dotnetTargetName|$actualRuntime"
+        }
+        Default {
+            throw "Invalid runtime name: $Runtime"
         }
     }
+
+    Write-Verbose "Getting registrations for $folder - $actualRuntime ..." -Verbose
+    Get-PSDrive -Name $folder -ErrorAction Ignore | Remove-PSDrive
+    Push-Location $PSScriptRoot\..\src\$folder
+    try {
+        Start-NativeExecution -VerboseOutputOnError -sb {
+            dotnet restore --runtime $actualRuntime  "/property:SDKToUse=$sdkToUse"
+        }
+        $null = New-PADrive -Path $PSScriptRoot\..\src\$folder\obj\project.assets.json -Name $folder
+        try {
+            $targets = Get-ChildItem -Path "${folder}:/targets/$target" -ErrorAction Stop | Where-Object { $_.Type -eq 'package' }  | select-object -ExpandProperty name
+        } catch {
+            Get-ChildItem -Path "${folder}:/targets" | Out-String | Write-Verbose -Verbose
+            throw
+        }
+    } finally {
+        Pop-Location
+        Get-PSDrive -Name $folder -ErrorAction Ignore | Remove-PSDrive
+    }
+
+    $targets | ForEach-Object {
+        $target = $_
+        $parts = ($target -split '\|')
+        $name = $parts[0]
+        $targetVersion = $parts[1]
+        $publicVersion = Get-NuGetPublicVersion -Name $name -Version $targetVersion
+
+        # Add the registration to the cgmanifest if the TPN does not contain the name of the target OR
+        # the exisitng CG contains the registration, because if the existing CG contains the registration,
+        # that might be the only reason it is in the TPN.
+        if (!$RegistrationTable.ContainsKey($target)) {
+            $DevelopmentDependency = $false
+            if (!$existingRegistrationTable.ContainsKey($name) -or $existingRegistrationTable.$name.Component.Version() -ne $publicVersion) {
+                $registrationChanged = $true
+            }
+            if ($existingRegistrationTable.ContainsKey($name) -and $existingRegistrationTable.$name.DevelopmentDependency) {
+                $DevelopmentDependency = $true
+            }
+
+            $registration = New-NugetComponent -Name $name -Version $publicVersion -DevelopmentDependency:$DevelopmentDependency
+            $RegistrationTable.Add($target, $registration)
+        }
+    }
+
+    return $registrationChanged
 }
 
-if ($updateRegistrations.count -gt 0) {
-    #TODO delete existing and add new registration
-    throw "updating registrations is not implemented"
+$registrations = [System.Collections.Generic.Dictionary[string, Registration]]::new()
+$lastCount = 0
+$registrationChanged = $false
+foreach ($runtime in "win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win-arm", "linux-arm", "linux-arm64", "osx-arm64", "win-arm64", "win7-x86") {
+    $registrationChanged = (Get-CGRegistrations -Runtime $runtime -RegistrationTable $registrations) -or $registrationChanged
+    $count = $registrations.Count
+    $newCount = $count - $lastCount
+    $lastCount = $count
+    Write-Verbose "$newCount new registrations, $count total..." -Verbose
 }
 
-$newCount = $newRegistrations.count - $existingRegistrationTable.count
-@{Registrations = $newRegistrations } | ConvertTo-Json -depth 99 | Set-Content $PSScriptRoot\..\cgmanifest.json
-Write-Verbose "$newCount registrations added" -Verbose
+$newRegistrations = $registrations.Keys | Sort-Object | ForEach-Object { $registrations[$_] }
+
+$count = $newRegistrations.Count
+$newJson = @{Registrations = $newRegistrations } | ConvertTo-Json -depth 99
+if ($Fix -and $registrationChanged) {
+    $cgManifestPath = (Resolve-Path -Path $PSScriptRoot\..\cgmanifest.json).ProviderPath
+    $newJson | Set-Content $cgManifestPath
+    Set-GWVariable -Name CGMANIFEST_PATH -Value $cgManifestPath
+}
+
+if (!$Fix -and $registrationChanged) {
+    $temp = Get-GWTempPath
+
+    $tempJson = Join-Path -Path $temp -ChildPath "cgmanifest$((Get-Date).ToString('yyyMMddHHmm')).json"
+    $newJson | Set-Content $tempJson -Encoding utf8NoBOM
+    Set-GWVariable -Name CGMANIFEST_PATH -Value $tempJson
+    throw "cgmanifest is out of date.  run ./tools/findMissingNotices.ps1 -Fix.  Generated cgmanifest is here: $tempJson"
+}
+
+Write-Verbose "$count registrations created!" -Verbose
