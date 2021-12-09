@@ -1278,7 +1278,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Add the content headers
-            if (request.Content == null)
+            if (request.Method != HttpMethod.Get && request.Content == null)
             {
                 request.Content = new StringContent(string.Empty);
                 request.Content.Headers.Clear();
