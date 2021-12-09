@@ -4145,7 +4145,7 @@ namespace System.Management.Automation
             string valAsString = string.Empty;
             if (isValueAnIEnumerator)
             {
-                valAsString = typeof(IEnumerator).Name;
+                valAsString = nameof(IEnumerator).Name;
             }
             else
             {
