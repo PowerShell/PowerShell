@@ -1277,8 +1277,14 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // Add the content headers
-            if (request.Method != HttpMethod.Get && request.Content == null)
+            // If this is a Get request and there is no content, then don't fill in the content as empty content gets rejected by some web services
+            if (request.Method == HttpMethod.Get && request.Content == null)
+            {
+                return;
+            }
+
+            // For other methods like Put where empty content has meaning, we need to fill in the content
+            if (request.Content == null)
             {
                 request.Content = new StringContent(string.Empty);
                 request.Content.Headers.Clear();
