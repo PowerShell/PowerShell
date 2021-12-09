@@ -1159,7 +1159,7 @@ namespace Microsoft.PowerShell.Commands
         /// This will not work if the target process is the
         /// current process.
         /// </summary>
-        [Parameter(Mandatory = false)]
+        [Parameter()]
         [Alias("Recurse")]
         public SwitchParameter IncludeChildProcess { get; set; }
 
