@@ -1212,13 +1212,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet))
                 {
-                    Version CurrentStrictModeVersion = Context.EngineSessionState.CurrentScope.StrictModeVersion;
+                    Version currentStrictModeVersion = Context.EngineSessionState.CurrentScope.StrictModeVersion;
                     try
                     {
                         if (_strictmodeversion != null)
                         {
                             Context.EngineSessionState.CurrentScope.StrictModeVersion = _strictmodeversion;
                         }
+                        
                         if (_steppablePipeline != null)
                         {
                             _steppablePipeline.End();
@@ -1239,7 +1240,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (_strictmodeversion != null)
                         {
-                            Context.EngineSessionState.CurrentScope.StrictModeVersion = CurrentStrictModeVersion;
+                            Context.EngineSessionState.CurrentScope.StrictModeVersion = currentStrictModeVersion;
                         }
                     }
                 }
