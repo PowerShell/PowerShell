@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Utf7EncodingObsolete" xml:space="preserve">
+    <value>Encoding 'UTF-7' is obsolete, please use UTF-8.</value>
+  </data>
   <data name="UtilityFileExistsNoClobber" xml:space="preserve">
     <value>File {0} already exists and {1} was specified.</value>
   </data>

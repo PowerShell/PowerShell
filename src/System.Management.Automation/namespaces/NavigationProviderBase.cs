@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
-using System.Text;
 
 namespace System.Management.Automation.Provider
 {
@@ -651,7 +650,7 @@ namespace System.Management.Automation.Provider
 
             if (originalPathHadTrailingSlash)
             {
-                result = result + StringLiterals.DefaultPathSeparator;
+                result += StringLiterals.DefaultPathSeparator;
             }
 
             return result;
@@ -1037,8 +1036,7 @@ namespace System.Management.Automation.Provider
                         if (!allowNonExistingPaths)
                         {
                             PSArgumentException e =
-                                (PSArgumentException)
-                                PSTraceSource.NewArgumentException(
+                                (PSArgumentException)PSTraceSource.NewArgumentException(
                                     nameof(path),
                                     SessionStateStrings.NormalizeRelativePathOutsideBase,
                                     path,
@@ -1094,4 +1092,3 @@ namespace System.Management.Automation.Provider
 
     #endregion NavigationCmdletProvider
 }
-

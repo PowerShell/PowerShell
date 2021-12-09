@@ -42,7 +42,7 @@ namespace System.Management.Automation
     {
         #region Internal Access
 
-        private static string s_checkForCommandInCurrentDirectoryScript = @"
+        private static readonly string s_checkForCommandInCurrentDirectoryScript = @"
             [System.Diagnostics.DebuggerHidden()]
             param()
 
@@ -58,21 +58,21 @@ namespace System.Management.Automation
             $foundSuggestion
         ";
 
-        private static string s_createCommandExistsInCurrentDirectoryScript = @"
+        private static readonly string s_createCommandExistsInCurrentDirectoryScript = @"
             [System.Diagnostics.DebuggerHidden()]
             param([string] $formatString)
 
             $formatString -f $lastError.TargetObject,"".\$($lastError.TargetObject)""
         ";
 
-        private static string s_getFuzzyMatchedCommands = @"
+        private static readonly string s_getFuzzyMatchedCommands = @"
             [System.Diagnostics.DebuggerHidden()]
             param([string] $formatString)
 
             $formatString -f [string]::Join(', ', (Get-Command $lastError.TargetObject -UseFuzzyMatch | Select-Object -First 10 -Unique -ExpandProperty Name))
         ";
 
-        private static List<Hashtable> s_suggestions = InitializeSuggestions();
+        private static readonly List<Hashtable> s_suggestions = InitializeSuggestions();
 
         private static List<Hashtable> InitializeSuggestions()
         {
@@ -309,8 +309,7 @@ namespace System.Management.Automation
 
         internal static List<string> GetSuggestion(Runspace runspace)
         {
-            LocalRunspace localRunspace = runspace as LocalRunspace;
-            if (localRunspace == null) { return new List<string>(); }
+            if (!(runspace is LocalRunspace localRunspace)) { return new List<string>(); }
 
             // Get the last value of $?
             bool questionMarkVariableValue = localRunspace.ExecutionContext.QuestionMarkVariableValue;

@@ -24,6 +24,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         public delegate object InvokeDelegate(object[] args);
+
         internal object Invoke(object[] args)
         {
             Debug.Assert(args != null);

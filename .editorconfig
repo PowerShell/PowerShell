@@ -21,6 +21,7 @@ indent_size = 4
 
 # Shell scripts
 [*.sh]
+end_of_line = lf
 indent_size = 4
 
 # Xml project files
@@ -42,6 +43,9 @@ indent_size = 2
 # Xml config files
 [*.{props,targets,config,nuspec}]
 indent_size = 2
+
+[*.tsv]
+indent_style = tab
 
 # Dotnet code style settings:
 [*.cs]

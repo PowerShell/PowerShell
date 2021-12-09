@@ -180,7 +180,12 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
 Describe 'get-help file' -Tags "CI" {
     BeforeAll {
         try {
-            $tmpfile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+            if ($IsWindows) {
+                $tmpfile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+            }
+            else {
+                $tmpfile = Join-Path $env:HOME $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), "ps1"))
+            }
         } catch {
             return
         }
@@ -233,7 +238,12 @@ Describe 'get-help file' -Tags "CI" {
 Describe 'get-help other tests' -Tags "CI" {
     BeforeAll {
         try {
-            $tempFile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+            if ($IsWindows) {
+                $tempFile = [IO.Path]::ChangeExtension([IO.Path]::GetTempFileName(), "ps1")
+            }
+            else {
+                $tempFile = Join-Path $env:HOME $([IO.Path]::ChangeExtension([IO.Path]::GetRandomFileName(), "ps1"))
+            }
         } catch {
             return
         }
@@ -612,6 +622,33 @@ Describe 'get-help other tests' -Tags "CI" {
         It '$x.Parameters.parameter[0].globbing' { $x.Parameters.parameter[0].globbing | Should -BeExactly 'true' }
         It '$x.Parameters.parameter[1].defaultValue' { $x.Parameters.parameter[1].defaultValue | Should -BeExactly '42' }
         It '$x.Parameters.parameter[2].defaultValue' { $x.Parameters.parameter[2].defaultValue | Should -BeExactly 'parameter is mandatory' }
+    }
+
+    Context 'get-help helpFunc14' {
+        function helpFunc14
+        {
+            param(
+                [SupportsWildcards()]
+                $p1
+            )
+        }
+
+        $x = Get-Help helpFunc14
+
+        It '$x.Parameters.parameter[0].globbing' { $x.Parameters.parameter[0].globbing | Should -BeExactly 'true' }
+    }
+
+    Context 'get-help helpFunc15' {
+        function helpFunc15
+        {
+            param(
+                $p1
+            )
+        }
+
+        $x = Get-Help helpFunc15
+
+        It '$x.Parameters.parameter[0].globbing' { $x.Parameters.parameter[0].globbing | Should -BeExactly 'false' }
     }
 
     Context 'get-help -Examples prompt string should have trailing space' {

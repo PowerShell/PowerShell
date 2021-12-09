@@ -25,7 +25,6 @@ namespace Microsoft.WSMan.Management
     /// Invoke-WSManAction
     /// Connect-WSMan.
     /// </summary>
-
     [Cmdlet(VerbsCommon.New, "WSManSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096845")]
     public class NewWSManSessionOptionCommand : PSCmdlet
     {
@@ -61,7 +60,10 @@ namespace Microsoft.WSMan.Management
         [ValidateNotNullOrEmpty]
         public ProxyAuthentication ProxyAuthentication
         {
-            get { return proxyauthentication; }
+            get
+            {
+                return proxyauthentication;
+            }
 
             set
             {
@@ -79,7 +81,10 @@ namespace Microsoft.WSMan.Management
         [Credential]
         public PSCredential ProxyCredential
         {
-            get { return _proxycredential; }
+            get
+            {
+                return _proxycredential;
+            }
 
             set
             {
@@ -100,7 +105,10 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         public SwitchParameter SkipCACheck
         {
-            get { return skipcacheck; }
+            get
+            {
+                return skipcacheck;
+            }
 
             set
             {
@@ -119,7 +127,10 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         public SwitchParameter SkipCNCheck
         {
-            get { return skipcncheck; }
+            get
+            {
+                return skipcncheck;
+            }
 
             set
             {
@@ -138,7 +149,10 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         public SwitchParameter SkipRevocationCheck
         {
-            get { return skiprevocationcheck; }
+            get
+            {
+                return skiprevocationcheck;
+            }
 
             set
             {
@@ -156,10 +170,13 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter]
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SPN")]
-        [ValidateRange(0, Int32.MaxValue)]
-        public Int32 SPNPort
+        [ValidateRange(0, int.MaxValue)]
+        public int SPNPort
         {
-            get { return spnport; }
+            get
+            {
+                return spnport;
+            }
 
             set
             {
@@ -167,7 +184,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private Int32 spnport;
+        private int spnport;
 
         /// <summary>
         /// The following is the definition of the input parameter "Timeout".
@@ -175,10 +192,13 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter]
         [Alias("OperationTimeoutMSec")]
-        [ValidateRange(0, Int32.MaxValue)]
-        public Int32 OperationTimeout
+        [ValidateRange(0, int.MaxValue)]
+        public int OperationTimeout
         {
-            get { return operationtimeout; }
+            get
+            {
+                return operationtimeout;
+            }
 
             set
             {
@@ -186,7 +206,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private Int32 operationtimeout;
+        private int operationtimeout;
 
         /// <summary>
         /// The following is the definition of the input parameter "UnEncrypted".
@@ -197,7 +217,10 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         public SwitchParameter NoEncryption
         {
-            get { return noencryption; }
+            get
+            {
+                return noencryption;
+            }
 
             set
             {
@@ -216,7 +239,10 @@ namespace Microsoft.WSMan.Management
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
         public SwitchParameter UseUTF16
         {
-            get { return useutf16; }
+            get
+            {
+                return useutf16;
+            }
 
             set
             {

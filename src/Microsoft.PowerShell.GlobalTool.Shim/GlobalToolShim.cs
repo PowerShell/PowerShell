@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.GlobalTool.Shim
     /// <summary>
     /// Shim layer to chose the appropriate runtime for PowerShell DotNet Global tool.
     /// </summary>
-    public class EntryPoint
+    public static class EntryPoint
     {
         private const string PwshDllName = "pwsh.dll";
 

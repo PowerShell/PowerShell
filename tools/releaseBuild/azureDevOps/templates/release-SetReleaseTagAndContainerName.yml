@@ -1,0 +1,21 @@
+steps:
+- pwsh: |
+    $variable = 'releaseTag'
+    $branch = $ENV:BUILD_SOURCEBRANCH
+    if($branch -notmatch  '^.*((release/|rebuild/.*rebuild))')
+    {
+        throw "Branch name is not in release format: '$branch'"
+    }
+
+    $releaseTag = $Branch -replace '^.*((release|rebuild)/)'
+    $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
+    Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
+    Write-Host -Object "##$vstsCommandString"
+  displayName: Set Release Tag
+
+- pwsh: |
+    $azureVersion = '$(ReleaseTag)'.ToLowerInvariant() -replace '\.', '-'
+    $vstsCommandString = "vso[task.setvariable variable=AzureVersion]$azureVersion"
+    Write-Host "sending " + $vstsCommandString
+    Write-Host "##$vstsCommandString"
+  displayName: Set container name

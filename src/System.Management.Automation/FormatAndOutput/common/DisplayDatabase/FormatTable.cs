@@ -25,14 +25,15 @@ namespace System.Management.Automation.Runspaces
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "FormatTable")]
     public class FormatTableLoadException : RuntimeException
     {
-        private Collection<string> _errors;
+        private readonly Collection<string> _errors;
 
         #region Constructors
 
         /// <summary>
         /// This is the default constructor.
         /// </summary>
-        public FormatTableLoadException() : base()
+        public FormatTableLoadException()
+            : base()
         {
             SetDefaultErrorRecord();
         }
@@ -43,7 +44,8 @@ namespace System.Management.Automation.Runspaces
         /// <param name="message">
         /// A localized error message.
         /// </param>
-        public FormatTableLoadException(string message) : base(message)
+        public FormatTableLoadException(string message)
+            : base(message)
         {
             SetDefaultErrorRecord();
         }
@@ -70,8 +72,8 @@ namespace System.Management.Automation.Runspaces
         /// <param name="loadErrors">
         /// The errors that occured
         /// </param>
-        internal FormatTableLoadException(ConcurrentBag<string> loadErrors) :
-            base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))
+        internal FormatTableLoadException(ConcurrentBag<string> loadErrors)
+            : base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))
         {
             _errors = new Collection<string>(loadErrors.ToArray());
             SetDefaultErrorRecord();
@@ -109,7 +111,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -161,7 +162,7 @@ namespace System.Management.Automation.Runspaces
     {
         #region Private Data
 
-        private TypeInfoDataBaseManager _formatDBMgr;
+        private readonly TypeInfoDataBaseManager _formatDBMgr;
 
         #endregion
 

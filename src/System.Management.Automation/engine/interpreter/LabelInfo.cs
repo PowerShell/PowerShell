@@ -137,7 +137,7 @@ namespace System.Management.Automation.Interpreter
 
             // We didn't find an outward jump. Look for a jump across blocks
             LabelScopeInfo def = FirstDefinition();
-            LabelScopeInfo common = CommonNode(def, reference, b => b.Parent);
+            LabelScopeInfo common = CommonNode(def, reference, static b => b.Parent);
 
             // Validate that we aren't jumping across a finally
             for (LabelScopeInfo j = reference; j != common; j = j.Parent)

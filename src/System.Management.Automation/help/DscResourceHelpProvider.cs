@@ -279,7 +279,7 @@ namespace System.Management.Automation
             }
 
             if (e != null)
-                s_tracer.WriteLine("Error occured in DscResourceHelpProvider {0}", e.Message);
+                s_tracer.WriteLine("Error occurred in DscResourceHelpProvider {0}", e.Message);
 
             if (reportErrors && (e != null))
             {

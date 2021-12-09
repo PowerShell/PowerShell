@@ -213,7 +213,7 @@ namespace System.Management.Automation.Remoting
             return;
         }
 
-        private void SerializeUInt(uint data, Stream streamToWriteTo)
+        private static void SerializeUInt(uint data, Stream streamToWriteTo)
         {
             Dbg.Assert(streamToWriteTo != null, "stream to write to cannot be null");
 
@@ -241,7 +241,7 @@ namespace System.Management.Automation.Remoting
             return result;
         }
 
-        private void SerializeGuid(Guid guid, Stream streamToWriteTo)
+        private static void SerializeGuid(Guid guid, Stream streamToWriteTo)
         {
             Dbg.Assert(streamToWriteTo != null, "stream to write to cannot be null");
 
@@ -267,7 +267,7 @@ namespace System.Management.Automation.Remoting
         #endregion
     }
 
-    internal class RemoteDataObject : RemoteDataObject<object>
+    internal sealed class RemoteDataObject : RemoteDataObject<object>
     {
         #region Constructors / Factory
 

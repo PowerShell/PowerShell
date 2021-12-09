@@ -25,7 +25,6 @@ namespace System.Management.Automation.ComInterop
             TypeLib = typeLibDesc;
         }
 
-
         internal static ComTypeDesc FromITypeInfo(ITypeInfo typeInfo, TYPEATTR typeAttr)
         {
             switch (typeAttr.typekind)
@@ -119,6 +118,7 @@ namespace System.Management.Automation.ComInterop
             method = null;
             return false;
         }
+
         internal void AddPutRef(string name, ComMethodDesc method)
         {
             name = name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);

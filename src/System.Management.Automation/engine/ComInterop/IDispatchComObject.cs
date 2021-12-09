@@ -73,7 +73,6 @@ namespace System.Management.Automation.ComInterop
     /// just find and invoke the multicast delegate corresponding to the invoked
     /// dispid.
     ///  </summary>
-
     internal sealed class IDispatchComObject : ComObject, IDynamicMetaObjectProvider
     {
         private ComTypeDesc _comTypeDesc;
@@ -450,7 +449,7 @@ namespace System.Management.Automation.ComInterop
                     // adding new events and putting them on new interfaces while keeping the
                     // old interfaces around. This may cause name collisions which we are
                     // resolving by keeping only the first event with the same name.
-                    if (events.ContainsKey(name) == false)
+                    if (!events.ContainsKey(name))
                     {
                         ComEventDesc eventDesc = new ComEventDesc
                         {

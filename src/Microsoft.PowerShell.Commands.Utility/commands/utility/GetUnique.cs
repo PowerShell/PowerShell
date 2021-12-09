@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// This parameter specifies that objects should be converted to
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Commands
                         true); // case-sensitive
                 }
 
-                isUnique = (0 != _comparer.Compare(InputObject, _lastObject));
+                isUnique = (_comparer.Compare(InputObject, _lastObject) != 0);
             }
 
             if (isUnique)

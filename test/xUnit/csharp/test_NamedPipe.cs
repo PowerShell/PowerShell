@@ -31,7 +31,7 @@ namespace PSTests.Parallel
         [Fact]
         public void TestCustomPipeNameCreationTooLongOnNonWindows()
         {
-            var longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy";
+            const string longPipeName = "DoggoipsumwaggywagssmolborkingdoggowithalongsnootforpatsdoingmeafrightenporgoYapperporgolongwatershoobcloudsbigolpupperlengthboy";
 
             if (!Platform.IsWindows)
             {

@@ -3,8 +3,6 @@
 
 using System.Management.Automation;
 
-using Dbg = System.Management.Automation;
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -101,4 +99,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-

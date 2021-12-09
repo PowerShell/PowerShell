@@ -251,7 +251,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        private static char[] s_charactersInvalidInDriveName = new char[] { ':', '/', '\\', '.', '~' };
+        private static readonly char[] s_charactersInvalidInDriveName = new char[] { ':', '/', '\\', '.', '~' };
 
         /// <summary>
         /// Tries to resolve the drive root as an MSH path. If it successfully resolves
@@ -1204,8 +1204,7 @@ namespace System.Management.Automation
             else
             {
                 PSInvalidOperationException e =
-                    (PSInvalidOperationException)
-                    PSTraceSource.NewInvalidOperationException(
+                    (PSInvalidOperationException)PSTraceSource.NewInvalidOperationException(
                         SessionStateStrings.DriveRemovalPreventedByProvider,
                         drive.Name,
                         drive.Provider);

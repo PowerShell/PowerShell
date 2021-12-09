@@ -248,12 +248,15 @@ $PID
 
     It 'Verifies logging level filtering works' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId -LogLevel Warning
-        & $powershell -NoProfile -SettingsFile $configFile -Command '$env:PSModulePath | out-null'
+        $result = & $powershell -NoProfile -SettingsFile $configFile -Command '$PID'
+        $result | Should -Not -BeNullOrEmpty
 
         # by default, PowerShell only logs informational events on startup. With Level = Warning, nothing should
-        # have been logged.
-        $items = Get-PSSysLog -Path $SyslogFile -Id $logId -Tail 100 -TotalCount 1
-        $items | Should -Be $null
+        # have been logged. We'll collect all the syslog entries and look for $PID (there should be none).
+        $items = Get-PSSysLog -Path $SyslogFile
+        @($items).Count | Should -BeGreaterThan 0
+        $logs = $items | Where-Object { $_.ProcessId -eq $result }
+        $logs | Should -BeNullOrEmpty
     }
 }
 

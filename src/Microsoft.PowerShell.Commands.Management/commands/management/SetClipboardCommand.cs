@@ -17,9 +17,10 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Clipboard", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2109826")]
     [Alias("scb")]
+    [OutputType(typeof(string))]
     public class SetClipboardCommand : PSCmdlet
     {
-        private List<string> _contentList = new List<string>();
+        private readonly List<string> _contentList = new();
 
         /// <summary>
         /// Property that sets clipboard content.
@@ -38,6 +39,12 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Append { get; set; }
 
         /// <summary>
+        /// Gets or sets if the values sent down the pipeline.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter PassThru { get; set; }
+
+        /// <summary>
         /// This method implements the BeginProcessing method for Set-Clipboard command.
         /// </summary>
         protected override void BeginProcessing()
@@ -53,6 +60,11 @@ namespace Microsoft.PowerShell.Commands
             if (Value != null)
             {
                 _contentList.AddRange(Value);
+
+                if (PassThru)
+                {
+                    WriteObject(Value);
+                }
             }
         }
 
@@ -84,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            StringBuilder content = new StringBuilder();
+            StringBuilder content = new();
             if (append)
             {
                 content.AppendLine(Clipboard.GetText());
@@ -102,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
                 if (verboseString.Length >= 20)
                 {
                     verboseString = verboseString.Substring(0, 20);
-                    verboseString = verboseString + " ...";
+                    verboseString += " ...";
                 }
             }
 

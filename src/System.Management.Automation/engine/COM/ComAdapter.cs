@@ -32,7 +32,7 @@ namespace System.Management.Automation
             StringBuilder firstType = new StringBuilder("System.__ComObject");
             firstType.Append("#{");
             firstType.Append(clsid);
-            firstType.Append("}");
+            firstType.Append('}');
             return firstType.ToString();
         }
 

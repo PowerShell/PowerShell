@@ -208,7 +208,7 @@ namespace System.Management.Automation.Runspaces
         public override string ToString()
         {
             // PSSession is a PowerShell type name and so should not be localized.
-            string formatString = "[PSSession]{0}";
+            const string formatString = "[PSSession]{0}";
             return StringUtil.Format(formatString, Name);
         }
 
@@ -347,9 +347,9 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="shell">Shell configuration name.</param>
         /// <returns>Display shell name.</returns>
-        private string GetDisplayShellName(string shell)
+        private static string GetDisplayShellName(string shell)
         {
-            string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
+            const string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
             int index = shell.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);
 
             return (index == 0) ? shell.Substring(shellPrefix.Length) : shell;

@@ -4,7 +4,7 @@
 param(
     [Parameter(ParameterSetName='packageSigned')]
     [Parameter(ParameterSetName='Build')]
-    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
     [string]$ReleaseTag,
 
     # full paths to files to add to container to run the build

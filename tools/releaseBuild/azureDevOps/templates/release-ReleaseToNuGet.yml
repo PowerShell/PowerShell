@@ -1,0 +1,47 @@
+steps:
+- task: DownloadPipelineArtifact@2
+  inputs:
+    source: specific
+    project: PowerShellCore
+    pipeline: '696'
+    preferTriggeringPipeline: true
+    runVersion: latestFromBranch
+    runBranch: '$(Build.SourceBranch)'
+    artifact: finalResults
+    patterns: '**/*.nupkg'
+    path: '$(Pipeline.Workspace)/releasePipeline/finalResults'
+
+- task: DownloadPipelineArtifact@2
+  inputs:
+    source: specific
+    project: PowerShellCore
+    pipeline: '696'
+    preferTriggeringPipeline: true
+    runVersion: latestFromBranch
+    runBranch: '$(Build.SourceBranch)'
+    artifact: metadata
+    path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+
+- pwsh: |
+    #Exclude all global tool packages. Their names start with 'PowerShell.'
+    $null = New-Item -ItemType Directory -Path "$(Pipeline.Workspace)/release"
+    Copy-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/*.nupkg" -Destination "$(Pipeline.Workspace)/release" -Exclude "PowerShell.*.nupkg" -Force -Verbose
+
+    $releaseVersion = Get-Content "$ENV:PIPELINE_WORKSPACE/releasePipeline/metadata/release.json" | ConvertFrom-Json | Select-Object -ExpandProperty 'ReleaseVersion'
+    $globalToolPath = "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/PowerShell.$releaseVersion.nupkg"
+
+    if ($releaseVersion -notlike '*-*') {
+        # Copy the global tool package for stable releases
+        Copy-Item $globalToolPath -Destination "$(Pipeline.Workspace)/release"
+    }
+
+    Get-ChildItem "$(Pipeline.Workspace)/release" -recurse
+  displayName: Download and capture nupkgs
+
+- task: NuGetCommand@2
+  displayName: 'NuGet push'
+  inputs:
+    command: push
+    packagesToPush: '$(Pipeline.Workspace)/release/*.nupkg'
+    nuGetFeedType: external
+    publishFeedCredentials: PowerShellNuGetOrgPush

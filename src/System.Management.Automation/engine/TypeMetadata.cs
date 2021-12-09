@@ -265,23 +265,23 @@ namespace System.Management.Automation
             get
             {
                 ParameterFlags flags = 0;
-                if (IsMandatory) { flags = flags | ParameterFlags.Mandatory; }
+                if (IsMandatory) { flags |= ParameterFlags.Mandatory; }
 
-                if (ValueFromPipeline) { flags = flags | ParameterFlags.ValueFromPipeline; }
+                if (ValueFromPipeline) { flags |= ParameterFlags.ValueFromPipeline; }
 
-                if (ValueFromPipelineByPropertyName) { flags = flags | ParameterFlags.ValueFromPipelineByPropertyName; }
+                if (ValueFromPipelineByPropertyName) { flags |= ParameterFlags.ValueFromPipelineByPropertyName; }
 
-                if (ValueFromRemainingArguments) { flags = flags | ParameterFlags.ValueFromRemainingArguments; }
+                if (ValueFromRemainingArguments) { flags |= ParameterFlags.ValueFromRemainingArguments; }
 
                 return flags;
             }
 
             set
             {
-                this.IsMandatory = (ParameterFlags.Mandatory == (value & ParameterFlags.Mandatory));
-                this.ValueFromPipeline = (ParameterFlags.ValueFromPipeline == (value & ParameterFlags.ValueFromPipeline));
-                this.ValueFromPipelineByPropertyName = (ParameterFlags.ValueFromPipelineByPropertyName == (value & ParameterFlags.ValueFromPipelineByPropertyName));
-                this.ValueFromRemainingArguments = (ParameterFlags.ValueFromRemainingArguments == (value & ParameterFlags.ValueFromRemainingArguments));
+                this.IsMandatory = ((value & ParameterFlags.Mandatory) == ParameterFlags.Mandatory);
+                this.ValueFromPipeline = ((value & ParameterFlags.ValueFromPipeline) == ParameterFlags.ValueFromPipeline);
+                this.ValueFromPipelineByPropertyName = ((value & ParameterFlags.ValueFromPipelineByPropertyName) == ParameterFlags.ValueFromPipelineByPropertyName);
+                this.ValueFromRemainingArguments = ((value & ParameterFlags.ValueFromRemainingArguments) == ParameterFlags.ValueFromRemainingArguments);
             }
         }
 
@@ -895,7 +895,7 @@ namespace System.Management.Automation
         /// <returns>
         /// Attribute's proxy string.
         /// </returns>
-        private string GetProxyAttributeData(Attribute attrib, string prefix)
+        private static string GetProxyAttributeData(Attribute attrib, string prefix)
         {
             string result;
 
@@ -978,7 +978,7 @@ namespace System.Management.Automation
                 string or = string.Empty;
                 string[] regexOptionEnumValues = Enum.GetNames(typeof(System.Text.RegularExpressions.RegexOptions));
 
-                foreach(string regexOption in regexOptionEnumValues)
+                foreach (string regexOption in regexOptionEnumValues)
                 {
                     System.Text.RegularExpressions.RegexOptions option = (System.Text.RegularExpressions.RegexOptions) Enum.Parse(
                         typeof(System.Text.RegularExpressions.RegexOptions),
@@ -1274,7 +1274,7 @@ namespace System.Management.Automation
         /// This member is null in all cases except when constructed with using reflection
         /// against the Type.
         /// </summary>
-        private Type _type;
+        private readonly Type _type;
 
         /// <summary>
         /// The flags used when reflecting against the object to create the metadata.
@@ -1367,7 +1367,7 @@ namespace System.Management.Automation
             }
         }
 
-        private void CheckForReservedParameter(string name)
+        private static void CheckForReservedParameter(string name)
         {
             if (name.Equals("SelectProperty", StringComparison.OrdinalIgnoreCase)
                 ||
@@ -1544,10 +1544,9 @@ namespace System.Management.Automation
         /// The cache of the type metadata. The key for the cache is the Type.FullName.
         /// Note, this is a case-sensitive dictionary because Type names are case sensitive.
         /// </summary>
-        private static System.Collections.Concurrent.ConcurrentDictionary<string, InternalParameterMetadata> s_parameterMetadataCache =
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, InternalParameterMetadata> s_parameterMetadataCache =
             new System.Collections.Concurrent.ConcurrentDictionary<string, InternalParameterMetadata>(StringComparer.Ordinal);
 
         #endregion Metadata cache
     }
 }
-

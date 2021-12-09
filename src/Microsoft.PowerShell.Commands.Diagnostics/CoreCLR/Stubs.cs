@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 #if CORECLR
-using System.ComponentModel;
 
 namespace System.Diagnostics
 {
@@ -29,8 +28,8 @@ namespace System.Diagnostics
     }
 
     /// <summary>
-    /// Specifies the formula used to calculate the <see cref="M:System.Diagnostics.PerformanceCounter.NextValue" />
-    /// method for a <see cref="T:System.Diagnostics.PerformanceCounter" /> instance.
+    /// Specifies the formula used to calculate the <see cref="M:System.Diagnostics.PerformanceCounter.NextValue"/>
+    /// method for a <see cref="T:System.Diagnostics.PerformanceCounter"/> instance.
     /// </summary>
     /// <filterpriority>2</filterpriority>
     public enum PerformanceCounterType
@@ -246,7 +245,7 @@ namespace System.Diagnostics
         /// A difference counter that shows the change in the measured attribute
         /// between the two most recent sample intervals. It is the same as the
         /// CounterDelta32 counter type except that is uses larger fields to
-        /// accomodate larger values.</summary>
+        /// accommodate larger values.</summary>
         CounterDelta64 = 4195584
     }
 }

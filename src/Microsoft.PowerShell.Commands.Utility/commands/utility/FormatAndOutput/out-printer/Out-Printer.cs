@@ -14,7 +14,8 @@ namespace Microsoft.PowerShell.Commands
     public class OutPrinterCommand : FrontEndCommandBase
     {
         /// <summary>
-        /// Set inner command.
+        /// Initializes a new instance of the <see cref="OutPrinterCommand"/> class
+        /// and sets the inner command.
         /// </summary>
         public OutPrinterCommand()
         {
@@ -55,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private LineOutput InstantiateLineOutputInterface()
         {
-            PrinterLineOutput printOutput = new PrinterLineOutput(_printerName);
+            PrinterLineOutput printOutput = new(_printerName);
             return (LineOutput)printOutput;
         }
     }

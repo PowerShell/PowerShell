@@ -11,11 +11,13 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 using Microsoft.PowerShell;
+using System.Management.Automation.Subsystem;
+using System.Management.Automation.Subsystem.DSC;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 
 namespace System.Management.Automation.Language
 {
-    internal class SemanticChecks : AstVisitor2, IAstPostVisitHandler
+    internal sealed class SemanticChecks : AstVisitor2, IAstPostVisitHandler
     {
         private readonly Parser _parser;
 
@@ -62,12 +64,12 @@ namespace System.Management.Automation.Language
             return fnMemberAst != null ? fnMemberAst.IsStatic : ((PropertyMemberAst)currentMember).IsStatic;
         }
 
-        private bool IsValidAttributeArgument(Ast ast, IsConstantValueVisitor visitor)
+        private static bool IsValidAttributeArgument(Ast ast, IsConstantValueVisitor visitor)
         {
             return (bool)ast.Accept(visitor);
         }
 
-        private (string id, string msg) GetNonConstantAttributeArgErrorExpr(IsConstantValueVisitor visitor)
+        private static (string id, string msg) GetNonConstantAttributeArgErrorExpr(IsConstantValueVisitor visitor)
         {
             if (visitor.CheckingClassAttributeArguments)
             {
@@ -100,7 +102,7 @@ namespace System.Management.Automation.Language
                     }
 
                     var voidConstraint =
-                        parameter.Attributes.OfType<TypeConstraintAst>().FirstOrDefault(t => typeof(void) == t.TypeName.GetReflectionType());
+                        parameter.Attributes.OfType<TypeConstraintAst>().FirstOrDefault(static t => typeof(void) == t.TypeName.GetReflectionType());
 
                     if (voidConstraint != null)
                     {
@@ -197,7 +199,8 @@ namespace System.Management.Automation.Language
                         var members = attributeType.GetMember(name, MemberTypes.Field | MemberTypes.Property,
                             BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance |
                             BindingFlags.FlattenHierarchy);
-                        if (members.Length != 1 || !(members[0] is PropertyInfo || members[0] is FieldInfo))
+                        if (members.Length != 1
+                            || (members[0] is not PropertyInfo && members[0] is not FieldInfo))
                         {
                             _parser.ReportError(namedArg.Extent,
                                 nameof(ParserStrings.PropertyNotFoundForAttribute),
@@ -348,7 +351,7 @@ namespace System.Management.Automation.Language
         {
             int count = 0;
             ITypeName type = typeName;
-            while ((type is TypeName) == false)
+            while (type is not TypeName)
             {
                 count++;
                 if (count > 200)
@@ -403,10 +406,11 @@ namespace System.Management.Automation.Language
                     ParserStrings.ParamBlockNotAllowedInMethod);
             }
 
-            if (body.BeginBlock != null ||
-                body.ProcessBlock != null ||
-                body.DynamicParamBlock != null ||
-                !body.EndBlock.Unnamed)
+            if (body.BeginBlock != null
+                || body.ProcessBlock != null
+                || body.CleanBlock != null
+                || body.DynamicParamBlock != null
+                || !body.EndBlock.Unnamed)
             {
                 _parser.ReportError(Parser.ExtentFromFirstOf(body.DynamicParamBlock, body.BeginBlock, body.ProcessBlock, body.EndBlock),
                     nameof(ParserStrings.NamedBlockNotAllowedInMethod),
@@ -669,7 +673,7 @@ namespace System.Management.Automation.Language
             }
 
             var str = expr as StringConstantExpressionAst;
-            return str != null ? str.Value : null;
+            return str?.Value;
         }
 
         public override AstVisitAction VisitBreakStatement(BreakStatementAst breakStatementAst)
@@ -692,8 +696,7 @@ namespace System.Management.Automation.Language
 
         private void CheckForReturnStatement(ReturnStatementAst ast)
         {
-            var functionMemberAst = _memberScopeStack.Peek() as FunctionMemberAst;
-            if (functionMemberAst == null)
+            if (!(_memberScopeStack.Peek() is FunctionMemberAst functionMemberAst))
             {
                 return;
             }
@@ -1026,7 +1029,9 @@ namespace System.Management.Automation.Language
             }
 
             var memberExpr = exprAst as MemberExpressionAst;
-            if (memberExpr != null && !(memberExpr is InvokeMemberExpressionAst) && (memberExpr.Member is StringConstantExpressionAst))
+            if (memberExpr != null
+                && memberExpr is not InvokeMemberExpressionAst
+                && memberExpr.Member is StringConstantExpressionAst)
             {
                 return CheckUsingExpression(memberExpr.Expression);
             }
@@ -1047,7 +1052,9 @@ namespace System.Management.Automation.Language
 
         public override AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst)
         {
-            if (variableExpressionAst.Splatted && !(variableExpressionAst.Parent is CommandAst) && !(variableExpressionAst.Parent is UsingExpressionAst))
+            if (variableExpressionAst.Splatted
+                && variableExpressionAst.Parent is not CommandAst
+                && variableExpressionAst.Parent is not UsingExpressionAst)
             {
                 if (variableExpressionAst.Parent is ArrayLiteralAst && variableExpressionAst.Parent.Parent is CommandAst)
                 {
@@ -1179,7 +1186,7 @@ namespace System.Management.Automation.Language
             return AstVisitAction.Continue;
         }
 
-        private void CheckMemberAccess(MemberExpressionAst ast)
+        private static void CheckMemberAccess(MemberExpressionAst ast)
         {
             // If the member access is not constant, it may be considered suspicious
             if (ast.Member is not ConstantExpressionAst)
@@ -1197,7 +1204,7 @@ namespace System.Management.Automation.Language
         }
 
         // Mark all of the parents of an AST as suspicious
-        private void MarkAstParentsAsSuspicious(Ast ast)
+        private static void MarkAstParentsAsSuspicious(Ast ast)
         {
             Ast targetAst = ast;
             var parent = ast;
@@ -1214,7 +1221,9 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitScriptBlock(ScriptBlockAst scriptBlockAst)
         {
             _scopeStack.Push(scriptBlockAst);
-            if (scriptBlockAst.Parent == null || scriptBlockAst.Parent is ScriptBlockExpressionAst || !(scriptBlockAst.Parent.Parent is FunctionMemberAst))
+            if (scriptBlockAst.Parent == null
+                || scriptBlockAst.Parent is ScriptBlockExpressionAst
+                || scriptBlockAst.Parent.Parent is not FunctionMemberAst)
             {
                 _memberScopeStack.Push(null);
             }
@@ -1380,7 +1389,7 @@ namespace System.Management.Automation.Language
                     else if (!keyword.Properties.ContainsKey(propName.Value))
                     {
                         IOrderedEnumerable<string> tableKeys = keyword.Properties.Keys
-                            .OrderBy(key => key, StringComparer.OrdinalIgnoreCase);
+                            .OrderBy(static key => key, StringComparer.OrdinalIgnoreCase);
 
                         _parser.ReportError(propName.Extent,
                             nameof(ParserStrings.InvalidInstanceProperty),
@@ -1399,7 +1408,10 @@ namespace System.Management.Automation.Language
             {
                 StringConstantExpressionAst nameAst = dynamicKeywordStatementAst.CommandElements[0] as StringConstantExpressionAst;
                 Diagnostics.Assert(nameAst != null, "nameAst should never be null");
-                if (!DscClassCache.SystemResourceNames.Contains(nameAst.Extent.Text.Trim()))
+                var extentText = nameAst.Extent.Text.Trim();
+                ICrossPlatformDsc dscSubsystem = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
+                var extentTextIsASystemResourceName = (dscSubsystem != null) ? dscSubsystem.IsSystemResourceName(extentText) : DscClassCache.SystemResourceNames.Contains(extentText);
+                if (!extentTextIsASystemResourceName)
                 {
                     if (configAst.ConfigurationType == ConfigurationType.Meta && !dynamicKeywordStatementAst.Keyword.IsMetaDSCResource())
                     {
@@ -1446,7 +1458,9 @@ namespace System.Management.Automation.Language
             var scriptBlockAst = ast as ScriptBlockAst;
             if (scriptBlockAst != null)
             {
-                if (scriptBlockAst.Parent == null || scriptBlockAst.Parent is ScriptBlockExpressionAst || !(scriptBlockAst.Parent.Parent is FunctionMemberAst))
+                if (scriptBlockAst.Parent == null
+                    || scriptBlockAst.Parent is ScriptBlockExpressionAst
+                    || scriptBlockAst.Parent.Parent is not FunctionMemberAst)
                 {
                     _memberScopeStack.Pop();
                 }
@@ -1583,8 +1597,7 @@ namespace System.Management.Automation.Language
 
             foreach (var baseType in typeDefinitionAst.BaseTypes)
             {
-                var baseTypeName = baseType.TypeName as TypeName;
-                if (baseTypeName == null)
+                if (!(baseType.TypeName is TypeName baseTypeName))
                 {
                     continue;
                 }
@@ -2271,7 +2284,7 @@ namespace System.Management.Automation.Language
                     else
                         argBuilder.Append(", ");
 
-                    argBuilder.Append("$");
+                    argBuilder.Append('$');
                     argBuilder.Append(varName);
                 }
 

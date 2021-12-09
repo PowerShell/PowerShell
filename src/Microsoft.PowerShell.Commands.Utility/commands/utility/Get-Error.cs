@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             index = 0;
-            bool addErrorIdentifier = errorRecords.Count > 1 ? true : false;
+            bool addErrorIdentifier = errorRecords.Count > 1;
 
             foreach (object errorRecord in errorRecords)
             {
