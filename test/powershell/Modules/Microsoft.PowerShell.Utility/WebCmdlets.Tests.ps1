@@ -2126,7 +2126,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         # Validate response
         $result.Error | Should -BeNullOrEmpty
-        $result.Output.headers.'Content-Length' | Should -BeNullOrEmpty
+        $result.Output.headers.'Content-Length' | Should -Be 0
     }
 
     It "Invoke-RestMethod returns headers dictionary" {
