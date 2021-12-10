@@ -199,12 +199,9 @@ Describe "Measure-Object" -Tags "CI" {
         It "Should not throw an invalid property error when not in StrictMode" {
             { Set-StrictMode -off; Get-Item $testEmptyFolder | Measure-Object $propertyName -ErrorAction Stop -sum } | Should -Not -Throw
         }
-    
+
         It "Should throw an invalid property error when in StrictMode" {
-            Set-StrictMode -version 3.0
-            Get-Item $testEmptyFolder | Measure-Object -ErrorVariable Err $propertyName -sum -ErrorAction SilentlyContinue
-            $Err.count | Should -Be 1
-            $Err[0].FullyQualifiedErrorId | Should -BeExactly "GenericMeasurePropertyNotFound,Microsoft.PowerShell.Commands.MeasureObjectCommand"
+            { Set-StrictMode -version 3.0; Get-Item $testEmptyFolder | Measure-Object $propertyName -ErrorAction Stop -sum } | Should -Throw -ErrorId 'GenericMeasurePropertyNotFound,Microsoft.PowerShell.Commands.MeasureObjectCommand'
         }
 
         AfterAll {

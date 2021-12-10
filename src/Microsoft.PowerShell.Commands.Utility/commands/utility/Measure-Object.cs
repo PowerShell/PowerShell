@@ -820,11 +820,12 @@ namespace Microsoft.PowerShell.Commands
                 Statistics stat = _statistics[propertyName];
                 if (stat.count == 0 && Property != null)
                 {
-                    // Why are there two different ids for this error?
-                    string errorId = (IsMeasuringGeneric) ? "GenericMeasurePropertyNotFound" : "TextMeasurePropertyNotFound";
-                    if (Context.EngineSessionState.CurrentScope.StrictModeVersion?.Major != 0) {
+                    if (Context.EngineSessionState.CurrentScope.StrictModeVersion?.Major != 0) 
+                    {
+                        string errorId = (IsMeasuringGeneric) ? "GenericMeasurePropertyNotFound" : "TextMeasurePropertyNotFound";
                         WritePropertyNotFoundError(propertyName, errorId);
                     }
+                    
                     continue;
                 }
 
