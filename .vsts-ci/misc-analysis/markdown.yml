@@ -38,6 +38,10 @@ jobs:
       curl -o- --progress-bar -L https://yarnpkg.com/install.sh | bash
     displayName: Bootstrap Yarn
 
+  - bash: |
+      yarn config  set global-folder "$(YARN_GLOBAL_CACHE_FOLDER)"
+    displayName: Set Yarn global cache folder
+
   - ${{ if not(contains(variables['SYSTEM.COLLECTIONURI'],'mscodehub')) }}:
     - pwsh: |
         Import-module ./build.psm1
