@@ -792,9 +792,9 @@ namespace Microsoft.PowerShell.Commands
         {
             Diagnostics.Assert(Property != null, "no property and no InputObject should have been addressed");
             ErrorRecord errorRecord = new(
-                    PSTraceSource.NewArgumentException("Property"),
+                    PSTraceSource.NewArgumentException(propertyName),
                     errorId,
-                    ErrorCategory.InvalidArgument,
+                    ErrorCategory.ObjectNotFound,
                     null);
             errorRecord.ErrorDetails = new ErrorDetails(
                 this, "MeasureObjectStrings", "PropertyNotFound", propertyName);
@@ -822,7 +822,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Why are there two different ids for this error?
                     string errorId = (IsMeasuringGeneric) ? "GenericMeasurePropertyNotFound" : "TextMeasurePropertyNotFound";
-                    WritePropertyNotFoundError(propertyName, errorId);
+                    if (Context.EngineSessionState.CurrentScope.StrictModeVersion?.Major != 0) {
+                        WritePropertyNotFoundError(propertyName, errorId);
+                    }
                     continue;
                 }
 
