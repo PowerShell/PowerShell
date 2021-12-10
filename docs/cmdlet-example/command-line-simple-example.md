@@ -226,6 +226,6 @@ and the [.NET Standard YouTube channel][net-std-chan].
 [net-std-chan]:  https://www.youtube.com/playlist?list=PLRAdsfhKI4OWx321A_pr-7HhRNk7wOLLY
 [pscore-os]:     https://github.com/powershell/powershell#get-powershell
 [readme]:        ../../README.md
-[linux-install]: https://docs.microsoft.com/dotnet/core/install/linux
+[linux-install]: https://www.microsoft.com/net/core#linuxubuntu
 [ps-stdlib]:     https://www.nuget.org/packages/PowerShellStandard.Library/
 [wsl]:           https://msdn.microsoft.com/commandline/wsl/about

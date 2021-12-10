@@ -504,6 +504,16 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "runtime.osx-arm64.runtime.native.System.IO.Ports",
           "Version": "6.0.0"
         }
@@ -516,16 +526,6 @@
         "Nuget": {
           "Name": "runtime.osx-x64.runtime.native.System.IO.Ports",
           "Version": "6.0.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
         }
       },
       "DevelopmentDependency": false
@@ -604,6 +604,56 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "runtime.win.System.Diagnostics.Debug",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.win.System.Runtime.Extensions",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.win7.System.Private.Uri",
+          "Version": "4.3.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.win7-x64.Microsoft.NETCore.Windows.ApiSets",
+          "Version": "1.0.1"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.win7-x86.Microsoft.NETCore.Windows.ApiSets",
+          "Version": "1.0.1"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni",
           "Version": "4.4.0"
         }
@@ -634,58 +684,8 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "runtime.win.System.Diagnostics.Debug",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win.System.Runtime.Extensions",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win7-x64.Microsoft.NETCore.Windows.ApiSets",
-          "Version": "1.0.1"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win7-x86.Microsoft.NETCore.Windows.ApiSets",
-          "Version": "1.0.1"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win7.System.Private.Uri",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "StyleCop.Analyzers.Unstable",
-          "Version": "1.2.0.376"
+          "Version": "1.2.0.354"
         }
       },
       "DevelopmentDependency": true

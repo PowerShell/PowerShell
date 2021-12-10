@@ -48,7 +48,7 @@ It removes the previously installed version of .NET CLI and installs the version
 If you have any problems installing `dotnet`, please see their [documentation][cli-docs].
 
 [dotnet-cli]: https://docs.microsoft.com/dotnet/core/tools/
-[cli-docs]: https://docs.microsoft.com/dotnet/core/install/windows
+[cli-docs]: https://www.microsoft.com/net/core#windowscmd
 
 ## Build using our module
 
