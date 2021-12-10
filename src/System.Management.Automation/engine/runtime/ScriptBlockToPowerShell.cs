@@ -334,7 +334,6 @@ namespace System.Management.Automation
             // Foreach-Object -Parallel call scope. This will filter the using variable map to variables 
             // only within the current (outer) Foreach-Object -Parallel call scope.
             var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(scriptBlock.Ast).ToList();
-            bool astIncludesForEachCommand = CheckScriptBlockForForeachCommand(scriptBlock);
             UsingExpressionAst usingAst = null;
             var usingValueMap = new Dictionary<string, object>(usingAsts.Count);
             Version oldStrictVersion = null;
@@ -349,9 +348,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < usingAsts.Count; ++i)
                 {
                     usingAst = (UsingExpressionAst)usingAsts[i];
-                    if (IsInForeachParallelCallingScope(
-                        usingAst: usingAst,
-                        astIncludesForEachCommand: astIncludesForEachCommand))
+                    if (IsInForeachParallelCallingScope(scriptBlock.Ast, usingAst))
                     {
                         var value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
                         string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
@@ -396,48 +393,31 @@ namespace System.Management.Automation
 
         private static bool FindForEachInCommand(CommandAst commandAst)
         {
-            foreach (var commandElement in commandAst.CommandElements)
+            // Command name is always the first element in the CommandAst.
+            //  e.g., 'foreach -parallel {}'
+            var commandNameElement = (commandAst.CommandElements.Count > 0) ? commandAst.CommandElements[0] : null;
+            if (commandNameElement is StringConstantExpressionAst commandName)
             {
-                if (commandElement is StringConstantExpressionAst commandName)
+                bool found = false;
+                foreach (var foreachName in forEachNames)
                 {
-                    bool found = false;
-                    foreach (var foreachName in forEachNames)
+                    if (commandName.Value.Equals(foreachName, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (commandName.Value.Equals(foreachName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            found = true;
-                            break;
-                        }
+                        found = true;
+                        break;
                     }
+                }
 
-                    if (found)
+                if (found)
+                {
+                    // Verify this is foreach-object with parallel parameter set.
+                    var bindingResult = StaticParameterBinder.BindCommand(commandAst);
+                    if (bindingResult.BoundParameters.ContainsKey("Parallel"))
                     {
-                        // Verify this is foreach-object with parallel parameter set.
-                        var bindingResult = StaticParameterBinder.BindCommand(commandAst);
-                        if (bindingResult.BoundParameters.ContainsKey("Parallel"))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
-
-            return false;
-        }
-
-        private static bool CheckScriptBlockForForeachCommand(ScriptBlock scriptBlock)
-        {
-            var currentAst = scriptBlock.Ast;
-            while (currentAst is not null)
-            {
-                if (currentAst is CommandAst commandAst &&
-                    FindForEachInCommand(commandAst))
-                {
-                    return true;
-                }
-
-                currentAst = currentAst.Parent;
-            } 
 
             return false;
         }
@@ -446,18 +426,15 @@ namespace System.Management.Automation
         /// Walks the using Ast to verify it is used within a foreach-object -parallel command
         /// and parameter set scope, and not from within a nested foreach-object -parallel call.
         /// </summary>
+        /// <param name="scriptblockAst">Scriptblock Ast containing this using Ast</param>
         /// <param name="usingAst">Using Ast to check.</param>
-        /// <param name="astIncludesForEachCommand">
-        /// True when the provided ast includes a parent containing the originating ForEach-Object command
-        /// e.g.,
-        ///     '1 | ForEach-Object -Parallel { }'          - script block ast includes parent with initial 'ForEach-Object'
-        ///     '1 | ForEach-Object -Parallel $scriptBlock' - script block ast *does not* include parent with initial 'ForEach-Object'
-        /// </param>
         /// <returns>True if using expression is in current call scope.</returns>
         private static bool IsInForeachParallelCallingScope(
-            UsingExpressionAst usingAst,
-            bool astIncludesForEachCommand)
+            Ast scriptblockAst,
+            UsingExpressionAst usingAst)
         {
+            Diagnostics.Assert(usingAst != null, "usingAst argument cannot be null.");
+
             /*
                 Example:
                 $Test1 = "Hello"
@@ -470,31 +447,23 @@ namespace System.Management.Automation
                    }
                 }
             */
-            Diagnostics.Assert(usingAst != null, "usingAst argument cannot be null.");
 
             // Search up the parent Ast chain for 'Foreach-Object -Parallel' commands.
             Ast currentParent = usingAst.Parent;
-            int foreachNestedCount = 0;
-            while (currentParent != null)
+            while (currentParent != scriptblockAst)
             {
                 // Look for Foreach-Object outer commands
                 if (currentParent is CommandAst commandAst && 
                     FindForEachInCommand(commandAst))
                 {
-                    foreachNestedCount++;
-                }
-
-                if (foreachNestedCount > 1)
-                {
-                    // This using expression Ast is outside the original calling scope.
+                    // Using Ast is outside the invoking foreach scope.
                     return false;
                 }
 
                 currentParent = currentParent.Parent;
             }
 
-            // Expected foreachNestedCount depends on provided script block ast (see above).
-            return astIncludesForEachCommand ? foreachNestedCount == 1 : foreachNestedCount == 0;
+            return true;
         }
 
         /// <summary>
