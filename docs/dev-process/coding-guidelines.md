@@ -193,7 +193,7 @@ See [CODEOWNERS](../../.github/CODEOWNERS) for more information about the area e
     * [Arrays](https://docs.microsoft.com/dotnet/standard/design-guidelines/arrays)
     * [Collections](https://docs.microsoft.com/dotnet/standard/design-guidelines/guidelines-for-collections)
     * [Exceptions](https://docs.microsoft.com/dotnet/standard/design-guidelines/exceptions)
-  * [Best Practices for Developing World-Ready Applications](https://docs.microsoft.com/dotnet/standard/globalization-localization/best-practices-for-developing-world-ready-apps) - Unicode, Culture, Encoding and Localization.
+  * [Best Practices for Developing World-Ready Applications](https://docs.microsoft.com/dotnet/core/extensions/best-practices-for-developing-world-ready-apps) - Unicode, Culture, Encoding and Localization.
   * [Best Practices for Exceptions](https://docs.microsoft.com/dotnet/standard/exceptions/best-practices-for-exceptions)
   * [Best Practices for Using Strings in .NET](https://docs.microsoft.com/dotnet/standard/base-types/best-practices-strings)
   * [Best Practices for Regular Expressions in .NET](https://docs.microsoft.com/dotnet/standard/base-types/best-practices)
