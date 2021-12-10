@@ -18,6 +18,10 @@ jobs:
   variables:
     - name: repoPath
       value: $(Agent.BuildDirectory)/$(repoFolder)
+    - name: YARN_CACHE_FOLDER
+      value: $(Pipeline.Workspace)/.yarn
+    - name: YARN_GLOBAL_CACHE_FOLDER
+      value: $(Pipeline.Workspace)/.yarn-global
 
   steps:
   - checkout: self
