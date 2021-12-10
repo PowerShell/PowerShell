@@ -97,6 +97,16 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $result[1] | Should -BeExactly $varArray[1]
     }
 
+    It 'Verifies using variables with passed-in {} script block object' {
+
+        $var = "Hello"
+        $varArray = "Hello","There"
+        $sBlock = { $using:var; $using:varArray[1] }
+        $result = 1..1 | ForEach-Object -Parallel $sBlock
+        $result[0] | Should -BeExactly $var
+        $result[1] | Should -BeExactly $varArray[1]
+    }
+
     It 'Verifies in scope using same-name variables in nested calls for passed-in script block objects' {
 
         $Test1 = "Test1"
@@ -113,6 +123,22 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $groups['Test2'].Count | Should -BeExactly 4
     }
 
+    It 'Verifies in scope using same-name variables in nested calls for passed-in {} script block objects' {
+
+        $Test1 = "Test1"
+        $sBlock = {
+            $using:Test1
+            $Test2 = "Test2"
+            $sBlock2 = [scriptblock]::Create('$using:Test2')
+            1..2 | ForEach-Object -Parallel $sBlock2
+        }
+        $results = 1..2 | ForEach-Object -Parallel $sBlock
+        $results.Count | Should -BeExactly 6
+        $groups = $results | Group-Object -AsHashTable
+        $groups['Test1'].Count | Should -BeExactly 2
+        $groups['Test2'].Count | Should -BeExactly 4
+    }
+
     It 'Verifies in scope using same-name variables in nested calls for mixed script block objects' {
 
         $Test1 = "Test1"
@@ -121,6 +147,21 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
             $Test2 = "Test2"
             1..2 | ForEach-Object -Parallel { $using:Test2 }
 '@)
+        $results = 1..2 | ForEach-Object -Parallel $sBlock
+        $results.Count | Should -BeExactly 6
+        $groups = $results | Group-Object -AsHashTable
+        $groups['Test1'].Count | Should -BeExactly 2
+        $groups['Test2'].Count | Should -BeExactly 4
+    }
+
+    It 'Verifies in scope using same-name variables in nested calls for mixed script block {} objects' {
+
+        $Test1 = "Test1"
+        $sBlock = {
+            $using:Test1
+            $Test2 = "Test2"
+            1..2 | ForEach-Object -Parallel { $using:Test2 }
+        }
         $results = 1..2 | ForEach-Object -Parallel $sBlock
         $results.Count | Should -BeExactly 6
         $groups = $results | Group-Object -AsHashTable
@@ -144,6 +185,22 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $groups['Test2'].Count | Should -BeExactly 4
     }
 
+    It 'Verifies in scope using different-name variables in nested calls for passed-in script {} block objects' {
+
+        $Test1 = "Test1"
+        $sBlock = {
+            $using:Test1
+            $Test2 = "Test2"
+            $sBlock2 = [scriptblock]::Create('$using:Test2')
+            1..2 | ForEach-Object -Parallel $sBlock2
+        }
+        $results = 1..2 | ForEach-Object -Parallel $sBlock
+        $results.Count | Should -BeExactly 6
+        $groups = $results | Group-Object -AsHashTable
+        $groups['Test1'].Count | Should -BeExactly 2
+        $groups['Test2'].Count | Should -BeExactly 4
+    }
+
     It 'Verifies in scope using different-name variables in nested calls for mixed script block objects' {
 
         $Test1 = "Test1"
@@ -159,12 +216,39 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $groups['Test2'].Count | Should -BeExactly 4
     }
 
+    It 'Verifies in scope using different-name variables in nested calls for mixed script block {} objects' {
+
+        $Test1 = "Test1"
+        $sBlock = {
+            $using:Test1
+            $Test2 = "Test2"
+            1..2 | ForEach-Object -Parallel { $using:Test2 }
+        }
+        $results = 1..2 | ForEach-Object -Parallel $sBlock
+        $results.Count | Should -BeExactly 6
+        $groups = $results | Group-Object -AsHashTable
+        $groups['Test1'].Count | Should -BeExactly 2
+        $groups['Test2'].Count | Should -BeExactly 4
+    }
+
     It 'Verifies expected error for out of scope using variable in nested calls for passed-in script block objects' {
 
         $Test = "TestZ"
         $sBlock = [scriptblock]::Create(@'
             $using:Test
             $sBlock2 = [scriptblock]::Create('$using:Test')
+            1..1 | ForEach-Object -Parallel $sBlock2
+'@)
+        1..1 | ForEach-Object -Parallel $SBlock -ErrorVariable usingErrors 2>$null
+        $usingErrors[0].FullyQualifiedErrorId | Should -BeExactly 'UsingVariableIsUndefined,Microsoft.PowerShell.Commands.ForEachObjectCommand'
+    }
+
+    It 'Verifies expected error for out of scope using variable in nested calls for passed-in {} script block objects' {
+
+        $Test = "TestZ"
+        $sBlock = [scriptblock]::Create(@'
+            $using:Test
+            $sBlock2 = { $using:Test }
             1..1 | ForEach-Object -Parallel $sBlock2
 '@)
         1..1 | ForEach-Object -Parallel $SBlock -ErrorVariable usingErrors 2>$null

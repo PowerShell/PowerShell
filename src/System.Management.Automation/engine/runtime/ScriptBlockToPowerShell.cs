@@ -324,22 +324,17 @@ namespace System.Management.Automation
         /// <param name = "scriptBlock">Scriptblock to search.</param>
         /// <param name = "isTrustedInput">True when input is trusted.</param>
         /// <param name = "context">Execution context.</param>
-        /// <param name = "foreachNames">List of foreach command names and aliases.</param>
         /// <returns>Dictionary of using variable map.</returns>
         internal static Dictionary<string, object> GetUsingValuesForEachParallel(
             ScriptBlock scriptBlock,
             bool isTrustedInput,
-            ExecutionContext context,
-            string[] foreachNames)
+            ExecutionContext context)
         {
             // Using variables for Foreach-Object -Parallel use are restricted to be within the 
             // Foreach-Object -Parallel call scope. This will filter the using variable map to variables 
             // only within the current (outer) Foreach-Object -Parallel call scope.
             var usingAsts = UsingExpressionAstSearcher.FindAllUsingExpressions(scriptBlock.Ast).ToList();
-            
-            // If the scriptblock ast parent is null, then it comes from a scriptblock variable and does
-            // not include the initiating Foreach-Object -Parallel command.
-            bool astIncludesForEachCommand = scriptBlock.Ast.Parent is not null;
+            bool astIncludesForEachCommand = CheckScriptBlockForForeachCommand(scriptBlock);
             UsingExpressionAst usingAst = null;
             var usingValueMap = new Dictionary<string, object>(usingAsts.Count);
             Version oldStrictVersion = null;
@@ -356,8 +351,7 @@ namespace System.Management.Automation
                     usingAst = (UsingExpressionAst)usingAsts[i];
                     if (IsInForeachParallelCallingScope(
                         usingAst: usingAst,
-                        astIncludesForEachCommand: astIncludesForEachCommand,
-                        foreachNames: foreachNames))
+                        astIncludesForEachCommand: astIncludesForEachCommand))
                     {
                         var value = Compiler.GetExpressionValue(usingAst.SubExpression, isTrustedInput, context);
                         string usingAstKey = PsUtils.GetUsingExpressionKey(usingAst);
@@ -389,6 +383,65 @@ namespace System.Management.Automation
             return usingValueMap;
         }
 
+        // List of Foreach-Object command names and aliases.
+        // TODO: Look into using SessionState.Internal.GetAliasTable() to find all user created aliases.
+        //       But update Alias command logic to maintain reverse table that lists all aliases mapping
+        //       to a single command definition, for performance.
+        private static readonly string[] forEachNames = new string[]
+        {
+            "ForEach-Object",
+            "foreach",
+            "%"
+        };
+
+        private static bool FindForEachInCommand(CommandAst commandAst)
+        {
+            foreach (var commandElement in commandAst.CommandElements)
+            {
+                if (commandElement is StringConstantExpressionAst commandName)
+                {
+                    bool found = false;
+                    foreach (var foreachName in forEachNames)
+                    {
+                        if (commandName.Value.Equals(foreachName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (found)
+                    {
+                        // Verify this is foreach-object with parallel parameter set.
+                        var bindingResult = StaticParameterBinder.BindCommand(commandAst);
+                        if (bindingResult.BoundParameters.ContainsKey("Parallel"))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool CheckScriptBlockForForeachCommand(ScriptBlock scriptBlock)
+        {
+            var currentAst = scriptBlock.Ast;
+            while (currentAst is not null)
+            {
+                if (currentAst is CommandAst commandAst &&
+                    FindForEachInCommand(commandAst))
+                {
+                    return true;
+                }
+
+                currentAst = currentAst.Parent;
+            } 
+
+            return false;
+        }
+
         /// <summary>
         /// Walks the using Ast to verify it is used within a foreach-object -parallel command
         /// and parameter set scope, and not from within a nested foreach-object -parallel call.
@@ -400,12 +453,10 @@ namespace System.Management.Automation
         ///     '1 | ForEach-Object -Parallel { }'          - script block ast includes parent with initial 'ForEach-Object'
         ///     '1 | ForEach-Object -Parallel $scriptBlock' - script block ast *does not* include parent with initial 'ForEach-Object'
         /// </param>
-        /// <param name-"foreachNames">List of foreach-object command names.</param>
         /// <returns>True if using expression is in current call scope.</returns>
         private static bool IsInForeachParallelCallingScope(
             UsingExpressionAst usingAst,
-            bool astIncludesForEachCommand,
-            string[] foreachNames)
+            bool astIncludesForEachCommand)
         {
             /*
                 Example:
@@ -427,34 +478,10 @@ namespace System.Management.Automation
             while (currentParent != null)
             {
                 // Look for Foreach-Object outer commands
-                if (currentParent is CommandAst commandAst)
+                if (currentParent is CommandAst commandAst && 
+                    FindForEachInCommand(commandAst))
                 {
-                    foreach (var commandElement in commandAst.CommandElements)
-                    {
-                        if (commandElement is StringConstantExpressionAst commandName)
-                        {
-                            bool found = false;
-                            foreach (var foreachName in foreachNames)
-                            {
-                                if (commandName.Value.Equals(foreachName, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            
-                            if (found)
-                            {
-                                // Verify this is foreach-object with parallel parameter set.
-                                var bindingResult = StaticParameterBinder.BindCommand(commandAst);
-                                if (bindingResult.BoundParameters.ContainsKey("Parallel"))
-                                {
-                                    foreachNestedCount++;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    foreachNestedCount++;
                 }
 
                 if (foreachNestedCount > 1)
