@@ -85,6 +85,9 @@ jobs:
     parameters:
       BuildDropPath: '$(System.ArtifactsDirectory)/$(SymbolsFolder)'
       Build_Repository_Uri: $(Github_Build_Repository_Uri)
+      PackageName: PowerShell macOS ${{ parameters.buildArchitecture }}
+      PackageVersion: $(Version)
+      sourceScanPath: '$(PowerShellRoot)/tools'
 
   - pwsh: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
