@@ -1574,7 +1574,6 @@ namespace System.Management.Automation.Internal
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
         internal static bool ForcePromptForChoiceDefaultOption;
-        internal static bool BypassOutputRedirectionCheck;
         internal static bool NoPromptForPassword;
         internal static bool ForceFormatListFixedLabelWidth;
 

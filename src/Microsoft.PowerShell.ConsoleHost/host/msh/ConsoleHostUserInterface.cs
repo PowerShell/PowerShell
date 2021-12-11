@@ -729,7 +729,7 @@ namespace Microsoft.PowerShell
             }
 
             TextWriter writer = Console.IsOutputRedirected ? Console.Out : _parent.ConsoleTextWriter;
-            value = GetOutputString(value, SupportsVirtualTerminal, Console.IsOutputRedirected);
+            value = GetOutputString(value, SupportsVirtualTerminal);
 
             if (_parent.IsRunningAsync)
             {
@@ -1215,7 +1215,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal)
                 {
-                    WriteLine(GetFormatStyleString(FormatStyle.Debug, Console.IsOutputRedirected) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message) + PSStyle.Instance.Reset);
+                    WriteLine(GetFormatStyleString(FormatStyle.Debug) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1276,7 +1276,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal)
                 {
-                    WriteLine(GetFormatStyleString(FormatStyle.Verbose, Console.IsOutputRedirected) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message) + PSStyle.Instance.Reset);
+                    WriteLine(GetFormatStyleString(FormatStyle.Verbose) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1320,7 +1320,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal)
                 {
-                    WriteLine(GetFormatStyleString(FormatStyle.Warning, Console.IsOutputRedirected) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message) + PSStyle.Instance.Reset);
+                    WriteLine(GetFormatStyleString(FormatStyle.Warning) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
