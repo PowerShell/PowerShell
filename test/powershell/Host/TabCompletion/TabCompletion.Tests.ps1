@@ -1475,7 +1475,7 @@ dir -Recurse `
                 }
             }
 
-            function Test-Scopes-1 {
+            function Test-Single-Function-Scope {
                 param (
                     $level
                 )
@@ -1488,14 +1488,14 @@ dir -Recurse `
                 }
             }
 
-            function Test-Scopes-2 {
+            function Test-Double-Function-Scope {
                 param (
                     $level
                 )
                 Test-Scopes-1 -level $level
             }
 
-            function Test-Scopes-3 {
+            function Test-Triple-Function-Scope {
                 Test-Scopes-2 -level 3
             }
         }
