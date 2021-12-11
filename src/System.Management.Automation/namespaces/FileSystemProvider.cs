@@ -8144,7 +8144,7 @@ namespace Microsoft.PowerShell.Commands
                 if (symbTarget != null && symbTarget.Exists) 
                 {
                     return symbTarget;
-                } else if (fileSysInfo.LinkTarget == null) 
+                } else if (fileSysInfo.LinkTarget is null) 
                 {
                     return fileSysInfo;
                 }
