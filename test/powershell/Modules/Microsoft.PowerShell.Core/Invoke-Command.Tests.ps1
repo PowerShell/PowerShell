@@ -10,17 +10,17 @@ Describe "Invoke-Command" -Tags "CI" {
             }
         }
 
-        It "Tests Invoke-Command with -StrictModeVersion parameter using uninitialized variable" {
+        It "Setting -StrictModeVersion parameter with uninitialized variable throws error" {
             { Invoke-Command -StrictModeVersion 3.0 {$InvokeCommand__Test} } | Should -Throw $errorMessage
         }
 
-        It "Tests Invoke-Command with -StrictModeVersion parameter using initialized variable" {
+        It "Setting -StrictModeVersion parameter with initialized variable does not throw error" {
             $InvokeCommand__Test = 'Something'
             Invoke-Command -StrictModeVersion 3.0 {$InvokeCommand__Test} | Should -Be 'Something'
             Remove-Item Variable:InvokeCommand__Test
         }
 
-        It "Tests Invoke-Command with -StrictModeVersion parameter sets StrictMode back to original state" {
+        It "-StrictModeVersion parameter sets StrictMode back to original state after process completes" {
             { Invoke-Command -StrictModeVersion 3.0 {$InvokeCommand__Test} } | Should -Throw $errorMessage
             { Invoke-Command {$InvokeCommand__Test} } | Should -Not -Throw
         }
