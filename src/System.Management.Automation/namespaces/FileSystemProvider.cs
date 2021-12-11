@@ -8151,7 +8151,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return null;
-            
         }
 
         /// <summary>
