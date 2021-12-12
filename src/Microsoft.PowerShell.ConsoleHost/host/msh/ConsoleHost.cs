@@ -16,6 +16,7 @@ using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
+using System.Management.Automation.Remoting.Server;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Reflection;
@@ -193,7 +194,7 @@ namespace Microsoft.PowerShell
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-ServerMode");
-                    System.Management.Automation.Remoting.Server.StdIOProcessMediator.Run(
+                    StdIOProcessMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
                         workingDirectory: s_cpp.WorkingDirectory,
                         configurationName: null);
@@ -203,7 +204,7 @@ namespace Microsoft.PowerShell
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer");
                     ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
-                    System.Management.Automation.Remoting.Server.StdIOProcessMediator.Run(
+                    StdIOProcessMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
                         workingDirectory: null,
                         configurationName: null);
@@ -213,7 +214,7 @@ namespace Microsoft.PowerShell
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe");
                     ProfileOptimization.StartProfile("StartupProfileData-NamedPipeServerMode");
-                    System.Management.Automation.Remoting.RemoteSessionNamedPipeServer.RunServerMode(
+                    RemoteSessionNamedPipeServer.RunServerMode(
                         configurationName: s_cpp.ConfigurationName);
                     exitCode = 0;
                 }
@@ -221,7 +222,7 @@ namespace Microsoft.PowerShell
                 {
                     ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode");
                     ProfileOptimization.StartProfile("StartupProfileData-SocketServerMode");
-                    System.Management.Automation.Remoting.Server.HyperVSocketMediator.Run(
+                    HyperVSocketMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
                         configurationName: s_cpp.ConfigurationName);
                     exitCode = 0;

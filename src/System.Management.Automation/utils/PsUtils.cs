@@ -83,31 +83,6 @@ namespace System.Management.Automation
             return arch == Architecture.Arm || arch == Architecture.Arm64;
         }
 
-        /// <summary>
-        /// Get a temporary directory to use, needs to be unique to avoid collision.
-        /// </summary>
-        internal static string GetTemporaryDirectory()
-        {
-            string tempDir = string.Empty;
-            string tempPath = Path.GetTempPath();
-            do
-            {
-                tempDir = Path.Combine(tempPath, System.Guid.NewGuid().ToString());
-            }
-            while (Directory.Exists(tempDir));
-
-            try
-            {
-                Directory.CreateDirectory(tempDir);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                tempDir = string.Empty; // will become current working directory
-            }
-
-            return tempDir;
-        }
-
         internal static string GetHostName()
         {
             IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();

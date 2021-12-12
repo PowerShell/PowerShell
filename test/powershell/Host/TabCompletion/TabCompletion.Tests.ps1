@@ -1097,6 +1097,14 @@ Describe "TabCompletion" -Tags CI {
             $entry.CompletionText | Should -BeExactly "Mandatory"
         }
 
+        It "Test Attribute scriptblock completion" {
+            $inputStr = '[ValidateScript({Get-Child})]$Test=ls'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn ($inputStr.IndexOf('}'))
+            $res.CompletionMatches | Should -HaveCount 1
+            $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Get-ChildItem"
+            $entry.CompletionText | Should -BeExactly "Get-ChildItem"
+        }
+
         It "Test completion with line continuation" {
             $inputStr = @'
 dir -Recurse `
