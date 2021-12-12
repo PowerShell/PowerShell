@@ -1500,11 +1500,11 @@ dir -Recurse `
                 param (
                     $level
                 )
-                Test-Scopes-1 -level $level
+                Test-Single-Function-Scope -level $level
             }
 
             function Test-Triple-Function-Scope {
-                Test-Scopes-2 -level 3
+                Test-Double-Function-Scope -level 3
             }
         }
 
@@ -1520,17 +1520,17 @@ dir -Recurse `
 
         It "Correctly tab completes scope values at a single nested function level" {
             # test 2: single function scope
-            Test-Scopes-1 -level 1
+            Test-Single-Function-Scope -level 1
         }
 
         It "Correctly tab completes scope values at a double nested function level" {
             # test 3: double function scope
-            Test-Scopes-2 -level 2
+            Test-Double-Function-Scope -level 2
         }
 
         It "Correctly tab completes scope values at a triple nested function level" {
             # test 4: triple function scope
-            Test-Scopes-3
+            Test-Triple-Function-Scope
         }
     }
 
