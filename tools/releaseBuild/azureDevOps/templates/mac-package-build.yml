@@ -23,11 +23,11 @@ jobs:
 
   - pwsh: |
       # create folder
-      sudo mkdir "${env:HOME}/PowerShell"
+      sudo mkdir "$(Agent.TempDirectory)/PowerShell"
 
       # make the current user the owner
-      sudo chown $env:USER "${env:HOME}/PowerShell"
-    displayName: 'Create ${env:HOME}/PowerShell'
+      sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
+    displayName: 'Create $(Agent.TempDirectory)/PowerShell'
 
   - template: SetVersionVariables.yml
     parameters:
@@ -36,6 +36,8 @@ jobs:
   - template: shouldSign.yml
 
   - template: cloneToOfficialPath.yml
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
 
   - task: DownloadBuildArtifacts@0
     displayName: Download macosBinResults
