@@ -720,9 +720,11 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    // This is a format error.
-                    // Format is 'major.minor.patch+BuildLabel-PreReleaseLabel'
-                    versionSansLabel = version;
+                    // No PreReleaseLabel: preLabel == null
+                    // Format is 'major.minor.patch+BuildLabel'
+                    buildLabel = version.Substring(plusIndex + 1);
+                    versionSansLabel = version.Substring(0, plusIndex);
+                    dashIndex = -1;
                 }
             }
             else
