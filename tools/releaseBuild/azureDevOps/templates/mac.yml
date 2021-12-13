@@ -6,7 +6,7 @@ jobs:
   displayName: Build macOS ${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
-    vmImage: internal-macos-11
+    vmImage: macos-latest
   variables:
     # Turn off Homebrew analytics
     - name: HOMEBREW_NO_ANALYTICS
