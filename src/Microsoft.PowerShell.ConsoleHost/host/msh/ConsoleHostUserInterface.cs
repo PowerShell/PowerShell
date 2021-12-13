@@ -87,11 +87,11 @@ namespace Microsoft.PowerShell
 
             if (SupportsVirtualTerminal)
             {
-                SupportsVirtualTerminal = TryTurnOnVtMode();
+                SupportsVirtualTerminal = TryTurnOnVirtualTerminal();
             }
         }
 
-        internal bool TryTurnOnVtMode()
+        internal bool TryTurnOnVirtualTerminal()
         {
 #if UNIX
             return true;
@@ -99,16 +99,22 @@ namespace Microsoft.PowerShell
             try
             {
                 // Turn on virtual terminal if possible.
-
                 // This might throw - not sure how exactly (no console), but if it does, we shouldn't fail to start.
-                var handle = ConsoleControl.GetActiveScreenBufferHandle();
-                var m = ConsoleControl.GetMode(handle);
-                if (ConsoleControl.NativeMethods.SetConsoleMode(handle.DangerousGetHandle(), (uint)(m | ConsoleControl.ConsoleModes.VirtualTerminal)))
+                var outputHandle = ConsoleControl.GetActiveScreenBufferHandle();
+                var outputMode = ConsoleControl.GetMode(outputHandle);
+
+                if (outputMode.HasFlag(ConsoleControl.ConsoleModes.VirtualTerminal))
+                {
+                    return true;
+                }
+
+                outputMode |= ConsoleControl.ConsoleModes.VirtualTerminal;
+                if (ConsoleControl.NativeMethods.SetConsoleMode(outputHandle.DangerousGetHandle(), (uint)outputMode))
                 {
                     // We only know if vt100 is supported if the previous call actually set the new flag, older
                     // systems ignore the setting.
-                    m = ConsoleControl.GetMode(handle);
-                    return (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
+                    outputMode = ConsoleControl.GetMode(outputHandle);
+                    return outputMode.HasFlag(ConsoleControl.ConsoleModes.VirtualTerminal);
                 }
             }
             catch
