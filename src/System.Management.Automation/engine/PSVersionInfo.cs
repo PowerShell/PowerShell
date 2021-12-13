@@ -720,22 +720,27 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    // No PreReleaseLabel: preLabel == null
-                    // Format is 'major.minor.patch+BuildLabel'
-                    buildLabel = version.Substring(plusIndex + 1);
-                    versionSansLabel = version.Substring(0, plusIndex);
-                    dashIndex = -1;
+                    // This is a format error.
+                    // Format is 'major.minor.patch+BuildLabel-PreReleaseLabel'
+                    versionSansLabel = version;
                 }
             }
             else
             {
-                if (dashIndex == -1)
+                if (plusIndex == -1)
                 {
                     // Here dashIndex == plusIndex == -1
                     // No preLabel - preLabel == null;
                     // No buildLabel - buildLabel == null;
                     // Format is 'major.minor.patch'
                     versionSansLabel = version;
+                }
+                else if (dashIndex == -1)
+                {
+                    // No PreReleaseLabel: preLabel == null
+                    // Format is 'major.minor.patch+BuildLabel'
+                    buildLabel = version.Substring(plusIndex + 1);
+                    versionSansLabel = version.Substring(0, plusIndex);
                 }
                 else
                 {
