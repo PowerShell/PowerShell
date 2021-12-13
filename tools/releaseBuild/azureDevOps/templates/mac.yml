@@ -6,7 +6,7 @@ jobs:
   displayName: Build macOS ${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
-    vmImage: internal-macos-10.14
+    vmImage: internal-macos-11
   variables:
     # Turn off Homebrew analytics
     - name: HOMEBREW_NO_ANALYTICS
@@ -28,11 +28,11 @@ jobs:
 
   - pwsh: |
       # create folder
-      sudo mkdir /PowerShell
+      sudo mkdir "${env:HOME}/PowerShell"
 
       # make the current user the owner
-      sudo chown $env:USER /PowerShell
-    displayName: 'Create /PowerShell'
+      sudo chown $env:USER "${env:HOME}/PowerShell"
+    displayName: 'Create ${env:HOME}/PowerShell'
 
   - template: cloneToOfficialPath.yml
 
@@ -46,7 +46,9 @@ jobs:
 
   - pwsh: |
       $env:AzDevOpsFeedPAT2 = '$(AzDevOpsFeedPAT2)'
-      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults -Runtime 'osx-${{ parameters.buildArchitecture }}'
+      # Add -SkipReleaseChecks as a mitigation to unblock release.
+      # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
+      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -Symbols -location $(PowerShellRoot) -Build -ArtifactName macosBinResults -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
       $env:AzDevOpsFeedPAT2 = $null
     displayName: 'Build'
 
