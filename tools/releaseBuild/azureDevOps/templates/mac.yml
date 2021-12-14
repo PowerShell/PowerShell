@@ -6,7 +6,7 @@ jobs:
   displayName: Build macOS ${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
-    vmImage: internal-macos-11
+    vmImage: macos-latest
   variables:
     # Turn off Homebrew analytics
     - name: HOMEBREW_NO_ANALYTICS
@@ -28,13 +28,15 @@ jobs:
 
   - pwsh: |
       # create folder
-      sudo mkdir "${env:HOME}/PowerShell"
+      sudo mkdir "$(Agent.TempDirectory)/PowerShell"
 
       # make the current user the owner
-      sudo chown $env:USER "${env:HOME}/PowerShell"
-    displayName: 'Create ${env:HOME}/PowerShell'
+      sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
+    displayName: 'Create $(Agent.TempDirectory)/PowerShell'
 
   - template: cloneToOfficialPath.yml
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
 
   - pwsh: |
       tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap

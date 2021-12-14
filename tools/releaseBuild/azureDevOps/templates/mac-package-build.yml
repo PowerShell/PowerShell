@@ -8,7 +8,7 @@ jobs:
   dependsOn: MacFileSigningJob_${{ parameters.buildArchitecture }}
   condition: succeeded()
   pool:
-    vmImage: internal-macos-11
+    vmImage: macos-latest
   variables:
     # Turn off Homebrew analytics
     - name: HOMEBREW_NO_ANALYTICS
@@ -23,11 +23,11 @@ jobs:
 
   - pwsh: |
       # create folder
-      sudo mkdir /PowerShell
+      sudo mkdir "$(Agent.TempDirectory)/PowerShell"
 
       # make the current user the owner
-      sudo chown $env:USER /PowerShell
-    displayName: 'Create /PowerShell'
+      sudo chown $env:USER "$(Agent.TempDirectory)/PowerShell"
+    displayName: 'Create $(Agent.TempDirectory)/PowerShell'
 
   - template: SetVersionVariables.yml
     parameters:
@@ -36,6 +36,8 @@ jobs:
   - template: shouldSign.yml
 
   - template: cloneToOfficialPath.yml
+    parameters:
+      nativePathRoot: '$(Agent.TempDirectory)'
 
   - task: DownloadBuildArtifacts@0
     displayName: Download macosBinResults
@@ -108,7 +110,9 @@ jobs:
     displayName: 'Bootstrap VM'
 
   - pwsh: |
-      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar" -Runtime 'osx-${{ parameters.buildArchitecture }}'
+      # Add -SkipReleaseChecks as a mitigation to unblock release.
+      # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
+      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar" -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
     displayName: 'Package'
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
