@@ -1110,7 +1110,7 @@ namespace System.Management.Automation
                                     throw new CommandNotFoundException(
                                         originalCommandName,
                                         lastError,
-                                        nameof(DiscoveryExceptions.CouldNotAutoImportMatchingModule),
+                                        "CouldNotAutoloadMatchingModule",
                                         errorMessage);
                                 }
 
