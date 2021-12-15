@@ -976,20 +976,10 @@ namespace System.Management.Automation
             try
             {
                 string psHome = Utils.DefaultPowerShellAppBase;
-                if (!string.IsNullOrEmpty(psHome))
-                {
-                    // Win8: 584267 Powershell Modules are listed twice in x86, and cannot be removed
-                    // This happens because ModuleTable uses Path as the key and CBS installer
-                    // expands the path to include "SysWOW64" (for
-                    // HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\PowerShell\3\PowerShellEngine ApplicationBase).
-                    // Because of this, the module that is getting loaded during startup (through LocalRunspace)
-                    // is using "SysWow64" in the key. Later, when Import-Module is called, it loads the
-                    // module using ""System32" in the key.
 #if !UNIX
-                    psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
+                psHome = psHome.ToLowerInvariant().Replace(@"\syswow64\", @"\system32\");
 #endif
-                    Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
-                }
+                Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
             }
             catch (System.Security.SecurityException)
             {

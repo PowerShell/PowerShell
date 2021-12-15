@@ -762,7 +762,7 @@ namespace Microsoft.PowerShell.Commands
                     // Check if module could be a snapin. This was the case for PowerShell version 2 engine modules.
                     if (InitialSessionState.IsEngineModule(name))
                     {
-                        PSSnapInInfo snapin = ModuleCmdletBase.GetEngineSnapIn(Context, name);
+                        PSSnapInInfo snapin = GetEngineSnapIn(Context, name);
 
                         // Return the command if we found a module
                         if (snapin != null)

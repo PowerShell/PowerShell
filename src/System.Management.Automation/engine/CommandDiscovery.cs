@@ -1091,24 +1091,27 @@ namespace System.Management.Automation
 
                             if (exportedCommands == null) { continue; }
 
-                            CommandTypes exportedCommandTypes;
                             // Skip if module only has class or other types and no commands.
-                            if (exportedCommands.TryGetValue(commandName, out exportedCommandTypes))
+                            if (exportedCommands.TryGetValue(commandName, out CommandTypes exportedCommandTypes))
                             {
-                                Exception exception;
                                 discoveryTracer.WriteLine("Found in module: {0}", expandedModulePath);
-                                Collection<PSModuleInfo> matchingModule = AutoloadSpecifiedModule(expandedModulePath, context,
+                                Collection<PSModuleInfo> matchingModule = AutoloadSpecifiedModule(
+                                    expandedModulePath,
+                                    context,
                                     cmdletInfo != null ? cmdletInfo.Visibility : SessionStateEntryVisibility.Private,
-                                        out exception);
-                                lastError = exception;
-                                if ((matchingModule == null) || (matchingModule.Count == 0))
+                                    out lastError);
+
+                                if (matchingModule == null || matchingModule.Count == 0)
                                 {
-                                    string error = StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportMatchingModule, commandName, moduleShortName);
-                                    CommandNotFoundException commandNotFound = new CommandNotFoundException(
+                                    string errorMessage = lastError is null
+                                        ? StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportMatchingModule, commandName, moduleShortName)
+                                        : StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportMatchingModuleWithErrorMessage, commandName, moduleShortName, lastError.Message);
+
+                                    throw new CommandNotFoundException(
                                         originalCommandName,
                                         lastError,
-                                        "CouldNotAutoloadMatchingModule", error);
-                                    throw commandNotFound;
+                                        nameof(DiscoveryExceptions.CouldNotAutoImportMatchingModule),
+                                        errorMessage);
                                 }
 
                                 result = LookupCommandInfo(commandName, commandTypes, searchResolutionOptions, commandOrigin, context);
