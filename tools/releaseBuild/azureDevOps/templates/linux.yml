@@ -160,6 +160,8 @@ jobs:
       value: false
     - name: NugetSecurityAnalysisWarningLevel
       value: none
+    - name: skipComponentGovernanceDetection
+      value: true
 
   steps:
   - checkout: self
@@ -309,9 +311,3 @@ jobs:
     parameters:
       artifactPath: '$(Build.StagingDirectory)\signedPackages\release'
       condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
-
-  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-    displayName: 'Component Detection'
-    inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
-      snapshotForceEnabled: true
