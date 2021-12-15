@@ -842,6 +842,8 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
+        private Version _savedStrictModeVersion;
+
         #endregion Parameters
 
         #region Overrides
@@ -963,6 +965,12 @@ namespace Microsoft.PowerShell.Commands
                             // ignore exception and don't do any streaming if can't convert to steppable pipeline
                         }
                     }
+                }
+
+                if (MyInvocation.BoundParameters.ContainsKey(nameof(StrictModeVersion)))
+                {
+                    _savedStrictModeVersion = Context.EngineSessionState.CurrentScope.StrictModeVersion;
+                    Context.EngineSessionState.CurrentScope.StrictModeVersion = _strictmodeversion;
                 }
 
                 return;
@@ -1181,7 +1189,18 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet) && (_steppablePipeline != null))
                 {
-                    _steppablePipeline.Process(InputObject);
+                    try
+                    {
+                        _steppablePipeline.Process(InputObject);
+                    }
+                    catch
+                    {
+                        if (MyInvocation.BoundParameters.ContainsKey(nameof(StrictModeVersion)))
+                        {
+                            Context.EngineSessionState.CurrentScope.StrictModeVersion = _savedStrictModeVersion;
+                        }
+                        throw;
+                    }
                 }
                 else
                 {
@@ -1215,7 +1234,7 @@ namespace Microsoft.PowerShell.Commands
                     Version currentStrictModeVersion = Context.EngineSessionState.CurrentScope.StrictModeVersion;
                     try
                     {
-                        if (_strictmodeversion != null)
+                        if (MyInvocation.BoundParameters.ContainsKey(nameof(StrictModeVersion)))
                         {
                             Context.EngineSessionState.CurrentScope.StrictModeVersion = _strictmodeversion;
                         }
@@ -1238,7 +1257,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     finally
                     {
-                        if (_strictmodeversion != null)
+                        if (MyInvocation.BoundParameters.ContainsKey(nameof(StrictModeVersion)))
                         {
                             Context.EngineSessionState.CurrentScope.StrictModeVersion = currentStrictModeVersion;
                         }

@@ -24,5 +24,9 @@ Describe "Invoke-Command" -Tags "CI" {
             { Invoke-Command -StrictModeVersion 3.0 {$InvokeCommand__Test} } | Should -Throw $errorMessage
             { Invoke-Command {$InvokeCommand__Test} } | Should -Not -Throw
         }
+
+        It "-StrictModeVersion applies for piped input" {
+            "There" | Invoke-Command -ScriptBlock { "Hello $input" } -StrictModeVersion Latest
+        }
     }
 }
