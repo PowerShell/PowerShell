@@ -1063,14 +1063,12 @@ namespace System.Management.Automation
                     return null;
 
                 CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Get-Module");
-                if ((commandOrigin == CommandOrigin.Internal) ||
-                    ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public)))
+                if (commandOrigin == CommandOrigin.Internal || cmdletInfo?.Visibility == SessionStateEntryVisibility.Public)
                 {
                     // Search for a module with a matching command, as long as the user would have the ability to
                     // import the module.
                     cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
-                    if (((commandOrigin == CommandOrigin.Internal) ||
-                         ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public))))
+                    if (commandOrigin == CommandOrigin.Internal || cmdletInfo?.Visibility == SessionStateEntryVisibility.Public)
                     {
                         discoveryTracer.WriteLine("Executing non module-qualified search: {0}", commandName);
                         context.CommandDiscovery.RegisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
@@ -1085,8 +1083,8 @@ namespace System.Management.Automation
                         {
                             // WinBlue:69141 - We need to get the full path here because the module path might be C:\Users\User1\DOCUME~1
                             // While the exportedCommands are cached, they are cached with the full path
-                            string expandedModulePath = IO.Path.GetFullPath(modulePath);
-                            string moduleShortName = System.IO.Path.GetFileNameWithoutExtension(expandedModulePath);
+                            string expandedModulePath = Path.GetFullPath(modulePath);
+                            string moduleShortName = Path.GetFileNameWithoutExtension(expandedModulePath);
                             var exportedCommands = AnalysisCache.GetExportedCommands(expandedModulePath, false, context);
 
                             if (exportedCommands == null) { continue; }
