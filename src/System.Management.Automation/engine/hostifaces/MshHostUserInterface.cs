@@ -304,18 +304,12 @@ namespace System.Management.Automation.Host
         /// <param name="formatStyle">
         /// The format style to get the escape sequence for.
         /// </param>
-        /// <param name="isOutputRedirected">
-        /// True if the output is redirected.
-        /// </param>
         /// <returns>
         /// The ANSI escape sequence for the given format style.
         /// </returns>
-        public static string GetFormatStyleString(FormatStyle formatStyle, bool isOutputRedirected)
+        public static string GetFormatStyleString(FormatStyle formatStyle)
         {
-            // redirected console gets plaintext output to preserve existing behavior
-            if (!InternalTestHooks.BypassOutputRedirectionCheck &&
-                (PSStyle.Instance.OutputRendering == OutputRendering.PlainText ||
-                isOutputRedirected))
+            if (PSStyle.Instance.OutputRendering == OutputRendering.PlainText)
             {
                 return string.Empty;
             }
@@ -353,30 +347,22 @@ namespace System.Management.Automation.Host
         /// <param name="supportsVirtualTerminal">
         /// True if the host supports virtual terminal.
         /// </param>
-        /// <param name="isOutputRedirected">
-        /// True if the output is redirected.
-        /// </param>
         /// <returns>
         /// The formatted text.
         /// </returns>
-        public static string GetOutputString(string text, bool supportsVirtualTerminal, bool isOutputRedirected)
+        public static string GetOutputString(string text, bool supportsVirtualTerminal)
         {
-            return GetOutputString(text, isHost: true, supportsVirtualTerminal: supportsVirtualTerminal, isOutputRedirected: isOutputRedirected);
+            return GetOutputString(text, isHost: true, supportsVirtualTerminal: supportsVirtualTerminal);
         }
 
-        internal static string GetOutputString(string text, bool isHost, bool? supportsVirtualTerminal = null, bool isOutputRedirected = false)
+        internal static string GetOutputString(string text, bool isHost, bool? supportsVirtualTerminal = null)
         {
             var sd = new ValueStringDecorated(text);
 
             if (sd.IsDecorated)
             {
                 var outputRendering = OutputRendering.Ansi;
-                if (InternalTestHooks.BypassOutputRedirectionCheck)
-                {
-                    isOutputRedirected = false;
-                }
-
-                if (isOutputRedirected || ShouldOutputPlainText(isHost, supportsVirtualTerminal))
+                if (ShouldOutputPlainText(isHost, supportsVirtualTerminal))
                 {
                     outputRendering = OutputRendering.PlainText;
                 }

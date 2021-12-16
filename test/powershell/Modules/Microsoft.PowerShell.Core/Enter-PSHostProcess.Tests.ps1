@@ -68,6 +68,15 @@ Exit-PSHostProcess
 Describe "Enter-PSHostProcess tests" -Tag Feature {
     Context "By Process Id" {
 
+        BeforeAll {
+            $oldColor = $env:NO_COLOR
+            $env:NO_COLOR = 1
+        }
+
+        AfterAll {
+            $env:NO_COLOR = $oldColor
+        }
+
         BeforeEach {
             # Start a normal job where the first thing it does is return $PID. After that, spin forever.
             # We will use this job as the target process for Enter-PSHostProcess
@@ -180,6 +189,15 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
     }
 
     Context "By CustomPipeName" {
+
+        BeforeAll {
+            $oldColor = $env:NO_COLOR
+            $env:NO_COLOR = 1
+        }
+
+        AfterAll {
+            $env:NO_COLOR = $oldColor
+        }
 
         It "Can enter, exit, and re-enter using CustomPipeName" {
             $pipeName = [System.IO.Path]::GetRandomFileName()
