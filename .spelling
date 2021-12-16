@@ -102,6 +102,7 @@ catchable
 cdxml
 celsius
 CentOS
+cgmanifest
 changelog
 changelog.md
 changelogs
@@ -234,6 +235,7 @@ DotnetRutimeMetadata.json
 dottedscopes
 downlevel
 dropdown
+dwtaber
 e.g.
 ebook
 ebooks
@@ -270,6 +272,7 @@ export-formatdata
 export-modulemember
 failurecode
 failurecount
+farmerau
 fbehrens
 felixfbecker
 ffeldhaus
@@ -353,6 +356,7 @@ hackathons
 HashSet
 hashtable
 hashtables
+hayhay27
 helloworld.ps1
 helpproviderwithcache
 helpproviderwithfullcache
@@ -370,6 +374,7 @@ httpbin's
 https
 hubuk
 hvitved
+i3arnon
 i.e.
 ico
 idera
@@ -427,8 +432,10 @@ jwmoss
 kanjibates
 kasper3
 katacoda
+Kellen-Stuart
 kevinmarquette
 kevinoid
+KevRitchie
 keyfileparameter
 keyhandler
 khansen00
@@ -473,10 +480,12 @@ macports
 maertendmsft
 mahawar
 Markdig.Signed
+markdown.yml
 markekraus
 marktiedemann
 Marusyk
 MarvTheRobot
+matt9ucci
 mcbobke
 md
 meir017
@@ -632,6 +641,7 @@ powershellgallery
 powershellget
 powershellmagazine.com
 powershellninja
+powershellpr0mpt
 powershellproperties
 ppadmavilasom
 pre-build
@@ -723,6 +733,7 @@ receive-pssession
 recurse
 reddit
 redhat
+redirections
 redistributable
 redistributables
 register-argumentcompleter
@@ -770,6 +781,7 @@ rkitover
 robo210
 ronn
 rpalo
+rpolley
 runspace
 runspaceinit
 runspaces
@@ -812,6 +824,7 @@ set-wsmaninstance
 set-wsmanquickconfig
 sethvs
 setversionvariables
+sha256
 ShaydeNofziger
 shellexecute
 shouldbeerrorid
@@ -837,6 +850,7 @@ start-codecoveragerun
 start-pspester
 stdin
 stevel-msft
+StevenLiekens
 stevend811
 stknohg
 strawgate
@@ -846,6 +860,7 @@ string.split
 stringbuilder
 stuntguy3000
 StyleCop
+subfolder
 submodule
 submodules
 sudo
