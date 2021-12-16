@@ -171,7 +171,7 @@ Describe "Will error correctly if an attempt to set variable to improper value" 
     }
 }
 
-foreach ( $argumentListValue in "Standard","Legacy" ) {
+foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
     $PSNativeCommandArgumentPassing = $argumentListValue
     Describe "Native Command Arguments (${PSNativeCommandArgumentPassing})" -tags "CI" {
         # When passing arguments to native commands, quoted segments that contain
@@ -262,6 +262,28 @@ foreach ( $argumentListValue in "Standard","Legacy" ) {
             for ($i = 0; $i -lt $expected.Count; $i++) {
                 $lines[$i] | Should -BeExactly "Arg $i is <$($expected[$i])>"
             }
+        }
+
+        It "Should handle empty args correctly (ArgumentList=${PSNativeCommandArgumentPassing})" {
+            if ($PSNativeCommandArgumentPassing -eq 'Legacy') {
+                $expectedLines = 2
+            }
+            else {
+                $expectedLines = 3
+            }
+
+            $lines = testexe -echoargs 1 '' 2
+            $lines.Count | Should -Be $expectedLines
+            $lines[0] | Should -BeExactly 'Arg 0 is <1>'
+
+            if ($expectedLines -eq 2) {
+                $lines[1] | Should -BeExactly 'Arg 1 is <2>'
+            }
+            else {
+                $lines[1] | Should -BeExactly 'Arg 1 is <>'
+                $lines[2] | Should -BeExactly 'Arg 2 is <2>'
+            }
+
         }
     }
 }
