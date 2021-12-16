@@ -136,7 +136,7 @@ namespace System.Management.Automation.Remoting
     /// Contains implementation that is common to both client and server
     /// transport managers.
     /// </summary>
-    internal abstract class BaseTransportManager : IDisposable
+    public abstract class BaseTransportManager : IDisposable
     {
         #region tracer
 
@@ -206,7 +206,7 @@ namespace System.Management.Automation.Remoting
 
         #region Constructor
 
-        protected BaseTransportManager(PSRemotingCryptoHelper cryptoHelper)
+        internal BaseTransportManager(PSRemotingCryptoHelper cryptoHelper)
         {
             CryptoHelper = cryptoHelper;
             // create a common fragmentor used by this transport manager to send and receive data.
@@ -407,18 +407,21 @@ namespace System.Management.Automation.Remoting
 
 namespace System.Management.Automation.Remoting.Client
 {
-    internal abstract class BaseClientTransportManager : BaseTransportManager, IDisposable
+    /// <summary>
+    /// Remoting base client transport manager.
+    /// </summary>
+    public abstract class BaseClientTransportManager : BaseTransportManager, IDisposable
     {
         #region Tracer
         [TraceSourceAttribute("ClientTransport", "Traces ClientTransportManager")]
-        protected static PSTraceSource tracer = PSTraceSource.GetTracer("ClientTransport", "Traces ClientTransportManager");
+        internal static PSTraceSource tracer = PSTraceSource.GetTracer("ClientTransport", "Traces ClientTransportManager");
         #endregion
 
         #region Data
 
-        protected bool isClosed;
-        protected object syncObject = new object();
-        protected PrioritySendDataCollection dataToBeSent;
+        internal bool isClosed;
+        internal object syncObject = new object();
+        internal PrioritySendDataCollection dataToBeSent;
         // used to handle callbacks from the server..these are used to synchronize received callbacks
         private readonly Queue<CallbackNotificationInformation> _callbackNotificationQueue;
         private readonly ReceiveDataCollection.OnDataAvailableCallback _onDataAvailableCallback;
@@ -429,13 +432,13 @@ namespace System.Management.Automation.Remoting.Client
         // this is used log crimson messages.
 
         // keeps track of whether a receive request has been placed on transport
-        protected bool receiveDataInitiated;
+        internal bool receiveDataInitiated;
 
         #endregion
 
         #region Constructors
 
-        protected BaseClientTransportManager(Guid runspaceId, PSRemotingCryptoHelper cryptoHelper)
+        internal BaseClientTransportManager(Guid runspaceId, PSRemotingCryptoHelper cryptoHelper)
             : base(cryptoHelper)
         {
             RunspacePoolInstanceId = runspaceId;
@@ -1014,11 +1017,14 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
     }
 
-    internal abstract class BaseClientSessionTransportManager : BaseClientTransportManager, IDisposable
+    /// <summary>
+    /// Remoting base client session transport manager.
+    /// </summary>
+    public abstract class BaseClientSessionTransportManager : BaseClientTransportManager, IDisposable
     {
         #region Constructors
 
-        protected BaseClientSessionTransportManager(Guid runspaceId, PSRemotingCryptoHelper cryptoHelper)
+        internal BaseClientSessionTransportManager(Guid runspaceId, PSRemotingCryptoHelper cryptoHelper)
             : base(runspaceId, cryptoHelper)
         {
         }

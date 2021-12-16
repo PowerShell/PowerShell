@@ -405,7 +405,7 @@ namespace System.Management.Automation.Remoting
     /// Synchronization is required to avoid collision when multiple TransportManager's
     /// write data at the same time to the same writer.
     /// </summary>
-    internal class OutOfProcessTextWriter
+    public class OutOfProcessTextWriter
     {
         #region Private Data
 
@@ -467,7 +467,10 @@ namespace System.Management.Automation.Remoting
 
 namespace System.Management.Automation.Remoting.Client
 {
-    internal abstract class OutOfProcessClientSessionTransportManagerBase : BaseClientSessionTransportManager
+    /// <summary>
+    /// Client session transport manager abstract base class.
+    /// </summary>
+    public abstract class ClientSessionTransportManagerBase : BaseClientSessionTransportManager
     {
         #region Data
 
@@ -478,14 +481,14 @@ namespace System.Management.Automation.Remoting.Client
         private readonly Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
         private readonly Timer _closeTimeOutTimer;
 
-        protected OutOfProcessTextWriter stdInWriter;
-        protected PowerShellTraceSource _tracer;
+        internal OutOfProcessTextWriter stdInWriter;
+        internal PowerShellTraceSource _tracer;
 
         #endregion
 
         #region Constructor
 
-        internal OutOfProcessClientSessionTransportManagerBase(
+        internal ClientSessionTransportManagerBase(
             Guid runspaceId,
             PSRemotingCryptoHelper cryptoHelper)
             : base(runspaceId, cryptoHelper)
@@ -693,6 +696,9 @@ namespace System.Management.Automation.Remoting.Client
             CleanupConnection();
         }
 
+        /// <summary>
+        /// Optional additional connection clean up after a connection is closed.
+        /// </summary>
         protected abstract void CleanupConnection();
 
         private void ProcessMessageProc(object state)
@@ -731,6 +737,9 @@ namespace System.Management.Automation.Remoting.Client
 
         private const string SESSIONDMESSAGETAG = "PSGuid='00000000-0000-0000-0000-000000000000'";
 
+        /// <summary>
+        /// Handles protocol output data from a transport.
+        /// </summary>
         protected void HandleOutputDataReceived(string data)
         {
             if (string.IsNullOrEmpty(data))
@@ -762,6 +771,9 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
+        /// <summary>
+        /// Handles protocol error data.
+        /// </summary>
         protected void HandleErrorDataReceived(string data)
         {
             lock (syncObject)
@@ -778,57 +790,13 @@ namespace System.Management.Automation.Remoting.Client
             RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.Unknown));
         }
 
-        protected void OnExited(object sender, EventArgs e)
-        {
-            TransportMethodEnum transportMethod = TransportMethodEnum.Unknown;
-            lock (syncObject)
-            {
-                // There is no need to return when IsClosed==true here as in a legitimate case process exits
-                // after Close is called..In that legitimate case, Exit handler is removed before
-                // calling Exit..So, this Exit must have been called abnormally.
-                if (isClosed)
-                {
-                    transportMethod = TransportMethodEnum.CloseShellOperationEx;
-                }
-
-                // dont let the writer write new data as the process is exited.
-                // Not assigning null to stdInWriter to fix the race condition between OnExited() and CloseAsync() methods.
-                //
-                stdInWriter.StopWriting();
-            }
-
-            // Try to get details about why the process exited
-            // and if they're not available, give information as to why
-            string processDiagnosticMessage;
-            try
-            {
-                var jobProcess = (Process)sender;
-                processDiagnosticMessage = StringUtil.Format(
-                    RemotingErrorIdStrings.ProcessExitInfo,
-                    jobProcess.ExitCode,
-                    jobProcess.StandardOutput.ReadToEnd(),
-                    jobProcess.StandardError.ReadToEnd());
-            }
-            catch (Exception exception)
-            {
-                processDiagnosticMessage = StringUtil.Format(
-                    RemotingErrorIdStrings.ProcessInfoNotRecoverable,
-                    exception.Message);
-            }
-
-            string exitErrorMsg = StringUtil.Format(
-                RemotingErrorIdStrings.IPCServerProcessExited,
-                processDiagnosticMessage);
-            var psrte = new PSRemotingTransportException(
-                PSRemotingErrorId.IPCServerProcessExited,
-                exitErrorMsg);
-            RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, transportMethod));
-        }
-
         #endregion
 
         #region Sending Data related Methods
 
+        /// <summary>
+        /// Send any data packet in the queue.
+        /// </summary>
         protected void SendOneItem()
         {
             DataPriorityType priorityType;
@@ -1035,6 +1003,9 @@ namespace System.Management.Automation.Remoting.Client
     
         #region Protected Methods
 
+        /// <summary>
+        /// Disposes message queue components.
+        /// </summary>
         protected void DisposeMessageQueue()
         {
             // Stop session processing thread.
@@ -1065,7 +1036,7 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
     }
 
-    internal class OutOfProcessClientSessionTransportManager : OutOfProcessClientSessionTransportManagerBase
+    internal class OutOfProcessClientSessionTransportManager : ClientSessionTransportManagerBase
     {
         #region Private Data
 
@@ -1316,10 +1287,57 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
+        private void OnExited(object sender, EventArgs e)
+        {
+            TransportMethodEnum transportMethod = TransportMethodEnum.Unknown;
+            lock (syncObject)
+            {
+                // There is no need to return when IsClosed==true here as in a legitimate case process exits
+                // after Close is called..In that legitimate case, Exit handler is removed before
+                // calling Exit..So, this Exit must have been called abnormally.
+                if (isClosed)
+                {
+                    transportMethod = TransportMethodEnum.CloseShellOperationEx;
+                }
+
+                // dont let the writer write new data as the process is exited.
+                // Not assigning null to stdInWriter to fix the race condition between OnExited() and CloseAsync() methods.
+                //
+                stdInWriter.StopWriting();
+            }
+
+            // Try to get details about why the process exited
+            // and if they're not available, give information as to why
+            string processDiagnosticMessage;
+            try
+            {
+                var jobProcess = (Process)sender;
+                processDiagnosticMessage = StringUtil.Format(
+                    RemotingErrorIdStrings.ProcessExitInfo,
+                    jobProcess.ExitCode,
+                    jobProcess.StandardOutput.ReadToEnd(),
+                    jobProcess.StandardError.ReadToEnd());
+            }
+            catch (Exception exception)
+            {
+                processDiagnosticMessage = StringUtil.Format(
+                    RemotingErrorIdStrings.ProcessInfoNotRecoverable,
+                    exception.Message);
+            }
+
+            string exitErrorMsg = StringUtil.Format(
+                RemotingErrorIdStrings.IPCServerProcessExited,
+                processDiagnosticMessage);
+            var psrte = new PSRemotingTransportException(
+                PSRemotingErrorId.IPCServerProcessExited,
+                exitErrorMsg);
+            RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, transportMethod));
+        }
+
         #endregion
     }
 
-    internal abstract class HyperVSocketClientSessionTransportManagerBase : OutOfProcessClientSessionTransportManagerBase
+    internal abstract class HyperVSocketClientSessionTransportManagerBase : ClientSessionTransportManagerBase
     {
         #region Data
 
@@ -1582,7 +1600,7 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
     }
 
-    internal sealed class SSHClientSessionTransportManager : OutOfProcessClientSessionTransportManagerBase
+    internal sealed class SSHClientSessionTransportManager : ClientSessionTransportManagerBase
     {
         #region Data
 
@@ -1949,7 +1967,7 @@ namespace System.Management.Automation.Remoting.Client
         #endregion
     }
 
-    internal abstract class NamedPipeClientSessionTransportManagerBase : OutOfProcessClientSessionTransportManagerBase
+    internal abstract class NamedPipeClientSessionTransportManagerBase : ClientSessionTransportManagerBase
     {
         #region Data
 
@@ -2228,7 +2246,7 @@ namespace System.Management.Automation.Remoting.Client
         internal OutOfProcessClientCommandTransportManager(
             ClientRemotePowerShell cmd,
             bool noInput,
-            OutOfProcessClientSessionTransportManagerBase sessnTM,
+            ClientSessionTransportManagerBase sessnTM,
             OutOfProcessTextWriter stdInWriter) : base(cmd, sessnTM.CryptoHelper, sessnTM)
         {
             _stdInWriter = stdInWriter;
