@@ -2238,7 +2238,7 @@ function Start-ResGen
 }
 
 function Find-Dotnet() {
-    Write-Verbose -Verbose "In Find-DotNet"
+    Write-Verbose "In Find-DotNet"
 
     $originalPath = $env:PATH
     $dotnetPath = if ($environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
@@ -2258,7 +2258,7 @@ function Find-Dotnet() {
         $dotnetCLIInstalledVersion = Get-LatestInstalledSDK
         Pop-Location
 
-        Write-Verbose -Verbose "dotnetCLIInstalledVersion = $dotnetCLIInstalledVersion`nchosenDotNetVersion = $chosenDotNetVersion"
+        Write-Verbose "dotnetCLIInstalledVersion = $dotnetCLIInstalledVersion; chosenDotNetVersion = $chosenDotNetVersion"
 
         if ($dotnetCLIInstalledVersion -ne $chosenDotNetVersion) {
             Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."

@@ -97,12 +97,14 @@ bugfix
 build.json
 build.psm1
 bulid
+buildInfoJson
 callmejoebob
 catchable
 cdxml
 celsius
 CentOS
 cgmanifest
+CGManifest
 changelog
 changelog.md
 changelogs
@@ -117,6 +119,7 @@ childitem
 ChrisLGardner
 cimsession
 cimsupport
+ci.psm1
 classlib
 clear-itemproperty
 cloudydino
@@ -922,6 +925,7 @@ tracesource
 travisez13
 travisty
 truher
+TSAUpload
 TValue
 tylerleonhardt
 typecataloggen

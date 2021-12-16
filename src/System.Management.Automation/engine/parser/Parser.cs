@@ -6735,7 +6735,7 @@ namespace System.Management.Automation.Language
                 SkipToken();
                 SkipNewlines();
 
-                // We have seen the ternary operator '?' and now expecting the 'IfFalse' expression.
+                // We have seen the ternary operator '?' and now expecting the 'IfTrue' expression.
                 ExpressionAst ifTrue = ExpressionRule(endNumberOnTernaryOpChars: true);
                 if (ifTrue == null)
                 {
