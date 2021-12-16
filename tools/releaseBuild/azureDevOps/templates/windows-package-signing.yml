@@ -17,7 +17,7 @@ jobs:
     - group: ESRP
     - name: repoFolder
       value: PowerShell
-    - name: repoPath
+    - name: repoRoot
       value: $(Agent.BuildDirectory)\$(repoFolder)
     - name: complianceRepoFolder
       value: compliance
@@ -134,5 +134,5 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(repoPath)\tools'
+      sourceScanPath: '$(repoRoot)\tools'
       snapshotForceEnabled: true
