@@ -16,12 +16,23 @@ jobs:
       value: false
     - name: NugetSecurityAnalysisWarningLevel
       value: none
+    - name: repoFolder
+      value: PowerShell
+    - name: repoRoot
+      value: $(Agent.BuildDirectory)\$(repoFolder)
+    - name: complianceRepoFolder
+      value: compliance
+    - name: complianceRepoPath
+      value: $(Agent.BuildDirectory)\$(complianceRepoFolder)
+
   steps:
   - checkout: self
     clean: true
+    path: $(repoFolder)
 
   - checkout: ComplianceRepo
     clean: true
+    path: $(complianceRepoFolder)
 
   - template: shouldSign.yml
 
@@ -119,5 +130,5 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)/tools'
+      sourceScanPath: '$(repoRoot)/tools'
       snapshotForceEnabled: true
