@@ -14,7 +14,8 @@ Import-Module "$PSScriptRoot\..\.github\workflows\GHWorkflowHelper" -Force
 . "$PSScriptRoot\..\tools\buildCommon\startNativeExecution.ps1"
 
 $existingRegistrationTable = @{}
-$existingRegistrationsJson = Get-Content $PSScriptRoot\..\cgmanifest.json | ConvertFrom-Json -AsHashtable
+$cgManifestPath = (Resolve-Path -Path $PSScriptRoot\..\tools\cgmanifest.json).ProviderPath
+$existingRegistrationsJson = Get-Content $cgManifestPath | ConvertFrom-Json -AsHashtable
 $existingRegistrationsJson.Registrations | ForEach-Object {
     $registration = [Registration]$_
     if ($registration.Component) {
@@ -269,7 +270,6 @@ $newRegistrations = $registrations.Keys | Sort-Object | ForEach-Object { $regist
 $count = $newRegistrations.Count
 $newJson = @{Registrations = $newRegistrations } | ConvertTo-Json -depth 99
 if ($Fix -and $registrationChanged) {
-    $cgManifestPath = (Resolve-Path -Path $PSScriptRoot\..\cgmanifest.json).ProviderPath
     $newJson | Set-Content $cgManifestPath
     Set-GWVariable -Name CGMANIFEST_PATH -Value $cgManifestPath
 }

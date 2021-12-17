@@ -15,13 +15,21 @@ jobs:
     - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
       value: 1
     - group: ESRP
+    - name: repoFolder
+      value: PowerShell
+    - name: repoRoot
+      value: $(Agent.BuildDirectory)\$(repoFolder)
+    - name: complianceRepoFolder
+      value: compliance
 
   steps:
   - checkout: self
     clean: true
+    path: $(repoFolder)
 
   - checkout: ComplianceRepo
     clean: true
+    path: $(complianceRepoFolder)
 
   - template: SetVersionVariables.yml
     parameters:
@@ -124,5 +132,5 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
+      sourceScanPath: '$(repoRoot)\tools'
       snapshotForceEnabled: true

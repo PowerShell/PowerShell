@@ -227,6 +227,9 @@ jobs:
     parameters:
       BuildDropPath: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
       Build_Repository_Uri: $(Github_Build_Repository_Uri)
+      PackageName: PowerShell Windows ${{ parameters.Architecture }} ${{ parameters.BuildConfiguration }}
+      PackageVersion: $(Version)
+      sourceScanPath: '$(PowerShellRoot)\tools'
 
   - powershell: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
@@ -357,7 +360,7 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
+      sourceScanPath: '$(PowerShellRoot)\tools'
       snapshotForceEnabled: true
 
   - powershell: |

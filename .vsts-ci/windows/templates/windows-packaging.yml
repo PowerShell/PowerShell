@@ -69,6 +69,7 @@ jobs:
       BuildDropPath: '$(System.ArtifactsDirectory)/mainBuild'
       Build_Repository_Uri: $(build.repository.uri)
       displayName: SBOM
+      sourceScanPath: '$(repoPath)\tools'
 
   - pwsh: |
       Import-Module .\tools\ci.psm1

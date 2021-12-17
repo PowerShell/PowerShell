@@ -10,19 +10,28 @@ jobs:
       name: PowerShell1ES
       demands:
       - ImageOverride -equals MMS2019
+
     variables:
       - group: ESRP
       - name: runCodesignValidationInjection
         value: false
       - name: NugetSecurityAnalysisWarningLevel
         value: none
+      - name: repoFolder
+        value: PowerShell
+      - name: repoRoot
+        value: $(Agent.BuildDirectory)\$(repoFolder)
+      - name: complianceRepoFolder
+        value: compliance
 
     steps:
     - checkout: self
       clean: true
+      path: $(repoFolder)
 
     - checkout: ComplianceRepo
       clean: true
+      path: $(complianceRepoFolder)
 
     - template: SetVersionVariables.yml
       parameters:
@@ -107,5 +116,5 @@ jobs:
     - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
       displayName: 'Component Detection'
       inputs:
-        sourceScanPath: '$(Build.SourcesDirectory)'
+        sourceScanPath: '$(repoRoot)\tools'
         snapshotForceEnabled: true

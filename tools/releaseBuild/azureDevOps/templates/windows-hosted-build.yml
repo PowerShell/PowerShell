@@ -76,5 +76,5 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(PowerShellRoot)'
+      sourceScanPath: '$(PowerShellRoot)\tools'
       snapshotForceEnabled: true

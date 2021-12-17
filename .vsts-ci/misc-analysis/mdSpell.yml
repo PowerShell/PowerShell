@@ -53,4 +53,4 @@ jobs:
 
   - template: dailyBuildCompliance.yml@ComplianceRepo
     parameters:
-      sourceScanPath: '$(repoPath)'
+      sourceScanPath: '$(repoPath)/test/common'
