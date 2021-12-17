@@ -488,7 +488,10 @@ namespace System.Management.Automation.Remoting.Client
 
         #region Constructor
 
-        internal ClientSessionTransportManagerBase(
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        protected ClientSessionTransportManagerBase(
             Guid runspaceId,
             PSRemotingCryptoHelper cryptoHelper)
             : base(runspaceId, cryptoHelper)
