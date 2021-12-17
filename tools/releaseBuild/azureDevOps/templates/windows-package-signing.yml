@@ -21,8 +21,6 @@ jobs:
       value: $(Agent.BuildDirectory)\$(repoFolder)
     - name: complianceRepoFolder
       value: compliance
-    - name: complianceRepoPath
-      value: $(Agent.BuildDirectory)\$(complianceRepoFolder)
 
   steps:
   - checkout: self
