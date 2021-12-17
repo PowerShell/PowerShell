@@ -1280,8 +1280,8 @@ namespace Microsoft.PowerShell.Commands
             // For other methods like Put where empty content has meaning, we need to fill in the content
             if (request.Content is null)
             {
-                // If this is a Get request and there is no content, then don't fill in the content as empty content gets rejected by some web services
-                if (request.Method == HttpMethod.Get && ContentType is null)
+                // If this is a Get request and there is no content, then don't fill in the content as empty content gets rejected by some web services per RFC7230
+                if ((IsStandardMethodSet() && request.Method == HttpMethod.Get && ContentType is null) || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET"))
                 {
                     return;
                 }

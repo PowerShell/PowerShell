@@ -713,6 +713,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         ($result.Output.Content | ConvertFrom-Json).args.testparam | Should -Be "testvalue"
     }
 
+    It 'Validate Invoke-WebRequest empty body CustomMethod GET' {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod GET"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.Headers.'Content-Length' | Should -BeNullOrEmpty
+    }
+
     It "Validate Invoke-WebRequest body is converted to query params for CustomMethod GET and -NoProxy" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'} -NoProxy"
@@ -2364,6 +2371,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'}"
         $result = ExecuteWebCommand -command $command
         $result.Output.args.testparam | Should -Be "testvalue"
+    }
+
+    It 'Validate Invoke-RestMethod empty body CustomMethod GET' {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod GET"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.Headers.'Content-Length' | Should -BeNullOrEmpty
     }
 
     It "Validate Invoke-RestMethod body is converted to query params for CustomMethod GET and -NoProxy" {
