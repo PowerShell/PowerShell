@@ -105,6 +105,12 @@ namespace Microsoft.PowerShell.Commands
             /// Historically -AllowClobber in these scenarios was set as True.
             /// </summary>
             internal bool NoClobberExportPSSession;
+
+            /// <summary>
+            /// When this flag is true, we only attempt to load a core-edition compatible module, and never try implicitly loading
+            /// a incompatible module via 'WinCompat' mechanism.
+            /// </summary>
+            internal bool CoreEditionCompatibleOnly;
         }
 
         /// <summary>
@@ -280,7 +286,10 @@ namespace Microsoft.PowerShell.Commands
             "ModuleVersion"
         };
 
-        private static readonly HashSet<string> s_builtInModules = new(StringComparer.OrdinalIgnoreCase)
+        /// <summary>
+        /// List of PowerShell built-in modules that are shipped with PowerShell only, not on PS Gallery.
+        /// </summary>
+        protected static readonly HashSet<string> BuiltInModules = new(StringComparer.OrdinalIgnoreCase)
         {
             "CimCmdlets",
             "Microsoft.PowerShell.Diagnostics",
@@ -2387,12 +2396,15 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (importingModule)
                     {
-                        // In case the module to be loaded in WinCompat mode is a PowerShell built-in module, such as the Utility module,
-                        // we need to check whether the built-in module is actually available in the $PSHOME module path.
-                        // This is because a user may not correctly deploy the built-in modules, and that would result in some confusing
-                        // errors when module auto-loading silently attempts to load those modules from the 'System32' module path.
-                        CheckAvailabilityOfBuiltInModules(ModuleIntrinsics.GetModuleName(moduleManifestPath));
-                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string[] { moduleManifestPath }, null, options);
+                        if (options.CoreEditionCompatibleOnly)
+                        {
+                            return null;
+                        }
+
+                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(
+                            moduleNames: new string[] { moduleManifestPath },
+                            moduleFullyQualifiedNames: null,
+                            importModuleOptions: options);
 
                         // We are loading by a single ManifestPath so expect max of 1
                         return moduleProxies.Count > 0 ? moduleProxies[0] : null;
@@ -3716,7 +3728,7 @@ namespace Microsoft.PowerShell.Commands
             // If the RequiredModule is one of the Engine modules, then they could have been loaded as snapins (using InitialSessionState.CreateDefault())
             if (result == null && InitialSessionState.IsEngineModule(requiredModule.Name))
             {
-                result = GetEngineSnapIn(context, requiredModule.Name);
+                result = context.CurrentRunspace.InitialSessionState.GetPSSnapIn(requiredModule.Name);
                 if (result != null)
                 {
                     loaded = true;
@@ -4897,33 +4909,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions) { throw new System.NotImplementedException(); }
 
-        private void CheckAvailabilityOfBuiltInModules(string moduleName)
-        {
-            // Check if the module is a PowerShell built-in module. If so, normalize the module name; if not, skip the module.
-            if (!s_builtInModules.TryGetValue(moduleName, out moduleName))
-            {
-                return;
-            }
-
-            // When it was imported as a snapin, we skip the check because it's OK to not have the module available in such case.
-            if (GetEngineSnapIn(Context, moduleName) is not null)
-            {
-                return;
-            }
-
-            // Check if the module exists in the $PSHOME module path. If not, throws exception.
-            string psHomeModulePath = ModuleIntrinsics.GetPSHomeModulePath();
-            string moduleFolder = Path.Join(psHomeModulePath, moduleName);
-            if (!Directory.Exists(moduleFolder))
-            {
-                throw new InvalidOperationException(
-                    StringUtil.Format(
-                        Modules.CannotFindBuiltInModules,
-                        moduleName,
-                        psHomeModulePath));
-            }
-        }
-
         private void RemoveTypesAndFormatting(
             IList<string> formatFilesToRemove,
             IList<string> typeFilesToRemove)
@@ -5346,9 +5331,8 @@ namespace Microsoft.PowerShell.Commands
             string moduleName, string fileBaseName, string extension, string moduleBase,
             string prefix, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out bool found)
         {
-            bool throwAwayModuleFileFound = false;
             return LoadUsingExtensions(parentModule, moduleName, fileBaseName, extension, moduleBase, prefix, ss,
-                                       options, manifestProcessingFlags, out found, out throwAwayModuleFileFound);
+                                       options, manifestProcessingFlags, out found, out _);
         }
 
         /// <summary>
@@ -5449,7 +5433,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (File.Exists(fileName))
                 {
-                    moduleFileFound = true;
                     // Win8: 325243 - Added the version check so that we do not unload modules with the same name but different version
                     if (BaseForce && DoesAlreadyLoadedModuleSatisfyConstraints(module))
                     {
@@ -7394,19 +7377,6 @@ namespace Microsoft.PowerShell.Commands
                 cmdlet.WriteVerbose(message);
                 return;
             }
-        }
-
-        /// <summary>
-        /// Search a PSSnapin with the specified name.
-        /// </summary>
-        internal static PSSnapInInfo GetEngineSnapIn(ExecutionContext context, string name)
-        {
-            if (context.CurrentRunspace.InitialSessionState.ImportedSnapins.TryGetValue(name, out PSSnapInInfo snapin))
-            {
-                return snapin;
-            }
-
-            return null;
         }
 
         /// <summary>

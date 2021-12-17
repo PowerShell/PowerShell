@@ -762,7 +762,7 @@ namespace Microsoft.PowerShell.Commands
                     // Check if module could be a snapin. This was the case for PowerShell version 2 engine modules.
                     if (InitialSessionState.IsEngineModule(name))
                     {
-                        PSSnapInInfo snapin = GetEngineSnapIn(Context, name);
+                        PSSnapInInfo snapin = Context.CurrentRunspace.InitialSessionState.GetPSSnapIn(name);
 
                         // Return the command if we found a module
                         if (snapin != null)
@@ -1945,27 +1945,26 @@ namespace Microsoft.PowerShell.Commands
             return match;
         }
 
-        private List<T> FilterModuleCollection<T>(IEnumerable<T> moduleCollection)
+        private IEnumerable<T> FilterModuleCollection<T>(IEnumerable<T> moduleCollection)
         {
-            List<T> filteredModuleCollection = null;
-            if (moduleCollection != null)
+            if (moduleCollection is null)
             {
-                // the ModuleDeny list is cached in PowerShellConfig object
-                string[] moduleDenyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
-                if (moduleDenyList?.Any() != true)
+                return null;
+            }
+
+            // The ModuleDeny list is cached in PowerShellConfig object
+            string[] moduleDenyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+            if (moduleDenyList is null || moduleDenyList.Length == 0)
+            {
+                return moduleCollection;
+            }
+
+            var filteredModuleCollection = new List<T>();
+            foreach (var module in moduleCollection)
+            {
+                if (!IsModuleInDenyList(moduleDenyList, module as string, module as ModuleSpecification))
                 {
-                    filteredModuleCollection = new List<T>(moduleCollection);
-                }
-                else
-                {
-                    filteredModuleCollection = new List<T>();
-                    foreach (var module in moduleCollection)
-                    {
-                        if (!IsModuleInDenyList(moduleDenyList, module as string, module as ModuleSpecification))
-                        {
-                            filteredModuleCollection.Add(module);
-                        }
-                    }
+                    filteredModuleCollection.Add(module);
                 }
             }
 
@@ -1977,38 +1976,62 @@ namespace Microsoft.PowerShell.Commands
             Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec == null), "Either moduleName or moduleSpec must be specified");
 
             // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
-            string coreModuleToLoad = ModuleIntrinsics.GetModuleName(moduleSpec == null ? moduleName : moduleSpec.Name);
+            string moduleToLoad = ModuleIntrinsics.GetModuleName(moduleSpec is null ? moduleName : moduleSpec.Name);
 
-            var isModuleToLoadEngineModule = InitialSessionState.IsEngineModule(coreModuleToLoad);
+            var isBuiltInModule = BuiltInModules.TryGetValue(moduleToLoad, out string normalizedName);
+            if (isBuiltInModule)
+            {
+                moduleToLoad = normalizedName;
+            }
+
             string[] noClobberModuleList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
-            if (isModuleToLoadEngineModule || ((noClobberModuleList != null) && noClobberModuleList.Contains(coreModuleToLoad, StringComparer.OrdinalIgnoreCase)))
+            if (isBuiltInModule || noClobberModuleList?.Contains(moduleToLoad, StringComparer.OrdinalIgnoreCase) == true)
             {
                 // if it is one of engine modules - first try to load it from $PSHOME\Modules
                 // otherwise rely on $env:PSModulePath (in which WinPS module location has to go after CorePS module location)
-                if (isModuleToLoadEngineModule)
+                bool tryLoadingModuleLocally = true;
+                if (isBuiltInModule)
                 {
-                    string expectedCoreModulePath = Path.Combine(ModuleIntrinsics.GetPSHomeModulePath(), coreModuleToLoad);
-                    if (Directory.Exists(expectedCoreModulePath))
+                    PSSnapInInfo loadedSnapin = Context.CurrentRunspace.InitialSessionState.GetPSSnapIn(moduleToLoad);
+                    tryLoadingModuleLocally = loadedSnapin is null;
+
+                    if (tryLoadingModuleLocally)
                     {
-                        coreModuleToLoad = expectedCoreModulePath;
+                        string expectedCoreModulePath = Path.Combine(ModuleIntrinsics.GetPSHomeModulePath(), moduleToLoad);
+                        if (Directory.Exists(expectedCoreModulePath))
+                        {
+                            moduleToLoad = expectedCoreModulePath;
+                        }
                     }
                 }
 
-                if (moduleSpec == null)
+                if (tryLoadingModuleLocally)
                 {
-                    ImportModule_LocallyViaName_WithTelemetry(importModuleOptions, coreModuleToLoad);
-                }
-                else
-                {
-                    ModuleSpecification tmpModuleSpec = new ModuleSpecification()
+                    bool savedValue = importModuleOptions.CoreEditionCompatibleOnly;
+                    importModuleOptions.CoreEditionCompatibleOnly = true;
+
+                    PSModuleInfo moduleInfo = moduleSpec is null
+                        ? ImportModule_LocallyViaName_WithTelemetry(importModuleOptions, moduleToLoad)
+                        : ImportModule_LocallyViaFQName(
+                            importModuleOptions,
+                            new ModuleSpecification()
+                            {
+                                Guid = moduleSpec.Guid,
+                                MaximumVersion = moduleSpec.MaximumVersion,
+                                Version = moduleSpec.Version,
+                                RequiredVersion = moduleSpec.RequiredVersion,
+                                Name = moduleToLoad
+                            });
+
+                    if (moduleInfo is null && isBuiltInModule)
                     {
-                        Guid = moduleSpec.Guid,
-                        MaximumVersion = moduleSpec.MaximumVersion,
-                        Version = moduleSpec.Version,
-                        RequiredVersion = moduleSpec.RequiredVersion,
-                        Name = coreModuleToLoad
-                    };
-                    ImportModule_LocallyViaFQName(importModuleOptions, tmpModuleSpec);
+                        throw new InvalidOperationException(
+                            StringUtil.Format(
+                                Modules.CannotFindBuiltInModules,
+                                moduleName));
+                    }
+
+                    importModuleOptions.CoreEditionCompatibleOnly = savedValue;
                 }
 
                 importModuleOptions.NoClobberExportPSSession = true;
@@ -2020,8 +2043,8 @@ namespace Microsoft.PowerShell.Commands
             IList<PSModuleInfo> moduleProxyList = new List<PSModuleInfo>();
 #if !UNIX
             // one of the two parameters can be passed: either ModuleNames (most of the time) or ModuleSpecifications (they are used in different parameter sets)
-            List<string> filteredModuleNames = FilterModuleCollection(moduleNames);
-            List<ModuleSpecification> filteredModuleFullyQualifiedNames = FilterModuleCollection(moduleFullyQualifiedNames);
+            IEnumerable<string> filteredModuleNames = FilterModuleCollection(moduleNames);
+            IEnumerable<ModuleSpecification> filteredModuleFullyQualifiedNames = FilterModuleCollection(moduleFullyQualifiedNames);
 
             // do not setup WinCompat resources if we have no modules to import
             if ((filteredModuleNames?.Any() != true) && (filteredModuleFullyQualifiedNames?.Any() != true))

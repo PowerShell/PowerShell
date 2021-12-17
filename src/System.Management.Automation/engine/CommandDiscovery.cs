@@ -376,9 +376,8 @@ namespace System.Management.Automation
 
             foreach (var requiresPSSnapIn in requiresPSSnapIns)
             {
-                IEnumerable<PSSnapInInfo> loadedPSSnapIns = null;
-                loadedPSSnapIns = context.InitialSessionState.GetPSSnapIn(requiresPSSnapIn.Name);
-                if (loadedPSSnapIns == null || !loadedPSSnapIns.Any())
+                var loadedPSSnapIn = context.InitialSessionState.GetPSSnapIn(requiresPSSnapIn.Name);
+                if (loadedPSSnapIn is null)
                 {
                     if (requiresMissingPSSnapIns == null)
                     {
@@ -390,8 +389,7 @@ namespace System.Management.Automation
                 else
                 {
                     // the requires PSSnapin is loaded. now check the PSSnapin version
-                    PSSnapInInfo loadedPSSnapIn = loadedPSSnapIns.First();
-                    Diagnostics.Assert(loadedPSSnapIn.Version != null,
+                    Dbg.Assert(loadedPSSnapIn.Version != null,
                         string.Format(
                             CultureInfo.InvariantCulture,
                             "Version is null for loaded PSSnapin {0}.", loadedPSSnapIn));

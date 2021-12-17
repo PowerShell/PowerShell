@@ -3970,20 +3970,14 @@ namespace System.Management.Automation.Runspaces
             return psSnapInInfo;
         }
 
-        internal List<PSSnapInInfo> GetPSSnapIn(string psSnapinName)
+        internal PSSnapInInfo GetPSSnapIn(string psSnapinName)
         {
-            List<PSSnapInInfo> loadedSnapins = null;
             if (ImportedSnapins.TryGetValue(psSnapinName, out PSSnapInInfo importedSnapin))
             {
-                if (loadedSnapins is null)
-                {
-                    loadedSnapins = new List<PSSnapInInfo>();
-                }
-
-                loadedSnapins.Add(importedSnapin);
+                return importedSnapin;
             }
 
-            return loadedSnapins;
+            return null;
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
