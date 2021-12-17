@@ -5,14 +5,20 @@
 # which is used to generate the notice file.
 # Requires the module dotnet.project.assets from the PowerShell Gallery authored by @TravisEz13
 
+param(
+    [switch] $Fix
+)
+
 Import-Module dotnet.project.assets
+Import-Module "$PSScriptRoot\..\.github\workflows\GHWorkflowHelper" -Force
 . "$PSScriptRoot\..\tools\buildCommon\startNativeExecution.ps1"
 
 $existingRegistrationTable = @{}
-$existingRegistrationsJson = Get-Content $PSScriptRoot\..\cgmanifest.json | ConvertFrom-Json -AsHashtable
+$cgManifestPath = (Resolve-Path -Path $PSScriptRoot\..\tools\cgmanifest.json).ProviderPath
+$existingRegistrationsJson = Get-Content $cgManifestPath | ConvertFrom-Json -AsHashtable
 $existingRegistrationsJson.Registrations | ForEach-Object {
     $registration = [Registration]$_
-    if($registration.Component) {
+    if ($registration.Component) {
         $name = $registration.Component.Name()
         $existingRegistrationTable.Add($name, $registration)
     }
@@ -70,10 +76,17 @@ Class Nuget {
     }
 }
 
+$winDesktopSdk = 'Microsoft.NET.Sdk.WindowsDesktop'
+if (!$IsWindows) {
+    $winDesktopSdk = 'Microsoft.NET.Sdk'
+    Write-Warning "Always using $winDesktopSdk since this is not windows!!!"
+}
+
 function New-NugetComponent {
     param(
         [string]$name,
-        [string]$version
+        [string]$version,
+        [switch]$DevelopmentDependency
     )
 
     $nuget = [Nuget]@{
@@ -87,19 +100,54 @@ function New-NugetComponent {
 
     $registration = [Registration]@{
         Component             = $Component
-        DevelopmentDependency = $false
+        DevelopmentDependency = $DevelopmentDependency
     }
 
     return $registration
 }
 
-$winDesktopSdk = 'Microsoft.NET.Sdk.WindowsDesktop'
-if (!$IsWindows) {
-    $winDesktopSdk = 'Microsoft.NET.Sdk'
-    Write-Warning "Always using $winDesktopSdk since this is not windows!!!"
+$nugetPublicVersionCache = [System.Collections.Generic.Dictionary[string, string]]::new()
+function Get-NuGetPublicVersion {
+    param(
+        [string]$Name,
+        [string]$Version
+    )
+
+    if($nugetPublicVersionCache.ContainsKey($Name)) {
+        return $nugetPublicVersionCache[$Name]
+    }
+
+    try {
+        [System.Management.Automation.SemanticVersion]$desiredVersion = $Version
+    } catch {
+        [Version]$desiredVersion = $Version
+    }
+
+    $publicVersion = $null
+    $publicVersion = Find-Package -Name $Name -AllowPrereleaseVersions -source nuget.org -AllVersions -ErrorAction SilentlyContinue | ForEach-Object {
+        try {
+            $packageVersion = [System.Management.Automation.SemanticVersion]$_.Version
+        } catch {
+            # Fall back to using [version] if it is not a semantic version
+            $packageVersion = $_.Version
+        }
+
+        $_ | Add-Member -Name SemVer -MemberType NoteProperty -Value $packageVersion -PassThru
+    } | Where-Object { $_.SemVer -le $desiredVersion } | Sort-Object -Property semver -Descending | Select-Object -First 1 -ExpandProperty Version
+
+    if(!$publicVersion) {
+        Write-Warning "No public version found for $Name, using $Version"
+        $publicVersion = $Version
+    }
+
+    if(!$nugetPublicVersionCache.ContainsKey($Name)) {
+        $nugetPublicVersionCache.Add($Name, $publicVersion)
+    }
+
+    return $publicVersion
 }
 
-Function Get-CGRegistrations {
+function Get-CGRegistrations {
     param(
         [Parameter(Mandatory)]
         [ValidateSet(
@@ -120,10 +168,10 @@ Function Get-CGRegistrations {
         [System.Collections.Generic.Dictionary[string, Registration]] $RegistrationTable
     )
 
-    $newRegistrations = $Registrations
+    $registrationChanged = $false
 
-    $dotnetTargetName = 'net6.0'
-    $dotnetTargetNameWin7 = 'net6.0-windows7.0'
+    $dotnetTargetName = 'net5.0'
+    $dotnetTargetNameWin7 = 'net5.0-windows7.0'
     $unixProjectName = 'powershell-unix'
     $windowsProjectName = 'powershell-win-core'
     $actualRuntime = $Runtime
@@ -169,13 +217,7 @@ Function Get-CGRegistrations {
         }
         $null = New-PADrive -Path $PSScriptRoot\..\src\$folder\obj\project.assets.json -Name $folder
         try {
-            $targets = Get-ChildItem -Path "${folder}:/targets/$target" -ErrorAction Stop | Where-Object {
-                $_.Type -eq 'package' -and
-                $_.Name -notlike 'DotNetAnalyzers.DocumentationAnalyzers*' -and
-                $_.Name -notlike 'StyleCop*' -and
-                $_.Name -notlike 'Microsoft.CodeAnalysis.Analyzers*' -and
-                $_.Name -notlike 'Microsoft.CodeAnalysis.NetAnalyzers*'
-            }  | select-object -ExpandProperty name
+            $targets = Get-ChildItem -Path "${folder}:/targets/$target" -ErrorAction Stop | Where-Object { $_.Type -eq 'package' }  | select-object -ExpandProperty name
         } catch {
             Get-ChildItem -Path "${folder}:/targets" | Out-String | Write-Verbose -Verbose
             throw
@@ -190,23 +232,33 @@ Function Get-CGRegistrations {
         $parts = ($target -split '\|')
         $name = $parts[0]
         $targetVersion = $parts[1]
-        $pattern = [regex]::Escape($name) + " "
-        $tpnMatch = Select-String -Path $PSScriptRoot\..\ThirdPartyNotices.txt -Pattern $pattern
+        $publicVersion = Get-NuGetPublicVersion -Name $name -Version $targetVersion
 
         # Add the registration to the cgmanifest if the TPN does not contain the name of the target OR
         # the exisitng CG contains the registration, because if the existing CG contains the registration,
         # that might be the only reason it is in the TPN.
-        if ((!$tpnMatch -or $existingRegistrationTable.ContainsKey($name)) -and !$RegistrationTable.ContainsKey($target)) {
-            $registration = New-NugetComponent -Name $name -Version $targetVersion
+        if (!$RegistrationTable.ContainsKey($target)) {
+            $DevelopmentDependency = $false
+            if (!$existingRegistrationTable.ContainsKey($name) -or $existingRegistrationTable.$name.Component.Version() -ne $publicVersion) {
+                $registrationChanged = $true
+            }
+            if ($existingRegistrationTable.ContainsKey($name) -and $existingRegistrationTable.$name.DevelopmentDependency) {
+                $DevelopmentDependency = $true
+            }
+
+            $registration = New-NugetComponent -Name $name -Version $publicVersion -DevelopmentDependency:$DevelopmentDependency
             $RegistrationTable.Add($target, $registration)
         }
     }
+
+    return $registrationChanged
 }
 
 $registrations = [System.Collections.Generic.Dictionary[string, Registration]]::new()
 $lastCount = 0
+$registrationChanged = $false
 foreach ($runtime in "win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win-arm", "linux-arm", "linux-arm64", "osx-arm64", "win-arm64", "win7-x86") {
-    Get-CGRegistrations -Runtime $runtime -RegistrationTable $registrations
+    $registrationChanged = (Get-CGRegistrations -Runtime $runtime -RegistrationTable $registrations) -or $registrationChanged
     $count = $registrations.Count
     $newCount = $count - $lastCount
     $lastCount = $count
@@ -216,5 +268,19 @@ foreach ($runtime in "win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win-arm"
 $newRegistrations = $registrations.Keys | Sort-Object | ForEach-Object { $registrations[$_] }
 
 $count = $newRegistrations.Count
-@{Registrations = $newRegistrations } | ConvertTo-Json -depth 99 | Set-Content $PSScriptRoot\..\cgmanifest.json
+$newJson = @{Registrations = $newRegistrations } | ConvertTo-Json -depth 99
+if ($Fix -and $registrationChanged) {
+    $newJson | Set-Content $cgManifestPath
+    Set-GWVariable -Name CGMANIFEST_PATH -Value $cgManifestPath
+}
+
+if (!$Fix -and $registrationChanged) {
+    $temp = Get-GWTempPath
+
+    $tempJson = Join-Path -Path $temp -ChildPath "cgmanifest$((Get-Date).ToString('yyyMMddHHmm')).json"
+    $newJson | Set-Content $tempJson -Encoding utf8NoBOM
+    Set-GWVariable -Name CGMANIFEST_PATH -Value $tempJson
+    throw "cgmanifest is out of date.  run ./tools/findMissingNotices.ps1 -Fix.  Generated cgmanifest is here: $tempJson"
+}
+
 Write-Verbose "$count registrations created!" -Verbose

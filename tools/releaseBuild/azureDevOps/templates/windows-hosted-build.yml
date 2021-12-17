@@ -9,8 +9,8 @@ parameters:
     default: ''
 
 jobs:
-- job: build_windows_${{ parameters.Architecture }}
-  displayName: Build Windows - ${{ parameters.Architecture }}
+- job: build_windows_${{ parameters.Architecture }}_${{ parameters.BuildConfiguration }}
+  displayName: Build Windows - ${{ parameters.Architecture }} ${{ parameters.BuildConfiguration }}
   condition: succeeded()
   dependsOn: ${{ parameters.parentJob }}
   pool:
@@ -46,7 +46,7 @@ jobs:
     parameters:
       repoRoot: $(PowerShellRoot)
 
-  - powershell: |
+  - pwsh: |
 
       $runtime = switch ($env:Architecture)
         {
@@ -61,7 +61,7 @@ jobs:
       tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols
     displayName: 'Build Windows Universal - $(Architecture) Symbols zip'
 
-  - powershell: |
+  - pwsh: |
       $packageName = (Get-ChildItem '$(Build.ArtifactStagingDirectory)\Symbols_$(Architecture)').FullName
       $vstsCommandString = "vso[artifact.upload containerfolder=results;artifactname=results]$packageName"
       Write-Host ("sending " + $vstsCommandString)
@@ -71,5 +71,5 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
+      sourceScanPath: '$(PowerShellRoot)\tools'
       snapshotForceEnabled: true
