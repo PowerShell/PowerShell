@@ -43,8 +43,7 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
-      ignoreDirectories: '$(Build.SourcesDirectory)\test,$(Build.SourcesDirectory)\docs'
+      sourceScanPath: '$(Build.SourcesDirectory)\tools'
 
   - task: msospo.ospo-extension.8d7f9abb-6896-461d-9e25-4f74ed65ddb2.notice@0
     displayName: 'NOTICE File Generator'
@@ -82,9 +81,3 @@ jobs:
       targetPath: $(System.ArtifactsDirectory)
       artifactName: notice
     displayName: Publish notice artifacts
-
-  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-    displayName: 'Component Detection'
-    inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
-      snapshotForceEnabled: true
