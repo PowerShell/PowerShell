@@ -7,7 +7,10 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
 $DebianDistributions = @("deb")
-$RedhatDistributions = @("rh")
+$RedhatDistributions = @("rh","mariner1")
+$AllDistribution = @()
+$AllDistribution += $DebianDistributions
+$RedhatDistributions += $RedhatDistributions
 $script:netCoreRuntime = 'net7.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
@@ -523,6 +526,7 @@ function Start-PSPackage {
                 foreach ($Distro in $Script:RedhatDistributions) {
                     $Arguments["Distribution"] = $Distro
                     if ($PSCmdlet.ShouldProcess("Create RPM Package for $Distro")) {
+                        Write-Verbose -Verbose "Creating RPM Package for $Distro"
                         New-UnixPackage @Arguments
                     }
                 }
@@ -1041,7 +1045,7 @@ function New-UnixPackage {
         # Build package
         try {
             if ($PSCmdlet.ShouldProcess("Create $type package")) {
-                Write-Log "Creating package with fpm..."
+                Write-Log "Creating package with fpm $Arguments..."
                 try {
                     $Output = Start-NativeExecution { fpm $Arguments }
                 }
@@ -1303,7 +1307,7 @@ function Get-FpmArguments
         "-t", $Type,
         "-s", "dir"
     )
-    if ($Distribution -eq 'rh') {
+    if ($Distribution -in $script:RedHatDistributions) {
         $Arguments += @("--rpm-dist", $Distribution)
         $Arguments += @("--rpm-os", "linux")
         $Arguments += @("--license", "MIT")
@@ -1348,11 +1352,21 @@ function Get-FpmArguments
 
 function Get-PackageDependencies
 {
-    param(
-        [String]
-        [ValidateSet('rh','deb','macOS')]
-        $Distribution
-    )
+    param()
+    DynamicParam {
+            # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
+            # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
+            $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
+            $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $Script:AllDistributions
+            $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
+            $Attributes.Add($ParameterAttr) > $null
+            $Attributes.Add($ValidateSetAttr) > $null
+
+            $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
+            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
+            $Dict.Add("Distribution", $Parameter) > $null
+            return $Dict
+    }
 
     End {
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
@@ -1372,6 +1386,11 @@ function Get-PackageDependencies
             $Dependencies = @(
                 "openssl-libs",
                 "libicu"
+            )
+        } elseif ($Distribution -eq 'mariner1') {
+            $Dependencies = @(
+                "openssl-libs",
+                "icu"
             )
         }
 
@@ -1423,7 +1442,7 @@ function New-AfterScripts
 
     Write-Verbose -Message "AfterScript Distribution: $Distribution" -Verbose
 
-    if ($Distribution -eq 'rh') {
+    if ($Distribution -in $script:RedHatDistributions) {
         $AfterInstallScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $AfterRemoveScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $packagingStrings.RedHatAfterInstallScript -f "$Link", $Destination  | Out-File -FilePath $AfterInstallScript -Encoding ascii
@@ -4401,7 +4420,7 @@ function Invoke-AzDevOpsLinuxPackageCreation {
     }
 
     try {
-        Write-Verbose "Packaging '$BuildType'-LTS:$LTS for $ReleaseTag ..." -Verbose
+        Write-Verbose "Packaging '$BuildType'; LTS:$LTS for $ReleaseTag ..." -Verbose
 
         Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\psoptions.json"
 
