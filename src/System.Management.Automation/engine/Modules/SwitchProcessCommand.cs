@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
 
             for (int i = 1; i < WithCommand.Length; i++)
             {
-                execArgs[i] = WithCommand[i].ToString();
+                execArgs[i] = WithCommand[i];
             }
 
             // need null terminator at end
