@@ -7,11 +7,12 @@ jobs:
       value: none
   displayName: Build test artifacts
   condition: succeeded()
-  pool: 'Hosted Ubuntu 1604'
+  pool:
+    # testing
+    vmImage: ubuntu-latest
   steps:
   - checkout: self
     clean: true
-
 
   - pwsh: |
       Import-Module ./build.psm1

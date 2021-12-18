@@ -16,7 +16,7 @@ jobs:
   pool:
     name: PowerShell1ES
     demands:
-    - ImageOverride -equals MMS2019
+    - ImageOverride -equals MMS2019TLS
 
   timeoutInMinutes: 15
 
