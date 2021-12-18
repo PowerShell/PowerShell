@@ -1,8 +1,11 @@
 jobs:
 - job: CreateMSIXBundle
   displayName: Create .msixbundle file
-  pool:
-    vmImage: windows-latest
+
+  pool: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019TLS
+
   variables:
     - group: msixTools
     - group: 'Azure Blob variable group'
