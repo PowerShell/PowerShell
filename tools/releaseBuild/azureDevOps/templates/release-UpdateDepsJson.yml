@@ -1,8 +1,11 @@
 jobs:
 - job: UpdateDepsFiles
   displayName: Update deps files
-  pool:
-    vmImage: windows-latest
+
+  pool: PowerShell1ES
+    demands:
+    - ImageOverride -equals MMS2019TLS
+
   variables:
   - group: 'Azure Blob variable group'
   steps:
