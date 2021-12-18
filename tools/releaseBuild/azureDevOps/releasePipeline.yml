@@ -110,6 +110,7 @@ stages:
   - job: ValidatePkgNames
     displayName: Validate Package Names
     pool:
+      # testing
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
@@ -118,6 +119,7 @@ stages:
   - job: ValidatePkgBOM
     displayName: Validate Package BOM
     pool:
+      # testing
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
@@ -174,8 +176,11 @@ stages:
   jobs:
   - deployment: AzureBlobPublic
     displayName: Make Azure Blob Public
-    pool:
-      vmImage: windows-latest
+
+    pool: PowerShell1ES
+      demands:
+      - ImageOverride -equals MMS2019TLS
+
     variables:
     - group: 'Staging_ACR'
     environment: PSReleaseAzureBlobPublic
@@ -187,8 +192,11 @@ stages:
 
   - job: GitHubDraft
     displayName: Create GitHub Draft release
-    pool:
-      vmImage: windows-latest
+
+    pool: PowerShell1ES
+      demands:
+      - ImageOverride -equals MMS2019TLS
+
     variables:
     - group: 'Azure Blob variable group'
     - group: 'AzDevOpsArtifacts'
@@ -220,14 +228,20 @@ stages:
   dependsOn: GitHubManualTasks
   jobs:
   - job: PublishNuget
-    pool:
-      vmImage: windows-latest
+
+    pool: PowerShell1ES
+      demands:
+      - ImageOverride -equals MMS2019TLS
+
     steps:
     - template: templates/release-ReleaseToNuGet.yml
 
   - job: PublishPkgsMsftCom
-    pool:
-      vmImage: ubuntu-latest
+
+    pool: PowerShell1ES
+      demands:
+      - ImageOverride -equals MMSUbuntu20.04TLS
+
     variables:
     - group: 'AzDevOpsArtifacts'
     - group: 'packages.microsoft.com'
@@ -320,8 +334,11 @@ stages:
   jobs:
   - deployment: UploadJson
     displayName: Upload BuildInfoJson
-    pool:
-      vmImage: windows-latest
+
+    pool: PowerShell1ES
+      demands:
+      - ImageOverride -equals MMS2019TLS
+
     variables:
     - group: 'Azure Blob variable group'
     environment: PSReleaseBuildInfoJson

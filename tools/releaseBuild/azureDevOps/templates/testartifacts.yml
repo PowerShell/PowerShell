@@ -8,6 +8,7 @@ jobs:
   displayName: Build test artifacts
   condition: succeeded()
   pool:
+    # testing
     vmImage: ubuntu-latest
   steps:
   - checkout: self
