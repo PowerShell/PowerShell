@@ -695,7 +695,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers",
-          "Version": "1.2.0-beta.354"
+          "Version": "1.1.118"
         }
       },
       "DevelopmentDependency": true
