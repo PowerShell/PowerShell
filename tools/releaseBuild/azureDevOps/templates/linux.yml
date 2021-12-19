@@ -244,10 +244,22 @@ jobs:
           signOutputPath: $(Build.StagingDirectory)\signedPackages
           certificateId: "CP-450779-Pgp"
           pattern: |
-            **\*.rpm
+            **\*.rh.*.rpm
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
-          displayName: Sign RPM
+          displayName: Sign RedHat RPM
+
+  - ${{ if eq(variables['buildName'], 'RPM') }}:
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+          buildOutputPath: $(System.ArtifactsDirectory)\rpm
+          signOutputPath: $(Build.StagingDirectory)\signedPackages
+          certificateId: "CP-459159-Pgp"
+          pattern: |
+            **\*.mariner1.*.rpm
+          useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
+          displayName: Sign Mariner RPM
 
   # requires windows
   - ${{ if ne(variables['buildName'], 'RPM') }}:
