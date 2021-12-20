@@ -13,6 +13,15 @@ Describe "Verify SBOMs" {
             $testCases += @{
                 FilePath = $_.FullName
                 Name = $_.Name
+                Extension = $_.Extension
+            }
+        }
+        Get-ChildItem $env:PACKAGE_FOLDER -Filter *.rpm | ForEach-Object {
+            Write-Verbose "Found $($_.Name)..." -Verbose
+            $testCases += @{
+                FilePath = $_.FullName
+                Name = $_.Name
+                Extension = $_.Extension
             }
         }
 
@@ -21,11 +30,30 @@ Describe "Verify SBOMs" {
             Write-Verbose "Testing $name..." -Verbose
             $extractedPath = Join-Path Testdrive:\ -ChildPath ([System.io.path]::GetRandomFileName())
             $null = New-Item -Path $extractedPath -ItemType Directory -Force
-            Expand-Archive -Path $case.FilePath -DestinationPath $extractedPath
-            $manifestPath = Join-Path $extractedPath -ChildPath '/_manifest/spdx_2.2/manifest.spdx.json'
+            $resolvedPath = (Resolve-Path -Path $extractedPath).ProviderPath
+            switch ($case.Extension) {
+                '.zip' {
+                    Expand-Archive -Path $case.FilePath -DestinationPath $extractedPath
+                    $manifestPath = Join-Path $extractedPath -ChildPath '/_manifest/spdx_2.2/manifest.spdx.json'
+                }
+                '.rpm' {
+                    Push-Location $resolvedPath
+                    try {
+                        rpm2cpio $case.FilePath | cpio -i --make-directories
+                        $manifestPath = Get-ChildItem -Path manifest.spdx.json -Recurse | Select-Object -First 1 -ExpandProperty FullName
+                    } finally {
+                        Pop-Location
+                    }
+                }
+                Default {
+                    throw "Unkown extension $($case.Extension)"
+                }
+            }
+
             It "$name has a BOM" {
                 $manifestPath | Should -Exist
             }
+
             Test-PackageManifest -PackagePath $extractedPath | ForEach-Object {
                 $status = $_.Status
                 $expectedHash = $_.ExpectedHash
@@ -66,11 +94,7 @@ Describe "Verify SBOMs" {
         }
     }
 
-    Context "Zip files" {
-        BeforeAll {
-            Write-Verbose "In Context BeforeAll" -Verbose
-        }
-
+    Context "Package files" {
         It "<name> should have <file> with matching hash" -TestCases $matchCases {
             param(
                 $Name,
