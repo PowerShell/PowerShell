@@ -248,6 +248,7 @@ jobs:
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
           displayName: Sign RedHat RPM
+          alwaysCopy: false
 
   - ${{ if eq(variables['buildName'], 'RPM') }}:
     - template: EsrpSign.yml@ComplianceRepo
@@ -260,6 +261,7 @@ jobs:
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
           displayName: Sign Mariner RPM
+          alwaysCopy: false
 
   # requires windows
   - ${{ if ne(variables['buildName'], 'RPM') }}:
