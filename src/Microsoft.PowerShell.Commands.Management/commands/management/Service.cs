@@ -1755,10 +1755,11 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.PermissionDenied);
                         return;
                     }
-
+                    
                     hService = NativeMethods.OpenServiceW(
                         hScManager,
                         Name,
+                        string.IsNullOrEmpty(SecurityDescriptorSddl) ? NativeMethods.SERVICE_CHANGE_CONFIG :
                         NativeMethods.SERVICE_CHANGE_CONFIG | NativeMethods.WRITE_DAC | NativeMethods.WRITE_OWNER
                         );
 
