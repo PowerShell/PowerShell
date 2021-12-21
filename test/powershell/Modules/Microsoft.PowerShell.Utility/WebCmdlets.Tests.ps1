@@ -3647,3 +3647,31 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdmi
         { Invoke-RestMethod -Uri $uri -ContentType $null } | Should -Not -Throw
     }
 }
+
+Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI",'Issue16658' {
+    BeforeAll {
+        $WebListener = Start-WebListener
+    }
+
+    It "Execute Invoke-WebRequest with URI parameter alias" {
+        $query = @{
+            body        = "hello"
+            contenttype = 'text/plain'
+        }
+        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+        $result = Invoke-WebRequest -Url $uri
+        $result.StatusCode | Should -Be "200"
+        $result.Content | Should -Be "hello"
+    }
+
+    It "Execute Invoke-RestMethod with URI parameter alias" {
+        $query = @{
+            contenttype = 'application/json'
+            body        = @{Hello = "world"} | ConvertTo-Json -Compress
+        }
+        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+        $result = Invoke-RestMethod -Url $uri
+        $result.Hello | Should -Be "world"
+    }
+
+}
