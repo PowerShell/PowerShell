@@ -1352,23 +1352,29 @@ function Get-FpmArguments
 
 function Get-PackageDependencies
 {
+    [CmdletBinding()]
     param()
     DynamicParam {
-            # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
-            # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
-            $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
-            $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $Script:AllDistributions
-            $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
-            $Attributes.Add($ParameterAttr) > $null
-            $Attributes.Add($ValidateSetAttr) > $null
+        # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
+        # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
+        $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
+        $ParameterAttr.Mandatory = $true
+        $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $Script:AllDistributions
+        $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
+        $Attributes.Add($ParameterAttr) > $null
+        $Attributes.Add($ValidateSetAttr) > $null
 
-            $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
-            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
-            $Dict.Add("Distribution", $Parameter) > $null
-            return $Dict
+        $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
+        $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
+        $Dict.Add("Distribution", $Parameter) > $null
+        return $Dict
     }
 
     End {
+        if ($PSBoundParameters.ContainsKey('Distribution')) {
+            $Distribution = $PSBoundParameters['Distribution']
+        }
+
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
         if ($Distribution -eq 'deb') {
@@ -1388,10 +1394,19 @@ function Get-PackageDependencies
                 "libicu"
             )
         } elseif ($Distribution -eq 'cm1') {
+            # Taken from the list here:
+            # https://github.com/dotnet/dotnet-docker/blob/d451d6e9427f58c8508f1297c862663a27eb609f/src/runtime-deps/6.0/cbl-mariner1.0/amd64/Dockerfile#L6
             $Dependencies = @(
-                "openssl-libs",
+                "glibc"
+                "libgcc"
+                "krb5"
+                "libstdc++"
+                "zlib"
                 "icu"
+                "openssl-libs"
             )
+        } else {
+            throw "Unknown distributino $Distribution"
         }
 
         return $Dependencies
