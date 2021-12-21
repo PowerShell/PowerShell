@@ -7,7 +7,7 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
 $DebianDistributions = @("deb")
-$RedhatDistributions = @("rh","mariner1")
+$RedhatDistributions = @("rh","cm1")
 $AllDistribution = @()
 $AllDistribution += $DebianDistributions
 $RedhatDistributions += $RedhatDistributions
@@ -1387,7 +1387,7 @@ function Get-PackageDependencies
                 "openssl-libs",
                 "libicu"
             )
-        } elseif ($Distribution -eq 'mariner1') {
+        } elseif ($Distribution -eq 'cm1') {
             $Dependencies = @(
                 "openssl-libs",
                 "icu"

@@ -258,7 +258,7 @@ jobs:
           signOutputPath: $(Build.StagingDirectory)\signedPackages
           certificateId: "CP-459159-Pgp"
           pattern: |
-            **\*.mariner1.*.rpm
+            **\*.cm1.*.rpm
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
           displayName: Sign Mariner RPM
