@@ -103,6 +103,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Position = 0, Mandatory = true)]
         [ValidateNotNullOrEmpty]
+        [Alias("Url")]
         public virtual Uri Uri { get; set; }
 
         #endregion
