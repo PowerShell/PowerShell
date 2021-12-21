@@ -248,12 +248,13 @@ jobs:
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
           displayName: Sign RedHat RPM
-          OutputMode: NeverCopy
+          OutputMode: AlwaysCopy
 
   - ${{ if eq(variables['buildName'], 'RPM') }}:
     - template: EsrpSign.yml@ComplianceRepo
       parameters:
-          buildOutputPath: $(System.ArtifactsDirectory)\rpm
+          # Sign in-place, previous task copied the files to this folder
+          buildOutputPath: $(Build.StagingDirectory)\signedPackages
           signOutputPath: $(Build.StagingDirectory)\signedPackages
           certificateId: "CP-459159-Pgp"
           pattern: |
