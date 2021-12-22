@@ -276,7 +276,15 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                _strictmodeversion = value;
+                if (ExperimentalFeature.IsEnabled("PSRedirectToVariable"))
+                {
+                    _strictmodeversion = value;
+                }
+                
+                else
+                {
+                    throw new ArgumentException("ExperimentalFeature 'PSRedirectToVariable' is not enabled");
+                }
             }
         }
 
