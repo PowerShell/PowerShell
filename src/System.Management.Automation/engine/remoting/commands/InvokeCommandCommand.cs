@@ -266,6 +266,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets strict mode.
         /// </summary>
+        [Experimental("InvokeCommandCommand.PSRedirectToVariable", ExperimentAction.Show)]
         [Parameter(ParameterSetName = InvokeCommandCommand.InProcParameterSet)]
         public Version StrictModeVersion
         {
