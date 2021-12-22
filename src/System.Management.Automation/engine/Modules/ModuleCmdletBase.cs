@@ -107,10 +107,10 @@ namespace Microsoft.PowerShell.Commands
             internal bool NoClobberExportPSSession;
 
             /// <summary>
-            /// When this flag is true, we only attempt to load a core-edition compatible module, and never try implicitly loading
-            /// a incompatible module via 'WinCompat' mechanism.
+            /// Flag that controls skipping the System32 module path when searching a module in module paths. It also suppresses
+            /// writing out errors when specified.
             /// </summary>
-            internal bool CoreEditionCompatibleOnly;
+            internal bool SkipSystem32ModulesAndSuppressError;
         }
 
         /// <summary>
@@ -328,14 +328,25 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
 
-        internal bool LoadUsingModulePath(bool found, IEnumerable<string> modulePath, string name, SessionState ss,
-            ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out PSModuleInfo module)
+        internal bool LoadUsingModulePath(
+            IEnumerable<string> modulePath,
+            string name,
+            SessionState ss,
+            ImportModuleOptions options,
+            ManifestProcessingFlags manifestProcessingFlags,
+            out PSModuleInfo module)
         {
-            return LoadUsingModulePath(null, found, modulePath, name, ss, options, manifestProcessingFlags, out module);
+            return LoadUsingModulePath(parentModule: null, modulePath, name, ss, options, manifestProcessingFlags, out module);
         }
 
-        internal bool LoadUsingModulePath(PSModuleInfo parentModule, bool found, IEnumerable<string> modulePath, string name, SessionState ss,
-            ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out PSModuleInfo module)
+        internal bool LoadUsingModulePath(
+            PSModuleInfo parentModule,
+            IEnumerable<string> modulePath,
+            string name,
+            SessionState ss,
+            ImportModuleOptions options,
+            ManifestProcessingFlags manifestProcessingFlags,
+            out PSModuleInfo module)
         {
             string extension = Path.GetExtension(name);
             string fileBaseName;
@@ -346,11 +357,18 @@ namespace Microsoft.PowerShell.Commands
                 extension = null;
             }
             else
+            {
                 fileBaseName = name.Substring(0, name.Length - extension.Length);
+            }
 
             // Now search using the module path...
+            bool found = false;
             foreach (string path in modulePath)
             {
+                if (options.SkipSystem32ModulesAndSuppressError && ModuleUtils.IsOnSystem32ModulePath(path))
+                {
+                    continue;
+                }
 #if UNIX
                 foreach (string folder in Directory.EnumerateDirectories(path))
                 {
@@ -844,7 +862,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // Otherwise try the module path
-                        found = LoadUsingModulePath(parentModule, found, modulePath,
+                        found = LoadUsingModulePath(parentModule, modulePath,
                                                     moduleSpecification.Name, ss,
                                                     options, manifestProcessingFlags, out module);
                     }
@@ -2396,11 +2414,6 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (importingModule)
                     {
-                        if (options.CoreEditionCompatibleOnly)
-                        {
-                            return null;
-                        }
-
                         IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(
                             moduleNames: new string[] { moduleManifestPath },
                             moduleFullyQualifiedNames: null,
@@ -5384,6 +5397,13 @@ namespace Microsoft.PowerShell.Commands
                 if (!string.IsNullOrEmpty(Context.ModuleBeingProcessed) &&
                     Context.ModuleBeingProcessed.Equals(fileName, StringComparison.OrdinalIgnoreCase))
                 {
+                    // If the module being processed points to the same module manifest file, then we should stop trying other
+                    // module extensions, because we are actually attempting to load the same module that is being processed.
+                    if (StringLiterals.PowerShellDataFileExtension.Equals(ext, StringComparison.OrdinalIgnoreCase))
+                    {
+                        break;
+                    }
+
                     continue;
                 }
 

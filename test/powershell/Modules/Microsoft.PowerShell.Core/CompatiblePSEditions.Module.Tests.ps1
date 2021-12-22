@@ -11,7 +11,7 @@ function Add-ModulePath
 
     if ($Prepend)
     {
-        $env:PSModulePAth = $Path + [System.IO.Path]::PathSeparator + $env:PSModulePath
+        $env:PSModulePath = $Path + [System.IO.Path]::PathSeparator + $env:PSModulePath
     }
     else
     {
@@ -642,6 +642,29 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
             '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": ["' + $ModuleName2 + '"]}' | Out-File -Force $ConfigPath
             & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Test-${ModuleName2}PSEdition;Test-$ModuleName2" | Should -Be @('Desktop','Core')
+        }
+
+        It "NoClobber WinCompat list in powershell.config is a Desktop-edition module" {
+            ## The 'PersistentMemory' module should not be imported twice.
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": ["PersistentMemory"]}' | Out-File -Force $ConfigPath
+            $env:PSModulePath = ''
+
+            ## 'PersistentMemory' is listed in the no-clobber list, so we will first try loading a core-edition compatible
+            ## version of the module before loading the remote one. And the 'system32' module path will be skipped in this
+            ## attempt, which is expected.
+            ## If we don't skip the 'system32' module path in this loading attempt, the 'PersistentMemory' module will be
+            ## imported twice as a remote module, and thus 'Remove-Module PersistentMemory' won't close the WinCompat session.
+            $results = & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c {
+                Import-Module PersistentMemory -UseWindowsPowerShell -WarningAction Ignore
+                Get-Module PersistentMemory | ForEach-Object { $_.ModuleType.ToString() }
+                (Get-PSSession | Measure-Object).Count
+                Remove-Module PersistentMemory
+                (Get-PSSession | Measure-Object).Count
+            }
+            $results[0] | Should -BeExactly 'Script'
+            $results[1] | Should -BeExactly 1
+            $results[2] | Should -BeExactly 0
         }
     }
 
@@ -1341,5 +1364,118 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
                 { Test-RootModulePSEdition } | Should -Throw -ErrorId "CommandNotFoundException"
             }
         }
+    }
+}
+
+Describe "WinCompat importing should check availablity of built-in modules" -Tag "CI" {
+    BeforeAll {
+        if (-not $IsWindows ) {
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+            return
+        }
+
+        ## Copy the current PowerShell instance to a temp location
+        $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) "WinCompat"
+        $pwshDir = Join-Path $tempDir "pwsh"
+        $moduleDir = Join-Path $tempDir "Modules"
+        $savedModulePath = $env:PSModulePath
+
+        if (Test-Path $tempDir) {
+            Remove-Item $tempDir -Recurse -Force
+        }
+
+        Write-Host "Making a copy of the running PowerShell instance ..." -ForegroundColor Yellow
+        Copy-Item $PSHOME $pwshDir -Recurse -Force
+        Move-Item $pwshDir\Modules $moduleDir -Force
+        Write-Host "-- Done copying!" -ForegroundColor Yellow
+    }
+
+    AfterAll {
+        if (-not $IsWindows) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            return
+        }
+
+        $env:PSModulePath = $savedModulePath
+        Remove-Item $tempDir -Recurse -Force
+    }
+
+    It "Missing built-in modules will trigger error instead of loading the non-compatible ones in System32 directory" {
+        $env:PSModulePath = ''
+        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c {
+            try {
+                Start-Transcript
+            } catch {
+                $_.FullyQualifiedErrorId
+                $_.Exception.Message
+            }
+        }
+
+        $result[0] | Should -BeExactly "CouldNotAutoloadMatchingModule"
+        $result[1] | Should -BeLike "*'Start-Transcript'*'Microsoft.PowerShell.Host'*'Microsoft.PowerShell.Host'*'Core'*`$PSHOME*'Import-Module Microsoft.PowerShell.Host'*"
+
+        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c {
+            try {
+                Import-Module Microsoft.PowerShell.Host
+            } catch {
+                $_.FullyQualifiedErrorId
+                $_.Exception.Message
+            }
+        }
+        $result[0] | Should -BeExactly "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+        $result[1] | Should -BeLike "*'Microsoft.PowerShell.Host'*'Core'*`$PSHOME*"
+
+        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c {
+            try {
+                Import-Module CimCmdlets
+            } catch {
+                $_.FullyQualifiedErrorId
+                $_.Exception.Message
+            }
+        }
+        $result[0] | Should -BeExactly "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+        $result[1] | Should -BeLike "*'CimCmdlets'*'Core'*`$PSHOME*"
+
+        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c {
+            try {
+                Import-Module Microsoft.PowerShell.Utility
+            } catch {
+                $_.FullyQualifiedErrorId
+                $_.Exception.Message
+            }
+        }
+        $result[0] | Should -BeExactly "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+        $result[1] | Should -BeLike "*'Microsoft.PowerShell.Utility'*'Core'*`$PSHOME*"
+
+        ## Attempt to load a 'Desktop' edition module should fail because 'Export-PSSession' cannot be found.
+        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c {
+            try {
+                Import-Module PersistentMemory -ErrorAction Stop
+            } catch {
+                $_.FullyQualifiedErrorId
+                $_.Exception.Message
+            }
+        }
+        $result[0] | Should -BeExactly "CommandNotFoundException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+        $result[1] | Should -BeLike "*'PersistentMemory'*'Export-PSSession'*'Microsoft.PowerShell.Utility'*"
+    }
+
+    It "When built-in modules are available but not in `$PSHOME module path, things should work" {
+        $env:PSModulePath = ''
+        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c @"
+            `$env:PSModulePath += ';$moduleDir'
+            Import-Module Microsoft.PowerShell.Utility -UseWindowsPowerShell -WarningAction Ignore
+            Get-Module Microsoft.PowerShell.Utility | ForEach-Object ModuleType
+            Get-Module Microsoft.PowerShell.Utility | Where-Object ModuleType -eq 'Manifest' | ForEach-Object Path
+            Get-Module Microsoft.PowerShell.Utility | Where-Object ModuleType -eq 'Script' | ForEach-Object { `$_.ExportedCommands.Keys }
+"@
+        $result | Should -HaveCount 6
+        $result[0] | Should -BeExactly 'Manifest'
+        $result[1] | Should -BeExactly 'Script'
+        $result[2] | Should -BeExactly "$moduleDir\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1"
+        $result[3] | Should -BeExactly 'Convert-String'
+        $result[4] | Should -BeExactly 'ConvertFrom-String'
+        $result[5] | Should -BeExactly 'CFS'
     }
 }
