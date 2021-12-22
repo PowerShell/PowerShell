@@ -13,6 +13,11 @@ Import-Module dotnet.project.assets
 Import-Module "$PSScriptRoot\..\.github\workflows\GHWorkflowHelper" -Force
 . "$PSScriptRoot\..\tools\buildCommon\startNativeExecution.ps1"
 
+$packageSourceName = 'findMissingNoticesNugetOrg'
+if (!(Get-PackageSource -Name $packageSourceName -ErrorAction SilentlyContinue)) {
+    $null = Register-PackageSource -Name $packageSourceName -Location https://www.nuget.org/api/v2 -ProviderName NuGet
+}
+
 $existingRegistrationTable = @{}
 $cgManifestPath = (Resolve-Path -Path $PSScriptRoot\..\tools\cgmanifest.json).ProviderPath
 $existingRegistrationsJson = Get-Content $cgManifestPath | ConvertFrom-Json -AsHashtable
@@ -109,7 +114,9 @@ function New-NugetComponent {
 $nugetPublicVersionCache = [System.Collections.Generic.Dictionary[string, string]]::new()
 function Get-NuGetPublicVersion {
     param(
+        [parameter(Mandatory)]
         [string]$Name,
+        [parameter(Mandatory)]
         [string]$Version
     )
 
@@ -124,7 +131,7 @@ function Get-NuGetPublicVersion {
     }
 
     $publicVersion = $null
-    $publicVersion = Find-Package -Name $Name -AllowPrereleaseVersions -source nuget.org -AllVersions -ErrorAction SilentlyContinue | ForEach-Object {
+    $publicVersion = Find-Package -Name $Name -AllowPrereleaseVersions -source $packageSourceName -AllVersions -ErrorAction SilentlyContinue | ForEach-Object {
         try {
             $packageVersion = [System.Management.Automation.SemanticVersion]$_.Version
         } catch {
