@@ -5397,13 +5397,6 @@ namespace Microsoft.PowerShell.Commands
                 if (!string.IsNullOrEmpty(Context.ModuleBeingProcessed) &&
                     Context.ModuleBeingProcessed.Equals(fileName, StringComparison.OrdinalIgnoreCase))
                 {
-                    // If the module being processed points to the same module manifest file, then we should stop trying other
-                    // module extensions, because we are actually attempting to load the same module that is being processed.
-                    if (StringLiterals.PowerShellDataFileExtension.Equals(ext, StringComparison.OrdinalIgnoreCase))
-                    {
-                        break;
-                    }
-
                     continue;
                 }
 
