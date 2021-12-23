@@ -4,7 +4,7 @@
 Describe "Invoke-Command" -Tags "CI" {
     Context "StrictModeVersion tests" {
         BeforeAll {
-            if ([ExperimentalFeature]::IsEnabled("PSStrictModeVersionAssignment")){
+            if ( $EnabledExperimentalFeatures -contains "PSStrictModeVersionAssignment" ){
                 $skipTest = $false
             }
             else {
