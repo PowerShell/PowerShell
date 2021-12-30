@@ -220,22 +220,42 @@ namespace System.Management.Automation.Remoting
             lock (_readSyncObject)
             {
                 priorityType = DataPriorityType.Default;
-
-                // send data from which ever stream that has data directly.
                 byte[] result = null;
-                result = _dataToBeSent[(int)DataPriorityType.PromptResponse].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
-                priorityType = DataPriorityType.PromptResponse;
 
-                if (result == null)
+                if (_dataSyncObjects != null && _dataToBeSent != null)
                 {
-                    result = _dataToBeSent[(int)DataPriorityType.Default].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
-                    priorityType = DataPriorityType.Default;
-                }
-                // no data to return..so register the callback.
-                if (result == null)
-                {
-                    // register callback.
-                    _onDataAvailableCallback = callback;
+                    const int promptResponseIndex = (int)DataPriorityType.PromptResponse;
+
+                    lock (_dataSyncObjects[promptResponseIndex])
+                    {
+                        //NOTE: fix unhandled NullReference exception;
+                        //_dataToBeSent[promptResponseIndex] is disposed by Clear method from different thread 
+                        if (_dataToBeSent[promptResponseIndex] != null) 
+                        {
+                            // send data from which ever stream that has data directly.
+                            result = _dataToBeSent[promptResponseIndex].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
+                            priorityType = DataPriorityType.PromptResponse;
+                        }
+                    }
+
+                    if (result == null)
+                    {
+                        const int defaultIndex = (int)DataPriorityType.Default;
+                        lock (_dataSyncObjects[defaultIndex]) 
+                        {
+                            if (_dataToBeSent[defaultIndex] != null) 
+                            {
+                                result = _dataToBeSent[defaultIndex].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
+                                priorityType = DataPriorityType.Default;
+                            }
+                        }
+                    }
+                    // no data to return..so register the callback.
+                    if (result == null)
+                    {
+                        // register callback.
+                        _onDataAvailableCallback = callback;
+                    }
                 }
 
                 return result;
