@@ -115,6 +115,18 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 
                 case "FromTimeSpan":
+                    if (Duration.TotalMilliseconds > int.MaxValue)
+                    {
+                        PSArgumentException argumentException = PSTraceSource.NewArgumentException(
+                            nameof(Duration),
+                            StartSleepStrings.MaximumDurationExceeded);
+
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                argumentException,
+                                "MaximumDurationExceeded",
+                                ErrorCategory.InvalidArgument, null));
+                    }
                     sleepTime = (int)Math.Floor(Duration.TotalMilliseconds);
                     break;
 
