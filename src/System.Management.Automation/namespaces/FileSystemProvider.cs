@@ -8140,11 +8140,16 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
-                FileSystemInfo symbTarget = fileSysInfo.ResolveLinkTarget(true);
-                if (symbTarget != null && symbTarget.Exists) 
+                FileSystemInfo symbTarget;
+                try {
+                    symbTarget = fileSysInfo.ResolveLinkTarget(true);
+                } catch (IOException) {
+                    return null;
+                }
+                if (symbTarget is not null && symbTarget.Exists)
                 {
                     return symbTarget;
-                } else if (fileSysInfo.LinkTarget is null) 
+                } else if (symbTarget is null) 
                 {
                     return fileSysInfo;
                 }
