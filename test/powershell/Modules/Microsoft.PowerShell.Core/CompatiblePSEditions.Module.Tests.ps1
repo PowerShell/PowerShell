@@ -645,21 +645,21 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         }
 
         It "NoClobber WinCompat list in powershell.config is a Desktop-edition module" {
-            ## The 'PersistentMemory' module should not be imported twice.
+            ## The 'RemoteDesktop' module (available on Windows Server) should not be imported twice.
             $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
-            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": ["PersistentMemory"]}' | Out-File -Force $ConfigPath
+            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": ["RemoteDesktop"]}' | Out-File -Force $ConfigPath
             $env:PSModulePath = ''
 
-            ## 'PersistentMemory' is listed in the no-clobber list, so we will first try loading a core-edition compatible
-            ## version of the module before loading the remote one. And the 'system32' module path will be skipped in this
+            ## 'RemoteDesktop' is listed in the no-clobber list, so we will first try loading a core-edition compatible
+            ## version of the module before loading the remote one. The 'system32' module path will be skipped in this
             ## attempt, which is expected.
-            ## If we don't skip the 'system32' module path in this loading attempt, the 'PersistentMemory' module will be
-            ## imported twice as a remote module, and thus 'Remove-Module PersistentMemory' won't close the WinCompat session.
+            ## If we don't skip the 'system32' module path in this loading attempt, the 'RemoteDesktop' module will be
+            ## imported twice as a remote module, and then 'Remove-Module RemoteDesktop' won't close the WinCompat session.
             $results = & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c {
-                Import-Module PersistentMemory -UseWindowsPowerShell -WarningAction Ignore
-                Get-Module PersistentMemory | ForEach-Object { $_.ModuleType.ToString() }
+                Import-Module RemoteDesktop -UseWindowsPowerShell -WarningAction Ignore
+                Get-Module RemoteDesktop | ForEach-Object { $_.ModuleType.ToString() }
                 (Get-PSSession | Measure-Object).Count
-                Remove-Module PersistentMemory
+                Remove-Module RemoteDesktop
                 (Get-PSSession | Measure-Object).Count
             }
             $results[0] | Should -BeExactly 'Script'
@@ -1451,14 +1451,14 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
         ## Attempt to load a 'Desktop' edition module should fail because 'Export-PSSession' cannot be found.
         $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c {
             try {
-                Import-Module PersistentMemory -ErrorAction Stop
+                Import-Module RemoteDesktop -ErrorAction Stop
             } catch {
                 $_.FullyQualifiedErrorId
                 $_.Exception.Message
             }
         }
         $result[0] | Should -BeExactly "CommandNotFoundException,Microsoft.PowerShell.Commands.ImportModuleCommand"
-        $result[1] | Should -BeLike "*'PersistentMemory'*'Export-PSSession'*'Microsoft.PowerShell.Utility'*"
+        $result[1] | Should -BeLike "*'RemoteDesktop'*'Export-PSSession'*'Microsoft.PowerShell.Utility'*"
     }
 
     It "When built-in modules are available but not in `$PSHOME module path, things should work" {
