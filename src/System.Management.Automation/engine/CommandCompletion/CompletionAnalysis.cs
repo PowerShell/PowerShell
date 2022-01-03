@@ -919,7 +919,7 @@ namespace System.Management.Automation
             {
                 result = GetResultForHashtable(completionContext);
                 // Handles the following scenario: [ipaddress]@{Address=""; <Tab> }
-                if (result is not null && result.Count > 0)
+                if (result?.Count > 0)
                 {
                     completionContext.ReplacementIndex = replacementIndex = completionContext.CursorPosition.Offset;
                     completionContext.ReplacementLength = replacementLength = 0;
