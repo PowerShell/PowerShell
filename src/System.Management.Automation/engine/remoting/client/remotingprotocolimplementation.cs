@@ -484,6 +484,7 @@ namespace System.Management.Automation.Remoting
                 {
                     exception = uriFormatException;
                 }
+
                 // if we are here, there must be an exception constructing a uri
                 if (exception != null)
                 {

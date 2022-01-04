@@ -3322,10 +3322,10 @@ namespace System.Management.Automation
                        errorId, ErrorCategory.OperationStopped,
                             helper);
             }
-            // there is a failure reason available in the runspace
             else if ((runspace.RunspaceStateInfo.State == RunspaceState.Broken) ||
                      (runspace.RunspaceStateInfo.Reason != null))
             {
+                // there is a failure reason available in the runspace
                 failureException = runspace.RunspaceStateInfo.Reason;
                 object targetObject = runspace.ConnectionInfo.ComputerName;
 

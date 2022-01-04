@@ -3708,6 +3708,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                                 initParamFormat,
                                 PSSessionConfigurationData.ModulesToImportToken, string.Empty));
                     }
+
                     // unsetModulePath is false AND modulePathParameter is not empty.
                     // 1. modulePathSpecified is false. In this case, modulePathParameter will be the original module path.
                     // 2. modulePathSpecified is true. In this case, the user is not unsetting the module path.
@@ -3876,12 +3877,13 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                                     PSSessionConfigurationData.ModulesToImportToken,
                                     modulePathParameter));
                             }
+
                             // if unsetModulePath is true, we don't need to do anything because ModulesToImport doesn't exist
                             // in the original configuration. If it's a workflow config, it's not a valid one.
                         }
-                        // SessionConfigurationData exists in InitializationParameters
                         else
                         {
+                            // SessionConfigurationData exists in InitializationParameters
                             PSSessionConfigurationData scd = PSSessionConfigurationData.Create(psObjectCollection[0].BaseObject.ToString());
                             string privateData = string.IsNullOrEmpty(scd.PrivateData)
                                                      ? null
@@ -3900,6 +3902,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                                         sessionConfigurationData.Append(string.Format(CultureInfo.InvariantCulture, privateDataFormat, privateData));
                                     }
                                 }
+
                                 // if ModulesToImport doesn't exist in the pssessionConfigurationData, we don't need to do anything.
                                 // in this case, if the current config is of type workflow, it's not a valid config.
                             }

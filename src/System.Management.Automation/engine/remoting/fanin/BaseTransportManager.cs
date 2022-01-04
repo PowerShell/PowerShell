@@ -315,6 +315,7 @@ namespace System.Management.Automation.Remoting
                     WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE));
                 s_baseTracer.WriteLine("{0} is not a valid stream", stream);
             }
+
             // process data
             ReceivedDataCollection.ProcessRawData(data, dataPriority, dataAvailableCallback);
         }
@@ -825,6 +826,7 @@ namespace System.Management.Automation.Remoting.Client
 
                         rcvdDataInfo = _callbackNotificationQueue.Dequeue();
                     }
+
                     // Handle callback.
                     if (rcvdDataInfo != null)
                     {

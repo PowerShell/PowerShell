@@ -241,6 +241,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_needToCheckForWaitingJobs && _pendingJobs.Count == 0)
                     releaseWait = true;
             }
+
             // end processing has been called
             // set waithandle if this is the last one
             if (releaseWait)

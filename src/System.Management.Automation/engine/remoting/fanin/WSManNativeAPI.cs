@@ -1030,6 +1030,7 @@ namespace System.Management.Automation.Remoting.Client
                         {
                             idsArray[i] = Marshal.PtrToStringUni(ptrs[i]); // Marshal the string pointers into strings
                         }
+
                         /*
                          * // TODO: Why didn't this work? It looks more efficient
                         idsArray = new string[resultInternal.streamIDsCount];
@@ -1141,6 +1142,7 @@ namespace System.Management.Automation.Remoting.Client
                     Marshal.FreeHGlobal(_optionSet.options);
                     _optionSet.options = IntPtr.Zero;
                 }
+
                 // dispose option set
                 _data.Dispose();
             }
@@ -1912,6 +1914,7 @@ namespace System.Management.Automation.Remoting.Client
                 internal IntPtr text;
             }
         }
+
         /// <summary>
         /// Used in the shell completion function delegate to refer to the data.
         /// </summary>
@@ -2178,6 +2181,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 return result;
             }
+
             /// <summary>
             /// Managed representation of WSMAN_CERTIFICATE_DETAILS.
             /// </summary>
@@ -2227,6 +2231,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 return result;
             }
+
             /// <summary>
             /// Managed representation of WSMAN_OPERATION_INFO.
             /// selectorSet and optionSet are handled differently because they are structs that contain pointers to arrays of structs.
@@ -2467,6 +2472,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 return returnval;
             }
+
             // calculate space required to store output.
             // StringBuilder will not work for this case as CLR
             // does not copy the entire string if there are delimiters ('\0')
@@ -2817,6 +2823,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 return returnval;
             }
+
             // calculate space required to store output.
             // StringBuilder will not work for this case as CLR
             // does not copy the entire string if there are delimiters ('\0')

@@ -350,6 +350,7 @@ namespace System.Management.Automation.Remoting
                         isRegisterWaitForSingleObjectSucceeded = false;
                     }
                 }
+
                 // release thread waiting to send data to the client.
                 _waitHandle.Set();
             }

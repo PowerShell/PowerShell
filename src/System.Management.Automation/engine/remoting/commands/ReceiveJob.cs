@@ -1349,6 +1349,7 @@ namespace Microsoft.PowerShell.Commands
                     Dbg.Assert(data.Count == 1, "DataAdded should be raised for each object added");
                     return data[0];
                 }
+
                 // it is possible that when there was a wait
                 // the data got written
                 return default(T);

@@ -1142,9 +1142,9 @@ namespace System.Management.Automation.Remoting
                 {
                     windowsIdentity = new WindowsIdentity(clientToken, senderDetails.authenticationMechanism);
                 }
-                // Suppress exceptions..So windowsIdentity = null in these cases
                 catch (ArgumentException)
                 {
+                    // Suppress exceptions..So windowsIdentity = null in these cases
                     // userToken is 0.
                     // -or-
                     // userToken is duplicated and invalid for impersonation.
@@ -1806,9 +1806,9 @@ namespace System.Management.Automation.Remoting
                     Thread.CurrentThread.CurrentUICulture = uiCultureToUse;
                 }
             }
-            // ignore if there is any exception constructing the culture..
             catch (ArgumentException)
             {
+                // ignore if there is any exception constructing the culture..
             }
 
             // Set the Culture
@@ -1820,9 +1820,9 @@ namespace System.Management.Automation.Remoting
                     Thread.CurrentThread.CurrentCulture = cultureToUse;
                 }
             }
-            // ignore if there is any exception constructing the culture..
             catch (ArgumentException)
             {
+                // ignore if there is any exception constructing the culture..
             }
         }
 
@@ -1870,6 +1870,7 @@ namespace System.Management.Automation.Remoting
             {
                 ReportOperationComplete(requestDetails.unmanagedHandle, errorCode, errorMessage);
             }
+
             // else cannot report if requestDetails is null.
         }
 
@@ -1891,6 +1892,7 @@ namespace System.Management.Automation.Remoting
                     (int)errorCode,
                     null);
             }
+
             // else cannot report if requestDetails is null.
         }
 

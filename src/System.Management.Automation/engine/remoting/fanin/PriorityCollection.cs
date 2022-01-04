@@ -231,6 +231,7 @@ namespace System.Management.Automation.Remoting
                     result = _dataToBeSent[(int)DataPriorityType.Default].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
                     priorityType = DataPriorityType.Default;
                 }
+
                 // no data to return..so register the callback.
                 if (result == null)
                 {

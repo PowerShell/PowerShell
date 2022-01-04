@@ -1567,6 +1567,7 @@ namespace System.Management.Automation.Remoting.Client
                 // send unencrypted messages
                 SetWSManSessionOption(WSManNativeApi.WSManSessionOption.WSMAN_OPTION_UNENCRYPTED_MESSAGES, 1);
             }
+
             // check if implicit credentials can be used for Negotiate
             if (connectionInfo.AllowImplicitCredentialForNegotiate)
             {
@@ -1967,6 +1968,7 @@ namespace System.Management.Automation.Remoting.Client
                 // Since create shell is successful, put a receive request.
                 sessionTM.StartReceivingData();
             }
+
             // Start sending data if any.
             sessionTM.SendOneItem();
         }
@@ -3104,6 +3106,7 @@ namespace System.Management.Automation.Remoting.Client
                 WSManNativeApi.WSManReconnectShellCommandEx(_wsManCmdOperationHandle, 0, _reconnectCmdCompleted);
             }
         }
+
         /// <summary>
         /// Used by powershell/pipeline to send a stop message to the server command.
         /// </summary>
@@ -3124,6 +3127,7 @@ namespace System.Management.Automation.Remoting.Client
                     _isStopSignalPending = true;
                     return;
                 }
+
                 // we are about to send a signal..so clear pending bit.
                 _isStopSignalPending = false;
 

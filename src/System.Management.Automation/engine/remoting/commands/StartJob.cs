@@ -677,6 +677,7 @@ namespace Microsoft.PowerShell.Commands
 
             Operations.Add(operation);
         }
+
         /// <summary>
         /// The expression will be executed in the remote computer if a
         /// remote runspace parameter or computer name is specified. If

@@ -452,6 +452,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     {
                         _stateInfoQueue.Enqueue(stateInfo);
                     }
+
                     // calling close async only after making sure all the internal members are prepared
                     // to handle close complete.
                     dataStructureHandler.CloseConnectionAsync(null);

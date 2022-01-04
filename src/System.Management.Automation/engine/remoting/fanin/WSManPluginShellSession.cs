@@ -167,6 +167,7 @@ namespace System.Management.Automation.Remoting
                     WSManPluginInstance.ReportWSManOperationComplete(requestDetails, lastErrorReported);
                     return;
                 }
+
                 // store the send request details..because the operation complete
                 // may happen from a different thread.
                 sendRequestDetails = requestDetails;
@@ -717,6 +718,7 @@ namespace System.Management.Automation.Remoting
                 // let base class release its resources
                 base.Close(isShuttingDown);
             }
+
             // TODO: Do this.Dispose(); here?
         }
     }

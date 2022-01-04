@@ -106,6 +106,7 @@ namespace System.Management.Automation.Remoting
                             RemotingErrorIdStrings.StartupScriptNotCorrect,
                             STARTUPSCRIPTTOKEN);
                     }
+
                     // allow the script file to exist in any path..and support
                     // environment variable expansion.
                     StartupScript = Environment.ExpandEnvironmentVariables(optionValue);
@@ -2087,6 +2088,7 @@ namespace System.Management.Automation.Remoting
                                     // In V3, Microsoft.PowerShell.Core module is not installed externally.
                                     iss.ImportCorePSSnapIn();
                                 }
+
                                 // silently ignore Microsoft.PowerShell.Core for other cases ie., SessionType.RestrictedRemoteServer && SessionType.Default
                             }
                             else

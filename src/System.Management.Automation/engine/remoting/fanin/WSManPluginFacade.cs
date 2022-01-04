@@ -261,41 +261,49 @@ namespace System.Management.Automation.Remoting
                 // Populate the outgoing structure so the caller has access to the entry points
                 _unmanagedStruct.wsManPluginShellCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginShell);
             }
+
             {
                 WSManPluginReleaseShellContextDelegate pluginReleaseShellContext = new WSManPluginReleaseShellContextDelegate(WSManPluginManagedEntryWrapper.WSManPluginReleaseShellContext);
                 _pluginReleaseShellContextGCHandle = GCHandle.Alloc(pluginReleaseShellContext);
                 _unmanagedStruct.wsManPluginReleaseShellContextCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginReleaseShellContext);
             }
+
             {
                 WSManPluginCommandDelegate pluginCommand = new WSManPluginCommandDelegate(WSManPluginManagedEntryWrapper.WSManPluginCommand);
                 _pluginCommandGCHandle = GCHandle.Alloc(pluginCommand);
                 _unmanagedStruct.wsManPluginCommandCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginCommand);
             }
+
             {
                 WSManPluginReleaseCommandContextDelegate pluginReleaseCommandContext = new WSManPluginReleaseCommandContextDelegate(WSManPluginManagedEntryWrapper.WSManPluginReleaseCommandContext);
                 _pluginReleaseCommandContextGCHandle = GCHandle.Alloc(pluginReleaseCommandContext);
                 _unmanagedStruct.wsManPluginReleaseCommandContextCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginReleaseCommandContext);
             }
+
             {
                 WSManPluginSendDelegate pluginSend = new WSManPluginSendDelegate(WSManPluginManagedEntryWrapper.WSManPluginSend);
                 _pluginSendGCHandle = GCHandle.Alloc(pluginSend);
                 _unmanagedStruct.wsManPluginSendCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginSend);
             }
+
             {
                 WSManPluginReceiveDelegate pluginReceive = new WSManPluginReceiveDelegate(WSManPluginManagedEntryWrapper.WSManPluginReceive);
                 _pluginReceiveGCHandle = GCHandle.Alloc(pluginReceive);
                 _unmanagedStruct.wsManPluginReceiveCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginReceive);
             }
+
             {
                 WSManPluginSignalDelegate pluginSignal = new WSManPluginSignalDelegate(WSManPluginManagedEntryWrapper.WSManPluginSignal);
                 _pluginSignalGCHandle = GCHandle.Alloc(pluginSignal);
                 _unmanagedStruct.wsManPluginSignalCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginSignal);
             }
+
             {
                 WSManPluginConnectDelegate pluginConnect = new WSManPluginConnectDelegate(WSManPluginManagedEntryWrapper.WSManPluginConnect);
                 _pluginConnectGCHandle = GCHandle.Alloc(pluginConnect);
                 _unmanagedStruct.wsManPluginConnectCallbackNative = Marshal.GetFunctionPointerForDelegate(pluginConnect);
             }
+
             {
                 WSManShutdownPluginDelegate shutdownPlugin = new WSManShutdownPluginDelegate(WSManPluginManagedEntryWrapper.ShutdownPlugin);
                 _shutdownPluginGCHandle = GCHandle.Alloc(shutdownPlugin);

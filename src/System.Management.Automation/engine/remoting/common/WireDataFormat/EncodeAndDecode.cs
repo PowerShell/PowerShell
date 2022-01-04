@@ -2047,6 +2047,7 @@ namespace System.Management.Automation
             {
                 return GetExceptionFromSerializedErrorRecord(property.Value);
             }
+
             // Exception is not present and return null.
             return null;
         }

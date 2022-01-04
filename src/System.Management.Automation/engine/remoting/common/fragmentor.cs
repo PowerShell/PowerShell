@@ -837,6 +837,7 @@ namespace System.Management.Automation.Remoting
             _writeOffset = 0;
             s_trace.WriteLine("Created write stream: {0}", _writeStream.GetHashCode());
         }
+
         /// <summary>
         /// This method provides a thread safe way to get an object id.
         /// </summary>
@@ -910,6 +911,7 @@ namespace System.Management.Automation.Remoting
 
             set { throw new NotSupportedException(); }
         }
+
         /// <summary>
         /// This is a No-Op intentionally as there is nothing
         /// to flush.
