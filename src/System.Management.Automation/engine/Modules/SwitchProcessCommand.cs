@@ -24,13 +24,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get or set the command and arguments to replace the current pwsh process.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = false, ValueFromPipeline = true, ValueFromRemainingArguments = true)]
+        [Parameter(Position = 0, Mandatory = false, ValueFromRemainingArguments = true)]
         public string[] WithCommand { get; set; } = Array.Empty<string>();
 
         /// <summary>
-        /// For each record, execute it, and push the results into the success stream.
+        /// Execute the command and arguments
         /// </summary>
-        protected override void ProcessRecord()
+        protected override void EndProcessing()
         {
             if (WithCommand.Length == 0)
             {
