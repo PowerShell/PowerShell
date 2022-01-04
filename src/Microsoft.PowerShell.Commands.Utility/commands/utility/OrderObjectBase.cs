@@ -230,6 +230,7 @@ namespace Microsoft.PowerShell.Commands
                 List<MshParameter> unexpandedParameterList = processor.ProcessParameters(expr, invocationContext);
                 mshParameterList = ExpandExpressions(inputObjects, unexpandedParameterList);
             }
+
             // NOTE: if no parameters are passed, we will look at the default keys of the first
             // incoming object
         }
@@ -724,6 +725,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return lhs.originalIndex.CompareTo(rhs.originalIndex);
             }
+
             // Otherwise, return the default comparison results
             return result;
         }

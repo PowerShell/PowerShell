@@ -209,6 +209,7 @@ namespace Microsoft.PowerShell.Commands
                 int initialCapacity = (int)Math.Min(contentLength, StreamHelper.DefaultReadBuffer);
                 _rawContentStream = new WebResponseContentMemoryStream(st, initialCapacity, null);
             }
+
             // set the position of the content stream to the beginning
             _rawContentStream.Position = 0;
         }

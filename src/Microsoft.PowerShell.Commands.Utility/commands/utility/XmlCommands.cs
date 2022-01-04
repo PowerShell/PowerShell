@@ -461,6 +461,7 @@ namespace Microsoft.PowerShell.Commands
                     _serializer.DoneAsStream();
                     _serializer = null;
                 }
+
                 // Loading to the XML Document
                 _ms.Position = 0;
                 StreamReader read = new(_ms);
@@ -755,9 +756,9 @@ namespace Microsoft.PowerShell.Commands
                     _cmdlet.WriteObject(result);
                 }
             }
-            // else try to flatten the output if possible
             else
             {
+                // else try to flatten the output if possible
                 ulong skipped = 0;
                 ulong count = 0;
                 while (!_deserializer.Done() && count < first)

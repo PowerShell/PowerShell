@@ -119,9 +119,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 NotifyEvent(e);
             }
-            // They are waiting on a specific one
             else
             {
+                // They are waiting on a specific one
                 ScanEventQueue();
             }
         }

@@ -618,9 +618,9 @@ namespace Microsoft.PowerShell.Commands
 
                 return;
             }
-            // if only unique is mentioned
             else if ((_unique))
             {
+                // if only unique is mentioned
                 bool isObjUnique = true;
                 foreach (UniquePSObjectHelper uniqueObj in _uniques)
                 {

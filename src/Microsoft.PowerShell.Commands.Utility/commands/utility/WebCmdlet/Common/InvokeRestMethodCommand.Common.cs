@@ -428,6 +428,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         encodingVerboseName = encoding.EncodingName;
                     }
+
                     // NOTE: Tests use this verbose output to verify the encoding.
                     WriteVerbose(string.Format
                     (
@@ -441,9 +442,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
                     }
-                    // default to try xml first since it's more common
                     else
                     {
+                        // default to try xml first since it's more common
                         convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
                     }
 

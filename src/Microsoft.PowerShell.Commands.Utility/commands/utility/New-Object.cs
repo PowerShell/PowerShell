@@ -86,6 +86,7 @@ namespace Microsoft.PowerShell.Commands
                     "ConstructorInvokedThrowException",
                     ErrorCategory.InvalidOperation, null));
             }
+
             // let other exceptions propagate
             return result;
         }
@@ -358,6 +359,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = Activator.CreateInstance(t);
             }
+
             // Does not catch InvalidComObjectException because ComObject is obtained from GetTypeFromProgID
             catch (ArgumentException e)
             {

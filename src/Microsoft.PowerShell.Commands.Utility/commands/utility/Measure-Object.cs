@@ -734,6 +734,7 @@ namespace Microsoft.PowerShell.Commands
                         numberOfLines++;
                     }
                 }
+
                 // 'abc\nd' has two lines
                 // but 'abc\n' has one line
                 if (inStr[inStr.Length - 1] != '\n')

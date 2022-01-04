@@ -3087,6 +3087,7 @@ function Get-PSImplicitRemotingClientSideParameters
                 GenerateFormatFile(writer, listOfFormatData);
                 formatPs1xml.SetLength(formatPs1xml.Position);
             }
+
             // Sign psm1 file and format file
             // If certificate is passed, sign the file
             // If certificate is not passed and executionPolicy is set to Restricted/AllSigned, output error

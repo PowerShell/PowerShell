@@ -1239,9 +1239,9 @@ namespace Microsoft.PowerShell
                 {
                     _commandLineCommand = StringToBase64Converter.Base64ToString(args[i]);
                 }
-                // decoding failed
                 catch
                 {
+                    // decoding failed
                     SetCommandLineError(CommandLineParameterParserStrings.BadCommandValue, showHelp: true);
                     return false;
                 }

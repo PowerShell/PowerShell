@@ -373,6 +373,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 diffCopy >>= 1;
             }
+
             // Get the mask for the number of bits
             ulong mask = (0xffffffffffffffff >> (64 - bitsToRepresentDiff));
             do

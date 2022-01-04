@@ -1192,9 +1192,9 @@ namespace Microsoft.PowerShell.Commands
                 WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = ContentType;
                 // request
             }
-            // ContentType == null
             else if (Method == WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "POST"))
             {
+                // ContentType == null
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 string contentType = null;
                 WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out contentType);
@@ -1218,9 +1218,9 @@ namespace Microsoft.PowerShell.Commands
 
                 SetRequestContent(request, formData);
             }
-            // coerce body into a usable form
             else if (Body != null)
             {
+                // coerce body into a usable form
                 object content = Body;
 
                 // make sure we're using the base object of the body, not the PSObject wrapper
@@ -1262,8 +1262,9 @@ namespace Microsoft.PowerShell.Commands
                         (string)LanguagePrimitives.ConvertTo(content, typeof(string), CultureInfo.InvariantCulture));
                 }
             }
-            else if (InFile != null) // copy InFile data
+            else if (InFile != null)
             {
+                // copy InFile data
                 try
                 {
                     // open the input file
@@ -1390,6 +1391,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WebSession.MaximumRedirection--;
                     }
+
                     // For selected redirects that used POST, GET must be used with the
                     // redirected Location.
                     // Since GET is the default; POST only occurs when -Method POST is used.

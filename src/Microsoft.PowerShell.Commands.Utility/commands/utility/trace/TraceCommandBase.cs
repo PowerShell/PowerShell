@@ -83,9 +83,9 @@ namespace Microsoft.PowerShell.Commands
                         matchFound = true;
                         results.Add(source);
                     }
-                    // Try matching by the short name.
                     else if (pattern.IsMatch(source.Name))
                     {
+                        // Try matching by the short name.
                         matchFound = true;
                         results.Add(source);
                     }

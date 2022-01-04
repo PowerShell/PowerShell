@@ -269,6 +269,7 @@ namespace Microsoft.PowerShell.Commands
                             result.Properties.Add(new PSNoteProperty(entry.Key, listResult));
                             break;
                         }
+
                     case JObject dic:
                         {
                             // Dictionary
@@ -281,6 +282,7 @@ namespace Microsoft.PowerShell.Commands
                             result.Properties.Add(new PSNoteProperty(entry.Key, dicResult));
                             break;
                         }
+
                     case JValue value:
                         {
                             result.Properties.Add(new PSNoteProperty(entry.Key, value.Value));
@@ -317,6 +319,7 @@ namespace Microsoft.PowerShell.Commands
                             result[index] = listResult;
                             break;
                         }
+
                     case JObject dic:
                         {
                             // Dictionary
@@ -329,6 +332,7 @@ namespace Microsoft.PowerShell.Commands
                             result[index] = dicResult;
                             break;
                         }
+
                     case JValue value:
                         {
                             result[index] = value.Value;
@@ -374,6 +378,7 @@ namespace Microsoft.PowerShell.Commands
                             result.Add(entry.Key, listResult);
                             break;
                         }
+
                     case JObject dic:
                         {
                             // Dictionary
@@ -386,6 +391,7 @@ namespace Microsoft.PowerShell.Commands
                             result.Add(entry.Key, dicResult);
                             break;
                         }
+
                     case JValue value:
                         {
                             result.Add(entry.Key, value.Value);
@@ -421,6 +427,7 @@ namespace Microsoft.PowerShell.Commands
                             result[index] = listResult;
                             break;
                         }
+
                     case JObject dic:
                         {
                             // Dictionary
@@ -433,6 +440,7 @@ namespace Microsoft.PowerShell.Commands
                             result[index] = dicResult;
                             break;
                         }
+
                     case JValue value:
                         {
                             result[index] = value.Value;

@@ -197,16 +197,19 @@ namespace Microsoft.PowerShell.Commands
                                 _mMailMessage.To.Add(new MailAddress(strEmailAddress));
                                 break;
                             }
+
                         case "cc":
                             {
                                 _mMailMessage.CC.Add(new MailAddress(strEmailAddress));
                                 break;
                             }
+
                         case "bcc":
                             {
                                 _mMailMessage.Bcc.Add(new MailAddress(strEmailAddress));
                                 break;
                             }
+
                         case "replyTo":
                             {
                                 _mMailMessage.ReplyToList.Add(new MailAddress(strEmailAddress));

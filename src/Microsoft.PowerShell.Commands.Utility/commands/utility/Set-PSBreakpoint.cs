@@ -185,9 +185,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            // If it is a variable breakpoint...
             else if (ParameterSetName.Equals(VariableParameterSetName, StringComparison.OrdinalIgnoreCase))
             {
+                // If it is a variable breakpoint...
                 for (int i = 0; i < Variable.Length; i++)
                 {
                     if (scripts.Count > 0)
@@ -205,9 +205,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            // Else it is the default parameter set (Line breakpoint)...
             else
             {
+                // Else it is the default parameter set (Line breakpoint)...
                 Debug.Assert(ParameterSetName.Equals(LineParameterSetName, StringComparison.OrdinalIgnoreCase));
 
                 for (int i = 0; i < Line.Length; i++)

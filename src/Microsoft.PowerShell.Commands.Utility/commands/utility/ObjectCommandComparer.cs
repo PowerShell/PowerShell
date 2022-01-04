@@ -163,6 +163,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return Compare(first.PropertyValue, second.PropertyValue);
             }
+
             // if first.IsExistingProperty, !second.IsExistingProperty; otherwise the
             // first branch if would return. Regardless of key orders non existing property
             // will be considered greater than others
@@ -170,11 +171,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 return -1;
             }
+
             // vice versa for the previous branch
             if (second.IsExistingProperty)
             {
                 return 1;
             }
+
             // both are nonexisting
             return 0;
         }
