@@ -1098,6 +1098,7 @@ namespace System.Management.Automation
         {
             return SetFunction(name, function, null, ScopedItemOptions.Unspecified, force, origin, context);
         }
+
         /// <summary>
         /// Sets an function to the given function declaration.
         /// </summary>
@@ -1488,6 +1489,7 @@ namespace System.Management.Automation
                                     // It is already added in the cache. Do not add it again
                                     return null;
                                 }
+
                                 // Otherwise it's an error...
                                 throwNotSupported = true;
                                 break;
@@ -1510,6 +1512,7 @@ namespace System.Management.Automation
                             break;
                         }
                     }
+
                     // Insert the cmdlet if a duplicate doesn't already exist
                     if (!throwNotSupported)
                     {

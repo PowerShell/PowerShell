@@ -60,6 +60,7 @@ namespace System.Management.Automation.Internal
                 // instance will get reused, but should be associated with the SessionState from the new module, instead of the one from the old module.
                 _stateMap.AddOrUpdate(runspaceToUse, sessionStateToUse);
             }
+
             // If the key exists and the corresponding value is the one we should use, then do nothing.
         }
 

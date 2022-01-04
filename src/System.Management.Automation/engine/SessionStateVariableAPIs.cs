@@ -333,8 +333,10 @@ namespace System.Management.Automation
                     readers =
                         GetContentReader(new string[] { variablePath.QualifiedName }, context);
                 }
+#pragma warning disable SA1513
                 // If the item is not found we just return null like the normal
                 // variable semantics.
+#pragma warning restore SA1513
                 catch (ItemNotFoundException)
                 {
                     break;
@@ -722,8 +724,10 @@ namespace System.Management.Automation
                         readers =
                             GetContentReader(new string[] { variablePath.QualifiedName }, context);
                     }
+#pragma warning disable SA1513
                     // If the item is not found we just return null like the normal
                     // variable semantics.
+#pragma warning restore SA1513
                     catch (ItemNotFoundException)
                     {
                         return null;

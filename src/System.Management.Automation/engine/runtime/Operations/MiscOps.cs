@@ -2583,6 +2583,7 @@ namespace System.Management.Automation
                     {
                         index++;
                     }
+
                     while (MoveNext(context, enumerator))
                     {
                         rest.Add(Current(enumerator));

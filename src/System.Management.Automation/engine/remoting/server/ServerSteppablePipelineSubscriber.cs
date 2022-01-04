@@ -212,6 +212,7 @@ namespace System.Management.Automation
                     driver.ProcessingInput = false;
                     driver.CheckAndPulseForProcessing(false);
                 }
+
                 // Check if should perform stop
                 if (driver.PipelineState == PSInvocationState.Stopping)
                 {

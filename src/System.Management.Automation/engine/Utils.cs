@@ -314,6 +314,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException(argName);
             }
+
             //
             // we use AES algorithm which supports key
             // lengths of 128, 192 and 256 bits.
@@ -628,6 +629,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             // Version.TryParse expects the string to be in format: major.minor[.build[.revision]]
             if (dotCount == 0)
             {

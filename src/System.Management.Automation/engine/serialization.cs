@@ -1259,9 +1259,9 @@ namespace System.Management.Automation
                     WritePSObjectProperties(sourceAsPSObject, depth, specificPropertiesToSerialize);
                     SerializeExtendedProperties(sourceAsPSObject, depth, specificPropertiesToSerialize);
                 }
-                // always serialize instance properties if there are any
                 else if (mshSource != null)
                 {
+                    // always serialize instance properties if there are any
                     SerializeInstanceProperties(mshSource, depth);
                 }
             }
@@ -2089,6 +2089,7 @@ namespace System.Management.Automation
                     WriteOneObject(item, null, null, depth);
                 }
             }
+
             // End element
             _writer.WriteEndElement();
         }
@@ -2816,6 +2817,7 @@ namespace System.Management.Automation
                     return EncodeString(s, i);
                 }
             }
+
             // No encodable characters were found above - simply return the original string
             return s;
         }
@@ -4023,6 +4025,7 @@ namespace System.Management.Automation
                     {
                         throw NewXmlException(Serialization.NullAsDictionaryKey, null);
                     }
+
                     // Read Value
                     if (_reader.NodeType != XmlNodeType.Element)
                     {
@@ -4251,6 +4254,7 @@ namespace System.Management.Automation
             {
                 return XmlConvert.ToGuid(deserializer._reader.ReadElementContentAsString());
             }
+
             // MSDN for XmlConvert.ToGuid doesn't list any exceptions, but
             // Reflector shows that this just calls to new Guid(string)
             // which MSDN documents can throw Format/OverflowException

@@ -1343,6 +1343,7 @@ namespace System.Management.Automation
                             string parentName = path.Substring(0, path.Length - childName.Length);
                             path = parentName;
                         }
+
                         // dir c:\tem* -include *.ps1 -rec => No change
                         if ((context.Include == null) || (context.Include.Count == 0))
                         {
@@ -1906,6 +1907,7 @@ namespace System.Management.Automation
                         {
                             return;
                         }
+
                         // The item is a container so recurse into it.
                         ProcessPathItems(providerInstance, qualifiedPath, recurse, depth - 1, context, out childrenNotMatchingFilterCriteria, processMode, skipIsItemContainerCheck: true);
                     }

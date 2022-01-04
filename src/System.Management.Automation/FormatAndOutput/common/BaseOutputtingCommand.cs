@@ -569,6 +569,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 return;
             }
+
             // try if it is a list view
             ListViewEntry lve = fed.formatEntryInfo as ListViewEntry;
             if (lve != null && lve.listViewFieldList != null)
@@ -1313,6 +1314,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _arr = new string[size];
                     Reset();
                 }
+
                 /// <summary>
                 /// Get the size of the buffer.
                 /// </summary>

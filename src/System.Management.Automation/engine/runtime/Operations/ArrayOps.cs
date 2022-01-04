@@ -181,6 +181,7 @@ namespace System.Management.Automation
                         ReportIndexingError(array, indexes, whyFailed);
                         Diagnostics.Assert(false, "ReportIndexingError must throw");
                     }
+
                     // If the second or subsequent index fails, report the failure for just that index
                     ReportIndexingError(array, currentIndex, null);
                     Diagnostics.Assert(false, "ReportIndexingError must throw");

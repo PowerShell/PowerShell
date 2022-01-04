@@ -64,12 +64,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         .GetValue("global:" + InitialSessionState.FormatEnumerationLimit);
                 }
             }
-            // Eat the following exceptions, enumerationLimit will use the default value
             catch (ProviderNotFoundException)
             {
+                // Eat the exceptions, enumerationLimit will use the default value.
             }
             catch (ProviderInvocationException)
             {
+                // Eat the exceptions, enumerationLimit will use the default value.
             }
 
             // if $global:FormatEnumerationLimit is an int, overwrite the default value

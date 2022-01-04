@@ -261,6 +261,7 @@ namespace System.Management.Automation
 
             return true;
         }
+
         /// <summary>
         /// Checks the visibility of an object based on the command origin argument.
         /// </summary>
@@ -278,6 +279,7 @@ namespace System.Management.Automation
 
             return (variable.Visibility == SessionStateEntryVisibility.Public);
         }
+
         /// <summary>
         /// Checks the visibility of an object based on the command origin argument.
         /// </summary>

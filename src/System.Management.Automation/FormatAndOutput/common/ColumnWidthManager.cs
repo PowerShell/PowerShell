@@ -76,6 +76,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // we fit with all the columns specified
                     return true;
                 }
+
                 // we do not fit, we will have to trim
                 return false;
             }

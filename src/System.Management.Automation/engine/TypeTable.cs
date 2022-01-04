@@ -1594,6 +1594,7 @@ namespace System.Management.Automation.Runspaces
             _idReferencedMemberName = xmlNameTable.Add("ReferencedMemberName");
         }
     }
+
     // ReSharper restore RedundantCast
 
     /// <summary>

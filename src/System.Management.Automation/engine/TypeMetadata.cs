@@ -570,6 +570,7 @@ namespace System.Management.Automation
 
             set { _isDynamic = value; }
         }
+
         /// <summary>
         /// Specifies the alias names for this parameter.
         /// </summary>

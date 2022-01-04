@@ -1141,6 +1141,7 @@ namespace System.Management.Automation
                             newScope.FunctionTable.Add(def.Key, new FunctionInfo(def.Key, def.Value, context));
                         }
                     }
+
                     // Inject passed in variables into the scope
                     if (variablesToDefine != null)
                     {

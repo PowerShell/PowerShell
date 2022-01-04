@@ -326,6 +326,7 @@ namespace System.Management.Automation
             {
                 throw;
             }
+
             // If any of the following exceptions are thrown we assume that
             // the path is a file system path not an MSH path and try
             // to create the drive with that root.
@@ -675,6 +676,7 @@ namespace System.Management.Automation
                             displayRoot = Microsoft.PowerShell.Commands.FileSystemProvider
                                             .GetRootPathForNetworkDriveOrDosDevice(systemDriveInfo);
                         }
+
                         // We want to get root path of the network drive as extra information to display to the user.
                         // It's okay we failed to get the root path for some reason. We don't want to throw exception
                         // here as it would break the current behavior.
@@ -869,6 +871,7 @@ namespace System.Management.Automation
                         // Give the provider a chance to cleanup
                         driveProvider.RemoveDrive(drive, context);
                     }
+
                     // Ignore any exceptions the provider throws because we
                     // are doing this without an explicit request from the
                     // user. Since the provider can throw any exception
@@ -1404,6 +1407,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             // We don't want to have automounting cause an exception. We
             // rather it just fail silently as it wasn't a result of an
             // explicit request by the user anyway.

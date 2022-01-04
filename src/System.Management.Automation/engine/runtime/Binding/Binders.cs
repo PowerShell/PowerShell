@@ -1263,6 +1263,7 @@ namespace System.Management.Automation.Language
                 memberName = PSObject.ToStringParser(null, memberNameArg.Value);
                 bindingStrExpr = PSToStringBinder.InvokeToString(ExpressionCache.NullConstant, memberNameArg.Expression);
             }
+
             // Note: Need to create DynamicExpression to support dynamic member invoke, see PSSetDynamicMemberBinder for example
             var result = PSInvokeMemberBinder.Get(memberName, _callInfo, _static, _propertySetter, _constraints, _classScope).FallbackInvokeMember(target, args.Skip(1).ToArray());
             BindingRestrictions restrictions = result.Restrictions;
@@ -2617,6 +2618,7 @@ namespace System.Management.Automation.Language
                 {
                     return arg;
                 }
+
                 // All other numeric conversions are simple casts, but bool=>decimal is not supported by LINQ (via Convert), so
                 // we must do the conversion ourselves.
                 boolToDecimal = true;

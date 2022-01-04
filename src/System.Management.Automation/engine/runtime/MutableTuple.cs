@@ -461,6 +461,7 @@ namespace System.Management.Automation
                 {
                     typeArr[index++] = types[i];
                 }
+
                 while (index < typeArr.Length)
                 {
                     typeArr[index++] = typeof(DynamicNull);

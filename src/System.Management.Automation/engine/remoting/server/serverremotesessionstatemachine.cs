@@ -1023,6 +1023,7 @@ namespace System.Management.Automation.Remoting
                 _state = newState;
                 s_trace.WriteLine("state machine state transition: from state {0} to state {1}", oldState, _state);
             }
+
             // TODO: else should we close the session here?
         }
     }
