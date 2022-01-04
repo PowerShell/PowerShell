@@ -770,6 +770,7 @@ namespace System.Management.Automation
                     WritePropertyWithNullValue(_writer, prop, depth);
                     continue;
                 }
+
                 // Write the property
                 if (value == null)
                 {
@@ -818,6 +819,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 // Write the property
                 WriteOneObject(value, prop.Name, depth);
             }

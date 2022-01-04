@@ -180,6 +180,7 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             ServiceName = 3
         }
+
         /// <summary>
         /// Holds the selection mode setting.
         /// </summary>
@@ -343,6 +344,7 @@ namespace Microsoft.PowerShell.Commands
                     matchingServices = MatchingServicesByServiceName();
                     break;
             }
+
             // 2004/12/16 Note that the services will be sorted
             //  before being stopped.  JimTru confirms that this is OK.
             matchingServices.Sort(ServiceComparison);
@@ -1774,6 +1776,7 @@ namespace Microsoft.PowerShell.Commands
                             ErrorCategory.PermissionDenied);
                         return;
                     }
+
                     // Modify startup type or display name or credential
                     if (!string.IsNullOrEmpty(DisplayName)
                         || StartupType != ServiceStartupType.InvalidValue || Credential != null)
@@ -2162,6 +2165,7 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.InvalidArgument);
                     return;
                 }
+
                 // set up the double-null-terminated lpDependencies parameter
                 IntPtr lpDependencies = IntPtr.Zero;
                 if (DependsOn != null)
@@ -2575,6 +2579,7 @@ namespace Microsoft.PowerShell.Commands
 
             _serviceName = info.GetString("ServiceName");
         }
+
         /// <summary>
         /// Serializer.
         /// </summary>

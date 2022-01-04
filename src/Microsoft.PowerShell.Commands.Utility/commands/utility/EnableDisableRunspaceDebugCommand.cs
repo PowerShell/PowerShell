@@ -152,6 +152,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         }
+
         /// <summary>
         /// RunspaceInstanceId.
         /// </summary>

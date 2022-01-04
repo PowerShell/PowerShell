@@ -35,6 +35,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 IList cimSessionArgumentAsList = (IList)cimSessionArgument;
                 return cimSessionArgumentAsList.Count;
             }
+
             // else - either CimSession=localhost OR CimSession is based on CimInstance->CimSession affinity
 
             // CimInstance->CimSession affinity in instance cmdlets can come from:

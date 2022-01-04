@@ -206,6 +206,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 CimCmdletStrings.CouldNotModifyReadonlyProperty, key, cimInstance));
                             return false;
                         }
+
                         // allow modify the key property value as long as it is not readonly,
                         // then the modified ciminstance is stand for a different CimInstance
                         DebugHelper.WriteLog("Set property name '{0}' has old value '{1}'", 4, key, property.Value);

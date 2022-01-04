@@ -21,6 +21,7 @@ namespace Microsoft.PowerShell.Commands
         {
             return Definition;
         }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberDefinition"/> class.
         /// </summary>

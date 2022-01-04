@@ -486,6 +486,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     // free managed resources
                     Cleanup();
                 }
+
                 // free native resources if there are any
             }
         }

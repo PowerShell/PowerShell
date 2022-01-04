@@ -185,11 +185,13 @@ namespace Microsoft.PowerShell.Commands
         /// they support the Include parameter. This property is on
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
+#pragma warning disable SA1513
         public virtual string[] Include
         {
             get;
             set;
         } = Array.Empty<string>();
+#pragma warning restore SA1513
 
         /// <summary>
         /// Gets or sets the exclude property.
@@ -199,11 +201,13 @@ namespace Microsoft.PowerShell.Commands
         /// they support the Exclude parameter. This property is on
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
+#pragma warning disable SA1513
         public virtual string[] Exclude
         {
             get;
             set;
         } = Array.Empty<string>();
+#pragma warning restore SA1513
 
         /// <summary>
         /// Gets or sets the force property.
@@ -504,6 +508,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+
                     // If the drive wasn't specified but the provider was
                     else if ((PSDrive == null || PSDrive.Length == 0) &&
                              (PSProvider != null && PSProvider.Length > 0))

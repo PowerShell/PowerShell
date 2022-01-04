@@ -1153,6 +1153,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
                         }
+
                         //
                         // Write an error if we have removed all the logs as irrelevant
                         //

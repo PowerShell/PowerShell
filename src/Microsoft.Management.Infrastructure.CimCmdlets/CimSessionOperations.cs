@@ -308,6 +308,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     Cleanup();
                     this._disposed = true;
                 }
+
                 // free native resources if there are any
             }
         }
@@ -1050,6 +1051,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     this.cimTestSession.Dispose();
                     this.Disposed = true;
                 }
+
                 // free native resources if there are any
             }
         }

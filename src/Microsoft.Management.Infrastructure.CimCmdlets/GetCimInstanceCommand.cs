@@ -454,6 +454,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 base.SetParameter(value, nameSelectProperties);
             }
         }
+
         /// <summary>
         /// Property for internal usage.
         /// </summary>

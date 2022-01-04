@@ -140,6 +140,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         continue;
                     }
+
                     // excludes pattern
                     if (SessionStateUtilities.MatchesAnyWildcardPattern(tableEntry.Key, excludePatterns, false))
                     {

@@ -264,6 +264,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         }
                     }
                 }
+
                 // there is a race condition that if
                 // one thread is waiting to add CimSession to cache,
                 // while current thread is removing the CimSession,
@@ -1426,6 +1427,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             return true;
         }
+
         /// <summary>
         /// Called before operation delete event.
         /// </summary>
@@ -1444,6 +1446,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected virtual void PostNewActionEvent(CmdletActionEventArgs args)
         {
         }
+
         /// <summary>
         /// Called after operation create event.
         /// </summary>
@@ -1451,6 +1454,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected virtual void PostOperationCreateEvent(OperationEventArgs args)
         {
         }
+
         /// <summary>
         /// Called after operation delete event.
         /// </summary>

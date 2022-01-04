@@ -382,6 +382,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.ToString());
                     }
+
                     resolvedNameProperty.Add(ht);
                 }
             }
@@ -723,6 +724,7 @@ namespace Microsoft.PowerShell.Commands
                     _isTHWritten = true;
                 }
             }
+
             // if the As parameter is Table, write the property values
             if (_as.Equals("Table", StringComparison.OrdinalIgnoreCase))
             {

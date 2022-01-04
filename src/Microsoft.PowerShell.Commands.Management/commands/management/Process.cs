@@ -55,6 +55,7 @@ namespace Microsoft.PowerShell.Commands
             /// </summary>
             ByInput
         }
+
         /// <summary>
         /// The current process selection mode.
         /// </summary>
@@ -128,6 +129,7 @@ namespace Microsoft.PowerShell.Commands
                     RetrieveMatchingProcessesByProcessName();
                     break;
             }
+
             // 2004/12/16 Note that the processes will be sorted
             //  before being stopped.  PM confirms that this is fine.
             _matchingProcesses.Sort(ProcessComparison);
@@ -2076,6 +2078,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
         /// <summary>
         /// Implements ^c, after creating a process.
         /// </summary>
@@ -3009,6 +3012,7 @@ namespace Microsoft.PowerShell.Commands
         {
             _processName = info.GetString("ProcessName");
         }
+
         /// <summary>
         /// Serializer.
         /// </summary>

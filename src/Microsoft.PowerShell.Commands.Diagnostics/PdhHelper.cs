@@ -510,6 +510,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             return PdhResults.PDH_CSTATUS_VALID_DATA;
         }
+
         /// <summary>
         /// Connects to a single named datasource, initializing m_hDataSource variable.
         /// </summary>

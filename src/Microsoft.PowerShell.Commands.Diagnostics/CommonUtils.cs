@@ -89,6 +89,7 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
             {
                 FreeLibrary(moduleHandle);
             }
+
             return formatError;
         }
 

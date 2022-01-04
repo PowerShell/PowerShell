@@ -337,8 +337,10 @@ namespace Microsoft.PowerShell.Commands
                     {
                         newPaths = SessionState.Path.GetResolvedProviderPathFromPSPath(_outputAssembly, out provider);
                     }
-                    // Ignore the ItemNotFound -- we handle it.
-                    catch (ItemNotFoundException) { }
+                    catch (ItemNotFoundException)
+                    {
+                        // Ignore the ItemNotFound -- we handle it.
+                    }
 
                     ErrorRecord errorRecord = new(
                         new Exception(
@@ -362,24 +364,24 @@ namespace Microsoft.PowerShell.Commands
                         ThrowTerminatingError(errorRecord);
                         return;
                     }
-                    // It didn't resolve to any files. They may
-                    // want to create the file.
                     else if (newPaths.Count == 0)
                     {
+                        // It didn't resolve to any files. They may
+                        // want to create the file.
                         // We can't create one with wildcard characters
                         if (WildcardPattern.ContainsWildcardCharacters(_outputAssembly))
                         {
                             ThrowTerminatingError(errorRecord);
                         }
-                        // Create the file
                         else
                         {
+                            // Create the file
                             _outputAssembly = SessionState.Path.GetUnresolvedProviderPathFromPSPath(_outputAssembly);
                         }
                     }
-                    // It resolved to a single file
                     else
                     {
+                        // It resolved to a single file
                         _outputAssembly = newPaths[0];
                     }
                 }
@@ -552,7 +554,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Prevent code compilation in ConstrainedLanguage mode, or NoLanguage mode under system lock down.
             if (SessionState.LanguageMode == PSLanguageMode.ConstrainedLanguage ||
-                (SessionState.LanguageMode == PSLanguageMode.NoLanguage && 
+                (SessionState.LanguageMode == PSLanguageMode.NoLanguage &&
                  SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce))
             {
                 ThrowTerminatingError(
@@ -855,6 +857,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 loadedAssembly = Assembly.Load(new AssemblyName(assemblyName));
             }
+
             // Generates a FileNotFoundException if you can't load the strong type.
             // So we'll try from the short name.
             catch (System.IO.FileNotFoundException) { }
