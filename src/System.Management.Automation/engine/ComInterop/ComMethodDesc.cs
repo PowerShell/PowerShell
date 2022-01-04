@@ -43,6 +43,7 @@ namespace System.Management.Automation.ComInterop
                 cNames++;
                 skipLast = true;
             }
+
             Debug.Assert(cNames == rgNames.Length);
             Name = rgNames[0];
 

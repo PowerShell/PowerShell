@@ -66,6 +66,7 @@ namespace System.Management.Automation.ComInterop
                 nestedArgs.Add(Expression.ArrayAccess(array, Expression.Constant(i)));
                 delegateArgs[i + 2] = typeof(object).MakeByRefType();
             }
+
             delegateArgs[delegateArgs.Length - 1] = typeof(object);
 
             return Expression.IfThen(

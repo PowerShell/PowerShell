@@ -22,6 +22,7 @@ namespace System.Management.Automation.ComInterop
             {
                 ComRuntimeHelpers.GetInfoFromType(typeInfo, out _typeName, out _documentation);
             }
+
             TypeLib = typeLibDesc;
         }
 
@@ -73,6 +74,7 @@ namespace System.Management.Automation.ComInterop
                 method = Funcs[name] as ComMethodDesc;
                 return true;
             }
+
             method = null;
             return false;
         }
@@ -94,6 +96,7 @@ namespace System.Management.Automation.ComInterop
                 method = Puts[name] as ComMethodDesc;
                 return true;
             }
+
             method = null;
             return false;
         }
@@ -115,6 +118,7 @@ namespace System.Management.Automation.ComInterop
                 method = PutRefs[name] as ComMethodDesc;
                 return true;
             }
+
             method = null;
             return false;
         }

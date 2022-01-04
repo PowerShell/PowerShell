@@ -118,6 +118,7 @@ namespace System.Management.Automation.ComInterop
                 {
                     _paramVariants = Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants");
                 }
+
                 return _paramVariants;
             }
         }
@@ -128,6 +129,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return var;
             }
+
             return var = Expression.Variable(type, name);
         }
 
@@ -144,8 +146,10 @@ namespace System.Management.Automation.ComInterop
                 {
                     marshalType = mo.Expression.Type;
                 }
+
                 marshalType = marshalType.MakeByRefType();
             }
+
             return marshalType;
         }
 
@@ -250,6 +254,7 @@ namespace System.Management.Automation.ComInterop
                     // Positional arguments are in reverse order at the tail of rgArgs
                     variantIndex = reverseIndex;
                 }
+
                 VariantBuilder variantBuilder = _varEnumSelector.VariantBuilders[i];
 
                 Expression marshal = variantBuilder.InitializeArgumentVariant(
@@ -562,6 +567,7 @@ namespace System.Management.Automation.ComInterop
             {
                 res[copy++] = _args[i].Expression;
             }
+
             return res;
         }
     }

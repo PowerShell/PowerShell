@@ -21,6 +21,7 @@ namespace System.Management.Automation.ComInterop
             {
                 _typeObj = Type.GetTypeFromCLSID(Guid);
             }
+
             return Activator.CreateInstance(Type.GetTypeFromCLSID(Guid));
         }
 
@@ -50,6 +51,7 @@ namespace System.Management.Automation.ComInterop
                 {
                     _sourceItfs = new LinkedList<string>();
                 }
+
                 _sourceItfs.AddLast(itfName);
             }
             else

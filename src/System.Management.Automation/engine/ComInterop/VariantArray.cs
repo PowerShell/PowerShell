@@ -97,6 +97,7 @@ namespace System.Management.Automation.ComInterop
             {
                 type.DefineField("Element" + i, T, FieldAttributes.Public);
             }
+
             return type.CreateType();
         }
     }

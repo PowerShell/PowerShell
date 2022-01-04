@@ -133,6 +133,7 @@ namespace System.Management.Automation.ComInterop
                     Debug.Assert(TempVariable != null);
                     return Expression.Call(TempVariable, typeof(Variant).GetMethod(nameof(Variant.Clear)));
                 }
+
                 return null;
             }
 
@@ -163,6 +164,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return null;
             }
+
             return Expression.Assign(
                 parameter,
                 Helpers.Convert(

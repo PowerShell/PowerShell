@@ -49,6 +49,7 @@ namespace System.Management.Automation.ComInterop
                         result.Restrictions
                     );
                 }
+
                 return true;
             }
 

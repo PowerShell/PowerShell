@@ -529,6 +529,7 @@ namespace System.Management.Automation
                 return result;
             }
         }
+
         /// <Content contentref="System.Management.Automation.PathIntrinsics.GetUnresolvedProviderPathFromPSPath" />
         public string GetUnresolvedProviderPathFromPSPath(string path)
         {

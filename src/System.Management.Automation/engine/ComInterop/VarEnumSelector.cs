@@ -216,6 +216,7 @@ namespace System.Management.Automation.ComInterop
                     }
                 }
             }
+
             return compatibleComTypes;
         }
 
@@ -242,6 +243,7 @@ namespace System.Management.Automation.ComInterop
                 {
                     typeNames += ", ";
                 }
+
                 typeNames += typeName;
             }
 
@@ -496,6 +498,7 @@ namespace System.Management.Automation.ComInterop
                     return new ConvertibleArgBuilder();
                 }
             }
+
             return GetSimpleArgBuilder(elementType, elementVarEnum);
         }
 
@@ -542,6 +545,7 @@ namespace System.Management.Automation.ComInterop
                     {
                         argBuilder = new ConvertArgBuilder(elementType, marshalType);
                     }
+
                     break;
             }
 

@@ -83,6 +83,7 @@ namespace System.Management.Automation.ComInterop
             {
                 helpLink += "#" + _dwHelpContext;
             }
+
             exception.HelpLink = helpLink;
 
             return exception;

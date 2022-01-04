@@ -21,6 +21,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return;
             }
+
             Exception parameterException = null;
 
             switch (hresult)
@@ -313,6 +314,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return variant;
             }
+
             InitVariantForObject(obj, ref variant);
             return variant;
         }
@@ -428,6 +430,7 @@ namespace System.Management.Automation.ComInterop
                 {
                     return s_dynamicModule;
                 }
+
                 lock (s_lock)
                 {
                     if (s_dynamicModule == null)
@@ -436,6 +439,7 @@ namespace System.Management.Automation.ComInterop
                         var assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(name), AssemblyBuilderAccess.Run);
                         s_dynamicModule = assembly.DefineDynamicModule(name);
                     }
+
                     return s_dynamicModule;
                 }
             }

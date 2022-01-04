@@ -129,6 +129,7 @@ namespace System.Management.Automation.InteropServices
                 {
                     *(IntPtr*)this._typeUnion._unionTypes._byref = IntPtr.Zero;
                 }
+
                 return;
             }
 
@@ -676,6 +677,7 @@ namespace System.Management.Automation.InteropServices
                 {
                     return null;
                 }
+
                 return Marshal.GetObjectForIUnknown(_typeUnion._unionTypes._unknown);
             }
 
@@ -705,6 +707,7 @@ namespace System.Management.Automation.InteropServices
                 {
                     return null;
                 }
+
                 return Marshal.GetObjectForIUnknown(_typeUnion._unionTypes._dispatch);
             }
 

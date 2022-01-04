@@ -15,6 +15,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return type.GetGenericArguments()[0];
             }
+
             return type;
         }
 
@@ -32,10 +33,12 @@ namespace System.Management.Automation.ComInterop
             {
                 return true;
             }
+
             if (!dest.IsValueType && !src.IsValueType && AreAssignable(dest, src))
             {
                 return true;
             }
+
             return false;
         }
 
@@ -46,14 +49,17 @@ namespace System.Management.Automation.ComInterop
             {
                 return true;
             }
+
             if (dest.IsAssignableFrom(src))
             {
                 return true;
             }
+
             if (dest.IsArray && src.IsArray && dest.GetArrayRank() == src.GetArrayRank() && AreReferenceAssignable(dest.GetElementType(), src.GetElementType()))
             {
                 return true;
             }
+
             if (src.IsArray && dest.IsGenericType &&
                 (dest.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IEnumerable<>)
                 || dest.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IList<>)
@@ -62,6 +68,7 @@ namespace System.Management.Automation.ComInterop
             {
                 return true;
             }
+
             return false;
         }
 
@@ -93,12 +100,14 @@ namespace System.Management.Automation.ComInterop
             {
                 return method;
             }
+
             MethodInfo[] cMethods = nnConvType.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
             method = FindConversionOperator(cMethods, convertFrom, convertToType, implicitOnly);
             if (method != null)
             {
                 return method;
             }
+
             // try lifted conversion
             if (nnExprType != convertFrom || nnConvType != convertToType)
             {
@@ -107,11 +116,13 @@ namespace System.Management.Automation.ComInterop
                 {
                     method = FindConversionOperator(cMethods, nnExprType, nnConvType, implicitOnly);
                 }
+
                 if (method != null)
                 {
                     return method;
                 }
             }
+
             return null;
         }
 
@@ -129,6 +140,7 @@ namespace System.Management.Automation.ComInterop
                     continue;
                 return mi;
             }
+
             return null;
         }
 
@@ -157,6 +169,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.Byte:
                     switch (tcDest)
@@ -172,6 +185,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.Int16:
                     switch (tcDest)
@@ -183,6 +197,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.UInt16:
                     switch (tcDest)
@@ -196,6 +211,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.Int32:
                     switch (tcDest)
@@ -206,6 +222,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.UInt32:
                     switch (tcDest)
@@ -217,6 +234,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.Int64:
                 case TypeCode.UInt64:
@@ -227,6 +245,7 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.Char:
                     switch (tcDest)
@@ -241,10 +260,12 @@ namespace System.Management.Automation.ComInterop
                         case TypeCode.Decimal:
                             return true;
                     }
+
                     return false;
                 case TypeCode.Single:
                     return (tcDest == TypeCode.Double);
             }
+
             return false;
         }
 

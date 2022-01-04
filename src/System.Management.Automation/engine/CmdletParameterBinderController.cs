@@ -644,6 +644,7 @@ namespace System.Management.Automation
                         _useDefaultParameterBinding = false;
                         return null;
                     }
+
                     // Write out a warning message if the key is not 'Disabled'
                     if (!key.Equals("Disabled", StringComparison.OrdinalIgnoreCase))
                     {
@@ -894,9 +895,9 @@ namespace System.Management.Automation
                     {
                         bindingException = originalBindingException;
                     }
-                    // Otherwise, give a generic error.
                     else
                     {
+                        // Otherwise, give a generic error.
                         string argument = StringLiterals.DollarNull;
                         if (parameter.ArgumentValue != null)
                         {
@@ -1817,6 +1818,7 @@ namespace System.Management.Automation
                         result.Add(parameter);
                         continue;
                     }
+
                     // The parameter was not mandatory in any parameter set
                 }
             }
@@ -1905,6 +1907,7 @@ namespace System.Management.Automation
                             _parameterSetToBePrioritizedInPipelineBinding = defaultParameterSet;
                     }
                 }
+
                 // We need to analyze the prompting data that was gathered to determine what parameter
                 // set to use, which parameters need prompting for, and which parameters take pipeline input.
 
@@ -2560,13 +2563,14 @@ namespace System.Management.Automation
                     // Note: this is the same as having a single valid parameter set flag.
                     validParameterSetCount = 1;
                 }
-                // If the valid parameter set is the default parameter set, or if the default
-                // parameter set has been defined and one of the valid parameter sets is
-                // the default parameter set, then use the default parameter set.
                 else if (!prePipelineInput &&
                     validSetIsDefault ||
                     (hasDefaultSetDefined && (_currentParameterSetFlag & defaultParameterSetFlag) != 0))
                 {
+                    // If the valid parameter set is the default parameter set, or if the default
+                    // parameter set has been defined and one of the valid parameter sets is
+                    // the default parameter set, then use the default parameter set.
+                    //
                     // NTRAID#Windows Out Of Band Releases-2006/02/14-928660-JonN
                     // Set currentParameterSetName regardless of setDefault
                     string currentParameterSetName = BindableParameters.GetParameterSetName(defaultParameterSetFlag);
@@ -2577,11 +2581,11 @@ namespace System.Management.Automation
                         validParameterSetCount = 1;
                     }
                 }
-                // There are multiple valid parameter sets but at least one parameter set takes
-                // pipeline input
                 else if (prePipelineInput &&
                     AtLeastOneUnboundValidParameterSetTakesPipelineInput(_currentParameterSetFlag))
                 {
+                    // There are multiple valid parameter sets but at least one parameter set takes
+                    // pipeline input.
                     // We haven't fixated on a valid parameter set yet, but will wait for pipeline input to
                     // determine which parameter set to use.
                 }
@@ -2596,8 +2600,10 @@ namespace System.Management.Automation
                     validParameterSetCount = resolvedParameterSetCount;
                 }
             }
-            else // validParameterSetCount == 1
+            else
             {
+                // validParameterSetCount == 1
+                //
                 // If the valid parameter set is the "all" set, and a default set was defined,
                 // then set the current parameter set to the default set.
 
@@ -2625,9 +2631,9 @@ namespace System.Management.Automation
                             validParameterSetCount = 1;
                         }
                     }
-                    // NTRAID#Windows Out Of Band Releases-2005/11/07-923917-JonN
                     else if (validParameterSetCount > 1)
                     {
+                        // NTRAID#Windows Out Of Band Releases-2005/11/07-923917-JonN
                         int resolvedParameterSetCount = ResolveParameterSetAmbiguityBasedOnMandatoryParameters();
                         if (resolvedParameterSetCount != 1)
                         {
@@ -3446,27 +3452,27 @@ namespace System.Management.Automation
                     {
                         bindResult = BindValueFromPipeline(inputToOperateOn, parameter, ParameterBindingFlags.None);
                     }
-                    // In the next phase we try binding the value from the pipeline by matching
-                    // the property name
                     else if (currentlyBinding == CurrentlyBinding.ValueFromPipelineByPropertyNameNoCoercion &&
                         parameterSetMetadata.ValueFromPipelineByPropertyName &&
                         inputToOperateOn != null)
                     {
+                        // In the next phase we try binding the value from the pipeline by matching
+                        // the property name
                         bindResult = BindValueFromPipelineByPropertyName(inputToOperateOn, parameter, ParameterBindingFlags.None);
                     }
-                    // The third step is to attempt to bind the value from the pipeline with
-                    // type coercion.
                     else if (currentlyBinding == CurrentlyBinding.ValueFromPipelineWithCoercion &&
                         parameterSetMetadata.ValueFromPipeline)
                     {
+                        // The third step is to attempt to bind the value from the pipeline with
+                        // type coercion.
                         bindResult = BindValueFromPipeline(inputToOperateOn, parameter, ParameterBindingFlags.ShouldCoerceType);
                     }
-                    // The final step is to attempt to bind the value from the pipeline by matching
-                    // the property name
                     else if (currentlyBinding == CurrentlyBinding.ValueFromPipelineByPropertyNameWithCoercion &&
                         parameterSetMetadata.ValueFromPipelineByPropertyName &&
                         inputToOperateOn != null)
                     {
+                        // The final step is to attempt to bind the value from the pipeline by matching
+                        // the property name
                         bindResult = BindValueFromPipelineByPropertyName(inputToOperateOn, parameter, ParameterBindingFlags.ShouldCoerceType);
                     }
 
@@ -3518,6 +3524,7 @@ namespace System.Management.Automation
                 {
                     parameterBindingException = e;
                 }
+
                 // Just ignore and continue;
                 bindResult = false;
             }
@@ -4314,6 +4321,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(dictionary));
             }
+
             // Contains keys that are in bad format. For every bad format key, we should write out a warning message
             // the first time we encounter it, and remove it from the $PSDefaultParameterValues
             var keysInBadFormat = new List<object>();

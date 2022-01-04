@@ -348,6 +348,7 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteError");
             }
         }
+
         /// <summary>
         /// Writes the object to the output pipe.
         /// </summary>
@@ -379,6 +380,7 @@ namespace System.Management.Automation
                     throw new System.NotImplementedException("WriteObject");
             }
         }
+
         /// <summary>
         /// Writes one or more objects to the output pipe.
         /// If the object is a collection and the enumerateCollection flag
@@ -1608,6 +1610,7 @@ namespace System.Management.Automation
 
             return result;
         }
+
         /// <summary>
         /// Invoke this cmdlet object returning a collection of results.
         /// </summary>

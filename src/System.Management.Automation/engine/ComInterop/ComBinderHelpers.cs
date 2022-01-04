@@ -130,6 +130,7 @@ namespace System.Management.Automation.ComInterop
                 //If the meta object holds a null value, create an instance restriction for checking null
                 return BindingRestrictions.GetInstanceRestriction(obj.Expression, null);
             }
+
             return BindingRestrictions.GetTypeRestriction(obj.Expression, obj.LimitType);
         }
     }

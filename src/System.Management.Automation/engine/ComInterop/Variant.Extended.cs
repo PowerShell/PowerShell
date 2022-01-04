@@ -201,6 +201,7 @@ namespace System.Management.Automation.InteropServices
                     _typeUnion._unionTypes._byref = (IntPtr)Unsafe.AsPointer(ref value._typeUnion._unionTypes._byref);
                     break;
             }
+
             VariantType = (value.VariantType | VarEnum.VT_BYREF);
         }
 
