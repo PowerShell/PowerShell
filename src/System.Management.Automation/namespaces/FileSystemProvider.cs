@@ -1034,6 +1034,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 description = newDrive.VolumeLabel;
                             }
+
                             // trying to read the volume label may cause an
                             // IOException or SecurityException. Just default
                             // to an empty description.
@@ -1132,6 +1133,7 @@ namespace Microsoft.PowerShell.Commands
 
                         results.Add(newPSDriveInfo);
                     }
+
                     // If there are issues accessing properties of the DriveInfo, do
                     // not add the drive
                     catch (IOException)
@@ -1873,6 +1875,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     isSwitchFilterHiddenSpecified = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
                 }
+
                 // Recurse into the directories
                 // Grab all the directories to recurse
                 // into separately from the ones that will get written
@@ -3688,6 +3691,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, path));
                 return;
             }
+
             // Copy-Item from session
             if (fromSession != null)
             {
@@ -3993,6 +3997,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, destinationPath));
                     return;
                 }
+
                 // Verify that the target doesn't represent a device name
                 if (PathIsReservedDeviceName(destinationPath, "CopyError"))
                 {
@@ -5407,9 +5412,10 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-                // Otherwise, we resolve to a child path (such as foo/bar)
                 else
                 {
+                    // Otherwise, we resolve to a child path (such as foo/bar).
+                    //
                     // If the path is a root, then the result will either be empty or the root depending
                     // on the value of basePath.
                     if (IsPathRoot(path))
@@ -7684,6 +7690,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _provider.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
                 }
+
                 _encoding = value;
                 // If an encoding was explicitly set, be sure to capture that.
                 WasStreamTypeSpecified = true;

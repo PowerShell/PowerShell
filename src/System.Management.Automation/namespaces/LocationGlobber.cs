@@ -307,9 +307,9 @@ namespace System.Management.Automation
                     }
                 }
             }
-            // They are suppressing wildcard expansion
             else
             {
+                // They are suppressing wildcard expansion
                 if (itemProvider != null)
                 {
                     if (allowNonexistingPaths || itemProvider.ItemExists(providerPath, context))
@@ -522,9 +522,9 @@ namespace System.Management.Automation
                             context);
                 }
             }
-            // They are suppressing wildcard expansion
             else
             {
+                // They are suppressing wildcard expansion
                 if (itemProvider != null)
                 {
                     if (allowNonexistingPaths || itemProvider.ItemExists(itemPath, context))
@@ -3749,6 +3749,7 @@ namespace System.Management.Automation
 
                         s_pathResolutionTracer.WriteLine("Root path of resolution: {0}", path);
                     }
+
                     // Once the container path with no glob characters are found store it
                     // so that it's children can be iterated over.
 

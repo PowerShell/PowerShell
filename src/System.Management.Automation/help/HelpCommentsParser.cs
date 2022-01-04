@@ -414,6 +414,7 @@ namespace System.Management.Automation
 
                 command.AppendChild(inputTypes);
             }
+
             // For outputs, we prefer what was specified in the comments, but if there are no comments
             // and the OutputType attribute was specified, we'll use those instead.
             IEnumerable outputs = null;
@@ -734,6 +735,7 @@ namespace System.Management.Automation
 
                                     break;
                                 }
+
                             case "FORWARDHELPTARGETNAME":
                                 _sections.ForwardHelpTargetName = match.Groups[3].Value.Trim();
                                 break;

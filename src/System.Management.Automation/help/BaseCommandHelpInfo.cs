@@ -152,6 +152,7 @@ namespace System.Management.Automation
             {
                 uriFormatException = urie;
             }
+
             // else get uri from CommandInfo HelpUri attribute
             result = this.LookupUriFromCommandInfo();
             if (result != null)

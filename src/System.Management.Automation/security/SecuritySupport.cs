@@ -654,9 +654,11 @@ namespace System.Management.Automation.Internal
                             return true;
                         }
                     }
+
                     break;
                 }
             }
+
             return false;
         }
 
@@ -671,9 +673,11 @@ namespace System.Management.Automation.Internal
                     {
                         return true;
                     }
+
                     break;
                 }
             }
+
             return false;
         }
 
@@ -769,11 +773,13 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets or sets purpose of a certificate.
         /// </summary>
+#pragma warning disable SA1513
         internal CertificatePurpose Purpose
         {
             get;
             set;
         } = CertificatePurpose.NotSpecified;
+#pragma warning disable SA1513
 
         /// <summary>
         /// Gets or sets SSL Server Authentication.
@@ -806,11 +812,13 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Gets or sets validity time for a certificate.
         /// </summary>
+#pragma warning disable SA1513
         internal DateTime Expiring
         {
             get;
             set;
         } = DateTime.MinValue;
+#pragma warning disable SA1513
 
         internal const string CodeSigningOid = "1.3.6.1.5.5.7.3.3";
         internal const string OID_PKIX_KP_SERVER_AUTH = "1.3.6.1.5.5.7.3.1";

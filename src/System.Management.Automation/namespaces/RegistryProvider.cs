@@ -900,6 +900,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return;
             }
+
             // Confirm the rename item with the user
 
             string action = RegistryProviderStrings.RenameItemAction;
@@ -1209,17 +1210,18 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            // Catch known non-terminating exceptions
             catch (System.IO.IOException)
             {
+                // Catch known non-terminating exceptions.
             }
-            // In these cases, the item does exist
             catch (System.Security.SecurityException)
             {
+                // In the case, the item does exist.
                 result = true;
             }
             catch (System.UnauthorizedAccessException)
             {
+                // In the case, the item does exist.
                 result = true;
             }
 
@@ -1610,6 +1612,7 @@ namespace Microsoft.PowerShell.Commands
                         result = true;
                     }
                 }
+
                 // Catch known exceptions that are not terminating
                 catch (System.IO.IOException ioException)
                 {

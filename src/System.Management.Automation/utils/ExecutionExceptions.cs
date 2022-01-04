@@ -59,6 +59,7 @@ namespace System.Management.Automation
             {
                 throw new ArgumentNullException(nameof(innerException));
             }
+
             // invocationInfo may be null
 
             IContainsErrorRecord icer = innerException as IContainsErrorRecord;
@@ -868,6 +869,7 @@ namespace System.Management.Automation
             : base(info, context)
         {
         }
+
         /// <summary>
         /// Serializer for <see cref="ISerializable"/>
         /// </summary>
@@ -975,6 +977,7 @@ namespace System.Management.Automation
             : base(info, context)
         {
         }
+
         /// <summary>
         /// Serializer for <see cref="ISerializable"/>
         /// </summary>

@@ -78,6 +78,7 @@ namespace System.Management.Automation
                      out providerInfo,
                      out driveInfo);
             }
+
             // ignore exceptions caused by provider resolution
             catch (ArgumentNullException)
             {
@@ -152,6 +153,7 @@ namespace System.Management.Automation
             {
                 return null;
             }
+
             // process the MAML content only if it is non-empty.
             XmlDocument mamlDoc = InternalDeserializer.LoadUnsafeXmlDocument(
                 mamlXmlString,

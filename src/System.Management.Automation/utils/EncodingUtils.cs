@@ -124,6 +124,7 @@ namespace System.Management.Automation
                     {
                         return System.Text.Encoding.GetEncoding(stringName);
                     }
+
                 case int intName:
                     return System.Text.Encoding.GetEncoding(intName);
             }

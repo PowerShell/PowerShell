@@ -323,6 +323,7 @@ namespace System.Management.Automation
             {
                 helpText = tr.ReadToEnd();
             }
+
             // Add this file into _helpFiles hashtable to prevent it to be loaded again.
             _helpFiles[path] = 0;
             helpInfo = HelpFileHelpInfo.GetHelpInfo(name, helpText, path);
@@ -384,6 +385,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
+
                     // Absorb any exception related to enumerating directories
                     catch (System.ArgumentException) { }
                     catch (System.IO.IOException) { }

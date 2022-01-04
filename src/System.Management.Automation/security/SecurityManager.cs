@@ -256,11 +256,11 @@ namespace Microsoft.PowerShell
                     policyCheckPassed = true;
                 }
             }
-            // Don't need to check the signature if the file is local
-            // and we're in "RemoteSigned" mode
             else if ((IsLocalFile(fi.FullName)) &&
                     (_executionPolicy == ExecutionPolicy.RemoteSigned))
             {
+                // Don't need to check the signature if the file is local
+                // and we're in "RemoteSigned" mode
                 policyCheckPassed = true;
             }
             else if ((_executionPolicy == ExecutionPolicy.AllSigned) ||
@@ -288,17 +288,17 @@ namespace Microsoft.PowerShell
                     {
                         policyCheckPassed = true;
                     }
-                    // The file is signed by an unknown publisher,
-                    // So prompt.
                     else
                     {
+                        // The file is signed by an unknown publisher,
+                        // So prompt.
                         policyCheckPassed = SetPolicyFromAuthenticodePrompt(path, host, ref reason, signature);
                     }
                 }
-                // The file is UnknownError, NotSigned, HashMismatch,
-                // NotTrusted, NotSupportedFileFormat
                 else
                 {
+                    // The file is UnknownError, NotSigned, HashMismatch,
+                    // NotTrusted, NotSupportedFileFormat
                     policyCheckPassed = false;
 
                     if (signature.Status == SignatureStatus.NotTrusted)
@@ -351,10 +351,10 @@ namespace Microsoft.PowerShell
                             {
                                 policyCheckPassed = true;
                             }
-                            // The file is signed by an unknown publisher,
-                            // So prompt.
                             else
                             {
+                                // The file is signed by an unknown publisher,
+                                // So prompt.
                                 policyCheckPassed = SetPolicyFromAuthenticodePrompt(path, host, ref reason, signature);
                                 reasonSet = true;
                             }

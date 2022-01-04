@@ -505,10 +505,12 @@ namespace Microsoft.PowerShell
                 {
                     pbDataIn.Free();
                 }
+
                 if (pOptionalEntropy.IsAllocated)
                 {
                     pOptionalEntropy.Free();
                 }
+
                 if (blob.pbData != IntPtr.Zero)
                 {
                     CAPI.ZeroMemory(blob.pbData, blob.cbData);
@@ -583,10 +585,12 @@ namespace Microsoft.PowerShell
                 {
                     pbDataIn.Free();
                 }
+
                 if (pOptionalEntropy.IsAllocated)
                 {
                     pOptionalEntropy.Free();
                 }
+
                 if (userData.pbData != IntPtr.Zero)
                 {
                     CAPI.ZeroMemory(userData.pbData, userData.cbData);

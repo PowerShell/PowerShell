@@ -74,6 +74,7 @@ namespace System.Management.Automation.Internal
             {
                 fdiContext.Dispose();
             }
+
             // Free unmanaged objects here
             this.CleanUpDelegates();
 
@@ -380,6 +381,7 @@ namespace System.Management.Automation.Internal
                         string absoluteFilePath = Path.Combine(destPath, fileName);
                         return CabinetNativeApi.FdiOpen(absoluteFilePath, (int)OpFlags.Create, (int)(PermissionMode.Read | PermissionMode.Write)); // TODO: OK to ignore _O_SEQUENTIAL, WrOnly, and _O_BINARY?
                     }
+
                 case FdiNotificationType.FdintCLOSE_FILE_INFO:
                     {
                         // Close the file

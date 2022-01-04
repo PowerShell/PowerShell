@@ -245,6 +245,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return _displayCellsPSHost;
                 }
+
                 // fall back if we do not have a Msh host specific instance
                 return _displayCellsPSHost;
             }

@@ -177,6 +177,7 @@ namespace System.Management.Automation
         }
         #endregion Private
     }
+
     /// <summary>
     /// Defines the exception thrown when a script's requirements to run specified by the #requires
     /// statements are not met.
@@ -216,6 +217,7 @@ namespace System.Management.Automation
             this.SetTargetObject(commandName);
             this.SetErrorCategory(ErrorCategory.ResourceUnavailable);
         }
+
         /// <summary>
         /// Constructs an ScriptRequiresException. Recommended constructor for the class for
         /// #requires -version N.
@@ -378,6 +380,7 @@ namespace System.Management.Automation
             _requiresShellId = info.GetString("RequiresShellId");
             _requiresShellPath = info.GetString("RequiresShellPath");
         }
+
         /// <summary>
         /// Gets the serialized data for the exception.
         /// </summary>

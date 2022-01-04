@@ -508,6 +508,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 // found a key which is not version
                 if (!MeetsVersionFormat(version))
                 {
@@ -519,6 +520,7 @@ namespace System.Management.Automation
                 {
                     oneVersionMshSnapins = ReadAll(monadRootKey, version);
                 }
+
                 // If we cannot get information for one version, continue with other
                 // versions
                 catch (SecurityException)
@@ -620,6 +622,7 @@ namespace System.Management.Automation
                 {
                     mshsnapins.Add(ReadOne(mshsnapinRoot, id));
                 }
+
                 // If we cannot read some mshsnapins, we should continue
                 catch (SecurityException)
                 {
@@ -662,6 +665,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(mshsnapinId));
             }
+
             // PSSnapIn Reader wont service invalid mshsnapins
             // Monad has specific restrictions on the mshsnapinid like
             // mshsnapinid should be A-Za-z0-9.-_ etc.

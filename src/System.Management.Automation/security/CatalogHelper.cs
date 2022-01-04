@@ -94,6 +94,7 @@ namespace System.Management.Automation
             {
                 catalogVersion = 2;
             }
+
             // One Windows 7 this API sent version information as decimal 1 not hex (0X100 = 256)
             // so we are checking for that value as well. Reason we are not checking for version 2 above in
             // this scenario because catalog version 2 is not supported on win7.
@@ -242,6 +243,7 @@ namespace System.Management.Automation
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
         }
+
         /// <summary>
         /// Generate the Catalog file for Input Catalog Definition File.
         /// </summary>
@@ -591,6 +593,7 @@ namespace System.Management.Automation
                 _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.SkipValidationOfCatalogFile, relativePath));
             }
         }
+
         /// <summary>
         /// Process file in path for its relative paths.
         /// </summary>
@@ -722,6 +725,7 @@ namespace System.Management.Automation
 
             return Status;
         }
+
         /// <summary>
         /// To Validate the Integrity of Catalog.
         /// </summary>
@@ -782,6 +786,7 @@ namespace System.Management.Automation
 
             return false;
         }
+
         /// <summary>
         /// Call back when error is thrown by catalog API's.
         /// </summary>
@@ -803,18 +808,21 @@ namespace System.Management.Automation
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }
+
                 case NativeConstants.CRYPTCAT_E_CDF_MEMBER_INDIRECTDATA:
                     {
                         ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToCreateFileHash, pwszLine)), "UnableToCreateFileHash", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }
+
                 case NativeConstants.CRYPTCAT_E_CDF_MEMBER_FILENOTFOUND:
                     {
                         ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.UnableToFindFileToHash, pwszLine)), "UnableToFindFileToHash", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }
+
                 case NativeConstants.CRYPTCAT_E_CDF_BAD_GUID_CONV: break;
                 case NativeConstants.CRYPTCAT_E_CDF_ATTR_TYPECOMBO: break;
                 case NativeConstants.CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES: break;
@@ -825,6 +833,7 @@ namespace System.Management.Automation
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }
+
                 case NativeConstants.CRYPTCAT_E_CDF_TAGNOTFOUND: break;
                 default: break;
             }

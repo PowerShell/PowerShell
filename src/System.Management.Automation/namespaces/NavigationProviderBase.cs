@@ -448,6 +448,7 @@ namespace System.Management.Automation.Provider
                         {
                             ++lastIndex;
                         }
+
                         // Get the parent directory
 
                         parentPath = path.Substring(0, lastIndex);
@@ -623,9 +624,9 @@ namespace System.Management.Automation.Provider
                         }
                     }
                 }
-                // Otherwise, we resolve to a child path (such as foo/bar)
                 else
                 {
+                    // Otherwise, we resolve to a child path (such as foo/bar)
                     tokenizedPathStack = TokenizePathToStack(path, basePath);
 
                     // Now we have to normalize the path
@@ -721,9 +722,9 @@ namespace System.Management.Automation.Provider
                 {
                     result = path;
                 }
-                // If the full path existed, we must semantically evaluate the parent path
                 else if (ItemExists(path, Context))
                 {
+                    // If the full path existed, we must semantically evaluate the parent path
                     string parentPath = GetParentPath(path, null);
 
                     // No parent, return the entire path
@@ -742,9 +743,9 @@ namespace System.Management.Automation.Provider
                         result = path.Substring(separatorIndex + 1);
                     }
                 }
-                // Otherwise, use lexical parsing
                 else
                 {
+                    // Otherwise, use lexical parsing
                     result = path.Substring(separatorIndex + 1);
                 }
 

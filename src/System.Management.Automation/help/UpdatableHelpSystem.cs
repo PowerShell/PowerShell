@@ -673,6 +673,7 @@ namespace System.Management.Automation.Help
                             StringUtil.Format(HelpDisplayStrings.HelpInfoXmlValidationFailure),
                             ErrorCategory.InvalidData, null, arg.Exception);
                     }
+
                 case XmlSeverityType.Warning:
                     break;
             }
@@ -693,6 +694,7 @@ namespace System.Management.Automation.Help
                             StringUtil.Format(HelpDisplayStrings.HelpContentXmlValidationFailure),
                             ErrorCategory.InvalidData, null, arg.Exception);
                     }
+
                 case XmlSeverityType.Warning:
                     break;
             }

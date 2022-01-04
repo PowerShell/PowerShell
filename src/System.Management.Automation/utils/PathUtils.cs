@@ -132,9 +132,9 @@ namespace System.Management.Automation
                 else
                     streamWriter = new StreamWriter(fileStream, resolvedEncoding);
             }
-            // These are the known exceptions for File.Load and StreamWriter.ctor
             catch (ArgumentException e)
             {
+                // These are the known exceptions for File.Load and StreamWriter.ctor
                 // NOTE: this call will throw
                 ReportFileOpenFailure(cmdlet, resolvedPath, e);
             }
@@ -155,6 +155,7 @@ namespace System.Management.Automation
                     // NOTE: this call will throw
                     cmdlet.ThrowTerminatingError(errorRecord);
                 }
+
                 // NOTE: this call will throw
                 ReportFileOpenFailure(cmdlet, resolvedPath, e);
             }
@@ -200,9 +201,9 @@ namespace System.Management.Automation
             {
                 return new FileStream(resolvedPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             }
-            // These are the known exceptions for FileStream.ctor
             catch (ArgumentException e)
             {
+                // These are the known exceptions for FileStream.ctor
                 PathUtils.ReportFileOpenFailure(command, filePath, e);
                 return null; // the line above will throw - silencing the compiler
             }
@@ -454,7 +455,7 @@ namespace System.Management.Automation
         }
 
         #region Helpers for long paths from .Net Runtime
-        
+
         // Code here is copied from .NET's internal path helper implementation:
         // https://github.com/dotnet/runtime/blob/dcce0f56e10f5ac9539354b049341a2d7c0cdebf/src/libraries/System.Private.CoreLib/src/System/IO/PathInternal.Windows.cs
         // It has been left as a verbatim copy.
@@ -547,6 +548,7 @@ namespace System.Management.Automation
                 // not qualified if you don't have a valid drive. "=:\" is the "=" file's default data stream.
                 && IsValidDriveChar(path[0]));
         }
+
         /// <summary>
         /// True if the given character is a directory separator.
         /// </summary>
