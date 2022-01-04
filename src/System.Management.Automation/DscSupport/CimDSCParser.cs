@@ -212,6 +212,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             return result;
         }
+
         /// <summary>
         /// Convert CIM instance to PS Credential.
         /// </summary>
@@ -1355,6 +1356,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     throw e;
                 }
             }
+
             // Add the dynamic keyword to the table
             DynamicKeyword.AddKeyword(keyword);
 
@@ -1455,6 +1457,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         continue;
                     }
                 }
+
                 // If it's one of our reserved properties, save it for error reporting
                 if (System.Text.RegularExpressions.Regex.Match(prop.Name, reservedProperties, System.Text.RegularExpressions.RegexOptions.IgnoreCase).Success)
                 {
@@ -2779,6 +2782,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     return false;
                 }
+
                 // flags and type should match
                 if ((prop.CimType != newProp.CimType) ||
                     (prop.Flags != newProp.Flags))
@@ -2803,6 +2807,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 return false;
             }
+
             // #2 qualifier count, names, values and types should be same
             if (!AreQualifiersSame(oldClass.CimClassQualifiers, newClass.CimClassQualifiers))
             {

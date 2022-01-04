@@ -657,6 +657,7 @@ namespace Microsoft.PowerShell
                     {
                         return;
                     }
+
                 case RunspaceState.Closing:
                 case RunspaceState.Closed:
                 case RunspaceState.Broken:
@@ -2669,10 +2670,10 @@ namespace Microsoft.PowerShell
 #endif
                         }
                     }
-                    // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
-                    // Removed HandleUnexpectedExceptions infrastructure
                     finally
                     {
+                        // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
+                        // Removed HandleUnexpectedExceptions infrastructure
                         _parent._isRunningPromptLoop = false;
                     }
                 }

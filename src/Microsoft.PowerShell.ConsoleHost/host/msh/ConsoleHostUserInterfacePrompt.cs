@@ -231,6 +231,7 @@ namespace Microsoft.PowerShell
                                 fieldPromptList.Length = fieldPrompt.Length + 1;
                             }
                         }
+
                         // if cancelInput, should throw OperationCancelException?
                         if (!cancelInput)
                         {

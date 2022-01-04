@@ -209,6 +209,7 @@ namespace Microsoft.PowerShell
                     WriteLineToConsole();
                     WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
                 }
+
                 // write message
                 if (!string.IsNullOrEmpty(message))
                 {
@@ -260,6 +261,7 @@ namespace Microsoft.PowerShell
                                 result.Add(defaultChoice);
                             }
                         }
+
                         // allow for no choice selection.
                         break;
                     }
@@ -279,6 +281,7 @@ namespace Microsoft.PowerShell
                         result.Add(choicePicked);
                         choicesSelected++;
                     }
+
                     // prompt for multiple choices
                 }
 
@@ -450,6 +453,7 @@ namespace Microsoft.PowerShell
                 }
             }
         }
+
         /// <summary>
         /// Guarantee a contrasting color for the default prompt that is slightly
         /// different from the other prompt elements.

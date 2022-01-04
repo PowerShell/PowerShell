@@ -420,9 +420,9 @@ namespace Microsoft.WSMan.Management
                         }
                     }
                 }
-                // 2. Client Certificate Checks
                 else if (WsManURI.Contains(WSManStringLiterals.containerCertMapping))
                 {
+                    // 2. Client Certificate Checks
                     XmlDocument xmlCertificates = EnumerateResourceValue(sessionobj, WsManURI);
                     Hashtable KeyCache, CertificatesObjCache;
                     if (xmlCertificates == null)
@@ -436,9 +436,9 @@ namespace Microsoft.WSMan.Management
                         return true;
                     }
                 }
-                // 3. Plugin and its internal structure Checks
                 else if (WsManURI.Contains(WSManStringLiterals.containerPlugin))
                 {
+                    // 3. Plugin and its internal structure Checks
                     strPathCheck += WSManStringLiterals.containerPlugin;
                     // Check for Plugin path
                     XmlDocument xmlPlugins = FindResourceValue(sessionobj, WsManURI, null);
@@ -1491,9 +1491,9 @@ namespace Microsoft.WSMan.Management
                         }
                     }
                 }
-                // 2. Client Certificate Checks
                 else if (WsManURI.Contains(WSManStringLiterals.containerCertMapping))
                 {
+                    // 2. Client Certificate Checks
                     strPathCheck += WSManStringLiterals.containerClientCertificate;
                     if (path.EndsWith(strPathCheck, StringComparison.OrdinalIgnoreCase))
                     {
@@ -1511,9 +1511,9 @@ namespace Microsoft.WSMan.Management
                         }
                     }
                 }
-                // 3. Plugin and its internal structure Checks
                 else if (WsManURI.Contains(WSManStringLiterals.containerPlugin))
                 {
+                    // 3. Plugin and its internal structure Checks
                     strPathCheck += WSManStringLiterals.containerPlugin;
                     // Check for Plugin path
                     if (path.EndsWith(strPathCheck, StringComparison.OrdinalIgnoreCase))
@@ -2061,6 +2061,7 @@ namespace Microsoft.WSMan.Management
                     path = path.Remove(path.LastIndexOf(WSManStringLiterals.DefaultPathSeparator));
                 }
             }
+
             // to create a new plugin
             if (path.EndsWith(strPathChk, StringComparison.OrdinalIgnoreCase))
             {
@@ -2202,6 +2203,7 @@ namespace Microsoft.WSMan.Management
                                 return;
                             }
                         }
+
                         // Construct the Uri from Resource_XXXX resource dir.
                         PSObject resourceDirProperties = GetItemValue(strPathChk);
                         if ((resourceDirProperties == null) || (resourceDirProperties.Properties["ResourceUri"] == null))
@@ -2458,6 +2460,7 @@ namespace Microsoft.WSMan.Management
                 string filePath = this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path);
                 putstr = File.ReadAllText(filePath, System.Text.Encoding.UTF8);
             }
+
             // known exceptions
             catch (ArgumentNullException e)
             {
@@ -2554,26 +2557,31 @@ namespace Microsoft.WSMan.Management
                             esc_str.Append("&amp;");
                             break;
                         }
+
                     case '<':
                         {
                             esc_str.Append("&lt;");
                             break;
                         }
+
                     case '>':
                         {
                             esc_str.Append("&gt;");
                             break;
                         }
+
                     case '\"':
                         {
                             esc_str.Append("&quot;");
                             break;
                         }
+
                     case '\'':
                         {
                             esc_str.Append("&apos;");
                             break;
                         }
+
                     default:
                         {
                             esc_str.Append(value[i]);
@@ -3224,6 +3232,7 @@ namespace Microsoft.WSMan.Management
                         }
                     }
                 }
+
                 // Getting the Fixed root nodes.
                 foreach (string root in WinRmRootConfigs)
                 {
@@ -3857,6 +3866,7 @@ namespace Microsoft.WSMan.Management
             {
                 return true;
             }
+
             // if endswith '\', removes it.
 
             if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -4865,6 +4875,7 @@ namespace Microsoft.WSMan.Management
                         }
                     }
                 }
+
                 // Containers in Plugin Level Configs
                 if (objConfiglvl != null)
                 {
@@ -6516,6 +6527,7 @@ $_ | Start-WSManServiceD15A7957836142a18627D7E1D342DD82 -force $args[0] -caption
             set { _typenameofelement = value; }
         }
     }
+
     /// <summary>
     /// Leaf Element.
     /// </summary>
@@ -6557,6 +6569,7 @@ $_ | Start-WSManServiceD15A7957836142a18627D7E1D342DD82 -force $args[0] -caption
 
         private object _value;
     }
+
     /// <summary>
     /// Container Element.
     /// </summary>

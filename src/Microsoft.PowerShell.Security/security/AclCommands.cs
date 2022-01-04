@@ -128,6 +128,7 @@ namespace Microsoft.PowerShell.Commands
                             )
                     );
                 }
+
                 // CentralAccessPolicyId retrieval does not require elevation, so we always add this property.
                 result.Properties.Add
                 (
@@ -268,6 +269,7 @@ namespace Microsoft.PowerShell.Commands
             // So return sddl..
             return sd.GetSecurityDescriptorSddlForm(AccessControlSections.Group);
         }
+
         /// <summary>
         /// Gets the access rules of the provided PSObject.
         /// </summary>

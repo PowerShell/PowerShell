@@ -109,6 +109,7 @@ namespace Microsoft.PowerShell.Commands
         /// "1" matches all certs that are currently valid and will expire
         /// by next day (local time).
         /// </summary>
+#pragma warning disable SA1513
         [Parameter]
         [ValidateRange(ValidateRangeKind.NonNegative)]
         public int ExpiringInDays
@@ -116,6 +117,7 @@ namespace Microsoft.PowerShell.Commands
             get;
             set;
         } = -1;
+#pragma warning restore SA1513
     }
 
     /// <summary>
@@ -1397,6 +1399,7 @@ namespace Microsoft.PowerShell.Commands
 
             return result;
         }
+
         /// <summary>
         /// Invokes the certificate management UI (certmgr.msc)
         /// for any path.
@@ -1765,6 +1768,7 @@ namespace Microsoft.PowerShell.Commands
 
                     certContext = store.GetNextCert(certContext);
                 }
+
                 // remove the cert store
                 const Security.NativeMethods.CertOpenStoreFlags StoreFlags =
                         Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_READONLY_FLAG |
@@ -1791,6 +1795,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowInvalidOperation(errorId, message);
             }
         }
+
         /// <summary>
         /// Delete the a single cert from the store; if -DeleteKey is specified, we also delete
         /// the associated private key.
@@ -2384,6 +2389,7 @@ namespace Microsoft.PowerShell.Commands
                                      returnNames,
                                      filter);
                 }
+
                 //
                 // children at depth 2 are certificates
                 //
@@ -3287,6 +3293,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
     }
+
     /// <summary>
     /// Class for ekulist.
     /// </summary>

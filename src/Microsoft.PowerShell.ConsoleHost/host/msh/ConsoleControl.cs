@@ -1270,6 +1270,7 @@ namespace Microsoft.PowerShell
                     }
                 }
             }
+
             // Check right edge
             if (origin.X + (contentsRegion.Right - contentsRegion.Left) + 1 >= bufferInfo.BufferSize.X)
             {
@@ -2039,6 +2040,7 @@ namespace Microsoft.PowerShell
                     {
                         colIndex = contentsRegion.Right + 1;
                     }
+
                     // colIndex past contents last column
                     if (colIndex > colEnd)
                     {
@@ -2141,6 +2143,7 @@ namespace Microsoft.PowerShell
                                 ErrorCategory.ReadError, ConsoleControlStrings.ReadConsoleOutputExceptionTemplate);
                             throw e;
                         }
+
                         // if cols == colsRemaining, nothing is guaranteed read in this pass and
                         //  the unread area is still rectangular
                         bufferLimit /= 2;
@@ -2220,6 +2223,7 @@ namespace Microsoft.PowerShell
                     {
                         colIndex = contentsRegion.Right + 1;
                     }
+
                     // colIndex past contents last column
                     if (colIndex > colEnd)
                     {
@@ -2286,6 +2290,7 @@ namespace Microsoft.PowerShell
                     ErrorCategory.WriteError, ConsoleControlStrings.FillConsoleOutputCharacterExceptionTemplate);
                 throw e;
             }
+
             // we don't assert that the number actually written matches the number we asked for, as the function may clip if
             // the number of cells to write extends past the end of the screen buffer.
         }

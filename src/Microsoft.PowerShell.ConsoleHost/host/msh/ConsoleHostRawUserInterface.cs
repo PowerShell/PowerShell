@@ -614,6 +614,7 @@ namespace Microsoft.PowerShell
                     cachedKeyEvent.RepeatCount--;
                     throw NewPipelineStoppedException();
                 }
+
                 // If IncludeKeyUp is not set and cached key events are KeyUp OR
                 //    IncludeKeyDown is not set and cached key events are KeyDown, clear the cache
                 if ((((options & ReadKeyOptions.IncludeKeyUp) == 0) && !cachedKeyEvent.KeyDown) ||
@@ -664,6 +665,7 @@ namespace Microsoft.PowerShell
                                     // represent a keystroke.
                                     continue;
                                 }
+
                                 //    Ctrl-C is not allowed and Ctrl-C is input
                                 if ((options & ReadKeyOptions.AllowCtrlC) == 0 &&
                                     inputRecords[0].KeyEvent.UnicodeChar == (char)3)
@@ -671,6 +673,7 @@ namespace Microsoft.PowerShell
                                     CacheKeyEvent(inputRecords[0].KeyEvent, ref cachedKeyEvent);
                                     throw NewPipelineStoppedException();
                                 }
+
                                 // if KeyDown events are wanted and event is KeyDown OR
                                 //    KeyUp events are wanted and event is KeyUp
                                 if ((((options & ReadKeyOptions.IncludeKeyDown) != 0) &&
@@ -868,6 +871,7 @@ namespace Microsoft.PowerShell
             {
                 PSTraceSource.NewArgumentNullException(nameof(contents));
             }
+
             // the origin must be within the window.
 
             ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
@@ -995,6 +999,7 @@ namespace Microsoft.PowerShell
                         }
                     }
                 }
+
                 // Check right edge
                 if (lineEnd == bufferWidth - 1)
                 {

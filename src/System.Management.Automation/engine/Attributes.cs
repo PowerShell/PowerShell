@@ -929,6 +929,7 @@ namespace System.Management.Automation
         /// </summary>
         NonPositive
     }
+
     /// <summary>
     /// Validates that each parameter argument falls in the range specified by <see cref="MinRange"/>
     /// and <see cref="MaxRange"/>.

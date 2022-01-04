@@ -359,6 +359,7 @@ namespace Microsoft.WSMan.Management
             // CleanUp();
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Public dispose method.
         /// </summary>
@@ -636,6 +637,7 @@ namespace Microsoft.WSMan.Management
                     UpdateGPORegistrySettings(applicationname, this.delegatecomputer, Registry.CurrentUser, key);
                 }
             }
+
             // saving gpo settings
             GPO.Save(true, true, new Guid("35378EAC-683F-11D2-A89A-00C04FBBCFA2"), new Guid("7A9206BD-33AF-47af-B832-D4128730E990"));
         }
@@ -703,6 +705,7 @@ namespace Microsoft.WSMan.Management
         {
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Public dispose method.
         /// </summary>
@@ -825,6 +828,7 @@ namespace Microsoft.WSMan.Management
                     WriteError(er);
                     return;
                 }
+
                 // The application name MUST be "wsman" as wsman got approval from security
                 // folks who suggested to register the SPN with name "wsman".
                 const string applicationname = "wsman";
@@ -903,6 +907,7 @@ namespace Microsoft.WSMan.Management
         {
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Public dispose method.
         /// </summary>

@@ -33,6 +33,7 @@ namespace Microsoft.PowerShell
                     _progPaneUpdateTimer.Dispose();
                     _progPaneUpdateTimer = null;
                 }
+
                 // We don't set 'progPaneUpdateFlag = 0' here, because:
                 // 1. According to MSDN, the timer callback can occur after the Dispose() method has been called.
                 //    So we cannot guarantee the flag is truly set to 0.

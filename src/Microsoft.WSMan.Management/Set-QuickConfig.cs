@@ -175,6 +175,7 @@ namespace Microsoft.WSMan.Management
                     {
                         Err_Msg = WSManResourceLoader.GetResourceString("L_QuickConfigNoChangesNeeded_Message");
                     }
+
                     //  ArgumentException e = new ArgumentException(Err_Msg);
                     // ErrorRecord er = new ErrorRecord(e, "InvalidOperation", ErrorCategory.InvalidOperation, null);
                     //  WriteError(er);
@@ -276,6 +277,7 @@ namespace Microsoft.WSMan.Management
             // CleanUp();
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Public dispose method.
         /// </summary>

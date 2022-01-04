@@ -314,6 +314,7 @@ namespace Microsoft.WSMan.Management
             // CleanUp();
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Public dispose method.
         /// </summary>

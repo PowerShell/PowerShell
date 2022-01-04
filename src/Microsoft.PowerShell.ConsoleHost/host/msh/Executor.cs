@@ -239,6 +239,7 @@ namespace Microsoft.PowerShell
                             break;
                         }
                     }
+
                     des.End();
                 }
 

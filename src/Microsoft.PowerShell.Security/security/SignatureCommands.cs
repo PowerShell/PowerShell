@@ -480,9 +480,9 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
-                    // These are the known exceptions for File.Load and StreamWriter.ctor
                     catch (ArgumentException e)
                     {
+                        // These are the known exceptions for File.Load and StreamWriter.ctor
                         ErrorRecord er = new(
                             e,
                             "ForceArgumentException",

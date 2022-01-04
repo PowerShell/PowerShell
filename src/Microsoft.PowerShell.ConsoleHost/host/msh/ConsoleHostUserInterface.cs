@@ -517,6 +517,7 @@ namespace Microsoft.PowerShell
                 {
                     return;
                 }
+
                 // BufferSize.Width is 1 larger than cursor position
                 cursorPosition.X = _rawui.BufferSize.Width - 1;
                 cursorPosition.Y--;
@@ -527,6 +528,7 @@ namespace Microsoft.PowerShell
                 cursorPosition.X--;
                 BlankAtCursor(cursorPosition);
             }
+
             // do nothing if cursorPosition.X is left of screen
         }
 

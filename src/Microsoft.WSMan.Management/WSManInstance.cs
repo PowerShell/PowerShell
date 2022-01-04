@@ -544,6 +544,7 @@ namespace Microsoft.WSMan.Management
                 {
                     obj = (IWSManEnumerator)wsmanSession.Enumerate(wsmanResourceLocator, filter, null, flags);
                 }
+
                 while (!obj.AtEndOfStream)
                 {
                     XmlDocument xmldoc = new XmlDocument();
@@ -652,6 +653,7 @@ namespace Microsoft.WSMan.Management
             // CleanUp();
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Public dispose method.
         /// </summary>
@@ -1024,6 +1026,7 @@ namespace Microsoft.WSMan.Management
             // CleanUp();
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Public dispose method.
         /// </summary>
@@ -1302,6 +1305,7 @@ namespace Microsoft.WSMan.Management
             // CleanUp();
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Public dispose method.
         /// </summary>
@@ -1609,6 +1613,7 @@ namespace Microsoft.WSMan.Management
             // CleanUp();
             GC.SuppressFinalize(this);
         }
+
         /// <summary>
         /// Public dispose method.
         /// </summary>
