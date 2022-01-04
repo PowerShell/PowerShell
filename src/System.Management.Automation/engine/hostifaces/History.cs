@@ -560,6 +560,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     throw PSTraceSource.NewArgumentOutOfRangeException(nameof(id), id);
                 }
+
                 // no entries are present to clear
                 if (_countEntriesInBuffer == 0)
                     return;
@@ -643,6 +644,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 return null;
             }
+
             // if (_buffer[GetIndexFromId(id)].Cleared == false )
             return _buffer[GetIndexFromId(id)];
             // else
@@ -667,6 +669,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
+
             // check for the minimum id that is not cleared
             for (int i = 0; i < _buffer.Length; i++)
             {
@@ -1673,6 +1676,7 @@ namespace Microsoft.PowerShell.Commands
                     )
                 );
             }
+
             // if id parameter is not present
             if (_id != null)
             {
@@ -1783,6 +1787,7 @@ namespace Microsoft.PowerShell.Commands
                     )
                 );
             }
+
             // if command line is not present
             if (_commandline != null)
             {
@@ -1872,6 +1877,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     count = 0;
                 }
+
                 // Return the matching history entries for the command line parameter
                 // if newest id false...gets the oldest entry
                 _entries = _history.GetEntries(wildcardpattern, count, newest);

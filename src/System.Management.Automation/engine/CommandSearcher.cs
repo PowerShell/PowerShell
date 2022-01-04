@@ -1224,6 +1224,7 @@ namespace System.Management.Automation
 
             return result;
         }
+
         /// <summary>
         /// Gets the next literal path.
         /// Filtering to ones that exist for the filesystem.

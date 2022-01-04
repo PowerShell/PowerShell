@@ -55,14 +55,14 @@ namespace System.Management.Automation
                 throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                     null, "NoEnumNameMatch", EnumExpressionEvaluatorStrings.NoEnumNameMatch, text, EnumAllValues(enumType));
             }
-            // Return the result if there is only one match.
             else if (namesWithMatchingPrefix.Count == 1)
             {
+                // Return the result if there is only one match.
                 return namesWithMatchingPrefix[0];
             }
-            // multiple matches situation
             else
             {
+                // multiple matches situation
                 // test for exact match
                 foreach (string matchName in namesWithMatchingPrefix)
                 {
@@ -71,6 +71,7 @@ namespace System.Management.Automation
                         return matchName;
                     }
                 }
+
                 // test for special cases match
                 string[] minDisambiguateNames;
                 if (s_specialDisambiguateCases.TryGetValue(enumType, out minDisambiguateNames))
@@ -83,6 +84,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 // No special cases match, throw error for multiple matches.
                 StringBuilder matchListSB = new StringBuilder(namesWithMatchingPrefix[0]);
                 const string separator = ", ";

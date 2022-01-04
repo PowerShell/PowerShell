@@ -852,9 +852,9 @@ namespace Microsoft.PowerShell.Commands
 
                             resultFound = FindCommandForName(options, commandName, isPattern, false, ref count, out isDuplicate);
                         }
-                        // Show additional commands from available modules only if ListImported is not specified
                         else if (!ListImported)
                         {
+                            // Show additional commands from available modules only if ListImported is not specified
                             if (TotalCount < 0 || count < TotalCount)
                             {
                                 IEnumerable<CommandInfo> commands;
@@ -1078,6 +1078,7 @@ namespace Microsoft.PowerShell.Commands
 
                             _accumulatedResults.Add(c);
                         }
+
                         // Make sure we don't exceed the TotalCount parameter
                     }
                 }

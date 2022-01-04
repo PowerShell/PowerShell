@@ -636,6 +636,7 @@ namespace System.Management.Automation.Language
                         AddBoundParameter(parameter, parameterName, bindingResult);
                         ResetCurrentParameter(ref currentParameter, ref bindingResult);
                     }
+
                     // Otherwise, it's just a parameter and the argument is to follow.
                     else
                     {
@@ -1301,6 +1302,7 @@ namespace System.Management.Automation.Language
                         }
                     } while (retryWithNoArgs && !alreadyRetried);
                 }
+
                 // Get all bindable parameters and initialize the _unboundParameters
                 _commandInfo = commandProcessor.CommandInfo;
                 _commandName = commandProcessor.CommandInfo.Name;

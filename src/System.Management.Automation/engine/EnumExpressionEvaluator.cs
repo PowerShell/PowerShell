@@ -89,8 +89,8 @@ namespace System.Management.Automation
                 tokenList.AddRange(TokenizeInput(orClause));
                 tokenList.Add(new Token(TokenKind.Or));
             }
-            // Unnecessary OR at the end not removed for tree construction
 
+            // Unnecessary OR at the end not removed for tree construction
             Debug.Assert(tokenList.Count > 0, "Input must not all be white characters.");
 
             CheckSyntaxError(tokenList);
@@ -276,9 +276,9 @@ namespace System.Management.Automation
                     ulong operandValue = (ulong)LanguagePrimitives.ConvertTo(_operandValue, typeof(ulong), CultureInfo.InvariantCulture);
                     satisfy = (operandValue == (valueToCheck & operandValue));
                 }
-                // allow for negative enum value input (though it's not recommended practice for flags attribute)
                 else
                 {
+                    // allow for negative enum value input (though it's not recommended practice for flags attribute)
                     long valueToCheck = (long)LanguagePrimitives.ConvertTo(val, typeof(long), CultureInfo.InvariantCulture);
                     long operandValue = (long)LanguagePrimitives.ConvertTo(_operandValue, typeof(long), CultureInfo.InvariantCulture);
                     satisfy = (operandValue == (valueToCheck & operandValue));
@@ -298,9 +298,9 @@ namespace System.Management.Automation
                     ulong operandValue = (ulong)LanguagePrimitives.ConvertTo(_operandValue, typeof(ulong), CultureInfo.InvariantCulture);
                     exist = valueToCheck == (valueToCheck & operandValue);
                 }
-                // allow for negative enum value input (though it's not recommended practice for flags attribute)
                 else
                 {
+                    // allow for negative enum value input (though it's not recommended practice for flags attribute)
                     long valueToCheck = (long)LanguagePrimitives.ConvertTo(enumVal, typeof(long), CultureInfo.InvariantCulture);
                     long operandValue = (long)LanguagePrimitives.ConvertTo(_operandValue, typeof(long), CultureInfo.InvariantCulture);
                     exist = valueToCheck == (valueToCheck & operandValue);
@@ -540,20 +540,20 @@ namespace System.Management.Automation
                             null, "SyntaxErrorUnexpectedBinaryOperator", EnumExpressionEvaluatorStrings.SyntaxErrorUnexpectedBinaryOperator);
                     }
                 }
-                // Not allowed: ... NOT AND/OR/NOT ...
-                // Allowed: ... NOT ID ...
                 else if (previous == TokenKind.Not)
                 {
+                    // Not allowed: ... NOT AND/OR/NOT ...
+                    // Allowed: ... NOT ID ...
                     if (token.Kind != TokenKind.Identifier)
                     {
                         throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
                             null, "SyntaxErrorIdentifierExpected", EnumExpressionEvaluatorStrings.SyntaxErrorIdentifierExpected);
                     }
                 }
-                // Not allowed: ... ID NOT/ID ...
-                // Allowed: ... ID AND/OR ...
                 else if (previous == TokenKind.Identifier)
                 {
+                    // Not allowed: ... ID NOT/ID ...
+                    // Allowed: ... ID AND/OR ...
                     if ((token.Kind == TokenKind.Identifier) || (token.Kind == TokenKind.Not))
                     {
                         throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),

@@ -2617,6 +2617,7 @@ namespace System.Management.Automation
 
                 throw;
             }
+
             /*
              * Not clearing the variables because of Win8: 738767 (Event actions no longer have persistent event variables)
              */

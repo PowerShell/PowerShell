@@ -683,6 +683,7 @@ namespace System.Management.Automation.Runspaces
         /// Get unique id for this instance of runspace. It is primarily used
         /// for logging purposes.
         /// </summary>
+#pragma warning disable SA1513
         public Guid InstanceId
         {
             get;
@@ -692,6 +693,7 @@ namespace System.Management.Automation.Runspaces
             // to an existing remote runspace.
             internal set;
         } = Guid.NewGuid();
+#pragma warning restore SA1513
 
         /// <summary>
         /// Gets execution context.

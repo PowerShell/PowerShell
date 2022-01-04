@@ -1001,6 +1001,7 @@ namespace System.Management.Automation.Internal.Host
                             result.Add(defaultChoice);
                         }
                     }
+
                     // allow for no choice selection.
                     break;
                 }
@@ -1012,6 +1013,7 @@ namespace System.Management.Automation.Internal.Host
                     result.Add(choicePicked);
                     choicesSelected++;
                 }
+
                 // reset messageToBeDisplayed
                 messageToBeDisplayed = string.Empty;
             }

@@ -962,6 +962,7 @@ namespace System.Management.Automation
                 if (e is not PipelineStoppedException && !e.WasThrownFromThrowStatement)
                     commandRuntime.AppendErrorToVariables(e);
             }
+
             // Upstream cmdlets see only that execution stopped
             throw new PipelineStoppedException();
         }

@@ -661,6 +661,7 @@ namespace System.Management.Automation.Runspaces
                             UpdateHistoryEntryAddedByAddHistoryCmdlet(skipIfLocked);
                         }
                     }
+
                     // Updating the history may trigger variable breakpoints; the debugger may throw a TerminateException to
                     // indicate that the user wants to interrupt the variable access.
                     catch (TerminateException)
@@ -770,6 +771,7 @@ namespace System.Management.Automation.Runspaces
                 return _stopper;
             }
         }
+
         /// <summary>
         /// Helper method for Stop functionality.
         /// </summary>
@@ -1352,6 +1354,7 @@ namespace System.Management.Automation.Runspaces
                     {
                         _stack.Peek().ExecutionFailed = true;
                     }
+
                     // If this is the last pipeline processor on the stack, then propagate it's execution status
                     if (_stack.Count == 1 && _localPipeline != null)
                     {

@@ -584,6 +584,7 @@ namespace System.Management.Automation
             base.GetObjectData(info, context);
             info.AddValue("ErrorId", _errorId);
         }
+
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException with serialization parameters.
         /// </summary>
@@ -605,6 +606,7 @@ namespace System.Management.Automation
             : base(typeof(PSInvalidCastException).FullName)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException setting the message.
         /// </summary>
@@ -613,6 +615,7 @@ namespace System.Management.Automation
             : base(message)
         {
         }
+
         /// <summary>
         /// Initializes a new instance of PSInvalidCastException setting the message and innerException.
         /// </summary>

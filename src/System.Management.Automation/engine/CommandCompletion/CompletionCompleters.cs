@@ -1958,6 +1958,7 @@ namespace System.Management.Automation
 
                         break;
                     }
+
                 case AstParameterArgumentType.AstArray:
                     {
                         var value = (AstArrayPair)argumentValue;
@@ -1979,6 +1980,7 @@ namespace System.Management.Automation
 
                         break;
                     }
+
                 default:
                     break;
             }
@@ -2110,17 +2112,20 @@ namespace System.Management.Automation
 
                         break;
                     }
+
                 case "Show-Command":
                     {
                         NativeCompletionGetHelpCommand(context, parameterName, /* isHelpRelated: */ false, result);
                         break;
                     }
+
                 case "help":
                 case "Get-Help":
                     {
                         NativeCompletionGetHelpCommand(context, parameterName, /* isHelpRelated: */ true, result);
                         break;
                     }
+
                 case "Invoke-Expression":
                     {
                         if (parameterName.Equals("Command", StringComparison.OrdinalIgnoreCase))
@@ -2132,6 +2137,7 @@ namespace System.Management.Automation
 
                         break;
                     }
+
                 case "Clear-EventLog":
                 case "Get-EventLog":
                 case "Limit-EventLog":
@@ -2141,6 +2147,7 @@ namespace System.Management.Automation
                         NativeCompletionEventLogCommands(context, parameterName, result);
                         break;
                     }
+
                 case "Get-Job":
                 case "Receive-Job":
                 case "Remove-Job":
@@ -2152,6 +2159,7 @@ namespace System.Management.Automation
                         NativeCompletionJobCommands(context, parameterName, result);
                         break;
                     }
+
                 case "Disable-ScheduledJob":
                 case "Enable-ScheduledJob":
                 case "Get-ScheduledJob":
@@ -2160,6 +2168,7 @@ namespace System.Management.Automation
                         NativeCompletionScheduledJobCommands(context, parameterName, result);
                         break;
                     }
+
                 case "Get-Module":
                     {
                         bool loadedModulesOnly = boundArguments == null || !boundArguments.ContainsKey("ListAvailable");
@@ -2167,17 +2176,20 @@ namespace System.Management.Automation
                         NativeCompletionModuleCommands(context, parameterName, result, loadedModulesOnly, skipEditionCheck: skipEditionCheck);
                         break;
                     }
+
                 case "Remove-Module":
                     {
                         NativeCompletionModuleCommands(context, parameterName, result, loadedModulesOnly: true);
                         break;
                     }
+
                 case "Import-Module":
                     {
                         bool skipEditionCheck = boundArguments != null && boundArguments.ContainsKey("SkipEditionCheck");
                         NativeCompletionModuleCommands(context, parameterName, result, isImportModule: true, skipEditionCheck: skipEditionCheck);
                         break;
                     }
+
                 case "Debug-Process":
                 case "Get-Process":
                 case "Stop-Process":
@@ -2187,6 +2199,7 @@ namespace System.Management.Automation
                         NativeCompletionProcessCommands(context, parameterName, result);
                         break;
                     }
+
                 case "Get-PSDrive":
                 case "Remove-PSDrive":
                     {
@@ -2212,16 +2225,19 @@ namespace System.Management.Automation
 
                         break;
                     }
+
                 case "New-PSDrive":
                     {
                         NativeCompletionProviderCommands(context, parameterName, result);
                         break;
                     }
+
                 case "Get-PSProvider":
                     {
                         NativeCompletionProviderCommands(context, parameterName, result);
                         break;
                     }
+
                 case "Get-Service":
                 case "Start-Service":
                 case "Restart-Service":
@@ -2233,6 +2249,7 @@ namespace System.Management.Automation
                         NativeCompletionServiceCommands(context, parameterName, result);
                         break;
                     }
+
                 case "Clear-Variable":
                 case "Get-Variable":
                 case "Remove-Variable":
@@ -2241,11 +2258,13 @@ namespace System.Management.Automation
                         NativeCompletionVariableCommands(context, parameterName, result);
                         break;
                     }
+
                 case "Get-Alias":
                     {
                         NativeCompletionAliasCommands(context, parameterName, result);
                         break;
                     }
+
                 case "Get-TraceSource":
                 case "Set-TraceSource":
                 case "Trace-Command":
@@ -2253,23 +2272,27 @@ namespace System.Management.Automation
                         NativeCompletionTraceSourceCommands(context, parameterName, result);
                         break;
                     }
+
                 case "Push-Location":
                 case "Set-Location":
                     {
                         NativeCompletionSetLocationCommand(context, parameterName, result);
                         break;
                     }
+
                 case "Move-Item":
                 case "Copy-Item":
                     {
                         NativeCompletionCopyMoveItemCommand(context, parameterName, result);
                         break;
                     }
+
                 case "New-Item":
                     {
                         NativeCompletionNewItemCommand(context, parameterName, result);
                         break;
                     }
+
                 case "ForEach-Object":
                     {
                         if (parameterName.Equals("MemberName", StringComparison.OrdinalIgnoreCase))
@@ -2279,6 +2302,7 @@ namespace System.Management.Automation
 
                         break;
                     }
+
                 case "Group-Object":
                 case "Measure-Object":
                 case "Sort-Object":
@@ -2291,6 +2315,7 @@ namespace System.Management.Automation
 
                         break;
                     }
+
                 case "Format-Custom":
                 case "Format-List":
                 case "Format-Table":
@@ -2307,6 +2332,7 @@ namespace System.Management.Automation
 
                         break;
                     }
+
                 case "Select-Object":
                     {
                         if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase)
@@ -2380,6 +2406,7 @@ namespace System.Management.Automation
                             result[boundArgument.Key] = switchPair.Argument;
                             continue;
                         }
+
                         // Ignored:
                         //     AstArrayPair - only used for ValueFromRemainingArguments, not that useful for tab completion
                         //     FakePair - missing argument, not that useful
@@ -5324,6 +5351,7 @@ namespace System.Management.Automation
                         result.Add(new CompletionResult(category));
                     }
                 }
+
                 return result.Count > 0 ? result : null;
             }
 
@@ -5335,6 +5363,7 @@ namespace System.Management.Automation
                     // ListItemText is used because it excludes the "$" as expected by REMOTEHELPRUNSPACE.
                     result.Add(new CompletionResult(variable.ListItemText, variable.ListItemText, variable.ResultType, variable.ToolTip));
                 }
+
                 return result.Count > 0 ? result : null;
             }
 
@@ -5478,6 +5507,7 @@ namespace System.Management.Automation
                 {
                     continue;
                 }
+
                 parametersToShow.Remove(parameter.Value);
             }
 
@@ -6662,6 +6692,7 @@ namespace System.Management.Automation
             catch (Exception)
             {
             }
+
             return results;
         }
 

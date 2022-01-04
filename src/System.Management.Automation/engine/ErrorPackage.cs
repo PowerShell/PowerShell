@@ -594,6 +594,7 @@ namespace System.Management.Automation
         {
             _message = BuildMessage(cmdlet, baseName, resourceId, args);
         }
+
         /// <summary>
         /// Creates an instance of ErrorDetails specifying a Message.
         /// This variant is used by CmdletProviders.
@@ -647,6 +648,7 @@ namespace System.Management.Automation
         {
             _message = BuildMessage(resourceSupplier, baseName, resourceId, args);
         }
+
         /// <summary>
         /// Creates an instance of ErrorDetails specifying a Message.
         /// This variant is used by other code without a reference to

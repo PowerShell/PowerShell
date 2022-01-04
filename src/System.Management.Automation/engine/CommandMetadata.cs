@@ -107,6 +107,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
+
             while (commandInfo is AliasInfo)
             {
                 commandInfo = ((AliasInfo)commandInfo).ResolvedCommand;
@@ -988,6 +989,7 @@ clean
                         // syntax for parameter separation : comma followed by new-line.
                         paramDataPrefix = string.Concat(",", Environment.NewLine);
                     }
+
                     // generate the parameter proxy and append to the list
                     string paramData = pair.Value.GetProxyParameterData(prefix, pair.Key, _wrappedAnyCmdlet);
                     parameters.Append(paramData);

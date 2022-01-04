@@ -2438,6 +2438,7 @@ namespace System.Management.Automation
                     {
                         emitter.Emit(OpCodes.Unbox_Any, type);
                     }
+
                     // For reference types, cast from object
                     else if (type != typeof(object))
                     {
@@ -4167,6 +4168,7 @@ namespace System.Management.Automation
                     ExtendedTypeSystem.MethodInvocationException,
                     methodInformation.method.Name, arguments.Length, inner.Message);
             }
+
             //
             // Note that FlowControlException, ScriptCallDepthException and ParameterBindingException will be wrapped in
             // a TargetInvocationException only when the invocation uses reflection so we need to bubble them up here as well.
@@ -4702,6 +4704,7 @@ namespace System.Management.Automation
             return new ConsolidatedString(GetTypeNameHierarchy(obj), interned: true);
         }
     }
+
     /// <summary>
     /// Adapter used for GetMember and GetMembers only.
     /// All other methods will not be called.
@@ -4822,6 +4825,7 @@ namespace System.Management.Automation
 
         #endregion virtual
     }
+
     /// <summary>
     /// Adapter for properties in the inside PSObject if it has a null BaseObject.
     /// </summary>
@@ -4889,6 +4893,7 @@ namespace System.Management.Automation
 
         #endregion virtual
     }
+
     /// <summary>
     /// Adapter for properties inside a member set.
     /// </summary>
@@ -4964,6 +4969,7 @@ namespace System.Management.Automation
 
         #endregion virtual
     }
+
     /// <summary>
     /// Base class for all adapters that adapt only properties and retain
     /// .NET methods.
@@ -5241,6 +5247,7 @@ namespace System.Management.Automation
                 members.Add(new PSProperty(nodeArrayEntry.Key, this, obj, nodeArrayEntry.Value.ToArray()) as T);
             }
         }
+
         /// <summary>
         /// Returns null if propertyName is not a property in the adapter or
         /// the corresponding PSProperty with its adapterData set to information
@@ -5381,6 +5388,7 @@ namespace System.Management.Automation
 
             return returnValue;
         }
+
         /// <summary>
         /// Sets the value of a property coming from a previous call to DoGetProperty.
         /// </summary>
@@ -5568,6 +5576,7 @@ namespace System.Management.Automation
 
             return;
         }
+
         /// <summary>
         /// Returns null if propertyName is not a property in the adapter or
         /// the corresponding PSProperty with its adapterData set to information
@@ -5650,6 +5659,7 @@ namespace System.Management.Automation
             DataRow dataRow = (DataRow)property.baseObject;
             return dataRow[(string)property.adapterData];
         }
+
         /// <summary>
         /// Sets the value of a property coming from a previous call to DoGetProperty.
         /// </summary>
@@ -5664,6 +5674,7 @@ namespace System.Management.Automation
         }
         #endregion virtual
     }
+
     /// <summary>
     /// Deals with DataRowView objects.
     /// </summary>
@@ -5690,6 +5701,7 @@ namespace System.Management.Automation
 
             return;
         }
+
         /// <summary>
         /// Returns null if propertyName is not a property in the adapter or
         /// the corresponding PSProperty with its adapterData set to information
@@ -5773,6 +5785,7 @@ namespace System.Management.Automation
             DataRowView dataRowView = (DataRowView)property.baseObject;
             return dataRowView[(string)property.adapterData];
         }
+
         /// <summary>
         /// Sets the value of a property coming from a previous call to DoGetProperty.
         /// </summary>

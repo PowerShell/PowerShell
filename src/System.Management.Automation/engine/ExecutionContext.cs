@@ -71,6 +71,7 @@ namespace System.Management.Automation
 
             this.transactionManager = new PSTransactionManager();
         }
+
         /// <summary>
         /// The tracing mode for the interpreter.
         /// </summary>
@@ -121,6 +122,7 @@ namespace System.Management.Automation
 
             return (context != null) && context.IsStrictVersion(majorVersion);
         }
+
         /// <summary>
         /// Check to see a specific version of strict mode is enabled.  The check is always scoped,
         /// even though in version 1 the check was engine wide.
@@ -139,6 +141,7 @@ namespace System.Management.Automation
                     // is the same as off to make this a simple check.
                     return (scope.StrictModeVersion.Major >= majorVersion);
                 }
+
                 // We shouldn't check global scope if we were in a module.
                 if (scope == EngineSessionState.ModuleScope)
                 {
@@ -1281,6 +1284,7 @@ namespace System.Management.Automation
                 // we should ignore this assembly.
                 return loadedAssembly;
             }
+
             // We will cache the assembly by both full name and
             // file name
             AssemblyCache.Add(loadedAssembly.FullName, loadedAssembly);

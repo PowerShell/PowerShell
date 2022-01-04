@@ -359,6 +359,7 @@ namespace System.Management.Automation
             {
                 return dotNetmethod.Invoke(arguments);
             }
+
             // else
             throw exception;
         }

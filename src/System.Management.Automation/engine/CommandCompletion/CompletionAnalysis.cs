@@ -635,6 +635,7 @@ namespace System.Management.Automation
                             // Current token is within ConfigurationDefinitionAst or DynamicKeywordStatementAst
                             return GetResultForIdentifierInConfiguration(completionContext, configureAst, null, out matched);
                         }
+
                     case TokenKind.Equals:
                     case TokenKind.AtParen:
                     case TokenKind.LParen:
@@ -681,6 +682,7 @@ namespace System.Management.Automation
 
                             break;
                         }
+
                     default:
                         if ((tokenAtCursor.TokenFlags & TokenFlags.Keyword) != 0)
                         {
@@ -850,6 +852,7 @@ namespace System.Management.Automation
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                                         break;
                                     }
+
                                 default:
                                     break;
                             }
@@ -1416,6 +1419,7 @@ namespace System.Management.Automation
                                             }
                                         }
                                     }
+
                                     //
                                     // Make sure only auto-complete string value in current line
                                     //
@@ -1616,6 +1620,7 @@ namespace System.Management.Automation
                         replacementIndex = completionContext.ReplacementIndex;
                         replacementLength = completionContext.ReplacementLength;
                     }
+
                     // Handle scenarios like this: "c:\wind"<tab>. Treat the StringLiteral/StringExpandable as path/command
                     else
                     {
@@ -1813,6 +1818,7 @@ namespace System.Management.Automation
                     }
                 }
             }
+
             if (completionContext.TokenAtCursor.TokenFlags == TokenFlags.MemberName)
             {
                 result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
@@ -1878,6 +1884,7 @@ namespace System.Management.Automation
                                 completionContext.ReplacementLength = replacementLength;
                             }
                         }
+
                         // Continue trying the filename/commandname completion for scenarios like this: $aa[get-<tab>
                         else if (cursorAst is not ErrorExpressionAst || cursorAst.Parent is not IndexExpressionAst)
                         {
