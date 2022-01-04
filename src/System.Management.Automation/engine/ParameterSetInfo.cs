@@ -214,9 +214,9 @@ namespace System.Management.Automation
             {
                 commonParameterAction(HelpDisplayStrings.CommonParameters);
             }
-            // Else, convert to string as before
             else
             {
+                // Else, convert to string as before
                 foreach (CommandParameterInfo parameter in commonParameters)
                 {
                     parameterAction(parameter);

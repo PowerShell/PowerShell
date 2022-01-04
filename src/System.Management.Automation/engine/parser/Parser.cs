@@ -4006,6 +4006,7 @@ namespace System.Management.Automation.Language
                             DynamicKeyword.Pop();
                     }
                 }
+
                 // commandast
                 // elements: instancename/dynamickeyword/hashtable or scripblockexpress
                 if (body == null)
@@ -4349,6 +4350,7 @@ namespace System.Management.Automation.Language
                     {
                         nestedAsts = new List<Ast>();
                     }
+
                     // no need to report error since the error is reported in method StatementRule
                     nestedAsts.AddRange(customAttributes.OfType<TypeConstraintAst>());
                     nestedAsts.Add(classDefn);
@@ -4760,6 +4762,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.InvalidUnderlyingType,
                                 underlyingType.Name);
                         }
+
                         underlyingTypeConstraint = new TypeConstraintAst(underlyingType.Extent, underlyingType);
                     }
                 }
@@ -6928,6 +6931,7 @@ namespace System.Management.Automation.Language
                         {
                             break;
                         }
+
                         precedence = operatorStack.Peek().Kind.GetBinaryPrecedence();
                     }
 
@@ -7645,6 +7649,7 @@ namespace System.Management.Automation.Language
                     exprAst = CheckUsingVariable(varToken, false);
                     if (_savingTokens) { newNestedTokens.Add(varToken); }
                 }
+
                 // Enable if we decide we still need to support
                 //     "${}"  or "$var:"
                 // else if (token.Kind == TokenKind.Unknown)

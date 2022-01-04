@@ -339,6 +339,7 @@ namespace System.Management.Automation.Internal
 
                 commandProcessor.AddedToPipelineAlready = true;
             }
+
             // 2003/08/11-JonN Subsequent commands must have predecessor
             else if (readFromCommand > _commands.Count || readFromCommand <= 0)
             {
@@ -1433,6 +1434,7 @@ namespace System.Management.Automation.Internal
                 {
                     _firstTerminatingError = ExceptionDispatchInfo.Capture(e);
                 }
+
                 // Error Architecture: Log/trace second and subsequent RecordFailure.
                 // Note that the pipeline could have been stopped asynchronously before hitting the error,
                 // therefore we check whether '_firstTerminatingError' is 'PipelineStoppedException'.

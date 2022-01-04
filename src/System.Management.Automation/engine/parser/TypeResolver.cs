@@ -911,6 +911,7 @@ namespace System.Management.Automation
 
             return null;
         }
+
         /// <summary>
         /// Add a type accelerator.
         /// </summary>

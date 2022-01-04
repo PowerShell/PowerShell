@@ -1630,6 +1630,7 @@ namespace System.Management.Automation
                     {
                         continue;
                     }
+
                     // Add will clone the member
                     returnValue.Members.Add(member);
                 }

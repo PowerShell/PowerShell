@@ -1574,6 +1574,7 @@ namespace System.Management.Automation.Language
                     name);
             }
         }
+
         /// <summary>
         /// Look up all the way up until find all the required members.
         /// </summary>
@@ -1630,6 +1631,7 @@ namespace System.Management.Automation.Language
                 }
             }
         }
+
         /// <summary>
         /// Check if it is a Get method with correct return type and signature.
         /// </summary>
@@ -1669,6 +1671,7 @@ namespace System.Management.Automation.Language
                         ParserStrings.DscResourceInvalidGetMethod,
                         ((TypeDefinitionAst)functionMemberAst.Parent).Name);
                 }
+
                 // Set hasGet to true to stop look up; it may have invalid get
                 hasGet = true;
                 return;
@@ -1688,6 +1691,7 @@ namespace System.Management.Automation.Language
                     functionMemberAst.ReturnType != null &&
                     functionMemberAst.ReturnType.TypeName.GetReflectionType() == typeof(bool));
         }
+
         /// <summary>
         /// Check if it is a Set method with correct return type and signature.
         /// </summary>

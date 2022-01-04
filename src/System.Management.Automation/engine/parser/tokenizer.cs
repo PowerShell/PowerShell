@@ -2932,6 +2932,7 @@ namespace System.Management.Automation.Language
 
                                 break;
                             }
+
                         case '"':
                         case SpecialChars.QuoteDoubleLeft:
                         case SpecialChars.QuoteDoubleRight:
@@ -4586,6 +4587,7 @@ namespace System.Management.Automation.Language
                     NewToken(TokenKind.Equals);
                     ScanAssemblyNameSpecToken(sb);
                 }
+
                 // else error?
             }
 

@@ -6820,6 +6820,7 @@ namespace System.Management.Automation.Language
                 {
                     resourceNames = paramValue;
                 }
+
                 // Since both parameters -ModuleName and -ModuleVersion has same start string i.e. Module so we will try to resolve it to -ModuleName
                 // if user specifies like -Module
                 if ((paramName.Length <= moduleNameParam.Length) && (paramName.AsSpan().Equals(moduleNameParam.AsSpan(0, paramName.Length), StringComparison.OrdinalIgnoreCase)))
@@ -8460,6 +8461,7 @@ namespace System.Management.Automation.Language
                     }
                 }
             }
+
             // implicit ctor is default as well
             return !hasExplicitCtor;
         }

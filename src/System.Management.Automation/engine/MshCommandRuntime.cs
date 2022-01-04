@@ -290,6 +290,7 @@ namespace System.Management.Automation
             ThrowIfWriteNotPermitted(true);
             _EnumerateAndWriteObjectSkipAllowCheck(sendToPipeline);
         }
+
         // Trust:  public void WriteObject(object sendToPipeline, DataTrustCategory trustCategory);     // enumerateCollection defaults to false
         // Trust:  public void WriteObject(object sendToPipeline, bool enumerateCollection, DataTrustCategory trustCategory);
 
@@ -2359,6 +2360,7 @@ namespace System.Management.Automation
                 _pp._permittedToWriteToPipeline = permittedToWriteToPipeline;
                 _pp._permittedToWriteThread = Thread.CurrentThread;
             }
+
             /// <summary>
             /// End the scope where WriteObject/WriteError is permitted.
             /// </summary>

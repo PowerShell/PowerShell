@@ -735,6 +735,7 @@ namespace System.Management.Automation.Language
                         FixTupleIndex(ast, i);
                     }
                 }
+
                 // Automatic variables assign the type directly, not relying on any analysis.  For
                 // all other variables, we don't determine the type of the local until we're done
                 // with the analysis.

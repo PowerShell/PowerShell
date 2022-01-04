@@ -425,6 +425,7 @@ namespace System.Management.Automation.Language
                         }
                     }
                 }
+
                 // TODO: static look for alias and function.
             }
 

@@ -6312,6 +6312,7 @@ namespace System.Management.Automation.Language
                                 {
                                     return Expression.Property(null, propertyInfo);
                                 }
+
                                 // else let the dynamic site generate the error - this is rare anyway
                             }
                             else

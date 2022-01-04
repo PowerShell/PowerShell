@@ -204,6 +204,7 @@ namespace Microsoft.PowerShell.Commands
 
                             continue;
                         }
+
                         // Specify the overall module name if there is only one.
                         // Otherwise specify the particular module name.
                         string moduleName = (_name.Length == 1) ? _name[0] : module.Name;

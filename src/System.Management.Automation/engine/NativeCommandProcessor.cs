@@ -611,6 +611,7 @@ namespace System.Management.Automation
                             {
                                 startInfo.ArgumentList.Insert(0, oldFileName);
                             }
+
                             startInfo.FileName = executable;
                             try
                             {
@@ -628,9 +629,11 @@ namespace System.Management.Automation
                                 {
                                     startInfo.ArgumentList.RemoveAt(0);
                                 }
+
                                 startInfo.FileName = oldFileName;
                             }
                         }
+
                         // We got here because there was either no executable found for this
                         // file or we tried to launch the exe and it failed. In either case
                         // we will try launching one last time using ShellExecute...

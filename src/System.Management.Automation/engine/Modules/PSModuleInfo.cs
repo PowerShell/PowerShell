@@ -185,11 +185,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Specifies the language mode for script based modules.
         /// </summary>
+#pragma warning disable SA1513
         internal PSLanguageMode? LanguageMode
         {
             get;
             set;
         } = PSLanguageMode.FullLanguage;
+#pragma warning restore SA1513
 
         /// <summary>
         /// Set to true when script module automatically exports all functions by default.

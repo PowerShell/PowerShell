@@ -498,6 +498,7 @@ namespace System.Management.Automation.Configuration
                             {
                                 jsonObject.Add(new JProperty(key, value));
                             }
+
                             // else the property doesn't exist so there is nothing to remove
                         }
                         else

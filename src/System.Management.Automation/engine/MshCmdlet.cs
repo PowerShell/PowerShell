@@ -83,6 +83,7 @@ namespace System.Management.Automation
         {
             get { return _isPresent; }
         }
+
         /// <summary>
         /// Implicit cast operator for casting SwitchParameter to bool.
         /// </summary>
@@ -152,6 +153,7 @@ namespace System.Management.Automation
                 return false;
             }
         }
+
         /// <summary>
         /// Returns the hash code for this switch parameter.
         /// </summary>
@@ -171,6 +173,7 @@ namespace System.Management.Automation
         {
             return first.Equals(second);
         }
+
         /// <summary>
         /// Implement the != operator for switch parameters.
         /// </summary>
@@ -181,6 +184,7 @@ namespace System.Management.Automation
         {
             return !first.Equals(second);
         }
+
         /// <summary>
         /// Implement the == operator for switch parameters and booleans.
         /// </summary>
@@ -191,6 +195,7 @@ namespace System.Management.Automation
         {
             return first.Equals(second);
         }
+
         /// <summary>
         /// Implement the != operator for switch parameters and booleans.
         /// </summary>
@@ -201,6 +206,7 @@ namespace System.Management.Automation
         {
             return !first.Equals(second);
         }
+
         /// <summary>
         /// Implement the == operator for bool and switch parameters.
         /// </summary>
@@ -211,6 +217,7 @@ namespace System.Management.Automation
         {
             return first.Equals(second);
         }
+
         /// <summary>
         /// Implement the != operator for bool and switch parameters.
         /// </summary>

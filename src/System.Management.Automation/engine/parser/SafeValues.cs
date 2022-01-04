@@ -514,6 +514,7 @@ namespace System.Management.Automation.Language
             {
                 return targetHashtable[index];
             }
+
             // The actual exception doesn't really matter because the caller in ScriptBlockToPowerShell
             // will present the user with the offending script segment
             throw new Exception();
