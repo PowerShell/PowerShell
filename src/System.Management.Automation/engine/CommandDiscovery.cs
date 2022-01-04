@@ -379,11 +379,7 @@ namespace System.Management.Automation
                 var loadedPSSnapIn = context.InitialSessionState.GetPSSnapIn(requiresPSSnapIn.Name);
                 if (loadedPSSnapIn is null)
                 {
-                    if (requiresMissingPSSnapIns == null)
-                    {
-                        requiresMissingPSSnapIns = new Collection<string>();
-                    }
-
+                    requiresMissingPSSnapIns ??= new Collection<string>();
                     requiresMissingPSSnapIns.Add(BuildPSSnapInDisplayName(requiresPSSnapIn));
                 }
                 else
@@ -398,11 +394,7 @@ namespace System.Management.Automation
                         if (!AreInstalledRequiresVersionsCompatible(
                             requiresPSSnapIn.Version, loadedPSSnapIn.Version))
                         {
-                            if (requiresMissingPSSnapIns == null)
-                            {
-                                requiresMissingPSSnapIns = new Collection<string>();
-                            }
-
+                            requiresMissingPSSnapIns ??= new Collection<string>();
                             requiresMissingPSSnapIns.Add(BuildPSSnapInDisplayName(requiresPSSnapIn));
                         }
                     }
@@ -1097,7 +1089,7 @@ namespace System.Management.Automation
                                     cmdletInfo != null ? cmdletInfo.Visibility : SessionStateEntryVisibility.Private,
                                     out lastError);
 
-                                if (matchingModule == null || matchingModule.Count == 0)
+                                if (matchingModule is null || matchingModule.Count == 0)
                                 {
                                     string errorMessage = lastError is null
                                         ? StringUtil.Format(DiscoveryExceptions.CouldNotAutoImportMatchingModule, commandName, moduleShortName)
