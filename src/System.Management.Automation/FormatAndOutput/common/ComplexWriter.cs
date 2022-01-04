@@ -55,6 +55,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // carrying the indentation from invocation to invocation
                 GenerateFormatEntryDisplay(fe, 0);
             }
+
             // make sure that, if we have pending text in the buffer it gets flushed
             WriteToScreen();
         }
@@ -366,6 +367,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     yield return result;
                 }
+
                 // Non-breaking space = \u00A0 - ideally shouldn't wrap
                 // Hard hyphen = \u2011 - Should not break
                 else if (s[i] == s_hardHyphen || s[i] == s_nonBreakingSpace)

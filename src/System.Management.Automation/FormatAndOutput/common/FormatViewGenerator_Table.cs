@@ -289,6 +289,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         return tableSpecific.hideHeaders.Value;
                     }
                 }
+
                 // if we have a view, get the value out of it
                 if (this.dataBaseInfo.view != null)
                 {

@@ -110,6 +110,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // no results or the retrieval on the first one failed
                 return null;
             }
+
             // return something only if the first match was successful
             return resList[0];
         }
@@ -346,6 +347,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         // we do have it, just use it
                         return string.Format(CultureInfo.CurrentCulture, directive.formatString, so);
                     }
+
                     // we fall back to the PSObject's IFormattable.ToString()
                     // pass a null IFormatProvider
                     return so.ToString(directive.formatString, null);
@@ -365,6 +367,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
             }
+
             // we do not have a formatting directive or we failed the formatting (fallback)
             // but we did not report as an error;
             // this call would deal with IEnumerable if the object implements it

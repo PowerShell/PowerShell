@@ -113,6 +113,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     break;
                 }
+
                 // compute the cell number for the current character
                 currCharDisplayLen = this.Length(str[k]);
 
@@ -121,6 +122,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // if we added this character it would not fit, we cannot continue
                     break;
                 }
+
                 // keep adding, we fit
                 filledDisplayCellsCount += currCharDisplayLen;
                 charactersAdded++;

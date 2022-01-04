@@ -363,6 +363,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             {
                                 ProcessDuplicateNode(n);
                             }
+
                             defaultSettingsNodeFound = true;
                             LoadDefaultSettings(db, n);
                         }
@@ -574,6 +575,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     return null; // fatal error
                 }
             }
+
             // CHECK: if there are alternative row definitions. There should be no alternative row definitions here.
             Diagnostics.Assert(tableBody.optionalDefinitionList.Count == 0,
                 "there should be no alternative row definitions because no SelectedBy is defined for TableControlRow");
@@ -737,6 +739,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 return token;
             }
+
             // this should never happen if the API is used correctly
             PSTraceSource.NewInvalidOperationException();
             return null;
@@ -809,6 +812,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     listBody.defaultEntryDefinition = null;
                     return;
                 }
+
                 // determine if we have a default entry and if it's already set
                 if (lved.appliesTo == null)
                 {
@@ -830,6 +834,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     listBody.optionalEntryList.Add(lved);
                 }
             }
+
             // list entries is empty
             if (listBody.defaultEntryDefinition == null)
             {
@@ -1607,6 +1612,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     return retVal;
                 }
+
                 // failure: expression is mandatory
                 // Error at XPath {0} in file {1}: An expression is expected.
                 this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ExpectExpression, ComputeCurrentXPath(), FilePath));
@@ -2011,6 +2017,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     return true;
                 }
+
                 // this should never happen if the API is used correctly
                 PSTraceSource.NewInvalidOperationException();
                 return false;
@@ -2217,6 +2224,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _control = controlRef;
                     return true;
                 }
+
                 // this should never happen if the API is used correctly
                 PSTraceSource.NewInvalidOperationException();
                 return false;

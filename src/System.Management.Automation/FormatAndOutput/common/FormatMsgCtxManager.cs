@@ -77,6 +77,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ctx = _stack.Peek();
                 }
+
                 //  notify for Payload
                 this.payload(fed, ctx);
             }

@@ -116,6 +116,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidNode, ComputeCurrentXPath(), FilePath, XmlTags.WideEntryNode));
                             return;
                         }
+
                         // determine if we have a default entry and if it's already set
                         if (wved.appliesTo == null)
                         {

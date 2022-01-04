@@ -168,6 +168,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we found an unambiguous match
                 return matchingEntry;
             }
+
             // we did not have a match
             ProcessIllegalKey(invocationContext, keyName);
             return null;

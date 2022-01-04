@@ -346,6 +346,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return GetDefaultView(expressionFactory, db, typeNames);
             }
+
             // map the FormatShape to a type derived from ViewDefinition
             System.Type t = null;
             if (shape == FormatShape.Table)
@@ -432,6 +433,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ControlBase.GetControlShapeName(vd.mainControl), vd.name);
                     continue;
                 }
+
                 // first make sure we match on name:
                 // if not, we do not try a match at all
                 if (viewName != null && !string.Equals(vd.name, viewName, StringComparison.OrdinalIgnoreCase))
@@ -557,6 +559,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 TraceHelper(vd, false);
             }
+
             // this is the best match we had
             ViewDefinition result = GetBestMatch(match);
             // we were unable to find a best match so far..try

@@ -328,6 +328,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (n.ChildNodes[0] is XmlText)
                     return true;
             }
+
             // Error at XPath {0} in file {1}: Node {2} cannot have children.
             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.NoChildrenAllowed, ComputeCurrentXPath(), FilePath, n.Name));
             return false;

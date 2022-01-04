@@ -54,6 +54,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     WideControlBody wideControl = (WideControlBody)this.dataBaseInfo.view.mainControl;
                     return wideControl.columns;
                 }
+
                 // not specified
                 return 0;
             }

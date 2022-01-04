@@ -310,6 +310,7 @@ namespace System.Management.Automation
         {
             this.Count = 1;
         }
+
         /// <summary/>
         public int Count { get; set; }
     }

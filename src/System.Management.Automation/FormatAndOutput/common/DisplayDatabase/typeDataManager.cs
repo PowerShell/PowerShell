@@ -176,6 +176,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     entryToLoad.Errors = errors;
                     filesToLoad.Add(entryToLoad);
                 }
+
                 // check if the passed in formatData is empty
                 if (filesToLoad.Count == 0)
                 {
@@ -201,6 +202,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     entryToLoad.Errors = errors;
                     filesToLoad.Add(entryToLoad);
                 }
+
                 // check if the passed in formatData is empty
                 if (filesToLoad.Count == _formatFileList.Count)
                 {
@@ -332,6 +334,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     newDataBase = LoadFromFileHelper(files, expressionFactory, authorizationManager, host, preValidated, out logEntries, out success);
                 }
+
                 // if we have a valid database, assign it to the
                 // current database
                 lock (databaseLock)
@@ -431,6 +434,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 if (entry.failToLoadFile) { file.FailToLoadFile = true; }
                             }
                         }
+
                         // now aggregate the entries...
                         logEntries.AddRange(loader.LogEntries);
                     }
@@ -467,6 +471,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         file.Errors.Add(mshsnapinMessage);
                     }
                 }
+
                 // now aggregate the entries...
                 logEntries.AddRange(loader.LogEntries);
             }

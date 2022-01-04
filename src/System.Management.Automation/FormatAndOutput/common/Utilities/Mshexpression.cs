@@ -236,14 +236,14 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-                // it can be a property
                 else if (member is PSPropertyInfo)
                 {
+                    // it can be a property
                     temporaryMemberList.Add(member);
                 }
-                // it can be a dynamic member
                 else if (member is PSDynamicMember)
                 {
+                    // it can be a dynamic member
                     temporaryMemberList.Add(member);
                 }
             }

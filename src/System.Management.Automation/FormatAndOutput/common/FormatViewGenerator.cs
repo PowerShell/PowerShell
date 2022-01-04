@@ -140,6 +140,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _autosize = parameters.autosize.Value;
                 return;
             }
+
             // check if we have a view with autosize checked
             if (this.dataBaseInfo.view != null && this.dataBaseInfo.view.mainControl != null)
             {

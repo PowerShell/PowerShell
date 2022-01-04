@@ -75,6 +75,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             complexBody.defaultEntry = null;
                             return; // fatal error
                         }
+
                         // determine if we have a default entry and if it's already set
                         if (cced.appliesTo == null)
                         {
@@ -316,6 +317,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             return true;
         }
+
         // No used currently
 #if false
         private FieldPropertyToken LoadFieldProperty (XmlNode fieldPropertyNode, int index)
@@ -413,6 +415,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     cpt.control = controlMatch.Control;
                 }
+
                 /*
                 if (cpt.control == null)
                 {
@@ -644,6 +647,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 val = true;
                 return true;
             }
+
             // Error at XPath {0} in file {1}: A Boolean value is expected.
             this.ReportError(StringUtil.Format(FormatAndOutXmlLoadingStrings.ExpectBoolean, ComputeCurrentXPath(), FilePath));
 

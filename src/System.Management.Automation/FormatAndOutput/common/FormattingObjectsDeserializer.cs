@@ -197,6 +197,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return null;
             }
+
             // NOTE: we do not distinguish between property not there and null property
             // if an exception is thrown, it would be considered an internal failure
             return member.Value;

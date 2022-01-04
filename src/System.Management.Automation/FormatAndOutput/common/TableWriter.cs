@@ -23,6 +23,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal int width = 0;
             internal int alignment = TextAlignment.Left;
         }
+
         /// <summary>
         /// Class containing information about the tabular layout.
         /// </summary>
@@ -177,6 +178,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     breakLine[k] = string.Empty;
                     continue;
                 }
+
                 // the title can be larger than the width
                 int count = _si.columnInfo[k].width;
                 if (!string.IsNullOrEmpty(values[k]))
@@ -185,6 +187,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (labelDisplayCells < count)
                         count = labelDisplayCells;
                 }
+
                 // NOTE: we can do this because "-" is a single cell character
                 // on all devices. If changed to some other character, this assumption
                 // would be invalidated

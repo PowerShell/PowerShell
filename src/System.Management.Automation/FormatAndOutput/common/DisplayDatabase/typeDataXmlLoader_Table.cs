@@ -172,6 +172,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         this.ProcessUnknownNode(n);
                     }
                 }
+
                 // NOTICE: the list can be empty if no entries were found
             }
         }

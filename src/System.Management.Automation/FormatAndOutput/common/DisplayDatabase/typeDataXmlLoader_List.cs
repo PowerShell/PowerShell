@@ -74,6 +74,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             listBody.defaultEntryDefinition = null;
                             return; // fatal error
                         }
+
                         // determine if we have a default entry and if it's already set
                         if (lved.appliesTo == null)
                         {
