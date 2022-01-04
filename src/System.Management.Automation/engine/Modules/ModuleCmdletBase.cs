@@ -1585,6 +1585,7 @@ namespace Microsoft.PowerShell.Commands
                     invalidOperation.SetErrorId("Modules_WildCardNotAllowedInModuleToProcessAndInNestedModules");
                     throw invalidOperation;
                 }
+
                 // See if this module is already loaded. Since the manifest entry may not
                 // have an extension and the module table is indexed by full names, we
                 // may have search through all the extensions.
@@ -1616,6 +1617,7 @@ namespace Microsoft.PowerShell.Commands
 
                         return loadedModule;
                     }
+
                     // remove the module if force is specified  (and if module is already loaded)
                     else if (File.Exists(rootedPath))
                     {
@@ -1942,6 +1944,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(error);
                             return null;
                         }
+
                         // module can be null (in case the RequiredModule has already been added as a snapin.
                         // In that case, we just emit a warning and do not add the snapin to the list of requiredmodules)
                         if (module != null)
@@ -2114,6 +2117,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     iss.DisableFormatUpdates = Context.InitialSessionState.DisableFormatUpdates;
                 }
+
                 // We want the processing errors to terminate module import.
                 iss.ThrowOnRunspaceOpenError = true;
             }
@@ -2969,6 +2973,7 @@ namespace Microsoft.PowerShell.Commands
                                     nestedModule.ExportedAliases[detectedAlias].Definition);
                             }
                         }
+
                         // If the NestedModules was a .ps1 script no module object would have been generated
                         // so there's nothing to add, otherwise add it to the list.
                         // When we are in analysis mode and we do not analyze the nested module (because the parent module has explicit exports), the nested modules do not get added to the list
@@ -3150,6 +3155,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     newManifestInfo.RootModule = manifestInfo.RootModule;
                 }
+
                 // If may be the case that a script has already set the PrivateData field in the module
                 // info object, in which case we won't overwrite it.
                 if (newManifestInfo.PrivateData == null)
@@ -4750,6 +4756,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return null;
                 }
+
                 // Make sure that the path is in the file system - that's all we can handle currently...
                 if ((provider == null) || !provider.NameEquals(context.ProviderNames.FileSystem))
                 {
@@ -4787,6 +4794,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return null;
                 }
+
                 // Make sure that the path is in the file system - that's all we can handle currently...
                 if ((provider == null) || !provider.NameEquals(context.ProviderNames.FileSystem))
                 {
@@ -4821,6 +4829,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = results[0];
             }
+
             return result;
         }
 
@@ -5006,6 +5015,7 @@ namespace Microsoft.PowerShell.Commands
                                 Context.EngineSessionState.RemoveCmdlet(name, i, true);
                             }
                         }
+
                         // And finally remove the name from the cache if the list is now empty...
                         if (matches.Count == 0)
                         {
@@ -5172,6 +5182,7 @@ namespace Microsoft.PowerShell.Commands
                         Context.TopLevelSessionState.ModuleTable.Remove(module.Path);
                         Context.TopLevelSessionState.ModuleTableKeys.Remove(module.Path);
                     }
+
                     // And finally from the global module table...
                     Context.Modules.ModuleTable.Remove(module.Path);
 
@@ -7118,6 +7129,7 @@ namespace Microsoft.PowerShell.Commands
                             cmdlet.WriteVerbose(message);
                             continue;
                         }
+
                         // Set the module on the variable...
                         v.SetModule(sourceModule);
 

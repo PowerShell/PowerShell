@@ -1557,10 +1557,12 @@ namespace System.Management.Automation.Runspaces.Internal
                                 {
                                     pool.Push(result);
                                 }
+
                                 // release the runspace requester
                                 runspaceRequester.Release();
                                 continue;
                             }
+
                             // release readers waiting for runspace on a thread pool
                             // thread.
                             runspaceRequester.Runspace = result;
@@ -1595,6 +1597,7 @@ namespace System.Management.Automation.Runspaces.Internal
                         }
                     }
                 }
+
             endOuterWhile:;
             }
             finally

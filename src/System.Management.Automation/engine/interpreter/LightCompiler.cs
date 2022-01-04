@@ -220,6 +220,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     return null;
                 }
+
                 // return the last one that is smaller
                 i -= 1;
             }
@@ -2035,6 +2036,7 @@ namespace System.Management.Automation.Interpreter
                     CompileReducibleExpression(expr); break;
                 default: throw Assert.Unreachable;
             }
+
             Debug.Assert(_instructions.CurrentStackDepth == startingStackDepth + (expr.Type == typeof(void) ? 0 : 1));
         }
 

@@ -174,6 +174,7 @@ namespace System.Management.Automation.Interpreter
                     {
                         return s_reference ??= new NotEqualReference();
                     }
+
                     // TODO: Nullable<T>
                     throw new NotImplementedException();
 

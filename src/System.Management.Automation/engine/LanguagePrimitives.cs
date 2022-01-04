@@ -1207,9 +1207,9 @@ namespace System.Management.Automation
                     returnType = default(T);
                 }
             }
-            // Then, see if it is an PSObject wrapping the object
             else
             {
+                // Then, see if it is an PSObject wrapping the object
                 try
                 {
                     returnType = (T)wrapperObject.BaseObject;
@@ -1791,6 +1791,7 @@ namespace System.Management.Automation
 
             return TryConvertTo(valueToConvert, CultureInfo.InvariantCulture, out result);
         }
+
         /// <summary>
         /// Sets result to valueToConvert converted to resultType considering formatProvider
         /// for custom conversions, calling the Parse method and calling Convert.ChangeType.

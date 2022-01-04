@@ -1106,6 +1106,7 @@ namespace System.Management.Automation
                     pos += substring.Length + 1; // '1' is for trailing semicolon
                 }
             }
+
             // if we are here, that means a match was not found
             return -1;
         }
@@ -1190,10 +1191,10 @@ namespace System.Management.Automation
                     currentProcessModulePath += hklmMachineModulePath; // += EVT.Machine
                 }
             }
-            // EVT.Process exists
-            // Now handle the case where the environment variable is already set.
             else
             {
+                // EVT.Process exists
+                // Now handle the case where the environment variable is already set.
                 string personalModulePathToUse = string.IsNullOrEmpty(hkcuUserModulePath) ? personalModulePath : hkcuUserModulePath;
                 string systemModulePathToUse = string.IsNullOrEmpty(hklmMachineModulePath) ? psHomeModulePath : hklmMachineModulePath;
 

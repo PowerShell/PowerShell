@@ -1217,6 +1217,7 @@ namespace System.Management.Automation
                 _context.PopPipelineProcessor(true);
             }
         }
+
         /// <summary>
         /// Process a single PSObject. This overload exists to deal with the fact
         /// that the PowerShell runtime will PSBase an object before passing it to

@@ -307,6 +307,7 @@ namespace System.Management.Automation.Runspaces
             {
                 PSTraceSource.NewArgumentNullException(nameof(runspace));
             }
+
             // This constructor is used only internally.
             // Caller should make sure the input is valid
             Dbg.Assert(command != null, "Command cannot be null");

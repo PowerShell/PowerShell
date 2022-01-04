@@ -1089,6 +1089,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         powerShell.AddParameter("AllowClobber", true);
                     }
+
                     powerShell.AddParameter("Module", remoteModuleName); // remoteModulePath is currently unsupported by Get-Command and implicit remoting
                     powerShell.AddParameter("Force", true);
                     powerShell.AddParameter("FormatTypeName", "*");

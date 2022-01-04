@@ -680,10 +680,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 MethodCallWithArguments();
             }
-            // no arg provided
             else
             {
-                // if inputObject is of IDictionary, get the value
+                // No arg provided.
+                // If inputObject is of IDictionary, get the value.
                 if (GetValueFromIDictionaryInput()) { return; }
 
                 PSMemberInfo member = null;
@@ -2140,6 +2140,7 @@ namespace Microsoft.PowerShell.Commands
 
                         break;
                     }
+
                 case TokenKind.Ccontains:
                 case TokenKind.Cnotcontains:
                 case TokenKind.Cin:
@@ -2168,6 +2169,7 @@ namespace Microsoft.PowerShell.Commands
 
                         break;
                     }
+
                 case TokenKind.Is:
                     _operationDelegate = (lval, rval) => ParserOps.IsOperator(Context, PositionUtilities.EmptyExtent, lval, rval);
                     break;

@@ -191,6 +191,7 @@ namespace System.Management.Automation.Interpreter
             {
                 return node;
             }
+
             // Convert can go away if we switch to strongly typed StrongBox
             return AstUtils.Convert(closureItem, node.Type);
         }

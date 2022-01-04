@@ -568,6 +568,7 @@ namespace System.Management.Automation.Host
         {
             return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", VirtualKeyCode, Character, ControlKeyState, KeyDown);
         }
+
         /// <summary>
         /// Overrides <see cref="System.Object.Equals(object)"/>
         /// </summary>
@@ -1770,6 +1771,7 @@ namespace System.Management.Automation.Host
                             new BufferCell((char)0, foregroundColor, backgroundColor, BufferCellType.Trailing);
                     }
                 }
+
                 while (resultJ < maxStringLengthInBufferCells)
                 {
                     results[i, resultJ] = new BufferCell(' ', foregroundColor, backgroundColor, BufferCellType.Complete);

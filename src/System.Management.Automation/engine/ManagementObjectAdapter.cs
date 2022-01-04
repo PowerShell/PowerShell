@@ -354,6 +354,7 @@ namespace System.Management.Automation
             PropertyData pd = property.adapterData as PropertyData;
             return pd.Value;
         }
+
         /// <summary>
         /// Sets the value of a property coming from a previous call to DoGetProperty.
         /// This method will only set the property on a particular instance. If you want

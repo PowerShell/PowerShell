@@ -864,6 +864,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
+
                 // We just wrote the file, note this so we can detect writes from another process
                 LastReadTime = new FileInfo(filename).LastWriteTime;
             }
@@ -925,6 +926,7 @@ namespace System.Management.Automation
                     throw new Exception(InvalidSignatureErrorMessage);
                 }
             }
+
             // No need to return - we don't use it other than to detect the correct file format
         }
 

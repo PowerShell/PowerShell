@@ -624,6 +624,7 @@ namespace System.Management.Automation.Runspaces
             Description = description;
             Options = options;
         }
+
         /// <summary>
         /// Shallow-clone this object...
         /// </summary>
@@ -3418,6 +3419,7 @@ namespace System.Management.Automation.Runspaces
                                     context.TopLevelSessionState.RemoveCmdlet(name, i,  /*force*/ true);
                                 }
                             }
+
                             // And remove the entry if the list is now empty...
                             if (matches.Count == 0)
                             {
@@ -5323,6 +5325,7 @@ end {
 
                     s_PSSnapInTracer.WriteLine("{0} from type {1} is added as a cmdlet. ", cmdletName, type.FullName);
                 }
+
                 // Check for providers
                 else if (IsProviderClass(type) && TryGetCustomAttribute(type, out CmdletProviderAttribute providerAttribute))
                 {

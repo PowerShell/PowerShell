@@ -1368,6 +1368,7 @@ namespace System.Management.Automation
                         _readWaitHandle.Reset();
                     }
                 }
+
                 // release any threads to notify an event. Enumerator
                 // blocks on this syncObject.
                 Monitor.PulseAll(SyncObject);

@@ -103,6 +103,7 @@ namespace System.Management.Automation.Interpreter
                 {
                     throw new InvalidOperationException("Ambiguous jump");
                 }
+
                 // For local jumps, we need a new IL label
                 // This is okay because:
                 //   1. no across block jumps have been made or will be made

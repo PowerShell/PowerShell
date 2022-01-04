@@ -1120,6 +1120,7 @@ namespace System.Management.Automation.Interpreter
                     result[label.LabelIndex] = label.ToRuntimeLabel();
                 }
             }
+
             // "return and rethrow" label:
             result[result.Length - 1] = new RuntimeLabel(Interpreter.RethrowOnReturn, 0, 0);
             return result;

@@ -2745,6 +2745,7 @@ namespace System.Management.Automation
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(output));
             }
+
             // use the above collection as the data store.
             PSDataCollection<T> listToWriteTo = new PSDataCollection<T>(output);
             CoreInvoke<T>(input, listToWriteTo, settings);
@@ -5035,6 +5036,7 @@ namespace System.Management.Automation
                 {
                     throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.NoCommandToInvoke);
                 }
+
                 // If execution has already started this will throw
                 AssertExecutionNotStarted();
 
