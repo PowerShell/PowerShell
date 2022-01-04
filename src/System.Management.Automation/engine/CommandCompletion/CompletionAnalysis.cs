@@ -2236,10 +2236,12 @@ namespace System.Management.Automation
                     result.Add(new CompletionResult(labeledStatement.Label, labeledStatement.Label, CompletionResultType.Text, labeledStatement.Extent.Text));
                 }
             }
+
             if (result.Count == 0)
             {
                 return null;
             }
+
             return result;
         }
     }
