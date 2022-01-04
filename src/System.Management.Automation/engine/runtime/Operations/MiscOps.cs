@@ -3557,6 +3557,7 @@ namespace System.Management.Automation
                 {
                     return value == 1;
                 }
+
                 return false;
             }
         );
@@ -3599,7 +3600,7 @@ namespace System.Management.Automation
             }
             catch (PSSecurityException)
             {
-                // ReportContent() will throw PSSecurityException if AMSI detects malware, which 
+                // ReportContent() will throw PSSecurityException if AMSI detects malware, which
                 // must be propagated.
                 throw;
             }

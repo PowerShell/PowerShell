@@ -39,6 +39,7 @@ namespace Microsoft.PowerShell.Commands
                         new InvalidOperationException(errMsg), "Command Failed", ErrorCategory.OperationStopped, "localhost");
                     WriteError(error);
                 }
+
                 return;
             }
 
@@ -71,6 +72,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 args = "now";
             }
+
             if (InternalTestHooks.TestStopComputer)
             {
                 var retVal = InternalTestHooks.TestStopComputerResults;
@@ -81,6 +83,7 @@ namespace Microsoft.PowerShell.Commands
                         new InvalidOperationException(errMsg), "Command Failed", ErrorCategory.OperationStopped, "localhost");
                     WriteError(error);
                 }
+
                 return;
             }
 
@@ -141,6 +144,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!_process.HasExited) {
                     _process.Kill();
                 }
+
                 WriteObject(_process.ExitCode);
             }
             catch (InvalidOperationException) {}
