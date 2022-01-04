@@ -277,14 +277,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (ExperimentalFeature.IsEnabled("PSStrictModeVersionAssignment"))
-                {
-                    _strictmodeversion = value;
-                }
-                else
-                {
-                    throw new ArgumentException("ExperimentalFeature 'PSStrictModeVersionAssignment' is not enabled");
-                }
+                _strictmodeversion = value;
             }
         }
 
