@@ -4634,7 +4634,7 @@ end {
                 const ScopedItemOptions ReadOnly_AllScope = ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope;
                 const ScopedItemOptions ReadOnly = ScopedItemOptions.ReadOnly;
 
-                return new SessionStateAliasEntry[] {
+                var builtInAliases = new List<SessionStateAliasEntry> {
                     new SessionStateAliasEntry("foreach", "ForEach-Object", string.Empty, ReadOnly_AllScope),
                     new SessionStateAliasEntry("%", "ForEach-Object", string.Empty, ReadOnly_AllScope),
                     new SessionStateAliasEntry("where", "Where-Object", string.Empty, ReadOnly_AllScope),
@@ -4801,6 +4801,15 @@ end {
                     //   - do not use AllScope - this causes errors in profiles that set this somewhat commonly used alias.
                     new SessionStateAliasEntry("sls", "Select-String"),
                 };
+
+#if UNIX
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
+                {
+                    builtInAliases.Add(new SessionStateAliasEntry("exec", "Switch-Process"));
+                }
+#endif
+
+                return builtInAliases.ToArray();
             }
         }
 
@@ -5438,6 +5447,13 @@ end {
             {
                 cmdlets.Add("Get-PSSubsystem", new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile));
             }
+
+#if UNIX
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
+            {
+                cmdlets.Add("Switch-Process", new SessionStateCmdletEntry("Switch-Process", typeof(SwitchProcessCommand), helpFile));
+            }
+#endif
 
             foreach (var val in cmdlets.Values)
             {
