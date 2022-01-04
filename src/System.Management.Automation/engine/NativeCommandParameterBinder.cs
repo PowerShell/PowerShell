@@ -394,6 +394,7 @@ namespace System.Management.Automation
                                     expandedPath =
                                         Context.SessionState.Path.NormalizeRelativePath(expandedPath, cwdinfo.ProviderPath);
                                 }
+
                                 // If the path contains spaces, then add quotes around it.
                                 if (NeedQuotes(expandedPath))
                                 {

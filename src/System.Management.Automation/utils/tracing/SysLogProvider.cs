@@ -355,6 +355,7 @@ namespace System.Management.Automation.Tracing
                 {
                     priority = NativeMethods.SysLogPriority.Info;
                 }
+
                 // log it.
                 NativeMethods.SysLog(priority, sb.ToString());
             }

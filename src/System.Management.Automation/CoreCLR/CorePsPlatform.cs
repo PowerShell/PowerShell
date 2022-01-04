@@ -297,6 +297,7 @@ namespace System.Management.Automation
                             Directory.CreateDirectory(xdgDataHomeDefault);
                             return xdgDataHomeDefault;
                         }
+
                         return Path.Combine(xdgdatahome, "powershell");
 
                     case XDG_Type.USER_MODULES:
@@ -306,6 +307,7 @@ namespace System.Management.Automation
                             Directory.CreateDirectory(xdgModuleDefault);
                             return xdgModuleDefault;
                         }
+
                         return Path.Combine(xdgdatahome, "powershell", "Modules");
 
                     case XDG_Type.SHARED_MODULES:
