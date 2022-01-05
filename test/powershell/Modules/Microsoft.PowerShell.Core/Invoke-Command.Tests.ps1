@@ -39,5 +39,9 @@ Describe "Invoke-Command" -Tags "CI" {
         It "-StrictModeVersion latest works" -skip:$skipTest {
             { Invoke-Command -StrictModeVersion latest {$InvokeCommand__Test} } | Should -Throw -ErrorId 'VariableIsUndefined'
         }
+
+        It "-StrictModeOff works" -skip:$skipTest {
+            { Invoke-Command -StrictModeOff {$InvokeCommand__Test} } | Should -Not -Throw
+        }
     }
 }
