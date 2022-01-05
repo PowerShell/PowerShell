@@ -51,10 +51,10 @@ jobs:
       Write-Host "##$vstsCommandString"
     displayName: 'Find SDK version from global.json'
 
-  - task: DotNetCoreInstaller@0
+  - task: UseDotNet@2
     displayName: 'Use .NET Core SDK from global.json'
     inputs:
-      version: '$(SDKVersion)'
+      useGlobalJson: true
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download PowerShell build artifacts - finalResults'
