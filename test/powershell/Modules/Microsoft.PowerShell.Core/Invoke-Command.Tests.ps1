@@ -36,5 +36,8 @@ Describe "Invoke-Command" -Tags "CI" {
             { "There" | Invoke-Command -ScriptBlock { "Hello $InvokeCommand__Test" } -StrictModeVersion 3.0 } | Should -Throw $errorMessage
         }
 
+        It "-StrictModeVersion latest works" -skip:$skipTest {
+            { Invoke-Command -StrictModeVersion latest {$InvokeCommand__Test} } | Should -Throw -ErrorId 'VariableIsUndefined'
+        }
     }
 }
