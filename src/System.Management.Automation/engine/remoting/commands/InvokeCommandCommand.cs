@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
         private Version _strictmodeversion = null;
 
         /// <summary>
-        /// Turns StrictMode off.
+        /// Gets or sets StrictMode off.
         /// </summary>
         [Experimental("PSStrictModeVersionAssignment", ExperimentAction.Show)]
         [Parameter(ParameterSetName = InvokeCommandCommand.InProcParameterSet)]
@@ -995,7 +995,7 @@ namespace Microsoft.PowerShell.Commands
                     _savedStrictModeVersion = Context.EngineSessionState.CurrentScope.StrictModeVersion;
                     Context.EngineSessionState.CurrentScope.StrictModeVersion = _strictmodeversion;
                 }
-                
+
                 if (strictmodeoff.IsPresent) 
                 {
                     _savedStrictModeVersion = Context.EngineSessionState.CurrentScope.StrictModeVersion;
