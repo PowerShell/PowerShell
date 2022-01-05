@@ -1724,6 +1724,16 @@ function MyFunction ($param1, $param2)
                 TestString = ':Outer do {:Inner while ($true){ break } continue o^ut } while ($true)'
             }
             @{
+                Intent = 'Complete loop label for incomplete switch'
+                Expected = 'Outer'
+                TestString = ':Outer switch ($x){"randomValue"{ continue ^'
+            }
+            @{
+                Intent = 'Complete loop label for incomplete do loop'
+                Expected = 'Outer'
+                TestString = ':Outer do {:Inner while ($true){ break } continue ^'
+            }
+            @{
                 Intent = 'Not Complete loop labels with colon'
                 Expected = $null
                 TestString = ':Outer foreach ($x in $y){:Inner for ($i = 0; $i -lt $X.Count; $i++){ break :O^}}'
