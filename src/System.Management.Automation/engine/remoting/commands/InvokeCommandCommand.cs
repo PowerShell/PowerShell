@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
         /// Turns StrictMode off.
         /// </summary>
         [Experimental("PSStrictModeVersionAssignment", ExperimentAction.Show)]
-        //[Parameter(ParameterSetName = InvokeCommandCommand.InProcParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.InProcParameterSet)]
         public SwitchParameter StrictModeOff
         {
             get
@@ -995,7 +995,9 @@ namespace Microsoft.PowerShell.Commands
                     _savedStrictModeVersion = Context.EngineSessionState.CurrentScope.StrictModeVersion;
                     Context.EngineSessionState.CurrentScope.StrictModeVersion = _strictmodeversion;
                 }
-                if (strictmodeoff.IsPresent) {
+                
+                if (strictmodeoff.IsPresent) 
+                {
                     _savedStrictModeVersion = Context.EngineSessionState.CurrentScope.StrictModeVersion;
                     Context.EngineSessionState.CurrentScope.StrictModeVersion = new Version(0, 0);
                 }
