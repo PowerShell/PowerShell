@@ -675,30 +675,27 @@ namespace System.Management.Automation
                     //   If we run a process like Windows Terminal with wt.exe
                     // the wt.exe process is replaced with WindowsTerminal.exe process
                     // so wt.exe process is already terminated (HasExited is true)
-                    // and it makes no sense to wait the process - we consider it as a background process.
+                    // and we consider it as a background process.
                     //   If we run a process like Skype with skype.exe
                     // the process is not terminated so we can get real path to the exe file:
                     // - before run "c:\users\username\appdata\local\microsoft\windowsapps\skype.exe"
                     // - after run the real path is "C:\Program Files\WindowsApps\Microsoft.SkypeApp_15.78.159.0_x86__kzf8qxf38zg5c\Skype\Skype.exe"
                     // With the real path we can read the exe file and analyze its header.
-                    _isRunningInBackground = startInfo.UseShellExecute || isWindowsApplication || _nativeProcess.HasExited;
+                    _isRunningInBackground = startInfo.UseShellExecute || isWindowsApplication;
                     if (!_isRunningInBackground)
                     {
                         try
                         {
-                            var mainModuleFileName = _nativeProcess.MainModule?.FileName;
+                            string mainModuleFileName = _nativeProcess.MainModule?.FileName;
                             if (mainModuleFileName is not null && !string.Equals(startInfo.FileName, mainModuleFileName, StringComparison.OrdinalIgnoreCase))
                             {
                                 _isRunningInBackground = IsWindowsApplication(mainModuleFileName);
-                            }
-                            else
-                            {
-                                _isRunningInBackground = isWindowsApplication;
                             }
                         }
                         catch (Win32Exception)
                         {
                             // We can not get MainModule, assume that the process has already been completed.
+                            // The best thing we can do is to use default behavior like Windows PowerShell.
                             _isRunningInBackground = true;
                         }
                     }
