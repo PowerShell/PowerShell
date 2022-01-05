@@ -1401,64 +1401,55 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
         Remove-Item $tempDir -Recurse -Force
     }
 
-    It "Missing built-in modules will trigger error instead of loading the non-compatible ones in System32 directory" {
+    It "Missing built-in modules will trigger error instead of loading the non-compatible ones in System32 directory. Running '<Command>'" -TestCases @(
+        @{
+            Command = 'Start-Transcript';
+            FullyQualifiedErrorId = "CouldNotAutoloadMatchingModule";
+            ExceptionMessage = "*'Start-Transcript'*'Microsoft.PowerShell.Host'*'Microsoft.PowerShell.Host'*'Core'*`$PSHOME*'Import-Module Microsoft.PowerShell.Host'*"
+        }
+        @{
+            Command = 'Import-Module Microsoft.PowerShell.Host';
+            FullyQualifiedErrorId = "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            ExceptionMessage = "*'Microsoft.PowerShell.Host'*'Core'*`$PSHOME*"
+        }
+        @{
+            Command = 'Import-Module CimCmdlets'
+            FullyQualifiedErrorId = "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            ExceptionMessage = "*'CimCmdlets'*'Core'*`$PSHOME*"
+        }
+        @{
+            Command = 'Import-Module Microsoft.PowerShell.Utility'
+            FullyQualifiedErrorId = "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            ExceptionMessage = "*'Microsoft.PowerShell.Utility'*'Core'*`$PSHOME*"
+        }
+        @{
+            ## Attempt to load a 'Desktop' edition module should fail because 'Export-PSSession' cannot be found.
+            Command = 'Import-Module RemoteDesktop -ErrorAction Stop'
+            FullyQualifiedErrorId = "CommandNotFoundException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            ExceptionMessage = "*'RemoteDesktop'*'Export-PSSession'*'Microsoft.PowerShell.Utility'*"
+        }
+    ) {
+        param(
+            $Command,
+            $FullyQualifiedErrorId,
+            $ExceptionMessage
+        )
+
+        $template = @'
+    try {{
+        {0}
+    }} catch {{
+        $_.FullyQualifiedErrorId
+        $_.Exception.Message
+    }}
+'@
         $env:PSModulePath = ''
-        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c {
-            try {
-                Start-Transcript
-            } catch {
-                $_.FullyQualifiedErrorId
-                $_.Exception.Message
-            }
-        }
+        $script = $template -f $Command
+        $scriptBlock = [scriptblock]::Create($script)
 
-        $result[0] | Should -BeExactly "CouldNotAutoloadMatchingModule"
-        $result[1] | Should -BeLike "*'Start-Transcript'*'Microsoft.PowerShell.Host'*'Microsoft.PowerShell.Host'*'Core'*`$PSHOME*'Import-Module Microsoft.PowerShell.Host'*"
-
-        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c {
-            try {
-                Import-Module Microsoft.PowerShell.Host
-            } catch {
-                $_.FullyQualifiedErrorId
-                $_.Exception.Message
-            }
-        }
-        $result[0] | Should -BeExactly "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
-        $result[1] | Should -BeLike "*'Microsoft.PowerShell.Host'*'Core'*`$PSHOME*"
-
-        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c {
-            try {
-                Import-Module CimCmdlets
-            } catch {
-                $_.FullyQualifiedErrorId
-                $_.Exception.Message
-            }
-        }
-        $result[0] | Should -BeExactly "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
-        $result[1] | Should -BeLike "*'CimCmdlets'*'Core'*`$PSHOME*"
-
-        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c {
-            try {
-                Import-Module Microsoft.PowerShell.Utility
-            } catch {
-                $_.FullyQualifiedErrorId
-                $_.Exception.Message
-            }
-        }
-        $result[0] | Should -BeExactly "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
-        $result[1] | Should -BeLike "*'Microsoft.PowerShell.Utility'*'Core'*`$PSHOME*"
-
-        ## Attempt to load a 'Desktop' edition module should fail because 'Export-PSSession' cannot be found.
-        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c {
-            try {
-                Import-Module RemoteDesktop -ErrorAction Stop
-            } catch {
-                $_.FullyQualifiedErrorId
-                $_.Exception.Message
-            }
-        }
-        $result[0] | Should -BeExactly "CommandNotFoundException,Microsoft.PowerShell.Commands.ImportModuleCommand"
-        $result[1] | Should -BeLike "*'RemoteDesktop'*'Export-PSSession'*'Microsoft.PowerShell.Utility'*"
+        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c $scriptBlock
+        $result[0] | Should -BeExactly $FullyQualifiedErrorId
+        $result[1] | Should -BeLike $ExceptionMessage
     }
 
     It "When built-in modules are available but not in `$PSHOME module path, things should work" {
