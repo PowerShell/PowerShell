@@ -21,7 +21,7 @@ namespace System.Management.Automation
     ///         [ref] $a = 3
     ///         [ref] $a = $b
     ///     b. variable reference
-    ///         $a = [ref] $b
+    ///         $a = [ref] $b.
     /// </remarks>
     public class PSReference
     {

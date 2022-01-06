@@ -66,7 +66,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="binderAssociation">
         /// The type of binder that the CommandProcessor will use to bind
-        /// the parameters for <paramref name="parameterMetadata"/>
+        /// the parameters for <paramref name="parameterMetadata"/>.
         /// </param>
         /// <returns>
         /// A collection of the merged parameter metadata that was added.

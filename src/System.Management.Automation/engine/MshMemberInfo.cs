@@ -93,7 +93,7 @@ namespace System.Management.Automation
         Event = 2048,
 
         /// <summary>
-        /// All dynamic members (where PowerShell cannot know the type of the member)
+        /// All dynamic members (where PowerShell cannot know the type of the member).
         /// </summary>
         Dynamic = 4096,
 
@@ -162,7 +162,7 @@ namespace System.Management.Automation
         IncludeHidden = 1,
 
         /// <summary>
-        /// Only include members with <see cref="PSMemberInfo.ShouldSerialize"/> property set to <see langword="true"/>
+        /// Only include members with <see cref="PSMemberInfo.ShouldSerialize"/> property set to <see langword="true"/>.
         /// </summary>
         OnlySerializable = 2
     }
@@ -457,7 +457,7 @@ namespace System.Management.Automation
         /// When
         ///     the alias has not been added to an PSObject or
         ///     the alias has a cycle or
-        ///     an aliased member is not present
+        ///     an aliased member is not present.
         /// </exception>
         public override string TypeNameOfValue
         {
@@ -479,7 +479,7 @@ namespace System.Management.Automation
         /// When
         ///     the alias has not been added to an PSObject or
         ///     the alias has a cycle or
-        ///     an aliased member is not present
+        ///     an aliased member is not present.
         /// </exception>
         public override bool IsSettable
         {
@@ -501,7 +501,7 @@ namespace System.Management.Automation
         ///     When
         ///         the alias has not been added to an PSObject or
         ///         the alias has a cycle or
-        ///         an aliased member is not present
+        ///         an aliased member is not present.
         /// </exception>
         public override bool IsGettable
         {
@@ -577,7 +577,7 @@ namespace System.Management.Automation
         /// When
         ///     the alias has not been added to an PSObject or
         ///     the alias has a cycle or
-        ///     an aliased member is not present
+        ///     an aliased member is not present.
         /// </exception>
         /// <exception cref="GetValueException">When getting the value of a property throws an exception.</exception>
         /// <exception cref="SetValueException">When setting the value of a property throws an exception.</exception>
@@ -1915,12 +1915,12 @@ namespace System.Management.Automation
         }
 
         /// <remarks>
-        /// If <see langword="null"/> then there are no constraints
+        /// If <see langword="null"/> then there are no constraints.
         /// </remarks>
         public Type MethodTargetType { get; }
 
         /// <remarks>
-        /// If <see langword="null"/> then there are no constraints
+        /// If <see langword="null"/> then there are no constraints.
         /// </remarks>
         public IEnumerable<Type> ParameterTypes => _parameterTypes;
 
@@ -2227,7 +2227,7 @@ namespace System.Management.Automation
         /// <exception cref="MethodException">
         ///     When
         ///         could CodeReference cannot match the given argument count or
-        ///         could not convert an argument to the type required
+        ///         could not convert an argument to the type required.
         /// </exception>
         /// <exception cref="MethodInvocationException">For exceptions invoking the CodeReference.</exception>
         public override object Invoke(params object[] arguments)
@@ -3076,7 +3076,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of PSMemberSet with all the initial members in <paramref name="members"/>
+        /// Initializes a new instance of PSMemberSet with all the initial members in <paramref name="members"/>.
         /// </summary>
         /// <param name="name">Name for the member set.</param>
         /// <param name="members">Members in the member set.</param>
@@ -3278,7 +3278,7 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>
     /// This is added to improve hosting PowerShell's PSObjects in a ASP.Net GridView
-    /// Control
+    /// Control.
     /// </remarks>
     internal class PSInternalMemberSet : PSMemberSet
     {
@@ -3291,10 +3291,10 @@ namespace System.Management.Automation
         /// Constructs the specialized member set.
         /// </summary>
         /// <param name="propertyName">
-        /// Should be one of PSObject, PSBase, PSAdapted
+        /// Should be one of PSObject, PSBase, PSAdapted.
         /// </param>
         /// <param name="psObject">
-        /// original PSObject to use to generate members
+        /// original PSObject to use to generate members.
         /// </param>
         internal PSInternalMemberSet(string propertyName, PSObject psObject)
             : base(propertyName)
@@ -3762,7 +3762,7 @@ namespace System.Management.Automation
         ///         adding a member to an PSMemberSet from the type configuration file or
         ///         adding a member with a reserved member name or
         ///         trying to add a member with a type not compatible with this collection or
-        ///         a member by this name is already present
+        ///         a member by this name is already present.
         /// </exception>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public abstract void Add(T member);
@@ -3779,7 +3779,7 @@ namespace System.Management.Automation
         ///         adding a member to an PSMemberSet from the type configuration file or
         ///         adding a member with a reserved member name or
         ///         trying to add a member with a type not compatible with this collection or
-        ///         a member by this name is already present
+        ///         a member by this name is already present.
         /// </exception>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public abstract void Add(T member, bool preValidated);
@@ -3792,7 +3792,7 @@ namespace System.Management.Automation
         ///     When:
         ///         removing a member from an PSMemberSet from the type configuration file
         ///         removing a member with a reserved member name or
-        ///         trying to remove a member with a type not compatible with this collection
+        ///         trying to remove a member with a type not compatible with this collection.
         /// </exception>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public abstract void Remove(string name);
@@ -4538,7 +4538,7 @@ namespace System.Management.Automation
         ///         adding a member with a reserved member name or
         ///         adding a member with a type not compatible with this collection
         ///         a member with this name already exists
-        ///         trying to add a member to a static memberset
+        ///         trying to add a member to a static memberset.
         /// </exception>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public override void Add(T member)
@@ -4560,7 +4560,7 @@ namespace System.Management.Automation
         ///         adding a member with a reserved member name or
         ///         adding a member with a type not compatible with this collection
         ///         a member with this name already exists
-        ///         trying to add a member to a static memberset
+        ///         trying to add a member to a static memberset.
         /// </exception>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public override void Add(T member, bool preValidated)
@@ -4625,7 +4625,7 @@ namespace System.Management.Automation
         ///         adding a member with a reserved member name or
         ///         adding a member with a type not compatible with this collection
         ///         a member with this name already exists
-        ///         trying to add a member to a static memberset
+        ///         trying to add a member to a static memberset.
         /// </exception>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         internal void AddToTypesXmlCache(T member, bool preValidated)
@@ -4690,7 +4690,7 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">
         /// When trying to remove a member with a type not compatible with this collection
         /// When trying to remove a member from a static memberset
-        /// When trying to remove a member from a MemberSet with a reserved name
+        /// When trying to remove a member from a MemberSet with a reserved name.
         /// </exception>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         public override void Remove(string name)
@@ -5064,7 +5064,7 @@ namespace System.Management.Automation
             /// </summary>
             /// <returns>
             /// false if there are no more elements to enumerate
-            /// true otherwise
+            /// true otherwise.
             /// </returns>
             public bool MoveNext()
             {

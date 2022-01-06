@@ -237,10 +237,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// A collection of delegates to get Extended/Adapted/Dotnet members based on the
-        /// <paramref name="viewType"/>
+        /// <paramref name="viewType"/>.
         /// </summary>
         /// <param name="viewType">
-        /// A filter to select Extended/Adapted/Dotnet view of the object
+        /// A filter to select Extended/Adapted/Dotnet view of the object.
         /// </param>
         /// <returns></returns>
         internal static Collection<CollectionEntry<PSMemberInfo>> GetMemberCollection(PSMemberViewTypes viewType)
@@ -250,13 +250,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// A collection of delegates to get Extended/Adapted/Dotnet members based on the
-        /// <paramref name="viewType"/>
+        /// <paramref name="viewType"/>.
         /// </summary>
         /// <param name="viewType">
-        /// A filter to select Extended/Adapted/Dotnet view of the object
+        /// A filter to select Extended/Adapted/Dotnet view of the object.
         /// </param>
         /// <param name="backupTypeTable">
-        /// Backup type table to use if there is no execution context associated with the current thread
+        /// Backup type table to use if there is no execution context associated with the current thread.
         /// </param>
         /// <returns></returns>
         internal static Collection<CollectionEntry<PSMemberInfo>> GetMemberCollection(
@@ -340,10 +340,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// A collection of delegates to get Extended/Adapted/Dotnet properties based on the
-        /// <paramref name="viewType"/>
+        /// <paramref name="viewType"/>.
         /// </summary>
         /// <param name="viewType">
-        /// A filter to select Extended/Adapted/Dotnet view of the object
+        /// A filter to select Extended/Adapted/Dotnet view of the object.
         /// </param>
         /// <returns></returns>
         internal static Collection<CollectionEntry<PSPropertyInfo>> GetPropertyCollection(
@@ -354,13 +354,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// A collection of delegates to get Extended/Adapted/Dotnet properties based on the
-        /// <paramref name="viewType"/>
+        /// <paramref name="viewType"/>.
         /// </summary>
         /// <param name="viewType">
-        /// A filter to select Extended/Adapted/Dotnet view of the object
+        /// A filter to select Extended/Adapted/Dotnet view of the object.
         /// </param>
         /// <param name="backupTypeTable">
-        /// Backup type table to use if there is no execution context associated with the current thread
+        /// Backup type table to use if there is no execution context associated with the current thread.
         /// </param>
         /// <returns></returns>
         internal static Collection<CollectionEntry<PSPropertyInfo>> GetPropertyCollection(
@@ -455,7 +455,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the adapter corresponding to obj.GetType()
+        /// Returns the adapter corresponding to obj.GetType().
         /// </summary>
         /// <returns>The adapter set corresponding to obj.GetType().</returns>
         internal static AdapterSet GetMappedAdapter(object obj, TypeTable typeTable)
@@ -1032,7 +1032,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">Object to be wrapped.</param>
         /// <returns>
-        /// obj or a new PSObject whose BaseObject is obj
+        /// obj or a new PSObject whose BaseObject is obj.
         /// </returns>
         /// <exception cref="ArgumentNullException">If <paramref name="obj"/> is null.</exception>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "This is shipped as part of V1. Retaining this for backward compatibility.")]
@@ -1846,7 +1846,7 @@ namespace System.Management.Automation
         /// true to make this PSObject as the owner of the memberset.
         /// </param>
         /// <param name="ownerObject">
-        /// PSObject to be used while replicating the owner for PSMemberSet
+        /// PSObject to be used while replicating the owner for PSMemberSet.
         /// </param>
         /// <returns></returns>
         internal static object GetNoteSettingValue(PSMemberSet settings, string noteName,
@@ -1972,7 +1972,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Used by Deserializer to deserialize a serialized object to a given type
-        /// (as specified in the a types.ps1xml file)
+        /// (as specified in the a types.ps1xml file).
         /// </summary>
         /// <param name="backupTypeTable">
         /// TypeTable to use if this PSObject.GetTypeTable() returns null. This will happen
@@ -2059,7 +2059,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="value">Object which is set as core.</param>
         /// <param name="overrideTypeInfo">If true, overwrite the type information.</param>
-        ///<remarks>This method is to be used only by Serialization code</remarks>
+        ///<remarks>This method is to be used only by Serialization code.</remarks>
         internal void SetCoreOnDeserialization(object value, bool overrideTypeInfo)
         {
             Diagnostics.Assert(this.ImmediateBaseObjectIsEmpty, "BaseObject should be PSCustomObject for deserialized objects");
@@ -2481,7 +2481,7 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>
     /// Please keep in sync with SerializationMethod from
-    /// C:\e\win7_powershell\admin\monad\nttargets\assemblies\logging\ETW\Manifests\Microsoft-Windows-PowerShell-Instrumentation.man
+    /// C:\e\win7_powershell\admin\monad\nttargets\assemblies\logging\ETW\Manifests\Microsoft-Windows-PowerShell-Instrumentation.man.
     /// </remarks>
     internal enum SerializationMethod
     {

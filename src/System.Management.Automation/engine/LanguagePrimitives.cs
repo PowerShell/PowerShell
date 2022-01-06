@@ -49,7 +49,7 @@ namespace System.Management.Automation
     ///     - ConvertTo and ConvertFrom receive formatProvider and ignoreCase.
     /// Other differences to System.ComponentModel.TypeConverter:
     ///     - There is no ITypeDescriptorContext.
-    ///     - This class is abstract
+    ///     - This class is abstract.
     /// </remarks>
     public abstract class PSTypeConverter
     {
@@ -456,7 +456,7 @@ namespace System.Management.Automation
         /// Returns True if the language considers obj to be IEnumerable.
         /// </summary>
         /// <param name="obj">
-        /// IEnumerable or IEnumerable-like object
+        /// IEnumerable or IEnumerable-like object.
         /// </param>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
         public static bool IsObjectEnumerable(object obj)
@@ -468,7 +468,7 @@ namespace System.Management.Automation
         /// Retrieves the IEnumerable of obj or null if the language does not consider obj to be IEnumerable.
         /// </summary>
         /// <param name="obj">
-        /// IEnumerable or IEnumerable-like object
+        /// IEnumerable or IEnumerable-like object.
         /// </param>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message.")]
         public static IEnumerable GetEnumerable(object obj)
@@ -547,7 +547,7 @@ namespace System.Management.Automation
         /// Retrieves the IEnumerator of obj or null if the language does not consider obj as capable of returning an IEnumerator.
         /// </summary>
         /// <param name="obj">
-        /// IEnumerable or IEnumerable-like object
+        /// IEnumerable or IEnumerable-like object.
         /// </param>
         /// <exception cref="ExtendedTypeSystemException">When the act of getting the enumerator throws an exception.</exception>
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "obj", Justification = "Since V1 code is already shipped, excluding this message for backward compatibility reasons.")]
@@ -605,7 +605,7 @@ namespace System.Management.Automation
         /// <param name="first">First object.</param>
         /// <param name="second">Object to compare first to.</param>
         /// <param name="ignoreCase">used only if first and second are strings
-        /// to specify the type of string comparison </param>
+        /// to specify the type of string comparison. </param>
         /// <returns>True if first is equal to the second.</returns>
         public static bool Equals(object first, object second, bool ignoreCase)
         {
@@ -618,7 +618,7 @@ namespace System.Management.Automation
         /// <param name="first">First object.</param>
         /// <param name="second">Object to compare first to.</param>
         /// <param name="ignoreCase">used only if first and second are strings
-        /// to specify the type of string comparison </param>
+        /// to specify the type of string comparison. </param>
         /// <param name="formatProvider">the format/culture to be used. If this parameter is null,
         /// CultureInfo.InvariantCulture will be used.
         /// </param>
@@ -1187,7 +1187,7 @@ namespace System.Management.Automation
         /// Emulates the "As" C# language primitive, but will unwrap
         /// the PSObject if required.
         /// </summary>
-        /// <typeparam name="T">The type for which to convert</typeparam>
+        /// <typeparam name="T">The type for which to convert.</typeparam>
         /// <param name="castObject">The object from which to convert.</param>
         /// <returns>An object of the specified type, if the conversion was successful.  Returns null otherwise.</returns>
         internal static T FromObjectAs<T>(object castObject)
@@ -1392,7 +1392,7 @@ namespace System.Management.Automation
         /// The property typically won't need conversion, but it could.  The value is more likely in
         /// need of conversion.
         /// </summary>
-        /// <param name="dictionary">The dictionary that potentially implement <see cref="IDictionary&lt;TKey,TValue&gt;"/></param>
+        /// <param name="dictionary">The dictionary that potentially implement <see cref="IDictionary&lt;TKey,TValue&gt;"/>.</param>
         /// <param name="key">The object representing the key.</param>
         /// <param name="value">The value to assign.</param>
         internal static void DoConversionsForSetInGenericDictionary(IDictionary dictionary, ref object key, ref object value)
@@ -1759,7 +1759,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Generic convertto that simplifies working with workflow.
         /// </summary>
-        /// <typeparam name="T">The type of object to return</typeparam>
+        /// <typeparam name="T">The type of object to return.</typeparam>
         /// <param name="valueToConvert"></param>
         /// <returns></returns>
         public static T ConvertTo<T>(object valueToConvert)
@@ -3852,7 +3852,7 @@ namespace System.Management.Automation
         /// <remark>
         /// When get to this method, we know the fromType and the toType meet the following two conditions:
         /// 1. toType is a closed generic type and it has a constructor that takes IEnumerable[T], ICollection[T] or IList[T]
-        /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType
+        /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType.
         /// </remark>
         private sealed class ConvertViaIEnumerableConstructor
         {
@@ -4860,7 +4860,7 @@ namespace System.Management.Automation
         /// <param name="valueToConvert"></param>
         /// <param name="resultType"></param>
         /// <returns>
-        /// A two-element tuple indicating [errorId, errorMsg]
+        /// A two-element tuple indicating [errorId, errorMsg].
         /// </returns>
         internal static Tuple<string, string> GetInvalidCastMessages(object valueToConvert, Type resultType)
         {

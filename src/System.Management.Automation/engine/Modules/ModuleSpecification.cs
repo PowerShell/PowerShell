@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
     /// 2. hashtable - [string]ModuleName (required) + [Version]ModuleVersion/RequiredVersion (required) + [Guid]GUID (optional)
     ///
     /// so we have a constructor that takes a string and a constructor that takes a hashtable
-    /// (so that LanguagePrimitives.ConvertTo can cast a string or a hashtable to this type)
+    /// (so that LanguagePrimitives.ConvertTo can cast a string or a hashtable to this type).
     /// </summary>
     public class ModuleSpecification
     {

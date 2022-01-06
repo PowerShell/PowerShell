@@ -144,10 +144,10 @@ namespace System.Management.Automation
         /// </remarks>
         /// <param name="args">
         /// arguments for the ScriptBlock (providing values for variables used within the ScriptBlock);
-        /// can be null
+        /// can be null.
         /// </param>
         /// <returns>
-        /// PowerShell object representing the pipeline contained in this ScriptBlock
+        /// PowerShell object representing the pipeline contained in this ScriptBlock.
         /// </returns>
         /// <exception cref="ScriptBlockToPowerShellNotSupportedException">
         /// Thrown when this ScriptBlock cannot be expressed as a PowerShell object.
@@ -158,7 +158,7 @@ namespace System.Management.Automation
         /// Thrown when evaluation of command arguments results in an exception.
         /// Might depend on the value of $errorActionPreference variable.
         /// For example trying to translate the following ScriptBlock will result in this exception:
-        /// <c>$errorActionPreference = "stop"; $sb = { get-foo $( throw ) }; $sb.GetPowerShell()</c>
+        /// <c>$errorActionPreference = "stop"; $sb = { get-foo $( throw ) }; $sb.GetPowerShell()</c>.
         /// </exception>
         /// <exception cref="InvalidOperationException">
         /// Thrown when there is no ExecutionContext associated with this ScriptBlock object.
@@ -184,7 +184,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="args">
         /// arguments for the ScriptBlock (providing values for variables used within the ScriptBlock);
-        /// can be null
+        /// can be null.
         /// </param>
         public PowerShell GetPowerShell(bool isTrustedInput, params object[] args)
             => GetPowerShellImpl(
@@ -205,10 +205,10 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="args">
         /// arguments for the ScriptBlock (providing values for variables used within the ScriptBlock);
-        /// can be null
+        /// can be null.
         /// </param>
         /// <returns>
-        /// PowerShell object representing the pipeline contained in this ScriptBlock
+        /// PowerShell object representing the pipeline contained in this ScriptBlock.
         /// </returns>
         /// <exception cref="ScriptBlockToPowerShellNotSupportedException">
         /// Thrown when this ScriptBlock cannot be expressed as a PowerShell object.
@@ -219,7 +219,7 @@ namespace System.Management.Automation
         /// Thrown when evaluation of command arguments results in an exception.
         /// Might depend on the value of $errorActionPreference variable.
         /// For example trying to translate the following ScriptBlock will result in this exception:
-        /// <c>$errorActionPreference = "stop"; $sb = { get-foo $( throw ) }; $sb.GetPowerShell()</c>
+        /// <c>$errorActionPreference = "stop"; $sb = { get-foo $( throw ) }; $sb.GetPowerShell()</c>.
         /// </exception>
         /// <exception cref="InvalidOperationException">
         /// Thrown when there is no ExecutionContext associated with this ScriptBlock object and no
@@ -248,14 +248,14 @@ namespace System.Management.Automation
         /// requested by the 'using:' prefix.
         /// </param>
         /// <param name="usingVariables">
-        /// key-value pairs from the <para>variables</para> that actually get used by the 'using:' prefix variables
+        /// key-value pairs from the. <para>variables.</para> that actually get used by the 'using:' prefix variables.
         /// </param>
         /// <param name="args">
         /// arguments for the ScriptBlock (providing values for variables used within the ScriptBlock);
-        /// can be null
+        /// can be null.
         /// </param>
         /// <returns>
-        /// PowerShell object representing the pipeline contained in this ScriptBlock
+        /// PowerShell object representing the pipeline contained in this ScriptBlock.
         /// </returns>
         /// <exception cref="ScriptBlockToPowerShellNotSupportedException">
         /// Thrown when this ScriptBlock cannot be expressed as a PowerShell object.
@@ -266,7 +266,7 @@ namespace System.Management.Automation
         /// Thrown when evaluation of command arguments results in an exception.
         /// Might depend on the value of $errorActionPreference variable.
         /// For example trying to translate the following ScriptBlock will result in this exception:
-        /// <c>$errorActionPreference = "stop"; $sb = { get-foo $( throw ) }; $sb.GetPowerShell()</c>
+        /// <c>$errorActionPreference = "stop"; $sb = { get-foo $( throw ) }; $sb.GetPowerShell()</c>.
         /// </exception>
         /// <exception cref="InvalidOperationException">
         /// Thrown when there is no ExecutionContext associated with this ScriptBlock object and no
@@ -287,18 +287,18 @@ namespace System.Management.Automation
         /// requested by the 'using:' prefix.
         /// </param>
         /// <param name="usingVariables">
-        /// key-value pairs from the <para>variables</para> that actually get used by the 'using:' prefix variables
+        /// key-value pairs from the. <para>variables.</para> that actually get used by the 'using:' prefix variables.
         /// </param>
         /// <param name="args">
         /// arguments for the ScriptBlock (providing values for variables used within the ScriptBlock);
-        /// can be null
+        /// can be null.
         /// </param>
         /// <param name="isTrustedInput">
         /// Specifies whether the scriptblock being converted comes from a trusted source.
         /// The default is False.
         /// </param>
         /// <returns>
-        /// PowerShell object representing the pipeline contained in this ScriptBlock
+        /// PowerShell object representing the pipeline contained in this ScriptBlock.
         /// </returns>
         /// <exception cref="ScriptBlockToPowerShellNotSupportedException">
         /// Thrown when this ScriptBlock cannot be expressed as a PowerShell object.
@@ -309,7 +309,7 @@ namespace System.Management.Automation
         /// Thrown when evaluation of command arguments results in an exception.
         /// Might depend on the value of $errorActionPreference variable.
         /// For example trying to translate the following ScriptBlock will result in this exception:
-        /// <c>$errorActionPreference = "stop"; $sb = { get-foo $( throw ) }; $sb.GetPowerShell()</c>
+        /// <c>$errorActionPreference = "stop"; $sb = { get-foo $( throw ) }; $sb.GetPowerShell()</c>.
         /// </exception>
         /// <exception cref="InvalidOperationException">
         /// Thrown when there is no ExecutionContext associated with this ScriptBlock object and no
@@ -1343,7 +1343,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Defines the exception thrown when conversion from ScriptBlock to PowerShell is forbidden
-    /// (i.e. when the script block has undeclared variables or more than one statement)
+    /// (i.e. when the script block has undeclared variables or more than one statement).
     /// </summary>
     [Serializable]
     public class ScriptBlockToPowerShellNotSupportedException : RuntimeException
@@ -1417,7 +1417,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs ScriptBlockInvocationEventArgs.
         /// </summary>
-        /// <param name="scriptBlock">The scriptblock to invoke
+        /// <param name="scriptBlock">The scriptblock to invoke.
         /// </param>
         /// /// <param name="useLocalScope"></param>
         /// <param name="errorHandlingBehavior"></param>
@@ -1430,11 +1430,11 @@ namespace System.Management.Automation
         ///   the $input variable is not created.
         /// </param>
         /// <param name="scriptThis"></param>
-        /// <param name="outputPipe">The output pipe which has the results of the invocation
+        /// <param name="outputPipe">The output pipe which has the results of the invocation.
         /// </param>
         /// <param name="invocationInfo">The information about current state of the runspace.</param>
         /// <param name="args">The arguments to this script.</param>
-        /// <exception cref="ArgumentNullException">ScriptBlock is null
+        /// <exception cref="ArgumentNullException">ScriptBlock is null.
         /// </exception>
         internal ScriptBlockInvocationEventArgs(
             ScriptBlock scriptBlock,

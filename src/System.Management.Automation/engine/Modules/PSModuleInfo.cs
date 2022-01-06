@@ -1518,7 +1518,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add an entry to the appdomain level module path cache. By default, if there already is an entry
-        /// it won't be replace. If force is specified, then it will be updated. \
+        /// it won't be replace. If force is specified, then it will be updated. \.
         /// </summary>
         /// <param name="moduleName"></param>
         /// <param name="path"></param>
@@ -1556,7 +1556,7 @@ namespace System.Management.Automation
     public enum ModuleType
     {
         /// <summary>
-        /// Indicates that this is a script module (a powershell file with a .PSM1 extension)
+        /// Indicates that this is a script module (a powershell file with a .PSM1 extension).
         /// </summary>
         Script = 0,
         /// <summary>
@@ -1569,7 +1569,7 @@ namespace System.Management.Automation
         /// </summary>
         Manifest,
         /// <summary>
-        /// Indicates that this is cmdlets-over-objects module (a powershell file with a .CDXML extension)
+        /// Indicates that this is cmdlets-over-objects module (a powershell file with a .CDXML extension).
         /// </summary>
         Cim,
     }

@@ -83,7 +83,7 @@ namespace System.Management.Automation
         /// ScriptBlock that is executed to initialize the module...
         /// </param>
         /// <param name="arguments">
-        /// The arguments to pass to the scriptblock used to initialize the module
+        /// The arguments to pass to the scriptblock used to initialize the module.
         /// </param>
         /// <param name="ss">The session state instance to use for this module - may be null.</param>
         /// <param name="results">The results produced from evaluating the scriptblock.</param>
@@ -116,7 +116,7 @@ namespace System.Management.Automation
         /// <param name="path">The path to use for the module root.</param>
         /// <param name="moduleCode">
         /// The code to use to create the module. This can be one of ScriptBlock, string
-        /// or ExternalScriptInfo
+        /// or ExternalScriptInfo.
         /// </param>
         /// <param name="arguments">
         /// Arguments to pass to the module scriptblock during evaluation.
@@ -1076,7 +1076,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if a particular string (path) is a member of 'combined path' string (like %Path% or %PSModulePath%)
+        /// Checks if a particular string (path) is a member of 'combined path' string (like %Path% or %PSModulePath%).
         /// </summary>
         /// <param name="pathToScan">'Combined path' string to analyze; can not be null.</param>
         /// <param name="pathToLookFor">Path to search for; can not be another 'combined path' (semicolon-separated); can not be null.</param>

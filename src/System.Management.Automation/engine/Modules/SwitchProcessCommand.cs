@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] WithCommand { get; set; } = Array.Empty<string>();
 
         /// <summary>
-        /// Execute the command and arguments
+        /// Execute the command and arguments.
         /// </summary>
         protected override void EndProcessing()
         {

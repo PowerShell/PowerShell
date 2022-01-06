@@ -131,7 +131,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">Object to get the TypeNameHierarchy from.</param>
         /// <remarks>
-        /// TypeName is of the format ObjectType#__Namespace\\__Class
+        /// TypeName is of the format ObjectType#__Namespace\\__Class.
         /// </remarks>
         protected override IEnumerable<string> GetTypeNameHierarchy(object obj)
         {
@@ -559,7 +559,7 @@ namespace System.Management.Automation
         /// <param name="pData">PropertyData representing a parameter.</param>
         /// <returns>
         /// typeof(object)#EmbeddedObjectTypeName if one found
-        /// typeof(object) otherwise
+        /// typeof(object) otherwise.
         /// </returns>
         /// <remarks>
         /// This helps users of WMI in identifying exactly what type
@@ -671,10 +671,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="mdata"></param>
         /// <returns>
-        /// true, if static
+        /// true, if static.
         /// </returns>
         /// <remarks>
-        /// This method relies on the qualifier "static"
+        /// This method relies on the qualifier "static".
         /// </remarks>
         protected static bool IsStaticMethod(MethodData mdata)
         {
@@ -757,7 +757,7 @@ namespace System.Management.Automation
         /// <param name="parameters">A ManagementBaseObject describing the parameters.</param>
         /// <param name="parametersList">A sorted list to store parameter information.</param>
         /// <remarks>
-        /// Should not throw exceptions
+        /// Should not throw exceptions.
         /// </remarks>
         internal static void UpdateParameters(ManagementBaseObject parameters,
             SortedList<int, WMIParameterInformation> parametersList)
@@ -896,7 +896,7 @@ namespace System.Management.Automation
         /// the ManagementClass corresponding to this ManagementObject. All the method
         /// information is cached for a particular ManagementObject.
         /// </summary>
-        /// <typeparam name="T">PSMemberInfo</typeparam>
+        /// <typeparam name="T">PSMemberInfo.</typeparam>
         /// <param name="wmiObject">Object for which the members need to be retrieved.</param>
         /// <param name="members">Method information is added to this.</param>
         protected abstract void AddAllMethods<T>(ManagementBaseObject wmiObject,
@@ -908,7 +908,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a method object given method name.
         /// </summary>
-        /// <typeparam name="T">PSMemberInfo</typeparam>
+        /// <typeparam name="T">PSMemberInfo.</typeparam>
         /// <param name="wmiObject">Object for which the method is required.</param>
         /// <param name="methodName">Name of the method.</param>
         /// <returns>
@@ -930,12 +930,12 @@ namespace System.Management.Automation
             string propertyName);
 
         /// <summary>
-        /// Returns the first property whose name matches the specified <see cref="MemberNamePredicate"/>
+        /// Returns the first property whose name matches the specified <see cref="MemberNamePredicate"/>.
         /// </summary>
         protected abstract T GetFirstOrDefaultProperty<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate) where T : PSMemberInfo;
 
         /// <summary>
-        /// Returns the first method whose name matches the specified <see cref="MemberNamePredicate"/>
+        /// Returns the first method whose name matches the specified <see cref="MemberNamePredicate"/>.
         /// </summary>
         protected abstract T GetFirstOrDefaultMethod<T>(ManagementBaseObject wmiObject, MemberNamePredicate predicate) where T : PSMemberInfo;
 
@@ -1015,7 +1015,7 @@ namespace System.Management.Automation
         /// Adds method information of the ManagementClass. Only static methods are added for
         /// an object of type ManagementClass.
         /// </summary>
-        /// <typeparam name="T">PSMemberInfo</typeparam>
+        /// <typeparam name="T">PSMemberInfo.</typeparam>
         /// <param name="wmiObject">Object for which the members need to be retrieved.</param>
         /// <param name="members">Method information is added to this.</param>
         protected override void AddAllMethods<T>(ManagementBaseObject wmiObject,
@@ -1203,7 +1203,7 @@ namespace System.Management.Automation
         /// Adds method information of the ManagementObject. Only instance methods are added for
         /// a ManagementObject.
         /// </summary>
-        /// <typeparam name="T">PSMemberInfo</typeparam>
+        /// <typeparam name="T">PSMemberInfo.</typeparam>
         /// <param name="wmiObject">Object for which the members need to be retrieved.</param>
         /// <param name="members">Method information is added to this.</param>
         protected override void AddAllMethods<T>(ManagementBaseObject wmiObject,

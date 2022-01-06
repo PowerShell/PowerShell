@@ -1818,7 +1818,7 @@ namespace Microsoft.PowerShell.Commands
         ///     module/examplemodule.psm1      # $PSScriptRoot/module/module.psm1
         ///     module/examplemodule           # $PSScriptRoot/module/examplemodule.XXX if examplemodule is not a directory...
         ///     module/examplemodule           # $PSScriptRoot/module/examplemodule is a directory and $PSScriptRoot/module/examplemodule/examplemodule.XXX exists
-        ///     module/examplemodule/examplemodule.XXX
+        ///     module/examplemodule/examplemodule.XXX.
         /// </remarks>
         protected override void ProcessRecord()
         {

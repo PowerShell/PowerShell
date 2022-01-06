@@ -29,7 +29,7 @@ namespace System.Management.Automation
         /// The NativeCommand to bind to.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="command"/>.Context is null
+        /// <paramref name="command"/>.Context is null.
         /// </exception>
         internal NativeCommandParameterBinder(
             NativeCommand command) : base(command.MyInvocation, command.Context, command)
@@ -453,7 +453,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="path">The potential PSPath to resolve.</param>
         /// <param name="context">The current ExecutionContext.</param>
-        /// <returns>Resolved PSPath if applicable otherwise the original path</returns>
+        /// <returns>Resolved PSPath if applicable otherwise the original path.</returns>
         internal static string ResolvePath(string path, ExecutionContext context)
         {
             if (ExperimentalFeature.IsEnabled("PSNativePSPathResolution"))

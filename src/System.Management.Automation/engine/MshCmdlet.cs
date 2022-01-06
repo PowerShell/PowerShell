@@ -78,7 +78,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the parameter was specified on the command line, false otherwise.
         /// </summary>
-        /// <value>True if the parameter was specified, false otherwise</value>
+        /// <value>True if the parameter was specified, false otherwise.</value>
         public bool IsPresent
         {
             get { return _isPresent; }
@@ -126,7 +126,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Static method that returns a instance of SwitchParameter that indicates that it is present.
         /// </summary>
-        /// <value>An instance of a switch parameter that will convert to true in a boolean context</value>
+        /// <value>An instance of a switch parameter that will convert to true in a boolean context.</value>
         public static SwitchParameter Present
         {
             get { return new SwitchParameter(true); }
@@ -948,7 +948,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The name of the parameter set in effect.
         /// </summary>
-        /// <value>the parameter set name</value>
+        /// <value>the parameter set name.</value>
         public string ParameterSetName
         {
             get

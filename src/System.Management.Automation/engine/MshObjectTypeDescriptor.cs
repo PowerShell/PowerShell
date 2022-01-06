@@ -7,7 +7,7 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Serves as the arguments for events triggered by exceptions in the SetValue method of <see cref="PSObjectPropertyDescriptor"/>
+    /// Serves as the arguments for events triggered by exceptions in the SetValue method of <see cref="PSObjectPropertyDescriptor"/>.
     /// </summary>
     /// <remarks>
     /// The sender of this event is an object of type <see cref="PSObjectPropertyDescriptor"/>.
@@ -43,7 +43,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Serves as the arguments for events triggered by exceptions in the GetValue
-    /// method of <see cref="PSObjectPropertyDescriptor"/>
+    /// method of <see cref="PSObjectPropertyDescriptor"/>.
     /// </summary>
     /// <remarks>
     /// The sender of this event is an object of type <see cref="PSObjectPropertyDescriptor"/>.
@@ -117,7 +117,7 @@ namespace System.Management.Automation
         /// This method has no effect for <see cref="PSObjectPropertyDescriptor"/>.
         /// CanResetValue returns false.
         /// </summary>
-        /// <param name="component">This parameter is ignored for <see cref="PSObjectPropertyDescriptor"/></param>
+        /// <param name="component">This parameter is ignored for <see cref="PSObjectPropertyDescriptor"/>.</param>
         public override void ResetValue(object component) { }
 
         /// <summary>
@@ -717,7 +717,7 @@ namespace System.Management.Automation
         public event EventHandler<GettingValueExceptionEventArgs> GettingValueException;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="PSObjectTypeDescriptionProvider"/>
+        /// Initializes a new instance of <see cref="PSObjectTypeDescriptionProvider"/>.
         /// </summary>
         public PSObjectTypeDescriptionProvider()
         {

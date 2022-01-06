@@ -79,7 +79,7 @@ namespace System.Management.Automation
         /// but it should be MUCH faster as there is no binding that takes place.
         /// </summary>
         /// <exception cref="System.ArgumentNullException">
-        /// may not be set to null
+        /// may not be set to null.
         /// </exception>
         /// <remarks>
         /// This is a common parameter via class CommonParameters.
@@ -199,7 +199,7 @@ namespace System.Management.Automation
         /// to percolate up to the caller of ProcessRecord etc.
         /// </exception>
         /// <exception cref="System.InvalidOperationException">
-        /// Not permitted at this time or from this thread
+        /// Not permitted at this time or from this thread.
         /// </exception>
         private void DoWriteObject(object sendToPipeline)
         {
@@ -217,7 +217,7 @@ namespace System.Management.Automation
         /// The object that needs to be written to the pipeline.
         /// </param>
         /// <param name="enumerateCollection">
-        /// true if the collection should be enumerated
+        /// true if the collection should be enumerated.
         /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
@@ -365,10 +365,10 @@ namespace System.Management.Automation
         /// Displays progress output if enabled.
         /// </summary>
         /// <param name="sourceId">
-        /// Identifies which command is reporting progress
+        /// Identifies which command is reporting progress.
         /// </param>
         /// <param name="progressRecord">
-        /// Progress status to be displayed
+        /// Progress status to be displayed.
         /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
@@ -381,7 +381,7 @@ namespace System.Management.Automation
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
         /// but the command failure will ultimately be
-        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
+        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>.
         /// </remarks>
         public void WriteProgress(
             Int64 sourceId,
@@ -462,7 +462,7 @@ namespace System.Management.Automation
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
         /// but the command failure will ultimately be
-        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
+        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>.
         /// </remarks>
         /// <seealso cref="System.Management.Automation.Cmdlet.WriteVerbose(string)"/>
         /// <seealso cref="System.Management.Automation.Cmdlet.WriteWarning(string)"/>
@@ -876,7 +876,7 @@ namespace System.Management.Automation
         /// pipeline execution log.
         ///
         /// If LogPipelineExecutionDetail is turned on, this information will be written
-        /// to monad log under log category "Pipeline execution detail"
+        /// to monad log under log category "Pipeline execution detail".
         /// </remarks>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteDebug(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteVerbose(string)"/>
@@ -924,7 +924,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This allows all success output to be set to a variable, where the variable is reset for each item returned by
-        /// the cmdlet. Semantically this is equivalent to :  cmd | % { $pipelineVariable = $_; (...) }
+        /// the cmdlet. Semantically this is equivalent to :  cmd | % { $pipelineVariable = $_; (...) }.
         /// </summary>
         internal string PipelineVariable { get; set; }
 
@@ -1080,7 +1080,7 @@ namespace System.Management.Automation
         /// will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
         /// but the command failure will ultimately be
-        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
+        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>.
         /// </remarks>
         /// <example>
         ///     <code>
@@ -1137,7 +1137,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="action">
         /// Name of the action which is being performed. This will
-        /// potentially be displayed to the user. (default is Cmdlet name)
+        /// potentially be displayed to the user. (default is Cmdlet name).
         /// </param>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
@@ -1174,7 +1174,7 @@ namespace System.Management.Automation
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
         /// but the command failure will ultimately be
-        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
+        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>.
         /// </remarks>
         /// <example>
         ///     <code>
@@ -1277,7 +1277,7 @@ namespace System.Management.Automation
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
         /// but the command failure will ultimately be
-        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
+        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>.
         /// </remarks>
         /// <example>
         ///     <code>
@@ -1392,7 +1392,7 @@ namespace System.Management.Automation
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
         /// but the command failure will ultimately be
-        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
+        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>.
         /// </remarks>
         /// <example>
         ///     <code>
@@ -1469,10 +1469,10 @@ namespace System.Management.Automation
         /// Helper function for ShouldProcess APIs.
         /// </summary>
         /// <param name="verboseDescription">
-        /// Description of operation, to be printed for Continue or WhatIf
+        /// Description of operation, to be printed for Continue or WhatIf.
         /// </param>
         /// <param name="verboseWarning">
-        /// Warning prompt, to be printed for Inquire
+        /// Warning prompt, to be printed for Inquire.
         /// </param>
         /// <param name="caption">
         /// This is the caption of the window which may be displayed
@@ -1485,7 +1485,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ShouldProcessReason"/>
         /// are returned.
         /// </param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true iff the action should be performed.</remarks>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
         /// during the execution of this method.
@@ -1497,7 +1497,7 @@ namespace System.Management.Automation
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
         /// but the command failure will ultimately be
-        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
+        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>.
         /// </remarks>
         private bool DoShouldProcess(
             string verboseDescription,
@@ -2042,10 +2042,10 @@ namespace System.Management.Automation
         /// Implementation of ThrowTerminatingError.
         /// </summary>
         /// <param name="errorRecord">
-        /// The error which caused the command to be terminated
+        /// The error which caused the command to be terminated.
         /// </param>
         /// <exception cref="PipelineStoppedException">
-        /// always
+        /// always.
         /// </exception>
         /// <remarks>
         /// <see cref="System.Management.Automation.Cmdlet.ThrowTerminatingError"/>
@@ -2388,7 +2388,7 @@ namespace System.Management.Automation
         /// PipelineProcessor.SynchronousExecute,
         /// and writes it to the error variable.
         /// The general pattern is to call
-        /// throw ManageException(e);
+        /// throw ManageException(e).
         /// </summary>
         /// <param name="e">The exception.</param>
         /// <returns>PipelineStoppedException.</returns>
@@ -2490,7 +2490,7 @@ namespace System.Management.Automation
         /// We insert at position 0 and delete from position 63.
         /// </summary>
         /// <param name="obj">
-        /// ErrorRecord or Exception to be written to $global:error
+        /// ErrorRecord or Exception to be written to $global:error.
         /// </param>
         /// <exception cref="System.Management.Automation.ExtendedTypeSystemException">
         /// An error occurred accessing $ERROR.
@@ -2704,7 +2704,7 @@ namespace System.Management.Automation
         /// </remarks>
         /// <param name="errorRecord">Error.</param>
         /// <exception cref="System.InvalidOperationException">
-        /// Not permitted at this time or from this thread
+        /// Not permitted at this time or from this thread.
         /// </exception>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
@@ -2722,7 +2722,7 @@ namespace System.Management.Automation
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
         /// but the command failure will ultimately be
-        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
+        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>.
         /// </remarks>
         public void WriteError(ErrorRecord errorRecord)
         {
@@ -2773,7 +2773,7 @@ namespace System.Management.Automation
         }
 
         /// <exception cref="System.InvalidOperationException">
-        /// Not permitted at this time or from this thread
+        /// Not permitted at this time or from this thread.
         /// </exception>
         /// <exception cref="System.Management.Automation.PipelineStoppedException">
         /// The pipeline has already been terminated, or was terminated
@@ -2786,7 +2786,7 @@ namespace System.Management.Automation
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
         /// but the command failure will ultimately be
-        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
+        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>.
         /// </remarks>
         private void DoWriteError(object obj)
         {
@@ -2844,7 +2844,7 @@ namespace System.Management.Automation
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
         /// but the command failure will ultimately be
-        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
+        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>.
         /// </remarks>
         internal void _WriteErrorSkipAllowCheck(ErrorRecord errorRecord, ActionPreference? actionPreference = null, bool isFromNativeStdError = false)
         {
@@ -2968,7 +2968,7 @@ namespace System.Management.Automation
         private bool _isConfirmPreferenceCached = false;
         private ConfirmImpact _confirmPreference = InitialSessionState.DefaultConfirmPreference;
         /// <summary>
-        /// Preference setting controlling behavior of ShouldProcess()
+        /// Preference setting controlling behavior of ShouldProcess().
         /// </summary>
         /// <remarks>
         /// This is not an independent parameter, it just emerges from the
@@ -3433,7 +3433,7 @@ namespace System.Management.Automation
         internal ContinueStatus lastInformationContinueStatus = ContinueStatus.Yes;
 
         /// <summary>
-        /// Should the verbose/debug/progress message be printed?
+        /// Should the verbose/debug/progress message be printed?.
         /// </summary>
         /// <param name="preference"></param>
         /// <param name="lastContinueStatus"></param>
@@ -3508,7 +3508,7 @@ namespace System.Management.Automation
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
         /// but the command failure will ultimately be
-        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
+        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>.
         /// </remarks>
         internal ContinueStatus WriteHelper(
             string inquireCaption,
@@ -3584,7 +3584,7 @@ namespace System.Management.Automation
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
         /// but the command failure will ultimately be
-        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>,
+        /// <see cref="System.Management.Automation.ActionPreferenceStopException"/>.
         /// </remarks>
         internal ContinueStatus InquireHelper(
             string inquireMessage,

@@ -1194,7 +1194,7 @@ namespace System.Management.Automation
         /// <param name="errorPosition">The position to use for error reporting.</param>
         /// <param name="lval">Left operand.</param>
         /// <param name="rval">Right operand.</param>
-        /// <param name="ignoreCase">Ignore case?</param>
+        /// <param name="ignoreCase">Ignore case?.</param>
         /// <param name="notMatch">True for -notmatch, false for -match.</param>
         /// <returns>The result of the operator.</returns>
         internal static object MatchOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, bool notMatch, bool ignoreCase)
@@ -1321,13 +1321,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Implementation of the PowerShell -contains/-notcontains operators (and case sensitive variants)
+        /// Implementation of the PowerShell -contains/-notcontains operators (and case sensitive variants).
         /// </summary>
         /// <param name="context">The execution context to use.</param>
         /// <param name="errorPosition">The position to use for error reporting.</param>
         /// <param name="left">Left operand.</param>
         /// <param name="right">Right operand.</param>
-        /// <param name="ignoreCase">Ignore case?</param>
+        /// <param name="ignoreCase">Ignore case?.</param>
         /// <param name="contains">True for -contains, false for -notcontains.</param>
         /// <returns>The result of the operator.</returns>
         internal static object ContainsOperator(ExecutionContext context, IScriptExtent errorPosition, object left, object right, bool contains, bool ignoreCase)
@@ -1726,7 +1726,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// The simple enumerator class is used for the range operator '..'
-    /// in expressions like 'A'..'B' | ForEach-Object { $_ }
+    /// in expressions like 'A'..'B' | ForEach-Object { $_ }.
     /// </summary>
     internal class CharRangeEnumerator : IEnumerator
     {
@@ -1793,10 +1793,10 @@ namespace System.Management.Automation
         /// <param name="exceptionType">Type of exception to build.</param>
         /// <param name="errorPosition">The position to use for error reporting.</param>
         /// <param name="resourceIdAndErrorId">
-        /// ResourceID to look up template message, and also ErrorID
+        /// ResourceID to look up template message, and also ErrorID.
         /// </param>
         /// <param name="resourceString">
-        /// Resource string that holds the error message
+        /// Resource string that holds the error message.
         /// </param>
         /// <param name="args">Insertion parameters to message.</param>
         /// <returns>A new instance of the specified exception type.</returns>
@@ -1813,10 +1813,10 @@ namespace System.Management.Automation
         /// <param name="exceptionType">Type of exception to build.</param>
         /// <param name="errorPosition">The position to use for error reporting.</param>
         /// <param name="resourceIdAndErrorId">
-        /// ResourceID to look up template message, and also ErrorID
+        /// ResourceID to look up template message, and also ErrorID.
         /// </param>
         /// <param name="resourceString">
-        /// Resource string which holds the error message
+        /// Resource string which holds the error message.
         /// </param>
         /// <param name="innerException">Inner exception.</param>
         /// <param name="args">Insertion parameters to message.</param>

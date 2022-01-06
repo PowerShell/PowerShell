@@ -45,12 +45,12 @@ namespace Microsoft.PowerShell.Commands
         internal enum ManifestProcessingFlags
         {
             /// <summary>
-            /// Write errors (otherwise no non-terminating-errors are written)
+            /// Write errors (otherwise no non-terminating-errors are written).
             /// </summary>
             WriteErrors = 0x1,
 
             /// <summary>
-            /// Return null on first error (otherwise we try to process other elements of the manifest)
+            /// Return null on first error (otherwise we try to process other elements of the manifest).
             /// </summary>
             NullOnFirstError = 0x2,
 
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
         internal bool BaseForce { get; set; }
 
         /// <summary>
-        /// Flags -global operations (affects what gets returned by TargetSessionState)
+        /// Flags -global operations (affects what gets returned by TargetSessionState).
         /// </summary>
         internal bool BaseGlobal { get; set; }
 
@@ -4252,7 +4252,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it's valid, it returns true otherwise it returns false.
-        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <see langword="null"/>
+        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <see langword="null"/>.
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
@@ -4344,7 +4344,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it's valid, it returns true otherwise it returns false.
-        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <see langword="null"/>
+        /// If the key wasn't there or wasn't valid, then <paramref name="list"/> is set to <see langword="null"/>.
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
         /// <param name="moduleManifestPath">The manifest that generated the hashtable.</param>
@@ -5299,7 +5299,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="prefix">Command name prefix.</param>
         /// <param name="ss">
         /// The session state instance to use for this module - may be null
-        /// in which case a session state will be allocated if necessary
+        /// in which case a session state will be allocated if necessary.
         /// </param>
         /// <param name="options">The set of options that are used while importing a module.</param>
         /// <param name="manifestProcessingFlags">The processing flags to use when processing the module.</param>
@@ -5325,7 +5325,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="prefix">Command name prefix.</param>
         /// <param name="ss">
         /// The session state instance to use for this module - may be null
-        /// in which case a session state will be allocated if necessary
+        /// in which case a session state will be allocated if necessary.
         /// </param>
         /// <param name="options">The set of options that are used while importing a module.</param>
         /// <param name="manifestProcessingFlags">The processing flags to use when processing the module.</param>

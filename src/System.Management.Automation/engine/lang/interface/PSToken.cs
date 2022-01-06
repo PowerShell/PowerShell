@@ -380,7 +380,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// For example, 'get-process' in
         ///
-        ///     get-process -name foo
+        ///     get-process -name foo.
         /// </remarks>
         Command,
 
@@ -390,7 +390,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// For example, '-name' in
         ///
-        ///     get-process -name foo
+        ///     get-process -name foo.
         /// </remarks>
         CommandParameter,
 
@@ -400,7 +400,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// For example, 'foo' in
         ///
-        ///     get-process -name foo
+        ///     get-process -name foo.
         /// </remarks>
         CommandArgument,
 
@@ -410,7 +410,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// For example, 12 in
         ///
-        ///     $a=12
+        ///     $a=12.
         /// </remarks>
         Number,
 
@@ -420,7 +420,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// For example, "12" in
         ///
-        ///     $a="12"
+        ///     $a="12".
         /// </remarks>
         String,
 
@@ -430,7 +430,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// For example, $a in
         ///
-        ///     $a="12"
+        ///     $a="12".
         /// </remarks>
         Variable,
 
@@ -440,7 +440,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// For example, Name in
         ///
-        ///     $a.Name
+        ///     $a.Name.
         /// </remarks>
         Member,
 
@@ -454,7 +454,7 @@ namespace System.Management.Automation
         ///     foreach($a in $b)
         ///     {
         ///         $a
-        ///     }
+        ///     }.
         /// </remarks>
         LoopLabel,
 
@@ -464,7 +464,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// For example, Mandatory in
         ///
-        ///     param([Mandatory] $a)
+        ///     param([Mandatory] $a).
         /// </remarks>
         Attribute,
 
@@ -474,7 +474,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// For example, [string] in
         ///
-        ///     $a = [string] 12
+        ///     $a = [string] 12.
         /// </remarks>
         Type,
 
@@ -484,7 +484,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// For example, + in
         ///
-        ///     $a = 1 + 2
+        ///     $a = 1 + 2.
         /// </remarks>
         Operator,
 
@@ -497,7 +497,7 @@ namespace System.Management.Automation
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
-        ///     }
+        ///     }.
         /// </remarks>
         GroupStart,
 
@@ -510,7 +510,7 @@ namespace System.Management.Automation
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
-        ///     }
+        ///     }.
         /// </remarks>
         GroupEnd,
 
@@ -523,7 +523,7 @@ namespace System.Management.Automation
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
-        ///     }
+        ///     }.
         /// </remarks>
         Keyword,
 
@@ -537,12 +537,12 @@ namespace System.Management.Automation
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
-        ///     }
+        ///     }.
         /// </remarks>
         Comment,
 
         /// <summary>
-        /// Statement separator. This is ';'
+        /// Statement separator. This is ';'.
         /// </summary>
         /// <remarks>
         /// For example, ; in
@@ -551,12 +551,12 @@ namespace System.Management.Automation
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
-        ///     }
+        ///     }.
         /// </remarks>
         StatementSeparator,
 
         /// <summary>
-        /// New line. This is '\n'
+        /// New line. This is '\n'.
         /// </summary>
         /// <remarks>
         /// For example, \n in
@@ -565,7 +565,7 @@ namespace System.Management.Automation
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
-        ///     }
+        ///     }.
         /// </remarks>
         NewLine,
 
@@ -576,7 +576,7 @@ namespace System.Management.Automation
         /// For example, ` in
         ///
         ///     get-command -name `
-        ///     foo
+        ///     foo.
         /// </remarks>
         LineContinuation,
 
