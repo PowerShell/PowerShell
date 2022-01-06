@@ -19,7 +19,7 @@ using System.Net;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The base class of all updatable help system cmdlets (Update-Help, Save-Help)
+    /// The base class of all updatable help system cmdlets (Update-Help, Save-Help).
     /// </summary>
     public class UpdatableHelpCommandBase : PSCmdlet
     {
@@ -717,8 +717,8 @@ namespace Microsoft.PowerShell.Commands
         /// Resolves a given path to a list of directories.
         /// </summary>
         /// <param name="path">Path to resolve.</param>
-        /// <param name="recurse">Resolve recursively?</param>
-        /// <param name="isLiteralPath">Treat the path / start path as a literal path?</param>///
+        /// <param name="recurse">Resolve recursively?.</param>
+        /// <param name="isLiteralPath">Treat the path / start path as a literal path?.</param>///
         /// <returns>A list of directories.</returns>
         internal IEnumerable<string> ResolvePath(string path, bool recurse, bool isLiteralPath)
         {

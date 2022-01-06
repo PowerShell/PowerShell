@@ -287,7 +287,7 @@ namespace System.Management.Automation.Help
         internal Collection<Exception> Errors { get; }
 
         /// <summary>
-        /// Gets the current UIculture (includes the fallback chain)
+        /// Gets the current UIculture (includes the fallback chain).
         /// </summary>
         /// <returns>A list of cultures.</returns>
         internal IEnumerable<string> GetCurrentUICulture()
@@ -374,7 +374,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Sends a standard HTTP request to get the resolved URI (potential FwLinks)
+        /// Sends a standard HTTP request to get the resolved URI (potential FwLinks).
         /// </summary>
         /// <param name="baseUri">Base URI.</param>
         /// <param name="verbose"></param>
@@ -622,7 +622,7 @@ namespace System.Management.Automation.Help
         /// <param name="ns">Schema namespace.</param>
         /// <param name="schema">Xml schema.</param>
         /// <param name="handler">Validation event handler.</param>
-        /// <param name="helpInfo">HelpInfo or HelpContent?</param>
+        /// <param name="helpInfo">HelpInfo or HelpContent?.</param>
         private static XmlDocument CreateValidXmlDocument(string xml, string ns, string schema, ValidationEventHandler handler,
             bool helpInfo)
         {

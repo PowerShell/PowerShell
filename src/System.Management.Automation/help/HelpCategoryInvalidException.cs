@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets ErrorRecord embedded in this exception.
         /// </summary>
-        /// <value>ErrorRecord instance</value>
+        /// <value>ErrorRecord instance.</value>
         public ErrorRecord ErrorRecord
         {
             get

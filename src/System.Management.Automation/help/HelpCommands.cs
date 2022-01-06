@@ -772,7 +772,7 @@ namespace Microsoft.PowerShell.Commands
         /// Retrieves the HelpUri given a CommandInfo instance.
         /// </summary>
         /// <param name="commandInfoPSObject">
-        /// CommandInfo instance wrapped as PSObject
+        /// CommandInfo instance wrapped as PSObject.
         /// </param>
         /// <returns>
         /// null if <paramref name="commandInfoPSObject"/> is not a CommandInfo type.

@@ -27,7 +27,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Help category for this provider, which is a constant: HelpCategory.Command.
         /// </summary>
-        /// <value>Help category for this provider</value>
+        /// <value>Help category for this provider.</value>
         internal override HelpCategory HelpCategory
         {
             get

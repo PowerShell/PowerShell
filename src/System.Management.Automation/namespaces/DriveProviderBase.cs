@@ -15,7 +15,7 @@ namespace System.Management.Automation.Provider
     /// Although it is possible to derive from this base class to implement a Cmdlet Provider, in most
     /// cases one should derive from <see cref="System.Management.Automation.Provider.ItemCmdletProvider"/>,
     /// <see cref="System.Management.Automation.Provider.ContainerCmdletProvider"/>, or
-    /// <see cref ="System.Management.Automation.Provider.NavigationCmdletProvider"/>
+    /// <see cref ="System.Management.Automation.Provider.NavigationCmdletProvider"/>.
     /// </remarks>
     public abstract class DriveCmdletProvider : CmdletProvider
     {
@@ -165,7 +165,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         ///
-        /// The default implementation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters).
         /// </returns>
         protected virtual object NewDriveDynamicParameters()
         {

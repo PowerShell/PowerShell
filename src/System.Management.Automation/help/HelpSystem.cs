@@ -153,8 +153,8 @@ namespace System.Management.Automation
         /// Variants of this function are defined below, which will create help request
         /// object on the fly.
         /// </summary>
-        /// <param name="helpRequest">HelpRequest object</param>
-        /// <returns>An array of HelpInfo objects</returns>
+        /// <param name="helpRequest">HelpRequest object.</param>
+        /// <returns>An array of HelpInfo objects.</returns>
         internal IEnumerable<HelpInfo> GetHelp(HelpRequest helpRequest)
         {
             if (helpRequest == null)
@@ -191,7 +191,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is the help category to search for help for the last command.
         /// </summary>
-        /// <value>help category to search for help</value>
+        /// <value>help category to search for help.</value>
         internal HelpCategory LastHelpCategory
         {
             get
@@ -279,7 +279,7 @@ namespace System.Management.Automation
         ///     4. if step 3 returns exactly one helpInfo object, try to retrieve exact help.
         /// </summary>
         /// <param name="helpRequest">Help request object.</param>
-        /// <returns>An array of HelpInfo objects</returns>
+        /// <returns>An array of HelpInfo objects.</returns>
         private IEnumerable<HelpInfo> DoGetHelp(HelpRequest helpRequest)
         {
             _lastErrors.Clear();
@@ -345,10 +345,10 @@ namespace System.Management.Automation
         ///
         /// If the helpInfo returned is not complete, we shall forward the
         /// helpInfo object to the appropriate help provider for further processing.
-        /// (this is implemented by ForwardHelp)
+        /// (this is implemented by ForwardHelp).
         /// </summary>
-        /// <param name="helpRequest">Help request object</param>
-        /// <returns>HelpInfo object retrieved (can be null)</returns>
+        /// <param name="helpRequest">Help request object.</param>
+        /// <returns>HelpInfo object retrieved (can be null).</returns>
         internal IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
         {
             bool isHelpInfoFound = false;
@@ -543,7 +543,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Return the list of help providers initialized.
         /// </summary>
-        /// <value>a list of help providers</value>
+        /// <value>a list of help providers.</value>
         internal ArrayList HelpProviders
         {
             get
@@ -894,7 +894,7 @@ namespace System.Management.Automation
         Filter = 0x400,
 
         /// <summary>
-        /// Help for an external script (i.e. for a *.ps1 file)
+        /// Help for an external script (i.e. for a *.ps1 file).
         /// </summary>
         ExternalScript = 0x800,
 

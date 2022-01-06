@@ -120,7 +120,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the help in for the DscResource Info.        ///
+        /// Get the help in for the DscResource Info.        ///.
         /// </summary>
         /// <param name="searcher">Searcher for DscResources.</param>
         /// <returns>Next HelpInfo object.</returns>

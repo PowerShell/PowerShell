@@ -17,7 +17,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// This is made private intentionally so that the only way to create object of this type
         /// is through
-        ///     GetHelpInfo(string name, string text, string filename)
+        ///     GetHelpInfo(string name, string text, string filename).
         /// </remarks>
         /// <param name="name">Help topic name.</param>
         /// <param name="text">Help text.</param>
@@ -47,7 +47,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name for the help info.
         /// </summary>
-        /// <value>Name for the help info</value>
+        /// <value>Name for the help info.</value>
         internal override string Name { get; } = string.Empty;
 
         private readonly string _filename = string.Empty;
@@ -55,7 +55,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Synopsis for the help info.
         /// </summary>
-        /// <value>Synopsis for the help info</value>
+        /// <value>Synopsis for the help info.</value>
         internal override string Synopsis
         {
             get
@@ -67,7 +67,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Help category for the help info.
         /// </summary>
-        /// <value>Help category for the help info</value>
+        /// <value>Help category for the help info.</value>
         internal override HelpCategory HelpCategory
         {
             get
@@ -79,7 +79,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Full help object for this help info.
         /// </summary>
-        /// <value>Full help object for this help info</value>
+        /// <value>Full help object for this help info.</value>
         internal override PSObject FullHelp { get; }
 
         /// <summary>

@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name of the provider.
         /// </summary>
-        /// <value>Name of the provider</value>
+        /// <value>Name of the provider.</value>
         internal override string Name
         {
             get
@@ -44,7 +44,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Help category of the provider.
         /// </summary>
-        /// <value>Help category of the provider</value>
+        /// <value>Help category of the provider.</value>
         internal override HelpCategory HelpCategory
         {
             get

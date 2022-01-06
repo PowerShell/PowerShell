@@ -65,7 +65,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name for the help provider.
         /// </summary>
-        /// <value>Name for the help provider</value>
+        /// <value>Name for the help provider.</value>
         /// <remarks>Derived classes should set this.</remarks>
         internal abstract string Name
         {
@@ -75,7 +75,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Help category for the help provider.
         /// </summary>
-        /// <value>Help category for the help provider</value>
+        /// <value>Help category for the help provider.</value>
         /// <remarks>Derived classes should set this.</remarks>
         internal abstract HelpCategory HelpCategory
         {

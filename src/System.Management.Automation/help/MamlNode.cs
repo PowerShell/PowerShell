@@ -19,11 +19,11 @@ namespace System.Management.Automation
     /// and output engine.
     ///
     /// Following three kinds of formating tags are supported per our agreement with Maml team,
-    ///     1. para,
+    ///     1. para.
     ///         <para>
-    ///             para text here
+    ///             para text here.
     ///         </para>
-    ///     2. list,
+    ///     2. list.
     ///         <list class="ordered|unordered">
     ///             <listItem>
     ///                 <para>
@@ -58,7 +58,7 @@ namespace System.Management.Automation
     ///             <tag>*</tag>
     ///             <text>text for list item 2</text>
     ///         </textItem>
-    ///     3. definitionList => a list of definitionTextItem's
+    ///     3. definitionList => a list of definitionTextItem's.
     ///         <definitionListItem>
     ///             <term>definition term here</term>
     ///             <definition>definition text here</definition>
@@ -186,7 +186,7 @@ namespace System.Management.Automation
         ///             . a MamlDefinitionListItem based on "definition list item 2"
         ///
         ///         The outside PSObject will have a property
-        ///             attribute => "value"
+        ///             attribute => "value".
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -250,7 +250,7 @@ namespace System.Management.Automation
         ///     . property 1: name="name" value=an PSObject to wrap string "get-item"
         ///     . property 2: name="note" value=an PSObject array with following two PSObjects
         ///         1. PSObject wrapping string "note 1"
-        ///         2. PSObject wrapping string "note 2"
+        ///         2. PSObject wrapping string "note 2".
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -587,7 +587,7 @@ namespace System.Management.Automation
         ///        . a MamlUnorderedListItem based on "list item 1"
         ///        . a MamlUnorderedListItem based on "list item 2"
         ///        . a MamlDefinitionListItem based on "definition list item 1"
-        ///        . a MamlDefinitionListItem based on "definition list item 2"
+        ///        . a MamlDefinitionListItem based on "definition list item 2".
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -735,12 +735,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Convert a para node into an mshObject.
         ///
-        /// For example,
+        /// For example.
         ///    <para>
-        ///        para text
+        ///        para text.
         ///    </para>
         ///    In this case, an PSObject of type "MamlParaTextItem" will be created with following property
-        ///        a. text="para text"
+        ///        a. text="para text".
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <param name="newLine"></param>
@@ -785,7 +785,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Convert a list node into an PSObject array.
         ///
-        /// For example,
+        /// For example.
         ///    <list class="ordered">
         ///        <listItem>
         ///            <para>
@@ -802,7 +802,7 @@ namespace System.Management.Automation
         /// two properties,
         ///        a. tag=" 1. " or " 2. "
         ///        b. text="text for list item 1" or "text for list item 2"
-        /// In the case of unordered list, similar PSObject will created with type to be "MamlUnorderedListText" and tag="*"
+        /// In the case of unordered list, similar PSObject will created with type to be "MamlUnorderedListText" and tag="*".
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -867,7 +867,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Convert an listItem node into an PSObject with property "tag" and "text"
+        /// Convert an listItem node into an PSObject with property "tag" and "text".
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <param name="ordered"></param>
@@ -986,7 +986,7 @@ namespace System.Management.Automation
         /// In this case, an PSObject of type "definitionListText" will be created with following
         /// properties
         ///        a. term="term text"
-        ///        b. definition="definition text"
+        ///        b. definition="definition text".
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>
@@ -1035,7 +1035,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the text for definition. The will treat some intermediate nodes like "definition" and "para"
+        /// Get the text for definition. The will treat some intermediate nodes like "definition" and "para".
         /// </summary>
         /// <param name="xmlNode"></param>
         /// <returns></returns>

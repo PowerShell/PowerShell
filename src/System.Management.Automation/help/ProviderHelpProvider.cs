@@ -47,7 +47,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Help category of this provider.
         /// </summary>
-        /// <value>Help category of this provider</value>
+        /// <value>Help category of this provider.</value>
         internal override HelpCategory HelpCategory
         {
             get

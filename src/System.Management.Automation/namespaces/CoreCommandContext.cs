@@ -75,7 +75,7 @@ namespace System.Management.Automation
         /// The context of the engine.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller of this API
+        /// The origin of the caller of this API.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="executionContext"/> is null.
@@ -554,9 +554,9 @@ namespace System.Management.Automation
         /// Confirm the operation with the user.
         /// </summary>
         /// <param name="target">
-        /// Name of the target resource being acted upon
+        /// Name of the target resource being acted upon.
         /// </param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true iff the action should be performed.</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
         /// triggered a terminating error.  The pipeline failure will be
@@ -579,10 +579,10 @@ namespace System.Management.Automation
         /// Confirm the operation with the user.
         /// </summary>
         /// <param name="target">
-        /// Name of the target resource being acted upon
+        /// Name of the target resource being acted upon.
         /// </param>
         /// <param name="action">What action was being performed.</param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true iff the action should be performed.</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
         /// triggered a terminating error.  The pipeline failure will be
@@ -621,7 +621,7 @@ namespace System.Management.Automation
         /// if the user is prompted whether or not to perform the action.
         /// It may be displayed by some hosts, but not all.
         /// </param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true iff the action should be performed.</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
         /// triggered a terminating error.  The pipeline failure will be
@@ -670,7 +670,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ShouldProcessReason"/>
         /// are returned.
         /// </param>
-        /// <remarks>true iff the action should be performed</remarks>
+        /// <remarks>true iff the action should be performed.</remarks>
         /// <exception cref="PipelineStoppedException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
         /// triggered a terminating error.  The pipeline failure will be
@@ -739,10 +739,10 @@ namespace System.Management.Automation
         /// Dialog caption if the host uses a dialog.
         /// </param>
         /// <param name="yesToAll">
-        /// Indicates whether the user selected YesToAll
+        /// Indicates whether the user selected YesToAll.
         /// </param>
         /// <param name="noToAll">
-        /// Indicates whether the user selected NoToAll
+        /// Indicates whether the user selected NoToAll.
         /// </param>
         /// <returns>
         /// True if the user wants to continue, false if not.

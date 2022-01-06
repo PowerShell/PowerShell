@@ -23,19 +23,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Name for the help info.
         /// </summary>
-        /// <value>Name for the help info</value>
+        /// <value>Name for the help info.</value>
         internal override string Name { get; } = string.Empty;
 
         /// <summary>
         /// Synopsis for the help info.
         /// </summary>
-        /// <value>Synopsis for the help info</value>
+        /// <value>Synopsis for the help info.</value>
         internal override string Synopsis { get; } = string.Empty;
 
         /// <summary>
         /// Full help object for this help info.
         /// </summary>
-        /// <value>Full help object for this help info</value>
+        /// <value>Full help object for this help info.</value>
         internal override PSObject FullHelp { get; }
 
         /// <summary>
