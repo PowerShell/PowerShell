@@ -17,7 +17,7 @@ namespace System.Management.Automation
         /// The name of the filter.
         /// </param>
         /// <param name="filter">
-        /// The ScriptBlock for the filter
+        /// The ScriptBlock for the filter.
         /// </param>
         /// <param name="context">
         /// The ExecutionContext for the filter.
@@ -36,7 +36,7 @@ namespace System.Management.Automation
         /// The name of the filter.
         /// </param>
         /// <param name="filter">
-        /// The ScriptBlock for the filter
+        /// The ScriptBlock for the filter.
         /// </param>
         /// <param name="context">
         /// The ExecutionContext for the filter.
@@ -60,7 +60,7 @@ namespace System.Management.Automation
         /// The name of the filter.
         /// </param>
         /// <param name="filter">
-        /// The ScriptBlock for the filter
+        /// The ScriptBlock for the filter.
         /// </param>
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
@@ -82,7 +82,7 @@ namespace System.Management.Automation
         /// The name of the filter.
         /// </param>
         /// <param name="filter">
-        /// The ScriptBlock for the filter
+        /// The ScriptBlock for the filter.
         /// </param>
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.

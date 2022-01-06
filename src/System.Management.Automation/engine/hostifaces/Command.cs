@@ -132,13 +132,13 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Access the command string.
         /// </summary>
-        /// <value>The command name, if <see cref="Command.IsScript"/> is false; otherwise; the script contents</value>
+        /// <value>The command name, if <see cref="Command.IsScript"/> is false; otherwise; the script contents.</value>
         public string CommandText { get; } = string.Empty;
 
         /// <summary>
         /// Access the commandInfo.
         /// </summary>
-        /// <value>The command info object</value>
+        /// <value>The command info object.</value>
         internal CommandInfo CommandInfo { get; }
 
         /// <summary>
@@ -151,8 +151,8 @@ namespace System.Management.Automation.Runspaces
         /// this script command.
         /// </summary>
         /// <value>True if this command is a script and localScope is
-        /// used for executing the script</value>
-        /// <remarks>This value is always false for non-script commands</remarks>
+        /// used for executing the script.</value>
+        /// <remarks>This value is always false for non-script commands.</remarks>
         public bool UseLocalScope
         {
             get { return _useLocalScope ?? false; }
@@ -182,7 +182,7 @@ namespace System.Management.Automation.Runspaces
         internal object DollarUnderbar { get; set; } = AutomationNull.Value;
 
         /// <summary>
-        /// Checks if the current command marks the end of a statement (see PowerShell.AddStatement())
+        /// Checks if the current command marks the end of a statement (see PowerShell.AddStatement()).
         /// </summary>
         public bool IsEndOfStatement { get; internal set; }
 
@@ -289,11 +289,11 @@ namespace System.Management.Automation.Runspaces
         /// Pipeline stream to be redirected.
         /// </param>
         /// <param name="toResult">
-        /// Pipeline stream in to which myResult is merged
+        /// Pipeline stream in to which myResult is merged.
         /// </param>
         /// <exception cref="ArgumentException">
         /// myResult parameter is not PipelineResultTypes.Error or
-        /// toResult parameter is not PipelineResultTypes.Output
+        /// toResult parameter is not PipelineResultTypes.Output.
         /// </exception>
         /// <remarks>
         /// Currently only operation supported is to merge error of command to output of
@@ -580,13 +580,13 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="commandAsPSObject">PSObject to rehydrate.</param>
         /// <returns>
-        /// Command rehydrated from a PSObject property bag
+        /// Command rehydrated from a PSObject property bag.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the PSObject is null.
         /// </exception>
         /// <exception cref="System.Management.Automation.Remoting.PSRemotingDataStructureException">
-        /// Thrown when the PSObject is not in the expected format
+        /// Thrown when the PSObject is not in the expected format.
         /// </exception>
         internal static Command FromPSObjectForRemoting(PSObject commandAsPSObject)
         {
@@ -890,7 +890,7 @@ namespace System.Management.Automation.Runspaces
         /// Gets the string representation of the command collection to be used for history.
         /// </summary>
         /// <returns>
-        /// string representing the command(s)
+        /// string representing the command(s).
         /// </returns>
         internal string GetCommandStringForHistory()
         {

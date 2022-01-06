@@ -17,7 +17,7 @@ namespace System.Management.Automation
     public abstract class InformationalRecord
     {
         /// <remarks>
-        /// This class can be instantiated only by its derived classes
+        /// This class can be instantiated only by its derived classes.
         /// </remarks>
         internal InformationalRecord(string message)
         {

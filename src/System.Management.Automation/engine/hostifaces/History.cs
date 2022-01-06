@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
         /// Constructor.
         /// </summary>
         /// <param name="pipelineId">Id of pipeline in which command associated
-        /// with this history entry is executed</param>
+        /// with this history entry is executed.</param>
         /// <param name="cmdline">Command string.</param>
         /// <param name="status">Status of pipeline execution.</param>
         /// <param name="startTime">StartTime of execution.</param>
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="skipIfLocked">If true, the entry will not be added when the history is locked.</param>
         /// <returns>Id for the new created entry. Use this id to fetch the
         /// entry. Returns -1 if the entry is not added.</returns>
-        /// <remarks>This function is thread safe</remarks>
+        /// <remarks>This function is thread safe.</remarks>
         internal long AddEntry(long pipelineId, string cmdline, PipelineState status, DateTime startTime, DateTime endTime, bool skipIfLocked)
         {
             if (!System.Threading.Monitor.TryEnter(_syncRoot, skipIfLocked ? 0 : System.Threading.Timeout.Infinite))
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell.Commands
         /// id returned by Add method.
         /// </summary>
         /// <param name="id">Id of the entry to be fetched.</param>
-        /// <returns>Entry corresponding to id if it is present else null
+        /// <returns>Entry corresponding to id if it is present else null.
         /// </returns>
         internal HistoryInfo GetEntry(long id)
         {
@@ -582,7 +582,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         ///<summary>
-        /// gets the total number of entries added
+        /// gets the total number of entries added.
         ///</summary>
         ///<returns>count of total entries added.</returns>
         internal int Buffercapacity()
@@ -601,7 +601,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="entry"></param>
         /// <returns>Returns id for the entry. This id should be used to fetch
         /// the entry from the buffer.</returns>
-        /// <remarks>Id starts from 1 and is incremented by 1 for each new entry</remarks>
+        /// <remarks>Id starts from 1 and is incremented by 1 for each new entry.</remarks>
         private long Add(HistoryInfo entry)
         {
             if (entry == null)
@@ -628,7 +628,7 @@ namespace Microsoft.PowerShell.Commands
         /// id returned by Add method.
         /// </summary>
         /// <param name="id">Id of the entry to be fetched.</param>
-        /// <returns>Entry corresponding to id if it is present else null
+        /// <returns>Entry corresponding to id if it is present else null.
         /// </returns>
         private HistoryInfo CoreGetEntry(long id)
         {
@@ -1505,7 +1505,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     ///<summary>
-    /// This Class implements the Clear History cmdlet
+    /// This Class implements the Clear History cmdlet.
     ///</summary>
     [Cmdlet(VerbsCommon.Clear, "History", SupportsShouldProcess = true, DefaultParameterSetName = "IDParameter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096691")]
     public class ClearHistoryCommand : PSCmdlet
@@ -1514,7 +1514,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the ID of a command in the session history.Clear history clears the entries
-        /// wit the specified ID(s)
+        /// wit the specified ID(s).
         /// </summary>
         [Parameter(ParameterSetName = "IDParameter", Position = 0,
            HelpMessage = "Specifies the ID of a command in the session history.Clear history clears only the specified command")]
@@ -1563,7 +1563,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _commandline = null;
 
         ///<summary>
-        /// Clears the specified number of history entries
+        /// Clears the specified number of history entries.
         ///</summary>
         [Parameter(Mandatory = false, Position = 1, HelpMessage = "Clears the specified number of history entries")]
         [ValidateRangeAttribute((int)1, int.MaxValue)]
@@ -1650,7 +1650,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Clears the session history based on the id parameter
-        /// takes no parameters
+        /// takes no parameters.
         /// <returns>Nothing.</returns>
         /// </summary>
         private void ClearHistoryByID()
@@ -1758,7 +1758,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Clears the session history based on the Commandline parameter
-        /// takes no parameters
+        /// takes no parameters.
         /// <returns>Nothing.</returns>
         /// </summary>
         private void ClearHistoryByCmdLine()
@@ -1821,7 +1821,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Clears the session history based on the input parameter
+        /// Clears the session history based on the input parameter.
         /// <param name="id">Id of the entry to be cleared.</param>
         /// <param name="count">Count of entries to be cleared.</param>
         /// <param name="cmdline">Cmdline string to be cleared.</param>

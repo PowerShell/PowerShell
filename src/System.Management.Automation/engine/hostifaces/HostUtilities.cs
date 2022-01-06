@@ -677,7 +677,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns the prompt used in remote sessions: "[machine]: basePrompt"
+        /// Returns the prompt used in remote sessions: "[machine]: basePrompt".
         /// </summary>
         internal static string GetRemotePrompt(RemoteRunspace runspace, string basePrompt, bool configuredSession = false)
         {

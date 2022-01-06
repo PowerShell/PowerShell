@@ -21,7 +21,7 @@ namespace System.Management.Automation
         /// The name of the function.
         /// </param>
         /// <param name="function">
-        /// The ScriptBlock for the function
+        /// The ScriptBlock for the function.
         /// </param>
         /// <param name="context">
         /// The execution context for the function.
@@ -40,7 +40,7 @@ namespace System.Management.Automation
         /// The name of the function.
         /// </param>
         /// <param name="function">
-        /// The ScriptBlock for the function
+        /// The ScriptBlock for the function.
         /// </param>
         /// <param name="context">
         /// The execution context for the function.
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         /// The name of the function.
         /// </param>
         /// <param name="function">
-        /// The ScriptBlock for the function
+        /// The ScriptBlock for the function.
         /// </param>
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
@@ -95,7 +95,7 @@ namespace System.Management.Automation
         /// The name of the function.
         /// </param>
         /// <param name="function">
-        /// The ScriptBlock for the function
+        /// The ScriptBlock for the function.
         /// </param>
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
@@ -298,7 +298,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the trying to set a function that is constant or
-        ///     if the value trying to be set is ScopedItemOptions.Constant
+        ///     if the value trying to be set is ScopedItemOptions.Constant.
         /// </exception>
         public ScopedItemOptions Options
         {

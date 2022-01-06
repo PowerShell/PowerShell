@@ -85,7 +85,7 @@ namespace System.Management.Automation.Runspaces
         /// implementation of PSHost.
         /// </summary>
         /// <param name="host">
-        /// The explicit PSHost implementation
+        /// The explicit PSHost implementation.
         /// </param>
         /// <param name="initialSessionState">
         /// configuration information for this runspace instance.
@@ -207,7 +207,7 @@ namespace System.Management.Automation.Runspaces
         /// Open the runspace synchronously.
         /// </summary>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is not BeforeOpen
+        /// RunspaceState is not BeforeOpen.
         /// </exception>
         public override void Open()
         {
@@ -218,7 +218,7 @@ namespace System.Management.Automation.Runspaces
         /// Open the runspace Asynchronously.
         /// </summary>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is not BeforeOpen
+        /// RunspaceState is not BeforeOpen.
         /// </exception>
         public override void OpenAsync()
         {
@@ -229,10 +229,10 @@ namespace System.Management.Automation.Runspaces
         /// Opens the runspace.
         /// </summary>
         /// <param name="syncCall">If true runspace is opened synchronously
-        /// else runspaces is opened asynchronously
+        /// else runspaces is opened asynchronously.
         /// </param>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is not BeforeOpen
+        /// RunspaceState is not BeforeOpen.
         /// </exception>
         private void CoreOpen(bool syncCall)
         {
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Runspaces
         /// Attempts to execute pipelines after a call to close will fail.
         /// </remarks>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is BeforeOpen or Opening
+        /// RunspaceState is BeforeOpen or Opening.
         /// </exception>
         public override void Close()
         {
@@ -305,7 +305,7 @@ namespace System.Management.Automation.Runspaces
         /// close will fail.
         /// </remarks>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is BeforeOpen or Opening
+        /// RunspaceState is BeforeOpen or Opening.
         /// </exception>
         public override void CloseAsync()
         {
@@ -316,13 +316,13 @@ namespace System.Management.Automation.Runspaces
         /// Close the runspace.
         /// </summary>
         /// <param name="syncCall">If true runspace is closed synchronously
-        /// else runspaces is closed asynchronously
+        /// else runspaces is closed asynchronously.
         /// </param>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is BeforeOpen or Opening
+        /// RunspaceState is BeforeOpen or Opening.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// If SessionStateProxy has some method call in progress
+        /// If SessionStateProxy has some method call in progress.
         /// </exception>
         private void CoreClose(bool syncCall)
         {
@@ -417,7 +417,7 @@ namespace System.Management.Automation.Runspaces
         /// Derived class's close implementation.
         /// </summary>
         /// <param name="syncCall">If true runspace is closed synchronously
-        /// else runspaces is closed asynchronously
+        /// else runspaces is closed asynchronously.
         /// </param>
         protected abstract void CloseHelper(bool syncCall);
 
@@ -529,7 +529,7 @@ namespace System.Management.Automation.Runspaces
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// command is null
+        /// command is null.
         /// </exception>
         public override Pipeline CreatePipeline(string command)
         {
@@ -550,7 +550,7 @@ namespace System.Management.Automation.Runspaces
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// command is null
+        /// command is null.
         /// </exception>
         public override Pipeline CreatePipeline(string command, bool addToHistory)
         {
@@ -584,7 +584,7 @@ namespace System.Management.Automation.Runspaces
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// command is null
+        /// command is null.
         /// </exception>
         public override Pipeline CreateNestedPipeline(string command, bool addToHistory)
         {
@@ -650,7 +650,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Retrieve the current state of the runspace.
-        /// <see cref="RunspaceState"/>
+        /// <see cref="RunspaceState"/>.
         /// </summary>
         protected RunspaceState RunspaceState
         {
@@ -815,7 +815,7 @@ namespace System.Management.Automation.Runspaces
         /// Add the pipeline to list of pipelines in execution.
         /// </summary>
         /// <param name="pipeline">Pipeline to add to the
-        /// list of pipelines in execution</param>
+        /// list of pipelines in execution.</param>
         /// <exception cref="InvalidRunspaceStateException">
         /// Thrown if the runspace is not in the Opened state.
         /// <see cref="RunspaceState"/>.
@@ -853,7 +853,7 @@ namespace System.Management.Automation.Runspaces
         /// Remove the pipeline from list of pipelines in execution.
         /// </summary>
         /// <param name="pipeline">Pipeline to remove from the
-        /// list of pipelines in execution</param>
+        /// list of pipelines in execution.</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="pipeline"/> is null.
         /// </exception>
@@ -980,7 +980,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the currently executing pipeline.
         /// </summary>
-        /// <remarks>Internal because it is needed by invoke-history</remarks>
+        /// <remarks>Internal because it is needed by invoke-history.</remarks>
         internal override Pipeline GetCurrentlyRunningPipeline()
         {
             return _currentlyRunningPipeline;

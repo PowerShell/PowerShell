@@ -34,13 +34,13 @@ namespace Microsoft.PowerShell
 
         #region properties
 
-        /// <summary>See base class</summary>
+        /// <summary>See base class.</summary>
         public override string Name { get { return "Default Host"; } }
 
-        /// <summary>See base class</summary>
+        /// <summary>See base class.</summary>
         public override Version Version { get; } = PSVersionInfo.PSVersion;
 
-        /// <summary>See base class</summary>
+        /// <summary>See base class.</summary>
         public override Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception cref="NotSupportedException">
-        /// On calling this method
+        /// On calling this method.
         /// </exception>
         public override
         void
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <value></value>
         /// <exception cref="NotSupportedException">
-        /// On calling this method
+        /// On calling this method.
         /// </exception>
         public override
         void

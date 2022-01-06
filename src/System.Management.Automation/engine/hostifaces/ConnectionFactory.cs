@@ -53,7 +53,7 @@ namespace System.Management.Automation.Runspaces
         /// The explicit PSHost implementation.
         /// </param>
         /// <returns>
-        /// A runspace object
+        /// A runspace object.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown when host is null.
@@ -69,16 +69,16 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Creates a runspace using <see cref="DefaultHost"/>
+        /// Creates a runspace using <see cref="DefaultHost"/>.
         /// </summary>
         /// <param name="initialSessionState">
         /// InitialSessionState information for the runspace.
         /// </param>
         /// <returns>
-        /// A runspace object
+        /// A runspace object.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when initialSessionState is null
+        /// Thrown when initialSessionState is null.
         /// </exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         public static Runspace CreateRunspace(InitialSessionState initialSessionState)
@@ -103,13 +103,13 @@ namespace System.Management.Automation.Runspaces
         /// InitialSessionState information for the runspace.
         /// </param>
         /// <returns>
-        /// A runspace object
+        /// A runspace object.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when host is null
+        /// Thrown when host is null.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when initialSessionState is null
+        /// Thrown when initialSessionState is null.
         /// </exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         public static Runspace CreateRunspace(PSHost host, InitialSessionState initialSessionState)
@@ -137,13 +137,13 @@ namespace System.Management.Automation.Runspaces
         /// InitialSessionState information for the runspace.
         /// </param>
         /// <returns>
-        /// A runspace object
+        /// A runspace object.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when host is null
+        /// Thrown when host is null.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// Thrown when initialSessionState is null
+        /// Thrown when initialSessionState is null.
         /// </exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspace")]
         internal static Runspace CreateRunspaceFromSessionStateNoClone(PSHost host, InitialSessionState initialSessionState)
@@ -226,7 +226,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Creates a RunspacePool using the supplied <paramref name="host"/>,
-        /// <paramref name="minRunspaces"/> and <paramref name="maxRunspaces"/>
+        /// <paramref name="minRunspaces"/> and <paramref name="maxRunspaces"/>.
         /// </summary>
         /// <param name="minRunspaces">
         /// The minimum number of Runspaces that can exist in this pool.
@@ -253,7 +253,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Creates a RunspacePool using the supplied <paramref name="initialSessionState"/>,
-        /// <paramref name="minRunspaces"/> and <paramref name="maxRunspaces"/>
+        /// <paramref name="minRunspaces"/> and <paramref name="maxRunspaces"/>.
         /// </summary>
         /// <param name="minRunspaces">
         /// The minimum number of Runspaces that can exist in this pool.
@@ -312,13 +312,13 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         /// <param name="connectionInfo">RunspaceConnectionInfo object describing
         /// the remote computer on which this runspace pool needs to be
-        /// created</param>
+        /// created.</param>
         /// <exception cref="ArgumentException">
         /// Maximum Pool size is less than 1.
         /// Minimum Pool size is less than 1.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// connectionInfo is null</exception>
+        /// connectionInfo is null.</exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         public static RunspacePool CreateRunspacePool(int minRunspaces,
                                         int maxRunspaces, RunspaceConnectionInfo connectionInfo)
@@ -343,16 +343,16 @@ namespace System.Management.Automation.Runspaces
         /// pool. Should be greater than or equal to 1.
         /// </param>
         /// <param name="host">Host associated with this
-        /// runspace pool</param>
+        /// runspace pool.</param>
         /// <param name="connectionInfo">RunspaceConnectionInfo object describing
         /// the remote computer on which this runspace pool needs to be
-        /// created</param>
+        /// created.</param>
         /// <exception cref="ArgumentException">
         /// Maximum Pool size is less than 1.
         /// Minimum Pool size is less than 1.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// connectionInfo is null</exception>
+        /// connectionInfo is null.</exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         public static RunspacePool CreateRunspacePool(int minRunspaces,
             int maxRunspaces, RunspaceConnectionInfo connectionInfo, PSHost host)
@@ -390,16 +390,16 @@ namespace System.Management.Automation.Runspaces
         /// can be done. Default PowerShell behavior will be used in this case.
         /// </param>
         /// <param name="host">Host associated with this
-        /// runspace pool</param>
+        /// runspace pool.</param>
         /// <param name="connectionInfo">RunspaceConnectionInfo object describing
         /// the remote computer on which this runspace pool needs to be
-        /// created</param>
+        /// created.</param>
         /// <exception cref="ArgumentException">
         /// Maximum Pool size is less than 1.
         /// Minimum Pool size is less than 1.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// connectionInfo is null</exception>
+        /// connectionInfo is null.</exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         public static RunspacePool CreateRunspacePool(int minRunspaces,
             int maxRunspaces, RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable)
@@ -437,19 +437,19 @@ namespace System.Management.Automation.Runspaces
         /// can be done. Default PowerShell behavior will be used in this case.
         /// </param>
         /// <param name="host">Host associated with this
-        /// runspace pool</param>
+        /// runspace pool.</param>
         /// <param name="applicationArguments">
-        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
+        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>.
         /// </param>
         /// <param name="connectionInfo">RunspaceConnectionInfo object describing
         /// the remote computer on which this runspace pool needs to be
-        /// created</param>
+        /// created.</param>
         /// <exception cref="ArgumentException">
         /// Maximum Pool size is less than 1.
         /// Minimum Pool size is less than 1.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// connectionInfo is null</exception>
+        /// connectionInfo is null.</exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         public static RunspacePool CreateRunspacePool(int minRunspaces,
             int maxRunspaces, RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable, PSPrimitiveDictionary applicationArguments)
@@ -485,7 +485,7 @@ namespace System.Management.Automation.Runspaces
         ///   3. SpecificSerializationProperties
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
-        ///   2. TypeConverter
+        ///   2. TypeConverter.
         /// </param>
         /// <param name="host"></param>
         /// <param name="connectionInfo"></param>
@@ -505,12 +505,12 @@ namespace System.Management.Automation.Runspaces
         ///   3. SpecificSerializationProperties
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
-        ///   2. TypeConverter
+        ///   2. TypeConverter.
         /// </param>
         /// <param name="host"></param>
         /// <param name="connectionInfo"></param>
         /// <param name="applicationArguments">
-        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
+        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>.
         /// </param>
         /// <returns></returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable, PSPrimitiveDictionary applicationArguments)
@@ -530,10 +530,10 @@ namespace System.Management.Automation.Runspaces
         ///   3. SpecificSerializationProperties
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
-        ///   2. TypeConverter
+        ///   2. TypeConverter.
         /// </param>
         /// <param name="applicationArguments">
-        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
+        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>.
         /// </param>
         /// <param name="name">Name for remote runspace.</param>
         /// <returns></returns>

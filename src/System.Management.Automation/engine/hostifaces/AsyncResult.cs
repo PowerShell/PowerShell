@@ -32,13 +32,13 @@ namespace System.Management.Automation.Runspaces
         /// Constructor.
         /// </summary>
         /// <param name="ownerId">
-        /// Instance Id of the object creating this instance
+        /// Instance Id of the object creating this instance.
         /// </param>
         /// <param name="callback">
         /// A AsyncCallback to call once the async operation completes.
         /// </param>
         /// <param name="state">
-        /// A user supplied state object
+        /// A user supplied state object.
         /// </param>
         internal AsyncResult(Guid ownerId, AsyncCallback callback, object state)
         {
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Runspaces
         /// Marks the async operation as completed.
         /// </summary>
         /// <param name="exception">
-        /// Exception occured. null if no exception occured
+        /// Exception occured. null if no exception occured.
         /// </param>
         internal void SetAsCompleted(Exception exception)
         {

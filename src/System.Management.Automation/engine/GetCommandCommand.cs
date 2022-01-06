@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The parameter that determines if additional matching commands should be returned.
-        /// (Additional matching functions and aliases are returned from module tables)
+        /// (Additional matching functions and aliases are returned from module tables).
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public SwitchParameter All
@@ -1405,10 +1405,10 @@ namespace Microsoft.PowerShell.Commands
         /// Gets matching commands from the module tables.
         /// </summary>
         /// <param name="commandName">
-        /// The commandname to look for
+        /// The commandname to look for.
         /// </param>
         /// <returns>
-        /// IEnumerable of CommandInfo objects
+        /// IEnumerable of CommandInfo objects.
         /// </returns>
         private IEnumerable<CommandInfo> GetMatchingCommandsFromModules(string commandName)
         {

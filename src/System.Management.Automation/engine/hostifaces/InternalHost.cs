@@ -206,7 +206,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// <seealso cref="ExitNestedPrompt"/>
         /// </summary>
         public override void EnterNestedPrompt()
@@ -384,7 +384,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// <seealso cref="EnterNestedPrompt()"/>
         /// </summary>
         public override void ExitNestedPrompt()
@@ -420,7 +420,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// <seealso cref="NotifyEndApplication"/>
         /// </summary>
         public override void NotifyBeginApplication()

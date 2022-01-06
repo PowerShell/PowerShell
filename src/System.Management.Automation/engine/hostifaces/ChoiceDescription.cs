@@ -23,7 +23,7 @@ namespace System.Management.Automation.Host
         /// Initializes an new instance of ChoiceDescription and defines the Label value.
         /// </summary>
         /// <param name="label">
-        /// The label to identify this field description
+        /// The label to identify this field description.
         /// </param>
         /// <exception cref="System.Management.Automation.PSArgumentException">
         /// <paramref name="label"/> is null or empty.

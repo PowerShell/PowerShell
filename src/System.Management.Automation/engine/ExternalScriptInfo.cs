@@ -28,7 +28,7 @@ namespace System.Management.Automation
         /// The name of the script.
         /// </param>
         /// <param name="path">
-        /// The path to the script
+        /// The path to the script.
         /// </param>
         /// <param name="context">
         /// The context of the currently running engine.
@@ -62,7 +62,7 @@ namespace System.Management.Automation
         /// The name of the script.
         /// </param>
         /// <param name="path">
-        /// The path to the script
+        /// The path to the script.
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="path"/> is null or empty.

@@ -41,7 +41,7 @@ namespace System.Management.Automation.Internal.Host
         /// <value></value>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         ConsoleColor
@@ -76,7 +76,7 @@ namespace System.Management.Automation.Internal.Host
         /// <value></value>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         ConsoleColor
@@ -111,7 +111,7 @@ namespace System.Management.Automation.Internal.Host
         /// <value></value>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         Coordinates
@@ -146,7 +146,7 @@ namespace System.Management.Automation.Internal.Host
         /// <value></value>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         Coordinates
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Internal.Host
         /// <value></value>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         int
@@ -216,7 +216,7 @@ namespace System.Management.Automation.Internal.Host
         /// <value></value>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         Size
@@ -251,7 +251,7 @@ namespace System.Management.Automation.Internal.Host
         /// <value></value>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         Size
@@ -286,7 +286,7 @@ namespace System.Management.Automation.Internal.Host
         /// <value></value>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         Size
@@ -311,7 +311,7 @@ namespace System.Management.Automation.Internal.Host
         /// <value></value>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         Size
@@ -338,7 +338,7 @@ namespace System.Management.Automation.Internal.Host
         /// <returns></returns>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         KeyInfo
@@ -375,7 +375,7 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         void
@@ -395,7 +395,7 @@ namespace System.Management.Automation.Internal.Host
         /// <returns></returns>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         bool
@@ -420,7 +420,7 @@ namespace System.Management.Automation.Internal.Host
         /// <value></value>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         string
@@ -456,7 +456,7 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="contents"></param>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         void
@@ -481,7 +481,7 @@ namespace System.Management.Automation.Internal.Host
         /// </remarks>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         void
@@ -502,7 +502,7 @@ namespace System.Management.Automation.Internal.Host
         /// <returns></returns>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         BufferCell[,]
@@ -529,7 +529,7 @@ namespace System.Management.Automation.Internal.Host
         /// </param>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         void
@@ -555,7 +555,7 @@ namespace System.Management.Automation.Internal.Host
         /// <returns></returns>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override int LengthInBufferCells(string str)
         {
@@ -574,7 +574,7 @@ namespace System.Management.Automation.Internal.Host
         /// <returns></returns>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override int LengthInBufferCells(string str, int offset)
         {
@@ -595,7 +595,7 @@ namespace System.Management.Automation.Internal.Host
         /// <returns></returns>
         /// <exception cref="HostException">
         /// if the RawUI property of the external host is null, possibly because the PSHostRawUserInterface is not
-        ///  implemented by the external host
+        ///  implemented by the external host.
         /// </exception>
         public override
         int

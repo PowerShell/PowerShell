@@ -29,7 +29,7 @@ namespace System.Management.Automation.Host
         /// Initializes a new instance of FieldDescription and defines the Name value.
         /// </summary>
         /// <param name="name">
-        /// The name to identify this field description
+        /// The name to identify this field description.
         /// </param>
         /// <exception cref="System.Management.Automation.PSArgumentException">
         /// <paramref name="name"/> is null or empty.
@@ -85,7 +85,7 @@ namespace System.Management.Automation.Host
         /// Gets the short name of the parameter's type.
         /// </summary>
         /// <value>
-        /// The type name of the parameter
+        /// The type name of the parameter.
         /// </value>
         /// <remarks>
         /// If not already set by a call to <see cref="System.Management.Automation.Host.FieldDescription.SetParameterType"/>,
@@ -358,7 +358,7 @@ namespace System.Management.Automation.Host
         /// <remarks>Used by the console host to
         /// determine if this field description was
         /// modified by the remoting protocol layer
-        /// and take appropriate actions</remarks>
+        /// and take appropriate actions.</remarks>
         internal bool ModifiedByRemotingProtocol
         {
             get
@@ -378,7 +378,7 @@ namespace System.Management.Automation.Host
         /// </summary>
         /// <remarks>Used by the console host to
         /// not cast strings to an arbitrary type,
-        /// but let the server-side do the type conversion
+        /// but let the server-side do the type conversion.
         /// </remarks>
         internal bool IsFromRemoteHost
         {

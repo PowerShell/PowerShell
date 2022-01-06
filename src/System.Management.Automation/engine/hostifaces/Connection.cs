@@ -223,7 +223,7 @@ namespace System.Management.Automation.Runspaces
         /// thread that calls Invoke.
         /// </summary>
         /// <remarks>
-        /// This option is not valid for asynchronous calls
+        /// This option is not valid for asynchronous calls.
         /// </remarks>
         UseCurrentThread = 3
     }
@@ -263,7 +263,7 @@ namespace System.Management.Automation.Runspaces
         /// Copy constructor to support cloning.
         /// </summary>
         /// <param name="runspaceStateInfo">The source
-        /// RunspaceStateInfo
+        /// RunspaceStateInfo.
         /// </param>
         internal RunspaceStateInfo(RunspaceStateInfo runspaceStateInfo)
         {
@@ -292,7 +292,7 @@ namespace System.Management.Automation.Runspaces
         #endregion public_properties
 
         /// <summary>
-        /// Override for ToString()
+        /// Override for ToString().
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -327,7 +327,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="runspaceStateInfo">The information about
         /// current state of the runspace.</param>
-        /// <exception cref="ArgumentNullException">RunspaceStateInfo is null
+        /// <exception cref="ArgumentNullException">RunspaceStateInfo is null.
         /// </exception>
         internal RunspaceStateEventArgs(RunspaceStateInfo runspaceStateInfo)
         {
@@ -588,10 +588,10 @@ namespace System.Management.Automation.Runspaces
         /// ApartmentState of the thread used to execute commands within this Runspace.
         /// </summary>
         /// <remarks>
-        /// Any updates to the value of this property must be done before the Runspace is opened
+        /// Any updates to the value of this property must be done before the Runspace is opened.
         /// </remarks>
         /// <exception cref="InvalidRunspaceStateException">
-        /// An attempt to change this property was made after opening the Runspace
+        /// An attempt to change this property was made after opening the Runspace.
         /// </exception>
         public ApartmentState ApartmentState
         {
@@ -617,13 +617,13 @@ namespace System.Management.Automation.Runspaces
         /// This property determines whether a new thread is create for each invocation.
         /// </summary>
         /// <remarks>
-        /// Any updates to the value of this property must be done before the Runspace is opened
+        /// Any updates to the value of this property must be done before the Runspace is opened.
         /// </remarks>
         /// <exception cref="InvalidRunspaceStateException">
-        /// An attempt to change this property was made after opening the Runspace
+        /// An attempt to change this property was made after opening the Runspace.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// The thread options cannot be changed to the requested value
+        /// The thread options cannot be changed to the requested value.
         /// </exception>
         public abstract PSThreadOptions ThreadOptions
         {
@@ -783,7 +783,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Engine activity id (for ETW tracing)
+        /// Engine activity id (for ETW tracing).
         /// </summary>
         internal Guid EngineActivityId { get; set; } = Guid.Empty;
 
@@ -867,7 +867,7 @@ namespace System.Management.Automation.Runspaces
         ///     Stopping
         ///     Stopped
         ///     Completed
-        ///     Failed
+        ///     Failed.
         /// </remarks>
         internal void UpdateRunspaceAvailability(PipelineState pipelineState, bool raiseEvent, Guid? cmdInstanceId = null)
         {
@@ -1061,7 +1061,7 @@ namespace System.Management.Automation.Runspaces
         ///     Stopping
         ///     Stopped
         ///     Completed
-        ///     Failed
+        ///     Failed.
         /// </remarks>
         internal void UpdateRunspaceAvailability(PSInvocationState invocationState, bool raiseEvent, Guid cmdInstanceId)
         {
@@ -1111,7 +1111,7 @@ namespace System.Management.Automation.Runspaces
         ///     Opened
         ///     Closed
         ///     Closing
-        ///     Broken
+        ///     Broken.
         /// </remarks>
         protected void UpdateRunspaceAvailability(RunspaceState runspaceState, bool raiseEvent)
         {
@@ -1364,7 +1364,7 @@ namespace System.Management.Automation.Runspaces
         /// Opens the runspace synchronously. Runspace must be opened before it can be used.
         /// </summary>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is not BeforeOpen
+        /// RunspaceState is not BeforeOpen.
         /// </exception>
         public abstract void Open();
 
@@ -1372,7 +1372,7 @@ namespace System.Management.Automation.Runspaces
         /// Open the runspace Asynchronously.
         /// </summary>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is not BeforeOpen
+        /// RunspaceState is not BeforeOpen.
         /// </exception>
         public abstract void OpenAsync();
 
@@ -1383,7 +1383,7 @@ namespace System.Management.Automation.Runspaces
         /// Attempts to execute pipelines after a call to close will fail.
         /// </remarks>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is BeforeOpen or Opening
+        /// RunspaceState is BeforeOpen or Opening.
         /// </exception>
         public abstract void Close();
 
@@ -1395,7 +1395,7 @@ namespace System.Management.Automation.Runspaces
         /// close will fail.
         /// </remarks>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is BeforeOpen or Opening
+        /// RunspaceState is BeforeOpen or Opening.
         /// </exception>
         public abstract void CloseAsync();
 
@@ -1413,7 +1413,7 @@ namespace System.Management.Automation.Runspaces
         /// A pipeline pre-filled with a <see cref="Command"/> object for specified command parameter.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// command is null
+        /// command is null.
         /// </exception>
         public abstract Pipeline CreatePipeline(string command);
 
@@ -1426,7 +1426,7 @@ namespace System.Management.Automation.Runspaces
         /// A pipeline pre-filled with a <see cref="Command"/> object for specified command parameter.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// command is null
+        /// command is null.
         /// </exception>
         public abstract Pipeline CreatePipeline(string command, bool addToHistory);
 
@@ -1449,7 +1449,7 @@ namespace System.Management.Automation.Runspaces
         /// A pipeline pre-filled with Command specified in commandString.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// command is null
+        /// command is null.
         /// </exception>
         public abstract Pipeline CreateNestedPipeline(string command, bool addToHistory);
 
@@ -1687,7 +1687,7 @@ namespace System.Management.Automation.Runspaces
         /// The new value of the item being set.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// name is null
+        /// name is null.
         /// </exception>
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
@@ -1709,13 +1709,13 @@ namespace System.Management.Automation.Runspaces
         /// Get a variable out of session state.
         /// </summary>
         /// <param name="name">
-        /// name of variable to look up
+        /// name of variable to look up.
         /// </param>
         /// <returns>
         /// The value of the specified variable.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// name is null
+        /// name is null.
         /// </exception>
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.

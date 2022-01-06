@@ -669,13 +669,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Hold the current command.
         /// </summary>
-        /// <value>Reference to command discovery</value>
+        /// <value>Reference to command discovery.</value>
         internal CommandProcessorBase CurrentCommandProcessor { get; set; }
 
         /// <summary>
         /// Redirect to the CommandDiscovery in the engine.
         /// </summary>
-        /// <value>Reference to command discovery</value>
+        /// <value>Reference to command discovery.</value>
         internal CommandDiscovery CommandDiscovery
         {
             get
@@ -827,7 +827,7 @@ namespace System.Management.Automation
         /// Appends the object to $global:error if it's an error record or exception.
         /// </summary>
         /// <param name="obj">
-        /// ErrorRecord or Exception to be written to $global:error
+        /// ErrorRecord or Exception to be written to $global:error.
         /// </param>
         /// <exception cref="ExtendedTypeSystemException">
         /// (get-only) An error occurred accessing $ERROR.
@@ -969,15 +969,15 @@ namespace System.Management.Automation
         internal RuntimeException CurrentExceptionBeingHandled { get; set; }
 
         /// <summary>
-        /// Shortcut to get at $?
+        /// Shortcut to get at $?.
         /// </summary>
-        /// <value>The current value of $? </value>
+        /// <value>The current value of $?. </value>
         internal bool QuestionMarkVariableValue { get; set; } = true;
 
         /// <summary>
         /// Shortcut to get at $error.
         /// </summary>
-        /// <value>The current value of $global:error </value>
+        /// <value>The current value of $global:error. </value>
         internal object DollarErrorVariable
         {
             get
@@ -1536,13 +1536,13 @@ namespace System.Management.Automation
         /// Constructs an Execution context object for Automation Engine.
         /// </summary>
         /// <param name="engine">
-        /// Engine that hosts this execution context
+        /// Engine that hosts this execution context.
         /// </param>
         /// <param name="hostInterface">
-        /// Interface that should be used for interaction with host
+        /// Interface that should be used for interaction with host.
         /// </param>
         /// <param name="initialSessionState">
-        /// InitialSessionState information
+        /// InitialSessionState information.
         /// </param>
         internal ExecutionContext(AutomationEngine engine, PSHost hostInterface, InitialSessionState initialSessionState)
         {
