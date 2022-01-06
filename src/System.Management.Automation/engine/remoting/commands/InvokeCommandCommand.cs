@@ -266,7 +266,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets strict mode.
         /// </summary>
-        [Experimental("InvokeCommandCommand.PSRedirectToVariable", ExperimentAction.Show)]
+        [Experimental("InvokeCommandCommand.PSStrictModeVersionAssignment", ExperimentAction.Show)]
         [Parameter(ParameterSetName = InvokeCommandCommand.InProcParameterSet)]
         public Version StrictModeVersion
         {
@@ -277,13 +277,13 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (ExperimentalFeature.IsEnabled("PSRedirectToVariable"))
+                if (ExperimentalFeature.IsEnabled("PSStrictModeVersionAssignment"))
                 {
                     _strictmodeversion = value;
                 }
                 else
                 {
-                    throw new ArgumentException("ExperimentalFeature 'PSRedirectToVariable' is not enabled");
+                    throw new ArgumentException("ExperimentalFeature 'PSStrictModeVersionAssignment' is not enabled");
                 }
             }
         }

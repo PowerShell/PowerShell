@@ -142,6 +142,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSExecFeatureName,
                     description: "Add 'exec' built-in command on Linux and macOS"),
+                new ExperimentalFeature(
+                    name: PSStrictModeVersionAssignment,
+                    description: "Add support of setting Strict-Mode with Invoke-Command"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
