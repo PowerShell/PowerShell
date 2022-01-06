@@ -255,7 +255,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <returns>Results from last pipeline stage.</returns>
         /// <exception cref="InvalidOperationException">
-        /// see AddCommand
+        /// see AddCommand.
         /// </exception>
         /// <exception cref="ObjectDisposedException"></exception>
         internal int Add(CommandProcessorBase commandProcessor)
@@ -290,12 +290,12 @@ namespace System.Management.Automation.Internal
         /// FirstCommandCannotHaveInput: <paramref name="readFromCommand"/> must be zero
         ///   for the first command in the pipe
         /// InvalidCommandNumber: there is no command numbered <paramref name="readFromCommand"/>
-        ///   A command can only read from earlier commands; this prevents circular queues
+        ///   A command can only read from earlier commands; this prevents circular queues.
         /// </exception>
         /// <exception cref="InvalidOperationException">
         /// ExecutionAlreadyStarted: pipeline has already started or completed
         /// PipeAlreadyTaken: the downstream pipe of command <paramref name="readFromCommand"/>
-        ///   is already taken
+        ///   is already taken.
         /// </exception>
         private int AddCommand(CommandProcessorBase commandProcessor, int readFromCommand, bool readErrorQueue)
         {
@@ -429,16 +429,16 @@ namespace System.Management.Automation.Internal
         /// ExternalSuccessOutput is set.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        /// ExecutionAlreadyStarted: pipeline has already started or completed
+        /// ExecutionAlreadyStarted: pipeline has already started or completed.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// PipelineExecuteRequiresAtLeastOneCommand
+        /// PipelineExecuteRequiresAtLeastOneCommand.
         /// </exception>
         /// <exception cref="CmdletInvocationException">
-        /// A cmdlet encountered a terminating error
+        /// A cmdlet encountered a terminating error.
         /// </exception>
         /// <exception cref="PipelineStoppedException">
-        /// The pipeline was stopped asynchronously
+        /// The pipeline was stopped asynchronously.
         /// </exception>
         /// <exception cref="ActionPreferenceStopException">
         /// The ActionPreference.Stop or ActionPreference.Inquire policy
@@ -902,18 +902,18 @@ namespace System.Management.Automation.Internal
         /// after the input objects have been entered into the pipe.
         /// </summary>
         /// <param name="input">
-        /// Array of input objects for first stage
+        /// Array of input objects for first stage.
         /// </param>
         /// <returns>
         /// Results from last pipeline stage.  This will be empty if
         /// ExternalSuccessOutput is set.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        /// PipelineExecuteRequiresAtLeastOneCommand
+        /// PipelineExecuteRequiresAtLeastOneCommand.
         /// </exception>
         /// <exception cref="PipelineStoppedException">
         /// The pipeline has already been stopped, or a cmdlet encountered
-        /// a terminating error
+        /// a terminating error.
         /// </exception>
         /// <exception cref="ParameterBindingException">
         /// If any parameters fail to bind,
@@ -976,7 +976,7 @@ namespace System.Management.Automation.Internal
         /// be caught and result in DisposeCommands.
         /// </remarks>
         /// <exception cref="InvalidOperationException">
-        /// PipelineExecuteRequiresAtLeastOneCommand
+        /// PipelineExecuteRequiresAtLeastOneCommand.
         /// </exception>
         /// <exception cref="ParameterBindingException">
         /// If any parameters fail to bind,
@@ -1171,25 +1171,25 @@ namespace System.Management.Automation.Internal
         /// the pipes.
         /// </summary>
         /// <param name="input">
-        /// Array of input objects for first stage
+        /// Array of input objects for first stage.
         /// </param>
         /// <param name="enumerate">If true, unravel the input otherwise pass as one object.</param>
         /// <throws>
-        /// Exception if any cmdlet throws a [terminating] exception
+        /// Exception if any cmdlet throws a [terminating] exception.
         /// </throws>
         /// <remarks>
         /// Inject must always be called in a context where terminating errors will
         /// be caught and result in DisposeCommands.
         /// </remarks>
         /// <exception cref="InvalidOperationException">
-        /// PipelineExecuteRequiresAtLeastOneCommand
+        /// PipelineExecuteRequiresAtLeastOneCommand.
         /// </exception>
         /// <exception cref="PipelineStoppedException">
         /// The pipeline has already been stopped, or a cmdlet encountered
-        /// a terminating error
+        /// a terminating error.
         /// </exception>
         /// <exception cref="PipelineClosedException">
-        /// The ExternalWriter stream is closed
+        /// The ExternalWriter stream is closed.
         /// </exception>
         private void Inject(object input, bool enumerate)
         {
@@ -1500,7 +1500,7 @@ namespace System.Management.Automation.Internal
         /// reader is closed, usually by another thread.
         /// </remarks>
         /// <exception cref="InvalidOperationException">
-        /// ExecutionAlreadyStarted: pipeline has already started or completed
+        /// ExecutionAlreadyStarted: pipeline has already started or completed.
         /// </exception>
         internal PipelineReader<object> ExternalInput
         {
@@ -1529,7 +1529,7 @@ namespace System.Management.Automation.Internal
         /// close ExternalSuccessOutput when the pipeline is finished.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        /// ExecutionAlreadyStarted: pipeline has already started or completed
+        /// ExecutionAlreadyStarted: pipeline has already started or completed.
         /// </exception>
         internal PipelineWriter ExternalSuccessOutput
         {
@@ -1559,7 +1559,7 @@ namespace System.Management.Automation.Internal
         /// close ExternalErrorOutput when the pipeline is finished.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        /// ExecutionAlreadyStarted: pipeline has already started or completed
+        /// ExecutionAlreadyStarted: pipeline has already started or completed.
         /// </exception>
         internal PipelineWriter ExternalErrorOutput
         {

@@ -379,7 +379,7 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// Read a value from the configuration file.
         /// </summary>
-        /// <typeparam name="T">The type of the value</typeparam>
+        /// <typeparam name="T">The type of the value.</typeparam>
         /// <param name="scope">The ConfigScope of the configuration file to update.</param>
         /// <param name="key">The string key of the value.</param>
         /// <param name="defaultValue">The default value to return if the key is not present.</param>
@@ -458,7 +458,7 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// Update a value in the configuration file.
         /// </summary>
-        /// <typeparam name="T">The type of the value</typeparam>
+        /// <typeparam name="T">The type of the value.</typeparam>
         /// <param name="scope">The ConfigScope of the configuration file to update.</param>
         /// <param name="key">The string key of the value.</param>
         /// <param name="value">The value to set.</param>
@@ -558,7 +558,7 @@ namespace System.Management.Automation.Configuration
         }
 
         /// <summary>
-        /// TODO: Should this return success, fail, or throw?
+        /// TODO: Should this return success, fail, or throw?.
         /// </summary>
         /// <typeparam name="T">The type of value to write.</typeparam>
         /// <param name="scope">The ConfigScope of the file to update.</param>
@@ -575,7 +575,7 @@ namespace System.Management.Automation.Configuration
         }
 
         /// <summary>
-        /// TODO: Should this return success, fail, or throw?
+        /// TODO: Should this return success, fail, or throw?.
         /// </summary>
         /// <typeparam name="T">The type of value to remove.</typeparam>
         /// <param name="scope">The ConfigScope of the file to update.</param>
@@ -635,7 +635,7 @@ namespace System.Management.Automation.Configuration
     ///       "ConsoleSessionConfigurationName": "name"
     ///     }
     ///   }
-    /// }
+    /// }.
     /// </summary>
     internal sealed class PowerShellPolicies
     {

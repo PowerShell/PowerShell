@@ -407,13 +407,13 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="obj">The object to add to the pipe.</param>
         /// <remarks>
-        /// AutomationNull.Value is ignored
+        /// AutomationNull.Value is ignored.
         /// </remarks>
         /// <exception cref="PipelineStoppedException">
-        /// a terminating error occurred, or the pipeline was otherwise stopped
+        /// a terminating error occurred, or the pipeline was otherwise stopped.
         /// </exception>
         /// <exception cref="PipelineClosedException">
-        /// The ExternalWriter stream is closed
+        /// The ExternalWriter stream is closed.
         /// </exception>
         internal void Add(object obj)
         {
@@ -483,14 +483,14 @@ namespace System.Management.Automation.Internal
         /// external output.
         /// </summary>
         /// <param name="objects">
-        /// Each of the objects are added to the pipe
+        /// Each of the objects are added to the pipe.
         /// </param>
         /// <exception cref="PipelineStoppedException">
         /// The pipeline has already been stopped,
         /// or a terminating error occurred in a downstream cmdlet.
         /// </exception>
         /// <exception cref="PipelineClosedException">
-        /// The ExternalWriter stream is closed
+        /// The ExternalWriter stream is closed.
         /// </exception>
         internal void AddItems(object objects)
         {
@@ -548,7 +548,7 @@ namespace System.Management.Automation.Internal
         /// This will try the ExternalReader if there are no queued objects.
         /// </summary>
         /// <returns>
-        /// object that is retrieved, or AutomationNull.Value if none
+        /// object that is retrieved, or AutomationNull.Value if none.
         /// </returns>
         internal object Retrieve()
         {

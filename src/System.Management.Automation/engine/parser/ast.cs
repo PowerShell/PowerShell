@@ -77,7 +77,7 @@ namespace System.Management.Automation.Language
         string GetWithInputHandlingForInvokeCommand();
 
         /// <summary>
-        /// Return value is Tuple[paramText, scriptBlockText]
+        /// Return value is Tuple[paramText, scriptBlockText].
         /// </summary>
         Tuple<string, string> GetWithInputHandlingForInvokeCommandWithUsingExpression(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple);
 
@@ -198,7 +198,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <returns>The object represented by the AST as a safe object.</returns>
         /// <exception cref="InvalidOperationException">
-        /// If <paramref name="extent"/> is deemed unsafe
+        /// If <paramref name="extent"/> is deemed unsafe.
         /// </exception>
         public object SafeGetValue()
         {
@@ -234,7 +234,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Copy a collection of AST elements.
         /// </summary>
-        /// <typeparam name="T">The actual AST type</typeparam>
+        /// <typeparam name="T">The actual AST type.</typeparam>
         /// <param name="elements">Collection of ASTs.</param>
         /// <returns></returns>
         internal static T[] CopyElements<T>(ReadOnlyCollection<T> elements) where T : Ast
@@ -253,7 +253,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Copy a single AST element.
         /// </summary>
-        /// <typeparam name="T">The actual AST type</typeparam>
+        /// <typeparam name="T">The actual AST type.</typeparam>
         /// <param name="element">An AST instance.</param>
         /// <returns></returns>
         internal static T CopyElement<T>(T element) where T : Ast
@@ -529,7 +529,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// The flags specified and their value. The value is null if it's not specified.
         /// e.g. switch -regex -file c:\demo.txt  --->   regex -- null
-        ///                                              file  -- { c:\demo.txt }
+        ///                                              file  -- { c:\demo.txt }.
         /// </summary>
         /// TODO, Changing this to an IDictionary because ReadOnlyDictionary is available only in .NET 4.5
         /// This is a temporary workaround and will be fixed later. Tracked by Win8: 354135
@@ -2093,7 +2093,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// If the source omitted an expression, this returns true, otherwise false.  This allows a caller to distinguish
-        /// the difference between <c>[Parameter(Mandatory)]</c> and <c>[Parameter(Mandatory=$true)]</c>
+        /// the difference between <c>[Parameter(Mandatory)]</c> and <c>[Parameter(Mandatory=$true)]</c>.
         /// </summary>
         public bool ExpressionOmitted { get; }
 
@@ -2921,7 +2921,7 @@ namespace System.Management.Automation.Language
         /// <param name="extent">The extent of the using statement including the using keyword.</param>
         /// <param name="kind">
         /// The kind of using statement, cannot be <see cref="System.Management.Automation.Language.UsingStatementKind.Command"/>
-        /// or <see cref="System.Management.Automation.Language.UsingStatementKind.Type"/>
+        /// or <see cref="System.Management.Automation.Language.UsingStatementKind.Type"/>.
         /// </param>
         /// <param name="name">The item (assembly, module, or namespace) being used.</param>
         public UsingStatementAst(IScriptExtent extent, UsingStatementKind kind, StringConstantExpressionAst name)
@@ -3003,7 +3003,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="extent">The extent of the using statement including the using keyword.</param>
         /// <param name="aliasName">The name of the alias.</param>
-        /// <param name="moduleSpecification">The module being aliased. Hashtable that describes <see cref="Microsoft.PowerShell.Commands.ModuleSpecification"/></param>
+        /// <param name="moduleSpecification">The module being aliased. Hashtable that describes <see cref="Microsoft.PowerShell.Commands.ModuleSpecification"/>.</param>
         public UsingStatementAst(IScriptExtent extent, StringConstantExpressionAst aliasName, HashtableAst moduleSpecification)
             : base(extent)
         {
@@ -3815,7 +3815,7 @@ namespace System.Management.Automation.Language
         /// The parameters specified immediately after the function name, or null if no parameters were specified.
         /// <para>It is possible that this property may have a value and <see cref="ScriptBlockAst.ParamBlock"/> to also have a
         /// value.  Normally this is not allowed in a valid script, but in one rare case it is allowed:</para>
-        /// <c>function foo() { param($a) }</c>
+        /// <c>function foo() { param($a) }</c>.
         /// <para>
         /// In this example, the parameters specified after the function name must be empty or the script is not valid.
         /// </para>
@@ -5460,7 +5460,7 @@ namespace System.Management.Automation.Language
         ///     try { foo } catch { . { throw } } # rethrow
         ///     try { foo } catch { function foo { throw } } # rethrow
         ///     try { foo } finally { throw } # not a rethrow
-        /// </c>
+        /// </c>.
         /// </summary>
         public bool IsRethrow
         {
@@ -6031,7 +6031,7 @@ namespace System.Management.Automation.Language
         /// <para>
         /// For example, if the command name is in a variable: <example>&amp; $foo</example>, then the parser cannot know which command is executed.
         /// Similarly, if the command is being invoked in a module: <example>&amp; (gmo SomeModule) Bar</example>, then the parser does not know the
-        /// command name is Bar because the parser can't determine that the expression <code>(gmo SomeModule)</code> returns a module instead
+        /// command name is Bar because the parser can't determine that the expression. <code>(gmo SomeModule)</code> returns a module instead
         /// of a string.
         /// </para>
         /// </summary>
@@ -6241,7 +6241,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The ast representing a redirection that merges 2 streams, e.g. <c>dir 2>&amp;1</c>
+    /// The ast representing a redirection that merges 2 streams, e.g. <c>dir 2>&amp;1</c>.
     /// </summary>
     public class MergingRedirectionAst : RedirectionAst
     {
@@ -6250,7 +6250,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="extent">The extent of the redirection.</param>
         /// <param name="from">The stream to read from.</param>
-        /// <param name="to">The stream to write to - must always be <see cref="RedirectionStream.Output"/></param>
+        /// <param name="to">The stream to write to - must always be <see cref="RedirectionStream.Output"/>.</param>
         /// <exception cref="PSArgumentNullException">If <paramref name="extent"/> is null.</exception>
         public MergingRedirectionAst(IScriptExtent extent, RedirectionStream from, RedirectionStream to)
             : base(extent, from)
@@ -6639,7 +6639,7 @@ namespace System.Management.Automation.Language
         /// Generate ast that defines a function for this <see cref="ConfigurationDefinitionAst"/> object.
         /// </summary>
         /// <returns>
-        /// The <see cref="PipelineAst"/> that defines a function for this <see cref="ConfigurationDefinitionAst"/> object
+        /// The <see cref="PipelineAst"/> that defines a function for this <see cref="ConfigurationDefinitionAst"/> object.
         /// </returns>
         internal PipelineAst GenerateSetItemPipelineAst()
         {
@@ -7367,7 +7367,7 @@ namespace System.Management.Automation.Language
         /// <remarks>
         /// We should preserve the partial output in case of exception only if the SubExpression/ParenExpression meets following conditions:
         ///  1. the SubExpr/ParenExpr is the first expression, and the only element in a pipeline
-        ///  2. the pipeline's parent is a StatementBlockAst or NamedBlockAst. e.g. $(1; throw 2) OR if (true) { $(1; throw 2) }
+        ///  2. the pipeline's parent is a StatementBlockAst or NamedBlockAst. e.g. $(1; throw 2) OR if (true) { $(1; throw 2) }.
         /// </remarks>
         /// <returns></returns>
         internal virtual bool ShouldPreserveOutputInCaseOfException()
@@ -7787,8 +7787,8 @@ namespace System.Management.Automation.Language
         /// <param name="extent">
         /// The extent of the expression, starting with the attribute and ending after the expression being attributed.
         /// </param>
-        /// <param name="attribute">The attribute being applied to <paramref name="child"/></param>
-        /// <param name="child">The expression being attributed by <paramref name="attribute"/></param>
+        /// <param name="attribute">The attribute being applied to <paramref name="child"/>.</param>
+        /// <param name="child">The expression being attributed by <paramref name="attribute"/>.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/>, <paramref name="attribute"/>, or <paramref name="child"/> is null.
         /// </exception>
@@ -8569,11 +8569,11 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Check if the type names a <see cref="System.Type"/>, false otherwise.
         /// </summary>
-        /// <param name="type">The given <see cref="System.Type"/></param>
+        /// <param name="type">The given <see cref="System.Type"/>.</param>
         /// <returns>Returns true if the type names a <see cref="System.Type"/>, false otherwise.</returns>
         /// <remarks>
         ///  This helper function is now used to check 'Void' type only;
-        ///  Other types may not work, for example, 'int'
+        ///  Other types may not work, for example, 'int'.
         /// </remarks>
         internal bool IsType(Type type)
         {
@@ -9275,7 +9275,7 @@ namespace System.Management.Automation.Language
         /// The name of the variable.  A leading '$' or '@' is not removed, those characters are assumed to be part of
         /// the variable name.
         /// </param>
-        /// <param name="splatted">True if splatting, like <c>@PSBoundParameters</c>, false otherwise, like <c>$false</c></param>
+        /// <param name="splatted">True if splatting, like <c>@PSBoundParameters</c>, false otherwise, like <c>$false</c>.</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="variableName"/> is null, or if <paramref name="variableName"/>
         /// is an empty string.
@@ -9335,7 +9335,7 @@ namespace System.Management.Automation.Language
         /// Check if the variable is one of $true, $false and $null.
         /// </summary>
         /// <returns>
-        /// True if it is a constant variable
+        /// True if it is a constant variable.
         /// </returns>
         public bool IsConstantVariable()
         {
@@ -9565,7 +9565,7 @@ namespace System.Management.Automation.Language
         /// A here string enclosed in single quotes, e.g. <c> @'
         /// a here string
         /// '@
-        /// </c>
+        /// </c>.
         /// </summary>
         SingleQuotedHereString,
 
@@ -9578,7 +9578,7 @@ namespace System.Management.Automation.Language
         /// A here string enclosed in double quotes, e.g. <c> @"
         /// a here string
         /// "@
-        /// </c>
+        /// </c>.
         /// </summary>
         DoubleQuotedHereString,
 
@@ -9694,7 +9694,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="extent">The extent of the string.</param>
         /// <param name="value">The unexpanded value of the string.</param>
-        /// <param name="type">The kind of string, must be one of<list>
+        /// <param name="type">The kind of string, must be one of.<list>
         /// <see cref="System.Management.Automation.Language.StringConstantType.DoubleQuoted"/>
         /// <see cref="System.Management.Automation.Language.StringConstantType.DoubleQuotedHereString"/>
         /// <see cref="System.Management.Automation.Language.StringConstantType.BareWord"/>
@@ -10149,7 +10149,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The ast that represents an expression (or pipeline) that is enclosed in parentheses, e.g. <c>(1)</c> or <c>(dir)</c>
+    /// The ast that represents an expression (or pipeline) that is enclosed in parentheses, e.g. <c>(1)</c> or <c>(dir)</c>.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Paren")]
     public class ParenExpressionAst : ExpressionAst, ISupportsAssignment
@@ -10276,7 +10276,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The ast that represents a "using" expression, e.g. <c>$using:pshome</c>
+    /// The ast that represents a "using" expression, e.g. <c>$using:pshome</c>.
     /// </summary>
     public class UsingExpressionAst : ExpressionAst
     {
@@ -10333,10 +10333,10 @@ namespace System.Management.Automation.Language
         /// Get the underlying "using variable" from a UsingExpressionAst.
         /// </summary>
         /// <param name="usingExpressionAst">
-        /// A UsingExpressionAst
+        /// A UsingExpressionAst.
         /// </param>
         /// <returns>
-        /// The underlying VariableExpressionAst of the UsingExpression
+        /// The underlying VariableExpressionAst of the UsingExpression.
         /// </returns>
         [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "We want to get the underlying variable only for the UsingExpressionAst.")]
         public static VariableExpressionAst ExtractUsingVariable(UsingExpressionAst usingExpressionAst)

@@ -316,7 +316,7 @@ namespace System.Management.Automation.Language
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         Iin = 73,
 
-        /// <summary>The case insensitive notin operator '-inotin' or '-notin'</summary>
+        /// <summary>The case insensitive notin operator '-inotin' or '-notin'.</summary>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         Inotin = 74,
 
@@ -540,52 +540,52 @@ namespace System.Management.Automation.Language
         /// <summary>The 'sequence' keyword.</summary>
         Sequence = 153,
 
-        /// <summary>The 'InlineScript' keyword</summary>
+        /// <summary>The 'InlineScript' keyword.</summary>
         InlineScript = 154,
 
-        /// <summary>The "configuration" keyword</summary>
+        /// <summary>The "configuration" keyword.</summary>
         Configuration = 155,
 
-        /// <summary>The token kind for dynamic keywords</summary>
+        /// <summary>The token kind for dynamic keywords.</summary>
         DynamicKeyword = 156,
 
-        /// <summary>The 'public' keyword</summary>
+        /// <summary>The 'public' keyword.</summary>
         Public = 157,
 
-        /// <summary>The 'private' keyword</summary>
+        /// <summary>The 'private' keyword.</summary>
         Private = 158,
 
-        /// <summary>The 'static' keyword</summary>
+        /// <summary>The 'static' keyword.</summary>
         Static = 159,
 
-        /// <summary>The 'interface' keyword</summary>
+        /// <summary>The 'interface' keyword.</summary>
         Interface = 160,
 
-        /// <summary>The 'enum' keyword</summary>
+        /// <summary>The 'enum' keyword.</summary>
         Enum = 161,
 
-        /// <summary>The 'namespace' keyword</summary>
+        /// <summary>The 'namespace' keyword.</summary>
         Namespace = 162,
 
-        /// <summary>The 'module' keyword</summary>
+        /// <summary>The 'module' keyword.</summary>
         Module = 163,
 
-        /// <summary>The 'type' keyword</summary>
+        /// <summary>The 'type' keyword.</summary>
         Type = 164,
 
-        /// <summary>The 'assembly' keyword</summary>
+        /// <summary>The 'assembly' keyword.</summary>
         Assembly = 165,
 
-        /// <summary>The 'command' keyword</summary>
+        /// <summary>The 'command' keyword.</summary>
         Command = 166,
 
-        /// <summary>The 'hidden' keyword</summary>
+        /// <summary>The 'hidden' keyword.</summary>
         Hidden = 167,
 
-        /// <summary>The 'base' keyword</summary>
+        /// <summary>The 'base' keyword.</summary>
         Base = 168,
 
-        /// <summary>The 'default' keyword</summary>
+        /// <summary>The 'default' keyword.</summary>
         Default = 169,
 
         /// <summary>The 'clean' keyword.</summary>
@@ -613,7 +613,7 @@ namespace System.Management.Automation.Language
         BinaryPrecedenceLogical = 0x1,
 
         /// <summary>
-        /// The precedence of the bitwise operators '-band', '-bor', and '-bxor'
+        /// The precedence of the bitwise operators '-band', '-bor', and '-bxor'.
         /// </summary>
         BinaryPrecedenceBitwise = 0x2,
 
@@ -692,7 +692,7 @@ namespace System.Management.Automation.Language
         SpecialOperator = 0x00001000,
 
         /// <summary>
-        /// The token is one of the assignment operators: '=', '+=', '-=', '*=', '/=', '%=' or '??='
+        /// The token is one of the assignment operators: '=', '+=', '-=', '*=', '/=', '%=' or '??='.
         /// </summary>
         AssignmentOperator = 0x00002000,
 

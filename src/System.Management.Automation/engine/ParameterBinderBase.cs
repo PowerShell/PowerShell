@@ -1942,9 +1942,9 @@ namespace System.Management.Automation
     /// AutomationNull.Value however AutomationNull.Value as a parameter value
     /// is used to say "use the default value for this object" whereas UnboundParameter
     /// says "this parameter is unbound, use the default only if the target type
-    /// supports permits this."
+    /// supports permits this.".
     /// </summary>
-    /// <remarks>It's a singleton class. Sealed to prevent subclassing</remarks>
+    /// <remarks>It's a singleton class. Sealed to prevent subclassing.</remarks>
     internal sealed class UnboundParameter
     {
         #region ctor

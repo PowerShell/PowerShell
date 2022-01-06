@@ -88,7 +88,7 @@ namespace System.Management.Automation
         /// The name of the parameter to get the value for.
         /// </param>
         /// <returns>
-        /// The value of the specified parameter
+        /// The value of the specified parameter.
         /// </returns>
         internal override object GetDefaultParameterValue(string name)
         {

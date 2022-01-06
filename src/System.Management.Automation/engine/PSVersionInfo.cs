@@ -670,7 +670,7 @@ namespace System.Management.Automation
         /// No exceptions are raised.
         /// </summary>
         /// <param name="version">The string to parse.</param>
-        /// <param name="result">The return value when the string is a valid <see cref="SemanticVersion"/></param>
+        /// <param name="result">The return value when the string is a valid <see cref="SemanticVersion"/>.</param>
         public static bool TryParse(string version, out SemanticVersion result)
         {
             if (version != null)
@@ -801,7 +801,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Implement ToString()
+        /// Implement ToString().
         /// </summary>
         public override string ToString()
         {
@@ -846,7 +846,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Implement <see cref="IComparable.CompareTo"/>
+        /// Implement <see cref="IComparable.CompareTo"/>.
         /// </summary>
         public int CompareTo(object version)
         {
@@ -865,7 +865,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Implement <see cref="IComparable{T}.CompareTo"/>.
-        /// Meets SymVer 2.0 p.11 https://semver.org/
+        /// Meets SymVer 2.0 p.11 https://semver.org/.
         /// </summary>
         public int CompareTo(SemanticVersion value)
         {
@@ -886,7 +886,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Override <see cref="object.Equals(object)"/>
+        /// Override <see cref="object.Equals(object)"/>.
         /// </summary>
         public override bool Equals(object obj)
         {
@@ -894,7 +894,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Implement <see cref="IEquatable{T}.Equals(T)"/>
+        /// Implement <see cref="IEquatable{T}.Equals(T)"/>.
         /// </summary>
         public bool Equals(SemanticVersion other)
         {
@@ -905,7 +905,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Override <see cref="object.GetHashCode()"/>
+        /// Override <see cref="object.GetHashCode()"/>.
         /// </summary>
         public override int GetHashCode()
         {

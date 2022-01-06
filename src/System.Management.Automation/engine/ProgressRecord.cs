@@ -60,7 +60,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Cloning constructor (all fields are value types - can treat our implementation of cloning as "deep" copy)
+        /// Cloning constructor (all fields are value types - can treat our implementation of cloning as "deep" copy).
         /// </summary>
         /// <param name="other"></param>
         internal ProgressRecord(ProgressRecord other)
@@ -152,7 +152,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets and sets the current status of the operation, e.g., "35 of 50 items Copied." or "95% completed." or "100 files purged."
+        /// Gets and sets the current status of the operation, e.g., "35 of 50 items Copied." or "95% completed." or "100 files purged.".
         /// </summary>
         public
         string
@@ -228,10 +228,10 @@ namespace System.Management.Automation
         /// Gets and sets the estimate of time remaining until this activity is completed.  This can be based upon a measurement of time since
         /// started and the percent complete or another approach deemed appropriate by the caller.
         ///
-        /// Normally displayed beside the progress bar, as "N seconds remaining."
+        /// Normally displayed beside the progress bar, as "N seconds remaining.".
         /// </summary>
         ///<remarks>
-        /// A value less than 0 means "don't display a time remaining."
+        /// A value less than 0 means "don't display a time remaining.".
         /// </remarks>
         public
         int
@@ -274,7 +274,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.ToString"/>
+        /// Overrides <see cref="System.Object.ToString"/>.
         /// </summary>
         /// <returns>
         /// "parent = a id = b act = c stat = d cur = e pct = f sec = g type = h" where
@@ -350,7 +350,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentOutOfRangeException">
         /// Thrown when
         /// 1) <paramref name="startTime"/> is in the future
-        /// 2) <paramref name="expectedDuration"/> is negative or zero
+        /// 2) <paramref name="expectedDuration"/> is negative or zero.
         /// </exception>
         internal static int GetPercentageComplete(DateTime startTime, TimeSpan expectedDuration)
         {
@@ -451,13 +451,13 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="progressAsPSObject">PSObject to rehydrate.</param>
         /// <returns>
-        /// ProgressRecord rehydrated from a PSObject property bag
+        /// ProgressRecord rehydrated from a PSObject property bag.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the PSObject is null.
         /// </exception>
         /// <exception cref="System.Management.Automation.Remoting.PSRemotingDataStructureException">
-        /// Thrown when the PSObject is not in the expected format
+        /// Thrown when the PSObject is not in the expected format.
         /// </exception>
         internal static ProgressRecord FromPSObjectForRemoting(PSObject progressAsPSObject)
         {

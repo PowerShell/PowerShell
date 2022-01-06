@@ -128,7 +128,7 @@ namespace System.Management.Automation.Language
         ///
         ///     At {filename}:{line} char:{column}
         ///     + $x + @y
-        ///     +    ~
+        ///     +    ~.
         /// </summary>
         internal static string VerboseMessage(IScriptExtent position)
         {
@@ -742,12 +742,12 @@ namespace System.Management.Automation.Language
         public int EndColumnNumber { get { return _endPosition.ColumnNumber; } }
 
         /// <summary>
-        /// The start offset (always returns 0)
+        /// The start offset (always returns 0).
         /// </summary>
         public int StartOffset { get { return 0; } }
 
         /// <summary>
-        /// The end offset (always returns 0)
+        /// The end offset (always returns 0).
         /// </summary>
         public int EndOffset { get { return 0; } }
 

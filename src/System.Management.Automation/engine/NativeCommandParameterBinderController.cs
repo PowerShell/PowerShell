@@ -90,7 +90,7 @@ namespace System.Management.Automation
         /// </param>
         /// <remarks>
         /// For any parameters that do not have a name, they are added to the command
-        /// line arguments for the command
+        /// line arguments for the command.
         /// </remarks>
         internal override Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> parameters)
         {

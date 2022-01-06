@@ -81,7 +81,7 @@ namespace System.Management.Automation
         /// If <paramref name="namespacesID"/> refers to a provider that does not exist.
         /// </exception>
         /// <exception cref="DriveNotFoundException">
-        /// If a current drive cannot be found for the provider <paramref name="providerName"/>
+        /// If a current drive cannot be found for the provider <paramref name="providerName"/>.
         /// </exception>
         public PathInfo CurrentProviderLocation(string providerName)
         {
@@ -98,7 +98,7 @@ namespace System.Management.Automation
         /// Gets the current location for the file system provider.
         /// </summary>
         /// <exception cref="DriveNotFoundException">
-        /// If a current drive cannot be found for the FileSystem provider
+        /// If a current drive cannot be found for the FileSystem provider.
         /// </exception>
         public PathInfo CurrentFileSystemLocation
         {
@@ -844,7 +844,7 @@ namespace System.Management.Automation
         /// </returns>
         /// <remarks>
         /// A provider-qualified path is a path in the following form:
-        /// providerId::provider-internal-path
+        /// providerId::provider-internal-path.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
@@ -873,7 +873,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// A path is an absolute drive-qualified path if it has the following
         /// form:
-        /// drive-name:drive-relative-path
+        /// drive-name:drive-relative-path.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.

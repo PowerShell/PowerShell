@@ -2366,7 +2366,7 @@ namespace System.Management.Automation.Language
         /// <param name="elements"></param>
         /// <returns>
         /// true  -- InlineScript parsing successful
-        /// false -- InlineScript parsing unsuccessful
+        /// false -- InlineScript parsing unsuccessful.
         /// </returns>
         private bool InlineScriptRule(Token inlineScriptToken, List<CommandElementAst> elements)
         {

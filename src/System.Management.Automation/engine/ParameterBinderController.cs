@@ -670,7 +670,7 @@ namespace System.Management.Automation
         /// The current parameter set flags that are valid.
         /// </param>
         /// <param name="defaultParameterSet">
-        /// The parameter set to use to disambiguate parameters that have the same position
+        /// The parameter set to use to disambiguate parameters that have the same position.
         /// </param>
         /// <param name="outgoingBindingException">
         /// Returns the underlying parameter binding exception if any was generated.
@@ -878,7 +878,7 @@ namespace System.Management.Automation
         /// The sorted dictionary of positional parameters.
         /// </param>
         /// <param name="validParameterSets">
-        /// Valid parameter sets
+        /// Valid parameter sets.
         /// </param>
         internal static void UpdatePositionalDictionary(
             SortedDictionary<int, Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter>> positionalParameterDictionary,

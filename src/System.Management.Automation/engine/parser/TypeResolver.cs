@@ -136,7 +136,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// A type IsPublic if IsPublic or (IsNestedPublic and is nested in public type(s))
+        /// A type IsPublic if IsPublic or (IsNestedPublic and is nested in public type(s)).
         /// </summary>
         internal static bool IsPublic(Type type)
         {

@@ -71,7 +71,7 @@ namespace System.Management.Automation
         #region GetProperty
 
         /// <summary>
-        /// Gets the specified properties from the specified item(s)
+        /// Gets the specified properties from the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path to the item to get the properties from.
@@ -118,7 +118,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the specified properties from the specified item(s)
+        /// Gets the specified properties from the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path(s) to the item(s) to get the properties from.
@@ -169,7 +169,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the specified properties from the specified item(s)
+        /// Gets the specified properties from the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path to the item to get the properties from.
@@ -273,13 +273,13 @@ namespace System.Management.Automation
         #region SetProperty
 
         /// <summary>
-        /// Sets the specified properties on the specified item(s)
+        /// Sets the specified properties on the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path to the item to set the properties on.
         /// </param>
         /// <param name="propertyValue">
-        /// The properties that are to be set on the item
+        /// The properties that are to be set on the item.
         /// </param>
         /// <returns>
         /// A PSObject for each item that had the property set on it.
@@ -318,13 +318,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the specified properties on the specified item(s)
+        /// Sets the specified properties on the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path(s) to the item(s) to set the properties on.
         /// </param>
         /// <param name="propertyValue">
-        /// The properties that are to be set on the item
+        /// The properties that are to be set on the item.
         /// </param>
         /// <param name="force">
         /// Passed on to providers to force operations.
@@ -371,13 +371,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets the specified properties on the specified item(s)
+        /// Sets the specified properties on the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path to the item to set the properties on.
         /// </param>
         /// <param name="propertyValue">
-        /// The properties that are to be set on the item
+        /// The properties that are to be set on the item.
         /// </param>
         /// <param name="context">
         /// The context under which the command is running.
@@ -426,7 +426,7 @@ namespace System.Management.Automation
         /// The path to the item if it was specified on the command line.
         /// </param>
         /// <param name="propertyValue">
-        /// The properties that are to be set on the item
+        /// The properties that are to be set on the item.
         /// </param>
         /// <param name="context">
         /// The context which the core command is running.
@@ -471,7 +471,7 @@ namespace System.Management.Automation
         #region ClearProperty
 
         /// <summary>
-        /// Clear the specified properties from the specified item(s)
+        /// Clear the specified properties from the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path to the item to clear the properties from.
@@ -513,7 +513,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Clear the specified properties from the specified item(s)
+        /// Clear the specified properties from the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path(s) to the item(s) to clear the properties from.
@@ -563,7 +563,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Clears the specified properties from the specified item(s)
+        /// Clears the specified properties from the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path to the item to clear the properties from.
@@ -894,7 +894,7 @@ namespace System.Management.Automation
         #region RemoveProperty
 
         /// <summary>
-        /// Removes a property from the specified item(s)
+        /// Removes a property from the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path to the item(s) on which the property should be removed.
@@ -934,7 +934,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes a property from the specified item(s)
+        /// Removes a property from the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path(s) to the item(s) on which the property should be removed.
@@ -980,7 +980,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes a property from the specified item(s)
+        /// Removes a property from the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path to the item(s) on which the property should be removed.
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation
         #region RenameProperty
 
         /// <summary>
-        /// Renames a property on the specified item(s)
+        /// Renames a property on the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path to the item(s) on which the property should be renamed.
@@ -1127,7 +1127,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Renames a property on the specified item(s)
+        /// Renames a property on the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path(s) to the item(s) on which the property should be renamed.
@@ -1185,7 +1185,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Renames a property on the specified item(s)
+        /// Renames a property on the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path to the item(s) on which the property should be renamed.
@@ -1295,7 +1295,7 @@ namespace System.Management.Automation
         #region CopyProperty
 
         /// <summary>
-        /// Copies a property on the specified item(s)
+        /// Copies a property on the specified item(s).
         /// </summary>
         /// <param name="sourcePath">
         /// The path to the item(s) on which the property should be copied.
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copies a property on the specified item(s)
+        /// Copies a property on the specified item(s).
         /// </summary>
         /// <param name="sourcePath">
         /// The path(s) to the item(s) on which the property should be copied.
@@ -1428,7 +1428,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copies a property on the specified item(s)
+        /// Copies a property on the specified item(s).
         /// </summary>
         /// <param name="sourcePath">
         /// The path to the item(s) on which the property should be copied.
@@ -1554,7 +1554,7 @@ namespace System.Management.Automation
         #region MoveProperty
 
         /// <summary>
-        /// Moves a property on the specified item(s)
+        /// Moves a property on the specified item(s).
         /// </summary>
         /// <param name="sourcePath">
         /// The path to the item(s) on which the property should be moved.
@@ -1620,7 +1620,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Moves a property on the specified item(s)
+        /// Moves a property on the specified item(s).
         /// </summary>
         /// <param name="sourcePath">
         /// The path(s) to the item(s) on which the property should be moved.
@@ -1694,7 +1694,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Moves a property on the specified item(s)
+        /// Moves a property on the specified item(s).
         /// </summary>
         /// <param name="sourcePath">
         /// The path to the item(s) on which the property should be moved.

@@ -27,7 +27,7 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>
     /// Most native commands only support text. Other formats
-    /// are supported by minishell
+    /// are supported by minishell.
     /// </remarks>
     internal enum NativeCommandIOFormat
     {
@@ -111,7 +111,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the data from this object.
         /// </summary>
-        /// <value>The data</value>
+        /// <value>The data.</value>
         internal object Data { get; }
 
         /// <summary>
@@ -268,7 +268,7 @@ namespace System.Management.Automation
         /// The execution context for this command.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="applicationInfo"/> or <paramref name="context"/> is null
+        /// <paramref name="applicationInfo"/> or <paramref name="context"/> is null.
         /// </exception>
         internal NativeCommandProcessor(ApplicationInfo applicationInfo, ExecutionContext context)
             : base(applicationInfo)
@@ -497,10 +497,10 @@ namespace System.Management.Automation
         /// Executes the native command once all of the input has been gathered.
         /// </summary>
         /// <exception cref="PipelineStoppedException">
-        /// The pipeline is stopping
+        /// The pipeline is stopping.
         /// </exception>
         /// <exception cref="ApplicationFailedException">
-        /// The native command could not be run
+        /// The native command could not be run.
         /// </exception>
         private void InitNativeProcess()
         {
@@ -1038,7 +1038,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Kills the process tree (process + associated child processes)
+        /// Kills the process tree (process + associated child processes).
         /// </summary>
         /// <param name="processToKill"></param>
         /// <param name="currentlyRunningProcs"></param>
@@ -2044,7 +2044,7 @@ namespace System.Management.Automation
         /// Start writing input to process.
         /// </summary>
         /// <param name="process">
-        /// process to which input is written
+        /// process to which input is written.
         /// </param>
         /// <param name="inputFormat">
         /// </param>
@@ -2345,10 +2345,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="serializedRemoteException">
-        /// serialized exception from remote msh
+        /// serialized exception from remote msh.
         /// </param>
         /// <param name="serializedRemoteInvocationInfo">
-        /// serialized invocation info from remote msh
+        /// serialized invocation info from remote msh.
         /// </param>
         internal RemoteException
         (

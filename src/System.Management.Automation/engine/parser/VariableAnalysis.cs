@@ -573,7 +573,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// Analyze a member function, marking variable references as "dynamic" (so they can be reported as errors)
-        /// and also analyze the control flow to make sure every block returns (or throws)
+        /// and also analyze the control flow to make sure every block returns (or throws).
         /// </summary>
         /// <param name="ast"></param>
         /// <returns></returns>

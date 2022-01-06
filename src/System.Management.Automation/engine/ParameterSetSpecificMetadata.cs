@@ -149,7 +149,7 @@ namespace System.Management.Automation
         /// set to HelpMessage.
         /// </summary>
         /// <returns>
-        /// Help info about the parameter
+        /// Help info about the parameter.
         /// </returns>
         /// <exception cref="InvalidOperationException">
         /// If the value of the specified resource is not a string and

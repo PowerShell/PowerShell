@@ -351,7 +351,7 @@ namespace System.Management.Automation.Language
         public Func<DynamicKeywordStatementAst, ParseError[]> PostParse { get; set; }
 
         /// <summary>
-        /// A custom function that checks semantic for the given <see cref="DynamicKeywordStatementAst"/>
+        /// A custom function that checks semantic for the given <see cref="DynamicKeywordStatementAst"/>.
         /// </summary>
         public Func<DynamicKeywordStatementAst, ParseError[]> SemanticCheck { get; set; }
     }
@@ -393,7 +393,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="keyword"></param>
         /// <param name="allowedKeywords"></param>
-        /// <returns>NULL if no keyword allowed for a given <see cref="DynamicKeyword"/></returns>
+        /// <returns>NULL if no keyword allowed for a given <see cref="DynamicKeyword"/>.</returns>
         internal static IEnumerable<DynamicKeyword> GetAllowedKeywords(this DynamicKeyword keyword, IEnumerable<DynamicKeyword> allowedKeywords)
         {
             string keywordName = keyword.Keyword;
