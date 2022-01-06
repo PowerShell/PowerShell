@@ -75,7 +75,7 @@ namespace System.Management.Automation.Tracing
     ///   Application logging (Events)
     ///   Context: EventId:taskname.opcodename.levelname
     ///   Payload: The event's message text formatted with arguments from the caller.
-    ///   Example: (19E1025:3:10) [Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational] PowerShell console is starting up
+    ///   Example: (19E1025:3:10) [Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational] PowerShell console is starting up.
     /// </remarks>
     internal class SysLogProvider
     {
@@ -491,7 +491,7 @@ namespace System.Management.Automation.Tracing
             Cron            = (9 << 3),
 
             /// <summary>
-            /// Security/authorization messages (private)
+            /// Security/authorization messages (private).
             /// </summary>
             Authpriv        = (10 << 3),
 

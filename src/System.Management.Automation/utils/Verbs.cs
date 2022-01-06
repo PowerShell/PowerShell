@@ -222,7 +222,7 @@ namespace System.Management.Automation
         public const string Compress = "Compress";
 
         /// <summary>
-        /// Change from one encoding to another or from one unit base to another (e.g. feet to meters)
+        /// Change from one encoding to another or from one unit base to another (e.g. feet to meters).
         /// </summary>
         public const string Convert = "Convert";
 
@@ -343,7 +343,7 @@ namespace System.Management.Automation
         public const string Assert = "Assert";
 
         /// <summary>
-        /// Creates an artifact (usually a binary or document) out of some set of input files (usually source code or declarative documents)
+        /// Creates an artifact (usually a binary or document) out of some set of input files (usually source code or declarative documents).
         /// </summary>
         public const string Build = "Build";
 
@@ -368,17 +368,17 @@ namespace System.Management.Automation
         public const string Deploy = "Deploy";
 
         /// <summary>
-        /// Stop and/or configure something to be unavailable (e.g unable to not start again)
+        /// Stop and/or configure something to be unavailable (e.g unable to not start again).
         /// </summary>
         public const string Disable = "Disable";
 
         /// <summary>
-        /// Configure to be available (e.g. able to start)
+        /// Configure to be available (e.g. able to start).
         /// </summary>
         public const string Enable = "Enable";
 
         /// <summary>
-        /// Settle in an indicated place or condition (optionally initializing for use)
+        /// Settle in an indicated place or condition (optionally initializing for use).
         /// </summary>
         public const string Install = "Install";
 
@@ -388,7 +388,7 @@ namespace System.Management.Automation
         public const string Invoke = "Invoke";
 
         ///<summary>
-        /// Record details about an item in a public store or publishing location
+        /// Record details about an item in a public store or publishing location.
         ///</summary>
         public const string Register = "Register";
 
@@ -398,7 +398,7 @@ namespace System.Management.Automation
         public const string Request = "Request";
 
         ///<summary>
-        /// Terminate existing activity and begin it again (with the same configuration)
+        /// Terminate existing activity and begin it again (with the same configuration).
         ///</summary>
         public const string Restart = "Restart";
 
@@ -413,7 +413,7 @@ namespace System.Management.Automation
         public const string Start = "Start";
 
         ///<summary>
-        ///Discontinue or cease an activity
+        ///Discontinue or cease an activity.
         ///</summary>
         public const string Stop = "Stop";
 
@@ -433,12 +433,12 @@ namespace System.Management.Automation
         public const string Uninstall = "Uninstall";
 
         ///<summary>
-        /// Remove details of an item from a public store or publishing location
+        /// Remove details of an item from a public store or publishing location.
         ///</summary>
         public const string Unregister = "Unregister";
 
         ///<summary>
-        /// Suspend execution until an expected event
+        /// Suspend execution until an expected event.
         ///</summary>
         public const string Wait = "Wait";
     }

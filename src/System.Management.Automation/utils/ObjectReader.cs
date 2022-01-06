@@ -157,7 +157,7 @@ namespace System.Management.Automation.Internal
         /// All calls to Close() after the first call are silently ignored.
         /// </remarks>
         /// <exception cref="ObjectDisposedException">
-        /// The stream is already disposed
+        /// The stream is already disposed.
         /// </exception>
         public override void Close()
         {
@@ -189,7 +189,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// The underlying stream.
         /// </summary>
-        /// <remarks>Can never be null</remarks>
+        /// <remarks>Can never be null.</remarks>
         protected ObjectStreamBase _stream;
 
         /// <summary>
@@ -263,7 +263,7 @@ namespace System.Management.Automation.Internal
         /// Read a single object from the stream.
         /// </summary>
         /// <returns>The next object in the stream.</returns>
-        /// <remarks>This method blocks if the stream is empty</remarks>
+        /// <remarks>This method blocks if the stream is empty.</remarks>
         public override object Read()
         {
             return _stream.Read();
@@ -373,7 +373,7 @@ namespace System.Management.Automation.Internal
         /// Read a single PSObject from the stream.
         /// </summary>
         /// <returns>The next PSObject in the stream.</returns>
-        /// <remarks>This method blocks if the stream is empty</remarks>
+        /// <remarks>This method blocks if the stream is empty.</remarks>
         public override PSObject Read()
         {
             return MakePSObject(_stream.Read());

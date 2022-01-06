@@ -30,10 +30,10 @@ namespace System.Management.Automation.Internal
         /// Raises DataReadyEvent.
         /// </summary>
         /// <param name="source">
-        /// Source of the event
+        /// Source of the event.
         /// </param>
         /// <param name="args">
-        /// Event args
+        /// Event args.
         /// </param>
         internal void FireDataReadyEvent(object source, EventArgs args)
         {
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Internal
         /// Read a single object from the stream.
         /// </summary>
         /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached.</returns>
-        /// <remarks>This method blocks if the stream is empty</remarks>
+        /// <remarks>This method blocks if the stream is empty.</remarks>
         internal virtual object Read()
         {
             throw PSTraceSource.NewNotSupportedException();
@@ -165,7 +165,7 @@ namespace System.Management.Automation.Internal
         /// <param name="count">The maximum number of objects to read.</param>
         /// <returns>The objects read.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="count"/> is less than 0
+        /// <paramref name="count"/> is less than 0.
         /// </exception>
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
@@ -226,7 +226,7 @@ namespace System.Management.Automation.Internal
         /// Return no more than maxRequested objects.
         /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="maxRequested"/> is less than 0
+        /// <paramref name="maxRequested"/> is less than 0.
         /// </exception>
         internal virtual Collection<object> NonBlockingRead(int maxRequested)
         {
@@ -237,7 +237,7 @@ namespace System.Management.Automation.Internal
         /// Peek the next object.
         /// </summary>
         /// <returns>
-        /// The next object in the stream or AutomationNull.Value if the stream is empty
+        /// The next object in the stream or AutomationNull.Value if the stream is empty.
         /// </returns>
         /// <exception cref="PipelineClosedException">The ObjectStream is closed.</exception>
         internal virtual object Peek()
@@ -260,10 +260,10 @@ namespace System.Management.Automation.Internal
         /// or if the object was AutomationNull.Value.
         /// </returns>
         /// <exception cref="PipelineClosedException">
-        /// The stream is closed
+        /// The stream is closed.
         /// </exception>
         /// <remarks>
-        /// AutomationNull.Value is ignored
+        /// AutomationNull.Value is ignored.
         /// </remarks>
         internal virtual int Write(object value)
         {
@@ -283,7 +283,7 @@ namespace System.Management.Automation.Internal
         /// </param>
         /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
-        /// The underlying stream is closed
+        /// The underlying stream is closed.
         /// </exception>
         /// <remarks>
         /// If the enumeration contains elements equal to
@@ -404,7 +404,7 @@ namespace System.Management.Automation.Internal
         private readonly List<object> _objects;
 
         /// <summary>
-        /// Is the stream open or closed for writing?
+        /// Is the stream open or closed for writing?.
         /// </summary>
         private bool _isOpen;
 
@@ -436,7 +436,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Write handle - signaled with the number of objects in the
         /// stream becomes less than the maximum number of objects
-        /// allowed in the stream.  <see cref="_capacity"/>
+        /// allowed in the stream.  <see cref="_capacity"/>.
         /// </summary>
         /// <remarks>
         /// This event may, on occasion, be signalled even when there is
@@ -518,7 +518,7 @@ namespace System.Management.Automation.Internal
         /// Default constructor.
         /// </summary>
         /// <remarks>
-        /// Constructs a stream with a maximum size of Int32.Max
+        /// Constructs a stream with a maximum size of Int32.Max.
         /// </remarks>
         internal ObjectStream()
             : this(Int32.MaxValue)
@@ -531,11 +531,11 @@ namespace System.Management.Automation.Internal
         /// <param name="capacity">
         /// The maximum number of objects to allow in the buffer at a time.
         /// Note that this is not permitted to be more than Int32.MaxValue,
-        /// since the underlying list has this limitation
+        /// since the underlying list has this limitation.
         /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="_capacity"/> is less than or equal to zero
-        /// <paramref name="_capacity"/> is greater than Int32.MaxValue
+        /// <paramref name="_capacity"/> is greater than Int32.MaxValue.
         /// </exception>
         internal ObjectStream(int capacity)
         {
@@ -1082,7 +1082,7 @@ namespace System.Management.Automation.Internal
         /// Read a single object from the stream.
         /// </summary>
         /// <returns>The next object in the stream or AutomationNull if EndOfPipeline is reached.</returns>
-        /// <remarks>This method blocks if the stream is empty</remarks>
+        /// <remarks>This method blocks if the stream is empty.</remarks>
         internal override object Read()
         {
             Collection<object> result = Read(1);
@@ -1102,7 +1102,7 @@ namespace System.Management.Automation.Internal
         /// <param name="count">The maximum number of objects to read.</param>
         /// <returns>The objects read.</returns>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="count"/> is less than 0
+        /// <paramref name="count"/> is less than 0.
         /// </exception>
         /// <remarks>
         /// This method blocks if the number of objects in the stream is less than <paramref name="count"/>
@@ -1218,7 +1218,7 @@ namespace System.Management.Automation.Internal
         /// Return no more than maxRequested objects.
         /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// <paramref name="maxRequested"/> is less than 0
+        /// <paramref name="maxRequested"/> is less than 0.
         /// </exception>
         internal override Collection<object> NonBlockingRead(int maxRequested)
         {
@@ -1274,7 +1274,7 @@ namespace System.Management.Automation.Internal
         /// Peek the next object.
         /// </summary>
         /// <returns>
-        /// The next object in the stream or AutomationNull.Value if the stream is empty
+        /// The next object in the stream or AutomationNull.Value if the stream is empty.
         /// </returns>
         /// <exception cref="PipelineClosedException">The ObjectStream is closed.</exception>
         internal override object Peek()
@@ -1313,7 +1313,7 @@ namespace System.Management.Automation.Internal
         /// </param>
         /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
-        /// The underlying stream is closed
+        /// The underlying stream is closed.
         /// </exception>
         /// <remarks>
         /// If the enumeration contains elements equal to
@@ -1577,7 +1577,7 @@ namespace System.Management.Automation.Internal
         /// A PSDataCollection instance.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// 1. storeToUse is null
+        /// 1. storeToUse is null.
         /// </exception>
         internal PSDataCollectionStream(Guid psInstanceId, PSDataCollection<T> storeToUse)
         {
@@ -1704,7 +1704,7 @@ namespace System.Management.Automation.Internal
         /// <param name="runspaceId">Runspace id that the pipeline specifies.</param>
         /// <remarks>the computer name and runspace id are associated with the
         /// reader so as to enable cmdlets to identify which computer name runspace does
-        /// the object that this stream writes belongs to</remarks>
+        /// the object that this stream writes belongs to.</remarks>
         internal PipelineReader<object> GetObjectReaderForPipeline(string computerName, Guid runspaceId)
         {
             if (_objectReaderForPipeline == null)
@@ -1751,7 +1751,7 @@ namespace System.Management.Automation.Internal
         /// <param name="runspaceId">Runspace id that the pipeline specifies.</param>
         /// <remarks>the computer name and runspace id are associated with the
         /// reader so as to enable cmdlets to identify which computer name runspace does
-        /// the object that this stream writes belongs to</remarks>
+        /// the object that this stream writes belongs to.</remarks>
         internal PipelineReader<PSObject> GetPSObjectReaderForPipeline(string computerName, Guid runspaceId)
         {
             if (_psobjectReaderForPipeline == null)

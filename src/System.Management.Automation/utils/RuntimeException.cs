@@ -36,7 +36,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the RuntimeException class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -50,7 +50,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
+        /// Serializer for <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -192,7 +192,7 @@ namespace System.Management.Automation
         /// or the like.
         /// </summary>
         /// <param name="errorCategory">
-        /// per ErrorRecord.CategoryInfo.Category
+        /// per ErrorRecord.CategoryInfo.Category.
         /// </param>
         internal void SetErrorCategory(ErrorCategory errorCategory)
         {
@@ -209,7 +209,7 @@ namespace System.Management.Automation
         /// already exists...
         /// </summary>
         /// <param name="targetObject">
-        /// per ErrorRecord.TargetObject
+        /// per ErrorRecord.TargetObject.
         /// </param>
         internal void SetTargetObject(object targetObject)
         {

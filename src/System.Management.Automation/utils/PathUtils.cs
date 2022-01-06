@@ -481,7 +481,7 @@ namespace System.Management.Automation
         private const int DevicePrefixLength = 4;
 
         /// <summary>
-        /// Returns true if the given character is a valid drive letter
+        /// Returns true if the given character is a valid drive letter.
         /// </summary>
         private static bool IsValidDriveChar(char value)
         {

@@ -136,29 +136,29 @@ namespace System.Management.Automation
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
         ///
-        /// InvocationInfo.MyCommand.Name == {0}
+        /// InvocationInfo.MyCommand.Name == {0}.
         /// </param>
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
         /// If position is null, the one from the InvocationInfo is used.
         ///
         /// token.LineNumber == {4}
-        /// token.OffsetInLine == {5}
+        /// token.OffsetInLine == {5}.
         /// </param>
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
         ///
-        /// parameterName == {1}
+        /// parameterName == {1}.
         /// </param>
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
         ///
-        /// parameterType == {2}
+        /// parameterType == {2}.
         /// </param>
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
         ///
-        /// typeSpecified == {3}
+        /// typeSpecified == {3}.
         /// </param>
         /// <param name="resourceString">
         /// The format string for the exception message.
@@ -169,7 +169,7 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Additional arguments to pass to the format string.
         ///
-        /// starts at {6}
+        /// starts at {6}.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="invocationInfo"/> is null.
@@ -296,10 +296,10 @@ namespace System.Management.Automation
         /// Constructors a ParameterBindingException using serialized data.
         /// </summary>
         /// <param name="info">
-        /// serialization information
+        /// serialization information.
         /// </param>
         /// <param name="context">
-        /// streaming context
+        /// streaming context.
         /// </param>
         protected ParameterBindingException(
             SerializationInfo info,
@@ -316,10 +316,10 @@ namespace System.Management.Automation
         /// Serializes the exception.
         /// </summary>
         /// <param name="info">
-        /// serialization information
+        /// serialization information.
         /// </param>
         /// <param name="context">
-        /// streaming context
+        /// streaming context.
         /// </param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -342,7 +342,7 @@ namespace System.Management.Automation
         /// Constructs a ParameterBindingException.
         /// </summary>
         /// <remarks>
-        /// DO NOT USE!!!
+        /// DO NOT USE!!!.
         /// </remarks>
         public ParameterBindingException() : base() { }
 
@@ -353,7 +353,7 @@ namespace System.Management.Automation
         /// Message to be included in exception.
         /// </param>
         /// <remarks>
-        /// DO NOT USE!!!
+        /// DO NOT USE!!!.
         /// </remarks>
         public ParameterBindingException(string message) : base(message) { _message = message; }
 
@@ -364,10 +364,10 @@ namespace System.Management.Automation
         /// Message to be included in the exception.
         /// </param>
         /// <param name="innerException">
-        /// exception that led to this exception
+        /// exception that led to this exception.
         /// </param>
         /// <remarks>
-        /// DO NOT USE!!!
+        /// DO NOT USE!!!.
         /// </remarks>
         public ParameterBindingException(
             string message,
@@ -531,28 +531,28 @@ namespace System.Management.Automation
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
         ///
-        /// InvocationInfo.MyCommand.Name == {0}
+        /// InvocationInfo.MyCommand.Name == {0}.
         /// </param>
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
         ///
         /// token.LineNumber == {4}
-        /// token.OffsetInLine == {5}
+        /// token.OffsetInLine == {5}.
         /// </param>
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
         ///
-        /// parameterName == {1}
+        /// parameterName == {1}.
         /// </param>
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
         ///
-        /// parameterType == {2}
+        /// parameterType == {2}.
         /// </param>
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
         ///
-        /// typeSpecified == {3}
+        /// typeSpecified == {3}.
         /// </param>
         /// <param name="resourceString">
         /// The format string for the exception message.
@@ -563,7 +563,7 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Additional arguments to pass to the format string.
         ///
-        /// starts at {6}
+        /// starts at {6}.
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="resourceString"/> or <paramref name="errorId"/>
@@ -604,28 +604,28 @@ namespace System.Management.Automation
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
         ///
-        /// InvocationInfo.MyCommand.Name == {0}
+        /// InvocationInfo.MyCommand.Name == {0}.
         /// </param>
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
         ///
         /// token.LineNumber == {4}
-        /// token.OffsetInLine == {5}
+        /// token.OffsetInLine == {5}.
         /// </param>
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
         ///
-        /// parameterName == {1}
+        /// parameterName == {1}.
         /// </param>
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
         ///
-        /// parameterType == {2}
+        /// parameterType == {2}.
         /// </param>
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
         ///
-        /// typeSpecified == {3}
+        /// typeSpecified == {3}.
         /// </param>
         /// <param name="resourceString">
         /// The format string for the exception message.
@@ -636,7 +636,7 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Additional arguments to pass to the format string.
         ///
-        /// starts at {6}
+        /// starts at {6}.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="invocationInfo"/> is null.
@@ -681,10 +681,10 @@ namespace System.Management.Automation
         /// Constructs a ParameterBindingValidationException from serialized data.
         /// </summary>
         /// <param name="info">
-        /// serialization information
+        /// serialization information.
         /// </param>
         /// <param name="context">
-        /// streaming context
+        /// streaming context.
         /// </param>
         protected ParameterBindingValidationException(
             SerializationInfo info,
@@ -701,7 +701,7 @@ namespace System.Management.Automation
         /// Make the positional binding ignore this validation exception when it's set to true.
         /// </summary>
         /// <remarks>
-        /// This property is only used internally in the positional binding phase
+        /// This property is only used internally in the positional binding phase.
         /// </remarks>
         internal bool SwallowException
         {
@@ -727,28 +727,28 @@ namespace System.Management.Automation
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
         ///
-        /// InvocationInfo.MyCommand.Name == {0}
+        /// InvocationInfo.MyCommand.Name == {0}.
         /// </param>
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
         ///
         /// token.LineNumber == {4}
-        /// token.OffsetInLine == {5}
+        /// token.OffsetInLine == {5}.
         /// </param>
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
         ///
-        /// parameterName == {1}
+        /// parameterName == {1}.
         /// </param>
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
         ///
-        /// parameterType == {2}
+        /// parameterType == {2}.
         /// </param>
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
         ///
-        /// typeSpecified == {3}
+        /// typeSpecified == {3}.
         /// </param>
         /// <param name="resourceString">
         /// The format string for the exception message.
@@ -759,7 +759,7 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Additional arguments to pass to the format string.
         ///
-        /// starts at {6}
+        /// starts at {6}.
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="resourceString"/> or <paramref name="errorId"/>
@@ -800,28 +800,28 @@ namespace System.Management.Automation
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
         ///
-        /// InvocationInfo.MyCommand.Name == {0}
+        /// InvocationInfo.MyCommand.Name == {0}.
         /// </param>
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
         ///
         /// token.LineNumber == {4}
-        /// token.OffsetInLine == {5}
+        /// token.OffsetInLine == {5}.
         /// </param>
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
         ///
-        /// parameterName == {1}
+        /// parameterName == {1}.
         /// </param>
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
         ///
-        /// parameterType == {2}
+        /// parameterType == {2}.
         /// </param>
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
         ///
-        /// typeSpecified == {3}
+        /// typeSpecified == {3}.
         /// </param>
         /// <param name="resourceString">
         /// The format string for the exception message.
@@ -832,7 +832,7 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Additional arguments to pass to the format string.
         ///
-        /// starts at {6}
+        /// starts at {6}.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="invocationInfo"/> is null.
@@ -871,10 +871,10 @@ namespace System.Management.Automation
         /// Constructs a ParameterBindingArgumentTransformationException using serialized data.
         /// </summary>
         /// <param name="info">
-        /// serialization information
+        /// serialization information.
         /// </param>
         /// <param name="context">
-        /// streaming context
+        /// streaming context.
         /// </param>
         protected ParameterBindingArgumentTransformationException(
             SerializationInfo info,
@@ -900,28 +900,28 @@ namespace System.Management.Automation
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
         ///
-        /// InvocationInfo.MyCommand.Name == {0}
+        /// InvocationInfo.MyCommand.Name == {0}.
         /// </param>
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
         ///
         /// token.LineNumber == {4}
-        /// token.OffsetInLine == {5}
+        /// token.OffsetInLine == {5}.
         /// </param>
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
         ///
-        /// parameterName == {1}
+        /// parameterName == {1}.
         /// </param>
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
         ///
-        /// parameterType == {2}
+        /// parameterType == {2}.
         /// </param>
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
         ///
-        /// typeSpecified == {3}
+        /// typeSpecified == {3}.
         /// </param>
         /// <param name="resourceString">
         /// The format string for the exception message.
@@ -932,7 +932,7 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Additional arguments to pass to the format string.
         ///
-        /// starts at {6}
+        /// starts at {6}.
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="resourceString"/> or <paramref name="errorId"/>
@@ -973,28 +973,28 @@ namespace System.Management.Automation
         /// <param name="invocationInfo">
         /// The information about the command that encountered the error.
         ///
-        /// InvocationInfo.MyCommand.Name == {0}
+        /// InvocationInfo.MyCommand.Name == {0}.
         /// </param>
         /// <param name="errorPosition">
         /// The position for the command or parameter that caused the error.
         ///
         /// token.LineNumber == {4}
-        /// token.OffsetInLine == {5}
+        /// token.OffsetInLine == {5}.
         /// </param>
         /// <param name="parameterName">
         /// The parameter on which binding caused the error.
         ///
-        /// parameterName == {1}
+        /// parameterName == {1}.
         /// </param>
         /// <param name="parameterType">
         /// The Type the parameter was expecting.
         ///
-        /// parameterType == {2}
+        /// parameterType == {2}.
         /// </param>
         /// <param name="typeSpecified">
         /// The Type that was attempted to be bound to the parameter.
         ///
-        /// typeSpecified == {3}
+        /// typeSpecified == {3}.
         /// </param>
         /// <param name="resourceString">
         /// The format string for the exception message.
@@ -1005,7 +1005,7 @@ namespace System.Management.Automation
         /// <param name="args">
         /// Additional arguments to pass to the format string.
         ///
-        /// starts at {6}
+        /// starts at {6}.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="invocationInfo"/> is null.
@@ -1045,10 +1045,10 @@ namespace System.Management.Automation
         /// Constructs a ParameterBindingParameterDefaultValueException using serialized data.
         /// </summary>
         /// <param name="info">
-        /// serialization information
+        /// serialization information.
         /// </param>
         /// <param name="context">
-        /// streaming context
+        /// streaming context.
         /// </param>
         protected ParameterBindingParameterDefaultValueException(
             SerializationInfo info,

@@ -19,11 +19,11 @@ namespace System.Management.Automation.Tracing
     /// </summary>
     /// <remarks>add an entry for a new event that you
     /// add to the manifest. Set it to the same value
-    /// that was set in the manifest</remarks>
+    /// that was set in the manifest.</remarks>
     public enum PowerShellTraceEvent : int
     {
         /// <summary>
-        /// None. (Should not be used)
+        /// None. (Should not be used).
         /// </summary>
         None = 0,
 
@@ -390,7 +390,7 @@ namespace System.Management.Automation.Tracing
     public enum PowerShellTraceChannel
     {
         /// <summary>
-        /// None (No channel selected, should not be used)
+        /// None (No channel selected, should not be used).
         /// </summary>
         None = 0,
         /// <summary>
@@ -457,7 +457,7 @@ namespace System.Management.Automation.Tracing
     public enum PowerShellTraceOperationCode
     {
         /// <summary>
-        /// None.  (Should not be used)
+        /// None.  (Should not be used).
         /// </summary>
         None = 0,
 

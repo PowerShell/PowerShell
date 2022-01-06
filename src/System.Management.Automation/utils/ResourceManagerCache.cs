@@ -132,10 +132,10 @@ namespace System.Management.Automation
         /// The base name of the resource to retrieve the string from.
         /// </param>
         /// <param name="resourceId">
-        /// Resource ID for which the localized string needs to be retrieved
+        /// Resource ID for which the localized string needs to be retrieved.
         /// </param>
         /// <returns>
-        /// Localized String, or null if the string does not exist
+        /// Localized String, or null if the string does not exist.
         /// </returns>
         /// <remarks>
         /// The current thread's UI culture is used.
@@ -217,11 +217,11 @@ namespace System.Management.Automation
         /// named "MyResource.en-US.resources" is "MyResource".
         /// </param>
         /// <param name="assemblyToUse">
-        /// The main Assembly for the resources
+        /// The main Assembly for the resources.
         /// </param>
         /// <returns>Resource Manager instance.</returns>
         /// <exception cref="ArgumentException">
-        /// Thrown if the resource manager instance could not be created
+        /// Thrown if the resource manager instance could not be created.
         /// </exception>
         private static ResourceManager InitRMWithAssembly(string baseName, Assembly assemblyToUse)
         {

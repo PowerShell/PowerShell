@@ -223,7 +223,7 @@ namespace System.Management.Automation
         /// Throw*Exception variants, since they call this.
         /// </summary>
         /// <param name="paramName">
-        /// The name of the parameter whose argument value was null
+        /// The name of the parameter whose argument value was null.
         /// </param>
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentNullException NewArgumentNullException(string paramName)
@@ -245,13 +245,13 @@ namespace System.Management.Automation
         /// specify alternate template text, but only in assembly S.M.A.Core.
         /// </summary>
         /// <param name="paramName">
-        /// The name of the parameter whose argument value was invalid
+        /// The name of the parameter whose argument value was invalid.
         /// </param>
         /// <param name="resourceString">
-        /// The template string for this error
+        /// The template string for this error.
         /// </param>
         /// <param name="args">
-        /// Objects corresponding to {0}, {1}, etc. in the resource string
+        /// Objects corresponding to {0}, {1}, etc. in the resource string.
         /// </param>
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentNullException NewArgumentNullException(
@@ -282,7 +282,7 @@ namespace System.Management.Automation
         /// other Throw*Exception variants, since they call this.
         /// </summary>
         /// <param name="paramName">
-        /// The name of the parameter whose argument value was invalid
+        /// The name of the parameter whose argument value was invalid.
         /// </param>
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentException NewArgumentException(string paramName)
@@ -305,13 +305,13 @@ namespace System.Management.Automation
         /// specify alternate template text, but only in assembly S.M.A.Core.
         /// </summary>
         /// <param name="paramName">
-        /// The name of the parameter whose argument value was invalid
+        /// The name of the parameter whose argument value was invalid.
         /// </param>
         /// <param name="resourceString">
-        /// The template string for this error
+        /// The template string for this error.
         /// </param>
         /// <param name="args">
-        /// Objects corresponding to {0}, {1}, etc. in the resource string
+        /// Objects corresponding to {0}, {1}, etc. in the resource string.
         /// </param>
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentException NewArgumentException(
@@ -355,10 +355,10 @@ namespace System.Management.Automation
         /// specify alternate template text, but only in assembly S.M.A.Core.
         /// </summary>
         /// <param name="resourceString">
-        /// The template string for this error
+        /// The template string for this error.
         /// </param>
         /// <param name="args">
-        /// Objects corresponding to {0}, {1}, etc. in the resource string
+        /// Objects corresponding to {0}, {1}, etc. in the resource string.
         /// </param>
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSInvalidOperationException NewInvalidOperationException(
@@ -381,13 +381,13 @@ namespace System.Management.Automation
         /// specify alternate template text, but only in assembly S.M.A.Core.
         /// </summary>
         /// <param name="innerException">
-        /// This is the InnerException for the InvalidOperationException
+        /// This is the InnerException for the InvalidOperationException.
         /// </param>
         /// <param name="resourceString">
-        /// The template string for this error
+        /// The template string for this error.
         /// </param>
         /// <param name="args">
-        /// Objects corresponding to {0}, {1}, etc. in the resource string
+        /// Objects corresponding to {0}, {1}, etc. in the resource string.
         /// </param>
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSInvalidOperationException NewInvalidOperationException(
@@ -426,10 +426,10 @@ namespace System.Management.Automation
         /// Throw*Exception variants, since they call this.
         /// </summary>
         /// <param name="resourceString">
-        /// The template string for this error
+        /// The template string for this error.
         /// </param>
         /// <param name="args">
-        /// Objects corresponding to {0}, {1}, etc. in the resource string
+        /// Objects corresponding to {0}, {1}, etc. in the resource string.
         /// </param>
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSNotSupportedException NewNotSupportedException(
@@ -469,10 +469,10 @@ namespace System.Management.Automation
         /// other Throw*Exception variants, since they call this.
         /// </summary>
         /// <param name="paramName">
-        /// The name of the parameter whose argument value was out of range
+        /// The name of the parameter whose argument value was out of range.
         /// </param>
         /// <param name="actualValue">
-        /// The value of the argument causing the exception
+        /// The value of the argument causing the exception.
         /// </param>
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentOutOfRangeException NewArgumentOutOfRangeException(string paramName, object actualValue)
@@ -494,16 +494,16 @@ namespace System.Management.Automation
         /// specify alternate template text, but only in assembly S.M.A.Core.
         /// </summary>
         /// <param name="paramName">
-        /// The name of the parameter whose argument value was invalid
+        /// The name of the parameter whose argument value was invalid.
         /// </param>
         /// <param name="actualValue">
-        /// The value of the argument causing the exception
+        /// The value of the argument causing the exception.
         /// </param>
         /// <param name="resourceString">
-        /// The template string for this error
+        /// The template string for this error.
         /// </param>
         /// <param name="args">
-        /// Objects corresponding to {0}, {1}, etc. in the resource string
+        /// Objects corresponding to {0}, {1}, etc. in the resource string.
         /// </param>
         /// <returns>Exception instance ready to throw.</returns>
         internal static PSArgumentOutOfRangeException NewArgumentOutOfRangeException(
@@ -532,7 +532,7 @@ namespace System.Management.Automation
         /// other Throw*Exception variants, since they call this.
         /// </summary>
         /// <param name="objectName">
-        /// The name of the disposed object
+        /// The name of the disposed object.
         /// </param>
         /// <returns>Exception instance ready to throw.</returns>
         /// <remarks>

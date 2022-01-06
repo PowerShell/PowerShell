@@ -40,7 +40,7 @@ namespace System.Management.Automation.Tracing
     public delegate void CallbackNoParameter();
 
     /// <summary>
-    /// Delegates that defines a call back with one parameter (state)
+    /// Delegates that defines a call back with one parameter (state).
     /// </summary>
     public delegate void CallbackWithState(object state);
 
@@ -56,17 +56,17 @@ namespace System.Management.Automation.Tracing
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public class EtwEventArgs : EventArgs
     {
-        /// <summary> Gets Event descriptor </summary>
+        /// <summary> Gets Event descriptor. </summary>
         public EventDescriptor Descriptor
         {
             get;
             private set;
         }
 
-        /// <summary> Gets whether the event is successfully written </summary>
+        /// <summary> Gets whether the event is successfully written. </summary>
         public bool Success { get; }
 
-        /// <summary> Gets payload in the event </summary>
+        /// <summary> Gets payload in the event. </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] Payload { get; }
 

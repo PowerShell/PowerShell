@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// For perf reasons, we resort to P/Invoke.
         /// </summary>
         /// <param name="current">The process we want to find the
-        /// parent of</param>
+        /// parent of.</param>
         internal static Process GetParentProcess(Process current)
         {
             var processId = current.Id;
@@ -184,28 +184,28 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get a Hashtable object out of a PowerShell data file (.psd1)
+        /// Get a Hashtable object out of a PowerShell data file (.psd1).
         /// </summary>
         /// <param name="parameterName">
-        /// Name of the parameter that takes the specified .psd1 file as a value
+        /// Name of the parameter that takes the specified .psd1 file as a value.
         /// </param>
         /// <param name="psDataFilePath">
-        /// Path to the powershell data file
+        /// Path to the powershell data file.
         /// </param>
         /// <param name="context">
-        /// ExecutionContext to use
+        /// ExecutionContext to use.
         /// </param>
         /// <param name="allowedCommands">
-        /// Set of command names that are allowed to use in the .psd1 file
+        /// Set of command names that are allowed to use in the .psd1 file.
         /// </param>
         /// <param name="allowedVariables">
-        /// Set of variable names that are allowed to use in the .psd1 file
+        /// Set of variable names that are allowed to use in the .psd1 file.
         /// </param>
         /// <param name="allowEnvironmentVariables">
-        /// If true, allow to use environment variables in the .psd1 file
+        /// If true, allow to use environment variables in the .psd1 file.
         /// </param>
         /// <param name="skipPathValidation">
-        /// If true, caller guarantees the path is valid
+        /// If true, caller guarantees the path is valid.
         /// </param>
         /// <returns></returns>
         internal static Hashtable EvaluatePowerShellDataFile(

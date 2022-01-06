@@ -106,7 +106,7 @@ namespace System.Management.Automation.Internal
         /// All calls to Close() after the first call are silently ignored.
         /// </remarks>
         /// <exception cref="ObjectDisposedException">
-        /// The stream is already disposed
+        /// The stream is already disposed.
         /// </exception>
         public override void Close()
         {
@@ -120,7 +120,7 @@ namespace System.Management.Automation.Internal
         /// but disposed streams may not.
         /// </summary>
         /// <exception cref="ObjectDisposedException">
-        /// The underlying stream is disposed
+        /// The underlying stream is disposed.
         /// </exception>
         public override void Flush()
         {
@@ -137,10 +137,10 @@ namespace System.Management.Automation.Internal
         /// or if the object was AutomationNull.Value.
         /// </returns>
         /// <exception cref="PipelineClosedException">
-        /// The underlying stream is closed
+        /// The underlying stream is closed.
         /// </exception>
         /// <remarks>
-        /// AutomationNull.Value is ignored
+        /// AutomationNull.Value is ignored.
         /// </remarks>
         public override int Write(object obj)
         {
@@ -160,7 +160,7 @@ namespace System.Management.Automation.Internal
         /// </param>
         /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
-        /// The underlying stream is closed
+        /// The underlying stream is closed.
         /// </exception>
         /// <remarks>
         /// If the enumeration contains elements equal to
@@ -198,7 +198,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// The underlying stream.
         /// </summary>
-        /// <remarks>Can never be null</remarks>
+        /// <remarks>Can never be null.</remarks>
         private readonly ObjectStreamBase _stream;
 
         #endregion Private Fields
@@ -222,7 +222,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="stream">The stream to write.</param>
         /// <exception cref="ArgumentNullException">
-        /// Thrown if the specified stream is null
+        /// Thrown if the specified stream is null.
         /// </exception>
         public PSDataCollectionWriter(PSDataCollectionStream<T> stream)
             : base(stream)

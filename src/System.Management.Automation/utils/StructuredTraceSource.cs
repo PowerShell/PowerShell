@@ -149,7 +149,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// The methods associated with the flags; Constructor, Dispose,
-        /// Finalizer, Method, Delegates, and Events will be enabled
+        /// Finalizer, Method, Delegates, and Events will be enabled.
         /// </remarks>
         ExecutionFlow =
             Constructor |
@@ -166,7 +166,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// The methods associated with the flags; Constructor, Dispose,
-        /// Finalizer, Property, and WriteLine will be enabled
+        /// Finalizer, Property, and WriteLine will be enabled.
         /// </remarks>
         Data =
             Constructor |
@@ -181,7 +181,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// The methods associated with the flags; Error,
-        /// and Exception will be enabled
+        /// and Exception will be enabled.
         /// </remarks>
         Errors =
             Error |
@@ -495,10 +495,10 @@ namespace System.Management.Automation
         /// Traces the method name and indents the trace output.
         /// </summary>
         /// <param name="format">
-        /// The format string for additional arguments to be traced
+        /// The format string for additional arguments to be traced.
         /// </param>
         /// <param name="args">
-        /// The additional arguments given to the format string
+        /// The additional arguments given to the format string.
         /// </param>
         /// <returns>
         /// An object that supports IDisposable. The caller
@@ -525,7 +525,7 @@ namespace System.Management.Automation
         /// <newpara/>
         /// Entering MethodName: count=4
         ///     other trace output indented
-        /// Leaving MethodName
+        /// Leaving MethodName.
         /// </remarks>
         internal IDisposable TraceMethod(
             string format,
@@ -614,10 +614,10 @@ namespace System.Management.Automation
         /// Traces the entrance and exit from event handlers.
         /// </summary>
         /// <param name="format">
-        /// The format string for additional arguments to be traced
+        /// The format string for additional arguments to be traced.
         /// </param>
         /// <param name="args">
-        /// The additional arguments given to the format string
+        /// The additional arguments given to the format string.
         /// </param>
         /// <returns>
         /// An object that supports IDisposable. The caller
@@ -693,7 +693,7 @@ namespace System.Management.Automation
         /// <newpara/>
         /// Entering Lock: my lock name
         ///     other trace output indented
-        /// Leaving Lock: my lock name
+        /// Leaving Lock: my lock name.
         /// </remarks>
         internal IDisposable TraceLock(string lockName)
         {
@@ -725,7 +725,7 @@ namespace System.Management.Automation
         /// Call this before acquiring a lock.
         /// </summary>
         /// <param name="lockName">
-        /// User defined name given to the lock
+        /// User defined name given to the lock.
         /// </param>
         internal void TraceLockAcquiring(string lockName)
         {
@@ -741,7 +741,7 @@ namespace System.Management.Automation
         /// Call this after acquiring a lock.
         /// </summary>
         /// <param name="lockName">
-        /// User defined name given to the lock
+        /// User defined name given to the lock.
         /// </param>
         /// <remarks>
         /// Use this only if the TraceLock that returns
@@ -765,7 +765,7 @@ namespace System.Management.Automation
         /// the lock.
         /// </summary>
         /// <param name="lockName">
-        /// User defined name given to the lock
+        /// User defined name given to the lock.
         /// </param>
         internal void TraceLockReleased(string lockName)
         {
@@ -784,7 +784,7 @@ namespace System.Management.Automation
         /// A format string for the output.
         /// </param>
         /// <param name="lockName">
-        /// User defined name for the lock
+        /// User defined name for the lock.
         /// </param>
         private void TraceLockHelper(
             string formatter,
@@ -814,10 +814,10 @@ namespace System.Management.Automation
         /// is enabled.
         /// </summary>
         /// <param name="errorMessageFormat">
-        /// The format string containing the error message
+        /// The format string containing the error message.
         /// </param>
         /// <param name="args">
-        /// The arguments for the format string
+        /// The arguments for the format string.
         /// </param>
         internal void TraceError(
             string errorMessageFormat,
@@ -838,10 +838,10 @@ namespace System.Management.Automation
         /// is enabled.
         /// </summary>
         /// <param name="warningMessageFormat">
-        /// The format string containing the error message
+        /// The format string containing the error message.
         /// </param>
         /// <param name="args">
-        /// The arguments for the format string
+        /// The arguments for the format string.
         /// </param>
         internal void TraceWarning(
             string warningMessageFormat,
@@ -862,10 +862,10 @@ namespace System.Management.Automation
         /// is enabled.
         /// </summary>
         /// <param name="verboseMessageFormat">
-        /// The format string containing the error message
+        /// The format string containing the error message.
         /// </param>
         /// <param name="args">
-        /// The arguments for the format string
+        /// The arguments for the format string.
         /// </param>
         internal void TraceVerbose(
             string verboseMessageFormat,
@@ -885,7 +885,7 @@ namespace System.Management.Automation
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled.
         /// </summary>
         /// <param name="format">
-        /// The format string
+        /// The format string.
         /// </param>
         internal void WriteLine(string format)
         {
@@ -1070,7 +1070,7 @@ namespace System.Management.Automation
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled.
         /// </summary>
         /// <param name="arg">
-        /// The object to be output
+        /// The object to be output.
         /// </param>
         internal void WriteLine(object arg)
         {
@@ -1094,7 +1094,7 @@ namespace System.Management.Automation
         /// Additional format string.
         /// </param>
         /// <param name="args">
-        /// Arguments for the additional format string
+        /// Arguments for the additional format string.
         /// </param>
         private void FormatOutputLine(
             PSTraceSourceOptions flag,
@@ -1560,7 +1560,7 @@ namespace System.Management.Automation
         /// local storage.
         /// </summary>
         /// <param name="tracer">
-        /// The trace object that is to be used for output
+        /// The trace object that is to be used for output.
         /// </param>
         /// <param name="flag">
         /// The PSTraceSourceOptions that is causing the scope object to
@@ -1578,7 +1578,7 @@ namespace System.Management.Automation
         /// format for the scope when the Dispose method is called.
         /// </param>
         /// <param name="scopeName">
-        /// The name of the scope that is being traced
+        /// The name of the scope that is being traced.
         /// </param>
         internal ScopeTracer(
             PSTraceSource tracer,
@@ -1605,7 +1605,7 @@ namespace System.Management.Automation
         /// local storage.
         /// </summary>
         /// <param name="tracer">
-        /// The trace object that is to be used for output
+        /// The trace object that is to be used for output.
         /// </param>
         /// <param name="flag">
         /// The PSTraceSourceOptions that is causing the scope object to
@@ -1623,11 +1623,11 @@ namespace System.Management.Automation
         /// format for the scope when the Dispose method is called.
         /// </param>
         /// <param name="scopeName">
-        /// The name of the scope that is being traced
+        /// The name of the scope that is being traced.
         /// </param>
         /// <param name="format">
         /// The format of any additional arguments which will be appended
-        /// to the line of trace output
+        /// to the line of trace output.
         /// </param>
         /// <param name="args">
         /// Arguments to the format string.
@@ -1684,11 +1684,11 @@ namespace System.Management.Automation
         /// format for the scope when the Dispose method is called.
         /// </param>
         /// <param name="scopeName">
-        /// The name of the scope being entered
+        /// The name of the scope being entered.
         /// </param>
         /// <param name="format">
         /// The format of any additional arguments which will be appended
-        /// to the "Entering" line of trace output
+        /// to the "Entering" line of trace output.
         /// </param>
         /// <param name="args">
         /// Arguments to the format string.

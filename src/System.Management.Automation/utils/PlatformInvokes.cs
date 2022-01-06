@@ -184,7 +184,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="dwCreationDisposition">
         /// An action to take on files that exist and do not exist.
-        /// See "CreateFile creation disposition" below
+        /// See "CreateFile creation disposition" below.
         /// </param>
         /// <param name="dwFlagsAndAttributes">
         /// The file attributes and flags.

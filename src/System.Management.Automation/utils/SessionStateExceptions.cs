@@ -27,10 +27,10 @@ namespace System.Management.Automation
         /// Constructs a ProviderInvocationException using serialized data.
         /// </summary>
         /// <param name="info">
-        /// serialization information
+        /// serialization information.
         /// </param>
         /// <param name="context">
-        /// streaming context
+        /// streaming context.
         /// </param>
         protected ProviderInvocationException(
             SerializationInfo info,
@@ -89,7 +89,7 @@ namespace System.Management.Automation
         /// Information about the provider to be used in formatting the message.
         /// </param>
         /// <param name="errorRecord">
-        /// Detailed error information
+        /// Detailed error information.
         /// </param>
         internal ProviderInvocationException(ProviderInfo provider, ErrorRecord errorRecord)
             : base(RuntimeException.RetrieveMessage(errorRecord),
@@ -162,7 +162,7 @@ namespace System.Management.Automation
         /// this context.
         /// </param>
         /// <param name="resourceStr">
-        /// This is the message template string
+        /// This is the message template string.
         /// </param>
         /// <param name="provider">
         /// The provider information used to format into the message.
@@ -666,7 +666,7 @@ namespace System.Management.Automation
         /// The name of provider that could not be found.
         /// </param>
         /// <param name="sessionStateCategory">
-        /// The category of session state object
+        /// The category of session state object.
         /// </param>
         /// <param name="errorIdAndResourceId">
         /// This string is the ErrorId passed to the ErrorRecord, and is also
@@ -674,7 +674,7 @@ namespace System.Management.Automation
         /// SessionStateStrings.txt.
         /// </param>
         /// <param name="resourceStr">
-        /// This string is the message template string
+        /// This string is the message template string.
         /// </param>
         /// <param name="messageArgs">
         /// Additional arguments to build the message from.
@@ -765,7 +765,7 @@ namespace System.Management.Automation
         /// SessionStateStrings.txt.
         /// </param>
         /// <param name="resourceStr">
-        /// This string is the message template string
+        /// This string is the message template string.
         /// </param>
         /// <param name="possibleMatches">
         /// The provider information for the providers that match the specified
@@ -878,7 +878,7 @@ namespace System.Management.Automation
         /// SessionStateStrings.txt.
         /// </param>
         /// <param name="resourceStr">
-        /// This string is the message template string
+        /// This string is the message template string.
         /// </param>
         internal DriveNotFoundException(
             string itemName,
