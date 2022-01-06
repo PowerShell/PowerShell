@@ -97,32 +97,32 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// Property <c>DefaultParameterSet</c>
+        /// Property <c>DefaultParameterSet</c>.
         /// </summary>
         internal bool IsDefaultParameterSet { get; }
 
         /// <summary>
-        /// Property <c>MandatoryParameterCount</c>
+        /// Property <c>MandatoryParameterCount</c>.
         /// </summary>
         internal uint MandatoryParameterCount { get; } = 0;
 
         /// <summary>
-        /// Property <c>IsValueSet</c>
+        /// Property <c>IsValueSet</c>.
         /// </summary>
         internal bool IsValueSet { get; set; }
 
         /// <summary>
-        /// Property <c>IsValueSetAtBeginProcess</c>
+        /// Property <c>IsValueSetAtBeginProcess</c>.
         /// </summary>
         internal bool IsValueSetAtBeginProcess { get; set; }
 
         /// <summary>
-        /// Property <c>SetMandatoryParameterCount</c>
+        /// Property <c>SetMandatoryParameterCount</c>.
         /// </summary>
         internal uint SetMandatoryParameterCount { get; set; } = 0;
 
         /// <summary>
-        /// Property <c>SetMandatoryParameterCountAtBeginProcess</c>
+        /// Property <c>SetMandatoryParameterCountAtBeginProcess</c>.
         /// </summary>
         internal uint SetMandatoryParameterCountAtBeginProcess { get; set; } = 0;
     }
@@ -169,7 +169,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <para>
         /// Used to remember the set of parameterset were set
         /// if any conflict occurred with current parameter,
-        /// throw exception
+        /// throw exception.
         /// </para>
         /// </summary>
         private List<string> parametersetNamesList = new();
@@ -183,7 +183,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <para>
         /// Used to remember the set of parameterset were set before begin process
         /// if any conflict occurred with current parameter,
-        /// throw exception
+        /// throw exception.
         /// </para>
         /// </summary>
         private List<string> parametersetNamesListAtBeginProcess = new();
@@ -195,7 +195,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Reset the status of parameter set entries
+        /// Reset the status of parameter set entries.
         /// </para>
         /// </summary>
         internal void reset()
@@ -222,7 +222,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <para>
         /// A given parameter's value was set by cmdlet caller,
         /// check and change the status of parameter set,
-        /// throw exception if confliction occurred
+        /// throw exception if confliction occurred.
         /// </para>
         /// </summary>
         /// <param name="parameterName"></param>
@@ -430,7 +430,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region resolve parameter set name
         /// <summary>
         /// <para>
-        /// Check set parameters and set ParameterSetName
+        /// Check set parameters and set ParameterSetName.
         /// </para>
         /// <para>
         /// Following are special types to be handled
@@ -438,7 +438,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Microsoft.Management.Infrastructure.Options.ImpersonationType
         /// UInt32
         /// Authentication.None  (default value)?
-        /// ProxyType.None
+        /// ProxyType.None.
         /// </para>
         /// </summary>
         internal void CheckParameterSet()
@@ -595,7 +595,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Async operation handler
+        /// Async operation handler.
         /// </para>
         /// </summary>
         private CimAsyncOperation operation;
@@ -653,7 +653,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Get current ParameterSetName of the cmdlet
+        /// Get current ParameterSetName of the cmdlet.
         /// </para>
         /// </summary>
         internal string ParameterSetName { get; private set; }
@@ -669,7 +669,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Throw terminating error
+        /// Throw terminating error.
         /// </para>
         /// </summary>
         [System.Diagnostics.CodeAnalysis.DoesNotReturn]
@@ -796,7 +796,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Throw invalid AuthenticationType
+        /// Throw invalid AuthenticationType.
         /// </para>
         /// </summary>
         /// <param name="operationName"></param>
@@ -838,7 +838,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Throw not found property error
+        /// Throw not found property error.
         /// </para>
         /// </summary>
         internal void ThrowInvalidProperty(

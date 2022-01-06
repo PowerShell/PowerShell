@@ -14,7 +14,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region AsyncResultType
     /// <summary>
     /// <para>
-    /// Async result type
+    /// Async result type.
     /// </para>
     /// </summary>
     public enum AsyncResultType
@@ -50,7 +50,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region AsyncResultEventArgsBase
     /// <summary>
     /// <para>
-    /// Base class of async result event argument
+    /// Base class of async result event argument.
     /// </para>
     /// </summary>
     internal abstract class AsyncResultEventArgsBase : EventArgs
@@ -103,7 +103,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region AsyncResult*Args
     /// <summary>
     /// <para>
-    /// operation successfully completed event argument
+    /// operation successfully completed event argument.
     /// </para>
     /// </summary>
     internal class AsyncResultCompleteEventArgs : AsyncResultEventArgsBase
@@ -123,7 +123,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// <para>
-    /// async result argument with object
+    /// async result argument with object.
     /// </para>
     /// </summary>
     internal class AsyncResultObjectEventArgs : AsyncResultEventArgsBase
@@ -148,7 +148,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// <para>
-    /// operation completed with exception event argument
+    /// operation completed with exception event argument.
     /// </para>
     /// </summary>
     internal class AsyncResultErrorEventArgs : AsyncResultEventArgsBase
@@ -200,10 +200,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// for the IObserver/IObservable contact
     /// - the only possible sequence is OnNext* (OnCompleted|OnError)?
     /// - callbacks are serialized
-    /// - Subscribe never throws
+    /// - Subscribe never throws.
     /// </para>
     /// </summary>
-    /// <typeparam name="T">object type</typeparam>
+    /// <typeparam name="T">object type.</typeparam>
     internal class CimResultObserver<T> : IObserver<T>
     {
         /// <summary>
@@ -238,7 +238,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Operation completed successfully
+        /// Operation completed successfully.
         /// </para>
         /// </summary>
         public virtual void OnCompleted()
@@ -262,7 +262,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Operation completed with an error
+        /// Operation completed with an error.
         /// </para>
         /// </summary>
         /// <param name="error">Error object.</param>
@@ -303,7 +303,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Operation got a new result object
+        /// Operation got a new result object.
         /// </para>
         /// </summary>
         /// <param name="value">Result object.</param>

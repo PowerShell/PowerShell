@@ -136,7 +136,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// Default session name.
-        /// If a name is not passed, then the session is given the name CimSession<int>,
+        /// If a name is not passed, then the session is given the name CimSession.<int>,
         /// where <int> is the next available session number.
         /// For example, CimSession1, CimSession2, etc...
         /// </summary>
@@ -149,7 +149,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// CimSession object path, which is identifying a cimsession object
+        /// CimSession object path, which is identifying a cimsession object.
         /// </para>
         /// </summary>
         internal static readonly string SessionObjectPath = @"CimSession id = {0}, name = {2}, ComputerName = {3}, instance id = {1}";
@@ -880,7 +880,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             /// <summary>
-            /// <para>Namespace</para>
+            /// <para>Namespace.</para>
             /// </summary>
             internal CimSessionWrapper CimSessionWrapper { get; }
         }
@@ -938,7 +938,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Add session to global cache,
+        /// Add session to global cache.
         /// </para>
         /// </summary>
         /// <param name="cimSession"></param>

@@ -17,7 +17,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// <para>
-    /// Convert error or exception to <see cref="System.Management.Automation.ErrorRecord"/>
+    /// Convert error or exception to <see cref="System.Management.Automation.ErrorRecord"/>.
     /// </para>
     /// </summary>
     internal sealed class ErrorToErrorRecord
@@ -311,7 +311,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// <para>
-    /// Write error to pipeline
+    /// Write error to pipeline.
     /// </para>
     /// </summary>
     internal sealed class CimWriteError : CimSyncAction
@@ -341,7 +341,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Write error to pipeline
+        /// Write error to pipeline.
         /// </para>
         /// </summary>
         /// <param name="cmdlet"></param>
@@ -374,7 +374,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Error instance
+        /// Error instance.
         /// </para>
         /// </summary>
 
@@ -382,7 +382,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Exception object
+        /// Exception object.
         /// </para>
         /// </summary>
         internal Exception Exception { get; }

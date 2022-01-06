@@ -47,7 +47,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cimSession">
-        /// <seealso cref="CimSession"/> object raised the event
+        /// <seealso cref="CimSession"/> object raised the event.
         /// </param>
         /// <param name="actionArgs">Event argument.</param>
         protected void NewCmdletActionHandler(object cimSession, CmdletActionEventArgs actionArgs)
@@ -121,7 +121,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// process all actions in the action queue
+        /// process all actions in the action queue.
         /// </para>
         /// </summary>
         /// <param name="cmdletOperation">
@@ -220,7 +220,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Are there active operations?
+        /// Are there active operations?.
         /// </para>
         /// </summary>
         /// <returns>True for having active operations, otherwise false.</returns>
@@ -433,7 +433,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Indicates whether this object was disposed or not
+        /// Indicates whether this object was disposed or not.
         /// </para>
         /// </summary>
         protected bool Disposed

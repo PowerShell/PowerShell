@@ -12,7 +12,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
     /// Containing all necessary information originated from
-    /// the parameters of <see cref="RemoveCimInstanceCommand"/>
+    /// the parameters of <see cref="RemoveCimInstanceCommand"/>.
     /// </summary>
     internal class CimRemoveCimInstanceContext : XOperationContextBase
     {
@@ -46,7 +46,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Base on parametersetName to retrieve ciminstances
+        /// Base on parametersetName to retrieve ciminstances.
         /// </para>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
@@ -114,7 +114,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Remove <see cref="CimInstance"/> from namespace specified in cmdlet
+        /// Remove <see cref="CimInstance"/> from namespace specified in cmdlet.
         /// </para>
         /// </summary>
         /// <param name="cimInstance"></param>

@@ -16,7 +16,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// message for -whatif parameter, while the message represents
     /// what will happen if execute the operation, but not do the operation.
     /// For example, Remove-CimInstance, the whatif message will like,
-    /// "CIM Instance: Win32_Process@{Key=1} will be deleted."
+    /// "CIM Instance: Win32_Process@{Key=1} will be deleted.".
     /// </para>
     /// </summary>
     internal sealed class CimPromptUser : CimSyncAction

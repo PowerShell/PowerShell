@@ -198,3 +198,11 @@ csharp_new_line_before_finally = true
 csharp_new_line_before_members_in_object_initializers = true
 csharp_new_line_before_members_in_anonymous_types = true
 csharp_new_line_between_query_expression_clauses = true
+
+# Analyzer diagnostic settings
+dotnet_analyzer_diagnostic.severity = warning
+
+
+# Dotnet diagnostic settings
+dotnet_diagnostic.DOC900.severity = none
+dotnet_diagnostic.DOC901.severity = none

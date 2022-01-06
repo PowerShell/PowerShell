@@ -14,7 +14,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
     /// Containing all necessary information originated from
-    /// the parameters of <see cref="InvokeCimMethodCommand"/>
+    /// the parameters of <see cref="InvokeCimMethodCommand"/>.
     /// </summary>
     internal class CimSetCimInstanceContext : XOperationContextBase
     {
@@ -38,17 +38,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>property value</para>
+        /// <para>property value.</para>
         /// </summary>
         internal IDictionary Property { get; }
 
         /// <summary>
-        /// <para>parameter set name</para>
+        /// <para>parameter set name.</para>
         /// </summary>
         internal string ParameterSetName { get; }
 
         /// <summary>
-        /// <para>PassThru value</para>
+        /// <para>PassThru value.</para>
         /// </summary>
         internal bool PassThru { get; }
     }
@@ -70,7 +70,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Base on parametersetName to set ciminstances
+        /// Base on parametersetName to set ciminstances.
         /// </para>
         /// </summary>
         /// <param name="cmdlet"><see cref="SetCimInstanceCommand"/> object.</param>
@@ -141,7 +141,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Set <see cref="CimInstance"/> with properties specified in cmdlet
+        /// Set <see cref="CimInstance"/> with properties specified in cmdlet.
         /// </para>
         /// </summary>
         /// <param name="cimInstance"></param>
@@ -170,7 +170,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// Set the properties value to be modified to the given
-        /// <see cref="CimInstance"/>
+        /// <see cref="CimInstance"/>.
         /// </para>
         /// </summary>
         /// <param name="properties"></param>

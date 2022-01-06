@@ -261,6 +261,10 @@ dotnet_diagnostic.CA1417.severity = warning
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1418
 dotnet_diagnostic.CA1418.severity = warning
 
+# CA1419: Provide a parameterless constructor that is as visible as the containing type for concrete types derived from 'System.Runtime.InteropServices.SafeHandle'
+# https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1419
+dotnet_diagnostic.CA1419.severity = none
+
 # CA1501: Avoid excessive inheritance
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules/ca1501
 dotnet_diagnostic.CA1501.severity = none
@@ -2182,7 +2186,7 @@ dotnet_diagnostic.SA1627.severity = none
 
 # SA1629: Documentation text should end with a period
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1629.md
-dotnet_diagnostic.SA1629.severity = none
+dotnet_diagnostic.SA1629.severity = warning
 
 # SA1633: File should have header
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md

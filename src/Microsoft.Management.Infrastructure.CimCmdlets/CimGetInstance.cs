@@ -16,7 +16,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// A class used to add pstypename to partial ciminstance
     /// for <see cref="GetCimInstanceCommand"/>, if -KeyOnly
     /// or -SelectProperties is been specified, then add a pstypename:
-    /// "Microsoft.Management.Infrastructure.CimInstance#__PartialCIMInstance"
+    /// "Microsoft.Management.Infrastructure.CimInstance#__PartialCIMInstance".
     /// </summary>
     internal class FormatPartialCimInstance : IObjectPreProcess
     {
@@ -53,7 +53,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="CimGetInstance"/> class.
         /// <para>
-        /// Constructor
+        /// Constructor.
         /// </para>
         /// </summary>
         public CimGetInstance() : base()
@@ -62,7 +62,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Base on parametersetName to retrieve ciminstances
+        /// Base on parametersetName to retrieve ciminstances.
         /// </para>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
@@ -73,7 +73,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Refactor to be reused by Get-CimInstance;Remove-CimInstance;Set-CimInstance
+        /// Refactor to be reused by Get-CimInstance;Remove-CimInstance;Set-CimInstance.
         /// </para>
         /// </summary>
         /// <param name="cmdlet"></param>
@@ -369,7 +369,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Set <see cref="CimSessionProxy"/> properties
+        /// Set <see cref="CimSessionProxy"/> properties.
         /// </para>
         /// </summary>
         /// <param name="proxy"></param>
@@ -476,7 +476,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </para>
         /// </summary>
         /// <param name="computerName"></param>

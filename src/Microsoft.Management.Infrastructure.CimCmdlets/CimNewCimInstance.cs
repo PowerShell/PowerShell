@@ -15,7 +15,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
     /// Containing all information originated from
-    /// the parameters of <see cref="NewCimInstanceCommand"/>
+    /// the parameters of <see cref="NewCimInstanceCommand"/>.
     /// </summary>
     internal class CimNewCimInstanceContext : XOperationContextBase
     {
@@ -44,7 +44,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Initializes a new instance of the <see cref="CimNewCimInstance"/> class.
         /// <para>
-        /// Constructor
+        /// Constructor.
         /// </para>
         /// </summary>
         public CimNewCimInstance()
@@ -55,7 +55,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// Base on parametersetName to create ciminstances,
-        /// either remotely or locally
+        /// either remotely or locally.
         /// </para>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
@@ -171,7 +171,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Get full <see cref="CimInstance"/> from server based on the key
+        /// Get full <see cref="CimInstance"/> from server based on the key.
         /// </para>
         /// </summary>
         /// <param name="cimInstance"></param>
@@ -197,7 +197,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Set <see cref="CimSessionProxy"/> properties
+        /// Set <see cref="CimSessionProxy"/> properties.
         /// </para>
         /// </summary>
         /// <param name="proxy"></param>
@@ -215,7 +215,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </para>
         /// </summary>
         /// <param name="computerName"></param>

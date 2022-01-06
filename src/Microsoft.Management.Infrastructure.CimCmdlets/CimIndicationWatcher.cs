@@ -21,7 +21,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// <para>
-        /// Returns an Object value for an operation context
+        /// Returns an Object value for an operation context.
         /// </para>
         /// </summary>
         public object Context
@@ -42,7 +42,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// <para>
-        /// Returns an exception
+        /// Returns an exception.
         /// </para>
         /// </summary>
         public Exception Exception { get; }
@@ -109,7 +109,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// subscription result
+        /// subscription result.
         /// </para>
         /// </summary>
         private readonly CimSubscriptionResult result;
@@ -183,7 +183,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Initialize
+        /// Initialize.
         /// </para>
         /// </summary>
         private void Initialize(
@@ -210,7 +210,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Handler of new subscription result
+        /// Handler of new subscription result.
         /// </para>
         /// </summary>
         /// <param name="src"></param>
@@ -239,7 +239,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// PSEventManager::ProcessNewSubscriber to start to listen to the Cim Indication.
         /// </para>
         /// <para>
-        /// If set EnableRaisingEvents to false, which will be ignored
+        /// If set EnableRaisingEvents to false, which will be ignored.
         /// </para>
         /// </summary>
         [BrowsableAttribute(false)]
@@ -265,7 +265,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Start the subscription
+        /// Start the subscription.
         /// </para>
         /// </summary>
         public void Start()
@@ -302,7 +302,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Unsubscribe the subscription
+        /// Unsubscribe the subscription.
         /// </para>
         /// </summary>
         public void Stop()
@@ -342,7 +342,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
         /// <summary>
         /// <para>
-        /// CimRegisterCimIndication object
+        /// CimRegisterCimIndication object.
         /// </para>
         /// </summary>
         private CimRegisterCimIndication cimRegisterCimIndication;
@@ -370,7 +370,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region parameters
         /// <summary>
         /// <para>
-        /// parameters used to start the subscription
+        /// parameters used to start the subscription.
         /// </para>
         /// </summary>
         private string computerName;

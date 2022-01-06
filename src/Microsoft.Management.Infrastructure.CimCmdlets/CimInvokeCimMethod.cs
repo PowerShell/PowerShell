@@ -22,7 +22,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// Containing all necessary information originated from
-        /// the parameters of <see cref="InvokeCimMethodCommand"/>
+        /// the parameters of <see cref="InvokeCimMethodCommand"/>.
         /// </summary>
         internal class CimInvokeCimMethodContext : XOperationContextBase
         {
@@ -44,12 +44,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             /// <summary>
-            /// <para>namespace</para>
+            /// <para>namespace.</para>
             /// </summary>
             internal string MethodName { get; }
 
             /// <summary>
-            /// <para>parameters collection</para>
+            /// <para>parameters collection.</para>
             /// </summary>
             internal CimMethodParametersCollection ParametersCollection { get; }
         }
@@ -64,7 +64,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Base on parametersetName to retrieve ciminstances
+        /// Base on parametersetName to retrieve ciminstances.
         /// </para>
         /// </summary>
         /// <param name="cmdlet"><see cref="GetCimInstanceCommand"/> object.</param>
@@ -221,7 +221,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Invoke cimmethod on given <see cref="CimInstance"/>
+        /// Invoke cimmethod on given <see cref="CimInstance"/>.
         /// </para>
         /// </summary>
         /// <param name="cimInstance"></param>
@@ -249,7 +249,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Set <see cref="CimSessionProxy"/> properties
+        /// Set <see cref="CimSessionProxy"/> properties.
         /// </para>
         /// </summary>
         /// <param name="proxy"></param>
@@ -267,7 +267,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </para>
         /// </summary>
         /// <param name="computerName"></param>
@@ -284,7 +284,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </para>
         /// </summary>
         /// <param name="computerName"></param>

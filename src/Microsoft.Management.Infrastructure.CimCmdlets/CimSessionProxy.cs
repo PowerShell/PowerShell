@@ -30,7 +30,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal abstract class XOperationContextBase
     {
         /// <summary>
-        /// <para>namespace</para>
+        /// <para>namespace.</para>
         /// </summary>
         internal string Namespace
         {
@@ -89,11 +89,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// ComputerName of the session
+        /// ComputerName of the session.
         /// </para>
         /// </summary>
         /// <remarks>
-        /// return value could be null
+        /// return value could be null.
         /// </remarks>
         internal virtual string ComputerName { get; }
 
@@ -103,7 +103,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <remarks>
-        /// return value could be null
+        /// return value could be null.
         /// </remarks>
         internal virtual CimInstance TargetCimInstance { get; }
     }
@@ -129,7 +129,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region Eventargs class
     /// <summary>
     /// <para>
-    /// CmdletActionEventArgs holds a CimBaseAction object
+    /// CmdletActionEventArgs holds a CimBaseAction object.
     /// </para>
     /// </summary>
     internal sealed class CmdletActionEventArgs : EventArgs
@@ -184,7 +184,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// global operation counter
+        /// global operation counter.
         /// </para>
         /// </summary>
         private static long gOperationCounter = 0;
@@ -195,7 +195,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private static readonly object temporarySessionCacheLock = new();
 
         /// <summary>
-        /// <para>temporary CimSession cache</para>
+        /// <para>temporary CimSession cache.</para>
         /// <para>Temporary CimSession means the session is created by cimcmdlets,
         /// which is not created by <see cref="New-CimSession"/> cmdlet.
         /// Due to some cmdlet, such as <see cref="Remove-CimInstance"/>
@@ -241,7 +241,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// <para>Wrapper function to remove CimSession from cache</para>
+        /// <para>Wrapper function to remove CimSession from cache.</para>
         /// </summary>
         /// <param name="session"></param>
         /// <param name="dispose">Whether need to dispose the <see cref="CimSession"/> object.</param>
@@ -741,7 +741,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Trigger an event that new action available
+        /// Trigger an event that new action available.
         /// </para>
         /// </summary>
         /// <param name="action"></param>
@@ -770,7 +770,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Trigger an event that new operation is created
+        /// Trigger an event that new operation is created.
         /// </para>
         /// </summary>
         /// <param name="cancelOperation"></param>
@@ -790,7 +790,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Trigger an event that an operation is deleted
+        /// Trigger an event that an operation is deleted.
         /// </para>
         /// </summary>
         /// <param name="operation"></param>
@@ -816,7 +816,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// WriteMessage callback
+        /// WriteMessage callback.
         /// </para>
         /// </summary>
         /// <param name="channel"></param>
@@ -837,7 +837,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Write operation start verbose message
+        /// Write operation start verbose message.
         /// </para>
         /// </summary>
         /// <param name="operation"></param>
@@ -868,7 +868,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Write operation complete verbose message
+        /// Write operation complete verbose message.
         /// </para>
         /// </summary>
         /// <param name="operation"></param>
@@ -883,7 +883,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// WriteProgress callback
+        /// WriteProgress callback.
         /// </para>
         /// </summary>
         /// <param name="activity"></param>
@@ -919,7 +919,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// WriteError callback
+        /// WriteError callback.
         /// </para>
         /// </summary>
         /// <param name="instance"></param>
@@ -967,7 +967,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Handle async event triggered by <see cref="CimResultObserver{T}"/>
+        /// Handle async event triggered by <see cref="CimResultObserver{T}"/>.
         /// </para>
         /// </summary>
         /// <param name="observer">Object triggered the event.</param>
@@ -1081,7 +1081,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// create a cim instance asynchronously
+        /// create a cim instance asynchronously.
         /// </para>
         /// </summary>
         /// <param name="namespaceName"></param>
@@ -1219,7 +1219,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// Enumerate referencing instance associated with
-        /// the given instance asynchronously
+        /// the given instance asynchronously.
         /// </para>
         /// </summary>
         /// <param name="namespaceName"></param>
@@ -1237,7 +1237,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Query cim instance asynchronously
+        /// Query cim instance asynchronously.
         /// </para>
         /// </summary>
         /// <param name="namespaceName"></param>
@@ -1374,7 +1374,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Subscribe to cim indication asynchronously
+        /// Subscribe to cim indication asynchronously.
         /// </para>
         /// </summary>
         /// <param name="namespaceName"></param>
@@ -1402,7 +1402,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Test connection asynchronously
+        /// Test connection asynchronously.
         /// </para>
         /// </summary>
         public void TestConnectionAsync()
@@ -1464,7 +1464,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Unique operation ID
+        /// Unique operation ID.
         /// </para>
         /// </summary>
         private long operationID;
@@ -1679,7 +1679,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Consume the results of async operations
+        /// Consume the results of async operations.
         /// </para>
         /// </summary>
         /// <param name="asyncResult"></param>
@@ -1722,7 +1722,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Consume the results of async operations
+        /// Consume the results of async operations.
         /// </para>
         /// </summary>
         /// <param name="asyncResult"></param>
@@ -1743,7 +1743,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Consume the <see cref="CimClass"/> of async operations
+        /// Consume the <see cref="CimClass"/> of async operations.
         /// </para>
         /// </summary>
         /// <param name="asyncResult"></param>
@@ -1763,7 +1763,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Consume the <see cref="CimSubscriptionResult"/> of async operations
+        /// Consume the <see cref="CimSubscriptionResult"/> of async operations.
         /// </para>
         /// </summary>
         /// <param name="asyncResult"></param>
@@ -1783,7 +1783,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Consume the <see cref="CimMethodResultBase"/> of async operations
+        /// Consume the <see cref="CimMethodResultBase"/> of async operations.
         /// </para>
         /// </summary>
         /// <param name="asyncResult"></param>
@@ -1811,7 +1811,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Check whether current proxy object is available
+        /// Check whether current proxy object is available.
         /// </para>
         /// </summary>
         private void CheckAvailability()
@@ -1832,7 +1832,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Check the wrapped <see cref="CimSession"/> object
+        /// Check the wrapped <see cref="CimSession"/> object.
         /// </para>
         /// </summary>
         private void AssertSession()
@@ -1846,7 +1846,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Create <see cref="CimSessionOptions"/> based on the given computerName
+        /// Create <see cref="CimSessionOptions"/> based on the given computerName.
         /// </para>
         /// </summary>
         /// <returns></returns>
@@ -1871,7 +1871,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// Create <see cref="CimSessionOptions"/> based on the given computerName,
-        /// timeout and credential
+        /// timeout and credential.
         /// </para>
         /// </summary>
         /// <param name="computerName"></param>
@@ -1916,7 +1916,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     #region class CimSessionProxyTestConnection
     /// <summary>
     /// <para>
-    /// Write session to pipeline after test connection success
+    /// Write session to pipeline after test connection success.
     /// </para>
     /// </summary>
     internal class CimSessionProxyTestConnection : CimSessionProxy
@@ -1968,7 +1968,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// <summary>
     /// <para>
     /// Write CimClass to pipeline if the CimClass satisfied
-    /// the given conditions
+    /// the given conditions.
     /// </para>
     /// </summary>
     internal class CimSessionProxyGetCimClass : CimSessionProxy

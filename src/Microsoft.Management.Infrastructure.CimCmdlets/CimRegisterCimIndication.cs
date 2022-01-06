@@ -14,14 +14,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
     /// <para>
-    /// Subscription result event args
+    /// Subscription result event args.
     /// </para>
     /// </summary>
     internal abstract class CimSubscriptionEventArgs : EventArgs
     {
         /// <summary>
         /// <para>
-        /// Returns an Object value for an operation context
+        /// Returns an Object value for an operation context.
         /// </para>
         /// </summary>
         public object Context
@@ -37,14 +37,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// <para>
-    /// Subscription result event args
+    /// Subscription result event args.
     /// </para>
     /// </summary>
     internal class CimSubscriptionResultEventArgs : CimSubscriptionEventArgs
     {
         /// <summary>
         /// <para>
-        /// subscription result
+        /// subscription result.
         /// </para>
         /// </summary>
         public CimSubscriptionResult Result { get; }
@@ -63,14 +63,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// <para>
-    /// Subscription result event args
+    /// Subscription result event args.
     /// </para>
     /// </summary>
     internal class CimSubscriptionExceptionEventArgs : CimSubscriptionEventArgs
     {
         /// <summary>
         /// <para>
-        /// subscription result
+        /// subscription result.
         /// </para>
         /// </summary>
         public Exception Exception { get; }
@@ -185,7 +185,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cimSession">
-        /// <seealso cref="CimSession"/> object raised the event
+        /// <seealso cref="CimSession"/> object raised the event.
         /// </param>
         /// <param name="actionArgs">Event argument.</param>
         private void CimIndicationHandler(object cimSession, CmdletActionEventArgs actionArgs)
@@ -309,7 +309,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private methods
         /// <summary>
         /// <para>
-        /// Create <see cref="CimSessionProxy"/> and set properties
+        /// Create <see cref="CimSessionProxy"/> and set properties.
         /// </para>
         /// </summary>
         /// <param name="computerName"></param>

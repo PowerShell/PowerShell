@@ -25,7 +25,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Execute the write operation to given cmdlet object
+        /// Execute the write operation to given cmdlet object.
         /// </para>
         /// </summary>
         /// <param name="cmdlet">
@@ -66,7 +66,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Block current thread until action completed
+        /// Block current thread until action completed.
         /// </para>
         /// </summary>
         /// <returns>Response from user.</returns>
