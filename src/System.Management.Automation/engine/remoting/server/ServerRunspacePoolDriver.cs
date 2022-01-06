@@ -120,7 +120,7 @@ namespace System.Management.Automation
         /// For RunspacePool case, every newly created Runspace (in the pool) will run
         /// this script.
         /// 2. ThreadOptions for RunspacePool/Runspace
-        /// 3. ThreadApartment for RunspacePool/Runspace
+        /// 3. ThreadApartment for RunspacePool/Runspace.
         /// </param>
         /// <param name="initialSessionState">Configuration of the runspace.</param>
         /// <param name="applicationPrivateData">Application private data.</param>
@@ -666,7 +666,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sender">Sender of this events.</param>
         /// <param name="eventArgs">arguments which describe the
-        /// RunspacePool's StateChanged event</param>
+        /// RunspacePool's StateChanged event.</param>
         private void HandleRunspacePoolStateChanged(object sender,
                             RunspacePoolStateChangedEventArgs eventArgs)
         {
@@ -1075,7 +1075,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">contains information about the new maxRunspaces
-        /// and the callId at the client</param>
+        /// and the callId at the client.</param>
         private void HandleSetMaxRunspacesReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
         {
             PSObject data = eventArgs.Data;
@@ -1091,7 +1091,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">contains information about the new minRunspaces
-        /// and the callId at the client</param>
+        /// and the callId at the client.</param>
         private void HandleSetMinRunspacesReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
         {
             PSObject data = eventArgs.Data;

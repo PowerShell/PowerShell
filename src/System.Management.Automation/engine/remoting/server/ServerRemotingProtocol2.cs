@@ -352,7 +352,7 @@ namespace System.Management.Automation
         /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should
         /// be the one thats used to send data from within this
-        /// data structure handler class</remarks>
+        /// data structure handler class.</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
             Dbg.Assert(data != null, "Cannot send null object.");
@@ -364,7 +364,7 @@ namespace System.Management.Automation
         /// powershell id.
         /// </summary>
         /// <param name="clientPowerShellId">powershell id for the
-        /// powershell data structure handler</param>
+        /// powershell data structure handler.</param>
         /// <returns>ServerPowerShellDataStructureHandler.</returns>
         internal ServerPowerShellDataStructureHandler GetAssociatedPowerShellDataStructureHandler
             (Guid clientPowerShellId)
@@ -496,7 +496,7 @@ namespace System.Management.Automation
         /// Send the state information to the client.
         /// </summary>
         /// <param name="stateInfo">state information to be
-        /// sent to the client</param>
+        /// sent to the client.</param>
         internal void SendStateChangedInformationToClient(PSInvocationStateInfo
             stateInfo)
         {
@@ -789,7 +789,7 @@ namespace System.Management.Automation
         /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should
         /// be the one thats used to send data from within this
-        /// data structure handler class</remarks>
+        /// data structure handler class.</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
             Dbg.Assert(data != null, "Cannot send null object.");

@@ -162,7 +162,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="optionName"></param>
         /// <param name="originalValue"></param>
         /// <exception cref="ArgumentException">
-        /// 1. "optionName" is already defined
+        /// 1. "optionName" is already defined.
         /// </exception>
         private static void AssertValueNotAssigned(string optionName, object originalValue)
         {

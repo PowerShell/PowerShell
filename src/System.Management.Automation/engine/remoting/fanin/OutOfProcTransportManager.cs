@@ -211,7 +211,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Process an XmlElement. The element name must be one of the following:
-        ///         "Data"
+        ///         "Data".
         /// </summary>
         /// <param name="xmlReader"></param>
         /// <param name="callbacks"></param>
@@ -1093,7 +1093,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Launch a new Process (pwsh -s) to perform remoting. This is used by *-Job cmdlets
         /// to support background jobs without depending on WinRM (WinRM has complex requirements like
-        /// elevation to support local machine remoting)
+        /// elevation to support local machine remoting).
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
         /// </exception>

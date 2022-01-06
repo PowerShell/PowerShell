@@ -3725,7 +3725,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The binder for converting a value, e.g. [int]"42"
+    /// The binder for converting a value, e.g. [int]"42".
     /// </summary>
     internal sealed class PSConvertBinder : ConvertBinder
     {
@@ -3924,7 +3924,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The binder to get the value of an indexable object, e.g. $x[1]
+    /// The binder to get the value of an indexable object, e.g. $x[1].
     /// </summary>
     internal sealed class PSGetIndexBinder : GetIndexBinder
     {

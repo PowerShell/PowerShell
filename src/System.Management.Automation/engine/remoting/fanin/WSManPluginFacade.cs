@@ -335,7 +335,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Structure definition to match the native one.
-        /// NOTE: The layout of this structure must be IDENTICAL between here and PwrshPluginWkr_Ptrs in pwrshplugindefs.h!
+        /// NOTE: The layout of this structure must be IDENTICAL between here and PwrshPluginWkr_Ptrs in pwrshplugindefs.h!.
         /// </summary>
         [StructLayout(LayoutKind.Sequential)]
         internal class WSManPluginEntryDelegatesInternal
@@ -701,7 +701,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Callback used to register with thread pool to notify when a plugin operation shuts down.
         /// Conforms to:
-        ///     public delegate void WaitOrTimerCallback( Object state, bool timedOut )
+        ///     public delegate void WaitOrTimerCallback( Object state, bool timedOut ).
         /// </summary>
         /// <param name="operationContext">PVOID.</param>
         /// <param name="timedOut">BOOLEAN.</param>

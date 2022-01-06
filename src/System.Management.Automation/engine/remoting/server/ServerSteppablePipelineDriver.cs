@@ -91,10 +91,10 @@ namespace System.Management.Automation
         /// <param name="clientPowerShellId">The client powershell id.</param>
         /// <param name="clientRunspacePoolId">The client runspacepool id.</param>
         /// <param name="runspacePoolDriver">runspace pool driver
-        /// which is creating this powershell driver</param>
+        /// which is creating this powershell driver.</param>
         /// <param name="apartmentState">Apartment state for this powershell.</param>
         /// <param name="hostInfo">host info using which the host for
-        /// this powershell will be constructed</param>
+        /// this powershell will be constructed.</param>
         /// <param name="streamOptions">Serialization options for the streams in this powershell.</param>
         /// <param name="addToHistory">
         /// true if the command is to be added to history list of the runspace. false, otherwise.
@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// If null, the RunspacePool pointed by <paramref name="runspacePoolDriver"/> will be used.
         /// </param>
         /// <param name="eventSubscriber">
-        /// Steppable pipeline event subscriber
+        /// Steppable pipeline event subscriber.
         /// </param>
         /// <param name="powershellInput">Input collection of the PowerShell pipeline.</param>
         internal ServerSteppablePipelineDriver(PowerShell powershell, bool noInput, Guid clientPowerShellId,

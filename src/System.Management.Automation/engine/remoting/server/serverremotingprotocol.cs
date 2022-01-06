@@ -50,7 +50,7 @@ namespace System.Management.Automation.Remoting
         /// Close the connection asynchronously.
         /// </summary>
         /// <param name="reasonForClose">
-        /// Message describing why the session is closing
+        /// Message describing why the session is closing.
         /// </param>
         internal abstract void CloseConnectionAsync(Exception reasonForClose);
 

@@ -10,7 +10,7 @@ namespace System.Management.Automation.Remoting
     ///<summary>
     /// This is the object used by Runspace,pipeline,host to send data
     /// to remote end. Transport layer owns breaking this into fragments
-    /// and sending to other end
+    /// and sending to other end.
     ///</summary>
     internal class RemoteDataObject<T>
     {

@@ -61,7 +61,7 @@ namespace System.Management.Automation.Remoting.Client
         /// the destination is running and is accepting requests. Consult the logs and documentation
         /// for the WS-Management service running on the destination, most commonly IIS or WinRM.
         /// If the destination is the WinRM service, run the following command on the destination to
-        /// analyze and configure the WinRM service:
+        /// analyze and configure the WinRM service:.
         /// </summary>
         internal const int ERROR_WSMAN_SENDDATA_CANNOT_CONNECT = -2144108526;
 
@@ -221,7 +221,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         /// <remarks>
         /// Please keep in sync with WSManAuthenticationMechanism
-        /// from C:\e\win7_powershell\admin\monad\nttargets\assemblies\logging\ETW\Manifests\Microsoft-Windows-PowerShell-Instrumentation.man
+        /// from C:\e\win7_powershell\admin\monad\nttargets\assemblies\logging\ETW\Manifests\Microsoft-Windows-PowerShell-Instrumentation.man.
         /// </remarks>
         [Flags]
         internal enum WSManAuthenticationMechanism : int
@@ -239,7 +239,7 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             WSMAN_FLAG_AUTH_DIGEST = 0x2,
             /// <summary>
-            /// Use negotiate authentication for a remote operation (may use kerberos or ntlm)
+            /// Use negotiate authentication for a remote operation (may use kerberos or ntlm).
             /// </summary>
             WSMAN_FLAG_AUTH_NEGOTIATE = 0x4,
             /// <summary>
@@ -353,7 +353,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// Gets a structure representation (used for marshalling)
+            /// Gets a structure representation (used for marshalling).
             /// </summary>
             internal WSManUserNameCredentialStruct CredentialStruct
             {
@@ -553,7 +553,7 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             WSMAN_OPTION_SHELL_MAX_DATA_SIZE_PER_MESSAGE_KB = 29,
             /// <summary>
-            /// String -
+            /// String -.
             /// </summary>
             WSMAN_OPTION_REDIRECT_LOCATION = 30,
             /// <summary>
@@ -1290,7 +1290,7 @@ namespace System.Management.Automation.Remoting.Client
             /// <summary>
             /// Since this is a structure, it must be non-null. This differs in behavior from all the other UnMarshals
             /// that are classes since they can be null.
-            /// TODO: Do I need to worry about intermediate null characters in the arguments? The managed to unmanaged does!
+            /// TODO: Do I need to worry about intermediate null characters in the arguments? The managed to unmanaged does!.
             /// </summary>
             /// <param name="unmanagedData"></param>
             /// <returns></returns>
@@ -1695,19 +1695,19 @@ namespace System.Management.Automation.Remoting.Client
         /// user supplied operation context.
         /// </param>
         /// <param name="flags">
-        /// one or more flags from WSManCallbackFlags
+        /// one or more flags from WSManCallbackFlags.
         /// </param>
         /// <param name="error">
-        /// error allocated and owned by the winrm stack; valid in the callback only;
+        /// error allocated and owned by the winrm stack; valid in the callback only.
         /// </param>
         /// <param name="shellOperationHandle">
-        /// shell handle associated with the user context
+        /// shell handle associated with the user context.
         /// </param>
         /// <param name="commandOperationHandle">
-        /// command handle associated with the user context
+        /// command handle associated with the user context.
         /// </param>
         /// <param name="operationHandle">
-        /// operation handle associated with the user context
+        /// operation handle associated with the user context.
         /// </param>
         /// <param name="data">
         /// output data from command/shell; allocated internally and owned by the winrm stack.
@@ -1796,7 +1796,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             internal int errorCode;
             /// <summary>
-            /// Extended error description from the fault;
+            /// Extended error description from the fault.
             /// </summary>
             internal string errorDetail;
             /// <summary>
@@ -2374,7 +2374,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </summary>
         /// <param name="wsManAPIHandle"></param>
         /// <param name="connection">
-        /// if NULL, then connection will default to 127.0.0.1
+        /// if NULL, then connection will default to 127.0.0.1.
         /// </param>
         /// <param name="flags"></param>
         /// <param name="authenticationCredentials">
@@ -2519,7 +2519,7 @@ namespace System.Management.Automation.Remoting.Client
         /// startup information to be passed to the shell.
         /// </param>
         /// <param name="optionSet">
-        /// Options to be passed with CreateShell
+        /// Options to be passed with CreateShell.
         /// </param>
         /// <param name="openContent">
         /// any content that is used by the remote shell to startup.
@@ -2884,7 +2884,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="messageLengthUsed">
         /// Represents the effective number of characters written to the output buffer, including the NULL terminator.
         /// It cannot be NULL. If both "messageLength" and "message" parameters are 0, the function will return ERROR_INSUFFICIENT_BUFFER
-        /// and "messageLengthUsed" parameter will be set to the number of characters needed, including NULL terminator
+        /// and "messageLengthUsed" parameter will be set to the number of characters needed, including NULL terminator.
         /// </param>
         [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern int WSManGetErrorMessage(IntPtr wsManAPIHandle,

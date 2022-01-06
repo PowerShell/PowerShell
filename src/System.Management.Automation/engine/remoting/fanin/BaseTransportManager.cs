@@ -62,7 +62,7 @@ namespace System.Management.Automation.Remoting
         /// Error occurred.
         /// </param>
         /// <param name="m">
-        /// The transport method that raised the error
+        /// The transport method that raised the error.
         /// </param>
         internal TransportErrorOccuredEventArgs(PSRemotingTransportException e,
             TransportMethodEnum m)
@@ -242,10 +242,10 @@ namespace System.Management.Automation.Remoting
         /// Uses the "OnDataAvailableCallback" to handle Deserialized objects.
         /// </summary>
         /// <param name="data">
-        /// data to process
+        /// data to process.
         /// </param>
         /// <param name="stream">
-        /// priority stream this data belongs to
+        /// priority stream this data belongs to.
         /// </param>
         internal virtual void ProcessRawData(byte[] data, string stream)
         {
@@ -271,10 +271,10 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// </summary>
         /// <param name="data">
-        /// data to process
+        /// data to process.
         /// </param>
         /// <param name="stream">
-        /// priority stream this data belongs to
+        /// priority stream this data belongs to.
         /// </param>
         /// <param name="dataAvailableCallback">
         /// used by the caller to supply a callback to handle deserialized object.
@@ -1253,7 +1253,7 @@ namespace System.Management.Automation.Remoting.Server
         /// true to immediately send data to client.
         /// </param>
         /// <param name="reportPending">
-        /// reported as true when host message requests are sent to client
+        /// reported as true when host message requests are sent to client.
         /// </param>
         internal void SendDataToClient<T>(RemoteDataObject<T> data, bool flush, bool reportPending = false)
         {
@@ -1362,7 +1362,7 @@ namespace System.Management.Automation.Remoting.Server
         /// true to immediately send data to client.
         /// </param>
         /// <param name="reportAsPending">
-        /// reported as true when sending host message requests are reported true
+        /// reported as true when sending host message requests are reported true.
         /// </param>
         internal void SendDataToClient(RemoteDataObject psObjectData, bool flush, bool reportAsPending = false)
         {
@@ -1374,7 +1374,7 @@ namespace System.Management.Automation.Remoting.Server
         /// not block Pipeline closing. This method is generally called when the
         /// TransportManager fails to Send data (SendDataToClient). Pipeline Execution
         /// Thread directly calls SendDataToClient method from its execution thread,
-        /// so we cannot call Stop from the same thread (as it will result in a deadlock)
+        /// so we cannot call Stop from the same thread (as it will result in a deadlock).
         /// </summary>
         internal void ReportError(int errorCode, string methodName)
         {
@@ -1424,10 +1424,10 @@ namespace System.Management.Automation.Remoting.Server
         /// flush data by sending data immediately to the client.
         /// </param>
         /// <param name="reportAsPending">
-        /// reported as true when sending host message requests to client
+        /// reported as true when sending host message requests to client.
         /// </param>
         /// <param name="reportAsDataBoundary">
-        /// reported as true when data being reported is as object boundary, i.e the corresponding fragment is an end fragment
+        /// reported as true when data being reported is as object boundary, i.e the corresponding fragment is an end fragment.
         /// </param>
         protected abstract void SendDataToClient(byte[] data, bool flush, bool reportAsPending, bool reportAsDataBoundary);
 
@@ -1438,7 +1438,7 @@ namespace System.Management.Automation.Remoting.Server
         /// <summary>
         /// </summary>
         /// <param name="reasonForClose">
-        /// message describing why the transport manager must be closed
+        /// message describing why the transport manager must be closed.
         /// </param>
         internal abstract void Close(Exception reasonForClose);
 

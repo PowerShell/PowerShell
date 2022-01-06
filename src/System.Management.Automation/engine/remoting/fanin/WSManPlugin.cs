@@ -1694,7 +1694,7 @@ namespace System.Management.Automation.Remoting
         #region Utilities
 
         /// <summary>
-        /// Report operation complete to WSMan and supply a reason (if any)
+        /// Report operation complete to WSMan and supply a reason (if any).
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="errorCode"></param>

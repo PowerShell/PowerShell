@@ -62,10 +62,10 @@ namespace System.Management.Automation
         /// <param name="clientPowerShellId">The client powershell id.</param>
         /// <param name="clientRunspacePoolId">The client runspacepool id.</param>
         /// <param name="runspacePoolDriver">runspace pool driver
-        /// which is creating this powershell driver</param>
+        /// which is creating this powershell driver.</param>
         /// <param name="apartmentState">Apartment state for this powershell.</param>
         /// <param name="hostInfo">host info using which the host for
-        /// this powershell will be constructed</param>
+        /// this powershell will be constructed.</param>
         /// <param name="streamOptions">Serialization options for the streams in this powershell.</param>
         /// <param name="addToHistory">
         /// true if the command is to be added to history list of the runspace. false, otherwise.
@@ -92,10 +92,10 @@ namespace System.Management.Automation
         /// <param name="clientPowerShellId">The client powershell id.</param>
         /// <param name="clientRunspacePoolId">The client runspacepool id.</param>
         /// <param name="runspacePoolDriver">runspace pool driver
-        /// which is creating this powershell driver</param>
+        /// which is creating this powershell driver.</param>
         /// <param name="apartmentState">Apartment state for this powershell.</param>
         /// <param name="hostInfo">host info using which the host for
-        /// this powershell will be constructed</param>
+        /// this powershell will be constructed.</param>
         /// <param name="streamOptions">Serialization options for the streams in this powershell.</param>
         /// <param name="addToHistory">
         /// true if the command is to be added to history list of the runspace. false, otherwise.
@@ -413,7 +413,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="eventArgs">arguments describing state changed
-        /// information for this powershell</param>
+        /// information for this powershell.</param>
         private void HandlePowerShellInvocationStateChanged(object sender,
             PSInvocationStateChangedEventArgs eventArgs)
         {
@@ -672,7 +672,7 @@ namespace System.Management.Automation
         /// runspace pool if it receives any of the terminal
         /// states. Hence all the remaining data should be
         /// sent before this happens. Else the data will be
-        /// discarded</remarks>
+        /// discarded.</remarks>
         private void SendRemainingData()
         {
             int indexIntoDataSent = (!_extraPowerShellAlreadyScheduled) ? 0 : 1;

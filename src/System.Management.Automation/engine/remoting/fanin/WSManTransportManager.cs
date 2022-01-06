@@ -87,13 +87,13 @@ namespace System.Management.Automation.Remoting.Client
         /// Constructs a WSManTransportErrorOccuredEventArgs instance from the supplied data.
         /// </summary>
         /// <param name="wsmanAPIHandle">
-        /// WSMan API handle to use to get error messages from WSMan error id(s)
+        /// WSMan API handle to use to get error messages from WSMan error id(s).
         /// </param>
         /// <param name="wsmanSessionTM">
-        /// Session Transportmanager to use to get error messages (for redirect)
+        /// Session Transportmanager to use to get error messages (for redirect).
         /// </param>
         /// <param name="errorStruct">
-        /// Error structure supplied by callbacks from WSMan API
+        /// Error structure supplied by callbacks from WSMan API.
         /// </param>
         /// <param name="transportMethodReportingError">
         /// The transport method call that reported this error.
@@ -102,10 +102,10 @@ namespace System.Management.Automation.Remoting.Client
         /// resource string that holds the message.
         /// </param>
         /// <param name="resourceArgs">
-        /// Arguments to pass to the resource
+        /// Arguments to pass to the resource.
         /// </param>
         /// <returns>
-        /// An instance of WSManTransportErrorOccuredEventArgs
+        /// An instance of WSManTransportErrorOccuredEventArgs.
         /// </returns>
         internal static TransportErrorOccuredEventArgs ConstructTransportErrorEventArgs(IntPtr wsmanAPIHandle,
             WSManClientSessionTransportManager wsmanSessionTM,
@@ -1250,7 +1250,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Adjusts for any variations in different protocol versions. Following changes are considered
         /// - In V2, default max envelope size is 150KB while in V3 it has been changed to 500KB.
         ///   With default configuration remoting from V3 client to V2 server will break as V3 client can send upto 500KB in a single Send packet
-        ///   So if server version is known to be V2, we'll downgrade the max env size to 150KB (V2's default) if the current value is 500KB (V3 default)
+        ///   So if server version is known to be V2, we'll downgrade the max env size to 150KB (V2's default) if the current value is 500KB (V3 default).
         /// </summary>
         /// <param name="serverProtocolVersion">Server negotiated protocol version.</param>
         internal void AdjustForProtocolVariations(Version serverProtocolVersion)
@@ -2913,7 +2913,7 @@ namespace System.Management.Automation.Remoting.Client
         /// </param>
         /// <param name="sessnTM">
         /// Session transport manager creating this command transport manager instance.
-        /// Used by Command TM to apply session specific properties
+        /// Used by Command TM to apply session specific properties.
         /// </param>
         internal WSManClientCommandTransportManager(
             WSManConnectionInfo connectionInfo,

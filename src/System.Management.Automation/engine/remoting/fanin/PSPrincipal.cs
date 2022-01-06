@@ -96,10 +96,10 @@ namespace System.Management.Automation.Remoting
         #region Public Constructors
 
         /// <summary>
-        /// Constructs PSPrincipal using PSIdentity and a token (used to construct WindowsIdentity)
+        /// Constructs PSPrincipal using PSIdentity and a token (used to construct WindowsIdentity).
         /// </summary>
         /// <param name="userPrincipal">
-        /// Connecting User Information
+        /// Connecting User Information.
         /// </param>
         /// <param name="httpUrl">
         /// httpUrl element (from WSMAN_SENDER_DETAILS struct).
@@ -137,7 +137,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Connection string used by the client to connect to the server. This is
-        /// directly taken from WSMAN_SENDER_DETAILS struct (from wsman.h)
+        /// directly taken from WSMAN_SENDER_DETAILS struct (from wsman.h).
         /// </summary>
         public string ConnectionString
         {
@@ -148,7 +148,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Application arguments (i.e. specified in New-PSSessionOptions -ApplicationArguments)
+        /// Application arguments (i.e. specified in New-PSSessionOptions -ApplicationArguments).
         /// </summary>
         public PSPrimitiveDictionary ApplicationArguments
         {
@@ -254,7 +254,7 @@ namespace System.Management.Automation.Remoting
         /// Constructs PSPrincipal using PSIdentity and a WindowsIdentity.
         /// </summary>
         /// <param name="identity">
-        /// An instance of PSIdentity
+        /// An instance of PSIdentity.
         /// </param>
         /// <param name="windowsIdentity">
         /// An instance of WindowsIdentity, if psIdentity represents a windows user. This can be
@@ -322,13 +322,13 @@ namespace System.Management.Automation.Remoting
         ///  WSMAN_AUTH_BASIC
         ///  WSMAN_AUTH_KERBEROS
         ///  WSMAN_AUTH_CLIENT_CERTIFICATE
-        ///  WSMAN_AUTH_LIVEID
+        ///  WSMAN_AUTH_LIVEID.
         /// </param>
         /// <param name="isAuthenticated">
         /// true if this user is authenticated.
         /// </param>
         /// <param name="userName">
-        /// Name of the user
+        /// Name of the user.
         /// </param>
         /// <param name="cert">
         /// Certificate details if Certificate authentication is used.

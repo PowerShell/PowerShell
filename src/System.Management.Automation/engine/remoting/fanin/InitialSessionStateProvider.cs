@@ -155,7 +155,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="optionName"></param>
         /// <param name="originalValue"></param>
         /// <exception cref="ArgumentException">
-        /// 1. "optionName" is already defined
+        /// 1. "optionName" is already defined.
         /// </exception>
         private static void AssertValueNotAssigned(string optionName, object originalValue)
         {
@@ -201,11 +201,11 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="initializationParameters">
         /// Initialization Parameters xml passed by WSMan API. This data is read from the config
-        /// xml and is in the following format:
+        /// xml and is in the following format:.
         /// </param>
         /// <returns></returns>
         /// <exception cref="ArgumentException">
-        /// 1. "optionName" is already defined
+        /// 1. "optionName" is already defined.
         /// </exception>
         /*
                   <InitializationParameters>
@@ -347,7 +347,7 @@ namespace System.Management.Automation.Remoting
         /// to be used to construct a Runspace for the user.
         /// </summary>
         /// <param name="senderInfo">
-        /// User Identity for which this information is requested
+        /// User Identity for which this information is requested.
         /// </param>
         /// <returns></returns>
         public abstract InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo);
@@ -369,7 +369,7 @@ namespace System.Management.Automation.Remoting
         /// If null, then the size is unlimited. Default is 10MB.
         /// </summary>
         /// <param name="senderInfo">
-        /// User Identity for which this information is requested
+        /// User Identity for which this information is requested.
         /// </param>
         /// <returns></returns>
         public virtual int? GetMaximumReceivedObjectSize(PSSenderInfo senderInfo)
@@ -383,7 +383,7 @@ namespace System.Management.Automation.Remoting
         /// Default is 50MB.
         /// </summary>
         /// <param name="senderInfo">
-        /// User Identity for which this information is requested
+        /// User Identity for which this information is requested.
         /// </param>
         /// <returns></returns>
         public virtual int? GetMaximumReceivedDataSizePerCommand(PSSenderInfo senderInfo)
@@ -396,12 +396,12 @@ namespace System.Management.Automation.Remoting
         /// that is going to be sent to the client and exposed via
         /// <see cref="System.Management.Automation.Runspaces.PSSession.ApplicationPrivateData"/>,
         /// <see cref="System.Management.Automation.Runspaces.Runspace.GetApplicationPrivateData"/> and
-        /// <see cref="System.Management.Automation.Runspaces.RunspacePool.GetApplicationPrivateData"/>
+        /// <see cref="System.Management.Automation.Runspaces.RunspacePool.GetApplicationPrivateData"/>.
         /// </summary>
         /// <param name="senderInfo">
-        /// User Identity for which this information is requested
+        /// User Identity for which this information is requested.
         /// </param>
-        /// <returns>Application private data or <see langword="null"/></returns>
+        /// <returns>Application private data or <see langword="null"/>.</returns>
         public virtual PSPrimitiveDictionary GetApplicationPrivateData(PSSenderInfo senderInfo)
         {
             return null;
@@ -437,11 +437,11 @@ namespace System.Management.Automation.Remoting
         /// <param name="shellId"></param>
         /// <param name="initializationParameters">
         /// Initialization Parameters xml passed by WSMan API. This data is read from the config
-        /// xml and is in the following format:
+        /// xml and is in the following format:.
         /// </param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">
-        /// 1. Non existent InitialSessionState provider for the shellID
+        /// 1. Non existent InitialSessionState provider for the shellID.
         /// </exception>
         /*
                   <InitializationParameters>
@@ -493,7 +493,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// </summary>
         /// <param name="shellId">
-        /// shellId for which the assembly is getting loaded
+        /// shellId for which the assembly is getting loaded.
         /// </param>
         /// <param name="applicationBase"></param>
         /// <param name="assemblyName"></param>
@@ -1627,7 +1627,7 @@ namespace System.Management.Automation.Remoting
         ///     'Everyone' = @{
         ///         'RoIeCapabilities' = 'Basic' };
         ///     'Administrators' = @{
-        ///         'VisibleCmdlets' = 'Get-Process','Get-Location'; 'VisibleFunctions = 'TabExpansion2' } }
+        ///         'VisibleCmdlets' = 'Get-Process','Get-Location'; 'VisibleFunctions = 'TabExpansion2' } }.
         /// </summary>
         /// <param name="roleDefinitions"></param>
         internal static void ValidateRoleDefinitions(IDictionary roleDefinitions)
@@ -1940,7 +1940,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates an initial session state from a configuration file (DISC)
+        /// Creates an initial session state from a configuration file (DISC).
         /// </summary>
         /// <param name="senderInfo"></param>
         /// <returns></returns>
@@ -2737,7 +2737,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Applies the command (cmdlet/function/alias) visibility settings to the <paramref name="iss"/>
+        /// Applies the command (cmdlet/function/alias) visibility settings to the <paramref name="iss"/>.
         /// </summary>
         /// <param name="configFileKey"></param>
         /// <returns></returns>

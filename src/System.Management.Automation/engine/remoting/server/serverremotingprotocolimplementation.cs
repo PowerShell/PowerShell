@@ -94,7 +94,7 @@ namespace System.Management.Automation.Remoting
         /// Send the encrypted session key to the client side.
         /// </summary>
         /// <param name="encryptedSessionKey">encrypted session key
-        /// as a string</param>
+        /// as a string.</param>
         internal override void SendEncryptedSessionKey(string encryptedSessionKey)
         {
             _transportManager.SendDataToClient<object>(RemotingEncoder.GenerateEncryptedSessionKeyResponse(
@@ -115,7 +115,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="receivedData">Received data.</param>
         /// <remarks>This method is a hook to be called
-        /// from the transport manager</remarks>
+        /// from the transport manager.</remarks>
         internal override void RaiseKeyExchangeMessageReceived(RemoteDataObject<PSObject> receivedData)
         {
             RaiseDataReceivedEvent(new RemoteDataEventArgs(receivedData));
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Remoting
         /// This method calls the transport level call to close the connection to the listener.
         /// </summary>
         /// <param name="reasonForClose">
-        /// Message describing why the session is closing
+        /// Message describing why the session is closing.
         /// </param>
         /// <exception cref="PSRemotingTransportException">
         /// If the transport call fails.

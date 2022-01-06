@@ -109,14 +109,14 @@ namespace System.Management.Automation.Remoting
         /// Details about the user creating this session.
         /// </param>
         /// <param name="configurationProviderId">
-        /// The resource URI for which this session is being created
+        /// The resource URI for which this session is being created.
         /// </param>
         /// <param name="initializationParameters">
         /// Initialization Parameters xml passed by WSMan API. This data is read from the config
         /// xml.
         /// </param>
         /// <param name="transportManager">
-        /// The transport manager this session should use to send/receive data
+        /// The transport manager this session should use to send/receive data.
         /// </param>
         /// <returns></returns>
         internal ServerRemoteSession(PSSenderInfo senderInfo,
@@ -392,7 +392,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">event arguments which contains the
-        /// remote public key</param>
+        /// remote public key.</param>
         private void HandlePublicKeyReceived(object sender, RemoteDataEventArgs<string> eventArgs)
         {
             if (SessionDataStructureHandler.StateMachine.State == RemoteSessionState.Established ||
@@ -737,7 +737,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="createRunspaceEventArg"></param>
         /// <exception cref="InvalidOperationException">
         /// 1. InitialSessionState cannot be null.
-        /// 2. Non existent InitialSessionState provider for the shellID
+        /// 2. Non existent InitialSessionState provider for the shellID.
         /// </exception>
         private void HandleCreateRunspacePool(object sender, RemoteDataEventArgs createRunspaceEventArg)
         {
@@ -995,7 +995,7 @@ namespace System.Management.Automation.Remoting
         /// This is the client capability that the server received from client.
         /// </param>
         /// <param name="onConnect">
-        /// If the negotiation is on a connect (and not create)
+        /// If the negotiation is on a connect (and not create).
         /// </param>
         /// <returns>
         /// The method returns true if the capability negotiation is successful.

@@ -97,7 +97,7 @@ namespace System.Management.Automation.Internal
     /// <summary/>
     public class ScriptBlockMemberMethodWrapper
     {
-        /// <summary>Used in codegen</summary>
+        /// <summary>Used in codegen.</summary>
         public static readonly object[] _emptyArgumentArray = Array.Empty<object>(); // See TypeDefiner.DefineTypeHelper.DefineMethodBody
 
         /// <summary>
