@@ -24,7 +24,7 @@ namespace System.Management.Automation
         /// The inner exception.
         /// </param>
         /// <param name="resourceStr">
-        /// This string is message template string
+        /// This string is message template string.
         /// </param>
         /// <param name="errorIdAndResourceId">
         /// This string is the ErrorId passed to the ErrorRecord, and is also
@@ -75,10 +75,10 @@ namespace System.Management.Automation
         /// Serialization constructor for class CommandNotFoundException.
         /// </summary>
         /// <param name="info">
-        /// serialization information
+        /// serialization information.
         /// </param>
         /// <param name="context">
-        /// streaming context
+        /// streaming context.
         /// </param>
         protected CommandNotFoundException(SerializationInfo info,
                                         StreamingContext context)
@@ -96,10 +96,10 @@ namespace System.Management.Automation
         /// Serializes the CommandNotFoundException.
         /// </summary>
         /// <param name="info">
-        /// serialization information
+        /// serialization information.
         /// </param>
         /// <param name="context">
-        /// streaming context
+        /// streaming context.
         /// </param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -227,7 +227,7 @@ namespace System.Management.Automation
         /// The Msh version that the script requires.
         /// </param>
         /// <param name="currentPSVersion">
-        /// The current Msh version
+        /// The current Msh version.
         /// </param>
         /// <param name="errorId">
         /// The error id for this exception.
@@ -363,10 +363,10 @@ namespace System.Management.Automation
         /// Constructs an PSVersionNotCompatibleException using serialized data.
         /// </summary>
         /// <param name="info">
-        /// serialization information
+        /// serialization information.
         /// </param>
         /// <param name="context">
-        /// streaming context
+        /// streaming context.
         /// </param>
         protected ScriptRequiresException(SerializationInfo info,
                                         StreamingContext context)
@@ -382,10 +382,10 @@ namespace System.Management.Automation
         /// Gets the serialized data for the exception.
         /// </summary>
         /// <param name="info">
-        /// serialization information
+        /// serialization information.
         /// </param>
         /// <param name="context">
-        /// streaming context
+        /// streaming context.
         /// </param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

@@ -49,7 +49,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="innerException">Wrapped exception.</param>
         /// <param name="invocationInfo">
-        /// identity of cmdlet, null is unknown
+        /// identity of cmdlet, null is unknown.
         /// </param>
         internal CmdletInvocationException(Exception innerException,
                                            InvocationInfo invocationInfo)
@@ -117,7 +117,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the CmdletInvocationException class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -132,7 +132,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
+        /// Serializer for <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -156,7 +156,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The error reported by the cmdlet.
         /// </summary>
-        /// <value>never null</value>
+        /// <value>never null.</value>
         public override ErrorRecord ErrorRecord
         {
             get
@@ -196,7 +196,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="innerException">Wrapped exception.</param>
         /// <param name="myInvocation">
-        /// identity of cmdlet, null is unknown
+        /// identity of cmdlet, null is unknown.
         /// </param>
         /// <returns>Constructed object.</returns>
         internal CmdletProviderInvocationException(
@@ -224,7 +224,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the CmdletProviderInvocationException class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -264,7 +264,7 @@ namespace System.Management.Automation
         /// <summary>
         /// InnerException as ProviderInvocationException.
         /// </summary>
-        /// <value>ProviderInvocationException</value>
+        /// <value>ProviderInvocationException.</value>
         public ProviderInvocationException ProviderInvocationException
         {
             get
@@ -280,7 +280,7 @@ namespace System.Management.Automation
         /// This is the ProviderInfo associated with the provider which
         /// generated the error.
         /// </summary>
-        /// <value>may be null</value>
+        /// <value>may be null.</value>
         public ProviderInfo ProviderInfo
         {
             get
@@ -336,7 +336,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PipelineStoppedException class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -421,7 +421,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PipelineClosedException class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -461,7 +461,7 @@ namespace System.Management.Automation
         /// Instantiates a new instance of the ActionPreferenceStopException class.
         /// </summary>
         /// <param name="error">
-        /// Non-terminating error which triggered the Stop
+        /// Non-terminating error which triggered the Stop.
         /// </param>
         /// <returns>Constructed object.</returns>
         internal ActionPreferenceStopException(ErrorRecord error)
@@ -507,7 +507,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ActionPreferenceStopException class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -529,7 +529,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
+        /// Serializer for <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -598,9 +598,9 @@ namespace System.Management.Automation
 
         #region Properties
         /// <summary>
-        /// See <see cref="System.Management.Automation.IContainsErrorRecord"/>
+        /// See <see cref="System.Management.Automation.IContainsErrorRecord"/>.
         /// </summary>
-        /// <value>ErrorRecord</value>
+        /// <value>ErrorRecord.</value>
         /// <remarks>
         /// If this error results from a non-terminating error being promoted to
         /// terminating due to -ErrorAction or $ErrorActionPreference, this is
@@ -687,7 +687,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ParentContainsErrorRecordException class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -712,7 +712,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
+        /// Serializer for <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Context.</param>
@@ -790,7 +790,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the RedirectedException class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -858,7 +858,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ScriptCallDepthException class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -869,7 +869,7 @@ namespace System.Management.Automation
         {
         }
         /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
+        /// Serializer for <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Context.</param>
@@ -881,11 +881,11 @@ namespace System.Management.Automation
 
         #region properties
         /// <summary>
-        /// See <see cref="System.Management.Automation.IContainsErrorRecord"/>
+        /// See <see cref="System.Management.Automation.IContainsErrorRecord"/>.
         /// </summary>
         /// <value></value>
         /// <remarks>
-        /// TargetObject is the offending call depth
+        /// TargetObject is the offending call depth.
         /// </remarks>
         public ErrorRecord ErrorRecord
         {
@@ -965,7 +965,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PipelineDepthException class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -976,7 +976,7 @@ namespace System.Management.Automation
         {
         }
         /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
+        /// Serializer for <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Context.</param>
@@ -988,11 +988,11 @@ namespace System.Management.Automation
 
         #region properties
         /// <summary>
-        /// See <see cref="System.Management.Automation.IContainsErrorRecord"/>
+        /// See <see cref="System.Management.Automation.IContainsErrorRecord"/>.
         /// </summary>
         /// <value></value>
         /// <remarks>
-        /// TargetObject is the offending call depth
+        /// TargetObject is the offending call depth.
         /// </remarks>
         [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
         public ErrorRecord ErrorRecord
@@ -1080,7 +1080,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the HaltCommandException class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>

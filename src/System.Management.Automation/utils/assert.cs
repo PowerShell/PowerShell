@@ -34,7 +34,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns the stack trace set in the constructor.
         /// </summary>
-        /// <value>the constructor's stackTrace</value>
+        /// <value>the constructor's stackTrace.</value>
         public override string StackTrace { get; }
     }
 
@@ -79,7 +79,7 @@ namespace System.Management.Automation
         /// If set to true will prevent the assertion dialog from showing up
         /// by throwing an exception instead of calling Debug.Assert.
         /// </summary>
-        /// <value>false for dialog, true for exception</value>
+        /// <value>false for dialog, true for exception.</value>
         internal static bool ThrowInsteadOfAssert
         {
             get
@@ -108,10 +108,10 @@ namespace System.Management.Automation
         /// Basic assertion with logical condition and message.
         /// </summary>
         /// <param name="condition">
-        /// logical condition that should be true for program to proceed
+        /// logical condition that should be true for program to proceed.
         /// </param>
         /// <param name="whyThisShouldNeverHappen">
-        /// Message to explain why condition should always be true
+        /// Message to explain why condition should always be true.
         /// </param>
         // These two lines are playing havoc with asmmeta. Since only one asmmeta file
         // can be checked in at a time if you compile the asmmeta for a fre build then
@@ -138,13 +138,13 @@ namespace System.Management.Automation
         /// Basic assertion with logical condition, message and detailed message.
         /// </summary>
         /// <param name="condition">
-        /// logical condition that should be true for program to proceed
+        /// logical condition that should be true for program to proceed.
         /// </param>
         /// <param name="whyThisShouldNeverHappen">
-        /// Message to explain why condition should always be true
+        /// Message to explain why condition should always be true.
         /// </param>
         /// <param name="detailMessage">
-        /// Additional information about the assertion
+        /// Additional information about the assertion.
         /// </param>
         // These two lines are playing havoc with asmmeta. Since only one asmmeta file
         // can be checked in at a time if you compile the asmmeta for a fre build then

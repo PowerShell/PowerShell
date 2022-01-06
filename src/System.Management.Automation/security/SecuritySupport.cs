@@ -220,7 +220,7 @@ namespace System.Management.Automation.Internal
         /// Used to determine execution policy when group policies are in effect.
         /// </summary>
         /// <remarks>
-        /// This is somewhat expensive to determine and does not change within the lifetime of the current process
+        /// This is somewhat expensive to determine and does not change within the lifetime of the current process.
         /// </remarks>
         private static bool HasGpScriptParent
         {
@@ -987,7 +987,7 @@ namespace System.Management.Automation
         ///         - The path to a file containing the certificate
         ///         - The path to a directory containing the certificate
         ///         - The thumbprint of the certificate, used to find the certificate in the certificate store
-        ///         - The Subject name of the recipient, used to find the certificate in the certificate store
+        ///         - The Subject name of the recipient, used to find the certificate in the certificate store.
         /// </param>
         public CmsMessageRecipient(string identifier)
         {
@@ -1600,7 +1600,7 @@ namespace System.Management.Automation
         private static readonly object s_amsiLockObject = new object();
 
         /// <summary>
-        /// Reset the AMSI session (used to track related script invocations)
+        /// Reset the AMSI session (used to track related script invocations).
         /// </summary>
         internal static void CloseSession()
         {

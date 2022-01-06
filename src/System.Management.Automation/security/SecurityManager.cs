@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="shellId">
         /// The shell identifier that the authorization manager applies
-        /// to.  For example, Microsoft.PowerShell
+        /// to.  For example, Microsoft.PowerShell.
         /// </param>
         public PSAuthorizationManager(string shellId)
             : base(shellId)

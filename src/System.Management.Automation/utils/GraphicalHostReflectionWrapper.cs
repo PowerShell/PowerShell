@@ -50,7 +50,7 @@ namespace System.Management.Automation.Internal
         /// <param name="graphicalHostHelperTypeName">The type name we want to invoke members from.</param>
         /// <returns>
         /// wrapper used to invoke members of the type with name <paramref name="graphicalHostHelperTypeName"/>
-        /// in Microsoft.PowerShell.GraphicalHost.dll
+        /// in Microsoft.PowerShell.GraphicalHost.dll.
         /// </returns>
         /// <exception cref="RuntimeException">When it was not possible to load Microsoft.PowerShell.GraphicalHost.dlly.</exception>
         internal static GraphicalHostReflectionWrapper GetGraphicalHostReflectionWrapper(PSCmdlet parentCmdlet, string graphicalHostHelperTypeName)
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Internal
         /// <param name="featureName">Used for error messages.</param>
         /// <returns>
         /// wrapper used to invoke members of the type with name <paramref name="graphicalHostHelperTypeName"/>
-        /// in Microsoft.PowerShell.GraphicalHost.dll
+        /// in Microsoft.PowerShell.GraphicalHost.dll.
         /// </returns>
         /// <exception cref="RuntimeException">When it was not possible to load Microsoft.PowerShell.GraphicalHost.dlly.</exception>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Assembly.Load has been found to throw unadvertised exceptions")]
@@ -151,7 +151,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Calls an instance method with name <paramref name="methodName"/> passing the <paramref name="arguments"/>
+        /// Calls an instance method with name <paramref name="methodName"/> passing the <paramref name="arguments"/>.
         /// </summary>
         /// <param name="methodName">Name of the method to call.</param>
         /// <param name="arguments">Arguments to call the method with.</param>
@@ -165,7 +165,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Calls a static method with name <paramref name="methodName"/> passing the <paramref name="arguments"/>
+        /// Calls a static method with name <paramref name="methodName"/> passing the <paramref name="arguments"/>.
         /// </summary>
         /// <param name="methodName">Name of the method to call.</param>
         /// <param name="arguments">Arguments to call the method with.</param>
@@ -178,10 +178,10 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Gets the value of an instance property with name <paramref name="propertyName"/>
+        /// Gets the value of an instance property with name <paramref name="propertyName"/>.
         /// </summary>
         /// <param name="propertyName">Name of the instance property to get the value from.</param>
-        /// <returns>The value of an instance property with name <paramref name="propertyName"/></returns>
+        /// <returns>The value of an instance property with name <paramref name="propertyName"/>.</returns>
         internal object GetPropertyValue(string propertyName)
         {
             Diagnostics.Assert(_graphicalHostHelperObject != null, "there should be a constructor in order to get an instance property value");
@@ -191,10 +191,10 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Gets the value of a static property with name <paramref name="propertyName"/>
+        /// Gets the value of a static property with name <paramref name="propertyName"/>.
         /// </summary>
         /// <param name="propertyName">Name of the static property to get the value from.</param>
-        /// <returns>The value of a static property with name <paramref name="propertyName"/></returns>
+        /// <returns>The value of a static property with name <paramref name="propertyName"/>.</returns>
         internal object GetStaticPropertyValue(string propertyName)
         {
             PropertyInfo property = _graphicalHostHelperType.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Static);

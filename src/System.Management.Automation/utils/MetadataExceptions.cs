@@ -138,12 +138,12 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initialize a new instance of ValidationMetadataException. This validation exception could be
-        /// ignored in positional binding phase if the <para>swallowException</para> is set to be true.
+        /// ignored in positional binding phase if the. <para>swallowException.</para> is set to be true.
         /// </summary>
         /// <param name="message">
-        /// The error message</param>
+        /// The error message.</param>
         /// <param name="swallowException">
-        /// Indicate whether to swallow this exception in positional binding phase
+        /// Indicate whether to swallow this exception in positional binding phase.
         /// </param>
         internal ValidationMetadataException(string message, bool swallowException) : base(message)
         {
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         /// Make the positional binding swallow this exception when it's set to true.
         /// </summary>
         /// <remarks>
-        /// This property is only used internally in the positional binding phase
+        /// This property is only used internally in the positional binding phase.
         /// </remarks>
         internal bool SwallowException
         {

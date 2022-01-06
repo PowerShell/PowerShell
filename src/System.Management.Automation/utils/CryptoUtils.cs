@@ -271,7 +271,7 @@ namespace System.Management.Automation.Internal
     /// <remarks>This exception is currently internal as it's not
     /// surfaced to the user. However, if we decide to surface errors
     /// to the user when something fails on the remote end, then this
-    /// can be turned public</remarks>
+    /// can be turned public.</remarks>
     [SuppressMessage("Microsoft.Design", "CA1064:ExceptionsShouldBePublic")]
     [Serializable]
     internal class PSCryptoException : Exception
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Internal
         /// Constructor that will be used from within CryptoUtils.
         /// </summary>
         /// <param name="errorCode">error code returned by native
-        /// crypto application</param>
+        /// crypto application.</param>
         /// <param name="message">Error message associated with this failure.</param>
         public PSCryptoException(uint errorCode, StringBuilder message)
             : base(message.ToString())
@@ -330,7 +330,7 @@ namespace System.Management.Automation.Internal
         /// <param name="message">Error message.</param>
         /// <param name="innerException">Inner exception.</param>
         /// <remarks>This constructor is currently not called
-        /// explicitly from crypto utils</remarks>
+        /// explicitly from crypto utils.</remarks>
         public PSCryptoException(string message, Exception innerException)
             : base(message, innerException)
         {
@@ -343,7 +343,7 @@ namespace System.Management.Automation.Internal
         /// <param name="info">Serialization info.</param>
         /// <param name="context">Context in which this constructor is called.</param>
         /// <remarks>Currently no custom type-specific serialization logic is
-        /// implemented</remarks>
+        /// implemented.</remarks>
         protected PSCryptoException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
@@ -397,7 +397,7 @@ namespace System.Management.Automation.Internal
         /// Private constructor.
         /// </summary>
         /// <param name="serverMode">indicates if this service
-        /// provider is operating in server mode</param>
+        /// provider is operating in server mode.</param>
         private PSRSACryptoServiceProvider(bool serverMode)
         {
             if (serverMode)
@@ -488,7 +488,7 @@ namespace System.Management.Automation.Internal
         /// the current CSP.
         /// </summary>
         /// <param name="sessionKey">encrypted session key as a
-        /// base64 encoded string</param>
+        /// base64 encoded string.</param>
         internal void ImportSessionKeyFromBase64EncodedString(string sessionKey)
         {
             Dbg.Assert(!string.IsNullOrEmpty(sessionKey), "key cannot be null or empty");
@@ -698,7 +698,7 @@ namespace System.Management.Automation.Internal
         /// Core logic to encrypt a string. Assumes session key is already generated.
         /// </summary>
         /// <param name="secureString">
-        /// secure string to be encrypted
+        /// secure string to be encrypted.
         /// </param>
         /// <returns></returns>
         protected string EncryptSecureStringCore(SecureString secureString)
@@ -745,7 +745,7 @@ namespace System.Management.Automation.Internal
         /// Core logic to decrypt a secure string. Assumes session key is already available.
         /// </summary>
         /// <param name="encryptedString">
-        /// encrypted string to be decrypted
+        /// encrypted string to be decrypted.
         /// </param>
         /// <returns></returns>
         protected SecureString DecryptSecureStringCore(string encryptedString)
@@ -819,7 +819,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="secureString">Secure string to encrypt.</param>
         /// <returns>Encrypted string.</returns>
-        /// <remarks>This method zeroes out all interim buffers used</remarks>
+        /// <remarks>This method zeroes out all interim buffers used.</remarks>
         internal abstract string EncryptSecureString(SecureString secureString);
 
         /// <summary>
@@ -828,7 +828,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="encryptedString">Encrypted string.</param>
         /// <returns>Secure string object.</returns>
-        /// <remarks>This method zeroes out any interim buffers used</remarks>
+        /// <remarks>This method zeroes out any interim buffers used.</remarks>
         internal abstract SecureString DecryptSecureString(string encryptedString);
 
         /// <summary>
@@ -993,7 +993,7 @@ namespace System.Management.Automation.Internal
         /// Gets a helper with a test session.
         /// </summary>
         /// <returns>Helper for testing.</returns>
-        /// <remarks>To be used only for testing</remarks>
+        /// <remarks>To be used only for testing.</remarks>
         internal static PSRemotingCryptoHelperServer GetTestRemotingCryptHelperServer()
         {
             PSRemotingCryptoHelperServer helper = new PSRemotingCryptoHelperServer();
@@ -1052,7 +1052,7 @@ namespace System.Management.Automation.Internal
         /// Export the public key as a base64 encoded string.
         /// </summary>
         /// <param name="publicKeyAsString">on execution will contain
-        /// the public key as string</param>
+        /// the public key as string.</param>
         /// <returns>True on success.</returns>
         internal bool ExportLocalPublicKey(out string publicKeyAsString)
         {
@@ -1113,7 +1113,7 @@ namespace System.Management.Automation.Internal
         /// Gets a helper with a test session.
         /// </summary>
         /// <returns>Helper for testing.</returns>
-        /// <remarks>To be used only for testing</remarks>
+        /// <remarks>To be used only for testing.</remarks>
         internal static PSRemotingCryptoHelperClient GetTestRemotingCryptHelperClient()
         {
             PSRemotingCryptoHelperClient helper = new PSRemotingCryptoHelperClient();

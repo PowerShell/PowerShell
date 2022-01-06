@@ -63,7 +63,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the PSArgumentOutOfRangeException class
         /// using data serialized via
-        /// <see cref="System.Runtime.Serialization.ISerializable"/>
+        /// <see cref="System.Runtime.Serialization.ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -76,7 +76,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serializer for <see cref="System.Runtime.Serialization.ISerializable"/>
+        /// Serializer for <see cref="System.Runtime.Serialization.ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>

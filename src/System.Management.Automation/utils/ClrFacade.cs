@@ -311,7 +311,7 @@ namespace System.Management.Automation
         #region Misc
 
         /// <summary>
-        /// Facade for ManagementDateTimeConverter.ToDmtfDateTime(DateTime)
+        /// Facade for ManagementDateTimeConverter.ToDmtfDateTime(DateTime).
         /// </summary>
         internal static string ToDmtfDateTime(DateTime date)
         {

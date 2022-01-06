@@ -31,7 +31,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Check if the stream is closed and contains no data.
         /// </summary>
-        /// <value>True if the stream is closed and contains no data, otherwise false</value>
+        /// <value>True if the stream is closed and contains no data, otherwise false.</value>
         /// <remarks>
         /// Attempting to read from the underlying stream if EndOfPipeline is true returns
         /// zero objects.
@@ -44,7 +44,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Check if the stream is open for further writes.
         /// </summary>
-        /// <value>true if the underlying stream is open, otherwise false</value>
+        /// <value>true if the underlying stream is open, otherwise false.</value>
         /// <remarks>
         /// The underlying stream may be readable after it is closed if data remains in the
         /// internal buffer. Check <see cref="EndOfPipeline"/> to determine if
@@ -88,7 +88,7 @@ namespace System.Management.Automation.Runspaces
         /// All calls to Close() after the first call are silently ignored.
         /// </remarks>
         /// <exception cref="PipelineClosedException">
-        /// The stream is already disposed
+        /// The stream is already disposed.
         /// </exception>
         public abstract void Close();
 
@@ -107,7 +107,7 @@ namespace System.Management.Automation.Runspaces
         /// Read a single object from the stream.
         /// </summary>
         /// <returns>The next object in the stream.</returns>
-        /// <remarks>This method blocks if the stream is empty</remarks>
+        /// <remarks>This method blocks if the stream is empty.</remarks>
         public abstract T Read();
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace System.Management.Automation.Runspaces
         /// Peek the next object, but do not remove it from the stream.  Non-blocking.
         /// </summary>
         /// <returns>
-        /// The next object in the stream or AutomationNull.Value if the stream is empty
+        /// The next object in the stream or AutomationNull.Value if the stream is empty.
         /// </returns>
         /// <exception cref="PipelineClosedException">The stream is closed.</exception>
         public abstract T Peek();

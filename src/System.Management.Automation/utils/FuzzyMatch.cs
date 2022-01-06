@@ -14,7 +14,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="string1">The first string to compare.</param>
         /// <param name="string2">The second string to compare.</param>
-        /// <returns>True if the two strings have a distance <= MinimumDistance.</returns>
+        /// <returns>True if the two strings have a distance. <= MinimumDistance.</returns>
         public static bool IsFuzzyMatch(string string1, string string2)
         {
             return GetDamerauLevenshteinDistance(string1, string2) <= MinimumDistance;

@@ -24,7 +24,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Check if the stream is open for further writes.
         /// </summary>
-        /// <value>true if the underlying stream is open, otherwise false</value>
+        /// <value>true if the underlying stream is open, otherwise false.</value>
         /// <remarks>
         /// Attempting to write to the underlying stream if IsOpen is false throws
         /// a <see cref="PipelineClosedException"/>.
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Runspaces
         /// All calls to Close() after the first call are silently ignored.
         /// </remarks>
         /// <exception cref="ObjectDisposedException">
-        /// The stream is already disposed
+        /// The stream is already disposed.
         /// </exception>
         public abstract void Close();
 
@@ -76,7 +76,7 @@ namespace System.Management.Automation.Runspaces
         /// but disposed streams may not.
         /// </summary>
         /// <exception cref="ObjectDisposedException">
-        /// The stream is already disposed
+        /// The stream is already disposed.
         /// </exception>
         public abstract void Flush();
 
@@ -90,10 +90,10 @@ namespace System.Management.Automation.Runspaces
         /// or if the object was AutomationNull.Value.
         /// </returns>
         /// <exception cref="PipelineClosedException">
-        /// The underlying stream is already closed
+        /// The underlying stream is already closed.
         /// </exception>
         /// <remarks>
-        /// AutomationNull.Value is ignored
+        /// AutomationNull.Value is ignored.
         /// </remarks>
         public abstract int Write(object obj);
 
@@ -110,7 +110,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         /// <returns>The number of objects written.</returns>
         /// <exception cref="PipelineClosedException">
-        /// The underlying stream is already closed
+        /// The underlying stream is already closed.
         /// </exception>
         /// <remarks>
         /// If the enumeration contains elements equal to

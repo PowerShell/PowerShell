@@ -74,10 +74,10 @@ namespace System.Management.Automation.Host
         /// The string should not contain white space.
         /// </param>
         /// <param name="errorCategory">
-        /// The ErrorCategory into which this exception situation falls
+        /// The ErrorCategory into which this exception situation falls.
         /// </param>
         /// <remarks>
-        /// Intentionally public, third-party hosts can call this
+        /// Intentionally public, third-party hosts can call this.
         /// </remarks>
         public
         HostException(
@@ -185,10 +185,10 @@ namespace System.Management.Automation.Host
         /// The string should not contain white space.
         /// </param>
         /// <param name="errorCategory">
-        /// The ErrorCategory into which this exception situation falls
+        /// The ErrorCategory into which this exception situation falls.
         /// </param>
         /// <remarks>
-        /// Intentionally public, third-party hosts can call this
+        /// Intentionally public, third-party hosts can call this.
         /// </remarks>
         public
         PromptingException(
