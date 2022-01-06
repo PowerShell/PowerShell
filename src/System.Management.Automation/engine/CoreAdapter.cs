@@ -4067,7 +4067,8 @@ namespace System.Management.Automation
         /// <returns>True if the property is settable.</returns>
         protected override bool PropertyIsSettable(PSProperty property)
         {
-            return !((PropertyCacheEntry)property.adapterData).readOnly && !((PropertyCacheEntry)property.adapterData).initOnly;
+            PropertyCacheEntry adapterData = (PropertyCacheEntry)property.adapterData;
+            return !adapterData.readOnly && !adapterData.initOnly;
         }
 
         /// <summary>
