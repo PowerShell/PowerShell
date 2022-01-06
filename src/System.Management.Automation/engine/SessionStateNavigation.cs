@@ -24,13 +24,13 @@ namespace System.Management.Automation
         /// Gets the path to the parent object for the given object.
         /// </summary>
         /// <param name="path">
-        /// The path to the object to get the parent path from
+        /// The path to the object to get the parent path from.
         /// </param>
         /// <param name="root">
         /// The root of the drive.
         /// </param>
         /// <returns>
-        /// The path to the parent object
+        /// The path to the parent object.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
@@ -64,7 +64,7 @@ namespace System.Management.Automation
         /// Gets the path to the parent object for the given object.
         /// </summary>
         /// <param name="path">
-        /// The path to the object to get the parent path from
+        /// The path to the object to get the parent path from.
         /// </param>
         /// <param name="root">
         /// The root of the drive. Namespace providers should
@@ -74,7 +74,7 @@ namespace System.Management.Automation
         /// The context which the core command is running.
         /// </param>
         /// <returns>
-        /// The path to the parent object
+        /// The path to the parent object.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
@@ -102,7 +102,7 @@ namespace System.Management.Automation
         /// given path is drive-qualified and the drive cannot be found.
         /// </summary>
         /// <param name="path">
-        /// The path to the object to get the parent path from
+        /// The path to the object to get the parent path from.
         /// </param>
         /// <param name="root">
         /// The root of the drive. Namespace providers should
@@ -115,7 +115,7 @@ namespace System.Management.Automation
         /// Specify whether to use default provider when needed.
         /// </param>
         /// <returns>
-        /// The path to the parent object
+        /// The path to the parent object.
         /// </returns>
         internal string GetParentPath(
             string path,
@@ -296,7 +296,7 @@ namespace System.Management.Automation
         /// The provider that should handle the GetParentPath call.
         /// </param>
         /// <param name="path">
-        /// The path to the object to get the parent path from
+        /// The path to the object to get the parent path from.
         /// </param>
         /// <param name="root">
         /// The root of the drive. Namespace providers should
@@ -306,7 +306,7 @@ namespace System.Management.Automation
         /// The context which the core command is running.
         /// </param>
         /// <returns>
-        /// The path to the parent object
+        /// The path to the parent object.
         /// </returns>
         /// <remarks>
         /// This is internal so that it can be called from the LocationGlobber.
@@ -354,7 +354,7 @@ namespace System.Management.Automation
         /// The instance of the provider that should handle the GetParentPath call.
         /// </param>
         /// <param name="path">
-        /// The path to the object to get the parent path from
+        /// The path to the object to get the parent path from.
         /// </param>
         /// <param name="root">
         /// The root of the drive. Namespace providers should
@@ -364,7 +364,7 @@ namespace System.Management.Automation
         /// The context which the core command is running.
         /// </param>
         /// <returns>
-        /// The path to the parent object
+        /// The path to the parent object.
         /// </returns>
         /// <remarks>
         /// This is internal so that it can be called from the LocationGlobber.
@@ -1021,7 +1021,7 @@ namespace System.Management.Automation
         /// Gets the name of the leaf element in the specified path.
         /// </summary>
         /// <param name="path">
-        /// The fully qualified path to the item
+        /// The fully qualified path to the item.
         /// </param>
         /// <returns>
         /// The leaf element in the path.
@@ -1062,7 +1062,7 @@ namespace System.Management.Automation
         /// Gets the name of the leaf element in the specified path.
         /// </summary>
         /// <param name="path">
-        /// The fully qualified path to the item
+        /// The fully qualified path to the item.
         /// </param>
         /// <param name="context">
         /// The context which the core command is running.
@@ -1099,7 +1099,7 @@ namespace System.Management.Automation
         /// given path is drive-qualified and the drive cannot be found.
         /// </summary>
         /// <param name="path">
-        /// The fully qualified path to the item
+        /// The fully qualified path to the item.
         /// </param>
         /// <param name="context">
         /// The context which the core command is running.

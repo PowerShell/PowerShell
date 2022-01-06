@@ -200,7 +200,7 @@ namespace System.Management.Automation
         /// <param name="depth">Depth of serialization.</param>
         /// <param name="useDepthFromTypes">
         /// if <see langword="true"/> then types.ps1xml can override depth
-        /// for a particular types (using SerializationDepth property)
+        /// for a particular types (using SerializationDepth property).
         /// </param>
         internal Serializer(XmlWriter writer, int depth, bool useDepthFromTypes)
             : this(writer, new SerializationContext(depth, useDepthFromTypes))
@@ -235,7 +235,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Serializer if ExecutionContext is not
-        /// available (to get the ExecutionContext's TypeTable)
+        /// available (to get the ExecutionContext's TypeTable).
         /// </summary>
         internal TypeTable TypeTable
         {
@@ -261,7 +261,7 @@ namespace System.Management.Automation
         /// Serializes passed in object.
         /// </summary>
         /// <param name="source">
-        /// object to be serialized
+        /// object to be serialized.
         /// </param>
         /// <param name="streamName">
         /// Stream to which this object belong. Ex: Output, Error etc.
@@ -463,7 +463,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="reader">Reader to be used for deserialization.</param>
         /// <exception cref="XmlException">
-        /// Thrown when the xml is in an incorrect format
+        /// Thrown when the xml is in an incorrect format.
         /// </exception>
         internal Deserializer(XmlReader reader)
             : this(reader, new DeserializationContext())
@@ -476,7 +476,7 @@ namespace System.Management.Automation
         /// <param name="reader">Reader to be used for deserialization.</param>
         /// <param name="context">Serialization context.</param>
         /// <exception cref="XmlException">
-        /// Thrown when the xml is in an incorrect format
+        /// Thrown when the xml is in an incorrect format.
         /// </exception>
         internal Deserializer(XmlReader reader, DeserializationContext context)
         {
@@ -517,7 +517,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Deserializer if ExecutionContext is not
-        /// available (to get the ExecutionContext's TypeTable)
+        /// available (to get the ExecutionContext's TypeTable).
         /// </summary>
         internal TypeTable TypeTable
         {
@@ -604,7 +604,7 @@ namespace System.Management.Automation
         /// Deserializes next object.
         /// </summary>
         /// <exception cref="XmlException">
-        /// Thrown when the xml is in an incorrect format
+        /// Thrown when the xml is in an incorrect format.
         /// </exception>
         internal object Deserialize()
         {
@@ -617,7 +617,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="streamName">Stream the object belongs to (i.e. "Error", "Output", etc.).</param>
         /// <exception cref="XmlException">
-        /// Thrown when the xml is in an incorrect format
+        /// Thrown when the xml is in an incorrect format.
         /// </exception>
         internal object Deserialize(out string streamName)
         {
@@ -817,7 +817,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Depth below top level - used to prevent infinitely deep serialization
-        /// (without this protection it would be possible i.e. with SerializationDepth and recursion)
+        /// (without this protection it would be possible i.e. with SerializationDepth and recursion).
         /// </summary>
         private int _depthBelowTopLevel;
 
@@ -850,7 +850,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Serializer if ExecutionContext is not
-        /// available (to get the ExecutionContext's TypeTable)
+        /// available (to get the ExecutionContext's TypeTable).
         /// </summary>
         internal TypeTable TypeTable
         {
@@ -916,7 +916,7 @@ namespace System.Management.Automation
         /// source to be serialized.
         /// </param>
         /// <param name="streamName">
-        /// Stream to which source belongs
+        /// Stream to which source belongs.
         /// </param>
         internal void WriteOneTopLevelObject
         (
@@ -1327,7 +1327,7 @@ namespace System.Management.Automation
         /// Serializes an PSObject whose baseobject is of primitive type.
         /// </summary>
         /// <param name="source">
-        /// source from which notes are written
+        /// source from which notes are written.
         /// </param>
         /// <param name="primitive">
         /// primitive object which is written as base object. In most cases it
@@ -1390,7 +1390,7 @@ namespace System.Management.Automation
         /// and which has notes.
         /// </summary>
         /// <param name="source">
-        /// source from which notes are written
+        /// source from which notes are written.
         /// </param>
         /// <param name="primitive">
         /// primitive object which is written as base object. In most cases it
@@ -1751,7 +1751,7 @@ namespace System.Management.Automation
         /// enclosing tags and attributes.
         /// </summary>
         /// <param name="me">
-        /// enumerable containing members
+        /// enumerable containing members.
         /// </param>
         /// <param name="depth"></param>
         /// <param name="writeEnclosingMemberSetElementTag">
@@ -1957,14 +1957,14 @@ namespace System.Management.Automation
         /// Serializes properties from collection.
         /// </summary>
         /// <param name="propertyCollection">
-        /// Collection of properties to serialize
+        /// Collection of properties to serialize.
         /// </param>
         /// <param name="name">
-        /// Name for enclosing element tag
+        /// Name for enclosing element tag.
         /// </param>
         /// <param name="depth">
         /// depth to which each property should be
-        /// serialized
+        /// serialized.
         /// </param>
         private void SerializeProperties
         (
@@ -2013,7 +2013,7 @@ namespace System.Management.Automation
         /// Serializes IEnumerable.
         /// </summary>
         /// <param name="enumerable">
-        /// enumerable which is serialized
+        /// enumerable which is serialized.
         /// </param>
         /// <param name="tag">
         /// </param>
@@ -2201,7 +2201,7 @@ namespace System.Management.Automation
         /// or when pso.SerializationMethod == SerializationMethod.String.
         /// </summary>
         /// <param name="source">
-        /// PSObject to be converted to string
+        /// PSObject to be converted to string.
         /// </param>
         /// <returns>
         /// string value to use for serializing this PSObject.
@@ -3036,7 +3036,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Deserializer if ExecutionContext is not
-        /// available (to get the ExecutionContext's TypeTable)
+        /// available (to get the ExecutionContext's TypeTable).
         /// </summary>
         internal TypeTable TypeTable
         {
@@ -3050,7 +3050,7 @@ namespace System.Management.Automation
         /// can deserialize this version.
         /// </summary>
         /// <param name="version">
-        /// version in string format
+        /// version in string format.
         /// </param>
         internal void ValidateVersion(string version)
         {
@@ -3731,7 +3731,7 @@ namespace System.Management.Automation
         /// Read type names.
         /// </summary>
         /// <param name="dso">
-        /// PSObject to which TypeNames are added
+        /// PSObject to which TypeNames are added.
         /// </param>
         private void ReadTypeNames(PSObject dso)
         {
@@ -3852,7 +3852,7 @@ namespace System.Management.Automation
         /// Read memberset.
         /// </summary>
         /// <param name="collection">
-        /// collection to which members are added
+        /// collection to which members are added.
         /// </param>
         private void ReadMemberSet(PSMemberInfoCollection<PSMemberInfo> collection)
         {
@@ -4727,7 +4727,7 @@ namespace System.Management.Automation
         #region misc
 
         /// <summary>
-        /// Check if LocalName of next element is "tag"
+        /// Check if LocalName of next element is "tag".
         /// </summary>
         /// <param name="tag"></param>
         /// <returns></returns>
@@ -4859,11 +4859,11 @@ namespace System.Management.Automation
         /// Helper function for building XmlException.
         /// </summary>
         /// <param name="resourceString">
-        /// resource String
+        /// resource String.
         /// </param>
         /// <param name="innerException"></param>
         /// <param name="args">
-        /// params for format string obtained from resourceId
+        /// params for format string obtained from resourceId.
         /// </param>
         private XmlException NewXmlException
         (
@@ -5471,10 +5471,10 @@ namespace System.Management.Automation
         /// Gets the "ToString" from PSObject.
         /// </summary>
         /// <param name="source">
-        /// PSObject to be converted to string
+        /// PSObject to be converted to string.
         /// </param>
         /// <returns>
-        /// "ToString" value
+        /// "ToString" value.
         /// </returns>
         internal static string GetToString(object source)
         {
@@ -5634,7 +5634,7 @@ namespace System.Management.Automation
     /// 2) keys use reference equality,
     /// 3) dictionary keeps only weak references to keys.
     /// </summary>
-    /// <typeparam name="T">type of dictionary values</typeparam>
+    /// <typeparam name="T">type of dictionary values.</typeparam>
     internal class WeakReferenceDictionary<T> : IDictionary<object, T>
     {
         private sealed class WeakReferenceEqualityComparer : IEqualityComparer<WeakReference>
@@ -5870,7 +5870,7 @@ namespace System.Management.Automation
     /// <see cref="PSPrimitiveDictionary"/> is a <see cref="Hashtable"/> that is limited to
     /// 1) case-insensitive strings as keys and
     /// 2) values that can be serialized and deserialized during PowerShell remoting handshake
-    ///    (in major-version compatible versions of PowerShell remoting)
+    ///    (in major-version compatible versions of PowerShell remoting).
     /// </summary>
     [Serializable]
     public sealed class PSPrimitiveDictionary : Hashtable
@@ -5889,7 +5889,7 @@ namespace System.Management.Automation
         /// Initializes a new instance of the <see cref="PSPrimitiveDictionary"/> class with contents
         /// copied from the <paramref name="other"/> hashtable.
         /// </summary>
-        /// <param name="other">Hashtable to copy into the new instance of <see cref="PSPrimitiveDictionary"/></param>
+        /// <param name="other">Hashtable to copy into the new instance of <see cref="PSPrimitiveDictionary"/>.</param>
         /// <exception cref="ArgumentException">
         /// This constructor will throw if the <paramref name="other"/> hashtable contains keys that are not a strings
         /// or values that are not one of primitive types that will work during PowerShell remoting handshake.
@@ -6528,7 +6528,7 @@ namespace System.Management.Automation
         /// For example to get $sessionInfo.ApplicationPrivateData.ImplicitRemoting.Hash you could call
         /// TryPathGet&lt;string&gt;($sessionInfo.ApplicationPrivateData, out myHash, "ImplicitRemoting", "Hash").
         /// </summary>
-        /// <typeparam name="T">Expected type of the value</typeparam>
+        /// <typeparam name="T">Expected type of the value.</typeparam>
         /// <param name="data">The root dictionary.</param>
         /// <param name="result"></param>
         /// <param name="keys">A chain of keys leading from the root dictionary (<paramref name="data"/>) to the value.</param>
@@ -6827,7 +6827,7 @@ namespace Microsoft.PowerShell
         /// Gets value of a property (has to be present, value has to be non-null).
         /// Can throw any exception (which is ok - LanguagePrimitives.ConvertTo will catch that).
         /// </summary>
-        /// <typeparam name="T">Expected type of the property</typeparam>
+        /// <typeparam name="T">Expected type of the property.</typeparam>
         /// <param name="pso">Deserialized object.</param>
         /// <param name="propertyName">Property name.</param>
         /// <returns></returns>
@@ -6839,7 +6839,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Gets value of a property.  Can throw any exception (which is ok - LanguagePrimitives.ConvertTo will catch that).
         /// </summary>
-        /// <typeparam name="T">Expected type of the property</typeparam>
+        /// <typeparam name="T">Expected type of the property.</typeparam>
         /// <param name="pso">Deserialized object.</param>
         /// <param name="propertyName">Property name.</param>
         /// <param name="flags"></param>
@@ -7260,10 +7260,10 @@ namespace Microsoft.PowerShell
         /// Gets the boolean properties of ParameterSetMetadata object encoded as an integer.
         /// </summary>
         /// <param name="instance">
-        /// The PSObject for which to obtain the flags
+        /// The PSObject for which to obtain the flags.
         /// </param>
         /// <returns>
-        /// Boolean properties of ParameterSetMetadata object encoded as an integer
+        /// Boolean properties of ParameterSetMetadata object encoded as an integer.
         /// </returns>
         public static UInt32 GetParameterSetMetadataFlags(PSObject instance)
         {
@@ -7540,10 +7540,10 @@ namespace Microsoft.PowerShell
         /// Gets the boolean properties of ParameterSetMetadata object encoded as an integer.
         /// </summary>
         /// <param name="instance">
-        /// The PSObject for which to obtain the flags
+        /// The PSObject for which to obtain the flags.
         /// </param>
         /// <returns>
-        /// Boolean properties of ParameterSetMetadata object encoded as an integer
+        /// Boolean properties of ParameterSetMetadata object encoded as an integer.
         /// </returns>
         public static Guid GetFormatViewDefinitionInstanceId(PSObject instance)
         {

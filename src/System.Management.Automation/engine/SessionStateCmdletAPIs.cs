@@ -97,7 +97,7 @@ namespace System.Management.Automation
         /// </returns>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -175,7 +175,7 @@ namespace System.Management.Automation
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -223,7 +223,7 @@ namespace System.Management.Automation
         /// The name of the cmdlet to remove.
         /// </param>
         /// <param name="origin">
-        /// THe origin of the caller of this API
+        /// THe origin of the caller of this API.
         /// </param>
         /// <param name="force">
         /// If true, the cmdlet is removed even if it is ReadOnly.

@@ -20,7 +20,7 @@ namespace System.Management.Automation
         /// The name of the script.
         /// </param>
         /// <param name="script">
-        /// The script definition
+        /// The script definition.
         /// </param>
         /// <param name="context">
         /// The execution context for the script.

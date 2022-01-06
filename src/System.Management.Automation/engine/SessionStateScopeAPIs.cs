@@ -40,7 +40,7 @@ namespace System.Management.Automation
         /// </returns>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -219,7 +219,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="isScriptScope">
         /// If true, the new scope is pushed on to the script scope stack and
-        /// can be referenced using $script:
+        /// can be referenced using $script:.
         /// </param>
         /// <returns>
         /// A new SessionStateScope which is a child of the current scope.

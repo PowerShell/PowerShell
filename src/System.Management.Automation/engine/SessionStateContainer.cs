@@ -3695,7 +3695,7 @@ namespace System.Management.Automation
         /// The type of the new item.
         /// </param>
         /// <param name="newItemValue">
-        /// The value of the new item
+        /// The value of the new item.
         /// </param>
         /// <param name="providerInstance">
         /// The instance of the provider to use.

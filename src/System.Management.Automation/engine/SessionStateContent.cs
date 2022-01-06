@@ -954,7 +954,7 @@ namespace System.Management.Automation
         /// Calls the provider to get the clear-content dynamic parameters.
         /// </summary>
         /// <param name="providerInstance">
-        /// The instance of the provider to call
+        /// The instance of the provider to call.
         /// </param>
         /// <param name="path">
         /// The path to pass to the provider.

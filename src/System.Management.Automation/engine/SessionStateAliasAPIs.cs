@@ -81,7 +81,7 @@ namespace System.Management.Automation
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -197,7 +197,7 @@ namespace System.Management.Automation
         /// </returns>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -240,7 +240,7 @@ namespace System.Management.Automation
         /// If true, the value will be set even if the alias is ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// THe origin of the caller of this API
+        /// THe origin of the caller of this API.
         /// </param>
         /// <returns>
         /// The resulting AliasInfo for the alias that was set.
@@ -312,7 +312,7 @@ namespace System.Management.Automation
         /// If true, the value will be set even if the alias is ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller of this API
+        /// The origin of the caller of this API.
         /// </param>
         /// <returns>
         /// The resulting AliasInfo for the alias that was set.
@@ -436,7 +436,7 @@ namespace System.Management.Automation
         /// </returns>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -490,7 +490,7 @@ namespace System.Management.Automation
         /// </returns>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -560,7 +560,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the aliases by command name (used by metadata-driven help)
+        /// Gets the aliases by command name (used by metadata-driven help).
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>

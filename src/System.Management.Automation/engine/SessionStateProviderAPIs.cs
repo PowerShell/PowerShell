@@ -734,10 +734,10 @@ namespace System.Management.Automation
         /// Gets the provider of the specified name.
         /// </summary>
         /// <param name="name">
-        /// The name of the provider to retrieve
+        /// The name of the provider to retrieve.
         /// </param>
         /// <returns>
-        /// The provider of the given name
+        /// The provider of the given name.
         /// </returns>
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
@@ -774,10 +774,10 @@ namespace System.Management.Automation
         /// Gets the provider of the specified name.
         /// </summary>
         /// <param name="name">
-        /// The name of the provider to retrieve
+        /// The name of the provider to retrieve.
         /// </param>
         /// <returns>
-        /// The provider of the given name
+        /// The provider of the given name.
         /// </returns>
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.

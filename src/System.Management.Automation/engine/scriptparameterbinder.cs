@@ -19,7 +19,7 @@ namespace System.Management.Automation
         /// Constructs a ScriptParameterBinder with the specified context.
         /// </summary>
         /// <param name="script">
-        /// The script block representing the code being run
+        /// The script block representing the code being run.
         /// </param>
         /// <param name="invocationInfo">
         /// The invocation information about the code that is being run.

@@ -71,7 +71,7 @@ namespace System.Management.Automation
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -134,7 +134,7 @@ namespace System.Management.Automation
         private bool _functionsExportedWithWildcard;
 
         /// <summary>
-        /// Set to true if module loading is performed under a manifest that explicitly exports functions (no wildcards)
+        /// Set to true if module loading is performed under a manifest that explicitly exports functions (no wildcards).
         /// </summary>
         internal bool ManifestWithExplicitFunctionExport { get; set; }
 
@@ -142,7 +142,7 @@ namespace System.Management.Automation
         /// Get a functions out of session state.
         /// </summary>
         /// <param name="name">
-        /// name of function to look up
+        /// name of function to look up.
         /// </param>
         /// <param name="origin">
         /// Origin of the command that called this API...
@@ -210,7 +210,7 @@ namespace System.Management.Automation
         /// Get a functions out of session state.
         /// </summary>
         /// <param name="name">
-        /// name of function to look up
+        /// name of function to look up.
         /// </param>
         /// <returns>
         /// The value of the specified function.
@@ -254,7 +254,7 @@ namespace System.Management.Automation
         /// The new value of the function being set.
         /// </param>
         /// <param name="origin">
-        /// Origin of the caller of this API
+        /// Origin of the caller of this API.
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
@@ -339,7 +339,7 @@ namespace System.Management.Automation
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// Origin of the caller of this API
+        /// Origin of the caller of this API.
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
@@ -380,7 +380,7 @@ namespace System.Management.Automation
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// Origin of the caller of this API
+        /// Origin of the caller of this API.
         /// </param>
         /// <param name="helpFile">
         /// The name of the help file associated with the function.
@@ -425,7 +425,7 @@ namespace System.Management.Automation
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// Origin of the caller of this API
+        /// Origin of the caller of this API.
         /// </param>
         /// <param name="context">
         /// The execution context for the function.
@@ -474,7 +474,7 @@ namespace System.Management.Automation
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// Origin of the caller of this API
+        /// Origin of the caller of this API.
         /// </param>
         /// <param name="context">
         /// The execution context for the function.
@@ -483,7 +483,7 @@ namespace System.Management.Automation
         /// The name of the help file associated with the function.
         /// </param>
         /// <param name="isPreValidated">
-        /// Set to true if it is a regular function (meaning, we do not need to check if the script contains JobDefinition Attribute and then process it)
+        /// Set to true if it is a regular function (meaning, we do not need to check if the script contains JobDefinition Attribute and then process it).
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
@@ -563,13 +563,13 @@ namespace System.Management.Automation
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller
+        /// The origin of the caller.
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// or
         /// If <paramref name="function"/> is not a <see cref="FilterInfo">FilterInfo</see>
-        /// or <see cref="FunctionInfo">FunctionInfo</see>
+        /// or <see cref="FunctionInfo">FunctionInfo</see>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
@@ -679,7 +679,7 @@ namespace System.Management.Automation
         /// If <paramref name="name"/> is null or empty.
         /// or
         /// If <paramref name="function"/> is not a <see cref="FilterInfo">FilterInfo</see>
-        /// or <see cref="FunctionInfo">FunctionInfo</see>
+        /// or <see cref="FunctionInfo">FunctionInfo</see>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
@@ -699,7 +699,7 @@ namespace System.Management.Automation
         /// The name of the function to remove.
         /// </param>
         /// <param name="origin">
-        /// THe origin of the caller of this API
+        /// THe origin of the caller of this API.
         /// </param>
         /// <param name="force">
         /// If true, the function is removed even if it is ReadOnly.

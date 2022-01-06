@@ -371,7 +371,7 @@ namespace System.Management.Automation
         /// The name of the variable to set.
         /// </param>
         /// <param name="value">
-        /// The value for the variable
+        /// The value for the variable.
         /// </param>
         /// <param name="asValue">
         /// If true, sets the variable value to newValue. If false, newValue must
@@ -384,7 +384,7 @@ namespace System.Management.Automation
         /// Which SessionState this variable belongs to.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller
+        /// The origin of the caller.
         /// </param>
         /// <param name="fastPath">
         /// If true and the variable is being set in the global scope,
@@ -730,7 +730,7 @@ namespace System.Management.Automation
         /// The name of the alias to set.
         /// </param>
         /// <param name="value">
-        /// The value for the alias
+        /// The value for the alias.
         /// </param>
         /// <param name="context">
         /// The execution context for this engine instance.
@@ -739,7 +739,7 @@ namespace System.Management.Automation
         /// If true, the value will be set even if the alias is ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// Origin of the caller of this API
+        /// Origin of the caller of this API.
         /// </param>
         /// <returns>
         /// The string representing the value that was set.
@@ -802,7 +802,7 @@ namespace System.Management.Automation
         /// The name of the alias to set.
         /// </param>
         /// <param name="value">
-        /// The value for the alias
+        /// The value for the alias.
         /// </param>
         /// <param name="context">
         /// The execution context for this engine instance.
@@ -814,7 +814,7 @@ namespace System.Management.Automation
         /// If true, the value will be set even if the alias is ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// Origin of the caller of this API
+        /// Origin of the caller of this API.
         /// </param>
         /// <returns>
         /// The string representing the value that was set.
@@ -915,7 +915,7 @@ namespace System.Management.Automation
         /// Sets an alias to the given value.
         /// </summary>
         /// <param name="aliasToSet">
-        /// The information about the alias to be set
+        /// The information about the alias to be set.
         /// </param>
         /// <param name="force">
         /// If true, the alias will be set even if there is an existing ReadOnly
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller of this API
+        /// The origin of the caller of this API.
         /// </param>
         /// <param name="context">
         /// The execution context for the function/filter.
@@ -1114,7 +1114,7 @@ namespace System.Management.Automation
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller of this API
+        /// The origin of the caller of this API.
         /// </param>
         /// <param name="context">
         /// The execution context for the function/filter.
@@ -1156,7 +1156,7 @@ namespace System.Management.Automation
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller of this API
+        /// The origin of the caller of this API.
         /// </param>
         /// <param name="context">
         /// The execution context for the function/filter.
@@ -1212,7 +1212,7 @@ namespace System.Management.Automation
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller of this API
+        /// The origin of the caller of this API.
         /// </param>
         /// <param name="context">
         /// The execution context for the function/filter.
@@ -1403,7 +1403,7 @@ namespace System.Management.Automation
         /// The name of the cmdlet to retrieve.
         /// </param>
         /// <returns>
-        /// A CmdletInfo representing this cmdlet
+        /// A CmdletInfo representing this cmdlet.
         /// </returns>
         internal CmdletInfo GetCmdlet(string name)
         {
@@ -1436,13 +1436,13 @@ namespace System.Management.Automation
         /// The cmdlet that should be added.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller of this API
+        /// The origin of the caller of this API.
         /// </param>
         /// <param name="context">
         /// The execution context for the cmdlet.
         /// </param>
         /// <returns>
-        /// A CmdletInfo representing the cmdlet
+        /// A CmdletInfo representing the cmdlet.
         /// </returns>
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the cmdlet is read-only or constant.
@@ -1543,7 +1543,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="index">
         /// The index at which to remove the cmdlet
-        /// If index is -1, remove all cmdlets with that name
+        /// If index is -1, remove all cmdlets with that name.
         /// </param>
         /// <param name="force">
         /// If true, the cmdlet is removed even if it is ReadOnly.
@@ -1898,7 +1898,7 @@ namespace System.Management.Automation
         private readonly Dictionary<string, List<string>> _commandsToAliasesCache = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Gets the aliases by command name (used by metadata-driven help)
+        /// Gets the aliases by command name (used by metadata-driven help).
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>

@@ -426,7 +426,7 @@ namespace System.Management.Automation
         /// Walks the using Ast to verify it is used within a foreach-object -parallel command
         /// and parameter set scope, and not from within a nested foreach-object -parallel call.
         /// </summary>
-        /// <param name="scriptblockAst">Scriptblock Ast containing this using Ast</param>
+        /// <param name="scriptblockAst">Scriptblock Ast containing this using Ast.</param>
         /// <param name="usingAst">Using Ast to check.</param>
         /// <returns>True if using expression is in current call scope.</returns>
         private static bool IsInForeachParallelCallingScope(

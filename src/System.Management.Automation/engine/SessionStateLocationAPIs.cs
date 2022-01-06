@@ -69,7 +69,7 @@ namespace System.Management.Automation
         /// If <paramref name="namespacesID"/> refers to a provider that does not exist.
         /// </exception>
         /// <exception cref="DriveNotFoundException">
-        /// If a current drive cannot be found for the provider <paramref name="namespaceID"/>
+        /// If a current drive cannot be found for the provider <paramref name="namespaceID"/>.
         /// </exception>
         internal PathInfo GetNamespaceCurrentLocation(string namespaceID)
         {
@@ -162,7 +162,7 @@ namespace System.Management.Automation
         /// Changes the current working directory to the path specified.
         /// </summary>
         /// <param name="path">
-        /// The path of the new current working directory
+        /// The path of the new current working directory.
         /// </param>
         /// <param name="context">
         /// The context the provider uses when performing the operation.

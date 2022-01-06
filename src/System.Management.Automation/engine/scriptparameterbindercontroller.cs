@@ -61,7 +61,7 @@ namespace System.Management.Automation
         #endregion ctor
 
         /// <summary>
-        /// Holds the set of parameters that were not bound to any argument (i.e $args)
+        /// Holds the set of parameters that were not bound to any argument (i.e $args).
         /// </summary>
         internal List<object> DollarArgs { get; }
 

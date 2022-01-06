@@ -319,7 +319,7 @@ namespace System.Management.Automation
         /// it isn't empty.
         /// </summary>
         /// <exception cref="PipelineStoppedException">
-        /// a terminating error occurred, or the pipeline was otherwise stopped
+        /// a terminating error occurred, or the pipeline was otherwise stopped.
         /// </exception>
         internal override void DoBegin()
         {

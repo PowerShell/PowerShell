@@ -439,7 +439,7 @@ namespace System.Management.Automation
         /// The path(s) to the item(s) to remove the property from.
         /// </param>
         /// <param name="property">
-        /// The name of the property to remove
+        /// The name of the property to remove.
         /// </param>
         /// <param name="force">
         /// Passed on to providers to force operations.
@@ -491,7 +491,7 @@ namespace System.Management.Automation
         /// The path(s) to the item(s) to remove the properties from.
         /// </param>
         /// <param name="property">
-        /// The name of the property to remove
+        /// The name of the property to remove.
         /// </param>
         /// <param name="context">
         /// The context which the core command is running.
