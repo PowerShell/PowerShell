@@ -248,17 +248,17 @@ namespace System.Management.Automation
         /// </summary>
         public enum XDG_Type
         {
-            /// <summary> XDG_CONFIG_HOME/powershell </summary>
+            /// <summary> XDG_CONFIG_HOME/powershell .</summary>
             CONFIG,
-            /// <summary> XDG_CACHE_HOME/powershell </summary>
+            /// <summary> XDG_CACHE_HOME/powershell .</summary>
             CACHE,
-            /// <summary> XDG_DATA_HOME/powershell </summary>
+            /// <summary> XDG_DATA_HOME/powershell .</summary>
             DATA,
-            /// <summary> XDG_DATA_HOME/powershell/Modules </summary>
+            /// <summary> XDG_DATA_HOME/powershell/Modules .</summary>
             USER_MODULES,
-            /// <summary> /usr/local/share/powershell/Modules </summary>
+            /// <summary> /usr/local/share/powershell/Modules .</summary>
             SHARED_MODULES,
-            /// <summary> XDG_CONFIG_HOME/powershell </summary>
+            /// <summary> XDG_CONFIG_HOME/powershell .</summary>
             DEFAULT
         }
 

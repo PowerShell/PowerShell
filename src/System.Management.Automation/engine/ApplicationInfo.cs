@@ -25,7 +25,7 @@ namespace System.Management.Automation
         /// The name of the application.
         /// </param>
         /// <param name="path">
-        /// The path to the application executable
+        /// The path to the application executable.
         /// </param>
         /// <param name="context">
         /// THe engine execution context for this command...

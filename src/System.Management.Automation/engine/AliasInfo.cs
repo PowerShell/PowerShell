@@ -232,7 +232,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <exception cref="System.Management.Automation.SessionStateUnauthorizedAccessException">
         /// If the trying to set an alias that is constant or
-        ///     if the value trying to be set is ScopedItemOptions.Constant
+        ///     if the value trying to be set is ScopedItemOptions.Constant.
         /// </exception>
         public ScopedItemOptions Options
         {

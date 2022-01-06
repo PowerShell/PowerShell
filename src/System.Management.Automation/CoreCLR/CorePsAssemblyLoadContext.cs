@@ -231,7 +231,7 @@ namespace System.Management.Automation
         ///                     |       |--- native.so
         ///                     |
         ///                     |--- 'osx-x64' subfolder
-        ///                     |       |--- native.dylib
+        ///                     |       |--- native.dylib.
         /// </summary>
         internal static IntPtr NativeDllHandler(Assembly assembly, string libraryName)
         {
@@ -498,7 +498,7 @@ namespace System.Management.Automation
         /// Get the TPA that is represented by the specified assembly strong name.
         /// </summary>
         /// <param name="tpaStrongName">
-        /// The assembly strong name of a CoreCLR Trusted_Platform_Assembly
+        /// The assembly strong name of a CoreCLR Trusted_Platform_Assembly.
         /// </param>
         private static Assembly GetTrustedPlatformAssembly(string tpaStrongName)
         {

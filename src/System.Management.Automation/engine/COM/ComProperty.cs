@@ -174,7 +174,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="target">Instance of the object from which to get the property value.</param>
         /// <param name="arguments">Parameters to get the property value.</param>
-        /// <returns>Value of the property</returns>
+        /// <returns>Value of the property.</returns>
         internal object GetValue(object target, object[] arguments)
         {
             try

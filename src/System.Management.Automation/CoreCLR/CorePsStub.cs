@@ -64,7 +64,7 @@ namespace System.Management.Automation.Internal
         /// Determines if you have a transaction that you can set active and work on.
         /// </summary>
         /// <remarks>
-        /// Always return false in CoreCLR
+        /// Always return false in CoreCLR.
         /// </remarks>
         internal bool HasTransaction
         {
@@ -112,7 +112,7 @@ namespace System.Management.Automation.Internal
         /// ambient transactions.
         /// </summary>
         /// <remarks>
-        /// Always return null in CoreCLR
+        /// Always return null in CoreCLR.
         /// </remarks>
         internal static IDisposable GetEngineProtectionScope()
         {
@@ -438,7 +438,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Gets the system lockdown policy.
         /// </summary>
-        /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
+        /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted).</remarks>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
         {
             return SystemEnforcementMode.None;
@@ -447,7 +447,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Gets lockdown policy as applied to a file.
         /// </summary>
-        /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted)</remarks>
+        /// <remarks>Always return SystemEnforcementMode.None in CSS (trusted).</remarks>
         public static SystemEnforcementMode GetLockdownPolicy(string path, System.Runtime.InteropServices.SafeHandle handle)
         {
             return SystemEnforcementMode.None;

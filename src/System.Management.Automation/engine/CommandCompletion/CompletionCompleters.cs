@@ -802,7 +802,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get completion results for operators that start with <paramref name="wordToComplete"/>
+        /// Get completion results for operators that start with <paramref name="wordToComplete"/>.
         /// </summary>
         /// <param name="wordToComplete">The starting text of the operator to complete.</param>
         /// <returns>A list of completion results.</returns>
@@ -3953,7 +3953,7 @@ namespace System.Management.Automation
         /// <param name="lastPositionalArgument"></param>
         /// <returns>
         /// If the command line after the [tab] will not be truncated, the return value could be non-null: Get-Cmdlet [tab] abc
-        /// If the command line after the [tab] is truncated, the return value will always be null
+        /// If the command line after the [tab] is truncated, the return value will always be null.
         /// </returns>
         private static AstPair FindTargetPositionalArgument(Collection<AstParameterArgumentPair> parsedArguments, int position, out AstPair lastPositionalArgument)
         {
@@ -5697,7 +5697,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Complete members against extension methods 'Where' and 'ForEach'
+        /// Complete members against extension methods 'Where' and 'ForEach'.
         /// </summary>
         private static void CompleteExtensionMethods(string memberName, List<CompletionResult> results)
         {
@@ -6740,7 +6740,7 @@ namespace System.Management.Automation
         ///         {
         ///             D^
         ///         }
-        ///     }
+        ///     }.
         /// </summary>
         /// <param name="completionContext"></param>
         /// <param name="ast"></param>
@@ -7285,7 +7285,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="completionContext"></param>
         /// <returns>
-        /// Indicate whether the "LiteralPaths" option needs to be removed after operation
+        /// Indicate whether the "LiteralPaths" option needs to be removed after operation.
         /// </returns>
         private static bool TurnOnLiteralPathOption(CompletionContext completionContext)
         {

@@ -235,7 +235,7 @@ namespace System.Management.Automation
         #region Special Cases
 
         /// <summary>
-        /// Check if we should complete file names for "switch -file"
+        /// Check if we should complete file names for "switch -file".
         /// </summary>
         private static bool CompleteAgainstSwitchFile(Ast lastAst, Token tokenBeforeCursor)
         {
@@ -1674,7 +1674,7 @@ namespace System.Management.Automation
         ///         {
         ///             Us^
         ///         }
-        ///     }
+        ///     }.
         /// </summary>
         /// <param name="completionContext"></param>
         /// <param name="configureAst"></param>

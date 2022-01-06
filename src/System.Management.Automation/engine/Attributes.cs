@@ -232,7 +232,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// To specify RunAs behavior for the class
-    /// /// </summary>
+    /// ///. </summary>
     public enum DSCResourceRunAsCredential
     {
         /// <summary>Default is same as optional.</summary>
@@ -435,7 +435,7 @@ namespace System.Management.Automation
     public sealed class OutputTypeAttribute : CmdletMetadataAttribute
     {
         /// <summary>
-        /// Construct the attribute from a <see>System.Type</see>
+        /// Construct the attribute from a <see>System.Type</see>.
         /// </summary>
         internal OutputTypeAttribute(Type type)
         {
@@ -451,7 +451,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Construct the attribute from an array of <see>System.Type</see>
+        /// Construct the attribute from an array of <see>System.Type</see>.
         /// </summary>
         /// <param name="type">The types output by the cmdlet.</param>
         public OutputTypeAttribute(params Type[] type)
@@ -839,7 +839,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="element">Object to validate.</param>
         /// <exception cref="ValidationMetadataException">If <paramref name="element"/> is not a string
-        /// with length between minLength and maxLength</exception>
+        /// with length between minLength and maxLength.</exception>
         /// <exception cref="ArgumentException">For invalid arguments.</exception>
         protected override void ValidateElement(object element)
         {
@@ -952,7 +952,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The range values and the value to validate will all be converted to the promoted type.
-        /// If minRange and maxRange are the same type,
+        /// If minRange and maxRange are the same type.
         /// </summary>
         private readonly Type _promotedType;
 
@@ -1008,7 +1008,7 @@ namespace System.Management.Automation
         /// <exception cref="ValidationMetadataException">
         /// if <paramref name="maxRange"/> has a different type than <paramref name="minRange"/>
         /// if <paramref name="maxRange"/> is smaller than <paramref name="minRange"/>
-        /// if <paramref name="maxRange"/>, <paramref name="minRange"/> are not <see cref="IComparable"/>
+        /// if <paramref name="maxRange"/>, <paramref name="minRange"/> are not <see cref="IComparable"/>.
         /// </exception>
         public ValidateRangeAttribute(object minRange, object maxRange) : base()
         {
@@ -1431,7 +1431,7 @@ namespace System.Management.Automation
         /// <exception cref="ValidationMetadataException">
         /// if the element is none of <see cref="ICollection"/>, <see cref="IEnumerable"/>,
         /// <see cref="IList"/>, <see cref="IEnumerator"/>
-        /// if the element's length is not between <see cref="MinLength"/> and <see cref="MaxLength"/>
+        /// if the element's length is not between <see cref="MinLength"/> and <see cref="MaxLength"/>.
         /// </exception>
         protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {
@@ -1500,7 +1500,7 @@ namespace System.Management.Automation
         /// <param name="maxLength">Maximum number of values required.</param>
         /// <exception cref="ArgumentOutOfRangeException">For invalid arguments.</exception>
         /// <exception cref="ValidationMetadataException">
-        /// if <paramref name="minLength"/> is greater than <paramref name="maxLength"/>
+        /// if <paramref name="minLength"/> is greater than <paramref name="maxLength"/>.
         /// </exception>
         public ValidateCountAttribute(int minLength, int maxLength)
         {
@@ -1652,7 +1652,7 @@ namespace System.Management.Automation
         /// <param name="element">Object to validate.</param>
         /// <exception cref="ValidationMetadataException">
         /// if element is not in the set
-        /// for invalid argument
+        /// for invalid argument.
         /// </exception>
         protected override void ValidateElement(object element)
         {
@@ -1710,7 +1710,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the <see cref="ValidateSetAttribute"/> class.
         /// Valid values are returned dynamically from a custom class implementing
-        /// <see cref="IValidateSetValuesGenerator"/>
+        /// <see cref="IValidateSetValuesGenerator"/>.
         /// </summary>
         /// <param name="valuesGeneratorType">
         /// Class that implements the <see cref="IValidateSetValuesGenerator"/> interface.
@@ -1734,7 +1734,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Allows dynamically generate set of values for <see cref="ValidateSetAttribute"/>
+    /// Allows dynamically generate set of values for <see cref="ValidateSetAttribute"/>.
     /// </summary>
 #nullable enable
     public interface IValidateSetValuesGenerator
@@ -1979,7 +1979,7 @@ namespace System.Management.Automation
         /// true if the argument is valid.
         /// </returns>
         /// <exception cref="ValidationMetadataException">
-        /// if element is null or a collection with a null element
+        /// if element is null or a collection with a null element.
         /// </exception>
         protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
         {

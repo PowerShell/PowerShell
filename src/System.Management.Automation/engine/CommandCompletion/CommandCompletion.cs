@@ -691,7 +691,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// The implementation of file name completion is completely different on V2 and V3 for remote scenarios. On PSv3, the
-        /// CompletionResults are generated always on the target machine, and
+        /// CompletionResults are generated always on the target machine, and.
         /// </remarks>
         private static class PSv2CompletionCompleter
         {

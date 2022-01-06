@@ -170,13 +170,13 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Look for typeinfo using IDispatch.GetTypeInfo.
         /// </summary>
-        /// <param name="dispatch">IDispatch object</param>
+        /// <param name="dispatch">IDispatch object.</param>
         /// <remarks>
         /// Some COM objects just dont expose typeinfo. In these cases, this method will return null.
         /// Some COM objects do intend to expose typeinfo, but may not be able to do so if the type-library is not properly
-        /// registered. This will be considered as acceptable or as an error condition depending on throwIfMissingExpectedTypeInfo
+        /// registered. This will be considered as acceptable or as an error condition depending on throwIfMissingExpectedTypeInfo.
         /// </remarks>
-        /// <returns>Type info</returns>
+        /// <returns>Type info.</returns>
         internal static ComTypes.ITypeInfo GetITypeInfoFromIDispatch(IDispatch dispatch)
         {
             int hresult = dispatch.TryGetTypeInfoCount(out uint typeCount);

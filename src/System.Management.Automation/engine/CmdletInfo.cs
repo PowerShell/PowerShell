@@ -26,7 +26,7 @@ namespace System.Management.Automation
         /// The type information about the class that implements the cmdlet.
         /// </param>
         /// <param name="helpFile">
-        /// The name of the help file associated with the cmdlet
+        /// The name of the help file associated with the cmdlet.
         /// </param>
         /// <param name="PSSnapin">
         /// The PSSnapInInfo of the PSSnapin the cmdlet comes from.
@@ -405,7 +405,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <exception cref="System.Management.Automation.SessionStateUnauthorizedAccessException">
         /// If the trying to set an cmdlet that is constant or
-        ///     if the value trying to be set is ScopedItemOptions.Constant
+        ///     if the value trying to be set is ScopedItemOptions.Constant.
         /// </exception>
         public ScopedItemOptions Options
         {

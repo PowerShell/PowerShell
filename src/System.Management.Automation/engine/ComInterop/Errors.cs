@@ -12,7 +12,7 @@ namespace System.Management.Automation.ComInterop
     internal static partial class Error
     {
         /// <summary>
-        /// InvalidOperationException with message like "Marshal.SetComObjectData failed."
+        /// InvalidOperationException with message like "Marshal.SetComObjectData failed.".
         /// </summary>
         internal static Exception SetComObjectDataFailed()
         {
@@ -20,7 +20,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// InvalidOperationException with message like "Unexpected VarEnum {0}."
+        /// InvalidOperationException with message like "Unexpected VarEnum {0}.".
         /// </summary>
         internal static Exception UnexpectedVarEnum(object p0)
         {
@@ -28,7 +28,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// System.Reflection.TargetParameterCountException with message like "Error while invoking {0}."
+        /// System.Reflection.TargetParameterCountException with message like "Error while invoking {0}.".
         /// </summary>
         internal static Exception DispBadParamCount(object p0, int parameterCount)
         {
@@ -36,7 +36,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// MissingMemberException with message like "Error while invoking {0}."
+        /// MissingMemberException with message like "Error while invoking {0}.".
         /// </summary>
         internal static Exception DispMemberNotFound(object p0)
         {
@@ -44,7 +44,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// ArgumentException with message like "Error while invoking {0}. Named arguments are not supported."
+        /// ArgumentException with message like "Error while invoking {0}. Named arguments are not supported.".
         /// </summary>
         internal static Exception DispNoNamedArgs(object p0)
         {
@@ -52,7 +52,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// OverflowException with message like "Error while invoking {0}."
+        /// OverflowException with message like "Error while invoking {0}.".
         /// </summary>
         internal static Exception DispOverflow(object p0)
         {
@@ -60,7 +60,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// ArgumentException with message like "Could not convert argument {0} for call to {1}."
+        /// ArgumentException with message like "Could not convert argument {0} for call to {1}.".
         /// </summary>
         internal static Exception DispTypeMismatch(object method, string value, string originalTypeName, string destinationTypeName)
         {
@@ -68,7 +68,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// ArgumentException with message like "Error while invoking {0}. A required parameter was omitted."
+        /// ArgumentException with message like "Error while invoking {0}. A required parameter was omitted.".
         /// </summary>
         internal static Exception DispParamNotOptional(object p0)
         {
@@ -76,7 +76,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// InvalidOperationException with message like "Cannot retrieve type information."
+        /// InvalidOperationException with message like "Cannot retrieve type information.".
         /// </summary>
         internal static Exception CannotRetrieveTypeInformation()
         {
@@ -84,7 +84,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// ArgumentException with message like "IDispatch::GetIDsOfNames behaved unexpectedly for {0}."
+        /// ArgumentException with message like "IDispatch::GetIDsOfNames behaved unexpectedly for {0}.".
         /// </summary>
         internal static Exception GetIDsOfNamesInvalid(object p0)
         {
@@ -92,7 +92,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// InvalidOperationException with message like "Attempting to pass an event handler of an unsupported type."
+        /// InvalidOperationException with message like "Attempting to pass an event handler of an unsupported type.".
         /// </summary>
         internal static Exception UnsupportedHandlerType()
         {
@@ -100,7 +100,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// MissingMemberException with message like "Could not get dispatch ID for {0} (error: {1})."
+        /// MissingMemberException with message like "Could not get dispatch ID for {0} (error: {1}).".
         /// </summary>
         internal static Exception CouldNotGetDispId(object p0, object p1)
         {
@@ -108,7 +108,7 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// System.Reflection.AmbiguousMatchException with message like "There are valid conversions from {0} to {1}."
+        /// System.Reflection.AmbiguousMatchException with message like "There are valid conversions from {0} to {1}.".
         /// </summary>
         internal static Exception AmbiguousConversion(object p0, object p1)
         {

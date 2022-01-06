@@ -280,7 +280,7 @@ namespace System.Management.Automation.InteropServices
         internal static extern void VariantClear(IntPtr variant);
 
         /// <summary>
-        /// Release any unmanaged memory associated with the Variant
+        /// Release any unmanaged memory associated with the Variant.
         /// </summary>
         public void Clear()
         {

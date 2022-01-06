@@ -851,13 +851,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// Get the module name and module version.
         /// </summary>
         /// <param name="moduleFolderPath">
-        /// Path to the module folder
+        /// Path to the module folder.
         /// </param>
         /// <param name="importInBoxResourcesImplicitly">
-        /// if module is inbox and we are importing resources implicitly
+        /// if module is inbox and we are importing resources implicitly.
         /// </param>
         /// <param name="isPsProviderModule">
-        /// Indicate a internal DSC module
+        /// Indicate a internal DSC module.
         /// </param>
         /// <returns></returns>
         private static Tuple<string, Version> GetModuleInfoHelper(string moduleFolderPath, bool importInBoxResourcesImplicitly, bool isPsProviderModule)
@@ -3592,7 +3592,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         ///            [ PasswordChangeRequired = [bool] ]
         ///            [ PasswordNeverExpires = [bool] ]
         ///            [ DependsOn = [string[]] ]
-        ///        }
+        ///        }.
         /// </summary>
         /// <param name="keyword"></param>
         /// <returns></returns>

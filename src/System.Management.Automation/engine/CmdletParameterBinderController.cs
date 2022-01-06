@@ -284,7 +284,7 @@ namespace System.Management.Automation
         /// Process all valid parameter sets, and filter out those that don't take any pipeline input.
         /// </summary>
         /// <returns>
-        /// The new valid parameter set flags
+        /// The new valid parameter set flags.
         /// </returns>
         private uint FilterParameterSetsTakingNoPipelineInput()
         {
@@ -341,10 +341,10 @@ namespace System.Management.Automation
         /// Apply the binding for the default parameter defined by the user.
         /// </summary>
         /// <param name="bindingStage">
-        /// Dictate which binding stage this default binding happens
+        /// Dictate which binding stage this default binding happens.
         /// </param>
         /// <param name="isDynamic">
-        /// Special operation needed if the default binding happens at the dynamic binding stage
+        /// Special operation needed if the default binding happens at the dynamic binding stage.
         /// </param>
         /// <returns></returns>
         private void ApplyDefaultParameterBinding(string bindingStage, bool isDynamic)
@@ -389,7 +389,7 @@ namespace System.Management.Automation
         /// <param name="defaultParameterValues">Default value pairs.</param>
         /// <returns>
         /// true if there is at least one default parameter bound successfully
-        /// false if there is no default parameter bound successfully
+        /// false if there is no default parameter bound successfully.
         /// </returns>
         private bool BindDefaultParameters(uint validParameterSetFlag, Dictionary<MergedCompiledCommandParameter, object> defaultParameterValues)
         {
@@ -853,7 +853,7 @@ namespace System.Management.Automation
         /// Verify if all arguments from the command line are bound.
         /// </summary>
         /// <param name="originalBindingException">
-        /// Previous binding exceptions that possibly causes the failure
+        /// Previous binding exceptions that possibly causes the failure.
         /// </param>
         private void VerifyArgumentsProcessed(ParameterBindingException originalBindingException)
         {
@@ -1463,7 +1463,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Binds the remaining arguments to an unbound ValueFromRemainingArguments parameter (Varargs)
+        /// Binds the remaining arguments to an unbound ValueFromRemainingArguments parameter (Varargs).
         /// </summary>
         /// <exception cref="ParameterBindingException">
         /// If there was an error binding the arguments to the parameters.
@@ -3058,13 +3058,13 @@ namespace System.Management.Automation
         ///  case character is used. The Hotkey is preceded by an ampersand in the label.
         /// </summary>
         /// <param name="parameterName">
-        /// The parameter name from which the Hotkey is created
+        /// The parameter name from which the Hotkey is created.
         /// </param>
         /// <param name="usedHotKeys">
-        /// A list of used HotKeys
+        /// A list of used HotKeys.
         /// </param>
         /// <returns>
-        /// A label made from parameterName with a HotKey indicated by an ampersand
+        /// A label made from parameterName with a HotKey indicated by an ampersand.
         /// </returns>
         private static string BuildLabel(string parameterName, StringBuilder usedHotKeys)
         {
@@ -3237,7 +3237,7 @@ namespace System.Management.Automation
         /// or
         /// If the binding to the parameter fails.
         /// or
-        /// If there is a failure resetting values prior to binding from the pipeline
+        /// If there is a failure resetting values prior to binding from the pipeline.
         /// </exception>
         /// <remarks>
         /// The algorithm for binding the pipeline object is as follows. If any
@@ -3255,7 +3255,7 @@ namespace System.Management.Automation
         /// - If parameter supports ValueFromPipeline
         ///     - attempt to bind input value using type coercion
         /// - If parameter support ValueFromPipelineByPropertyName
-        ///     - attempt to bind the vlue of the property with the matching name using type coercion
+        ///     - attempt to bind the vlue of the property with the matching name using type coercion.
         /// </remarks>
         private bool BindPipelineParametersPrivate(PSObject inputToOperateOn)
         {
@@ -4081,7 +4081,7 @@ namespace System.Management.Automation
         /// Binds the specified value to the specified parameter.
         /// </summary>
         /// <param name="parameterValue">
-        /// The value to bind to the parameter
+        /// The value to bind to the parameter.
         /// </param>
         /// <param name="parameter">
         /// The parameter to bind the value to.
@@ -4304,7 +4304,7 @@ namespace System.Management.Automation
         /// Constructor takes a hash table.
         /// </summary>
         /// <remarks>
-        /// Check for the keys' formats and make it versionable
+        /// Check for the keys' formats and make it versionable.
         /// </remarks>
         /// <param name="dictionary">A hashtable instance.</param>
         public DefaultParameterDictionary(IDictionary dictionary)

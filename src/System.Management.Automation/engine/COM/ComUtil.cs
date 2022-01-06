@@ -343,7 +343,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Converts a MethodBase[] into a MethodInformation[]
+        /// Converts a MethodBase[] into a MethodInformation[].
         /// </summary>
         /// <returns>The ComMethodInformation[] corresponding to methods.</returns>
         internal static ComMethodInformation[] GetMethodInformationArray(COM.ITypeInfo typeInfo, Collection<int> methods, bool skipLastParameters)

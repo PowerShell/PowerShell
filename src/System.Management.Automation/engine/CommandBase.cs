@@ -154,7 +154,7 @@ namespace System.Management.Automation.Internal
         /// Gets or sets the execution context.
         /// </summary>
         /// <exception cref="System.ArgumentNullException">
-        /// may not be set to null
+        /// may not be set to null.
         /// </exception>
         internal ExecutionContext Context
         {
@@ -329,19 +329,19 @@ namespace System.Management.Automation
     /// </summary>
     public enum ActionPreference
     {
-        /// <summary>Ignore this event and continue</summary>
+        /// <summary>Ignore this event and continue.</summary>
         SilentlyContinue = 0,
 
-        /// <summary>Stop the command</summary>
+        /// <summary>Stop the command.</summary>
         Stop = 1,
 
-        /// <summary>Handle this event as normal and continue</summary>
+        /// <summary>Handle this event as normal and continue.</summary>
         Continue = 2,
 
-        /// <summary>Ask whether to stop or continue</summary>
+        /// <summary>Ask whether to stop or continue.</summary>
         Inquire = 3,
 
-        /// <summary>Ignore the event completely (not even logging it to the target stream)</summary>
+        /// <summary>Ignore the event completely (not even logging it to the target stream).</summary>
         Ignore = 4,
 
         /// <summary>Reserved for future use.</summary>
