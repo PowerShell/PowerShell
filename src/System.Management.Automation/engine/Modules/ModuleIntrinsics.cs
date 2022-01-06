@@ -983,7 +983,7 @@ namespace System.Management.Automation
                 // "SysWow64" in the key. Later, when 'Import-Module' is called, it loads the module using ""System32"
                 // in the key.
                 // For the cross-platform PowerShell, a user can choose to install it under "C:\Windows\SysWOW64", and
-                // thus it may have the same problem as described above.
+                // thus it may have the same problem as described above. So we keep this line of code.
                 psHome = psHome.ToLowerInvariant().Replace(@"\syswow64\", @"\system32\");
 #endif
                 Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
