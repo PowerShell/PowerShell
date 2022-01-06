@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell
         /// Can be tested to see if the execution was successful or not.
         /// </param>
         /// <param name="options">
-        /// options to govern the execution
+        /// options to govern the execution.
         /// </param>
         /// <returns>
         /// the object stream resulting from the execution.  May be null.
@@ -661,7 +661,7 @@ namespace Microsoft.PowerShell
         ///
         /// Summary:
         /// ExecuteCommand always saves/sets/restores CurrentExecutor
-        /// Host.EnterNestedPrompt always saves/clears/restores CurrentExecutor
+        /// Host.EnterNestedPrompt always saves/clears/restores CurrentExecutor.
         /// </remarks>
         internal static Executor CurrentExecutor
         {

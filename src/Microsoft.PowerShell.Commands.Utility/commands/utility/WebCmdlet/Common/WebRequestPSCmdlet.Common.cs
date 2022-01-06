@@ -1941,8 +1941,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a <see cref="StringContent"/> from the supplied field name and field value. Uses <see cref="LanguagePrimitives.ConvertTo{T}(object)"/> to convert the objects to strings.
         /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StringContent"/></param>
-        /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent"/></param>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StringContent"/>.</param>
+        /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent"/>.</param>
         private static StringContent GetMultipartStringContent(object fieldName, object fieldValue)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
@@ -1958,8 +1958,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a <see cref="StreamContent"/> from the supplied field name and <see cref="Stream"/>. Uses <see cref="LanguagePrimitives.ConvertTo{T}(object)"/> to convert the fieldname to a string.
         /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent"/></param>
-        /// <param name="stream">The <see cref="Stream"/> to use for the <see cref="StreamContent"/></param>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent"/>.</param>
+        /// <param name="stream">The <see cref="Stream"/> to use for the <see cref="StreamContent"/>.</param>
         private static StreamContent GetMultipartStreamContent(object fieldName, Stream stream)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
@@ -1976,8 +1976,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a <see cref="StreamContent"/> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(object, Stream)"/> to create the <see cref="StreamContent"/> and then sets the file name.
         /// </summary>
-        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent"/></param>
-        /// <param name="file">The file to use for the <see cref="StreamContent"/></param>
+        /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent"/>.</param>
+        /// <param name="file">The file to use for the <see cref="StreamContent"/>.</param>
         private static StreamContent GetMultipartFileContent(object fieldName, FileInfo file)
         {
             var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));

@@ -158,10 +158,10 @@ namespace Microsoft.PowerShell.Commands
         /// in WhatIf scenarios.
         /// </param>
         /// <param name="member">
-        /// LocalPrincipal object to be processed
+        /// LocalPrincipal object to be processed.
         /// </param>
         /// <returns>
-        /// LocalPrincipal object processed and ready to be removed
+        /// LocalPrincipal object processed and ready to be removed.
         /// </returns>
         /// <remarks>
         /// <para>
@@ -172,11 +172,11 @@ namespace Microsoft.PowerShell.Commands
         /// <para>
         /// Any Member object provided by name or SID string will be looked up
         /// to ensure that such an object exists. If an object is not found,
-        /// an error message is displayed by PowerShell and null will be returned from this method
+        /// an error message is displayed by PowerShell and null will be returned from this method.
         /// </para>
         /// <para>
         /// This method also handles the WhatIf scenario. If the Cmdlet's
-        /// <b>ShouldProcess</b> method returns false on any Member object
+        /// <b>ShouldProcess</b> method returns false on any Member object.
         /// </para>
         /// </remarks>
         private LocalPrincipal MakePrincipal(string groupId, LocalPrincipal member)

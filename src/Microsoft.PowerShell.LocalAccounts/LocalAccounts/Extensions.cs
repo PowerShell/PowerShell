@@ -111,7 +111,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
         }
 
         /// <summary>
-        /// Gets the Identifier Authority portion of a <see cref="SecurityIdentifier"/>
+        /// Gets the Identifier Authority portion of a <see cref="SecurityIdentifier"/>.
         /// </summary>
         /// <param name="sid">The SecurityIdentifier containing the desired Authority.</param>
         /// <returns>

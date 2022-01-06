@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         AzureAD,
 
         /// <summary>
-        /// The principal is a Microsoft Account, such as
+        /// The principal is a Microsoft Account, such as.
         /// <b>MicrosoftAccount\user@domain.com</b>
         /// </summary>
         MicrosoftAccount
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         public string Name { get; set; }
 
         /// <summary>
-        /// The Security Identifier that uniquely identifies the Principal/
+        /// The Security Identifier that uniquely identifies the Principal/.
         /// </summary>
         public SecurityIdentifier SID { get; set; }
 

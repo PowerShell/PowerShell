@@ -68,13 +68,13 @@ namespace Microsoft.PowerShell
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="descriptions"/> is null
         ///    OR
-        ///    at least one FieldDescription in <paramref name="descriptions"/> is null
+        ///    at least one FieldDescription in <paramref name="descriptions"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If <paramref name="descriptions"/> count is less than 1
         ///    OR
         ///    at least one FieldDescription.AssemblyFullName in <paramref name="descriptions"/> is
-        ///     null or empty
+        ///     null or empty.
         /// </exception>
         /// <exception cref="PromptingException">
         /// If a FieldDescription in <paramref name="descriptions"/> specifies one of SecureString or
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell
         /// </exception>
         /// <exception cref="PSInvalidCastException">
         /// If the converting the user input to the prompt field type fails unless it is caused by
-        ///     OverflowException or FormatException
+        ///     OverflowException or FormatException.
         /// </exception>
         public override
         Dictionary<string, PSObject>
@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell
         /// <param name="isFromRemoteHost">Is the call coming from a remote host.</param>
         /// <param name="inputString">The string to be converted.</param>
         /// <param name="convertedObj">if there's no error in the conversion, the converted object will be assigned here;
-        /// otherwise, this will be the same as the inputString</param>
+        /// otherwise, this will be the same as the inputString.</param>
         /// <returns>An object of type fieldType that inputString represents.</returns>
         private PromptCommonInputErrors PromptTryConvertTo(Type fieldType, bool isFromRemoteHost, string inputString, out object convertedObj)
         {

@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// TimerCallback for '_progPaneUpdateTimer' to update 'progPaneUpdateFlag'
+        /// TimerCallback for '_progPaneUpdateTimer' to update 'progPaneUpdateFlag'.
         /// </summary>
         private
         void

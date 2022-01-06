@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell
         /// Internal Entry point in msh console host implementation.
         /// </summary>
         /// <param name="bannerText">
-        /// Banner text to be displayed by ConsoleHost
+        /// Banner text to be displayed by ConsoleHost.
         /// </param>
         /// <param name="helpText">
         /// Help text for minishell. This is displayed on 'minishell -?'.
@@ -1090,7 +1090,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// See base class
+        /// See base class.
         /// <seealso cref="NotifyBeginApplication"/>
         /// </summary>
         public override void NotifyEndApplication()
@@ -1423,7 +1423,7 @@ namespace Microsoft.PowerShell
         /// arguments before calling this method.
         /// </param>
         /// <param name="isPrestartWarned">
-        /// Is there any warning at startup
+        /// Is there any warning at startup.
         /// </param>
         /// <returns>
         /// The process exit code to be returned by Main.
@@ -2118,7 +2118,7 @@ namespace Microsoft.PowerShell
         /// The exception to report.
         /// </param>
         /// <param name="header">
-        /// Optional header message.  Empty or null means "no header"
+        /// Optional header message.  Empty or null means "no header".
         /// </param>
         private void ReportExceptionFallback(Exception e, string header)
         {
@@ -2363,7 +2363,7 @@ namespace Microsoft.PowerShell
             /// </summary>
             /// <returns>True if next input loop is nested, False otherwise.</returns>
             /// <exception cref="InvalidOperationException">
-            ///  when there is no instanceStack.Count == 0
+            ///  when there is no instanceStack.Count == 0.
             /// </exception>
             internal static bool ExitCurrentLoop()
             {

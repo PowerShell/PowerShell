@@ -194,7 +194,7 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    obtaining information about the buffer failed
         ///    OR
-        ///    Win32's SetConsoleCursorPosition failed
+        ///    Win32's SetConsoleCursorPosition failed.
         /// </exception>
         public override string ReadLine()
         {
@@ -215,10 +215,10 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's setting input buffer mode to disregard window and mouse input failed
         ///    OR
-        ///    Win32's ReadConsole failed
+        ///    Win32's ReadConsole failed.
         /// </exception>
         /// <exception cref="PipelineStoppedException">
-        /// If Ctrl-C is entered by user
+        /// If Ctrl-C is entered by user.
         /// </exception>
         public override SecureString ReadLineAsSecureString()
         {
@@ -251,10 +251,10 @@ namespace Microsoft.PowerShell
         /// arrow key movement, but supports backspace.
         /// </summary>
         ///<param name="isSecureString">
-        /// True to specify reading a SecureString; false reading a string
+        /// True to specify reading a SecureString; false reading a string.
         /// </param>
         /// <param name="printToken">
-        /// string for output echo
+        /// string for output echo.
         /// </param>
         /// <returns></returns>
         /// <exception cref="HostException">
@@ -266,10 +266,10 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    obtaining information about the buffer failed
         ///    OR
-        ///    Win32's SetConsoleCursorPosition failed
+        ///    Win32's SetConsoleCursorPosition failed.
         /// </exception>
         /// <exception cref="PipelineStoppedException">
-        /// If Ctrl-C is entered by user
+        /// If Ctrl-C is entered by user.
         /// </exception>
         private object ReadLineSafe(bool isSecureString, char? printToken)
         {
@@ -456,15 +456,15 @@ namespace Microsoft.PowerShell
         /// Handle writing print token with proper cursor adjustment for ReadLineSafe.
         /// </summary>
         /// <param name="printToken">
-        /// token output for each char input. It must be a one-char string
+        /// token output for each char input. It must be a one-char string.
         /// </param>
         /// <param name="originalCursorPosition">
-        /// it is the cursor position where ReadLineSafe begins
+        /// it is the cursor position where ReadLineSafe begins.
         /// </param>
         /// <exception cref="HostException">
         /// If obtaining information about the buffer failed
         ///    OR
-        ///    Win32's SetConsoleCursorPosition failed
+        ///    Win32's SetConsoleCursorPosition failed.
         /// </exception>
         private void WritePrintToken(
             string printToken,
@@ -495,12 +495,12 @@ namespace Microsoft.PowerShell
         /// Handle backspace with proper cursor adjustment for ReadLineSafe.
         /// </summary>
         /// <param name="originalCursorPosition">
-        /// it is the cursor position where ReadLineSafe begins
+        /// it is the cursor position where ReadLineSafe begins.
         /// </param>
         /// <exception cref="HostException">
         /// If obtaining information about the buffer failed
         ///    OR
-        ///    Win32's SetConsoleCursorPosition failed
+        ///    Win32's SetConsoleCursorPosition failed.
         /// </exception>
         private void WriteBackSpace(Coordinates originalCursorPosition)
         {
@@ -531,7 +531,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Blank out at and move rawui.CursorPosition to <paramref name="cursorPosition"/>
+        /// Blank out at and move rawui.CursorPosition to <paramref name="cursorPosition"/>.
         /// </summary>
         /// <param name="cursorPosition">Position to blank out.</param>
         private void BlankAtCursor(Coordinates cursorPosition)
@@ -547,13 +547,13 @@ namespace Microsoft.PowerShell
         /// otherwise return false.
         /// </summary>
         /// <param name="flagToUnset">
-        /// a flag in ConsoleControl.ConsoleModes to be unset in <paramref name="m"/>
+        /// a flag in ConsoleControl.ConsoleModes to be unset in <paramref name="m"/>.
         /// </param>
         /// <param name="m">
         /// </param>
         /// <returns>
         /// true if <paramref name="m"/> is set on <paramref name="flagToUnset"/>
-        /// false otherwise
+        /// false otherwise.
         /// </returns>
         private static bool shouldUnsetMode(
             ConsoleControl.ConsoleModes flagToUnset,
@@ -701,7 +701,7 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleMode fails
         ///    OR
-        ///    Win32's WriteConsole fails
+        ///    Win32's WriteConsole fails.
         /// </exception>
         public override void Write(string value)
         {
@@ -772,7 +772,7 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleMode fails
         ///    OR
-        ///    Win32's WriteConsole fails
+        ///    Win32's WriteConsole fails.
         /// </exception>
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
@@ -796,7 +796,7 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleMode fails
         ///    OR
-        ///    Win32's WriteConsole fails
+        ///    Win32's WriteConsole fails.
         /// </exception>
         public override void WriteLine(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
@@ -837,7 +837,7 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleMode fails
         ///    OR
-        ///    Win32's WriteConsole fails
+        ///    Win32's WriteConsole fails.
         /// </exception>
         public override void WriteLine(string value)
         {
@@ -854,7 +854,7 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleMode fails
         ///    OR
-        ///    Win32's WriteConsole fails
+        ///    Win32's WriteConsole fails.
         /// </exception>
         public override void WriteLine()
         {
@@ -1198,7 +1198,7 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleMode fails
         ///    OR
-        ///    Win32's WriteConsole fails
+        ///    Win32's WriteConsole fails.
         /// </exception>
         public override void WriteDebugLine(string message)
         {
@@ -1259,7 +1259,7 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleMode fails
         ///    OR
-        ///    Win32's WriteConsole fails
+        ///    Win32's WriteConsole fails.
         /// </exception>
         public override void WriteVerboseLine(string message)
         {
@@ -1303,7 +1303,7 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    Win32's SetConsoleMode fails
         ///    OR
-        ///    Win32's WriteConsole fails
+        ///    Win32's WriteConsole fails.
         /// </exception>
         public override void WriteWarningLine(string message)
         {
@@ -1466,7 +1466,7 @@ namespace Microsoft.PowerShell
         /// Receives an enum value indicating how input was ended.
         /// </param>
         /// <param name="calledFromPipeline">
-        /// TBD
+        /// TBD.
         /// </param>
         /// <param name="transcribeResult">
         /// true to include the results in any transcription that might be happening.
@@ -1483,7 +1483,7 @@ namespace Microsoft.PowerShell
         ///    OR
         ///    obtaining information about the buffer failed
         ///    OR
-        ///    Win32's SetConsoleCursorPosition failed
+        ///    Win32's SetConsoleCursorPosition failed.
         /// </exception>
         internal string ReadLine(bool endOnTab, string initialContent, out ReadLineResult result, bool calledFromPipeline, bool transcribeResult)
         {
@@ -1934,11 +1934,11 @@ namespace Microsoft.PowerShell
         /// Reads a line, and completes the input for the user if they hit tab.
         /// </summary>
         /// <param name="exec">
-        /// The Executor instance on which to run any pipelines that are needed to find matches
+        /// The Executor instance on which to run any pipelines that are needed to find matches.
         /// </param>
         /// <returns>
         /// null on a break event
-        /// the completed line otherwise
+        /// the completed line otherwise.
         /// </returns>
         internal string ReadLineWithTabCompletion(Executor exec)
         {

@@ -480,7 +480,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         /// </summary>
         /// <param name="ntstatus">The NTSTATUS value returned from native functions.</param>
         /// <returns>
-        /// One of the STATUS_SEVERITY_* values
+        /// One of the STATUS_SEVERITY_* values.
         /// </returns>
         public static uint Severity(UInt32 ntstatus)
         {

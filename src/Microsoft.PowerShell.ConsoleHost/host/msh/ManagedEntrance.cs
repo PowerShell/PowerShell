@@ -24,10 +24,10 @@ namespace Microsoft.PowerShell
         /// Starts managed MSH.
         /// </summary>
         /// <param name="consoleFilePath">
-        /// Deprecated: Console file used to create a runspace configuration to start MSH
+        /// Deprecated: Console file used to create a runspace configuration to start MSH.
         /// </param>
         /// <param name="args">
-        /// Command line arguments to the managed MSH
+        /// Command line arguments to the managed MSH.
         /// </param>
         /// <param name="argc">
         /// Length of the passed in argument array.
@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell
         /// Starts managed MSH.
         /// </summary>
         /// <param name="args">
-        /// Command line arguments to the managed MSH
+        /// Command line arguments to the managed MSH.
         /// </param>
         /// <param name="argc">
         /// Length of the passed in argument array.

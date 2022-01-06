@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell
     /// </summary>
     /// <remarks>
     /// Originally sourced from https://blogs.msdn.com/adamroot/pages/interop-with-propvariants-in-net.aspx
-    /// and modified to add ability to set values
+    /// and modified to add ability to set values.
     /// </remarks>
     [StructLayout(LayoutKind.Explicit)]
     internal sealed class PropVariant : IDisposable

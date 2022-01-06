@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell
         public Guid FormatId { get; }
 
         /// <summary>
-        /// Property identifier (PID)
+        /// Property identifier (PID).
         /// </summary>
         public int PropertyId { get; }
 

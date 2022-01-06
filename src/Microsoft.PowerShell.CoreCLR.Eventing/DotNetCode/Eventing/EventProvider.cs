@@ -71,7 +71,7 @@ namespace System.Diagnostics.Eventing
         /// Constructor for EventProvider class.
         /// </summary>
         /// <param name="providerGuid">
-        /// Unique GUID among all trace sources running on a system
+        /// Unique GUID among all trace sources running on a system.
         /// </param>
         [SecuritySafeCritical]
         [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", MessageId = "guid")]
@@ -209,10 +209,10 @@ namespace System.Diagnostics.Eventing
         /// IsEnabled, method used to test if event is enabled.
         /// </summary>
         /// <param name="level">
-        /// Level to test
+        /// Level to test.
         /// </param>
         /// <param name="keywords">
-        /// Keyword to test
+        /// Keyword to test.
         /// </param>
         public bool IsEnabled(byte level, long keywords)
         {
@@ -424,13 +424,13 @@ namespace System.Diagnostics.Eventing
         /// The activity ID will be propagated only if the call stays on the same native thread as SetActivityId().
         /// </summary>
         /// <param name="eventMessage">
-        /// Message to write
+        /// Message to write.
         /// </param>
         /// <param name="eventLevel">
-        /// Level to test
+        /// Level to test.
         /// </param>
         /// <param name="eventKeywords">
-        /// Keyword to test
+        /// Keyword to test.
         /// </param>
         [System.Security.SecurityCritical]
         public bool WriteMessageEvent(string eventMessage, byte eventLevel, long eventKeywords)
@@ -473,7 +473,7 @@ namespace System.Diagnostics.Eventing
         /// The activity ID will be propagated only if the call stays on the same native thread as SetActivityId().
         /// </summary>
         /// <param name="eventMessage">
-        /// Message to log
+        /// Message to log.
         /// </param>
         public bool WriteMessageEvent(string eventMessage)
         {
@@ -559,10 +559,10 @@ namespace System.Diagnostics.Eventing
         /// Event Descriptor for this event.
         /// </param>
         /// <param name="dataCount">
-        /// number of event descriptors
+        /// Number of event descriptors.
         /// </param>
         /// <param name="data">
-        /// pointer do the event data
+        /// Pointer do the event data.
         /// </param>
         [System.Security.SecurityCritical]
         protected bool WriteEvent(in EventDescriptor eventDescriptor, int dataCount, IntPtr data)
