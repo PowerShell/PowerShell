@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>This is used in the in process case with a
         /// "ValueFromPipelineProperty" enabled in order to maintain
-        /// compatibility with v1.0</remarks>
+        /// compatibility with v1.0.</remarks>
         [Parameter(Position = 0,
                    Mandatory = true,
                    ParameterSetName = StartJobCommand.ComputerNameParameterSet)]

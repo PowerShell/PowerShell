@@ -68,7 +68,7 @@ namespace System.Management.Automation
     /// This event arg contains data received and is used to pass information
     /// from a data structure handler to its object.
     /// </summary>
-    /// <typeparam name="T">type of data that's associated</typeparam>
+    /// <typeparam name="T">type of data that's associated.</typeparam>
     internal sealed class RemoteDataEventArgs<T> : EventArgs
     {
         #region Private Members
@@ -166,14 +166,14 @@ namespace System.Management.Automation
         /// Have sent a public key to the remote end,
         /// awaiting a response.
         /// </summary>
-        /// <remarks>Applicable only to client</remarks>
+        /// <remarks>Applicable only to client.</remarks>
         EstablishedAndKeySent = 12,
 
         /// <summary>
         /// Have received a public key from the remote
         /// end, need to send a response.
         /// </summary>
-        /// <remarks>Applicable only to server</remarks>
+        /// <remarks>Applicable only to server.</remarks>
         EstablishedAndKeyReceived = 13,
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace System.Management.Automation
         /// send a public key
         /// for Client - have received a PK request from server.
         /// </summary>
-        /// <remarks>Applicable to both client and server</remarks>
+        /// <remarks>Applicable to both client and server.</remarks>
         EstablishedAndKeyRequested = 14,
 
         /// <summary>

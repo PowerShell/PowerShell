@@ -806,13 +806,13 @@ namespace System.Management.Automation.Runspaces
         /// <param name="port">Port to connect to.</param>
         /// <param name="appName">Application end point to connect to.</param>
         /// <param name="shellUri">remote shell to launch
-        /// on connection</param>
+        /// on connection.</param>
         /// <param name="credential">credential to be used
-        /// for connection</param>
+        /// for connection.</param>
         /// <param name="openTimeout">Timeout in milliseconds for open
-        /// call on Runspace to finish</param>
+        /// call on Runspace to finish.</param>
         /// <exception cref="ArgumentException">Invalid
-        /// scheme or invalid port is specified</exception>
+        /// scheme or invalid port is specified.</exception>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#.ctor(System.String,System.String,System.Int32,System.String,System.String,System.Management.Automation.PSCredential,System.Int64,System.Int64)", MessageId = "4#")]
         public WSManConnectionInfo(string scheme, string computerName, int port, string appName, string shellUri, PSCredential credential, int openTimeout)
         {
@@ -833,13 +833,13 @@ namespace System.Management.Automation.Runspaces
         /// <param name="port">Port to connect to.</param>
         /// <param name="appName">Application end point to connect to.</param>
         /// <param name="shellUri">remote shell to launch
-        /// on connection</param>
+        /// on connection.</param>
         /// <param name="credential">credential to be used
-        /// for connection</param>
+        /// for connection.</param>
         /// <exception cref="ArgumentException">Invalid
-        /// scheme or invalid port is specified</exception>
+        /// scheme or invalid port is specified.</exception>
         /// <remarks>max server life timeout and open timeout are
-        /// default in this case</remarks>
+        /// default in this case.</remarks>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#.ctor(System.String,System.String,System.Int32,System.String,System.String,System.Management.Automation.PSCredential)", MessageId = "4#")]
         public WSManConnectionInfo(
             string scheme,
@@ -937,9 +937,9 @@ namespace System.Management.Automation.Runspaces
         /// <param name="uri">Uri of remote runspace.</param>
         /// <param name="shellUri"></param>
         /// <param name="credential">credentials to use to
-        /// connect to the remote runspace</param>
+        /// connect to the remote runspace.</param>
         /// <exception cref="ArgumentException">When an
-        /// uri representing an invalid path is specified</exception>
+        /// uri representing an invalid path is specified.</exception>
         [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", Scope = "member", Target = "System.Management.Automation.Runspaces.WSManConnectionInfo.#.ctor(System.Uri,System.String,System.Management.Automation.PSCredential)", MessageId = "1#")]
         public WSManConnectionInfo(Uri uri, string shellUri, PSCredential credential)
         {
@@ -1003,7 +1003,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="uri">Uri of remote runspace.</param>
         /// <exception cref="ArgumentException">When an
-        /// uri representing an invalid path is specified</exception>
+        /// uri representing an invalid path is specified.</exception>
         public WSManConnectionInfo(Uri uri)
             : this(uri, DefaultShellUri, DefaultCredential)
         {
@@ -1281,10 +1281,10 @@ namespace System.Management.Automation.Runspaces
         /// Returns connection string without the scheme portion.
         /// </summary>
         /// <param name="connectionUri">
-        /// The uri from which the string will be extracted
+        /// The uri from which the string will be extracted.
         /// </param>
         /// <param name="isSSLSpecified">
-        /// returns true if https scheme is specified
+        /// returns true if https scheme is specified.
         /// </param>
         /// <returns>
         /// returns connection string without the scheme portion.
@@ -1913,7 +1913,7 @@ namespace System.Management.Automation.Runspaces
         /// Default value for subsystem.
         /// </summary>
         private const string DefaultSubsystem = "powershell";
-        
+
         /// <summary>
         /// Default value is infinite timeout.
         /// </summary>
@@ -2364,7 +2364,7 @@ namespace System.Management.Automation.Runspaces
                 access, StreamBufferSize, isAsync: false);
         }
 
-        /// <summary>Copies environment variables from ProcessStartInfo </summary>
+        /// <summary>Copies environment variables from ProcessStartInfo.</summary>
         /// <param name="psi">ProcessStartInfo.</param>
         /// <returns>String array of environment key/value pairs.</returns>
         private static string[] CopyEnvVariables(ProcessStartInfo psi)

@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
         public int MaxConnectionRetryCount { get; set; }
 
         /// <summary>
-        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
+        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>.
         /// </summary>
         [Parameter]
         [ValidateNotNull]

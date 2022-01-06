@@ -45,7 +45,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Create a pipe name based on process information.
-        /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
+        /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName".
         /// </summary>
         /// <param name="procId">Process Id.</param>
         /// <returns>Pipe name.</returns>
@@ -58,7 +58,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Create a pipe name based on process information.
-        /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
+        /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName".
         /// </summary>
         /// <param name="proc">Process object.</param>
         /// <returns>Pipe name.</returns>
@@ -70,7 +70,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Create a pipe name based on process Id and appdomain name information.
-        /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
+        /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName".
         /// </summary>
         /// <param name="procId">Process Id.</param>
         /// <param name="appDomainName">Name of process app domain to connect to.</param>
@@ -84,7 +84,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Create a pipe name based on process and appdomain name information.
-        /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
+        /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName".
         /// </summary>
         /// <param name="proc">Process object.</param>
         /// <param name="appDomainName">Name of process app domain to connect to.</param>

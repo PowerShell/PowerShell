@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         /// Load the resource corresponding to the specified errorId and
         /// return the message as a string.
         /// </summary>
-        /// <param name="resourceString">resource String which holds the message
+        /// <param name="resourceString">resource String which holds the message.
         /// </param>
         /// <returns>Error message loaded from appropriate resource cache.</returns>
         internal string GetMessage(string resourceString)
@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Computer names after they have been resolved
-        /// (null, empty string, "." resolves to localhost)
+        /// (null, empty string, "." resolves to localhost).
         /// </summary>
         /// <remarks>If Null or empty string is specified, then localhost is assumed.
         /// The ResolveComputerNames will include this.
@@ -564,13 +564,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Port specifies the alternate port to be used in case the
         /// default ports are not used for the transport mechanism
-        /// (port 80 for http and port 443 for useSSL)
+        /// (port 80 for http and port 443 for useSSL).
         /// </summary>
         /// <remarks>
         /// Currently this is being accepted as a parameter. But in future
         /// support will be added to make this a part of a policy setting.
         /// When a policy setting is in place this parameter can be used
-        /// to override the policy setting
+        /// to override the policy setting.
         /// </remarks>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
@@ -795,7 +795,7 @@ namespace Microsoft.PowerShell.Commands
         /// Hashtable array containing SSH connection parameters for each remote target
         ///   ComputerName  (Alias: HostName)           (required)
         ///   UserName                                  (optional)
-        ///   KeyFilePath   (Alias: IdentityFilePath)   (optional)
+        ///   KeyFilePath   (Alias: IdentityFilePath)   (optional).
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostHashParameterSet, Mandatory = true)]
         [ValidateNotNullOrEmpty()]
@@ -996,7 +996,7 @@ namespace Microsoft.PowerShell.Commands
         /// appropriate error records.
         /// </summary>
         /// <remarks>This function will lead in terminating errors when any of
-        /// the validations fail</remarks>
+        /// the validations fail.</remarks>
         protected void ValidateRemoteRunspacesSpecified()
         {
             Dbg.Assert(Session != null && Session.Length != 0,
@@ -1062,7 +1062,7 @@ namespace Microsoft.PowerShell.Commands
         /// happen to be a Uri. If so this throws an error.
         /// </summary>
         /// <param name="computerNames">collection of computer
-        /// names to validate</param>
+        /// names to validate.</param>
         protected void ValidateComputerName(string[] computerNames)
         {
             foreach (string computerName in computerNames)
@@ -1979,7 +1979,7 @@ namespace Microsoft.PowerShell.Commands
         /// failed.
         /// </summary>
         /// <param name="e">exception which is causing this error record
-        /// to be written</param>
+        /// to be written.</param>
         /// <param name="uri">Uri which caused this exception.</param>
         private void WriteErrorCreateRemoteRunspaceFailed(Exception e, Uri uri)
         {
@@ -2344,10 +2344,10 @@ namespace Microsoft.PowerShell.Commands
         /// Get the converted script for a remote PSv2 end.
         /// </summary>
         /// <param name="newParameterNames">
-        /// The new parameter names that we added to the param block
+        /// The new parameter names that we added to the param block.
         /// </param>
         /// <param name="newParameterValues">
-        /// The new parameter values that need to be added to the powershell instance
+        /// The new parameter values that need to be added to the powershell instance.
         /// </param>
         /// <returns></returns>
         private string GetConvertedScript(out List<string> newParameterNames, out List<object> newParameterValues)
@@ -2621,9 +2621,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the matching runspaces based on the parameterset.
         /// </summary>
         /// <param name="writeErrorOnNoMatch">write an error record when
-        /// no matches are found</param>
+        /// no matches are found.</param>
         /// <param name="writeobject">if true write the object down
-        /// the pipeline</param>
+        /// the pipeline.</param>
         /// <returns>List of matching runspaces.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         protected Dictionary<Guid, PSSession> GetMatchingRunspaces(bool writeobject,
@@ -2636,9 +2636,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the matching runspaces based on the parameterset.
         /// </summary>
         /// <param name="writeErrorOnNoMatch">write an error record when
-        /// no matches are found</param>
+        /// no matches are found.</param>
         /// <param name="writeobject">if true write the object down
-        /// the pipeline</param>
+        /// the pipeline.</param>
         /// <param name="filterState">Runspace state filter value.</param>
         /// <param name="configurationName">Runspace configuration name filter value.</param>
         /// <returns>List of matching runspaces.</returns>
@@ -2740,9 +2740,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the matching runspaces by computernames.
         /// </summary>
         /// <param name="writeErrorOnNoMatch">write an error record when
-        /// no matches are found</param>
+        /// no matches are found.</param>
         /// <param name="writeobject">if true write the object down
-        /// the pipeline</param>
+        /// the pipeline.</param>
         /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesByComputerName(bool writeobject,
             bool writeErrorOnNoMatch)
@@ -2802,9 +2802,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the matching runspaces based on name.
         /// </summary>
         /// <param name="writeErrorOnNoMatch">write an error record when
-        /// no matches are found</param>
+        /// no matches are found.</param>
         /// <param name="writeobject">if true write the object down
-        /// the pipeline</param>
+        /// the pipeline.</param>
         /// <returns>List of matching runspaces.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "writeobject")]
@@ -2861,9 +2861,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the matching runspaces based on the runspaces instance id.
         /// </summary>
         /// <param name="writeErrorOnNoMatch">write an error record when
-        /// no matches are found</param>
+        /// no matches are found.</param>
         /// <param name="writeobject">if true write the object down
-        /// the pipeline</param>
+        /// the pipeline.</param>
         /// <returns>List of matching runspaces.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Runspaces")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "writeobject")]
@@ -2916,12 +2916,12 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets the matching runspaces based on the session id (the
-        /// short integer id which is unique for a runspace)
+        /// short integer id which is unique for a runspace).
         /// </summary>
         /// <param name="writeErrorOnNoMatch">write an error record when
-        /// no matches are found</param>
+        /// no matches are found.</param>
         /// <param name="writeobject">if true write the object down
-        /// the pipeline</param>
+        /// the pipeline.</param>
         /// <returns>List of matching runspaces.</returns>
         private Dictionary<Guid, PSSession> GetMatchingRunspacesBySessionId(bool writeobject,
             bool writeErrorOnNoMatch)
@@ -3419,7 +3419,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="sender">Source of this event.</param>
         /// <param name="stateEventArgs">object describing state information about the
-        /// pipeline</param>
+        /// pipeline.</param>
         private void HandlePipelineStateChanged(object sender, PipelineStateEventArgs stateEventArgs)
         {
             PipelineStateInfo stateInfo = stateEventArgs.PipelineStateInfo;
@@ -3449,7 +3449,7 @@ namespace Microsoft.PowerShell.Commands
         /// Raise an operation complete event.
         /// </summary>
         /// <param name="baseEventArgs">The event args which actually
-        /// raises this operation complete</param>
+        /// raises this operation complete.</param>
         private void RaiseOperationCompleteEvent(EventArgs baseEventArgs)
         {
             CleanupRunspaceDebugging(PipelineRunspace);
@@ -3506,7 +3506,7 @@ namespace Microsoft.PowerShell.Commands
         /// Constructor.
         /// </summary>
         /// <param name="remoteRunspace">RemoteRunspace that is associated
-        /// with this operation</param>
+        /// with this operation.</param>
         /// <param name="pipeline">Pipeline created from the remote runspace.</param>
         /// <param name="invokeAndDisconnect">Indicates if pipeline should be disconnected after invoking command.</param>
         internal ExecutionCmdletHelperComputerName(RemoteRunspace remoteRunspace, Pipeline pipeline, bool invokeAndDisconnect = false)
@@ -3688,7 +3688,7 @@ namespace Microsoft.PowerShell.Commands
         /// Raise an operation complete event.
         /// </summary>
         /// <param name="baseEventArgs">The event args which actually
-        /// raises this operation complete</param>
+        /// raises this operation complete.</param>
         private void RaiseOperationCompleteEvent(EventArgs baseEventArgs)
         {
             if (pipeline != null)
@@ -3729,7 +3729,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="path">Path to resolve.</param>
         /// <param name="isLiteralPath">True if wildcard expansion should be suppressed for this path.</param>
         /// <param name="cmdlet">reference to calling cmdlet. This will be used for
-        /// for writing errors</param>
+        /// for writing errors.</param>
         /// <param name="allowNonexistingPaths"></param>
         /// <param name="resourceString">Resource string for error when path is not from filesystem provider.</param>
         /// <returns>A fully qualified string representing filename.</returns>
@@ -3759,7 +3759,7 @@ namespace Microsoft.PowerShell.Commands
         /// If true, resolves the path even if it doesn't exist.
         /// </param>
         /// <param name="cmdlet">
-        /// Calling cmdlet
+        /// Calling cmdlet.
         /// </param>
         /// <returns>
         /// A string representing the resolved path.
@@ -4326,7 +4326,7 @@ namespace System.Management.Automation.Remoting
     public sealed class PSSessionOption
     {
         /// <summary>
-        /// Creates a new instance of <see cref="PSSessionOption"/>
+        /// Creates a new instance of <see cref="PSSessionOption"/>.
         /// </summary>
         public PSSessionOption()
         {
@@ -4498,7 +4498,7 @@ namespace System.Management.Automation.Remoting
         public int? MaximumReceivedObjectSize { get; set; } = 200 << 20;
 
         /// <summary>
-        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
+        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public PSPrimitiveDictionary ApplicationArguments { get; set; }

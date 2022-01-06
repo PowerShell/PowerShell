@@ -730,7 +730,7 @@ namespace Microsoft.PowerShell.Commands
         /// Write the results from this Job object. This does not write from the
         /// child jobs of this job object.
         /// </summary>
-        /// <param name="job">Job object from which to write the results from
+        /// <param name="job">Job object from which to write the results from.
         /// </param>
         private void WriteJobResults(Job job)
         {
@@ -995,7 +995,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="jobsToWrite">Collection of jobs to write.</param>
         /// <remarks>this method is intended to be called only from
         /// ProcessRecord. When any changes are made ensure that this
-        /// contract is not broken</remarks>
+        /// contract is not broken.</remarks>
         private void WriteJobsIfRequired(IEnumerable<Job> jobsToWrite)
         {
             if (!_outputJobFirst) return;
@@ -1011,7 +1011,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="job"></param>
         /// <remarks>this method should always be called before
-        /// writeExistingData is set in ProcessRecord</remarks>
+        /// writeExistingData is set in ProcessRecord.</remarks>
         private void AggregateResultsFromJob(Job job)
         {
             if ((!Force && job.IsPersistentState(job.JobStateInfo.State)) || (Force && job.IsFinishedState(job.JobStateInfo.State))) return;

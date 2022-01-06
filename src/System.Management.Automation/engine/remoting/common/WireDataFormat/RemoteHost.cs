@@ -329,7 +329,7 @@ namespace System.Management.Automation.Remoting
         /// such modifications will be made here.
         /// </summary>
         /// <param name="computerName">computer name to use in
-        /// warning messages</param>
+        /// warning messages.</param>
         /// <returns>A collection of remote host calls which will
         /// have to be executed before this host call can be
         /// executed.</returns>
@@ -436,7 +436,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Provides the modified caption for the given caption
         /// Used in ensuring that remote prompt messages are
-        /// tagged with "PowerShell Credential Request"
+        /// tagged with "PowerShell Credential Request".
         /// </summary>
         /// <param name="caption">Caption to modify.</param>
         /// <returns>New modified caption.</returns>
@@ -463,7 +463,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="message">Original message to modify.</param>
         /// <param name="computerName">computername to include in the
-        /// message</param>
+        /// message.</param>
         /// <returns>Message which contains a warning as well.</returns>
         private static string ModifyMessage(string message, string computerName)
         {
@@ -481,7 +481,7 @@ namespace System.Management.Automation.Remoting
         /// actually attempting to read a line as a secure string.
         /// </summary>
         /// <param name="computerName">computer name to include
-        /// in warning</param>
+        /// in warning.</param>
         /// <param name="resourceString">Resource string to use.</param>
         /// <returns>A constructed remote host call message
         /// which will display the warning.</returns>
@@ -503,7 +503,7 @@ namespace System.Management.Automation.Remoting
         /// it was suppressed.
         /// </summary>
         /// <param name="computerName">computer name to include
-        /// in warning</param>
+        /// in warning.</param>
         /// <returns>A constructed remote host call message
         /// which will display the warning.</returns>
         private static RemoteHostCall ConstructWarningMessageForGetBufferContents(string computerName)

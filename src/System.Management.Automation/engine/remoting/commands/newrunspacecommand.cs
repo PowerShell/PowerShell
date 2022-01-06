@@ -349,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
         /// pending runspaces.
         /// </summary>
         /// <remarks>This is called from a separate thread so need to worry
-        /// about concurrency issues
+        /// about concurrency issues.
         /// </remarks>
         protected override void StopProcessing()
         {
@@ -409,7 +409,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="stateEventArgs">Event information object which describes
-        /// the event which triggered this method</param>
+        /// the event which triggered this method.</param>
         private void HandleRunspaceStateChanged(object sender, OperationStateEventArgs stateEventArgs)
         {
             if (sender == null)
@@ -1186,7 +1186,7 @@ namespace Microsoft.PowerShell.Commands
         /// dispose operations and finalize suppressions.
         /// </summary>
         /// <param name="disposing">Whether method is called
-        /// from Dispose or destructor</param>
+        /// from Dispose or destructor.</param>
         protected void Dispose(bool disposing)
         {
             if (disposing)
@@ -1236,7 +1236,7 @@ namespace Microsoft.PowerShell.Commands
         /// failed.
         /// </summary>
         /// <param name="e">exception which is causing this error record
-        /// to be written</param>
+        /// to be written.</param>
         /// <param name="uri">Uri which caused this exception.</param>
         private void WriteErrorCreateRemoteRunspaceFailed(Exception e, Uri uri)
         {
@@ -1399,7 +1399,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         /// <param name="source">Source of this event.</param>
         /// <param name="stateEventArgs">object describing state information of the
-        /// runspace</param>
+        /// runspace.</param>
         private void HandleRunspaceStateChanged(object source, RunspaceStateEventArgs stateEventArgs)
         {
             // Disregard intermediate states.

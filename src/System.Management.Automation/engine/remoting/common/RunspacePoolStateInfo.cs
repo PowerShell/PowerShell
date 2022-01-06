@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>This class is created so that a state change along
     /// with its reason can be transported from the server to the
-    /// client in case of RemoteRunspacePool</remarks>
+    /// client in case of RemoteRunspacePool.</remarks>
     public sealed class RunspacePoolStateInfo
     {
         /// <summary>
@@ -31,7 +31,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="state">State.</param>
         /// <param name="reason">exception that resulted in this
-        /// state change. Can be null</param>
+        /// state change. Can be null.</param>
         public RunspacePoolStateInfo(RunspacePoolState state, Exception reason)
         {
             State = state;

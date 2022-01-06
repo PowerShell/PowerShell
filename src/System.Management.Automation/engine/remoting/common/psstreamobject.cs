@@ -264,7 +264,7 @@ namespace System.Management.Automation.Remoting.Internal
         /// <param name="cmdlet">Cmdlet to use for outputting the object.</param>
         /// <param name="instanceId"></param>
         /// <param name="overrideInquire">Suppresses prompt on messages with Inquire preference.
-        /// Needed for Receive-Job</param>
+        /// Needed for Receive-Job.</param>
         internal void WriteStreamObject(Cmdlet cmdlet, Guid instanceId, bool overrideInquire = false)
         {
             switch (ObjectType)

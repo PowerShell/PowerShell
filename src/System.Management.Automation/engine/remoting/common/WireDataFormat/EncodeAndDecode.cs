@@ -497,7 +497,7 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>
     /// Please keep in sync with RemotingTargetInterface from
-    /// C:\e\win7_powershell\admin\monad\nttargets\assemblies\logging\ETW\Manifests\Microsoft-Windows-PowerShell-Instrumentation.man
+    /// C:\e\win7_powershell\admin\monad\nttargets\assemblies\logging\ETW\Manifests\Microsoft-Windows-PowerShell-Instrumentation.man.
     /// </remarks>
     internal enum RemotingTargetInterface : int
     {
@@ -512,7 +512,7 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>
     /// Please keep in sync with RemotingDataType from
-    /// C:\e\win7_powershell\admin\monad\nttargets\assemblies\logging\ETW\Manifests\Microsoft-Windows-PowerShell-Instrumentation.man
+    /// C:\e\win7_powershell\admin\monad\nttargets\assemblies\logging\ETW\Manifests\Microsoft-Windows-PowerShell-Instrumentation.man.
     /// </remarks>
     internal enum RemotingDataType : uint
     {
@@ -641,15 +641,15 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="clientRunspacePoolId">Id of the clientRunspacePool.</param>
         /// <param name="minRunspaces">minRunspaces for the RunspacePool
-        /// to be created at the server</param>
+        /// to be created at the server.</param>
         /// <param name="maxRunspaces">maxRunspaces for the RunspacePool
-        /// to be created at the server</param>
+        /// to be created at the server.</param>
         /// <param name="runspacePool">Local runspace pool.</param>
         /// <param name="host">host for the runspacepool at the client end
         /// from this host, information will be extracted and sent to
-        /// server</param>
+        /// server.</param>
         /// <param name="applicationArguments">
-        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
+        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>.
         /// </param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
@@ -699,9 +699,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="clientRunspacePoolId">Id of the clientRunspacePool.</param>
         /// <param name="minRunspaces">minRunspaces for the RunspacePool
-        /// to be created at the server</param>
+        /// to be created at the server.</param>
         /// <param name="maxRunspaces">maxRunspaces for the RunspacePool
-        /// to be created at the server</param>
+        /// to be created at the server.</param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
@@ -756,9 +756,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="runspacePoolId">Id of the clientRunspacePool.</param>
         /// <param name="minRunspaces">minRunspaces for the RunspacePool
-        /// to be created at the server</param>
+        /// to be created at the server.</param>
         /// <param name="maxRunspaces">maxRunspaces for the RunspacePool
-        /// to be created at the server</param>
+        /// to be created at the server.</param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
@@ -791,7 +791,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="clientRunspacePoolId">Id of the clientRunspacePool.</param>
         /// <param name="maxRunspaces">new value of maxRunspaces for the
-        /// specified RunspacePool  </param>
+        /// specified RunspacePool.  </param>
         /// <param name="callId">Call id of the call at client.</param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
@@ -822,7 +822,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="clientRunspacePoolId">Id of the clientRunspacePool.</param>
         /// <param name="minRunspaces">new value of minRunspaces for the
-        /// specified RunspacePool  </param>
+        /// specified RunspacePool.  </param>
         /// <param name="callId">Call id of the call at client.</param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
@@ -882,7 +882,7 @@ namespace System.Management.Automation
         /// getting the available runspaces on the server.
         /// </summary>
         /// <param name="clientRunspacePoolId">guid of the runspace pool on which
-        /// this needs to be queried</param>
+        /// this needs to be queried.</param>
         /// <param name="callId">Call id of the call at the client.</param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
@@ -912,7 +912,7 @@ namespace System.Management.Automation
         /// <param name="runspacePoolId">Runspace pool id.</param>
         /// <param name="publicKey">Public key to send across.</param>
         /// <param name="destination">destination that this message is
-        /// targeted to</param>
+        /// targeted to.</param>
         /// <returns>Data structure message.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------
@@ -1070,7 +1070,7 @@ namespace System.Management.Automation
         /// creating a PowerShell on the server.
         /// </summary>
         /// <param name="shell">The client remote powershell from which the
-        /// create powershell message needs to be generated</param>
+        /// create powershell message needs to be generated.</param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// -------------------------------------------------------------------------
@@ -1341,9 +1341,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="data">Data to be sent.</param>
         /// <param name="clientPowerShellId">id of client powershell
-        /// to which this information need to be delivered</param>
+        /// to which this information need to be delivered.</param>
         /// <param name="clientRunspacePoolId">id of client runspacepool
-        /// associated with this powershell</param>
+        /// associated with this powershell.</param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
@@ -1369,11 +1369,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="data">Data to be sent.</param>
         /// <param name="clientPowerShellId">id of client powershell
-        /// to which this information need to be delivered</param>
+        /// to which this information need to be delivered.</param>
         /// <param name="clientRunspacePoolId">id of client runspacepool
-        /// associated with this powershell</param>
+        /// associated with this powershell.</param>
         /// <param name="dataType">data type of this informational
-        /// message</param>
+        /// message.</param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
@@ -1399,9 +1399,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="progressRecord">Progress record to send.</param>
         /// <param name="clientPowerShellId">id of client powershell
-        /// to which this information need to be delivered</param>
+        /// to which this information need to be delivered.</param>
         /// <param name="clientRunspacePoolId">id of client runspacepool
-        /// associated with this powershell</param>
+        /// associated with this powershell.</param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
@@ -1432,9 +1432,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="informationRecord">Information record to send.</param>
         /// <param name="clientPowerShellId">id of client powershell
-        /// to which this information need to be delivered</param>
+        /// to which this information need to be delivered.</param>
         /// <param name="clientRunspacePoolId">id of client runspacepool
-        /// associated with this powershell</param>
+        /// associated with this powershell.</param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// -----------------------------------------------------------------------------------------------
@@ -1464,9 +1464,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="errorRecord">Error record to be sent.</param>
         /// <param name="clientPowerShellId">id of client powershell
-        /// to which this information need to be delivered</param>
+        /// to which this information need to be delivered.</param>
         /// <param name="clientRunspacePoolId">id of client runspacepool
-        /// associated with this powershell</param>
+        /// associated with this powershell.</param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
@@ -1491,9 +1491,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="stateInfo">State information object.</param>
         /// <param name="clientPowerShellId">id of client powershell
-        /// to which this information need to be delivered</param>
+        /// to which this information need to be delivered.</param>
         /// <param name="clientRunspacePoolId">id of client runspacepool
-        /// associated with this powershell</param>
+        /// associated with this powershell.</param>
         /// <returns>Data structure handler message encoded as RemoteDataObject.</returns>
         /// The message format is as under for this message
         /// --------------------------------------------------------------------------------------
@@ -1540,7 +1540,7 @@ namespace System.Management.Automation
         /// <param name="exception"></param>
         /// <returns>
         /// ErrorRecord if exception is of type IContainsErrorRecord
-        /// Null if exception is not of type IContainsErrorRecord
+        /// Null if exception is not of type IContainsErrorRecord.
         /// </returns>
         internal static ErrorRecord GetErrorRecordFromException(Exception exception)
         {
@@ -2077,7 +2077,7 @@ namespace System.Management.Automation
         /// <returns>Output object.</returns>
         /// <remarks>the current implementation does nothing,
         /// however this method is there in place as the
-        /// packaging of output data may change in the future</remarks>
+        /// packaging of output data may change in the future.</remarks>
         internal static object GetPowerShellOutput(object data)
         {
             return data;

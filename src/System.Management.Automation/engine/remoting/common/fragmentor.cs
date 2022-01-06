@@ -204,7 +204,7 @@ namespace System.Management.Automation.Remoting
         ///     |                        BlobLength                             |
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         ///     |     Blob ...
-        ///     +-+-+-+-+-+-+-+-
+        ///     +-+-+-+-+-+-+-+-.
         /// </summary>
         /// <returns>
         /// The binary encoded FragmentedRemoteObject to be ready to pass to WinRS Send API.
@@ -428,7 +428,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// A stream used to store serialized data. This stream holds serialized data in the
     /// form of fragments. Every "fragment size" data will hold a blob identifying the fragment.
-    /// The blob has "ObjectId","FragmentId","Properties like Start,End","BlobLength"
+    /// The blob has "ObjectId","FragmentId","Properties like Start,End","BlobLength".
     /// </summary>
     internal class SerializedDataStream : Stream, IDisposable
     {
@@ -626,7 +626,7 @@ namespace System.Management.Automation.Remoting
         /// callback to call once the data becomes available.
         /// </param>
         /// <returns>
-        /// a byte[] holding data read from the stream
+        /// a byte[] holding data read from the stream.
         /// </returns>
         internal byte[] ReadOrRegisterCallback(OnDataAvailableCallback callback)
         {
@@ -979,7 +979,7 @@ namespace System.Management.Automation.Remoting
         /// Constructor which initializes fragmentor with FragmentSize.
         /// </summary>
         /// <param name="fragmentSize">
-        /// size of each fragment
+        /// size of each fragment.
         /// </param>
         /// <param name="cryptoHelper"></param>
         internal Fragmentor(int fragmentSize, PSRemotingCryptoHelper cryptoHelper)
@@ -1010,7 +1010,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         /// <param name="dataToBeSent">
         /// Caller specified dataToStore to which the fragments are added
-        /// one-by-one
+        /// one-by-one.
         /// </param>
         internal void Fragment<T>(RemoteDataObject<T> obj, SerializedDataStream dataToBeSent)
         {

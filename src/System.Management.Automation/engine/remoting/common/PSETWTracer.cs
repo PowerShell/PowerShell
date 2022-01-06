@@ -68,7 +68,7 @@ namespace System.Management.Automation.Internal
     /// </summary>
     /// <remarks>add an entry for a new event that you
     /// add to the manifest. Set it to the same value
-    /// that was set in the manifest</remarks>
+    /// that was set in the manifest.</remarks>
     internal enum PSEventId : int
     {
         HostNameResolve = 0x1001,
@@ -246,7 +246,7 @@ namespace System.Management.Automation.Internal
     /// Defines enumerations for version.
     /// </summary>
     /// <remarks>all messages in V2 timeframe
-    /// should be of version 1</remarks>
+    /// should be of version 1.</remarks>
     internal enum PSEventVersion : byte
     {
         One = 0x1,

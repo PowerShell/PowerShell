@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// New-PSSessionConfigurationFile command implementation
     ///
-    /// See Declarative Initial Session State (DISC)
+    /// See Declarative Initial Session State (DISC).
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSSessionConfigurationFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096791")]
     public class NewPSSessionConfigurationFileCommand : PSCmdlet
@@ -272,7 +272,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _scriptsToProcess = Array.Empty<string>();
 
         /// <summary>
-        /// Role definitions for this session configuration (Role name -> Role capability)
+        /// Role definitions for this session configuration (Role name -> Role capability).
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -445,7 +445,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _visibleFunctions = null;
 
         /// <summary>
-        /// A list of visible external commands (scripts and applications)
+        /// A list of visible external commands (scripts and applications).
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1131,7 +1131,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// New-PSRoleCapabilityFile command implementation
     ///
-    /// Creates a role capability file suitable for use in a Role Capability (which can be referenced in a Session Configuration file)
+    /// Creates a role capability file suitable for use in a Role Capability (which can be referenced in a Session Configuration file).
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSRoleCapabilityFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=623708")]
     public class NewPSRoleCapabilityFileCommand : PSCmdlet
@@ -1334,7 +1334,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _visibleFunctions = null;
 
         /// <summary>
-        /// A list of visible external commands (scripts and applications)
+        /// A list of visible external commands (scripts and applications).
         /// </summary>
         [Parameter()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -1991,7 +1991,7 @@ namespace Microsoft.PowerShell.Commands
         /// e.g.,
         /// -RequiredGroups @{ Or = 'TrustedGroup1', 'MFAGroup2' }
         /// -RequiredGroups @{ And = 'Administrators', @{ Or = 'MFAGroup1', 'MFAGroup2' } }
-        /// -RequiredGroups @{ Or = @{ And = 'Administrators', 'TrustedGroup1' }, @{ And = 'Power Users', 'TrustedGroup1' } }
+        /// -RequiredGroups @{ Or = @{ And = 'Administrators', 'TrustedGroup1' }, @{ And = 'Power Users', 'TrustedGroup1' } }.
         /// </summary>
         /// <param name="table"></param>
         /// <returns></returns>

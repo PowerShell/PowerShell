@@ -330,13 +330,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Port specifies the alternate port to be used in case the
         /// default ports are not used for the transport mechanism
-        /// (port 80 for http and port 443 for useSSL)
+        /// (port 80 for http and port 443 for useSSL).
         /// </summary>
         /// <remarks>
         /// Currently this is being accepted as a parameter. But in future
         /// support will be added to make this a part of a policy setting.
         /// When a policy setting is in place this parameter can be used
-        /// to override the policy setting
+        /// to override the policy setting.
         /// </remarks>
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerInstanceIdParameterSet)]
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerSessionNameParameterSet)]

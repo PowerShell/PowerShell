@@ -52,7 +52,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Constructor for RemoteSessionCapability.
         /// </summary>
-        /// <remarks>should not be called from outside, use create methods instead
+        /// <remarks>should not be called from outside, use create methods instead.
         /// </remarks>
         internal RemoteSessionCapability(RemotingDestination remotingDestination)
         {

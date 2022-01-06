@@ -215,13 +215,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Port specifies the alternate port to be used in case the
         /// default ports are not used for the transport mechanism
-        /// (port 80 for http and port 443 for useSSL)
+        /// (port 80 for http and port 443 for useSSL).
         /// </summary>
         /// <remarks>
         /// Currently this is being accepted as a parameter. But in future
         /// support will be added to make this a part of a policy setting.
         /// When a policy setting is in place this parameter can be used
-        /// to override the policy setting
+        /// to override the policy setting.
         /// </remarks>
         [Parameter(ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
@@ -781,7 +781,7 @@ namespace Microsoft.PowerShell.Commands
         /// Hashtable array containing SSH connection parameters for each remote target
         ///   ComputerName  (Alias: HostName)           (required)
         ///   UserName                                  (optional)
-        ///   KeyFilePath   (Alias: IdentityFilePath)   (optional)
+        ///   KeyFilePath   (Alias: IdentityFilePath)   (optional).
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostHashParameterSet, Mandatory = true)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostHashParameterSet, Mandatory = true)]
@@ -1058,7 +1058,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// 1. Identify if the command belongs to the same pipeline
-        /// 2. If so, use the same GUID to create Pipeline/PowerShell
+        /// 2. If so, use the same GUID to create Pipeline/PowerShell.
         /// </remarks>
         protected override void ProcessRecord()
         {
@@ -1306,7 +1306,7 @@ namespace Microsoft.PowerShell.Commands
         /// corresponding to these runspaces.
         /// </summary>
         /// <remarks>This is called from a separate thread so need to worry
-        /// about concurrency issues
+        /// about concurrency issues.
         /// </remarks>
         protected override void StopProcessing()
         {
@@ -1935,7 +1935,7 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// It can be used in conjunction with a filepath or a script block parameter
         ///
-        /// It doesn't take effect with the -AsJob parameter
+        /// It doesn't take effect with the -AsJob parameter.
         /// </remarks>
         private void DetermineThrowStatementBehavior()
         {

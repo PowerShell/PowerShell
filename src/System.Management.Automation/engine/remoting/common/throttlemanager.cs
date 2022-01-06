@@ -116,7 +116,7 @@ namespace System.Management.Automation.Remoting
         /// these two cases. When this property is set, StopOperation
         /// need not be called on the operation (this can be when the
         /// operation has stop completed or stop has been called and is
-        /// pending)
+        /// pending).
         ///</remarks>
         internal bool IgnoreStop
         {
@@ -229,7 +229,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="operations">List of operations to be throttled.</param>
         /// <remarks>Once the operations are added to the queue, the method will
-        /// start operations from the queue
+        /// start operations from the queue.
         /// </remarks>
         internal void SubmitOperations(List<IThrottleOperation> operations)
         {
@@ -289,7 +289,7 @@ namespace System.Management.Automation.Remoting
         /// Stop throttling operations.
         /// </summary>
         /// <remarks>Calling this method will also affect other cmdlets which
-        /// could have potentially submitComplete operations for processing
+        /// could have potentially submitComplete operations for processing.
         /// </remarks>
         /// <returns>Number of objects cleared from queue without being
         /// stopped.</returns>
@@ -456,7 +456,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="source">Sender of the event.</param>
         /// <param name="stateEventArgs">Event information object which describes the event
-        /// which triggered this method</param>
+        /// which triggered this method.</param>
         private void OperationCompleteHandler(object source, OperationStateEventArgs stateEventArgs)
         {
             // An item has completed operation. If it's a start operation which completed
@@ -652,7 +652,7 @@ namespace System.Management.Automation.Remoting
         /// operations and finalize suppressions.
         /// </summary>
         /// <param name="disposing">If method is called from
-        /// disposing of destructor</param>
+        /// disposing of destructor.</param>
         private void Dispose(bool disposing)
         {
             if (disposing)
