@@ -407,7 +407,7 @@ namespace System.Management.Automation
         /// Find the start of the next token, skipping white spaces.
         /// </summary>
         /// <param name="input">
-        /// Input string
+        /// Input string.
         /// </param>
         /// <param name="_offset">
         /// Current offset position for the string parser.
@@ -431,13 +431,13 @@ namespace System.Management.Automation
         /// enclosed quotes.
         /// </summary>
         /// <param name="input">
-        /// Input string
+        /// Input string.
         /// </param>
         /// <param name="_offset">
         /// Current offset position for the string parser.
         /// </param>
         /// <returns>
-        /// The next token on the input string
+        /// The next token on the input string.
         /// </returns>
         private static Token GetNextToken(string input, ref int _offset)
         {

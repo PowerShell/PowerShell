@@ -52,7 +52,7 @@ namespace System.Management.Automation
         Cmdlet = 0x0008,
 
         /// <summary>
-        /// An MSH script (*.ps1 file)
+        /// An MSH script (*.ps1 file).
         /// </summary>
         ExternalScript = 0x0010,
 
@@ -185,12 +185,12 @@ namespace System.Management.Automation
         // CommandType
 
         /// <summary>
-        /// Gets the source of the command (shown by default in Get-Command)
+        /// Gets the source of the command (shown by default in Get-Command).
         /// </summary>
         public virtual string Source { get { return this.ModuleName; } }
 
         /// <summary>
-        /// Gets the source version (shown by default in Get-Command)
+        /// Gets the source version (shown by default in Get-Command).
         /// </summary>
         public virtual Version Version
         {

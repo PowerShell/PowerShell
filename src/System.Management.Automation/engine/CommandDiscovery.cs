@@ -45,7 +45,7 @@ namespace System.Management.Automation
         public string CommandName { get; }
 
         /// <summary>
-        /// The origin of the command internal or runspace (external)
+        /// The origin of the command internal or runspace (external).
         /// </summary>
         public CommandOrigin CommandOrigin { get; }
 
@@ -147,7 +147,7 @@ namespace System.Management.Automation
         /// Determines if the cmdlet is a cmdlet that shouldn't be in the discovery list.
         /// </summary>
         /// <param name="implementingType">
-        /// Type implementing the cmdlet
+        /// Type implementing the cmdlet.
         /// </param>
         /// <returns>
         /// True if the cmdlet is a special cmdlet that shouldn't be part of the discovery list. Or false otherwise.
@@ -499,7 +499,7 @@ namespace System.Management.Automation
         /// <param name="installed">Version installed.</param>
         /// <returns>
         /// true if requires and installed's major version match and requires' minor version
-        /// is smaller than or equal to installed's
+        /// is smaller than or equal to installed's.
         /// </returns>
         /// <remarks>
         /// In PowerShell V2, script requiring PowerShell 1.0 will fail.

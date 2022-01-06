@@ -186,7 +186,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Contains auxiliary information about an
-    /// <see cref="System.Management.Automation.ErrorRecord"/>
+    /// <see cref="System.Management.Automation.ErrorRecord"/>.
     /// </summary>
     public class ErrorCategoryInfo
     {
@@ -215,7 +215,7 @@ namespace System.Management.Automation
         /// Text description of the operation which
         /// encountered the error.
         /// </summary>
-        /// <value>text description of the operation</value>
+        /// <value>text description of the operation.</value>
         /// <remarks>
         /// By default, this is the cmdlet name.
         /// The default can be overridden by calling Set with a
@@ -250,7 +250,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Text description of the error.
         /// </summary>
-        /// <value>text description of the error</value>
+        /// <value>text description of the error.</value>
         /// <remarks>
         /// By default, this is the exception type.
         /// The default can be overridden by calling Set with a
@@ -286,7 +286,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Text description of the target object.
         /// </summary>
-        /// <value>text description of the target object</value>
+        /// <value>text description of the target object.</value>
         /// <remarks>
         /// By default, this is TargetObject.ToString(), or the empty string
         /// if the target object is null.
@@ -329,7 +329,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Text description of the type of the target object.
         /// </summary>
-        /// <value>text description of the type of the target object</value>
+        /// <value>text description of the type of the target object.</value>
         /// <remarks>
         /// By default, this is TargetObject.GetType().ToString(),
         /// or the empty string if the target object is null.
@@ -364,7 +364,7 @@ namespace System.Management.Automation
         #region Methods
         /// <summary>
         /// Concise text description based on
-        /// <see cref="System.Management.Automation.ErrorCategoryInfo.Category"/>
+        /// <see cref="System.Management.Automation.ErrorCategoryInfo.Category"/>.
         /// </summary>
         /// <returns>Concise text description.</returns>
         /// <remarks>
@@ -394,7 +394,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Concise text description based on
-        /// <see cref="System.Management.Automation.ErrorCategoryInfo.Category"/>
+        /// <see cref="System.Management.Automation.ErrorCategoryInfo.Category"/>.
         /// </summary>
         /// <param name="uiCultureInfo">Culture in which to display message.</param>
         /// <returns>Concise text description.</returns>
@@ -466,7 +466,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Same as
-        /// <see cref="System.Management.Automation.ErrorCategoryInfo.GetMessage()"/>
+        /// <see cref="System.Management.Automation.ErrorCategoryInfo.GetMessage()"/>.
         /// </summary>
         /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
@@ -491,7 +491,7 @@ namespace System.Management.Automation
         /// <param name="original">Original string.</param>
         /// <returns>Ellipsized version of string.</returns>
         /// <remarks>
-        /// "Please do not make this public as ellipsize is not a word."
+        /// "Please do not make this public as ellipsize is not a word.".
         /// </remarks>
         internal static string Ellipsize(CultureInfo uiCultureInfo, string original)
         {
@@ -513,7 +513,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Additional details about an
-    /// <see cref="System.Management.Automation.ErrorRecord"/>
+    /// <see cref="System.Management.Automation.ErrorRecord"/>.
     /// </summary>
     /// <remarks>
     /// ErrorDetails represents additional details about an
@@ -556,14 +556,14 @@ namespace System.Management.Automation
         /// <param name="cmdlet">Cmdlet containing the template string.</param>
         /// <param name="baseName">by default, the
         /// <see cref="System.Resources.ResourceManager"/>
-        /// name</param>
+        /// name.</param>
         /// <param name="resourceId">
         /// by default, the resourceId in the
-        /// <see cref="System.Resources.ResourceManager"/>
+        /// <see cref="System.Resources.ResourceManager"/>.
         /// </param>
         /// <param name="args">
         /// <see cref="System.String.Format(IFormatProvider,string,object[])"/>
-        /// insertion parameters
+        /// insertion parameters.
         /// </param>
         /// <remarks>
         /// This variant is a shortcut to build an instance of
@@ -604,14 +604,14 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="baseName">by default, the
         /// <see cref="System.Resources.ResourceManager"/>
-        /// name</param>
+        /// name.</param>
         /// <param name="resourceId">
         /// by default, the resourceId in the
-        /// <see cref="System.Resources.ResourceManager"/>
+        /// <see cref="System.Resources.ResourceManager"/>.
         /// </param>
         /// <param name="args">
         /// <see cref="System.String.Format(IFormatProvider,string,object[])"/>
-        /// insertion parameters
+        /// insertion parameters.
         /// </param>
         /// <remarks>
         /// This variant is a shortcut to build an instance of
@@ -653,18 +653,18 @@ namespace System.Management.Automation
         /// a <see cref="Cmdlet"/> or <see cref="Provider.CmdletProvider"/> instance.
         /// </summary>
         /// <param name="assembly">
-        /// assembly containing the template string
+        /// assembly containing the template string.
         /// </param>
         /// <param name="baseName">by default, the
         /// <see cref="System.Resources.ResourceManager"/>
-        /// name</param>
+        /// name.</param>
         /// <param name="resourceId">
         /// by default, the resourceId in the
-        /// <see cref="System.Resources.ResourceManager"/>
+        /// <see cref="System.Resources.ResourceManager"/>.
         /// </param>
         /// <param name="args">
         /// <see cref="System.String.Format(IFormatProvider,string,object[])"/>
-        /// insertion parameters
+        /// insertion parameters.
         /// </param>
         /// <remarks>
         /// This variant is a shortcut to build an instance of
@@ -702,7 +702,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ErrorDetails class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -716,7 +716,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serializer for <see cref="ISerializable"/>
+        /// Serializer for <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -735,7 +735,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Message which replaces
         /// <see cref="System.Exception.Message"/> in
-        /// <see cref="System.Management.Automation.ErrorRecord.Exception"/>
+        /// <see cref="System.Management.Automation.ErrorRecord.Exception"/>.
         /// </summary>
         /// <remarks>
         /// When an instance of
@@ -749,7 +749,7 @@ namespace System.Management.Automation
         /// <see cref="System.Management.Automation.ErrorRecord.Exception"/>.
         ///
         /// This should be a grammatically correct localized text string, as with
-        /// <see cref="System.Exception.Message"/>
+        /// <see cref="System.Exception.Message"/>.
         /// </remarks>
         public string Message
         {
@@ -796,7 +796,7 @@ namespace System.Management.Automation
 
         #region ToString
         /// <summary>
-        /// As <see cref="System.Object.ToString()"/>
+        /// As <see cref="System.Object.ToString()"/>.
         /// </summary>
         /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
@@ -1057,7 +1057,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ErrorRecord class
         /// using data serialized via
-        /// <see cref="ISerializable"/>
+        /// <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -1075,7 +1075,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Deserializer for <see cref="ISerializable"/>
+        /// Deserializer for <see cref="ISerializable"/>.
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
@@ -1248,10 +1248,10 @@ namespace System.Management.Automation
         /// PSObject from which value is fetched.
         /// </param>
         /// <param name="note">
-        /// name of note whose value is fetched
+        /// name of note whose value is fetched.
         /// </param>
         /// <returns>
-        /// value of note
+        /// value of note.
         /// </returns>
         private static object GetNoteValue(PSObject mshObject, string note)
         {
@@ -1271,7 +1271,7 @@ namespace System.Management.Automation
         /// by ToPSObjectForRemoting method.
         /// </summary>
         /// <param name="serializedErrorRecord">
-        /// PSObject to convert to ErrorRecord
+        /// PSObject to convert to ErrorRecord.
         /// </param>
         /// <returns>
         /// ErrorRecord convert from mshObject.
@@ -1452,7 +1452,7 @@ namespace System.Management.Automation
         /// <summary>
         /// An Exception describing the error.
         /// </summary>
-        /// <value>never null</value>
+        /// <value>never null.</value>
         public Exception Exception
         {
             get
@@ -1467,7 +1467,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The object against which the error occurred.
         /// </summary>
-        /// <value>may be null</value>
+        /// <value>may be null.</value>
         public object TargetObject { get => _target; }
 
         private object _target /* = null */;
@@ -1482,7 +1482,7 @@ namespace System.Management.Automation
         /// associated with this error, and with the categorized error message
         /// for that ErrorCategory.
         /// </summary>
-        /// <value>never null</value>
+        /// <value>never null.</value>
         public ErrorCategoryInfo CategoryInfo { get => _categoryInfo ??= new ErrorCategoryInfo(this); }
 
         private ErrorCategoryInfo _categoryInfo;
@@ -1490,7 +1490,7 @@ namespace System.Management.Automation
         /// <summary>
         /// String which uniquely identifies this error condition.
         /// </summary>
-        /// <value>never null</value>
+        /// <value>never null.</value>
         /// <remarks>
         /// FullyQualifiedErrorid identifies this error condition
         /// more specifically than either the ErrorCategory
@@ -1519,7 +1519,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Additional information about the error.
         /// </summary>
-        /// <value>may be null</value>
+        /// <value>may be null.</value>
         /// <remarks>
         /// In particular, ErrorDetails.Message (if present and non-empty)
         /// contains a replacement message which should be displayed instead of
@@ -1531,7 +1531,7 @@ namespace System.Management.Automation
         /// Identifies the cmdlet, script, or other command which caused
         /// the error.
         /// </summary>
-        /// <value>may be null</value>
+        /// <value>may be null.</value>
         public InvocationInfo InvocationInfo { get => _invocationInfo; }
 
         private InvocationInfo _invocationInfo /* = null */;
@@ -1681,7 +1681,7 @@ namespace System.Management.Automation
 
         #region ToString
         /// <summary>
-        /// As <see cref="System.Object.ToString()"/>
+        /// As <see cref="System.Object.ToString()"/>.
         /// </summary>
         /// <returns>Developer-readable identifier.</returns>
         public override string ToString()
@@ -1797,7 +1797,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Objects implementing this interface can be used by
-    /// <see cref="System.Management.Automation.ErrorDetails(IResourceSupplier,string,string,object[])"/>
+    /// <see cref="System.Management.Automation.ErrorDetails(IResourceSupplier,string,string,object[])"/>.
     /// </summary>
     /// <remarks>
     /// <see cref="Provider.CmdletProvider"/>

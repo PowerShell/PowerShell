@@ -89,7 +89,7 @@ namespace System.Management.Automation.Language
 
     /// <summary>
     /// Represent a parameter argument pair. The argument is an array of ExpressionAst (remaining
-    /// arguments)
+    /// arguments).
     /// </summary>
     internal sealed class AstArrayPair : AstParameterArgumentPair
     {

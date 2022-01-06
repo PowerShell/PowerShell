@@ -17,7 +17,7 @@ namespace System.Management.Automation
         /// The name of the configuration.
         /// </param>
         /// <param name="configuration">
-        /// The ScriptBlock for the configuration
+        /// The ScriptBlock for the configuration.
         /// </param>
         /// <param name="context">
         /// The ExecutionContext for the configuration.
@@ -36,7 +36,7 @@ namespace System.Management.Automation
         /// The name of the configuration.
         /// </param>
         /// <param name="configuration">
-        /// The ScriptBlock for the configuration
+        /// The ScriptBlock for the configuration.
         /// </param>
         /// <param name="context">
         /// The ExecutionContext for the configuration.
@@ -60,7 +60,7 @@ namespace System.Management.Automation
         /// The name of the configuration.
         /// </param>
         /// <param name="configuration">
-        /// The ScriptBlock for the configuration
+        /// The ScriptBlock for the configuration.
         /// </param>
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
@@ -82,7 +82,7 @@ namespace System.Management.Automation
         /// The name of the configuration.
         /// </param>
         /// <param name="configuration">
-        /// The ScriptBlock for the configuration
+        /// The ScriptBlock for the configuration.
         /// </param>
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
@@ -111,7 +111,7 @@ namespace System.Management.Automation
         /// The name of the configuration.
         /// </param>
         /// <param name="configuration">
-        /// The ScriptBlock for the configuration
+        /// The ScriptBlock for the configuration.
         /// </param>
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.

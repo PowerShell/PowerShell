@@ -246,7 +246,7 @@ namespace System.Management.Automation
         /// A null is returned if
         /// -- current object has not been initialized
         /// -- current creds are not compatible with NetworkCredential
-        ///    (such as smart card creds or cert creds)
+        ///    (such as smart card creds or cert creds).
         /// </summary>
         /// <returns>
         ///     null if the current object has not been initialized.

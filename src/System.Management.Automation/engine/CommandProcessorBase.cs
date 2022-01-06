@@ -398,7 +398,7 @@ namespace System.Management.Automation
         /// Adds an unbound parameter.
         /// </summary>
         /// <param name="parameter">
-        /// The parameter to add to the unbound arguments list
+        /// The parameter to add to the unbound arguments list.
         /// </param>
         internal void AddParameter(CommandParameterInternal parameter)
         {
@@ -477,7 +477,7 @@ namespace System.Management.Automation
         /// BeginProcessing() of the InternalCommand.
         /// </summary>
         /// <exception cref="PipelineStoppedException">
-        /// a terminating error occurred, or the pipeline was otherwise stopped
+        /// a terminating error occurred, or the pipeline was otherwise stopped.
         /// </exception>
         internal virtual void DoBegin()
         {
@@ -944,7 +944,7 @@ namespace System.Management.Automation
         /// the error variable.
         /// </summary>
         /// <param name="e">
-        /// The exception which occurred during script execution
+        /// The exception which occurred during script execution.
         /// </param>
         /// <exception cref="PipelineStoppedException">
         /// ManageScriptException throws PipelineStoppedException if-and-only-if
@@ -992,7 +992,7 @@ namespace System.Management.Automation
         /// This enables cmdlets to reliably release file handles etc.
         /// without waiting for garbage collection.
         /// </summary>
-        /// <remarks>We use the standard IDispose pattern</remarks>
+        /// <remarks>We use the standard IDispose pattern.</remarks>
         public void Dispose()
         {
             Dispose(true);

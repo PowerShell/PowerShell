@@ -71,7 +71,7 @@ namespace System.Management.Automation
         /// Construct a CommandMetadata object for the given commandInfo.
         /// </summary>
         /// <param name="commandInfo">
-        /// The commandInfo object to construct CommandMetadata for
+        /// The commandInfo object to construct CommandMetadata for.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// commandInfo is null.
@@ -89,10 +89,10 @@ namespace System.Management.Automation
         /// Construct a CommandMetadata object for the given commandInfo.
         /// </summary>
         /// <param name="commandInfo">
-        /// The commandInfo object to construct CommandMetadata for
+        /// The commandInfo object to construct CommandMetadata for.
         /// </param>
         /// <param name="shouldGenerateCommonParameters">
-        /// Should common parameters be included in the metadata?
+        /// Should common parameters be included in the metadata?.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// commandInfo is null.
@@ -720,7 +720,7 @@ namespace System.Management.Automation
         /// Extracts the cmdlet data from the CmdletAttribute.
         /// </summary>
         /// <param name="attribute">
-        /// The CmdletAttribute to process
+        /// The CmdletAttribute to process.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="attribute"/> is null.

@@ -321,7 +321,7 @@ namespace System.Management.Automation
         /// The instance of session state that the provider is being added to.
         /// </param>
         /// <param name="implementingType">
-        /// The type that implements the provider
+        /// The type that implements the provider.
         /// </param>
         /// <param name="name">
         /// The name of the provider.
@@ -358,7 +358,7 @@ namespace System.Management.Automation
         /// The instance of session state that the provider is being added to.
         /// </param>
         /// <param name="implementingType">
-        /// The type that implements the provider
+        /// The type that implements the provider.
         /// </param>
         /// <param name="name">
         /// The alternate name to use for the provider instead of the one specified

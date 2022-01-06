@@ -90,7 +90,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">
         /// If the drive already exists,
         /// or
-        /// If <paramref name="drive"/>.Name contains one or more invalid characters; ~ / \\ . :
+        /// If <paramref name="drive"/>.Name contains one or more invalid characters; ~ / \\ . :.
         /// </exception>
         /// <exception cref="NotSupportedException">
         /// If the provider is not a DriveCmdletProvider.
@@ -136,7 +136,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">
         /// If the drive already exists
         /// or
-        /// If <paramref name="drive"/>.Name contains one or more invalid characters; ~ / \\ . :
+        /// If <paramref name="drive"/>.Name contains one or more invalid characters; ~ / \\ . :.
         /// </exception>
         /// <exception cref="NotSupportedException">
         /// If the provider is not a DriveCmdletProvider.
@@ -307,7 +307,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scope"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -345,7 +345,7 @@ namespace System.Management.Automation
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scope"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently

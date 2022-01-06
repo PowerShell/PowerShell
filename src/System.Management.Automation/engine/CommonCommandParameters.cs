@@ -185,7 +185,7 @@ namespace System.Management.Automation.Internal
         /// This parameter tells the command to set all success output in the specified variable.
         /// Similar to the way -errorvariable sets all errors to a variable name.
         /// Semantically this is equivalent to :  command |set-var varname -passthru
-        /// but it should be MUCH faster as there is no binding that takes place
+        /// but it should be MUCH faster as there is no binding that takes place.
         /// </remarks>
         [Parameter]
         [Alias("ov")]
@@ -201,7 +201,7 @@ namespace System.Management.Automation.Internal
         /// Gets or sets the OutBuffer parameter for the cmdlet.
         /// </summary>
         /// <remarks>
-        /// This parameter configures the number of objects to buffer before calling the downstream Cmdlet
+        /// This parameter configures the number of objects to buffer before calling the downstream Cmdlet.
         /// </remarks>
         [Parameter]
         [ValidateRangeAttribute(0, Int32.MaxValue)]
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Internal
         /// This parameter defines a variable to hold the current pipeline output the command
         /// as it passes down the pipeline:
         /// Write-Output (1..10) -PipelineVariable WriteOutput | Foreach-Object { "Hello" }  |
-        ///     Foreach-Object { $WriteOutput }
+        ///     Foreach-Object { $WriteOutput }.
         /// </remarks>
         [Parameter]
         [Alias("pv")]

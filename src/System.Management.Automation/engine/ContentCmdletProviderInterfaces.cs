@@ -500,7 +500,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Clears the content from the specified item(s)
+        /// Clears the content from the specified item(s).
         /// </summary>
         /// <param name="path">
         /// The path to the item(s) to clear the content from.

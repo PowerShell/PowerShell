@@ -1148,7 +1148,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns -1 if <paramref name="candidate1"/> is less specific than <paramref name="candidate2"/>
-        /// (1 otherwise, or 0 if both are equally specific or non-comparable)
+        /// (1 otherwise, or 0 if both are equally specific or non-comparable).
         /// </summary>
         private static int CompareTypeSpecificity(OverloadCandidate candidate1, OverloadCandidate candidate2)
         {
@@ -4203,7 +4203,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Converts a MethodBase[] into a MethodInformation[]
+        /// Converts a MethodBase[] into a MethodInformation[].
         /// </summary>
         /// <param name="methods">The methods to be converted.</param>
         /// <returns>The MethodInformation[] corresponding to methods.</returns>

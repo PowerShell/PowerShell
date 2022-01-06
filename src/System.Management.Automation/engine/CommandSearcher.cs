@@ -1227,7 +1227,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the next literal path.
         /// Filtering to ones that exist for the filesystem.
-        /// Handles Exceptions
+        /// Handles Exceptions.
         /// </summary>
         /// <param name="command">
         /// The command to search for.
@@ -1328,7 +1328,7 @@ namespace System.Management.Automation
         ///     3..x
         ///         foreach (extension in PATHEXT)
         ///             [commandName].[extension]
-        ///     x+1. [commandName]
+        ///     x+1. [commandName].
         /// </returns>
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> contains one or more of the

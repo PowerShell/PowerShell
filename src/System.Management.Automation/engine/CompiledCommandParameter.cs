@@ -104,7 +104,7 @@ namespace System.Management.Automation
         /// from the enclosing bindable object type.
         /// </summary>
         /// <param name="member">
-        /// The member information for the parameter
+        /// The member information for the parameter.
         /// </param>
         /// <param name="processingDynamicParameters">
         /// True if dynamic parameters are being processed, or false otherwise.

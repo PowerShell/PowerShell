@@ -60,14 +60,14 @@ namespace System.Management.Automation
         #region constructors
 
         /// <summary>
-        /// Creates a new instance of a <see cref="Breakpoint"/>
+        /// Creates a new instance of a <see cref="Breakpoint"/>.
         /// </summary>
         protected Breakpoint(string script)
             : this(script, null)
         { }
 
         /// <summary>
-        /// Creates a new instance of a <see cref="Breakpoint"/>
+        /// Creates a new instance of a <see cref="Breakpoint"/>.
         /// </summary>
         protected Breakpoint(string script, ScriptBlock action)
         {
@@ -79,14 +79,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a new instance of a <see cref="Breakpoint"/>
+        /// Creates a new instance of a <see cref="Breakpoint"/>.
         /// </summary>
         protected Breakpoint(string script, int id)
             : this(script, null, id)
         { }
 
         /// <summary>
-        /// Creates a new instance of a <see cref="Breakpoint"/>
+        /// Creates a new instance of a <see cref="Breakpoint"/>.
         /// </summary>
         protected Breakpoint(string script, ScriptBlock action, int id)
         {
@@ -155,14 +155,14 @@ namespace System.Management.Automation
     public class CommandBreakpoint : Breakpoint
     {
         /// <summary>
-        /// Creates a new instance of a <see cref="CommandBreakpoint"/>
+        /// Creates a new instance of a <see cref="CommandBreakpoint"/>.
         /// </summary>
         public CommandBreakpoint(string script, WildcardPattern command, string commandString)
             : this(script, command, commandString, null)
         { }
 
         /// <summary>
-        /// Creates a new instance of a <see cref="CommandBreakpoint"/>
+        /// Creates a new instance of a <see cref="CommandBreakpoint"/>.
         /// </summary>
         public CommandBreakpoint(string script, WildcardPattern command, string commandString, ScriptBlock action)
             : base(script, action)
@@ -172,14 +172,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a new instance of a <see cref="CommandBreakpoint"/>
+        /// Creates a new instance of a <see cref="CommandBreakpoint"/>.
         /// </summary>
         public CommandBreakpoint(string script, WildcardPattern command, string commandString, int id)
             : this(script, command, commandString, null, id)
         { }
 
         /// <summary>
-        /// Creates a new instance of a <see cref="CommandBreakpoint"/>
+        /// Creates a new instance of a <see cref="CommandBreakpoint"/>.
         /// </summary>
         public CommandBreakpoint(string script, WildcardPattern command, string commandString, ScriptBlock action, int id)
             : base(script, action, id)
@@ -356,14 +356,14 @@ namespace System.Management.Automation
     public class LineBreakpoint : Breakpoint
     {
         /// <summary>
-        /// Creates a new instance of a <see cref="LineBreakpoint"/>
+        /// Creates a new instance of a <see cref="LineBreakpoint"/>.
         /// </summary>
         public LineBreakpoint(string script, int line)
             : this(script, line, null)
         { }
 
         /// <summary>
-        /// Creates a new instance of a <see cref="LineBreakpoint"/>
+        /// Creates a new instance of a <see cref="LineBreakpoint"/>.
         /// </summary>
         public LineBreakpoint(string script, int line, ScriptBlock action)
             : base(script, action)
@@ -375,14 +375,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a new instance of a <see cref="LineBreakpoint"/>
+        /// Creates a new instance of a <see cref="LineBreakpoint"/>.
         /// </summary>
         public LineBreakpoint(string script, int line, int column)
             : this(script, line, column, null)
         { }
 
         /// <summary>
-        /// Creates a new instance of a <see cref="LineBreakpoint"/>
+        /// Creates a new instance of a <see cref="LineBreakpoint"/>.
         /// </summary>
         public LineBreakpoint(string script, int line, int column, ScriptBlock action)
             : base(script, action)
@@ -394,14 +394,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a new instance of a <see cref="LineBreakpoint"/>
+        /// Creates a new instance of a <see cref="LineBreakpoint"/>.
         /// </summary>
         public LineBreakpoint(string script, int line, int column, int id)
             : this(script, line, column, null, id)
         { }
 
         /// <summary>
-        /// Creates a new instance of a <see cref="LineBreakpoint"/>
+        /// Creates a new instance of a <see cref="LineBreakpoint"/>.
         /// </summary>
         public LineBreakpoint(string script, int line, int column, ScriptBlock action, int id)
             : base(script, action, id)

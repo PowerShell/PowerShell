@@ -213,7 +213,7 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class StartRunspaceDebugProcessingEventArgs : EventArgs
     {
-        /// <summary> The runspace to process </summary>
+        /// <summary> The runspace to process. </summary>
         public Runspace Runspace { get; }
 
         /// <summary>
@@ -2751,7 +2751,7 @@ namespace System.Management.Automation
         /// <param name="column">The column in the script file where the breakpoint may be hit. If 0, the breakpoint will trigger on any statement on the line.</param>
         /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
-        /// <returns>A LineBreakpoint</returns>
+        /// <returns>A LineBreakpoint.</returns>
         public override LineBreakpoint SetLineBreakpoint(string path, int line, int column, ScriptBlock action, int? runspaceId)
         {
             if (runspaceId.HasValue)
@@ -5025,7 +5025,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// This class is used to pre-process the command read by the host when it is in debug mode; its
-    /// main intention is to implement the debugger commands ("s", "c", "o", etc)
+    /// main intention is to implement the debugger commands ("s", "c", "o", etc).
     /// </summary>
     internal class DebuggerCommandProcessor
     {
@@ -5399,7 +5399,7 @@ namespace System.Management.Automation
         /// If ResumeAction is not null it indicates that the host must exit the debugger
         /// and resume execution of the suspended pipeline; the debugger will use the
         /// value of this property to decide how to resume the pipeline (i.e. step into,
-        /// step-over, continue, etc)
+        /// step-over, continue, etc).
         /// </summary>
         public DebuggerResumeAction? ResumeAction { get; }
 
@@ -5410,7 +5410,7 @@ namespace System.Management.Automation
         public string Command { get; }
 
         /// <summary>
-        /// If true, the host should repeat this command if the next command in an empty line (enter)
+        /// If true, the host should repeat this command if the next command in an empty line (enter).
         /// </summary>
         public bool RepeatOnEnter { get; }
 

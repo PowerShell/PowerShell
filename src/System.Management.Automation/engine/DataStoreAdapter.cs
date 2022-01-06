@@ -244,7 +244,7 @@ namespace System.Management.Automation
         /// It seems that on single rooted filesystems, only the default
         /// drive of "/" needs to set this VolumeSeparatedByColon to false
         /// otherwise, creating new drives from the filesystem should actually
-        /// have this set to true as all the drives will have <string>: except
+        /// have this set to true as all the drives will have. <string>: except
         /// for "/"
         /// </summary>
         public bool VolumeSeparatedByColon { get; internal set; } = true;
@@ -301,7 +301,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="root">
         /// The root path of the drive. For example, the root of a
-        /// drive in the file system can be c:\windows\system32
+        /// drive in the file system can be c:\windows\system32.
         /// </param>
         /// <param name="description">
         /// The description for the drive.
@@ -378,7 +378,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="root">
         /// The root path of the drive. For example, the root of a
-        /// drive in the file system can be c:\windows\system32
+        /// drive in the file system can be c:\windows\system32.
         /// </param>
         /// <param name="description">
         /// The description for the drive.
@@ -420,7 +420,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="root">
         /// The root path of the drive. For example, the root of a
-        /// drive in the file system can be c:\windows\system32
+        /// drive in the file system can be c:\windows\system32.
         /// </param>
         /// <param name="description">
         /// The description for the drive.

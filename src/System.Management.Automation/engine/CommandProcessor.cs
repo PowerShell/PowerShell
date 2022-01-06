@@ -180,7 +180,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Prepares the command. Encodes the command-line parameters
-        /// JonN     2003-04-02 Split from Execute()
+        /// JonN     2003-04-02 Split from Execute().
         /// </summary>
         /// <exception cref="ParameterBindingException">
         /// If any parameters fail to bind,
@@ -301,10 +301,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This calls the command.  It assumes that Prepare() has already been called.
-        /// JonN     2003-04-02 Split from Execute()
+        /// JonN     2003-04-02 Split from Execute().
         /// </summary>
         /// <exception cref="PipelineStoppedException">
-        /// a terminating error occurred, or the pipeline was otherwise stopped
+        /// a terminating error occurred, or the pipeline was otherwise stopped.
         /// </exception>
         internal override void ProcessRecord()
         {
