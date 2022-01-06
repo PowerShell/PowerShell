@@ -131,6 +131,22 @@ function New-TestNestedModule
     [scriptblock]::Create($newManifestCmd).Invoke()
 }
 
+function Get-DesktopModuleToUse {
+    $system32Path = "$env:windir\system32\WindowsPowerShell\v1.0\Modules"
+    $persistentMemoryModule = "PersistentMemory"
+    $remoteDesktopModule = "RemoteDesktop"
+
+    if (Test-Path -PathType Container "$system32Path\$persistentMemoryModule") {
+        return $persistentMemoryModule
+    } elseif (Test-Path -PathType Container "$system32Path\$remoteDesktopModule") {
+        return $remoteDesktopModule
+    } else {
+        return $null
+    }
+}
+
+$desktopModuleToUse = Get-DesktopModuleToUse
+
 Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
 
     BeforeAll {
@@ -645,23 +661,32 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         }
 
         It "NoClobber WinCompat list in powershell.config is a Desktop-edition module" {
-            ## The 'RemoteDesktop' module (available on Windows Server) should not be imported twice.
+            if (-not $desktopModuleToUse) {
+                Write-Host 'Skip the test case "NoClobber WinCompat list in powershell.config is a Desktop-edition module" because neither the "PersistentMemory" module nor the "RemoteDesktop" module is available under the System32 module path' -ForegroundColor Yellow
+                return
+            }
+
+            ## The 'Desktop' edition module 'PersistentMemory' (available on Windows Client) or 'RemoteDesktop' (available on Windows Server) should not be imported twice.
             $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
-            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": ["RemoteDesktop"]}' | Out-File -Force $ConfigPath
+@"
+{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": ["$desktopModuleToUse"]}
+"@ | Out-File -Force $ConfigPath
             $env:PSModulePath = ''
 
-            ## 'RemoteDesktop' is listed in the no-clobber list, so we will first try loading a core-edition compatible
-            ## version of the module before loading the remote one. The 'system32' module path will be skipped in this
-            ## attempt, which is expected.
-            ## If we don't skip the 'system32' module path in this loading attempt, the 'RemoteDesktop' module will be
-            ## imported twice as a remote module, and then 'Remove-Module RemoteDesktop' won't close the WinCompat session.
-            $results = & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c {
-                Import-Module RemoteDesktop -UseWindowsPowerShell -WarningAction Ignore
-                Get-Module RemoteDesktop | ForEach-Object { $_.ModuleType.ToString() }
-                (Get-PSSession | Measure-Object).Count
-                Remove-Module RemoteDesktop
-                (Get-PSSession | Measure-Object).Count
-            }
+            ## The desktop-edition module is listed in the no-clobber list, so we will first try loading a core-edition
+            ## compatible version of the module before loading the remote one. The 'system32' module path will be skipped
+            ## in this attempt, which is by-design.
+            ## If we don't skip the 'system32' module path in this loading attempt, the desktop-edition module will be
+            ## imported twice as a remote module, and then 'Remove-Module' won't close the WinCompat session.
+            $script = @"
+Import-Module $desktopModuleToUse -UseWindowsPowerShell -WarningAction Ignore
+Get-Module $desktopModuleToUse | ForEach-Object { `$_.ModuleType.ToString() }
+(Get-PSSession | Measure-Object).Count
+Remove-Module $desktopModuleToUse
+(Get-PSSession | Measure-Object).Count
+"@
+            $scriptBlock = [scriptblock]::Create($script)
+            $results = & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c $scriptBlock
             $results[0] | Should -BeExactly 'Script'
             $results[1] | Should -BeExactly 1
             $results[2] | Should -BeExactly 0
@@ -1424,9 +1449,9 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
         }
         @{
             ## Attempt to load a 'Desktop' edition module should fail because 'Export-PSSession' cannot be found.
-            Command = 'Import-Module RemoteDesktop -ErrorAction Stop'
+            Command = $desktopModuleToUse ? "Import-Module $desktopModuleToUse -ErrorAction Stop" : 'Skip the test case that loads a desktop-edition module because neither the "PersistentMemory" module nor the "RemoteDesktop" module is available under the System32 module path'
             FullyQualifiedErrorId = "CommandNotFoundException,Microsoft.PowerShell.Commands.ImportModuleCommand"
-            ExceptionMessage = "*'RemoteDesktop'*'Export-PSSession'*'Microsoft.PowerShell.Utility'*"
+            ExceptionMessage = "*'$desktopModuleToUse'*'Export-PSSession'*'Microsoft.PowerShell.Utility'*"
         }
     ) {
         param(
@@ -1434,6 +1459,11 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
             $FullyQualifiedErrorId,
             $ExceptionMessage
         )
+
+        if ($Command.StartsWith("Skip")) {
+            Write-Host $Command -ForegroundColor Yellow
+            return
+        }
 
         $template = @'
     try {{
