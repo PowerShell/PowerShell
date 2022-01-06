@@ -8,7 +8,7 @@ using System.Reflection;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Internal wrapper for third-party adapters (PSPropertyAdapter)
+    /// Internal wrapper for third-party adapters (PSPropertyAdapter).
     /// </summary>
     internal class ThirdPartyAdapter : PropertyOnlyAdapter
     {
@@ -286,7 +286,7 @@ namespace System.Management.Automation
     /// User-defined property adapter.
     /// </summary>
     /// <remarks>
-    /// This class is used to expose a simplified version of the type adapter API
+    /// This class is used to expose a simplified version of the type adapter API.
     /// </remarks>
     public abstract class PSPropertyAdapter
     {

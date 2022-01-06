@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Add a string to the current buffer, waiting for a FlushBuffer()
+        /// Add a string to the current buffer, waiting for a FlushBuffer().
         /// </summary>
         /// <param name="s">String to add to buffer.</param>
         private void AddToBuffer(string s)

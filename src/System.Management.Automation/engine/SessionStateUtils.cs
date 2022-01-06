@@ -310,17 +310,17 @@ namespace Microsoft.PowerShell.Commands
     public enum OpenMode
     {
         /// <summary>
-        /// This opens the file for appending (similar to FileMode.Append)
+        /// This opens the file for appending (similar to FileMode.Append).
         /// </summary>
         Add,
 
         /// <summary>
-        /// The file must be created new. If the file exists it is an error (similar to FileMode.CreateNew)
+        /// The file must be created new. If the file exists it is an error (similar to FileMode.CreateNew).
         /// </summary>
         New,
 
         /// <summary>
-        /// Creates a new file, if the file already exists it is overwritten (similar to FileMode.Create)
+        /// Creates a new file, if the file already exists it is overwritten (similar to FileMode.Create).
         /// </summary>
         Overwrite
     }

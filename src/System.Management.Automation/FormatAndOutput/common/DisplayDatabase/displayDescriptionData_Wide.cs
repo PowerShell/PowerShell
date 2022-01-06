@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// RULE: the body can only contain
         ///     * TextToken
         ///     * PropertyToken
-        ///     * NOTHING (provide an empty cell)
+        ///     * NOTHING (provide an empty cell).
         /// </summary>
         internal List<FormatToken> formatTokenList = new List<FormatToken>();
     }
@@ -65,16 +65,16 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class WideControl : PSControl
     {
-        /// <summary>Entries in this wide control</summary>
+        /// <summary>Entries in this wide control.</summary>
         public List<WideControlEntryItem> Entries { get; internal set; }
 
         /// <summary>When true, widths are calculated based on more than the first object.</summary>
         public bool AutoSize { get; set; }
 
-        /// <summary>Number of columns in the control</summary>
+        /// <summary>Number of columns in the control.</summary>
         public uint Columns { get; internal set; }
 
-        /// <summary>Create a default WideControl</summary>
+        /// <summary>Create a default WideControl.</summary>
         public static WideControlBuilder Create(bool outOfBand = false, bool autoSize = false, uint columns = 0)
         {
             var control = new WideControl { OutOfBand = false, AutoSize = autoSize, Columns = columns };
@@ -119,7 +119,7 @@ namespace System.Management.Automation
             return true;
         }
 
-        /// <summary>Default constructor for WideControl</summary>
+        /// <summary>Default constructor for WideControl.</summary>
         public WideControl()
         {
             Entries = new List<WideControlEntryItem>();
@@ -141,7 +141,7 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>Public constructor for WideControl</summary>
+        /// <summary>Public constructor for WideControl.</summary>
         public WideControl(IEnumerable<WideControlEntryItem> wideEntries) : this()
         {
             if (wideEntries == null)
@@ -153,7 +153,7 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>Public constructor for WideControl</summary>
+        /// <summary>Public constructor for WideControl.</summary>
         public WideControl(IEnumerable<WideControlEntryItem> wideEntries, uint columns) : this()
         {
             if (wideEntries == null)
@@ -167,7 +167,7 @@ namespace System.Management.Automation
             this.Columns = columns;
         }
 
-        /// <summary>Construct an instance with columns</summary>
+        /// <summary>Construct an instance with columns.</summary>
         public WideControl(uint columns) : this()
         {
             this.Columns = columns;
@@ -179,10 +179,10 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class WideControlEntryItem
     {
-        /// <summary>Display entry</summary>
+        /// <summary>Display entry.</summary>
         public DisplayEntry DisplayEntry { get; internal set; }
 
-        /// <summary>List of typenames which select this entry, deprecated, use EntrySelectedBy</summary>
+        /// <summary>List of typenames which select this entry, deprecated, use EntrySelectedBy.</summary>
         public List<string> SelectedBy
         {
             get
@@ -196,7 +196,7 @@ namespace System.Management.Automation
         /// <summary>List of typenames and/or a script block which select this entry.</summary>
         public EntrySelectedBy EntrySelectedBy { get; internal set; }
 
-        /// <summary>Format string to apply</summary>
+        /// <summary>Format string to apply.</summary>
         public string FormatString { get; internal set; }
 
         internal WideControlEntryItem()

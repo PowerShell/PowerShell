@@ -8,7 +8,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// The parameters for the paging support enabled by <see cref="CmdletCommonMetadataAttribute.SupportsPaging"/>.
-    /// Includes: -IncludeTotalCount, -Skip [int], -First [int]
+    /// Includes: -IncludeTotalCount, -Skip [int], -First [int].
     /// </summary>
     public sealed class PagingParameters
     {
@@ -62,7 +62,7 @@ namespace System.Management.Automation
         /// accuracy of the <paramref name="totalCount"/> parameter.
         /// <c>1.0</c> means 100% accurate;
         /// <c>0.0</c> means that total count is unknown;
-        /// anything in-between means that total count is estimated
+        /// anything in-between means that total count is estimated.
         /// </param>
         /// <returns>An object that represents a total count of objects that the cmdlet would return without paging.</returns>
         public PSObject NewTotalCount(UInt64 totalCount, double accuracy)

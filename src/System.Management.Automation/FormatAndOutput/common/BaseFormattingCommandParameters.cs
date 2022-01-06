@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// It holds the command line parameter values
     /// It unifies the data structures across the various
-    /// formatting command (e.g. table, wide and list)
+    /// formatting command (e.g. table, wide and list).
     /// </summary>
     internal sealed class FormattingCommandLineParameters
     {

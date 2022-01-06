@@ -70,7 +70,7 @@ namespace System.Management.Automation.Runspaces
         /// time.
         /// </summary>
         /// <param name="loadErrors">
-        /// The errors that occured
+        /// The errors that occured.
         /// </param>
         internal FormatTableLoadException(ConcurrentBag<string> loadErrors)
             : base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))
@@ -238,7 +238,7 @@ namespace System.Management.Automation.Runspaces
         /// Format files to load for format information.
         /// </param>
         /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
+        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed).
         /// </param>
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.

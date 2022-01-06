@@ -396,7 +396,7 @@ namespace System.Management.Automation
         /// Checks if the given value meets the validation attribute constraints on the PSVariable.
         /// </summary>
         /// <param name="value">
-        /// value which needs to be checked
+        /// value which needs to be checked.
         /// </param>
         /// <remarks>
         /// If <paramref name="value"/> is null or if no attributes are set, then

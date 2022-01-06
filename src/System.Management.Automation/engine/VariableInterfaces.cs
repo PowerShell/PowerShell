@@ -100,7 +100,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scope"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -216,7 +216,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scope"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -290,7 +290,7 @@ namespace System.Management.Automation
         /// Sets the variable.
         /// </summary>
         /// <param name="variable">
-        /// The variable to set
+        /// The variable to set.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="variable"/> is null.

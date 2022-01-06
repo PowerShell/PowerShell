@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// Do not remove columns, just assign widths to columns that have a zero width
-        /// (meaning unassigned)
+        /// (meaning unassigned).
         /// </summary>
         /// <param name="columnWidths">Columns to process.</param>
         /// <returns>True if there was a fit, false if there is need for trimming.</returns>
@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Get the last visible column (i.e. with a width >= 0)
+        /// Get the last visible column (i.e. with a width >= 0).
         /// </summary>
         /// <param name="columnWidths">Column widths array.</param>
         /// <returns>Index of the last visible column, -1 if none.</returns>

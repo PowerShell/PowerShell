@@ -36,10 +36,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
-        /// the scope specifiers like "global:example"
+        /// the scope specifiers like "global:example".
         /// </summary>
         /// <param name="name">
-        /// name of variable to look up
+        /// name of variable to look up.
         /// </param>
         /// <param name="origin">
         /// Origin of the command making this request.
@@ -67,10 +67,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
-        /// the scope specifiers like "global:example"
+        /// the scope specifiers like "global:example".
         /// </summary>
         /// <param name="name">
-        /// name of variable to look up
+        /// name of variable to look up.
         /// </param>
         /// <returns>
         /// The specified variable.
@@ -86,10 +86,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:example"
+        /// "env:PATH" or "global:example".
         /// </summary>
         /// <param name="name">
-        /// name of variable to look up
+        /// name of variable to look up.
         /// </param>
         /// <returns>
         /// The value of the specified variable.
@@ -129,10 +129,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:example"
+        /// "env:PATH" or "global:example".
         /// </summary>
         /// <param name="name">
-        /// name of variable to look up
+        /// name of variable to look up.
         /// </param>
         /// <param name="defaultValue">
         /// value to return if you can't find Name or it returns null.
@@ -187,7 +187,7 @@ namespace System.Management.Automation
         /// is found the lookup goes in the following order.
         ///     - current scope
         ///     - each consecutive parent scope until the variable is found.
-        ///     - global scope
+        ///     - global scope.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="variablePath"/> is null.
@@ -246,7 +246,7 @@ namespace System.Management.Automation
         /// not found.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller of this API
+        /// The origin of the caller of this API.
         /// </param>
         /// <returns>
         /// The variable if it was found or null if it was not.
@@ -258,7 +258,7 @@ namespace System.Management.Automation
         /// is found the lookup goes in the following order.
         ///     - current scope
         ///     - each consecutive parent scope until the variable is found.
-        ///     - global scope
+        ///     - global scope.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="variablePath"/> is null.
@@ -517,7 +517,7 @@ namespace System.Management.Automation
         /// The scope the variable was found in. Null if the variable wasn't found.
         /// </param>
         /// <param name="origin">
-        /// Origin of the command requesting this variable
+        /// Origin of the command requesting this variable.
         /// </param>
         /// <returns>
         /// The variable if it was found or null if it was not.
@@ -528,7 +528,7 @@ namespace System.Management.Automation
         /// then only that scope is searched for the variable.
         ///     - current scope
         ///     - each consecutive parent scope until the variable is found.
-        ///     - global scope
+        ///     - global scope.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="variablePath"/> is null.
@@ -580,7 +580,7 @@ namespace System.Management.Automation
         /// then only that scope is searched for the variable.
         ///     - current scope
         ///     - each consecutive parent scope until the variable is found.
-        ///     - global scope
+        ///     - global scope.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="variablePath"/> is null.
@@ -595,10 +595,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:example"
+        /// "env:PATH" or "global:example".
         /// </summary>
         /// <param name="name">
-        /// name of variable to look up
+        /// name of variable to look up.
         /// </param>
         /// <param name="scopeID">
         /// The ID of the scope to lookup the variable in.
@@ -611,7 +611,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -646,10 +646,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:example"
+        /// "env:PATH" or "global:example".
         /// </summary>
         /// <param name="name">
-        /// name of variable to look up
+        /// name of variable to look up.
         /// </param>
         /// <param name="scopeID">
         /// The ID of the scope to lookup the variable in.
@@ -662,7 +662,7 @@ namespace System.Management.Automation
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
@@ -922,7 +922,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a variable in session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "$env:PATH = 'c:\windows'" or "$global:example = 13"
+        /// "$env:PATH = 'c:\windows'" or "$global:example = 13".
         /// </summary>
         /// <param name="name">
         /// The name of the item to set.
@@ -1005,7 +1005,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Set a variable in session state. This interface supports
-        /// the scope specifiers like "$global:example = 13"
+        /// the scope specifiers like "$global:example = 13".
         /// </summary>
         /// <param name="variable">
         /// The variable to be set.
@@ -1014,7 +1014,7 @@ namespace System.Management.Automation
         /// If true, the variable is set even if it is ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller of this API
+        /// The origin of the caller of this API.
         /// </param>
         /// <returns>
         /// A PSVariable object if <paramref name="variablePath"/> refers to a variable.
@@ -1052,7 +1052,7 @@ namespace System.Management.Automation
         /// be a PSVariable object and the item will be set rather than the value.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller
+        /// The origin of the caller.
         /// </param>
         /// <returns>
         /// A PSVariable object if <paramref name="variablePath"/> refers to a variable.
@@ -1103,7 +1103,7 @@ namespace System.Management.Automation
         /// If true, the variable is set even if it is ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller
+        /// The origin of the caller.
         /// </param>
         /// <returns>
         /// A PSVariable object if <paramref name="variablePath"/> refers to a variable.
@@ -1371,24 +1371,24 @@ namespace System.Management.Automation
         /// Set a variable in session state.
         /// </summary>
         /// <param name="variable">
-        /// The variable to set
+        /// The variable to set.
         /// </param>
         /// <param name="scopeID">
         /// The ID of the scope to do the lookup in. The ID is either a zero based index
         /// of the scope tree with the current scope being zero, its parent scope
-        /// being 1 and so on, or "global", "local", "private", or "script"
+        /// being 1 and so on, or "global", "local", "private", or "script".
         /// </param>
         /// <param name="force">
         /// If true, the variable is set even if it is ReadOnly.
         /// </param>
         /// <param name="origin">
-        /// The origin of the caller
+        /// The origin of the caller.
         /// </param>
         /// <exception cref="ArgumentException">
         /// If <paramref name="variable"/> is null or its name is null or empty.
         /// or
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <returns>
         /// A PSVariable object if <paramref name="variable"/> refers to a variable.
@@ -1426,7 +1426,7 @@ namespace System.Management.Automation
         /// Creates a new variable.
         /// </summary>
         /// <param name="variable">
-        /// The variable to create
+        /// The variable to create.
         /// </param>
         /// <param name="force">
         /// If true, the variable is created even if it is ReadOnly.
@@ -1455,12 +1455,12 @@ namespace System.Management.Automation
         /// Creates a new variable in the specified scope.
         /// </summary>
         /// <param name="variable">
-        /// The variable to create
+        /// The variable to create.
         /// </param>
         /// <param name="scopeID">
         /// The ID of the scope to do the lookup in. The ID is either a zero based index
         /// of the scope tree with the current scope being zero, its parent scope
-        /// being 1 and so on, or "global", "local", "private", or "script"
+        /// being 1 and so on, or "global", "local", "private", or "script".
         /// </param>
         /// <param name="force">
         /// If true, the variable is set even if it is ReadOnly.
@@ -1469,7 +1469,7 @@ namespace System.Management.Automation
         /// If <paramref name="variable"/> is null or its name is null or empty.
         /// or
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <returns>
         /// A PSVariable representing the variable that was created.
@@ -1639,10 +1639,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Remove a variable from session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:example"
+        /// "env:PATH" or "global:example".
         /// </summary>
         /// <param name="name">
-        /// name of variable to remove
+        /// name of variable to remove.
         /// </param>
         /// <param name="scopeID">
         /// The ID of the scope to lookup the variable in.
@@ -1669,10 +1669,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Remove a variable from session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:example"
+        /// "env:PATH" or "global:example".
         /// </summary>
         /// <param name="name">
-        /// name of variable to remove
+        /// name of variable to remove.
         /// </param>
         /// <param name="scopeID">
         /// The ID of the scope to lookup the variable in.
@@ -1734,7 +1734,7 @@ namespace System.Management.Automation
         /// Remove a variable from session state.
         /// </summary>
         /// <param name="variable">
-        /// The variable to remove
+        /// The variable to remove.
         /// </param>
         /// <param name="scopeID">
         /// The ID of the scope to lookup the variable in.
@@ -1758,7 +1758,7 @@ namespace System.Management.Automation
         /// Remove a variable from session state.
         /// </summary>
         /// <param name="variable">
-        /// The variable to remove
+        /// The variable to remove.
         /// </param>
         /// <param name="scopeID">
         /// The ID of the scope to lookup the variable in.
@@ -1855,7 +1855,7 @@ namespace System.Management.Automation
         /// </returns>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently

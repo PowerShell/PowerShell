@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// RULE: the body can only contain
         ///     * TextToken
         ///     * PropertyToken
-        ///     * NOTHING (provide an empty cell)
+        ///     * NOTHING (provide an empty cell).
         /// </summary>
         internal List<FormatToken> formatTokenList = new List<FormatToken>();
     }
@@ -117,7 +117,7 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class ListControl : PSControl
     {
-        /// <summary>Entries in this list control</summary>
+        /// <summary>Entries in this list control.</summary>
         public List<ListControlEntry> Entries { get; internal set; }
 
         /// <summary></summary>
@@ -132,7 +132,7 @@ namespace System.Management.Automation
             writer.WriteListControl(this);
         }
 
-        /// <summary>Indicates if this control does not have any script blocks and is safe to export</summary>
+        /// <summary>Indicates if this control does not have any script blocks and is safe to export.</summary>
         internal override bool SafeForExport()
         {
             if (!base.SafeForExport())
@@ -147,13 +147,13 @@ namespace System.Management.Automation
             return true;
         }
 
-        /// <summary>Initiate an instance of ListControl</summary>
+        /// <summary>Initiate an instance of ListControl.</summary>
         public ListControl()
         {
             Entries = new List<ListControlEntry>();
         }
 
-        /// <summary>To go from internal representation to external - for Get-FormatData</summary>
+        /// <summary>To go from internal representation to external - for Get-FormatData.</summary>
         internal ListControl(ListControlBody listcontrolbody, ViewDefinition viewDefinition)
             : this()
         {
@@ -168,7 +168,7 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>Public constructor for ListControl</summary>
+        /// <summary>Public constructor for ListControl.</summary>
         public ListControl(IEnumerable<ListControlEntry> entries)
             : this()
         {
@@ -200,10 +200,10 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class ListControlEntry
     {
-        /// <summary>List of items in the entry</summary>
+        /// <summary>List of items in the entry.</summary>
         public List<ListControlEntryItem> Items { get; internal set; }
 
-        /// <summary>List of typenames which select this entry, deprecated, use EntrySelectedBy</summary>
+        /// <summary>List of typenames which select this entry, deprecated, use EntrySelectedBy.</summary>
         public List<string> SelectedBy
         {
             get
@@ -217,7 +217,7 @@ namespace System.Management.Automation
         /// <summary>List of typenames and/or a script block which select this entry.</summary>
         public EntrySelectedBy EntrySelectedBy { get; internal set; }
 
-        /// <summary>Initiate an instance of ListControlEntry</summary>
+        /// <summary>Initiate an instance of ListControlEntry.</summary>
         public ListControlEntry()
         {
             Items = new List<ListControlEntryItem>();
@@ -237,7 +237,7 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>Public constructor for ListControlEntry</summary>
+        /// <summary>Public constructor for ListControlEntry.</summary>
         public ListControlEntry(IEnumerable<ListControlEntryItem> listItems)
             : this()
         {
@@ -249,7 +249,7 @@ namespace System.Management.Automation
             }
         }
 
-        /// <summary>Public constructor for ListControlEntry</summary>
+        /// <summary>Public constructor for ListControlEntry.</summary>
         public ListControlEntry(IEnumerable<ListControlEntryItem> listItems, IEnumerable<string> selectedBy)
         {
             if (listItems == null)
@@ -299,13 +299,13 @@ namespace System.Management.Automation
         /// </summary>
         public string Label { get; internal set; }
 
-        /// <summary>Display entry</summary>
+        /// <summary>Display entry.</summary>
         public DisplayEntry DisplayEntry { get; internal set; }
 
         /// <summary/>
         public DisplayEntry ItemSelectionCondition { get; internal set; }
 
-        /// <summary>Format string to apply</summary>
+        /// <summary>Format string to apply.</summary>
         public string FormatString { get; internal set; }
 
         internal ListControlEntryItem()

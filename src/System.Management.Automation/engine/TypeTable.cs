@@ -1646,7 +1646,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Copy constructor (deep copy)
+        /// Copy constructor (deep copy).
         /// </summary>
         /// <param name="other"></param>
         public ConsolidatedString(ConsolidatedString other)
@@ -1796,7 +1796,7 @@ namespace System.Management.Automation.Runspaces
         /// time.
         /// </summary>
         /// <param name="loadErrors">
-        /// The errors that occurred
+        /// The errors that occurred.
         /// </param>
         internal TypeTableLoadException(ConcurrentBag<string> loadErrors)
             : base(TypesXmlStrings.TypeTableLoadErrors)
@@ -3910,7 +3910,7 @@ namespace System.Management.Automation.Runspaces
         /// Type files to load for type information.
         /// </param>
         /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
+        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed).
         /// </param>
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
@@ -4439,8 +4439,8 @@ namespace System.Management.Automation.Runspaces
         /// this TypeTable instance itself is a shared TypeTable.
         /// </param>
         /// <returns>
-        /// If <para>unshared</para> is True, return an unshared clone of this TypeTable instance
-        /// If <para>unshared</para> is False, return a clone that is exactly the same as this TypeTable instance.
+        /// If. <para>unshared.</para> is True, return an unshared clone of this TypeTable instance
+        /// If. <para>unshared.</para> is False, return a clone that is exactly the same as this TypeTable instance.
         /// </returns>
         public TypeTable Clone(bool unshared)
         {
@@ -4525,7 +4525,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Load the specified file and report the errors in <paramref name="errors."/>
+        /// Load the specified file and report the errors in <paramref name="errors."/>.
         /// </summary>
         /// <param name="snapinName"></param>
         /// <param name="fileToLoad">
@@ -4533,7 +4533,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         /// <param name="errors"></param>
         /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
+        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed).
         /// </param>
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
@@ -4724,7 +4724,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="filePath">The path to the file to load.</param>
         /// <param name="errors">A place to put the errors...</param>
         /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
+        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed).
         /// </param>
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.

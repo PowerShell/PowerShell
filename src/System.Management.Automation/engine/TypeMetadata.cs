@@ -225,7 +225,7 @@ namespace System.Management.Automation
         /// Compares this instance with the supplied <paramref name="second"/>.
         /// </summary>
         /// <param name="second">
-        /// An object to compare this instance with
+        /// An object to compare this instance with.
         /// </param>
         /// <returns>
         /// true if the metadata is same. false otherwise.
@@ -481,7 +481,7 @@ namespace System.Management.Automation
         /// is a proxy written on top of CompiledCommandParameter.
         /// </summary>
         /// <param name="cmdParameterMD">
-        /// Internal CompiledCommandParameter metadata
+        /// Internal CompiledCommandParameter metadata.
         /// </param>
         internal ParameterMetadata(CompiledCommandParameter cmdParameterMD)
         {
@@ -1220,7 +1220,7 @@ namespace System.Management.Automation
         /// from the enclosing bindable object type.
         /// </summary>
         /// <param name="type">
-        /// The type information for the bindable object
+        /// The type information for the bindable object.
         /// </param>
         /// <param name="processingDynamicParameters">
         /// True if dynamic parameters are being processed, or false otherwise.

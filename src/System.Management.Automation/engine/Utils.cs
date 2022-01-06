@@ -305,8 +305,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper fn to check byte[] arg for null.
         /// </summary>
-        ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
+        ///<param name="arg"> arg to check. </param>
+        ///<param name="argName"> name of the arg. </param>
         ///<returns> Does not return a value.</returns>
         internal static void CheckKeyArg(byte[] arg, string argName)
         {
@@ -332,8 +332,8 @@ namespace System.Management.Automation
         /// Helper fn to check arg for empty or null.
         /// Throws ArgumentNullException on either condition.
         /// </summary>
-        ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
+        ///<param name="arg"> arg to check. </param>
+        ///<param name="argName"> name of the arg. </param>
         ///<returns> Does not return a value.</returns>
         internal static void CheckArgForNullOrEmpty(string arg, string argName)
         {
@@ -351,8 +351,8 @@ namespace System.Management.Automation
         /// Helper fn to check arg for null.
         /// Throws ArgumentNullException on either condition.
         /// </summary>
-        ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
+        ///<param name="arg"> arg to check. </param>
+        ///<param name="argName"> name of the arg. </param>
         ///<returns> Does not return a value.</returns>
         internal static void CheckArgForNull(object arg, string argName)
         {
@@ -365,8 +365,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Helper fn to check arg for null.
         /// </summary>
-        ///<param name="arg"> arg to check </param>
-        ///<param name="argName"> name of the arg </param>
+        ///<param name="arg"> arg to check. </param>
+        ///<param name="argName"> name of the arg. </param>
         ///<returns> Does not return a value.</returns>
         internal static void CheckSecureStringArg(SecureString arg, string argName)
         {
@@ -527,7 +527,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>
         /// true: if the filePath is under product folder
-        /// false: otherwise
+        /// false: otherwise.
         /// </returns>
         internal static bool IsUnderProductFolder(string filePath)
         {

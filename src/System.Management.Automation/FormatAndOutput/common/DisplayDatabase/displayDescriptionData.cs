@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// If true, display an error string in the formatted display
-        /// (e.g. cell in a table)
+        /// (e.g. cell in a table).
         /// </summary>
         internal bool ShowErrorsInFormattedOutput
         {
@@ -671,13 +671,13 @@ namespace System.Management.Automation
     [DebuggerDisplay("{Name}")]
     public sealed class FormatViewDefinition
     {
-        /// <summary>Name of the formatting view as defined in the formatting file</summary>
+        /// <summary>Name of the formatting view as defined in the formatting file.</summary>
         public string Name { get; }
 
-        /// <summary>The control defined by this formatting view can be one of table, list, wide, or custom</summary>
+        /// <summary>The control defined by this formatting view can be one of table, list, wide, or custom.</summary>
         public PSControl Control { get; }
 
-        /// <summary>instance id of the original view this will be used to distinguish two views with the same name and control types</summary>
+        /// <summary>instance id of the original view this will be used to distinguish two views with the same name and control types.</summary>
         internal Guid InstanceId { get; set; }
 
         internal FormatViewDefinition(string name, PSControl control, Guid instanceid)
@@ -787,15 +787,15 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class DisplayEntry
     {
-        /// <summary>Returns the type of this value</summary>
+        /// <summary>Returns the type of this value.</summary>
         public DisplayEntryValueType ValueType { get; internal set; }
 
-        /// <summary>Returns the value as a string</summary>
+        /// <summary>Returns the value as a string.</summary>
         public string Value { get; internal set; }
 
         internal DisplayEntry() { }
 
-        /// <summary>Public constructor for DisplayEntry</summary>
+        /// <summary>Public constructor for DisplayEntry.</summary>
         public DisplayEntry(string value, DisplayEntryValueType type)
         {
             if (string.IsNullOrEmpty(value))
@@ -936,7 +936,7 @@ namespace System.Management.Automation
         Undefined = 0,
 
         /// <summary>
-        /// Left of the cell, contents will trail with a ... if exceeded - ex "Display..."
+        /// Left of the cell, contents will trail with a ... if exceeded - ex "Display...".
         /// </summary>
         Left = 1,
 
@@ -946,7 +946,7 @@ namespace System.Management.Automation
         Center = 2,
 
         /// <summary>
-        /// Right of the cell, contents will lead with a ... if exceeded - ex "...456"
+        /// Right of the cell, contents will lead with a ... if exceeded - ex "...456".
         /// </summary>
         Right = 3,
     }

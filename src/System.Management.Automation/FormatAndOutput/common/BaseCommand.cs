@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// Hook up the calls from the implementation object
-        /// and then call the implementation's Begin()
+        /// and then call the implementation's Begin().
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -235,7 +235,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Default implementation just delegates to internal helper.
         /// </summary>
-        /// <remarks>This method calls GC.SuppressFinalize</remarks>
+        /// <remarks>This method calls GC.SuppressFinalize.</remarks>
         public void Dispose()
         {
             Dispose(true);
@@ -276,28 +276,28 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal class ImplementationCommandBase : IDisposable
     {
         /// <summary>
-        /// Inner version of CommandBase.BeginProcessing()
+        /// Inner version of CommandBase.BeginProcessing().
         /// </summary>
         internal virtual void BeginProcessing()
         {
         }
 
         /// <summary>
-        /// Inner version of CommandBase.ProcessRecord()
+        /// Inner version of CommandBase.ProcessRecord().
         /// </summary>
         internal virtual void ProcessRecord()
         {
         }
 
         /// <summary>
-        /// Inner version of CommandBase.EndProcessing()
+        /// Inner version of CommandBase.EndProcessing().
         /// </summary>
         internal virtual void EndProcessing()
         {
         }
 
         /// <summary>
-        /// Inner version of CommandBase.StopProcessing()
+        /// Inner version of CommandBase.StopProcessing().
         /// </summary>
         internal virtual void StopProcessing()
         {
@@ -379,7 +379,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Default implementation just delegates to internal helper.
         /// </summary>
-        /// <remarks>This method calls GC.SuppressFinalize</remarks>
+        /// <remarks>This method calls GC.SuppressFinalize.</remarks>
         public void Dispose()
         {
             Dispose(true);

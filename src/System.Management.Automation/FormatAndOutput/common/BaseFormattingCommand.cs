@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
     /// Base class defining the formatting context and the
-    /// formatting context manager (stack based)
+    /// formatting context manager (stack based).
     /// </summary>
     internal class InnerFormatShapeCommandBase : ImplementationCommandBase
     {
@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// and push group context on stack.
         /// </summary>
         /// <param name="firstObjectInGroup">current pipeline object
-        /// that is starting the group</param>
+        /// that is starting the group.</param>
         private void PushGroup(PSObject firstObjectInGroup)
         {
             GroupStartData startGroup = _viewManager.ViewGenerator.GenerateGroupStartData(firstObjectInGroup, _enumerationLimit);
