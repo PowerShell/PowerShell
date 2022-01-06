@@ -45,7 +45,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name of command.
         /// </summary>
-        /// <value>Name of command</value>
+        /// <value>Name of command.</value>
         internal override string Name
         {
             get
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Synopsis for this command help.
         /// </summary>
-        /// <value>Synopsis for this command help</value>
+        /// <value>Synopsis for this command help.</value>
         internal override string Synopsis
         {
             get
@@ -120,7 +120,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Help category for this command help, which is constantly HelpCategory.Command.
         /// </summary>
-        /// <value>Help category for this command help</value>
+        /// <value>Help category for this command help.</value>
         internal override HelpCategory HelpCategory { get; }
 
         /// <summary>

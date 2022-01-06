@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Write a line to the output device.
         /// </summary>
         /// <param name="s">
-        ///     string to be written to the device
+        ///     string to be written to the device.
         /// </param>
         internal abstract void WriteLine(string s);
 

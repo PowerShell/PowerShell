@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="formatFiles"></param>
         /// <param name="isShared"></param>
         /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
+        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed).
         /// </param>
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
@@ -157,10 +157,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// database is created.
         /// </summary>
         /// <param name="formatData">
-        /// The format data to update the database
+        /// The format data to update the database.
         /// </param>
         /// <param name="shouldPrepend">
-        /// Specify the order in which the format data will be loaded
+        /// Specify the order in which the format data will be loaded.
         /// </param>
         internal void AddFormatData(IEnumerable<ExtendedTypeDefinition> formatData, bool shouldPrepend)
         {
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// have been removed using Remove.
         /// </summary>
         /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
+        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed).
         /// </param>
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="mshsnapins">Files to be loaded and errors to be updated.</param>
         /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
+        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed).
         /// </param>
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
@@ -304,7 +304,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="expressionFactory">Expression factory to validate script blocks.</param>
         /// <param name="acceptLoadingErrors">If true, load the database even if there are loading errors.</param>
         /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
+        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed).
         /// </param>
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.
@@ -365,7 +365,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="files">*.formal.xml files to be loaded.</param>
         /// <param name="expressionFactory">Expression factory to validate script blocks.</param>
         /// <param name="authorizationManager">
-        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed)
+        /// Authorization manager to perform signature checks before reading ps1xml files (or null of no checks are needed).
         /// </param>
         /// <param name="host">
         /// Host passed to <paramref name="authorizationManager"/>.  Can be null if no interactive questions should be asked.

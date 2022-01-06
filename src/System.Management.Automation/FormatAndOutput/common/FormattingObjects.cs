@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Advisory, the outputter can decide otherwise
         ///
         /// A zero value signifies let the outputter get the
-        /// best fit on the screen (possibly blocking until the end)
+        /// best fit on the screen (possibly blocking until the end).
         /// </summary>
         public int columns = 0;
     }

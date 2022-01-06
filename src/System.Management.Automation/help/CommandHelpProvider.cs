@@ -57,7 +57,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name of this provider.
         /// </summary>
-        /// <value>Name of this provider</value>
+        /// <value>Name of this provider.</value>
         internal override string Name
         {
             get
@@ -69,7 +69,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Help category for this provider, which is a constant: HelpCategory.Command.
         /// </summary>
-        /// <value>Help category for this provider</value>
+        /// <value>Help category for this provider.</value>
         internal override HelpCategory HelpCategory
         {
             get
@@ -1212,7 +1212,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Checks whether <paramref name="target"/> matches any of the patterns
-        /// present in <paramref name="patterns"/>
+        /// present in <paramref name="patterns"/>.
         /// </summary>
         /// <param name="target">Content to search in.</param>
         /// <param name="patterns">String patterns to look for.</param>

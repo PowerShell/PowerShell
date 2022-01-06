@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// Object managing the sub-pipelines that execute
     /// different output commands (or different instances of the
-    /// default one)
+    /// default one).
     /// </summary>
     internal sealed class SubPipelineManager : IDisposable
     {

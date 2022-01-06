@@ -57,7 +57,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name of alias help provider.
         /// </summary>
-        /// <value>Name of alias help provider</value>
+        /// <value>Name of alias help provider.</value>
         internal override string Name
         {
             get
@@ -88,7 +88,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// This will
         ///     a. use _commandDiscovery object to retrieve AliasInfo object.
-        ///     b. Create AliasHelpInfo object based on AliasInfo object
+        ///     b. Create AliasHelpInfo object based on AliasInfo object.
         /// </remarks>
         /// <param name="helpRequest">Help request object.</param>
         /// <returns>Help info found.</returns>

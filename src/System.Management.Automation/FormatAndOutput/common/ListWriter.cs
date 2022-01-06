@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private string[] _propertyLabels;
 
         /// <summary>
-        /// Display length of the property labels in the array (all the same length)
+        /// Display length of the property labels in the array (all the same length).
         /// </summary>
         private int _propertyLabelsDisplayLength = 0;
 

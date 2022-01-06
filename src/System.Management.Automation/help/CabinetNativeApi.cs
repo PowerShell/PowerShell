@@ -54,7 +54,7 @@ namespace System.Management.Automation.Internal
         #region IDisposable Methods
 
         /// <summary>
-        /// Flag: Has Dispose already been called?
+        /// Flag: Has Dispose already been called?.
         /// </summary>
         private bool _disposed = false;
 

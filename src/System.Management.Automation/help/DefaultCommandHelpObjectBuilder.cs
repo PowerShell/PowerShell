@@ -237,14 +237,14 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Add the syntax parameters properties (these parameters are used to create the syntax section)
+        /// Add the syntax parameters properties (these parameters are used to create the syntax section).
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="parameters">
         /// a collection of parameters in display order
         /// ie., Positional followed by
         ///      Named Mandatory (in alpha numeric) followed by
-        ///      Named (in alpha numeric)
+        ///      Named (in alpha numeric).
         /// </param>
         /// <param name="common">Common parameters.</param>
         /// <param name="parameterSetName">Name of the parameter set for which the syntax is generated.</param>
@@ -330,7 +330,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Adds a parameter value group (for enums)
+        /// Adds a parameter value group (for enums).
         /// </summary>
         /// <param name="obj">Object.</param>
         /// <param name="values">Parameter group values.</param>
@@ -348,7 +348,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Add the parameters properties (these parameters are used to create the parameters section)
+        /// Add the parameters properties (these parameters are used to create the parameters section).
         /// </summary>
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="parameters">Parameters.</param>
@@ -403,7 +403,7 @@ namespace System.Management.Automation.Help
         /// <param name="obj">HelpInfo object.</param>
         /// <param name="name">Parameter name.</param>
         /// <param name="aliases">Parameter aliases.</param>
-        /// <param name="dynamic">Is dynamic parameter?</param>
+        /// <param name="dynamic">Is dynamic parameter?.</param>
         /// <param name="type">Parameter type.</param>
         /// <param name="attributes">Parameter attributes.</param>
         /// <param name="parameterSetName">Name of the parameter set for which the syntax is generated.</param>

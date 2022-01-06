@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// IDisposable implementation.
         /// </summary>
-        /// <remarks>This method calls GC.SuppressFinalize</remarks>
+        /// <remarks>This method calls GC.SuppressFinalize.</remarks>
         public void Dispose()
         {
             Dispose(true);
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             /// <summary>
             /// Node index for enumerations, valid only if != -1
-            /// NOTE: this allows to express the XPath construct "foo[0]"
+            /// NOTE: this allows to express the XPath construct "foo[0]".
             /// </summary>
             internal int index = -1;
         }
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// IDisposable implementation.
         /// </summary>
-        /// <remarks>This method calls GC.SuppressFinalize</remarks>
+        /// <remarks>This method calls GC.SuppressFinalize.</remarks>
         public void Dispose()
         {
             Dispose(true);
@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Get the list of log entries.
         /// </summary>
-        /// <value>list of entries logged during a load</value>
+        /// <value>list of entries logged during a load.</value>
         internal List<XmlLoaderLoggerEntry> LogEntries
         {
             get
@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Check if there were errors.
         /// </summary>
-        /// <value>true of the log entry list has errors</value>
+        /// <value>true of the log entry list has errors.</value>
         internal bool HasErrors
         {
             get

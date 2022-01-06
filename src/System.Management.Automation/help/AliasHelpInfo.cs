@@ -15,7 +15,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// The constructor is private. The only way to create an
-        /// AliasHelpInfo object is through static method <see cref="GetHelpInfo"/>
+        /// AliasHelpInfo object is through static method <see cref="GetHelpInfo"/>.
         /// </remarks>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         private AliasHelpInfo(AliasInfo aliasInfo)
@@ -61,7 +61,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Help category for alias help. This is always HelpCategory.Alias.
         /// </summary>
-        /// <value>Help category for alias help</value>
+        /// <value>Help category for alias help.</value>
         internal override HelpCategory HelpCategory
         {
             get

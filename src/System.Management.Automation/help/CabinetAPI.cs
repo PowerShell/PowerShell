@@ -27,7 +27,7 @@ namespace System.Management.Automation.Internal
         //
 
         /// <summary>
-        /// Flag: Has Dispose already been called?
+        /// Flag: Has Dispose already been called?.
         /// </summary>
         private bool _disposed = false;
 
@@ -69,7 +69,7 @@ namespace System.Management.Automation.Internal
     /// assembly using reflection.
     /// </summary>
     /// <remarks>The C++/CLI implementation of this class needs to be
-    /// static</remarks>
+    /// static.</remarks>
     internal abstract class ICabinetExtractorLoader
     {
         internal virtual ICabinetExtractor GetCabinetExtractor() { return null; }

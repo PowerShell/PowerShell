@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// Queue to provide sliding window capabilities for auto size functionality
     /// It provides caching capabilities (either the first N objects in a group
-    /// or all the objects in a group)
+    /// or all the objects in a group).
     /// </summary>
     internal sealed class OutputGroupQueue
     {
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal delegate void ProcessCachedGroupNotification(FormatStartData formatStartData, List<PacketInfoData> objects);
 
         /// <summary>
-        /// Decide right away if we need a front end cache (e.g. printing)
+        /// Decide right away if we need a front end cache (e.g. printing).
         /// </summary>
         /// <param name="cacheFrontEnd">If true, create a front end cache object.</param>
         internal FormattedObjectsCache(bool cacheFrontEnd)
@@ -325,7 +325,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Front end queue (if present, cache ALL, if not, bypass)
+        /// Front end queue (if present, cache ALL, if not, bypass).
         /// </summary>
         private readonly Queue<PacketInfoData> _frontEndQueue;
 

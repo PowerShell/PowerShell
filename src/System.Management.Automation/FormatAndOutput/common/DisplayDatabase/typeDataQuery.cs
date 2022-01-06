@@ -581,7 +581,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// Given an appliesTo list, it finds all the types that are contained (following type
-        /// group references)
+        /// group references).
         /// </summary>
         /// <param name="db">Database to use.</param>
         /// <param name="appliesTo">Object to lookup.</param>

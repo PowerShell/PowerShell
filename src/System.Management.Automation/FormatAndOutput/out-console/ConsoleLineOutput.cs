@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region LineOutput implementation
         /// <summary>
         /// The # of columns is just the width of the screen buffer (not the
-        /// width of the window)
+        /// width of the window).
         /// </summary>
         /// <value></value>
         internal override int ColumnNumber
@@ -198,7 +198,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// The # of rows is the # of rows visible in the window (and not the # of
-        /// rows in the screen buffer)
+        /// rows in the screen buffer).
         /// </summary>
         /// <value></value>
         internal override int RowNumber
@@ -439,7 +439,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Check if we need to put out a prompt.
         /// </summary>
-        /// <value>true if we need to prompt</value>
+        /// <value>true if we need to prompt.</value>
         private bool NeedToPrompt
         {
             get
@@ -557,7 +557,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             /// <summary>
-            /// Cached string(s) valid during a sequence of ComputePromptLines()/PromptUser()
+            /// Cached string(s) valid during a sequence of ComputePromptLines()/PromptUser().
             /// </summary>
             private StringCollection _actualPrompt;
 
@@ -575,17 +575,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Flag to force new lines in CMD.EXE by limiting the
         /// usable width to N-1 (e.g. 80-1) and forcing a call
-        /// to WriteLine()
+        /// to WriteLine().
         /// </summary>
         private readonly bool _forceNewLine = true;
 
         /// <summary>
-        /// Use this if IRawConsole is null;
+        /// Use this if IRawConsole is null.
         /// </summary>
         private readonly int _fallbackRawConsoleColumnNumber = 80;
 
         /// <summary>
-        /// Use this if IRawConsole is null;
+        /// Use this if IRawConsole is null.
         /// </summary>
         private readonly int _fallbackRawConsoleRowNumber = 40;
 

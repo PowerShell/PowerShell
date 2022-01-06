@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implementation for the out-default command
     /// this command it implicitly inject by the
     /// powershell host at the end of the pipeline as the
-    /// default sink (display to console screen)
+    /// default sink (display to console screen).
     /// </summary>
     [Cmdlet(VerbsData.Out, "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096486", RemotingCapability = RemotingCapability.None)]
     public class OutDefaultCommand : FrontEndCommandBase

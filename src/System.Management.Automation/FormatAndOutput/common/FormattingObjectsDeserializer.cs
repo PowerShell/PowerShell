@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Deserialization of string without TAB expansion (RAW)
+        /// Deserialization of string without TAB expansion (RAW).
         /// </summary>
         /// <param name="so">Object whose the property belongs to.</param>
         /// <param name="property">Name of the string property.</param>
