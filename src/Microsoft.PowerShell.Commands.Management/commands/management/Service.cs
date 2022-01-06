@@ -266,7 +266,7 @@ namespace Microsoft.PowerShell.Commands
         /// have wildcard characters in their name (servicename or
         /// displayname).
         /// </summary>
-        /// <value>ServiceController objects</value>
+        /// <value>ServiceController objects.</value>
         [Parameter(ParameterSetName = "InputObject", ValueFromPipeline = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -825,13 +825,13 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         /// <param name="resourceIdPending">
         /// resourceId for a string to be written to verbose stream
-        /// every 2 seconds
+        /// every 2 seconds.
         /// </param>
         /// <param name="errorId">
-        /// errorId for a nonterminating error if operation fails
+        /// errorId for a nonterminating error if operation fails.
         /// </param>
         ///  <param name="errorMessage">
-        /// errorMessage for a nonterminating error if operation fails
+        /// errorMessage for a nonterminating error if operation fails.
         /// </param>
         /// <returns>True if action succeeded.</returns>
         /// <exception cref="PipelineStoppedException">
@@ -1074,7 +1074,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="dependentServices"></param>
         /// <returns>
         /// True if all dependent services are stopped
-        /// False if not all dependent services are stopped
+        /// False if not all dependent services are stopped.
         /// </returns>
         private static bool HaveAllDependentServicesStopped(ServiceController[] dependentServices)
         {
@@ -2052,7 +2052,7 @@ namespace Microsoft.PowerShell.Commands
         internal string description = null;
 
         /// <summary>
-        /// Should the service start automatically?
+        /// Should the service start automatically?.
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -2906,7 +2906,7 @@ namespace Microsoft.PowerShell.Commands
         /// StartupType provided by the user.
         /// </param>
         /// <param name="dwStartType">
-        /// Out parameter of the native win32 StartupType
+        /// Out parameter of the native win32 StartupType.
         /// </param>
         /// <returns>
         /// If a supported StartupType is provided, funciton returns true, otherwise false.
@@ -2961,19 +2961,19 @@ namespace Microsoft.PowerShell.Commands
 
     #region ServiceStartupType
     ///<summary>
-    ///Enum for usage with StartupType. Automatic, Manual and Disabled index matched from System.ServiceProcess.ServiceStartMode
+    ///Enum for usage with StartupType. Automatic, Manual and Disabled index matched from System.ServiceProcess.ServiceStartMode.
     ///</summary>
     public enum ServiceStartupType
     {
-        ///<summary>Invalid service</summary>
+        ///<summary>Invalid service.</summary>
         InvalidValue = -1,
-        ///<summary>Automatic service</summary>
+        ///<summary>Automatic service.</summary>
         Automatic = 2,
-        ///<summary>Manual service</summary>
+        ///<summary>Manual service.</summary>
         Manual = 3,
-        ///<summary>Disabled service</summary>
+        ///<summary>Disabled service.</summary>
         Disabled = 4,
-        ///<summary>Automatic (Delayed Start) service</summary>
+        ///<summary>Automatic (Delayed Start) service.</summary>
         AutomaticDelayedStart = 10
     }
     #endregion ServiceStartupType

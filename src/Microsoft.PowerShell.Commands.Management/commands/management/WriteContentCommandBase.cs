@@ -11,7 +11,7 @@ using System.Management.Automation.Provider;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A base class for the commands that write content (set-content, add-content)
+    /// A base class for the commands that write content (set-content, add-content).
     /// </summary>
     public class WriteContentCommandBase : PassThroughContentCommandBase
     {
@@ -243,10 +243,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the IContentWriters for the current path(s)
+        /// Gets the IContentWriters for the current path(s).
         /// </summary>
         /// <returns>
-        /// An array of IContentWriters for the current path(s)
+        /// An array of IContentWriters for the current path(s).
         /// </returns>
         internal List<ContentHolder> GetContentWriters(
             string[] writerPaths,

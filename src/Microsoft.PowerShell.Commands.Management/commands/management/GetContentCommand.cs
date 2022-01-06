@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="currentContext"></param>
         /// <returns>
         /// true if no error occured
-        /// false if there was an error
+        /// false if there was an error.
         /// </returns>
         private bool ScanForwardsForTail(in ContentHolder holder, CmdletProviderContext currentContext)
         {
@@ -384,11 +384,11 @@ namespace Microsoft.PowerShell.Commands
         /// Seek position to the right place.
         /// </summary>
         /// <param name="reader">
-        /// reader should be able to be casted to FileSystemContentReader
+        /// reader should be able to be casted to FileSystemContentReader.
         /// </param>
         /// <returns>
         /// true if the stream pointer is moved to the right place
-        /// false if we cannot seek
+        /// false if we cannot seek.
         /// </returns>
         private bool SeekPositionForTail(IContentReader reader)
         {

@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         /// directly.  This allows us to deal with processes which
         /// have wildcard characters in their name.
         /// </summary>
-        /// <value>Process objects</value>
+        /// <value>Process objects.</value>
         [Parameter(
             ParameterSetName = "InputObject",
             Mandatory = true,

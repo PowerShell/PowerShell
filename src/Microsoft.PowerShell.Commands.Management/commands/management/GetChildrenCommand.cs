@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// The "Items" parameter set includes the following parameters:
         ///     -filter
-        ///     -recurse
+        ///     -recurse.
         /// </remarks>
         private const string childrenSet = "Items";
         private const string literalChildrenSet = "LiteralItems";

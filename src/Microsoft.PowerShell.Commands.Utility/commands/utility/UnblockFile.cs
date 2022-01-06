@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _paths;
 
         /// <summary>
-        /// Generate the type(s)
+        /// Generate the type(s).
         /// </summary>
         protected override void ProcessRecord()
         {

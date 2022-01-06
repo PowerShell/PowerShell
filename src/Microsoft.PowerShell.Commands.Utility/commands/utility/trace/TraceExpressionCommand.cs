@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.Commands
         /// The underlying stream is closed.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="obj"/> contains AutomationNull.Value
+        /// <paramref name="obj"/> contains AutomationNull.Value.
         /// </exception>
         public override int Write(object obj, bool enumerateCollection)
         {

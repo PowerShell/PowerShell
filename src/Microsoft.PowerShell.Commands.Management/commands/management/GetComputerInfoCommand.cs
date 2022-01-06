@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
         /// Display progress.
         /// </summary>
         /// <param name="status">
-        /// Text to be displayed in status bar
+        /// Text to be displayed in status bar.
         /// </param>
         private void UpdateProgress(string status)
         {
@@ -417,7 +417,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         /// <returns>
         /// A <see cref="DeviceGuard"/> object containing information related to
-        /// the Device Guard feature
+        /// the Device Guard feature.
         /// </returns>
         private static DeviceGuardInfo GetDeviceGuard(CimSession session)
         {
@@ -482,7 +482,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         /// <returns>
         /// A <see cref="HyperVInfo"/> object containing information related to
-        /// HyperVisor
+        /// HyperVisor.
         /// </returns>
         private static HyperVInfo GetHyperVisorInfo(CimSession session)
         {
@@ -536,7 +536,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         /// <returns>
         /// A <see cref="MiscInfoGroup"/> object containing miscellaneous
-        /// system information
+        /// system information.
         /// </returns>
         private static MiscInfoGroup GetOtherInfo(CimSession session)
         {
@@ -929,14 +929,14 @@ namespace Microsoft.PowerShell.Commands
         /// namedProperties parameter.
         /// </summary>
         /// <param name="info">
-        /// A <see cref="ComputerInfo"/> containing all the acquired system information
+        /// A <see cref="ComputerInfo"/> containing all the acquired system information.
         /// </param>
         /// <param name="namedProperties">
-        /// A list of property names to be included in the returned object
+        /// A list of property names to be included in the returned object.
         /// </param>
         /// <returns>
         /// A new PSObject with the properties specified in the <paramref name="namedProperties"/>
-        /// parameter
+        /// parameter.
         /// </returns>
         private static PSObject CreateCustomOutputObject(ComputerInfo info, List<string> namedProperties)
         {
@@ -984,10 +984,10 @@ namespace Microsoft.PowerShell.Commands
         /// Expand any wild-card patterns into known property names.
         /// </summary>
         /// <param name="propertyNames">
-        /// List of known property names
+        /// List of known property names.
         /// </param>
         /// <param name="pattern">
-        /// The wild-card pattern used to perform globbing
+        /// The wild-card pattern used to perform globbing.
         /// </param>
         /// <returns></returns>
         private static List<string> ExpandWildcardPropertyNames(List<string> propertyNames, string pattern)
@@ -2156,7 +2156,7 @@ namespace Microsoft.PowerShell.Commands
         /// Number of cores for the current instance of the processor.
         /// </summary>
         /// <remarks>
-        /// A core is a physical processor on the integrated circuit
+        /// A core is a physical processor on the integrated circuit.
         /// </remarks>
         public uint? NumberOfCores { get; internal set; }
         /// <summary>
@@ -2164,7 +2164,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// For processors capable of hyperthreading, this value includes only the
-        /// processors which have hyperthreading enabled
+        /// processors which have hyperthreading enabled.
         /// </remarks>
         public uint? NumberOfLogicalProcessors { get; internal set; }
         /// <summary>
@@ -2178,7 +2178,7 @@ namespace Microsoft.PowerShell.Commands
         /// to 1. The second is an offset of 0Ch-0Fh, which is the EDX value that the
         /// instruction returns. Only the first two bytes of the property are significant
         /// and contain the contents of the DX register at CPU reset—all others are set
-        /// to 0 (zero), and the contents are in DWORD format
+        /// to 0 (zero), and the contents are in DWORD format.
         /// </remarks>
         public string ProcessorID { get; internal set; }
         /// <summary>
@@ -2331,7 +2331,7 @@ namespace Microsoft.PowerShell.Commands
         /// Firmware type of the local computer.
         /// </summary>
         /// <remarks>
-        /// This is acquired via the GetFirmwareType Windows API function
+        /// This is acquired via the GetFirmwareType Windows API function.
         /// </remarks>
         public FirmwareType? BiosFirmwareType { get; internal set; }
 
@@ -2545,7 +2545,7 @@ namespace Microsoft.PowerShell.Commands
         /// Name of the domain to which a computer belongs.
         /// </summary>
         /// <remarks>
-        /// If the computer is not part of a domain, then the name of the workgroup is returned
+        /// If the computer is not part of a domain, then the name of the workgroup is returned.
         /// </remarks>
         public string CsDomain { get; internal set; }
 
@@ -2645,7 +2645,7 @@ namespace Microsoft.PowerShell.Commands
         /// does not include the disabled processors. If a computer system
         /// has two physical processors each containing two logical processors,
         /// then the value of CsNumberOfProcessors is 2 and CsNumberOfLogicalProcessors
-        /// is 4. The processors may be multicore or they may be hyperthreading processors
+        /// is 4. The processors may be multicore or they may be hyperthreading processors.
         /// </remarks>
         public uint? CsNumberOfProcessors { get; internal set; }
 
@@ -2700,7 +2700,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// This property does not indicate that power management features are
         /// enabled currently, but it does indicate that the logical device is
-        /// capable of power management
+        /// capable of power management.
         /// </remarks>
         public bool? CsPowerManagementSupported { get; internal set; }
 
@@ -2800,7 +2800,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// Be aware that, under some circumstances, this property may not
         /// return an accurate value for the physical memory. For example,
-        /// it is not accurate if the BIOS is using some of the physical memory
+        /// it is not accurate if the BIOS is using some of the physical memory.
         /// </remarks>
         public ulong? CsTotalPhysicalMemory { get; internal set; }
 
@@ -2816,7 +2816,7 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// In a terminal services session, CsUserName is the name of the user
         /// that is logged on to the console—not the user logged on during the
-        /// terminal service session
+        /// terminal service session.
         /// </remarks>
         public string CsUserName { get; internal set; }
 
@@ -2901,7 +2901,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// Values are based on international phone dialing prefixes—also
-        /// referred to as IBM country/region codes
+        /// referred to as IBM country/region codes.
         /// </remarks>
         public string OsCountryCode { get; internal set; }
 
@@ -2918,7 +2918,7 @@ namespace Microsoft.PowerShell.Commands
         /// A language identifier is a standard international numeric abbreviation
         /// for a country/region. Each language has a unique language identifier (LANGID),
         /// a 16-bit value that consists of a primary language identifier and a secondary
-        /// language identifier
+        /// language identifier.
         /// </remarks>
         public string OsLocaleID { get; internal set; }   // From Win32_OperatingSystem.Locale
 
@@ -3039,7 +3039,7 @@ namespace Microsoft.PowerShell.Commands
         /// distinguished from page files. However, some operating systems
         /// distinguish these concepts. For example, in UNIX, whole processes
         /// can be swapped out when the free page list falls and remains below
-        /// a specified amount
+        /// a specified amount.
         /// </remarks>
         public ulong? OsTotalSwapSpaceSize { get; internal set; }
 
@@ -3064,7 +3064,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] OsPagingFiles { get; internal set; }
 
         /// <summary>
-        /// Version of the operating system's Hardware Abstraction Layer (HAL)
+        /// Version of the operating system's Hardware Abstraction Layer (HAL).
         /// </summary>
         public string OsHardwareAbstractionLayer { get; internal set; }
 
@@ -3075,7 +3075,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Name of the operating system manufacturer.
-        /// For Windows-based systems, this value is "Microsoft Corporation"
+        /// For Windows-based systems, this value is "Microsoft Corporation".
         /// </summary>
         public string OsManufacturer { get; internal set; }
 
@@ -4015,7 +4015,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Indicates the operating system Stock Keeping Unit (SKU)
+    /// Indicates the operating system Stock Keeping Unit (SKU).
     /// </summary>
     public enum OperatingSystemSKU
     {
@@ -4165,7 +4165,7 @@ namespace Microsoft.PowerShell.Commands
         WindowsUltimate = 28,
 
         /// <summary>
-        /// SKU is Web Server (core installation)
+        /// SKU is Web Server (core installation).
         /// </summary>
         WebServerCore = 29,
 
@@ -4185,27 +4185,27 @@ namespace Microsoft.PowerShell.Commands
         WindowsServerStandardNoHyperVFull = 36,
 
         /// <summary>
-        /// SKU is Windows Server Datacenter without Hyper-V (full installation)
+        /// SKU is Windows Server Datacenter without Hyper-V (full installation).
         /// </summary>
         WindowsServerDatacenterNoHyperVFull = 37,
 
         /// <summary>
-        /// SKU is Windows Server Enterprise without Hyper-V (full installation)
+        /// SKU is Windows Server Enterprise without Hyper-V (full installation).
         /// </summary>
         WindowsServerEnterpriseNoHyperVFull = 38,
 
         /// <summary>
-        /// SKU is Windows Server Datacenter without Hyper-V (core installation)
+        /// SKU is Windows Server Datacenter without Hyper-V (core installation).
         /// </summary>
         WindowsServerDatacenterNoHyperVCore = 39,
 
         /// <summary>
-        /// SKU is Windows Server Standard without Hyper-V (core installation)
+        /// SKU is Windows Server Standard without Hyper-V (core installation).
         /// </summary>
         WindowsServerStandardNoHyperVCore = 40,
 
         /// <summary>
-        /// SKU is Windows Server Enterprise without Hyper-V (core installation)
+        /// SKU is Windows Server Enterprise without Hyper-V (core installation).
         /// </summary>
         WindowsServerEnterpriseNoHyperVCore = 41,
 
@@ -4215,22 +4215,22 @@ namespace Microsoft.PowerShell.Commands
         MicrosoftHyperVServer = 42,
 
         /// <summary>
-        /// SKU is Storage Server Express (core installation)
+        /// SKU is Storage Server Express (core installation).
         /// </summary>
         StorageServerExpressCore = 43,
 
         /// <summary>
-        /// SKU is Storage Server Standard (core installation)
+        /// SKU is Storage Server Standard (core installation).
         /// </summary>
         StorageServerStandardCore = 44,
 
         /// <summary>
-        /// SKU is Storage Server Workgroup (core installation)
+        /// SKU is Storage Server Workgroup (core installation).
         /// </summary>
         StorageServerWorkgroupCore = 45,
 
         /// <summary>
-        /// SKU is Storage Server Enterprise (core installation)
+        /// SKU is Storage Server Enterprise (core installation).
         /// </summary>
         StorageServerEnterpriseCore = 46,
 
@@ -4240,7 +4240,7 @@ namespace Microsoft.PowerShell.Commands
         WindowsSmallBusinessServer2011Essentials = 50,
 
         /// <summary>
-        /// SKU is Small Business Server Premium (core installation)
+        /// SKU is Small Business Server Premium (core installation).
         /// </summary>
         SmallBusinessServerPremiumCore = 63,
 
@@ -4840,7 +4840,7 @@ namespace Microsoft.PowerShell.Commands
         Unknown = 2,
 
         /// <summary>
-        /// Processor is a Central Processing Unit (CPU)
+        /// Processor is a Central Processing Unit (CPU).
         /// </summary>
         CentralProcessor = 3,
 
@@ -4850,7 +4850,7 @@ namespace Microsoft.PowerShell.Commands
         MathProcessor = 4,
 
         /// <summary>
-        /// Processor is a Digital Signal processor (DSP)
+        /// Processor is a Digital Signal processor (DSP).
         /// </summary>
         DSPProcessor = 5,
 
@@ -4960,7 +4960,7 @@ namespace Microsoft.PowerShell.Commands
         Desktop = 1,
 
         /// <summary>
-        /// The OEM specified a mobile role (for example, a laptop)
+        /// The OEM specified a mobile role (for example, a laptop).
         /// </summary>
         Mobile = 2,
 
@@ -5123,7 +5123,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="firmwareType">
         /// A reference to a <see cref="FirmwareType"/> enumeration to contain
-        /// the resultant firmware type
+        /// the resultant firmware type.
         /// </param>
         /// <returns></returns>
         [DllImport(PInvokeDllNames.GetFirmwareTypeDllName, SetLastError = true)]

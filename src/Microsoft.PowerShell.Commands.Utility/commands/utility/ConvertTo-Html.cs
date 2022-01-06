@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed
     class ConvertToHtmlCommand : PSCmdlet
     {
-        /// <summary>The incoming object</summary>
+        /// <summary>The incoming object.</summary>
         /// <value></value>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject

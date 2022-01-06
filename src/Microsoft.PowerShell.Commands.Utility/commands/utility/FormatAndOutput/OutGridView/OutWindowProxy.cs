@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
 
         private int _index;
 
-        /// <summary> Columns definition of the underlying Management List</summary>
+        /// <summary> Columns definition of the underlying Management List.</summary>
         private HeaderInfo _headerInfo;
 
         private bool _isWindowStarted;

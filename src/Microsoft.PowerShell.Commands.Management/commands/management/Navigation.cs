@@ -1357,7 +1357,7 @@ namespace Microsoft.PowerShell.Commands
         /// <exception cref="ProviderNotFoundException"></exception>
         /// <exception cref="ArgumentException">
         /// If <paramref name="scope"/> is less than zero, or not
-        /// a number and not "script", "global", "local", or "private"
+        /// a number and not "script", "global", "local", or "private".
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scope"/> is less than zero or greater than the number of currently

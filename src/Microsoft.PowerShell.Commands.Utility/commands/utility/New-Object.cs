@@ -23,13 +23,13 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// <summary>Create a new .net object</summary>
+    /// <summary>Create a new .net object.</summary>
     [Cmdlet(VerbsCommon.New, "Object", DefaultParameterSetName = netSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096620")]
     public sealed class NewObjectCommand : PSCmdlet
     {
         #region parameters
 
-        /// <summary> the number</summary>
+        /// <summary> the number.</summary>
         [Parameter(ParameterSetName = netSetName, Mandatory = true, Position = 0)]
         [ValidateTrustedData]
         public string TypeName { get; set; }
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion private
 
         #region Overrides
-        /// <summary> Create the object </summary>
+        /// <summary> Create the object. </summary>
         protected override void BeginProcessing()
         {
             Type type = null;

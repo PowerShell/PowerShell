@@ -690,7 +690,7 @@ namespace System.Management.Automation
         /// enclosing tags and attributes.
         /// </summary>
         /// <param name="me">
-        /// Enumerable containing members
+        /// Enumerable containing members.
         /// </param>
         /// <param name="depth"></param>
         /// <param name="writeEnclosingMemberSetElementTag">

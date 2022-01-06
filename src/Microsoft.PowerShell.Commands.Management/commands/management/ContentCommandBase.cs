@@ -468,10 +468,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets the IContentReaders for the current path(s)
+        /// Gets the IContentReaders for the current path(s).
         /// </summary>
         /// <returns>
-        /// An array of IContentReaders for the current path(s)
+        /// An array of IContentReaders for the current path(s).
         /// </returns>
         internal List<ContentHolder> GetContentReaders(
             string[] readerPaths,

@@ -13,14 +13,14 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public enum BreakpointType
     {
-        /// <summary>Breakpoint on a line within a script</summary>
+        /// <summary>Breakpoint on a line within a script.</summary>
         Line,
 
         /// <summary>
-        /// Breakpoint on a variable</summary>
+        /// Breakpoint on a variable.</summary>
         Variable,
 
-        /// <summary>Breakpoint on a command</summary>
+        /// <summary>Breakpoint on a command.</summary>
         Command
     }
 

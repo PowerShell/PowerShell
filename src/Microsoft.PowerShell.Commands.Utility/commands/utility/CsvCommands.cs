@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         public char Delimiter { get; set; }
 
         ///<summary>
-        ///Culture switch for csv conversion
+        ///Culture switch for csv conversion.
         ///</summary>
         [Parameter(ParameterSetName = "UseCulture")]
         public SwitchParameter UseCulture { get; set; }
@@ -789,7 +789,7 @@ namespace Microsoft.PowerShell.Commands
         public char Delimiter { get; set; }
 
         ///<summary>
-        ///Culture switch for csv conversion
+        ///Culture switch for csv conversion.
         ///</summary>
         [Parameter(ParameterSetName = "UseCulture", Mandatory = true)]
         [ValidateNotNull]

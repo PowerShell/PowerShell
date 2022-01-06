@@ -927,7 +927,7 @@ namespace Microsoft.PowerShell.Commands
             private readonly long _latency = -1;
 
             /// <summary>
-            /// Gets the sequence number of this ping in the sequence of pings to the <see cref="Destination"/>
+            /// Gets the sequence number of this ping in the sequence of pings to the <see cref="Destination"/>.
             /// </summary>
             public uint Ping { get; }
 

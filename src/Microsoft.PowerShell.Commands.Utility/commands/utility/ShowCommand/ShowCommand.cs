@@ -591,7 +591,7 @@ namespace Microsoft.PowerShell.Commands
                 internal KEY_EVENT_RECORD KeyEvent;
 
                 /// <summary>
-                /// Sets the necessary fields of <paramref name="inputRecord"/> for a KeyDown event for the <paramref name="character"/>
+                /// Sets the necessary fields of <paramref name="inputRecord"/> for a KeyDown event for the <paramref name="character"/>.
                 /// </summary>
                 /// <param name="inputRecord">Input record to be set.</param>
                 /// <param name="character">Character to set the record with.</param>
