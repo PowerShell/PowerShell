@@ -79,7 +79,7 @@ namespace System.Management.Automation
         /// The object that needs to be written to the pipeline.
         /// </param>
         /// <param name="enumerateCollection">
-        /// true if the collection should be enumerated
+        /// true if the collection should be enumerated.
         /// </param>
         /// <remarks>
         ///  When the cmdlet wants to write multiple objects out, it will call this
@@ -113,10 +113,10 @@ namespace System.Management.Automation
         /// Displays progress output if enabled.
         /// </summary>
         /// <param name="sourceId">
-        /// Identifies which command is reporting progress
+        /// Identifies which command is reporting progress.
         /// </param>
         /// <param name="progressRecord">
-        /// Progress status to be displayed
+        /// Progress status to be displayed.
         /// </param>
         /// <remarks>
         /// The implementation of the API should display these progress records
@@ -174,7 +174,7 @@ namespace System.Management.Automation
         /// pipeline execution log.
         ///
         /// If LogPipelineExecutionDetail is turned on, this information will be written
-        /// to monad log under log category "Pipeline execution detail"
+        /// to monad log under log category "Pipeline execution detail".
         /// </remarks>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteDebug(string)"/>
         /// <seealso cref="System.Management.Automation.ICommandRuntime.WriteVerbose(string)"/>
@@ -238,7 +238,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="action">
         /// Name of the action which is being performed. This will
-        /// potentially be displayed to the user. (default is Cmdlet name)
+        /// potentially be displayed to the user. (default is Cmdlet name).
         /// </param>
         /// <returns>
         /// If ShouldProcess returns true, the operation should be performed.
@@ -526,7 +526,7 @@ namespace System.Management.Automation
         /// This interface will be called to route fatal errors from a cmdlet.
         /// </summary>
         /// <param name="errorRecord">
-        /// The error which caused the command to be terminated
+        /// The error which caused the command to be terminated.
         /// </param>
         /// <remarks>
         /// <see cref="System.Management.Automation.Cmdlet.ThrowTerminatingError"/>

@@ -260,7 +260,7 @@ namespace System.Management.Automation
     /// of the command will see something like PSListModifier[Mailbox] and know they need
     /// to pass in Mailboxes.
     /// </summary>
-    /// <typeparam name="T">The list element type</typeparam>
+    /// <typeparam name="T">The list element type.</typeparam>
     public class PSListModifier<T> : PSListModifier
     {
         /// <summary>

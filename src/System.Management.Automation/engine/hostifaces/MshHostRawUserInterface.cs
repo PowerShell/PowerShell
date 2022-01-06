@@ -49,10 +49,10 @@ namespace System.Management.Automation.Host
         /// Initializes a new instance of the Coordinates class and defines the X and Y values.
         /// </summary>
         /// <param name="x">
-        /// The X coordinate
+        /// The X coordinate.
         /// </param>
         /// <param name="y">
-        /// The Y coordinate
+        /// The Y coordinate.
         /// </param>
         public
         Coordinates(int x, int y)
@@ -62,7 +62,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.ToString"/>
+        /// Overrides <see cref="System.Object.ToString"/>.
         /// </summary>
         /// <returns>
         /// "a,b" where a and b are the values of the X and Y properties.
@@ -75,7 +75,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="System.Object.Equals(object)"/>.
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -99,7 +99,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="System.Object.GetHashCode"/>.
         /// </summary>
         /// <returns>
         /// Hash code for this instance.
@@ -235,10 +235,10 @@ namespace System.Management.Automation.Host
         /// Initialize a new instance of the Size class and defines the Width and Height values.
         /// </summary>
         /// <param name="width">
-        /// The Width
+        /// The Width.
         /// </param>
         /// <param name="height">
-        /// The Height
+        /// The Height.
         /// </param>
         public
         Size(int width, int height)
@@ -248,7 +248,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overloads <see cref="System.Object.ToString"/>
+        /// Overloads <see cref="System.Object.ToString"/>.
         /// </summary>
         /// <returns>
         /// "a,b" where a and b are the values of the Width and Height properties.
@@ -261,7 +261,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="System.Object.Equals(object)"/>.
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -285,7 +285,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="System.Object.GetHashCode"/>.
         /// </summary>
         /// <returns>
         /// Hash code for this instance.
@@ -389,7 +389,7 @@ namespace System.Management.Automation.Host
 
     /// <summary>
     /// Governs the behavior of <see cref="System.Management.Automation.Host.PSHostRawUserInterface.ReadKey()"/>
-    /// and <see cref="System.Management.Automation.Host.PSHostRawUserInterface.ReadKey(System.Management.Automation.Host.ReadKeyOptions)"/>
+    /// and <see cref="System.Management.Automation.Host.PSHostRawUserInterface.ReadKey(System.Management.Automation.Host.ReadKeyOptions)"/>.
     /// </summary>
     [Flags]
     public
@@ -530,16 +530,16 @@ namespace System.Management.Automation.Host
         /// Character, ControlKeyState and KeyDown values.
         /// </summary>
         /// <param name="virtualKeyCode">
-        /// The virtual key code
+        /// The virtual key code.
         /// </param>
         /// <param name="ch">
-        /// The character
+        /// The character.
         /// </param>
         /// <param name="controlKeyState">
-        /// The control key state
+        /// The control key state.
         /// </param>
         /// <param name="keyDown">
-        /// Whether the key is pressed or released
+        /// Whether the key is pressed or released.
         /// </param>
         public
         KeyInfo
@@ -557,7 +557,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overloads <see cref="System.Object.ToString"/>
+        /// Overloads <see cref="System.Object.ToString"/>.
         /// </summary>
         /// <returns>
         /// "a,b,c,d" where a, b, c, and d are the values of the VirtualKeyCode, Character, ControlKeyState, and KeyDown properties.
@@ -569,7 +569,7 @@ namespace System.Management.Automation.Host
             return string.Format(CultureInfo.InvariantCulture, "{0},{1},{2},{3}", VirtualKeyCode, Character, ControlKeyState, KeyDown);
         }
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="System.Object.Equals(object)"/>.
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -593,7 +593,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="System.Object.GetHashCode"/>.
         /// </summary>
         /// <returns>
         /// Hash code for this instance.
@@ -729,20 +729,20 @@ namespace System.Management.Automation.Host
         /// Initialize a new instance of the Rectangle class and defines the Left, Top, Right, and Bottom values.
         /// </summary>
         /// <param name="left">
-        /// The left side of the rectangle
+        /// The left side of the rectangle.
         /// </param>
         /// <param name="top">
-        /// The top of the rectangle
+        /// The top of the rectangle.
         /// </param>
         /// <param name="right">
-        /// The right side of the rectangle
+        /// The right side of the rectangle.
         /// </param>
         /// <param name="bottom">
-        /// The bottom of the rectangle
+        /// The bottom of the rectangle.
         /// </param>
         /// <exception cref="ArgumentException">
         /// <paramref name="right"/> is less than <paramref name="left"/>;
-        /// <paramref name="bottom"/> is less than <paramref name="top"/>
+        /// <paramref name="bottom"/> is less than <paramref name="top"/>.
         /// </exception>
         public
         Rectangle(int left, int top, int right, int bottom)
@@ -774,10 +774,10 @@ namespace System.Management.Automation.Host
         /// -->
         /// </summary>
         /// <param name="upperLeft">
-        /// The Coordinates of the upper left corner of the Rectangle
+        /// The Coordinates of the upper left corner of the Rectangle.
         /// </param>
         /// <param name="lowerRight">
-        /// The Coordinates of the lower right corner of the Rectangle
+        /// The Coordinates of the lower right corner of the Rectangle.
         /// </param>
         /// <exception/>
         public
@@ -787,7 +787,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overloads <see cref="System.Object.ToString"/>
+        /// Overloads <see cref="System.Object.ToString"/>.
         /// </summary>
         /// <returns>
         /// "a,b ; c,d" where a, b, c, and d are values of the Left, Top, Right, and Bottom properties.
@@ -800,7 +800,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="System.Object.Equals(object)"/>.
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -824,7 +824,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="System.Object.GetHashCode"/>.
         /// </summary>
         /// <returns>
         /// Hash code for this instance.
@@ -994,16 +994,16 @@ namespace System.Management.Automation.Host
         /// Character, ForegroundColor, BackgroundColor and Type values.
         /// </summary>
         /// <param name="character">
-        /// The character in this BufferCell object
+        /// The character in this BufferCell object.
         /// </param>
         /// <param name="foreground">
-        /// The foreground color of this BufferCell object
+        /// The foreground color of this BufferCell object.
         /// </param>
         /// <param name="background">
-        /// The foreground color of this BufferCell object
+        /// The foreground color of this BufferCell object.
         /// </param>
         /// <param name="bufferCellType">
-        /// The type of this BufferCell object
+        /// The type of this BufferCell object.
         /// </param>
         public
         BufferCell(char character, ConsoleColor foreground, ConsoleColor background, BufferCellType bufferCellType)
@@ -1015,7 +1015,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overloads <see cref="System.Object.ToString"/>
+        /// Overloads <see cref="System.Object.ToString"/>.
         /// </summary>
         /// <returns>
         /// "'a' b c d" where a, b, c, and d are the values of the Character, ForegroundColor, BackgroundColor, and Type properties.
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.Equals(object)"/>
+        /// Overrides <see cref="System.Object.Equals(object)"/>.
         /// </summary>
         /// <param name="obj">
         /// object to be compared for equality.
@@ -1052,7 +1052,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Overrides <see cref="System.Object.GetHashCode"/>
+        /// Overrides <see cref="System.Object.GetHashCode"/>.
         /// <!-- consider (ForegroundColor XOR BackgroundColor) the high-order part of a 32-bit int,
         ///      and Character the lower order half.  Then use the int32.GetHashCode.-->
         /// </summary>
@@ -1211,7 +1211,7 @@ namespace System.Management.Automation.Host
         /// <remarks>
         /// To write to the screen buffer without updating the cursor position, use
         /// <see cref="System.Management.Automation.Host.PSHostRawUserInterface.SetBufferContents(Rectangle, BufferCell)"/> or
-        /// <see cref="System.Management.Automation.Host.PSHostRawUserInterface.SetBufferContents(Coordinates, BufferCell[,])"/>
+        /// <see cref="System.Management.Automation.Host.PSHostRawUserInterface.SetBufferContents(Coordinates, BufferCell[,])"/>.
         /// </remarks>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.MaxPhysicalWindowSize"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.WindowSize"/>
@@ -1334,7 +1334,7 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// Reads a key stroke from the keyboard device, blocking until a keystroke is typed.
-        /// Same as ReadKey(ReadKeyOptions.IncludeKeyDown)
+        /// Same as ReadKey(ReadKeyOptions.IncludeKeyDown).
         /// </summary>
         /// <returns>
         /// Key stroke when a key is pressed.
@@ -1361,7 +1361,7 @@ namespace System.Management.Automation.Host
         /// </summary>
         /// <param name="options">
         /// A bit mask of the options to be used to read the keyboard. Constants defined by
-        /// <see cref="System.Management.Automation.Host.ReadKeyOptions"/>
+        /// <see cref="System.Management.Automation.Host.ReadKeyOptions"/>.
         /// </param>
         /// <returns>
         /// Key stroke depending on the value of <paramref name="options"/>.
@@ -1496,7 +1496,7 @@ namespace System.Management.Automation.Host
         /// </param>
         /// <returns>
         /// An array of <see cref="System.Management.Automation.Host.BufferCell"/> objects extracted from
-        /// the rectangular region of the screen buffer specified by <paramref name="rectangle"/>
+        /// the rectangular region of the screen buffer specified by <paramref name="rectangle"/>.
         /// </returns>
         /// <remarks>
         /// If the rectangle is completely outside of the screen buffer, a BufferCell array of zero rows and column will be
@@ -1569,12 +1569,12 @@ namespace System.Management.Automation.Host
         /// The string whose substring length we want to know.
         /// </param>
         /// <param name="offset">
-        /// Offset where the substring begins in <paramref name="source"/>
+        /// Offset where the substring begins in <paramref name="source"/>.
         /// </param>
         /// <returns>
         /// The default implementation calls <see cref="PSHostRawUserInterface.LengthInBufferCells(string)"/> method
         /// with the substring extracted from the <paramref name="source"/> string
-        /// starting at the offset <paramref name="offset"/>
+        /// starting at the offset <paramref name="offset"/>.
         /// </returns>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(int, int, BufferCell)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(Size, BufferCell)"/>
@@ -1613,7 +1613,7 @@ namespace System.Management.Automation.Host
         /// The string whose length we want to know.
         /// </param>
         /// <returns>
-        /// The default implementation returns the length of <paramref name="source"/>
+        /// The default implementation returns the length of <paramref name="source"/>.
         /// </returns>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(int, int, BufferCell)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(Size, BufferCell)"/>
@@ -1681,11 +1681,11 @@ namespace System.Management.Automation.Host
         /// <returns>
         /// A two dimensional array of BufferCells whose characters are the same as those in <paramref name="contents"/>
         /// and whose foreground and background colors set to <paramref name="foregroundColor"/> and
-        /// <paramref name="backgroundColor"/>
+        /// <paramref name="backgroundColor"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="contents"/> is null;
-        /// Any string in <paramref name="contents"/> is null or empty
+        /// Any string in <paramref name="contents"/> is null or empty.
         /// </exception>
         /// <remark>
         /// If a character C takes one BufferCell to display as determined by LengthInBufferCells,
@@ -1787,10 +1787,10 @@ namespace System.Management.Automation.Host
         /// <seealso cref="PSHostRawUserInterface"/>
         /// </summary>
         /// <param name="width">
-        /// The number of columns of the resulting array
+        /// The number of columns of the resulting array.
         /// </param>
         /// <param name="height">
-        /// The number of rows of the resulting array
+        /// The number of rows of the resulting array.
         /// </param>
         /// <param name="contents">
         /// The cell to be copied to each of the elements of the resulting array.
@@ -1798,7 +1798,7 @@ namespace System.Management.Automation.Host
         /// <returns>
         /// A <paramref name="width"/> by <paramref name="height"/> array of BufferCells where each cell's value is
         /// based on <paramref name="contents"/>
-        /// <paramref name="backgroundColor"/>
+        /// <paramref name="backgroundColor"/>.
         /// </returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="width"/> is less than 1;
@@ -1882,7 +1882,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Same as <see cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(int, int, BufferCell)"/>
+        /// Same as <see cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(int, int, BufferCell)"/>.
         /// </summary>
         /// <param name="size">
         /// The width and height of the resulting array.
@@ -1892,7 +1892,7 @@ namespace System.Management.Automation.Host
         /// </param>
         /// <returns>
         /// An array of BufferCells whose size is <paramref name="size"/> and where each cell's value is
-        /// based on <paramref name="contents"/>
+        /// based on <paramref name="contents"/>.
         /// </returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="size"/>.Width or <paramref name="size"/>.Height is less than 1.

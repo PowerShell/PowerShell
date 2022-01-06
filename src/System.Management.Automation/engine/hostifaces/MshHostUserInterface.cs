@@ -69,7 +69,7 @@ namespace System.Management.Automation.Host
         /// <remarks>
         /// Note that credentials (a user name and password) should be gathered with
         /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
-        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>.
         /// </remarks>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
@@ -172,7 +172,7 @@ namespace System.Management.Automation.Host
         /// written to by the variants of
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(string)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Write(System.ConsoleColor, System.ConsoleColor, string)"/>
-        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine()"/> and
+        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine()"/> and.
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.WriteLine(string)"/>
         /// </summary>
         /// <param name="value">
@@ -932,7 +932,7 @@ namespace System.Management.Automation.Host
         /// Constructs a 'dialog' where the user is presented with a number of fields for which to supply values.
         /// </summary>
         /// <param name="caption">
-        /// Caption to precede or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
+        /// Caption to precede or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)".
         /// </param>
         /// <param name="message">
         /// A text description of the set of fields to be prompt.
@@ -1007,7 +1007,7 @@ namespace System.Management.Automation.Host
         /// Types of credential can be supplied by the user.
         /// </param>
         /// <param name="options">
-        /// Options that control the credential gathering UI behavior
+        /// Options that control the credential gathering UI behavior.
         /// </param>
         /// <returns>
         /// User input credential.
@@ -1026,7 +1026,7 @@ namespace System.Management.Automation.Host
         /// Presents a dialog allowing the user to choose an option from a set of options.
         /// </summary>
         /// <param name="caption">
-        /// Caption to precede or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
+        /// Caption to precede or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)".
         /// </param>
         /// <param name="message">
         /// A message that describes what the choice is for.
@@ -1347,7 +1347,7 @@ namespace System.Management.Automation.Host
         /// Presents a dialog allowing the user to choose options from a set of options.
         /// </summary>
         /// <param name="caption">
-        /// Caption to precede or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)"
+        /// Caption to precede or title the prompt.  E.g. "Parameters for get-foo (instance 1 of 2)".
         /// </param>
         /// <param name="message">
         /// A message that describes what the choice is for.

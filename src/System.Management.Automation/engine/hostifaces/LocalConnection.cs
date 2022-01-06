@@ -37,13 +37,13 @@ namespace System.Management.Automation.Runspaces
         /// of PSHost.
         /// </summary>
         /// <param name="host">
-        /// The explicit PSHost implementation
+        /// The explicit PSHost implementation.
         /// </param>
         /// <param name="initialSessionState">
         /// configuration information for this minshell.
         /// </param>
         /// <param name="suppressClone">
-        /// If true, don't make a copy of the initial session state object
+        /// If true, don't make a copy of the initial session state object.
         /// </param>
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
         internal LocalRunspace(PSHost host, InitialSessionState initialSessionState, bool suppressClone)
@@ -56,7 +56,7 @@ namespace System.Management.Automation.Runspaces
         /// of PSHost.
         /// </summary>
         /// <param name="host">
-        /// The explicit PSHost implementation
+        /// The explicit PSHost implementation.
         /// </param>
         /// <param name="initialSessionState">
         /// configuration information for this minshell.
@@ -127,13 +127,13 @@ namespace System.Management.Automation.Runspaces
         /// This property determines whether a new thread is create for each invocation.
         /// </summary>
         /// <remarks>
-        /// Any updates to the value of this property must be done before the Runspace is opened
+        /// Any updates to the value of this property must be done before the Runspace is opened.
         /// </remarks>
         /// <exception cref="InvalidRunspaceStateException">
-        /// An attempt to change this property was made after opening the Runspace
+        /// An attempt to change this property was made after opening the Runspace.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// The thread options cannot be changed to the requested value
+        /// The thread options cannot be changed to the requested value.
         /// </exception>
         public override PSThreadOptions ThreadOptions
         {
@@ -589,7 +589,7 @@ namespace System.Management.Automation.Runspaces
         /// Open the runspace.
         /// </summary>
         /// <param name="syncCall">
-        /// parameter which control if Open is done synchronously or asynchronously
+        /// parameter which control if Open is done synchronously or asynchronously.
         /// </param>
         protected override void OpenHelper(bool syncCall)
         {
@@ -764,7 +764,7 @@ namespace System.Management.Automation.Runspaces
         /// Returns the thread that must be used to execute pipelines when CreateThreadOptions is ReuseThread.
         /// </summary>
         /// <remarks>
-        /// The pipeline calls this function after ensuring there is a single thread in the pipeline, so no locking is necessary
+        /// The pipeline calls this function after ensuring there is a single thread in the pipeline, so no locking is necessary.
         /// </remarks>
         internal PipelineThread GetPipelineThread()
         {

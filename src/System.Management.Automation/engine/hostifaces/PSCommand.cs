@@ -64,7 +64,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a command to construct a command pipeline.
-        /// For example, to construct a command string "get-process | sort-object",
+        /// For example, to construct a command string "get-process | sort-object".
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process").AddCommand("sort-object");
         ///     </code>
@@ -105,7 +105,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a cmdlet to construct a command pipeline.
-        /// For example, to construct a command string "get-process | sort-object",
+        /// For example, to construct a command string "get-process | sort-object".
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process").AddCommand("sort-object");
         ///     </code>
@@ -149,7 +149,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a piece of script to construct a command pipeline.
-        /// For example, to construct a command string "get-process | foreach { $_.Name }"
+        /// For example, to construct a command string "get-process | foreach { $_.Name }".
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process")
         ///             .AddScript("foreach { $_.Name }", true);
@@ -191,7 +191,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a piece of script to construct a command pipeline.
-        /// For example, to construct a command string "get-process | foreach { $_.Name }"
+        /// For example, to construct a command string "get-process | foreach { $_.Name }".
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process")
         ///             .AddScript("foreach { $_.Name }", true);
@@ -274,7 +274,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a parameter to the last added command.
-        /// For example, to construct a command string "get-process | select-object -property name"
+        /// For example, to construct a command string "get-process | select-object -property name".
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process")
         ///             .AddCommand("select-object")
@@ -320,7 +320,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Adds a switch parameter to the last added command.
-        /// For example, to construct a command string "get-process | sort-object -descending"
+        /// For example, to construct a command string "get-process | sort-object -descending".
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process")
         ///             .AddCommand("sort-object")
@@ -383,7 +383,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Adds an argument to the last added command.
-        /// For example, to construct a command string "get-process | select-object name"
+        /// For example, to construct a command string "get-process | select-object name".
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process")
         ///             .AddCommand("select-object")
@@ -427,7 +427,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an additional statement for execution
         ///
-        /// For example,
+        /// For example.
         ///     <code>
         ///         Runspace rs = RunspaceFactory.CreateRunspace();
         ///         PowerShell ps = PowerShell.Create();
@@ -498,7 +498,7 @@ namespace System.Management.Automation
         /// Creates a shallow copy of the current PSCommand.
         /// </summary>
         /// <returns>
-        /// A shallow copy of the current PSCommand
+        /// A shallow copy of the current PSCommand.
         /// </returns>
         public PSCommand Clone()
         {
@@ -526,7 +526,7 @@ namespace System.Management.Automation
         /// Caller should check the input.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
-        /// command is null
+        /// command is null.
         /// </exception>
         private void Initialize(string command, bool isScript, bool? useLocalScope)
         {

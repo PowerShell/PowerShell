@@ -14,7 +14,7 @@ namespace System.Management.Automation.Language
     {
         /// <summary>
         /// Escapes content so that it is safe for inclusion in a single-quoted string.
-        /// For example: "'" + EscapeSingleQuotedStringContent(userContent) + "'"
+        /// For example: "'" + EscapeSingleQuotedStringContent(userContent) + "'".
         /// </summary>
         /// <param name="value">The content to be included in a single-quoted string.</param>
         /// <returns>Content with all single-quotes escaped.</returns>
@@ -41,7 +41,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// Escapes content so that it is safe for inclusion in a block comment.
-        /// For example: "&lt;#" + EscapeBlockCommentContent(userContent) + "#&gt;"
+        /// For example: "&lt;#" + EscapeBlockCommentContent(userContent) + "#&gt;".
         /// </summary>
         /// <param name="value">The content to be included in a block comment.</param>
         /// <returns>Content with all block comment characters escaped.</returns>
@@ -90,7 +90,7 @@ namespace System.Management.Automation.Language
         /// Escapes content so that it is safe for inclusion in a string that will later be used in a variable
         /// name reference. This is only valid when used within PowerShell's curly brace naming syntax.
         ///
-        /// For example: '${' + EscapeVariableName('value') + '}'
+        /// For example: '${' + EscapeVariableName('value') + '}'.
         /// </summary>
         /// <param name="value">The content to be included as a variable name.</param>
         /// <returns>Content with all curly braces and back-ticks escaped.</returns>

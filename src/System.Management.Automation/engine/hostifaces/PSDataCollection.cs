@@ -163,7 +163,7 @@ namespace System.Management.Automation
         /// Creates a PSDataCollection that includes all the items in the IEnumerable and invokes Complete().
         /// </summary>
         /// <param name="items">
-        /// Items used to initialize the collection
+        /// Items used to initialize the collection.
         /// </param>
         /// <remarks>
         /// This constructor is useful when the user wants to use an IEnumerable as an input to one of the PowerShell.BeginInvoke overloads.
@@ -177,7 +177,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes a new instance with the specified capacity
-        /// <paramref name="capacity"/>
+        /// <paramref name="capacity"/>.
         /// </summary>
         /// <param name="capacity">
         /// The number of elements that the new buffer can initially
@@ -312,7 +312,7 @@ namespace System.Management.Automation
         /// as the data buffer.
         /// </summary>
         /// <param name="listToUse">
-        /// buffer where the elements are stored
+        /// buffer where the elements are stored.
         /// </param>
         /// <remarks>
         /// Using this constructor will make the data buffer a wrapper on
@@ -779,7 +779,7 @@ namespace System.Management.Automation
         /// Adds an item to the thread-safe buffer.
         /// </summary>
         /// <param name="item">
-        /// item to add
+        /// item to add.
         /// </param>
         /// <exception cref="InvalidOperationException">
         /// Objects cannot be added to a closed buffer.
@@ -847,7 +847,7 @@ namespace System.Management.Automation
         /// Type T cannot be cast automatically to the type of the destination array.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// array is a null reference
+        /// array is a null reference.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// arrayIndex is less than 0.
@@ -938,7 +938,7 @@ namespace System.Management.Automation
         /// element with a specific value.
         /// </summary>
         /// <param name="value">
-        /// The object to locate in the collection
+        /// The object to locate in the collection.
         /// </param>
         /// <returns>
         /// true if the element value is found in the collection;
@@ -1114,7 +1114,7 @@ namespace System.Management.Automation
         /// available space from arrayIndex to the end of the destination array.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// array is a null reference
+        /// array is a null reference.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
         /// arrayIndex is less than 0.
@@ -1246,7 +1246,7 @@ namespace System.Management.Automation
         /// Guid.Empty if not initiated by a PowerShell instance.
         /// </param>
         /// <param name="index">
-        /// The zero-based index of the buffer where the object is to be inserted
+        /// The zero-based index of the buffer where the object is to be inserted.
         /// </param>
         /// <param name="item">
         /// The object to be inserted into the buffer.
@@ -1455,7 +1455,7 @@ namespace System.Management.Automation
         /// Guid.Empty if this is not initiated by a PowerShell instance.
         /// </param>
         /// <param name="item">
-        /// item to add
+        /// item to add.
         /// </param>
         /// <exception cref="InvalidOperationException">
         /// Objects cannot be added to a closed buffer.

@@ -376,7 +376,7 @@ namespace System.Management.Automation.Runspaces
         /// Constructor.
         /// </summary>
         /// <param name="ownerId">
-        /// Instance Id of the pool creating this instance
+        /// Instance Id of the pool creating this instance.
         /// </param>
         /// <param name="callback">
         /// Callback to call when the async operation completes.
@@ -386,7 +386,7 @@ namespace System.Management.Automation.Runspaces
         /// </param>
         /// <param name="isCalledFromOpenAsync">
         /// true if AsyncResult monitors Async Open.
-        /// false otherwise
+        /// false otherwise.
         /// </param>
         internal RunspacePoolAsyncResult(Guid ownerId, AsyncCallback callback, object state,
             bool isCalledFromOpenAsync)
@@ -425,7 +425,7 @@ namespace System.Management.Automation.Runspaces
         /// Constructor.
         /// </summary>
         /// <param name="ownerId">
-        /// Instance Id of the pool creating this instance
+        /// Instance Id of the pool creating this instance.
         /// </param>
         /// <param name="callback">
         /// Callback to call when the async operation completes.
@@ -479,7 +479,7 @@ namespace System.Management.Automation.Runspaces
         /// waiting threads.
         /// </summary>
         /// <param name="state">
-        /// This is not used
+        /// This is not used.
         /// </param>
         /// <remarks>
         /// This method is called from a thread pool thread to release
@@ -520,7 +520,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor which creates a RunspacePool using the
         /// supplied <paramref name="configuration"/>,
-        /// <paramref name="minRunspaces"/> and <paramref name="maxRunspaces"/>
+        /// <paramref name="minRunspaces"/> and <paramref name="maxRunspaces"/>.
         /// </summary>
         /// <param name="minRunspaces">
         /// The minimum number of Runspaces that can exist in this pool.
@@ -552,7 +552,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Constructor which creates a RunspacePool using the
         /// supplied <paramref name="initialSessionState"/>,
-        /// <paramref name="minRunspaces"/> and <paramref name="maxRunspaces"/>
+        /// <paramref name="minRunspaces"/> and <paramref name="maxRunspaces"/>.
         /// </summary>
         /// <param name="minRunspaces">
         /// The minimum number of Runspaces that can exist in this pool.
@@ -1040,7 +1040,7 @@ namespace System.Management.Automation.Runspaces
         /// Retrieves the maximum number of runspaces the pool maintains.
         /// </summary>
         /// <returns>
-        /// The maximum number of runspaces in the pool
+        /// The maximum number of runspaces in the pool.
         /// </returns>
         public int GetMaxRunspaces()
         {
@@ -1070,7 +1070,7 @@ namespace System.Management.Automation.Runspaces
         /// Retrieves the minimum number of runspaces the pool maintains.
         /// </summary>
         /// <returns>
-        /// The minimum number of runspaces in the pool
+        /// The minimum number of runspaces in the pool.
         /// </returns>
         public int GetMinRunspaces()
         {
@@ -1094,7 +1094,7 @@ namespace System.Management.Automation.Runspaces
         /// be opened before it can be used.
         /// </summary>
         /// <exception cref="InvalidRunspacePoolStateException">
-        /// RunspacePoolState is not BeforeOpen
+        /// RunspacePoolState is not BeforeOpen.
         /// </exception>
         public void Open()
         {
@@ -1232,10 +1232,10 @@ namespace System.Management.Automation.Runspaces
         /// This property determines whether a new thread is created for each invocation.
         /// </summary>
         /// <remarks>
-        /// Any updates to the value of this property must be done before the RunspacePool is opened
+        /// Any updates to the value of this property must be done before the RunspacePool is opened.
         /// </remarks>
         /// <exception cref="InvalidRunspacePoolStateException">
-        /// An attempt to change this property was made after opening the RunspacePool
+        /// An attempt to change this property was made after opening the RunspacePool.
         /// </exception>
         public PSThreadOptions ThreadOptions
         {
@@ -1259,10 +1259,10 @@ namespace System.Management.Automation.Runspaces
         /// ApartmentState of the thread used to execute commands within this RunspacePool.
         /// </summary>
         /// <remarks>
-        /// Any updates to the value of this property must be done before the RunspacePool is opened
+        /// Any updates to the value of this property must be done before the RunspacePool is opened.
         /// </remarks>
         /// <exception cref="InvalidRunspacePoolStateException">
-        /// An attempt to change this property was made after opening the RunspacePool
+        /// An attempt to change this property was made after opening the RunspacePool.
         /// </exception>
         public ApartmentState ApartmentState
         {
@@ -1284,7 +1284,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Gets Runspace asynchronously from the runspace pool. The caller
-        /// will get notified with the runspace using <paramref name="callback"/>
+        /// will get notified with the runspace using <paramref name="callback"/>.
         /// </summary>
         /// <param name="callback">
         /// A AsyncCallback to call once the runspace is available.

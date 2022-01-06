@@ -190,7 +190,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Provide basic information about the command.
         /// </summary>
-        /// <value>may be null</value>
+        /// <value>may be null.</value>
         public CommandInfo MyCommand { get; }
 
         /// <summary>
@@ -257,7 +257,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The text of the line that contained this cmdlet invocation.
         /// </summary>
-        /// <value>Line that was entered to invoke this command</value>
+        /// <value>Line that was entered to invoke this command.</value>
         public string Line
         {
             get
@@ -275,7 +275,7 @@ namespace System.Management.Automation
         /// Formatted message indicating where the cmdlet appeared
         /// in the line.
         /// </summary>
-        /// <value>Formatted string indicating the command's position in the line</value>
+        /// <value>Formatted string indicating the command's position in the line.</value>
         public string PositionMessage
         {
             get { return PositionUtilities.VerboseMessage(ScriptPosition); }
@@ -322,13 +322,13 @@ namespace System.Management.Automation
         /// <summary>
         /// How many elements are in the containing pipeline.
         /// </summary>
-        /// <value>number of elements in the containing pipeline</value>
+        /// <value>number of elements in the containing pipeline.</value>
         public int PipelineLength { get; internal set; }
 
         /// <summary>
         /// Which element this command was in the containing pipeline.
         /// </summary>
-        /// <value>which element this command was in the containing pipeline</value>
+        /// <value>which element this command was in the containing pipeline.</value>
         public int PipelinePosition { get; internal set; }
 
         /// <summary>

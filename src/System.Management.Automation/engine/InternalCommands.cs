@@ -1146,7 +1146,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Unroll the object to be output. If it's of type IEnumerator, unroll and output it
-        /// by calling WriteOutIEnumerator. If it's not, unroll and output it by calling WriteObject(obj, true)
+        /// by calling WriteOutIEnumerator. If it's not, unroll and output it by calling WriteObject(obj, true).
         /// </summary>
         /// <param name="obj">Source object.</param>
         private void WriteToPipelineWithUnrolling(object obj)

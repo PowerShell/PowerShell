@@ -49,7 +49,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Constructor which creates a RunspacePool using the
         /// supplied <paramref name="configuration"/>, <paramref name="minRunspaces"/>
-        /// and <paramref name="maxRunspaces"/>
+        /// and <paramref name="maxRunspaces"/>.
         /// </summary>
         /// <param name="maxRunspaces">
         /// The maximum number of Runspaces that can exist in this pool.
@@ -89,7 +89,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Constructor which creates a RunspacePool using the
         /// supplied <paramref name="configuration"/>, <paramref name="minRunspaces"/>
-        /// and <paramref name="maxRunspaces"/>
+        /// and <paramref name="maxRunspaces"/>.
         /// </summary>
         /// <param name="initialSessionState">
         /// InitialSessionState to use when creating a new Runspace.
@@ -475,7 +475,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Retrieves the maximum number of runspaces the pool maintains.
         /// </summary>
         /// <returns>
-        /// The maximum number of runspaces in the pool
+        /// The maximum number of runspaces in the pool.
         /// </returns>
         public int GetMaxRunspaces()
         {
@@ -515,7 +515,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Retrieves the minimum number of runspaces the pool maintains.
         /// </summary>
         /// <returns>
-        /// The minimum number of runspaces in the pool
+        /// The minimum number of runspaces in the pool.
         /// </returns>
         public int GetMinRunspaces()
         {
@@ -527,7 +527,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// this method.
         /// </summary>
         /// <exception cref="ArgumentException">
-        /// If the RunspacePool failed or has been closed
+        /// If the RunspacePool failed or has been closed.
         /// </exception>
         /// <returns>
         /// The number of available runspace in the pool.
@@ -572,7 +572,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// be opened before it can be used.
         /// </summary>
         /// <exception cref="InvalidRunspacePoolStateException">
-        /// RunspacePoolState is not BeforeOpen
+        /// RunspacePoolState is not BeforeOpen.
         /// </exception>
         public virtual void Open()
         {
@@ -847,7 +847,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// it determines whether a new thread is create when a pipeline is executed.
         /// </summary>
         /// <remarks>
-        /// Any updates to the value of this property must be done before the RunspacePool is opened
+        /// Any updates to the value of this property must be done before the RunspacePool is opened.
         /// </remarks>
         internal PSThreadOptions ThreadOptions { get; set; } = PSThreadOptions.Default;
 
@@ -855,13 +855,13 @@ namespace System.Management.Automation.Runspaces.Internal
         /// The value of this property is propagated to all the Runspaces in this pool.
         /// </summary>
         /// <remarks>
-        /// Any updates to the value of this property must be done before the RunspacePool is opened
+        /// Any updates to the value of this property must be done before the RunspacePool is opened.
         /// </remarks>
         internal ApartmentState ApartmentState { get; set; } = Runspace.DefaultApartmentState;
 
         /// <summary>
         /// Gets Runspace asynchronously from the runspace pool. The caller
-        /// will get notified with the runspace using <paramref name="callback"/>
+        /// will get notified with the runspace using <paramref name="callback"/>.
         /// </summary>
         /// <param name="callback">
         /// A AsyncCallback to call once the runspace is available.
@@ -958,7 +958,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Runspace pool must be opened before it can be used.
         /// </summary>
         /// <param name="isAsync">
-        /// true to open asynchronously
+        /// true to open asynchronously.
         /// </param>
         /// <param name="callback">
         /// A AsyncCallback to call once the BeginOpen completes.
@@ -1078,7 +1078,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Starting point for asynchronous thread.
         /// </summary>
         /// <remarks>
-        /// asyncResult object
+        /// asyncResult object.
         /// </remarks>
         protected void OpenThreadProc(object o)
         {
@@ -1109,7 +1109,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Closes the runspacepool synchronously / asynchronously.
         /// </summary>
         /// <param name="isAsync">
-        /// true to close asynchronously
+        /// true to close asynchronously.
         /// </param>
         /// <param name="callback">
         /// A AsyncCallback to call once the BeginClose completes.
@@ -1239,7 +1239,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Creates a new Runspace and initializes it by calling Open()
+        /// Creates a new Runspace and initializes it by calling Open().
         /// </summary>
         /// <returns>
         /// An opened Runspace.
@@ -1288,7 +1288,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Cleans/Closes the runspace.
         /// </summary>
         /// <param name="runspace">
-        /// Runspace to be closed/cleaned
+        /// Runspace to be closed/cleaned.
         /// </param>
         protected void DestroyRunspace(Runspace runspace)
         {

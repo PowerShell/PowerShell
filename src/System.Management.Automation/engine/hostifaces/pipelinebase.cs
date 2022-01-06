@@ -24,12 +24,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create a pipeline initialized with a command string.
         /// </summary>
-        /// <param name="runspace">The associated Runspace/></param>
+        /// <param name="runspace">The associated Runspace/>.</param>
         /// <param name="command">Command string.</param>
         /// <param name="addToHistory">If true, add pipeline to history.</param>
         /// <param name="isNested">True for nested pipeline.</param>
         /// <exception cref="ArgumentNullException">
-        /// Command is null and add to history is true
+        /// Command is null and add to history is true.
         /// </exception>
         protected PipelineBase(Runspace runspace, string command, bool addToHistory, bool isNested)
             : base(runspace)
@@ -72,10 +72,10 @@ namespace System.Management.Automation.Runspaces
         /// information of an invocation.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// Command is null and add to history is true
+        /// Command is null and add to history is true.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        /// 1. InformationalBuffers is null
+        /// 1. InformationalBuffers is null.
         /// </exception>
         protected PipelineBase(Runspace runspace,
             CommandCollection command,
@@ -187,7 +187,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Is this a pulse pipeline (created by the EventManager)
+        /// Is this a pulse pipeline (created by the EventManager).
         /// </summary>
         internal bool IsPulsePipeline { get; set; }
 
@@ -365,7 +365,7 @@ namespace System.Management.Automation.Runspaces
         /// array of objects.
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
-        /// Array may be empty but may not be null</param>
+        /// Array may be empty but may not be null.</param>
         /// <returns>An array of zero or more result objects.</returns>
         /// <remarks>Caller of synchronous exectute should not close
         /// input objectWriter. Synchronous invoke will always close the input
@@ -437,14 +437,14 @@ namespace System.Management.Automation.Runspaces
         /// Invoke the pipeline asynchronously with input.
         /// </summary>
         /// <param name="input">input to provide to pipeline. Input is
-        /// used only for synchronous execution</param>
+        /// used only for synchronous execution.</param>
         /// <param name="syncCall">True if this method is called from
-        /// synchronous invoke else false</param>
+        /// synchronous invoke else false.</param>
         /// <remarks>
         /// Results are returned through the <see cref="Pipeline.Output"/> reader.
         /// </remarks>
         /// <exception cref="InvalidOperationException">
-        /// No command is added to pipeline
+        /// No command is added to pipeline.
         /// </exception>
         /// <exception cref="InvalidPipelineStateException">
         /// PipelineState is not NotStarted.
@@ -458,10 +458,10 @@ namespace System.Management.Automation.Runspaces
         /// pipeline must be invoked from a running pipeline.
         /// </exception>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is not Open
+        /// RunspaceState is not Open.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        /// Pipeline already disposed
+        /// Pipeline already disposed.
         /// </exception>
         private void CoreInvoke(IEnumerable input, bool syncCall)
         {
@@ -603,7 +603,7 @@ namespace System.Management.Automation.Runspaces
         /// from currently executing pipeline's thread.
         /// </summary>
         /// <param name="syncCall">True if method is called from Invoke, false
-        /// if called from InvokeAsync</param>
+        /// if called from InvokeAsync.</param>
         /// <param name="syncObject">The sync object on which the lock is acquired.</param>
         /// <param name="isInLock">True if the method is invoked in a critical section.</param>
         /// <exception cref="InvalidOperationException">

@@ -12,7 +12,7 @@ namespace System.Management.Automation.Runspaces
     using Debug = System.Management.Automation.Diagnostics;
 
     /// <summary>
-    /// Define a parameter for <see cref="Command"/>
+    /// Define a parameter for <see cref="Command"/>.
     /// </summary>
     public sealed class CommandParameter
     {
@@ -204,13 +204,13 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="parameterAsPSObject">PSObject to rehydrate.</param>
         /// <returns>
-        /// CommandParameter rehydrated from a PSObject property bag
+        /// CommandParameter rehydrated from a PSObject property bag.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the PSObject is null.
         /// </exception>
         /// <exception cref="System.Management.Automation.Remoting.PSRemotingDataStructureException">
-        /// Thrown when the PSObject is not in the expected format
+        /// Thrown when the PSObject is not in the expected format.
         /// </exception>
         internal static CommandParameter FromPSObjectForRemoting(PSObject parameterAsPSObject)
         {

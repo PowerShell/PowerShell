@@ -527,7 +527,7 @@ namespace System.Management.Automation
         /// Constructor.
         /// </summary>
         /// <param name="ownerId">
-        /// Instance Id of the Powershell object creating this instance
+        /// Instance Id of the Powershell object creating this instance.
         /// </param>
         /// <param name="callback">
         /// Callback to call when the async operation completes.
@@ -540,7 +540,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="isCalledFromBeginInvoke">
         /// true if AsyncResult monitors BeginInvoke.
-        /// false otherwise
+        /// false otherwise.
         /// </param>
         internal PowerShellAsyncResult(Guid ownerId, AsyncCallback callback, object state, PSDataCollection<PSObject> output,
             bool isCalledFromBeginInvoke)
@@ -614,7 +614,7 @@ namespace System.Management.Automation
         /// A PSCommand.
         /// </param>
         /// <param name="extraCommands">
-        /// A list of extra commands to run
+        /// A list of extra commands to run.
         /// </param>
         /// <param name="rsConnection">
         /// A Runspace or RunspacePool to refer while invoking the command.
@@ -744,7 +744,7 @@ namespace System.Management.Automation
         /// <remarks>This method will be called by RemotePipeline
         /// before it begins execution. This method is used to set
         /// the command collection of the remote pipeline as the
-        /// command collection of the underlying powershell</remarks>
+        /// command collection of the underlying powershell.</remarks>
         internal void InitForRemotePipeline(CommandCollection command, ObjectStreamBase inputstream,
             ObjectStreamBase outputstream, ObjectStreamBase errorstream, PSInvocationSettings settings, bool redirectShellErrorOutputPipe)
         {
@@ -952,7 +952,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a cmdlet to construct a command pipeline.
-        /// For example, to construct a command string "get-process | sort-object",
+        /// For example, to construct a command string "get-process | sort-object".
         ///     <code>
         ///         PowerShell shell = PowerShell.Create("get-process").AddCommand("sort-object");
         ///     </code>
@@ -990,7 +990,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a cmdlet to construct a command pipeline.
-        /// For example, to construct a command string "get-process | sort-object",
+        /// For example, to construct a command string "get-process | sort-object".
         ///     <code>
         ///         PowerShell shell = PowerShell.Create("get-process").AddCommand("sort-object");
         ///     </code>
@@ -1031,7 +1031,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a piece of script to construct a command pipeline.
-        /// For example, to construct a command string "get-process | foreach { $_.Name }"
+        /// For example, to construct a command string "get-process | foreach { $_.Name }".
         ///     <code>
         ///         PowerShell shell = PowerShell.Create("get-process").
         ///                                     AddCommand("foreach { $_.Name }", true);
@@ -1070,7 +1070,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a piece of script to construct a command pipeline.
-        /// For example, to construct a command string "get-process | foreach { $_.Name }"
+        /// For example, to construct a command string "get-process | foreach { $_.Name }".
         ///     <code>
         ///         PowerShell shell = PowerShell.Create("get-process").
         ///                                     AddCommand("foreach { $_.Name }", true);
@@ -1179,7 +1179,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a parameter to the last added command.
-        /// For example, to construct a command string "get-process | select-object -property name"
+        /// For example, to construct a command string "get-process | select-object -property name".
         ///     <code>
         ///         PowerShell shell = PowerShell.Create("get-process").
         ///                                     AddCommand("select-object").AddParameter("property","name");
@@ -1225,7 +1225,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Adds a switch parameter to the last added command.
-        /// For example, to construct a command string "get-process | sort-object -descending"
+        /// For example, to construct a command string "get-process | sort-object -descending".
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process").
         ///                                     AddCommand("sort-object").AddParameter("descending");
@@ -1384,7 +1384,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Adds an argument to the last added command.
-        /// For example, to construct a command string "get-process | select-object name"
+        /// For example, to construct a command string "get-process | select-object name".
         ///     <code>
         ///         PowerShell shell = PowerShell.Create("get-process").
         ///                                     AddCommand("select-object").AddParameter("name");
@@ -1421,7 +1421,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds an additional statement for execution
         ///
-        /// For example,
+        /// For example.
         ///     <code>
         ///         Runspace rs = RunspaceFactory.CreateRunspace();
         ///         PowerShell ps = PowerShell.Create();
@@ -1724,7 +1724,7 @@ namespace System.Management.Automation
         /// the global error output pipe to the command's error output pipe.
         ///
         /// (see the comment in Pipeline.RedirectShellErrorOutputPipe for an
-        /// explanation of why this flag is needed)
+        /// explanation of why this flag is needed).
         /// </summary>
         internal bool RedirectShellErrorOutputPipe { get; set; } = true;
 
@@ -1796,7 +1796,7 @@ namespace System.Management.Automation
         /// whenever Invoke* method is called.
         /// </summary>
         /// <remarks>
-        /// This property and RunspacePool are mutually exclusive; setting one of them resets the other to null
+        /// This property and RunspacePool are mutually exclusive; setting one of them resets the other to null.
         /// </remarks>
         /// <exception cref="InvalidPowerShellStateException">
         /// Powershell instance cannot be changed in its
@@ -1884,7 +1884,7 @@ namespace System.Management.Automation
         /// whenever Invoke* method is called.
         /// </summary>
         /// <remarks>
-        /// This property and Runspace are mutually exclusive; setting one of them resets the other to null
+        /// This property and Runspace are mutually exclusive; setting one of them resets the other to null.
         /// </remarks>
         /// <exception cref="InvalidPowerShellStateException">
         /// Powershell instance cannot be changed in its
@@ -2313,7 +2313,7 @@ namespace System.Management.Automation
         /// the output PSObject collection.
         /// </summary>
         /// <param name="input">
-        /// Input to the command
+        /// Input to the command.
         /// </param>
         /// <returns>
         /// Collection of PSObjects representing output.
@@ -2372,10 +2372,10 @@ namespace System.Management.Automation
         /// the output PSObject collection.
         /// </summary>
         /// <param name="input">
-        /// Input to the command
+        /// Input to the command.
         /// </param>
         /// <param name="settings">
-        /// Invocation Settings
+        /// Invocation Settings.
         /// </param>
         /// <returns>
         /// Collection of PSObjects representing output.
@@ -2500,7 +2500,7 @@ namespace System.Management.Automation
         /// Type of output object(s) expected from the command invocation.
         /// </typeparam>
         /// <param name="input">
-        /// Input to the command
+        /// Input to the command.
         /// </param>
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
@@ -2561,10 +2561,10 @@ namespace System.Management.Automation
         /// Type of output object(s) expected from the command invocation.
         /// </typeparam>
         /// <param name="input">
-        /// Input to the command
+        /// Input to the command.
         /// </param>
         /// <param name="settings">
-        /// Invocation Settings
+        /// Invocation Settings.
         /// </param>
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
@@ -2619,13 +2619,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Invoke the <see cref="Command"/> synchronously and collect
-        /// output data into the buffer <paramref name="output"/>
+        /// output data into the buffer <paramref name="output"/>.
         /// </summary>
         /// <typeparam name="T">
         /// Type of output object(s) expected from the command invocation.
         /// </typeparam>
         /// <param name="input">
-        /// Input to the command
+        /// Input to the command.
         /// </param>
         /// <param name="output">
         /// A collection supplied by the user where output is collected.
@@ -2684,13 +2684,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Invoke the <see cref="Command"/> synchronously and collect
-        /// output data into the buffer <paramref name="output"/>
+        /// output data into the buffer <paramref name="output"/>.
         /// </summary>
         /// <typeparam name="T">
         /// Type of output object(s) expected from the command invocation.
         /// </typeparam>
         /// <param name="input">
-        /// Input to the command
+        /// Input to the command.
         /// </param>
         /// <param name="output">
         /// A collection supplied by the user where output is collected.
@@ -2752,7 +2752,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Invoke the <see cref="Command"/> synchronously and stream
-        /// output data into the buffer <paramref name="output"/>
+        /// output data into the buffer <paramref name="output"/>.
         /// </summary>
         /// <typeparam name="TInput">
         /// Type of input object(s) expected from the command invocation.
@@ -2761,7 +2761,7 @@ namespace System.Management.Automation
         /// Type of output object(s) expected from the command invocation.
         /// </typeparam>
         /// <param name="input">
-        /// Input to the command
+        /// Input to the command.
         /// </param>
         /// <param name="output">
         /// Output of the command.
@@ -2857,7 +2857,7 @@ namespace System.Management.Automation
         /// this may be the reason.
         /// </remarks>
         /// <typeparam name="T">
-        /// Type of the input buffer
+        /// Type of the input buffer.
         /// </typeparam>
         /// <param name="input">
         /// Input to the command. See remarks for more details.
@@ -2895,7 +2895,7 @@ namespace System.Management.Automation
         /// this may be the reason.
         /// </remarks>
         /// <typeparam name="T">
-        /// Type of the input buffer
+        /// Type of the input buffer.
         /// </typeparam>
         /// <param name="input">
         /// Input to the command. See remarks for more details.
@@ -4201,7 +4201,7 @@ namespace System.Management.Automation
         /// Raise the execution state change event handlers.
         /// </summary>
         /// <param name="stateInfo">
-        /// State Information
+        /// State Information.
         /// </param>
         private void RaiseStateChangeEvent(PSInvocationStateInfo stateInfo)
         {
@@ -4476,7 +4476,7 @@ namespace System.Management.Automation
         /// Input to the command.
         /// </param>
         /// <param name="output">
-        /// output from the command
+        /// output from the command.
         /// </param>
         /// <param name="settings">
         /// Invocation settings.
@@ -4539,8 +4539,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Core invocation helper method.
         /// </summary>
-        /// <typeparam name="TInput">input type</typeparam>
-        /// <typeparam name="TOutput">output type</typeparam>
+        /// <typeparam name="TInput">input type.</typeparam>
+        /// <typeparam name="TOutput">output type.</typeparam>
         /// <param name="input">Input objects.</param>
         /// <param name="output">Output object.</param>
         /// <param name="settings">Invocation settings.</param>
@@ -4626,8 +4626,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Core invocation helper method for remoting.
         /// </summary>
-        /// <typeparam name="TInput">input type</typeparam>
-        /// <typeparam name="TOutput">output type</typeparam>
+        /// <typeparam name="TInput">input type.</typeparam>
+        /// <typeparam name="TOutput">output type.</typeparam>
         /// <param name="input">Input objects.</param>
         /// <param name="output">Output object.</param>
         /// <param name="settings">Invocation settings.</param>
@@ -4660,8 +4660,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Core invocation method.
         /// </summary>
-        /// <typeparam name="TInput">input type</typeparam>
-        /// <typeparam name="TOutput">output type</typeparam>
+        /// <typeparam name="TInput">input type.</typeparam>
+        /// <typeparam name="TOutput">output type.</typeparam>
         /// <param name="input">Input objects.</param>
         /// <param name="output">Output object.</param>
         /// <param name="settings">Invocation settings.</param>
@@ -4793,10 +4793,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Performs the actual asynchronous command invocation.
         /// </summary>
-        /// <typeparam name="TInput">Type of the input buffer</typeparam>
-        /// <typeparam name="TOutput">Type of the output buffer</typeparam>
+        /// <typeparam name="TInput">Type of the input buffer.</typeparam>
+        /// <typeparam name="TOutput">Type of the output buffer.</typeparam>
         /// <param name="input">
-        /// input can be null
+        /// input can be null.
         /// </param>
         /// <param name="output"></param>
         /// <param name="settings"></param>
@@ -4808,7 +4808,7 @@ namespace System.Management.Automation
         /// with.
         /// </param>
         /// <param name="asyncResultOutput">
-        /// The output buffer to attach to the IAsyncResult returned by this method
+        /// The output buffer to attach to the IAsyncResult returned by this method.
         /// </param>
         /// <exception cref="InvalidOperationException">
         /// Cannot perform the operation because the command is already started.
@@ -5012,8 +5012,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// </summary>
-        /// <typeparam name="TInput">Type for the input collection</typeparam>
-        /// <typeparam name="TOutput">Type for the output collection</typeparam>
+        /// <typeparam name="TInput">Type for the input collection.</typeparam>
+        /// <typeparam name="TOutput">Type for the output collection.</typeparam>
         /// <param name="input"></param>
         /// <param name="output"></param>
         /// <param name="settings"></param>
@@ -5097,10 +5097,10 @@ namespace System.Management.Automation
         /// false otherewise.
         /// </param>
         /// <param name="callback">
-        /// Valid for asynchronous stop
+        /// Valid for asynchronous stop.
         /// </param>
         /// <param name="state">
-        /// Valid for asynchronous stop
+        /// Valid for asynchronous stop.
         /// </param>
         private IAsyncResult CoreStop(bool isSyncCall, AsyncCallback callback, object state)
         {
@@ -5768,13 +5768,13 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="powerShellAsPSObject">PSObject to rehydrate.</param>
         /// <returns>
-        /// PowerShell rehydrated from a PSObject property bag
+        /// PowerShell rehydrated from a PSObject property bag.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the PSObject is null.
         /// </exception>
         /// <exception cref="System.Management.Automation.Remoting.PSRemotingDataStructureException">
-        /// Thrown when the PSObject is not in the expected format
+        /// Thrown when the PSObject is not in the expected format.
         /// </exception>
         internal static PowerShell FromPSObjectForRemoting(PSObject powerShellAsPSObject)
         {
@@ -6201,7 +6201,7 @@ namespace System.Management.Automation
     ///     using (new PowerShellStopper(context, powerShell))
     ///     {
     ///         result = powerShell.Invoke();
-    ///     }
+    ///     }.
     /// </example>
     internal class PowerShellStopper : IDisposable
     {

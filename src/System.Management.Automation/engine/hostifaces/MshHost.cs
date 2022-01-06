@@ -198,7 +198,7 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// Used to allow the host to pass private data through a Runspace to cmdlets running inside that Runspace's
-        /// runspace.  The type and nature of that data is entirely defined by the host, but there are some caveats:
+        /// runspace.  The type and nature of that data is entirely defined by the host, but there are some caveats:.
         /// </summary>
         /// <returns>
         /// The default implementation returns null.

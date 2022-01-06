@@ -471,7 +471,7 @@ namespace System.Management.Automation.Runspaces
         /// objectWriter.
         /// </remarks>
         /// <exception cref="InvalidOperationException">
-        /// No command is added to pipeline
+        /// No command is added to pipeline.
         /// </exception>
         /// <exception cref="InvalidPipelineStateException">
         /// PipelineState is not NotStarted.
@@ -483,10 +483,10 @@ namespace System.Management.Automation.Runspaces
         /// pipeline must be invoked from a running pipeline.
         /// </exception>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is not Open
+        /// RunspaceState is not Open.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        /// Pipeline already disposed
+        /// Pipeline already disposed.
         /// </exception>
         /// <exception cref="ScriptCallDepthException">
         /// The script recursed too deeply into script functions.
@@ -532,14 +532,14 @@ namespace System.Management.Automation.Runspaces
         /// Invoke the pipeline, synchronously, returning the results as an array of objects.
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
-        /// Array may be empty but may not be null</param>
+        /// Array may be empty but may not be null.</param>
         /// <returns>An array of zero or more result objects.</returns>
         /// <remarks>If using synchronous exectute, do not close
         /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
         /// </remarks>
         /// <exception cref="InvalidOperationException">
-        /// No command is added to pipeline
+        /// No command is added to pipeline.
         /// </exception>
         /// <exception cref="InvalidPipelineStateException">
         /// PipelineState is not NotStarted.
@@ -551,10 +551,10 @@ namespace System.Management.Automation.Runspaces
         /// pipeline must be invoked from a running pipeline.
         /// </exception>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is not Open
+        /// RunspaceState is not Open.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        /// Pipeline already disposed
+        /// Pipeline already disposed.
         /// </exception>
         /// <exception cref="ScriptCallDepthException">
         /// The script recursed too deeply into script functions.
@@ -611,7 +611,7 @@ namespace System.Management.Automation.Runspaces
         /// command isn't doing anything, this may be the reason.
         /// </remarks>
         /// <exception cref="InvalidOperationException">
-        /// No command is added to pipeline
+        /// No command is added to pipeline.
         /// </exception>
         /// <exception cref="InvalidPipelineStateException">
         /// PipelineState is not NotStarted.
@@ -623,10 +623,10 @@ namespace System.Management.Automation.Runspaces
         /// cannot be executed Asynchronously.
         /// </exception>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is not Open
+        /// RunspaceState is not Open.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        /// Pipeline already disposed
+        /// Pipeline already disposed.
         /// </exception>
         public abstract void InvokeAsync();
 
@@ -662,7 +662,7 @@ namespace System.Management.Automation.Runspaces
         /// Sets the command collection.
         /// </summary>
         /// <param name="commands">Command collection to set.</param>
-        /// <remarks>called by ClientRemotePipeline</remarks>
+        /// <remarks>called by ClientRemotePipeline.</remarks>
         internal void SetCommandCollection(CommandCollection commands)
         {
             Commands = commands;
