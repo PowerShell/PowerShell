@@ -4,7 +4,7 @@
 namespace System.Management.Automation
 {
     /// <summary>
-    /// A variable that represents $?
+    /// A variable that represents $?.
     /// </summary>
     internal class QuestionMarkVariable : PSVariable
     {
@@ -12,7 +12,7 @@ namespace System.Management.Automation
         /// Constructs an instance of the variable with execution context.
         /// </summary>
         /// <param name="context">
-        /// Execution context
+        /// Execution context.
         /// </param>
         internal QuestionMarkVariable(ExecutionContext context)
             : base(SpecialVariables.Question, true, ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope, RunspaceInit.DollarHookDescription)

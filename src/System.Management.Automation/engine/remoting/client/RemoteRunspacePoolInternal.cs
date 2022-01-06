@@ -30,7 +30,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Constructor which creates a RunspacePool using the
         /// supplied <paramref name="connectionInfo"/>, <paramref name="minRunspaces"/>
-        /// and <paramref name="maxRunspaces"/>
+        /// and <paramref name="maxRunspaces"/>.
         /// </summary>
         /// <param name="maxRunspaces">
         /// The maximum number of Runspaces that can exist in this pool.
@@ -48,14 +48,14 @@ namespace System.Management.Automation.Runspaces.Internal
         ///   3. SpecificSerializationProperties
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
-        ///   2. TypeConverter
+        ///   2. TypeConverter.
         /// </param>
         /// <param name="host">Host associated with this runspacepool.</param>
         /// <param name="applicationArguments">
-        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
+        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>.
         /// </param>
         /// <param name="connectionInfo">The RunspaceConnectionInfo object
-        /// which identifies this runspace pools connection to the server
+        /// which identifies this runspace pools connection to the server.
         /// </param>
         /// <param name="name">Session name.</param>
         /// <exception cref="ArgumentException">
@@ -63,7 +63,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Minimum runspaces is less than 1.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// ConnectionInfo specified is null
+        /// ConnectionInfo specified is null.
         /// </exception>
         internal RemoteRunspacePoolInternal(int minRunspaces,
             int maxRunspaces, TypeTable typeTable, PSHost host, PSPrimitiveDictionary applicationArguments, RunspaceConnectionInfo connectionInfo, string name = null)
@@ -814,7 +814,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Runspace pool must be opened before it can be used.
         /// </summary>
         /// <param name="isAsync">
-        /// true to open asynchronously
+        /// true to open asynchronously.
         /// </param>
         /// <param name="callback">
         /// A AsyncCallback to call once the BeginOpen completes.
@@ -909,15 +909,15 @@ namespace System.Management.Automation.Runspaces.Internal
         /// that might have occurred, call EndOpen.
         /// </summary>
         /// <param name="callback">
-        /// An AsyncCallback to call once the BeginClose completes
+        /// An AsyncCallback to call once the BeginClose completes.
         /// </param>
         /// <param name="asyncState">
         /// A user supplied state to call the <paramref name="callback"/>
-        /// with
+        /// with.
         /// </param>
         /// <returns>
         /// An AsyncResult object to monitor the state of the async
-        /// operation
+        /// operation.
         /// </returns>
         public override IAsyncResult BeginClose(AsyncCallback callback, object asyncState)
         {
@@ -1534,7 +1534,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// server RunspacePool.
         /// </summary>
         /// <param name="newStateInfo">state information object
-        /// describing the state change at the server RunspacePool</param>
+        /// describing the state change at the server RunspacePool.</param>
         private void SetRunspacePoolState(RunspacePoolStateInfo newStateInfo)
         {
             SetRunspacePoolState(newStateInfo, false);
@@ -1545,7 +1545,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// server RunspacePool and raise events if required.
         /// </summary>
         /// <param name="newStateInfo">state information object
-        /// describing the state change at the server RunspacePool</param>
+        /// describing the state change at the server RunspacePool.</param>
         /// <param name="raiseEvents">Raise state changed events if true.</param>
         private void SetRunspacePoolState(RunspacePoolStateInfo newStateInfo, bool raiseEvents)
         {

@@ -293,7 +293,7 @@ namespace System.Management.Automation.Remoting
     /// defining origin information for error records.
     /// In case of output objects, the information
     /// should directly be added to the object as
-    /// properties</remarks>
+    /// properties.</remarks>
     [Serializable]
     [DataContract()]
     public class OriginInfo

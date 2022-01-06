@@ -19,7 +19,7 @@ namespace System.Management.Automation
     /// job store.
     /// </summary>
     /// <remarks>The actual implementation of this class will
-    /// happen in M2</remarks>
+    /// happen in M2.</remarks>
     [Serializable]
     public class JobDefinition : ISerializable
     {
@@ -171,7 +171,7 @@ namespace System.Management.Automation
     /// <remarks>This class is not required if
     /// CommandParameterCollection adds a public
     /// constructor.The actual implementation of
-    /// this class will happen in M2</remarks>
+    /// this class will happen in M2.</remarks>
     [Serializable]
     public class JobInvocationInfo : ISerializable
     {
@@ -385,7 +385,7 @@ namespace System.Management.Automation
         /// Get a token that allows for construction of a job with a previously assigned
         /// Id and InstanceId. This is only possible if this JobSourceAdapter is the
         /// creator of the original job.
-        /// The original job must have been saved using "SaveJobIdForReconstruction"
+        /// The original job must have been saved using "SaveJobIdForReconstruction".
         /// </summary>
         /// <param name="instanceId">Instance Id of the job to recreate.</param>
         /// <returns>JobIdentifier to be used in job construction.</returns>
@@ -478,7 +478,7 @@ namespace System.Management.Automation
         /// Get list of jobs that matches the specified names.
         /// </summary>
         /// <param name="name">names to match, can support
-        ///   wildcard if the store supports</param>
+        ///   wildcard if the store supports.</param>
         /// <param name="recurse"></param>
         /// <returns>Collection of jobs that match the specified
         /// criteria.</returns>
@@ -523,7 +523,7 @@ namespace System.Management.Automation
         /// filter parameters.
         /// </summary>
         /// <param name="filter">dictionary containing name value
-        ///   pairs for adapter specific filters</param>
+        ///   pairs for adapter specific filters.</param>
         /// <param name="recurse"></param>
         /// <returns>Collection of jobs that match the
         /// specified criteria.</returns>

@@ -136,7 +136,7 @@ namespace System.Management.Automation
         /// with the associated command string.
         /// </summary>
         /// <param name="command">string representation
-        /// of the command the job is running</param>
+        /// of the command the job is running.</param>
         protected Job2(string command) : base(command) { }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="state">State of the job.</param>
         /// <param name="reason">exception associated with the
-        /// job entering this state</param>
+        /// job entering this state.</param>
         protected new void SetJobState(JobState state, Exception reason)
         {
             base.SetJobState(state, reason);
@@ -211,7 +211,7 @@ namespace System.Management.Automation
         /// an FxCop violation "CA1716:IdentifiersShouldNotMatchKeywords"
         /// Stop and Resume are reserved keyworks in C# and hence cannot
         /// be used as method names. Therefore to be consistent it has
-        /// been decided to use *Job in the name of the methods</remarks>
+        /// been decided to use *Job in the name of the methods.</remarks>
         public abstract void StartJob();
 
         /// <summary>
@@ -232,7 +232,7 @@ namespace System.Management.Automation
         /// the job is completed.
         /// </summary>
         /// <param name="eventArgs">arguments describing
-        /// an exception that is associated with the event</param>
+        /// an exception that is associated with the event.</param>
         protected virtual void OnStartJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
             RaiseCompletedHandler(StartJobOperation, eventArgs);
@@ -244,7 +244,7 @@ namespace System.Management.Automation
         /// job is completed.
         /// </summary>
         /// <param name="eventArgs">argument describing
-        /// an exception that is associated with the event</param>
+        /// an exception that is associated with the event.</param>
         protected virtual void OnStopJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
             RaiseCompletedHandler(StopJobOperation, eventArgs);
@@ -256,7 +256,7 @@ namespace System.Management.Automation
         /// job is completed.
         /// </summary>
         /// <param name="eventArgs">argument describing
-        /// an exception that is associated with the event</param>
+        /// an exception that is associated with the event.</param>
         protected virtual void OnSuspendJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
             RaiseCompletedHandler(SuspendJobOperation, eventArgs);
@@ -268,7 +268,7 @@ namespace System.Management.Automation
         /// suspended job is completed.
         /// </summary>
         /// <param name="eventArgs">argument describing
-        /// an exception that is associated with the event</param>
+        /// an exception that is associated with the event.</param>
         protected virtual void OnResumeJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
             RaiseCompletedHandler(ResumeJobOperation, eventArgs);
@@ -280,7 +280,7 @@ namespace System.Management.Automation
         /// blocked job is completed.
         /// </summary>
         /// <param name="eventArgs">argument describing
-        /// an exception that is associated with the event</param>
+        /// an exception that is associated with the event.</param>
         protected virtual void OnUnblockJobCompleted(AsyncCompletedEventArgs eventArgs)
         {
             RaiseCompletedHandler(UnblockJobOperation, eventArgs);
@@ -291,7 +291,7 @@ namespace System.Management.Automation
         /// and the associated event arguments.
         /// </summary>
         /// <param name="operation">operation for which the event
-        /// needs to be raised</param>
+        /// needs to be raised.</param>
         /// <param name="eventArgs"></param>
         private void RaiseCompletedHandler(int operation, AsyncCompletedEventArgs eventArgs)
         {

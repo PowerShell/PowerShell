@@ -120,15 +120,15 @@ namespace System.Management.Automation
         ///   3. SpecificSerializationProperties
         /// TypeTable has the following information used by deserializer:
         ///   1. TargetTypeForDeserialization
-        ///   2. TypeConverter
+        ///   2. TypeConverter.
         /// </param>
         /// <param name="connectionInfo">connection information which identifies
-        /// the remote computer</param>
+        /// the remote computer.</param>
         /// <param name="host">Host on the client.</param>
         /// <param name="applicationArguments">
         /// <param name="name">Friendly name for remote runspace session.</param>
         /// <param name="id">Id for remote runspace.</param>
-        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>
+        /// Application arguments the server can see in <see cref="System.Management.Automation.Remoting.PSSenderInfo.ApplicationArguments"/>.
         /// </param>
         internal RemoteRunspace(TypeTable typeTable, RunspaceConnectionInfo connectionInfo, PSHost host, PSPrimitiveDictionary applicationArguments, string name = null, int id = -1)
         {
@@ -273,13 +273,13 @@ namespace System.Management.Automation
         /// This property determines whether a new thread is create for each invocation.
         /// </summary>
         /// <remarks>
-        /// Any updates to the value of this property must be done before the Runspace is opened
+        /// Any updates to the value of this property must be done before the Runspace is opened.
         /// </remarks>
         /// <exception cref="InvalidRunspaceStateException">
-        /// An attempt to change this property was made after opening the Runspace
+        /// An attempt to change this property was made after opening the Runspace.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// The thread options cannot be changed to the requested value
+        /// The thread options cannot be changed to the requested value.
         /// </exception>
         public override PSThreadOptions ThreadOptions
         {
@@ -419,7 +419,7 @@ namespace System.Management.Automation
         /// for the product code. However, there are
         /// existing transport manager tests which depend on
         /// the same. Once transport manager is modified,
-        /// this needs to be removed</remarks>
+        /// this needs to be removed.</remarks>
         internal ClientRemoteSession ClientRemoteSession
         {
             get
@@ -519,7 +519,7 @@ namespace System.Management.Automation
         /// Open the runspace Asynchronously.
         /// </summary>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is not BeforeOpen
+        /// RunspaceState is not BeforeOpen.
         /// </exception>
         public override void OpenAsync()
         {
@@ -539,7 +539,7 @@ namespace System.Management.Automation
         /// Open the runspace synchronously.
         /// </summary>
         /// <exception cref="InvalidRunspaceStateException">
-        /// RunspaceState is not BeforeOpen
+        /// RunspaceState is not BeforeOpen.
         /// </exception>
         public override void Open()
         {
@@ -1023,7 +1023,7 @@ namespace System.Management.Automation
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// command is null
+        /// command is null.
         /// </exception>
         public override Pipeline CreatePipeline(string command)
         {
@@ -1044,7 +1044,7 @@ namespace System.Management.Automation
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// command is null
+        /// command is null.
         /// </exception>
         public override Pipeline CreatePipeline(string command, bool addToHistory)
         {
@@ -1065,7 +1065,7 @@ namespace System.Management.Automation
         /// while current pipeline (lets call it parent pipeline) is blocked.
         /// </remarks>
         /// <exception cref="PSNotSupportedException">Not supported in remoting
-        /// scenarios</exception>
+        /// scenarios.</exception>
         public override Pipeline CreateNestedPipeline()
         {
             return CoreCreatePipeline(null, false, true);
@@ -1080,7 +1080,7 @@ namespace System.Management.Automation
         /// A pipeline pre-filled with Commands specified in commandString.
         /// </returns>
         /// <exception cref="PSNotSupportedException">Not supported in remoting
-        /// scenarios</exception>
+        /// scenarios.</exception>
         public override Pipeline CreateNestedPipeline(string command, bool addToHistory)
         {
             if (command == null)
@@ -1099,7 +1099,7 @@ namespace System.Management.Automation
         /// Add the pipeline to list of pipelines in execution.
         /// </summary>
         /// <param name="pipeline">Pipeline to add to the
-        /// list of pipelines in execution</param>
+        /// list of pipelines in execution.</param>
         /// <exception cref="InvalidRunspaceStateException">
         /// Thrown if the runspace is not in the Opened state.
         /// <see cref="RunspaceState"/>.
@@ -1145,7 +1145,7 @@ namespace System.Management.Automation
         /// Remove the pipeline from list of pipelines in execution.
         /// </summary>
         /// <param name="pipeline">Pipeline to remove from the
-        /// list of pipelines in execution</param>
+        /// list of pipelines in execution.</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="pipeline"/> is null.
         /// </exception>
@@ -1172,7 +1172,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pipeline">Pipeline to check and add.</param>
         /// <param name="syncCall">whether this is being called from
-        /// a synchronous method call</param>
+        /// a synchronous method call.</param>
         internal void DoConcurrentCheckAndAddToRunningPipelines(RemotePipeline pipeline, bool syncCall)
         {
             // Concurrency check should be done under runspace lock
@@ -1533,7 +1533,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the currently executing pipeline.
         /// </summary>
-        /// <remarks>Internal because it is needed by invoke-history</remarks>
+        /// <remarks>Internal because it is needed by invoke-history.</remarks>
         internal override Pipeline GetCurrentlyRunningPipeline()
         {
             lock (_syncRoot)
@@ -1554,7 +1554,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sender">Sender of this information, unused.</param>
         /// <param name="eventArgs">arguments describing this event, contains
-        /// a RemoteHostCall object</param>
+        /// a RemoteHostCall object.</param>
         private void HandleHostCallReceived(object sender, RemoteDataEventArgs<RemoteHostCall> eventArgs)
         {
             ClientMethodExecutor.Dispatch(
@@ -1650,7 +1650,7 @@ namespace System.Management.Automation
         /// ahead on the specified invoke-command.
         /// </summary>
         /// <param name="invokeCommand">current invoke-command
-        /// instance</param>
+        /// instance.</param>
         /// <param name="localPipelineId">Local pipeline id.</param>
         /// <returns>True, if another invoke-command is running
         /// before, false otherwise.</returns>
@@ -1699,7 +1699,7 @@ namespace System.Management.Automation
         /// within the current local pipeline.
         /// </summary>
         /// <param name="invokeCommand">reference to invoke command
-        /// which is currently being processed</param>
+        /// which is currently being processed.</param>
         /// <param name="localPipelineId">The local pipeline id.</param>
         internal void SetCurrentInvokeCommand(InvokeCommandCommand invokeCommand,
             long localPipelineId)
@@ -2955,7 +2955,7 @@ namespace System.Management.Automation
         /// The new value of the item being set.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// name is null
+        /// name is null.
         /// </exception>
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.
@@ -3009,13 +3009,13 @@ namespace System.Management.Automation
         /// Get a variable out of session state.
         /// </summary>
         /// <param name="name">
-        /// name of variable to look up
+        /// name of variable to look up.
         /// </param>
         /// <returns>
         /// The value of the specified variable.
         /// </returns>
         /// <exception cref="ArgumentNullException">
-        /// name is null
+        /// name is null.
         /// </exception>
         /// <exception cref="InvalidRunspaceStateException">
         /// Runspace is not open.

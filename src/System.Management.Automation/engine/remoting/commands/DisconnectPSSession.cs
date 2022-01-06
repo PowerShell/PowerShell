@@ -530,7 +530,7 @@ namespace Microsoft.PowerShell.Commands
         /// dispose operations and finalize suppressions.
         /// </summary>
         /// <param name="disposing">Whether method is called
-        /// from Dispose or destructor</param>
+        /// from Dispose or destructor.</param>
         private void Dispose(bool disposing)
         {
             if (disposing)

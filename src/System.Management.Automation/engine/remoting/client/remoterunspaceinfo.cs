@@ -24,7 +24,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Target is a container with which the session is based on Hyper-V socket (Hyper-V
-        /// container) or named pipe (windows container)
+        /// container) or named pipe (windows container).
         /// </summary>
         Container
     }
@@ -183,7 +183,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <remarks>This property is marked internal to allow other cmdlets
         /// to get access to the RemoteRunspace object and operate on it like
-        /// for instance test-runspace, close-runspace etc</remarks>
+        /// for instance test-runspace, close-runspace etc.</remarks>
         public Runspace Runspace
         {
             get
@@ -245,7 +245,7 @@ namespace System.Management.Automation.Runspaces
         /// object with a auto generated name.
         /// </summary>
         /// <param name="remoteRunspace">Remote runspace object for which
-        /// the info object need to be created</param>
+        /// the info object need to be created.</param>
         internal PSSession(RemoteRunspace remoteRunspace)
         {
             _remoteRunspace = remoteRunspace;

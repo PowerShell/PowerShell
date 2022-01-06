@@ -275,13 +275,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Port specifies the alternate port to be used in case the
         /// default ports are not used for the transport mechanism
-        /// (port 80 for http and port 443 for useSSL)
+        /// (port 80 for http and port 443 for useSSL).
         /// </summary>
         /// <remarks>
         /// Currently this is being accepted as a parameter. But in future
         /// support will be added to make this a part of a policy setting.
         /// When a policy setting is in place this parameter can be used
-        /// to override the policy setting
+        /// to override the policy setting.
         /// </remarks>
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameGuidParameterSet)]
@@ -1071,7 +1071,7 @@ namespace Microsoft.PowerShell.Commands
         /// dispose operations and finalize suppressions.
         /// </summary>
         /// <param name="disposing">Whether method is called
-        /// from Dispose or destructor</param>
+        /// from Dispose or destructor.</param>
         private void Dispose(bool disposing)
         {
             if (disposing)

@@ -179,7 +179,7 @@ namespace System.Management.Automation
         #endregion
 
         /// <summary>
-        /// Flags of child jobs of a <see cref="ThrottlingJob"/>
+        /// Flags of child jobs of a <see cref="ThrottlingJob"/>.
         /// </summary>
         [Flags]
         internal enum ChildJobFlags
@@ -266,7 +266,7 @@ namespace System.Management.Automation
         /// <param name="jobTypeName">Name describing job type.</param>
         /// <param name="maximumConcurrentChildJobs">
         /// The maximum number of child jobs that can be running at any given point in time.
-        /// Passing 0 requests to turn off throttling (i.e. allow unlimited number of child jobs to run)
+        /// Passing 0 requests to turn off throttling (i.e. allow unlimited number of child jobs to run).
         /// </param>
         /// <param name="cmdletMode">
         /// <see langword="true"/> if this <see cref="ThrottlingJob"/> is used from a cmdlet invoked without -AsJob switch.
@@ -368,7 +368,7 @@ namespace System.Management.Automation
         /// <param name="jobEnqueuedAction">Action to run after enqueuing the job.</param>
         /// <exception cref="ArgumentException">
         /// Thrown when the child job is not in the <see cref="JobState.NotStarted"/> state.
-        /// (because this can lead to race conditions - the child job can finish before the parent job has a chance to register for child job events)
+        /// (because this can lead to race conditions - the child job can finish before the parent job has a chance to register for child job events).
         /// </exception>
         internal void AddChildJobWithoutBlocking(StartableJob childJob, ChildJobFlags flags, Action jobEnqueuedAction = null)
         {

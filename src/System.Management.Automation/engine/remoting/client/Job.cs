@@ -59,7 +59,7 @@ namespace System.Management.Automation
         Stopped = 4,
 
         /// <summary>
-        /// Command execution is blocked (on user input host calls etc)
+        /// Command execution is blocked (on user input host calls etc).
         /// </summary>
         Blocked = 5,
 
@@ -285,7 +285,7 @@ namespace System.Management.Automation
         #endregion public_properties
 
         /// <summary>
-        /// Override for ToString()
+        /// Override for ToString().
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -1363,7 +1363,7 @@ namespace System.Management.Automation
         /// Sets Job State.
         /// </summary>
         /// <param name="state">
-        /// New State of Job
+        /// New State of Job.
         /// </param>
         protected void SetJobState(JobState state)
         {
@@ -1375,7 +1375,7 @@ namespace System.Management.Automation
         /// Sets Job State.
         /// </summary>
         /// <param name="state">
-        /// New State of Job
+        /// New State of Job.
         /// </param>
         /// <param name="reason">
         /// Reason associated with the state.
@@ -1545,7 +1545,7 @@ namespace System.Management.Automation
         /// <returns>Auto generated job name.</returns>
         /// <remarks>Since the user can script/program against the
         /// job name, the auto generated name will not be
-        /// localizable</remarks>
+        /// localizable.</remarks>
         protected string AutoGenerateJobName()
         {
             return "Job" + Id.ToString(System.Globalization.NumberFormatInfo.InvariantInfo);
@@ -1723,7 +1723,7 @@ namespace System.Management.Automation
     /// objects. Each child job object invokes command on one remote machine.
     /// </summary>
     /// <remarks>
-    /// Not removing the prefix "PS" as this signifies powershell specific remoting job
+    /// Not removing the prefix "PS" as this signifies powershell specific remoting job.
     /// </remarks>
     internal class PSRemotingJob : Job
     {
@@ -1734,13 +1734,13 @@ namespace System.Management.Automation
         /// computer names.
         /// </summary>
         /// <param name="computerNames">names of computers for
-        /// which the job object is being created</param>
+        /// which the job object is being created.</param>
         /// <param name="computerNameHelpers">list of helper objects
-        /// corresponding to the computer names
+        /// corresponding to the computer names.
         /// </param>
         /// <param name="remoteCommand">remote command corresponding to this
-        /// job object</param>
-        /// <param name="name"> a friendly name for the job object
+        /// job object.</param>
+        /// <param name="name"> a friendly name for the job object.
         /// </param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal PSRemotingJob(string[] computerNames,
@@ -1753,12 +1753,12 @@ namespace System.Management.Automation
         /// PSSession objects.
         /// </summary>
         /// <param name="remoteRunspaceInfos">array of runspace info
-        /// objects on which the remote command is executed</param>
+        /// objects on which the remote command is executed.</param>
         /// <param name="runspaceHelpers">List of helper objects for the
-        /// runspaces</param>
+        /// runspaces.</param>
         /// <param name="remoteCommand"> remote command corresponding to this
-        /// job object</param>
-        /// <param name="name">a friendly name for the job object
+        /// job object.</param>
+        /// <param name="name">a friendly name for the job object.
         /// </param>
         internal PSRemotingJob(PSSession[] remoteRunspaceInfos,
                         List<IThrottleOperation> runspaceHelpers, string remoteCommand, string name)
@@ -1770,12 +1770,12 @@ namespace System.Management.Automation
         /// computer names.
         /// </summary>
         /// <param name="computerNames">names of computers for
-        /// which the result object is being created</param>
+        /// which the result object is being created.</param>
         /// <param name="computerNameHelpers">list of helper objects
-        /// corresponding to the computer names
+        /// corresponding to the computer names.
         /// </param>
         /// <param name="remoteCommand">remote command corresponding to this
-        /// result object</param>
+        /// result object.</param>
         /// <param name="throttleLimit">Throttle limit to use.</param>
         /// <param name="name">A friendly name for the job object.</param>
         internal PSRemotingJob(string[] computerNames,
@@ -1804,11 +1804,11 @@ namespace System.Management.Automation
         /// PSSession objects.
         /// </summary>
         /// <param name="remoteRunspaceInfos">array of runspace info
-        /// objects on which the remote command is executed</param>
+        /// objects on which the remote command is executed.</param>
         /// <param name="runspaceHelpers">List of helper objects for the
-        /// runspaces</param>
+        /// runspaces.</param>
         /// <param name="remoteCommand"> remote command corresponding to this
-        /// result object</param>
+        /// result object.</param>
         /// <param name="throttleLimit">Throttle limit to use.</param>
         /// <param name="name"></param>
         internal PSRemotingJob(PSSession[] remoteRunspaceInfos,
@@ -1903,7 +1903,7 @@ namespace System.Management.Automation
         /// Get entity result for the specified computer.
         /// </summary>
         /// <param name="computerName">computername for which entity
-        /// result is required</param>
+        /// result is required.</param>
         /// <returns>Entity result.</returns>
         internal List<Job> GetJobsForComputer(string computerName)
         {
@@ -1926,7 +1926,7 @@ namespace System.Management.Automation
         /// Get entity result for the specified runspace.
         /// </summary>
         /// <param name="runspace">runspace for which entity
-        /// result is required</param>
+        /// result is required.</param>
         /// <returns>Entity result.</returns>
         internal List<Job> GetJobsForRunspace(PSSession runspace)
         {
@@ -1948,7 +1948,7 @@ namespace System.Management.Automation
         /// Get entity result for the specified helper object.
         /// </summary>
         /// <param name="operation">helper for which entity
-        /// result is required</param>
+        /// result is required.</param>
         /// <returns>Entity result.</returns>
         internal List<Job> GetJobsForOperation(IThrottleOperation operation)
         {
@@ -2641,7 +2641,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sender">Sender of this event, unused.</param>
         /// <param name="eventArgs">event arguments, should be empty in this
-        /// case</param>
+        /// case.</param>
         private void HandleJobUnblocked(object sender, EventArgs eventArgs)
         {
             bool unblockjob = false;
@@ -2748,7 +2748,7 @@ namespace System.Management.Automation
     /// TODO: I am not sure whether to change this internal to just RemotingChildJob.
     /// </remarks>
     /// <remarks>
-    /// Not removing the prefix "PS" as this signifies powershell specific remoting job
+    /// Not removing the prefix "PS" as this signifies powershell specific remoting job.
     /// </remarks>
     internal class PSRemotingChildJob : Job, IJobDebugger
     {
@@ -3028,7 +3028,7 @@ namespace System.Management.Automation
         /// internal stream.
         /// </summary>
         /// <param name="sender">the pipeline reader which raised
-        /// this event</param>
+        /// this event.</param>
         /// <param name="eventArgs">Information describing the ready event.</param>
         private void HandleOutputReady(object sender, EventArgs eventArgs)
         {
@@ -3079,7 +3079,7 @@ namespace System.Management.Automation
         /// internal stream.
         /// </summary>
         /// <param name="sender">the pipeline reader which raised
-        /// this event</param>
+        /// this event.</param>
         /// <param name="eventArgs">Information describing the ready event.</param>
         private void HandleErrorReady(object sender, EventArgs eventArgs)
         {
@@ -3505,7 +3505,7 @@ namespace System.Management.Automation
         /// with the specified helper.
         /// </summary>
         /// <param name="helper">helper whose pipeline results
-        /// need to be aggregated</param>
+        /// need to be aggregated.</param>
         protected void AggregateResultsFromHelper(ExecutionCmdletHelper helper)
         {
             // Get the pipeline associated with this helper and register for appropriate events
@@ -3653,7 +3653,7 @@ namespace System.Management.Automation
         /// the specified helper.
         /// </summary>
         /// <param name="helper">helper class whose pipeline results
-        /// aggregation has to be stopped</param>
+        /// aggregation has to be stopped.</param>
         protected void StopAggregateResultsFromHelper(ExecutionCmdletHelper helper)
         {
             // Get the pipeline associated with this helper and register for appropriate events
@@ -4167,7 +4167,7 @@ namespace System.Management.Automation
     /// TODO: I am not sure whether to change this internal to just InvokeExpressionSyncJob.
     /// </remarks>
     /// <remarks>
-    /// Not removing the prefix "PS" as this signifies powershell specific remoting job
+    /// Not removing the prefix "PS" as this signifies powershell specific remoting job.
     /// </remarks>
     internal class PSInvokeExpressionSyncJob : PSRemotingChildJob
     {
@@ -4189,7 +4189,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="operations">List of operations to use.</param>
         /// <param name="throttleManager">throttle manager to use for
-        /// this job</param>
+        /// this job.</param>
         internal PSInvokeExpressionSyncJob(List<IThrottleOperation> operations, ThrottleManager throttleManager)
         {
             UsesResultsCollection = true;

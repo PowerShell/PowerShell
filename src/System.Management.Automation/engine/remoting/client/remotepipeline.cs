@@ -160,7 +160,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="pipeline">Pipeline to clone from.</param>
         /// <remarks>This constructor is private because this will
-        /// only be called from the copy method</remarks>
+        /// only be called from the copy method.</remarks>
         private RemotePipeline(RemotePipeline pipeline)
             : this(
                 (RemoteRunspace)pipeline.Runspace,
@@ -198,7 +198,7 @@ namespace System.Management.Automation
         /// Override for creating a copy of pipeline.
         /// </summary>
         /// <returns>
-        /// Pipeline object which is copy of this pipeline
+        /// Pipeline object which is copy of this pipeline.
         /// </returns>
         public override Pipeline Copy()
         {
@@ -416,7 +416,7 @@ namespace System.Management.Automation
         /// array of objects.
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
-        /// Array may be empty but may not be null</param>
+        /// Array may be empty but may not be null.</param>
         /// <returns>An array of zero or more result objects.</returns>
         /// <remarks>Caller of synchronous exectute should not close
         /// input objectWriter. Synchronous invoke will always close the input
@@ -1038,7 +1038,7 @@ namespace System.Management.Automation
         /// from currently executing pipeline's thread.
         /// </summary>
         /// <param name="syncCall">True if method is called from Invoke, false
-        /// if called from InvokeAsync</param>
+        /// if called from InvokeAsync.</param>
         /// <exception cref="InvalidOperationException">
         /// 1) A pipeline is already executing. Pipeline cannot execute
         /// concurrently.

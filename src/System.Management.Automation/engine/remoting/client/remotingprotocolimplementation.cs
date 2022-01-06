@@ -532,7 +532,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="dataArg">
-        /// arg which contains the data received from input queue
+        /// arg which contains the data received from input queue.
         /// </param>
         internal void DispatchInputQueueData(object sender, RemoteDataEventArgs dataArg)
         {
@@ -602,7 +602,7 @@ namespace System.Management.Automation.Remoting
         /// targeted for session.
         /// </summary>
         /// <param name="arg">
-        /// argument contains the data object
+        /// argument contains the data object.
         /// </param>
         private void ProcessSessionMessages(RemoteDataEventArgs arg)
         {
@@ -780,7 +780,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="receivedData">Received data.</param>
         /// <remarks>This method is a hook to be called
-        /// from the transport manager</remarks>
+        /// from the transport manager.</remarks>
         internal override void RaiseKeyExchangeMessageReceived(RemoteDataObject<PSObject> receivedData)
         {
             ProcessSessionMessages(new RemoteDataEventArgs(receivedData));

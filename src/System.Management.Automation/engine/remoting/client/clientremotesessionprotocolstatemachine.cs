@@ -509,7 +509,7 @@ namespace System.Management.Automation.Remoting
         /// This parameter contains the event to be raised.
         /// </param>
         /// <param name="clearQueuedEvents">
-        /// optional bool indicating whether to clear currently queued events
+        /// optional bool indicating whether to clear currently queued events.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
@@ -787,7 +787,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="newState">New state of the state machine.</param>
         /// <param name="reason">reason why the state machine is set
-        /// to the new state</param>
+        /// to the new state.</param>
         private void SetState(RemoteSessionState newState, Exception reason)
         {
             RemoteSessionState oldState = _state;

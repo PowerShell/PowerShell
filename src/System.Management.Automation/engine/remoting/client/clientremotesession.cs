@@ -157,7 +157,7 @@ namespace System.Management.Automation.Remoting
         /// Get the runspace pool with the matching id.
         /// </summary>
         /// <param name="clientRunspacePoolId">
-        /// Id of the runspace to get
+        /// Id of the runspace to get.
         /// </param>
         /// <returns></returns>
         internal RemoteRunspacePoolInternal GetRunspacePool(Guid clientRunspacePoolId)
@@ -253,7 +253,7 @@ namespace System.Management.Automation.Remoting
         /// Closes Session Connection Asynchronously.
         /// </summary>
         /// <remarks>
-        /// Caller should register for ConnectionClosed event to get notified
+        /// Caller should register for ConnectionClosed event to get notified.
         /// </remarks>
         public override void CloseAsync()
         {
@@ -289,7 +289,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="arg">
-        /// Event argument which contains the new state
+        /// Event argument which contains the new state.
         /// </param>
         private void HandleConnectionStateChanged(object sender, RemoteSessionStateEventArgs arg)
         {
@@ -386,7 +386,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="sender">Sender of this event.</param>
         /// <param name="eventArgs">arguments that contain the remote
-        /// public key</param>
+        /// public key.</param>
         private void HandleEncryptedSessionKeyReceived(object sender, RemoteDataEventArgs<string> eventArgs)
         {
             if (SessionDataStructureHandler.StateMachine.State == RemoteSessionState.EstablishedAndKeySent)
@@ -484,7 +484,7 @@ namespace System.Management.Automation.Remoting
         /// Verifies the negotiation packet received from the server.
         /// </summary>
         /// <param name="serverRemoteSessionCapability">
-        /// Capabilities of remote session
+        /// Capabilities of remote session.
         /// </param>
         /// <returns>
         /// The method returns true if the capability negotiation is successful.

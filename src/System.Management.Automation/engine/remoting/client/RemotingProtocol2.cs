@@ -307,7 +307,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="maxRunspaces">New maxrunspaces to set.</param>
         /// <param name="callId">call id on which the calling method will
-        /// be blocked on</param>
+        /// be blocked on.</param>
         internal void SendSetMaxRunspacesToServer(int maxRunspaces, long callId)
         {
             RemoteDataObject message =
@@ -321,7 +321,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="minRunspaces">New minrunspaces to set.</param>
         /// <param name="callId">call id on which the calling method will
-        /// be blocked on</param>
+        /// be blocked on.</param>
         internal void SendSetMinRunspacesToServer(int minRunspaces, long callId)
         {
             RemoteDataObject message =
@@ -334,7 +334,7 @@ namespace System.Management.Automation.Internal
         /// Send a message to get the available runspaces from the server.
         /// </summary>
         /// <param name="callId">call id on which the calling method will
-        /// be blocked on</param>
+        /// be blocked on.</param>
         internal void SendGetAvailableRunspacesToServer(long callId)
         {
             SendDataAsync(RemotingEncoder.GenerateGetAvailableRunspaces(_clientRunspacePoolId, callId));
@@ -421,7 +421,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should be
-        /// the one used within the code</remarks>
+        /// the one used within the code.</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
             _transportManager.DataToBeSentCollection.Add<object>(data);
@@ -608,7 +608,7 @@ namespace System.Management.Automation.Internal
         /// Notifies associated powershell's of the runspace pool state change.
         /// </summary>
         /// <param name="stateInfo">state information that need to
-        /// be notified</param>
+        /// be notified.</param>
         private void NotifyAssociatedPowerShells(RunspacePoolStateInfo stateInfo)
         {
             List<ClientPowerShellDataStructureHandler> dsHandlers;
@@ -1349,10 +1349,10 @@ namespace System.Management.Automation.Internal
         /// Set the state of the associated powershell to stopped.
         /// </summary>
         /// <param name="reason">reason why this state change
-        /// should occur</param>
+        /// should occur.</param>
         /// <remarks>This method is called by the associated
         /// runspace pool data structure handler when the server runspace pool
-        /// goes into a closed or broken state</remarks>
+        /// goes into a closed or broken state.</remarks>
         internal void SetStateToFailed(Exception reason)
         {
             Dbg.Assert(BrokenNotificationFromRunspacePool != null,
@@ -1489,12 +1489,12 @@ namespace System.Management.Automation.Internal
         /// Default internal constructor.
         /// </summary>
         /// <param name="clientRunspacePoolId">id of the client
-        /// remote runspace pool associated with this data structure handler
+        /// remote runspace pool associated with this data structure handler.
         /// </param>
         /// <param name="clientPowerShellId">id of the client
-        /// powershell associated with this data structure handler</param>
+        /// powershell associated with this data structure handler.</param>
         /// <param name="transportManager">transport manager associated
-        /// with this connection</param>
+        /// with this connection.</param>
         internal ClientPowerShellDataStructureHandler(BaseClientCommandTransportManager transportManager,
                     Guid clientRunspacePoolId, Guid clientPowerShellId)
         {
@@ -1535,7 +1535,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <param name="data">Data to send.</param>
         /// <remarks>This overload takes a RemoteDataObject and should be
-        /// the one used within the code</remarks>
+        /// the one used within the code.</remarks>
         private void SendDataAsync(RemoteDataObject data)
         {
             RemoteDataObject<object> dataToBeSent = (RemoteDataObject<object>)data;
@@ -1560,7 +1560,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// </summary>
         /// <remarks>This method doesn't lock and its the responsibility
-        /// of the caller to actually do the locking</remarks>
+        /// of the caller to actually do the locking.</remarks>
         /// <param name="inputstream"></param>
         private void WriteInput(ObjectStreamBase inputstream)
         {

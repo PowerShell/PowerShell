@@ -1584,7 +1584,7 @@ else
         /// Update SDDL user ACEs with provided conditional group ACE fragment.
         /// SDDL:       O:NSG:BAD:P(A;;GA;;;BA)(A;;GA;;;RM)(A;;GA;;;IU)(A;;GA;;;S-1-5-21-2127438184-1604012920-1882527527)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)
         /// Cond ACE:   (Member_of {SID(2FA_GROUP_1)})
-        /// Cond SDDL:  O:NSG:BAD:P(XA;;GA;;;BA)(A;;GA;;;RM)(A;;GA;;;IU)(XA;;GA;;;S-1-5-21-2127438184-1604012920-1882527527;(Member_of {SID(2FA_GROUP_1)}))S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)
+        /// Cond SDDL:  O:NSG:BAD:P(XA;;GA;;;BA)(A;;GA;;;RM)(A;;GA;;;IU)(XA;;GA;;;S-1-5-21-2127438184-1604012920-1882527527;(Member_of {SID(2FA_GROUP_1)}))S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD).
         /// </summary>
         /// <param name="sddl"></param>
         /// <param name="conditionalGroupACE"></param>

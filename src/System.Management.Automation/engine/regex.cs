@@ -278,7 +278,7 @@ namespace System.Management.Automation
         /// Checks to see if the given string has any wild card characters in it.
         /// </summary>
         /// <param name="pattern">
-        /// String which needs to be checked for the presence of wildcard chars
+        /// String which needs to be checked for the presence of wildcard chars.
         /// </param>
         /// <returns>True if the string has wild card chars, false otherwise..</returns>
         /// <remarks>
@@ -511,7 +511,7 @@ namespace System.Management.Automation
         /// <param name="pattern">
         /// <see cref="WildcardPattern"/> object that includes both
         /// the text of the pattern (<see cref="WildcardPattern.Pattern"/>)
-        /// and the pattern options (<see cref="WildcardPattern.Options"/>)
+        /// and the pattern options (<see cref="WildcardPattern.Options"/>).
         /// </param>
         protected virtual void BeginWildcardPattern(WildcardPattern pattern)
         {
@@ -571,7 +571,7 @@ namespace System.Management.Automation
         /// Called from <see cref="Parse"/> method to indicate that the bracket expression
         /// should include all characters from character range
         /// starting at <paramref name="startOfCharacterRange"/>
-        /// and ending at <paramref name="endOfCharacterRange"/>
+        /// and ending at <paramref name="endOfCharacterRange"/>.
         /// </summary>
         protected abstract void AppendCharacterRangeToBracketExpression(
                         char startOfCharacterRange,
@@ -593,7 +593,7 @@ namespace System.Management.Automation
         /// <param name="bracketExpressionOperators"></param>
         /// <param name="pattern"></param>
         /// <remarks>
-        /// This method should be kept "internal"
+        /// This method should be kept "internal".
         /// </remarks>
         internal void AppendBracketExpression(string brackedExpressionContents, string bracketExpressionOperators, string pattern)
         {
@@ -628,7 +628,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Parses <paramref name="pattern"/>, calling appropriate overloads
-        /// in <paramref name="parser"/>
+        /// in <paramref name="parser"/>.
         /// </summary>
         /// <param name="pattern">Pattern to parse.</param>
         /// <param name="parser">Parser to call back.</param>
@@ -744,7 +744,7 @@ namespace System.Management.Automation
     /// foo*bar            ^foo.*bar$
     /// foo`*bar           ^foo\*bar$
     ///
-    /// for a more cases see the unit-test file RegexTest.cs
+    /// for a more cases see the unit-test file RegexTest.cs.
     /// </remarks>
     internal class WildcardPatternToRegexParser : WildcardPatternParser
     {
@@ -900,10 +900,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Parses a <paramref name="wildcardPattern"/> into a <see cref="Regex"/>
+        /// Parses a <paramref name="wildcardPattern"/> into a <see cref="Regex"/>.
         /// </summary>
         /// <param name="wildcardPattern">Wildcard pattern to parse.</param>
-        /// <returns>Regular expression equivalent to <paramref name="wildcardPattern"/></returns>
+        /// <returns>Regular expression equivalent to <paramref name="wildcardPattern"/>.</returns>
         public static Regex Parse(WildcardPattern wildcardPattern)
         {
             WildcardPatternToRegexParser parser = new WildcardPatternToRegexParser();

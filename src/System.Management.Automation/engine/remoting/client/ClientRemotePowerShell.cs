@@ -31,7 +31,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         /// <param name="shell">Powershell instance.</param>
         /// <param name="runspacePool">The runspace pool associated with
-        /// this shell</param>
+        /// this shell.</param>
         internal ClientRemotePowerShell(PowerShell shell, RemoteRunspacePoolInternal runspacePool)
         {
             this.shell = shell;
@@ -177,7 +177,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         /// <remarks>This method will be called from
         /// within the lock on PowerShell. Hence no need
-        /// to lock</remarks>
+        /// to lock.</remarks>
         internal void StopAsync()
         {
             // If we are in robust connection retry mode then auto-disconnect this command
@@ -220,13 +220,13 @@ namespace System.Management.Automation.Runspaces.Internal
         /// </summary>
         /// <param name="inputstream">Input for execution.</param>
         /// <param name="errorstream">error stream to which
-        /// data needs to be written to</param>
+        /// data needs to be written to.</param>
         /// <param name="informationalBuffers">informational buffers
-        /// which will hold debug, verbose and warning messages</param>
+        /// which will hold debug, verbose and warning messages.</param>
         /// <param name="settings">settings based on which this powershell
-        /// needs to be executed</param>
+        /// needs to be executed.</param>
         /// <param name="outputstream">output stream to which data
-        /// needs to be written to</param>
+        /// needs to be written to.</param>
         internal void Initialize(
             ObjectStreamBase inputstream, ObjectStreamBase outputstream,
                  ObjectStreamBase errorstream, PSInformationalBuffers informationalBuffers,
@@ -728,7 +728,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="sender">Sender of this information, unused.</param>
         /// <param name="eventArgs">arguments describing this event
         /// contains information on the reason associated with the
-        /// runspace pool entering a Broken state</param>
+        /// runspace pool entering a Broken state.</param>
         private void HandleBrokenNotificationFromRunspacePool(object sender,
             RemoteDataEventArgs<Exception> eventArgs)
         {
