@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// This is the base class for all the providers that produce a view
-    /// on session state data (Variables, Aliases, and Functions)
+    /// on session state data (Variables, Aliases, and Functions).
     /// </summary>
     public abstract class SessionStateProviderBase : ContainerCmdletProvider, IContentCmdletProvider
     {
@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         /// <remarks>
         /// The default implementation will get
-        /// the Value property of a DictionaryEntry
+        /// the Value property of a DictionaryEntry.
         /// </remarks>
         internal virtual object GetValueOfItem(object item)
         {
@@ -174,10 +174,10 @@ namespace Microsoft.PowerShell.Commands
         /// Sets a session state item to a given value.
         /// </summary>
         /// <param name="name">
-        /// Name of the item to set
+        /// Name of the item to set.
         /// </param>
         /// <param name="value">
-        /// The value to which to set the item
+        /// The value to which to set the item.
         /// </param>
         /// <returns>
         /// Nothing. The item that was set is written to the
@@ -587,7 +587,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         /// <remarks>
         /// The path may not contain the following characters:
-        /// . ( ) :
+        /// . ( ) :.
         /// </remarks>
         protected override bool IsValidPath(string path)
         {
@@ -1191,10 +1191,10 @@ namespace Microsoft.PowerShell.Commands
         /// always throws a NotSupportedException.
         /// </summary>
         /// <param name="offset">
-        /// ignored
+        /// ignored.
         /// </param>
         /// <param name="origin">
-        /// ignored
+        /// ignored.
         /// </param>
         /// <exception cref="NotSupportedException">
         /// This exception is always thrown.

@@ -74,12 +74,12 @@ namespace System.Management.Automation.Security
         public const int WTD_UI_NONE = 2;
 
         /// <Summary>
-        /// S_OK -> ((HRESULT)0L)
+        /// S_OK -> ((HRESULT)0L).
         /// </Summary>
         public const int S_OK = 0;
 
         /// <Summary>
-        /// S_FALSE -> ((HRESULT)1L)
+        /// S_FALSE -> ((HRESULT)1L).
         /// </Summary>
         public const int S_FALSE = 1;
 
@@ -104,7 +104,7 @@ namespace System.Management.Automation.Security
         public const int SAFER_MAX_HASH_SIZE = 64;
 
         /// <Summary>
-        /// SRP_POLICY_SCRIPT -> L"SCRIPT"
+        /// SRP_POLICY_SCRIPT -> L"SCRIPT".
         /// </Summary>
         public const string SRP_POLICY_SCRIPT = "SCRIPT";
 

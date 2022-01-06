@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get the contents of a SecureString as byte[]
+        /// Get the contents of a SecureString as byte[].
         /// </summary>
         /// <param name="s">Input string.</param>
         /// <returns>Contents of s (char[]) converted to byte[].</returns>
@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell
         /// Decrypts the specified string using DPAPI and return
         /// equivalent SecureString.
         ///
-        /// The string must be obtained earlier by a call to Protect()
+        /// The string must be obtained earlier by a call to Protect().
         /// </summary>
         /// <param name="input">Encrypted string.</param>
         /// <returns>SecureString .</returns>
@@ -299,7 +299,7 @@ namespace Microsoft.PowerShell
         /// Decrypts the specified string using the specified key
         /// and return equivalent SecureString.
         ///
-        /// The string must be obtained earlier by a call to Encrypt()
+        /// The string must be obtained earlier by a call to Encrypt().
         /// </summary>
         /// <param name="input">Encrypted string.</param>
         /// <param name="key">Encryption key.</param>
@@ -329,7 +329,7 @@ namespace Microsoft.PowerShell
         /// Decrypts the specified string using the specified key
         /// and return equivalent SecureString.
         ///
-        /// The string must be obtained earlier by a call to Encrypt()
+        /// The string must be obtained earlier by a call to Encrypt().
         /// </summary>
         /// <param name="input">Encrypted string.</param>
         /// <param name="key">Encryption key.</param>

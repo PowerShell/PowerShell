@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Sets the security descriptor for the item specified by <paramref name="path"/>
+        /// Sets the security descriptor for the item specified by <paramref name="path"/>.
         /// </summary>
         /// <param name="path">
         /// The path to the item to set the security descriptor on.
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell.Commands
         /// Creates a new empty security descriptor.
         /// </summary>
         /// <param name="type">
-        /// The type of item associated with this security descriptor
+        /// The type of item associated with this security descriptor.
         /// </param>
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to create.

@@ -49,7 +49,7 @@ namespace System.Management.Automation.Provider
     /// Although it is possible to derive from this base class to implement a Cmdlet Provider, in most
     /// cases one should derive from <see cref="System.Management.Automation.Provider.ItemCmdletProvider"/>,
     /// <see cref="System.Management.Automation.Provider.ContainerCmdletProvider"/>, or
-    /// <see cref ="System.Management.Automation.Provider.NavigationCmdletProvider"/>
+    /// <see cref ="System.Management.Automation.Provider.NavigationCmdletProvider"/>.
     /// </remarks>
     public abstract partial class CmdletProvider : IResourceSupplier
     {
@@ -540,7 +540,7 @@ namespace System.Management.Automation.Provider
         /// The path to the item on which the property should be removed.
         /// </param>
         /// <param name="propertyName">
-        /// The name of the property to be removed
+        /// The name of the property to be removed.
         /// </param>
         /// <param name="cmdletProviderContext">
         /// The context under which this method is being called.
@@ -1069,7 +1069,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         ///
-        /// The default implementation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters).
         /// </returns>
         protected virtual object StartDynamicParameters()
         {
@@ -1364,13 +1364,13 @@ namespace System.Management.Automation.Provider
         /// this if you require a different behavior.
         /// </summary>
         /// <param name="baseName">
-        /// the base resource name
+        /// the base resource name.
         /// </param>
         /// <param name="resourceId">
-        /// the resource id
+        /// the resource id.
         /// </param>
         /// <returns>
-        /// the resource string corresponding to baseName and resourceId
+        /// the resource string corresponding to baseName and resourceId.
         /// </returns>
         /// <remarks>
         /// When overriding this method, the resource string for the specified

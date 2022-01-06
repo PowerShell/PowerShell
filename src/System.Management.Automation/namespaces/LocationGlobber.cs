@@ -1144,7 +1144,7 @@ namespace System.Management.Automation
         /// Returns a provider specific path for given PowerShell path.
         /// </summary>
         /// <param name="path">
-        /// Either a PowerShell path or a provider path in the form providerId::providerPath
+        /// Either a PowerShell path or a provider path in the form providerId::providerPath.
         /// </param>
         /// <param name="context">
         /// The command context under which this operation is occurring.
@@ -1439,7 +1439,7 @@ namespace System.Management.Automation
         /// alternate path separator) in order for PowerShell to be slash agnostic.
         /// </remarks>
         /// <param name="path">
-        /// The path used in the determination
+        /// The path used in the determination.
         /// </param>
         /// <returns>
         /// Returns true if we're on a single root filesystem and the path is absolute.
@@ -1458,7 +1458,7 @@ namespace System.Management.Automation
         /// Determines if the given path is relative or absolute.
         /// </summary>
         /// <param name="path">
-        /// The path used in the determination
+        /// The path used in the determination.
         /// </param>
         /// <returns>
         /// true if the path is an absolute path, false otherwise.
@@ -1546,7 +1546,7 @@ namespace System.Management.Automation
         /// Determines if the given path is relative or absolute.
         /// </summary>
         /// <param name="path">
-        /// The path used in the determination
+        /// The path used in the determination.
         /// </param>
         /// <param name="driveName">
         /// If the path is absolute, this out parameter will be the
@@ -1786,7 +1786,7 @@ namespace System.Management.Automation
         /// relative path using the specified drive instead of the
         /// current working drive.
         ///
-        /// This is internal so that it can be called from SessionState
+        /// This is internal so that it can be called from SessionState.
         /// </remarks>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
@@ -4510,7 +4510,7 @@ namespace System.Management.Automation
         /// </param>
         /// <returns>
         /// True if the path contains a ~ at the beginning of the path or immediately
-        /// following a provider designator ("provider::")
+        /// following a provider designator ("provider::").
         /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Is <paramref name="path"/> is null.

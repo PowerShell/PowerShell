@@ -74,7 +74,7 @@ namespace System.Management.Automation
         /// Thrown if
         /// -- argument fileName is empty OR
         /// -- the specified certificate is not suitable for
-        ///    signing code
+        ///    signing code.
         /// </exception>
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
@@ -84,10 +84,10 @@ namespace System.Management.Automation
         ///  -- certificate is invalid
         ///  -- certificate has no private key
         ///  -- certificate password mismatch
-        ///  -- etc
+        ///  -- etc.
         /// </exception>
         /// <exception cref="System.IO.FileNotFoundException">
-        /// Thrown if the file specified by argument fileName is not found
+        /// Thrown if the file specified by argument fileName is not found.
         /// </exception>
         [ArchitectureSensitive]
         internal static Signature SignFile(SigningOption option,
@@ -263,7 +263,7 @@ namespace System.Management.Automation
         /// Thrown if argument fileName is empty.
         /// </exception>
         /// <exception cref="System.ArgumentNullException">
-        /// Thrown if argument fileName is null
+        /// Thrown if argument fileName is null.
         /// </exception>
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found.

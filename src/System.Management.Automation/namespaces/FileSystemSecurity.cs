@@ -284,7 +284,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="type">
         /// The type of Security Descriptor to create. Valid types are
-        /// "file", "directory," and "container."
+        /// "file", "directory," and "container.".
         /// </param>
         /// <param name="sections">
         /// The sections of the security descriptor to create.

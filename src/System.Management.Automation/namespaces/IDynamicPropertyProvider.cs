@@ -85,7 +85,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         ///
-        /// The default implementation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters).
         /// </returns>
         object? NewPropertyDynamicParameters(
             string path,
@@ -137,7 +137,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         ///
-        /// The default implementation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters).
         /// </returns>
         object RemovePropertyDynamicParameters(
             string path,
@@ -194,7 +194,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         ///
-        /// The default implementation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters).
         /// </returns>
         object? RenamePropertyDynamicParameters(
             string path,
@@ -260,7 +260,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         ///
-        /// The default implementation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters).
         /// </returns>
         object? CopyPropertyDynamicParameters(
             string sourcePath,
@@ -326,7 +326,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         ///
-        /// The default implementation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters).
         /// </returns>
         object? MovePropertyDynamicParameters(
             string sourcePath,

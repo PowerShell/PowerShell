@@ -17,7 +17,7 @@ namespace System.Management.Automation
         /// The name of the stack.
         /// </param>
         /// <param name="locationStack">
-        /// A stack object containing PathInfo objects
+        /// A stack object containing PathInfo objects.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="locationStack"/> is null.

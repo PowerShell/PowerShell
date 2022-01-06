@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
         /// The file access requested in the file.
         /// </param>
         /// <param name="share">
-        /// The file share to open the file with
+        /// The file share to open the file with.
         /// </param>
         /// <param name="encoding">
         /// The encoding of the file to be read or written.
@@ -100,10 +100,10 @@ namespace Microsoft.PowerShell.Commands
         /// will be used to read the file.
         /// </param>
         /// <param name="waitForChanges">
-        /// If true, we will perform blocking reads on the file, waiting for new content to be appended
+        /// If true, we will perform blocking reads on the file, waiting for new content to be appended.
         /// </param>
         /// <param name="provider">
-        /// The CmdletProvider invoking this stream
+        /// The CmdletProvider invoking this stream.
         /// </param>
         /// <param name="isRawStream">
         /// Indicates raw stream.
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands
         /// The file access requested in the file.
         /// </param>
         /// <param name="share">
-        /// The file share to open the file with
+        /// The file share to open the file with.
         /// </param>
         /// <param name="encoding">
         /// The encoding of the file to be read or written.
@@ -159,10 +159,10 @@ namespace Microsoft.PowerShell.Commands
         /// will be used to read the file.
         /// </param>
         /// <param name="waitForChanges">
-        /// If true, we will perform blocking reads on the file, waiting for new content to be appended
+        /// If true, we will perform blocking reads on the file, waiting for new content to be appended.
         /// </param>
         /// <param name="provider">
-        /// The CmdletProvider invoking this stream
+        /// The CmdletProvider invoking this stream.
         /// </param>
         /// <param name="isRawStream">
         /// Indicates raw stream.
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
         /// The file access requested in the file.
         /// </param>
         /// <param name="share">
-        /// The file share to open the file with
+        /// The file share to open the file with.
         /// </param>
         /// <param name="encoding">
         /// The encoding of the file to be read or written.
@@ -225,10 +225,10 @@ namespace Microsoft.PowerShell.Commands
         /// will be used to read the file.
         /// </param>
         /// <param name="waitForChanges">
-        /// If true, we will perform blocking reads on the file, waiting for new content to be appended
+        /// If true, we will perform blocking reads on the file, waiting for new content to be appended.
         /// </param>
         /// <param name="provider">
-        /// The CmdletProvider invoking this stream
+        /// The CmdletProvider invoking this stream.
         /// </param>
         /// <param name="isRawStream">
         /// Indicates raw stream.
@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
         /// The file access requested in the file.
         /// </param>
         ///  <param name="share">
-        ///    The file share to open the file with
+        ///    The file share to open the file with.
         ///  </param>
         /// <param name="delimiter">
         /// The delimiter to use when reading strings. Each time read is called, all contents up to an including
@@ -272,10 +272,10 @@ namespace Microsoft.PowerShell.Commands
         /// The encoding of the file to be read or written.
         /// </param>
         /// <param name="waitForChanges">
-        /// If true, we will perform blocking reads on the file, waiting for new content to be appended
+        /// If true, we will perform blocking reads on the file, waiting for new content to be appended.
         /// </param>
         /// <param name="provider">
-        /// The CmdletProvider invoking this stream
+        /// The CmdletProvider invoking this stream.
         /// </param>
         /// <param name="isRawStream">
         /// Indicates raw stream.
@@ -1063,7 +1063,7 @@ namespace Microsoft.PowerShell.Commands
         /// Writes the specified object to the file.
         /// </summary>
         /// <param name="content">
-        /// The objects to write to the file
+        /// The objects to write to the file.
         /// </param>
         /// <returns>
         /// The objects written to the file.

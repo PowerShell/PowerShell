@@ -92,13 +92,13 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
-        /// Converts all / in the path to \
+        /// Converts all / in the path to \.
         /// </summary>
         /// <param name="path">
         /// The path to normalize.
         /// </param>
         /// <returns>
-        /// The path with all / normalized to \
+        /// The path with all / normalized to \.
         /// </returns>
         private static string NormalizePath(string path)
         {
@@ -871,7 +871,7 @@ namespace Microsoft.PowerShell.Commands
         ///         net use z: \\scratch2\scratch\
         ///         subst y: z:\abc\
         ///   2. Substitute a network location directly. For example:
-        ///         subst y: \\scratch2\scratch\
+        ///         subst y: \\scratch2\scratch\.
         /// </summary>
         /// <param name="driveName"></param>
         /// <returns></returns>
@@ -1954,7 +1954,7 @@ namespace Microsoft.PowerShell.Commands
         /// If any attribute filtering switch parameters are set,
         /// returns an evaluator that evaluates these parameters.
         /// Otherwise,
-        /// returns NULL
+        /// returns NULL.
         /// </returns>
         private FlagsExpression<FileAttributes> FormatAttributeSwitchParameters()
         {
@@ -2145,7 +2145,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         /// <exception cref="System.ArgumentException">
         ///     path is null or empty.
-        ///     newName is null or empty
+        ///     newName is null or empty.
         /// </exception>
         protected override void RenameItem(
             string path,
@@ -2794,7 +2794,7 @@ namespace Microsoft.PowerShell.Commands
         /// Creates a directory at the specified path.
         /// </summary>
         /// <param name="path">
-        /// The path of the directory to create
+        /// The path of the directory to create.
         /// </param>
         /// <param name="streamOutput">
         /// Determines if the directory should be streamed out after being created.
@@ -3429,7 +3429,7 @@ namespace Microsoft.PowerShell.Commands
         /// on the returned ErrorRecord.
         /// </summary>
         /// <param name="path">
-        /// The path of the object to check
+        /// The path of the object to check.
         /// </param>
         /// <param name="error">
         /// An error record is returned in this parameter if there was an error.
@@ -3513,7 +3513,7 @@ namespace Microsoft.PowerShell.Commands
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         ///
-        /// The default implementation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters).
         /// </returns>
         protected override object ItemExistsDynamicParameters(string path)
         {
@@ -5068,7 +5068,7 @@ namespace Microsoft.PowerShell.Commands
         /// Determines if the specified path is either a drive root or a UNC root.
         /// </summary>
         /// <param name="path">
-        /// The path
+        /// The path.
         /// </param>
         /// <returns>
         /// True if the path is either a drive root or a UNC root, or false otherwise.
@@ -6197,7 +6197,7 @@ namespace Microsoft.PowerShell.Commands
         /// The list of properties to get.  Examples include "Attributes", "LastAccessTime,"
         /// and other properties defined by
         /// <see cref="System.IO.DirectoryInfo"/> and
-        /// <see cref="System.IO.FileInfo"/>
+        /// <see cref="System.IO.FileInfo"/>.
         /// </param>
         public void GetProperty(string path, Collection<string> providerSpecificPickList)
         {
@@ -7242,7 +7242,7 @@ namespace Microsoft.PowerShell.Commands
             /// Searches a path for a drive letter within the range of 'A' to 'Z' and returns the corresponding drive number.
             /// </summary>
             /// <param name="path">
-            /// Path of the file being executed
+            /// Path of the file being executed.
             /// </param>
             /// <returns>Returns 0 through 25 (corresponding to 'A' through 'Z') if the path has a drive letter, or -1 otherwise.</returns>
             [DllImport("api-ms-win-core-shlwapi-legacy-l1-1-0.dll", CharSet = CharSet.Unicode)]
@@ -7329,7 +7329,7 @@ namespace Microsoft.PowerShell.Commands
             /// The buffer to receive the result of the query.
             /// </param>
             /// <param name="ucchMax">
-            /// The maximum number of characters that can be stored into the buffer
+            /// The maximum number of characters that can be stored into the buffer.
             /// </param>
             /// <returns></returns>
             [DllImport(PinvokeDllNames.QueryDosDeviceDllName, CharSet = CharSet.Unicode, SetLastError = true)]

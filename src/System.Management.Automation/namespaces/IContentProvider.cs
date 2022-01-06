@@ -62,7 +62,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         ///
-        /// The default implementation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters).
         /// </returns>
         object? GetContentReaderDynamicParameters(string path);
 
@@ -103,7 +103,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         ///
-        /// The default implementation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters).
         /// </returns>
         object? GetContentWriterDynamicParameters(string path);
 
@@ -140,7 +140,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         ///
-        /// The default implementation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters).
         /// </returns>
         object? ClearContentDynamicParameters(string path);
     }

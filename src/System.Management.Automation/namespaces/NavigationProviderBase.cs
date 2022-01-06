@@ -148,7 +148,7 @@ namespace System.Management.Automation.Provider
         /// context of the command can be set.
         /// </summary>
         /// <param name="path">
-        /// The fully qualified path to the item
+        /// The fully qualified path to the item.
         /// </param>
         /// <returns>
         /// The leaf element in the path.
@@ -301,7 +301,7 @@ namespace System.Management.Automation.Provider
         /// The child segment of a path to be joined with the parent.
         /// </param>
         /// <param name="childIsLeaf">
-        /// Indicate that the <paramref name="child"/> is the name of a child item that's guaranteed to exist
+        /// Indicate that the <paramref name="child"/> is the name of a child item that's guaranteed to exist.
         /// </param>
         /// <remarks>
         /// If the <paramref name="childIsLeaf"/> is True, then we don't normalize the child path, and would do
@@ -686,7 +686,7 @@ namespace System.Management.Automation.Provider
         /// Gets the name of the leaf element in the specified path.
         /// </summary>
         /// <param name="path">
-        /// The fully qualified path to the item
+        /// The fully qualified path to the item.
         /// </param>
         /// <returns>
         /// The leaf element in the path.
@@ -838,7 +838,7 @@ namespace System.Management.Automation.Provider
         /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
         ///
-        /// The default implementation returns null. (no additional parameters)
+        /// The default implementation returns null. (no additional parameters).
         /// </returns>
         protected virtual object MoveItemDynamicParameters(
             string path,

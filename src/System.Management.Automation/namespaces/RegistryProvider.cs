@@ -770,7 +770,7 @@ namespace Microsoft.PowerShell.Commands
         /// The escaped path.
         /// </returns>
         /// <remarks>
-        /// This method handles surrogate pairs. Please see msdn documentation
+        /// This method handles surrogate pairs. Please see msdn documentation.
         /// </remarks>
         private static string EscapeSpecialChars(string path)
         {
@@ -819,7 +819,7 @@ namespace Microsoft.PowerShell.Commands
         /// The escaped name.
         /// </returns>
         /// <remarks>
-        /// This method handles surrogate pairs. Please see msdn documentation
+        /// This method handles surrogate pairs. Please see msdn documentation.
         /// </remarks>
         private static string EscapeChildName(string name)
         {
@@ -2930,13 +2930,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Converts all / in the path to \
+        /// Converts all / in the path to \.
         /// </summary>
         /// <param name="path">
         /// The path to normalize.
         /// </param>
         /// <returns>
-        /// The path with all / normalized to \
+        /// The path with all / normalized to \.
         /// </returns>
         private string NormalizePath(string path)
         {
@@ -3187,13 +3187,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Checks if the given path is the top container path (the one containing the hives)
+        /// Checks if the given path is the top container path (the one containing the hives).
         /// </summary>
         /// <param name="path">
-        /// path to check
+        /// path to check.
         /// </param>
         /// <returns>
-        /// true if the path is empty, a \ or a /, else false
+        /// true if the path is empty, a \ or a /, else false.
         /// </returns>
         private static bool IsHiveContainer(string path)
         {
@@ -3969,7 +3969,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="key">Key to read the value from.</param>
         /// <param name="valueName">Name of the value to read.</param>
         /// <returns>Value of the key, null if it could not retrieve
-        /// it because known exceptions were thrown, else an exception is percolated up
+        /// it because known exceptions were thrown, else an exception is percolated up.
         /// </returns>
         private static object ReadExistingKeyValue(IRegistryWrapper key, string valueName)
         {
@@ -4053,7 +4053,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         /// <param name="kind">Output for the RegistryValueKind for the string.</param>
         /// <returns>
-        /// true if the conversion succeeded
+        /// true if the conversion succeeded.
         /// </returns>
         private bool ParseKind(string type, out RegistryValueKind kind)
         {
@@ -4160,7 +4160,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// The only acceptable values for this parameter are those found
-        /// in the RegistryValueKind enum
+        /// in the RegistryValueKind enum.
         /// </remarks>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public RegistryValueKind Type { get; set; } = RegistryValueKind.Unknown;

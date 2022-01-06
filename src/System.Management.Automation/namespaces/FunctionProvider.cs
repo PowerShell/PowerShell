@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         /// <remarks>
         /// The default implementation will get
-        /// the Value property of a DictionaryEntry
+        /// the Value property of a DictionaryEntry.
         /// </remarks>
         internal override object GetValueOfItem(object item)
         {

@@ -124,7 +124,7 @@ namespace System.Management.Automation
         /// The constructor of the PathInfo object.
         /// </summary>
         /// <param name="drive">
-        /// The drive that contains the path
+        /// The drive that contains the path.
         /// </param>
         /// <param name="provider">
         /// The provider that contains the path.

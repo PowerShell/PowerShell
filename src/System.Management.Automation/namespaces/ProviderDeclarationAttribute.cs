@@ -27,7 +27,7 @@ namespace System.Management.Automation.Provider
         /// If <paramref name="providerName"/> is null or empty.
         /// </exception>
         /// <exception cref="PSArgumentException">
-        /// If <paramref name="providerName"/> contains any of the following characters: \ [ ] ? * :
+        /// If <paramref name="providerName"/> contains any of the following characters: \ [ ] ? * :.
         /// </exception>
         public CmdletProviderAttribute(
             string providerName,
