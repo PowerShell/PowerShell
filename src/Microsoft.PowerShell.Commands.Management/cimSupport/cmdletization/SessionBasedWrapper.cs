@@ -15,8 +15,8 @@ namespace Microsoft.PowerShell.Cmdletization
     /// Provides common code for processing session-based object models.  The common code
     /// Session, ThrottleLimit, AsJob parameters and delegates creation of jobs to derived classes.
     /// </summary>
-    /// <typeparam name="TObjectInstance">Type that represents instances of objects from the wrapped object model</typeparam>
-    /// <typeparam name="TSession">Type representing remote sessions</typeparam>
+    /// <typeparam name="TObjectInstance">Type that represents instances of objects from the wrapped object model.</typeparam>
+    /// <typeparam name="TSession">Type representing remote sessions.</typeparam>
     [SuppressMessage("Microsoft.Design", "CA1005:AvoidExcessiveParametersOnGenericTypes")]
     public abstract class SessionBasedCmdletAdapter<TObjectInstance, TSession> : CmdletAdapter<TObjectInstance>, IDisposable
         where TObjectInstance : class

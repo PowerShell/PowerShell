@@ -152,7 +152,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// values, which is then used to retrieve the instances.
         /// </para>
         /// <para>
-        /// If no ComputerName is specified the default value is "localhost"
+        /// If no ComputerName is specified the default value is "localhost".
         /// </para>
         /// </summary>
         [Alias(AliasCN, AliasServerName)]
@@ -272,7 +272,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// properties, for example:
         /// New-CimInstance -ClassName C -Namespace root\cimv2
         ///  -Property @{CreationClassName="CIM_VirtualComputerSystem";Name="VM3358"}
-        ///  -Keys {"CreationClassName", "Name"} -Local
+        ///  -Keys {"CreationClassName", "Name"} -Local.
         /// </para>
         /// </summary>
         [Parameter(

@@ -14,11 +14,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// <summary>
     /// <para>
     /// This Cmdlet creates an instance of a CIM class based on the class
-    /// definition, which is an instance factory
+    /// definition, which is an instance factory.
     /// </para>
     /// <para>
     /// If -ClientOnly is not specified, New-CimInstance will create a new instance
-    /// on the server, otherwise just create client in-memory instance
+    /// on the server, otherwise just create client in-memory instance.
     /// </para>
     /// </summary>
     [Alias("ncim")]
@@ -105,7 +105,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Enables the user to specify list of key property name.
         /// </para>
         /// <para>
-        /// Example: -Key {"K1", "K2"}
+        /// Example: -Key {"K1", "K2"}.
         /// </para>
         /// </summary>
         [Parameter(
@@ -173,7 +173,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Enables the user to specify instances with specific property values.
         /// </para>
         /// <para>
-        /// Example: -Property @{P1="Value1";P2="Value2"}
+        /// Example: -Property @{P1="Value1";P2="Value2"}.
         /// </para>
         /// </summary>
         [Parameter(
@@ -186,7 +186,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The following is the definition of the input parameter "Namespace".
         /// Namespace used to look for the classes under to store the instances.
-        /// Default namespace is 'root\cimv2'
+        /// Default namespace is 'root\cimv2'.
         /// </summary>
         [Parameter(
             ValueFromPipelineByPropertyName = true,
@@ -265,7 +265,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Provides the name of the computer from which to create the instances.
         /// </para>
         /// <para>
-        /// If no ComputerName is specified the default value is "localhost"
+        /// If no ComputerName is specified the default value is "localhost".
         /// </para>
         /// </summary>
         [Alias(AliasCN, AliasServerName)]

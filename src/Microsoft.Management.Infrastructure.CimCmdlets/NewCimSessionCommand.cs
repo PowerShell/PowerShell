@@ -84,7 +84,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Specifies a friendly name for the CIM Session connection.
         /// </para>
         /// <para>
-        /// If a name is not passed, then the session is given the name CimSession<int>,
+        /// If a name is not passed, then the session is given the name CimSession.<int>,
         /// where <int> is the next available session number. Example, CimSession1,
         /// CimSession2, etc...
         /// </para>
@@ -124,7 +124,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// The following is the definition of the input parameter "SkipTestConnection".
-        /// Specifies where test connection should be skipped
+        /// Specifies where test connection should be skipped.
         /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -318,7 +318,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// CimNewSession object
+        /// CimNewSession object.
         /// </para>
         /// </summary>
         private CimNewSession cimNewSession;

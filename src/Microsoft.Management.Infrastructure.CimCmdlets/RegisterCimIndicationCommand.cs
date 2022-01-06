@@ -17,7 +17,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// -SourceIdentifier is a name given to the subscription
     /// The Cmdlet should return a PS EventSubscription object that can be used to
     /// cancel the subscription
-    /// Should we have the second parameter set with a -Query?
+    /// Should we have the second parameter set with a -Query?.
     /// </summary>
     [Alias("rcie")]
     [Cmdlet(VerbsLifecycle.Register, "CimIndicationEvent", DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227960")]
@@ -31,7 +31,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Specifies the NameSpace under which to look for the specified class name.
         /// </para>
         /// <para>
-        /// Default value is root\cimv2
+        /// Default value is root\cimv2.
         /// </para>
         /// </summary>
         [Parameter]
@@ -264,7 +264,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Handler to handle unsubscribe event
+        /// Handler to handle unsubscribe event.
         /// </para>
         /// </summary>
         /// <param name="sender"></param>

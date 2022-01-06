@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns true if the given input is of the form c, c:, c:\, C, C: or C:\
+        /// Returns true if the given input is of the form c, c:, c:\, C, C: or C:\.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Returns a drive path of the form C:\ for the given drive driveName.
-        /// Supports the following inputs: C, C:, C:\
+        /// Supports the following inputs: C, C:, C:\.
         /// </summary>
         /// <param name="driveName"></param>
         /// <returns></returns>

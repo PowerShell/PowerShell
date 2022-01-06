@@ -9,7 +9,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
     /// <para>
-    /// Write result object to ps pipeline
+    /// Write result object to ps pipeline.
     /// </para>
     /// </summary>
     internal sealed class CimWriteResultObject : CimBaseAction
@@ -25,7 +25,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Write result object to ps pipeline
+        /// Write result object to ps pipeline.
         /// </para>
         /// </summary>
         /// <param name="cmdlet"></param>

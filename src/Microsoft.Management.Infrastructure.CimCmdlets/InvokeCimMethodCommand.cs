@@ -221,7 +221,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// values, which is then used to retrieve the instances.
         /// </para>
         /// <para>
-        /// If no ComputerName is specified the default value is "localhost"
+        /// If no ComputerName is specified the default value is "localhost".
         /// </para>
         /// </summary>
         [Alias(AliasCN, AliasServerName)]

@@ -93,10 +93,10 @@ namespace Microsoft.PowerShell.Commands
         /// Serialization constructor for class RestartComputerTimeoutException.
         /// </summary>
         /// <param name="info">
-        /// serialization information
+        /// serialization information.
         /// </param>
         /// <param name="context">
-        /// streaming context
+        /// streaming context.
         /// </param>
         private RestartComputerTimeoutException(SerializationInfo info, StreamingContext context)
             : base(info, context)
@@ -114,10 +114,10 @@ namespace Microsoft.PowerShell.Commands
         /// Serializes the RestartComputerTimeoutException.
         /// </summary>
         /// <param name="info">
-        /// serialization information
+        /// serialization information.
         /// </param>
         /// <param name="context">
-        /// streaming context
+        /// streaming context.
         /// </param>
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {

@@ -12,7 +12,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
     /// <para>
-    /// Write message to message channel
+    /// Write message to message channel.
     /// </para>
     /// </summary>
     internal sealed class CimWriteMessage : CimBaseAction
@@ -44,7 +44,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Write message to the target channel
+        /// Write message to the target channel.
         /// </para>
         /// </summary>
         /// <param name="cmdlet"></param>

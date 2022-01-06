@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="from">A string containing the WMI class name.</param>
         /// <returns>
-        /// A string containing the WQL query string
+        /// A string containing the WQL query string.
         /// </returns>
         internal static string WqlQueryAll(string from)
         {
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
         /// The CIM session to be queried.
         /// </param>
         /// <param name="nameSpace">
-        /// A string containing the namespace to run the query against
+        /// A string containing the namespace to run the query against.
         /// </param>
         /// <param name="wmiClassName">
         /// A string containing the name of the WMI class from which to populate
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
         /// The CIM session to be queried.
         /// </param>
         /// <param name="nameSpace">
-        /// A string containing the namespace to run the query against
+        /// A string containing the namespace to run the query against.
         /// </param>
         /// <param name="wmiClassName">
         /// A string containing the name of the WMI class from which to populate
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         /// <returns>
         /// A new string in which any backslash characters have been "escaped"
-        /// by prefacing then with an additional backslash
+        /// by prefacing then with an additional backslash.
         /// </returns>
         internal static string EscapePath(string path)
         {
@@ -256,7 +256,7 @@ namespace Extensions
         /// <param name="nameSpace">A string containing the namespace to run the query against.</param>
         /// <param name="query">A string containing the query to be run.</param>
         /// <returns>
-        /// An IEnumerable interface that can be used to enumerate the instances
+        /// An IEnumerable interface that can be used to enumerate the instances.
         /// </returns>
         internal static IEnumerable<CimInstance> QueryInstances(this CimSession session, string nameSpace, string query)
         {

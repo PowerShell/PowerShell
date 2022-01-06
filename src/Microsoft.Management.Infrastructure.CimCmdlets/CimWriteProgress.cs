@@ -12,7 +12,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
     /// <para>
-    /// Write progress record of given activity
+    /// Write progress record of given activity.
     /// </para>
     /// </summary>
     internal sealed class CimWriteProgress : CimBaseAction
@@ -21,19 +21,19 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Initializes a new instance of the <see cref="CimWriteProgress"/> class.
         /// </summary>
         /// <param name="activity">
-        ///  Activity identifier of the given activity
+        ///  Activity identifier of the given activity.
         /// </param>
         /// <param name="currentOperation">
-        /// current operation description of the given activity
+        /// current operation description of the given activity.
         /// </param>
         /// <param name="statusDescription">
-        /// current status description of the given activity
+        /// current status description of the given activity.
         /// </param>
         /// <param name="percentageCompleted">
-        /// percentage completed of the given activity
+        /// percentage completed of the given activity.
         /// </param>
         /// <param name="secondsRemaining">
-        /// how many seconds remained for the given activity
+        /// how many seconds remained for the given activity.
         /// </param>
         public CimWriteProgress(
             string theActivity,
@@ -61,7 +61,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Write progress record to powershell
+        /// Write progress record to powershell.
         /// </para>
         /// </summary>
         /// <param name="cmdlet"></param>

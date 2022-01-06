@@ -64,7 +64,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// the specified Namespace.
         /// </para>
         /// <para>
-        /// Default namespace is root\cimv2
+        /// Default namespace is root\cimv2.
         /// </para>
         /// </summary>
         [Parameter(
@@ -108,10 +108,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>The following is the definition of the input parameter "ComputerName".
-        /// Provides the name of the computer from which to retrieve the <see cref="CimClass"/>
+        /// Provides the name of the computer from which to retrieve the <see cref="CimClass"/>.
         /// </para>
         /// <para>
-        /// If no ComputerName is specified the default value is "localhost"
+        /// If no ComputerName is specified the default value is "localhost".
         /// </para>
         /// </summary>
         [Alias(AliasCN, AliasServerName)]
@@ -139,7 +139,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <para>
         /// The following is the definition of the input parameter "MethodName",
         /// Which may contains wildchar.
-        /// Then Filter the <see cref="CimClass"/> by given methodname
+        /// Then Filter the <see cref="CimClass"/> by given methodname.
         /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -159,7 +159,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <para>
         /// The following is the definition of the input parameter "QualifierName",
         /// Which may contains wildchar.
-        /// Filter the <see cref="CimClass"/> by given methodname
+        /// Filter the <see cref="CimClass"/> by given methodname.
         /// </para>
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]

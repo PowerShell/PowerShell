@@ -15,49 +15,49 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
     /// <para>
-    /// Global Non-localization strings
+    /// Global Non-localization strings.
     /// </para>
     /// </summary>
     internal static class ConstValue
     {
         /// <summary>
         /// <para>
-        /// Default computername
+        /// Default computername.
         /// </para>
         /// </summary>
         internal static readonly string[] DefaultSessionName = { @"*" };
 
         /// <summary>
         /// <para>
-        /// Empty computername, which will create DCOM session
+        /// Empty computername, which will create DCOM session.
         /// </para>
         /// </summary>
         internal static readonly string NullComputerName = null;
 
         /// <summary>
         /// <para>
-        /// Empty computername array, which will create DCOM session
+        /// Empty computername array, which will create DCOM session.
         /// </para>
         /// </summary>
         internal static readonly string[] NullComputerNames = { NullComputerName };
 
         /// <summary>
         /// <para>
-        /// localhost computername, which will create WSMAN session
+        /// localhost computername, which will create WSMAN session.
         /// </para>
         /// </summary>
         internal static readonly string LocalhostComputerName = @"localhost";
 
         /// <summary>
         /// <para>
-        /// Default namespace
+        /// Default namespace.
         /// </para>
         /// </summary>
         internal static readonly string DefaultNameSpace = @"root\cimv2";
 
         /// <summary>
         /// <para>
-        /// Default namespace
+        /// Default namespace.
         /// </para>
         /// </summary>
         internal static readonly string DefaultQueryDialect = @"WQL";
@@ -69,7 +69,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Whether given computername is either null or empty
+        /// Whether given computername is either null or empty.
         /// </para>
         /// </summary>
         /// <param name="computerName"></param>
@@ -81,7 +81,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Get computer names, if it is null then return DCOM one
+        /// Get computer names, if it is null then return DCOM one.
         /// </para>
         /// </summary>
         /// <param name="computerNames"></param>
@@ -103,7 +103,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Get namespace, if it is null then return default one
+        /// Get namespace, if it is null then return default one.
         /// </para>
         /// </summary>
         /// <param name="nameSpace"></param>
@@ -115,7 +115,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Get queryDialect, if it is null then return default query Dialect
+        /// Get queryDialect, if it is null then return default query Dialect.
         /// </para>
         /// </summary>
         /// <param name="queryDialect"></param>
@@ -128,7 +128,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// <para>
-    /// Debug helper class used to dump debug message to log file
+    /// Debug helper class used to dump debug message to log file.
     /// </para>
     /// </summary>
     internal static class DebugHelper
@@ -359,7 +359,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// <para>
-    /// Helper class used to validate given parameter
+    /// Helper class used to validate given parameter.
     /// </para>
     /// </summary>
     internal static class ValidationHelper

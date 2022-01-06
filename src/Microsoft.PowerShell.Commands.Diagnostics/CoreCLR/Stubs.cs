@@ -8,7 +8,7 @@ namespace System.Diagnostics
     /// <summary>
     /// Indicates whether the performance counter category can have multiple instances.
     /// </summary>
-    /// <filterpriority>1</filterpriority>
+    /// <filterpriority>1.</filterpriority>
     public enum PerformanceCounterCategoryType
     {
         /// <summary>
@@ -31,7 +31,7 @@ namespace System.Diagnostics
     /// Specifies the formula used to calculate the <see cref="M:System.Diagnostics.PerformanceCounter.NextValue"/>
     /// method for a <see cref="T:System.Diagnostics.PerformanceCounter"/> instance.
     /// </summary>
-    /// <filterpriority>2</filterpriority>
+    /// <filterpriority>2.</filterpriority>
     public enum PerformanceCounterType
     {
         /// <summary>

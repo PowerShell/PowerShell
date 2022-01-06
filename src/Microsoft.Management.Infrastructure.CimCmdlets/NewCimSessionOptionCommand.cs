@@ -251,7 +251,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "ProxyAuthentication".
-        /// Which proxy authentication types to use: Allowed set is:
+        /// Which proxy authentication types to use: Allowed set is:.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = WSManParameterSet)]
@@ -319,7 +319,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The following is the definition of the input parameter "ProxyType".
         /// Which proxy type to use: Valid set is:
-        ///  { InternetExplorer | WinHttp | Auto | None }
+        ///  { InternetExplorer | WinHttp | Auto | None }.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = WSManParameterSet)]

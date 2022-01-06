@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         public string ProviderName { get; set; }
 
         /// <summary>
-        /// Id (EventId defined in manifest file)
+        /// Id (EventId defined in manifest file).
         /// </summary>
         [Parameter(
             Position = 1,
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _idSpecified = false;
 
         /// <summary>
-        /// Version (event version)
+        /// Version (event version).
         /// </summary>
         [Parameter(
             Mandatory = false,

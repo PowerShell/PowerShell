@@ -113,7 +113,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Throw terminating error
+        /// Throw terminating error.
         /// </para>
         /// </summary>
         [System.Diagnostics.CodeAnalysis.DoesNotReturn]
@@ -158,7 +158,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Object here need to be removed if it is CimInstance
+        /// Object here need to be removed if it is CimInstance.
         /// </para>
         /// </summary>
         /// <param name="sendToPipeline"></param>
@@ -222,7 +222,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Object here need to be removed if it is CimInstance
+        /// Object here need to be removed if it is CimInstance.
         /// </para>
         /// </summary>
         /// <param name="sendToPipeline"></param>
@@ -300,7 +300,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Object here need to be removed if it is CimInstance
+        /// Object here need to be removed if it is CimInstance.
         /// </para>
         /// </summary>
         /// <param name="sendToPipeline"></param>
@@ -365,7 +365,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Add session object to cache
+        /// Add session object to cache.
         /// </para>
         /// </summary>
         /// <param name="sendToPipeline"></param>
