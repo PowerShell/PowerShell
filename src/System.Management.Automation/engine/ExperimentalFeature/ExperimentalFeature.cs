@@ -143,7 +143,7 @@ namespace System.Management.Automation
                     name: PSExecFeatureName,
                     description: "Add 'exec' built-in command on Linux and macOS"),
                 new ExperimentalFeature(
-                    name: PSStrictModeVersionAssignment,
+                    name: PSStrictModeAssignment,
                     description: "Add support of setting Strict-Mode with Invoke-Command"),
             };
 
