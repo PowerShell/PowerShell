@@ -3189,7 +3189,7 @@ namespace Microsoft.WSMan.Management
         /// <summary>
         /// For Host Level or WsMan level
         /// WsMan\Localhost:\>
-        /// WsMan:\>
+        /// WsMan:\>.
         /// </summary>
         /// <param name="objSessionObject"></param>
         /// <param name="uri"></param>
@@ -5060,7 +5060,7 @@ namespace Microsoft.WSMan.Management
         /// <param name="host">Name of the Host.</param>
         /// <param name="Operation">Type of Operation.</param>
         ///<param name="resources">List of Resources.</param>
-        ///<param name="securities">List of Securities</param>
+        ///<param name="securities">List of Securities.</param>
         ///<param name="initParams">List of initialization parameters.</param>
         /// <returns>An Configuration XML, ready to send to server.</returns>
         private static string ConstructPluginXml(PSObject objinputparam, string ResourceURI, string host, string Operation, ArrayList resources, ArrayList securities, ArrayList initParams)
@@ -5504,7 +5504,7 @@ namespace Microsoft.WSMan.Management
 
     /// <summary>
     /// Computer dynamic parameters. This is similar to connect-wsman parameters.
-    /// Available path wsman:\>
+    /// Available path wsman:\>.
     /// </summary>
     public class WSManProviderNewItemComputerParameters
     {
@@ -5539,7 +5539,7 @@ namespace Microsoft.WSMan.Management
         /// - Basic:  Use basic authentication for establishing a remote connection.
         /// -CredSSP: Use CredSSP authentication for establishing a remote connection
         /// which will enable the user to perform credential delegation. (i.e. second
-        /// hop)
+        /// hop).
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -5655,7 +5655,7 @@ namespace Microsoft.WSMan.Management
 
     /// <summary>
     /// Plugin Dynamic parameter. There are 2 parameter sets.
-    /// Path - WSMan:\Localhost\Plugin>
+    /// Path - WSMan:\Localhost\Plugin>.
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Plugin")]
     public class WSManProviderNewItemPluginParameters
@@ -5824,7 +5824,7 @@ namespace Microsoft.WSMan.Management
 
     /// <summary>
     /// Initparameters dynamic parameters
-    /// Path - wsman:\localhost\plugin\[specified plugin]\Initializationparameters>
+    /// Path - wsman:\localhost\plugin\[specified plugin]\Initializationparameters>.
     /// </summary>
     public class WSManProviderInitializeParameters
     {
@@ -5861,7 +5861,7 @@ namespace Microsoft.WSMan.Management
 
     /// <summary>
     /// Dynamic parameter for Resource Item.
-    /// Path - WsMAn:\localhost\Plugin\[Specified Plugin]\Resources>
+    /// Path - WsMAn:\localhost\Plugin\[Specified Plugin]\Resources>.
     /// </summary>
     public class WSManProviderNewItemResourceParameters
     {
@@ -5897,7 +5897,7 @@ namespace Microsoft.WSMan.Management
 
     /// <summary>
     /// Security Dynamic Parameters
-    /// Path - WsMan:\Localhost\Plugin\[Specified Plugin]\Resources\[Specified Resource]\Security>
+    /// Path - WsMan:\Localhost\Plugin\[Specified Plugin]\Resources\[Specified Resource]\Security>.
     /// </summary>
     public class WSManProviderNewItemSecurityParameters
     {
@@ -6010,7 +6010,7 @@ namespace Microsoft.WSMan.Management
 
     /// <summary>
     /// Listener Dynamic parameters
-    /// Path - WsMan:\Localhost\Listener>
+    /// Path - WsMan:\Localhost\Listener>.
     /// </summary>
     public class WSManProvidersListenerParameters
     {

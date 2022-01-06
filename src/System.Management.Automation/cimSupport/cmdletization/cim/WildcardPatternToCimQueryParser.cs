@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// 1) rather slim / incomplete
     /// 2) sometimes incorrect (i.e. says that '=' is used for character ranges, when it should have said '-')
     ///
-    /// The code below is therefore mainly based on reverse engineering of admin\wmi\wbem\winmgmt\wbecomn\like.cpp
+    /// The code below is therefore mainly based on reverse engineering of admin\wmi\wbem\winmgmt\wbecomn\like.cpp.
     /// </remarks>
     internal class WildcardPatternToCimQueryParser : WildcardPatternParser
     {

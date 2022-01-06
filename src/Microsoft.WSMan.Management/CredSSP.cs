@@ -27,7 +27,7 @@ namespace Microsoft.WSMan.Management
     #region WSManCredSSP cmdlet base
 
     /// <summary>
-    /// Base class used *-WSManCredSSP cmdlets (Enable-WSManCredSSP, Disable-WSManCredSSP)
+    /// Base class used *-WSManCredSSP cmdlets (Enable-WSManCredSSP, Disable-WSManCredSSP).
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]

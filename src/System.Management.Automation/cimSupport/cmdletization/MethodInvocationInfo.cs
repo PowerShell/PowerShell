@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 namespace Microsoft.PowerShell.Cmdletization
 {
     /// <summary>
-    /// Information about invocation of a method in an object model wrapped by an instance of <see cref="CmdletAdapter{TObjectInstance}"/>
+    /// Information about invocation of a method in an object model wrapped by an instance of <see cref="CmdletAdapter{TObjectInstance}"/>.
     /// </summary>
     public sealed class MethodInvocationInfo
     {

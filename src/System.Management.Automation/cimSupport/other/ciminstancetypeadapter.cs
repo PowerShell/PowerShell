@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Cim
     /// supports only properties. If method support is needed in future, this should derive from
     /// Adapter class.
     ///
-    /// The Adapter registration is done in monad\src\singleshell\installer\MshManagementMshSnapin.cs
+    /// The Adapter registration is done in monad\src\singleshell\installer\MshManagementMshSnapin.cs.
     /// </remarks>
     public sealed class CimInstanceAdapter : PSPropertyAdapter
     {

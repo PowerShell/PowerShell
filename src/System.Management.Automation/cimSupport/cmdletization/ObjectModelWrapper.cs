@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Cmdletization
     /// ObjectModelWrapper integrates OM-specific operations into generic cmdletization framework.
     /// For example - CimCmdletAdapter knows how to invoke a static method "Foo" in the CIM OM.
     /// </summary>
-    /// <typeparam name="TObjectInstance">Type that represents instances of objects from the wrapped object model</typeparam>
+    /// <typeparam name="TObjectInstance">Type that represents instances of objects from the wrapped object model.</typeparam>
     public abstract class CmdletAdapter<TObjectInstance>
         where TObjectInstance : class
     {
@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
         /// <summary>
         /// Name of the class (from the object model handled by this ObjectModelWrapper) that is wrapped by the currently executing cmdlet.
-        /// This value can be <see langword="null"/> (i.e. when ClassVersion attribute is omitted in the ps1xml)
+        /// This value can be <see langword="null"/> (i.e. when ClassVersion attribute is omitted in the ps1xml).
         /// </summary>
         public string ClassVersion
         {
@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Cmdletization
         private Version _moduleVersion;
 
         /// <summary>
-        /// Private data from Cmdlet Definition XML (from &lt;ObjectModelWrapperPrivateData&gt; element)
+        /// Private data from Cmdlet Definition XML (from &lt;ObjectModelWrapperPrivateData&gt; element).
         /// </summary>
         public IDictionary<string, string> PrivateData
         {

@@ -697,7 +697,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </summary>
         /// <param name="group">
         /// A <see cref="LocalGroup"/> object identifying the group from
-        /// which to remove members
+        /// which to remove members.
         /// </param>
         /// <param name="member">
         /// An object of type <see cref="LocalPrincipal"/> identifying
@@ -724,7 +724,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </summary>
         /// <param name="groupSid">
         /// A <see cref="SecurityIdentifier"/> object identifying the group from
-        /// which to remove members
+        /// which to remove members.
         /// </param>
         /// <param name="member">
         /// An Object of type <see cref="LocalPrincipal"/> identifying
@@ -802,7 +802,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// no password is set.
         /// </param>
         /// <param name="setPasswordNeverExpires">
-        /// Indicates whether PasswordNeverExpires was specified
+        /// Indicates whether PasswordNeverExpires was specified.
         /// </param>
         /// <returns>
         /// A new LocalGroup object containing information about the newly
@@ -962,7 +962,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// Call this overload when intending to leave the password-expired
         /// marker in its current state. To set the password and the
         /// password-expired state, call the overload with a boolean as the
-        /// fourth parameter
+        /// fourth parameter.
         /// </remarks>
         internal void UpdateLocalUser(LocalUser user, LocalUser changed, System.Security.SecureString password, bool? setPasswordNeverExpires)
         {
@@ -1223,10 +1223,10 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// Handle to the domain in which to create the new user.
         /// </param>
         /// <param name="setPasswordNeverExpires">
-        /// Indicates whether PasswordNeverExpires was specified
+        /// Indicates whether PasswordNeverExpires was specified.
         /// </param>
         /// <returns>
-        /// A LocalUser object that represents the newly-created user
+        /// A LocalUser object that represents the newly-created user.
         /// </returns>
         private LocalUser CreateUser(LocalUser userInfo, System.Security.SecureString password, IntPtr domainHandle, bool setPasswordNeverExpires)
         {
@@ -1495,7 +1495,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </summary>
         /// <param name="groupSid">
         /// A <see cref="SecurityIdentifier"/> object identifying the group from
-        /// which to remove members
+        /// which to remove members.
         /// </param>
         /// <param name="member">
         /// An object of type <see cref="LocalPrincipal"/> identifying
@@ -2179,7 +2179,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// this parameter is ignored.
         /// </param>
         /// <param name="setPasswordNeverExpires">
-        /// Nullable value the specifies whether the PasswordNeverExpires bit should be flipped
+        /// Nullable value the specifies whether the PasswordNeverExpires bit should be flipped.
         /// </param>
         private void SetUserData(IntPtr userHandle,
                                  LocalUser sourceUser,

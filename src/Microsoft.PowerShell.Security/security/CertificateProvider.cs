@@ -930,7 +930,7 @@ namespace Microsoft.PowerShell.Commands
         /// Only support store.
         /// </param>
         /// <param name="value">
-        /// Ignored
+        /// Ignored.
         /// </param>
         /// <returns>
         /// Nothing.  The new certificate store object is
@@ -1037,7 +1037,7 @@ namespace Microsoft.PowerShell.Commands
         /// certificates.  False otherwise.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">
-        /// Path is null
+        /// Path is null.
         /// </exception>
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
@@ -1046,7 +1046,7 @@ namespace Microsoft.PowerShell.Commands
         /// Some example reasons include:
         ///  -- certificate is invalid
         ///  -- certificate has no private key
-        ///  -- certificate password mismatch
+        ///  -- certificate password mismatch.
         /// </exception>
         protected override bool HasChildItems(string path)
         {
@@ -1137,7 +1137,7 @@ namespace Microsoft.PowerShell.Commands
         /// at the specified path.  False otherwise.
         /// </returns>
         /// <exception cref="System.ArgumentNullException">
-        /// Path is null
+        /// Path is null.
         /// </exception>
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
@@ -1147,7 +1147,7 @@ namespace Microsoft.PowerShell.Commands
         ///  -- certificate is invalid
         ///  -- certificate has no private key
         ///  -- certificate password mismatch
-        ///  -- etc
+        ///  -- etc.
         /// </exception>
         protected override bool ItemExists(string path)
         {
@@ -1208,7 +1208,7 @@ namespace Microsoft.PowerShell.Commands
         /// The path of the item to retrieve.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// Path is null
+        /// Path is null.
         /// </exception>
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
@@ -1218,7 +1218,7 @@ namespace Microsoft.PowerShell.Commands
         ///  -- certificate is invalid
         ///  -- certificate has no private key
         ///  -- certificate password mismatch
-        ///  -- etc
+        ///  -- etc.
         /// </exception>
         protected override void GetItem(string path)
         {
@@ -2151,7 +2151,7 @@ namespace Microsoft.PowerShell.Commands
         ///  -- certificate is invalid
         ///  -- certificate has no private key
         ///  -- certificate password mismatch
-        ///  -- etc
+        ///  -- etc.
         /// </exception>
         protected override void GetChildItems(string path, bool recurse)
         {
@@ -2181,7 +2181,7 @@ namespace Microsoft.PowerShell.Commands
         ///  -- certificate is invalid
         ///  -- certificate has no private key
         ///  -- certificate password mismatch
-        ///  -- etc
+        ///  -- etc.
         /// </exception>
         protected override void GetChildNames(
             string path,
@@ -2210,7 +2210,7 @@ namespace Microsoft.PowerShell.Commands
         ///  -- certificate is invalid
         ///  -- certificate has no private key
         ///  -- certificate password mismatch
-        ///  -- etc
+        ///  -- etc.
         /// </exception>
         protected override bool IsItemContainer(string path)
         {
@@ -2406,7 +2406,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="cert"></param>
         /// <returns>Cert name .</returns>
-        /// <remarks> we use Thumbprint as the name  </remarks>
+        /// <remarks> we use Thumbprint as the name.  </remarks>
         private static string GetCertName(X509Certificate2 cert)
         {
             return cert.Thumbprint;
@@ -2874,14 +2874,14 @@ namespace Microsoft.PowerShell.Commands
         /// Get provider-specific help.
         /// </summary>
         /// <param name="helpItemName">
-        /// Name of help item or cmdlet for which user has requested help
+        /// Name of help item or cmdlet for which user has requested help.
         /// </param>
         /// <param name = "path">
         /// Path to the current location or path to the location of the property that the user needs
         /// help about.
         /// </param>
         /// <returns>
-        /// Provider specific MAML help content string
+        /// Provider specific MAML help content string.
         /// </returns>
         string ICmdletProviderSupportsHelp.GetHelpMaml(string helpItemName, string path)
         {
@@ -2999,7 +2999,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets the location as a
-        /// <see cref="System.Security.Cryptography.X509Certificates.StoreLocation"/>
+        /// <see cref="System.Security.Cryptography.X509Certificates.StoreLocation"/>.
         /// </summary>
         public StoreLocation Location
         {

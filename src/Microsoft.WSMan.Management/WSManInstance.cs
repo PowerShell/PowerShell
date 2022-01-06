@@ -26,7 +26,7 @@ namespace Microsoft.WSMan.Management
     /// parameters are specified by key value pairs.
     /// eg., Call StartService method on the spooler service
     /// Invoke-WSManAction -Action StartService -ResourceURI wmicimv2/Win32_Service
-    /// -SelectorSet {Name=Spooler}
+    /// -SelectorSet {Name=Spooler}.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "WSManInstance", DefaultParameterSetName = "GetInstance", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096627")]
     public class GetWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
@@ -80,7 +80,7 @@ namespace Microsoft.WSMan.Management
         /// The following is the definition of the input parameter "ComputerName".
         /// Executes the management operation on the specified computer(s). The default
         /// is the local computer. Type the fully qualified domain name, NETBIOS name or
-        /// IP address to indicate the remote host(s)
+        /// IP address to indicate the remote host(s).
         /// </summary>
         [Parameter(ParameterSetName = "GetInstance")]
         [Parameter(ParameterSetName = "Enumerate")]
@@ -682,7 +682,7 @@ namespace Microsoft.WSMan.Management
     /// parameters are specified by key value pairs.
     /// eg., Call StartService method on the spooler service
     /// Set-WSManInstance -Action StartService -ResourceURI wmicimv2/Win32_Service
-    /// -SelectorSet {Name=Spooler}
+    /// -SelectorSet {Name=Spooler}.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096937")]
     public class SetWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
@@ -707,7 +707,7 @@ namespace Microsoft.WSMan.Management
         /// The following is the definition of the input parameter "ComputerName".
         /// Executes the management operation on the specified computer(s). The default
         /// is the local computer. Type the fully qualified domain name, NETBIOS name or
-        /// IP address to indicate the remote host(s)
+        /// IP address to indicate the remote host(s).
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [Alias("cn")]
@@ -1055,7 +1055,7 @@ namespace Microsoft.WSMan.Management
     /// parameters are specified by key value pairs.
     /// eg., Call StartService method on the spooler service
     /// Set-WSManInstance -Action StartService -ResourceURI wmicimv2/Win32_Service
-    /// -SelectorSet {Name=Spooler}
+    /// -SelectorSet {Name=Spooler}.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096721")]
     public class RemoveWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
@@ -1080,7 +1080,7 @@ namespace Microsoft.WSMan.Management
         /// The following is the definition of the input parameter "ComputerName".
         /// Executes the management operation on the specified computer(s). The default
         /// is the local computer. Type the fully qualified domain name, NETBIOS name or
-        /// IP address to indicate the remote host(s)
+        /// IP address to indicate the remote host(s).
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [Alias("cn")]
@@ -1345,7 +1345,7 @@ namespace Microsoft.WSMan.Management
         /// The following is the definition of the input parameter "ComputerName".
         /// Executes the management operation on the specified computer(s). The default
         /// is the local computer. Type the fully qualified domain name, NETBIOS name or
-        /// IP address to indicate the remote host(s)
+        /// IP address to indicate the remote host(s).
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [Alias("cn")]

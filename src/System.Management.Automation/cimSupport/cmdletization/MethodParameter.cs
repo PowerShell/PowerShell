@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Cmdletization
     }
 
     /// <summary>
-    /// Parameter of a method in an object model wrapped by <see cref="CmdletAdapter&lt;TObjectInstance&gt;"/>
+    /// Parameter of a method in an object model wrapped by <see cref="CmdletAdapter&lt;TObjectInstance&gt;"/>.
     /// </summary>
     public sealed class MethodParameter
     {
@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Cmdletization
         public string Name { get; set; }
 
         /// <summary>
-        /// Type of the parameter (as seen in the PowerShell layer on the client)
+        /// Type of the parameter (as seen in the PowerShell layer on the client).
         /// </summary>
         public Type ParameterType { get; set; }
 
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Cmdletization
         public string ParameterTypeName { get; set; }
 
         /// <summary>
-        /// Bindings of the method parameter (in/out/error)
+        /// Bindings of the method parameter (in/out/error).
         /// </summary>
         public MethodParameterBindings Bindings { get; set; }
 

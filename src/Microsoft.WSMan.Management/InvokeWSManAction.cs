@@ -21,7 +21,7 @@ namespace Microsoft.WSMan.Management
     /// parameters are specified by key value pairs.
     /// eg., Call StartService method on the spooler service
     /// Invoke-WSManAction -Action StartService -ResourceURI wmicimv2/Win32_Service
-    /// -SelectorSet {Name=Spooler}
+    /// -SelectorSet {Name=Spooler}.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "WSManAction", DefaultParameterSetName = "URI", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096843")]
     public class InvokeWSManActionCommand : AuthenticatingWSManCommand, IDisposable
@@ -62,7 +62,7 @@ namespace Microsoft.WSMan.Management
         /// The following is the definition of the input parameter "ComputerName".
         /// Executes the management operation on the specified computer(s). The default
         /// is the local computer. Type the fully qualified domain name, NETBIOS name or
-        /// IP address to indicate the remote host(s)
+        /// IP address to indicate the remote host(s).
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [Alias("cn")]

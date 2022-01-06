@@ -123,7 +123,7 @@ namespace Microsoft.WSMan.Management
     #endregion WsManSessionFlags
 
     #region AuthenticationMechanism
-    /// <summary>WSManEnumFlags enumeration</summary>
+    /// <summary>WSManEnumFlags enumeration.</summary>
     [SuppressMessage("Microsoft.Design", "CA1027:MarkEnumsWithFlags")]
     public enum AuthenticationMechanism
     {
@@ -140,7 +140,7 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         Digest = 0x2,
         /// <summary>
-        /// Use negotiate authentication for a remote operation (may use kerberos or ntlm)
+        /// Use negotiate authentication for a remote operation (may use kerberos or ntlm).
         /// </summary>
         Negotiate = 0x4,
         /// <summary>
@@ -195,7 +195,7 @@ namespace Microsoft.WSMan.Management
 #endif
 
         /// <summary><para><c>CreateSession</c> method of <c>IWSMan</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue);
 
         [DispId(1)]
@@ -207,7 +207,7 @@ namespace Microsoft.WSMan.Management
         object CreateSession([MarshalAs(UnmanagedType.BStr)] string connection, int flags, [MarshalAs(UnmanagedType.IDispatch)] object connectionOptions);
 #endif
         /// <summary><para><c>CreateConnectionOptions</c> method of <c>IWSMan</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CreateConnectionOptions</c> method was the following:  <c>HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>CreateConnectionOptions</c> method was the following:  <c>HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue);
         //
         [DispId(2)]
@@ -219,7 +219,7 @@ namespace Microsoft.WSMan.Management
         object CreateConnectionOptions();
 
         /// <summary><para><c>CommandLine</c> property of <c>IWSMan</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CommandLine</c> property was the following:  <c>BSTR CommandLine</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>CommandLine</c> property was the following:  <c>BSTR CommandLine</c>.</para></remarks>
         // IDL: BSTR CommandLine;
         //
         string CommandLine
@@ -232,7 +232,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary><para><c>Error</c> property of <c>IWSMan</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>.</para></remarks>
         // IDL: BSTR Error;
         //
 
@@ -276,7 +276,7 @@ namespace Microsoft.WSMan.Management
         object Invoke();
 #endif
         /// <summary><para><c>UserName</c> property of <c>IWSManConnectionOptions</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>UserName</c> property was the following:  <c>BSTR UserName</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>UserName</c> property was the following:  <c>BSTR UserName</c>.</para></remarks>
         // IDL: BSTR UserName;
 
         string UserName
@@ -293,7 +293,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary><para><c>Password</c> property of <c>IWSManConnectionOptions</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Password</c> property was the following:  <c>BSTR Password</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Password</c> property was the following:  <c>BSTR Password</c>.</para></remarks>
         // IDL: BSTR Password;
 
         [SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly")]
@@ -408,7 +408,7 @@ namespace Microsoft.WSMan.Management
 #endif
 
         /// <summary><para><c>ReadItem</c> method of <c>IWSManEnumerator</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>ReadItem</c> method was the following:  <c>HRESULT ReadItem ([out, retval] BSTR* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>ReadItem</c> method was the following:  <c>HRESULT ReadItem ([out, retval] BSTR* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT ReadItem ([out, retval] BSTR* ReturnValue);
 
         [DispId(1)]
@@ -416,7 +416,7 @@ namespace Microsoft.WSMan.Management
         string ReadItem();
 
         /// <summary><para><c>AtEndOfStream</c> property of <c>IWSManEnumerator</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>AtEndOfStream</c> property was the following:  <c>BOOL AtEndOfStream</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>AtEndOfStream</c> property was the following:  <c>BOOL AtEndOfStream</c>.</para></remarks>
         // IDL: BOOL AtEndOfStream;
 
         bool AtEndOfStream
@@ -429,7 +429,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary><para><c>Error</c> property of <c>IWSManEnumerator</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>.</para></remarks>
         // IDL: BSTR Error;
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Error")]
         string Error
@@ -475,7 +475,7 @@ namespace Microsoft.WSMan.Management
 #endif
 
         /// <summary><para><c>CreateSession</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT CreateSession ([optional, defaultvalue(string.Empty)] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue);
 
         [DispId(1)]
@@ -488,7 +488,7 @@ namespace Microsoft.WSMan.Management
 #endif
 
         /// <summary><para><c>CreateConnectionOptions</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CreateConnectionOptions</c> method was the following:  <c>HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>CreateConnectionOptions</c> method was the following:  <c>HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue);
 
         [DispId(2)]
@@ -512,7 +512,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary><para><c>Error</c> property of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>.</para></remarks>
         // IDL: BSTR Error;
 
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Error")]
@@ -527,7 +527,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary><para><c>CreateResourceLocator</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CreateResourceLocator</c> method was the following:  <c>HRESULT CreateResourceLocator ([optional, defaultvalue(string.Empty)] BSTR strResourceLocator, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>CreateResourceLocator</c> method was the following:  <c>HRESULT CreateResourceLocator ([optional, defaultvalue(string.Empty)] BSTR strResourceLocator, [out, retval] IDispatch** ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT CreateResourceLocator ([optional, defaultvalue(string.Empty)] BSTR strResourceLocator, [out, retval] IDispatch** ReturnValue);
 
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "str")]
@@ -540,7 +540,7 @@ namespace Microsoft.WSMan.Management
         object CreateResourceLocator([MarshalAs(UnmanagedType.BStr)] string strResourceLocator);
 
         /// <summary><para><c>SessionFlagUTF8</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>SessionFlagUTF8</c> method was the following:  <c>HRESULT SessionFlagUTF8 ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>SessionFlagUTF8</c> method was the following:  <c>HRESULT SessionFlagUTF8 ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT SessionFlagUTF8 ([out, retval] long* ReturnValue);
 
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "UTF")]
@@ -548,7 +548,7 @@ namespace Microsoft.WSMan.Management
         int SessionFlagUTF8();
 
         /// <summary><para><c>SessionFlagCredUsernamePassword</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>SessionFlagCredUsernamePassword</c> method was the following:  <c>HRESULT SessionFlagCredUsernamePassword ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>SessionFlagCredUsernamePassword</c> method was the following:  <c>HRESULT SessionFlagCredUsernamePassword ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT SessionFlagCredUsernamePassword ([out, retval] long* ReturnValue);
 
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Username")]
@@ -557,56 +557,56 @@ namespace Microsoft.WSMan.Management
         int SessionFlagCredUsernamePassword();
 
         /// <summary><para><c>SessionFlagSkipCACheck</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>SessionFlagSkipCACheck</c> method was the following:  <c>HRESULT SessionFlagSkipCACheck ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>SessionFlagSkipCACheck</c> method was the following:  <c>HRESULT SessionFlagSkipCACheck ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT SessionFlagSkipCACheck ([out, retval] long* ReturnValue);
 
         [DispId(8)]
         int SessionFlagSkipCACheck();
 
         /// <summary><para><c>SessionFlagSkipCNCheck</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>SessionFlagSkipCNCheck</c> method was the following:  <c>HRESULT SessionFlagSkipCNCheck ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>SessionFlagSkipCNCheck</c> method was the following:  <c>HRESULT SessionFlagSkipCNCheck ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT SessionFlagSkipCNCheck ([out, retval] long* ReturnValue);
 
         [DispId(9)]
         int SessionFlagSkipCNCheck();
 
         /// <summary><para><c>SessionFlagUseDigest</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>SessionFlagUseDigest</c> method was the following:  <c>HRESULT SessionFlagUseDigest ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>SessionFlagUseDigest</c> method was the following:  <c>HRESULT SessionFlagUseDigest ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT SessionFlagUseDigest ([out, retval] long* ReturnValue);
 
         [DispId(10)]
         int SessionFlagUseDigest();
 
         /// <summary><para><c>SessionFlagUseNegotiate</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>SessionFlagUseNegotiate</c> method was the following:  <c>HRESULT SessionFlagUseNegotiate ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>SessionFlagUseNegotiate</c> method was the following:  <c>HRESULT SessionFlagUseNegotiate ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT SessionFlagUseNegotiate ([out, retval] long* ReturnValue);
 
         [DispId(11)]
         int SessionFlagUseNegotiate();
 
         /// <summary><para><c>SessionFlagUseBasic</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>SessionFlagUseBasic</c> method was the following:  <c>HRESULT SessionFlagUseBasic ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>SessionFlagUseBasic</c> method was the following:  <c>HRESULT SessionFlagUseBasic ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT SessionFlagUseBasic ([out, retval] long* ReturnValue);
 
         [DispId(12)]
         int SessionFlagUseBasic();
 
         /// <summary><para><c>SessionFlagUseKerberos</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>SessionFlagUseKerberos</c> method was the following:  <c>HRESULT SessionFlagUseKerberos ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>SessionFlagUseKerberos</c> method was the following:  <c>HRESULT SessionFlagUseKerberos ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT SessionFlagUseKerberos ([out, retval] long* ReturnValue);
 
         [DispId(13)]
         int SessionFlagUseKerberos();
 
         /// <summary><para><c>SessionFlagNoEncryption</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>SessionFlagNoEncryption</c> method was the following:  <c>HRESULT SessionFlagNoEncryption ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>SessionFlagNoEncryption</c> method was the following:  <c>HRESULT SessionFlagNoEncryption ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT SessionFlagNoEncryption ([out, retval] long* ReturnValue);
 
         [DispId(14)]
         int SessionFlagNoEncryption();
 
         /// <summary><para><c>SessionFlagEnableSPNServerPort</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>SessionFlagEnableSPNServerPort</c> method was the following:  <c>HRESULT SessionFlagEnableSPNServerPort ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>SessionFlagEnableSPNServerPort</c> method was the following:  <c>HRESULT SessionFlagEnableSPNServerPort ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT SessionFlagEnableSPNServerPort ([out, retval] long* ReturnValue);
 
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SPN")]
@@ -614,21 +614,21 @@ namespace Microsoft.WSMan.Management
         int SessionFlagEnableSPNServerPort();
 
         /// <summary><para><c>SessionFlagUseNoAuthentication</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>SessionFlagUseNoAuthentication</c> method was the following:  <c>HRESULT SessionFlagUseNoAuthentication ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>SessionFlagUseNoAuthentication</c> method was the following:  <c>HRESULT SessionFlagUseNoAuthentication ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT SessionFlagUseNoAuthentication ([out, retval] long* ReturnValue);
 
         [DispId(16)]
         int SessionFlagUseNoAuthentication();
 
         /// <summary><para><c>EnumerationFlagNonXmlText</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>EnumerationFlagNonXmlText</c> method was the following:  <c>HRESULT EnumerationFlagNonXmlText ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>EnumerationFlagNonXmlText</c> method was the following:  <c>HRESULT EnumerationFlagNonXmlText ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT EnumerationFlagNonXmlText ([out, retval] long* ReturnValue);
 
         [DispId(17)]
         int EnumerationFlagNonXmlText();
 
         /// <summary><para><c>EnumerationFlagReturnEPR</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>EnumerationFlagReturnEPR</c> method was the following:  <c>HRESULT EnumerationFlagReturnEPR ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>EnumerationFlagReturnEPR</c> method was the following:  <c>HRESULT EnumerationFlagReturnEPR ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT EnumerationFlagReturnEPR ([out, retval] long* ReturnValue);
 
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "EPR")]
@@ -636,7 +636,7 @@ namespace Microsoft.WSMan.Management
         int EnumerationFlagReturnEPR();
 
         /// <summary><para><c>EnumerationFlagReturnObjectAndEPR</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>EnumerationFlagReturnObjectAndEPR</c> method was the following:  <c>HRESULT EnumerationFlagReturnObjectAndEPR ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>EnumerationFlagReturnObjectAndEPR</c> method was the following:  <c>HRESULT EnumerationFlagReturnObjectAndEPR ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT EnumerationFlagReturnObjectAndEPR ([out, retval] long* ReturnValue);
 
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "EPR")]
@@ -644,7 +644,7 @@ namespace Microsoft.WSMan.Management
         int EnumerationFlagReturnObjectAndEPR();
 
         /// <summary><para><c>GetErrorMessage</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>GetErrorMessage</c> method was the following:  <c>HRESULT GetErrorMessage (unsigned long errorNumber, [out, retval] BSTR* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>GetErrorMessage</c> method was the following:  <c>HRESULT GetErrorMessage (unsigned long errorNumber, [out, retval] BSTR* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT GetErrorMessage (unsigned long errorNumber, [out, retval] BSTR* ReturnValue);
 
         [DispId(20)]
@@ -652,41 +652,41 @@ namespace Microsoft.WSMan.Management
         string GetErrorMessage(uint errorNumber);
 
         /// <summary><para><c>EnumerationFlagHierarchyDeep</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>EnumerationFlagHierarchyDeep</c> method was the following:  <c>HRESULT EnumerationFlagHierarchyDeep ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>EnumerationFlagHierarchyDeep</c> method was the following:  <c>HRESULT EnumerationFlagHierarchyDeep ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT EnumerationFlagHierarchyDeep ([out, retval] long* ReturnValue);
 
         [DispId(21)]
         int EnumerationFlagHierarchyDeep();
 
         /// <summary><para><c>EnumerationFlagHierarchyShallow</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>EnumerationFlagHierarchyShallow</c> method was the following:  <c>HRESULT EnumerationFlagHierarchyShallow ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>EnumerationFlagHierarchyShallow</c> method was the following:  <c>HRESULT EnumerationFlagHierarchyShallow ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT EnumerationFlagHierarchyShallow ([out, retval] long* ReturnValue);
 
         [DispId(22)]
         int EnumerationFlagHierarchyShallow();
 
         /// <summary><para><c>EnumerationFlagHierarchyDeepBasePropsOnly</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>EnumerationFlagHierarchyDeepBasePropsOnly</c> method was the following:  <c>HRESULT EnumerationFlagHierarchyDeepBasePropsOnly ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>EnumerationFlagHierarchyDeepBasePropsOnly</c> method was the following:  <c>HRESULT EnumerationFlagHierarchyDeepBasePropsOnly ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT EnumerationFlagHierarchyDeepBasePropsOnly ([out, retval] long* ReturnValue);
 
         [DispId(23)]
         int EnumerationFlagHierarchyDeepBasePropsOnly();
 
         /// <summary><para><c>EnumerationFlagReturnObject</c> method of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>EnumerationFlagReturnObject</c> method was the following:  <c>HRESULT EnumerationFlagReturnObject ([out, retval] long* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>EnumerationFlagReturnObject</c> method was the following:  <c>HRESULT EnumerationFlagReturnObject ([out, retval] long* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT EnumerationFlagReturnObject ([out, retval] long* ReturnValue);
 
         [DispId(24)]
         int EnumerationFlagReturnObject();
 
         /// <summary><para><c>CommandLine</c> property of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CommandLine</c> property was the following:  <c>BSTR CommandLine</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>CommandLine</c> property was the following:  <c>BSTR CommandLine</c>.</para></remarks>
         // IDL: BSTR CommandLine;
         [DispId(28)]
         int EnumerationFlagAssociationInstance();
 
         /// <summary><para><c>CommandLine</c> property of <c>IWSManEx</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>CommandLine</c> property was the following:  <c>BSTR CommandLine</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>CommandLine</c> property was the following:  <c>BSTR CommandLine</c>.</para></remarks>
         // IDL: BSTR CommandLine;
         [DispId(29)]
         int EnumerationFlagAssociatedInstance();
@@ -727,7 +727,7 @@ namespace Microsoft.WSMan.Management
         object Invoke();
 #endif
         /// <summary><para><c>resourceUri</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Set the resource URI. Must contain path only -- query string is not allowed here.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>resourceUri</c> property was the following:  <c>BSTR resourceUri</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>resourceUri</c> property was the following:  <c>BSTR resourceUri</c>.</para></remarks>
         // Set the resource URI. Must contain path only -- query string is not allowed here.
         // IDL: BSTR resourceUri;
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "resource")]
@@ -748,8 +748,8 @@ namespace Microsoft.WSMan.Management
             set;
         }
 
-        /// <summary><para><c>AddSelector</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Add selector to resource locator</para></summary>
-        /// <remarks><para>An original IDL definition of <c>AddSelector</c> method was the following:  <c>HRESULT AddSelector (BSTR resourceSelName, VARIANT selValue)</c>;</para></remarks>
+        /// <summary><para><c>AddSelector</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Add selector to resource locator.</para></summary>
+        /// <remarks><para>An original IDL definition of <c>AddSelector</c> method was the following:  <c>HRESULT AddSelector (BSTR resourceSelName, VARIANT selValue)</c>.</para></remarks>
         // Add selector to resource locator
         // IDL: HRESULT AddSelector (BSTR resourceSelName, VARIANT selValue);
 
@@ -759,16 +759,16 @@ namespace Microsoft.WSMan.Management
         [DispId(2)]
         void AddSelector([MarshalAs(UnmanagedType.BStr)] string resourceSelName, object selValue);
 
-        /// <summary><para><c>ClearSelectors</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Clear all selectors</para></summary>
-        /// <remarks><para>An original IDL definition of <c>ClearSelectors</c> method was the following:  <c>HRESULT ClearSelectors (void)</c>;</para></remarks>
+        /// <summary><para><c>ClearSelectors</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Clear all selectors.</para></summary>
+        /// <remarks><para>An original IDL definition of <c>ClearSelectors</c> method was the following:  <c>HRESULT ClearSelectors (void)</c>.</para></remarks>
         // Clear all selectors
         // IDL: HRESULT ClearSelectors (void);
 
         [DispId(3)]
         void ClearSelectors();
 
-        /// <summary><para><c>FragmentPath</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Gets the fragment path</para></summary>
-        /// <remarks><para>An original IDL definition of <c>FragmentPath</c> property was the following:  <c>BSTR FragmentPath</c>;</para></remarks>
+        /// <summary><para><c>FragmentPath</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Gets the fragment path.</para></summary>
+        /// <remarks><para>An original IDL definition of <c>FragmentPath</c> property was the following:  <c>BSTR FragmentPath</c>.</para></remarks>
         // Gets the fragment path
         // IDL: BSTR FragmentPath;
 
@@ -785,8 +785,8 @@ namespace Microsoft.WSMan.Management
             set;
         }
 
-        /// <summary><para><c>FragmentDialect</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Gets the Fragment dialect</para></summary>
-        /// <remarks><para>An original IDL definition of <c>FragmentDialect</c> property was the following:  <c>BSTR FragmentDialect</c>;</para></remarks>
+        /// <summary><para><c>FragmentDialect</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Gets the Fragment dialect.</para></summary>
+        /// <remarks><para>An original IDL definition of <c>FragmentDialect</c> property was the following:  <c>BSTR FragmentDialect</c>.</para></remarks>
         // Gets the Fragment dialect
         // IDL: BSTR FragmentDialect;
 
@@ -803,16 +803,16 @@ namespace Microsoft.WSMan.Management
             set;
         }
 
-        /// <summary><para><c>AddOption</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Add option to resource locator</para></summary>
-        /// <remarks><para>An original IDL definition of <c>AddOption</c> method was the following:  <c>HRESULT AddOption (BSTR OptionName, VARIANT OptionValue, [optional, defaultvalue(0)] long mustComply)</c>;</para></remarks>
+        /// <summary><para><c>AddOption</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Add option to resource locator.</para></summary>
+        /// <remarks><para>An original IDL definition of <c>AddOption</c> method was the following:  <c>HRESULT AddOption (BSTR OptionName, VARIANT OptionValue, [optional, defaultvalue(0)] long mustComply)</c>.</para></remarks>
         // Add option to resource locator
         // IDL: HRESULT AddOption (BSTR OptionName, VARIANT OptionValue, [optional, defaultvalue(0)] long mustComply);
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "Option")]
         [DispId(6)]
         void AddOption([MarshalAs(UnmanagedType.BStr)] string OptionName, object OptionValue, int mustComply);
 
-        /// <summary><para><c>MustUnderstandOptions</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Sets the MustUnderstandOptions value</para></summary>
-        /// <remarks><para>An original IDL definition of <c>MustUnderstandOptions</c> property was the following:  <c>long MustUnderstandOptions</c>;</para></remarks>
+        /// <summary><para><c>MustUnderstandOptions</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Sets the MustUnderstandOptions value.</para></summary>
+        /// <remarks><para>An original IDL definition of <c>MustUnderstandOptions</c> property was the following:  <c>long MustUnderstandOptions</c>.</para></remarks>
         // Sets the MustUnderstandOptions value
         // IDL: long MustUnderstandOptions;
 
@@ -828,8 +828,8 @@ namespace Microsoft.WSMan.Management
             set;
         }
 
-        /// <summary><para><c>ClearOptions</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Clear all options</para></summary>
-        /// <remarks><para>An original IDL definition of <c>ClearOptions</c> method was the following:  <c>HRESULT ClearOptions (void)</c>;</para></remarks>
+        /// <summary><para><c>ClearOptions</c> method of <c>IWSManResourceLocator</c> interface.  </para><para>Clear all options.</para></summary>
+        /// <remarks><para>An original IDL definition of <c>ClearOptions</c> method was the following:  <c>HRESULT ClearOptions (void)</c>.</para></remarks>
         // Clear all options
         // IDL: HRESULT ClearOptions (void);
 
@@ -837,7 +837,7 @@ namespace Microsoft.WSMan.Management
         void ClearOptions();
 
         /// <summary><para><c>Error</c> property of <c>IWSManResourceLocator</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>.</para></remarks>
         // IDL: BSTR Error;
 
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Error")]
@@ -886,7 +886,7 @@ namespace Microsoft.WSMan.Management
 #endif
 
         /// <summary><para><c>Get</c> method of <c>IWSManSession</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Get</c> method was the following:  <c>HRESULT Get (VARIANT resourceUri, [optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Get</c> method was the following:  <c>HRESULT Get (VARIANT resourceUri, [optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT Get (VARIANT resourceUri, [optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue);
 
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get")]
@@ -895,7 +895,7 @@ namespace Microsoft.WSMan.Management
         string Get(object resourceUri, int flags);
 
         /// <summary><para><c>Put</c> method of <c>IWSManSession</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Put</c> method was the following:  <c>HRESULT Put (VARIANT resourceUri, BSTR resource, [optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Put</c> method was the following:  <c>HRESULT Put (VARIANT resourceUri, BSTR resource, [optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT Put (VARIANT resourceUri, BSTR resource, [optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue);
 
         [DispId(2)]
@@ -903,7 +903,7 @@ namespace Microsoft.WSMan.Management
         string Put(object resourceUri, [MarshalAs(UnmanagedType.BStr)] string resource, int flags);
 
         /// <summary><para><c>Create</c> method of <c>IWSManSession</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Create</c> method was the following:  <c>HRESULT Create (VARIANT resourceUri, BSTR resource, [optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Create</c> method was the following:  <c>HRESULT Create (VARIANT resourceUri, BSTR resource, [optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT Create (VARIANT resourceUri, BSTR resource, [optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue);
 
         [DispId(3)]
@@ -911,7 +911,7 @@ namespace Microsoft.WSMan.Management
         string Create(object resourceUri, [MarshalAs(UnmanagedType.BStr)] string resource, int flags);
 
         /// <summary><para><c>Delete</c> method of <c>IWSManSession</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Delete</c> method was the following:  <c>HRESULT Delete (VARIANT resourceUri, [optional, defaultvalue(0)] long flags)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Delete</c> method was the following:  <c>HRESULT Delete (VARIANT resourceUri, [optional, defaultvalue(0)] long flags)</c>.</para></remarks>
         // IDL: HRESULT Delete (VARIANT resourceUri, [optional, defaultvalue(0)] long flags);
 
         [DispId(4)]
@@ -930,7 +930,7 @@ namespace Microsoft.WSMan.Management
         string Invoke([MarshalAs(UnmanagedType.BStr)] string actionURI, [In] object resourceUri, [MarshalAs(UnmanagedType.BStr)] string parameters, [In] int flags);
 
         /// <summary><para><c>Enumerate</c> method of <c>IWSManSession</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Enumerate</c> method was the following:  <c>HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue(string.Empty)] BSTR filter, [optional, defaultvalue(string.Empty)] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Enumerate</c> method was the following:  <c>HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue(string.Empty)] BSTR filter, [optional, defaultvalue(string.Empty)] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue(string.Empty)] BSTR filter, [optional, defaultvalue(string.Empty)] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue);
 
         [DispId(6)]
@@ -942,7 +942,7 @@ namespace Microsoft.WSMan.Management
         object Enumerate(object resourceUri, [MarshalAs(UnmanagedType.BStr)] string filter, [MarshalAs(UnmanagedType.BStr)] string dialect, int flags);
 
         /// <summary><para><c>Identify</c> method of <c>IWSManSession</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Identify</c> method was the following:  <c>HRESULT Identify ([optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue)</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Identify</c> method was the following:  <c>HRESULT Identify ([optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue)</c>.</para></remarks>
         // IDL: HRESULT Identify ([optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue);
 
         [DispId(7)]
@@ -950,7 +950,7 @@ namespace Microsoft.WSMan.Management
         string Identify(int flags);
 
         /// <summary><para><c>Error</c> property of <c>IWSManSession</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Error</c> property was the following:  <c>BSTR Error</c>.</para></remarks>
         // IDL: BSTR Error;
 
         [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Error")]
@@ -965,7 +965,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary><para><c>BatchItems</c> property of <c>IWSManSession</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>BatchItems</c> property was the following:  <c>long BatchItems</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>BatchItems</c> property was the following:  <c>long BatchItems</c>.</para></remarks>
         // IDL: long BatchItems;
 
         int BatchItems
@@ -981,7 +981,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary><para><c>Timeout</c> property of <c>IWSManSession</c> interface.</para></summary>
-        /// <remarks><para>An original IDL definition of <c>Timeout</c> property was the following:  <c>long Timeout</c>;</para></remarks>
+        /// <remarks><para>An original IDL definition of <c>Timeout</c> property was the following:  <c>long Timeout</c>.</para></remarks>
         // IDL: long Timeout;
 
         int Timeout
@@ -1118,7 +1118,7 @@ namespace Microsoft.WSMan.Management
 
     #endregion IGroupPolicyObject
 
-    /// <summary><para><c>GpoNativeApi</c></para></summary>
+    /// <summary><para><c>GpoNativeApi</c>.</para></summary>
     public sealed class GpoNativeApi
     {
         private GpoNativeApi() { }

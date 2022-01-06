@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
         /// The name of the Folder or file on which to perform the action.
         /// </param>
         /// <param name="catalogFilePath">
-        /// Path to Catalog
+        /// Path to Catalog.
         /// </param>
         protected abstract void PerformAction(Collection<string> path, string catalogFilePath);
     }
@@ -166,13 +166,13 @@ namespace Microsoft.PowerShell.Commands
         /// Generate the Catalog for the Path.
         /// </summary>
         /// <param name="path">
-        /// File or Folder Path
+        /// File or Folder Path.
         /// </param>
         /// <param name="catalogFilePath">
-        /// Path to Catalog
+        /// Path to Catalog.
         /// </param>
         /// <returns>
-        /// True if able to Create Catalog or else False
+        /// True if able to Create Catalog or else False.
         /// </returns>
         protected override void PerformAction(Collection<string> path, string catalogFilePath)
         {
@@ -262,13 +262,13 @@ namespace Microsoft.PowerShell.Commands
         /// Validate the Integrity of given Catalog.
         /// </summary>
         /// <param name="path">
-        /// File or Folder Path
+        /// File or Folder Path.
         /// </param>
         /// <param name="catalogFilePath">
-        /// Path to Catalog
+        /// Path to Catalog.
         /// </param>
         /// <returns>
-        /// True if able to Validate the Catalog and its not tampered or else False
+        /// True if able to Validate the Catalog and its not tampered or else False.
         /// </returns>
         protected override void PerformAction(Collection<string> path, string catalogFilePath)
         {

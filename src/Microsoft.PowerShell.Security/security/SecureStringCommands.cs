@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         /// class.
         /// </summary>
         /// <param name="name">
-        /// The command name deriving from this class
+        /// The command name deriving from this class.
         /// </param>
         protected SecureStringCommandBase(string name) : base()
         {

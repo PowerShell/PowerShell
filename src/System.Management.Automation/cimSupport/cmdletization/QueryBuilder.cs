@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <see langword="false"/> otherwise.
         /// </param>
         /// <param name="behaviorOnNoMatch">
-        /// Describes how to handle filters that didn't match any objects
+        /// Describes how to handle filters that didn't match any objects.
         /// </param>
         public virtual void FilterByProperty(string propertyName, IEnumerable allowedPropertyValues, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
         {
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <see langword="false"/> otherwise.
         /// </param>
         /// <param name="behaviorOnNoMatch">
-        /// Describes how to handle filters that didn't match any objects
+        /// Describes how to handle filters that didn't match any objects.
         /// </param>
         public virtual void ExcludeByProperty(string propertyName, IEnumerable excludedPropertyValues, bool wildcardsEnabled, BehaviorOnNoMatch behaviorOnNoMatch)
         {
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="propertyName">Property name to query on.</param>
         /// <param name="minPropertyValue">Minimum property value.</param>
         /// <param name="behaviorOnNoMatch">
-        /// Describes how to handle filters that didn't match any objects
+        /// Describes how to handle filters that didn't match any objects.
         /// </param>
         public virtual void FilterByMinPropertyValue(string propertyName, object minPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
         {
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="propertyName">Property name to query on.</param>
         /// <param name="maxPropertyValue">Maximum property value.</param>
         /// <param name="behaviorOnNoMatch">
-        /// Describes how to handle filters that didn't match any objects
+        /// Describes how to handle filters that didn't match any objects.
         /// </param>
         public virtual void FilterByMaxPropertyValue(string propertyName, object maxPropertyValue, BehaviorOnNoMatch behaviorOnNoMatch)
         {
@@ -107,14 +107,14 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         /// <summary>
-        /// Modifies the query, so that it returns only objects associated with <paramref name="associatedInstance"/>
+        /// Modifies the query, so that it returns only objects associated with <paramref name="associatedInstance"/>.
         /// </summary>
         /// <param name="associatedInstance">Object that query results have to be associated with.</param>
         /// <param name="associationName">Name of the association.</param>
         /// <param name="resultRole">Name of the role that <paramref name="associatedInstance"/> has in the association.</param>
         /// <param name="sourceRole">Name of the role that query results have in the association.</param>
         /// <param name="behaviorOnNoMatch">
-        /// Describes how to handle filters that didn't match any objects
+        /// Describes how to handle filters that didn't match any objects.
         /// </param>
         public virtual void FilterByAssociatedInstance(object associatedInstance, string associationName, string sourceRole, string resultRole, BehaviorOnNoMatch behaviorOnNoMatch)
         {

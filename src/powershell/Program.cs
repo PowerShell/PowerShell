@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell
         /// Starts the managed MSH.
         /// </summary>
         /// <param name="args">
-        /// Command line arguments to the managed MSH
+        /// Command line arguments to the managed MSH.
         /// </param>
         public static int Main(string[] args)
         {
@@ -491,7 +491,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="mib">The Management Information Base name, used to query information.</param>
         /// <param name="mibLength">The length of the MIB name.</param>
-        /// <param name="oldp">The object passed out of sysctl (may be null)</param>
+        /// <param name="oldp">The object passed out of sysctl (may be null).</param>
         /// <param name="oldlenp">The size of the object passed out of sysctl.</param>
         /// <param name="newp">The object passed in to sysctl.</param>
         /// <param name="newlenp">The length of the object passed in to sysctl.</param>

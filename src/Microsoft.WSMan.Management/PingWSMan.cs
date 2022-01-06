@@ -65,10 +65,10 @@ namespace Microsoft.WSMan.Management
         /// - Basic:  Use basic authentication for establishing a remote connection.
         /// -CredSSP: Use CredSSP authentication for establishing a remote connection
         /// which will enable the user to perform credential delegation. (i.e. second
-        /// hop)
+        /// hop).
         /// </summary>
         /// <remarks>
-        /// Overriding to use a different default than the one in AuthenticatingWSManCommand base class
+        /// Overriding to use a different default than the one in AuthenticatingWSManCommand base class.
         /// </remarks>
         [Parameter]
         [ValidateNotNullOrEmpty]

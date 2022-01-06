@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell
         /// <param name="path">Provider path.</param>
         /// <returns>
         /// filesystem path if all conditions are true,
-        /// null otherwise
+        /// null otherwise.
         /// </returns>
         internal static string GetFilePathOfExistingFile(PSCmdlet cmdlet,
                                                          string path)
