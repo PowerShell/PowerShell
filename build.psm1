@@ -2258,7 +2258,7 @@ function Find-Dotnet() {
         $dotnetCLIInstalledVersion = Get-LatestInstalledSDK
         Pop-Location
 
-        Write-Verbose "dotnetCLIInstalledVersion = $dotnetCLIInstalledVersion; chosenDotNetVersion = $chosenDotNetVersion"
+        Write-Verbose -Message "Find-DotNet: dotnetCLIInstalledVersion = $dotnetCLIInstalledVersion; chosenDotNetVersion = $chosenDotNetVersion"
 
         if ($dotnetCLIInstalledVersion -ne $chosenDotNetVersion) {
             Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."

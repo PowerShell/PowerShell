@@ -10,7 +10,7 @@ jobs:
   pool:
     name: PowerShell1ES
     demands:
-    - ImageOverride -equals MMS2019TLS
+    - ImageOverride -equals MMS2019
 
   timeoutInMinutes: 90
 
@@ -118,12 +118,14 @@ jobs:
   - task: NuGetToolInstaller@1
     displayName: 'Install NuGet.exe'
 
-  - pwsh: |
-      Import-Module $env:REPOROOT\build.psm1
-      Import-Module $env:REPOROOT\tools\packaging
-      Find-Dotnet
-      New-ILNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -WinFxdBinPath '$(winFxdPath)' -LinuxFxdBinPath '$(linuxFxdPath)' -GenAPIToolPath "$(GenAPIToolPath)"
-    displayName: 'Create Nuget Package Folders'
+  # Create nuget packages along with SBOM manifests.
+  - template: nuget-pkg-sbom.yml
+    parameters:
+      PackageVersion: $(Version)
+      PackagePath: $(PackagePath)
+      WinFxdPath: $(winFxdPath)
+      LinuxFxdPath: $(linuxFxdPath)
+      GenAPIToolPath: $(GenAPIToolPath)
 
   - pwsh: |
       Get-ChildItem $(linuxFxdPath)
@@ -253,4 +255,4 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(repoRoot)\tools'
+      sourceScanPath: '$(PackagePath)'

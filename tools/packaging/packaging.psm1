@@ -1700,6 +1700,9 @@ function CreateNugetPlatformFolder
 {
     param(
         [Parameter(Mandatory = $true)]
+        [string] $FileName,
+
+        [Parameter(Mandatory = $true)]
         [string] $Platform,
 
         [Parameter(Mandatory = $true)]
@@ -1710,14 +1713,321 @@ function CreateNugetPlatformFolder
     )
 
     $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/$script:netCoreRuntime")
-    $fullPath = Join-Path $PlatformBinPath $file
+    $fullPath = Join-Path $PlatformBinPath $FileName
 
     if (-not(Test-Path $fullPath)) {
         throw "File not found: $fullPath"
     }
 
     Copy-Item -Path $fullPath -Destination $destPath
-    Write-Log "Copied $file to $Platform"
+    Write-Log "Copied $FileName to $Platform at path: $destPath"
+}
+
+<#
+.SYNOPSIS
+Creates nuget package sources for a single provided binary file.
+
+.DESCRIPTION
+Creates IL assemblies, for a single binary file, to be packaged in a NuGet file.
+Includes runtime assemblies for linux and Windows runtime assemblies.
+
+.PARAMETER FileName
+File name of binary to create nuget sources for.
+
+.PARAMETER PackagePath
+Path where the package source files will be created.
+
+.PARAMETER PackageVersion
+Version of the created package.
+
+.PARAMETER WinFxdBinPath
+Path to source folder containing Windows framework dependent assemblies.
+
+.PARAMETER LinuxFxdBinPath
+Path to source folder containing Linux framework dependent assemblies.
+
+.PARAMETER GenAPIToolPath
+Path to the GenAPI.exe tool.
+#>
+function New-ILNugetPackageSource
+{
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+
+        [Parameter(Mandatory = $true)]
+        [string] $FileName,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackagePath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackageVersion,
+
+        [Parameter(Mandatory = $true)]
+        [string] $WinFxdBinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $LinuxFxdBinPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $GenAPIToolPath
+    )
+
+    if (! $Environment.IsWindows)
+    {
+        throw "New-ILNugetPackageSource can be only executed on Windows platform."
+    }
+
+    if (! $PSCmdlet.ShouldProcess("Create nuget packages at: $PackagePath"))
+    {
+        return
+    }
+
+    $fileList = @(
+        "Microsoft.Management.Infrastructure.CimCmdlets.dll",
+        "Microsoft.PowerShell.Commands.Diagnostics.dll",
+        "Microsoft.PowerShell.Commands.Management.dll",
+        "Microsoft.PowerShell.Commands.Utility.dll",
+        "Microsoft.PowerShell.ConsoleHost.dll",
+        "Microsoft.PowerShell.CoreCLR.Eventing.dll",
+        "Microsoft.PowerShell.Security.dll",
+        "Microsoft.PowerShell.SDK.dll",
+        "Microsoft.WSMan.Management.dll",
+        "Microsoft.WSMan.Runtime.dll",
+        "System.Management.Automation.dll")
+
+    $linuxExceptionList = @(
+        "Microsoft.Management.Infrastructure.CimCmdlets.dll",
+        "Microsoft.PowerShell.Commands.Diagnostics.dll",
+        "Microsoft.PowerShell.CoreCLR.Eventing.dll",
+        "Microsoft.WSMan.Management.dll",
+        "Microsoft.WSMan.Runtime.dll")
+
+    $refBinPath = New-TempFolder
+    $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
+
+    New-ReferenceAssembly -linux64BinPath $LinuxFxdBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
+
+    if (! (Test-Path $PackagePath)) {
+        $null = New-Item -Path $PackagePath -ItemType Directory
+    }
+
+    # Remove '.dll' at the end
+    $fileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($FileName)
+    $filePackageFolder = New-Item (Join-Path $PackagePath $fileBaseName) -ItemType Directory -Force
+    $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
+
+    Write-Verbose -Verbose "New-ILNugetPackageSource: Creating package source folder for file: $FileName at: $filePackageFolder"
+
+    #region ref
+    $refFolder = New-Item (Join-Path $filePackageFolder.FullName "ref/$script:netCoreRuntime") -ItemType Directory -Force
+    CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
+    #endregion ref
+
+    $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
+
+    CreateNugetPlatformFolder -FileName $FileName -Platform 'win' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $WinFxdBinPath
+
+    if ($linuxExceptionList -notcontains $FileName )
+    {
+        CreateNugetPlatformFolder -FileName $FileName -Platform 'unix' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxFxdBinPath
+    }
+
+    if ($FileName -eq "Microsoft.PowerShell.SDK.dll")
+    {
+        # Copy the '$PSHOME\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
+        # This is to make 'Add-Type' work in application that hosts PowerShell.
+
+        $contentFolder = New-Item (Join-Path $filePackageFolder "contentFiles\any\any") -ItemType Directory -Force
+        $dotnetRefAsmFolder = Join-Path -Path $WinFxdBinPath -ChildPath "ref"
+        Copy-Item -Path $dotnetRefAsmFolder -Destination $contentFolder -Recurse -Force
+        Write-Log "Copied the reference assembly folder to contentFiles for the SDK package"
+
+        # Copy the built-in module folders to the NuGet package, so 'dotnet publish' can deploy those modules to the $pshome module path.
+        # This is for enabling applications that hosts PowerShell to ship the built-in modules.
+
+        $winBuiltInModules = @(
+            "CimCmdlets",
+            "Microsoft.PowerShell.Diagnostics",
+            "Microsoft.PowerShell.Host",
+            "Microsoft.PowerShell.Management",
+            "Microsoft.PowerShell.Security",
+            "Microsoft.PowerShell.Utility",
+            "Microsoft.WSMan.Management",
+            "PSDiagnostics"
+        )
+
+        $unixBuiltInModules = @(
+            "Microsoft.PowerShell.Host",
+            "Microsoft.PowerShell.Management",
+            "Microsoft.PowerShell.Security",
+            "Microsoft.PowerShell.Utility"
+        )
+
+        $winModuleFolder = New-Item (Join-Path $contentFolder "runtimes\win\lib\$script:netCoreRuntime\Modules") -ItemType Directory -Force
+        $unixModuleFolder = New-Item (Join-Path $contentFolder "runtimes\unix\lib\$script:netCoreRuntime\Modules") -ItemType Directory -Force
+
+        foreach ($module in $winBuiltInModules) {
+            $source = Join-Path $WinFxdBinPath "Modules\$module"
+            Copy-Item -Path $source -Destination $winModuleFolder -Recurse -Force
+        }
+
+        foreach ($module in $unixBuiltInModules) {
+            $source = Join-Path $LinuxFxdBinPath "Modules\$module"
+            Copy-Item -Path $source -Destination $unixModuleFolder -Recurse -Force
+        }
+
+        Write-Log "Copied the built-in modules to contentFiles for the SDK package"
+    }
+
+    if (Test-Path $refBinPath)
+    {
+        Remove-Item $refBinPath -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
+
+<#
+.SYNOPSIS
+Creates a nuget package file from the provided source path.
+
+.PARAMETER FileName
+File name of binary to create nuget package for.
+
+.PARAMETER PackagePath
+Path for the source files and the created NuGet package file.
+#>
+function New-ILNugetPackageFromSource
+{
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param(
+
+        [Parameter(Mandatory = $true)]
+        [string] $FileName,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackageVersion,
+
+        [Parameter(Mandatory = $true)]
+        [string] $PackagePath
+    )
+
+    if (! $Environment.IsWindows)
+    {
+        throw "New-ILNugetPackageFromSource can be only executed on Windows platform."
+    }
+
+    if (! $PSCmdlet.ShouldProcess("Create nuget package for file $FileName at: $PackagePath"))
+    {
+        return
+    }
+
+    $fileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($FileName)
+
+    # Filed a tracking bug for automating generation of dependecy list: https://github.com/PowerShell/PowerShell/issues/6247
+    $deps = [System.Collections.ArrayList]::new()
+
+    switch ($fileBaseName) {
+        'Microsoft.Management.Infrastructure.CimCmdlets' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+        }
+
+        'Microsoft.PowerShell.Commands.Diagnostics' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+        }
+
+        'Microsoft.PowerShell.Commands.Management' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+
+        'Microsoft.PowerShell.Commands.Utility' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+
+        'Microsoft.PowerShell.ConsoleHost' {
+            $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+
+        'Microsoft.PowerShell.CoreCLR.Eventing' {
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+
+        'Microsoft.PowerShell.SDK' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Utility'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.ConsoleHost'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure.CimCmdlets'), [tuple]::Create('version', $PackageVersion))) > $null
+        }
+
+        'Microsoft.PowerShell.Security' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+        }
+
+        'Microsoft.WSMan.Management' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Runtime'), [tuple]::Create('version', $PackageVersion))) > $null
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+
+        'Microsoft.WSMan.Runtime' {
+            ## No dependencies
+        }
+
+        'System.Management.Automation' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.CoreCLR.Eventing'), [tuple]::Create('version', $PackageVersion))) > $null
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+    }
+
+    $srcFilePackagePath = Join-Path $PackagePath $fileBaseName
+
+    Write-Verbose -Verbose "New-ILNugetPackageFromSource: Creating nuget package for file: $FileName from source path: $srcFilePackagePath"
+    Write-Verbose -Verbose -Message "$(Get-ChildItem -Path $srcFilePackagePath)"
+
+    if (! (Test-Path $srcFilePackagePath)) {
+        $msg = "Expected nuget source path $srcFilePackagePath for file $fileBaseName does not exist."
+        Write-Verbose -Verbose $msg
+        throw $msg
+    }
+
+    New-NuSpec -PackageId $fileBaseName -PackageVersion $PackageVersion -Dependency $deps -FilePath (Join-Path $srcFilePackagePath "$fileBaseName.nuspec")
+
+    # Copy icon file to package
+    Copy-Item -Path $iconPath -Destination "$srcFilePackagePath/$iconFileName" -Verbose
+
+    New-NugetPackage -NuSpecPath $srcFilePackagePath -PackageDestinationPath $PackagePath
+
+    # Remove file nuget package source directory
+    Remove-Item $srcFilePackagePath -Recurse -Force -ErrorAction SilentlyContinue
 }
 
 <#
@@ -1772,6 +2082,11 @@ function New-ILNugetPackage
         throw "New-ILNugetPackage can be only executed on Windows platform."
     }
 
+    if (! $PSCmdlet.ShouldProcess("Create nuget packages at: $PackagePath"))
+    {
+        return
+    }
+
     $fileList = @(
         "Microsoft.Management.Infrastructure.CimCmdlets.dll",
         "Microsoft.PowerShell.Commands.Diagnostics.dll",
@@ -1792,185 +2107,182 @@ function New-ILNugetPackage
         "Microsoft.WSMan.Management.dll",
         "Microsoft.WSMan.Runtime.dll")
 
-    if ($PSCmdlet.ShouldProcess("Create nuget packages at: $PackagePath"))
+    $refBinPath = New-TempFolder
+    $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
+
+    New-ReferenceAssembly -linux64BinPath $LinuxFxdBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
+
+    foreach ($file in $fileList)
     {
-        $refBinPath = New-TempFolder
-        $SnkFilePath = "$RepoRoot\src\signing\visualstudiopublic.snk"
+        $tmpPackageRoot = New-TempFolder
+        # Remove '.dll' at the end
+        $fileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($file)
+        $filePackageFolder = New-Item (Join-Path $tmpPackageRoot $fileBaseName) -ItemType Directory -Force
+        $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
 
-        New-ReferenceAssembly -linux64BinPath $LinuxFxdBinPath -RefAssemblyDestinationPath $refBinPath -RefAssemblyVersion $PackageVersion -SnkFilePath $SnkFilePath -GenAPIToolPath $GenAPIToolPath
+        #region ref
+        $refFolder = New-Item (Join-Path $filePackageFolder.FullName "ref/$script:netCoreRuntime") -ItemType Directory -Force
+        CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
+        #endregion ref
 
-        foreach ($file in $fileList)
+        $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
+
+        CreateNugetPlatformFolder -FileName $file -Platform 'win' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $WinFxdBinPath
+
+        if ($linuxExceptionList -notcontains $file )
         {
-            $tmpPackageRoot = New-TempFolder
-            # Remove '.dll' at the end
-            $fileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($file)
-            $filePackageFolder = New-Item (Join-Path $tmpPackageRoot $fileBaseName) -ItemType Directory -Force
-            $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
+            CreateNugetPlatformFolder -FileName $file -Platform 'unix' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxFxdBinPath
+        }
 
-            #region ref
-            $refFolder = New-Item (Join-Path $filePackageFolder.FullName "ref/$script:netCoreRuntime") -ItemType Directory -Force
-            CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
-            #endregion ref
+        if ($file -eq "Microsoft.PowerShell.SDK.dll")
+        {
+            # Copy the '$PSHOME\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
+            # This is to make 'Add-Type' work in application that hosts PowerShell.
 
-            $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
+            $contentFolder = New-Item (Join-Path $filePackageFolder "contentFiles\any\any") -ItemType Directory -Force
+            $dotnetRefAsmFolder = Join-Path -Path $WinFxdBinPath -ChildPath "ref"
+            Copy-Item -Path $dotnetRefAsmFolder -Destination $contentFolder -Recurse -Force
+            Write-Log "Copied the reference assembly folder to contentFiles for the SDK package"
 
-            CreateNugetPlatformFolder -Platform 'win' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $WinFxdBinPath
+            # Copy the built-in module folders to the NuGet package, so 'dotnet publish' can deploy those modules to the $pshome module path.
+            # This is for enabling applications that hosts PowerShell to ship the built-in modules.
 
-            if ($linuxExceptionList -notcontains $file )
-            {
-                CreateNugetPlatformFolder -Platform 'unix' -PackageRuntimesFolder $packageRuntimesFolderPath -PlatformBinPath $LinuxFxdBinPath
+            $winBuiltInModules = @(
+                "CimCmdlets",
+                "Microsoft.PowerShell.Diagnostics",
+                "Microsoft.PowerShell.Host",
+                "Microsoft.PowerShell.Management",
+                "Microsoft.PowerShell.Security",
+                "Microsoft.PowerShell.Utility",
+                "Microsoft.WSMan.Management",
+                "PSDiagnostics"
+            )
+
+            $unixBuiltInModules = @(
+                "Microsoft.PowerShell.Host",
+                "Microsoft.PowerShell.Management",
+                "Microsoft.PowerShell.Security",
+                "Microsoft.PowerShell.Utility"
+            )
+
+            $winModuleFolder = New-Item (Join-Path $contentFolder "runtimes\win\lib\$script:netCoreRuntime\Modules") -ItemType Directory -Force
+            $unixModuleFolder = New-Item (Join-Path $contentFolder "runtimes\unix\lib\$script:netCoreRuntime\Modules") -ItemType Directory -Force
+
+            foreach ($module in $winBuiltInModules) {
+                $source = Join-Path $WinFxdBinPath "Modules\$module"
+                Copy-Item -Path $source -Destination $winModuleFolder -Recurse -Force
             }
 
-            if ($file -eq "Microsoft.PowerShell.SDK.dll")
-            {
-                # Copy the '$PSHOME\ref' folder to the NuGet package, so 'dotnet publish' can deploy the 'ref' folder to the publish folder.
-                # This is to make 'Add-Type' work in application that hosts PowerShell.
-
-                $contentFolder = New-Item (Join-Path $filePackageFolder "contentFiles\any\any") -ItemType Directory -Force
-                $dotnetRefAsmFolder = Join-Path -Path $WinFxdBinPath -ChildPath "ref"
-                Copy-Item -Path $dotnetRefAsmFolder -Destination $contentFolder -Recurse -Force
-                Write-Log "Copied the reference assembly folder to contentFiles for the SDK package"
-
-                # Copy the built-in module folders to the NuGet package, so 'dotnet publish' can deploy those modules to the $pshome module path.
-                # This is for enabling applications that hosts PowerShell to ship the built-in modules.
-
-                $winBuiltInModules = @(
-                    "CimCmdlets",
-                    "Microsoft.PowerShell.Diagnostics",
-                    "Microsoft.PowerShell.Host",
-                    "Microsoft.PowerShell.Management",
-                    "Microsoft.PowerShell.Security",
-                    "Microsoft.PowerShell.Utility",
-                    "Microsoft.WSMan.Management",
-                    "PSDiagnostics"
-                )
-
-                $unixBuiltInModules = @(
-                    "Microsoft.PowerShell.Host",
-                    "Microsoft.PowerShell.Management",
-                    "Microsoft.PowerShell.Security",
-                    "Microsoft.PowerShell.Utility"
-                )
-
-                $winModuleFolder = New-Item (Join-Path $contentFolder "runtimes\win\lib\$script:netCoreRuntime\Modules") -ItemType Directory -Force
-                $unixModuleFolder = New-Item (Join-Path $contentFolder "runtimes\unix\lib\$script:netCoreRuntime\Modules") -ItemType Directory -Force
-
-                foreach ($module in $winBuiltInModules) {
-                    $source = Join-Path $WinFxdBinPath "Modules\$module"
-                    Copy-Item -Path $source -Destination $winModuleFolder -Recurse -Force
-                }
-
-                foreach ($module in $unixBuiltInModules) {
-                    $source = Join-Path $LinuxFxdBinPath "Modules\$module"
-                    Copy-Item -Path $source -Destination $unixModuleFolder -Recurse -Force
-                }
-
-                Write-Log "Copied the built-in modules to contentFiles for the SDK package"
+            foreach ($module in $unixBuiltInModules) {
+                $source = Join-Path $LinuxFxdBinPath "Modules\$module"
+                Copy-Item -Path $source -Destination $unixModuleFolder -Recurse -Force
             }
 
-            #region nuspec
-            # filed a tracking bug for automating generation of dependecy list: https://github.com/PowerShell/PowerShell/issues/6247
-            $deps = [System.Collections.ArrayList]::new()
+            Write-Log "Copied the built-in modules to contentFiles for the SDK package"
+        }
 
-            switch ($fileBaseName) {
-                'Microsoft.Management.Infrastructure.CimCmdlets' {
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                }
+        #region nuspec
+        # filed a tracking bug for automating generation of dependecy list: https://github.com/PowerShell/PowerShell/issues/6247
+        $deps = [System.Collections.ArrayList]::new()
 
-                'Microsoft.PowerShell.Commands.Diagnostics' {
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                }
+        switch ($fileBaseName) {
+            'Microsoft.Management.Infrastructure.CimCmdlets' {
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+            }
 
-                'Microsoft.PowerShell.Commands.Management' {
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
-                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-                    {
-                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-                    }
-                }
+            'Microsoft.PowerShell.Commands.Diagnostics' {
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+            }
 
-                'Microsoft.PowerShell.Commands.Utility' {
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-
-                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-                    {
-                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-                    }
-                }
-
-                'Microsoft.PowerShell.ConsoleHost' {
-                    $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-                    {
-                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-                    }
-                }
-
-                'Microsoft.PowerShell.CoreCLR.Eventing' {
-                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-                    {
-                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-                    }
-                }
-
-                'Microsoft.PowerShell.SDK' {
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Management'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Utility'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.ConsoleHost'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-                    {
-                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-                    }
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure.CimCmdlets'), [tuple]::Create('version', $PackageVersion))) > $null
-                }
-
-                'Microsoft.PowerShell.Security' {
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                }
-
-                'Microsoft.WSMan.Management' {
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Runtime'), [tuple]::Create('version', $PackageVersion))) > $null
-                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-                    {
-                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-                    }
-                }
-
-                'Microsoft.WSMan.Runtime' {
-                    ## No dependencies
-                }
-
-                'System.Management.Automation' {
-                    $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.CoreCLR.Eventing'), [tuple]::Create('version', $PackageVersion))) > $null
-                    foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-                    {
-                        $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-                    }
+            'Microsoft.PowerShell.Commands.Management' {
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
+                foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
                 }
             }
 
-            New-NuSpec -PackageId $fileBaseName -PackageVersion $PackageVersion -Dependency $deps -FilePath (Join-Path $filePackageFolder.FullName "$fileBaseName.nuspec")
+            'Microsoft.PowerShell.Commands.Utility' {
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
 
-            # Copy icon file to package
-            Copy-Item -Path $iconPath -Destination "$($filePackageFolder.Fullname)/$iconFileName" -Verbose
+                foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                }
+            }
 
-            New-NugetPackage -NuSpecPath $filePackageFolder.FullName -PackageDestinationPath $PackagePath
+            'Microsoft.PowerShell.ConsoleHost' {
+                $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                }
+            }
+
+            'Microsoft.PowerShell.CoreCLR.Eventing' {
+                foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                }
+            }
+
+            'Microsoft.PowerShell.SDK' {
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Utility'), [tuple]::Create('version', $PackageVersion))) > $null
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.ConsoleHost'), [tuple]::Create('version', $PackageVersion))) > $null
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                }
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure.CimCmdlets'), [tuple]::Create('version', $PackageVersion))) > $null
+            }
+
+            'Microsoft.PowerShell.Security' {
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+            }
+
+            'Microsoft.WSMan.Management' {
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Runtime'), [tuple]::Create('version', $PackageVersion))) > $null
+                foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                }
+            }
+
+            'Microsoft.WSMan.Runtime' {
+                ## No dependencies
+            }
+
+            'System.Management.Automation' {
+                $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.CoreCLR.Eventing'), [tuple]::Create('version', $PackageVersion))) > $null
+                foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
+                {
+                    $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+                }
+            }
         }
 
-        if (Test-Path $refBinPath)
-        {
-            Remove-Item $refBinPath -Recurse -Force -ErrorAction SilentlyContinue
-        }
+        New-NuSpec -PackageId $fileBaseName -PackageVersion $PackageVersion -Dependency $deps -FilePath (Join-Path $filePackageFolder.FullName "$fileBaseName.nuspec")
 
-        if (Test-Path $tmpPackageRoot)
-        {
-            Remove-Item $tmpPackageRoot -Recurse -Force -ErrorAction SilentlyContinue
-        }
+        # Copy icon file to package
+        Copy-Item -Path $iconPath -Destination "$($filePackageFolder.Fullname)/$iconFileName" -Verbose
+
+        New-NugetPackage -NuSpecPath $filePackageFolder.FullName -PackageDestinationPath $PackagePath
+    }
+
+    if (Test-Path $refBinPath)
+    {
+        Remove-Item $refBinPath -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    if (Test-Path $tmpPackageRoot)
+    {
+        Remove-Item $tmpPackageRoot -Recurse -Force -ErrorAction SilentlyContinue
     }
 }
 
@@ -2182,6 +2494,9 @@ function New-ReferenceAssembly
         "Microsoft.PowerShell.Commands.Utility",
         "Microsoft.PowerShell.ConsoleHost"
     )
+
+    # Ensure needed dotNet version is available.  Find-DotNet does this, and is part of build.psm1 which should already be imported.
+    Find-DotNet -Verbose
 
     foreach ($assemblyName in $assemblyNames) {
 
@@ -2428,7 +2743,7 @@ function GenerateBuildArguments
 Create a NuGet package from a nuspec.
 
 .DESCRIPTION
-Creates a NuGet using the nuspec using at the specified folder.
+Creates a NuGet using the nuspec at the specified folder.
 It is expected that the lib / ref / runtime folders are welformed.
 The genereated NuGet package is copied over to the $PackageDestinationPath
 
