@@ -266,7 +266,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets strict mode.
         /// </summary>
-        [Experimental("PSStrictModeAssignment", ExperimentAction.Show)]
+        [Experimental(ExperimentalFeature.PSStrictModeAssignment, ExperimentAction.Show)]
         [Parameter(ParameterSetName = InvokeCommandCommand.InProcParameterSet)]
         [ArgumentToPSVersionTransformation]
         [ValidateVersion]
