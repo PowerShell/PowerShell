@@ -2609,6 +2609,12 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
+            if (string.Equals("off", versionString, StringComparison.OrdinalIgnoreCase))
+            {
+                version = new Version(0, 0);
+                return true;
+            }
+
             return base.TryConvertFromString(versionString, out version);
         }
     }

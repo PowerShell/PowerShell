@@ -266,11 +266,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets strict mode.
         /// </summary>
-        [Experimental("InvokeCommandCommand.PSStrictModeVersionAssignment", ExperimentAction.Show)]
+        [Experimental("InvokeCommandCommand.PSStrictModeAssignment", ExperimentAction.Show)]
         [Parameter(ParameterSetName = InvokeCommandCommand.InProcParameterSet)]
         [ValidateVersion]
         [ArgumentToPSVersionTransformation]
-        public Version StrictModeVersion
+        public Version StrictMode
         {
             get
             {
@@ -284,26 +284,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Version _strictmodeversion = null;
-
-        /// <summary>
-        /// Gets or sets StrictMode off.
-        /// </summary>
-        [Experimental("PSStrictModeVersionAssignment", ExperimentAction.Show)]
-        [Parameter(ParameterSetName = InvokeCommandCommand.InProcParameterSet)]
-        public SwitchParameter StrictModeOff
-        {
-            get
-            {
-                return strictmodeoff;
-            }
-
-            set
-            {
-                strictmodeoff = value;
-            }
-        }
-
-        private SwitchParameter strictmodeoff;
 
         /// <summary>
         /// For WSMan session:
@@ -996,12 +976,6 @@ namespace Microsoft.PowerShell.Commands
                     Context.EngineSessionState.CurrentScope.StrictModeVersion = _strictmodeversion;
                 }
 
-                if (strictmodeoff.IsPresent) 
-                {
-                    _savedStrictModeVersion = Context.EngineSessionState.CurrentScope.StrictModeVersion;
-                    Context.EngineSessionState.CurrentScope.StrictModeVersion = new Version(0, 0);
-                }
-
                 return;
             }
 
@@ -1224,7 +1198,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch
                     {
-                        if (_strictmodeversion != null || strictmodeoff.IsPresent)
+                        if (_strictmodeversion != null)
                         {
                             Context.EngineSessionState.CurrentScope.StrictModeVersion = _savedStrictModeVersion;
                         }
@@ -1281,7 +1255,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     finally
                     {
-                        if (_strictmodeversion != null || strictmodeoff.IsPresent)
+                        if (_strictmodeversion != null)
                         {
                             Context.EngineSessionState.CurrentScope.StrictModeVersion = _savedStrictModeVersion;
                         }
