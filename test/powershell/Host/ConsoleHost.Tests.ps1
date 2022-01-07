@@ -836,8 +836,10 @@ namespace StackTest {
 
     Context "Startup banner text tests" -Tag Slow {
         BeforeAll {
-            $waitSecs = 3
-            $outputPath = Join-Path $env:temp "StartupBanner-${Pid}.txt"
+            $outputPath = Join-Path $env:temp "StartupBannerTest-Output-${Pid}.txt"
+
+            $inputPath = Join-Path $env:temp "StartupBannerTest-Input.txt"
+            "exit" > $inputPath
 
             # Not testing update notification banner text here
             $origUpdateCheckVal = $env:POWERSHELL_UPDATECHECK
@@ -846,6 +848,7 @@ namespace StackTest {
             $spArgs = @{
                 FilePath = $powershell
                 ArgumentList = @("-NoProfile")
+                RedirectStandardInput = $inputPath
                 RedirectStandardOutput = $outputPath
                 WorkingDirectory = $pwd
                 PassThru = $true
@@ -865,24 +868,23 @@ namespace StackTest {
             Remove-Item $outputPath -Force -ErrorAction Ignore
         }
         It "Displays expected startup banner text by default" {
-            $p = Start-Process @spArgs
-            Start-Sleep -Seconds $waitSecs
-            Stop-Process $p
+            $process = Start-Process @spArgs
+            Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
 
             $out = @(Get-Content $outputPath)
             $out.Count | Should -BeExactly 2
             $out[0] | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
-            $out[1] | Should -BeExactly "PS ${pwd}> "
+            $out[1] | Should -BeExactly "PS ${pwd}> exit"
         }
         It "Displays only the prompt with -NoLogo" {
             $spArgs.ArgumentList += "-NoLogo"
-            $p = Start-Process @spArgs
-            Start-Sleep -Seconds $waitSecs
-            Stop-Process $p
+
+            $process = Start-Process @spArgs
+            Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
 
             $out = @(Get-Content $outputPath)
             $out.Count | Should -BeExactly 1
-            $out[0] | Should -BeExactly "PS ${pwd}> "
+            $out[0] | Should -BeExactly "PS ${pwd}> exit"
         }
     }
 }
