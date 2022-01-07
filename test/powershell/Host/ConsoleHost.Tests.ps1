@@ -856,6 +856,9 @@ namespace StackTest {
             }
         }
         AfterAll {
+            Remove-Item $inputPath -Force -ErrorAction Ignore
+            Remove-Item $outputPath -Force -ErrorAction Ignore
+
             # Restore original value of $env:POWERSHELL_UPDATECHECK
             if ($origUpdateCheckVal) {
                 $env:POWERSHELL_UPDATECHECK = $origUpdateCheckVal
