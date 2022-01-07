@@ -836,10 +836,10 @@ namespace StackTest {
 
     Context "Startup banner text tests" -Tag Slow {
         BeforeAll {
-            $inputPath = Join-Path $env:temp "StartupBannerTest-Input.txt"
+            $inputPath = "Temp:\StartupBannerTest-Input.txt"
             "exit" > $inputPath
 
-            $outputPath = Join-Path $env:temp "StartupBannerTest-Output-${Pid}.txt"
+            $outputPath = "Temp:\StartupBannerTest-Output-${Pid}.txt"
 
             # Not testing update notification banner text here
             $origPSUpdateCheckVal = $env:POWERSHELL_UPDATECHECK
@@ -863,8 +863,8 @@ namespace StackTest {
             if ($origPSUpdateCheckVal) {
                 $env:POWERSHELL_UPDATECHECK = $origPSUpdateCheckVal
             }
-            elseif (Test-Path Env:\POWERSHELL_UPDATECHECK) {
-                Remove-Item Env:\POWERSHELL_UPDATECHECK -Force
+            else {
+                Remove-Item Env:\POWERSHELL_UPDATECHECK -Force -ErrorAction Ignore
             }
         }
         BeforeEach {
