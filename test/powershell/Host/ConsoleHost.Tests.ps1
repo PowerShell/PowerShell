@@ -875,6 +875,7 @@ namespace StackTest {
             Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
 
             $out = @(Get-Content $outputPath)
+            Write-Host "pwsh output is: '$($out -join '\n')'"
             $out.Count | Should -BeExactly 2
             $out[0] | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
             $out[1] | Should -BeExactly "PS ${pwd}> exit"
@@ -886,6 +887,7 @@ namespace StackTest {
             Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
 
             $out = @(Get-Content $outputPath)
+            Write-Host "pwsh output is: '$($out -join '\n')'"
             $out.Count | Should -BeExactly 1
             $out[0] | Should -BeExactly "PS ${pwd}> exit"
         }
