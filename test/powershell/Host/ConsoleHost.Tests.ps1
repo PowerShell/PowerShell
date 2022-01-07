@@ -837,7 +837,7 @@ namespace StackTest {
     Context "Startup banner text tests" -Tag Slow {
         BeforeAll {
             $inputPath = "Temp:\StartupBannerTest-Input.txt"
-            "exit" > $inputPath
+            "`$PSStyle.OutputRendering = 'PlainText'`nexit" > $inputPath
 
             $outputPath = "Temp:\StartupBannerTest-Output-${Pid}.txt"
 
@@ -876,9 +876,10 @@ namespace StackTest {
 
             $out = @(Get-Content $outputPath)
             Write-Warning "pwsh output is: '$($out -join '\n')'"
-            $out.Count | Should -BeExactly 2
+            $out.Count | Should -BeExactly 3
             $out[0] | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
-            $out[1] | Should -BeExactly "PS ${pwd}> exit"
+            $out[1] | Should -BeExactly "PS ${pwd}> `$PSStyle.OutputRendering = 'PlainText'"
+            $out[2] | Should -BeExactly "PS ${pwd}> exit"
         }
         It "Displays only the prompt with -NoLogo" {
             $spArgs["ArgumentList"] += "-NoLogo"
@@ -888,8 +889,9 @@ namespace StackTest {
 
             $out = @(Get-Content $outputPath)
             Write-Warning "pwsh output is: '$($out -join '\n')'"
-            $out.Count | Should -BeExactly 1
-            $out[0] | Should -BeExactly "PS ${pwd}> exit"
+            $out.Count | Should -BeExactly 2
+            $out[0] | Should -BeExactly "PS ${pwd}> `$PSStyle.OutputRendering = 'PlainText'"
+            $out[1] | Should -BeExactly "PS ${pwd}> exit"
         }
     }
 }
