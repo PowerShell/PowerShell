@@ -662,8 +662,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
         It "NoClobber WinCompat list in powershell.config is a Desktop-edition module" {
             if (-not $desktopModuleToUse) {
-                Write-Host 'Skip the test case "NoClobber WinCompat list in powershell.config is a Desktop-edition module" because neither the "PersistentMemory" module nor the "RemoteDesktop" module is available under the System32 module path' -ForegroundColor Yellow
-                return
+                throw 'Neither the "PersistentMemory" module nor the "RemoteDesktop" module is available. Please check and use a desktop-edition module that is under the System32 module path.'
             }
 
             ## The 'Desktop' edition module 'PersistentMemory' (available on Windows Client) or 'RemoteDesktop' (available on Windows Server) should not be imported twice.
@@ -1447,23 +1446,12 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
             FullyQualifiedErrorId = "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportModuleCommand"
             ExceptionMessage = "*'Microsoft.PowerShell.Utility'*'Core'*`$PSHOME*"
         }
-        @{
-            ## Attempt to load a 'Desktop' edition module should fail because 'Export-PSSession' cannot be found.
-            Command = $desktopModuleToUse ? "Import-Module $desktopModuleToUse -ErrorAction Stop" : 'Skip the test case that loads a desktop-edition module because neither the "PersistentMemory" module nor the "RemoteDesktop" module is available under the System32 module path'
-            FullyQualifiedErrorId = "CommandNotFoundException,Microsoft.PowerShell.Commands.ImportModuleCommand"
-            ExceptionMessage = "*'$desktopModuleToUse'*'Export-PSSession'*'Microsoft.PowerShell.Utility'*"
-        }
     ) {
         param(
             $Command,
             $FullyQualifiedErrorId,
             $ExceptionMessage
         )
-
-        if ($Command.StartsWith("Skip")) {
-            Write-Host $Command -ForegroundColor Yellow
-            return
-        }
 
         $template = @'
     try {{
@@ -1478,8 +1466,30 @@ Describe "WinCompat importing should check availablity of built-in modules" -Tag
         $scriptBlock = [scriptblock]::Create($script)
 
         $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c $scriptBlock
+        $result | Should -HaveCount 2
         $result[0] | Should -BeExactly $FullyQualifiedErrorId
         $result[1] | Should -BeLike $ExceptionMessage
+    }
+
+    It "Attempt to load a 'Desktop' edition module should fail because 'Export-PSSession' cannot be found" {
+        if (-not $desktopModuleToUse) {
+            throw 'Neither the "PersistentMemory" module nor the "RemoteDesktop" module is available. Please check and use a desktop-edition module that is under the System32 module path.'
+        }
+
+        $script = @"
+    try {
+        Import-Module $desktopModuleToUse -ErrorAction Stop
+    } catch {
+        `$_.FullyQualifiedErrorId
+        `$_.Exception.Message
+    }
+"@
+        $env:PSModulePath = ''
+        $scriptBlock = [scriptblock]::Create($script)
+        $result = & "$pwshDir\pwsh.exe" -NoProfile -NonInteractive -c $scriptBlock
+        $result | Should -HaveCount 2
+        $result[0] | Should -BeExactly "CommandNotFoundException,Microsoft.PowerShell.Commands.ImportModuleCommand"
+        $result[1] | Should -BeLike "*'$desktopModuleToUse'*'Export-PSSession'*'Microsoft.PowerShell.Utility'*"
     }
 
     It "When built-in modules are available but not in `$PSHOME module path, things should work" {
