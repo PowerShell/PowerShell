@@ -833,6 +833,58 @@ namespace StackTest {
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
         }
     }
+
+    Context "Startup banner text tests" -Tag Slow {
+        BeforeAll {
+            $waitSecs = 3
+            $outputPath = Join-Path $env:temp "StartupBanner-${Pid}.txt"
+
+            # Not testing update notification banner text here
+            $origUpdateCheckVal = $env:POWERSHELL_UPDATECHECK
+            $env:POWERSHELL_UPDATECHECK = "Off"
+
+            $spArgs = @{
+                FilePath = $powershell
+                ArgumentList = @("-NoProfile")
+                RedirectStandardOutput = $outputPath
+                WorkingDirectory = $pwd
+                PassThru = $true
+                NoNewWindow = $true
+            }
+        }
+        AfterAll {
+            # Restore original value of $env:POWERSHELL_UPDATECHECK
+            if ($origUpdateCheckVal) {
+                $env:POWERSHELL_UPDATECHECK = $origUpdateCheckVal
+            }
+            else {
+                Remove-Item Env:\POWERSHELL_UPDATECHECK -Force
+            }
+        }
+        BeforeEach {
+            Remove-Item $outputPath -Force -ErrorAction Ignore
+        }
+        It "Displays expected startup banner text by default" {
+            $p = Start-Process @spArgs
+            Start-Sleep -Seconds $waitSecs
+            Stop-Process $p
+
+            $out = @(Get-Content $outputPath)
+            $out.Count | Should -BeExactly 2
+            $out[0] | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
+            $out[1] | Should -BeExactly "PS ${pwd}> "
+        }
+        It "Displays only the prompt with -NoLogo" {
+            $spArgs.ArgumentList += "-NoLogo"
+            $p = Start-Process @spArgs
+            Start-Sleep -Seconds $waitSecs
+            Stop-Process $p
+
+            $out = @(Get-Content $outputPath)
+            $out.Count | Should -BeExactly 1
+            $out[0] | Should -BeExactly "PS ${pwd}> "
+        }
+    }
 }
 
 Describe "WindowStyle argument" -Tag Feature {
