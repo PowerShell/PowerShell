@@ -836,13 +836,13 @@ namespace StackTest {
 
     Context "Startup banner text tests" -Tag Slow {
         BeforeAll {
-            $outputPath = Join-Path $env:temp "StartupBannerTest-Output-${Pid}.txt"
-
             $inputPath = Join-Path $env:temp "StartupBannerTest-Input.txt"
             "exit" > $inputPath
 
+            $outputPath = Join-Path $env:temp "StartupBannerTest-Output-${Pid}.txt"
+
             # Not testing update notification banner text here
-            $origUpdateCheckVal = $env:POWERSHELL_UPDATECHECK
+            $origPSUpdateCheckVal = $env:POWERSHELL_UPDATECHECK
             $env:POWERSHELL_UPDATECHECK = "Off"
 
             $spArgs = @{
@@ -859,11 +859,11 @@ namespace StackTest {
             Remove-Item $inputPath -Force -ErrorAction Ignore
             Remove-Item $outputPath -Force -ErrorAction Ignore
 
-            # Restore original value of $env:POWERSHELL_UPDATECHECK
-            if ($origUpdateCheckVal) {
-                $env:POWERSHELL_UPDATECHECK = $origUpdateCheckVal
+            # Restore original value of $env:POWERSHELL_UPDATECHECK or remove it if it didn't exist
+            if ($origPSUpdateCheckVal) {
+                $env:POWERSHELL_UPDATECHECK = $origPSUpdateCheckVal
             }
-            else {
+            elseif (Test-Path Env:\POWERSHELL_UPDATECHECK) {
                 Remove-Item Env:\POWERSHELL_UPDATECHECK -Force
             }
         }
@@ -880,7 +880,7 @@ namespace StackTest {
             $out[1] | Should -BeExactly "PS ${pwd}> exit"
         }
         It "Displays only the prompt with -NoLogo" {
-            $spArgs.ArgumentList += "-NoLogo"
+            $spArgs["ArgumentList"] += "-NoLogo"
 
             $process = Start-Process @spArgs
             Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
