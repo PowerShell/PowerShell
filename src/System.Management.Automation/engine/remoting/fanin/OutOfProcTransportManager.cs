@@ -412,6 +412,19 @@ namespace System.Management.Automation.Remoting
         private readonly TextWriter _writer;
         private bool _isStopped;
         private readonly object _syncObject = new object();
+        private const string _errorPrepend = "__NamedPipeError__:";
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Prefix for transport error message.
+        /// </summary>
+        public static string ErrorPrefix
+        {
+            get;
+        } = _errorPrepend;
 
         #endregion
 
@@ -421,7 +434,7 @@ namespace System.Management.Automation.Remoting
         /// Constructs the wrapper.
         /// </summary>
         /// <param name="writerToWrap"></param>
-        internal OutOfProcessTextWriter(TextWriter writerToWrap)
+        public OutOfProcessTextWriter(TextWriter writerToWrap)
         {
             Dbg.Assert(writerToWrap != null, "Cannot wrap a null writer.");
             _writer = writerToWrap;
@@ -435,7 +448,7 @@ namespace System.Management.Automation.Remoting
         /// Calls writer.WriteLine() with data.
         /// </summary>
         /// <param name="data"></param>
-        internal virtual void WriteLine(string data)
+        public virtual void WriteLine(string data)
         {
             if (_isStopped)
             {
@@ -552,7 +565,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Closes the server process.
         /// </summary>
-        internal override void CloseAsync()
+        public override void CloseAsync()
         {
             bool shouldRaiseCloseCompleted = false;
             lock (syncObject)
@@ -634,7 +647,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Terminates the server process and disposes other resources.
         /// </summary>
         /// <param name="isDisposing"></param>
-        internal override void Dispose(bool isDisposing)
+        protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
             if (isDisposing)
@@ -1074,7 +1087,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <exception cref="System.ComponentModel.Win32Exception">
         /// 1. There was an error in opening the associated file.
         /// </exception>
-        internal override void CreateAsync()
+        public override void CreateAsync()
         {
             if (_connectionInfo != null)
             {
@@ -1226,7 +1239,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Kills the server process and disposes other resources.
         /// </summary>
         /// <param name="isDisposing"></param>
-        internal override void Dispose(bool isDisposing)
+        protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
             if (isDisposing)
@@ -1362,7 +1375,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region Overrides
 
-        internal override void Dispose(bool isDisposing)
+        protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
 
@@ -1506,7 +1519,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Create a Hyper-V socket connection to the target process and set up
         /// transport reader/writer.
         /// </summary>
-        internal override void CreateAsync()
+        public override void CreateAsync()
         {
             _client = new RemoteSessionHyperVSocketClient(_vmGuid, true);
             if (!_client.Connect(_networkCredential, _configurationName, true))
@@ -1579,7 +1592,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Create a Hyper-V socket connection to the target process and set up
         /// transport reader/writer.
         /// </summary>
-        internal override void CreateAsync()
+        public override void CreateAsync()
         {
             _client = new RemoteSessionHyperVSocketClient(_targetGuid, false, true);
             if (!_client.Connect(null, string.Empty, false))
@@ -1636,7 +1649,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region Overrides
 
-        internal override void Dispose(bool isDisposing)
+        protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
 
@@ -1655,7 +1668,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Create an SSH connection to the target host and set up
         /// transport reader/writer.
         /// </summary>
-        internal override void CreateAsync()
+        public override void CreateAsync()
         {
             // Create the ssh client process with connection to host target.
             _sshProcessId = _connectionInfo.StartSSHProcess(
@@ -1716,7 +1729,7 @@ namespace System.Management.Automation.Remoting.Client
                 period: Timeout.Infinite);
         }
 
-        internal override void CloseAsync()
+        public override void CloseAsync()
         {
             base.CloseAsync();
 
@@ -1934,10 +1947,10 @@ namespace System.Management.Automation.Remoting.Client
                         break;
                     }
 
-                    if (data.StartsWith(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrepend, StringComparison.OrdinalIgnoreCase))
+                    if (data.StartsWith(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
                     {
                         // Error message from the server.
-                        string errorData = data.Substring(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrepend.Length);
+                        string errorData = data.Substring(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrefix.Length);
                         HandleErrorDataReceived(errorData);
                     }
                     else
@@ -2003,7 +2016,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region Overrides
 
-        internal override void Dispose(bool isDisposing)
+        protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
 
@@ -2064,10 +2077,10 @@ namespace System.Management.Automation.Remoting.Client
                         break;
                     }
 
-                    if (data.StartsWith(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrepend, StringComparison.OrdinalIgnoreCase))
+                    if (data.StartsWith(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
                     {
                         // Error message from the server.
-                        string errorData = data.Substring(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrepend.Length);
+                        string errorData = data.Substring(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrefix.Length);
                         HandleErrorDataReceived(errorData);
                     }
                     else
@@ -2131,7 +2144,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Create a named pipe connection to the target process and set up
         /// transport reader/writer.
         /// </summary>
-        internal override void CreateAsync()
+        public override void CreateAsync()
         {
             _clientPipe = string.IsNullOrEmpty(_connectionInfo.CustomPipeName) ?
                 new RemoteSessionNamedPipeClient(_connectionInfo.ProcessId, _connectionInfo.AppDomainName) :
@@ -2199,7 +2212,7 @@ namespace System.Management.Automation.Remoting.Client
         /// Create a named pipe connection to the target process in target container and set up
         /// transport reader/writer.
         /// </summary>
-        internal override void CreateAsync()
+        public override void CreateAsync()
         {
             _clientPipe = new ContainerSessionNamedPipeClient(
                 _connectionInfo.ContainerProc.ProcessId,
@@ -2267,7 +2280,7 @@ namespace System.Management.Automation.Remoting.Client
             throw new NotImplementedException(RemotingErrorIdStrings.IPCTransportConnectError);
         }
 
-        internal override void CreateAsync()
+        public override void CreateAsync()
         {
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateCommand, PSOpcode.Connect,
                                 PSTask.CreateRunspace,
@@ -2277,7 +2290,7 @@ namespace System.Management.Automation.Remoting.Client
             _stdInWriter.WriteLine(OutOfProcessUtils.CreateCommandPacket(powershellInstanceId));
         }
 
-        internal override void CloseAsync()
+        public override void CloseAsync()
         {
             lock (syncObject)
             {
@@ -2331,7 +2344,7 @@ namespace System.Management.Automation.Remoting.Client
             _signalTimeOutTimer.Change(60 * 1000, Timeout.Infinite);
         }
 
-        internal override void Dispose(bool isDisposing)
+        protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
             if (isDisposing)
