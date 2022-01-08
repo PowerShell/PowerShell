@@ -660,56 +660,55 @@ Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI
 }
 
 Describe "Validate Get-Item ResolvedTarget property" -Tag RequireAdminOnWindows {
-    Context "Validate Get-Item ResolvedTarget property points to resolution of symbolic link (or null if resolution does not exist)" {
+    BeforeAll {
+        $rootDir = Join-Path "TestDrive:" "TestDir"
 
-        BeforeAll {
-            $rootDir = Join-Path "TestDrive:" "TestDir"
+        Push-Location $rootDir
+        $null = New-Item -Path "realDir" -ItemType Directory
+        $null = New-Item -Path "toDel" -ItemType Directory
+        $null = New-Item -Path "brokenLinkedDir" -ItemType SymbolicLink -Value ".\toDel"
+        $null = New-Item -Path "linkedDir" -ItemType SymbolicLink -Value ".\realDir"
+        Remove-Item "toDel"
+        $null = New-Item -Path "realFile.fil" -ItemType File
+        $null = New-Item -Path "toDel.fil" -ItemType File
+        $null = New-Item -Path "brokenLinkedFile.fil" -ItemType SymbolicLink -Value ".\toDel.fil"
+        $null = New-Item -Path "linkedFile.fil" -ItemType SymbolicLink -Value ".\realFile.fil"
+        Remove-Item "toDel.fil"
+    }
 
-            Push-Location $rootDir
-            $null = New-Item -Path "realDir" -ItemType Directory
-            $null = New-Item -Path "toDel" -ItemType Directory
-            $null = New-Item -Path "brokenLinkedDir" -ItemType SymbolicLink -Value ".\toDel"
-            $null = New-Item -Path "linkedDir" -ItemType SymbolicLink -Value ".\realDir"
-            Remove-Item "toDel"
-            $null = New-Item -Path "realFile.fil" -ItemType File
-            $null = New-Item -Path "toDel.fil" -ItemType File
-            $null = New-Item -Path "brokenLinkedFile.fil" -ItemType SymbolicLink -Value ".\toDel.fil"
-            $null = New-Item -Path "linkedFile.fil" -ItemType SymbolicLink -Value ".\realFile.fil"
-            Remove-Item "toDel.fil"
-        }
+    AfterAll {
+        Pop-Location
+    }
 
-        AfterAll {
-            Pop-Location
-        }
-
+    Context 'Get-Item files and folders' {
         It 'Get-Item "linkedDir"' {
             $result = Get-Item "linkedDir"
-            $result.ResolvedTarget.Name | Should -Be "realDir"
+            $result.ResolvedTarget.EndsWith("realDir") | Should -Be $true
         }
 
         It 'Get-Item "linkedFile.fil"' {
             $result = Get-Item "linkedFile.fil"
-            $result.ResolvedTarget.Name | Should -Be "realFile.fil"
+            $result.ResolvedTarget.EndsWith("realFile.fil") | Should -Be $true
         }
 
         It 'Get-Item "brokenLinkedDir"' {
             $result = Get-Item "brokenLinkedDir"
-            $result.ResolvedTarget | Should -Be $null
+            $result.ResolvedTarget.EndsWith("brokenLinkedDir") | Should -Be $true
         }
 
         It 'Get-Item "brokenLinkedFile.fil"' {
             $result = Get-Item "brokenLinkedFile.fil"
-            $result.ResolvedTarget | Should -Be $null
+            $result.ResolvedTarget.EndsWith("brokenLinkedFile.fil") | Should -Be $true
         }
 
         It 'Get-Item "realDir"' {
             $result = Get-Item "realDir"
-            $result.ResolvedTarget.Name | Should -Be "realDir"
+            $result.ResolvedTarget.EndsWith("realDir") | Should -Be $true
         }
 
         It 'Get-Item "realFile.fil' {
             $result = Get-Item "realFile.fil"
-            $result.ResolvedTarget.Name | Should -Be "realFile.fil"
+            $result.ResolvedTarget.EndsWith("realFile.fil") | Should -Be $true
         }
     }
 }

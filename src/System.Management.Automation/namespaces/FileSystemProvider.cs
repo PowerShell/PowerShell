@@ -8136,7 +8136,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="instance">The FileInfo or DirectoryInfo type.</param>
         /// <returns>The file path the instance points to.</returns>
-        public static FileSystemInfo ResolvedTarget(PSObject instance)
+        public static string ResolvedTarget(PSObject instance)
         {
             if (instance.BaseObject is FileSystemInfo fileSysInfo)
             {
