@@ -845,6 +845,11 @@ namespace StackTest {
             $origPSUpdateCheckVal = $env:POWERSHELL_UPDATECHECK
             $env:POWERSHELL_UPDATECHECK = "Off"
 
+            # During some runs of pwsh, the ANSI DECCKM enable(1h)/disable(1l) sequences wind up in the output
+            $escPwd = [regex]::Escape($pwd)
+            $expectedPromptPattern1 = "PS ${escPwd}> (1h)?\`$PSStyle.OutputRendering = 'PlainText'"
+            $expectedPromptPattern2 = "(1l)?PS ${escPwd}> exit"
+
             $spArgs = @{
                 FilePath = $powershell
                 ArgumentList = @("-NoProfile")
@@ -878,8 +883,8 @@ namespace StackTest {
             Write-Warning "pwsh output is: '$($out -join '\n')'"
             $out.Count | Should -BeExactly 3
             $out[0] | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
-            $out[1] | Should -BeExactly "PS ${pwd}> `$PSStyle.OutputRendering = 'PlainText'"
-            $out[2] | Should -BeExactly "PS ${pwd}> exit"
+            $out[1] | Should -MatchExactly $expectedPromptPattern1
+            $out[2] | Should -MatchExactly $expectedPromptPattern2
         }
         It "Displays only the prompt with -NoLogo" {
             $spArgs["ArgumentList"] += "-NoLogo"
@@ -890,8 +895,8 @@ namespace StackTest {
             $out = @(Get-Content $outputPath)
             Write-Warning "pwsh output is: '$($out -join '\n')'"
             $out.Count | Should -BeExactly 2
-            $out[0] | Should -BeExactly "PS ${pwd}> `$PSStyle.OutputRendering = 'PlainText'"
-            $out[1] | Should -BeExactly "PS ${pwd}> exit"
+            $out[0] | Should -MatchExactly $expectedPromptPattern1
+            $out[1] | Should -MatchExactly $expectedPromptPattern2
         }
     }
 }
