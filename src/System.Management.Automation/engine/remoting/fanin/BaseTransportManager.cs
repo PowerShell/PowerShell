@@ -33,27 +33,81 @@ namespace System.Management.Automation.Remoting
 {
     #region TransportErrorOccuredEventArgs
 
-    internal enum TransportMethodEnum
+    /// <summary>
+    /// Transport method for error reporting
+    /// </summary>
+    public enum TransportMethodEnum
     {
+        /// <summary>
+        /// CreateShellEx
+        /// </summary>
         CreateShellEx = 0,
+
+        /// <summary>
+        /// RunShellCommandEx
+        /// </summary>
         RunShellCommandEx = 1,
+
+        /// <summary>
+        /// SendShellInputEx
+        /// </summary>
         SendShellInputEx = 2,
+
+        /// <summary>
+        /// ReceiveShellOutputEx
+        /// </summary>
         ReceiveShellOutputEx = 3,
+
+        /// <summary>
+        /// CloseShellOperationEx
+        /// </summary>
         CloseShellOperationEx = 4,
+
+        /// <summary>
+        /// CommandInputEx
+        /// </summary>
         CommandInputEx = 5,
+
+        /// <summary>
+        /// ReceiveCommandOutputEx
+        /// </summary>
         ReceiveCommandOutputEx = 6,
+
+        /// <summary>
+        /// DisconnectShellEx
+        /// </summary>
         DisconnectShellEx = 7,
+
+        /// <summary>
+        /// ReconnectShellEx
+        /// </summary>
         ReconnectShellEx = 8,
+        
+        /// <summary>
+        /// ConnectShellEx
+        /// </summary>
         ConnectShellEx = 9,
+
+        /// <summary>
+        /// ReconnectShellCommandEx
+        /// </summary>
         ReconnectShellCommandEx = 10,
+
+        /// <summary>
+        /// ConnectShellCommandEx
+        /// </summary>
         ConnectShellCommandEx = 11,
+
+        /// <summary>
+        /// Unknown
+        /// </summary>
         Unknown = 12,
     }
 
     /// <summary>
-    /// Event arguments passed to TransportErrorOccured handlers.
+    /// Event arguments passed to TransportErrorOccurred handlers.
     /// </summary>
-    internal class TransportErrorOccuredEventArgs : EventArgs
+    public sealed class TransportErrorOccuredEventArgs : EventArgs
     {
         /// <summary>
         /// Constructor.
@@ -64,7 +118,8 @@ namespace System.Management.Automation.Remoting
         /// <param name="m">
         /// The transport method that raised the error
         /// </param>
-        internal TransportErrorOccuredEventArgs(PSRemotingTransportException e,
+        public TransportErrorOccuredEventArgs(
+            PSRemotingTransportException e,
             TransportMethodEnum m)
         {
             Exception = e;
@@ -361,7 +416,7 @@ namespace System.Management.Automation.Remoting
         /// Raise the error handlers.
         /// </summary>
         /// <param name="eventArgs"></param>
-        internal virtual void RaiseErrorHandler(TransportErrorOccuredEventArgs eventArgs)
+        public virtual void RaiseErrorHandler(TransportErrorOccuredEventArgs eventArgs)
         {
             WSManTransportErrorOccured.SafeInvoke(this, eventArgs);
         }
@@ -393,7 +448,10 @@ namespace System.Management.Automation.Remoting
             System.GC.SuppressFinalize(this);
         }
 
-        internal virtual void Dispose(bool isDisposing)
+        /// <summary>
+        /// Dispose resources
+        /// </summary>
+        protected virtual void Dispose(bool isDisposing)
         {
             if (isDisposing)
             {
@@ -936,14 +994,17 @@ namespace System.Management.Automation.Remoting.Client
 
         #region Abstract / Virtual methods
 
-        internal abstract void CreateAsync();
+        /// <summary>
+        /// Create the transport manager and initiate connection.
+        /// </summary>
+        public abstract void CreateAsync();
 
         internal abstract void ConnectAsync();
 
         /// <summary>
         /// The caller should make sure the call is synchronized.
         /// </summary>
-        internal virtual void CloseAsync()
+        public virtual void CloseAsync()
         {
             // Clear the send collection
             dataToBeSent.Clear();
@@ -1001,7 +1062,10 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        internal override void Dispose(bool isDisposing)
+        /// <summary>
+        /// Dispose resources
+        /// </summary>
+        protected override void Dispose(bool isDisposing)
         {
             // clear event handlers
             this.CreateCompleted = null;
@@ -1173,7 +1237,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region Overrides
 
-        internal override void Dispose(bool isDisposing)
+        protected override void Dispose(bool isDisposing)
         {
             base.Dispose(isDisposing);
 
