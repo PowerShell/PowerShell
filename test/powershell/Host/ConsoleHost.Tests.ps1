@@ -880,7 +880,6 @@ namespace StackTest {
             Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
 
             $out = @(Get-Content $outputPath)
-            Write-Warning "pwsh output is: '$($out -join '\n')'"
             $out.Count | Should -BeExactly 3
             $out[0] | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
             $out[1] | Should -MatchExactly $expectedPromptPattern1
@@ -893,7 +892,6 @@ namespace StackTest {
             Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
 
             $out = @(Get-Content $outputPath)
-            Write-Warning "pwsh output is: '$($out -join '\n')'"
             $out.Count | Should -BeExactly 2
             $out[0] | Should -MatchExactly $expectedPromptPattern1
             $out[1] | Should -MatchExactly $expectedPromptPattern2
