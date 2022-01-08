@@ -27,6 +27,7 @@ namespace System.Management.Automation
         internal const string PSCleanBlockFeatureName = "PSCleanBlock";
         internal const string PSAMSIMethodInvocationLogging = "PSAMSIMethodInvocationLogging";
         internal const string PSExecFeatureName = "PSExec";
+        internal const string PSStrictModeAssignment = "PSStrictModeAssignment";
 
         #endregion
 
