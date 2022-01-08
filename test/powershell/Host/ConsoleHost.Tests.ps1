@@ -847,8 +847,8 @@ namespace StackTest {
 
             # During some runs of pwsh, the ANSI DECCKM enable(1h)/disable(1l) sequences wind up in the output
             $escPwd = [regex]::Escape($pwd)
-            $expectedPromptPattern1 = "PS ${escPwd}> (1h)?\`$PSStyle.OutputRendering = 'PlainText'"
-            $expectedPromptPattern2 = "(1l)?PS ${escPwd}> exit"
+            $expectedPromptPattern1 = "^PS ${escPwd}> (\x1b\[\?1h)?\`$PSStyle.OutputRendering = 'PlainText'`$"
+            $expectedPromptPattern2 = "^(\x1b\[\?1l)?PS ${escPwd}> exit`$"
 
             $spArgs = @{
                 FilePath = $powershell
