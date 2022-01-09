@@ -836,19 +836,20 @@ namespace StackTest {
 
     Context "Startup banner text tests" -Tag Slow {
         BeforeAll {
-            $inputPath = "Temp:\StartupBannerTest-Input.txt"
-            "`$PSStyle.OutputRendering = 'PlainText'`nexit" > $inputPath
-
             $outputPath = "Temp:\StartupBannerTest-Output-${Pid}.txt"
+            $inputPath  = "Temp:\StartupBannerTest-Input.txt"
+            "exit" > $inputPath
 
             # Not testing update notification banner text here
-            $origPSUpdateCheckVal = $env:POWERSHELL_UPDATECHECK
+            $oldPowerShellUpdateCheck = $env:POWERSHELL_UPDATECHECK
             $env:POWERSHELL_UPDATECHECK = "Off"
 
-            # During some runs of pwsh, the ANSI DECCKM enable(1h)/disable(1l) sequences wind up in the output
+            # Set TERM to "dumb" to avoid DECCKM codes in the output
+            $oldTERM = $env:TERM
+            $env:TERM = "dumb"
+
             $escPwd = [regex]::Escape($pwd)
-            $expectedPromptPattern1 = "^PS ${escPwd}> (\x1b\[\?1h)?\`$PSStyle.OutputRendering = 'PlainText'`$"
-            $expectedPromptPattern2 = "^(\x1b\[\?1l)?PS ${escPwd}> exit`$"
+            $expectedPromptPattern = "^PS ${escPwd}> exit`$"
 
             $spArgs = @{
                 FilePath = $powershell
@@ -858,19 +859,15 @@ namespace StackTest {
                 WorkingDirectory = $pwd
                 PassThru = $true
                 NoNewWindow = $true
+                UseNewEnvironment = $false
             }
         }
         AfterAll {
+            $env:TERM = $oldTERM
+            $env:POWERSHELL_UPDATECHECK = $oldPowerShellUpdateCheck
+
             Remove-Item $inputPath -Force -ErrorAction Ignore
             Remove-Item $outputPath -Force -ErrorAction Ignore
-
-            # Restore original value of $env:POWERSHELL_UPDATECHECK or remove it if it didn't exist
-            if ($origPSUpdateCheckVal) {
-                $env:POWERSHELL_UPDATECHECK = $origPSUpdateCheckVal
-            }
-            else {
-                Remove-Item Env:\POWERSHELL_UPDATECHECK -Force -ErrorAction Ignore
-            }
         }
         BeforeEach {
             Remove-Item $outputPath -Force -ErrorAction Ignore
@@ -880,21 +877,18 @@ namespace StackTest {
             Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
 
             $out = @(Get-Content $outputPath)
-            $out.Count | Should -BeExactly 3
+            $out.Count | Should -BeExactly 2
             $out[0] | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
-            $out[1] | Should -MatchExactly $expectedPromptPattern1
-            $out[2] | Should -MatchExactly $expectedPromptPattern2
+            $out[1] | Should -MatchExactly $expectedPromptPattern
         }
         It "Displays only the prompt with -NoLogo" {
             $spArgs["ArgumentList"] += "-NoLogo"
-
             $process = Start-Process @spArgs
             Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
 
             $out = @(Get-Content $outputPath)
-            $out.Count | Should -BeExactly 2
-            $out[0] | Should -MatchExactly $expectedPromptPattern1
-            $out[1] | Should -MatchExactly $expectedPromptPattern2
+            $out.Count | Should -BeExactly 1
+            $out[0] | Should -MatchExactly $expectedPromptPattern
         }
     }
 }
