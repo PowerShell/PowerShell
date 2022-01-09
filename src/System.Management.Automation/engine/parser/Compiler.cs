@@ -2669,10 +2669,11 @@ namespace System.Management.Automation.Language
             else
             {
                 Assembly[] assemblies;
-                typesToAdd = LoadUsingsImpl(usingStatements, out assemblies);
+                Dictionary<string, ITypeName> typeAliases;
+                typesToAdd = LoadUsingsImpl(usingStatements, out assemblies, out typeAliases);
                 trs = new TypeResolutionState(
                     TypeOps.GetNamespacesForTypeResolutionState(usingStatements),
-                    assemblies);
+                    assemblies, typeAliases);
             }
 
             exprs.Add(Expression.Call(
@@ -2728,8 +2729,9 @@ namespace System.Management.Automation.Language
             return assembly;
         }
 
-        private static Dictionary<string, TypeDefinitionAst> LoadUsingsImpl(IEnumerable<UsingStatementAst> usingAsts, out Assembly[] assemblies)
+        private static Dictionary<string, TypeDefinitionAst> LoadUsingsImpl(IEnumerable<UsingStatementAst> usingAsts, out Assembly[] assemblies, out Dictionary<string, ITypeName> typeAliases)
         {
+            var alias = new Dictionary<string, ITypeName>(StringComparer.OrdinalIgnoreCase);
             var asms = new List<Assembly>();
             var types = new Dictionary<string, TypeDefinitionAst>(StringComparer.OrdinalIgnoreCase);
 
@@ -2763,6 +2765,10 @@ namespace System.Management.Automation.Language
                     case UsingStatementKind.Namespace:
                         break;
                     case UsingStatementKind.Type:
+                        if (usingStmt.Alias is not null)
+                        {
+                            alias[usingStmt.Name.Value] = Parser.ScanType(usingStmt.Alias.Extent.Text, ignoreErrors:true);
+                        }
                         break;
                     default:
                         Diagnostics.Assert(false, "Unknown enum value " + usingStmt.UsingStatementKind + " for UsingStatementKind");
@@ -2771,6 +2777,7 @@ namespace System.Management.Automation.Language
             }
 
             assemblies = asms.ToArray();
+            typeAliases = alias;
             return types;
         }
 

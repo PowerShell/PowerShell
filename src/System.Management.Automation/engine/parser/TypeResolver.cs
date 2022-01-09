@@ -380,7 +380,29 @@ namespace System.Management.Automation.Language
             var assemList = assemblies ?? ClrFacade.GetAssemblies(typeResolutionState, typeName);
             var isAssembliesExplicitlyPassedIn = assemblies != null;
 
-            result = CallResolveTypeNameWorkerHelper(typeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+            if (typeResolutionState.typeAliases.TryGetValue(typeName.FullName, out ITypeName typeNameAlias))
+            {
+                if (typeNameAlias is GenericTypeName genericTypeAlias)
+                {
+                    result = genericTypeAlias.GetReflectionType();
+                    if (result is not null)
+                    {
+                        TypeCache.Add(genericTypeAlias, typeResolutionState, result);
+                    }
+                }
+                else if (typeNameAlias is TypeName newTypeNameAlias)
+                {
+                    result = CallResolveTypeNameWorkerHelper(newTypeNameAlias, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+                    if (result is not null)
+                    {
+                        TypeCache.Add(newTypeNameAlias, typeResolutionState, result);
+                    }
+                }
+            }
+            else
+            {
+                result = CallResolveTypeNameWorkerHelper(typeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+            }
 
             if (result != null)
             {
@@ -520,16 +542,18 @@ namespace System.Management.Automation.Language
     {
         internal static readonly string[] systemNamespace = { "System" };
         internal static readonly Assembly[] emptyAssemblies = Array.Empty<Assembly>();
+        internal static readonly Dictionary<string, ITypeName> emptyTypeAliases = new Dictionary<string, ITypeName> { };
         internal static readonly TypeResolutionState UsingSystem = new TypeResolutionState();
 
         internal readonly string[] namespaces;
         internal readonly Assembly[] assemblies;
+        internal readonly Dictionary<string, ITypeName> typeAliases;
         private readonly HashSet<string> _typesDefined;
         internal readonly int genericArgumentCount;
         internal readonly bool attribute;
 
         private TypeResolutionState()
-            : this(systemNamespace, emptyAssemblies)
+            : this(systemNamespace, emptyAssemblies, emptyTypeAliases)
         {
         }
 
@@ -556,9 +580,15 @@ namespace System.Management.Automation.Language
         }
 
         internal TypeResolutionState(string[] namespaces, Assembly[] assemblies)
+            : this(namespaces, assemblies, null)
+        {
+        }
+
+        internal TypeResolutionState(string[] namespaces, Assembly[] assemblies, Dictionary<string, ITypeName> typeAliases)
         {
             this.namespaces = namespaces ?? systemNamespace;
             this.assemblies = assemblies ?? emptyAssemblies;
+            this.typeAliases = typeAliases ?? emptyTypeAliases;
             _typesDefined = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
 
@@ -566,6 +596,7 @@ namespace System.Management.Automation.Language
         {
             this.namespaces = other.namespaces;
             this.assemblies = other.assemblies;
+            this.typeAliases = other.typeAliases;
             _typesDefined = other._typesDefined;
             this.genericArgumentCount = genericArgumentCount;
             this.attribute = attribute;
@@ -630,6 +661,11 @@ namespace System.Management.Automation.Language
             if (this.assemblies.Length != other.assemblies.Length)
                 return false;
 
+            if (this.typeAliases.Count != other.typeAliases.Count)
+            {
+                return false;
+            }
+
             for (int i = 0; i < namespaces.Length; i++)
             {
                 if (!this.namespaces[i].Equals(other.namespaces[i], StringComparison.OrdinalIgnoreCase))
@@ -640,6 +676,19 @@ namespace System.Management.Automation.Language
             {
                 if (!this.assemblies[i].Equals(other.assemblies[i]))
                     return false;
+            }
+
+            foreach (string key in typeAliases.Keys)
+            {
+                if (!other.typeAliases.ContainsKey(key))
+                {
+                    return false;
+                }
+
+                if (!this.typeAliases[key].Equals(other.typeAliases[key]))
+                {
+                    return false;
+                }
             }
 
             if (_typesDefined.Count != other._typesDefined.Count)
@@ -660,6 +709,11 @@ namespace System.Management.Automation.Language
             for (int i = 0; i < assemblies.Length; i++)
             {
                 result = Utils.CombineHashCodes(result, this.assemblies[i].GetHashCode());
+            }
+
+            foreach (KeyValuePair<string, ITypeName> kvp in typeAliases)
+            {
+                result = Utils.CombineHashCodes(result, kvp.GetHashCode());
             }
 
             foreach (var t in _typesDefined)

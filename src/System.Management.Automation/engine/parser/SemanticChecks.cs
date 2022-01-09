@@ -1308,13 +1308,16 @@ namespace System.Management.Automation.Language
         {
             bool usingKindSupported = usingStatementAst.UsingStatementKind == UsingStatementKind.Namespace ||
                                       usingStatementAst.UsingStatementKind == UsingStatementKind.Assembly ||
-                                      usingStatementAst.UsingStatementKind == UsingStatementKind.Module;
-            if (!usingKindSupported ||
-                usingStatementAst.Alias != null)
+                                      usingStatementAst.UsingStatementKind == UsingStatementKind.Module ||
+                                      usingStatementAst.UsingStatementKind == UsingStatementKind.Type;
+            
+            bool usingAliasSupported = usingStatementAst.UsingStatementKind == UsingStatementKind.Type;
+            
+            if (!usingKindSupported || (usingStatementAst.Alias is not null && !usingAliasSupported))
             {
                 _parser.ReportError(usingStatementAst.Extent,
-                    nameof(ParserStrings.UsingStatementNotSupported),
-                    ParserStrings.UsingStatementNotSupported);
+                nameof(ParserStrings.UsingStatementNotSupported),
+                ParserStrings.UsingStatementNotSupported);
             }
 
             return AstVisitAction.Continue;

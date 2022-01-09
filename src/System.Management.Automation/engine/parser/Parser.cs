@@ -5010,7 +5010,7 @@ namespace System.Management.Automation.Language
                     SkipToken();
 
                     var aliasToken = NextToken();
-                    if (aliasToken.Kind == TokenKind.EndOfInput)
+                    if (aliasToken.Kind == TokenKind.EndOfInput || aliasToken.Kind == TokenKind.NewLine)
                     {
                         UngetToken(aliasToken);
                         ReportIncompleteInput(After(equalsToken),
@@ -5024,20 +5024,20 @@ namespace System.Management.Automation.Language
                     {
                         htAst = (HashtableAst)aliasAst;
                     }
-                    else if (aliasAst is not StringConstantExpressionAst)
+                    else if (aliasAst is not StringConstantExpressionAst and not ArrayLiteralAst)
                     {
                         return new ErrorStatementAst(ExtentOf(usingToken, aliasAst), new Ast[] { itemAst, aliasAst });
                     }
 
                     RequireStatementTerminator();
 
-                    if (htAst == null)
+                    if (htAst is null)
                     {
                         return new UsingStatementAst(
-                            ExtentOf(usingToken, aliasToken),
+                            ExtentOf(usingToken, aliasAst),
                             kind,
                             (StringConstantExpressionAst)itemAst,
-                            (StringConstantExpressionAst)aliasAst);
+                            aliasAst);
                     }
                     else
                     {
