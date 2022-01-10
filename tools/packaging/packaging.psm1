@@ -2015,7 +2015,7 @@ function New-ILNugetPackageFromSource
 
     if (! (Test-Path $srcFilePackagePath)) {
         $msg = "Expected nuget source path $srcFilePackagePath for file $fileBaseName does not exist."
-        Write-Verbose -Verbose $msg
+        Write-Verbose -Verbose -Message $msg
         throw $msg
     }
 
