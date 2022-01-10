@@ -857,6 +857,64 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
         }
     }
+
+    Context "Startup banner text tests" -Tag Slow {
+        BeforeAll {
+            $outputPath = "Temp:\StartupBannerTest-Output-${Pid}.txt"
+            $inputPath  = "Temp:\StartupBannerTest-Input.txt"
+            "exit" > $inputPath
+
+            # Not testing update notification banner text here
+            $oldPowerShellUpdateCheck = $env:POWERSHELL_UPDATECHECK
+            $env:POWERSHELL_UPDATECHECK = "Off"
+
+            # Set TERM to "dumb" to avoid DECCKM codes in the output
+            $oldTERM = $env:TERM
+            $env:TERM = "dumb"
+
+            $escPwd = [regex]::Escape($pwd)
+            $expectedPromptPattern = "^PS ${escPwd}> exit`$"
+
+            $spArgs = @{
+                FilePath = $powershell
+                ArgumentList = @("-NoProfile")
+                RedirectStandardInput = $inputPath
+                RedirectStandardOutput = $outputPath
+                WorkingDirectory = $pwd
+                PassThru = $true
+                NoNewWindow = $true
+                UseNewEnvironment = $false
+            }
+        }
+        AfterAll {
+            $env:TERM = $oldTERM
+            $env:POWERSHELL_UPDATECHECK = $oldPowerShellUpdateCheck
+
+            Remove-Item $inputPath -Force -ErrorAction Ignore
+            Remove-Item $outputPath -Force -ErrorAction Ignore
+        }
+        BeforeEach {
+            Remove-Item $outputPath -Force -ErrorAction Ignore
+        }
+        It "Displays expected startup banner text by default" {
+            $process = Start-Process @spArgs
+            Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
+
+            $out = @(Get-Content $outputPath)
+            $out.Count | Should -Be 2
+            $out[0] | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
+            $out[1] | Should -MatchExactly $expectedPromptPattern
+        }
+        It "Displays only the prompt with -NoLogo" {
+            $spArgs["ArgumentList"] += "-NoLogo"
+            $process = Start-Process @spArgs
+            Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
+
+            $out = @(Get-Content $outputPath)
+            $out.Count | Should -Be 1
+            $out[0] | Should -MatchExactly $expectedPromptPattern
+        }
+    }
 }
 
 Describe "WindowStyle argument" -Tag Feature {

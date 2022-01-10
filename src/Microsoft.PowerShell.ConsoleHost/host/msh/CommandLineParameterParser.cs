@@ -690,7 +690,6 @@ namespace Microsoft.PowerShell
                 if (!string.IsNullOrEmpty(bannerText))
                 {
                     hostUI.WriteLine(bannerText);
-                    hostUI.WriteLine();
                 }
 
                 if (UpdatesNotification.CanNotifyUpdates)
