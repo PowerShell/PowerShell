@@ -566,18 +566,18 @@ namespace System.Management.Automation
                 commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
                 var workingDirectoryParameter = CommandParameterInternal.CreateParameterWithArgument(
                     parameterAst: pipelineAst,
-                    "WorkingDirectory",
-                    null,
+                    parameterName: "WorkingDirectory",
+                    parameterText: null,
                     argumentAst: pipelineAst,
-                    context.SessionState.Path.CurrentLocation.Path,
-                    false);
+                    value: context.SessionState.Path.CurrentLocation.Path,
+                    spaceAfterParameter: false);
                 var scriptBlockParameter = CommandParameterInternal.CreateParameterWithArgument(
                     parameterAst: pipelineAst,
-                    "ScriptBlock",
-                    null,
+                    parameterName: "ScriptBlock",
+                    parameterText: null,
                     argumentAst: pipelineAst,
-                    sb,
-                    false);
+                    value: sb,
+                    spaceAfterParameter: false);
                 commandProcessor.AddParameter(workingDirectoryParameter);
                 commandProcessor.AddParameter(scriptBlockParameter);
                 pipelineProcessor.Add(commandProcessor);
