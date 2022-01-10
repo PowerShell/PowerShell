@@ -29,7 +29,7 @@ steps:
       Write-Verbose -Verbose "FilePackage path: $FilePackagePath"
       # Set SBOM package name
       $vstsCommandString = "vso[task.setvariable variable=SbomFilePackageName]${FileBaseName}"
-      Write-Verbose -Verbose -Message "sending $vstsCommandString"
+      Write-Host "sending " + $vstsCommandString
       Write-Host "##$vstsCommandString"
       # Set SBOM package path variable
       $vstsCommandString = "vso[task.setvariable variable=SbomFilePackagePath]${FilePackagePath}"
