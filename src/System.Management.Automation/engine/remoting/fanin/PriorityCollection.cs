@@ -225,11 +225,9 @@ namespace System.Management.Automation.Remoting
                 if (_dataSyncObjects != null && _dataToBeSent != null)
                 {
                     const int promptResponseIndex = (int)DataPriorityType.PromptResponse;
-
                     lock (_dataSyncObjects[promptResponseIndex])
                     {
-                        //NOTE: fix unhandled NullReference exception;
-                        //_dataToBeSent[promptResponseIndex] is disposed by Clear method from different thread 
+                        // _dataToBeSent array items can be asynchronously disposed and set to null value.
                         if (_dataToBeSent[promptResponseIndex] != null) 
                         {
                             // send data from which ever stream that has data directly.
@@ -243,6 +241,7 @@ namespace System.Management.Automation.Remoting
                         const int defaultIndex = (int)DataPriorityType.Default;
                         lock (_dataSyncObjects[defaultIndex]) 
                         {
+                            // _dataToBeSent array items can be asynchronously disposed and set to null value.
                             if (_dataToBeSent[defaultIndex] != null) 
                             {
                                 result = _dataToBeSent[defaultIndex].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
@@ -250,6 +249,7 @@ namespace System.Management.Automation.Remoting
                             }
                         }
                     }
+
                     // no data to return..so register the callback.
                     if (result == null)
                     {
