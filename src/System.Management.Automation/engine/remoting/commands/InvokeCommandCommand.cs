@@ -268,8 +268,8 @@ namespace Microsoft.PowerShell.Commands
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
                 Version version = arguments as Version;
-                Version s_OffVersion = new Version(0, 0);
-                if (version == null || (!PSVersionInfo.IsValidPSVersion(version) && version != s_OffVersion))
+                Version s_offVersion = new Version(0, 0);
+                if (version == null || (!PSVersionInfo.IsValidPSVersion(version) && version != s_offVersion))
                 {
                     // No conversion succeeded so throw and exception...
                     throw new ValidationMetadataException(
