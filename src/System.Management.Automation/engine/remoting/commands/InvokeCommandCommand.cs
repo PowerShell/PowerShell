@@ -264,6 +264,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private static readonly Version s_offVersion = new Version(0, 0);
+        
         internal class ValidateVersionOffAttribute : ValidateArgumentsAttribute
         {
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
