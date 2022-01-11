@@ -262,6 +262,7 @@ namespace Microsoft.PowerShell.Commands
                 base.UseSSL = value;
             }
         }
+        
         private sealed class ArgumentToPSVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
         {
             protected override bool TryConvertFromString(string versionString, [NotNullWhen(true)] out Version version)
@@ -275,7 +276,7 @@ namespace Microsoft.PowerShell.Commands
                 return base.TryConvertFromString(versionString, out version);
             }
         }
-        
+
         private static readonly Version s_OffVersion = new Version(0, 0);
 
         private sealed class ValidateVersionAttribute : ValidateArgumentsAttribute
