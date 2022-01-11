@@ -263,12 +263,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private static readonly Version s_offVersion = new Version(0, 0);
         internal class ValidateVersionOffAttribute : ValidateArgumentsAttribute
         {
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
                 Version version = arguments as Version;
-                Version s_offVersion = new Version(0, 0);
                 if (version == null || (!PSVersionInfo.IsValidPSVersion(version) && version != s_offVersion))
                 {
                     // No conversion succeeded so throw and exception...
