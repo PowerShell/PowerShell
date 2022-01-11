@@ -262,17 +262,35 @@ namespace Microsoft.PowerShell.Commands
                 base.UseSSL = value;
             }
         }
+        private sealed class ArgumentToPSVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
+        {
+            protected override bool TryConvertFromString(string versionString, [NotNullWhen(true)] out Version version)
+            {
+                if (string.Equals("latest", versionString, StringComparison.OrdinalIgnoreCase))
+                {
+                    version = PSVersionInfo.PSVersion;
+                    return true;
+                }
 
-        private static readonly Version s_offVersion = new Version(0, 0);
+                return base.TryConvertFromString(versionString, out version);
+            }
+        }
         
-        internal class ValidateVersionOffAttribute : ValidateArgumentsAttribute
+        private static readonly Version s_OffVersion = new Version(0, 0);
+
+        private sealed class ValidateVersionAttribute : ValidateArgumentsAttribute
         {
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
                 Version version = arguments as Version;
-                if (version == null || (!PSVersionInfo.IsValidPSVersion(version) && version != s_offVersion))
+                if (version == s_OffVersion)
                 {
-                    // No conversion succeeded so throw and exception...
+                    return;
+                }
+
+                if (version == null || !PSVersionInfo.IsValidPSVersion(version))
+                {
+                    // No conversion succeeded so throw an exception...
                     throw new ValidationMetadataException(
                         "InvalidPSVersion",
                         null,
@@ -288,7 +306,7 @@ namespace Microsoft.PowerShell.Commands
         [Experimental(ExperimentalFeature.PSStrictModeAssignment, ExperimentAction.Show)]
         [Parameter(ParameterSetName = InvokeCommandCommand.InProcParameterSet)]
         [ArgumentToPSVersionTransformation]
-        [ValidateVersionOff]
+        [ValidateVersion]
         public Version StrictMode
         {
             get

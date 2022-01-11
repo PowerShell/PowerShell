@@ -2597,46 +2597,6 @@ namespace Microsoft.PowerShell.Commands
     #region Set-StrictMode
 
     /// <summary>
-    /// Handle 'latest', which we interpret to be the current version of PowerShell.
-    /// </summary>
-    internal class ArgumentToPSVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
-    {
-        protected override bool TryConvertFromString(string versionString, [NotNullWhen(true)] out Version version)
-        {
-            if (string.Equals("latest", versionString, StringComparison.OrdinalIgnoreCase))
-            {
-                version = PSVersionInfo.PSVersion;
-                return true;
-            }
-
-            if (string.Equals("off", versionString, StringComparison.OrdinalIgnoreCase))
-            {
-                version = new Version(0, 0);
-                return true;
-            }
-
-            return base.TryConvertFromString(versionString, out version);
-        }
-    }
-
-    internal class ValidateVersionAttribute : ValidateArgumentsAttribute
-    {
-        protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
-        {
-            Version version = arguments as Version;
-            if (version == null || !PSVersionInfo.IsValidPSVersion(version))
-            {
-                // No conversion succeeded so throw and exception...
-                throw new ValidationMetadataException(
-                    "InvalidPSVersion",
-                    null,
-                    Metadata.ValidateVersionFailure,
-                    arguments);
-            }
-        }
-    }
-
-    /// <summary>
     /// Set-StrictMode causes the interpreter to throw an exception in the following cases:
     /// * Referencing an unassigned variable
     /// * Referencing a non-existent property of an object
@@ -2674,6 +2634,40 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private SwitchParameter _off;
+
+        /// <summary>
+        /// Handle 'latest', which we interpret to be the current version of PowerShell.
+        /// </summary>
+        private sealed class ArgumentToPSVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
+        {
+            protected override bool TryConvertFromString(string versionString, [NotNullWhen(true)] out Version version)
+            {
+                if (string.Equals("latest", versionString, StringComparison.OrdinalIgnoreCase))
+                {
+                    version = PSVersionInfo.PSVersion;
+                    return true;
+                }
+
+                return base.TryConvertFromString(versionString, out version);
+            }
+        }
+
+        private sealed class ValidateVersionAttribute : ValidateArgumentsAttribute
+        {
+            protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
+            {
+                Version version = arguments as Version;
+                if (version == null || !PSVersionInfo.IsValidPSVersion(version))
+                {
+                    // No conversion succeeded so throw and exception...
+                    throw new ValidationMetadataException(
+                        "InvalidPSVersion",
+                        null,
+                        Metadata.ValidateVersionFailure,
+                        arguments);
+                }
+            }
+        }
 
         /// <summary>
         /// Gets or sets strict mode in the current scope.
