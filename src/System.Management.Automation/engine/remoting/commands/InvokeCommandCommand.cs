@@ -263,13 +263,31 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        internal class ValidateVersionOffAttribute : ValidateArgumentsAttribute
+        {
+            protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
+            {
+                Version version = arguments as Version;
+                Version s_OffVersion = new Version(0, 0);
+                if (version == null || (!PSVersionInfo.IsValidPSVersion(version) && version != s_OffVersion))
+                {
+                    // No conversion succeeded so throw and exception...
+                    throw new ValidationMetadataException(
+                        "InvalidPSVersion",
+                        null,
+                        Metadata.ValidateVersionFailure,
+                        arguments);
+                }
+            }
+        }
+
         /// <summary>
         /// Gets or sets strict mode.
         /// </summary>
         [Experimental(ExperimentalFeature.PSStrictModeAssignment, ExperimentAction.Show)]
         [Parameter(ParameterSetName = InvokeCommandCommand.InProcParameterSet)]
         [ArgumentToPSVersionTransformation]
-        [ValidateVersion]
+        [ValidateVersionOff]
         public Version StrictMode
         {
             get
