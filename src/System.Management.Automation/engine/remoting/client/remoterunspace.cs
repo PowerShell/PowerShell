@@ -221,11 +221,7 @@ namespace System.Management.Automation
         {
             get
             {
-#pragma warning disable 56503
-
                 throw PSTraceSource.NewNotImplementedException();
-
-#pragma warning restore 56503
             }
         }
 
@@ -236,11 +232,7 @@ namespace System.Management.Automation
         {
             get
             {
-#pragma warning disable 56503
-
                 throw PSTraceSource.NewNotImplementedException();
-
-#pragma warning restore 56503
             }
         }
 
