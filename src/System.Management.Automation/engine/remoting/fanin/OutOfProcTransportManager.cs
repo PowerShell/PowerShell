@@ -493,9 +493,12 @@ namespace System.Management.Automation.Remoting.Client
         private OutOfProcessUtils.DataProcessingDelegates _dataProcessingCallbacks;
         private readonly Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
         private readonly Timer _closeTimeOutTimer;
-
-        internal OutOfProcessTextWriter stdInWriter;
         internal PowerShellTraceSource _tracer;
+
+        /// <summary>
+        /// Writer object for sending protocol messages.
+        /// </summary>
+        protected OutOfProcessTextWriter _messageWriter;
 
         #endregion
 
@@ -579,7 +582,7 @@ namespace System.Management.Automation.Remoting.Client
                 // will know that we are closing.
                 isClosed = true;
 
-                if (stdInWriter == null)
+                if (_messageWriter == null)
                 {
                     // this will happen if CloseAsync() is called
                     // before ConnectAsync()..in which case we
@@ -605,7 +608,7 @@ namespace System.Management.Automation.Remoting.Client
             try
             {
                 // send Close signal to the server and let it die gracefully.
-                stdInWriter.WriteLine(OutOfProcessUtils.CreateClosePacket(Guid.Empty));
+                _messageWriter.WriteLine(OutOfProcessUtils.CreateClosePacket(Guid.Empty));
 
                 // start the timer..so client can fail deterministically
                 _closeTimeOutTimer.Change(60 * 1000, Timeout.Infinite);
@@ -637,7 +640,7 @@ namespace System.Management.Automation.Remoting.Client
             Dbg.Assert(cmd != null, "Cmd cannot be null");
 
             OutOfProcessClientCommandTransportManager result = new
-                OutOfProcessClientCommandTransportManager(cmd, noInput, this, stdInWriter);
+                OutOfProcessClientCommandTransportManager(cmd, noInput, this, _messageWriter);
             AddCommandTransportManager(cmd.InstanceId, result);
 
             return result;
@@ -849,7 +852,7 @@ namespace System.Management.Automation.Remoting.Client
                     return;
                 }
 
-                stdInWriter.WriteLine(OutOfProcessUtils.CreateDataPacket(data,
+                _messageWriter.WriteLine(OutOfProcessUtils.CreateDataPacket(data,
                     priorityType,
                     Guid.Empty));
             }
@@ -1128,8 +1131,8 @@ namespace System.Management.Automation.Remoting.Client
                     _processInstance.Start();
 
                     StartRedirectionReaderThreads(_serverProcess);
-                    stdInWriter = new OutOfProcessTextWriter(_serverProcess.StandardInput);
-                    _processInstance.StdInWriter = stdInWriter;
+                    _messageWriter = new OutOfProcessTextWriter(_serverProcess.StandardInput);
+                    _processInstance.StdInWriter = _messageWriter;
                 }
             }
             catch (System.ComponentModel.Win32Exception w32e)
@@ -1319,7 +1322,7 @@ namespace System.Management.Automation.Remoting.Client
                 // dont let the writer write new data as the process is exited.
                 // Not assigning null to stdInWriter to fix the race condition between OnExited() and CloseAsync() methods.
                 //
-                stdInWriter.StopWriting();
+                _messageWriter.StopWriting();
             }
 
             // Try to get details about why the process exited
@@ -1548,7 +1551,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // Create writer for Hyper-V socket.
-            stdInWriter = new OutOfProcessTextWriter(_client.TextWriter);
+            _messageWriter = new OutOfProcessTextWriter(_client.TextWriter);
 
             // Create reader thread for Hyper-V socket.
             StartReaderThread(_client.TextReader);
@@ -1607,7 +1610,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // Create writer for Hyper-V socket.
-            stdInWriter = new OutOfProcessTextWriter(_client.TextWriter);
+            _messageWriter = new OutOfProcessTextWriter(_client.TextWriter);
 
             // Create reader thread for Hyper-V socket.
             StartReaderThread(_client.TextReader);
@@ -1680,7 +1683,7 @@ namespace System.Management.Automation.Remoting.Client
             StartErrorThread(_stdErrReader);
 
             // Create writer for named pipe.
-            stdInWriter = new OutOfProcessTextWriter(_stdInWriter);
+            _messageWriter = new OutOfProcessTextWriter(_stdInWriter);
 
             // Create reader thread and send first PSRP message.
             StartReaderThread(_stdOutReader);
@@ -2154,7 +2157,7 @@ namespace System.Management.Automation.Remoting.Client
             _clientPipe.Connect(_connectionInfo.OpenTimeout);
 
             // Create writer for named pipe.
-            stdInWriter = new OutOfProcessTextWriter(_clientPipe.TextWriter);
+            _messageWriter = new OutOfProcessTextWriter(_clientPipe.TextWriter);
 
             // Create reader thread for named pipe.
             StartReaderThread(_clientPipe.TextReader);
@@ -2223,7 +2226,7 @@ namespace System.Management.Automation.Remoting.Client
             _clientPipe.Connect(_connectionInfo.OpenTimeout);
 
             // Create writer for named pipe.
-            stdInWriter = new OutOfProcessTextWriter(_clientPipe.TextWriter);
+            _messageWriter = new OutOfProcessTextWriter(_clientPipe.TextWriter);
 
             // Create reader thread for named pipe.
             StartReaderThread(_clientPipe.TextReader);
