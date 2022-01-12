@@ -263,6 +263,72 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private sealed class ArgumentToPSVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
+        {
+            protected override bool TryConvertFromString(string versionString, [NotNullWhen(true)] out Version version)
+            {
+                if (string.Equals("off", versionString, StringComparison.OrdinalIgnoreCase))
+                {
+                    version = new Version(0, 0);
+                    return true;
+                }
+
+                if (string.Equals("latest", versionString, StringComparison.OrdinalIgnoreCase))
+                {
+                    version = PSVersionInfo.PSVersion;
+                    return true;
+                }
+
+                return base.TryConvertFromString(versionString, out version);
+            }
+        }
+
+        private static readonly Version s_OffVersion = new Version(0, 0);
+
+        private sealed class ValidateVersionAttribute : ValidateArgumentsAttribute
+        {
+            protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
+            {
+                Version version = arguments as Version;
+                if (version == s_OffVersion)
+                {
+                    return;
+                }
+
+                if (version == null || !PSVersionInfo.IsValidPSVersion(version))
+                {
+                    // No conversion succeeded so throw an exception...
+                    throw new ValidationMetadataException(
+                        "InvalidPSVersion",
+                        null,
+                        Metadata.ValidateVersionFailure,
+                        arguments);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets strict mode.
+        /// </summary>
+        [Experimental(ExperimentalFeature.PSStrictModeAssignment, ExperimentAction.Show)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.InProcParameterSet)]
+        [ArgumentToPSVersionTransformation]
+        [ValidateVersion]
+        public Version StrictMode
+        {
+            get
+            {
+                return _strictmodeversion;
+            }
+
+            set
+            {
+                _strictmodeversion = value;
+            }
+        }
+
+        private Version _strictmodeversion = null;
+
         /// <summary>
         /// For WSMan session:
         /// If this parameter is not specified then the value specified in
@@ -823,6 +889,8 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
+        private Version _savedStrictModeVersion;
+
         #endregion Parameters
 
         #region Overrides
@@ -944,6 +1012,12 @@ namespace Microsoft.PowerShell.Commands
                             // ignore exception and don't do any streaming if can't convert to steppable pipeline
                         }
                     }
+                }
+
+                if (_strictmodeversion != null)
+                {
+                    _savedStrictModeVersion = Context.EngineSessionState.CurrentScope.StrictModeVersion;
+                    Context.EngineSessionState.CurrentScope.StrictModeVersion = _strictmodeversion;
                 }
 
                 return;
@@ -1162,7 +1236,19 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet) && (_steppablePipeline != null))
                 {
-                    _steppablePipeline.Process(InputObject);
+                    try
+                    {
+                        _steppablePipeline.Process(InputObject);
+                    }
+                    catch
+                    {
+                        if (_strictmodeversion != null)
+                        {
+                            Context.EngineSessionState.CurrentScope.StrictModeVersion = _savedStrictModeVersion;
+                        }
+                        
+                        throw;
+                    }
                 }
                 else
                 {
@@ -1193,20 +1279,30 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet))
                 {
-                    if (_steppablePipeline != null)
-                    {
-                        _steppablePipeline.End();
+                    try
+                    {   
+                        if (_steppablePipeline != null)
+                        {
+                            _steppablePipeline.End();
+                        }
+                        else
+                        {
+                            ScriptBlock.InvokeUsingCmdlet(
+                                contextCmdlet: this,
+                                useLocalScope: !NoNewScope,
+                                errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                                dollarUnder: AutomationNull.Value,
+                                input: _input,
+                                scriptThis: AutomationNull.Value,
+                                args: ArgumentList);
+                        }
                     }
-                    else
+                    finally
                     {
-                        ScriptBlock.InvokeUsingCmdlet(
-                            contextCmdlet: this,
-                            useLocalScope: !NoNewScope,
-                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                            dollarUnder: AutomationNull.Value,
-                            input: _input,
-                            scriptThis: AutomationNull.Value,
-                            args: ArgumentList);
+                        if (_strictmodeversion != null)
+                        {
+                            Context.EngineSessionState.CurrentScope.StrictModeVersion = _savedStrictModeVersion;
+                        }
                     }
                 }
                 else
