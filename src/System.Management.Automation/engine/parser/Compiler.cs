@@ -2662,9 +2662,10 @@ namespace System.Management.Automation.Language
         {
             TypeResolutionState trs;
             Dictionary<string, TypeDefinitionAst> typesToAdd = null;
+            Dictionary<string, string> namespaceAliases;
             if (allUsingsAreNamespaces)
             {
-                trs = new TypeResolutionState(TypeOps.GetNamespacesForTypeResolutionState(usingStatements), null);
+                trs = new TypeResolutionState(TypeOps.GetNamespacesForTypeResolutionState(usingStatements, out namespaceAliases), null, null, namespaceAliases);
             }
             else
             {
@@ -2672,8 +2673,8 @@ namespace System.Management.Automation.Language
                 Dictionary<string, ITypeName> typeAliases;
                 typesToAdd = LoadUsingsImpl(usingStatements, out assemblies, out typeAliases);
                 trs = new TypeResolutionState(
-                    TypeOps.GetNamespacesForTypeResolutionState(usingStatements),
-                    assemblies, typeAliases);
+                    TypeOps.GetNamespacesForTypeResolutionState(usingStatements, out namespaceAliases),
+                    assemblies, typeAliases, namespaceAliases);
             }
 
             exprs.Add(Expression.Call(
@@ -2767,7 +2768,7 @@ namespace System.Management.Automation.Language
                     case UsingStatementKind.Type:
                         if (usingStmt.Alias is not null)
                         {
-                            alias[usingStmt.Name.Value] = Parser.ScanType(usingStmt.Alias.Extent.Text, ignoreErrors:true);
+                            alias[usingStmt.Name.Value] = Parser.ScanType(usingStmt.Alias.Extent.Text, ignoreErrors:false);
                         }
                         break;
                     default:

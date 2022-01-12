@@ -449,6 +449,48 @@ namespace System.Management.Automation.Language
                 }
             }
 
+            if (exception is null)
+            {
+                foreach (var key in typeResolutionState.namespaceAliases.Keys)
+                {
+                    if (!typeName.Name.StartsWith($"{key}.", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+                    var newTypeNameToSearch = $"{typeResolutionState.namespaceAliases[key]}{typeName.Name.Substring(key.Length)}";
+                    newTypeNameToSearch = typeResolutionState.GetAlternateTypeName(newTypeNameToSearch) ?? newTypeNameToSearch;
+                    var newTypeName = new TypeName(typeName.Extent, newTypeNameToSearch);
+#if CORECLR
+                    if (!isAssembliesExplicitlyPassedIn)
+                    {
+                        // We called 'ClrFacade.GetAssemblies' to get assemblies. That means the assemblies to search from
+                        // are not pre-defined, and thus we have to refetch assembly again based on the new type name.
+                        assemList = ClrFacade.GetAssemblies(typeResolutionState, newTypeName);
+                    }
+#endif
+                    var newResult = CallResolveTypeNameWorkerHelper(newTypeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
+
+                    if (exception != null)
+                    {
+                        break;
+                    }
+
+                    if (newResult != null)
+                    {
+                        if (result == null)
+                        {
+                            result = newResult;
+                        }
+                        else
+                        {
+                            exception = new AmbiguousTypeException(typeName, new string[] { result.FullName, newResult.FullName });
+                            result = null;
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (exception != null)
             {
                 // AmbiguousTypeException is for internal representation only.
@@ -543,17 +585,19 @@ namespace System.Management.Automation.Language
         internal static readonly string[] systemNamespace = { "System" };
         internal static readonly Assembly[] emptyAssemblies = Array.Empty<Assembly>();
         internal static readonly Dictionary<string, ITypeName> emptyTypeAliases = new Dictionary<string, ITypeName> { };
+        internal static readonly Dictionary<string, string> emptyNamespaceAliases = new Dictionary<string, string> { };
         internal static readonly TypeResolutionState UsingSystem = new TypeResolutionState();
 
         internal readonly string[] namespaces;
         internal readonly Assembly[] assemblies;
         internal readonly Dictionary<string, ITypeName> typeAliases;
+        internal readonly Dictionary<string, string> namespaceAliases;
         private readonly HashSet<string> _typesDefined;
         internal readonly int genericArgumentCount;
         internal readonly bool attribute;
 
         private TypeResolutionState()
-            : this(systemNamespace, emptyAssemblies, emptyTypeAliases)
+            : this(systemNamespace, emptyAssemblies, emptyTypeAliases, emptyNamespaceAliases)
         {
         }
 
@@ -579,16 +623,12 @@ namespace System.Management.Automation.Language
             return _typesDefined.Contains(type);
         }
 
-        internal TypeResolutionState(string[] namespaces, Assembly[] assemblies)
-            : this(namespaces, assemblies, null)
-        {
-        }
-
-        internal TypeResolutionState(string[] namespaces, Assembly[] assemblies, Dictionary<string, ITypeName> typeAliases)
+        internal TypeResolutionState(string[] namespaces, Assembly[] assemblies, Dictionary<string, ITypeName> typeAliases, Dictionary<string, string> namespaceAliases)
         {
             this.namespaces = namespaces ?? systemNamespace;
             this.assemblies = assemblies ?? emptyAssemblies;
             this.typeAliases = typeAliases ?? emptyTypeAliases;
+            this.namespaceAliases = namespaceAliases ?? emptyNamespaceAliases;
             _typesDefined = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         }
 
@@ -597,6 +637,7 @@ namespace System.Management.Automation.Language
             this.namespaces = other.namespaces;
             this.assemblies = other.assemblies;
             this.typeAliases = other.typeAliases;
+            this.namespaceAliases = other.namespaceAliases;
             _typesDefined = other._typesDefined;
             this.genericArgumentCount = genericArgumentCount;
             this.attribute = attribute;
@@ -606,6 +647,8 @@ namespace System.Management.Automation.Language
         {
             this.namespaces = other.namespaces;
             this.assemblies = other.assemblies;
+            this.typeAliases = other.typeAliases;
+            this.namespaceAliases = other.namespaceAliases;
             _typesDefined = typesDefined;
             this.genericArgumentCount = other.genericArgumentCount;
             this.attribute = other.attribute;
@@ -666,6 +709,11 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
+            if (this.namespaceAliases.Count != other.namespaceAliases.Count)
+            {
+                return false;
+            }
+
             for (int i = 0; i < namespaces.Length; i++)
             {
                 if (!this.namespaces[i].Equals(other.namespaces[i], StringComparison.OrdinalIgnoreCase))
@@ -686,6 +734,19 @@ namespace System.Management.Automation.Language
                 }
 
                 if (!this.typeAliases[key].Equals(other.typeAliases[key]))
+                {
+                    return false;
+                }
+            }
+
+            foreach (string key in namespaceAliases.Keys)
+            {
+                if (!other.namespaceAliases.ContainsKey(key))
+                {
+                    return false;
+                }
+
+                if (!this.namespaceAliases[key].Equals(other.namespaceAliases[key]))
                 {
                     return false;
                 }
@@ -712,6 +773,11 @@ namespace System.Management.Automation.Language
             }
 
             foreach (KeyValuePair<string, ITypeName> kvp in typeAliases)
+            {
+                result = Utils.CombineHashCodes(result, kvp.GetHashCode());
+            }
+
+            foreach (KeyValuePair<string, string> kvp in namespaceAliases)
             {
                 result = Utils.CombineHashCodes(result, kvp.GetHashCode());
             }
