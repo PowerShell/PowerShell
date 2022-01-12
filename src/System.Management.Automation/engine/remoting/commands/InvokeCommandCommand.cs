@@ -262,11 +262,18 @@ namespace Microsoft.PowerShell.Commands
                 base.UseSSL = value;
             }
         }
-        
+
         private sealed class ArgumentToPSVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
         {
             protected override bool TryConvertFromString(string versionString, [NotNullWhen(true)] out Version version)
             {
+
+                if (string.Equals("off", versionString, StringComparison.OrdinalIgnoreCase))
+                {
+                    version = new Version(0, 0);
+                    return true;
+                }
+
                 if (string.Equals("latest", versionString, StringComparison.OrdinalIgnoreCase))
                 {
                     version = PSVersionInfo.PSVersion;
