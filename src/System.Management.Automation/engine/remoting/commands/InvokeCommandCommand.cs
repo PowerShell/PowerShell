@@ -267,7 +267,6 @@ namespace Microsoft.PowerShell.Commands
         {
             protected override bool TryConvertFromString(string versionString, [NotNullWhen(true)] out Version version)
             {
-
                 if (string.Equals("off", versionString, StringComparison.OrdinalIgnoreCase))
                 {
                     version = new Version(0, 0);
