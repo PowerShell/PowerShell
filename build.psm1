@@ -2101,9 +2101,198 @@ function Start-PSBootstrap {
 }
 
 function Get-LatestInstalledSDK {
-    Start-NativeExecution -sb {
-        dotnet --list-sdks | Select-String -Pattern '\d*.\d*.\d*(-\w*\.\d*)?' | ForEach-Object { [System.Management.Automation.SemanticVersion]::new($_.matches.value) } | Sort-Object -Descending | Select-Object -First 1
-    } -IgnoreExitcode 2> $null
+    begin {
+        # a SemVer-lite type - introduced to allow bootstrapping+building from Windows PowerShell 5.1
+        # most functionality is lifted directly from the [SemanticVersion] implementation in PSVersionInfo.cs 
+        class FakeSemVer : IComparable {
+            hidden static $VersionSansRegEx = "^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$"
+            hidden static $LabelRegEx = "^((?<preLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?(\+(?<buildLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?$"
+            hidden static $LabelUnitRegEx = "^[0-9A-Za-z][0-9A-Za-z\-\.]*$"
+
+            hidden [int]    $_major
+            hidden [int]    $_minor
+            hidden [int]    $_patch
+            hidden [string] $_preLabel
+            hidden [string] $_buildLabel
+
+            FakeSemVer([string]$Version) {
+
+                if ($Version -match '[.+-]$') {
+                    throw "Incomplete version label"
+                }
+
+                $versionSansLabel = $null;
+                $maj = $min = $pat = 0
+
+                $dashIndex = $Version.IndexOf('-')
+                $plusIndex = $Version.IndexOf('+')
+
+                if ($dashIndex -gt $plusIndex) {
+                    if ($plusIndex -lt 0) {
+                        $this._preLabel = $Version.Substring($dashIndex + 1)
+                        $versionSansLabel = $Version.Remove($dashIndex)
+                    }
+                    else {
+                        $this._buildLabel = $version.Substring($plusIndex + 1)
+                        $versionSansLabel = $Version.Remove($plusIndex)
+                        $dashIndex = -1
+                    }
+                }
+                else {
+                    if ($plusIndex -lt 0) {
+                        $versionSansLabel = $Version
+                    }
+                    elseif ($dashIndex -lt 0) {
+                        $this._buildLabel = $versionSansLabel.Substring($plusIndex + 1)
+                        $versionSansLabel = $Version.Remove($plusIndex)
+                    }
+                    else {
+                        $this._preLabel = $Version.Remove($plusIndex).Substring($dashIndex + 1)
+                        $this._buildLabel = $Version.Substring($plusIndex + 1)
+                        $versionSansLabel = $Version.Remove($dashIndex)
+                    }
+                }
+
+                if (($dashIndex -ge 0 -and [string]::IsNullOrEmpty($this._preLabel)) -or ($plusIndex -ge 0 -and [string]::IsNullOrEmpty($this._buildLabel)) -or ([string]::IsNullOrEmpty($versionSansLabel))) {
+                    throw 'Input string was not in a correct format'
+                }
+
+                if ($versionSansLabel -notmatch $this::VersionSansRegEx) {
+                    throw 'Input string was not in a correct format'
+                }
+
+                if (-not [int]::TryParse($Matches['major'], [ref]$maj)) {
+                    throw 'Input string was not in a correct format'
+                }
+
+                $this._major = $maj
+
+                if ($Matches.ContainsKey('minor') -and -not [int]::TryParse($Matches['minor'], [ref]$min)) {
+                    throw 'Input string was not in a correct format'
+                }
+
+                $this._minor = $min
+
+                if ($Matches.ContainsKey('patch') -and -not [int]::TryParse($Matches['patch'], [ref]$pat)) {
+                    throw 'Input string was not in a correct format'
+                }
+
+                $this._patch = $pat
+
+                if (-not [string]::IsNullOrEmpty($this._preLabel) -and $this._preLabel -notmatch $this::LabelRegEx) {
+                    throw 'Input string was not in a correct format'
+                }
+
+                if (-not [string]::IsNullOrEmpty($this._buildLabel) -and $this._buildLabel -notmatch $this::LabelUnitRegEx) {
+                    throw 'Input string was not in a correct format'
+                }
+            }
+
+            [string] ToString()
+            {
+                $sb = [System.Text.StringBuilder]::new()
+                $sb = $sb.Append($($this._major,$this._minor,$this._patch) -join '.')
+
+                if($this._preLabel){
+                    $sb = $sb.Append('-').Append($this._preLabel)
+                }
+
+                if($this._buildLabel){
+                    $sb = $sb.Append('+').Append($this._buildLabel)
+                }
+
+                return $sb.ToString()
+            }
+
+            [int] CompareTo($other)
+            {
+                if($null -eq $other){
+                    return 1
+                }
+
+                if($other -isnot [FakeSemVer]){
+                    throw [System.ArgumentException]::new('other')
+                }
+
+                return $this.CompareToInternal($other)
+            }
+
+            hidden
+            [int] CompareToInternal([FakeSemVer]$other)
+            {
+                if($null -eq $other){
+                    return 1
+                }
+
+                if($this._major -ne $other._major){
+                    return $this._major.CompareTo($other._major)
+                }
+
+                if($this._minor -ne $other._minor){
+                    return $this._minor.CompareTo($other._minor)
+                }
+
+                if($this._patch -ne $other._patch){
+                    return $this._patch.CompareTo($other._patch)
+                }
+
+                if(-not $this._preLabel){
+                    if(-not $other._preLabel){
+                        return 0
+                    }
+                    return 1
+                }
+
+                if(-not $other._preLabel){
+                    return -1
+                }
+
+                $theseUnits = $this._preLabel.Split('.')
+                $otherUnits = $other._preLabel.Split('.')
+
+                $minLength = [math]::Min($theseUnits.Length, $otherUnits.Length)
+
+                for($i = 0; $i -lt $minLength; $i++)
+                {
+                    $ac = $theseUnits[$i]
+                    $bc = $otherUnits[$i]
+
+                    $n1 = $n2 = 0
+
+                    $isn1 = [int]::TryParse($ac, [ref]$n1)
+                    $isn2 = [int]::TryParse($bc, [ref]$n2)
+
+                    if($isn1 -and $isn2){
+                        if($n1 -ne $n2){
+                            return $n1.CompareTo($n2)
+                        }
+                    }
+                    else {
+                        if($isn1){
+                            return -1
+                        }
+
+                        if($isn2){
+                            return 1
+                        }
+
+                        $lexCmp = [string]::CompareOrdinal($ac, $bc)
+                        if($lexCmp -ne 0){
+                            return $lexCmp
+                        }
+                    }
+                }
+
+                return $theseUnits.Length.CompareTo($otherUnits.Length)
+            }
+        }
+    }
+    
+    end {
+        Start-NativeExecution -sb {
+            dotnet --list-sdks | Select-String -Pattern '\d*.\d*.\d*(-\w*\.\d*)?' | ForEach-Object { [FakeSemVer]::new($_.matches.value) } | Sort-Object -Descending | Select-Object -First 1
+        } -IgnoreExitcode 2> $null
+    }
 }
 
 function Start-DevPowerShell {
