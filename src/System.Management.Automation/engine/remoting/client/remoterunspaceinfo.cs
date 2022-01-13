@@ -393,18 +393,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Generates a unique runspace id.
-        /// </summary>
-        /// <param name="rtnId">Returned Id.</param>
-        /// <returns>Returned name.</returns>
-        internal static string GenerateRunspaceName(out int rtnId)
-        {
-            int id = GenerateRunspaceId();
-            rtnId = id;
-            return "Runspace" + id.ToString();
-        }
-
-        /// <summary>
         /// Increments and returns a session unique runspace Id.
         /// </summary>
         /// <returns>Id.</returns>
