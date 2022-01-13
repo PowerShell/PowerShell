@@ -328,9 +328,21 @@ namespace System.Management.Automation.Language
         internal static void ResolveSymbols(Parser parser, ScriptBlockAst scriptBlockAst)
         {
             Diagnostics.Assert(scriptBlockAst.Parent == null, "Can only resolve starting from the root");
+            Dictionary<string, ITypeName> typeAliases = new Dictionary<string, ITypeName>(StringComparer.OrdinalIgnoreCase);
+            foreach (var usingStatement in scriptBlockAst.UsingStatements)
+            {
+                if (usingStatement.UsingStatementKind == UsingStatementKind.Type && usingStatement.Alias is not null)
+                {
+                    typeAliases[usingStatement.Name.Value] = Parser.ScanType(usingStatement.Alias.Extent.Text, ignoreErrors: false);
+                }
+            }
+            if (typeAliases.Count == 0)
+            {
+                typeAliases = null;
+            }
             Dictionary<string, string> namespaceAliases;
             var usingState = scriptBlockAst.UsingStatements.Count > 0
-                ? new TypeResolutionState(TypeOps.GetNamespacesForTypeResolutionState(scriptBlockAst.UsingStatements, out namespaceAliases), TypeResolutionState.emptyAssemblies, null, namespaceAliases)
+                ? new TypeResolutionState(TypeOps.GetNamespacesForTypeResolutionState(scriptBlockAst.UsingStatements, out namespaceAliases), TypeResolutionState.emptyAssemblies, typeAliases, namespaceAliases)
                 : TypeResolutionState.GetDefaultUsingState(null);
             var resolver = new SymbolResolver(parser, usingState);
             resolver._symbolTable.EnterScope(scriptBlockAst, ScopeType.ScriptBlock);

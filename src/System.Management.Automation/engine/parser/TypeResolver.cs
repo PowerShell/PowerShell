@@ -404,7 +404,7 @@ namespace System.Management.Automation.Language
                 result = CallResolveTypeNameWorkerHelper(typeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
             }
 
-            if (result != null)
+            if (result != null && typeNameAlias is null)
             {
                 TypeCache.Add(typeName, typeResolutionState, result);
                 return result;
