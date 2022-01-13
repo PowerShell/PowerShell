@@ -5010,7 +5010,7 @@ namespace System.Management.Automation.Language
                     SkipToken();
 
                     var aliasToken = NextToken();
-                    if (aliasToken.Kind == TokenKind.EndOfInput)
+                    if (aliasToken.Kind == TokenKind.EndOfInput || aliasToken.Kind == TokenKind.NewLine)
                     {
                         UngetToken(aliasToken);
                         ReportIncompleteInput(After(equalsToken),
