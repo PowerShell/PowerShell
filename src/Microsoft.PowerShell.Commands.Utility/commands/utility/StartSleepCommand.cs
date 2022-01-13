@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         public int Milliseconds { get; set; }
 
         /// <summary>
-        /// Allows sleep time to be specified as a TimeSpan
+        /// Allows sleep time to be specified as a TimeSpan.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "FromTimeSpan", ValueFromPipeline = true,
                    ValueFromPipelineByPropertyName = true)]
