@@ -130,6 +130,7 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorCategory.InvalidArgument,
                                 targetObject: null));
                     }
+
                     sleepTime = (int)Math.Floor(Duration.TotalMilliseconds);
                     break;
 
