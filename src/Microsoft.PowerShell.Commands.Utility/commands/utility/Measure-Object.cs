@@ -820,7 +820,7 @@ namespace Microsoft.PowerShell.Commands
                 Statistics stat = _statistics[propertyName];
                 if (stat.count == 0 && Property != null)
                 {
-                    if (Context.EngineSessionState.CurrentScope.StrictModeVersion?.Major != 0) 
+                    if (Context.IsStrictVersion(2))
                     {
                         string errorId = (IsMeasuringGeneric) ? "GenericMeasurePropertyNotFound" : "TextMeasurePropertyNotFound";
                         WritePropertyNotFoundError(propertyName, errorId);
