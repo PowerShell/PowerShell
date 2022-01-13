@@ -220,42 +220,30 @@ namespace System.Management.Automation.Remoting
             lock (_readSyncObject)
             {
                 priorityType = DataPriorityType.Default;
+                // Send data from which ever stream that has data directly.
                 byte[] result = null;
-
-                if (_dataSyncObjects != null && _dataToBeSent != null)
+                SerializedDataStream promptDataToBeSent = _dataToBeSent[(int)DataPriorityType.PromptResponse];
+                if (promptDataToBeSent is not null)
                 {
-                    const int promptResponseIndex = (int)DataPriorityType.PromptResponse;
-                    lock (_dataSyncObjects[promptResponseIndex])
-                    {
-                        // _dataToBeSent array items can be asynchronously disposed and set to null value.
-                        if (_dataToBeSent[promptResponseIndex] != null) 
-                        {
-                            // send data from which ever stream that has data directly.
-                            result = _dataToBeSent[promptResponseIndex].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
-                            priorityType = DataPriorityType.PromptResponse;
-                        }
-                    }
+                    result = promptDataToBeSent.ReadOrRegisterCallback(_onSendCollectionDataAvailable);
+                    priorityType = DataPriorityType.PromptResponse;
+                }
 
-                    if (result == null)
+                if (result == null)
+                {
+                    SerializedDataStream defaultDataToBeSent = _dataToBeSent[(int)DataPriorityType.Default];
+                    if (defaultDataToBeSent is not null)
                     {
-                        const int defaultIndex = (int)DataPriorityType.Default;
-                        lock (_dataSyncObjects[defaultIndex]) 
-                        {
-                            // _dataToBeSent array items can be asynchronously disposed and set to null value.
-                            if (_dataToBeSent[defaultIndex] != null) 
-                            {
-                                result = _dataToBeSent[defaultIndex].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
-                                priorityType = DataPriorityType.Default;
-                            }
-                        }
+                        result = defaultDataToBeSent.ReadOrRegisterCallback(_onSendCollectionDataAvailable);
+                        priorityType = DataPriorityType.Default;
                     }
+                }
 
-                    // no data to return..so register the callback.
-                    if (result == null)
-                    {
-                        // register callback.
-                        _onDataAvailableCallback = callback;
-                    }
+                // No data to return..so register the callback.
+                if (result == null)
+                {
+                    // Register callback.
+                    _onDataAvailableCallback = callback;
                 }
 
                 return result;
