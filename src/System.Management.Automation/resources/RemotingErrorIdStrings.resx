@@ -1702,4 +1702,7 @@ SSH client process terminated before connection could be established.</value>
   <data name="WindowsPowerShellNotPresent" xml:space="preserve">
     <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
   </data>
+  <data name="InvalidPSSessionArgument" xml:space="preserve">
+    <value>The Runspace argument to Create must be a non-null RemoteRunspace object.</value>
+  </data>
 </root>

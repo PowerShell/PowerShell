@@ -2165,7 +2165,7 @@ namespace System.Management.Automation.Runspaces
 
         #endregion
 
-        #region Internal Methods
+        #region Public Methods
 
         /// <summary>
         /// StartSSHProcess.

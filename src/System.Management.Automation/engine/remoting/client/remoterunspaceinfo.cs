@@ -360,6 +360,19 @@ namespace System.Management.Automation.Runspaces
         #region Static Methods
 
         /// <summary>
+        /// Creates a PSSession object from the provided remote runspace object.
+        /// </summary>
+        public static PSSession Create(Runspace runspace)
+        {
+            if (!(runspace is RemoteRunspace remoteRunspace))
+            {
+                throw new PSArgumentException(RemotingErrorIdStrings.InvalidPSSessionArgument);
+            }
+
+            return new PSSession(remoteRunspace);
+        }
+
+        /// <summary>
         /// Generates a unique runspace id.
         /// </summary>
         /// <param name="rtnId">Returned Id.</param>
