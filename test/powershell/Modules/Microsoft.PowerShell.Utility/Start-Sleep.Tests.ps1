@@ -56,6 +56,12 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
         $watch.ElapsedMilliseconds | Should -BeGreaterThan $minTime
         $watch.ElapsedMilliseconds | Should -BeLessThan $maxTime
     }
+
+    It "Should validate [timespan] parameter values" {
+        { Start-Sleep -Duration    '0:00:01' } | Should -Not -Throw
+        { Start-Sleep -Duration   '-0:00:01' } | Should -Throw -ErrorId 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.StartSleepCommand'
+        { Start-Sleep -Duration '30.0:00:00' } | Should -Throw -ErrorId 'MaximumDurationExceeded,Microsoft.PowerShell.Commands.StartSleepCommand'
+    }
 }
 
 Describe "Start-Sleep" -Tags "CI" {
