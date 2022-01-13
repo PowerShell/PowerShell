@@ -504,6 +504,29 @@ function Start-PSPackage {
                     }
                 }
             }
+            'osxpkg' {
+                $HostArchitecture = "x86_64"
+                if ($MacOSRuntime -match "-arm64") {
+                    $HostArchitecture = "arm64"
+                }
+                Write-Verbose "HostArchitecture = $HostArchitecture" -Verbose
+
+                $Arguments = @{
+                    Type = 'osxpkg'
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    NoSudo = $NoSudo
+                    LTS = $LTS
+                    HostArchitecture = $HostArchitecture
+                }
+
+
+                if ($PSCmdlet.ShouldProcess("Create macOS Package")) {
+                    New-UnixPackage @Arguments
+                }
+            }
             default {
                 $Arguments = @{
                     Type = $_
@@ -803,6 +826,19 @@ function New-UnixPackage {
             $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
             $Dict.Add("Distribution", $Parameter) > $null
             return $Dict
+        } elseif ($Type -eq "osxpkg") {
+            # Add a dynamic parameter '-HostArchitecture' when the specified package type is 'osxpkg'.
+            # The '-HostArchitecture' parameter is used to indicate which Mac processor this package is targeting,
+            # Intel (x86_64) or Apple Silicon (arm64).
+            $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
+            $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList "x86_64", "arm64"
+            $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
+            $Attributes.Add($ParameterAttr) > $null
+            $Attributes.Add($ValidateSetAttr) > $null
+            $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("HostArchitecture", [string], $Attributes)
+            $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
+            $Dict.Add("HostArchitecture", $Parameter) > $null
+            return $Dict
         }
     }
 
@@ -856,6 +892,7 @@ function New-UnixPackage {
                     throw ($ErrorMessage -f "macOS")
                 }
 
+                $HostArchitecture = $PSBoundParameters['HostArchitecture']
                 $DebDistro = 'macOS'
             }
         }
@@ -1013,7 +1050,7 @@ function New-UnixPackage {
         if ($Environment.IsMacOS) {
             if ($PSCmdlet.ShouldProcess("Add distribution information and Fix PackageName"))
             {
-                $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage -IsPreview:$IsPreview
+                $createdPackage = New-MacOsDistributionPackage -FpmPackage $createdPackage -HostArchitecture $HostArchitecture -IsPreview:$IsPreview
             }
         }
 
@@ -1063,6 +1100,11 @@ function New-MacOsDistributionPackage
     param(
         [Parameter(Mandatory,HelpMessage='The FileInfo of the file created by FPM')]
         [System.IO.FileInfo]$FpmPackage,
+
+        [Parameter(HelpMessage='x86_64 for Intel or arm64 for Apple Silicon')]
+        [ValidateSet("x86_64", "arm64")]
+        [string] $HostArchitecture = "x86_64",
+
         [Switch] $IsPreview
     )
 
@@ -1112,7 +1154,8 @@ function New-MacOsDistributionPackage
     # 2 - package path
     # 3 - minimum os version
     # 4 - Package Identifier
-    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.14', $packageId | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
+    # 5 - host architecture (x86_64 for Intel or arm64 for Apple Silicon)
+    $PackagingStrings.OsxDistributionTemplate -f "PowerShell - $packageVersion", $packageVersion, $packageName, '10.14', $packageId, $HostArchitecture | Out-File -Encoding ascii -FilePath $distributionXmlPath -Force
 
     Write-Log "Applying distribution.xml to package..."
     Push-Location $tempDir
