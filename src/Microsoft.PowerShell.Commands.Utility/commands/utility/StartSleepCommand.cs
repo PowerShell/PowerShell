@@ -127,7 +127,8 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 argumentException,
                                 "MaximumDurationExceeded",
-                                ErrorCategory.InvalidArgument, null));
+                                ErrorCategory.InvalidArgument,
+                                targetObject: null));
                     }
                     sleepTime = (int)Math.Floor(Duration.TotalMilliseconds);
                     break;
