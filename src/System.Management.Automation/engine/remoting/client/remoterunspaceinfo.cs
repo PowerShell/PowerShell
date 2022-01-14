@@ -26,7 +26,12 @@ namespace System.Management.Automation.Runspaces
         /// Target is a container with which the session is based on Hyper-V socket (Hyper-V
         /// container) or named pipe (windows container)
         /// </summary>
-        Container
+        Container,
+
+        /// <summary>
+        /// Target is for a custom remote connection
+        /// </summary>
+        CustomRemoteConnection
     }
 
     /// <summary>
@@ -302,7 +307,7 @@ namespace System.Management.Automation.Runspaces
                     break;
 
                 default:
-                    Dbg.Assert(false, "Invalid Runspace");
+                    ComputerType = TargetMachineType.CustomRemoteConnection;
                     break;
             }
         }
@@ -338,7 +343,7 @@ namespace System.Management.Automation.Runspaces
                     return "VMBus";
 
                 default:
-                    return "Unknown";
+                    return "CustomConnection";
             }
         }
 
