@@ -362,14 +362,29 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates a PSSession object from the provided remote runspace object.
         /// </summary>
-        public static PSSession Create(Runspace runspace)
+        public static PSSession Create(
+            Runspace runspace,
+            PSCmdlet psCmdlet,
+            bool addToRunspaceRepository)
         {
             if (!(runspace is RemoteRunspace remoteRunspace))
             {
                 throw new PSArgumentException(RemotingErrorIdStrings.InvalidPSSessionArgument);
             }
 
-            return new PSSession(remoteRunspace);
+            if (addToRunspaceRepository && psCmdlet == null)
+            {
+                throw new PSArgumentNullException(nameof(psCmdlet));
+            }
+
+            var psSession = new PSSession(remoteRunspace);
+            
+            if (addToRunspaceRepository)
+            {
+                psCmdlet.RunspaceRepository.Add(psSession);
+            }
+
+            return psSession;
         }
 
         /// <summary>
