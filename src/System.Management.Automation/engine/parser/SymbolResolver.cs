@@ -81,8 +81,32 @@ namespace System.Management.Automation.Language
             }
         }
 
+        private static void ReportConflictingTypeAliases(Ast ast, Parser parser, string typeName, bool typeIsExternal)
+        {
+            if (ast is ScriptBlockAst scriptBlock && scriptBlock.UsingStatements.Count > 0)
+            {
+                foreach (var statement in scriptBlock.UsingStatements)
+                {
+                    if (statement.UsingStatementKind == UsingStatementKind.Type && string.Equals(typeName, statement.Name.Value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (typeIsExternal)
+                        {
+                            parser.ReportError(statement.Extent, nameof(ParserStrings.TypeAliasConflictsImportedTypeDefinition),
+                                ParserStrings.TypeAliasConflictsImportedTypeDefinition, statement.Name.Value);
+                        }
+                        else
+                        {
+                            parser.ReportError(statement.Extent, nameof(ParserStrings.TypeAliasConflictsTypeDefinition),
+                                ParserStrings.TypeAliasConflictsTypeDefinition, statement.Name.Value);
+                        }
+                    }
+                }
+            }
+        }
+
         internal void AddType(Parser parser, TypeDefinitionAst typeDefinitionAst)
         {
+            ReportConflictingTypeAliases(_ast, parser, typeDefinitionAst.Name, typeIsExternal:false);
             TypeLookupResult result;
             if (_typeTable.TryGetValue(typeDefinitionAst.Name, out result))
             {
@@ -108,6 +132,7 @@ namespace System.Management.Automation.Language
 
         internal void AddTypeFromUsingModule(Parser parser, TypeDefinitionAst typeDefinitionAst, PSModuleInfo moduleInfo)
         {
+            ReportConflictingTypeAliases(_ast, parser, typeDefinitionAst.Name, typeIsExternal:true);
             TypeLookupResult result;
             if (_typeTable.TryGetValue(typeDefinitionAst.Name, out result))
             {

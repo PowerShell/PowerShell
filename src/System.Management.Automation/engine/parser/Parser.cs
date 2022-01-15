@@ -815,6 +815,8 @@ namespace System.Management.Automation.Language
         private List<UsingStatementAst> UsingStatementsRule()
         {
             List<UsingStatementAst> result = null;
+            var usedNamespaces = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var usedTypeAliases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             while (true)
             {
@@ -829,12 +831,28 @@ namespace System.Management.Automation.Language
                         result = new List<UsingStatementAst>();
                     }
 
-                    var usingStatement = statement as UsingStatementAst;
-                    // otherwise returned statement is ErrorStatementAst.
-                    // We ignore it here, because error already reported to the parser.
-                    if (usingStatement != null)
+                    if (statement is UsingStatementAst usingStatement)
                     {
-                        result.Add(usingStatement);
+                        if (usingStatement.UsingStatementKind == UsingStatementKind.Namespace && usedNamespaces.Contains(usingStatement.Name.Value))
+                        {
+                            ReportError(usingStatement.Extent, nameof(ParserStrings.DuplicateNamespaceClause), ParserStrings.DuplicateNamespaceClause, usingStatement.Name.Value);
+                        }
+                        else if (usingStatement.UsingStatementKind == UsingStatementKind.Type && usedTypeAliases.Contains(usingStatement.Name.Value))
+                        {
+                            ReportError(usingStatement.Extent, nameof(ParserStrings.DuplicateTypeAliasClause), ParserStrings.DuplicateTypeAliasClause, usingStatement.Name.Value);
+                        }
+                        else
+                        {
+                            result.Add(usingStatement);
+                            if (usingStatement.UsingStatementKind == UsingStatementKind.Namespace)
+                            {
+                                _ = usedNamespaces.Add(usingStatement.Name.Value);
+                            }
+                            else if (usingStatement.UsingStatementKind == UsingStatementKind.Type)
+                            {
+                                _ = usedTypeAliases.Add(usingStatement.Name.Value);
+                            }
+                        }
                     }
 
                     continue;
@@ -4987,6 +5005,13 @@ namespace System.Management.Automation.Language
                     nameof(ParserStrings.InvalidValueForUsingItemName),
                     ParserStrings.InvalidValueForUsingItemName,
                     itemAst.Extent.Text);
+                return new ErrorStatementAst(ExtentOf(usingToken, ExtentFromFirstOf(itemAst, itemToken)));
+            }
+
+            // We don't allow namespaces in type aliases
+            if (kind == UsingStatementKind.Type && itemAst.Extent.Text.Contains('.'))
+            {
+                ReportError(itemAst.Extent, nameof(ParserStrings.TypeAliasContainsNamespace), ParserStrings.TypeAliasContainsNamespace);
                 return new ErrorStatementAst(ExtentOf(usingToken, ExtentFromFirstOf(itemAst, itemToken)));
             }
 
