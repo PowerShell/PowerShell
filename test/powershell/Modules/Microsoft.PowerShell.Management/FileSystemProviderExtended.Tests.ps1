@@ -693,12 +693,12 @@ Describe "Validate Get-Item ResolvedTarget property" -Tag RequireAdminOnWindows 
 
         It 'Get-Item "brokenLinkedDir"' {
             $result = Get-Item "brokenLinkedDir"
-            $result.ResolvedTarget.EndsWith("brokenLinkedDir") | Should -Be $true
+            $result.ResolvedTarget.EndsWith("toDel") | Should -Be $true
         }
 
         It 'Get-Item "brokenLinkedFile.fil"' {
             $result = Get-Item "brokenLinkedFile.fil"
-            $result.ResolvedTarget.EndsWith("brokenLinkedFile.fil") | Should -Be $true
+            $result.ResolvedTarget.EndsWith("toDel.fil") | Should -Be $true
         }
 
         It 'Get-Item "realDir"' {
