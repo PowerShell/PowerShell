@@ -469,9 +469,7 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
             // The placeholder mode management APIs Rtl(Set|Query)(Process|Thread)PlaceholderCompatibilityMode
             // are only supported starting with Windows 10 version 1803 (build 17134)
-            Version minBuildForPlaceHolderAPIs = new Version(10, 0, 17134, 0);
-
-            if (Environment.OSVersion.Version >= minBuildForPlaceHolderAPIs)
+            if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17134, 0))
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
                 if (NativeMethods.RtlQueryProcessPlaceholderCompatibilityMode() == NativeMethods.PHCM_DISGUISE_PLACEHOLDER)
@@ -2725,7 +2723,7 @@ namespace Microsoft.PowerShell.Commands
             var flags = isDirectory ? NativeMethods.SymbolicLinkFlags.Directory : NativeMethods.SymbolicLinkFlags.File;
 
             Version minBuildOfDeveloperMode = new Version(10, 0, 14972, 0);
-            if (Environment.OSVersion.Version >= minBuildOfDeveloperMode)
+            if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 14972, 0))
             {
                 flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
             }
