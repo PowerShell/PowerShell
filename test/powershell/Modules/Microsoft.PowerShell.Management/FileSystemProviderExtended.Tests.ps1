@@ -683,32 +683,32 @@ Describe "Validate Get-Item ResolvedTarget property" -Tag RequireAdminOnWindows 
     Context 'Get-Item files and folders' {
         It 'Get-Item "linkedDir"' {
             $result = Get-Item "linkedDir"
-            $result.ResolvedTarget.EndsWith("realDir") | Should -Be $true
+            $result.ResolvedTarget.EndsWith("realDir") | Should -BeTrue
         }
 
         It 'Get-Item "linkedFile.fil"' {
             $result = Get-Item "linkedFile.fil"
-            $result.ResolvedTarget.EndsWith("realFile.fil") | Should -Be $true
+            $result.ResolvedTarget.EndsWith("realFile.fil") | Should -BeTrue
         }
 
         It 'Get-Item "brokenLinkedDir"' {
             $result = Get-Item "brokenLinkedDir"
-            $result.ResolvedTarget.EndsWith("toDel") | Should -Be $true
+            $result.ResolvedTarget.EndsWith("toDel") | Should -BeTrue
         }
 
         It 'Get-Item "brokenLinkedFile.fil"' {
             $result = Get-Item "brokenLinkedFile.fil"
-            $result.ResolvedTarget.EndsWith("toDel.fil") | Should -Be $true
+            $result.ResolvedTarget.EndsWith("toDel.fil") | Should -BeTrue
         }
 
         It 'Get-Item "realDir"' {
             $result = Get-Item "realDir"
-            $result.ResolvedTarget.EndsWith("realDir") | Should -Be $true
+            $result.ResolvedTarget.EndsWith("realDir") | Should -BeTrue
         }
 
         It 'Get-Item "realFile.fil' {
             $result = Get-Item "realFile.fil"
-            $result.ResolvedTarget.EndsWith("realFile.fil") | Should -Be $true
+            $result.ResolvedTarget.EndsWith("realFile.fil") | Should -BeTrue
         }
     }
 }
