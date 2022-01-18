@@ -27,7 +27,7 @@ stages:
 
     pool: PowerShell1ES
       demands:
-      - ImageOverride -equals MMS2019TLS
+      - ImageOverride -equals MMSWindows2019-Secure
 
     steps:
     - checkout: self
