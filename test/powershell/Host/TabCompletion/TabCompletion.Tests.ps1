@@ -1190,6 +1190,21 @@ dir -Recurse `
                 TestString = ':Outer do {:Inner while ($true){ break } continue ^'
             }
             @{
+                Intent = 'Complete loop label for incomplete for loop'
+                Expected = 'Outer'
+                TestString = ':forLoop for ($i = 0; $i -lt $SomeCollection.Count; $i++) {continue ^'
+            }
+            @{
+                Intent = 'Complete loop label for incomplete while loop'
+                Expected = 'Outer'
+                TestString = ':WhileLoop while ($true){ break ^'
+            }
+            @{
+                Intent = 'Complete loop label for incomplete foreach loop'
+                Expected = 'Outer'
+                TestString = ':foreachLoop foreach ($x in $y) { break ^'
+            }
+            @{
                 Intent = 'Not Complete loop labels with colon'
                 Expected = $null
                 TestString = ':Outer foreach ($x in $y){:Inner for ($i = 0; $i -lt $X.Count; $i++){ break :O^}}'

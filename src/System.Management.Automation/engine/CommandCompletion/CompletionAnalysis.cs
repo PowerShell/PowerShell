@@ -2237,6 +2237,9 @@ namespace System.Management.Automation
                 }
                 else if (ast is ErrorStatementAst errorStatement)
                 {
+                    // Handles incomplete do/switch loops (other labeled statements do not need this special treatment)
+                    // The regex looks for the loopLabel of errorstatements that look like do/switch loops
+                    // For example in ":Label do " it will find "Label".
                     var labelMatch = Regex.Match(errorStatement.Extent.Text, @"(?<=^:)\w+(?=\s+(do|switch)\b(?!-))", RegexOptions.IgnoreCase);
                     if (labelMatch.Success)
                     {
