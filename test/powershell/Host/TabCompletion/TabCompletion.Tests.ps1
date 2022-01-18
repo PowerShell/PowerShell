@@ -1191,17 +1191,17 @@ dir -Recurse `
             }
             @{
                 Intent = 'Complete loop label for incomplete for loop'
-                Expected = 'Outer'
+                Expected = 'forLoop'
                 TestString = ':forLoop for ($i = 0; $i -lt $SomeCollection.Count; $i++) {continue ^'
             }
             @{
                 Intent = 'Complete loop label for incomplete while loop'
-                Expected = 'Outer'
+                Expected = 'WhileLoop'
                 TestString = ':WhileLoop while ($true){ break ^'
             }
             @{
                 Intent = 'Complete loop label for incomplete foreach loop'
-                Expected = 'Outer'
+                Expected = 'foreachLoop'
                 TestString = ':foreachLoop foreach ($x in $y) { break ^'
             }
             @{
