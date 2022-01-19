@@ -1725,6 +1725,150 @@ function CreateNugetPlatformFolder
 
 <#
 .SYNOPSIS
+Creates a CGManifest file containing package dependencies for specified file.
+
+.PARAMETER FilePath
+File path name of CGManifest file to be created.
+
+.PARAMETER Dependencies
+Array list of dependency tuples:
+[tuple[ [tuple[string, string]], [tuple[string, string]] ] []]
+["Id", "Microsoft.PowerShell.SecretStore"], ["Version", "1.1.1.0"]
+#>
+function New-CGManifest
+{
+    param (
+        [parameter(Mandatory = $true)]
+        [string] $FilePath,
+
+        [parameter(Mandatory = $false)]
+        [tuple[ [tuple[string, string]], [tuple[string, string]] ] []] $Dependencies
+    )
+
+    Write-Verbose -Verbose -Message "Creating CGManifest for SBOM: $Filepath"
+
+    $Registrations = @()
+
+    foreach ($dependency in $Dependencies) {
+        $component = @{
+            Component = @{
+                Type = "nuget";
+                NuGet = @{
+                    Name = ($dependency.Item1.Item2); Version = ($dependency.Item2.Item2)
+                }
+            };
+            DevelopmentDependency = "true"
+        }
+
+        $Registrations += $component
+    }
+
+    $manifest = @{ Registrations = $Registrations }
+    $jsonManifest = $manifest | ConvertTo-Json -Depth 10
+
+    $jsonManifest | Out-File -FilePath $FilePath
+}
+
+function New-FileDependencies
+{
+    param (
+        [parameter(Mandatory = $true)]
+        [string] $FileBaseName,
+
+        [parameter(Mandatory = $true)]
+        [string] $PackageVersion
+    )
+
+    # Filed a tracking bug for automating generation of dependecy list: https://github.com/PowerShell/PowerShell/issues/6247
+    $deps = [System.Collections.ArrayList]::new()
+
+    switch ($FileBaseName) {
+        'Microsoft.Management.Infrastructure.CimCmdlets' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+        }
+
+        'Microsoft.PowerShell.Commands.Diagnostics' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+        }
+
+        'Microsoft.PowerShell.Commands.Management' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $FileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+
+        'Microsoft.PowerShell.Commands.Utility' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $FileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+
+        'Microsoft.PowerShell.ConsoleHost' {
+            $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $FileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+
+        'Microsoft.PowerShell.CoreCLR.Eventing' {
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $FileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+
+        'Microsoft.PowerShell.SDK' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Utility'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.ConsoleHost'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $FileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure.CimCmdlets'), [tuple]::Create('version', $PackageVersion))) > $null
+        }
+
+        'Microsoft.PowerShell.Security' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+        }
+
+        'Microsoft.WSMan.Management' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Runtime'), [tuple]::Create('version', $PackageVersion))) > $null
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $FileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+
+        'Microsoft.WSMan.Runtime' {
+            ## No dependencies
+        }
+
+        'System.Management.Automation' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.CoreCLR.Eventing'), [tuple]::Create('version', $PackageVersion))) > $null
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $FileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+    }
+
+    Write-Output $deps
+}
+
+<#
+.SYNOPSIS
 Creates nuget package sources for a single provided binary file.
 
 .DESCRIPTION
@@ -1880,6 +2024,10 @@ function New-ILNugetPackageSource
         Write-Log "Copied the built-in modules to contentFiles for the SDK package"
     }
 
+    # Create a CGManifest file that lists all dependencies for this package, which is used when creating the SBOM.
+    $deps = New-FileDependencies -FileBaseName $fileBaseName -PackageVersion $PackageVersion
+    New-CGManifest -FilePath (Join-Path -Path $filePackageFolder -ChildPath "CGManifest.json") -Dependencies $deps
+
     if (Test-Path $refBinPath)
     {
         Remove-Item $refBinPath -Recurse -Force -ErrorAction SilentlyContinue
@@ -1923,100 +2071,24 @@ function New-ILNugetPackageFromSource
 
     $fileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($FileName)
 
-    # Filed a tracking bug for automating generation of dependecy list: https://github.com/PowerShell/PowerShell/issues/6247
-    $deps = [System.Collections.ArrayList]::new()
-
-    switch ($fileBaseName) {
-        'Microsoft.Management.Infrastructure.CimCmdlets' {
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-        }
-
-        'Microsoft.PowerShell.Commands.Diagnostics' {
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-        }
-
-        'Microsoft.PowerShell.Commands.Management' {
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
-            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-            {
-                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-            }
-        }
-
-        'Microsoft.PowerShell.Commands.Utility' {
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-
-            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-            {
-                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-            }
-        }
-
-        'Microsoft.PowerShell.ConsoleHost' {
-            $deps.Add([tuple]::Create( [tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-            {
-                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-            }
-        }
-
-        'Microsoft.PowerShell.CoreCLR.Eventing' {
-            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-            {
-                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-            }
-        }
-
-        'Microsoft.PowerShell.SDK' {
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Management'), [tuple]::Create('version', $PackageVersion))) > $null
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Utility'), [tuple]::Create('version', $PackageVersion))) > $null
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.ConsoleHost'), [tuple]::Create('version', $PackageVersion))) > $null
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Security'), [tuple]::Create('version', $PackageVersion))) > $null
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-            {
-                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-            }
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Management'), [tuple]::Create('version', $PackageVersion))) > $null
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.Commands.Diagnostics'), [tuple]::Create('version', $PackageVersion))) > $null
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.Management.Infrastructure.CimCmdlets'), [tuple]::Create('version', $PackageVersion))) > $null
-        }
-
-        'Microsoft.PowerShell.Security' {
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-        }
-
-        'Microsoft.WSMan.Management' {
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.WSMan.Runtime'), [tuple]::Create('version', $PackageVersion))) > $null
-            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-            {
-                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-            }
-        }
-
-        'Microsoft.WSMan.Runtime' {
-            ## No dependencies
-        }
-
-        'System.Management.Automation' {
-            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.CoreCLR.Eventing'), [tuple]::Create('version', $PackageVersion))) > $null
-            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
-            {
-                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
-            }
-        }
-    }
+    $deps = New-FileDependencies -FileBaseName $fileBaseName -PackageVersion $PackageVersion
 
     $srcFilePackagePath = Join-Path $PackagePath $fileBaseName
 
     Write-Verbose -Verbose "New-ILNugetPackageFromSource: Creating nuget package for file: $FileName from source path: $srcFilePackagePath"
-    Write-Verbose -Verbose -Message "$(Get-ChildItem -Path $srcFilePackagePath)"
 
     if (! (Test-Path $srcFilePackagePath)) {
         $msg = "Expected nuget source path $srcFilePackagePath for file $fileBaseName does not exist."
         Write-Verbose -Verbose $msg
         throw $msg
+    }
+
+    # Remove the CGManifest file used to create the SBOM, it should not be part of the package.
+    $cgManifestFilePath = Join-Path -Path $srcFilePackagePath -ChildPath "CGManifest.json"
+    if (Test-Path -Path $cgManifestFilePath)
+    {
+        Write-Verbose -Verbose "Removing CGManifest file: $cgManifestFilePath"
+        Remove-Item -Path $cgManifestFilePath -Force -ErrorAction Continue
     }
 
     New-NuSpec -PackageId $fileBaseName -PackageVersion $PackageVersion -Dependency $deps -FilePath (Join-Path $srcFilePackagePath "$fileBaseName.nuspec")
@@ -2393,7 +2465,7 @@ function New-NuSpec {
         [Parameter(Mandatory = $false)]
         # An array of tuples of tuples to define the dependencies.
         # First tuple defines 'id' and value eg: ["id", "System.Data.SqlClient"]
-        # Second tuple defines 'version' and vale eg: ["version", "4.4.2"]
+        # Second tuple defines 'version' and value eg: ["version", "4.4.2"]
         # Both these tuples combined together define one dependency.
         # An array represents all the dependencies.
         [tuple[ [tuple[string, string]], [tuple[string, string]] ] []] $Dependency,

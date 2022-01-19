@@ -48,6 +48,7 @@ steps:
       Build_Repository_Uri: 'https://github.com/powershell/powershell'
       PackageName: $(SbomFilePackageName)
       PackageVersion: ${{ parameters.PackageVersion }}
+      sourceScanPath: $(SbomFilePackagePath)
       displayName: SBOM for NuGetPkg
 
   - pwsh: |
