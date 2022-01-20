@@ -18,7 +18,7 @@ jobs:
   pool:
     name: PowerShell1ES
     demands:
-    - ImageOverride -equals MMS2019TLS
+    - ImageOverride -equals PSMMS2019-Secure
 
   # APIScan can take a long time
   timeoutInMinutes: 180

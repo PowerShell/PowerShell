@@ -10,7 +10,7 @@ jobs:
   condition: succeeded()
   pool: PowerShell1ES
     demands:
-    - ImageOverride -equals MMS2019TLS
+    - ImageOverride -equals PSMMS2019-Secure
   steps:
   - checkout: self
     clean: true

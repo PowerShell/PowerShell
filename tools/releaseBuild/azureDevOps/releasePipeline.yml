@@ -179,7 +179,7 @@ stages:
 
     pool: PowerShell1ES
       demands:
-      - ImageOverride -equals MMS2019TLS
+      - ImageOverride -equals PSMMS2019-Secure
 
     variables:
     - group: 'Staging_ACR'
@@ -195,7 +195,7 @@ stages:
 
     pool: PowerShell1ES
       demands:
-      - ImageOverride -equals MMS2019TLS
+      - ImageOverride -equals PSMMS2019-Secure
 
     variables:
     - group: 'Azure Blob variable group'
@@ -231,7 +231,7 @@ stages:
 
     pool: PowerShell1ES
       demands:
-      - ImageOverride -equals MMS2019TLS
+      - ImageOverride -equals PSMMS2019-Secure
 
     steps:
     - template: templates/release-ReleaseToNuGet.yml
@@ -337,7 +337,7 @@ stages:
 
     pool: PowerShell1ES
       demands:
-      - ImageOverride -equals MMS2019TLS
+      - ImageOverride -equals PSMMS2019-Secure
 
     variables:
     - group: 'Azure Blob variable group'
