@@ -1329,7 +1329,7 @@ namespace System.Management.Automation
                         context.Options.Remove("LiteralPaths");
                 }
 
-                if (context.WordToComplete != string.Empty && context.WordToComplete.Contains('-'))
+                if (context.WordToComplete != string.Empty && context.WordToComplete != "-" && context.WordToComplete.Contains('-'))
                 {
                     var commandResults = CompleteCommand(context);
                     if (commandResults != null)
