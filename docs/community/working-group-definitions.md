@@ -33,7 +33,6 @@ Special consideration should be given to topics like **backwards compatibility**
 
 * @JamesWTruher (PS Standard, module authoring)
 * @adityapatwardhan (SDK)
-* @rjmholt (hosting, WinPS compatibility)
 
 ## Engine
 
@@ -60,9 +59,9 @@ However, it's expected that many issues will require input from both WGs.
 * @BrucePay
 * @daxian-dbw
 * @JamesWTruher
-* @rjmholt
 * @rkeithhill
 * @vexx32
+* @SeeminglyScience
 
 ## Interactive UX
 
@@ -94,7 +93,6 @@ particularly given the long-lasting effects of language decisions.
 ### Members
 
 * @JamesWTruher
-* @rjmholt
 * @daxian-dbw
 * @BrucePay
 
