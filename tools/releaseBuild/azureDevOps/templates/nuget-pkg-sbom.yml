@@ -25,8 +25,10 @@ steps:
       $FileName = '${{ value }}'
       $FileBaseName = [System.IO.Path]::GetFileNameWithoutExtension($FileName)
       $FilePackagePath = Join-Path -Path '${{ parameters.PackagePath }}' -ChildPath $FileBaseName
+      $CGManifestPath = Join-Path -Path '${{ parameters.PackagePath }}' -ChildPath 'CGManifest'
       Write-Verbose -Verbose "FileName to package: $FileName"
       Write-Verbose -Verbose "FilePackage path: $FilePackagePath"
+      Write-Verbose -Verbose "CGManifest path: $CGManifestPath"
       # Set SBOM package name
       $vstsCommandString = "vso[task.setvariable variable=SbomFilePackageName]${FileBaseName}"
       Write-Host "sending " + $vstsCommandString
@@ -35,11 +37,15 @@ steps:
       $vstsCommandString = "vso[task.setvariable variable=SbomFilePackagePath]${FilePackagePath}"
       Write-Host "sending " + $vstsCommandString
       Write-Host "##$vstsCommandString"
+      # Set CGManifest path variable
+      $vstsCommandString = "vso[task.setvariable variable=CGManifestPath]${CGManifestPath}"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
       # Create Nuget package sources
       Import-Module -Name $env:REPOROOT\build.psm1
       Import-Module -Name $env:REPOROOT\tools\packaging
       Find-DotNet
-      New-ILNugetPackageSource -File $FileName -PackagePath '${{ parameters.PackagePath }}' -PackageVersion '${{ parameters.PackageVersion }}' -WinFxdBinPath '${{ parameters.WinFxdPath }}' -LinuxFxdBinPath '${{ parameters.LinuxFxdPath }}' -GenAPIToolPath '${{ parameters.GenAPIToolPath }}'
+      New-ILNugetPackageSource -File $FileName -PackagePath '${{ parameters.PackagePath }}' -PackageVersion '${{ parameters.PackageVersion }}' -WinFxdBinPath '${{ parameters.WinFxdPath }}' -LinuxFxdBinPath '${{ parameters.LinuxFxdPath }}' -GenAPIToolPath '${{ parameters.GenAPIToolPath }}' -CGManifestPath $CGManifestPath
     displayName: 'Create NuGet Package source for single file'
 
   - template: Sbom.yml@ComplianceRepo
@@ -48,7 +54,7 @@ steps:
       Build_Repository_Uri: 'https://github.com/powershell/powershell'
       PackageName: $(SbomFilePackageName)
       PackageVersion: ${{ parameters.PackageVersion }}
-      sourceScanPath: $(SbomFilePackagePath)
+      sourceScanPath: $(CGManifestPath)
       displayName: SBOM for NuGetPkg
 
   - pwsh: |

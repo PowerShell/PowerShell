@@ -1896,8 +1896,7 @@ Path to the GenAPI.exe tool.
 function New-ILNugetPackageSource
 {
     [CmdletBinding(SupportsShouldProcess = $true)]
-    param(
-
+    param (
         [Parameter(Mandatory = $true)]
         [string] $FileName,
 
@@ -1914,7 +1913,10 @@ function New-ILNugetPackageSource
         [string] $LinuxFxdBinPath,
 
         [Parameter(Mandatory = $true)]
-        [string] $GenAPIToolPath
+        [string] $GenAPIToolPath,
+
+        [Parameter(Mandatory = $true)]
+        [string] $CGManifestPath
     )
 
     if (! $Environment.IsWindows)
@@ -2025,11 +2027,13 @@ function New-ILNugetPackageSource
     }
 
     # Create a CGManifest file that lists all dependencies for this package, which is used when creating the SBOM.
+    if (! (Test-Path -Path $CGManifestPath)) {
+        $null = New-Item -Path $CGManifestPath -ItemType Directory
+    }
     $deps = New-FileDependencies -FileBaseName $fileBaseName -PackageVersion $PackageVersion
-    New-CGManifest -FilePath (Join-Path -Path $filePackageFolder -ChildPath "CGManifest.json") -Dependencies $deps
+    New-CGManifest -FilePath (Join-Path -Path $CGManifestPath -ChildPath "CGManifest.json") -Dependencies $deps
 
-    if (Test-Path $refBinPath)
-    {
+    if (Test-Path $refBinPath) {
         Remove-Item $refBinPath -Recurse -Force -ErrorAction SilentlyContinue
     }
 }
@@ -2047,8 +2051,7 @@ Path for the source files and the created NuGet package file.
 function New-ILNugetPackageFromSource
 {
     [CmdletBinding(SupportsShouldProcess = $true)]
-    param(
-
+    param (
         [Parameter(Mandatory = $true)]
         [string] $FileName,
 
@@ -2083,8 +2086,9 @@ function New-ILNugetPackageFromSource
         throw $msg
     }
 
-    # Remove the CGManifest file used to create the SBOM, it should not be part of the package.
-    $cgManifestFilePath = Join-Path -Path $srcFilePackagePath -ChildPath "CGManifest.json"
+    # Remove the CGManifest file used to create the SBOM.
+    $cgManifestPath = Join-Path -Path $PackagePath -ChildPath 'CGManifest'
+    $cgManifestFilePath = Join-Path -Path $cgManifestPath -ChildPath 'CGManifest.json'
     if (Test-Path -Path $cgManifestFilePath)
     {
         Write-Verbose -Verbose "Removing CGManifest file: $cgManifestFilePath"
