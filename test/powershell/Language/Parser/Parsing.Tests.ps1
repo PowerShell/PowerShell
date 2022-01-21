@@ -648,6 +648,7 @@ Describe "Parsing array that has too many dimensions" -Tag CI {
 Describe "Parsing using statement with alias and linebreak" -Tag CI {
     It "ParseError for '<Script>'" -TestCases @(
         @{ Script = "using namespace x =`n"; ErrorId = @('MissingNamespaceAlias'); StartOffset = @(19); EndOffset = @(19) }
+        @{ Script = "using namespace x = `n"; ErrorId = @('MissingNamespaceAlias'); StartOffset = @(19); EndOffset = @(19) }
     ) {
         param($Script, $ErrorId, $StartOffset, $EndOffset)
 
