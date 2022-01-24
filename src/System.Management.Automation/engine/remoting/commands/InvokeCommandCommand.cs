@@ -263,26 +263,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private sealed class ArgumentToPSVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
-        {
-            protected override bool TryConvertFromString(string versionString, [NotNullWhen(true)] out Version version)
-            {
-                if (string.Equals("off", versionString, StringComparison.OrdinalIgnoreCase))
-                {
-                    version = new Version(0, 0);
-                    return true;
-                }
-
-                if (string.Equals("latest", versionString, StringComparison.OrdinalIgnoreCase))
-                {
-                    version = PSVersionInfo.PSVersion;
-                    return true;
-                }
-
-                return base.TryConvertFromString(versionString, out version);
-            }
-        }
-
         private static readonly Version s_OffVersion = new Version(0, 0);
 
         private sealed class ValidateVersionAttribute : ValidateArgumentsAttribute

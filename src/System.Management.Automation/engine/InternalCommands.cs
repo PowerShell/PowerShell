@@ -2635,23 +2635,6 @@ namespace Microsoft.PowerShell.Commands
 
         private SwitchParameter _off;
 
-        /// <summary>
-        /// Handle 'latest', which we interpret to be the current version of PowerShell.
-        /// </summary>
-        private sealed class ArgumentToPSVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
-        {
-            protected override bool TryConvertFromString(string versionString, [NotNullWhen(true)] out Version version)
-            {
-                if (string.Equals("latest", versionString, StringComparison.OrdinalIgnoreCase))
-                {
-                    version = PSVersionInfo.PSVersion;
-                    return true;
-                }
-
-                return base.TryConvertFromString(versionString, out version);
-            }
-        }
-
         private sealed class ValidateVersionAttribute : ValidateArgumentsAttribute
         {
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
