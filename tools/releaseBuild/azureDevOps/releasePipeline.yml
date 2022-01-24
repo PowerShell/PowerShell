@@ -240,7 +240,7 @@ stages:
 
     pool: PowerShell1ES
       demands:
-      - ImageOverride -equals MMSUbuntu20.04TLS
+      - ImageOverride -equals PSMMSUbuntu20.04-Secure
 
     variables:
     - group: 'AzDevOpsArtifacts'
