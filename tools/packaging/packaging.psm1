@@ -1020,7 +1020,7 @@ function New-UnixPackage {
             if ($PSCmdlet.ShouldProcess("Create $type package")) {
                 Write-Log "Creating package with fpm..."
                 try {
-                    $Output = Start-NativeExecution { fpm $Arguments }
+                    $Output = Start-NativeExecution { fpm --debug $Arguments }
                 }
                 catch {
                     Write-Verbose -Message "!!!Handling error in FPM!!!" -Verbose -ErrorAction SilentlyContinue
