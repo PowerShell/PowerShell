@@ -1019,7 +1019,14 @@ function New-UnixPackage {
         try {
             if ($PSCmdlet.ShouldProcess("Create $type package")) {
                 Write-Log "Creating package with fpm..."
-                $Output = Start-NativeExecution { fpm $Arguments }
+                try {
+                    $Output = Start-NativeExecution { fpm $Arguments }
+                }
+                catch {
+                    Write-Verbose $outDir -Verbose
+                    Get-Error
+                    throw
+                }
             }
         } finally {
             if ($Environment.IsMacOS) {
