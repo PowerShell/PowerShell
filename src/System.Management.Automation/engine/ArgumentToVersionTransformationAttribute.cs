@@ -12,8 +12,8 @@ namespace System.Management.Automation
     /// To make it easier to specify a version, we add some conversions that wouldn't happen otherwise:
     ///   * A simple integer, i.e. 2;
     ///   * A string without a dot, i.e. "2".
-    ///   * the string "off" sets the version to 0.0 (unset)
-    ///   * the string "latest" sets to the current version
+    ///   * the string "off" sets the version to 0.0 (unset).
+    ///   * the string "latest" sets to the current version.
     /// </summary>
     internal sealed class ArgumentToPSVersionTransformationAttribute : ArgumentToVersionTransformationAttribute
     {
