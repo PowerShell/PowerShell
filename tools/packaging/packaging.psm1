@@ -2337,6 +2337,8 @@ function CleanupGeneratedSourceCode
         '[Microsoft.PowerShell.Commands.SetStrictModeCommand.ArgumentToPSVersionTransformationAttribute]'
         '[Microsoft.PowerShell.Commands.HttpVersionCompletionsAttribute]'
         '[System.Management.Automation.ArgumentToVersionTransformationAttribute]'
+        '[Microsoft.PowerShell.Commands.InvokeCommandCommand.ArgumentToPSVersionTransformationAttribute]'
+        '[Microsoft.PowerShell.Commands.InvokeCommandCommand.ValidateVersionAttribute]'
         )
 
     $patternsToReplace = @(
