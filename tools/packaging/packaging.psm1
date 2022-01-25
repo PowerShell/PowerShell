@@ -1025,7 +1025,7 @@ function New-UnixPackage {
                 catch {
                     Write-Verbose -Message "!!!Handling error in FPM!!!" -Verbose -ErrorAction SilentlyContinue
                     Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
-                    Get-Error
+                    Get-Error -InputObject $_
                     throw
                 }
             }
@@ -4155,7 +4155,7 @@ function Invoke-AzDevOpsLinuxPackageCreation {
         }
     }
     catch {
-        Get-Error
+        Get-Error -InputObject $_
         throw
     }
 }
@@ -4236,7 +4236,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
         }
     }
     catch {
-        Get-Error
+        Get-Error -InputObject $_
         throw
     }
 }
