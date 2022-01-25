@@ -1023,7 +1023,8 @@ function New-UnixPackage {
                     $Output = Start-NativeExecution { fpm $Arguments }
                 }
                 catch {
-                    Write-Verbose $outDir -Verbose
+                    Write-Verbose -Message "!!!Handling error in FPM!!!" -Verbose -ErrorAction SilentlyContinue
+                    Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
                     Get-Error
                     throw
                 }
