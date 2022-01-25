@@ -1932,10 +1932,6 @@ function Start-PSBootstrap {
                 # Build tools
                 $Deps += "curl", "wget"
 
-                if ($BuildLinuxArm) {
-                    $Deps += "gcc-arm-linux-gnueabihf", "g++-arm-linux-gnueabihf"
-                }
-
                 # .NET Core required runtime libraries
                 $Deps += "libunwind8"
                 if ($environment.IsUbuntu16) { $Deps += "libicu55" }
