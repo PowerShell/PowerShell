@@ -1920,7 +1920,7 @@ namespace System.Management.Automation
         {
             MethodTargetType = methodTargetType;
             _parameterTypes = parameterTypes;
-            GenericTypeParameters = genericTypeParameters ?? Array.Empty<Type>();
+            GenericTypeParameters = genericTypeParameters;
         }
 
         /// <remarks>
@@ -2024,7 +2024,7 @@ namespace System.Management.Automation
                 separator = " ";
             }
 
-            if (GenericTypeParameters.Length != 0)
+            if (GenericTypeParameters != null)
             {
                 sb.Append(separator);
                 sb.Append("genericTypeParams: ");

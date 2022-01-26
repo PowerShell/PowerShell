@@ -6350,28 +6350,18 @@ namespace System.Management.Automation.Language
         internal static PSMethodInvocationConstraints GetInvokeMemberConstraints(BaseCtorInvokeMemberExpressionAst invokeMemberExpressionAst)
         {
             Type targetTypeConstraint = null;
+            ReadOnlyCollection<ExpressionAst> arguments = invokeMemberExpressionAst.Arguments;
             Type[] argumentTypes = null;
-            if (invokeMemberExpressionAst.Arguments is not null)
+            if (arguments is not null)
             {
-                argumentTypes = new Type[invokeMemberExpressionAst.Arguments.Count];
-                for (var i = 0; i < invokeMemberExpressionAst.Arguments.Count; i++)
+                argumentTypes = new Type[arguments.Count];
+                for (var i = 0; i < arguments.Count; i++)
                 {
-                    argumentTypes[i] = GetTypeConstraintForMethodResolution(invokeMemberExpressionAst.Arguments[i]);
+                    argumentTypes[i] = GetTypeConstraintForMethodResolution(arguments[i]);
                 }
             }
 
             TypeDefinitionAst typeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(invokeMemberExpressionAst);
-
-            Type[] genericArguments = null;
-            if (invokeMemberExpressionAst.GenericTypeArguments.Count > 0)
-            {
-                genericArguments = new Type[invokeMemberExpressionAst.GenericTypeArguments.Count];
-                for (var i = 0; i < invokeMemberExpressionAst.GenericTypeArguments.Count; i++)
-                {
-                    genericArguments[i] = invokeMemberExpressionAst.GenericTypeArguments[i].GetReflectionType();
-                }
-            }
-
             if (typeDefinitionAst != null)
             {
                 targetTypeConstraint = (typeDefinitionAst as TypeDefinitionAst).Type.BaseType;
@@ -6381,7 +6371,7 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(false, "BaseCtorInvokeMemberExpressionAst must be used only inside TypeDefinitionAst");
             }
 
-            return CombineTypeConstraintForMethodResolution(targetTypeConstraint, argumentTypes, genericArguments);
+            return CombineTypeConstraintForMethodResolution(targetTypeConstraint, argumentTypes, genericArguments: null);
         }
 
         internal Expression InvokeMember(

@@ -1411,7 +1411,7 @@ namespace System.Management.Automation
             {
                 MethodInformation methodInfo = methods[i];
 
-                if ((methodInfo.method?.DeclaringType.IsGenericTypeDefinition == true)
+                if (methodInfo.method?.DeclaringType.IsGenericTypeDefinition == true
                     || (!methodInfo.isGeneric && genericParameters.Length > 0))
                 {
                     // If method is defined by an *open* generic type, or

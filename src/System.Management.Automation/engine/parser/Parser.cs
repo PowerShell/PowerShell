@@ -1437,7 +1437,7 @@ namespace System.Management.Automation.Language
             return typeName;
         }
 
-        private List<ITypeName> GenericTypeArgumentsRule(Token firstToken, bool unbracketedGenericArg, out Token lastToken)
+        private List<ITypeName> GenericTypeArgumentsRule(Token firstToken, out Token lastToken)
         {
             Diagnostics.Assert(firstToken.Kind == TokenKind.Identifier || firstToken.Kind == TokenKind.LBracket, "unexpected first token");
             RuntimeHelpers.EnsureSufficientExecutionStack();
@@ -1480,7 +1480,7 @@ namespace System.Management.Automation.Language
 
         private ITypeName GenericTypeNameRule(Token genericTypeName, Token firstToken, bool unbracketedGenericArg)
         {
-            List<ITypeName> genericArguments = GenericTypeArgumentsRule(firstToken, unbracketedGenericArg, out Token rBracketToken);
+            List<ITypeName> genericArguments = GenericTypeArgumentsRule(firstToken, out Token rBracketToken);
 
             if (rBracketToken.Kind != TokenKind.RBracket)
             {
@@ -1489,8 +1489,7 @@ namespace System.Management.Automation.Language
                 ReportIncompleteInput(
                     Before(rBracketToken),
                     nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
-                    ParserStrings.EndSquareBracketExpectedAtEndOfAttribute,
-                    rBracketToken.Text);
+                    ParserStrings.EndSquareBracketExpectedAtEndOfAttribute);
                 rBracketToken = null;
             }
 
@@ -7789,7 +7788,7 @@ namespace System.Management.Automation.Language
                 if (firstToken.Kind == TokenKind.Identifier || firstToken.Kind == TokenKind.LBracket)
                 {
                     resyncIndex = -1;
-                    genericTypes = GenericTypeArgumentsRule(firstToken, unbracketedGenericArg: false, out rBracketToken);
+                    genericTypes = GenericTypeArgumentsRule(firstToken, out rBracketToken);
 
                     if (rBracketToken.Kind != TokenKind.RBracket)
                     {
