@@ -946,7 +946,15 @@ function New-UnixPackage {
         try {
             if ($PSCmdlet.ShouldProcess("Create $type package")) {
                 Write-Log "Creating package with fpm..."
-                $Output = Start-NativeExecution { fpm $Arguments }
+                try {
+                    $Output = Start-NativeExecution { fpm $Arguments }
+                }
+                catch {
+                    Write-Verbose -Message "!!!Handling error in FPM!!!" -Verbose -ErrorAction SilentlyContinue
+                    Write-Verbose -Message "$Output" -Verbose -ErrorAction SilentlyContinue
+                    Get-Error -InputObject $_
+                    throw
+                }
             }
         } finally {
             if ($Environment.IsMacOS) {
@@ -3947,7 +3955,7 @@ function Invoke-AzDevOpsLinuxPackageCreation {
         }
     }
     catch {
-        Get-Error
+        Get-Error -InputObject $_
         throw
     }
 }
@@ -4032,7 +4040,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
         }
     }
     catch {
-        Get-Error
+        Get-Error -InputObject $_
         throw
     }
 }

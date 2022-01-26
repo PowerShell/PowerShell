@@ -10,7 +10,7 @@ jobs:
   pool:
     name: PowerShell1ES
     demands:
-    - ImageOverride -equals MMSUbuntu20.04TLS
+    - ImageOverride -equals PSMMSUbuntu20.04-Secure
   dependsOn: ${{ parameters.parentJob }}
   variables:
     - name: runCodesignValidationInjection
@@ -149,7 +149,7 @@ jobs:
   pool:
     name: PowerShell1ES
     demands:
-    - ImageOverride -equals MMS2019TLS
+    - ImageOverride -equals PSMMS2019-Secure
   variables:
     - name: buildName
       value: ${{ parameters.buildName }}

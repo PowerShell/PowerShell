@@ -1830,7 +1830,7 @@ function Start-PSBootstrap {
                 elseif ($environment.IsUbuntu18) { $Deps += "libicu60"}
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev" }
+                if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev", "rpm" }
 
                 # Install dependencies
                 # change the fontend from apt-get to noninteractive
