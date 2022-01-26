@@ -14,7 +14,7 @@ From `pwsh.exe`, run `Import-Module ./build.psm1` and use `Start-PSBootstrap` to
 
 The `Start-PSBootstrap` function does the following:
 
-- Uses `brew` or `port` to install CMake, OpenSSL, and GNU WGet
+- Uses `brew` or `port` to install OpenSSL, and GNU WGet
 - Uninstalls any prior versions of .NET CLI
 - Downloads and installs .NET Core SDK to `~/.dotnet`
 
