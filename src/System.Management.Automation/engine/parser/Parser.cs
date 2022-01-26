@@ -7715,7 +7715,6 @@ namespace System.Management.Automation.Language
 
             CommandElementAst member = MemberNameRule();
             List<ITypeName> genericTypeArguments = null;
-            Token rBracket = null;
 
             if (member == null)
             {
@@ -7730,20 +7729,17 @@ namespace System.Management.Automation.Language
             }
             else if (_ungotToken == null)
             {
+                // Member name may be an incomplete token like `$a.$(Command-Name`; we do not look for generic args or
+                // invocation token(s) if the member name token is recognisably incomplete.
+                genericTypeArguments = GenericMethodArgumentsRule(out Token rBracket);
                 Token lParen = NextInvokeMemberToken();
-                if (lParen is null)
-                {
-                    genericTypeArguments = GenericMethodArgumentsRule(out rBracket);
-                    lParen = NextInvokeMemberToken();
-                }
+
                 if (lParen != null)
                 {
-                    // Fall through to the last available token expected in a member name for calculating the expected
-                    // position of the lParen. This accounts for things like `[Array]::Empty[int[]()` so that we don't
-                    // get unhandled behaviour when input is expected but incomplete.
-                    int endColumnNumber = rBracket.Extent?.EndColumnNumber
-                        ?? genericTypeArguments?.LastOrDefault()?.Extent?.EndColumnNumber
-                        ?? member.Extent.EndColumnNumber;
+                    // When we reach here, we either had a legit section of generic arguments (in which case, `rBracket`
+                    // won't be null), or we saw `lParen` directly following the member token (in which case, `rBracket`
+                    // will be null).
+                    int endColumnNumber = rBracket is null ? member.Extent.EndColumnNumber : rBracket.Extent.EndColumnNumber;
 
                     Diagnostics.Assert(lParen.Kind == TokenKind.LParen || lParen.Kind == TokenKind.LCurly, "token kind incorrect");
                     Diagnostics.Assert(
@@ -7767,15 +7763,20 @@ namespace System.Management.Automation.Language
             List<ITypeName> genericTypes = null;
 
             int resyncIndex = _tokenizer.GetRestorePoint();
-            Token lBracket = PeekToken();
+            Token lBracket = NextToken();
             rBracketToken = null;
 
             if (lBracket.Kind != TokenKind.LBracket)
             {
+                // We cannot avoid this Resync(); if we use PeekToken() to try to avoid a Resync(), the method called
+                // after this [`NextInvokeMemberToken()` or `NextMemberAccessToken()`] will note that an _ungotToken
+                // is present and assume an error state. That will cause any property accesses or non-generic method
+                // calls to throw a parse error.
+                Resync(resyncIndex);
                 return null;
             }
 
-            // This is either a member expression with generic type arguments, or some sort of collection index
+            // This is either a InvokeMember expression with generic type arguments, or some sort of collection index
             // on a property.
             TokenizerMode oldTokenizerMode = _tokenizer.Mode;
             try
