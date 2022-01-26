@@ -2056,7 +2056,7 @@ function Start-PSBootstrap {
                 # ignore exitcode, because they may be already installed
                 Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
             } elseif ($environment.IsLinux -and $environment.IsAlpine) {
-                $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl', 'wget'
+                $Deps += 'libunwind', 'libcurl', 'bash', 'build-base', 'git', 'curl', 'wget'
 
                 Start-NativeExecution {
                     Invoke-Expression "apk add $Deps"
