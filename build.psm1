@@ -1894,6 +1894,47 @@ function Get-RedHatPackageManager {
     }
 }
 
+function Install-GlobalGem {
+    param(
+        [Parameter()]
+        [string]
+        $Sudo = "",
+
+        [Parameter(Mandatory)]
+        [string]
+        $GemName,
+
+        [Parameter(Mandatory)]
+        [string]
+        $GemVersion,
+
+        [Parameter()]
+        [string[]]
+        $Logs
+    )
+    try {
+        # We cannot guess if the user wants to run gem install as root on linux and windows,
+        # but macOs usually requires sudo
+        $gemsudo = ''
+        if($environment.IsMacOS -or $env:TF_BUILD) {
+            $gemsudo = $sudo
+        }
+
+        Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install $GemName -v $GemVersion --no-document"))
+
+    } catch {
+        Write-Warning "Installation of gem $GemName $GemVersion failed! Must resolve manually."
+        $logs = Get-ChildItem "/var/lib/gems/*/extensions/x86_64-linux/*/$GemName-*/gem_make.out" | Select-Object -ExpandProperty FullName
+        foreach ($log in $logs) {
+            Write-Verbose "Contents of: $log" -Verbose
+            Get-Content -Raw -Path $log -ErrorAction Ignore | ForEach-Object { Write-Verbose $_ -Verbose }
+            Write-Verbose "END Contents of: $log" -Verbose
+        }
+
+        throw
+    }
+}
+
 function Start-PSBootstrap {
     [CmdletBinding()]
     param(
@@ -2024,31 +2065,9 @@ function Start-PSBootstrap {
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
             if ($Package) {
-                try {
-                    # We cannot guess if the user wants to run gem install as root on linux and windows,
-                    # but macOs usually requires sudo
-                    $gemsudo = ''
-                    if($environment.IsMacOS -or $env:TF_BUILD) {
-                        $gemsudo = $sudo
-                    }
-                    try {
-                        Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ffi -v 1.12.0 --no-document"))
-                    } catch {
-                        $logs = , "/var/lib/gems/2.7.0/extensions/x86_64-linux/2.7.0/ffi-1.12.0/gem_make.out"
-                        foreach ($log in $logs) {
-                            if (Test-Path -Path $log) {
-                                Get-Content -Raw -Path $log | ForEach-Object { Write-Verbose $_ -Verbose }
-                            }
-
-                            throw
-                        }
-
-                    }
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.11.0 --no-document"))
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document"))
-                } catch {
-                    Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
-                }
+                Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.12.0" -Logs "/var/lib/gems/*/extensions/x86_64-linux/*/ffi-*/gem_make.out"
+                Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.11.0"
+                Install-GlobalGem -Sudo $sudo -GemName "ronn" -GemVersion "0.7.3"
             }
         }
 
