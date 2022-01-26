@@ -18,8 +18,7 @@ refer to the [Working with the PowerShell Repository](../git/README.md),
 
 ### Toolchain Setup
 
-We use the [.NET Command-Line Interface][dotnet-cli] (`dotnet`) to build the managed components,
-and [CMake][] to build the native components.
+We use the [.NET Command-Line Interface][dotnet-cli] (`dotnet`) to build the managed components.
 
 Installing the toolchain is as easy as running `Start-PSBootstrap` in PowerShell.
 Of course, this requires a self-hosted copy of PowerShell on Linux.
@@ -55,7 +54,6 @@ The `Start-PSBootstrap` function does the following:
 If you want to use `dotnet` outside of `Start-PSBuild`, add `~/.dotnet` to your `PATH` environment variable.
 
 [dotnet-cli]: https://docs.microsoft.com/dotnet/core/tools/
-[CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
 
 ## Build using our module
 
