@@ -2031,7 +2031,19 @@ function Start-PSBootstrap {
                     if($environment.IsMacOS -or $env:TF_BUILD) {
                         $gemsudo = $sudo
                     }
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ffi -v 1.12.0 --no-document"))
+                    try {
+                        Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ffi -v 1.12.0 --no-document"))
+                    } catch {
+                        $logs = , "/var/lib/gems/2.7.0/extensions/x86_64-linux/2.7.0/ffi-1.12.0/gem_make.out"
+                        foreach ($log in $logs) {
+                            if (Test-Path -Path $log) {
+                                Get-Content -Raw -Path $log | ForEach-Object { Write-Verbose $_ -Verbose }
+                            }
+
+                            throw
+                        }
+
+                    }
                     Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.11.0 --no-document"))
                     Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document"))
                 } catch {
