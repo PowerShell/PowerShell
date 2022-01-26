@@ -7969,7 +7969,7 @@ namespace System.Management.Automation.Language
             CommandElementAst member,
             bool @static,
             bool nullConditional)
-            : this(extent, expression, member, @static, genericTypes: null)
+            : this(extent, expression, member, @static, nullConditional, genericTypes: null)
         {
         }
 

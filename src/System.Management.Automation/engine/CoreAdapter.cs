@@ -1398,7 +1398,7 @@ namespace System.Management.Automation
                 && !methods[0].hasVarArgs
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
                 && !methods[0].isGeneric
-                && (methods[0].method is null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition))
+                && (methods[0].method is null || !methods[0].method.DeclaringType.IsGenericTypeDefinition)
                 && methods[0].parameters.Length == arguments.Length)
             {
                 return methods[0];
@@ -1411,7 +1411,7 @@ namespace System.Management.Automation
             {
                 MethodInformation methodInfo = methods[i];
 
-                if ((methodInfo.method is not null && methodInfo.method.DeclaringType.IsGenericTypeDefinition)
+                if ((methodInfo.method?.DeclaringType.IsGenericTypeDefinition == true)
                     || (!methodInfo.isGeneric && genericParameters.Length > 0))
                 {
                     // If method is defined by an *open* generic type, or
@@ -1455,7 +1455,7 @@ namespace System.Management.Automation
                     }
 
                     methodInfo = TypeInference.Infer(methodInfo, argumentTypesForTypeInference);
-                    if (methodInfo == null)
+                    if (methodInfo is null)
                     {
                         // Skip generic methods for which we cannot infer type arguments
                         continue;

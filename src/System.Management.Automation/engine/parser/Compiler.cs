@@ -6338,7 +6338,6 @@ namespace System.Management.Automation.Language
             if (genericArguments is not null)
             {
                 genericTypeArguments = new Type[genericArguments.Count];
-
                 for (var i = 0; i < genericArguments.Count; i++)
                 {
                     genericTypeArguments[i] = genericArguments[i].GetReflectionType();

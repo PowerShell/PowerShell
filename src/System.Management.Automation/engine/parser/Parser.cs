@@ -1446,7 +1446,6 @@ namespace System.Management.Automation.Language
             ITypeName typeName = GetSingleGenericArgument(firstToken);
             genericArguments.Add(typeName);
 
-            Token token;
             while (true)
             {
                 SkipNewlines();
@@ -1458,7 +1457,7 @@ namespace System.Management.Automation.Language
 
                 SkipNewlines();
 
-                token = PeekToken();
+                Token token = PeekToken();
                 if (token.Kind == TokenKind.Identifier || token.Kind == TokenKind.LBracket)
                 {
                     SkipToken();
@@ -1489,8 +1488,8 @@ namespace System.Management.Automation.Language
                 UngetToken(rBracketToken);
                 ReportIncompleteInput(
                     Before(rBracketToken),
-                    nameof(ParserStrings.UnexpectedToken),
-                    ParserStrings.UnexpectedToken,
+                    nameof(ParserStrings.EndSquareBracketExpectedAtEndOfAttribute),
+                    ParserStrings.EndSquareBracketExpectedAtEndOfAttribute,
                     rBracketToken.Text);
                 rBracketToken = null;
             }
@@ -7731,17 +7730,18 @@ namespace System.Management.Automation.Language
             }
             else if (_ungotToken == null)
             {
-                // Member name may be an incomplete token like `$a.$(Command-Name`; we do not look for generic args or
-                // invocation token(s) if the member name token is recognisably incomplete.
-                genericTypeArguments = GenericMethodArgumentsRule(out rBracket);
                 Token lParen = NextInvokeMemberToken();
-
+                if (lParen is null)
+                {
+                    genericTypeArguments = GenericMethodArgumentsRule(out rBracket);
+                    lParen = NextInvokeMemberToken();
+                }
                 if (lParen != null)
                 {
                     // Fall through to the last available token expected in a member name for calculating the expected
                     // position of the lParen. This accounts for things like `[Array]::Empty[int[]()` so that we don't
                     // get unhandled behaviour when input is expected but incomplete.
-                    int endColumnNumber = rBracket?.Extent?.EndColumnNumber
+                    int endColumnNumber = rBracket.Extent?.EndColumnNumber
                         ?? genericTypeArguments?.LastOrDefault()?.Extent?.EndColumnNumber
                         ?? member.Extent.EndColumnNumber;
 
@@ -7767,15 +7767,11 @@ namespace System.Management.Automation.Language
             List<ITypeName> genericTypes = null;
 
             int resyncIndex = _tokenizer.GetRestorePoint();
-            Token lBracket = NextToken();
+            Token lBracket = PeekToken();
             rBracketToken = null;
 
             if (lBracket.Kind != TokenKind.LBracket)
             {
-                // We cannot avoid this Resync(); if we use PeekToken() to try to avoid a Resync(), the method called
-                // after this (NextInvokeMemberToken()) will note that an _ungotToken is present and assume an error
-                // state. That will cause any property accesses or non-generic method calls to throw a parse error.
-                Resync(resyncIndex);
                 return null;
             }
 
