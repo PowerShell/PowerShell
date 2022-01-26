@@ -1939,7 +1939,6 @@ function Start-PSBootstrap {
 
                 # Packaging tools
                 if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev", "rpm", "g++" }
-            }
 
                 # Install dependencies
                 # change the fontend from apt-get to noninteractive
