@@ -101,8 +101,14 @@ namespace System.Management.Automation.Internal
             }
         }
 
+        // graphics/color mode ESC[1;2;...m
+        private const string graphicsRegex = @"\x1b\[\d+(;\d+)*m";
+
+        // hyperlink ESC]8;;<url>ESC\<text>ESC]8;;ESC\ taken from https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
+        private const string hyperlinkRegex = @"\x1b\]8;;[^\x1b]+\x1b\\[^\x1b]+\x1b\]8;;\x1b\\";
+
         // replace regex with .NET 6 API once available
-        internal static readonly Regex AnsiRegex = new Regex(@"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", RegexOptions.Compiled);
+        internal static readonly Regex AnsiRegex = new Regex($"({graphicsRegex})|(({hyperlinkRegex}))", RegexOptions.Compiled);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ValueStringDecorated"/> struct.
