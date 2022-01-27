@@ -73,8 +73,8 @@ try{
     Write-Verbose "Sync'ing Tags..." -verbose
     Sync-PSTags -AddRemoteIfMissing
 
-    Write-Verbose "Bootstrapping powershell build..." -verbose
-    Start-PSBootstrap -Force -Package
+    Write-Verbose "Bootstrapping powershell build..." -Verbose
+    Start-PSBootstrap -Force -Package -ErrorAction Stop
 
     if ($PSCmdlet.ParameterSetName -eq 'packageSigned')
     {

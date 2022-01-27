@@ -1717,6 +1717,43 @@ function Get-RedHatPackageManager {
     }
 }
 
+function Install-GlobalGem {
+    param(
+        [Parameter()]
+        [string]
+        $Sudo = "",
+
+        [Parameter(Mandatory)]
+        [string]
+        $GemName,
+
+        [Parameter(Mandatory)]
+        [string]
+        $GemVersion
+    )
+    try {
+        # We cannot guess if the user wants to run gem install as root on linux and windows,
+        # but macOs usually requires sudo
+        $gemsudo = ''
+        if($environment.IsMacOS -or $env:TF_BUILD) {
+            $gemsudo = $sudo
+        }
+
+        Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install $GemName -v $GemVersion --no-document"))
+
+    } catch {
+        Write-Warning "Installation of gem $GemName $GemVersion failed! Must resolve manually."
+        $logs = Get-ChildItem "/var/lib/gems/*/extensions/x86_64-linux/*/$GemName-*/gem_make.out" | Select-Object -ExpandProperty FullName
+        foreach ($log in $logs) {
+            Write-Verbose "Contents of: $log" -Verbose
+            Get-Content -Raw -Path $log -ErrorAction Ignore | ForEach-Object { Write-Verbose $_ -Verbose }
+            Write-Verbose "END Contents of: $log" -Verbose
+        }
+
+        throw
+    }
+}
+
 function Start-PSBootstrap {
     [CmdletBinding(
         SupportsShouldProcess=$true,
@@ -1759,7 +1796,7 @@ function Start-PSBootstrap {
                 elseif ($Environment.IsUbuntu18) { $Deps += "libicu60"}
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev", "rpm" }
+                if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev", "rpm", "g++", "make" }
 
                 # Install dependencies
                 # change the fontend from apt-get to noninteractive
@@ -1783,7 +1820,7 @@ function Start-PSBootstrap {
                 $Deps += "libicu", "libunwind"
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel' }
+                if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel', "gcc-c++" }
 
                 $PackageManager = Get-RedHatPackageManager
 
@@ -1804,7 +1841,7 @@ function Start-PSBootstrap {
                 $Deps += "wget"
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel' }
+                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel', "gcc" }
 
                 $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
@@ -1845,19 +1882,9 @@ function Start-PSBootstrap {
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
             if ($Package) {
-                try {
-                    # We cannot guess if the user wants to run gem install as root on linux and windows,
-                    # but macOs usually requires sudo
-                    $gemsudo = ''
-                    if($Environment.IsMacOS -or $env:TF_BUILD) {
-                        $gemsudo = $sudo
-                    }
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ffi -v 1.12.0 --no-document"))
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.11.0 --no-document"))
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document"))
-                } catch {
-                    Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
-                }
+                Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.12.0"
+                Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.11.0"
+                Install-GlobalGem -Sudo $sudo -GemName "ronn" -GemVersion "0.7.3"
             }
         }
 
