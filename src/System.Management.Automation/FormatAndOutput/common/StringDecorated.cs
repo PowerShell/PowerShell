@@ -108,7 +108,7 @@ namespace System.Management.Automation.Internal
         private const string HyperlinkRegex = @"(\x1b\]8;;[^\x1b]+\x1b\\[^\x1b]+\x1b\]8;;\x1b\\)";
 
         // CSI escape sequences
-        private const string CsiRegex = @"(\x1b\[?\d+[hl])";
+        private const string CsiRegex = @"(\x1b\[\?\d+[hl])";
 
         // replace regex with .NET 6 API once available
         internal static readonly Regex AnsiRegex = new Regex($"{GraphicsRegex}|{HyperlinkRegex}|{CsiRegex}", RegexOptions.Compiled);
