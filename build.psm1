@@ -2065,7 +2065,7 @@ function Start-PSBootstrap {
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
             if ($Package) {
-                Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.12.0" -Logs "/var/lib/gems/*/extensions/x86_64-linux/*/ffi-*/gem_make.out"
+                Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.12.0"
                 Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.11.0"
                 Install-GlobalGem -Sudo $sudo -GemName "ronn" -GemVersion "0.7.3"
             }
