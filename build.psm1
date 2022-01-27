@@ -1906,11 +1906,7 @@ function Install-GlobalGem {
 
         [Parameter(Mandatory)]
         [string]
-        $GemVersion,
-
-        [Parameter()]
-        [string[]]
-        $Logs
+        $GemVersion
     )
     try {
         # We cannot guess if the user wants to run gem install as root on linux and windows,
