@@ -1961,7 +1961,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Key File Path.
         /// </summary>
-        private string KeyFilePath
+        public string KeyFilePath
         {
             get;
             set;
@@ -1970,7 +1970,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Port for connection.
         /// </summary>
-        private int Port
+        public int Port
         {
             get;
             set;
@@ -1979,7 +1979,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Subsystem to use.
         /// </summary>
-        private string Subsystem
+        public string Subsystem
         {
             get;
             set;
