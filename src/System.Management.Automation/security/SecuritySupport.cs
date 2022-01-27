@@ -1213,7 +1213,7 @@ namespace System.Management.Automation
                     storeCU.Open(OpenFlags.ReadOnly);
                     X509Certificate2Collection storeCerts = storeCU.Certificates;
 
-                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    if (Platform.IsWindows)
                     {
                         using (var storeLM = new X509Store("my", StoreLocation.LocalMachine))
                         {

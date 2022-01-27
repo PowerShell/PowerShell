@@ -22,7 +22,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+                return OperatingSystem.IsLinux();
             }
         }
 
@@ -33,7 +33,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+                return OperatingSystem.IsMacOS();
             }
         }
 
@@ -44,7 +44,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+                return OperatingSystem.IsWindows();
             }
         }
 
