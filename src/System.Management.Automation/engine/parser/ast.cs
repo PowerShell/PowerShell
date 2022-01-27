@@ -7896,7 +7896,7 @@ namespace System.Management.Automation.Language
             SetParent(member);
             this.Static = @static;
 
-            if (genericTypes != null && genericTypes.Count > 0)
+            if (genericTypes is not null && genericTypes.Count > 0)
             {
                 this.GenericTypeArguments = new ReadOnlyCollection<ITypeName>(genericTypes);
             }
