@@ -98,6 +98,7 @@ try
         Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -Verbose
         $buildParams = @{
             ForMinimalSize = $ForMinimalSize
+            ExperimentalFeatureJsonFilePath = "$location\ExperimentalFeatures.json"
         }
 
         if($Symbols)

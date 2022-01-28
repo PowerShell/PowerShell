@@ -52,7 +52,7 @@ function BuildPackages {
 
         Start-PSBootstrap -Package -NoSudo
 
-        $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true; Restore = $true }
+        $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true; Restore = $true; ExperimentalFeatureJsonFilePath = "$location\ExperimentalFeatures.json"}
 
         if ($FxDependent.IsPresent) {
             $projectAssetsZipName = 'linuxFxDependantProjectAssetssymbols.zip'
@@ -96,12 +96,12 @@ function BuildPackages {
         if ($TarArm) {
             ## Build 'linux-arm' and create 'tar.gz' package for it.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam
+            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -ExperimentalFeatureJsonFilePath "$location\ExperimentalFeatures.json"
             Start-PSPackage -Type tar-arm @releaseTagParam -LTS:$LTS
         }
 
         if ($TarArm64) {
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam
+            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam --ExperimentalFeatureJsonFilePath "$location\ExperimentalFeatures.json"
             Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
         }
     } finally {
