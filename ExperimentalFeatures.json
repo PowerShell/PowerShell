@@ -1,0 +1,11 @@
+[
+  "PSAnsiRenderingFileInfo",
+  "PSCleanBlock",
+  "PSCommandNotFoundSuggestion",
+  "PSLoadAssemblyFromNativeCode",
+  "PSNativeCommandArgumentPassing",
+  "PSNativeCommandErrorActionPreference",
+  "PSNativePSPathResolution",
+  "PSRemotingSSHTransportErrorHandling",
+  "PSSubsystemPluginModel"
+]

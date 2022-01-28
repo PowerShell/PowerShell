@@ -324,7 +324,8 @@ function Start-PSBuild {
         [switch]$Detailed,
         [switch]$InteractiveAuth,
         [switch]$SkipRoslynAnalyzers,
-        [string]$PSOptionsPath
+        [string]$PSOptionsPath,
+        [string]$ExperimentalFeatureJsonFilePath
     )
 
     if ($ReleaseTag -and $ReleaseTag -notmatch "^v\d+\.\d+\.\d+(-(preview|rc)(\.\d{1,2})?)?$") {
@@ -624,35 +625,45 @@ Fix steps:
                      "WindowsPowerShellCompatibilityModuleDenyList" = @("PSScheduledJob","BestPractices","UpdateServices") }
     }
 
-    # When building preview, we want the configuration to enable all experiemental features by default
-    # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
-    if (-not $SkipExperimentalFeatureGeneration -and
-        (Test-IsPreview $psVersion) -and
-        -not (Test-IsReleaseCandidate $psVersion) -and
-        -not $Runtime.Contains("arm") -and
-        -not ($Runtime -like 'fxdependent*')) {
-
-        $json = & $publishPath\pwsh -noprofile -command {
-            # Special case for DSC code in PS;
-            # this experimental feature requires new DSC module that is not inbox,
-            # so we don't want default DSC use case be broken
-            [System.Collections.ArrayList] $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
-
-            $expFeatures | Out-String | Write-Verbose -Verbose
-
-            # Make sure ExperimentalFeatures from modules in PSHome are added
-            # https://github.com/PowerShell/PowerShell/issues/10550
-            $ExperimentalFeaturesFromGalleryModulesInPSHome = @()
-            $ExperimentalFeaturesFromGalleryModulesInPSHome | ForEach-Object {
-                if (!$expFeatures.Contains($_)) {
-                    $null = $expFeatures.Add($_)
-                }
-            }
-
-            ConvertTo-Json $expFeatures
+    if ($ExperimentalFeatureJsonFilePath) {
+        if (-not (Test-Path $ExperimentalFeatureJsonFilePath)) {
+            throw "ExperimentalFeatureJsonFilePath: $ExperimentalFeatureJsonFilePath does not exist"
         }
 
+        $json = Get-Content -Raw $ExperimentalFeatureJsonFilePath
         $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
+    }
+    else {
+        # When building preview, we want the configuration to enable all experiemental features by default
+        # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
+        if (-not $SkipExperimentalFeatureGeneration -and
+        (Test-IsPreview $psVersion) -and
+            -not (Test-IsReleaseCandidate $psVersion) -and
+            -not $Runtime.Contains("arm") -and
+            -not ($Runtime -like 'fxdependent*')) {
+
+            $json = & $publishPath\pwsh -noprofile -command {
+                # Special case for DSC code in PS;
+                # this experimental feature requires new DSC module that is not inbox,
+                # so we don't want default DSC use case be broken
+                [System.Collections.ArrayList] $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
+
+                $expFeatures | Out-String | Write-Verbose -Verbose
+
+                # Make sure ExperimentalFeatures from modules in PSHome are added
+                # https://github.com/PowerShell/PowerShell/issues/10550
+                $ExperimentalFeaturesFromGalleryModulesInPSHome = @()
+                $ExperimentalFeaturesFromGalleryModulesInPSHome | ForEach-Object {
+                    if (!$expFeatures.Contains($_)) {
+                        $null = $expFeatures.Add($_)
+                    }
+                }
+
+                ConvertTo-Json $expFeatures
+            }
+
+            $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
+        }
     }
 
     if ($config.Count -gt 0) {
