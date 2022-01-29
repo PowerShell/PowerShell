@@ -5018,7 +5018,12 @@ namespace System.Management.Automation.Language
                             ParserStrings.MissingNamespaceAlias);
                         return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
                     }
-
+                    if (aliasToken.Kind == TokenKind.Comma)
+                    {
+                        UngetToken(aliasToken);
+                        ReportError(aliasToken.Extent, nameof(ParserStrings.UnexpectedUnaryOperator), ParserStrings.UnexpectedUnaryOperator, aliasToken.Text);
+                        return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
+                    }
                     var aliasAst = GetCommandArgument(CommandArgumentContext.CommandArgument, aliasToken);
                     if (kind == UsingStatementKind.Module && aliasAst is HashtableAst)
                     {
