@@ -55,6 +55,15 @@ namespace Microsoft.PowerShell.Commands
         [Alias("ms")]
         public int Milliseconds { get; set; }
 
+        /// <summary>
+        /// Allows sleep time to be specified as a TimeSpan.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "FromTimeSpan", ValueFromPipeline = true,
+                   ValueFromPipelineByPropertyName = true)]
+        [ValidateRange(ValidateRangeKind.NonNegative)]
+        [Alias("ts")]
+        public TimeSpan Duration { get; set; }
+
         #endregion
 
         #region methods
@@ -103,6 +112,26 @@ namespace Microsoft.PowerShell.Commands
 
                 case "Milliseconds":
                     sleepTime = Milliseconds;
+                    break;
+                
+                case "FromTimeSpan":
+                    if (Duration.TotalMilliseconds > int.MaxValue)
+                    {
+                        PSArgumentException argumentException = PSTraceSource.NewArgumentException(
+                            nameof(Duration),
+                            StartSleepStrings.MaximumDurationExceeded,
+                            TimeSpan.FromMilliseconds(int.MaxValue),
+                            Duration);
+
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                argumentException,
+                                "MaximumDurationExceeded",
+                                ErrorCategory.InvalidArgument,
+                                targetObject: null));
+                    }
+
+                    sleepTime = (int)Math.Floor(Duration.TotalMilliseconds);
                     break;
 
                 default:

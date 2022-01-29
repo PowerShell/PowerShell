@@ -469,9 +469,7 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
             // The placeholder mode management APIs Rtl(Set|Query)(Process|Thread)PlaceholderCompatibilityMode
             // are only supported starting with Windows 10 version 1803 (build 17134)
-            Version minBuildForPlaceHolderAPIs = new Version(10, 0, 17134, 0);
-
-            if (Environment.OSVersion.Version >= minBuildForPlaceHolderAPIs)
+            if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17134, 0))
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
                 if (NativeMethods.RtlQueryProcessPlaceholderCompatibilityMode() == NativeMethods.PHCM_DISGUISE_PLACEHOLDER)
@@ -2724,8 +2722,7 @@ namespace Microsoft.PowerShell.Commands
             // The new AllowUnprivilegedCreate is only available on Win10 build 14972 or newer
             var flags = isDirectory ? NativeMethods.SymbolicLinkFlags.Directory : NativeMethods.SymbolicLinkFlags.File;
 
-            Version minBuildOfDeveloperMode = new Version(10, 0, 14972, 0);
-            if (Environment.OSVersion.Version >= minBuildOfDeveloperMode)
+            if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 14972, 0))
             {
                 flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
             }
@@ -8126,6 +8123,22 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 return fileSysInfo.LinkTarget;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the target for a given file or directory, resolving symbolic links.
+        /// </summary>
+        /// <param name="instance">The FileInfo or DirectoryInfo type.</param>
+        /// <returns>The file path the instance points to.</returns>
+        public static string ResolvedTarget(PSObject instance)
+        {
+            if (instance.BaseObject is FileSystemInfo fileSysInfo)
+            {
+                FileSystemInfo linkTarget = fileSysInfo.ResolveLinkTarget(true);
+                return linkTarget is null ? fileSysInfo.FullName : linkTarget.FullName;
             }
 
             return null;

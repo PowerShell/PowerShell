@@ -639,7 +639,9 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo ArgumentTransformationAttribute_Transform =
             typeof(ArgumentTransformationAttribute).GetMethod(nameof(ArgumentTransformationAttribute.Transform), InstancePublicFlags);
-        // ReSharper restore InconsistentNaming
+        
+        internal static readonly MethodInfo MemberInvocationLoggingOps_LogMemberInvocation =
+            typeof(MemberInvocationLoggingOps).GetMethod(nameof(MemberInvocationLoggingOps.LogMemberInvocation), StaticFlags);
     }
 
     internal static class ExpressionCache
@@ -1172,24 +1174,34 @@ namespace System.Management.Automation.Language
             return firstConvert?.Type.TypeName.GetReflectionType();
         }
 
-        internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(Type targetType, Type argType)
+        internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(
+            Type targetType,
+            Type argType,
+            Type[] genericArguments = null)
         {
-            if (targetType == null && argType == null)
+            if (targetType is null
+                && argType is null
+                && (genericArguments is null || genericArguments.Length == 0))
             {
                 return null;
             }
 
-            return new PSMethodInvocationConstraints(targetType, new[] { argType });
+            return new PSMethodInvocationConstraints(targetType, genericArguments, new[] { argType });
         }
 
-        internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(Type targetType, Type[] argTypes)
+        internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(
+            Type targetType,
+            Type[] argTypes,
+            Type[] genericArguments = null)
         {
-            if (targetType == null && (argTypes == null || argTypes.Length == 0))
+            if (targetType is null
+                && (argTypes is null || argTypes.Length == 0)
+                && (genericArguments is null || genericArguments.Length == 0))
             {
                 return null;
             }
 
-            return new PSMethodInvocationConstraints(targetType, argTypes);
+            return new PSMethodInvocationConstraints(targetType, genericArguments, argTypes);
         }
 
         internal static Expression ConvertValue(TypeConstraintAst typeConstraint, Expression expr)
@@ -6336,17 +6348,47 @@ namespace System.Management.Automation.Language
 
         internal static PSMethodInvocationConstraints GetInvokeMemberConstraints(InvokeMemberExpressionAst invokeMemberExpressionAst)
         {
-            var arguments = invokeMemberExpressionAst.Arguments;
+            ReadOnlyCollection<ExpressionAst> arguments = invokeMemberExpressionAst.Arguments;
+            Type[] argumentTypes = null;
+            if (arguments is not null)
+            {
+                argumentTypes = new Type[arguments.Count];
+                for (var i = 0; i < arguments.Count; i++)
+                {
+                    argumentTypes[i] = GetTypeConstraintForMethodResolution(arguments[i]);
+                }
+            }
+
             var targetTypeConstraint = GetTypeConstraintForMethodResolution(invokeMemberExpressionAst.Expression);
-            return CombineTypeConstraintForMethodResolution(
-                    targetTypeConstraint,
-                    arguments?.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray());
+
+            ReadOnlyCollection<ITypeName> genericArguments = invokeMemberExpressionAst.GenericTypeArguments;
+            Type[] genericTypeArguments = null;
+            if (genericArguments is not null)
+            {
+                genericTypeArguments = new Type[genericArguments.Count];
+                for (var i = 0; i < genericArguments.Count; i++)
+                {
+                    genericTypeArguments[i] = genericArguments[i].GetReflectionType();
+                }
+            }
+
+            return CombineTypeConstraintForMethodResolution(targetTypeConstraint, argumentTypes, genericTypeArguments);
         }
 
         internal static PSMethodInvocationConstraints GetInvokeMemberConstraints(BaseCtorInvokeMemberExpressionAst invokeMemberExpressionAst)
         {
             Type targetTypeConstraint = null;
-            var arguments = invokeMemberExpressionAst.Arguments;
+            ReadOnlyCollection<ExpressionAst> arguments = invokeMemberExpressionAst.Arguments;
+            Type[] argumentTypes = null;
+            if (arguments is not null)
+            {
+                argumentTypes = new Type[arguments.Count];
+                for (var i = 0; i < arguments.Count; i++)
+                {
+                    argumentTypes[i] = GetTypeConstraintForMethodResolution(arguments[i]);
+                }
+            }
+
             TypeDefinitionAst typeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(invokeMemberExpressionAst);
             if (typeDefinitionAst != null)
             {
@@ -6357,9 +6399,7 @@ namespace System.Management.Automation.Language
                 Diagnostics.Assert(false, "BaseCtorInvokeMemberExpressionAst must be used only inside TypeDefinitionAst");
             }
 
-            return CombineTypeConstraintForMethodResolution(
-                    targetTypeConstraint,
-                    arguments?.Select(Compiler.GetTypeConstraintForMethodResolution).ToArray());
+            return CombineTypeConstraintForMethodResolution(targetTypeConstraint, argumentTypes, genericArguments: null);
         }
 
         internal Expression InvokeMember(
