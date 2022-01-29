@@ -1362,6 +1362,13 @@ dir -Recurse `
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches | Should -BeNullOrEmpty
         }
+
+        It "A single dash should not complete to anything" {
+            function test-{}
+            $inputStr = 'git -'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -BeNullOrEmpty
+        }
     }
 
     Context "Tab completion error tests" {
