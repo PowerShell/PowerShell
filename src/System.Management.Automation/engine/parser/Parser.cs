@@ -5051,6 +5051,16 @@ namespace System.Management.Automation.Language
                     Token aliasToken;
                     if (kind is UsingStatementKind.Type or UsingStatementKind.Namespace)
                     {
+                        // prevents bypassing the type whitelist by overriding an allowed type accelerator with a blocked type
+                        // using type string = System.Collections.Generic.List[string]; [string]
+                        if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
+                        {
+                            var errorExtent = ExtentOf(usingToken, equalsToken);
+                            ReportError(errorExtent,
+                                nameof(ParserStrings.TypeAndNamespaceAliasNotAllowedInConstrainedLanguage),
+                                ParserStrings.TypeAndNamespaceAliasNotAllowedInConstrainedLanguage);
+                            return null;
+                        }
                         var oldMode = _tokenizer.Mode;
                         SetTokenizerMode(TokenizerMode.TypeName);
                         aliasToken = PeekToken();
