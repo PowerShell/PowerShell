@@ -1497,10 +1497,16 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="TypeAliasContainsNamespace" xml:space="preserve">
     <value>Type aliases cannot contain namespaces.</value>
   </data>
+  <data name="NamespaceAliasContainsNamespace" xml:space="preserve">
+    <value>Namespace aliases cannot contain namespaces.</value>
+  </data>
   <data name="TypeAliasConflictsTypeDefinition" xml:space="preserve">
     <value>Type alias {0} conflicts with a script defined type.</value>
   </data>
   <data name="TypeAliasConflictsImportedTypeDefinition" xml:space="preserve">
     <value>Type alias {0} conflicts with an imported type.</value>
+  </data>
+  <data name="NamespaceExpected" xml:space="preserve">
+    <value>Namespace expected.</value>
   </data>
 </root>

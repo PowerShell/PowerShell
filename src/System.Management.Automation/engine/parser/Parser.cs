@@ -5008,11 +5008,15 @@ namespace System.Management.Automation.Language
                 return new ErrorStatementAst(ExtentOf(usingToken, ExtentFromFirstOf(itemAst, itemToken)));
             }
 
-            // We don't allow namespaces in type aliases
-            if (kind == UsingStatementKind.Type && itemAst.Extent.Text.Contains('.'))
+            if (kind == UsingStatementKind.Type)
             {
-                ReportError(itemAst.Extent, nameof(ParserStrings.TypeAliasContainsNamespace), ParserStrings.TypeAliasContainsNamespace);
-                return new ErrorStatementAst(ExtentOf(usingToken, ExtentFromFirstOf(itemAst, itemToken)));
+                itemToken.TokenFlags = TokenFlags.TypeName;
+                // We don't allow namespaces in type aliases
+                if (itemAst.Extent.Text.Contains('.'))
+                {
+                    ReportError(itemAst.Extent, nameof(ParserStrings.TypeAliasContainsNamespace), ParserStrings.TypeAliasContainsNamespace);
+                    return new ErrorStatementAst(ExtentOf(usingToken, itemAst));
+                }
             }
 
             HashtableAst htAst = null;
@@ -5033,25 +5037,106 @@ namespace System.Management.Automation.Language
                 if (equalsToken.Kind == TokenKind.Equals)
                 {
                     SkipToken();
-
-                    var aliasToken = NextToken();
-                    if (aliasToken.Kind == TokenKind.EndOfInput || aliasToken.Kind == TokenKind.NewLine)
+                    // We don't allow subnamespaces in namespace aliases
+                    if (kind == UsingStatementKind.Namespace)
                     {
-                        UngetToken(aliasToken);
-                        ReportIncompleteInput(After(equalsToken),
-                            nameof(ParserStrings.MissingNamespaceAlias),
-                            ParserStrings.MissingNamespaceAlias);
-                        return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
+                        itemToken.TokenFlags = TokenFlags.TypeName;
+                        if (itemAst.Extent.Text.Contains('.'))
+                        {
+                            ReportError(itemAst.Extent, nameof(ParserStrings.NamespaceAliasContainsNamespace), ParserStrings.NamespaceAliasContainsNamespace);
+                            return new ErrorStatementAst(ExtentOf(usingToken, itemAst.Extent));
+                        }
                     }
+                    Ast aliasAst;
+                    Token aliasToken;
+                    if (kind is UsingStatementKind.Type or UsingStatementKind.Namespace)
+                    {
+                        var oldMode = _tokenizer.Mode;
+                        SetTokenizerMode(TokenizerMode.TypeName);
+                        aliasToken = PeekToken();
+                        SetTokenizerMode(oldMode);
 
-                    var aliasAst = GetCommandArgument(CommandArgumentContext.CommandArgument, aliasToken);
+                        if (aliasToken.Kind is TokenKind.EndOfInput or TokenKind.NewLine or TokenKind.Semi)
+                        {
+                            if (kind == UsingStatementKind.Type)
+                            {
+                                ReportIncompleteInput(After(equalsToken), nameof(ParserStrings.MissingTypeAlias), ParserStrings.MissingTypeAlias);
+                            }
+                            else
+                            {
+                                ReportIncompleteInput(After(equalsToken), nameof(ParserStrings.MissingNamespaceAlias), ParserStrings.MissingNamespaceAlias);
+                            }
+                            return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
+                        }
+
+                        if (aliasToken.Kind != TokenKind.Identifier && aliasToken.TokenFlags != TokenFlags.TypeName)
+                        {
+                            if (kind == UsingStatementKind.Type)
+                            {
+                                ReportError(aliasToken.Extent, nameof(ParserStrings.TypeNameExpected), ParserStrings.TypeNameExpected);
+                            }
+                            else
+                            {
+                                ReportError(aliasToken.Extent, nameof(ParserStrings.NamespaceExpected), ParserStrings.NamespaceExpected);
+                            }
+                            return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
+                        }
+
+                        var aliasTypeName = TypeNameRule(allowAssemblyQualifiedNames: false, out _);
+
+                        if (kind == UsingStatementKind.Namespace && (aliasTypeName.IsGeneric || aliasTypeName.IsArray))
+                        {
+                            ReportError(aliasTypeName.Extent, nameof(ParserStrings.NamespaceExpected), ParserStrings.NamespaceExpected);
+                            return new ErrorStatementAst(ExtentOf(usingToken, aliasTypeName.Extent));
+                        }
+
+                        // TypeNameRule inserts ":ErrorTypeName:" when generics are missing a type
+                        if (aliasTypeName.Name.Contains(":ErrorTypeName:"))
+                        {
+                            return new ErrorStatementAst(ExtentOf(usingToken, aliasTypeName.Extent));
+                        }
+
+                        aliasAst = new TypeConstraintAst(aliasTypeName.Extent, aliasTypeName);
+                    }
+                    else
+                    {
+                        aliasToken = NextToken();
+                        if (aliasToken.Kind is TokenKind.EndOfInput or TokenKind.NewLine or TokenKind.Semi)
+                        {
+                            UngetToken(aliasToken);
+                            ReportIncompleteInput(After(equalsToken),
+                                nameof(ParserStrings.MissingNamespaceAlias),
+                                ParserStrings.MissingNamespaceAlias);
+                            return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
+                        }
+                        if (aliasToken.Kind == TokenKind.Comma)
+                        {
+                            UngetToken(aliasToken);
+                            ReportError(aliasToken.Extent, nameof(ParserStrings.UnexpectedUnaryOperator), ParserStrings.UnexpectedUnaryOperator, aliasToken.Text);
+                            return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
+                        }
+
+                        aliasAst = GetCommandArgument(CommandArgumentContext.CommandArgument, aliasToken);
+                    }
+                    
                     if (kind == UsingStatementKind.Module && aliasAst is HashtableAst)
                     {
                         htAst = (HashtableAst)aliasAst;
                     }
-                    else if (aliasAst is not StringConstantExpressionAst and not ArrayLiteralAst)
+                    else if (aliasAst is not StringConstantExpressionAst and not TypeConstraintAst)
                     {
-                        return new ErrorStatementAst(ExtentOf(usingToken, aliasAst), new Ast[] { itemAst, aliasAst });
+                        var errorExtent = ExtentFromFirstOf(aliasAst, aliasToken);
+                        Ast[] nestedAsts;
+                        if (aliasAst is null)
+                        {
+                            nestedAsts = new Ast[] { itemAst };
+                        }
+                        else
+                        {
+                            nestedAsts = new Ast[] { itemAst, aliasAst };
+                        }
+                        ReportError(errorExtent, nameof(ParserStrings.InvalidValueForUsingItemName), ParserStrings.InvalidValueForUsingItemName, errorExtent.Text);
+                        return new ErrorStatementAst(ExtentOf(usingToken, errorExtent), nestedAsts);
                     }
 
                     RequireStatementTerminator();

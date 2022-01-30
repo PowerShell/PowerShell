@@ -2972,7 +2972,7 @@ namespace System.Management.Automation.Language
         /// <param name="aliasName">The name of the alias.</param>
         /// <param name="resolvedAliasAst">The item being aliased.</param>
         public UsingStatementAst(IScriptExtent extent, UsingStatementKind kind, StringConstantExpressionAst aliasName,
-                                 ExpressionAst resolvedAliasAst)
+                                 Ast resolvedAliasAst)
             : base(extent)
         {
             if (aliasName == null)
@@ -3033,7 +3033,7 @@ namespace System.Management.Automation.Language
         /// The name of the item being aliased.
         /// This property is mutually exclusive with <see cref="ModuleSpecification"/> property.
         /// </summary>
-        public ExpressionAst Alias { get; }
+        public Ast Alias { get; }
 
         /// <summary>
         /// Hashtable that can be converted to <see cref="Microsoft.PowerShell.Commands.ModuleSpecification"/>. Only for 'using module' case, otherwise null.

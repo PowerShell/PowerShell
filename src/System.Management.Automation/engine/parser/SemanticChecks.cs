@@ -1317,8 +1317,8 @@ namespace System.Management.Automation.Language
             if (!usingKindSupported || (usingStatementAst.Alias is not null && !usingAliasSupported))
             {
                 _parser.ReportError(usingStatementAst.Extent,
-                nameof(ParserStrings.UsingStatementNotSupported),
-                ParserStrings.UsingStatementNotSupported);
+                    nameof(ParserStrings.UsingStatementNotSupported),
+                    ParserStrings.UsingStatementNotSupported);
             }
 
             return AstVisitAction.Continue;

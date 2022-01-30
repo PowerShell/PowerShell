@@ -356,9 +356,9 @@ namespace System.Management.Automation.Language
             Dictionary<string, ITypeName> typeAliases = new Dictionary<string, ITypeName>(StringComparer.OrdinalIgnoreCase);
             foreach (var usingStatement in scriptBlockAst.UsingStatements)
             {
-                if (usingStatement.UsingStatementKind == UsingStatementKind.Type && usingStatement.Alias is not null)
+                if (usingStatement.UsingStatementKind == UsingStatementKind.Type && usingStatement.Alias is TypeConstraintAst typeConstraint)
                 {
-                    typeAliases[usingStatement.Name.Value] = Parser.ScanType(usingStatement.Alias.Extent.Text, ignoreErrors: false);
+                    typeAliases[usingStatement.Name.Value] = typeConstraint.TypeName;
                 }
             }
             if (typeAliases.Count == 0)
