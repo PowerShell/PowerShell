@@ -390,6 +390,14 @@ namespace System.Management.Automation.Language
                         TypeCache.Add(genericTypeAlias, typeResolutionState, result);
                     }
                 }
+                else if (typeNameAlias is ArrayTypeName arrayTypeAlias)
+                {
+                    result = arrayTypeAlias.GetReflectionType();
+                    if (result is not null)
+                    {
+                        TypeCache.Add(arrayTypeAlias, typeResolutionState, result);
+                    }
+                }
                 else if (typeNameAlias is TypeName newTypeNameAlias)
                 {
                     result = CallResolveTypeNameWorkerHelper(newTypeNameAlias, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
