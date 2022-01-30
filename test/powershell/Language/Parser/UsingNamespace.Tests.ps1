@@ -8,7 +8,7 @@ using namespace System.Threading
 using namespace System.Timers
 using namespace System.Diagnostics
 # Test parsing more than one using statement on one line
-using namespace System.Diagnostics; using namespace System.Runtime.CompilerServices
+using namespace System.Buffers; using namespace System.Runtime.CompilerServices
 using namespace System.Collections.Generic
 
 # Flags is System.FlagsAttribute
