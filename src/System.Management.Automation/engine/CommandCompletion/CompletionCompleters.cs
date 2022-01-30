@@ -6250,8 +6250,11 @@ namespace System.Management.Automation
         {
             internal string Namespace;
 
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
+            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
             {
+                string completion = string.IsNullOrEmpty(namespaceToRemove)
+                    ? $"{prefix}{Namespace}{suffix}"
+                    : $"{prefix}{Namespace.Substring(namespaceToRemove.Length + 1)}{suffix}";
                 var listItemText = Namespace;
                 var dotIndex = listItemText.LastIndexOf('.');
                 if (dotIndex != -1)
@@ -6259,12 +6262,12 @@ namespace System.Management.Automation
                     listItemText = listItemText.Substring(dotIndex + 1);
                 }
 
-                return new CompletionResult(prefix + Namespace + suffix, listItemText, CompletionResultType.Namespace, "Namespace " + Namespace);
+                return new CompletionResult(completion, listItemText, CompletionResultType.Namespace, "Namespace " + Namespace);
             }
 
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
+            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
             {
-                return GetCompletionResult(keyMatched, prefix, suffix);
+                return GetCompletionResult(keyMatched, prefix, suffix, null);
             }
         }
 
@@ -6538,6 +6541,42 @@ namespace System.Management.Automation
             var results = new List<CompletionResult>();
             var completionTextSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             var wordToComplete = context.WordToComplete;
+            string usedNamespaceAlias = null;
+            var usingInfo = GetUsingAliasInfo(context);
+
+            if (wordToComplete.Contains('.'))
+            {
+                foreach (var nsAlias in usingInfo.NamespaceAliases.Keys)
+                {
+                    if (wordToComplete.StartsWith($"{nsAlias}.", StringComparison.OrdinalIgnoreCase))
+                    {
+                        prefix = $"{prefix}{nsAlias}.";
+                        usedNamespaceAlias = nsAlias;
+                        wordToComplete = $"{usingInfo.NamespaceAliases[nsAlias]}{wordToComplete.Substring(nsAlias.Length)}";
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var nsAlias in usingInfo.NamespaceAliases.Keys)
+                {
+                    if (nsAlias.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                    {
+                        results.Add(new CompletionResult($"{prefix}{nsAlias}{suffix}", nsAlias, CompletionResultType.Namespace, $"NamespaceAlias {nsAlias} = {usingInfo.NamespaceAliases[nsAlias]}"));
+                    }
+                }
+                foreach (var typeAlias in usingInfo.TypeAliases.Keys)
+                {
+                    if (typeAlias.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                    {
+                        var typeAliasName = $"{prefix}{typeAlias}{suffix}";
+                        results.Add(new CompletionResult(typeAliasName, typeAlias, CompletionResultType.Type, $"TypeAlias {typeAlias} = {usingInfo.TypeAliases[typeAlias]}"));
+                        _ = completionTextSet.Add(typeAliasName);
+                    }
+                }
+            }
+
             var dots = wordToComplete.Count(static c => c == '.');
             if (dots >= localTypeCache.Length || localTypeCache[dots] == null)
             {
@@ -6550,7 +6589,15 @@ namespace System.Management.Automation
             {
                 foreach (var completion in entry.Completions)
                 {
-                    string namespaceToRemove = GetNamespaceToRemove(context, completion);
+                    string namespaceToRemove;
+                    if (usedNamespaceAlias is not null)
+                    {
+                        namespaceToRemove = usingInfo.NamespaceAliases[usedNamespaceAlias];
+                    }
+                    else
+                    {
+                        namespaceToRemove = GetNamespaceToRemove(context, completion);
+                    }
                     var completionResult = completion.GetCompletionResult(entry.Key, prefix, suffix, namespaceToRemove);
 
                     // We might get the same completion result twice. For example, the type cache has:
@@ -6616,6 +6663,46 @@ namespace System.Management.Automation
             }
 
             return ns;
+        }
+
+        private static UsingAliasInfo GetUsingAliasInfo(CompletionContext context)
+        {
+            var namespaceAliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var typeAliases = new Dictionary<string, ITypeName>(StringComparer.OrdinalIgnoreCase);
+
+            if (context.RelatedAsts is not null && context.RelatedAsts.Count > 0 && context.RelatedAsts[0] is ScriptBlockAst rootScriptBlock)
+            {
+                foreach (var statement in rootScriptBlock.UsingStatements)
+                {
+                    if (statement.UsingStatementKind == UsingStatementKind.Namespace && statement.Alias is not null)
+                    {
+                        namespaceAliases.Add(statement.Name.Value, statement.Alias.Extent.Text);
+                    }
+                    else if (statement.UsingStatementKind == UsingStatementKind.Type)
+                    {
+                        typeAliases.Add(statement.Name.Value, Parser.ScanType(statement.Alias.Extent.Text, ignoreErrors: false));
+                    }
+                }
+            }
+            if (namespaceAliases.Count == 0)
+            {
+                namespaceAliases = context.ExecutionContext.SessionState.Internal.CurrentScope.TypeResolutionState.namespaceAliases;
+            }
+            if (typeAliases.Count == 0)
+            {
+                typeAliases = context.ExecutionContext.SessionState.Internal.CurrentScope.TypeResolutionState.typeAliases;
+            }
+            return new UsingAliasInfo()
+            {
+                NamespaceAliases = namespaceAliases,
+                TypeAliases = typeAliases
+            };
+        }
+
+        private sealed class UsingAliasInfo
+        {
+            internal Dictionary<string, string> NamespaceAliases;
+            internal Dictionary<string, ITypeName> TypeAliases;
         }
 
         #endregion Types
