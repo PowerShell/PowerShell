@@ -461,11 +461,11 @@ namespace System.Management.Automation.Language
             {
                 foreach (var key in typeResolutionState.namespaceAliases.Keys)
                 {
-                    if (!typeName.Name.StartsWith($"{key}.", StringComparison.OrdinalIgnoreCase))
+                    if (!typeName.Name.StartsWith(string.Create(CultureInfo.InvariantCulture, $"{key}."), StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
-                    var newTypeNameToSearch = $"{typeResolutionState.namespaceAliases[key]}{typeName.Name.Substring(key.Length)}";
+                    var newTypeNameToSearch = string.Create(CultureInfo.InvariantCulture, $"{typeResolutionState.namespaceAliases[key]}{typeName.Name.AsSpan(key.Length)}");
                     newTypeNameToSearch = typeResolutionState.GetAlternateTypeName(newTypeNameToSearch) ?? newTypeNameToSearch;
                     var newTypeName = new TypeName(typeName.Extent, newTypeNameToSearch);
 #if CORECLR

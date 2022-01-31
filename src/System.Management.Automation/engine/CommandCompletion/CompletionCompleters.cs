@@ -6548,11 +6548,11 @@ namespace System.Management.Automation
             {
                 foreach (var nsAlias in usingInfo.NamespaceAliases.Keys)
                 {
-                    if (wordToComplete.StartsWith($"{nsAlias}.", StringComparison.OrdinalIgnoreCase))
+                    if (wordToComplete.StartsWith(string.Create(CultureInfo.InvariantCulture, $"{nsAlias}."), StringComparison.OrdinalIgnoreCase))
                     {
-                        prefix = $"{prefix}{nsAlias}.";
+                        prefix = string.Create(CultureInfo.InvariantCulture, $"{prefix}{nsAlias}.");
                         usedNamespaceAlias = nsAlias;
-                        wordToComplete = $"{usingInfo.NamespaceAliases[nsAlias]}{wordToComplete.Substring(nsAlias.Length)}";
+                        wordToComplete = string.Create(CultureInfo.InvariantCulture, $"{usingInfo.NamespaceAliases[nsAlias]}{wordToComplete.AsSpan(nsAlias.Length)}");
                         break;
                     }
                 }
@@ -6563,15 +6563,23 @@ namespace System.Management.Automation
                 {
                     if (nsAlias.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
                     {
-                        results.Add(new CompletionResult($"{prefix}{nsAlias}{suffix}", nsAlias, CompletionResultType.Namespace, $"NamespaceAlias {nsAlias} = {usingInfo.NamespaceAliases[nsAlias]}"));
+                        results.Add(new CompletionResult(
+                            string.Create(CultureInfo.InvariantCulture, $"{prefix}{nsAlias}{suffix}"),
+                            nsAlias,
+                            CompletionResultType.Namespace,
+                            string.Create(CultureInfo.InvariantCulture, $"NamespaceAlias {nsAlias} = {usingInfo.NamespaceAliases[nsAlias]}")));
                     }
                 }
                 foreach (var typeAlias in usingInfo.TypeAliases.Keys)
                 {
                     if (typeAlias.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
                     {
-                        var typeAliasName = $"{prefix}{typeAlias}{suffix}";
-                        results.Add(new CompletionResult(typeAliasName, typeAlias, CompletionResultType.Type, $"TypeAlias {typeAlias} = {usingInfo.TypeAliases[typeAlias]}"));
+                        var typeAliasName = string.Create(CultureInfo.InvariantCulture, $"{prefix}{typeAlias}{suffix}");
+                        results.Add(new CompletionResult(
+                            typeAliasName,
+                            typeAlias,
+                            CompletionResultType.Type,
+                            string.Create(CultureInfo.InvariantCulture, $"TypeAlias {typeAlias} = {usingInfo.TypeAliases[typeAlias]}")));
                         _ = completionTextSet.Add(typeAliasName);
                     }
                 }
