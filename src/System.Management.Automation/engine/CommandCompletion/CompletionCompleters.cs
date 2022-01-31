@@ -6253,8 +6253,8 @@ namespace System.Management.Automation
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
             {
                 string completion = string.IsNullOrEmpty(namespaceToRemove)
-                    ? $"{prefix}{Namespace}{suffix}"
-                    : $"{prefix}{Namespace.Substring(namespaceToRemove.Length + 1)}{suffix}";
+                    ? string.Create(CultureInfo.InvariantCulture, $"{prefix}{Namespace}{suffix}")
+                    : string.Create(CultureInfo.InvariantCulture, $"{prefix}{Namespace.AsSpan(namespaceToRemove.Length + 1)}{suffix}");
                 var listItemText = Namespace;
                 var dotIndex = listItemText.LastIndexOf('.');
                 if (dotIndex != -1)
