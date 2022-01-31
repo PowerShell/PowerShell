@@ -8001,7 +8001,48 @@ namespace System.Management.Automation.Language
     public class MemberExpressionAst : ExpressionAst, ISupportsAssignment
     {
         /// <summary>
-        /// Construct an ast to reference a property.
+        /// Initializes a new instance of the <see cref="MemberExpressionAst"/> class.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the expression, starting with the expression before the operator '.' or '::' and ending after
+        /// membername or expression naming the member.
+        /// </param>
+        /// <param name="expression">The expression before the member access operator '.' or '::'.</param>
+        /// <param name="member">The name or expression naming the member to access.</param>
+        /// <param name="static">True if the '::' operator was used, false if '.' is used.
+        /// True if the member access is for a static member, using '::', false if accessing a member on an instance using '.'.
+        /// </param>
+        /// <param name="genericTypes">The generic type arguments passed to the member.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/>, <paramref name="expression"/>, or <paramref name="member"/> is null.
+        /// </exception>
+        public MemberExpressionAst(
+            IScriptExtent extent,
+            ExpressionAst expression,
+            CommandElementAst member,
+            bool @static,
+            IList<ITypeName> genericTypes)
+            : base(extent)
+        {
+            if (expression == null || member == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(expression == null ? "expression" : "member");
+            }
+
+            this.Expression = expression;
+            SetParent(expression);
+            this.Member = member;
+            SetParent(member);
+            this.Static = @static;
+
+            if (genericTypes is not null && genericTypes.Count > 0)
+            {
+                this.GenericTypeArguments = new ReadOnlyCollection<ITypeName>(genericTypes);
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MemberExpressionAst"/> class.
         /// </summary>
         /// <param name="extent">
         /// The extent of the expression, starting with the expression before the operator '.' or '::' and ending after
@@ -8015,19 +8056,40 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/>, <paramref name="expression"/>, or <paramref name="member"/> is null.
         /// </exception>
-        public MemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst member, bool @static)
-            : base(extent)
+        public MemberExpressionAst(
+            IScriptExtent extent,
+            ExpressionAst expression,
+            CommandElementAst member,
+            bool @static)
+            : this(extent, expression, member, @static, genericTypes: null)
         {
-            if (expression == null || member == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(expression == null ? "expression" : "member");
-            }
+        }
 
-            this.Expression = expression;
-            SetParent(expression);
-            this.Member = member;
-            SetParent(member);
-            this.Static = @static;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MemberExpressionAst"/> class.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the expression, starting with the expression before the operator '.', '::' or '?.' and ending after
+        /// membername or expression naming the member.
+        /// </param>
+        /// <param name="expression">The expression before the member access operator '.', '::' or '?.'.</param>
+        /// <param name="member">The name or expression naming the member to access.</param>
+        /// <param name="static">True if the '::' operator was used, false if '.' or '?.' is used.</param>
+        /// <param name="nullConditional">True if '?.' used.</param>
+        /// <param name="genericTypes">The generic type arguments passed to the member.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/>, <paramref name="expression"/>, or <paramref name="member"/> is null.
+        /// </exception>
+        public MemberExpressionAst(
+            IScriptExtent extent,
+            ExpressionAst expression,
+            CommandElementAst member,
+            bool @static,
+            bool nullConditional,
+            IList<ITypeName> genericTypes)
+            : this(extent, expression, member, @static, genericTypes)
+        {
+            this.NullConditional = nullConditional;
         }
 
         /// <summary>
@@ -8044,10 +8106,14 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/>, <paramref name="expression"/>, or <paramref name="member"/> is null.
         /// </exception>
-        public MemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst member, bool @static, bool nullConditional)
-            : this(extent, expression, member, @static)
+        public MemberExpressionAst(
+            IScriptExtent extent,
+            ExpressionAst expression,
+            CommandElementAst member,
+            bool @static,
+            bool nullConditional)
+            : this(extent, expression, member, @static, nullConditional, genericTypes: null)
         {
-            this.NullConditional = nullConditional;
         }
 
         /// <summary>
@@ -8071,13 +8137,25 @@ namespace System.Management.Automation.Language
         public bool NullConditional { get; protected set; }
 
         /// <summary>
+        /// Gets a list of generic type arguments passed to this member.
+        /// </summary>
+        public ReadOnlyCollection<ITypeName> GenericTypeArguments { get; }
+
+        /// <summary>
         /// Copy the MemberExpressionAst instance.
         /// </summary>
         public override Ast Copy()
         {
             var newExpression = CopyElement(this.Expression);
             var newMember = CopyElement(this.Member);
-            return new MemberExpressionAst(this.Extent, newExpression, newMember, this.Static, this.NullConditional);
+
+            return new MemberExpressionAst(
+                this.Extent,
+                newExpression,
+                newMember,
+                this.Static,
+                this.NullConditional,
+                this.GenericTypeArguments);
         }
 
         #region Visitors
@@ -8113,7 +8191,40 @@ namespace System.Management.Automation.Language
     public class InvokeMemberExpressionAst : MemberExpressionAst, ISupportsAssignment
     {
         /// <summary>
-        /// Construct an instance of a method invocation expression.
+        /// Initializes a new instance of the <see cref="InvokeMemberExpressionAst"/> class.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the expression, starting with the expression before the invocation operator and ending with the
+        /// closing paren after the arguments.
+        /// </param>
+        /// <param name="expression">The expression before the invocation operator ('.', '::').</param>
+        /// <param name="method">The method to invoke.</param>
+        /// <param name="arguments">The arguments to pass to the method.</param>
+        /// <param name="static">
+        /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.'.
+        /// </param>
+        /// <param name="genericTypes">The generic type arguments passed to the method.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        public InvokeMemberExpressionAst(
+            IScriptExtent extent,
+            ExpressionAst expression,
+            CommandElementAst method,
+            IEnumerable<ExpressionAst> arguments,
+            bool @static,
+            IList<ITypeName> genericTypes)
+            : base(extent, expression, method, @static, genericTypes)
+        {
+            if (arguments != null && arguments.Any())
+            {
+                this.Arguments = new ReadOnlyCollection<ExpressionAst>(arguments.ToArray());
+                SetParents(Arguments);
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvokeMemberExpressionAst"/> class.
         /// </summary>
         /// <param name="extent">
         /// The extent of the expression, starting with the expression before the invocation operator and ending with the
@@ -8128,14 +8239,45 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
         /// </exception>
-        public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static)
-            : base(extent, expression, method, @static)
+        public InvokeMemberExpressionAst(
+            IScriptExtent extent,
+            ExpressionAst expression,
+            CommandElementAst method,
+            IEnumerable<ExpressionAst> arguments,
+            bool @static)
+            : this(extent, expression, method, arguments, @static, genericTypes: null)
         {
-            if (arguments != null && arguments.Any())
-            {
-                this.Arguments = new ReadOnlyCollection<ExpressionAst>(arguments.ToArray());
-                SetParents(Arguments);
-            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvokeMemberExpressionAst"/> class.
+        /// </summary>
+        /// <param name="extent">
+        /// The extent of the expression, starting with the expression before the invocation operator and ending with the
+        /// closing paren after the arguments.
+        /// </param>
+        /// <param name="expression">The expression before the invocation operator ('.', '::' or '?.').</param>
+        /// <param name="method">The method to invoke.</param>
+        /// <param name="arguments">The arguments to pass to the method.</param>
+        /// <param name="static">
+        /// True if the invocation is for a static method, using '::', false if invoking a method on an instance using '.' or '?.'.
+        /// </param>
+        /// <param name="nullConditional">True if the operator used is '?.'.</param>
+        /// <param name="genericTypes">The generic type arguments passed to the method.</param>
+        /// <exception cref="PSArgumentNullException">
+        /// If <paramref name="extent"/> is null.
+        /// </exception>
+        public InvokeMemberExpressionAst(
+            IScriptExtent extent,
+            ExpressionAst expression,
+            CommandElementAst method,
+            IEnumerable<ExpressionAst> arguments,
+            bool @static,
+            bool nullConditional,
+            IList<ITypeName> genericTypes)
+            : this(extent, expression, method, arguments, @static, genericTypes)
+        {
+            this.NullConditional = nullConditional;
         }
 
         /// <summary>
@@ -8155,10 +8297,15 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
         /// </exception>
-        public InvokeMemberExpressionAst(IScriptExtent extent, ExpressionAst expression, CommandElementAst method, IEnumerable<ExpressionAst> arguments, bool @static, bool nullConditional)
-            : this(extent, expression, method, arguments, @static)
+        public InvokeMemberExpressionAst(
+            IScriptExtent extent,
+            ExpressionAst expression,
+            CommandElementAst method,
+            IEnumerable<ExpressionAst> arguments,
+            bool @static,
+            bool nullConditional)
+            : this(extent, expression, method, arguments, @static, nullConditional, genericTypes: null)
         {
-            this.NullConditional = nullConditional;
         }
 
         /// <summary>
@@ -8174,7 +8321,15 @@ namespace System.Management.Automation.Language
             var newExpression = CopyElement(this.Expression);
             var newMethod = CopyElement(this.Member);
             var newArguments = CopyElements(this.Arguments);
-            return new InvokeMemberExpressionAst(this.Extent, newExpression, newMethod, newArguments, this.Static, this.NullConditional);
+
+            return new InvokeMemberExpressionAst(
+                this.Extent,
+                newExpression,
+                newMethod,
+                newArguments,
+                this.Static,
+                this.NullConditional,
+                this.GenericTypeArguments);
         }
 
         #region Visitors

@@ -1909,9 +1909,18 @@ namespace System.Management.Automation
         internal PSMethodInvocationConstraints(
             Type methodTargetType,
             Type[] parameterTypes)
+            : this(methodTargetType, genericTypeParameters: null, parameterTypes)
         {
-            this.MethodTargetType = methodTargetType;
+        }
+
+        internal PSMethodInvocationConstraints(
+            Type methodTargetType,
+            Type[] genericTypeParameters,
+            Type[] parameterTypes)
+        {
+            MethodTargetType = methodTargetType;
             _parameterTypes = parameterTypes;
+            GenericTypeParameters = genericTypeParameters;
         }
 
         /// <remarks>
@@ -1925,6 +1934,11 @@ namespace System.Management.Automation
         public IEnumerable<Type> ParameterTypes => _parameterTypes;
 
         private readonly Type[] _parameterTypes;
+
+        /// <summary>
+        /// Gets the generic type parameters for the method invocation.
+        /// </summary>
+        public Type[] GenericTypeParameters { get; }
 
         internal static bool EqualsForCollection<T>(ICollection<T> xs, ICollection<T> ys)
         {
@@ -1946,8 +1960,6 @@ namespace System.Management.Automation
             return xs.SequenceEqual(ys);
         }
 
-        // TODO: IEnumerable<Type> genericTypeParameters { get; private set; }
-
         public bool Equals(PSMethodInvocationConstraints other)
         {
             if (other is null)
@@ -1966,6 +1978,11 @@ namespace System.Management.Automation
             }
 
             if (!EqualsForCollection(_parameterTypes, other._parameterTypes))
+            {
+                return false;
+            }
+
+            if (!EqualsForCollection(GenericTypeParameters, other.GenericTypeParameters))
             {
                 return false;
             }
@@ -1994,18 +2011,7 @@ namespace System.Management.Automation
         }
 
         public override int GetHashCode()
-        {
-            // algorithm based on https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
-            unchecked
-            {
-                int result = 61;
-
-                result = result * 397 + (MethodTargetType != null ? MethodTargetType.GetHashCode() : 0);
-                result = result * 397 + ParameterTypes.SequenceGetHashCode();
-
-                return result;
-            }
-        }
+            => HashCode.Combine(MethodTargetType, ParameterTypes, GenericTypeParameters);
 
         public override string ToString()
         {
@@ -2015,6 +2021,22 @@ namespace System.Management.Automation
             {
                 sb.Append("this: ");
                 sb.Append(ToStringCodeMethods.Type(MethodTargetType, dropNamespaces: true));
+                separator = " ";
+            }
+
+            if (GenericTypeParameters != null)
+            {
+                sb.Append(separator);
+                sb.Append("genericTypeParams: ");
+
+                separator = string.Empty;
+                foreach (Type parameter in GenericTypeParameters)
+                {
+                    sb.Append(separator);
+                    sb.Append(ToStringCodeMethods.Type(parameter, dropNamespaces: true));
+                    separator = ", ";
+                }
+
                 separator = " ";
             }
 
@@ -5035,7 +5057,7 @@ namespace System.Management.Automation
             private readonly PSMemberInfoInternalCollection<T> _allMembers;
 
             /// <summary>
-            /// Constructs this instance to enumerate over members.
+            /// Initializes a new instance of the <see cref="Enumerator"/> class to enumerate over members.
             /// </summary>
             /// <param name="integratingCollection">Members we are enumerating.</param>
             internal Enumerator(PSMemberInfoIntegratingCollection<T> integratingCollection)
@@ -5063,8 +5085,8 @@ namespace System.Management.Automation
             /// Moves to the next element in the enumeration.
             /// </summary>
             /// <returns>
-            /// false if there are no more elements to enumerate
-            /// true otherwise
+            /// If there are no more elements to enumerate, returns false.
+            /// Returns true otherwise.
             /// </returns>
             public bool MoveNext()
             {
@@ -5093,7 +5115,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Current PSMemberInfo in the enumeration.
+            /// Gets the current PSMemberInfo in the enumeration.
             /// </summary>
             /// <exception cref="ArgumentException">For invalid arguments.</exception>
             T IEnumerator<T>.Current

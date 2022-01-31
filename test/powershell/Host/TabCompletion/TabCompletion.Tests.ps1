@@ -43,6 +43,22 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'CompareTo('
     }
 
+    It 'should complete generic type parameters for static methods' {
+        $script = '[array]::Empty[pscu'
+
+        $results = TabExpansion2 -inputScript $script -cursorColumn $script.Length
+        $results.CompletionMatches.CompletionText | Should -Contain 'pscustomobject'
+    }
+
+    It 'should complete generic type parameters for instance methods' {
+        $script = '
+            $dict = [System.Collections.Concurrent.ConcurrentDictionary[string, int]]::new()
+            $dict.AddOrUpdate[pscu'
+
+        $results = TabExpansion2 -inputScript $script -cursorColumn $script.Length
+        $results.CompletionMatches.CompletionText | Should -Contain 'pscustomobject'
+    }
+
     It 'Should complete Magic foreach' {
         $res = TabExpansion2 -inputScript '(1..10).Fo' -cursorColumn '(1..10).Fo'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ForEach('

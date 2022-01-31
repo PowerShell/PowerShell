@@ -116,7 +116,7 @@ namespace System.Management.Automation
                 // results = this.ExecuteCommand(cmd);
 
                 // If this pipeline has been stopped lets set a flag to cancel all future tab completion calls
-                // untill the next completion
+                // until the next completion
                 if (IsStopped)
                 {
                     results = new Collection<PSObject>();
@@ -147,7 +147,7 @@ namespace System.Management.Automation
                 results = CurrentPowerShell.Invoke(input);
 
                 // If this pipeline has been stopped lets set a flag to cancel all future tab completion calls
-                // untill the next completion
+                // until the next completion
                 if (IsStopped)
                 {
                     results = new Collection<PSObject>();
