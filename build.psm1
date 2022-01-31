@@ -2077,6 +2077,7 @@ function Find-Dotnet() {
         Push-Location $PSScriptRoot
         $dotnetCLIInstalledVersion = (dotnet --version)
         Pop-Location
+        Write-Verbose -Message "Find-DotNet: dotnetCLIInstalledVersion = $dotnetCLIInstalledVersion"
         if ($dotnetCLIInstalledVersion -ne $dotnetCLIRequiredVersion) {
             Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."
             # Globally installed dotnet doesn't have the required SDK version, prepend the user local dotnet location

@@ -15,6 +15,8 @@ Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
         'New-DotnetSdkContainerFxdPackage'
         'New-ExePackage'
         'New-GlobalToolNupkg'
+        'New-ILNugetPackageSource'
+        'New-ILNugetPackageFromSource'
         'New-ILNugetPackage'
         'New-MSIPatch'
         'New-PSBuildZip'

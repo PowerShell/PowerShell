@@ -107,25 +107,25 @@ jobs:
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
 
-  - task: NuGetToolInstaller@0
-    displayName: 'Install NuGet 4.9.3'
-    inputs:
-      versionSpec: 4.9.3
+  - task: NuGetToolInstaller@1
+    displayName: 'Install NuGet.exe'
 
-  - powershell: |
-      Import-Module $env:REPOROOT\build.psm1
-      Import-Module $env:REPOROOT\tools\packaging
-      Find-Dotnet
-      New-ILNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -WinFxdBinPath '$(winFxdPath)' -LinuxFxdBinPath '$(linuxFxdPath)' -GenAPIToolPath "$(GenAPIToolPath)"
-    displayName: 'Create Nuget Package Folders'
+  # Create nuget packages along with SBOM manifests.
+  - template: nuget-pkg-sbom.yml
+    parameters:
+      PackageVersion: $(Version)
+      PackagePath: $(PackagePath)
+      WinFxdPath: $(winFxdPath)
+      LinuxFxdPath: $(linuxFxdPath)
+      GenAPIToolPath: $(GenAPIToolPath)
 
-  - powershell: |
+  - pwsh: |
       Get-ChildItem $(linuxFxdPath)
       Get-ChildItem $(winFxdPath)
       Get-ChildItem $(winFxdWinDesktopPath)
     displayName: Capture fxd folders
 
-  - powershell: |
+  - pwsh: |
       Import-Module $env:REPOROOT\build.psm1
       Import-Module $env:REPOROOT\tools\packaging
       Find-Dotnet
@@ -136,7 +136,7 @@ jobs:
       New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
     displayName: 'Create Global tool packages'
 
-  - powershell: |
+  - pwsh: |
       Get-ChildItem "$(PackagePath)" -Recurse
     displayName: Capture generated packages
 
@@ -149,6 +149,7 @@ jobs:
           **\*.nupkg
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
+        displayName: Sign NuPkg
 
   - pwsh: |
       if (-not (Test-Path '$(System.ArtifactsDirectory)\signed\')) { $null = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)\signed\' }
@@ -158,13 +159,6 @@ jobs:
     condition: eq(variables['SHOULD_SIGN'], 'false')
 
   - pwsh: |
-      if (-not (Test-Path '$(System.ArtifactsDirectory)\signed\')) { $null = New-Item -ItemType Directory -Path '$(System.ArtifactsDirectory)\signed\' }
-      Copy-Item -Path '$(PackagePath)\*.nupkg' -Destination '$(System.ArtifactsDirectory)\signed\' -Verbose -Force
-      Copy-Item -Path '$(PackagePath)\globaltool\*.nupkg' -Destination '$(System.ArtifactsDirectory)\signed\' -Verbose -Force
-    displayName: Fake copy when not signing
-    condition: eq(variables['SHOULD_SIGN'], 'false')
-
-  - powershell: |
       Import-Module "${env:REPOROOT}\build.psm1" -Force
       Get-ChildItem -Recurse "$(System.ArtifactsDirectory)\signed\*.nupkg" -Verbose | ForEach-Object {  Start-NativeExecution -sb { nuget.exe verify -All $_.FullName } }
     displayName: Verify all packages are signed
@@ -183,7 +177,7 @@ jobs:
     parameters:
       artifactPath: '$(System.ArtifactsDirectory)\signed'
 
-  - powershell: |
+  - pwsh: |
       if (-not (Test-Path "$(System.ArtifactsDirectory)\signed\globaltool"))
       {
         $null = New-Item -Path "$(System.ArtifactsDirectory)\signed\globaltool" -ItemType Directory -Force
@@ -217,4 +211,4 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(repoRoot)\tools'
+      sourceScanPath: '$(PackagePath)'
