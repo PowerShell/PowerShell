@@ -128,6 +128,6 @@ Describe "Using Namespace" -Tags "CI" {
 
     ShouldBeParseError "1; using namespace System" UsingMustBeAtStartOfScript 3
     # TODO: add diagnostic (low pri)
-    ShouldBeParseError "using namespace System; using namespace System" UsingNamespaceAlreadySpecified 24
+    ShouldBeParseError "using namespace System; using namespace System" DuplicateNamespaceClause 24
 }
 
