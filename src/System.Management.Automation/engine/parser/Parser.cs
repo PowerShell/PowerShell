@@ -5010,7 +5010,7 @@ namespace System.Management.Automation.Language
                     SkipToken();
 
                     var aliasToken = NextToken();
-                    if (aliasToken.Kind == TokenKind.EndOfInput || aliasToken.Kind == TokenKind.NewLine)
+                    if (aliasToken.Kind is TokenKind.EndOfInput or TokenKind.NewLine or TokenKind.Semi)
                     {
                         UngetToken(aliasToken);
                         ReportIncompleteInput(After(equalsToken),
@@ -5024,6 +5024,7 @@ namespace System.Management.Automation.Language
                         ReportError(aliasToken.Extent, nameof(ParserStrings.UnexpectedUnaryOperator), ParserStrings.UnexpectedUnaryOperator, aliasToken.Text);
                         return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
                     }
+
                     var aliasAst = GetCommandArgument(CommandArgumentContext.CommandArgument, aliasToken);
                     if (kind == UsingStatementKind.Module && aliasAst is HashtableAst)
                     {
@@ -5031,7 +5032,18 @@ namespace System.Management.Automation.Language
                     }
                     else if (aliasAst is not StringConstantExpressionAst)
                     {
-                        return new ErrorStatementAst(ExtentOf(usingToken, aliasAst), new Ast[] { itemAst, aliasAst });
+                        var errorExtent = ExtentFromFirstOf(aliasAst, aliasToken);
+                        Ast[] nestedAsts;
+                        if (aliasAst is null)
+                        {
+                            nestedAsts = new Ast[] { itemAst };
+                        }
+                        else
+                        {
+                            nestedAsts = new Ast[] { itemAst, aliasAst };
+                        }
+                        ReportError(errorExtent, nameof(ParserStrings.InvalidValueForUsingItemName), ParserStrings.InvalidValueForUsingItemName, errorExtent.Text);
+                        return new ErrorStatementAst(ExtentOf(usingToken, errorExtent), nestedAsts);
                     }
 
                     RequireStatementTerminator();
