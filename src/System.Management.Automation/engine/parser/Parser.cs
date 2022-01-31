@@ -5010,7 +5010,10 @@ namespace System.Management.Automation.Language
 
             if (kind == UsingStatementKind.Type)
             {
-                itemToken.TokenFlags = TokenFlags.TypeName;
+                if (itemToken.Kind == TokenKind.Identifier && itemToken.TokenFlags == TokenFlags.None)
+                {
+                    itemToken.TokenFlags = TokenFlags.TypeName;
+                }
                 // We don't allow namespaces in type aliases
                 if (itemAst.Extent.Text.Contains('.'))
                 {
@@ -5040,7 +5043,10 @@ namespace System.Management.Automation.Language
                     // We don't allow subnamespaces in namespace aliases
                     if (kind == UsingStatementKind.Namespace)
                     {
-                        itemToken.TokenFlags = TokenFlags.TypeName;
+                        if (itemToken.Kind == TokenKind.Identifier && itemToken.TokenFlags == TokenFlags.None)
+                        {
+                            itemToken.TokenFlags = TokenFlags.TypeName;
+                        }
                         if (itemAst.Extent.Text.Contains('.'))
                         {
                             ReportError(itemAst.Extent, nameof(ParserStrings.NamespaceAliasContainsNamespace), ParserStrings.NamespaceAliasContainsNamespace);
@@ -5059,7 +5065,7 @@ namespace System.Management.Automation.Language
                             ReportError(errorExtent,
                                 nameof(ParserStrings.TypeAndNamespaceAliasNotAllowedInConstrainedLanguage),
                                 ParserStrings.TypeAndNamespaceAliasNotAllowedInConstrainedLanguage);
-                            return null;
+                            return new ErrorStatementAst(errorExtent);
                         }
                         var oldMode = _tokenizer.Mode;
                         SetTokenizerMode(TokenizerMode.TypeName);

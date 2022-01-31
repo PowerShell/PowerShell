@@ -1810,7 +1810,10 @@ namespace System.Management.Automation
                                     result.AddRange(moduleResults);
                                 return result;
                             case UsingStatementKind.Namespace:
-                                result = CompletionCompleters.CompleteNamespace(completionContext);
+                                if (usingState.Alias is null)
+                                {
+                                    result = CompletionCompleters.CompleteNamespace(completionContext);
+                                }
                                 return result;
                             case UsingStatementKind.Type:
                                 break;
