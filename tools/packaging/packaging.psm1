@@ -4368,12 +4368,12 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             ## Build 'linux-arm' and create 'tar.gz' package for it.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm32LinuxBuildFolder}"
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json" -ExperimentalFeatureJsonFilePath "$PSScriptRoot\..\ExperimentalFeatures.json"
+            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json" -ExperimentalFeatureJsonFilePath (Resolve-Path "$PSScriptRoot\..\..\ExperimentalFeatures.json")
             # Remove symbol files.
             Remove-Item "${buildFolder}\*.pdb" -Force
 
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${arm64LinuxBuildFolder}"
-            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json" -ExperimentalFeatureJsonFilePath "$PSScriptRoot\..\ExperimentalFeatures.json"
+            Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json" -ExperimentalFeatureJsonFilePath (Resolve-Path "$PSScriptRoot\..\..\ExperimentalFeatures.json")
             # Remove symbol files.
             Remove-Item "${buildFolder}\*.pdb" -Force
         }
