@@ -2015,14 +2015,14 @@ namespace System.Management.Automation
         {
             StringBuilder sb = new StringBuilder();
             string separator = string.Empty;
-            if (MethodTargetType != null)
+            if (MethodTargetType is not null)
             {
                 sb.Append("this: ");
                 sb.Append(ToStringCodeMethods.Type(MethodTargetType, dropNamespaces: true));
                 separator = " ";
             }
 
-            if (GenericTypeParameters != null)
+            if (GenericTypeParameters is not null)
             {
                 sb.Append(separator);
                 sb.Append("genericTypeParams: ");
@@ -2050,7 +2050,7 @@ namespace System.Management.Automation
                 separator = " ";
             }
 
-            if (ParameterTypes != null)
+            if (ParameterTypes is not null)
             {
                 sb.Append(separator);
                 sb.Append("args: ");
