@@ -625,7 +625,11 @@ Fix steps:
                      "WindowsPowerShellCompatibilityModuleDenyList" = @("PSScheduledJob","BestPractices","UpdateServices") }
     }
 
-    if ($ExperimentalFeatureJsonFilePath) {
+    if (-not $SkipExperimentalFeatureGeneration -and
+        (Test-IsPreview $psVersion) -and
+        -not (Test-IsReleaseCandidate $psVersion) -and
+        $ExperimentalFeatureJsonFilePath) {
+
         if (-not (Test-Path $ExperimentalFeatureJsonFilePath)) {
             throw "ExperimentalFeatureJsonFilePath: $ExperimentalFeatureJsonFilePath does not exist"
         }
