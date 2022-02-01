@@ -850,6 +850,16 @@ namespace System.Management.Automation
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                                         break;
                                     }
+                                case TokenKind.Break:
+                                case TokenKind.Continue:
+                                    {
+                                        if ((lastAst is BreakStatementAst breakStatement && breakStatement.Label is null)
+                                            || (lastAst is ContinueStatementAst continueStatement && continueStatement.Label is null))
+                                        {
+                                            result = CompleteLoopLabel(completionContext);
+                                        }
+                                        break;
+                                    }
                                 default:
                                     break;
                             }
@@ -1759,6 +1769,11 @@ namespace System.Management.Automation
             var tokenAtCursorText = tokenAtCursor.Text;
             completionContext.WordToComplete = tokenAtCursorText;
 
+            if (lastAst.Parent is BreakStatementAst || lastAst.Parent is ContinueStatementAst)
+            {
+                return CompleteLoopLabel(completionContext);
+            }
+
             var strConst = lastAst as StringConstantExpressionAst;
             if (strConst != null)
             {
@@ -2209,6 +2224,41 @@ namespace System.Management.Automation
             {
                 if (clearLiteralPathsKey)
                     completionContext.Options.Remove("LiteralPaths");
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Complete loop labels after labeled control flow statements such as Break and Continue.
+        /// </summary>
+        private static List<CompletionResult> CompleteLoopLabel(CompletionContext completionContext)
+        {
+            var result = new List<CompletionResult>();
+            foreach (Ast ast in completionContext.RelatedAsts)
+            {
+                if (ast is LabeledStatementAst labeledStatement
+                    && labeledStatement.Label is not null
+                    && (completionContext.WordToComplete is null || labeledStatement.Label.StartsWith(completionContext.WordToComplete, StringComparison.OrdinalIgnoreCase)))
+                {
+                    result.Add(new CompletionResult(labeledStatement.Label, labeledStatement.Label, CompletionResultType.Text, labeledStatement.Extent.Text));
+                }
+                else if (ast is ErrorStatementAst errorStatement)
+                {
+                    // Handles incomplete do/switch loops (other labeled statements do not need this special treatment)
+                    // The regex looks for the loopLabel of errorstatements that look like do/switch loops
+                    // For example in ":Label do " it will find "Label".
+                    var labelMatch = Regex.Match(errorStatement.Extent.Text, @"(?<=^:)\w+(?=\s+(do|switch)\b(?!-))", RegexOptions.IgnoreCase);
+                    if (labelMatch.Success)
+                    {
+                        result.Add(new CompletionResult(labelMatch.Value, labelMatch.Value, CompletionResultType.Text, errorStatement.Extent.Text));
+                    }
+                }
+            }
+
+            if (result.Count == 0)
+            {
+                return null;
             }
 
             return result;

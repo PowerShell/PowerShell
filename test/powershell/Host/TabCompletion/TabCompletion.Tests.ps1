@@ -1179,6 +1179,63 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount 2
             [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "1.0,1.1"
         }
+        It '<Intent>' -TestCases @(
+            @{
+                Intent = 'Complete loop labels with no input'
+                Expected = 'Outer','Inner'
+                TestString = ':Outer while ($true){:Inner while ($true){ break ^ }}'
+            }
+            @{
+                Intent = 'Complete loop labels that are accessible'
+                Expected = 'Outer'
+                TestString = ':Outer do {:Inner while ($true){ break } continue ^ } until ($false)'
+            }
+            @{
+                Intent = 'Complete loop labels with partial input'
+                Expected = 'Outer'
+                TestString = ':Outer do {:Inner while ($true){ break } continue o^ut } while ($true)'
+            }
+            @{
+                Intent = 'Complete loop label for incomplete switch'
+                Expected = 'Outer'
+                TestString = ':Outer switch ($x){"randomValue"{ continue ^'
+            }
+            @{
+                Intent = 'Complete loop label for incomplete do loop'
+                Expected = 'Outer'
+                TestString = ':Outer do {:Inner while ($true){ break } continue ^'
+            }
+            @{
+                Intent = 'Complete loop label for incomplete for loop'
+                Expected = 'forLoop'
+                TestString = ':forLoop for ($i = 0; $i -lt $SomeCollection.Count; $i++) {continue ^'
+            }
+            @{
+                Intent = 'Complete loop label for incomplete while loop'
+                Expected = 'WhileLoop'
+                TestString = ':WhileLoop while ($true){ break ^'
+            }
+            @{
+                Intent = 'Complete loop label for incomplete foreach loop'
+                Expected = 'foreachLoop'
+                TestString = ':foreachLoop foreach ($x in $y) { break ^'
+            }
+            @{
+                Intent = 'Not Complete loop labels with colon'
+                Expected = $null
+                TestString = ':Outer foreach ($x in $y){:Inner for ($i = 0; $i -lt $X.Count; $i++){ break :O^}}'
+            }
+            @{
+                Intent = 'Not Complete loop labels if cursor is in front of existing label'
+                Expected = $null
+                TestString = ':Outer switch ($x){"Value1"{break ^ Outer}}'
+            }
+        ){
+            param($Expected, $TestString)
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+            $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
+        }
     }
 
     Context "Module completion for 'using module'" {
