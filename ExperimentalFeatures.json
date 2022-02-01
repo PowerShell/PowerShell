@@ -7,5 +7,6 @@
   "PSNativeCommandErrorActionPreference",
   "PSNativePSPathResolution",
   "PSRemotingSSHTransportErrorHandling",
-  "PSSubsystemPluginModel"
+  "PSSubsystemPluginModel",
+  "PSAMSIMethodInvocationLogging"
 ]
