@@ -221,6 +221,12 @@ function Start-PSPackage {
                 $createdSpdxPath = New-Item -Path $manifestSpdxPath -Force
                 Write-Verbose -Verbose "Created manifest.spdx.json file: $createdSpdxPath"
             }
+
+            $manifestSpdxPathSha = (Join-Path -Path $Source "_manifest\spdx_2.2\manifest.spdx.json.sha256")
+            if (-not (Test-Path -Path $manifestSpdxPathSha)) {
+                $createdSpdxPathSha = New-Item -Path $manifestSpdxPathSha -Force
+                Write-Verbose -Verbose "Created manifest.spdx.json.sha256 file: $createdSpdxPathSha"
+            }
         }
 
         # If building a symbols package, we add a zip of the parent to publish
