@@ -8,9 +8,6 @@ on:
     # At 13:00 UTC every day.
     - cron:  '0 13 * * *'
 
-    push:
-      branches: [ doesnotexist ]
-
 defaults:
   run:
     shell: pwsh
@@ -37,18 +34,18 @@ jobs:
           $pwsh = Get-PSOutput
 
           $getExpFeatureJsonScript = @'
-          [System.Collections.ArrayList] $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
+            [System.Collections.ArrayList] $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
 
-          # Make sure ExperimentalFeatures from modules in PSHome are added
-          # https://github.com/PowerShell/PowerShell/issues/10550
-          $ExperimentalFeaturesFromGalleryModulesInPSHome = @()
-          $ExperimentalFeaturesFromGalleryModulesInPSHome | ForEach-Object {
-              if (!$expFeatures.Contains($_)) {
-                  $null = $expFeatures.Add($_)
-              }
-          }
+            # Make sure ExperimentalFeatures from modules in PSHome are added
+            # https://github.com/PowerShell/PowerShell/issues/10550
+            $ExperimentalFeaturesFromGalleryModulesInPSHome = @()
+            $ExperimentalFeaturesFromGalleryModulesInPSHome | ForEach-Object {
+                if (!$expFeatures.Contains($_)) {
+                    $null = $expFeatures.Add($_)
+                }
+            }
 
-          ConvertTo-Json $expFeatures
+            ConvertTo-Json $expFeatures
           '@
 
           $expFeaturesJson = & pwsh -c $getExpFeatureJsonScript
