@@ -8,6 +8,9 @@ on:
     # At 13:00 UTC every day.
     - cron:  '0 13 * * *'
 
+    push:
+      branches: [ doesnotexist ]
+
 defaults:
   run:
     shell: pwsh
