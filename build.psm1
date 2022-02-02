@@ -638,36 +638,7 @@ Fix steps:
         $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
     }
     else {
-        # When building preview, we want the configuration to enable all experiemental features by default
-        # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
-        if (-not $SkipExperimentalFeatureGeneration -and
-        (Test-IsPreview $psVersion) -and
-            -not (Test-IsReleaseCandidate $psVersion) -and
-            -not $Runtime.Contains("arm") -and
-            -not ($Runtime -like 'fxdependent*')) {
-
-            $json = & $publishPath\pwsh -noprofile -command {
-                # Special case for DSC code in PS;
-                # this experimental feature requires new DSC module that is not inbox,
-                # so we don't want default DSC use case be broken
-                [System.Collections.ArrayList] $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
-
-                $expFeatures | Out-String | Write-Verbose -Verbose
-
-                # Make sure ExperimentalFeatures from modules in PSHome are added
-                # https://github.com/PowerShell/PowerShell/issues/10550
-                $ExperimentalFeaturesFromGalleryModulesInPSHome = @()
-                $ExperimentalFeaturesFromGalleryModulesInPSHome | ForEach-Object {
-                    if (!$expFeatures.Contains($_)) {
-                        $null = $expFeatures.Add($_)
-                    }
-                }
-
-                ConvertTo-Json $expFeatures
-            }
-
-            $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
-        }
+        Write-Warning -Message "Experimental features are not enabled in powershell.config.json file"
     }
 
     if ($config.Count -gt 0) {
