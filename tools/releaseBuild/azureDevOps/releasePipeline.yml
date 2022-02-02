@@ -177,7 +177,8 @@ stages:
   - deployment: AzureBlobPublic
     displayName: Make Azure Blob Public
 
-    pool: PowerShell1ES
+    pool:
+      name: PowerShell1ES
       demands:
       - ImageOverride -equals PSMMS2019-Secure
 
