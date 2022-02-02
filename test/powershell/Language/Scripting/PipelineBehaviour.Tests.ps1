@@ -478,6 +478,13 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             ## Dispose the steppable pipeline.
             $step.Dispose()
         }
+
+        It "Clean block runs fine in a proxy function when a dynamic parameter fails to bind" {
+            $function:TestProxyGci = [scriptblock]::Create(
+                [Management.Automation.ProxyCommand]::Create(
+                (Get-Command Get-ChildItem)))
+            { ProxyGci -Attributes } | Should -Throw -ErrorId 'MissingArgument,ProxyGci'
+        }
     }
 
     Context "'exit' statement in command" {
