@@ -564,6 +564,7 @@ namespace System.Management.Automation
                 var sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
                 commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
+
                 var workingDirectoryParameter = CommandParameterInternal.CreateParameterWithArgument(
                     parameterAst: pipelineAst,
                     parameterName: "WorkingDirectory",
@@ -571,6 +572,7 @@ namespace System.Management.Automation
                     argumentAst: pipelineAst,
                     value: context.SessionState.Path.CurrentLocation.Path,
                     spaceAfterParameter: false);
+
                 var scriptBlockParameter = CommandParameterInternal.CreateParameterWithArgument(
                     parameterAst: pipelineAst,
                     parameterName: "ScriptBlock",
@@ -578,6 +580,7 @@ namespace System.Management.Automation
                     argumentAst: pipelineAst,
                     value: sb,
                     spaceAfterParameter: false);
+
                 commandProcessor.AddParameter(workingDirectoryParameter);
                 commandProcessor.AddParameter(scriptBlockParameter);
                 pipelineProcessor.Add(commandProcessor);
