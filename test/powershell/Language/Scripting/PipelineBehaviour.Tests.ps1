@@ -483,7 +483,13 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             $function:TestProxyGci = [scriptblock]::Create(
                 [Management.Automation.ProxyCommand]::Create(
                 (Get-Command Get-ChildItem)))
-            { ProxyGci -Attributes } | Should -Throw -ErrorId 'MissingArgument,ProxyGci'
+
+            ## The proxy function 'TestProxyGci' contains the 'dynamicparam' block, which will
+            ## run during parameter binding. However, the parameter binding failed, and thus
+            ## the 'begin', 'process', and 'end' blocks will not run, so '$steppablePipeline'
+            ## in the proxy function is null (never created). The 'clean' block will run anyway,
+            ## but it should skip calling '$steppablePipeline.Clean()' in this case. 
+            { TestProxyGci -Attributes } | Should -Throw -ErrorId 'MissingArgument,TestProxyGci'
         }
     }
 
