@@ -25,12 +25,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
       - name: Create experimental features file
         run: |
           Import-Module ./build.psm1 -Force
           Import-Module ./.github/workflows/GHWorkflowHelper -Force
           Start-PSBootstrap
-          Sync-PSTags -AddRemoteIfMissing
           Start-PSBuild -Clean -SkipExperimentalFeatureGeneration
           $pwsh = Get-PSOutput
 
