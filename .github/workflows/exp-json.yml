@@ -51,6 +51,10 @@ jobs:
           '@
 
           $expFeaturesJson = & pwsh -c $getExpFeatureJsonScript
+
+          Write-Verbose -Verbose 'Experimental features found'
+          $expFeaturesJson | Out-String | Write-Verbose -Verbose
+
           $expFeaturesJson | Out-File ./experimental-feature-windows-new.json -Force
 
           if (Test-Path ./experimental-feature-windows.json) {
@@ -70,8 +74,8 @@ jobs:
       - name: Upload experimental features windows
         uses: actions/upload-artifact@v2
         with:
-          name: experimental-feature-windows-new.json
-          path: experimental-feature-windows-new.json
+          name: experimental-feature-windows.json
+          path: experimental-feature-windows.json
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
