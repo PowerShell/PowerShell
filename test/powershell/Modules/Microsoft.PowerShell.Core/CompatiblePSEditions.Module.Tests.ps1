@@ -584,6 +584,16 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
         It "NoClobber WinCompat import works for an engine module through -UseWindowsPowerShell parameter" {
 
+            "==============" | Write-Verbose -Verbose
+            "Check for if module is already pre-loaded " | Write-Verbose -Verbose
+            $modules = Get-Module -Name Microsoft.PowerShell.Management
+            foreach ($m in $modules) {
+                Write-Verbose -Verbose $m.Name
+                Write-Verbose -Verbose ("    Module Base: " + $m.ModuleBase)
+                Write-Verbose -Verbose ("    Module Path: " + $m.Path)
+            }
+            "==============" | Write-Verbose -Verbose
+
             Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
 
             $modules = Get-Module -Name Microsoft.PowerShell.Management
@@ -593,6 +603,11 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
                 Write-Verbose -Verbose ("    Module Base: " + $m.ModuleBase)
                 Write-Verbose -Verbose ("    Module Path: " + $m.Path)
             }
+
+            "==============" | Write-Verbose -Verbose
+            "Check for bad WinPS module manifest " | Write-Verbose -Verbose
+            Get-Content "C:\Windows\system32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Management\Microsoft.PowerShell.Management.psd1" | Out-String | Write-Verbose -Verbose
+            "==============" | Write-Verbose -Verbose
 
             $modules.Count | Should -Be 2
             $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
@@ -693,6 +708,15 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
                 $env:PSModulePath += ";$mypath"
 
                 Write-Verbose -Verbose ("pwsh PSModulePath: " + $env:PSModulePath)
+
+                "==============" | Write-Verbose -Verbose
+                "Check for pre-existing WinPSCompatSession" | Write-Verbose -Verbose
+                Get-PSSession -Name WinPSCompatSession | Out-String | Write-Verbose -Verbose
+                $s = Get-PSSession -Name WinPSCompatSession
+                if ($s) {
+                    Invoke-Command -Session $s -ScriptBlock {$env:psmodulepath} | Out-String | Write-Verbose -Verbose
+                }
+                "==============" | Write-Verbose -Verbose
 
                 Import-Module $ModuleName2 -UseWindowsPowerShell -Force
 
