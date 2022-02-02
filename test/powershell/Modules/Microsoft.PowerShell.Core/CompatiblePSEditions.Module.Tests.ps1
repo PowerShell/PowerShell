@@ -587,6 +587,13 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
 
             $modules = Get-Module -Name Microsoft.PowerShell.Management
+
+            foreach ($m in $modules) {
+                Write-Verbose -Verbose $m.Name
+                Write-Verbose -Verbose ("    Module Base: " + $m.ModuleBase)
+                Write-Verbose -Verbose ("    Module Path: " + $m.Path)
+            }
+
             $modules.Count | Should -Be 2
             $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
             $coreModule = $modules | Where-Object {$_.ModuleType -eq 'Manifest'}
@@ -684,7 +691,14 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $originalModulePath = $env:PSModulePath
             try {
                 $env:PSModulePath += ";$mypath"
-                Import-Module $ModuleName2 -UseWindowsPowerShell -Force -WarningAction Ignore
+
+                Write-Verbose -Verbose ("pwsh PSModulePath: " + $env:PSModulePath)
+
+                Import-Module $ModuleName2 -UseWindowsPowerShell -Force
+
+                $m = Get-Module $ModuleName2
+                Write-Verbose -Verbose ($m.ModuleBase)
+
                 $s = Get-PSSession -Name WinPSCompatSession
                 $winpsPaths = Invoke-Command -Session $s -ScriptBlock {$env:psmodulepath}
                 $winpsPaths | Should -BeLike "*$mypath*"
