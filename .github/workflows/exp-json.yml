@@ -30,6 +30,7 @@ jobs:
           Import-Module ./build.psm1 -Force
           Import-Module ./.github/workflows/GHWorkflowHelper -Force
           Start-PSBootstrap
+          Sync-PSTags -AddRemoteIfMissing
           Start-PSBuild -Clean -SkipExperimentalFeatureGeneration
           $pwsh = Get-PSOutput
 
