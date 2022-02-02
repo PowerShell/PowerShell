@@ -1,0 +1,82 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
+name: PowerShell Experimental Features Json Update
+on:
+    workflow_dispatch:
+    schedule:
+    # At 13:00 UTC every day.
+    - cron:  '0 13 * * *'
+
+defaults:
+  run:
+    shell: pwsh
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+
+jobs:
+  create-expjson-windows:
+    name: Update experimental features json
+    timeout-minutes: 15
+    runs-on: windows-latest
+    if: github.repository == 'PowerShell/PowerShell'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create experimental features file
+        run: |
+          Import-Module ./build.psm1 -Force
+          Import-Module ./.github/workflows/GHWorkflowHelper -Force
+          Start-PSBootstrap
+          Start-PSBuild -Clean -SkipExperimentalFeatureGeneration
+          $pwsh = Get-PSOutput
+
+          $getExpFeatureJsonScript = @'
+            [System.Collections.ArrayList] $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
+
+            # Make sure ExperimentalFeatures from modules in PSHome are added
+            # https://github.com/PowerShell/PowerShell/issues/10550
+            $ExperimentalFeaturesFromGalleryModulesInPSHome = @()
+            $ExperimentalFeaturesFromGalleryModulesInPSHome | ForEach-Object {
+                if (!$expFeatures.Contains($_)) {
+                    $null = $expFeatures.Add($_)
+                }
+            }
+
+            ConvertTo-Json $expFeatures
+          '@
+
+          $expFeaturesJson = & pwsh -c $getExpFeatureJsonScript
+          $expFeaturesJson | Out-File ./experimental-feature-windows-new.json -Force
+
+          if (Test-Path ./experimental-feature-windows.json) {
+            $currentExpFeatures =  Get-Content ./experimental-feature-windows.json -Raw | ConvertFrom-Json
+            $newExpFeatures =  Get-Content ./experimental-feature-windows-new.json -Raw | ConvertFrom-Json
+
+            if (-not (Compare-Object $currentExpFeatures $newExpFeatures)) {
+                Write-Verbose -Verbose "No changes to experimental features json file"
+                Set-GWVariable -Name CREATE_EXP_JSON_PR -Value 'false'
+                exit 0
+            }
+          }
+
+          Move-Item ./experimental-feature-windows-new.json ./experimental-feature-windows.json -Verbose
+          Set-GWVariable -Name CREATE_EXP_JSON_PR -Value 'true'
+
+      - name: Upload experimental features windows
+        uses: actions/upload-artifact@v2
+        with:
+          name: experimental-feature-windows-new.json
+          path: experimental-feature-windows-new.json
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        id: cpr
+        if: env.CREATE_EXP_JSON_PR == 'true'
+        with:
+          commit-message: "Update experimental-feature-windows.json"
+          title: "Update experimental-feature-windows.json"
+          base: master
+          branch: expjson_update_windows
