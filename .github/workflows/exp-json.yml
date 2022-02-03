@@ -73,8 +73,8 @@ jobs:
       - name: Upload experimental features windows
         uses: actions/upload-artifact@v2
         with:
-          name: experimental-feature-$OS_NAME-new.json
-          path: experimental-feature-$OS_NAME-new.json
+          name: experimentalJson
+          path: experimental-feature-*-new.json
 
       #- name: Create Pull Request
       #  uses: peter-evans/create-pull-request@v3
