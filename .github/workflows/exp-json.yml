@@ -57,12 +57,8 @@ jobs:
           '@
 
           $expFeaturesJson = & $builtPwsh -c $getExpFeatureJsonScript
-
           $osname = $env:OS_TITLE -like 'windows*' ? 'windows' : 'linux'
-          Set-GWVariable -Name OS_NAME -Value 'true'
-
           $fileNamePrefix = "experimental-feature-$osname"
-
           $newFileName = "${fileNamePrefix}-new.json"
 
           Write-Verbose -Verbose 'Experimental features found'
