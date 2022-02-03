@@ -5020,7 +5020,6 @@ namespace System.Management.Automation.Language
                     }
                     if (aliasToken.Kind == TokenKind.Comma)
                     {
-                        UngetToken(aliasToken);
                         ReportError(aliasToken.Extent, nameof(ParserStrings.UnexpectedUnaryOperator), ParserStrings.UnexpectedUnaryOperator, aliasToken.Text);
                         return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
                     }

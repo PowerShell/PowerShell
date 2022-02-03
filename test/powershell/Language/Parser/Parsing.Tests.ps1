@@ -649,8 +649,9 @@ Describe "Parsing using statement with alias and linebreak and comma" -Tag CI {
     It "ParseError for '<Script>'" -TestCases @(
         @{ Script = "using namespace x =`n"; ErrorId = @('MissingNamespaceAlias'); StartOffset = @(19); EndOffset = @(19) }
         @{ Script = "using namespace x = `n"; ErrorId = @('MissingNamespaceAlias'); StartOffset = @(19); EndOffset = @(19) }
-        @{ Script = "using namespace x = ,"; ErrorId = @('UnexpectedUnaryOperator'); StartOffset = @(21); EndOffset = @(21) }
-        @{ Script = "using namespace x = &"; ErrorId = @('InvalidValueForUsingItemName'); StartOffset = @(21); EndOffset = @(21) }
+        @{ Script = "using namespace x = ;"; ErrorId = @('MissingNamespaceAlias'); StartOffset = @(19); EndOffset = @(19) }
+        @{ Script = "using namespace x = ,"; ErrorId = @('UnexpectedUnaryOperator'); StartOffset = @(20); EndOffset = @(21) }
+        @{ Script = "using namespace x = &"; ErrorId = @('InvalidValueForUsingItemName','MissingExpression'); StartOffset = @(20, 20); EndOffset = @(21, 21) }
     ) {
         param($Script, $ErrorId, $StartOffset, $EndOffset)
 
