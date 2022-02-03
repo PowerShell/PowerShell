@@ -20,7 +20,7 @@ jobs:
   create-expjson-windows:
     strategy:
       matrix:
-        os: [windows-latest, linux-latest]
+        os: [windows-latest, ubuntu-latest]
     timeout-minutes: 15
     runs-on: ${{ matrix.os }}
     env:
@@ -59,7 +59,7 @@ jobs:
 
           $expFeaturesJson = & $builtPwsh -c $getExpFeatureJsonScript
 
-          $osname = ("$env:OS_TITLE" -split '-')[0]
+          $osname = $env:OS_TITLE -like 'windows*' ? 'windows' : 'linux'
           Set-GWVariable -Name OS_NAME -Value 'true'
 
           $fileNamePrefix = "experimental-feature-$osname"
