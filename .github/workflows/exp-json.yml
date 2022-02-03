@@ -104,8 +104,8 @@ jobs:
 
           $currentWinFile = "experimental-feature-windows.json"
           $currentLinuxFile = "experimental-feature-linux.json"
-          $newWinFile = "experimental-feature-windows.json"
-          $newLinuxFile = "experimental-feature-linux.json"
+          $newWinFile = "experimental-feature-windows-new.json"
+          $newLinuxFile = "experimental-feature-linux-new.json"
 
           $createPrWin = ShouldCreatePR $currentWinFile $newWinFile
           Write-Verbose -Verbose "Create PR Windows == $createPrWin"
@@ -119,9 +119,15 @@ jobs:
           if ($createPrWin) {
             Move-Item $newWinFile $currentWinFile -Verbose
           }
+          else {
+            Remove-Item $newWinFile -Verbose
+          }
 
           if ($createPrLinux) {
             Move-Item $newLinuxFile $currentLinuxFile -Verbose
+          }
+          else {
+            Remove-Item $newLinuxFile -Verbose
           }
 
           Set-GWVariable -Name CREATE_EXP_JSON_PR -Value $createPR
