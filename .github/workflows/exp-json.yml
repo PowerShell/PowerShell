@@ -17,7 +17,7 @@ env:
   POWERSHELL_TELEMETRY_OPTOUT: 1
 
 jobs:
-  create-expjson-windows:
+  create-expjson:
     strategy:
       matrix:
         os: [windows-latest, ubuntu-latest]
@@ -26,7 +26,7 @@ jobs:
     env:
       OS_TITLE: ${{ matrix.os }}
     if: github.repository == 'PowerShell/PowerShell'
-    name: Update experimental features json - $(OS_TITLE)
+    name: Update experimental features json
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -35,7 +35,6 @@ jobs:
       - name: Create experimental features file
         run: |
           Import-Module ./build.psm1 -Force
-          Import-Module ./.github/workflows/GHWorkflowHelper -Force
           Start-PSBootstrap
           Start-PSBuild -Clean -PSModuleRestore
           $builtPwsh = Get-PSOutput
@@ -75,6 +74,61 @@ jobs:
         with:
           name: experimentalJson
           path: experimental-feature-*-new.json
+
+  compare-expjson-files:
+    runs-on: ubuntu-latest
+    name: Compare experimental json files and create PR
+    needs: create-expjson
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: experimentalJson
+      - name: Compare json files
+        run: |
+          Import-Module ./.github/workflows/GHWorkflowHelper -Force
+
+          function ShouldCreatePR($currentFile, $newFile) {
+            if (Test-Path $expectedWinFile) {
+              $currentExpFeatures =  Get-Content $expectedWinFile -Raw | ConvertFrom-Json
+              $newExpFeatures =  Get-Content $newWinFile -Raw | ConvertFrom-Json
+
+              if (-not (Compare-Object $currentExpFeatures $newExpFeatures)) {
+                  Write-Verbose -Verbose "No changes to experimental features json file"
+                  return $false
+              }
+            }
+
+            return $true
+          }
+
+          $currentWinFile = "experimental-feature-windows.json"
+          $currentLinuxFile = "experimental-feature-linux.json"
+          $newWinFile = "experimental-feature-windows.json"
+          $newLinuxFile = "experimental-feature-linux.json"
+
+          $createPrWin = ShouldCreatePR $currentWinFile $newWinFile
+          Write-Verbose -Verbose "Create PR Windows == $createPrWin"
+
+          $createPrLinux = ShouldCreatePR $currentLinuxFile $newLinuxFile
+          Write-Verbose -Verbose "Create PR Windows == $createPrLinux"
+
+          $createPr = $createPrWin -or $createPrLinux
+          Write-Verbose -Verbose "Create PR == $createPr"
+
+          if ($createPrWin) {
+            Move-Item $newWinFile $currentWinFile -Verbose
+          }
+
+          if ($createPrLinux) {
+            Move-Item $newLinuxFile $currentLinuxFile -Verbose
+          }
+
+          Set-GWVariable -Name CREATE_EXP_JSON_PR -Value $createPR
 
       #- name: Create Pull Request
       #  uses: peter-evans/create-pull-request@v3
