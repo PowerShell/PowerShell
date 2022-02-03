@@ -1909,17 +1909,17 @@ namespace System.Management.Automation
         internal PSMethodInvocationConstraints(
             Type methodTargetType,
             Type[] parameterTypes)
-            : this(methodTargetType, genericTypeParameters: null, parameterTypes)
+            : this(methodTargetType, parameterTypes, genericTypeParameters: null)
         {
         }
 
         internal PSMethodInvocationConstraints(
             Type methodTargetType,
-            Type[] genericTypeParameters,
-            Type[] parameterTypes)
+            Type[] parameterTypes,
+            object[] genericTypeParameters)
         {
             MethodTargetType = methodTargetType;
-            _parameterTypes = parameterTypes;
+            ParameterTypes = parameterTypes;
             GenericTypeParameters = genericTypeParameters;
         }
 
@@ -1931,14 +1931,12 @@ namespace System.Management.Automation
         /// <remarks>
         /// If <see langword="null"/> then there are no constraints
         /// </remarks>
-        public IEnumerable<Type> ParameterTypes => _parameterTypes;
-
-        private readonly Type[] _parameterTypes;
+        public Type[] ParameterTypes { get; }
 
         /// <summary>
         /// Gets the generic type parameters for the method invocation.
         /// </summary>
-        public Type[] GenericTypeParameters { get; }
+        public object[] GenericTypeParameters { get; }
 
         internal static bool EqualsForCollection<T>(ICollection<T> xs, ICollection<T> ys)
         {
@@ -1977,7 +1975,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (!EqualsForCollection(_parameterTypes, other._parameterTypes))
+            if (!EqualsForCollection(ParameterTypes, other.ParameterTypes))
             {
                 return false;
             }
@@ -2017,35 +2015,47 @@ namespace System.Management.Automation
         {
             StringBuilder sb = new StringBuilder();
             string separator = string.Empty;
-            if (MethodTargetType != null)
+            if (MethodTargetType is not null)
             {
                 sb.Append("this: ");
                 sb.Append(ToStringCodeMethods.Type(MethodTargetType, dropNamespaces: true));
                 separator = " ";
             }
 
-            if (GenericTypeParameters != null)
+            if (GenericTypeParameters is not null)
             {
                 sb.Append(separator);
                 sb.Append("genericTypeParams: ");
 
                 separator = string.Empty;
-                foreach (Type parameter in GenericTypeParameters)
+                foreach (object parameter in GenericTypeParameters)
                 {
                     sb.Append(separator);
-                    sb.Append(ToStringCodeMethods.Type(parameter, dropNamespaces: true));
+
+                    switch (parameter)
+                    {
+                        case Type paramType:
+                            sb.Append(ToStringCodeMethods.Type(paramType, dropNamespaces: true));
+                            break;
+                        case ITypeName paramTypeName:
+                            sb.Append(paramTypeName.ToString());
+                            break;
+                        default:
+                            throw new ArgumentException("Unexpected value");
+                    }
+
                     separator = ", ";
                 }
 
                 separator = " ";
             }
 
-            if (_parameterTypes != null)
+            if (ParameterTypes is not null)
             {
                 sb.Append(separator);
                 sb.Append("args: ");
                 separator = string.Empty;
-                foreach (var p in _parameterTypes)
+                foreach (var p in ParameterTypes)
                 {
                     sb.Append(separator);
                     sb.Append(ToStringCodeMethods.Type(p, dropNamespaces: true));

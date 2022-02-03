@@ -1174,25 +1174,20 @@ namespace System.Management.Automation.Language
             return firstConvert?.Type.TypeName.GetReflectionType();
         }
 
-        internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(
-            Type targetType,
-            Type argType,
-            Type[] genericArguments = null)
+        internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(Type targetType, Type argType)
         {
-            if (targetType is null
-                && argType is null
-                && (genericArguments is null || genericArguments.Length == 0))
+            if (targetType is null && argType is null)
             {
                 return null;
             }
 
-            return new PSMethodInvocationConstraints(targetType, genericArguments, new[] { argType });
+            return new PSMethodInvocationConstraints(targetType, new[] { argType });
         }
 
         internal static PSMethodInvocationConstraints CombineTypeConstraintForMethodResolution(
             Type targetType,
             Type[] argTypes,
-            Type[] genericArguments = null)
+            object[] genericArguments = null)
         {
             if (targetType is null
                 && (argTypes is null || argTypes.Length == 0)
@@ -1201,7 +1196,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            return new PSMethodInvocationConstraints(targetType, genericArguments, argTypes);
+            return new PSMethodInvocationConstraints(targetType, argTypes, genericArguments);
         }
 
         internal static Expression ConvertValue(TypeConstraintAst typeConstraint, Expression expr)
@@ -6362,13 +6357,14 @@ namespace System.Management.Automation.Language
             var targetTypeConstraint = GetTypeConstraintForMethodResolution(invokeMemberExpressionAst.Expression);
 
             ReadOnlyCollection<ITypeName> genericArguments = invokeMemberExpressionAst.GenericTypeArguments;
-            Type[] genericTypeArguments = null;
+            object[] genericTypeArguments = null;
             if (genericArguments is not null)
             {
-                genericTypeArguments = new Type[genericArguments.Count];
+                genericTypeArguments = new object[genericArguments.Count];
                 for (var i = 0; i < genericArguments.Count; i++)
                 {
-                    genericTypeArguments[i] = genericArguments[i].GetReflectionType();
+                    Type type = genericArguments[i].GetReflectionType();
+                    genericTypeArguments[i] = (object)type ?? genericArguments[i];
                 }
             }
 
