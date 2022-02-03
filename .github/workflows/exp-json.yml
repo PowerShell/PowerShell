@@ -89,9 +89,9 @@ jobs:
           Import-Module ./.github/workflows/GHWorkflowHelper -Force
 
           function ShouldCreatePR($currentFile, $newFile) {
-            if (Test-Path $expectedWinFile) {
-              $currentExpFeatures =  Get-Content $expectedWinFile -Raw | ConvertFrom-Json
-              $newExpFeatures =  Get-Content $newWinFile -Raw | ConvertFrom-Json
+            if (Test-Path $currentFile) {
+              $currentExpFeatures =  Get-Content $currentFile -Raw | ConvertFrom-Json
+              $newExpFeatures =  Get-Content $newFile -Raw | ConvertFrom-Json
 
               if (-not (Compare-Object $currentExpFeatures $newExpFeatures)) {
                   Write-Verbose -Verbose "No changes to experimental features json file"
