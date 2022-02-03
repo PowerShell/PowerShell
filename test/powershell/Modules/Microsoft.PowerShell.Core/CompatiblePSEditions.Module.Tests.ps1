@@ -588,30 +588,9 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             Get-Module -Name Microsoft.PowerShell.Management | Remove-Module
             Import-Module -Name Microsoft.PowerShell.Management # import the one that comes with PSCore
 
-            "==============" | Write-Verbose -Verbose
-            "Check for if module is already pre-loaded " | Write-Verbose -Verbose
-            $modules = Get-Module -Name Microsoft.PowerShell.Management
-            foreach ($m in $modules) {
-                Write-Verbose -Verbose $m.Name
-                Write-Verbose -Verbose ("    Module Base: " + $m.ModuleBase)
-                Write-Verbose -Verbose ("    Module Path: " + $m.Path)
-            }
-            "==============" | Write-Verbose -Verbose
-
-            Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
+            Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell # import through proxy the one that comes with WindowsPS
 
             $modules = Get-Module -Name Microsoft.PowerShell.Management
-
-            foreach ($m in $modules) {
-                Write-Verbose -Verbose $m.Name
-                Write-Verbose -Verbose ("    Module Base: " + $m.ModuleBase)
-                Write-Verbose -Verbose ("    Module Path: " + $m.Path)
-            }
-
-            "==============" | Write-Verbose -Verbose
-            "Check for bad WinPS module manifest " | Write-Verbose -Verbose
-            Get-Content "C:\Windows\system32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Management\Microsoft.PowerShell.Management.psd1" | Out-String | Write-Verbose -Verbose
-            "==============" | Write-Verbose -Verbose
 
             $modules.Count | Should -Be 2
             $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
@@ -682,9 +661,12 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             Restore-ModulePath
         }
 
+        BeforeEach {
+            Get-PSSession -Name WinPSCompatSession -ErrorAction SilentlyContinue | Remove-PSSession
+        }
+
         AfterEach {
             Get-Module $allModules | Remove-Module -Force
-            Get-PSSession -Name WinPSCompatSession -ErrorAction SilentlyContinue | Remove-PSSession
         }
 
         It 'WinCompat process does not inherit PowerShell-Core-specific paths' {
@@ -711,23 +693,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $originalModulePath = $env:PSModulePath
             try {
                 $env:PSModulePath += ";$mypath"
-
-                Write-Verbose -Verbose ("pwsh PSModulePath: " + $env:PSModulePath)
-
-                "==============" | Write-Verbose -Verbose
-                "Check for pre-existing WinPSCompatSession" | Write-Verbose -Verbose
-                Get-PSSession -Name WinPSCompatSession | Out-String | Write-Verbose -Verbose
-                $s = Get-PSSession -Name WinPSCompatSession
-                if ($s) {
-                    Invoke-Command -Session $s -ScriptBlock {$env:psmodulepath} | Out-String | Write-Verbose -Verbose
-                }
-                "==============" | Write-Verbose -Verbose
-
                 Import-Module $ModuleName2 -UseWindowsPowerShell -Force
-
-                $m = Get-Module $ModuleName2
-                Write-Verbose -Verbose ($m.ModuleBase)
-
                 $s = Get-PSSession -Name WinPSCompatSession
                 $winpsPaths = Invoke-Command -Session $s -ScriptBlock {$env:psmodulepath}
                 $winpsPaths | Should -BeLike "*$mypath*"
