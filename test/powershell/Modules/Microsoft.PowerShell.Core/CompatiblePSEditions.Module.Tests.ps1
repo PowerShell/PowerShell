@@ -600,6 +600,10 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
         It "NoClobber WinCompat import works for an engine module through -UseWindowsPowerShell parameter" {
 
+            # pre-test cleanup
+            Get-Module -Name Microsoft.PowerShell.Management | Remove-Module
+            Import-Module -Name Microsoft.PowerShell.Management # import the one that comes with PSCore
+
             "==============" | Write-Verbose -Verbose
             "Check for if module is already pre-loaded " | Write-Verbose -Verbose
             $modules = Get-Module -Name Microsoft.PowerShell.Management
@@ -727,6 +731,7 @@ Remove-Module $desktopModuleToUse
 
         AfterEach {
             Get-Module $allModules | Remove-Module -Force
+            Get-PSSession -Name WinPSCompatSession -ErrorAction SilentlyContinue | Remove-PSSession
         }
 
         It 'WinCompat process does not inherit PowerShell-Core-specific paths' {
