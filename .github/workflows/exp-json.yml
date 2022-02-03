@@ -32,8 +32,10 @@ jobs:
           Import-Module ./build.psm1 -Force
           Import-Module ./.github/workflows/GHWorkflowHelper -Force
           Start-PSBootstrap
-          Start-PSBuild -Clean
-          $pwsh = Get-PSOutput
+          Start-PSBuild -Clean -PSModuleRestore
+          $builtPwsh = Get-PSOutput
+
+          Write-Verbose -Verbose "PWSH path: $builtPwsh"
 
           $getExpFeatureJsonScript = @'
             [System.Collections.ArrayList] $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
@@ -50,7 +52,7 @@ jobs:
             ConvertTo-Json $expFeatures
           '@
 
-          $expFeaturesJson = & pwsh -c $getExpFeatureJsonScript
+          $expFeaturesJson = & $builtPwsh -c $getExpFeatureJsonScript
 
           Write-Verbose -Verbose 'Experimental features found'
           $expFeaturesJson | Out-String | Write-Verbose -Verbose
