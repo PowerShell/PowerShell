@@ -138,6 +138,6 @@ jobs:
         if: env.CREATE_EXP_JSON_PR == 'true'
         with:
           commit-message: "Update experimental-feature-windows.json"
-          title: "Update experimental-feature-windows.json"
+          title: "Update experimental-feature json files"
           base: master
           branch: expjson_update_windows
