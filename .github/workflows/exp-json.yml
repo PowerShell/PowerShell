@@ -32,7 +32,7 @@ jobs:
           Import-Module ./build.psm1 -Force
           Import-Module ./.github/workflows/GHWorkflowHelper -Force
           Start-PSBootstrap
-          Start-PSBuild -Clean -SkipExperimentalFeatureGeneration
+          Start-PSBuild -Clean
           $pwsh = Get-PSOutput
 
           $getExpFeatureJsonScript = @'
@@ -77,12 +77,12 @@ jobs:
           name: experimental-feature-windows.json
           path: experimental-feature-windows.json
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
-        id: cpr
-        if: env.CREATE_EXP_JSON_PR == 'true'
-        with:
-          commit-message: "Update experimental-feature-windows.json"
-          title: "Update experimental-feature-windows.json"
-          base: master
-          branch: expjson_update_windows
+      #- name: Create Pull Request
+      #  uses: peter-evans/create-pull-request@v3
+      #  id: cpr
+      #  if: env.CREATE_EXP_JSON_PR == 'true'
+      #  with:
+      #    commit-message: "Update experimental-feature-windows.json"
+      #    title: "Update experimental-feature-windows.json"
+      #    base: master
+      #    branch: expjson_update_windows
