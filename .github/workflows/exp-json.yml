@@ -18,10 +18,15 @@ env:
 
 jobs:
   create-expjson-windows:
-    name: Update experimental features json
+    strategy:
+      matrix:
+        os: [windows-latest, linux-latest]
     timeout-minutes: 15
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    env:
+      OS_TITLE: ${{ matrix.os }}
     if: github.repository == 'PowerShell/PowerShell'
+    name: Update experimental features json - $(OS_TITLE)
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -54,30 +59,22 @@ jobs:
 
           $expFeaturesJson = & $builtPwsh -c $getExpFeatureJsonScript
 
+          $osname = ("$(OS_TITLE)" -split ' ')[0]
+          Set-GWVariable -Name OS_NAME -Value 'true'
+
+          $fileNamePrefix = "experimental-feature-$osname"
+
+          $newFileName = "${fileNamePrefix}-new.json"
+
           Write-Verbose -Verbose 'Experimental features found'
           $expFeaturesJson | Out-String | Write-Verbose -Verbose
-
-          $expFeaturesJson | Out-File ./experimental-feature-windows-new.json -Force
-
-          if (Test-Path ./experimental-feature-windows.json) {
-            $currentExpFeatures =  Get-Content ./experimental-feature-windows.json -Raw | ConvertFrom-Json
-            $newExpFeatures =  Get-Content ./experimental-feature-windows-new.json -Raw | ConvertFrom-Json
-
-            if (-not (Compare-Object $currentExpFeatures $newExpFeatures)) {
-                Write-Verbose -Verbose "No changes to experimental features json file"
-                Set-GWVariable -Name CREATE_EXP_JSON_PR -Value 'false'
-                exit 0
-            }
-          }
-
-          Move-Item ./experimental-feature-windows-new.json ./experimental-feature-windows.json -Verbose
-          Set-GWVariable -Name CREATE_EXP_JSON_PR -Value 'true'
+          $expFeaturesJson | Out-File $newFileName -Force
 
       - name: Upload experimental features windows
         uses: actions/upload-artifact@v2
         with:
-          name: experimental-feature-windows.json
-          path: experimental-feature-windows.json
+          name: experimental-feature-$(OS_NAME)-new.json
+          path: experimental-feature-$(OS_NAME)-new.json
 
       #- name: Create Pull Request
       #  uses: peter-evans/create-pull-request@v3
