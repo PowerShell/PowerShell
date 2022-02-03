@@ -588,7 +588,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             Get-Module -Name Microsoft.PowerShell.Management | Remove-Module
             Import-Module -Name Microsoft.PowerShell.Management # import the one that comes with PSCore
 
-            Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell # import through proxy the one that comes with WindowsPS
+            Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
 
             $modules = Get-Module -Name Microsoft.PowerShell.Management
 
@@ -693,7 +693,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $originalModulePath = $env:PSModulePath
             try {
                 $env:PSModulePath += ";$mypath"
-                Import-Module $ModuleName2 -UseWindowsPowerShell -Force
+                Import-Module $ModuleName2 -UseWindowsPowerShell -Force -WarningAction Ignore
                 $s = Get-PSSession -Name WinPSCompatSession
                 $winpsPaths = Invoke-Command -Session $s -ScriptBlock {$env:psmodulepath}
                 $winpsPaths | Should -BeLike "*$mypath*"
