@@ -4328,7 +4328,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
 
         $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
 
-        $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true; Restore = $true}
+        $buildParams = @{ Configuration = 'Release'; PSModuleRestore = $true; Restore = $true }
 
         switch ($BuildType) {
             'fxdependent' {
