@@ -5018,6 +5018,7 @@ namespace System.Management.Automation.Language
                             ParserStrings.MissingNamespaceAlias);
                         return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
                     }
+
                     if (aliasToken.Kind == TokenKind.Comma)
                     {
                         ReportError(aliasToken.Extent, nameof(ParserStrings.UnexpectedUnaryOperator), ParserStrings.UnexpectedUnaryOperator, aliasToken.Text);
