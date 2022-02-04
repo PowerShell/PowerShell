@@ -8073,6 +8073,9 @@ namespace Microsoft.PowerShell.Commands
             private static extern bool FindClose(IntPtr handle);
         }
 
+        // We replaced FindFirstFileExW with FindFirstFileW
+        // since FindFirstFileExW doesn't work correctly with Unicode file names on FAT32
+        // See https://github.com/PowerShell/PowerShell/issues/16804
         [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileW", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
 
