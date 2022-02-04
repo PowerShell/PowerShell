@@ -626,6 +626,7 @@ Fix steps:
     ) {
 
         if ($Options.Runtime -like "*win*") {
+			# Execution Policy is only supported on Windows
             $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned";
                 "WindowsPowerShellCompatibilityModuleDenyList"  = @("PSScheduledJob", "BestPractices", "UpdateServices")
             }
