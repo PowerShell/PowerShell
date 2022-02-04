@@ -168,6 +168,14 @@ namespace System.Management.Automation
             }
             catch (Exception e) when (LogException(e)) { }
 
+            if (enabledFeatures.Length == 0 && !string.IsNullOrEmpty(PSVersionInfo.PSCurrentVersion.PreReleaseLabel))
+            {
+                // if no experimental features are configured in pwsh.config.json file
+                // and pwsh version is preview
+                // then we enable all experimental features by default.
+                enabledFeatures = engineFeatures.Select(static f => f.Name).ToArray();
+            }
+
             EnabledExperimentalFeatureNames = ProcessEnabledFeatures(enabledFeatures);
         }
 
