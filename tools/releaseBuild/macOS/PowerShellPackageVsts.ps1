@@ -106,13 +106,13 @@ try {
 
     if ($Build) {
         if ($Symbols) {
-            Start-PSBuild -Clean -Configuration 'Release' -NoPSModuleRestore @releaseTagParam -Runtime $Runtime -ExperimentalFeatureJsonFilePath "$repoRoot/ExperimentalFeatures.json"
+            Start-PSBuild -Clean -Configuration 'Release' -NoPSModuleRestore @releaseTagParam -Runtime $Runtime
             $pspackageParams['Type']='zip'
             $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
             Write-Verbose "Starting powershell packaging(zip)..." -Verbose
             Start-PSPackage @pspackageParams @releaseTagParam
         } else {
-            Start-PSBuild -Configuration 'Release' -PSModuleRestore @releaseTagParam -Runtime $Runtime -ExperimentalFeatureJsonFilePath "$repoRoot/ExperimentalFeatures.json"
+            Start-PSBuild -Configuration 'Release' -PSModuleRestore @releaseTagParam -Runtime $Runtime
             Start-PSPackage @pspackageParams @releaseTagParam
             switch ($ExtraPackage) {
                 "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam }

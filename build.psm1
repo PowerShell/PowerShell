@@ -324,8 +324,7 @@ function Start-PSBuild {
         [switch]$Detailed,
         [switch]$InteractiveAuth,
         [switch]$SkipRoslynAnalyzers,
-        [string]$PSOptionsPath,
-        [string]$ExperimentalFeatureJsonFilePath
+        [string]$PSOptionsPath
     )
 
     if ($ReleaseTag -and $ReleaseTag -notmatch "^v\d+\.\d+\.\d+(-(preview|rc)(\.\d{1,2})?)?$") {
@@ -620,15 +619,20 @@ Fix steps:
 
     # publish powershell.config.json
     $config = @{}
-    if ($environment.IsWindows) {
-        $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned";
-                     "WindowsPowerShellCompatibilityModuleDenyList" = @("PSScheduledJob","BestPractices","UpdateServices") }
-    }
 
     if (-not $SkipExperimentalFeatureGeneration -and
         (Test-IsPreview $psVersion) -and
-        -not (Test-IsReleaseCandidate $psVersion) -and
-        $ExperimentalFeatureJsonFilePath) {
+        -not (Test-IsReleaseCandidate $psVersion)
+    ) {
+
+        if ($Options.Runtime -like "*win*") {
+            $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned";
+                "WindowsPowerShellCompatibilityModuleDenyList"  = @("PSScheduledJob", "BestPractices", "UpdateServices")
+            }
+            $ExperimentalFeatureJsonFilePath = "$PSScriptRoot/experimental-feature-windows.json"
+        } else {
+            $ExperimentalFeatureJsonFilePath = "$PSScriptRoot/experimental-feature-linux.json"
+        }
 
         if (-not (Test-Path $ExperimentalFeatureJsonFilePath)) {
             throw "ExperimentalFeatureJsonFilePath: $ExperimentalFeatureJsonFilePath does not exist"
@@ -636,8 +640,7 @@ Fix steps:
 
         $json = Get-Content -Raw $ExperimentalFeatureJsonFilePath
         $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
-    }
-    else {
+    } else {
         Write-Warning -Message "Experimental features are not enabled in powershell.config.json file"
     }
 
