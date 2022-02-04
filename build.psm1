@@ -620,19 +620,22 @@ Fix steps:
     # publish powershell.config.json
     $config = @{}
 
+    if ($Options.Runtime -like "*win*") {
+        # Execution Policy is only supported on Windows
+        $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned";
+            "WindowsPowerShellCompatibilityModuleDenyList"  = @("PSScheduledJob", "BestPractices", "UpdateServices")
+        }
+    }
+
     if (-not $SkipExperimentalFeatureGeneration -and
         (Test-IsPreview $psVersion) -and
         -not (Test-IsReleaseCandidate $psVersion)
     ) {
 
-        if ($Options.Runtime -like "*win*") {
-			# Execution Policy is only supported on Windows
-            $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned";
-                "WindowsPowerShellCompatibilityModuleDenyList"  = @("PSScheduledJob", "BestPractices", "UpdateServices")
-            }
-            $ExperimentalFeatureJsonFilePath = "$PSScriptRoot/experimental-feature-windows.json"
+        $ExperimentalFeatureJsonFilePath = if ($Options.Runtime -like "*win*") {
+            "$PSScriptRoot/experimental-feature-windows.json"
         } else {
-            $ExperimentalFeatureJsonFilePath = "$PSScriptRoot/experimental-feature-linux.json"
+            "$PSScriptRoot/experimental-feature-linux.json"
         }
 
         if (-not (Test-Path $ExperimentalFeatureJsonFilePath)) {
