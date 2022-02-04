@@ -619,40 +619,33 @@ Fix steps:
 
     # publish powershell.config.json
     $config = @{}
-    if ($environment.IsWindows) {
+
+    if ($Options.Runtime -like "*win*") {
+        # Execution Policy is only supported on Windows
         $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned";
-                     "WindowsPowerShellCompatibilityModuleDenyList" = @("PSScheduledJob","BestPractices","UpdateServices") }
+            "WindowsPowerShellCompatibilityModuleDenyList"  = @("PSScheduledJob", "BestPractices", "UpdateServices")
+        }
     }
 
-    # When building preview, we want the configuration to enable all experiemental features by default
-    # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
     if (-not $SkipExperimentalFeatureGeneration -and
         (Test-IsPreview $psVersion) -and
-        -not (Test-IsReleaseCandidate $psVersion) -and
-        -not $Runtime.Contains("arm") -and
-        -not ($Runtime -like 'fxdependent*')) {
+        -not (Test-IsReleaseCandidate $psVersion)
+    ) {
 
-        $json = & $publishPath\pwsh -noprofile -command {
-            # Special case for DSC code in PS;
-            # this experimental feature requires new DSC module that is not inbox,
-            # so we don't want default DSC use case be broken
-            [System.Collections.ArrayList] $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
-
-            $expFeatures | Out-String | Write-Verbose -Verbose
-
-            # Make sure ExperimentalFeatures from modules in PSHome are added
-            # https://github.com/PowerShell/PowerShell/issues/10550
-            $ExperimentalFeaturesFromGalleryModulesInPSHome = @()
-            $ExperimentalFeaturesFromGalleryModulesInPSHome | ForEach-Object {
-                if (!$expFeatures.Contains($_)) {
-                    $null = $expFeatures.Add($_)
-                }
-            }
-
-            ConvertTo-Json $expFeatures
+        $ExperimentalFeatureJsonFilePath = if ($Options.Runtime -like "*win*") {
+            "$PSScriptRoot/experimental-feature-windows.json"
+        } else {
+            "$PSScriptRoot/experimental-feature-linux.json"
         }
 
+        if (-not (Test-Path $ExperimentalFeatureJsonFilePath)) {
+            throw "ExperimentalFeatureJsonFilePath: $ExperimentalFeatureJsonFilePath does not exist"
+        }
+
+        $json = Get-Content -Raw $ExperimentalFeatureJsonFilePath
         $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
+    } else {
+        Write-Warning -Message "Experimental features are not enabled in powershell.config.json file"
     }
 
     if ($config.Count -gt 0) {
