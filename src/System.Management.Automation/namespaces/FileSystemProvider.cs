@@ -8073,8 +8073,8 @@ namespace Microsoft.PowerShell.Commands
             private static extern bool FindClose(IntPtr handle);
         }
 
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern SafeFindHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
+        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
 
         internal enum FINDEX_INFO_LEVELS : uint
         {
@@ -8278,7 +8278,7 @@ namespace Microsoft.PowerShell.Commands
                 fullPath = PathUtils.EnsureExtendedPrefix(fullPath);
             }
 
-            using (SafeFindHandle handle = FindFirstFileEx(fullPath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+            using (SafeFindHandle handle = FindFirstFile(fullPath, ref data))
             {
                 if (handle.IsInvalid)
                 {
