@@ -8073,23 +8073,10 @@ namespace Microsoft.PowerShell.Commands
             private static extern bool FindClose(IntPtr handle);
         }
 
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern SafeFindHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
-
-        internal enum FINDEX_INFO_LEVELS : uint
-        {
-            FindExInfoStandard = 0x0u,
-            FindExInfoBasic = 0x1u,
-            FindExInfoMaxInfoLevel = 0x2u,
-        }
-
-        internal enum FINDEX_SEARCH_OPS : uint
-        {
-            FindExSearchNameMatch = 0x0u,
-            FindExSearchLimitToDirectories = 0x1u,
-            FindExSearchLimitToDevices = 0x2u,
-            FindExSearchMaxSearchOp = 0x3u,
-        }
+        // We use 'FindFirstFileW' instead of 'FindFirstFileExW' because the latter doesn't work correctly with Unicode file names on FAT32.
+        // See https://github.com/PowerShell/PowerShell/issues/16804
+        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal unsafe struct WIN32_FIND_DATA
@@ -8278,7 +8265,7 @@ namespace Microsoft.PowerShell.Commands
                 fullPath = PathUtils.EnsureExtendedPrefix(fullPath);
             }
 
-            using (SafeFindHandle handle = FindFirstFileEx(fullPath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+            using (SafeFindHandle handle = FindFirstFile(fullPath, ref data))
             {
                 if (handle.IsInvalid)
                 {
