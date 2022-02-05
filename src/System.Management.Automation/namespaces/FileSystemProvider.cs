@@ -8078,21 +8078,6 @@ namespace Microsoft.PowerShell.Commands
         [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileW", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
 
-        internal enum FINDEX_INFO_LEVELS : uint
-        {
-            FindExInfoStandard = 0x0u,
-            FindExInfoBasic = 0x1u,
-            FindExInfoMaxInfoLevel = 0x2u,
-        }
-
-        internal enum FINDEX_SEARCH_OPS : uint
-        {
-            FindExSearchNameMatch = 0x0u,
-            FindExSearchLimitToDirectories = 0x1u,
-            FindExSearchLimitToDevices = 0x2u,
-            FindExSearchMaxSearchOp = 0x3u,
-        }
-
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal unsafe struct WIN32_FIND_DATA
         {
