@@ -20,6 +20,8 @@ Today, DSC is integrated into the PowerShell language, and we need to manage it 
 * @TravisEz13
 * @theJasonHelmick
 * @anmenaga
+* @gaelcolas
+* @michaeltlombardi
 
 ## Developer Experience
 
@@ -33,6 +35,8 @@ Special consideration should be given to topics like **backwards compatibility**
 
 * @JamesWTruher (PS Standard, module authoring)
 * @adityapatwardhan (SDK)
+* @michaeltlombardi
+* @SeeminglyScience
 
 ## Engine
 
@@ -81,6 +85,8 @@ These topics include (but are not limited to):
 * @daxian-dbw (PSReadline / IntelliSense)
 * @adityapatwardhan (Markdown / help system)
 * @JamesWTruher (cmdlet design)
+* @SeeminglyScience
+* @kilasuit
 
 ## Language
 
@@ -95,6 +101,7 @@ particularly given the long-lasting effects of language decisions.
 * @JamesWTruher
 * @daxian-dbw
 * @BrucePay
+* @SeeminglyScience
 
 ## Remoting
 
@@ -136,6 +143,8 @@ These modules include:
 * PowerShell Committee as interim members
 * @jdhitsolutions
 * @TobiasPSP
+* @doctordns
+* @jhoneill
 
 ## Security
 
