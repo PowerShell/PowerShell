@@ -925,20 +925,26 @@ namespace System.Management.Automation.Language
             // G      parameter-list   new-lines:opt   ','   script-parameter
 
             List<ParameterAst> parameters = new List<ParameterAst>();
-            Token commaToken = null;
+            Token nextToken = null;
             while (true)
             {
                 ParameterAst parameter = ParameterRule();
                 if (parameter == null)
                 {
-                    if (commaToken != null)
+                    if (nextToken is not null)
                     {
-                        // ErrorRecovery: ??
-
-                        ReportIncompleteInput(After(commaToken),
+                        var endToken = PeekToken();
+                        if (endToken.Kind == TokenKind.RParen)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            ReportIncompleteInput(After(nextToken),
                             nameof(ParserStrings.MissingExpressionAfterToken),
                             ParserStrings.MissingExpressionAfterToken,
-                            commaToken.Kind.Text());
+                            nextToken.Kind.Text());
+                        }
                     }
 
                     break;
@@ -946,13 +952,18 @@ namespace System.Management.Automation.Language
 
                 parameters.Add(parameter);
                 SkipNewlines();
-                commaToken = PeekToken();
-                if (commaToken.Kind != TokenKind.Comma)
+                nextToken = PeekToken();
+                if (nextToken.Kind == TokenKind.Comma)
+                {
+                    SkipToken();
+                    continue;
+                }
+                else if (nextToken.Extent.StartLineNumber == parameter.Extent.EndLineNumber
+                    || (nextToken.Kind is not TokenKind.LBracket and not TokenKind.Variable and not TokenKind.Generic)
+                    || (nextToken.Kind == TokenKind.Generic && !nextToken.Text.StartsWith('[')))
                 {
                     break;
                 }
-
-                SkipToken();
             }
 
             return parameters;
@@ -1206,8 +1217,6 @@ namespace System.Management.Automation.Language
                                 expr = new ErrorExpressionAst(errorPosition);
                                 SyncOnError(true, TokenKind.Comma, TokenKind.RParen, TokenKind.RBracket, TokenKind.NewLine);
                             }
-
-                            lastItemExtent = expr.Extent;
                         }
                         else
                         {
@@ -1216,6 +1225,7 @@ namespace System.Management.Automation.Language
                             expr = new ConstantExpressionAst(name.Extent, true);
                             expressionOmitted = true;
                         }
+                        lastItemExtent = expr.Extent;
                     }
                     else
                     {
@@ -1247,26 +1257,31 @@ namespace System.Management.Automation.Language
                     else if (commaToken != null)
                     {
                         // ErrorRecovery: Pretend we saw the argument and keep going.
-
-                        IScriptExtent errorExtent = After(commaToken);
-                        ReportIncompleteInput(
-                            errorExtent,
-                            nameof(ParserStrings.MissingExpressionAfterToken),
-                            ParserStrings.MissingExpressionAfterToken,
-                            commaToken.Kind.Text());
-                        positionalArguments.Add(new ErrorExpressionAst(errorExtent));
-                        lastItemExtent = errorExtent;
+                        var endToken = PeekToken();
+                        if (endToken.Kind != TokenKind.RParen)
+                        {
+                            IScriptExtent errorExtent = After(commaToken);
+                            ReportIncompleteInput(
+                                errorExtent,
+                                nameof(ParserStrings.MissingExpressionAfterToken),
+                                ParserStrings.MissingExpressionAfterToken,
+                                commaToken.Kind.Text());
+                            positionalArguments.Add(new ErrorExpressionAst(errorExtent));
+                            lastItemExtent = errorExtent;
+                        }
                     }
 
                     SkipNewlines();
                     commaToken = PeekToken();
-                    if (commaToken.Kind != TokenKind.Comma)
+                    if (commaToken.Kind == TokenKind.Comma)
+                    {
+                        lastItemExtent = commaToken.Extent;
+                        SkipToken();
+                    }
+                    else if (commaToken.Kind == TokenKind.RParen || commaToken.Extent.StartLineNumber == lastItemExtent.EndLineNumber)
                     {
                         break;
                     }
-
-                    lastItemExtent = commaToken.Extent;
-                    SkipToken();
                 }
             }
             finally
@@ -7917,6 +7932,11 @@ namespace System.Management.Automation.Language
                     {
                         if (comma != null)
                         {
+                            var endToken = PeekToken();
+                            if (endToken.Kind == TokenKind.RParen)
+                            {
+                                break;
+                            }
                             // ErrorRecovery: sync at closing paren or newline.
 
                             ReportIncompleteInput(After(comma),
@@ -7933,7 +7953,15 @@ namespace System.Management.Automation.Language
 
                     SkipNewlines();
                     comma = NextToken();
-                    if (comma.Kind != TokenKind.Comma)
+                    if (comma.Kind == TokenKind.Comma)
+                    {
+                        continue;
+                    }
+                    else if (comma.Kind != TokenKind.RParen && comma.Extent.StartLineNumber != argument.Extent.EndLineNumber)
+                    {
+                        UngetToken(comma);
+                    }
+                    else
                     {
                         UngetToken(comma);
                         comma = null;

@@ -644,3 +644,75 @@ Describe "Parsing array that has too many dimensions" -Tag CI {
         }
     }
 }
+
+Describe "Trailing commas and no commas" -Tag CI {
+    It "Parse script succesfully: '<Script>'" -TestCases @(
+        @{ Script = @'
+param ($x
+$y)
+'@}
+        @{ Script = @'
+param ($x,$y,)
+'@}
+        @{ Script = @'
+param ($x
+[string]
+$y)
+'@}
+        @{ Script = @'
+param ($x
+[Parameter()]
+[string]
+$y)
+'@}
+        @{ Script = @'
+[ValidateSet("val1"
+"val2"
+"val3")]$X=""
+'@}
+        @{ Script = @'
+[ValidateSet("val1","val2","val3",)]$X=""
+'@}
+        @{ Script = @'
+[parameter(Mandatory
+ValueFromPipeline
+ValueFromPipelineByPropertyName)]$X=""
+'@}
+        @{ Script = @'
+[parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]$X=""
+'@}
+        @{ Script = @'
+"".Split('a','b','c',)
+'@}
+        @{ Script = @'
+"".Split(
+'a'
+'b'
+'c')
+'@}
+    ) -test {
+        param($Script)
+
+        $errs = Get-ParseResults -src $Script
+        $errs.Count | Should -Be 0
+    }
+
+    It "ParseError for '<Script>'" -TestCases @(
+        @{ Script = 'param ($x $y)'; ErrorId = @('MissingEndParenthesisInFunctionParameterList', 'UnexpectedToken'); StartOffset = @(9, 12); EndOffset = @(9, 13) }
+        @{ Script = 'param ($x, $y,,)'; ErrorId = @('MissingExpressionAfterToken', 'MissingEndParenthesisInFunctionParameterList','MissingExpressionAfterOperator','UnexpectedToken'); StartOffset = @(14,13,15,15); EndOffset = @(14,13,15,16) }
+        @{ Script = '[ValidateSet("val1" "val2")]$X=""'; ErrorId = @('MissingEndParenthesisInExpression', 'UnexpectedToken','UnexpectedAttribute'); StartOffset = @(19,26,0); EndOffset = @(19,27,19) }
+        @{ Script = '[ValidateSet("val1", "val2",,)]$X=""'; ErrorId = @('MissingExpressionAfterToken', 'ParameterAttributeArgumentNeedsToBeConstantOrScriptBlock'); StartOffset = @(28,28); EndOffset = @(28,28) }
+        @{ Script = '"".Split("a" "b")'; ErrorId = @('MissingEndParenthesisInMethodCall', 'UnexpectedToken','UnexpectedToken'); StartOffset = @(12,13,16); EndOffset = @(12,16,17) }
+        @{ Script = '"".Split("a","b",,)'; ErrorId = @('MissingExpressionAfterToken', 'MissingExpressionAfterToken','UnexpectedToken'); StartOffset = @(17,18,18); EndOffset = @(17,18,19) }
+    ) -test {
+        param($Script, $ErrorId, $StartOffset, $EndOffset)
+
+        $errs = Get-ParseResults -src $Script
+        $errs.Count | Should -Be $ErrorId.Count
+        for ($i = 0; $i -lt $errs.Count; $i++) {
+            $errs[$i].ErrorId | Should -BeExactly $ErrorId[$i]
+            $errs[$i].Extent.StartScriptPosition.Offset | Should -Be $StartOffset[$i]
+            $errs[$i].Extent.EndScriptPosition.Offset | Should -Be $EndOffset[$i]
+        }
+    }
+}
