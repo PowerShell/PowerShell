@@ -1225,6 +1225,7 @@ namespace System.Management.Automation.Language
                             expr = new ConstantExpressionAst(name.Extent, true);
                             expressionOmitted = true;
                         }
+
                         lastItemExtent = expr.Extent;
                     }
                     else
@@ -7937,6 +7938,7 @@ namespace System.Management.Automation.Language
                             {
                                 break;
                             }
+                            
                             // ErrorRecovery: sync at closing paren or newline.
 
                             ReportIncompleteInput(After(comma),
