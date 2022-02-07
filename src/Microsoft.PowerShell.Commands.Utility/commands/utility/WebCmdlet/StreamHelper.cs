@@ -429,24 +429,27 @@ namespace Microsoft.PowerShell.Commands
             string content = StreamToString(stream, encoding);
             if (isDefaultEncoding)
             {
-                do
+                int endOfHeader = content.IndexOf("</head>", startIndex: 0, count: 2048, StringComparison.OrdinalIgnoreCase);
+                if (endOfHeader == -1)
                 {
-                    // check for a charset attribute on the meta element to override the default.
-                    Match match = s_metaexp.Match(content);
-                    if (match.Success)
-                    {
-                        Encoding localEncoding = null;
-                        string characterSet = match.Groups["charset"].Value;
+                    return content;
+                }
 
-                        if (TryGetEncoding(characterSet, out localEncoding))
-                        {
-                            stream.Seek(0, SeekOrigin.Begin);
-                            content = StreamToString(stream, localEncoding);
-                            // report the encoding used.
-                            encoding = localEncoding;
-                        }
+                // check for a charset attribute on the meta element to override the default.
+                Match match = s_metaexp.Match(content, beginning: 0, length: endOfHeader);
+                if (match.Success)
+                {
+                    Encoding localEncoding = null;
+                    string characterSet = match.Groups["charset"].Value;
+
+                    if (TryGetEncoding(characterSet, out localEncoding))
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                        content = StreamToString(stream, localEncoding);
+                        // report the encoding used.
+                        encoding = localEncoding;
                     }
-                } while (false);
+                }
             }
 
             return content;
