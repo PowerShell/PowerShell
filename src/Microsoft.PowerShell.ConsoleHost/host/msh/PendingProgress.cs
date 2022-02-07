@@ -937,8 +937,6 @@ namespace Microsoft.PowerShell
                 return nodesCompressed;
             }
 
-            Dbg.Assert(false, "with all nodes invisible, we should never reach this point.");
-
             return 0;
         }
 

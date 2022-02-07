@@ -175,13 +175,13 @@ namespace Microsoft.PowerShell.Commands
 
             // NOTE: The HelpInfoUri must be updated with each release.
 
-            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://aka.ms/powershell72-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://aka.ms/powershell72-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://aka.ms/powershell72-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://aka.ms/powershell72-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://aka.ms/powershell72-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://aka.ms/powershell72-help");
-            s_metadataCache.Add("Microsoft.WSMan.Management", "https://aka.ms/powershell72-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.WSMan.Management", "https://aka.ms/powershell73-help");
         }
 
         /// <summary>

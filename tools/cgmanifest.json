@@ -35,7 +35,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.ApplicationInsights",
-          "Version": "2.19.0"
+          "Version": "2.20.0"
         }
       },
       "DevelopmentDependency": false
@@ -685,7 +685,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers.Unstable",
-          "Version": "1.2.0.376"
+          "Version": "1.2.0.406"
         }
       },
       "DevelopmentDependency": true
@@ -695,7 +695,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers",
-          "Version": "1.2.0-beta.354"
+          "Version": "1.1.118"
         }
       },
       "DevelopmentDependency": true

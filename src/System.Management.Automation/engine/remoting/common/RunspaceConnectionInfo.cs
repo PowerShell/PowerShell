@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel; // Win32Exception
 using System.Diagnostics;
@@ -1995,18 +1996,27 @@ namespace System.Management.Automation.Runspaces
             set;
         }
 
+        /// The SSH options to pass to OpenSSH.
+        /// Gets or sets the SSH options to pass to OpenSSH.
+        /// </summary>
+        private Hashtable Options
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="SSHConnectionInfo" /> class.
         /// </summary>
         private SSHConnectionInfo()
         { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="SSHConnectionInfo" /> class.
         /// </summary>
         /// <param name="userName">User Name.</param>
         /// <param name="computerName">Computer Name.</param>
@@ -2027,7 +2037,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="SSHConnectionInfo" /> class.
         /// </summary>
         /// <param name="userName">User Name.</param>
         /// <param name="computerName">Computer Name.</param>
@@ -2044,7 +2054,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the <see cref="SSHConnectionInfo" /> class.
         /// </summary>
         /// <param name="userName">User Name.</param>
         /// <param name="computerName">Computer Name.</param>
@@ -2079,6 +2089,28 @@ namespace System.Management.Automation.Runspaces
             int connectingTimeout) : this(userName, computerName, keyFilePath, port, subsystem)
         {
             ConnectingTimeout = connectingTimeout;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SSHConnectionInfo" /> class.
+        /// </summary>
+        /// <param name="userName">User Name.</param>
+        /// <param name="computerName">Computer Name.</param>
+        /// <param name="keyFilePath">Key File Path.</param>
+        /// <param name="port">Port number for connection (default 22).</param>
+        /// <param name="subsystem">Subsystem to use (default 'powershell').</param>
+        /// <param name="connectingTimeout">Timeout time for terminating connection attempt.</param>
+        /// <param name="options">Options for the SSH connection.</param>
+        public SSHConnectionInfo(
+            string userName,
+            string computerName,
+            string keyFilePath,
+            int port,
+            string subsystem,
+            int connectingTimeout,
+            Hashtable options) : this(userName, computerName, keyFilePath, port, subsystem, connectingTimeout)
+        {
+           Options = options;
         }
 
         #endregion
@@ -2137,6 +2169,7 @@ namespace System.Management.Automation.Runspaces
             newCopy.Port = Port;
             newCopy.Subsystem = Subsystem;
             newCopy.ConnectingTimeout = ConnectingTimeout;
+            newCopy.Options = Options;
 
             return newCopy;
         }
@@ -2188,9 +2221,9 @@ namespace System.Management.Automation.Runspaces
             //
             // Local ssh invoked as:
             //   windows:
-            //     ssh.exe [-i identity_file] [-l login_name] [-p port] -s <destination> <command>
+            //     ssh.exe [-i identity_file] [-l login_name] [-p port] [-o option] -s <destination> <command>
             //   linux|macos:
-            //     ssh [-i identity_file] [-l login_name] [-p port] -s <destination> <command>
+            //     ssh [-i identity_file] [-l login_name] [-p port] [-o option] -s <destination> <command>
             // where <command> is interpreted as the subsystem due to the -s flag.
             //
             // Remote sshd configured for PowerShell Remoting Protocol (PSRP) over Secure Shell Protocol (SSH)
@@ -2239,6 +2272,15 @@ namespace System.Management.Automation.Runspaces
             if (this.Port != 0)
             {
                 startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-p {0}", this.Port));
+            }
+
+            // pass "-o option=value" command line argument to ssh if options are provided
+            if (this.Options != null) 
+            {
+                foreach (DictionaryEntry pair in this.Options) 
+                {
+                    startInfo.ArgumentList.Add(string.Format(CultureInfo.InvariantCulture, @"-o {0}={1}", pair.Key, pair.Value));
+                }
             }
 
             // pass "-s destination command" command line arguments to ssh where command is the subsystem to invoke on the destination

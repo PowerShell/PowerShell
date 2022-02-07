@@ -976,20 +976,17 @@ namespace System.Management.Automation
             try
             {
                 string psHome = Utils.DefaultPowerShellAppBase;
-                if (!string.IsNullOrEmpty(psHome))
-                {
-                    // Win8: 584267 Powershell Modules are listed twice in x86, and cannot be removed
-                    // This happens because ModuleTable uses Path as the key and CBS installer
-                    // expands the path to include "SysWOW64" (for
-                    // HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\PowerShell\3\PowerShellEngine ApplicationBase).
-                    // Because of this, the module that is getting loaded during startup (through LocalRunspace)
-                    // is using "SysWow64" in the key. Later, when Import-Module is called, it loads the
-                    // module using ""System32" in the key.
 #if !UNIX
-                    psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
+                // Win8: 584267 Powershell Modules are listed twice in x86, and cannot be removed.
+                // This happens because 'ModuleTable' uses Path as the key and x86 WinPS has "SysWOW64" in its $PSHOME.
+                // Because of this, the module that is getting loaded during startup (through LocalRunspace) is using
+                // "SysWow64" in the key. Later, when 'Import-Module' is called, it loads the module using ""System32"
+                // in the key.
+                // For the cross-platform PowerShell, a user can choose to install it under "C:\Windows\SysWOW64", and
+                // thus it may have the same problem as described above. So we keep this line of code.
+                psHome = psHome.ToLowerInvariant().Replace(@"\syswow64\", @"\system32\");
 #endif
-                    Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
-                }
+                Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
             }
             catch (System.Security.SecurityException)
             {

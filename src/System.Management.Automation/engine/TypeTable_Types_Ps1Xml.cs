@@ -676,6 +676,17 @@ namespace System.Management.Automation.Runspaces
                 typeMembers,
                 isOverride: false);
 
+            newMembers.Add(@"ResolvedTarget");
+            AddMember(
+                errors,
+                typeName,
+                new PSCodeProperty(
+                    @"ResolvedTarget",
+                    GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), @"ResolvedTarget"),
+                    setterCodeReference: null),
+                typeMembers,
+                isOverride: false);
+
             newMembers.Add(@"Target");
             AddMember(
                 errors,
@@ -798,6 +809,17 @@ namespace System.Management.Automation.Runspaces
                     GetScriptBlock(@"if ($this.Extension.Length -gt 0){$this.Name.Remove($this.Name.Length - $this.Extension.Length)}else{$this.Name}"),
                     setterScript: null,
                     shouldCloneOnAccess: true),
+                typeMembers,
+                isOverride: false);
+
+            newMembers.Add(@"ResolvedTarget");
+            AddMember(
+                errors,
+                typeName,
+                new PSCodeProperty(
+                    @"ResolvedTarget",
+                    GetMethodInfo(typeof(Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods), @"ResolvedTarget"),
+                    setterCodeReference: null),
                 typeMembers,
                 isOverride: false);
 

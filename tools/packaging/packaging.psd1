@@ -15,6 +15,8 @@
         'New-DotnetSdkContainerFxdPackage'
         'New-ExePackage'
         'New-GlobalToolNupkg'
+        'New-ILNugetPackageSource'
+        'New-ILNugetPackageFromSource'
         'New-ILNugetPackage'
         'New-MSIPatch'
         'New-PSBuildZip'
