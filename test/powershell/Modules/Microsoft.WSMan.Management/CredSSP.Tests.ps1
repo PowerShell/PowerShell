@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+Import-Module HelpersCommon
+
 Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
@@ -44,50 +47,25 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
     }
 
     It "Enable-WSManCredSSP works: <description>" -Skip:($NotEnglish -or $IsToBeSkipped) -TestCases @(
-        @{params=@{Role="Client";DelegateComputer="*"};description="client"},
-        @{params=@{Role="Server"};description="server"}
+        @{ params = @{ Role="Client"; DelegateComputer="*" }; description = "client"; expected = "The machine is configured to allow delegating fresh credentials to the following target\(s\):wsman/\*" },
+        @{ params = @{ Role="Server" };                       description = "server"; expected = "This computer is configured to receive credentials from a remote client computer" }
     ) {
-        param ($params)
-
-        Write-Verbose -Verbose "=========== $($params.Role) Enable-WSManCredSSP ==========="
+        param ($params, $description, $expected)
 
         $c = Enable-WSManCredSSP @params -Force
-
-        Write-Verbose -Verbose ($c.GetType().FullName)
-        Write-Verbose -Verbose ($c | Format-List | Out-String)
-
-        Write-Verbose -Verbose "============ END ============"
-
         $c.CredSSP | Should -BeTrue
-
-        Write-Verbose -Verbose "=========== $($params.Role) Get-WSManCredSSP ==========="
-
-        $c = Get-WSManCredSSP
-
-        foreach ($i in $c) {
-            Write-Verbose -Verbose $i
-        }
-
-        Write-Verbose -Verbose "============ END ============"
-
-        if ($params.Role -eq "Client") {
-            Start-Sleep -Seconds 2
-            $c = Get-WSManCredSSP
-
-            Write-Verbose -Verbose "============ Get again in 2 seconds ==========="
-            foreach ($i in $c) {
-                Write-Verbose -Verbose $i
-            }
-            Write-Verbose -Verbose "================== END ========================"
-        }
 
         if ($params.Role -eq "Client")
         {
-            $c[0] | Should -Match "The machine is configured to allow delegating fresh credentials to the following target\(s\):wsman/\*"
+            Wait-UntilTrue -IntervalInMilliseconds 500 -sb {
+                $c = Get-WSManCredSSP
+                $c[0] -match $expected
+            } | Should -BeTrue -Because "WSManCredSSP should have been enabled to allow delegating fresh credentials to wsman/*, but it was not."
         }
         else
         {
-            $c[1] | Should -Match "This computer is configured to receive credentials from a remote client computer"
+            $c = Get-WSManCredSSP
+            $c[1] | Should -Match $expected
         }
     }
 
