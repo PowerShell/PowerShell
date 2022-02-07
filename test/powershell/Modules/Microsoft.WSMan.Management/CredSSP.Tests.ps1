@@ -48,10 +48,29 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         @{params=@{Role="Server"};description="server"}
     ) {
         param ($params)
+
+        Write-Verbose -Verbose "=========== Enable-WSManCredSSP ==========="
+
         $c = Enable-WSManCredSSP @params -Force
+
+        Write-Verbose -Verbose ($c.GetType().FullName)
+        Write-Verbose -Verbose ($c | Format-List | Out-String)
+        Write-Verbose -Verbose ($Error[0])
+
+        Write-Verbose -Verbose "============ END ============"
+
         $c.CredSSP | Should -BeTrue
 
+        Write-Verbose -Verbose "=========== Get-WSManCredSSP ==========="
+
         $c = Get-WSManCredSSP
+
+        Write-Verbose -Verbose ($c.GetType().FullName)
+        Write-Verbose -Verbose ($c | Format-List | Out-String)
+        Write-Verbose -Verbose ($Error[0])
+
+        Write-Verbose -Verbose "============ END ============"
+
         if ($params.Role -eq "Client")
         {
             $c[0] | Should -Match "The machine is configured to allow delegating fresh credentials to the following target\(s\):wsman/\*"
