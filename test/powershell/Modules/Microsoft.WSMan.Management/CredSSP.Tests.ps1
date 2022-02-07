@@ -49,27 +49,37 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
     ) {
         param ($params)
 
-        Write-Verbose -Verbose "=========== Enable-WSManCredSSP ==========="
+        Write-Verbose -Verbose "=========== $($params.Role) Enable-WSManCredSSP ==========="
 
         $c = Enable-WSManCredSSP @params -Force
 
         Write-Verbose -Verbose ($c.GetType().FullName)
         Write-Verbose -Verbose ($c | Format-List | Out-String)
-        Write-Verbose -Verbose ($Error[0])
 
         Write-Verbose -Verbose "============ END ============"
 
         $c.CredSSP | Should -BeTrue
 
-        Write-Verbose -Verbose "=========== Get-WSManCredSSP ==========="
+        Write-Verbose -Verbose "=========== $($params.Role) Get-WSManCredSSP ==========="
 
         $c = Get-WSManCredSSP
 
-        Write-Verbose -Verbose ($c.GetType().FullName)
-        Write-Verbose -Verbose ($c | Format-List | Out-String)
-        Write-Verbose -Verbose ($Error[0])
+        foreach ($i in $c) {
+            Write-Verbose -Verbose $i
+        }
 
         Write-Verbose -Verbose "============ END ============"
+
+        if ($params.Role -eq "Client") {
+            Start-Sleep -Seconds 2
+            $c = Get-WSManCredSSP
+
+            Write-Verbose -Verbose "============ Get again in 2 seconds ==========="
+            foreach ($i in $c) {
+                Write-Verbose -Verbose $i
+            }
+            Write-Verbose -Verbose "================== END ========================"
+        }
 
         if ($params.Role -eq "Client")
         {
