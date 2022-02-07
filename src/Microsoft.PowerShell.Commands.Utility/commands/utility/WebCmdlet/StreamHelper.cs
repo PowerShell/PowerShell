@@ -429,7 +429,9 @@ namespace Microsoft.PowerShell.Commands
             string content = StreamToString(stream, encoding);
             if (isDefaultEncoding)
             {
-                int endOfHeader = content.IndexOf("</head>", startIndex: 0, count: 2048, StringComparison.OrdinalIgnoreCase);
+                // No need to parse all content if it is large.
+                var count = Math.Min(2048, content.Length);
+                int endOfHeader = content.IndexOf("</head>", startIndex: 0, count, StringComparison.OrdinalIgnoreCase);
                 if (endOfHeader == -1)
                 {
                     return content;
