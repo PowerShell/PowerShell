@@ -26,12 +26,7 @@ namespace System.Management.Automation.Runspaces
         /// Target is a container with which the session is based on Hyper-V socket (Hyper-V
         /// container) or named pipe (windows container)
         /// </summary>
-        Container,
-
-        /// <summary>
-        /// Target is for a custom remote connection
-        /// </summary>
-        CustomRemoteConnection
+        Container
     }
 
     /// <summary>
@@ -49,6 +44,7 @@ namespace System.Management.Automation.Runspaces
         #region Private Members
 
         private RemoteRunspace _remoteRunspace;
+        private string _transportName;
 
         /// <summary>
         /// Static variable which is incremented to generate id.
@@ -307,7 +303,8 @@ namespace System.Management.Automation.Runspaces
                     break;
 
                 default:
-                    ComputerType = TargetMachineType.CustomRemoteConnection;
+                    // Default for custom connection and transports.
+                    ComputerType = TargetMachineType.RemoteMachine;
                     break;
             }
         }
@@ -343,7 +340,7 @@ namespace System.Management.Automation.Runspaces
                     return "VMBus";
 
                 default:
-                    return "CustomConnection";
+                    return string.IsNullOrEmpty(_transportName) ? "Custom" : _transportName;
             }
         }
 
@@ -366,25 +363,28 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Creates a PSSession object from the provided remote runspace object.
+        /// If psCmdlet argument is non-null, then the new PSSession object is added to the
+        /// session runspace repository (Get-PSSession).
         /// </summary>
+        /// <param name="runspace">Runspace for the new PSSession.</param>
+        /// <param name="transportName">Optional transport name.</param>
+        /// <param name="psCmdlet">Optional cmdlet associated with the PSSession creation.</param>
         public static PSSession Create(
             Runspace runspace,
-            PSCmdlet psCmdlet,
-            bool addToRunspaceRepository)
+            string transportName,
+            PSCmdlet psCmdlet)
         {
             if (!(runspace is RemoteRunspace remoteRunspace))
             {
                 throw new PSArgumentException(RemotingErrorIdStrings.InvalidPSSessionArgument);
             }
 
-            if (addToRunspaceRepository && psCmdlet == null)
+            var psSession = new PSSession(remoteRunspace)
             {
-                throw new PSArgumentNullException(nameof(psCmdlet));
-            }
+                _transportName = transportName
+            };
 
-            var psSession = new PSSession(remoteRunspace);
-            
-            if (addToRunspaceRepository)
+            if (psCmdlet != null)
             {
                 psCmdlet.RunspaceRepository.Add(psSession);
             }
