@@ -423,8 +423,8 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public static string ErrorPrefix
         {
-            get;
-        } = _errorPrepend;
+            get => _errorPrepend;
+        }
 
         #endregion
 
