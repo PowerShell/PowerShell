@@ -64,8 +64,10 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         }
         else
         {
-            $c = Get-WSManCredSSP
-            $c[1] | Should -Match $expected
+            Wait-UntilTrue -IntervalInMilliseconds 500 -sb {
+                $c = Get-WSManCredSSP
+                $c[1] -match $expected
+            } | Should -BeTrue -Because "WSManCredSSP should have been enabled to allow receiving credentials from a remote client computer, but it was not."
         }
     }
 
