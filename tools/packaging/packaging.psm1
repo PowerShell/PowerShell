@@ -4128,13 +4128,13 @@ function New-GlobalToolNupkgSource
     {
         Write-Log "New-GlobalToolNupkgSource: Reducing package size for non-unified packages."
 
-        Write-Log "Start-PrepForGlobalToolNupkg: Reducing size of Linux package"
+        Write-Log "New-GlobalToolNupkgSource: Reducing size of Linux package"
         ReduceFxDependentPackage -Path $LinuxBinPath
 
-        Write-Log "Start-PrepForGlobalToolNupkg: Reducing size of Windows package"
+        Write-Log "New-GlobalToolNupkgSource: Reducing size of Windows package"
         ReduceFxDependentPackage -Path $WindowsBinPath -KeepWindowsRuntimes
 
-        Write-Log "Start-PrepForGlobalToolNupkg: Reducing size of WindowsDesktop package"
+        Write-Log "New-GlobalToolNupkgSource: Reducing size of WindowsDesktop package"
         ReduceFxDependentPackage -Path $WindowsDesktopBinPath -KeepWindowsRuntimes
     }
 

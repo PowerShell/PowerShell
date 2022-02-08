@@ -14,7 +14,7 @@ parameters:
     - PowerShell.Linux.arm64
     - PowerShell.Windows.x64
     - PowerShell.Windows.arm32
-    
+
 steps:
 
 - pwsh: |
@@ -45,6 +45,8 @@ steps:
       Get-ChildItem -Path env:
     displayName: 'Capture environment variables after Global Tool package source is created.'
 
+  # NOTE: The above 'New-GlobalToolNupkgSource' task function sets the 'GlobalToolNuSpecSourcePath', 'GlobalToolPkgName',
+  #       and 'GlobalToolCGManifestPath' environment variables.
   - template: Sbom.yml@ComplianceRepo
     parameters:
       BuildDropPath: $(GlobalToolNuSpecSourcePath)
