@@ -1,6 +1,6 @@
 parameters:
   - name: pool
-    default: 'Hosted VS2017'
+    default: 'windows-latest'
   - name: jobName
     default: 'win_packaging'
   - name: runtimePrefix
@@ -24,7 +24,7 @@ jobs:
       value: $(Agent.BuildDirectory)\$(complianceRepoFolder)
 
   pool:
-    name: ${{ parameters.pool }}
+    vmImage: ${{ parameters.pool }}
 
   displayName: Windows Packaging - ${{ parameters.architecture }} - ${{ parameters.channel }}
 

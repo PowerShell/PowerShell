@@ -600,9 +600,14 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
         It "NoClobber WinCompat import works for an engine module through -UseWindowsPowerShell parameter" {
 
+            # pre-test cleanup
+            Get-Module -Name Microsoft.PowerShell.Management | Remove-Module
+            Import-Module -Name Microsoft.PowerShell.Management # import the one that comes with PSCore
+
             Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
 
             $modules = Get-Module -Name Microsoft.PowerShell.Management
+
             $modules.Count | Should -Be 2
             $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
             $coreModule = $modules | Where-Object {$_.ModuleType -eq 'Manifest'}
@@ -701,6 +706,10 @@ Remove-Module $desktopModuleToUse
 
         AfterAll {
             Restore-ModulePath
+        }
+
+        BeforeEach {
+            Get-PSSession -Name WinPSCompatSession -ErrorAction SilentlyContinue | Remove-PSSession
         }
 
         AfterEach {
