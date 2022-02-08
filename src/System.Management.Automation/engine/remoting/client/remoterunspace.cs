@@ -938,6 +938,11 @@ namespace System.Management.Automation
                 returnCaps |= RunspaceCapability.SupportsDisconnect;
             }
 
+            if (_connectionInfo is WSManConnectionInfo)
+            {
+                return returnCaps;
+            }
+
             if (_connectionInfo is NamedPipeConnectionInfo)
             {
                 returnCaps |= RunspaceCapability.NamedPipeTransport;
@@ -950,15 +955,19 @@ namespace System.Management.Automation
             {
                 returnCaps |= RunspaceCapability.SSHTransport;
             }
-            else
+            else if (_connectionInfo is ContainerConnectionInfo containerConnectionInfo)
             {
-                ContainerConnectionInfo containerConnectionInfo = _connectionInfo as ContainerConnectionInfo;
-
                 if ((containerConnectionInfo != null) &&
                     (containerConnectionInfo.ContainerProc.RuntimeId == Guid.Empty))
                 {
                     returnCaps |= RunspaceCapability.NamedPipeTransport;
                 }
+            }
+            else
+            {
+                // Unknown connection info type means a custom connection/transport, which at
+                // minimum supports remote runspace capability starting from PowerShell v7.x.
+                returnCaps |= RunspaceCapability.CustomTransport;
             }
 
             return returnCaps;
