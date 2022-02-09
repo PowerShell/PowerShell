@@ -133,16 +133,14 @@ jobs:
       Get-ChildItem $(winFxdWinDesktopPath)
     displayName: Capture fxd folders
 
-  - pwsh: |
-      Import-Module $env:REPOROOT\build.psm1
-      Import-Module $env:REPOROOT\tools\packaging
-      Find-Dotnet
-      # Create unified package first
-      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
-
-      # Create packages for dotnet sdk
-      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
-    displayName: 'Create Global tool packages'
+  # Create Global Tool packages along with SBOM manifests
+  - template: global-tool-pkg-sbom.yml
+    parameters:
+      PackageVersion: $(Version)
+      LinuxBinPath: $(linuxFxdPath)
+      WindowsBinPath: $(winFxdPath)
+      WindowsDesktopBinPath: $(winFxdWinDesktopPath)
+      DestinationPath: $(PackagePath)\globaltool
 
   - pwsh: |
       Get-ChildItem "$(PackagePath)" -Recurse
