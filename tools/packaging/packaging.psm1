@@ -159,6 +159,23 @@ function Start-PSPackage {
             # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
             # are generated, it'll be hard to verify if they were built from the correct content.
 
+            Write-Warning -Message "Start-PSPackage: The build PreCheck has failed."
+            if (-not $Script:Options) {
+                Write-Warning -Message "Start-PSPackage: builid options variable is null indicating Start-PSBuild hasn't been run yet."
+            }
+            if (-not $PSModuleRestoreCorrect) {
+                Write-Warning -Message "Start-PSPackage: PSModuleRestoreCorrect variable is null indicating build -PSModuleRestore was not performed."
+            }
+            if ($Script:Options.Configuration -ne $Configuration) {
+                Write-Warning -Message "Start-PSPackage: Build configuration is incorrect: Expected: $Configuration Actual: $($Script:Options.Configuration)"
+            }
+            if ($Script:Options.Framework -ne $script:netCoreRuntime) {
+                Write-Warning -Message "Start-PSPackage: Build .NET version is incorrect: Expected: $($script:netCoreRuntime) Actual: $($Script:Options.Framework)"
+            }
+            if (($Type -notlike 'fxdependent*' -and $Type -ne 'tar-alpine') -and ($Script:Options.Runtime -ne $Runtime)) {
+                Write-Warning -Message "Start-PSPackage: Build RID does not match expected RID: Expected: $Runtime Actual: $($Script:Options.Runtime)"
+            }
+
             $params = @('-Clean')
 
             if (!$IncludeSymbols.IsPresent) {
