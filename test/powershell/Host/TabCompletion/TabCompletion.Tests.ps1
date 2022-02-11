@@ -1788,6 +1788,41 @@ function MyFunction ($param1, $param2)
             $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
         }
     }
+    Context "Using statement related tests" {
+        It 'Should complete <ScriptText>' -TestCases @(
+            #@{
+            #    Expected = 'Timers.Timer','Threading.Timer','TimerCallback'
+            #    ScriptText = 'using namespace System; using namespace System.Threading;using namespace System.Timers;[timer'
+            #}
+            #@{
+            #    Expected = 'System.Timers.Timer','t.Timer','TimerCallback'
+            #    ScriptText = 'using namespace t = System.Threading;using namespace System.Threading;using namespace System.Timers; [timer'
+            #}
+            @{
+                Expected = 'Automation.Language.Token'
+                ScriptText = 'using namespace "System.Management";[token'
+            }
+        ) -test {
+            param ([string[]]$Expected, $ScriptText)
+            (TabExpansion2 -inputScript $ScriptText -cursorColumn $ScriptText.Length).CompletionMatches.CompletionText | Select-Object -First $expected.Count | Should -Be $Expected
+        }
+    }
+
+    Context "Type completion" {
+        It 'Should complete <ScriptText>' -TestCases @(
+            @{
+                Expected = 'System.Management.Automation.Language.Token'
+                ScriptText = '[language.token'
+            }
+            @{
+                Expected = 'System.Numerics.BigInteger'
+                ScriptText = '[Numerics.'
+            }
+        ) -test {
+            param ([string[]]$Expected, $ScriptText)
+            (TabExpansion2 -inputScript $ScriptText -cursorColumn $ScriptText.Length).CompletionMatches.CompletionText | Select-Object -First $expected.Count | Should -Be $Expected
+        }
+    }
 }
 
 Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
