@@ -388,6 +388,12 @@ Describe "Type extensible completion of type after using namespace" -Tags "CI" {
         ExpectedResults = @(
             @{CompletionText = "Alias"; ResultType = "Type"}
             )
+        TestInput = '[alias'
+    },
+    @{
+        ExpectedResults = @(
+            @{CompletionText = "AliasAttribute"; ResultType = "Type"}
+            )
         TestInput = '[aliasatt'
     },
     @{
@@ -402,28 +408,28 @@ Describe "Additional type name completion tests" -Tags "CI" {
     @{
         ExpectedResults = @(
             @{CompletionText = "System"; ResultType = "Namespace"}
-            @{CompletionText = "System.Security.AccessControl.SystemAcl"; ResultType = "Type"}
+            @{CompletionText = "Security.AccessControl.SystemAcl"; ResultType = "Type"}
             )
         TestInput = 'Get-Command -ParameterType System'
     },
     @{
         ExpectedResults = @(
-            @{CompletionText = "System.Action"; ResultType = "Type"}
-            @{CompletionText = "System.Activator"; ResultType = "Type"}
+            @{CompletionText = "Action"; ResultType = "Type"}
+            @{CompletionText = "Activator"; ResultType = "Type"}
             )
         TestInput = 'Get-Command -ParameterType System.'
     },
     @{
         ExpectedResults = @(
-            @{CompletionText = "System.Collections.Generic.LinkedList"; ResultType = "Type"; ListItemText = "LinkedList<>"; ToolTip = "System.Collections.Generic.LinkedList[T]"}
-            @{CompletionText = "System.Collections.Generic.LinkedListNode"; ResultType = "Type"; ListItemText = "LinkedListNode<>"; ToolTip = "System.Collections.Generic.LinkedListNode[T]"}
-            @{CompletionText = "System.Collections.Generic.List"; ResultType = "Type"; ListItemText = "List<>"; ToolTip = "System.Collections.Generic.List[T]"}
+            @{CompletionText = "LinkedList"; ResultType = "Type"; ListItemText = "LinkedList<>"; ToolTip = "System.Collections.Generic.LinkedList[T]"}
+            @{CompletionText = "LinkedListNode"; ResultType = "Type"; ListItemText = "LinkedListNode<>"; ToolTip = "System.Collections.Generic.LinkedListNode[T]"}
+            @{CompletionText = "List"; ResultType = "Type"; ListItemText = "List<>"; ToolTip = "Class System.Collections.Generic.List[T]"}
             )
         TestInput = 'Get-Command -ParameterType System.Collections.Generic.Li'
     },
     @{
         ExpectedResults = @(
-            @{CompletionText = "System.Collections.Generic.Dictionary"; ResultType = "Type"; ListItemText = "Dictionary<>"; ToolTip = "System.Collections.Generic.Dictionary[T1, T2]"}
+            @{CompletionText = "Dictionary"; ResultType = "Type"; ListItemText = "Dictionary<>"; ToolTip = "Class System.Collections.Generic.Dictionary[TKey, TValue]"}
             )
         TestInput = 'Get-Command -ParameterType System.Collections.Generic.Dic'
     } | Get-CompletionTestCaseData | Test-Completions
