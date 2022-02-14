@@ -2923,7 +2923,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            if (configurationNameToken.Kind == TokenKind.EndOfInput)
+            if (configurationNameToken.Kind is TokenKind.EndOfInput or TokenKind.Comma)
             {
                 UngetToken(configurationNameToken);
 
