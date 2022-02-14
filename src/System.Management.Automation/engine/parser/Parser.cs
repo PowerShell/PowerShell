@@ -5042,6 +5042,7 @@ namespace System.Management.Automation.Language
                         {
                             nestedAsts = new Ast[] { itemAst, aliasAst };
                         }
+
                         ReportError(errorExtent, nameof(ParserStrings.InvalidValueForUsingItemName), ParserStrings.InvalidValueForUsingItemName, errorExtent.Text);
                         return new ErrorStatementAst(ExtentOf(usingToken, errorExtent), nestedAsts);
                     }
