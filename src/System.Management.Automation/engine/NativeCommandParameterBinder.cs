@@ -314,7 +314,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            if (argArrayAst != null && ArgumentPassingStyle == NativeArgumentPassingStyle.Standard)
+                            if (argArrayAst != null && ArgumentPassingStyle != NativeArgumentPassingStyle.Legacy)
                             {
                                 // We have a literal array, so take the extent, break it on spaces and add them to the argument list.
                                 foreach (string element in argArrayAst.Extent.Text.Split(' ', StringSplitOptions.RemoveEmptyEntries))
@@ -331,7 +331,7 @@ namespace System.Management.Automation
                         }
                     }
                 }
-                else if (ArgumentPassingStyle == NativeArgumentPassingStyle.Standard && currentObj != null)
+                else if (ArgumentPassingStyle != NativeArgumentPassingStyle.Legacy && currentObj != null)
                 {
                     // add empty strings to arglist, but not nulls
                     AddToArgumentList(parameter, arg);

@@ -1071,18 +1071,16 @@ namespace Microsoft.PowerShell
         {
             lock (hostGlobalLock)
             {
-                ++_beginApplicationNotifyCount;
-                if (_beginApplicationNotifyCount == 1)
+                if (++_beginApplicationNotifyCount == 1)
                 {
-                    // save the window title when first notified.
-
+                    // Save the window title when first notified.
                     _savedWindowTitle = ui.RawUI.WindowTitle;
 #if !UNIX
                     if (_initialConsoleMode != ConsoleControl.ConsoleModes.Unknown)
                     {
-                        var activeScreenBufferHandle = ConsoleControl.GetActiveScreenBufferHandle();
-                        _savedConsoleMode = ConsoleControl.GetMode(activeScreenBufferHandle);
-                        ConsoleControl.SetMode(activeScreenBufferHandle, _initialConsoleMode);
+                        var outputHandle = ConsoleControl.GetActiveScreenBufferHandle();
+                        _savedConsoleMode = ConsoleControl.GetMode(outputHandle);
+                        ConsoleControl.SetMode(outputHandle, _initialConsoleMode);
                     }
 #endif
                 }
@@ -1097,17 +1095,26 @@ namespace Microsoft.PowerShell
         {
             lock (hostGlobalLock)
             {
-                Dbg.Assert(_beginApplicationNotifyCount > 0, "Not running an executable - NotifyBeginApplication was not called!");
-                --_beginApplicationNotifyCount;
-                if (_beginApplicationNotifyCount == 0)
+                if (--_beginApplicationNotifyCount == 0)
                 {
-                    // restore the window title when the last application started has ended.
-
+                    // Restore the window title when the last application started has ended.
                     ui.RawUI.WindowTitle = _savedWindowTitle;
 #if !UNIX
                     if (_savedConsoleMode != ConsoleControl.ConsoleModes.Unknown)
                     {
                         ConsoleControl.SetMode(ConsoleControl.GetActiveScreenBufferHandle(), _savedConsoleMode);
+                        if (_savedConsoleMode.HasFlag(ConsoleControl.ConsoleModes.VirtualTerminal))
+                        {
+                            // If the console output mode we just set already has 'VirtualTerminal' turned on,
+                            // we don't need to try turn on the VT mode separately.
+                            return;
+                        }
+                    }
+
+                    if (ui.SupportsVirtualTerminal)
+                    {
+                        // Re-enable VT mode if it was previously enabled, as a native command may have turned it off.
+                        ui.TryTurnOnVirtualTerminal();
                     }
 #endif
                 }
@@ -2452,14 +2459,6 @@ namespace Microsoft.PowerShell
 
                 while (!_parent.ShouldEndSession && !_shouldExit)
                 {
-#if !UNIX
-                    if (ui.SupportsVirtualTerminal)
-                    {
-                        // need to re-enable VT mode if it was previously enabled as native commands may have turned it off
-                        ui.TryTurnOnVtMode();
-                    }
-#endif
-
                     try
                     {
                         _parent._isRunningPromptLoop = true;

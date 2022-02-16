@@ -414,7 +414,7 @@ export $envVarName='$guid'
 
         It "text output" {
             # Join (multiple lines) and remove whitespace (we don't care about spacing) to verify we converted to string (by generating a table)
-            -join (& $powershell -noprofile -outputFormat text { [PSCustomObject]@{X=10;Y=20} }) -replace "\s","" | Should -Be "XY--1020"
+            -join (& $powershell -noprofile -outputFormat text { $PSStyle.OutputRendering = 'PlainText'; [PSCustomObject]@{X=10;Y=20} }) -replace "\s","" | Should -Be "XY--1020"
         }
 
         It "errors are in text if error is redirected, encoded command, non-interactive, and outputformat specified" {
@@ -491,7 +491,15 @@ export $envVarName='$guid'
     }
 
     Context "Redirected standard input for 'interactive' use" {
-        $nl = [Environment]::Newline
+        BeforeAll {
+            $nl = [Environment]::Newline
+            $oldColor = $env:NO_COLOR
+            $env:NO_COLOR = 1
+        }
+
+        AfterAll {
+            $env:NO_COLOR = $oldColor
+        }
 
         # All of the following tests replace the prompt (either via an initial command or interactively)
         # so that we can read StandardOutput and reliably know exactly what the prompt is.
@@ -586,6 +594,8 @@ foo
         It "Redirected input w/ nested prompt" -Pending:($IsWindows) {
             $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS' + ('>'*(`$NestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
             $process = RunPowerShell $si
+            $process.StandardInput.Write("`$PSStyle.OutputRendering='plaintext'`n")
+            $null = $process.StandardOutput.ReadLine()
             $process.StandardInput.Write("`$Host.EnterNestedPrompt()`n")
             $process.StandardOutput.ReadLine() | Should -Be "PS> `$Host.EnterNestedPrompt()"
             $process.StandardInput.Write("exit`n")
@@ -845,6 +855,64 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
 
             & $powershell $switch -noprofile -command exit
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
+        }
+    }
+
+    Context "Startup banner text tests" -Tag Slow {
+        BeforeAll {
+            $outputPath = "Temp:\StartupBannerTest-Output-${Pid}.txt"
+            $inputPath  = "Temp:\StartupBannerTest-Input.txt"
+            "exit" > $inputPath
+
+            # Not testing update notification banner text here
+            $oldPowerShellUpdateCheck = $env:POWERSHELL_UPDATECHECK
+            $env:POWERSHELL_UPDATECHECK = "Off"
+
+            # Set TERM to "dumb" to avoid DECCKM codes in the output
+            $oldTERM = $env:TERM
+            $env:TERM = "dumb"
+
+            $escPwd = [regex]::Escape($pwd)
+            $expectedPromptPattern = "^PS ${escPwd}> exit`$"
+
+            $spArgs = @{
+                FilePath = $powershell
+                ArgumentList = @("-NoProfile")
+                RedirectStandardInput = $inputPath
+                RedirectStandardOutput = $outputPath
+                WorkingDirectory = $pwd
+                PassThru = $true
+                NoNewWindow = $true
+                UseNewEnvironment = $false
+            }
+        }
+        AfterAll {
+            $env:TERM = $oldTERM
+            $env:POWERSHELL_UPDATECHECK = $oldPowerShellUpdateCheck
+
+            Remove-Item $inputPath -Force -ErrorAction Ignore
+            Remove-Item $outputPath -Force -ErrorAction Ignore
+        }
+        BeforeEach {
+            Remove-Item $outputPath -Force -ErrorAction Ignore
+        }
+        It "Displays expected startup banner text by default" {
+            $process = Start-Process @spArgs
+            Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
+
+            $out = @(Get-Content $outputPath)
+            $out.Count | Should -Be 2
+            $out[0] | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
+            $out[1] | Should -MatchExactly $expectedPromptPattern
+        }
+        It "Displays only the prompt with -NoLogo" {
+            $spArgs["ArgumentList"] += "-NoLogo"
+            $process = Start-Process @spArgs
+            Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
+
+            $out = @(Get-Content $outputPath)
+            $out.Count | Should -Be 1
+            $out[0] | Should -MatchExactly $expectedPromptPattern
         }
     }
 }

@@ -19,7 +19,7 @@ jobs:
   pool:
     name: PowerShell1ES
     demands:
-    - ImageOverride -equals MMS2019
+    - ImageOverride -equals PSMMS2019-Secure
 
   # APIScan can take a long time
   timeoutInMinutes: 180
@@ -86,5 +86,5 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(Build.SourcesDirectory)'
+      sourceScanPath: '$(Build.SourcesDirectory)\tools'
       snapshotForceEnabled: true

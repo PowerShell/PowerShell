@@ -189,36 +189,41 @@ function Get-DotnetUpdate {
     try {
 
         try {
-            $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$quality/productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
+            $URL = "http://aka.ms/dotnet/$channel/$quality/productVersion.txt"
+            $latestSDKVersionString = Invoke-RestMethod -Uri $URL -ErrorAction Stop | ForEach-Object { $_.Trim() }
             $selectedQuality = $quality
         } catch {
             if ($_.exception.Response.StatusCode -eq 'NotFound') {
-                Write-Verbose "Build not found for Channel: $Channel and Quality: $Quality" -Verbose
+                Write-Verbose -Verbose -Message "No build at '$URL' found!"
             } else {
                 throw $_
             }
         }
+        $latestSDKversion = $latestSDKVersionString -as "System.Management.Automation.SemanticVersion"
 
-        if (-not $latestSDKVersionString -or -not $latestSDKVersionString.StartsWith($sdkImageVersion)) {
+        if (-not $latestSDKVersion) {
             # we did not get a version number so fall back to daily
-            $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$qualityFallback/productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
+            $URL = "http://aka.ms/dotnet/$channel/$qualityFallback/productVersion.txt"
+            $latestSDKVersionString = Invoke-RestMethod -Uri $URL -ErrorAction Stop | ForEach-Object { $_.Trim() }
             $selectedQuality = $qualityFallback
 
-            if (-not $latestSDKVersionString.StartsWith($sdkImageVersion)) {
-                throw "No build found!"
+            $latestSDKversion = $latestSDKVersionString -as "System.Management.Automation.SemanticVersion"
+            if (-not $latestSDKVersion) {
+                throw "No build at '$URL' found!"
             }
         }
 
-        $latestSDKversion = [System.Management.Automation.SemanticVersion] $latestSDKVersionString
-
         $currentVersion = [System.Management.Automation.SemanticVersion] (( Get-Content -Path "$PSScriptRoot/../global.json" -Raw | ConvertFrom-Json).sdk.version)
 
-        if ($latestSDKversion -gt $currentVersion) {
+        if ($latestSDKversion -gt $currentVersion -and $null -ne $latestSDKversion.PreReleaseLabel) {
             $shouldUpdate = $true
             $newVersion = $latestSDKversion
         } else {
             $shouldUpdate = $false
-            $newVersion = $null
+            $newVersion = $latestSDKVersionString
+            if ($null -eq $currentVersion.PreReleaseLabel) {
+                $Message = "$latestSDKversion is not preview, update manually."
+            }
         }
     } catch {
         Write-Verbose -Verbose "Error occured: $_.message"
@@ -355,4 +360,7 @@ if ($dotnetUpdate.ShouldUpdate) {
     }
 
     Update-DevContainer
+}
+else {
+    Write-Verbose -Verbose -Message $dotnetUpdate.Message
 }

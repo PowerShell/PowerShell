@@ -3546,4 +3546,69 @@ namespace System.Management.Automation
             return result;
         }
     }
+
+    internal static class MemberInvocationLoggingOps
+    {
+        private static readonly Lazy<bool> DumpLogAMSIContent = new Lazy<bool>(
+            () => {
+                object result = Environment.GetEnvironmentVariable("__PSDumpAMSILogContent");
+                if (result != null && LanguagePrimitives.TryConvertTo(result, out int value))
+                {
+                    return value == 1;
+                }
+                return false;
+            }
+        );
+
+        internal static void LogMemberInvocation(string targetName, string name, object[] args)
+        {
+            try
+            {
+                var contentName = "PowerShellMemberInvocation";
+                var argsBuilder = new Text.StringBuilder();
+
+                for (int i = 0; i < args.Length; i++)
+                {
+                    string value = args[i] is null ? "null" : args[i].ToString();
+
+                    if (i > 0)
+                    {
+                        argsBuilder.Append(", ");
+                    }
+
+                    argsBuilder.Append($"<{value}>");
+                }
+
+                string content = $"<{targetName}>.{name}({argsBuilder})";
+
+                if (DumpLogAMSIContent.Value)
+                {
+                    Console.WriteLine("\n=== Amsi notification report content ===");
+                    Console.WriteLine(content);
+                }
+
+                var success = AmsiUtils.ReportContent(
+                    name: contentName,
+                    content: content);
+
+                if (DumpLogAMSIContent.Value)
+                {
+                    Console.WriteLine($"=== Amsi notification report success: {success} ===");
+                }
+            }
+            catch (PSSecurityException)
+            {
+                // ReportContent() will throw PSSecurityException if AMSI detects malware, which 
+                // must be propagated.
+                throw;
+            }
+            catch (Exception ex)
+            {
+                if (DumpLogAMSIContent.Value)
+                {
+                    Console.WriteLine($"!!! Amsi notification report exception: {ex} !!!");
+                }
+            }
+        }
+    }
 }
