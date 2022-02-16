@@ -235,7 +235,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Namotion.Reflection",
-          "Version": "2.0.3"
+          "Version": "2.0.10"
         }
       },
       "DevelopmentDependency": false
@@ -255,7 +255,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "NJsonSchema",
-          "Version": "10.5.2"
+          "Version": "10.6.9"
         }
       },
       "DevelopmentDependency": false
