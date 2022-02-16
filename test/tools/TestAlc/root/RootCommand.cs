@@ -1,35 +1,36 @@
 ﻿using System.Management.Automation;
 
-namespace Test.Isolated.Root;
-
-[Cmdlet("Test", "RootCommand")]
-public class TestRootCommand : PSCmdlet
+namespace Test.Isolated.Root
 {
-    [Parameter(Mandatory = true)]
-    public Red Param { get; set; }
-
-    protected override void ProcessRecord()
+    [Cmdlet("Test", "RootCommand")]
+    public class TestRootCommand : PSCmdlet
     {
-        WriteObject(Param.Name);
+        [Parameter(Mandatory = true)]
+        public Red Param { get; set; }
+
+        protected override void ProcessRecord()
+        {
+            WriteObject(Param.Name);
+        }
     }
-}
 
-public class Red
-{
-    public string Name { get; }
-
-    public Red(string name)
+    public class Red
     {
-        Name = name;
+        public string Name { get; }
+
+        public Red(string name)
+        {
+            Name = name;
+        }
     }
-}
 
-public class Yellow
-{
-    public string Id { get; }
-
-    public Yellow(string id)
+    public class Yellow
     {
-        Id = id;
+        public string Id { get; }
+
+        public Yellow(string id)
+        {
+            Id = id;
+        }
     }
 }
