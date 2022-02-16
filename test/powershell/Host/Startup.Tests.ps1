@@ -67,11 +67,13 @@ Describe "Validate start of console host" -Tag CI {
                 'System.DirectoryServices.dll'
                 'System.Management.dll'
                 'System.Security.Claims.dll'
+                'System.Threading.Overlapped.dll'
             )
         }
         else {
             $allowedAssemblies += @(
                 'System.Net.Sockets.dll'
+                'System.Reflection.Emit.dll'
             )
         }
 
