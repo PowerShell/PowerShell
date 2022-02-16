@@ -1269,55 +1269,112 @@ namespace System.Management.Automation
 
         internal PSTransactionManager transactionManager;
 
-        internal Assembly AddAssembly(string name, string filename, out Exception error)
+        /// <summary>
+        /// This method is used for assembly loading requests stemmed from 'InitialSessionState' binding and module loading.
+        /// </summary>
+        internal Assembly AddAssembly(string source, string assemblyName, string fileName, out Exception error)
         {
-            Assembly loadedAssembly = LoadAssembly(name, filename, out error);
-
-            if (loadedAssembly == null)
-                return null;
-
-            if (AssemblyCache.ContainsKey(loadedAssembly.FullName))
+            // Search the cache by the path, and return the assembly if we find it.
+            // It's common to have two loading requests for the same assembly when loading a module -- the first time for
+            // resolving a binary module path, and the second time for actually processing that module.
+            //
+            // That's not a problem when all the module assemblies are loaded into the default ALC. But in a scenario where
+            // a module tries to hide its nested/root binary modules in a custom ALC, that will become a problem.
+            //
+            // In this scenario, the module will usually setup a handler to load the specific assemblies to the custom ALC,
+            // and that will be how the first loading request gets served. However, after the module path is resolved with
+            // the first loading, the path will be used for the second loading upon real module processing. Since we prefer
+            // loading by path to loading by name, we will end up loading the same assembly in the default ALC if we do not
+            // search in the cache first. That will break this scenario, becuase the module means to isolate its dependencies
+            // from the default ALC, and it failed to do so.
+            //
+            // Therefore, we need to search the cache first. The reason we use path as the key is to make sure the request
+            // is for exactly the same assembly. The same assembly file should not be loaded into different ACL's by module
+            // loading within the same PowerShell session (Runspace).
+            if (TryGetFromAssemblyCache(source, fileName, out Assembly loadedAssembly))
             {
-                // we should ignore this assembly.
+                error = null;
                 return loadedAssembly;
             }
-            // We will cache the assembly by both full name and
-            // file name
-            AssemblyCache.Add(loadedAssembly.FullName, loadedAssembly);
 
-            if (AssemblyCache.ContainsKey(loadedAssembly.GetName().Name))
+            // Attempt to load the requested assembly, first by path then by name.
+            loadedAssembly = LoadAssembly(assemblyName, fileName, out error);
+            if (loadedAssembly is not null)
             {
-                // we should ignore this assembly.
-                return loadedAssembly;
+                AddToAssemblyCache(source, loadedAssembly);
             }
 
-            AssemblyCache.Add(loadedAssembly.GetName().Name, loadedAssembly);
             return loadedAssembly;
         }
 
-        internal void RemoveAssembly(string name)
+        internal void AddToAssemblyCache(string source, Assembly assembly)
         {
-            Assembly loadedAssembly;
-            if (AssemblyCache.TryGetValue(name, out loadedAssembly) && loadedAssembly != null)
-            {
-                AssemblyCache.Remove(name);
+            // Try caching the assembly by its location if possible.
+            // When it's a dynamic assembly, we use it's full name. This could happen with 'Import-Module -Assembly'.
+            string key = string.IsNullOrEmpty(assembly.Location) ? assembly.FullName : assembly.Location;
 
-                AssemblyCache.Remove(loadedAssembly.GetName().Name);
+            // When the assembly is from a module loading, we prefix the key with the source,
+            // so we can remove it from the cache when the module gets unloaded.
+            if (!string.IsNullOrEmpty(source))
+            {
+                key = $"{source}@{key}";
+            }
+
+            AssemblyCache.TryAdd(key, assembly);
+        }
+
+        /// <summary>
+        /// Remove all cache entries from the specified source.
+        /// </summary>
+        internal void RemoveFromAssemblyCache(string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return;
+            }
+
+            var keysToRemove = new List<string>();
+            string prefix = $"{source}@";
+
+            foreach (string key in AssemblyCache.Keys)
+            {
+                if (key.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+                {
+                    keysToRemove.Add(key);
+                }
+            }
+
+            if (keysToRemove.Count > 0)
+            {
+                foreach (string key in keysToRemove)
+                {
+                    AssemblyCache.Remove(key);
+                }
             }
         }
 
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadWithPartialName")]
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
-        internal static Assembly LoadAssembly(string name, string filename, out Exception error)
+        private bool TryGetFromAssemblyCache(string source, string fileName, out Assembly assembly)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                assembly = null;
+                return false;
+            }
+
+            string key = string.IsNullOrEmpty(source) ? fileName : $"{source}@{fileName}";
+            return AssemblyCache.TryGetValue(key, out assembly);
+        }
+
+        private static Assembly LoadAssembly(string name, string fileName, out Exception error)
         {
             // First we try to load the assembly based on the filename
             Assembly loadedAssembly = null;
             error = null;
-            if (!string.IsNullOrEmpty(filename))
+            if (!string.IsNullOrEmpty(fileName))
             {
                 try
                 {
-                    loadedAssembly = Assembly.LoadFrom(filename);
+                    loadedAssembly = Assembly.LoadFrom(fileName);
                     return loadedAssembly;
                 }
                 catch (FileNotFoundException fileNotFound)
@@ -1562,7 +1619,7 @@ namespace System.Management.Automation
             EngineHostInterface = hostInterface as InternalHost ?? new InternalHost(hostInterface, this);
 
             // Hook up the assembly cache
-            AssemblyCache = new Dictionary<string, Assembly>();
+            AssemblyCache = new Dictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
 
             // Initialize the fixed toplevel session state and the current session state
             TopLevelSessionState = EngineSessionState = new SessionStateInternal(this);
