@@ -55,7 +55,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Analyzers",
-          "Version": "3.3.2"
+          "Version": "3.3.3"
         }
       },
       "DevelopmentDependency": true
@@ -845,7 +845,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.Protocols",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -1405,7 +1405,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Web.Services.Description",
-          "Version": "4.9.0"
+          "Version": "4.9.0-rc2.21473.1"
         }
       },
       "DevelopmentDependency": false

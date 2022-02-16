@@ -541,7 +541,9 @@ Fix steps:
 
             try {
                 Push-Location $globalToolSrcFolder
-                $Arguments += "--output", $publishPath
+                if ($Arguments -notcontains '--output') {
+                    $Arguments += "--output", $publishPath
+                }
                 Write-Log -message "Run dotnet $Arguments from $PWD to build global tool entry point"
                 Start-NativeExecution { dotnet $Arguments }
             }
@@ -801,8 +803,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("net6.0")]
-        [string]$Framework = "net6.0",
+        [ValidateSet("net7.0")]
+        [string]$Framework = "net7.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -1745,11 +1747,6 @@ function Install-Dotnet {
 
     Write-Verbose -Verbose "In install-dotnet"
 
-    # This is needed workaround for RTM pre-release build as the SDK version is always 6.0.100 after installation for every pre-release
-    if ($dotnetCLIRequiredVersion -like '6.0.100-rtm.*') {
-        $dotnetCLIRequiredVersion = '6.0.100'
-    }
-
     # This allows sudo install to be optional; needed when running in containers / as root
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
@@ -1818,13 +1815,11 @@ function Install-Dotnet {
         $installScript = "dotnet-install.ps1"
         Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
         if (-not $environment.IsCoreCLR) {
-            $installArgs = @{
-                Quality = $Quality
-            }
-
+            $installArgs = @{}
             if ($Version) {
                 $installArgs += @{ Version = $Version }
             } elseif ($Channel) {
+                $installArgs += @{ Quality = $Quality }
                 $installArgs += @{ Channel = $Channel }
             }
 
@@ -1850,7 +1845,7 @@ function Install-Dotnet {
             $fullDotnetInstallPath = Join-Path -Path (Convert-Path -Path $PWD.Path) -ChildPath $installScript
 
             if ($Version) {
-                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version, '-Quality', $Quality)
+                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version)
             }
             elseif ($Channel) {
                 $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Channel', $Channel, '-Quality', $Quality)
