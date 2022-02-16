@@ -2340,6 +2340,8 @@ namespace System.Management.Automation
                     return TabCompletionStrings.ModuleKeywordDescription;
                 case "namespace":
                     return TabCompletionStrings.NamespaceKeywordDescription;
+                case "type":
+                    return TabCompletionStrings.TypeKeywordDescription;
                 default:
                     return null;
             }
@@ -2349,7 +2351,8 @@ namespace System.Management.Automation
         {
             "assembly",
             "module",
-            "namespace"
+            "namespace",
+            "type"
         };
     }
 }
