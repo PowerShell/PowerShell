@@ -1207,6 +1207,37 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount 2
             [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "1.0,1.1"
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         It 'Should complete Select-Object properties without duplicates' {
             $res = TabExpansion2 -inputScript '$PSVersionTable | Select-Object -Property Count,'
             $res.CompletionMatches.CompletionText | Should -Not -Contain "Count"
