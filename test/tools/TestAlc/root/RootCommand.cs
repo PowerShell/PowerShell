@@ -1,4 +1,7 @@
-﻿using System.Management.Automation;
+﻿// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+using System.Management.Automation;
 
 namespace Test.Isolated.Root
 {
