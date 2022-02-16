@@ -194,7 +194,8 @@ stages:
   - job: GitHubDraft
     displayName: Create GitHub Draft release
 
-    pool: PowerShell1ES
+    pool:
+      name: PowerShell1ES
       demands:
       - ImageOverride -equals PSMMS2019-Secure
 
@@ -230,7 +231,8 @@ stages:
   jobs:
   - job: PublishNuget
 
-    pool: PowerShell1ES
+    pool:
+      name: PowerShell1ES
       demands:
       - ImageOverride -equals PSMMS2019-Secure
 
@@ -239,7 +241,8 @@ stages:
 
   - job: PublishPkgsMsftCom
 
-    pool: PowerShell1ES
+    pool:
+      name: PowerShell1ES
       demands:
       - ImageOverride -equals PSMMSUbuntu20.04-Secure
 
@@ -336,7 +339,8 @@ stages:
   - deployment: UploadJson
     displayName: Upload BuildInfoJson
 
-    pool: PowerShell1ES
+    pool:
+      name: PowerShell1ES
       demands:
       - ImageOverride -equals PSMMS2019-Secure
 
