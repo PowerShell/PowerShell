@@ -30,12 +30,6 @@ jobs:
 
   - checkout: ComplianceRepo
 
-  - task: Cache@2
-    inputs:
-      key: '"markdown-link-check" | "$(Agent.OS)" | $(repoPath)/test/common/markdown-link/markdown-link.tests.ps1'
-      path: $(YARN_GLOBAL_CACHE_FOLDER)
-    displayName: Cache Yarn packages
-
   - powershell: |
       Install-module Pester -Scope CurrentUser -Force -MaximumVersion 4.99
     displayName: Install Pester

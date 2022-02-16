@@ -206,6 +206,10 @@ The #requires statement must be in one of the following formats:
   <data name="CouldNotAutoImportMatchingModule" xml:space="preserve">
     <value>The '{0}' command was found in the module '{1}', but the module could not be loaded. For more information, run 'Import-Module {1}'.</value>
   </data>
+  <data name="CouldNotAutoImportMatchingModuleWithErrorMessage" xml:space="preserve">
+    <value>The '{0}' command was found in the module '{1}', but the module could not be loaded due to the following error: [{2}]
+For more information, run 'Import-Module {1}'.</value>
+  </data>
   <data name="CouldNotAutoImportModule" xml:space="preserve">
     <value>The module '{0}' could not be loaded. For more information, run 'Import-Module {0}'.</value>
   </data>

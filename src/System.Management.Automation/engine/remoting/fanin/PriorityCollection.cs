@@ -220,21 +220,29 @@ namespace System.Management.Automation.Remoting
             lock (_readSyncObject)
             {
                 priorityType = DataPriorityType.Default;
-
-                // send data from which ever stream that has data directly.
+                // Send data from which ever stream that has data directly.
                 byte[] result = null;
-                result = _dataToBeSent[(int)DataPriorityType.PromptResponse].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
-                priorityType = DataPriorityType.PromptResponse;
+                SerializedDataStream promptDataToBeSent = _dataToBeSent[(int)DataPriorityType.PromptResponse];
+                if (promptDataToBeSent is not null)
+                {
+                    result = promptDataToBeSent.ReadOrRegisterCallback(_onSendCollectionDataAvailable);
+                    priorityType = DataPriorityType.PromptResponse;
+                }
 
                 if (result == null)
                 {
-                    result = _dataToBeSent[(int)DataPriorityType.Default].ReadOrRegisterCallback(_onSendCollectionDataAvailable);
-                    priorityType = DataPriorityType.Default;
+                    SerializedDataStream defaultDataToBeSent = _dataToBeSent[(int)DataPriorityType.Default];
+                    if (defaultDataToBeSent is not null)
+                    {
+                        result = defaultDataToBeSent.ReadOrRegisterCallback(_onSendCollectionDataAvailable);
+                        priorityType = DataPriorityType.Default;
+                    }
                 }
-                // no data to return..so register the callback.
+
+                // No data to return..so register the callback.
                 if (result == null)
                 {
-                    // register callback.
+                    // Register callback.
                     _onDataAvailableCallback = callback;
                 }
 

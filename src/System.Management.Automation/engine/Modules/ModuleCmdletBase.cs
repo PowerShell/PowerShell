@@ -105,6 +105,12 @@ namespace Microsoft.PowerShell.Commands
             /// Historically -AllowClobber in these scenarios was set as True.
             /// </summary>
             internal bool NoClobberExportPSSession;
+
+            /// <summary>
+            /// Flag that controls skipping the System32 module path when searching a module in module paths. It also suppresses
+            /// writing out errors when specified.
+            /// </summary>
+            internal bool SkipSystem32ModulesAndSuppressError;
         }
 
         /// <summary>
@@ -281,6 +287,21 @@ namespace Microsoft.PowerShell.Commands
         };
 
         /// <summary>
+        /// List of PowerShell built-in modules that are shipped with PowerShell only, not on PS Gallery.
+        /// </summary>
+        protected static readonly HashSet<string> BuiltInModules = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "CimCmdlets",
+            "Microsoft.PowerShell.Diagnostics",
+            "Microsoft.PowerShell.Host",
+            "Microsoft.PowerShell.Management",
+            "Microsoft.PowerShell.Security",
+            "Microsoft.PowerShell.Utility",
+            "Microsoft.WSMan.Management",
+            "PSDiagnostics",
+        };
+
+        /// <summary>
         /// When module manifests lack a CompatiblePSEditions field,
         /// they will be treated as if they have this value.
         /// The PSModuleInfo will still reflect the lack of value.
@@ -307,14 +328,25 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
 
-        internal bool LoadUsingModulePath(bool found, IEnumerable<string> modulePath, string name, SessionState ss,
-            ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out PSModuleInfo module)
+        internal bool LoadUsingModulePath(
+            IEnumerable<string> modulePath,
+            string name,
+            SessionState ss,
+            ImportModuleOptions options,
+            ManifestProcessingFlags manifestProcessingFlags,
+            out PSModuleInfo module)
         {
-            return LoadUsingModulePath(null, found, modulePath, name, ss, options, manifestProcessingFlags, out module);
+            return LoadUsingModulePath(parentModule: null, modulePath, name, ss, options, manifestProcessingFlags, out module);
         }
 
-        internal bool LoadUsingModulePath(PSModuleInfo parentModule, bool found, IEnumerable<string> modulePath, string name, SessionState ss,
-            ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out PSModuleInfo module)
+        internal bool LoadUsingModulePath(
+            PSModuleInfo parentModule,
+            IEnumerable<string> modulePath,
+            string name,
+            SessionState ss,
+            ImportModuleOptions options,
+            ManifestProcessingFlags manifestProcessingFlags,
+            out PSModuleInfo module)
         {
             string extension = Path.GetExtension(name);
             string fileBaseName;
@@ -325,11 +357,18 @@ namespace Microsoft.PowerShell.Commands
                 extension = null;
             }
             else
+            {
                 fileBaseName = name.Substring(0, name.Length - extension.Length);
+            }
 
             // Now search using the module path...
+            bool found = false;
             foreach (string path in modulePath)
             {
+                if (options.SkipSystem32ModulesAndSuppressError && ModuleUtils.IsOnSystem32ModulePath(path))
+                {
+                    continue;
+                }
 #if UNIX
                 foreach (string folder in Directory.EnumerateDirectories(path))
                 {
@@ -823,7 +862,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // Otherwise try the module path
-                        found = LoadUsingModulePath(parentModule, found, modulePath,
+                        found = LoadUsingModulePath(parentModule, modulePath,
                                                     moduleSpecification.Name, ss,
                                                     options, manifestProcessingFlags, out module);
                     }
@@ -2375,17 +2414,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (importingModule)
                     {
-                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string[] { moduleManifestPath }, null, options);
+                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(
+                            moduleNames: new string[] { moduleManifestPath },
+                            moduleFullyQualifiedNames: null,
+                            importModuleOptions: options);
 
-                        // we are loading by a single ManifestPath so expect max of 1
-                        if (moduleProxies.Count > 0)
-                        {
-                            return moduleProxies[0];
-                        }
-                        else
-                        {
-                            return null;
-                        }
+                        // We are loading by a single ManifestPath so expect max of 1
+                        return moduleProxies.Count > 0 ? moduleProxies[0] : null;
                     }
                 }
                 else
@@ -3706,7 +3741,7 @@ namespace Microsoft.PowerShell.Commands
             // If the RequiredModule is one of the Engine modules, then they could have been loaded as snapins (using InitialSessionState.CreateDefault())
             if (result == null && InitialSessionState.IsEngineModule(requiredModule.Name))
             {
-                result = ModuleCmdletBase.GetEngineSnapIn(context, requiredModule.Name);
+                result = context.CurrentRunspace.InitialSessionState.GetPSSnapIn(requiredModule.Name);
                 if (result != null)
                 {
                     loaded = true;
@@ -4883,7 +4918,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal static System.EventHandler<LocationChangedEventArgs> SyncCurrentLocationDelegate;
+        internal static EventHandler<LocationChangedEventArgs> SyncCurrentLocationDelegate;
 
         internal virtual IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions) { throw new System.NotImplementedException(); }
 
@@ -5309,9 +5344,8 @@ namespace Microsoft.PowerShell.Commands
             string moduleName, string fileBaseName, string extension, string moduleBase,
             string prefix, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out bool found)
         {
-            bool throwAwayModuleFileFound = false;
             return LoadUsingExtensions(parentModule, moduleName, fileBaseName, extension, moduleBase, prefix, ss,
-                                       options, manifestProcessingFlags, out found, out throwAwayModuleFileFound);
+                                       options, manifestProcessingFlags, out found, out _);
         }
 
         /// <summary>
@@ -5412,7 +5446,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (File.Exists(fileName))
                 {
-                    moduleFileFound = true;
                     // Win8: 325243 - Added the version check so that we do not unload modules with the same name but different version
                     if (BaseForce && DoesAlreadyLoadedModuleSatisfyConstraints(module))
                     {
@@ -7357,29 +7390,6 @@ namespace Microsoft.PowerShell.Commands
                 cmdlet.WriteVerbose(message);
                 return;
             }
-        }
-
-        /// <summary>
-        /// Search a PSSnapin with the specified name.
-        /// </summary>
-        internal static PSSnapInInfo GetEngineSnapIn(ExecutionContext context, string name)
-        {
-            HashSet<PSSnapInInfo> snapinSet = new HashSet<PSSnapInInfo>();
-            List<CmdletInfo> cmdlets = context.SessionState.InvokeCommand.GetCmdlets();
-            foreach (CmdletInfo cmdlet in cmdlets)
-            {
-                PSSnapInInfo snapin = cmdlet.PSSnapIn;
-                if (snapin != null && !snapinSet.Contains(snapin))
-                    snapinSet.Add(snapin);
-            }
-
-            foreach (PSSnapInInfo snapin in snapinSet)
-            {
-                if (string.Equals(snapin.Name, name, StringComparison.OrdinalIgnoreCase))
-                    return snapin;
-            }
-
-            return null;
         }
 
         /// <summary>

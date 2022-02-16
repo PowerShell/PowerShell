@@ -51,6 +51,7 @@ pr:
     - src/Microsoft.WSMan.Runtime/Microsoft.WSMan.Runtime.csproj
     - src/Modules/PSGalleryModules.csproj
     - src/powershell-win-core/powershell-win-core.csproj
+    - test/packaging/windows/*
     - tools/ci.psm1
     - tools/packaging/*
 

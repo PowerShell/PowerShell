@@ -1,5 +1,5 @@
 parameters:
-  pool: 'vs2017-win2016'
+  pool: 'windows-latest'
   jobName: 'win_build'
   displayName: Windows Build
 

@@ -136,7 +136,7 @@ Describe 'Get-Error tests' -Tag CI {
         try {
             $originalRendering = $PSStyle.OutputRendering
             $PSStyle.OutputRendering = 'Ansi'
-            $out = pwsh -noprofile -command '$PSStyle.OutputRendering = "ANSI"; [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("BypassOutputRedirectionCheck", $true); try { 1/0 } catch { }; Get-Error' | Out-String
+            $out = pwsh -noprofile -command '$PSStyle.OutputRendering = "ANSI"; try { 1/0 } catch { }; Get-Error' | Out-String
 
             # need to escape the open square bracket so the regex works
             $resetColor = $PSStyle.Reset.Replace('[','\[')

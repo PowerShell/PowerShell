@@ -1,7 +1,7 @@
 {
   "sdk": {
     "channel": "6.0.1xx",
-    "quality": "signed",
+    "quality": "ga",
     "qualityFallback": "daily",
     "packageVersionPattern": "6.0.0",
     "sdkImageVersion": "6.0.100",
