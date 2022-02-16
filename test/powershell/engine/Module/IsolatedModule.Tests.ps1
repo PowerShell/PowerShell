@@ -50,7 +50,7 @@ Describe "Isolated module scenario - load the whole module in custom ALC" {
         { [Test.Isolated.Root.Yellow] } | Should -Throw -ErrorId "TypeNotFound"
     }
 
-    It "WSMan and Certificate providers should reference the manifest module instead of the nested module" {
+    It "WSMan and Certificate providers should reference the manifest module instead of the nested module" -Skip:(!$IsWindows) {
         $wsManModule = Import-Module Microsoft.WSMan.Management -PassThru
         $securityModule = Import-Module Microsoft.PowerShell.Security -PassThru
 
