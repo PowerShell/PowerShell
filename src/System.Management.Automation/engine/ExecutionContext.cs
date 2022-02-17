@@ -1272,6 +1272,10 @@ namespace System.Management.Automation
         /// <summary>
         /// This method is used for assembly loading requests stemmed from 'InitialSessionState' binding and module loading.
         /// </summary>
+        /// <param name="source">Source of the assembly loading request, usually is a module name.</param>
+        /// <param name="assemblyName">Name of the assembly to be loaded.</param>
+        /// <param name="fileName">Path of the assembly to be loaded.</param>
+        /// <param name="error">Exception that is caught when the loading fails.</param>
         internal Assembly AddAssembly(string source, string assemblyName, string fileName, out Exception error)
         {
             // Search the cache by the path, and return the assembly if we find it.
