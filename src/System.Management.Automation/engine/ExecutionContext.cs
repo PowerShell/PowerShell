@@ -1353,7 +1353,7 @@ namespace System.Management.Automation
             // so we can remove it from the cache when the module gets unloaded.
             if (!string.IsNullOrEmpty(source))
             {
-                // Both 'source' and 'key' are of the string type, so no need to specify 'IFormatProvider'.
+                // Both 'source' and 'key' are of the string type, so no need to specify 'InvariantCulture'.
                 key = $"{source}@{key}";
             }
 
@@ -1398,7 +1398,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // Both 'source' and 'filePath' are of the string type, so no need to specify 'IFormatProvider'.
+            // Both 'source' and 'filePath' are of the string type, so no need to specify 'InvariantCulture'.
             string key = string.IsNullOrEmpty(source) ? filePath : $"{source}@{filePath}";
             return AssemblyCache.TryGetValue(key, out assembly);
         }
