@@ -1890,9 +1890,7 @@ namespace Microsoft.PowerShell.Commands
             else if ((requiredProcessorArchitecture != ProcessorArchitecture.None) &&
                      (requiredProcessorArchitecture != ProcessorArchitecture.MSIL))
             {
-                #pragma warning disable SYSLIB0037
                 ProcessorArchitecture currentArchitecture = typeof(object).Assembly.GetName().ProcessorArchitecture;
-                #pragma warning restore SYSLIB0037
 
                 if (currentArchitecture != requiredProcessorArchitecture)
                 {

@@ -342,7 +342,7 @@ if ($dotnetUpdate.ShouldUpdate) {
         Import-Module "$PSScriptRoot/../build.psm1" -Force
         Import-Module "$PSScriptRoot/packaging" -Force
         Start-PSBootstrap -Package
-        Start-PSBuild -Clean -Configuration Release -InteractiveAuth:$InteractiveAuth
+        Start-PSBuild -Clean -Configuration Release -CrossGen -InteractiveAuth:$InteractiveAuth
 
         $publishPath = Split-Path (Get-PSOutput)
         Remove-Item -Path "$publishPath\*.pdb"
