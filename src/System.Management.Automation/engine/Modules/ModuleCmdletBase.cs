@@ -4692,7 +4692,7 @@ namespace Microsoft.PowerShell.Commands
                     // We cannot move the processing of types.ps1xml file after processing 'RootModule' either, because the 'RootModule' might refer to
                     // members defined in the types.ps1xml file. In order to make it work for this paradox, we have to load the resolved assembly when
                     // we are actually loading the module. However, when it's module analysis, there is no need to load the assembly.
-                    Context.AddAssembly(source: moduleName, assemblyName: null, fileName: resolvedPath, error: out _);
+                    Context.AddAssembly(source: moduleName, assemblyName: null, filePath: resolvedPath, error: out _);
                 }
 
                 pathIsResolved = true;
@@ -4709,7 +4709,7 @@ namespace Microsoft.PowerShell.Commands
                 (extension.Equals(StringLiterals.PowerShellILAssemblyExtension, StringComparison.OrdinalIgnoreCase) ||
                  extension.Equals(StringLiterals.PowerShellILExecutableExtension, StringComparison.OrdinalIgnoreCase)))
             {
-                Assembly assembly = Context.AddAssembly(source: moduleName, assemblyName: originalName, fileName: null, error: out _);
+                Assembly assembly = Context.AddAssembly(source: moduleName, assemblyName: originalName, filePath: null, error: out _);
                 if (assembly is not null)
                 {
                     pathIsResolved = true;

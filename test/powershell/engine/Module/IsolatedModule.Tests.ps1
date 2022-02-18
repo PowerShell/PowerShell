@@ -5,8 +5,15 @@ Describe "Isolated module scenario - load the whole module in custom ALC" {
     It "Loading 'IsolatedModule' should work as expected" {
         ## The 'IsolatedModule' module can be found at '<repo-root>\test\tools\Modules'.
         ## The module assemblies are created and deployed by '<repo-root>\test\tools\TestAlc'.
-        ## The module defines its own custom ALC and has its module structure organized in a special way
-        ## that allows the module to be loaded in that custom ALC.
+        ## The module defines its own custom ALC and has its module structure organized in a special way that allows the module to be loaded in that custom ALC.
+        ## The file structure of this module is as follows:
+        ## │   IsolatedModule.psd1
+        ## │   Test.Isolated.Init.dll (contains the custom ALC and code to setup 'Resolving' handler)
+        ## │
+        ## └───Dependencies
+        ##        Newtonsoft.Json.dll (version 10.0.0.0 dependency)
+        ##        Test.Isolated.Nested.dll (nested binary module)
+        ##        Test.Isolated.Root.dll (root binary module)
         $module = Import-Module IsolatedModule -PassThru
         $nestedCmd = Get-Command Test-NestedCommand
         $rootCmd = Get-Command Test-RootCommand
