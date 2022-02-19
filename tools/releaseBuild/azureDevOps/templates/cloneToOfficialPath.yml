@@ -1,7 +1,10 @@
+parameters:
+  nativePathRoot: ''
+
 steps:
   - powershell: |
       $dirSeparatorChar = [system.io.path]::DirectorySeparatorChar
-      $nativePath = "${dirSeparatorChar}PowerShell"
+      $nativePath = "${{parameters.nativePathRoot }}${dirSeparatorChar}PowerShell"
       Write-Host "##vso[task.setvariable variable=PowerShellRoot]$nativePath"
 
       if ((Test-Path "$nativePath")) {

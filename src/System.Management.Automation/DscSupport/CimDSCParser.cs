@@ -738,12 +738,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 if (!Directory.Exists(systemResourceRoot))
                 {
-                    configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
+                    configSystemPath = Environment.GetFolderPath(Environment.SpecialFolder.System);
                     systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
                     inboxModulePath = InboxDscResourceModulePath;
                 }
 
-                var programFilesDirectory = Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                var programFilesDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
                 Debug.Assert(programFilesDirectory != null, "Program Files environment variable does not exist!");
                 var customResourceRoot = Path.Combine(programFilesDirectory, "WindowsPowerShell\\Configuration");
                 Debug.Assert(Directory.Exists(customResourceRoot), "%ProgramFiles%\\WindowsPowerShell\\Configuration Directory does not exist");

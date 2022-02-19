@@ -572,7 +572,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the rendering mode for output.
         /// </summary>
-        public OutputRendering OutputRendering { get; set; } = OutputRendering.Host;
+        public OutputRendering OutputRendering { get; set; } = OutputRendering.Ansi;
 
         /// <summary>
         /// Gets value to turn off all attributes.

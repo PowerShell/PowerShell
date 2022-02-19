@@ -1088,6 +1088,12 @@ namespace System.Management.Automation
 
         private static void ValidateRange(object element, ValidateRangeKind rangeKind)
         {
+            if (element is TimeSpan ts)
+            {
+                ValidateTimeSpanRange(ts, rangeKind);
+                return;
+            }
+
             Type commonType = GetCommonType(typeof(int), element.GetType());
             if (commonType == null)
             {
@@ -1209,6 +1215,59 @@ namespace System.Management.Automation
                     Metadata.ValidateRangeGreaterThanMaxRangeFailure,
                     element.ToString(),
                     MaxRange.ToString());
+            }
+        }
+
+        private static void ValidateTimeSpanRange(TimeSpan element, ValidateRangeKind rangeKind)
+        {
+            TimeSpan zero = TimeSpan.Zero;
+
+            switch (rangeKind)
+            {
+                case ValidateRangeKind.Positive:
+                    if (zero.CompareTo(element) >= 0)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateRangePositiveFailure",
+                            null,
+                            Metadata.ValidateRangePositiveFailure,
+                            element.ToString());
+                    }
+
+                    break;
+                case ValidateRangeKind.NonNegative:
+                    if (zero.CompareTo(element) > 0)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateRangeNonNegativeFailure",
+                            null,
+                            Metadata.ValidateRangeNonNegativeFailure,
+                            element.ToString());
+                    }
+
+                    break;
+                case ValidateRangeKind.Negative:
+                    if (zero.CompareTo(element) <= 0)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateRangeNegativeFailure",
+                            null,
+                            Metadata.ValidateRangeNegativeFailure,
+                            element.ToString());
+                    }
+
+                    break;
+                case ValidateRangeKind.NonPositive:
+                    if (zero.CompareTo(element) < 0)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateRangeNonPositiveFailure",
+                            null,
+                            Metadata.ValidateRangeNonPositiveFailure,
+                            element.ToString());
+                    }
+
+                    break;
             }
         }
 

@@ -1329,7 +1329,8 @@ namespace System.Management.Automation
                         context.Options.Remove("LiteralPaths");
                 }
 
-                if (context.WordToComplete != string.Empty && context.WordToComplete.Contains('-'))
+                // The word to complete contains a dash and it's not the first character. We try command names in this case.
+                if (context.WordToComplete.IndexOf('-') > 0)
                 {
                     var commandResults = CompleteCommand(context);
                     if (commandResults != null)

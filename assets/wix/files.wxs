@@ -1638,6 +1638,9 @@
         <Component Id="cmpA75DEF5617C54DA1937CB37D5824BF79">
           <File Id="fil3EE6096BD3C8407685E881F3CE6BF5C1" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Security.Cryptography.OpenSsl.dll" />
         </Component>
+        <Component Id="cmpE5993DB9118640FD8C180A2D61C89C01">
+          <File Id="fil7381E5F4FBC64B60A8B7D7841B89F4C6" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Security.Cryptography.dll" />
+        </Component>
       </Directory>
       <Directory Id="dirC72EEAF9434D4AD066E0F4D20D8E816C" Name="en-US">
         <Component Id="cmpDC2EF4541FA5A2E63F36A8CD6C5FA51B">
@@ -3137,6 +3140,9 @@
           <Component Id="cmp408A3AF905EB47ADA35FBC5A6B1465A0">
             <File Id="fil2146848B6ACB45FCA8E9C8FEE3BECDD8" KeyPath="yes" Source="$(var.ProductSourcePath)\_manifest\spdx_2.2\manifest.spdx.json" />
           </Component>
+          <Component Id="cmpB7C69B48760E47CD89D0641D4A9FEFE9">
+            <File Id="fil5B154D0E36C747769E1387D3A3E9AC7E" KeyPath="yes" Source="$(var.ProductSourcePath)\_manifest\spdx_2.2\manifest.spdx.json.sha256" />
+          </Component>
         </Directory>
       </Directory>
       <Component Id="cmpA6276F9EAB41411AAAEC496E67A3DBAE">
@@ -3151,8 +3157,11 @@
       <Component Id="cmp22840874A8C84AA796496634FBEBF09C">
         <File Id="fil2067B616D1FA4B30932A0240ABE06089" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Web.Services.Description.dll" />
       </Component>
-      <Component Id="cmpFB17CABA17334B2BBA1ED6CBF757B310">
-        <File Id="fil1621E0132D2C49B89068166196075157" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.21.52210.dll" />
+      <Component Id="cmpAC388473B5C048E3AB478DCC0B3C61FE">
+        <File Id="fil2D3CF7A46E0842BABB83B0A8787FED26" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.7608.dll" />
+      </Component>
+      <Component Id="cmpE0DEAA289B2D4594A0C4791B2808C97C">
+        <File Id="fil530EAD567BDB402FA6F02AFAA696D721" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Security.Cryptography.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4161,7 +4170,6 @@
       <ComponentRef Id="cmp5492F78ACB1A4391BBED371FDFC06B9E" />
       <ComponentRef Id="cmp22840874A8C84AA796496634FBEBF09C" />
       <ComponentRef Id="cmp0173AE0CBFA44C269D93361F6C98F99B" />
-      <ComponentRef Id="cmpFB17CABA17334B2BBA1ED6CBF757B310" />
       <ComponentRef Id="cmpD55F08F6CF51498E9E8551067BA57040" />
       <ComponentRef Id="cmp777DF202EF2542F2ACFCCF0481E8D6EE" />
       <ComponentRef Id="cmpF24D3B9F29F84B4D9C47577B7926FC2E" />
@@ -4170,6 +4178,10 @@
       <ComponentRef Id="cmp0C4751F9D5C14419A45F234152D21DA9" />
       <ComponentRef Id="cmpF96C036EAE3B436DB096888697193FAF" />
       <ComponentRef Id="cmp789F545EA2CB4AC5A2688CF730A5F6B4" />
+      <ComponentRef Id="cmpB7C69B48760E47CD89D0641D4A9FEFE9" />
+      <ComponentRef Id="cmpAC388473B5C048E3AB478DCC0B3C61FE" />
+      <ComponentRef Id="cmpE5993DB9118640FD8C180A2D61C89C01" />
+      <ComponentRef Id="cmpE0DEAA289B2D4594A0C4791B2808C97C" />
     </ComponentGroup>
   </Fragment>
 </Wix>
