@@ -179,6 +179,13 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             Write-Verbose -Verbose "It Complete"
         }
 
+        It "Verifies explicit Options parameter" {
+            $options = @{"Port"="22"}
+            $script:session = New-PSSession -HostName localhost -Options $options -ErrorVariable err
+            $err | Should -HaveCount 0
+            VerifySession $script:session
+        }
+
         It "Verifies explicit Subsystem parameter" {
             Write-Verbose -Verbose "It Starting: Verifies explicit Subsystem parameter"
             $portNum = 22

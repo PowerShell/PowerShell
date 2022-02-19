@@ -77,7 +77,7 @@ try
     Sync-PSTags -AddRemoteIfMissing
 
     Write-Verbose "Bootstrapping powershell build..." -Verbose
-    Start-PSBootstrap -Force -Package
+    Start-PSBootstrap -Force -Package -ErrorAction Stop
 
     if ($PSCmdlet.ParameterSetName -eq 'packageSigned')
     {

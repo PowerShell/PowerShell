@@ -4,7 +4,6 @@
     <Description>PowerShell's Microsoft.PowerShell.Commands.Diagnostics project</Description>
     <NoWarn>$(NoWarn);CS1591;CA1416</NoWarn>
     <AssemblyName>Microsoft.PowerShell.Commands.Diagnostics</AssemblyName>
-    <Platforms>AnyCPU;ARM32</Platforms>
   </PropertyGroup>
 
   <ItemGroup>

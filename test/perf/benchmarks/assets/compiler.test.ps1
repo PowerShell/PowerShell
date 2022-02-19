@@ -1149,7 +1149,7 @@ function Start-PSBootstrap {
             $Deps = @()
             if ($environment.IsLinux -and $environment.IsUbuntu) {
                 # Build tools
-                $Deps += "curl", "g++", "cmake", "make"
+                $Deps += "curl", "g++", "make"
 
                 if ($BuildLinuxArm) {
                     $Deps += "gcc-arm-linux-gnueabihf", "g++-arm-linux-gnueabihf"
@@ -1179,7 +1179,7 @@ function Start-PSBootstrap {
                 }
             } elseif ($environment.IsLinux -and $environment.IsRedHatFamily) {
                 # Build tools
-                $Deps += "which", "curl", "gcc-c++", "cmake", "make"
+                $Deps += "which", "curl", "gcc-c++", "make"
 
                 # .NET Core required runtime libraries
                 $Deps += "libicu", "libunwind"
@@ -1203,7 +1203,7 @@ function Start-PSBootstrap {
                 }
             } elseif ($environment.IsLinux -and $environment.IsSUSEFamily) {
                 # Build tools
-                $Deps += "gcc", "cmake", "make"
+                $Deps += "gcc", "make"
 
                 # Packaging tools
                 if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel' }
@@ -1228,9 +1228,6 @@ function Start-PSBootstrap {
                     $PackageManager = "$sudo port"
                 }
 
-                # Build tools
-                $Deps += "cmake"
-
                 # .NET Core required runtime libraries
                 $Deps += "openssl"
 
@@ -1238,7 +1235,7 @@ function Start-PSBootstrap {
                 # ignore exitcode, because they may be already installed
                 Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
             } elseif ($environment.IsLinux -and $environment.IsAlpine) {
-                $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl'
+                $Deps += 'libunwind', 'libcurl', 'bash', 'clang', 'build-base', 'git', 'curl'
 
                 Start-NativeExecution {
                     Invoke-Expression "apk add $Deps"

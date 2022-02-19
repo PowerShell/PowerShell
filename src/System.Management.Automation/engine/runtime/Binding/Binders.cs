@@ -6903,6 +6903,23 @@ namespace System.Management.Automation.Language
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
                 }
 
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAMSIMethodInvocationLogging))
+                {
+                    // Expression block runs two expressions in order:
+                    //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
+                    //  - Invoke method
+                    string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
+                    expr = Expression.Block(
+                        Expression.Call(
+                            CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
+                            Expression.Constant(targetName),
+                            Expression.Constant(name),
+                            Expression.NewArrayInit(
+                                typeof(object),
+                                args.Select(static e => e.Expression.Cast(typeof(object))))),
+                        expr);
+                }
+
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
                 // propagation and ensure errors are attributed to the correct code (the

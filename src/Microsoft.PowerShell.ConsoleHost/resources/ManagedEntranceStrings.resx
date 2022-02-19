@@ -118,11 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ShellBannerNonWindowsPowerShell" xml:space="preserve">
-    <value>PowerShell {0}
-Copyright (c) Microsoft Corporation.
-
-https://aka.ms/powershell
-Type 'help' to get help.</value>
+    <value>PowerShell {0}</value>
   </data>
   <data name="PSReadLineDisabledWhenScreenReaderIsActive" xml:space="preserve">
     <value>Warning: PowerShell detected that you might be using a screen reader and has disabled PSReadLine for compatibility purposes. If you want to re-enable it, run 'Import-Module PSReadLine'.</value>
@@ -383,7 +379,7 @@ All parameters are case-insensitive.</value>
 
 -NoLogo | -nol
 
-    Hides the copyright banner at startup of interactive sessions.
+    Hides the banner text at startup of interactive sessions.
 
 -NonInteractive | -noni
 

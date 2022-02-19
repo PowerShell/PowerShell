@@ -39,7 +39,7 @@ Describe -Name "Windows MSI" -Fixture {
         }
 
         function Get-UseMU {
-            $useMu = 0
+            $useMu = $null
             $key = 'HKLM:\SOFTWARE\Microsoft\PowerShellCore\'
             if ($runtime -like '*x86*') {
                 $key = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\PowerShellCore\'
@@ -48,6 +48,25 @@ Describe -Name "Windows MSI" -Fixture {
             try {
                 $useMu = Get-ItemPropertyValue -Path $key -Name UseMU -ErrorAction SilentlyContinue
             } catch {}
+
+            if (!$useMu) {
+                $useMu = 0
+            }
+
+            return $useMu
+        }
+
+        function Set-UseMU {
+            param(
+                [int]
+                $Value
+            )
+            $key = 'HKLM:\SOFTWARE\Microsoft\PowerShellCore\'
+            if ($runtime -like '*x86*') {
+                $key = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\PowerShellCore\'
+            }
+
+            Set-ItemProperty -Path $key -Name UseMU -Value $Value -Type DWord
 
             return $useMu
         }
@@ -185,6 +204,15 @@ Describe -Name "Windows MSI" -Fixture {
     }
 
     Context "Add Path disabled" {
+        BeforeAll {
+            Set-UseMU -Value 0
+        }
+
+        It "UseMU should be 0 before install" -Skip:(!(Test-Elevated)) {
+            $useMu = Get-UseMU
+            $useMu | Should -Be 0
+        }
+
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
             {
                 Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 0; USE_MU = 1; ENABLE_MU = 1}
@@ -213,6 +241,15 @@ Describe -Name "Windows MSI" -Fixture {
     }
 
     Context "USE_MU disabled" {
+        BeforeAll {
+            Set-UseMU -Value 0
+        }
+
+        It "UseMU should be 0 before install" -Skip:(!(Test-Elevated)) {
+            $useMu = Get-UseMU
+            $useMu | Should -Be 0
+        }
+
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
             {
                 Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{USE_MU = 0}

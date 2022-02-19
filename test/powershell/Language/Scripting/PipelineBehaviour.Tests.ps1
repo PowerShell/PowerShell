@@ -478,6 +478,19 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             ## Dispose the steppable pipeline.
             $step.Dispose()
         }
+
+        It "Clean block runs fine in a proxy function when a dynamic parameter fails to bind" {
+            $function:TestProxyGci = [scriptblock]::Create(
+                [Management.Automation.ProxyCommand]::Create(
+                (Get-Command Get-ChildItem)))
+
+            ## The proxy function 'TestProxyGci' contains the 'dynamicparam' block, which will
+            ## run during parameter binding. However, the parameter binding failed, and thus
+            ## the 'begin', 'process', and 'end' blocks will not run, so '$steppablePipeline'
+            ## in the proxy function is null (never created). The 'clean' block will run anyway,
+            ## but it should skip calling '$steppablePipeline.Clean()' in this case. 
+            { TestProxyGci -Attributes } | Should -Throw -ErrorId 'MissingArgument,TestProxyGci'
+        }
     }
 
     Context "'exit' statement in command" {

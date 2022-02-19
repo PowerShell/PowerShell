@@ -729,13 +729,20 @@ namespace System.Management.Automation
             }
             else
             {
-                if (dashIndex == -1)
+                if (plusIndex == -1)
                 {
                     // Here dashIndex == plusIndex == -1
                     // No preLabel - preLabel == null;
                     // No buildLabel - buildLabel == null;
                     // Format is 'major.minor.patch'
                     versionSansLabel = version;
+                }
+                else if (dashIndex == -1)
+                {
+                    // No PreReleaseLabel: preLabel == null
+                    // Format is 'major.minor.patch+BuildLabel'
+                    buildLabel = version.Substring(plusIndex + 1);
+                    versionSansLabel = version.Substring(0, plusIndex);
                 }
                 else
                 {

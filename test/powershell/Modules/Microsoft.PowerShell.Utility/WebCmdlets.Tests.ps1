@@ -370,6 +370,8 @@ $redirectTests = @(
 
 Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
+        $oldProgress = $ProgressPreference
+        $ProgressPreference = 'SilentlyContinue'
         $WebListener = Start-WebListener
         $NotFoundQuery = @{
             statuscode = 404
@@ -378,6 +380,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             body = 'oops'
             headers = "{}"
         }
+    }
+
+    AfterAll {
+        $ProgressPreference = $oldProgress
     }
 
     # Validate the output of Invoke-WebRequest
@@ -456,6 +462,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         # Validate response
         ValidateResponse -response $result
+
+        $result.Output.Headers.'Content-Length' | Should -BeNullOrEmpty
     }
 
     It "Validate Invoke-WebRequest -DisableKeepAlive" {
@@ -703,6 +711,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'}"
         $result = ExecuteWebCommand -command $command
         ($result.Output.Content | ConvertFrom-Json).args.testparam | Should -Be "testvalue"
+    }
+
+    It 'Validate Invoke-WebRequest empty body CustomMethod GET' {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -CustomMethod GET"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.Headers.'Content-Length' | Should -BeNullOrEmpty
     }
 
     It "Validate Invoke-WebRequest body is converted to query params for CustomMethod GET and -NoProxy" {
@@ -2061,6 +2076,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
 Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
+        $oldProgress = $ProgressPreference
+        $ProgressPreference = 'SilentlyContinue'
+
         $WebListener = Start-WebListener
 
         $NotFoundQuery = @{
@@ -2070,6 +2088,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             body = '{"message": "oops"}'
             headers = "{}"
         }
+    }
+
+    AfterAll {
+        $ProgressPreference = $oldProgress
     }
 
     #User-Agent changes on different platforms, so tests should only be run if on the correct platform
@@ -2111,6 +2133,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         # Validate response
         $result.Error | Should -BeNullOrEmpty
+        $result.Output.headers.'Content-Length' | Should -Be 0
     }
 
     It "Invoke-RestMethod returns headers dictionary" {
@@ -2348,6 +2371,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod GET -Body @{'testparam'='testvalue'}"
         $result = ExecuteWebCommand -command $command
         $result.Output.args.testparam | Should -Be "testvalue"
+    }
+
+    It 'Validate Invoke-RestMethod empty body CustomMethod GET' {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -CustomMethod GET"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.Headers.'Content-Length' | Should -BeNullOrEmpty
     }
 
     It "Validate Invoke-RestMethod body is converted to query params for CustomMethod GET and -NoProxy" {
@@ -3528,7 +3558,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
 Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Feature", "RequireAdminOnWindows" {
     BeforeAll {
+        $oldProgress = $ProgressPreference
+        $ProgressPreference = 'SilentlyContinue'
         $WebListener = Start-WebListener
+    }
+
+    AfterAll {
+        $ProgressPreference = $oldProgress
     }
 
     Context "InFile parameter negative tests" {
