@@ -169,7 +169,7 @@ Describe "TabCompletion" -Tags CI {
 
     It 'Should complete keyword with no input' {
         $res = TabExpansion2 -inputScript 'using ' -cursorColumn 'using '.Length
-        $res.CompletionMatches.CompletionText | Should -BeExactly 'assembly','module','namespace'
+        $res.CompletionMatches.CompletionText | Should -BeExactly 'assembly','module','namespace','type'
     }
 
     It 'Should complete keyword with no input after line continuation' {
@@ -178,7 +178,7 @@ using `
 
 '@
         $res = TabExpansion2 -inputScript $InputScript -cursorColumn $InputScript.Length
-        $res.CompletionMatches.CompletionText | Should -BeExactly 'assembly','module','namespace'
+        $res.CompletionMatches.CompletionText | Should -BeExactly 'assembly','module','namespace','type'
     }
 
     It 'Should first suggest -Full and then -Functionality when using Get-Help -Fu<tab>' -Skip {
