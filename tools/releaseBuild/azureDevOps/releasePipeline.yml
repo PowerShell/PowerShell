@@ -19,6 +19,8 @@ variables:
     value: none
   - name: skipComponentGovernanceDetection
     value: true
+  - name: BUILDSECMON_OPT_IN
+    value: true
 
 stages:
 - stage: MSIXBundle
