@@ -44,6 +44,8 @@ variables:
     value: https://github.com/powershell/powershell
   - name: SBOMGenerator_Formats
     value: spdx:2.2
+  - name: BUILDSECMON_OPT_IN
+    value: true
 
 stages:
   - stage: prep
