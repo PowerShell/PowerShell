@@ -527,7 +527,7 @@ namespace System.Management.Automation.Remoting.Client
             _dataProcessingCallbacks.ClosePacketReceived += new OutOfProcessUtils.ClosePacketReceived(OnClosePacketReceived);
             _dataProcessingCallbacks.CloseAckPacketReceived += new OutOfProcessUtils.CloseAckPacketReceived(OnCloseAckReceived);
 
-            dataToBeSent.Fragmentor = base.Fragmentor;
+            dataToBeSent.Fragmentor = Fragmentor;
             // session transport manager can receive unlimited data..however each object is limited
             // by maxRecvdObjectSize. this is to allow clients to use a session for an unlimited time..
             // also the messages that can be sent to a session are limited and very controlled.
@@ -950,7 +950,8 @@ namespace System.Management.Automation.Remoting.Client
 
         private void OnSignalPacketReceived(Guid psGuid)
         {
-            throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownElementReceived,
+            throw new PSRemotingTransportException(
+                PSRemotingErrorId.IPCUnknownElementReceived,
                 RemotingErrorIdStrings.IPCUnknownElementReceived,
                    OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_TAG);
         }
@@ -959,7 +960,8 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (psGuid == Guid.Empty)
             {
-                throw new PSRemotingTransportException(PSRemotingErrorId.IPCNoSignalForSession,
+                throw new PSRemotingTransportException(
+                    PSRemotingErrorId.IPCNoSignalForSession,
                     RemotingErrorIdStrings.IPCNoSignalForSession,
                     OutOfProcessUtils.PS_OUT_OF_PROC_SIGNAL_ACK_TAG);
             }
