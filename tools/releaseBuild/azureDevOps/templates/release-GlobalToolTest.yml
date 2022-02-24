@@ -69,7 +69,7 @@ jobs:
     - pwsh: |
         $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
         Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
-        Start-PSBootstrap -Force
+        Start-PSBootstrap
 
         $toolPath = New-Item -ItemType Directory "$(System.DefaultWorkingDirectory)/toolPath" | Select-Object -ExpandProperty FullName
 
@@ -94,7 +94,7 @@ jobs:
 
     - pwsh: |
         Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
-        Start-PSBootstrap -Force
+        Start-PSBootstrap
 
         $exeName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
 
