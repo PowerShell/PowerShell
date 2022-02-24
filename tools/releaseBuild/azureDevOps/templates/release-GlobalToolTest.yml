@@ -100,7 +100,10 @@ jobs:
 
         $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/${{ parameters.globalToolExeName }}"
 
-        $env:DOTNET_ROOT = Split-Path (Get-Command -Type Application -Name dotnet | Select-Object -First 1).Source
+        $source = (get-command -Type Application -Name dotnet | Select-Object -First 1 -ExpandProperty source)
+        $target = (Get-ChildItem $source).target
+
+        $env:DOTNET_ROOT = (resolve-path -Path (Join-Path (split-path $source) $target)).ProviderPath
 
         Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
         Get-ChildItem $env:DOTNET_ROOT
