@@ -1,5 +1,128 @@
 # Current preview release
 
+## [7.3.0-preview.2] - 2022-02-24
+
+### Engine Updates and Fixes
+
+- Fix the `clean` block for generated proxy function (#16827)
+- Add support to allow invoking method with generic type arguments (#12412 and #16822) (Thanks @vexx32!)
+- Report error when PowerShell built-in modules are missing (#16628)
+
+### General Cmdlet Updates and Fixes
+
+- Prevent command completion if the word to complete is a single dash (#16781) (Thanks @ayousuf23!)
+- Use `FindFirstFileW` instead of `FindFirstFileExW` to correctly handle Unicode file names on FAT32 (#16840) (Thanks @iSazonov!)
+- Add completion for loop labels after Break/Continue (#16438) (Thanks @MartinGC94!)
+- Support OpenSSH options for `PSRP` over SSH commands (#12802) (Thanks @BrannenGH!)
+- Adds a `.ResolvedTarget` Property to `File-System` Items to Reflect a Symlink's Target as `FileSystemInfo` (#16490) (Thanks @hammy3502!)
+- Use `NotifyEndApplication` to re-enable VT mode (#16612)
+- Add new parameter to `Start-Sleep`: `[-Duration] <timespan>` (#16185) (Thanks @IISResetMe!)
+- Add lock and null check to remoting internals (#16542) (#16683) (Thanks @SergeyZalyadeev!)
+- Make `Measure-Object` ignore missing properties unless running in strict mode (#16589) (Thanks @KiwiThePoodle!)
+- Add `-StrictMode` to `Invoke-Command` to allow specifying strict mode when invoking command locally (#16545) (Thanks @Thomas-Yu!)
+- Fix `$PSNativeCommandArgPassing` = `Windows` to handle empty args correctly (#16639)
+- Reduce the amount of startup banner text (#16516) (Thanks @rkeithhill!)
+- Add `exec` cmdlet for bash compatibility (#16462)
+- Add AMSI method invocation logging as experimental feature (#16496)
+- Fix web cmdlets so that an empty `Get` does not include a `content-length` header (#16587)
+- Update `HelpInfoUri` for 7.3 release (#16646)
+- Fix parsing `SemanticVersion` build label from version string (#16608)
+- Fix `ForEach-Object -Parallel` when passing in script block variable (#16564)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@eltociear, @iSazonov, @xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Fix typo in PowerShellExecutionHelper.cs (#16776) (Thanks @eltociear!)</li>
+<li>Use more efficient platform detection API (#16760) (Thanks @iSazonov!)</li>
+<li>Seal <code>ClientRemotePowerShell</code> (#15802) (Thanks @xtqqczze!)</li>
+<li>Fix the DSC overview URL in a markdown file and some small cleanup changes (#16629)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Fix automation to update experimental JSON files in GitHub action (#16837)
+
+### Tests
+
+- Update `markdownlint` to the latest version (#16825)
+- Bump the package `path-parse` from `1.0.6` to `1.0.7` (#16820)
+- Remove assert that is incorrect and affecting our tests (#16588)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@dahlia</p>
+
+</summary>
+
+<ul>
+<li>Update NuGet Testing to not re-install dotnet,
+when not needed and dynamically determine the DOTNET_ROOT (Internal 19268, 19269, 19272, 19273, and 19274)</li>
+<li>Remove SkipExperimentalFeatureGeneration when building alpine (Internal 19248)</li>
+<li>Revert .NET 7 changes, Update to the latest .NET 6 and Update WXS file due to blocking issue in .NET 7 Preview 1 </li>
+<li>Install and Find AzCopy</li>
+<li>Use Start-PSBootStrap for installing .NET during nuget packaging</li>
+<li>Fix pool syntax for deployments (Internal 19189)</li>
+<li>Bump NJsonSchema from 10.5.2 to 10.6.9 (#16888)</li>
+<li>Update projects and scripts to use .NET 7 preview 1 pre-release builds (#16856)</li>
+<li>Add warning messages when package precheck fails (#16867)</li>
+<li>Refactor Global Tool packaging to include SBOM generation (#16860)</li>
+<li>Update to use <code>windows-latest</code> as the build agent image (#16831)</li>
+<li>Ensure alpine and arm SKUs have <code>powershell.config.json</code> file with experimental features enabled (#16823)</li>
+<li>Update experimental feature json files (#16838) (Thanks @github-actions[bot]!)</li>
+<li>Remove WiX install (#16834)</li>
+<li>Add experimental json update automation (#16833)</li>
+<li>Update .NET SDK to 6.0.101 and fix <code>Microsoft.PowerShell.GlobalTool.Shim.csproj</code> (#16821)</li>
+<li>Add SBOM manifest to nuget packages (#16711)</li>
+<li>Improve logic for updating .NET in CI (#16808)</li>
+<li>Add Linux package dependencies for packaging (#16807)</li>
+<li>Switch to our custom images for build and release (#16801)</li>
+<li>Remove all references to <code>cmake</code> for the builds in this repo (#16578)</li>
+<li>Fix build for new <code>InvokeCommand</code> attributes (#16800)</li>
+<li>Let macOS installer run without Rosetta on Apple Silicon (#16742) (Thanks @dahlia!)</li>
+<li>Update the expect .NET SDK quality to GA for installing dotnet (#16784)</li>
+<li>Change nuget release yaml to use <code>UseDotNet</code> task (#16701)</li>
+<li>Bump Microsoft.ApplicationInsights from 2.19.0 to 2.20.0 (#16642)</li>
+<li>Register NuGet source when generating <code>CGManifest</code> (#16570)</li>
+<li>Update Images used for release (#16580)</li>
+<li>Update SBOM generation (#16641)</li>
+<li>Bring changes from 7.3.0-preview.1 (#16640)</li>
+<li>Update the <code>vmImage</code> and PowerShell root directory for macOS builds (#16611)</li>
+<li>Update macOS build image and root folder for build (#16609)</li>
+<li>Disabled Yarn cache in markdown.yml (#16599)</li>
+<li>Update cgmanifest (#16600)</li>
+<li>Fix broken links in markdown (#16598)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Add newly joined members to their respective Working Groups (#16849)
+- Update Engine Working Group members (#16780)
+- Replace the broken link about pull request (#16771)
+- Update change log to remove a broken URL (#16735)
+- Updated `README.md` and `metadata.json` for `v7.3.0-preview.1` release (#16627)
+- Updating changelog for `7.2.1` (#16616)
+- Updated `README.md` and `metadata.json` for `7.2.1` release (#16586)
+
+[7.3.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.1...v7.3.0-preview.2
+
 ## [7.3.0-preview.1] - 2021-12-16
 
 ### Breaking Changes
