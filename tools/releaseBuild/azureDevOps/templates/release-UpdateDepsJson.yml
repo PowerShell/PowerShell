@@ -2,7 +2,8 @@ jobs:
 - job: UpdateDepsFiles
   displayName: Update deps files
 
-  pool: PowerShell1ES
+  pool:
+    name: PowerShell1ES
     demands:
     - ImageOverride -equals PSMMS2019-Secure
 
