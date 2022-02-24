@@ -51,13 +51,14 @@ jobs:
       Write-Host "##$vstsCommandString"
     displayName: 'Find SDK version from global.json'
 
-  - task: DotNetCoreInstaller@0
-    displayName: 'Use .NET Core SDK from global.json'
-    inputs:
-      version: '$(SDKVersion)'
+  - pwsh: |
+      Import-Module "$env:REPOROOT/build.psm1" -Force
+      # We just need .NET but we fixed this in an urgent situation.
+      Start-PSBootStrap -Verbose
+    displayName: Bootstrap
 
   - task: DownloadBuildArtifacts@0
-    displayName: 'Download PowerShell build artifacts'
+    displayName: 'Download PowerShell build artifacts - finalResults'
     inputs:
       buildType: current
       downloadType: single
