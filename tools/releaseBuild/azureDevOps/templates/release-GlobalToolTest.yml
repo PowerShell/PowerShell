@@ -103,7 +103,7 @@ jobs:
         $source = (get-command -Type Application -Name dotnet | Select-Object -First 1 -ExpandProperty source)
         $target = (Get-ChildItem $source).target
 
-        $env:DOTNET_ROOT = (resolve-path -Path (Join-Path (split-path $source) $target)).ProviderPath
+        $env:DOTNET_ROOT = split-path (resolve-path -Path (Join-Path (split-path $source) $target)).ProviderPath
 
         Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
         Get-ChildItem $env:DOTNET_ROOT
