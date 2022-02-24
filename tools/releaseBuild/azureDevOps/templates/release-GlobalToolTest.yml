@@ -100,7 +100,7 @@ jobs:
 
         $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/${{ parameters.globalToolExeName }}"
 
-        $env:DOTNET_ROOT = if ($IsWindows) { "$env:LOCALAPPDATA\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
+        $env:DOTNET_ROOT = Split-Path (Get-Command -Type Application -Name dotnet | Select-Object -First 1).Source
 
         Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
         Get-ChildItem $env:DOTNET_ROOT
