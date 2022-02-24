@@ -79,7 +79,6 @@ function Update-PackageVersion {
         "$PSScriptRoot/packaging/projects/reference/Microsoft.PowerShell.ConsoleHost/Microsoft.PowerShell.ConsoleHost.csproj"
         "$PSScriptRoot/../src/"
         "$PSScriptRoot/../test/tools/"
-        "$PSScriptRoot/../test/perf/dotnet-tools/"
     )
 
     Get-ChildItem -Path $paths -Recurse -Filter "*.csproj" -Exclude 'PSGalleryModules.csproj', 'PSGalleryTestModules.csproj' | ForEach-Object {
@@ -189,41 +188,36 @@ function Get-DotnetUpdate {
     try {
 
         try {
-            $URL = "http://aka.ms/dotnet/$channel/$quality/productVersion.txt"
-            $latestSDKVersionString = Invoke-RestMethod -Uri $URL -ErrorAction Stop | ForEach-Object { $_.Trim() }
+            $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$quality/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
             $selectedQuality = $quality
         } catch {
             if ($_.exception.Response.StatusCode -eq 'NotFound') {
-                Write-Verbose -Verbose -Message "No build at '$URL' found!"
+                Write-Verbose "Build not found for Channel: $Channel and Quality: $Quality" -Verbose
             } else {
                 throw $_
             }
         }
-        $latestSDKversion = $latestSDKVersionString -as "System.Management.Automation.SemanticVersion"
 
-        if (-not $latestSDKVersion) {
+        if (-not $latestSDKVersionString -or -not $latestSDKVersionString.StartsWith($sdkImageVersion)) {
             # we did not get a version number so fall back to daily
-            $URL = "http://aka.ms/dotnet/$channel/$qualityFallback/productVersion.txt"
-            $latestSDKVersionString = Invoke-RestMethod -Uri $URL -ErrorAction Stop | ForEach-Object { $_.Trim() }
+            $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$qualityFallback/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
             $selectedQuality = $qualityFallback
 
-            $latestSDKversion = $latestSDKVersionString -as "System.Management.Automation.SemanticVersion"
-            if (-not $latestSDKVersion) {
-                throw "No build at '$URL' found!"
+            if (-not $latestSDKVersionString.StartsWith($sdkImageVersion)) {
+                throw "No build found!"
             }
         }
 
+        $latestSDKversion = [System.Management.Automation.SemanticVersion] $latestSDKVersionString
+
         $currentVersion = [System.Management.Automation.SemanticVersion] (( Get-Content -Path "$PSScriptRoot/../global.json" -Raw | ConvertFrom-Json).sdk.version)
 
-        if ($latestSDKversion -gt $currentVersion -and $null -ne $latestSDKversion.PreReleaseLabel) {
+        if ($latestSDKversion -gt $currentVersion) {
             $shouldUpdate = $true
             $newVersion = $latestSDKversion
         } else {
             $shouldUpdate = $false
-            $newVersion = $latestSDKVersionString
-            if ($null -eq $currentVersion.PreReleaseLabel) {
-                $Message = "$latestSDKversion is not preview, update manually."
-            }
+            $newVersion = $null
         }
     } catch {
         Write-Verbose -Verbose "Error occured: $_.message"
@@ -342,10 +336,7 @@ if ($dotnetUpdate.ShouldUpdate) {
         Import-Module "$PSScriptRoot/../build.psm1" -Force
         Import-Module "$PSScriptRoot/packaging" -Force
         Start-PSBootstrap -Package
-        Start-PSBuild -Clean -Configuration Release -InteractiveAuth:$InteractiveAuth
-
-        $publishPath = Split-Path (Get-PSOutput)
-        Remove-Item -Path "$publishPath\*.pdb"
+        Start-PSBuild -Clean -Configuration Release -CrossGen -InteractiveAuth:$InteractiveAuth
 
         try {
             Start-PSPackage -Type msi -SkipReleaseChecks -InformationVariable wxsData
@@ -360,7 +351,4 @@ if ($dotnetUpdate.ShouldUpdate) {
     }
 
     Update-DevContainer
-}
-else {
-    Write-Verbose -Verbose -Message $dotnetUpdate.Message
 }
