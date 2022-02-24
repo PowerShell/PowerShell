@@ -1143,7 +1143,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="instanceId">Runspace/Pool instance Id.</param>
         /// <param name="sessionName">Session name.</param>
-        /// <param name="cryptoHelper">PSRemotingCryptoHelper.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper instance.</param>
+        /// <returns>Instance of WSManClientSessionTransportManager</returns>
         public override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
         {
             return new WSManClientSessionTransportManager(
@@ -1678,7 +1679,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="instanceId">Runspace/Pool instance Id.</param>
         /// <param name="sessionName">Session name.</param>
-        /// <param name="cryptoHelper">PSRemotingCryptoHelper.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper object.</param>
+        /// <returns>Instance of OutOfProcessClientSessionTransportManager</returns>
         public override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
         {
             return new OutOfProcessClientSessionTransportManager(
@@ -1915,7 +1917,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="instanceId">Runspace/Pool instance Id.</param>
         /// <param name="sessionName">Session name.</param>
-        /// <param name="cryptoHelper">PSRemotingCryptoHelper.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper object.</param>
+        /// <returns>Instance of NamedPipeClientSessionTransportManager</returns>
         public override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
         {
             return new NamedPipeClientSessionTransportManager(
@@ -2297,6 +2300,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Terminates the SSH process by process Id.
         /// </summary>
+        /// <param name="pid">Process id.</param>
         public void KillSSHProcess(int pid)
         {
             KillSSHProcessImpl(pid);
@@ -2975,7 +2979,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="instanceId">Runspace/Pool instance Id.</param>
         /// <param name="sessionName">Session name.</param>
-        /// <param name="cryptoHelper">PSRemotingCryptoHelper.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper instance.</param>
+        /// <returns>Instance of VMHyperVSocketClientSessionTransportManager.</returns>
         public override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
         {
             return new VMHyperVSocketClientSessionTransportManager(
@@ -3118,7 +3123,8 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="instanceId">Runspace/Pool instance Id.</param>
         /// <param name="sessionName">Session name.</param>
-        /// <param name="cryptoHelper">PSRemotingCryptoHelper.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper object.</param>
+        /// <returns>Instance of ContainerHyperVSocketClientSessionTransportManager</returns>
         public override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
         {
             if (ContainerProc.RuntimeId != Guid.Empty)
