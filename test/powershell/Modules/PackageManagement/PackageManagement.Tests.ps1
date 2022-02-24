@@ -19,13 +19,24 @@ $InternalSource = 'OneGetTestSource'
 Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
  BeforeAll{
-    Register-PackageSource -Name Nugettest -provider NuGet -Location https://www.nuget.org/api/v2 -Force
-    Register-PackageSource -Name $InternalSource -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
+
+    # Setting all It block to pending as the test fail due to https://github.com/dotnet/runtime/issues/65013
+    # These should be re-enabled when the issue is fixed
+    $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+    $PSDefaultParameterValues["it:pending"] = $true
+
+    # The cmdlets in the if block fail due the to above issue, hence putting them in a if ($false)
+    if ($false) {
+        Register-PackageSource -Name Nugettest -provider NuGet -Location https://www.nuget.org/api/v2 -Force
+        Register-PackageSource -Name $InternalSource -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
+    }
+
     $SavedProgressPreference = $ProgressPreference
     $ProgressPreference = "SilentlyContinue"
  }
  AfterAll {
      $ProgressPreference = $SavedProgressPreference
+     $global:PSDefaultParameterValues = $originalDefaultParameterValues
  }
     It "get-packageprovider" {
 
