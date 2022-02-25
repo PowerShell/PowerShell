@@ -1,10 +1,19 @@
 steps:
+- checkout: self
+  clean: true
+
 - download: none
 
 - template: release-SetReleaseTagAndContainerName.yml
 
 - pwsh: |
-    $azcopy = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+    Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+    Install-AzCopy
+  displayName: Install AzCopy
+
+- pwsh: |
+    Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+    $azcopy = Find-AzCopy
     & $azcopy /Source:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) /Dest:$(System.ArtifactsDirectory) /S /SourceKey:$(StorageAccountKey)
   displayName: Download Azure Artifacts
 
