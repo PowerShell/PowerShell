@@ -4484,8 +4484,6 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             }
             'alpine' {
                 $buildParams.Add("Runtime", 'alpine-x64')
-                # We are cross compiling, so we can't generate experimental features
-                $buildParams.Add("SkipExperimentalFeatureGeneration", $true)
             }
         }
 

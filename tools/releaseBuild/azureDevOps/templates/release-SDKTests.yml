@@ -99,7 +99,7 @@ jobs:
     - pwsh: |
         $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
         Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
-        Start-PSBootstrap -Force
+        Start-PSBootstrap
 
         $localLocation = "$(Pipeline.Workspace)/releasePipeline/finalResults"
         $xmlElement = @"

@@ -3226,3 +3226,29 @@ function Set-CorrectLocale
     # Output the locale to log it
     locale
 }
+
+function Install-AzCopy {
+    $testPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+    if (Test-Path $testPath) {
+        Write-Verbose "AzCopy already installed" -Verbose
+        return
+    }
+
+    $destination = "$env:TEMP\azcopy81.msi"
+    Invoke-WebRequest "https://aka.ms/downloadazcopy" -OutFile $destination
+    Start-Process -FilePath $destination -ArgumentList "/quiet" -Wait
+}
+
+function Find-AzCopy {
+    $searchPaths = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+
+    foreach ($filter in $searchPaths) {
+        $azCopy = Get-ChildItem -Path $filter -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName -First 1
+        if ($azCopy) {
+            return $azCopy
+        }
+    }
+
+    $azCopy = Get-Command -Name azCopy -ErrorAction Stop | Select-Object -First 1
+    return $azCopy.Path
+}
