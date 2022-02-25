@@ -565,21 +565,6 @@ namespace System.Management.Automation.Remoting.Server
 
     internal sealed class NamedPipeErrorTextWriter : OutOfProcessTextWriter
     {
-        #region Private Members
-
-        private const string _errorPrepend = "__NamedPipeError__:";
-
-        #endregion
-
-        #region Properties
-
-        internal static string ErrorPrepend
-        {
-            get { return _errorPrepend; }
-        }
-
-        #endregion
-
         #region Constructors
 
         internal NamedPipeErrorTextWriter(
@@ -590,9 +575,9 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Base class overrides
 
-        internal override void WriteLine(string data)
+        public override void WriteLine(string data)
         {
-            string dataToWrite = (data != null) ? _errorPrepend + data : null;
+            string dataToWrite = (data != null) ? ErrorPrefix + data : null;
             base.WriteLine(dataToWrite);
         }
 
@@ -681,7 +666,7 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Base class overrides
 
-        internal override void WriteLine(string data)
+        public override void WriteLine(string data)
         {
             string dataToWrite = (data != null) ? _errorPrepend + data : null;
             base.WriteLine(dataToWrite);
