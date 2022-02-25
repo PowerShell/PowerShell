@@ -183,6 +183,7 @@ namespace System.Management.Automation
                     if (remoteRunspace.GetCapabilities().Equals(Runspaces.RunspaceCapability.Default))
                     {
                         // Capability:
+                        //      CustomTransport    (0x100)          -> If remoteMachine is PowerShell 7.x or later
                         //      NamedPipeTransport (0x2)            -> If remoteMachine is Threshold or later
                         //      SupportsDisconnect (0x1)            -> If remoteMachine is Win8 or later
                         //      Default (0x0)                       -> If remoteMachine is Win7
