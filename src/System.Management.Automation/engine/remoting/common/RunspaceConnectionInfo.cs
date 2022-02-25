@@ -327,29 +327,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Creates the appropriate client session transportmanager.
-        /// </summary>
-        /// <param name="instanceId">Runspace/Pool instance Id.</param>
-        /// <param name="sessionName">Session name.</param>
-        /// <param name="cryptoHelper">PSRemotingCryptoHelper.</param>
-        internal virtual BaseClientSessionTransportManager CreateClientSessionTransportManager(
-            Guid instanceId,
-            string sessionName,
-            PSRemotingCryptoHelper cryptoHelper)
-        {
-            throw new PSNotImplementedException();
-        }
-
-        /// <summary>
-        /// Create a copy of the connection info object.
-        /// </summary>
-        /// <returns>Copy of the connection info object.</returns>
-        internal virtual RunspaceConnectionInfo InternalCopy()
-        {
-            throw new PSNotImplementedException();
-        }
-
-        /// <summary>
         /// Validates port number is in range.
         /// </summary>
         /// <param name="port">Port number to validate.</param>
@@ -363,6 +340,33 @@ namespace System.Management.Automation.Runspaces
                 ArgumentException e = new ArgumentException(message);
                 throw e;
             }
+        }
+
+        #endregion
+
+        #region Public methods
+
+        /// <summary>
+        /// Creates the appropriate client session transportmanager.
+        /// </summary>
+        /// <param name="instanceId">Runspace/Pool instance Id.</param>
+        /// <param name="sessionName">Session name.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper.</param>
+        public virtual BaseClientSessionTransportManager CreateClientSessionTransportManager(
+            Guid instanceId,
+            string sessionName,
+            PSRemotingCryptoHelper cryptoHelper)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
+        /// Create a copy of the connection info object.
+        /// </summary>
+        /// <returns>Copy of the connection info object.</returns>
+        public virtual RunspaceConnectionInfo InternalCopy()
+        {
+            throw new PSNotImplementedException();
         }
 
         #endregion
@@ -1063,10 +1067,10 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Shallow copy of the current instance.
+        /// Create a copy of the connection info object.
         /// </summary>
-        /// <returns>RunspaceConnectionInfo.</returns>
-        internal override RunspaceConnectionInfo InternalCopy()
+        /// <returns>Copy of the connection info object.</returns>
+        public override RunspaceConnectionInfo InternalCopy()
         {
             return Copy();
         }
@@ -1134,7 +1138,14 @@ namespace System.Management.Automation.Runspaces
 
         #region Internal Methods
 
-        internal override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
+        /// <summary>
+        /// Creates the appropriate client session transportmanager.
+        /// </summary>
+        /// <param name="instanceId">Runspace/Pool instance Id.</param>
+        /// <param name="sessionName">Session name.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper instance.</param>
+        /// <returns>Instance of WSManClientSessionTransportManager</returns>
+        public override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
         {
             return new WSManClientSessionTransportManager(
                 instanceId,
@@ -1654,12 +1665,23 @@ namespace System.Management.Automation.Runspaces
             return result;
         }
 
-        internal override RunspaceConnectionInfo InternalCopy()
+        /// <summary>
+        /// Create a copy of the connection info object.
+        /// </summary>
+        /// <returns>Copy of the connection info object.</returns>
+        public override RunspaceConnectionInfo InternalCopy()
         {
             return Copy();
         }
 
-        internal override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
+        /// <summary>
+        /// Creates the appropriate client session transportmanager.
+        /// </summary>
+        /// <param name="instanceId">Runspace/Pool instance Id.</param>
+        /// <param name="sessionName">Session name.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper object.</param>
+        /// <returns>Instance of OutOfProcessClientSessionTransportManager</returns>
+        public override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
         {
             return new OutOfProcessClientSessionTransportManager(
                 instanceId,
@@ -1874,10 +1896,10 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Shallow copy of current instance.
+        /// Create a copy of the connection info object.
         /// </summary>
-        /// <returns>NamedPipeConnectionInfo.</returns>
-        internal override RunspaceConnectionInfo InternalCopy()
+        /// <returns>Copy of the connection info object.</returns>
+        public override RunspaceConnectionInfo InternalCopy()
         {
             NamedPipeConnectionInfo newCopy = new NamedPipeConnectionInfo();
             newCopy._authMechanism = this.AuthenticationMechanism;
@@ -1890,7 +1912,14 @@ namespace System.Management.Automation.Runspaces
             return newCopy;
         }
 
-        internal override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
+        /// <summary>
+        /// Creates the appropriate client session transportmanager.
+        /// </summary>
+        /// <param name="instanceId">Runspace/Pool instance Id.</param>
+        /// <param name="sessionName">Session name.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper object.</param>
+        /// <returns>Instance of NamedPipeClientSessionTransportManager</returns>
+        public override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
         {
             return new NamedPipeClientSessionTransportManager(
                 this,
@@ -1936,7 +1965,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Key File Path.
         /// </summary>
-        private string KeyFilePath
+        public string KeyFilePath
         {
             get;
             set;
@@ -1945,7 +1974,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Port for connection.
         /// </summary>
-        private int Port
+        public int Port
         {
             get;
             set;
@@ -1954,7 +1983,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Subsystem to use.
         /// </summary>
-        private string Subsystem
+        public string Subsystem
         {
             get;
             set;
@@ -2131,10 +2160,10 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Shallow copy of current instance.
+        /// Create a copy of the connection info object.
         /// </summary>
-        /// <returns>NamedPipeConnectionInfo.</returns>
-        internal override RunspaceConnectionInfo InternalCopy()
+        /// <returns>Copy of the connection info object.</returns>
+        public override RunspaceConnectionInfo InternalCopy()
         {
             SSHConnectionInfo newCopy = new SSHConnectionInfo();
             newCopy.ComputerName = ComputerName;
@@ -2149,13 +2178,12 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// CreateClientSessionTransportManager.
+        /// Creates the appropriate client session transportmanager.
         /// </summary>
-        /// <param name="instanceId"></param>
-        /// <param name="sessionName"></param>
-        /// <param name="cryptoHelper"></param>
-        /// <returns></returns>
-        internal override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
+        /// <param name="instanceId">Runspace/Pool instance Id.</param>
+        /// <param name="sessionName">Session name.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper.</param>
+        public override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
         {
             return new SSHClientSessionTransportManager(
                 this,
@@ -2165,13 +2193,13 @@ namespace System.Management.Automation.Runspaces
 
         #endregion
 
-        #region Internal Methods
+        #region Public Methods
 
         /// <summary>
         /// StartSSHProcess.
         /// </summary>
         /// <returns></returns>
-        internal int StartSSHProcess(
+        public int StartSSHProcess(
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
             out StreamReader stdErrReaderVar)
@@ -2269,7 +2297,11 @@ namespace System.Management.Automation.Runspaces
             return StartSSHProcessImpl(startInfo, out stdInWriterVar, out stdOutReaderVar, out stdErrReaderVar);
         }
 
-        internal void KillSSHProcess(int pid)
+        /// <summary>
+        /// Terminates the SSH process by process Id.
+        /// </summary>
+        /// <param name="pid">Process id.</param>
+        public void KillSSHProcess(int pid)
         {
             KillSSHProcessImpl(pid);
         }
@@ -2932,13 +2964,24 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         public override string ComputerName { get; set; }
 
-        internal override RunspaceConnectionInfo InternalCopy()
+        /// <summary>
+        /// Create a copy of the connection info object.
+        /// </summary>
+        /// <returns>Copy of the connection info object.</returns>
+        public override RunspaceConnectionInfo InternalCopy()
         {
             VMConnectionInfo result = new VMConnectionInfo(Credential, VMGuid, ComputerName, ConfigurationName);
             return result;
         }
 
-        internal override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
+        /// <summary>
+        /// Creates the appropriate client session transportmanager.
+        /// </summary>
+        /// <param name="instanceId">Runspace/Pool instance Id.</param>
+        /// <param name="sessionName">Session name.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper instance.</param>
+        /// <returns>Instance of VMHyperVSocketClientSessionTransportManager.</returns>
+        public override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
         {
             return new VMHyperVSocketClientSessionTransportManager(
                 this,
@@ -3065,13 +3108,24 @@ namespace System.Management.Automation.Runspaces
             set { throw new PSNotSupportedException(); }
         }
 
-        internal override RunspaceConnectionInfo InternalCopy()
+        /// <summary>
+        /// Create a copy of the connection info object.
+        /// </summary>
+        /// <returns>Copy of the connection info object.</returns>
+        public override RunspaceConnectionInfo InternalCopy()
         {
             ContainerConnectionInfo newCopy = new ContainerConnectionInfo(ContainerProc);
             return newCopy;
         }
 
-        internal override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
+        /// <summary>
+        /// Creates the appropriate client session transportmanager.
+        /// </summary>
+        /// <param name="instanceId">Runspace/Pool instance Id.</param>
+        /// <param name="sessionName">Session name.</param>
+        /// <param name="cryptoHelper">PSRemotingCryptoHelper object.</param>
+        /// <returns>Instance of ContainerHyperVSocketClientSessionTransportManager</returns>
+        public override BaseClientSessionTransportManager CreateClientSessionTransportManager(Guid instanceId, string sessionName, PSRemotingCryptoHelper cryptoHelper)
         {
             if (ContainerProc.RuntimeId != Guid.Empty)
             {
