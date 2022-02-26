@@ -3177,11 +3177,11 @@
       <Component Id="cmp22840874A8C84AA796496634FBEBF09C">
         <File Id="fil2067B616D1FA4B30932A0240ABE06089" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Web.Services.Description.dll" />
       </Component>
-      <Component Id="cmpAC388473B5C048E3AB478DCC0B3C61FE">
-        <File Id="fil2D3CF7A46E0842BABB83B0A8787FED26" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.7608.dll" />
-      </Component>
       <Component Id="cmpE0DEAA289B2D4594A0C4791B2808C97C">
         <File Id="fil530EAD567BDB402FA6F02AFAA696D721" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Security.Cryptography.dll" />
+      </Component>
+      <Component Id="cmpBE708E925DB44DF79A8EE11706572228">
+        <File Id="filD7A90BD005AC451EBF60D6DE0FB6781E" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.12204.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4203,9 +4203,9 @@
       <ComponentRef Id="cmpF96C036EAE3B436DB096888697193FAF" />
       <ComponentRef Id="cmp789F545EA2CB4AC5A2688CF730A5F6B4" />
       <ComponentRef Id="cmpB7C69B48760E47CD89D0641D4A9FEFE9" />
-      <ComponentRef Id="cmpAC388473B5C048E3AB478DCC0B3C61FE" />
       <ComponentRef Id="cmpE5993DB9118640FD8C180A2D61C89C01" />
       <ComponentRef Id="cmpE0DEAA289B2D4594A0C4791B2808C97C" />
+      <ComponentRef Id="cmpBE708E925DB44DF79A8EE11706572228" />
     </ComponentGroup>
   </Fragment>
 </Wix>
