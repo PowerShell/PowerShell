@@ -2118,7 +2118,7 @@ function Start-PSBootstrap {
 
 function Get-LatestInstalledSDK {
     Start-NativeExecution -sb {
-        dotnet --list-sdks | Select-String -Pattern '\d*.\d*.\d*(-\w*\.\d*)?' | ForEach-Object { [System.Management.Automation.SemanticVersion]::new($_.matches.value) } | Sort-Object -Descending | Select-Object -First 1
+        dotnet --list-sdks | Select-String -Pattern '\d*.\d*.\d*(-\w*\.\d*.\d*.\d*)?' | ForEach-Object { [System.Management.Automation.SemanticVersion]::new($_.matches.value) } | Sort-Object -Descending | Select-Object -First 1
     } -IgnoreExitcode 2> $null
 }
 

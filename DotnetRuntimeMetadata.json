@@ -7,10 +7,9 @@
     "sdkImageVersion": "7.0.100",
     "nextChannel": "7.0.1xx-preview2",
     "azureFeed": "",
-    "sdkImageOverride": "",
-    "globalJsonVersion": "7.0.100-preview.2"
+    "sdkImageOverride": ""
   },
-  "internalfeed" : {
+  "internalfeed": {
     "url": ""
   }
 }

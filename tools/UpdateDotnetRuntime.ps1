@@ -31,14 +31,12 @@ param (
 function Update-GlobalJson([string] $Version) {
     $psGlobalJsonPath = Resolve-Path "$PSScriptRoot/../global.json"
     $psGlobalJson = Get-Content -Path $psGlobalJsonPath -Raw | ConvertFrom-Json
-    $psGlobalJsonPattern = $psGlobalJson.sdk.version + "*"
 
-    if ($Version -like $psGlobalJsonPattern) {
+    if ($psGlobalJson.sdk.version -eq $Version) {
         throw '.NET SDK version is not updated'
     }
 
-    $dotnetMetadata = (Get-Content -Path "$PSScriptRoot/../DotnetRuntimeMetadata.json" -Raw | ConvertFrom-Json)
-    $psGlobalJson.sdk.version = $dotnetMetadata.sdk.globalJsonVersion
+    $psGlobalJson.sdk.version = $Version
     $psGlobalJson | ConvertTo-Json | Out-File -FilePath $psGlobalJsonPath -Force
 }
 
