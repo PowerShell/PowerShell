@@ -364,7 +364,7 @@ namespace System.Management.Automation.Runspaces
         /// Create a copy of the connection info object.
         /// </summary>
         /// <returns>Copy of the connection info object.</returns>
-        public virtual RunspaceConnectionInfo InternalCopy()
+        public virtual RunspaceConnectionInfo Clone()
         {
             throw new PSNotImplementedException();
         }
@@ -1070,7 +1070,7 @@ namespace System.Management.Automation.Runspaces
         /// Create a copy of the connection info object.
         /// </summary>
         /// <returns>Copy of the connection info object.</returns>
-        public override RunspaceConnectionInfo InternalCopy()
+        public override RunspaceConnectionInfo Clone()
         {
             return Copy();
         }
@@ -1669,7 +1669,7 @@ namespace System.Management.Automation.Runspaces
         /// Create a copy of the connection info object.
         /// </summary>
         /// <returns>Copy of the connection info object.</returns>
-        public override RunspaceConnectionInfo InternalCopy()
+        public override RunspaceConnectionInfo Clone()
         {
             return Copy();
         }
@@ -1899,7 +1899,7 @@ namespace System.Management.Automation.Runspaces
         /// Create a copy of the connection info object.
         /// </summary>
         /// <returns>Copy of the connection info object.</returns>
-        public override RunspaceConnectionInfo InternalCopy()
+        public override RunspaceConnectionInfo Clone()
         {
             NamedPipeConnectionInfo newCopy = new NamedPipeConnectionInfo();
             newCopy._authMechanism = this.AuthenticationMechanism;
@@ -2163,7 +2163,7 @@ namespace System.Management.Automation.Runspaces
         /// Create a copy of the connection info object.
         /// </summary>
         /// <returns>Copy of the connection info object.</returns>
-        public override RunspaceConnectionInfo InternalCopy()
+        public override RunspaceConnectionInfo Clone()
         {
             SSHConnectionInfo newCopy = new SSHConnectionInfo();
             newCopy.ComputerName = ComputerName;
@@ -2968,7 +2968,7 @@ namespace System.Management.Automation.Runspaces
         /// Create a copy of the connection info object.
         /// </summary>
         /// <returns>Copy of the connection info object.</returns>
-        public override RunspaceConnectionInfo InternalCopy()
+        public override RunspaceConnectionInfo Clone()
         {
             VMConnectionInfo result = new VMConnectionInfo(Credential, VMGuid, ComputerName, ConfigurationName);
             return result;
@@ -3112,7 +3112,7 @@ namespace System.Management.Automation.Runspaces
         /// Create a copy of the connection info object.
         /// </summary>
         /// <returns>Copy of the connection info object.</returns>
-        public override RunspaceConnectionInfo InternalCopy()
+        public override RunspaceConnectionInfo Clone()
         {
             ContainerConnectionInfo newCopy = new ContainerConnectionInfo(ContainerProc);
             return newCopy;

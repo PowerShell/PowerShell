@@ -3013,6 +3013,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
+        /// Begin connection creation.
         /// </summary>
         /// <exception cref="PSRemotingTransportException">
         /// WSManRunShellCommandEx failed.
