@@ -7760,9 +7760,10 @@ namespace System.Management.Automation.Language
             }
             else if (_ungotToken == null)
             {
-                // Member name may be an incomplete token like `$a.$(Command-Name`; we do not look for generic args or
-                // invocation token(s) if the member name token is recognisably incomplete.
-                genericTypeArguments = GenericMethodArgumentsRule(out Token rBracket);
+                // Member name may be an incomplete token like `$a.$(Command-Name`, in which case, '_ungotToken != null'.
+                // We do not look for generic args or invocation token if the member name token is recognisably incomplete.
+                int resyncIndex = _tokenizer.GetRestorePoint();
+                genericTypeArguments = GenericMethodArgumentsRule(resyncIndex, out Token rBracket);
                 Token lParen = NextInvokeMemberToken();
 
                 if (lParen != null)
@@ -7778,6 +7779,13 @@ namespace System.Management.Automation.Language
                         "member and paren must be adjacent when the method is not generic");
                     return MemberInvokeRule(targetExpr, lParen, operatorToken, member, genericTypeArguments);
                 }
+                else if (rBracket != null)
+                {
+                    // We had a legit section of generic arguments but no 'lParen' following that, so this is not a method
+                    // invocation, but an invalid indexing operation. Resync the tokenizer back to before the generic arg
+                    // parsing and then continue.
+                    Resync(resyncIndex);
+                }
             }
 
             return new MemberExpressionAst(
@@ -7785,15 +7793,13 @@ namespace System.Management.Automation.Language
                 targetExpr,
                 member,
                 @static: operatorToken.Kind == TokenKind.ColonColon,
-                nullConditional: operatorToken.Kind == TokenKind.QuestionDot,
-                genericTypeArguments);
+                nullConditional: operatorToken.Kind == TokenKind.QuestionDot);
         }
 
-        private List<ITypeName> GenericMethodArgumentsRule(out Token rBracketToken)
+        private List<ITypeName> GenericMethodArgumentsRule(int resyncIndex, out Token rBracketToken)
         {
             List<ITypeName> genericTypes = null;
 
-            int resyncIndex = _tokenizer.GetRestorePoint();
             Token lBracket = NextToken();
             rBracketToken = null;
 
@@ -7817,7 +7823,23 @@ namespace System.Management.Automation.Language
 
                 SkipNewlines();
                 Token firstToken = NextToken();
-                if (firstToken.Kind == TokenKind.Identifier || firstToken.Kind == TokenKind.LBracket)
+
+                // For method generic arguments, we only support the syntax `$var.Method[TypeName1 <, TypeName2 ...>]`,
+                // not the syntax `$var.Method[[TypeName1] <, [TypeName2] ...>]`.
+                // The latter syntax has been supported for type expression since the beginning, but it's ambiguous in
+                // this scenario because we could be looking at an indexing operation on a property like:
+                //    `$var.Property[<expression>]`
+                // and the '<expression>' could start with a type expression like `[TypeName]::Method()`, or even just
+                // a single type expression acting as a key to a hashtable property. Such cases will cause ambiguities.
+                //
+                // It could be possible to write code that sorts out the ambiguity and continue to support the latter
+                // syntax for method generic arguments, and thus to allow assembly-qualified type names. But we choose
+                // to not do so becuase:
+                //   1. that will definitely increase the complexity of the parsing code and also make it fragile;
+                //   2. the latter syntax hurts readability due to the number of opening/closing brackets.
+                // The downside is that the assembly-qualified type names won't be supported for method generic args,
+                // but that's likely not a problem in practice, and we can revisit if it turns out otherwise.
+                if (firstToken.Kind == TokenKind.Identifier)
                 {
                     resyncIndex = -1;
                     genericTypes = GenericTypeArgumentsRule(firstToken, out rBracketToken);
@@ -7836,11 +7858,11 @@ namespace System.Management.Automation.Language
             finally
             {
                 SetTokenizerMode(oldTokenizerMode);
-            }
 
-            if (resyncIndex > 0)
-            {
-                Resync(resyncIndex);
+                if (resyncIndex > 0)
+                {
+                    Resync(resyncIndex);
+                }
             }
 
             return genericTypes;

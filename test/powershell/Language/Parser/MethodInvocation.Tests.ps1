@@ -13,9 +13,18 @@ Describe 'Generic Method invocation' -Tags 'CI' {
                 Script       = '[Array]::Empty[System.Collections.Generic.Dictionary[System.Numerics.BigInteger, System.Collections.Generic.List[string[,]]]]()'
                 ExpectedType = [System.Collections.Generic.Dictionary[System.Numerics.BigInteger, System.Collections.Generic.List[string[, ]]][]]
             }
+        )
+
+        $IndexingAProperty = @(
             @{
-                Script       = '[Array]::$("Empty")[[System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib],[System.Numerics.BigInteger, System.Runtime.Numerics]], System.Private.CoreLib]]()'
-                ExpectedType = [System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib], [System.Numerics.BigInteger, System.Runtime.Numerics]][], System.Private.CoreLib]
+                Script       = '[object]::Property[[type]]'
+                IndexType    = 'System.Management.Automation.Language.TypeExpressionAst'
+                IndexString  = '[type]'
+            }
+            @{
+                Script       = '$object.IPSubnet[[Array]::IndexOf($_.IPAddress, $_.IPAddress[0])]'
+                IndexType    = 'System.Management.Automation.Language.InvokeMemberExpressionAst'
+                IndexString  = '[Array]::IndexOf($_.IPAddress, $_.IPAddress[0])'
             }
         )
 
@@ -37,8 +46,8 @@ Describe 'Generic Method invocation' -Tags 'CI' {
             }
             @{
                 Script         = '[array]::empty[type]]()'
-                ExpectedErrors = @('UnexpectedToken', 'ExpectedExpression')
-                ErrorCount     = 2
+                ExpectedErrors = @('MissingArrayIndexExpression', 'UnexpectedToken', 'ExpectedExpression')
+                ErrorCount     = 3
             }
             @{
                 Script         = '$object.Method[type,]()'
@@ -70,6 +79,21 @@ Describe 'Generic Method invocation' -Tags 'CI' {
                 ExpectedErrors = @('EndSquareBracketExpectedAtEndOfType', 'UnexpectedToken')
                 ErrorCount     = 2
             }
+            @{
+                Script         = '$object.Method[[type]]()'
+                ExpectedErrors = @('UnexpectedToken', 'ExpectedExpression')
+                ErrorCount     = 2
+            }
+            @{
+                Script         = '[Array]::Empty[[type]]()'
+                ExpectedErrors = @('UnexpectedToken', 'ExpectedExpression')
+                ErrorCount     = 2
+            }
+            @{
+                Script         = '$object.Property[type]'
+                ExpectedErrors = @('MissingArrayIndexExpression', 'UnexpectedToken')
+                ErrorCount     = 2
+            }
         )
     }
 
@@ -77,6 +101,21 @@ Describe 'Generic Method invocation' -Tags 'CI' {
         param($Script)
 
         { [scriptblock]::Create($script) } | Should -Not -Throw
+    }
+
+    It "parses fine for indexing a property" -TestCases $IndexingAProperty {
+        param($Script, $IndexType, $IndexString)
+
+        $parseErrors = $null
+
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$null, [ref]$parseErrors)
+        $parseErrors | Should -BeNullOrEmpty
+
+        $cmdExpr = $ast.EndBlock.Statements[0].PipelineElements[0]
+        $cmdExpr | Should -BeOfType 'System.Management.Automation.Language.CommandExpressionAst'
+        $cmdExpr.Expression | Should -BeOfType 'System.Management.Automation.Language.IndexExpressionAst'
+        $cmdExpr.Expression.Index | Should -BeOfType $IndexType
+        $cmdExpr.Expression.Index.ToString() | Should -BeExactly $IndexString
     }
 
     It 'reports a parse error for "<Script>"' -TestCases $ExpectedParseErrors {
@@ -162,16 +201,6 @@ Describe 'Generic Method invocation' -Tags 'CI' {
             $_.Exception.Message | Should -BeLike "*[thisdoesnotexist]*"
             $_.FullyQualifiedErrorId | Should -BeExactly 'TypeNotFound'
         }
-    }
-
-    It 'lists the same method group information with and without type parameters' {
-        $dict = [System.Collections.Concurrent.ConcurrentDictionary[string, int]]::new()
-        $noTypeParams = $dict.AddOrUpdate
-        $typeParams = $dict.AddOrUpdate[string]
-        $extraTypeParams = $dict.AddOrUpdate[string, int]
-
-        $typeParams.OverloadDefinitions | Should -BeExactly $noTypeParams.OverloadDefinitions
-        $extraTypeParams.OverloadDefinitions | Should -BeExactly $typeParams.OverloadDefinitions
     }
 
     It 'successfully invokes common Linq generic methods' {
