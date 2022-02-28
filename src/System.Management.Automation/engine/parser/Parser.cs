@@ -7828,14 +7828,14 @@ namespace System.Management.Automation.Language
                 // The latter syntax has been supported for type expression since the beginning, but it's ambiguous in
                 // this scenario because we could be looking at an indexing operation on a property like:
                 //    `$var.Property[<expression>]`
-                // and the '<expression>' could start with a type expression like `[TypeName]::Method()`, or even just
+                // and the `<expression>` could start with a type expression like `[TypeName]::Method()`, or even just
                 // a single type expression acting as a key to a hashtable property. Such cases will cause ambiguities.
                 //
                 // It could be possible to write code that sorts out the ambiguity and continue to support the latter
                 // syntax for method generic arguments, and thus to allow assembly-qualified type names. But we choose
-                // to not do so becuase:
+                // not to do so because:
                 //   1. that will definitely increase the complexity of the parsing code and also make it fragile;
-                //   2. the latter syntax hurts readability due to the number of opening/closing brackets.
+                //   2. the latter syntax hurts readability a lot due to the number of opening/closing brackets.
                 // The downside is that the assembly-qualified type names won't be supported for method generic args,
                 // but that's likely not a problem in practice, and we can revisit if it turns out otherwise.
                 if (firstToken.Kind == TokenKind.Identifier)
