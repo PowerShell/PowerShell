@@ -34,7 +34,7 @@ namespace System.Management.Automation.Remoting
     #region TransportErrorOccuredEventArgs
 
     /// <summary>
-    /// Transport method for error reporting
+    /// Transport method for error reporting.
     /// </summary>
     public enum TransportMethodEnum
     {
@@ -116,7 +116,7 @@ namespace System.Management.Automation.Remoting
         /// Error occurred.
         /// </param>
         /// <param name="m">
-        /// The transport method that raised the error
+        /// The transport method that raised the error.
         /// </param>
         public TransportErrorOccuredEventArgs(
             PSRemotingTransportException e,
@@ -449,7 +449,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Dispose resources
+        /// Dispose resources.
         /// </summary>
         protected virtual void Dispose(bool isDisposing)
         {
@@ -1063,7 +1063,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Dispose resources
+        /// Dispose resources.
         /// </summary>
         protected override void Dispose(bool isDisposing)
         {

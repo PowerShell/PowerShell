@@ -436,7 +436,11 @@ namespace System.Management.Automation.Remoting
         /// <param name="writerToWrap"></param>
         public OutOfProcessTextWriter(TextWriter writerToWrap)
         {
-            Dbg.Assert(writerToWrap != null, "Cannot wrap a null writer.");
+            if (writerToWrap is null)
+            {
+                throw new PSArgumentNullException(nameof(writerToWrap));
+            }
+
             _writer = writerToWrap;
         }
 
@@ -505,7 +509,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Constructor
 
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
         protected ClientSessionTransportManagerBase(
             Guid runspaceId,
@@ -1085,7 +1089,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Launch a new Process (pwsh -s) to perform remoting. This is used by *-Job cmdlets
         /// to support background jobs without depending on WinRM (WinRM has complex requirements like
-        /// elevation to support local machine remoting)
+        /// elevation to support local machine remoting).
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
         /// </exception>

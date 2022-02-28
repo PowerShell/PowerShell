@@ -137,8 +137,8 @@ namespace System.Management.Automation
                         PSTask.CreateRunspace, PSKeyword.UseAlwaysOperational,
                         InstanceId.ToString());
 
-            _connectionInfo = connectionInfo.InternalCopy();
-            OriginalConnectionInfo = connectionInfo.InternalCopy();
+            _connectionInfo = connectionInfo.Clone();
+            OriginalConnectionInfo = connectionInfo.Clone();
 
             RunspacePool = new RunspacePool(1, 1, typeTable, host, applicationArguments, connectionInfo, name);
 
@@ -170,7 +170,7 @@ namespace System.Management.Automation
             RunspacePool.RemoteRunspacePoolInternal.SetMinRunspaces(1);
             RunspacePool.RemoteRunspacePoolInternal.SetMaxRunspaces(1);
 
-            _connectionInfo = runspacePool.ConnectionInfo.InternalCopy();
+            _connectionInfo = runspacePool.ConnectionInfo.Clone();
 
             // Update runspace DisconnectedOn and ExpiresOn property from WSManConnectionInfo
             UpdateDisconnectExpiresOn();
