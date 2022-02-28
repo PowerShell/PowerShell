@@ -7745,7 +7745,6 @@ namespace System.Management.Automation.Language
             // On entry, we've verified that operatorToken is not preceded by whitespace.
 
             CommandElementAst member = MemberNameRule();
-            List<ITypeName> genericTypeArguments = null;
 
             if (member == null)
             {
@@ -7763,7 +7762,7 @@ namespace System.Management.Automation.Language
                 // Member name may be an incomplete token like `$a.$(Command-Name`, in which case, '_ungotToken != null'.
                 // We do not look for generic args or invocation token if the member name token is recognisably incomplete.
                 int resyncIndex = _tokenizer.GetRestorePoint();
-                genericTypeArguments = GenericMethodArgumentsRule(resyncIndex, out Token rBracket);
+                List<ITypeName> genericTypeArguments = GenericMethodArgumentsRule(resyncIndex, out Token rBracket);
                 Token lParen = NextInvokeMemberToken();
 
                 if (lParen != null)
