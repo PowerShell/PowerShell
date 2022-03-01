@@ -2344,13 +2344,14 @@ namespace System.Management.Automation
                         {
                             break;
                         }
+
                         HashSet<string> excludedValues = null;
                         if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase) && boundArguments["Property"] is AstPair pair)
                         {
                             excludedValues = GetParameterValues(pair, context.CursorPosition.Offset);
                         }
-                        NativeCompletionCimCommands(parameterName, boundArguments, result, commandAst, context, excludedValues, commandName);
 
+                        NativeCompletionCimCommands(parameterName, boundArguments, result, commandAst, context, excludedValues, commandName);
                         break;
                     }
 
