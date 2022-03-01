@@ -26,6 +26,28 @@ Describe 'Generic Method invocation' -Tags 'CI' {
                 IndexType    = 'System.Management.Automation.Language.InvokeMemberExpressionAst'
                 IndexString  = '[Array]::IndexOf($_.IPAddress, $_.IPAddress[0])'
             }
+            @{
+                Script       = @'
+                    [IPAddress]::Parse(
+                        $_.IPSubnet[
+                            [Array]::IndexOf($_.IPAddress, $_.IPAddress[0])
+                        ]
+                    )
+'@
+                IndexType    = 'System.Management.Automation.Language.InvokeMemberExpressionAst'
+                IndexString  = '[Array]::IndexOf($_.IPAddress, $_.IPAddress[0])'
+            }
+            @{
+                Script       = @'
+                    [IPAddress]::Parse(
+                        $_.IPSubnet[
+                            ([Array]::IndexOf($_.IPAddress, $_.IPAddress[0]))
+                        ]
+                    )
+'@
+                IndexType    = 'System.Management.Automation.Language.ParenExpressionAst'
+                IndexString  = '([Array]::IndexOf($_.IPAddress, $_.IPAddress[0]))'
+            }
         )
 
         $ExpectedParseErrors = @(
@@ -103,7 +125,7 @@ Describe 'Generic Method invocation' -Tags 'CI' {
         { [scriptblock]::Create($script) } | Should -Not -Throw
     }
 
-    It "parses fine for indexing a property" -TestCases $IndexingAProperty {
+    It "parses fine for indexing a property: <Script>" -TestCases $IndexingAProperty {
         param($Script, $IndexType, $IndexString)
 
         $parseErrors = $null
@@ -113,9 +135,12 @@ Describe 'Generic Method invocation' -Tags 'CI' {
 
         $cmdExpr = $ast.EndBlock.Statements[0].PipelineElements[0]
         $cmdExpr | Should -BeOfType 'System.Management.Automation.Language.CommandExpressionAst'
-        $cmdExpr.Expression | Should -BeOfType 'System.Management.Automation.Language.IndexExpressionAst'
-        $cmdExpr.Expression.Index | Should -BeOfType $IndexType
-        $cmdExpr.Expression.Index.ToString() | Should -BeExactly $IndexString
+
+        $indexExpr = $cmdExpr.Expression -is [System.Management.Automation.Language.InvokeMemberExpressionAst] ? $cmdExpr.Expression.Arguments[0] : $cmdExpr.Expression
+
+        $indexExpr | Should -BeOfType 'System.Management.Automation.Language.IndexExpressionAst'
+        $indexExpr.Index | Should -BeOfType $IndexType
+        $indexExpr.Index.ToString() | Should -BeExactly $IndexString
     }
 
     It 'reports a parse error for "<Script>"' -TestCases $ExpectedParseErrors {
