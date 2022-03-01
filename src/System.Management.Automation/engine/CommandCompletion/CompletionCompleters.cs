@@ -2338,16 +2338,18 @@ namespace System.Management.Automation
                 case "Register-CimIndicationEvent":
                 case "Set-CimInstance":
                     {
-                        if (!parameterName.Equals("Arguments", StringComparison.OrdinalIgnoreCase)
-                            && !(parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase) && !commandName.Equals("Get-CimInstance")))
+                        // Avoids completion for parameters that expect a hashtable.
+                        if (parameterName.Equals("Arguments", StringComparison.OrdinalIgnoreCase)
+                            || (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase) && !commandName.Equals("Get-CimInstance")))
                         {
-                            HashSet<string> excludedValues = null;
-                            if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase) && boundArguments["Property"] is AstPair pair)
-                            {
-                                excludedValues = GetParameterValues(pair, context.CursorPosition.Offset);
-                            }
-                            NativeCompletionCimCommands(parameterName, boundArguments, result, commandAst, context, excludedValues, commandName);
+                            break;
                         }
+                        HashSet<string> excludedValues = null;
+                        if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase) && boundArguments["Property"] is AstPair pair)
+                        {
+                            excludedValues = GetParameterValues(pair, context.CursorPosition.Offset);
+                        }
+                        NativeCompletionCimCommands(parameterName, boundArguments, result, commandAst, context, excludedValues, commandName);
 
                         break;
                     }
@@ -7176,10 +7178,6 @@ namespace System.Management.Automation
 
         private static List<CompletionResult> GetSpecialHashTableKeyMembers(HashSet<string> excludedKeys, string wordToComplete, params string[] keys)
         {
-            // Resources were removed because they missed the deadline for loc.
-            // return keys.Select(key => new CompletionResult(key, key, CompletionResultType.Property,
-            //    ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).Assembly,
-            //                                           "TabCompletionStrings", key + "HashKeyDescription"))).ToList();
             var result = new List<CompletionResult>();
             foreach (string key in keys)
             {

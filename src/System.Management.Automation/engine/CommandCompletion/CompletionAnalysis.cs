@@ -931,8 +931,8 @@ namespace System.Management.Automation
                 // Handles the following scenario: [ipaddress]@{Address=""; <Tab> }
                 if (result?.Count > 0)
                 {
-                    completionContext.ReplacementIndex = replacementIndex = completionContext.CursorPosition.Offset;
-                    completionContext.ReplacementLength = replacementLength = 0;
+                    replacementIndex = completionContext.CursorPosition.Offset;
+                    replacementLength = 0;
                 }
             }
 
@@ -978,6 +978,7 @@ namespace System.Management.Automation
 
             if (lastRelatedAst is HashtableAst hashtableAst)
             {
+                // Cursor is just after the hashtable: @{}<Tab>
                 if (completionContext.TokenAtCursor is not null && completionContext.TokenAtCursor.Kind == TokenKind.RCurly)
                 {
                     return null;
