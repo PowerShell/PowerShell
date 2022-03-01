@@ -842,7 +842,7 @@ namespace Microsoft.PowerShell.Commands
         /// Return a System.Diagnostics.Process object by process Id,
         /// or null if not found or process has exited.
         /// </summary>
-        /// <param name="procId"Process of Id to find.</param>
+        /// <param name="procId">Process of Id to find.</param>
         /// <returns>Process object or null.</returns>
         public static Process GetProcessById(int procId)
         {
