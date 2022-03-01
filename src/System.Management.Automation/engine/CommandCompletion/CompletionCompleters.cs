@@ -3968,10 +3968,10 @@ namespace System.Management.Automation
         private static HashSet<string>GetParameterValues(AstPair parameter, int cursorOffset)
         {
             var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            var parameterValues = parameter.Argument.FindAll(ast => !(cursorOffset >= ast.Extent.StartOffset && cursorOffset <= ast.Extent.EndOffset) && ast is StringConstantExpressionAst, false);
+            var parameterValues = parameter.Argument.FindAll(ast => !(cursorOffset >= ast.Extent.StartOffset && cursorOffset <= ast.Extent.EndOffset) && ast is StringConstantExpressionAst, searchNestedScriptBlocks: false);
             foreach (Ast ast in parameterValues)
             {
-                _ = result.Add(ast.Extent.Text);
+                result.Add(ast.Extent.Text);
             }
 
             return result;
@@ -6944,7 +6944,7 @@ namespace System.Management.Automation
                 // Exclude all existing keys, except the key the cursor is currently at
                 if (!(cursorOffset >= keyPair.Item1.Extent.StartOffset && cursorOffset <= keyPair.Item1.Extent.EndOffset))
                 {
-                    _ = excludedKeys.Add(keyPair.Item1.Extent.Text);
+                    excludedKeys.Add(keyPair.Item1.Extent.Text);
                 }
             }
 
@@ -7132,14 +7132,23 @@ namespace System.Management.Automation
 
             if (ast.Parent is AssignmentStatementAst assignment && assignment.Left is VariableExpressionAst assignmentVar)
             {
-                var firstSplatUse = completionContext.RelatedAsts[0].Find(currentAst => currentAst.Extent.StartOffset > hashtableAst.Extent.EndOffset
-                && currentAst is VariableExpressionAst splatVar
-                && splatVar.Splatted
-                && splatVar.VariablePath.UserPath.Equals(assignmentVar.VariablePath.UserPath, StringComparison.OrdinalIgnoreCase), true) as VariableExpressionAst;
+                var firstSplatUse = completionContext.RelatedAsts[0].Find(
+                    currentAst =>
+                        currentAst.Extent.StartOffset > hashtableAst.Extent.EndOffset
+                        && currentAst is VariableExpressionAst splatVar
+                        && splatVar.Splatted
+                        && splatVar.VariablePath.UserPath.Equals(assignmentVar.VariablePath.UserPath, StringComparison.OrdinalIgnoreCase),
+                    searchNestedScriptBlocks: true) as VariableExpressionAst;
 
                 if (firstSplatUse is not null && firstSplatUse.Parent is CommandAst command)
                 {
-                    var binding = new PseudoParameterBinder().DoPseudoParameterBinding(command, null, null, PseudoParameterBinder.BindingType.ParameterCompletion);
+                    var binding = new PseudoParameterBinder()
+                        .DoPseudoParameterBinding(
+                            command,
+                            pipeArgumentType: null,
+                            paramAstAtCursor: null,
+                            PseudoParameterBinder.BindingType.ParameterCompletion);
+
                     if (binding is null)
                     {
                         return null;
