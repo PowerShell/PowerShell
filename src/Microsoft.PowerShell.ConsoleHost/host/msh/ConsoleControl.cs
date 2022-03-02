@@ -2518,7 +2518,8 @@ namespace Microsoft.PowerShell
             {
                 int err = Marshal.GetLastWin32Error();
 
-                if (err == 0x1f) // ERROR_GEN_FAILURE is returned if this api can't be used with the terminal
+                // ERROR_GEN_FAILURE is returned if this api can't be used with the terminal
+                if (err == 0x1f)
                 {
                     tracer.WriteLine("Call to SetConsoleTitle failed: {0}", err);
                     canSetConsoleWindowTitle = false;
