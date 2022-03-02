@@ -2494,6 +2494,8 @@ namespace Microsoft.PowerShell
             return consoleTitle.ToString();
         }
 
+        internal static bool canSetConsoleWindowTitle = true;
+
         /// <summary>
         /// Wraps Win32 SetConsoleTitle.
         /// </summary>
@@ -2505,15 +2507,17 @@ namespace Microsoft.PowerShell
         /// </exception>
         internal static void SetConsoleWindowTitle(string consoleTitle)
         {
+            if (!canSetConsoleWindowTitle)
+            {
+                // some scenarios don't allow setting the window title, so we can just ignore if this fails
+                return;
+            }
+
             bool result = NativeMethods.SetConsoleTitle(consoleTitle);
 
             if (!result)
             {
-                int err = Marshal.GetLastWin32Error();
-
-                HostException e = CreateHostException(err, "SetConsoleWindowTitle",
-                    ErrorCategory.ResourceUnavailable, ConsoleControlStrings.SetConsoleWindowTitleExceptionTemplate);
-                throw e;
+                canSetConsoleWindowTitle = false;
             }
         }
 
