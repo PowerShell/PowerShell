@@ -319,7 +319,7 @@ namespace Microsoft.PowerShell.Commands
         private Process GetProcessById(int procId)
         {
             var process = PSHostProcessUtils.GetProcessById(procId);
-            if (process == null)
+            if (process is null)
             {
                 ThrowTerminatingError(
                     new ErrorRecord(
@@ -602,9 +602,16 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    if (namePattern.IsMatch(proc.ProcessName))
+                    try
                     {
-                        returnIds.Add(proc.Id);
+                        if (namePattern.IsMatch(proc.ProcessName))
+                        {
+                            returnIds.Add(proc.Id);
+                        }
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // Ignore if process has exited in the mean time.
                     }
                 }
             }
@@ -706,10 +713,20 @@ namespace Microsoft.PowerShell.Commands
                                             // best effort to cleanup
                                         }
                                     }
-                                    else if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
+                                    else
                                     {
-                                        // only add if the process name matches
-                                        procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName, namedPipe));
+                                        try
+                                        {
+                                            if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
+                                            {
+                                                // only add if the process name matches
+                                                procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName, namedPipe));
+                                            }
+                                        }
+                                        catch (InvalidOperationException)
+                                        {
+                                            // Ignore if process has exited in the mean time.
+                                        }
                                     }
                                 }
                             }
@@ -834,7 +851,7 @@ namespace Microsoft.PowerShell.Commands
 
     #endregion
 
-    #region
+    #region PSHostProcessUtils
 
     internal static class PSHostProcessUtils
     {
