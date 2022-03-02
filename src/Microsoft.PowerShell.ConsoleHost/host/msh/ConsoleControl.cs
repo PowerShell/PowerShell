@@ -2494,7 +2494,7 @@ namespace Microsoft.PowerShell
             return consoleTitle.ToString();
         }
 
-        internal static bool canSetConsoleWindowTitle = true;
+        private static bool canSetConsoleWindowTitle = true;
 
         /// <summary>
         /// Wraps Win32 SetConsoleTitle.
