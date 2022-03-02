@@ -2494,7 +2494,7 @@ namespace Microsoft.PowerShell
             return consoleTitle.ToString();
         }
 
-        internal static bool canSetConsoleWindowTitle = true;
+        internal static bool SetConsoleWindowTitle = true;
 
         /// <summary>
         /// Wraps Win32 SetConsoleTitle.
@@ -2509,7 +2509,6 @@ namespace Microsoft.PowerShell
         {
             if (!canSetConsoleWindowTitle)
             {
-                // some scenarios don't allow setting the window title, so we can just ignore if this fails
                 return;
             }
 
@@ -2517,7 +2516,22 @@ namespace Microsoft.PowerShell
 
             if (!result)
             {
-                canSetConsoleWindowTitle = false;
+                int err = Marshal.GetLastWin32Error();
+
+                if (err == 0x1f) // ERROR_GEN_FAILURE is returned if this api can't be used with the terminal
+                {
+                    tracer.WriteLine("Call to SetConsoleTitle failed: {0}", err);
+                    canSetConsoleWindowTitle = false;
+
+                    // We ignore this specific error as the console can still continue to operate
+                    return;
+                }
+                else
+                {
+                    HostException e = CreateHostException(err, "SetConsoleWindowTitle",
+                        ErrorCategory.ResourceUnavailable, ConsoleControlStrings.SetConsoleWindowTitleExceptionTemplate);
+                    throw e;
+                }
             }
         }
 
