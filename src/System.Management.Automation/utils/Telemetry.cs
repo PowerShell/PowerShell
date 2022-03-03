@@ -120,9 +120,9 @@ namespace Microsoft.PowerShell.Telemetry
 
                 s_telemetryClient = new TelemetryClient(configuration);
                 // Be sure to obscure any information about the client node.
+                s_telemetryClient.Context.Cloud.RoleInstance = "na";
+                s_telemetryClient.Context.GetInternalContext().NodeName = "na";
                 s_sessionId = Guid.NewGuid().ToString();
-                s_telemetryClient.Context.Cloud.RoleInstance = s_sessionId;
-                s_telemetryClient.Context.GetInternalContext().NodeName = s_sessionId;
 
                 // use a hashset when looking for module names, it should be quicker than a string comparison
                 s_knownModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
