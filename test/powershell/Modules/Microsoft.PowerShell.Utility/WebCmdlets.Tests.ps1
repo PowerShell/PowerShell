@@ -1781,7 +1781,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                     SslProtocol          = $SslProtocol
                     SkipCertificateCheck = $true
                 }
+                "About to run Invoke-WebRequest -SslProtocol $SslProtocol works on $ActualProtocol" | Write-Verbose -Verbose
                 $response = Invoke-WebRequest @params
+                "Success  run Invoke-WebRequest -SslProtocol $SslProtocol works on $ActualProtocol" | Write-Verbose -Verbose
                 $result = $Response.Content | ConvertFrom-Json
 
                 $result.headers.Host | Should -Be $params.Uri.Authority
