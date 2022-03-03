@@ -1227,6 +1227,13 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be BaseType
     }
+
+    It 'Infers type of generic method invocation with type parameters' {
+        [AstTypeInference]::in
+        $res = [AstTypeInference]::InferTypeOf( { [array]::Empty[int]() }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Int32[]'
+    }
 }
 
 Describe "AstTypeInference tests" -Tags CI {
