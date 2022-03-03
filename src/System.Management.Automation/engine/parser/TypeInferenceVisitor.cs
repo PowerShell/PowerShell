@@ -1495,7 +1495,11 @@ namespace System.Management.Automation
             }
 
             var res = new List<PSTypeName>(10);
-            bool isInvokeMemberExpressionAst = memberExpressionAst is InvokeMemberExpressionAst;
+
+            var invokeMemberExpression = memberExpressionAst as InvokeMemberExpressionAst;
+            bool isInvokeMemberExpressionAst = invokeMemberExpression is not null;
+            IList<ITypeName> genericTypeArguments = isInvokeMemberExpressionAst ? invokeMemberExpression.GenericTypeArguments : null;
+
             var maybeWantDefaultCtor = isStatic
                                        && isInvokeMemberExpressionAst
                                        && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");
@@ -1512,7 +1516,7 @@ namespace System.Management.Automation
 
                 var members = _context.GetMembersByInferredType(type, isStatic, filter: null);
 
-                AddTypesOfMembers(type, memberNameList, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, memberExpressionAst.GenericTypeArguments, res);
+                AddTypesOfMembers(type, memberNameList, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, genericTypeArguments, res);
 
                 // We didn't find any constructors but they used [T]::new() syntax
                 if (maybeWantDefaultCtor)
