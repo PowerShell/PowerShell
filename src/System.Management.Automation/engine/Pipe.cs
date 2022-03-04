@@ -559,15 +559,28 @@ namespace System.Management.Automation.Internal
             else if (_enumeratorToProcess != null)
             {
                 if (_enumeratorToProcessIsEmpty)
-                    return AutomationNull.Value;
-
-                if (!ParserOps.MoveNext(_context, null, _enumeratorToProcess))
                 {
-                    _enumeratorToProcessIsEmpty = true;
                     return AutomationNull.Value;
                 }
 
-                return ParserOps.Current(null, _enumeratorToProcess);
+                while (true)
+                {
+                    if (!ParserOps.MoveNext(_context, errorPosition: null, _enumeratorToProcess))
+                    {
+                        _enumeratorToProcessIsEmpty = true;
+                        return AutomationNull.Value;
+                    }
+
+                    object retValue = ParserOps.Current(errorPosition: null, _enumeratorToProcess);
+                    if (retValue == AutomationNull.Value)
+                    {
+                        // 'AutomationNull.Value' from the enumerator won't be sent to the pipeline.
+                        // We try to get the next value in this case.
+                        continue;
+                    }
+
+                    return retValue;
+                }
             }
             else if (ExternalReader != null)
             {
