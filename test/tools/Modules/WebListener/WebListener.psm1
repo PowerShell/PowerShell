@@ -252,7 +252,6 @@ function Get-WebListenerUrl {
     )
     process {
 
-        "================== Get-WebListenerUrl ==============================" | Write-Verbose -Verbose
         $runningListener = Get-WebListener
         if ($null -eq $runningListener -or $runningListener.GetStatus() -ne 'Running')
         {
@@ -297,6 +296,8 @@ function Get-WebListenerUrl {
         $str = $Uri.ToString()
 
         "==== Uri:  $str" | Write-Verbose -Verbose
+        $Script:WebListener.$Job | Receive-Job | Out-String | Write-Verbose -Verbose
+        "====|" | Write-Verbose -Verbose
 
         return [Uri]$Uri.ToString()
     }
