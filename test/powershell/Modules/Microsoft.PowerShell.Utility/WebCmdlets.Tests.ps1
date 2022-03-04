@@ -3380,7 +3380,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $name = $_
             $data = get-itemproperty -literalpath $path -name $name |
             select -expand $name
-            [pscustomobject]@{value=$name; data=$data; key=$path}
+            "$path   -  $name = $data" | Write-Verbose -Verbose
         }
         }
 
