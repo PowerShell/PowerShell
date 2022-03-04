@@ -2275,7 +2275,7 @@ namespace System.Management.Automation
                     {
                         if (parameterName.Equals("MemberName", StringComparison.OrdinalIgnoreCase))
                         {
-                            NativeCompletionMemberName(context, result, commandAst);
+                            NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
                         }
 
                         break;
@@ -2287,7 +2287,7 @@ namespace System.Management.Automation
                     {
                         if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
                         {
-                            NativeCompletionMemberName(context, result, commandAst);
+                            NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
                         }
 
                         break;
@@ -2299,7 +2299,7 @@ namespace System.Management.Automation
                     {
                         if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
                         {
-                            NativeCompletionMemberName(context, result, commandAst);
+                            NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
                         }
                         else if (parameterName.Equals("View", StringComparison.OrdinalIgnoreCase))
                         {
@@ -2314,7 +2314,7 @@ namespace System.Management.Automation
                          || parameterName.Equals("ExcludeProperty", StringComparison.OrdinalIgnoreCase)
                          || parameterName.Equals("ExpandProperty", StringComparison.OrdinalIgnoreCase))
                         {
-                            NativeCompletionMemberName(context, result, commandAst);
+                            NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
                         }
 
                         break;
@@ -2336,8 +2336,22 @@ namespace System.Management.Automation
                 case "Invoke-CimMethod":
                 case "New-CimInstance":
                 case "Register-CimIndicationEvent":
+                case "Set-CimInstance":
                     {
-                        NativeCompletionCimCommands(parameterName, boundArguments, result, commandAst, context);
+                        // Avoids completion for parameters that expect a hashtable.
+                        if (parameterName.Equals("Arguments", StringComparison.OrdinalIgnoreCase)
+                            || (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase) && !commandName.Equals("Get-CimInstance")))
+                        {
+                            break;
+                        }
+
+                        HashSet<string> excludedValues = null;
+                        if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase) && boundArguments["Property"] is AstPair pair)
+                        {
+                            excludedValues = GetParameterValues(pair, context.CursorPosition.Offset);
+                        }
+
+                        NativeCompletionCimCommands(parameterName, boundArguments, result, commandAst, context, excludedValues, commandName);
                         break;
                     }
 
@@ -2508,7 +2522,9 @@ namespace System.Management.Automation
             Dictionary<string, AstParameterArgumentPair> boundArguments,
             List<CompletionResult> result,
             CommandAst commandAst,
-            CompletionContext context)
+            CompletionContext context,
+            HashSet<string> excludedValues,
+            string commandName)
         {
             if (boundArguments != null)
             {
@@ -2529,6 +2545,7 @@ namespace System.Management.Automation
                 }
             }
 
+            RemoveLastNullCompletionResult(result);
             if (parameter.Equals("Namespace", StringComparison.OrdinalIgnoreCase))
             {
                 NativeCompletionCimNamespace(result, context);
@@ -2573,6 +2590,16 @@ namespace System.Management.Automation
                         else if (parameter.Equals("MethodName", StringComparison.OrdinalIgnoreCase))
                         {
                             NativeCompletionCimMethodName(pseudoboundCimNamespace, pseudoboundClassName, !gotInstance, result, context);
+                        }
+                        else if (parameter.Equals("Arguments", StringComparison.OrdinalIgnoreCase))
+                        {
+                            string pseudoboundMethodName = NativeCommandArgumentCompletion_ExtractSecondaryArgument(boundArguments, "MethodName").FirstOrDefault();
+                            NativeCompletionCimMethodArgumentName(pseudoboundCimNamespace, pseudoboundClassName, pseudoboundMethodName, excludedValues, result, context);
+                        }
+                        else if (parameter.Equals("Property", StringComparison.OrdinalIgnoreCase))
+                        {
+                            bool includeReadOnly = !commandName.Equals("Set-CimInstance", StringComparison.OrdinalIgnoreCase);
+                            NativeCompletionCimPropertyName(pseudoboundCimNamespace, pseudoboundClassName, includeReadOnly, excludedValues, result, context);
                         }
                     }
                 }
@@ -2714,6 +2741,82 @@ namespace System.Management.Automation
             }
 
             result.AddRange(localResults.OrderBy(static x => x.ListItemText, StringComparer.OrdinalIgnoreCase));
+        }
+
+        private static void NativeCompletionCimMethodArgumentName(
+            string pseudoboundNamespace,
+            string pseudoboundClassName,
+            string pseudoboundMethodName,
+            HashSet<string> excludedParameters,
+            List<CompletionResult> result,
+            CompletionContext context)
+        {
+            if (string.IsNullOrWhiteSpace(pseudoboundClassName) || string.IsNullOrWhiteSpace(pseudoboundMethodName))
+            {
+                return;
+            }
+
+            CimClass cimClass;
+            using (var cimSession = CimSession.Create(null))
+            {
+                using var options = new CimOperationOptions();
+                options.Flags |= CimOperationFlags.LocalizedQualifiers;
+                cimClass = cimSession.GetClass(pseudoboundNamespace ?? "root/cimv2", pseudoboundClassName, options);
+            }
+
+            var methodParameters = cimClass.CimClassMethods[pseudoboundMethodName]?.Parameters;
+            if (methodParameters is null)
+            {
+                return;
+            }
+
+            foreach (var parameter in methodParameters)
+            {
+                if ((string.IsNullOrEmpty(context.WordToComplete) || parameter.Name.StartsWith(context.WordToComplete, StringComparison.OrdinalIgnoreCase))
+                        && (excludedParameters is null || !excludedParameters.Contains(parameter.Name))
+                        && parameter.Qualifiers["In"]?.Value is true)
+                {
+                    string parameterDescription = parameter.Qualifiers["Description"]?.Value as string ?? string.Empty;
+                    string toolTip = $"[{CimInstanceAdapter.CimTypeToTypeNameDisplayString(parameter.CimType)}] {parameterDescription}";
+                    result.Add(new CompletionResult(parameter.Name, parameter.Name, CompletionResultType.Property, toolTip));
+                }
+            }
+        }
+
+        private static void NativeCompletionCimPropertyName(
+            string pseudoboundNamespace,
+            string pseudoboundClassName,
+            bool includeReadOnly,
+            HashSet<string> excludedProperties,
+            List<CompletionResult> result,
+            CompletionContext context)
+        {
+            if (string.IsNullOrWhiteSpace(pseudoboundClassName))
+            {
+                return;
+            }
+
+            CimClass cimClass;
+            using (var cimSession = CimSession.Create(null))
+            {
+                using var options = new CimOperationOptions();
+                options.Flags |= CimOperationFlags.LocalizedQualifiers;
+                cimClass = cimSession.GetClass(pseudoboundNamespace ?? "root/cimv2", pseudoboundClassName, options);
+            }
+
+            foreach (var property in cimClass.CimClassProperties)
+            {
+                bool isReadOnly = (property.Flags & CimFlags.ReadOnly) != 0;
+                if ((!isReadOnly || (isReadOnly && includeReadOnly))
+                    && (string.IsNullOrEmpty(context.WordToComplete) || property.Name.StartsWith(context.WordToComplete, StringComparison.OrdinalIgnoreCase))
+                    && (excludedProperties is null || !excludedProperties.Contains(property.Name)))
+                {
+                    string propertyDescription = property.Qualifiers["Description"]?.Value as string ?? string.Empty;
+                    string accessString = isReadOnly ? "{ get; }" : "{ get; set; }";
+                    string toolTip = $"[{CimInstanceAdapter.CimTypeToTypeNameDisplayString(property.CimType)}] {accessString} {propertyDescription}";
+                    result.Add(new CompletionResult(property.Name, property.Name, CompletionResultType.Property, toolTip));
+                }
+            }
         }
 
         private static readonly ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceToClassNames =
@@ -3845,15 +3948,36 @@ namespace System.Management.Automation
             return prevType;
         }
 
-        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst)
+        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, AstParameterArgumentPair parameterInfo)
         {
             IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
             if (prevType is not null)
             {
-                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
+                HashSet<string> excludedMembers = null;
+                if (parameterInfo is AstPair pair)
+                {
+                    excludedMembers = GetParameterValues(pair, context.CursorPosition.Offset);
+                }
+
+                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false, excludedMembers);
             }
 
             result.Add(CompletionResult.Null);
+        }
+
+        /// <summary>
+        /// Returns all string values bound to a parameter except the one the cursor is currently at.
+        /// </summary>
+        private static HashSet<string>GetParameterValues(AstPair parameter, int cursorOffset)
+        {
+            var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var parameterValues = parameter.Argument.FindAll(ast => !(cursorOffset >= ast.Extent.StartOffset && cursorOffset <= ast.Extent.EndOffset) && ast is StringConstantExpressionAst, searchNestedScriptBlocks: false);
+            foreach (Ast ast in parameterValues)
+            {
+                result.Add(ast.Extent.Text);
+            }
+
+            return result;
         }
 
         private static void NativeCompletionFormatViewName(
@@ -5798,7 +5922,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic)
+        internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic, HashSet<string> excludedMembers = null)
         {
             bool extensionMethodsAdded = false;
             HashSet<string> typeNameUsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -5814,7 +5938,7 @@ namespace System.Management.Automation
                 var members = context.GetMembersByInferredType(psTypeName, isStatic, filter);
                 foreach (var member in members)
                 {
-                    AddInferredMember(member, memberNamePattern, results);
+                    AddInferredMember(member, memberNamePattern, results, excludedMembers);
                 }
 
                 // Check if we need to complete against the extension methods 'Where' and 'ForEach'
@@ -5841,7 +5965,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results)
+        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results, HashSet<string> excludedMembers)
         {
             string memberName = null;
             bool isMethod = false;
@@ -5894,7 +6018,7 @@ namespace System.Management.Automation
                 getToolTip = memberAst.GetTooltip;
             }
 
-            if (memberName == null || !memberNamePattern.IsMatch(memberName))
+            if (memberName == null || !memberNamePattern.IsMatch(memberName) || (excludedMembers is not null && excludedMembers.Contains(memberName)))
             {
                 return;
             }
@@ -6815,13 +6939,25 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteHashtableKey(CompletionContext completionContext, HashtableAst hashtableAst)
         {
+            int cursorOffset = completionContext.CursorPosition.Offset;
+            string wordToComplete = completionContext.WordToComplete;
+            var excludedKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var keyPair in hashtableAst.KeyValuePairs)
+            {
+                // Exclude all existing keys, except the key the cursor is currently at
+                if (!(cursorOffset >= keyPair.Item1.Extent.StartOffset && cursorOffset <= keyPair.Item1.Extent.EndOffset))
+                {
+                    excludedKeys.Add(keyPair.Item1.Extent.Text);
+                }
+            }
+
             var typeAst = hashtableAst.Parent as ConvertExpressionAst;
             if (typeAst != null)
             {
                 var result = new List<CompletionResult>();
                 CompleteMemberByInferredType(
                     completionContext.TypeInferenceContext, AstTypeInference.InferTypeOf(typeAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval),
-                    result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false);
+                    result, wordToComplete + "*", IsWriteablePropertyMember, isStatic: false, excludedKeys);
                 return result;
             }
 
@@ -6921,7 +7057,7 @@ namespace System.Management.Automation
                             case "Format-List":
                             case "Format-Wide":
                             case "Format-Custom":
-                                return GetSpecialHashTableKeyMembers("Expression", "FormatString", "Label");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label");
                         }
 
                         return null;
@@ -6936,23 +7072,104 @@ namespace System.Management.Automation
                                 var result = new List<CompletionResult>();
                                 CompleteMemberByInferredType(
                                     completionContext.TypeInferenceContext, inferredType,
-                                    result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false);
+                                    result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false, excludedKeys);
                                 return result;
                             case "Select-Object":
-                                return GetSpecialHashTableKeyMembers("Name", "Expression");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Name", "Expression");
                             case "Sort-Object":
-                                return GetSpecialHashTableKeyMembers("Expression", "Ascending", "Descending");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Ascending", "Descending");
                             case "Group-Object":
-                                return GetSpecialHashTableKeyMembers("Expression");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression");
                             case "Format-Table":
-                                return GetSpecialHashTableKeyMembers("Expression", "FormatString", "Label", "Width", "Alignment");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label", "Width", "Alignment");
                             case "Format-List":
-                                return GetSpecialHashTableKeyMembers("Expression", "FormatString", "Label");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label");
                             case "Format-Wide":
-                                return GetSpecialHashTableKeyMembers("Expression", "FormatString");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString");
                             case "Format-Custom":
-                                return GetSpecialHashTableKeyMembers("Expression", "Depth");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Depth");
+                            case "Set-CimInstance":
+                            case "New-CimInstance":
+                                var results = new List<CompletionResult>();
+                                NativeCompletionCimCommands(parameterName, binding.BoundArguments, results, commandAst, completionContext, excludedKeys, binding.CommandName);
+                                // this method adds a null CompletionResult to the list but we don't want that here.
+                                if (results.Count > 1)
+                                {
+                                    results.RemoveAt(results.Count - 1);
+                                    return results;
+                                }
+
+                                return null;
                         }
+                    }
+
+                    if (parameterName.Equals("FilterHashtable", StringComparison.OrdinalIgnoreCase))
+                    {
+                        switch (binding.CommandName)
+                        {
+                            case "Get-WinEvent":
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "LogName", "ProviderName", "Path", "Keywords", "ID", "Level", 
+                                    "StartTime", "EndTime", "UserID", "Data", "SuppressHashFilter");
+                        }
+                    }
+
+                    if (parameterName.Equals("Arguments", StringComparison.OrdinalIgnoreCase))
+                    {
+                        switch (binding.CommandName)
+                        {
+                            case "Invoke-CimMethod":
+                                var result = new List<CompletionResult>();
+                                NativeCompletionCimCommands(parameterName, binding.BoundArguments, result, commandAst, completionContext, excludedKeys, binding.CommandName);
+                                // this method adds a null CompletionResult to the list but we don't want that here.
+                                if (result.Count > 1)
+                                {
+                                    result.RemoveAt(result.Count - 1);
+                                    return result;
+                                }
+
+                                return null;
+                        }
+                    }
+                }
+            }
+
+            if (ast.Parent is AssignmentStatementAst assignment && assignment.Left is VariableExpressionAst assignmentVar)
+            {
+                var firstSplatUse = completionContext.RelatedAsts[0].Find(
+                    currentAst =>
+                        currentAst.Extent.StartOffset > hashtableAst.Extent.EndOffset
+                        && currentAst is VariableExpressionAst splatVar
+                        && splatVar.Splatted
+                        && splatVar.VariablePath.UserPath.Equals(assignmentVar.VariablePath.UserPath, StringComparison.OrdinalIgnoreCase),
+                    searchNestedScriptBlocks: true) as VariableExpressionAst;
+
+                if (firstSplatUse is not null && firstSplatUse.Parent is CommandAst command)
+                {
+                    var binding = new PseudoParameterBinder()
+                        .DoPseudoParameterBinding(
+                            command,
+                            pipeArgumentType: null,
+                            paramAstAtCursor: null,
+                            PseudoParameterBinder.BindingType.ParameterCompletion);
+
+                    if (binding is null)
+                    {
+                        return null;
+                    }
+
+                    var results = new List<CompletionResult>();
+                    foreach (var parameter in binding.UnboundParameters)
+                    {
+                        if (!excludedKeys.Contains(parameter.Parameter.Name)
+                            && (wordToComplete is null || parameter.Parameter.Name.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            results.Add(new CompletionResult(parameter.Parameter.Name, parameter.Parameter.Name, CompletionResultType.ParameterName, $"[{parameter.Parameter.Type.Name}]"));
+                        }
+                    }
+
+                    if (results.Count > 0)
+                    {
+                        return results;
                     }
                 }
             }
@@ -6960,13 +7177,23 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static List<CompletionResult> GetSpecialHashTableKeyMembers(params string[] keys)
+        private static List<CompletionResult> GetSpecialHashTableKeyMembers(HashSet<string> excludedKeys, string wordToComplete, params string[] keys)
         {
-            // Resources were removed because they missed the deadline for loc.
-            // return keys.Select(key => new CompletionResult(key, key, CompletionResultType.Property,
-            //    ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).Assembly,
-            //                                           "TabCompletionStrings", key + "HashKeyDescription"))).ToList();
-            return keys.Select(static key => new CompletionResult(key, key, CompletionResultType.Property, key)).ToList();
+            var result = new List<CompletionResult>();
+            foreach (string key in keys)
+            {
+                if ((string.IsNullOrEmpty(wordToComplete) || key.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase)) && !excludedKeys.Contains(key))
+                {
+                    result.Add(new CompletionResult(key, key, CompletionResultType.Property, key));
+                }
+            }
+
+            if (result.Count == 0)
+            {
+                return null;
+            }
+
+            return result;
         }
 
         #endregion Hashtable Keys

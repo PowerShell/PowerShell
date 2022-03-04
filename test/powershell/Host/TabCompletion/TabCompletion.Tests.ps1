@@ -144,6 +144,50 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches | Should -HaveCount 3
         $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
     }
+    It 'Complete hashtable key without duplicate keys' {
+        class X {
+            $A
+            $B
+            $C
+        }
+        $TestString = '[x]@{A="";^}'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches | Should -HaveCount 2
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'B C'
+    }
+    It 'Complete hashtable key on empty line after key/value pair' {
+        class X {
+            $A
+            $B
+            $C
+        }
+        $TestString = @'
+[x]@{
+    B=""
+    ^
+}
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches | Should -HaveCount 2
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A C'
+    }
+
+    It 'Complete hashtable keys for Get-WinEvent FilterHashtable' -Skip:(!$IsWindows) {
+        $TestString = 'Get-WinEvent -FilterHashtable @{^'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches | Should -HaveCount 11
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'LogName ProviderName Path Keywords ID Level StartTime EndTime UserID Data SuppressHashFilter'
+    }
+
+    It 'Complete hashtable keys for a hashtable used for splatting' {
+        $TestString = '$GetChildItemParams=@{^};Get-ChildItem @GetChildItemParams -Force -Recurse'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Path'
+    }
 
     It 'Should complete "Get-Process -Id " with Id and name in tooltip' {
         Set-StrictMode -Version 3.0
@@ -1179,6 +1223,12 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount 2
             [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "1.0,1.1"
         }
+        
+        It 'Should complete Select-Object properties without duplicates' {
+            $res = TabExpansion2 -inputScript '$PSVersionTable | Select-Object -Property Count,'
+            $res.CompletionMatches.CompletionText | Should -Not -Contain "Count"
+        }
+        
         It '<Intent>' -TestCases @(
             @{
                 Intent = 'Complete loop labels with no input'
@@ -1537,6 +1587,18 @@ dir -Recurse `
                 @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassNam'; expected = 'CimClassName' }
                 @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassName.Substrin'; expected = 'Substring(' }
                 @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | %{ $_.ExecutableP'; expected = 'ExecutablePath' }
+                @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName SetPriority -Arguments @{'; expected = 'Priority' }
+                @{ inputStr = 'Get-CimInstance -ClassName Win32_Service | Invoke-CimMethod -MethodName Change -Arguments @{d'; expected = 'DesktopInteract' }
+                @{ inputStr = 'Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{'; expected = 'CommandLine' }
+                @{ inputStr = 'New-CimInstance Win32_Environment -Property @{'; expected = 'Caption' }
+                @{ inputStr = 'Get-CimInstance Win32_Environment | Set-CimInstance -Property @{'; expected = 'Name' }
+                @{ inputStr = 'Set-CimInstance -Namespace root/CIMV'; expected = 'root/CIMV2' }
+                @{ inputStr = 'Get-CimInstance Win32_Process -Property '; expected = 'Caption' }
+                @{ inputStr = 'Get-CimInstance Win32_Process -Property Caption,'; expected = 'Description' }
+            )
+            $FailCases = @(
+                @{ inputStr = "Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments " }
+                @{ inputStr = "New-CimInstance Win32_Process -Property " }
             )
         }
 
@@ -1546,6 +1608,13 @@ dir -Recurse `
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -Be $expected
+        }
+
+        It "CIM cmdlet input '<inputStr>' should not successfully complete" -TestCases $FailCases -Skip:(!$IsWindows) {
+            param($inputStr)
+
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches[0].ResultType | should -Not -Be 'Property'
         }
     }
 
