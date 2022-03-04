@@ -3371,6 +3371,22 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             )
         }
 
+        "========== Listing SecurityProviders ===================" | Write-Verbose -Verbose
+
+        $key = "HKLM:\\SYSTEM\CurrentControlSet\Control\SecurityProviders"
+        Get-ChildItem -Recurse $key | foreach-object {
+        $path = $_.PSPath
+        $_.Property | foreach-object {
+            $name = $_
+            $data = get-itemproperty -literalpath $path -name $name |
+            select -expand $name
+            [pscustomobject]@{value=$name; data=$data; key=$path}
+        }
+        }
+
+        "========== Listing SecurityProviders ===================" | Write-Verbose -Verbose
+
+
         foreach ($entry in $testCases1) {
             It "Verifies Invoke-RestMethod -SslProtocol <SslProtocol> works on <ActualProtocol>" -TestCases ($entry.Test) -Pending:($entry.Pending) {
                 param($SslProtocol, $ActualProtocol)
