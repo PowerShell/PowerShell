@@ -136,6 +136,11 @@ function Start-WebListener
         New-ServerCertificate -CertificatePath $serverPfxPath -Password $serverPfxPassword
         New-ClientCertificate -CertificatePath $Script:ClientPfxPath -Password $Script:ClientPfxPassword
 
+
+        "================== Start-WebListener ==============================" | Write-Verbose -Verbose
+        "$appExe $serverPfxPath $serverPfxPassword $HttpPort $HttpsPort $Tls11Port $TlsPort $Tls13Port" | Write-Verbose -Verbose
+        "===================================================================" | Write-Verbose -Verbose
+
         $Job = Start-Job {
             $path = Split-Path -Parent (Get-Command WebListener).Path -Verbose
             Push-Location $path -Verbose
@@ -192,6 +197,8 @@ function Stop-WebListener
 
     process
     {
+        "================== Stop-WebListener ==============================" | Write-Verbose -Verbose
+
         $Script:WebListener.job | Stop-Job -PassThru | Remove-Job
         $Script:WebListener = $null
     }
@@ -244,6 +251,8 @@ function Get-WebListenerUrl {
         [System.Collections.IDictionary]$Query
     )
     process {
+
+        "================== Get-WebListenerUrl ==============================" | Write-Verbose -Verbose
         $runningListener = Get-WebListener
         if ($null -eq $runningListener -or $runningListener.GetStatus() -ne 'Running')
         {
@@ -284,6 +293,10 @@ function Get-WebListenerUrl {
             $null = $StringBuilder.Append('&')
         }
         $Uri.Query = $StringBuilder.ToString()
+
+        $str = $Uri.ToString()
+
+        "==== Uri:  $str" | Write-Verbose -Verbose
 
         return [Uri]$Uri.ToString()
     }
