@@ -1314,6 +1314,17 @@ namespace System.Management.Automation
         }
     }
 
+    internal static class ByRefOps
+    {
+        /// <summary>
+        /// There is no way to directly work with ByRef type in the expression tree, so we turn to reflection in this case.
+        /// </summary>
+        internal static object GetByRefPropertyValue(object target, PropertyInfo property)
+        {
+            return property.GetValue(target);
+        }
+    }
+
     internal static class HashtableOps
     {
         internal static void AddKeyValuePair(IDictionary hashtable, object key, object value, IScriptExtent errorExtent)
