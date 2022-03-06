@@ -3484,26 +3484,48 @@ namespace System.Management.Automation.Language
         internal override string GetTooltip()
         {
             var sb = new StringBuilder();
-            if (IsStatic)
+            var classMembers = ((TypeDefinitionAst)Parent).Members;
+            for (int i = 0; i < classMembers.Count; i++)
             {
-                sb.Append("static ");
-            }
-
-            sb.Append(IsReturnTypeVoid() ? "void" : ReturnType.TypeName.FullName);
-            sb.Append(' ');
-            sb.Append(Name);
-            sb.Append('(');
-            for (int i = 0; i < Parameters.Count; i++)
-            {
-                if (i > 0)
+                var methodMember = classMembers[i] as FunctionMemberAst;
+                if (methodMember is null ||
+                    !Name.Equals(methodMember.Name) ||
+                    IsStatic != methodMember.IsStatic)
                 {
-                    sb.Append(", ");
+                    continue;
                 }
 
-                sb.Append(Parameters[i].GetTooltip());
-            }
+                if (sb.Length > 0)
+                {
+                    sb.AppendLine();
+                }
 
-            sb.Append(')');
+                if (methodMember.IsStatic)
+                {
+                    sb.Append("static ");
+                }
+
+                if (!methodMember.IsConstructor)
+                {
+                    sb.Append(methodMember.IsReturnTypeVoid() ? "void" : methodMember.ReturnType.TypeName.FullName);
+                    sb.Append(' ');
+                }
+
+                sb.Append(methodMember.Name);
+                sb.Append('(');
+                for (int j = 0; j < methodMember.Parameters.Count; j++)
+                {
+                    if (j > 0)
+                    {
+                        sb.Append(", ");
+                    }
+
+                    sb.Append(methodMember.Parameters[j].GetTooltip());
+                }
+
+                sb.Append(')');
+            }
+            
             return sb.ToString();
         }
 

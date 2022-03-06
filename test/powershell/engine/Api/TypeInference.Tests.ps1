@@ -1227,6 +1227,24 @@ Describe "Type inference Tests" -tags "CI" {
 
         $res.Count | Should -Be BaseType
     }
+
+    It 'Infers type of "as" operator statement' {
+        $res = [AstTypeInference]::InferTypeOf( { $null -as [int] }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Infers type of $_ in a method scriptblock' {
+        $res = [AstTypeInference]::InferTypeOf( { ("","").ForEach({$_}) }.Ast.Find({param($ast) $ast -is [System.Management.Automation.Language.VariableExpressionAst]}, $true))
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Infers type of index item in an IList' {
+        $res = [AstTypeInference]::InferTypeOf( { ([System.Collections.Generic.IList[System.Text.StringBuilder]]$null)[0] }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Text.StringBuilder'
+    }
 }
 
 Describe "AstTypeInference tests" -Tags CI {

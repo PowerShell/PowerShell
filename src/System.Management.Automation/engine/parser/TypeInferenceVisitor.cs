@@ -298,7 +298,7 @@ namespace System.Management.Automation
                 else
                 {
                     var functionMember = (FunctionMemberAst)member;
-                    add = functionMember.IsStatic == isStatic;
+                    add = (functionMember.IsConstructor && isStatic) || (!functionMember.IsConstructor && functionMember.IsStatic == isStatic);
                     foundConstructor |= functionMember.IsConstructor;
                 }
 
@@ -638,6 +638,13 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
         {
+            // TODO: Handle other kinds of expressions on the right side.
+            if (binaryExpressionAst.Operator == TokenKind.As && binaryExpressionAst.Right is TypeExpressionAst typeExpression)
+            {
+                var type = typeExpression.TypeName.GetReflectionType();
+                var psTypeName = type != null ? new PSTypeName(type) : new PSTypeName(typeExpression.TypeName.FullName);
+                return new[] { psTypeName };
+            }
             return InferTypes(binaryExpressionAst.Left);
         }
 
@@ -1845,39 +1852,15 @@ namespace System.Management.Automation
                             return;
                         }
 
-                        foreach (var result in InferTypes(pipelineAst.PipelineElements[0]))
-                        {
-                            if (result.Type != null)
-                            {
-                                // Assume (because we're looking at $_ and we're inside a script block that is an
-                                // argument to some command) that the type we're getting is actually unrolled.
-                                // This might not be right in all cases, but with our simple analysis, it's
-                                // right more often than it's wrong.
-                                if (result.Type.IsArray)
-                                {
-                                    inferredTypes.Add(new PSTypeName(result.Type.GetElementType()));
-                                    continue;
-                                }
+                        AddInferredTypesForDollarUnderbar(pipelineAst.PipelineElements[0], inferredTypes);
 
-                                if (typeof(IEnumerable).IsAssignableFrom(result.Type))
-                                {
-                                    // We can't deduce much from IEnumerable, but we can if it's generic.
-                                    var enumerableInterfaces = result.Type.GetInterfaces();
-                                    foreach (var t in enumerableInterfaces)
-                                    {
-                                        if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                                        {
-                                            inferredTypes.Add(new PSTypeName(t.GetGenericArguments()[0]));
-                                        }
-                                    }
+                        return;
+                    }
 
-                                    continue;
-                                }
-                            }
-
-                            inferredTypes.Add(result);
-                        }
-
+                    if (parent.Parent is InvokeMemberExpressionAst memberExpression)
+                    {
+                        AddInferredTypesForDollarUnderbar(memberExpression.Expression, inferredTypes);
+                        
                         return;
                     }
                 }
@@ -1928,6 +1911,11 @@ namespace System.Management.Automation
             if (parent?.Parent is FunctionDefinitionAst)
             {
                 parent = parent.Parent;
+            }
+
+            if (parent is null)
+            {
+                return;
             }
 
             int startOffset = variableExpressionAst.Extent.StartOffset;
@@ -2013,6 +2001,42 @@ namespace System.Management.Automation
             if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out var evalTypeName))
             {
                 inferredTypes.Add(evalTypeName);
+            }
+        }
+
+        private void AddInferredTypesForDollarUnderbar(Ast parentExpression, List<PSTypeName> results)
+        {
+            foreach (var result in InferTypes(parentExpression))
+            {
+                if (result.Type != null)
+                {
+                    // Assume (because we're looking at $_ and we're inside a script block that is an
+                    // argument to some command) that the type we're getting is actually unrolled.
+                    // This might not be right in all cases, but with our simple analysis, it's
+                    // right more often than it's wrong.
+                    if (result.Type.IsArray)
+                    {
+                        results.Add(new PSTypeName(result.Type.GetElementType()));
+                        continue;
+                    }
+
+                    if (typeof(IEnumerable).IsAssignableFrom(result.Type))
+                    {
+                        // We can't deduce much from IEnumerable, but we can if it's generic.
+                        var enumerableInterfaces = result.Type.GetInterfaces();
+                        foreach (var t in enumerableInterfaces)
+                        {
+                            if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                            {
+                                results.Add(new PSTypeName(t.GetGenericArguments()[0]));
+                            }
+                        }
+
+                        continue;
+                    }
+                }
+
+                results.Add(result);
             }
         }
 
@@ -2200,6 +2224,17 @@ namespace System.Management.Automation
                     {
                         yield return new PSTypeName(type.GetElementType());
 
+                        continue;
+                    }
+                    
+                    if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IList<>))
+                    {
+                        var valueType = type.GetGenericArguments()[0];
+                        if (!valueType.ContainsGenericParameters)
+                        {
+                            foundAny = true;
+                            yield return new PSTypeName(valueType);
+                        }
                         continue;
                     }
 

@@ -361,6 +361,23 @@ Describe "TabCompletion" -Tags CI {
         $actual | Should -BeExactly $expected
     }
 
+    It 'ForEach-Object member completion results should include methods' {
+        $res = TabExpansion2 -inputScript '1..10 | ForEach-Object -MemberName '
+        $res.CompletionMatches.CompletionText | Should -Contain "GetType("
+    }
+
+    It 'Should not complete void instance members' {
+        $res = TabExpansion2 -inputScript '([void]("")).'
+        $res.CompletionMatches | Should -BeNullOrEmpty
+    }
+
+    It 'Should complete custom constructor from class using the AST' {
+        $res = TabExpansion2 -inputScript 'class ConstructorTestClass{ConstructorTestClass ([string] $s){}};[ConstructorTestClass]::'
+        $res.CompletionMatches | Should -HaveCount 3
+        $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+        $completionText -join ' ' | Should -BeExactly 'Equals( new( ReferenceEquals('
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'
