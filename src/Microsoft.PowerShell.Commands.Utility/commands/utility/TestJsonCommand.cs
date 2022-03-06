@@ -17,6 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Test-Json command.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Json", DefaultParameterSetName = ParameterAttribute.AllParameterSets, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096609")]
+    [OutputType(typeof(bool))]
     public class TestJsonCommand : PSCmdlet
     {
         private const string SchemaFileParameterSet = "SchemaFile";
