@@ -837,8 +837,7 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
     <value>A {1} job source adapter threw an exception with the following message: {0}</value>
   </data>
   <data name="PSVersionParameterOutOfRange" xml:space="preserve">
-    <value>The value {0} is not valid for the {1} parameter. The available values are 2.0, 3.0, 4.0, 5.0, 5.1.</value>
-    <comment>{StrContains="2.0"} {StrContains="3.0"}</comment>
+    <value>The value {0} is not valid for the {1} parameter. The only allowed value is 5.1.</value>
   </data>
   <data name="BlockCannotBeUsedWithKeep" xml:space="preserve">
     <value>The Wait and Keep parameters cannot be used together in the same command.</value>
@@ -846,8 +845,8 @@ Note that 'Start-Job' is not supported by design in scenarios where PowerShell i
   <data name="WriteEventsCannotBeUsedWithoutWait" xml:space="preserve">
     <value>The WriteEvents parameter cannot be used without the Wait parameter.</value>
   </data>
-  <data name="PowerShellNotInstalled" xml:space="preserve">
-    <value>PowerShell {0} is not installed. Install PowerShell {0}, and then try again.</value>
+  <data name="PowerShellVersionNotSupported" xml:space="preserve">
+    <value>PowerShell remoting endpoint versioning is not supported on PowerShell Core.</value>
   </data>
   <data name="JobManagerRegistrationConstructorError" xml:space="preserve">
     <value>The following type cannot be instantiated because its constructor is not public: {0}.</value>
@@ -1409,7 +1408,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>Multiple processes were found with this name {0}. Use the process Id to specify a single process to enter.</value>
   </data>
   <data name="EnterPSHostProcessNoPowerShell" xml:space="preserve">
-    <value>Cannot enter process {0} because it has not loaded the PowerShell engine.</value>
+    <value>Cannot enter process with Id '{0}' because it has not loaded the PowerShell engine.</value>
   </data>
   <data name="EnterPSHostProcessNoProcessFoundWithId" xml:space="preserve">
     <value>No process was found with Id: {0}.</value>

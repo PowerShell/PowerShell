@@ -439,10 +439,9 @@ Fix steps:
     # Add --self-contained due to "warning NETSDK1179: One of '--self-contained' or '--no-self-contained' options are required when '--runtime' is used."
     if ($Options.Runtime -like 'fxdependent*') {
         $Arguments += "--no-self-contained"
-        # The UseAppHost = false property avoids creating ".exe" for the fxdependent packages.
-        # The ".exe" is not a cross-platform executable, but specific to the platform that it was built on.
-        # We do not need to ship that.
-        $Arguments += "/property:UseAppHost=false"
+        # The UseAppHost = true property creates ".exe" for the fxdependent packages.
+        # We need this in the package as Start-Job needs it.
+        $Arguments += "/property:UseAppHost=true"
     }
     else {
         $Arguments += "--self-contained"
@@ -542,7 +541,9 @@ Fix steps:
 
             try {
                 Push-Location $globalToolSrcFolder
-                $Arguments += "--output", $publishPath
+                if ($Arguments -notcontains '--output') {
+                    $Arguments += "--output", $publishPath
+                }
                 Write-Log -message "Run dotnet $Arguments from $PWD to build global tool entry point"
                 Start-NativeExecution { dotnet $Arguments }
             }
@@ -620,40 +621,33 @@ Fix steps:
 
     # publish powershell.config.json
     $config = @{}
-    if ($environment.IsWindows) {
+
+    if ($Options.Runtime -like "*win*") {
+        # Execution Policy is only supported on Windows
         $config = @{ "Microsoft.PowerShell:ExecutionPolicy" = "RemoteSigned";
-                     "WindowsPowerShellCompatibilityModuleDenyList" = @("PSScheduledJob","BestPractices","UpdateServices") }
+            "WindowsPowerShellCompatibilityModuleDenyList"  = @("PSScheduledJob", "BestPractices", "UpdateServices")
+        }
     }
 
-    # When building preview, we want the configuration to enable all experiemental features by default
-    # ARM is cross compiled, so we can't run pwsh to enumerate Experimental Features
     if (-not $SkipExperimentalFeatureGeneration -and
         (Test-IsPreview $psVersion) -and
-        -not (Test-IsReleaseCandidate $psVersion) -and
-        -not $Runtime.Contains("arm") -and
-        -not ($Runtime -like 'fxdependent*')) {
+        -not (Test-IsReleaseCandidate $psVersion)
+    ) {
 
-        $json = & $publishPath\pwsh -noprofile -command {
-            # Special case for DSC code in PS;
-            # this experimental feature requires new DSC module that is not inbox,
-            # so we don't want default DSC use case be broken
-            [System.Collections.ArrayList] $expFeatures = Get-ExperimentalFeature | Where-Object Name -NE PS7DscSupport | ForEach-Object -MemberName Name
-
-            $expFeatures | Out-String | Write-Verbose -Verbose
-
-            # Make sure ExperimentalFeatures from modules in PSHome are added
-            # https://github.com/PowerShell/PowerShell/issues/10550
-            $ExperimentalFeaturesFromGalleryModulesInPSHome = @()
-            $ExperimentalFeaturesFromGalleryModulesInPSHome | ForEach-Object {
-                if (!$expFeatures.Contains($_)) {
-                    $null = $expFeatures.Add($_)
-                }
-            }
-
-            ConvertTo-Json $expFeatures
+        $ExperimentalFeatureJsonFilePath = if ($Options.Runtime -like "*win*") {
+            "$PSScriptRoot/experimental-feature-windows.json"
+        } else {
+            "$PSScriptRoot/experimental-feature-linux.json"
         }
 
+        if (-not (Test-Path $ExperimentalFeatureJsonFilePath)) {
+            throw "ExperimentalFeatureJsonFilePath: $ExperimentalFeatureJsonFilePath does not exist"
+        }
+
+        $json = Get-Content -Raw $ExperimentalFeatureJsonFilePath
         $config += @{ ExperimentalFeatures = ([string[]] ($json | ConvertFrom-Json)) }
+    } else {
+        Write-Warning -Message "Experimental features are not enabled in powershell.config.json file"
     }
 
     if ($config.Count -gt 0) {
@@ -809,8 +803,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("net6.0")]
-        [string]$Framework = "net6.0",
+        [ValidateSet("net7.0")]
+        [string]$Framework = "net7.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -1052,9 +1046,10 @@ function Publish-PSTestTools {
     Find-Dotnet
 
     $tools = @(
-        @{Path="${PSScriptRoot}/test/tools/TestExe";Output="testexe"}
-        @{Path="${PSScriptRoot}/test/tools/WebListener";Output="WebListener"}
-        @{Path="${PSScriptRoot}/test/tools/TestService";Output="TestService"}
+        @{ Path="${PSScriptRoot}/test/tools/TestAlc";     Output="library" }
+        @{ Path="${PSScriptRoot}/test/tools/TestExe";     Output="exe" }
+        @{ Path="${PSScriptRoot}/test/tools/WebListener"; Output="exe" }
+        @{ Path="${PSScriptRoot}/test/tools/TestService"; Output="exe" }
     )
 
     $Options = Get-PSOptions -DefaultToNew
@@ -1075,11 +1070,18 @@ function Publish-PSTestTools {
                 Remove-Item -Path $objPath -Recurse -Force
             }
 
-            if (-not $runtime) {
-                dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
-            } else {
-                dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $runtime
+            if ($tool.Output -eq 'library') {
+                ## Handle building and publishing assemblies.
+                dotnet publish --configuration $Options.Configuration --framework $Options.Framework
+                continue
             }
+
+            ## Handle building and publishing executables.
+            if (-not $runtime) {
+                $runtime = $Options.Runtime
+            }
+
+            dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $runtime --self-contained
 
             if ( -not $env:PATH.Contains($toolPath) ) {
                 $env:PATH = $toolPath+$TestModulePathSeparator+$($env:PATH)
@@ -1753,11 +1755,6 @@ function Install-Dotnet {
 
     Write-Verbose -Verbose "In install-dotnet"
 
-    # This is needed workaround for RTM pre-release build as the SDK version is always 6.0.100 after installation for every pre-release
-    if ($dotnetCLIRequiredVersion -like '6.0.100-rtm.*') {
-        $dotnetCLIRequiredVersion = '6.0.100'
-    }
-
     # This allows sudo install to be optional; needed when running in containers / as root
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
@@ -1826,13 +1823,11 @@ function Install-Dotnet {
         $installScript = "dotnet-install.ps1"
         Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
         if (-not $environment.IsCoreCLR) {
-            $installArgs = @{
-                Quality = $Quality
-            }
-
+            $installArgs = @{}
             if ($Version) {
                 $installArgs += @{ Version = $Version }
             } elseif ($Channel) {
+                $installArgs += @{ Quality = $Quality }
                 $installArgs += @{ Channel = $Channel }
             }
 
@@ -1855,10 +1850,10 @@ function Install-Dotnet {
         else {
             # dotnet-install.ps1 uses APIs that are not supported in .NET Core, so we run it with Windows PowerShell
             $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
-            $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
+            $fullDotnetInstallPath = Join-Path -Path (Convert-Path -Path $PWD.Path) -ChildPath $installScript
 
             if ($Version) {
-                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version, '-Quality', $Quality)
+                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version)
             }
             elseif ($Channel) {
                 $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Channel', $Channel, '-Quality', $Quality)
@@ -1892,6 +1887,43 @@ function Get-RedHatPackageManager {
         "dnf install -y -q"
     } else {
         throw "Error determining package manager for this distribution."
+    }
+}
+
+function Install-GlobalGem {
+    param(
+        [Parameter()]
+        [string]
+        $Sudo = "",
+
+        [Parameter(Mandatory)]
+        [string]
+        $GemName,
+
+        [Parameter(Mandatory)]
+        [string]
+        $GemVersion
+    )
+    try {
+        # We cannot guess if the user wants to run gem install as root on linux and windows,
+        # but macOs usually requires sudo
+        $gemsudo = ''
+        if($environment.IsMacOS -or $env:TF_BUILD) {
+            $gemsudo = $sudo
+        }
+
+        Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install $GemName -v $GemVersion --no-document"))
+
+    } catch {
+        Write-Warning "Installation of gem $GemName $GemVersion failed! Must resolve manually."
+        $logs = Get-ChildItem "/var/lib/gems/*/extensions/x86_64-linux/*/$GemName-*/gem_make.out" | Select-Object -ExpandProperty FullName
+        foreach ($log in $logs) {
+            Write-Verbose "Contents of: $log" -Verbose
+            Get-Content -Raw -Path $log -ErrorAction Ignore | ForEach-Object { Write-Verbose $_ -Verbose }
+            Write-Verbose "END Contents of: $log" -Verbose
+        }
+
+        throw
     }
 }
 
@@ -1931,11 +1963,7 @@ function Start-PSBootstrap {
             $Deps = @()
             if ($environment.IsLinux -and $environment.IsUbuntu) {
                 # Build tools
-                $Deps += "curl", "g++", "cmake", "make"
-
-                if ($BuildLinuxArm) {
-                    $Deps += "gcc-arm-linux-gnueabihf", "g++-arm-linux-gnueabihf"
-                }
+                $Deps += "curl", "wget"
 
                 # .NET Core required runtime libraries
                 $Deps += "libunwind8"
@@ -1943,7 +1971,7 @@ function Start-PSBootstrap {
                 elseif ($environment.IsUbuntu18) { $Deps += "libicu60"}
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev" }
+                if ($Package) { $Deps += "ruby-dev", "groff", "libffi-dev", "rpm", "g++", "make" }
 
                 # Install dependencies
                 # change the fontend from apt-get to noninteractive
@@ -1961,13 +1989,13 @@ function Start-PSBootstrap {
                 }
             } elseif ($environment.IsLinux -and $environment.IsRedHatFamily) {
                 # Build tools
-                $Deps += "which", "curl", "gcc-c++", "cmake", "make"
+                $Deps += "which", "curl", "wget"
 
                 # .NET Core required runtime libraries
                 $Deps += "libicu", "libunwind"
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel' }
+                if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel', "gcc-c++" }
 
                 $PackageManager = Get-RedHatPackageManager
 
@@ -1985,10 +2013,10 @@ function Start-PSBootstrap {
                 }
             } elseif ($environment.IsLinux -and $environment.IsSUSEFamily) {
                 # Build tools
-                $Deps += "gcc", "cmake", "make"
+                $Deps += "wget"
 
                 # Packaging tools
-                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel' }
+                if ($Package) { $Deps += "ruby-devel", "rpmbuild", "groff", 'libffi-devel', "gcc" }
 
                 $PackageManager = "zypper --non-interactive install"
                 $baseCommand = "$sudo $PackageManager"
@@ -2010,9 +2038,6 @@ function Start-PSBootstrap {
                     $PackageManager = "$sudo port"
                 }
 
-                # Build tools
-                $Deps += "cmake"
-
                 # wget for downloading dotnet
                 $Deps += "wget"
 
@@ -2023,7 +2048,7 @@ function Start-PSBootstrap {
                 # ignore exitcode, because they may be already installed
                 Start-NativeExecution ([ScriptBlock]::Create("$PackageManager install $Deps")) -IgnoreExitcode
             } elseif ($environment.IsLinux -and $environment.IsAlpine) {
-                $Deps += 'libunwind', 'libcurl', 'bash', 'cmake', 'clang', 'build-base', 'git', 'curl', 'wget'
+                $Deps += 'libunwind', 'libcurl', 'bash', 'build-base', 'git', 'curl', 'wget'
 
                 Start-NativeExecution {
                     Invoke-Expression "apk add $Deps"
@@ -2032,19 +2057,9 @@ function Start-PSBootstrap {
 
             # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
             if ($Package) {
-                try {
-                    # We cannot guess if the user wants to run gem install as root on linux and windows,
-                    # but macOs usually requires sudo
-                    $gemsudo = ''
-                    if($environment.IsMacOS -or $env:TF_BUILD) {
-                        $gemsudo = $sudo
-                    }
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ffi -v 1.12.0 --no-document"))
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.11.0 --no-document"))
-                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document"))
-                } catch {
-                    Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
-                }
+                Install-GlobalGem -Sudo $sudo -GemName "ffi" -GemVersion "1.12.0"
+                Install-GlobalGem -Sudo $sudo -GemName "fpm" -GemVersion "1.11.0"
+                Install-GlobalGem -Sudo $sudo -GemName "ronn" -GemVersion "0.7.3"
             }
         }
 
@@ -2239,7 +2254,7 @@ function Start-ResGen
 }
 
 function Find-Dotnet() {
-    Write-Verbose -Verbose "In Find-DotNet"
+    Write-Verbose "In Find-DotNet"
 
     $originalPath = $env:PATH
     $dotnetPath = if ($environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
@@ -2259,7 +2274,7 @@ function Find-Dotnet() {
         $dotnetCLIInstalledVersion = Get-LatestInstalledSDK
         Pop-Location
 
-        Write-Verbose -Verbose "dotnetCLIInstalledVersion = $dotnetCLIInstalledVersion`nchosenDotNetVersion = $chosenDotNetVersion"
+        Write-Verbose -Message "Find-DotNet: dotnetCLIInstalledVersion = $dotnetCLIInstalledVersion; chosenDotNetVersion = $chosenDotNetVersion"
 
         if ($dotnetCLIInstalledVersion -ne $chosenDotNetVersion) {
             Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."
@@ -3210,4 +3225,30 @@ function Set-CorrectLocale
 
     # Output the locale to log it
     locale
+}
+
+function Install-AzCopy {
+    $testPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+    if (Test-Path $testPath) {
+        Write-Verbose "AzCopy already installed" -Verbose
+        return
+    }
+
+    $destination = "$env:TEMP\azcopy81.msi"
+    Invoke-WebRequest "https://aka.ms/downloadazcopy" -OutFile $destination
+    Start-Process -FilePath $destination -ArgumentList "/quiet" -Wait
+}
+
+function Find-AzCopy {
+    $searchPaths = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+
+    foreach ($filter in $searchPaths) {
+        $azCopy = Get-ChildItem -Path $filter -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName -First 1
+        if ($azCopy) {
+            return $azCopy
+        }
+    }
+
+    $azCopy = Get-Command -Name azCopy -ErrorAction Stop | Select-Object -First 1
+    return $azCopy.Path
 }

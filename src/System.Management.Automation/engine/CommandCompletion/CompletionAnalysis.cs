@@ -881,6 +881,16 @@ namespace System.Management.Automation
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                                         break;
                                     }
+                                case TokenKind.Break:
+                                case TokenKind.Continue:
+                                    {
+                                        if ((lastAst is BreakStatementAst breakStatement && breakStatement.Label is null)
+                                            || (lastAst is ContinueStatementAst continueStatement && continueStatement.Label is null))
+                                        {
+                                            result = CompleteLoopLabel(completionContext);
+                                        }
+                                        break;
+                                    }
                                 case TokenKind.Dot:
                                 case TokenKind.ColonColon:
                                 case TokenKind.QuestionDot:
@@ -891,7 +901,6 @@ namespace System.Management.Automation
                                     {
                                         return result;
                                     }
-
                                     break;
                                 default:
                                     break;
@@ -961,6 +970,12 @@ namespace System.Management.Automation
             if (result == null || result.Count == 0)
             {
                 result = GetResultForHashtable(completionContext);
+                // Handles the following scenario: [ipaddress]@{Address=""; <Tab> }
+                if (result?.Count > 0)
+                {
+                    replacementIndex = completionContext.CursorPosition.Offset;
+                    replacementLength = 0;
+                }
             }
 
             if (result == null || result.Count == 0)
@@ -983,59 +998,56 @@ namespace System.Management.Automation
         // Helper method to auto complete hashtable key
         private static List<CompletionResult> GetResultForHashtable(CompletionContext completionContext)
         {
-            var lastAst = completionContext.RelatedAsts.Last();
-            HashtableAst tempHashtableAst = null;
-            IScriptPosition cursor = completionContext.CursorPosition;
-            var hashTableAst = lastAst as HashtableAst;
-            if (hashTableAst != null)
-            {
-                // Check if the cursor within the hashtable
-                if (cursor.Offset < hashTableAst.Extent.EndOffset)
-                {
-                    tempHashtableAst = hashTableAst;
-                }
-                else if (cursor.Offset == hashTableAst.Extent.EndOffset)
-                {
-                    // Exclude the scenario that cursor at the end of hashtable, i.e. after '}'
-                    if (completionContext.TokenAtCursor == null ||
-                        completionContext.TokenAtCursor.Kind != TokenKind.RCurly)
-                    {
-                        tempHashtableAst = hashTableAst;
-                    }
-                }
-            }
-            else
-            {
-                // Handle property completion on a blank line for DynamicKeyword statement
-                Ast lastChildofHashtableAst;
-                hashTableAst = Ast.GetAncestorHashtableAst(lastAst, out lastChildofHashtableAst);
+            Ast lastRelatedAst = null;
+            var cursorPosition = completionContext.CursorPosition;
 
-                // Check if the hashtable within a DynamicKeyword statement
-                if (hashTableAst != null)
+            // Enumeration is used over the LastAst pattern because empty lines following a key-value pair will set LastAst to the value.
+            // Example:
+            // @{
+            //     Key1="Value1"
+            //     <Tab>
+            // }
+            // In this case the last 3 Asts will be StringConstantExpression, CommandExpression, and Pipeline instead of the expected Hashtable
+            for (int i = completionContext.RelatedAsts.Count - 1; i >= 0; i--)
+            {
+                Ast ast = completionContext.RelatedAsts[i];
+                if (cursorPosition.Offset >= ast.Extent.StartOffset && cursorPosition.Offset <= ast.Extent.EndOffset)
                 {
-                    var keywordAst = Ast.GetAncestorAst<DynamicKeywordStatementAst>(hashTableAst);
-                    if (keywordAst != null)
-                    {
-                        // Handle only empty line
-                        if (string.IsNullOrWhiteSpace(cursor.Line))
-                        {
-                            // Check if the cursor outside of last child of hashtable and within the hashtable
-                            if (cursor.Offset > lastChildofHashtableAst.Extent.EndOffset &&
-                                cursor.Offset <= hashTableAst.Extent.EndOffset)
-                            {
-                                tempHashtableAst = hashTableAst;
-                            }
-                        }
-                    }
+                    lastRelatedAst = ast;
+                    break;
                 }
             }
 
-            hashTableAst = tempHashtableAst;
-            if (hashTableAst != null)
+            if (lastRelatedAst is HashtableAst hashtableAst)
             {
+                // Cursor is just after the hashtable: @{}<Tab>
+                if (completionContext.TokenAtCursor is not null && completionContext.TokenAtCursor.Kind == TokenKind.RCurly)
+                {
+                    return null;
+                }
+
+                bool cursorIsWithinOrOnSameLineAsKeypair = false;
+                foreach (var pair in hashtableAst.KeyValuePairs)
+                {
+                    if (cursorPosition.Offset >= pair.Item1.Extent.StartOffset
+                        && (cursorPosition.Offset <= pair.Item2.Extent.EndOffset || cursorPosition.LineNumber == pair.Item2.Extent.EndLineNumber))
+                    {
+                        cursorIsWithinOrOnSameLineAsKeypair = true;
+                        break;
+                    }
+                }
+
+                if (cursorIsWithinOrOnSameLineAsKeypair)
+                {
+                    var tokenBeforeOrAtCursor = completionContext.TokenBeforeCursor ?? completionContext.TokenAtCursor;
+                    if (tokenBeforeOrAtCursor.Kind != TokenKind.Semi)
+                    {
+                        return null;
+                    }
+                }
                 completionContext.ReplacementIndex = completionContext.CursorPosition.Offset;
                 completionContext.ReplacementLength = 0;
-                return CompletionCompleters.CompleteHashtableKey(completionContext, hashTableAst);
+                return CompletionCompleters.CompleteHashtableKey(completionContext, hashtableAst);
             }
 
             return null;
@@ -1802,6 +1814,11 @@ namespace System.Management.Automation
             var tokenAtCursorText = tokenAtCursor.Text;
             completionContext.WordToComplete = tokenAtCursorText;
 
+            if (lastAst.Parent is BreakStatementAst || lastAst.Parent is ContinueStatementAst)
+            {
+                return CompleteLoopLabel(completionContext);
+            }
+
             var strConst = lastAst as StringConstantExpressionAst;
             if (strConst != null)
             {
@@ -2163,6 +2180,14 @@ namespace System.Management.Automation
             result = CompletionCompleters.CompleteCommandArgument(completionContext);
             replacementIndex = completionContext.ReplacementIndex;
             replacementLength = completionContext.ReplacementLength;
+
+            if (result.Count == 0
+                && completionContext.TokenAtCursor.TokenFlags.HasFlag(TokenFlags.TypeName)
+                && lastAst?.Find(a => a is MemberExpressionAst, searchNestedScriptBlocks: false) is not null)
+            {
+                result = CompletionCompleters.CompleteType(completionContext.TokenAtCursor.Text).ToList();
+            }
+
             return result;
         }
 
@@ -2271,6 +2296,41 @@ namespace System.Management.Automation
             {
                 if (clearLiteralPathsKey)
                     completionContext.Options.Remove("LiteralPaths");
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Complete loop labels after labeled control flow statements such as Break and Continue.
+        /// </summary>
+        private static List<CompletionResult> CompleteLoopLabel(CompletionContext completionContext)
+        {
+            var result = new List<CompletionResult>();
+            foreach (Ast ast in completionContext.RelatedAsts)
+            {
+                if (ast is LabeledStatementAst labeledStatement
+                    && labeledStatement.Label is not null
+                    && (completionContext.WordToComplete is null || labeledStatement.Label.StartsWith(completionContext.WordToComplete, StringComparison.OrdinalIgnoreCase)))
+                {
+                    result.Add(new CompletionResult(labeledStatement.Label, labeledStatement.Label, CompletionResultType.Text, labeledStatement.Extent.Text));
+                }
+                else if (ast is ErrorStatementAst errorStatement)
+                {
+                    // Handles incomplete do/switch loops (other labeled statements do not need this special treatment)
+                    // The regex looks for the loopLabel of errorstatements that look like do/switch loops
+                    // For example in ":Label do " it will find "Label".
+                    var labelMatch = Regex.Match(errorStatement.Extent.Text, @"(?<=^:)\w+(?=\s+(do|switch)\b(?!-))", RegexOptions.IgnoreCase);
+                    if (labelMatch.Success)
+                    {
+                        result.Add(new CompletionResult(labelMatch.Value, labelMatch.Value, CompletionResultType.Text, errorStatement.Extent.Text));
+                    }
+                }
+            }
+
+            if (result.Count == 0)
+            {
+                return null;
             }
 
             return result;

@@ -5277,7 +5277,17 @@ namespace System.Management.Automation.Language
                                     return GenerateGetPropertyException(restrictions).WriteToDebugLog(this);
                                 }
 
-                                expr = Expression.Property(targetExpr, propertyAccessor);
+                                if (propertyAccessor.PropertyType.IsByRef)
+                                {
+                                    expr = Expression.Call(
+                                        CachedReflectionInfo.ByRefOps_GetByRefPropertyValue,
+                                        targetExpr,
+                                        Expression.Constant(propertyAccessor));
+                                }
+                                else
+                                {
+                                    expr = Expression.Property(targetExpr, propertyAccessor);
+                                }
                             }
                             else
                             {
@@ -6901,6 +6911,23 @@ namespace System.Management.Automation.Language
                 if (expr.Type == typeof(void))
                 {
                     expr = Expression.Block(expr, ExpressionCache.AutomationNullConstant);
+                }
+
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAMSIMethodInvocationLogging))
+                {
+                    // Expression block runs two expressions in order:
+                    //  - Log method invocation to AMSI Notifications (can throw PSSecurityException)
+                    //  - Invoke method
+                    string targetName = methodInfo.ReflectedType?.FullName ?? string.Empty;
+                    expr = Expression.Block(
+                        Expression.Call(
+                            CachedReflectionInfo.MemberInvocationLoggingOps_LogMemberInvocation,
+                            Expression.Constant(targetName),
+                            Expression.Constant(name),
+                            Expression.NewArrayInit(
+                                typeof(object),
+                                args.Select(static e => e.Expression.Cast(typeof(object))))),
+                        expr);
                 }
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want

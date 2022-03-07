@@ -222,4 +222,10 @@ Reviewed by TArcher on 2010-07-20
   <data name="UseOfDeprecatedCommandWarning" xml:space="preserve">
     <value>The {0} is obsolete. {1}</value>
   </data>
+  <data name="ExecFailed" xml:space="preserve">
+    <value>Exec call failed with errorno {0} for command line: {1}</value>
+  </data>
+  <data name="NativeCommandNotFound" xml:space="preserve">
+    <value>Command '{0}' was not found. The specified command must be an executable.</value>
+  </data>
 </root>

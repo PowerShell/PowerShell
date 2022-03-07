@@ -531,12 +531,8 @@ namespace System.Management.Automation
                 var pipelineOffset = pipelineAst.Extent.StartOffset;
                 var variables = pipelineAst.FindAll(static x => x is VariableExpressionAst, true);
 
-                // Used to make sure that the job runs in the current directory
-                const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location -LiteralPath $using:pwd ; ";
-
-                // Minimize allocations by initializing the stringbuilder to the size of the source string + prefix + space for ${using:} * 2
-                System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(cmdPrefix.Length + scriptblockBodyString.Length + 18);
-                updatedScriptblock.Append(cmdPrefix);
+                // Minimize allocations by initializing the stringbuilder to the size of the source string + space for ${using:} * 2
+                System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(scriptblockBodyString.Length + 18);
                 int position = 0;
 
                 // Prefix variables in the scriptblock with $using:
@@ -568,14 +564,25 @@ namespace System.Management.Automation
                 var sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
                 commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
-                var parameter = CommandParameterInternal.CreateParameterWithArgument(
+
+                var workingDirectoryParameter = CommandParameterInternal.CreateParameterWithArgument(
                     parameterAst: pipelineAst,
-                    "ScriptBlock",
-                    null,
+                    parameterName: "WorkingDirectory",
+                    parameterText: null,
                     argumentAst: pipelineAst,
-                    sb,
-                    false);
-                commandProcessor.AddParameter(parameter);
+                    value: context.SessionState.Path.CurrentLocation.Path,
+                    spaceAfterParameter: false);
+
+                var scriptBlockParameter = CommandParameterInternal.CreateParameterWithArgument(
+                    parameterAst: pipelineAst,
+                    parameterName: "ScriptBlock",
+                    parameterText: null,
+                    argumentAst: pipelineAst,
+                    value: sb,
+                    spaceAfterParameter: false);
+
+                commandProcessor.AddParameter(workingDirectoryParameter);
+                commandProcessor.AddParameter(scriptBlockParameter);
                 pipelineProcessor.Add(commandProcessor);
                 pipelineProcessor.LinkPipelineSuccessOutput(outputPipe ?? new Pipe(new List<object>()));
 
@@ -1311,6 +1318,17 @@ namespace System.Management.Automation
             var result = (_scriptBlock ??= new ScriptBlock(_ast, isFilter)).Clone();
             result.SessionStateInternal = context.EngineSessionState;
             return result;
+        }
+    }
+
+    internal static class ByRefOps
+    {
+        /// <summary>
+        /// There is no way to directly work with ByRef type in the expression tree, so we turn to reflection in this case.
+        /// </summary>
+        internal static object GetByRefPropertyValue(object target, PropertyInfo property)
+        {
+            return property.GetValue(target);
         }
     }
 
@@ -3544,6 +3562,71 @@ namespace System.Management.Automation
             }
 
             return result;
+        }
+    }
+
+    internal static class MemberInvocationLoggingOps
+    {
+        private static readonly Lazy<bool> DumpLogAMSIContent = new Lazy<bool>(
+            () => {
+                object result = Environment.GetEnvironmentVariable("__PSDumpAMSILogContent");
+                if (result != null && LanguagePrimitives.TryConvertTo(result, out int value))
+                {
+                    return value == 1;
+                }
+                return false;
+            }
+        );
+
+        internal static void LogMemberInvocation(string targetName, string name, object[] args)
+        {
+            try
+            {
+                var contentName = "PowerShellMemberInvocation";
+                var argsBuilder = new Text.StringBuilder();
+
+                for (int i = 0; i < args.Length; i++)
+                {
+                    string value = args[i] is null ? "null" : args[i].ToString();
+
+                    if (i > 0)
+                    {
+                        argsBuilder.Append(", ");
+                    }
+
+                    argsBuilder.Append($"<{value}>");
+                }
+
+                string content = $"<{targetName}>.{name}({argsBuilder})";
+
+                if (DumpLogAMSIContent.Value)
+                {
+                    Console.WriteLine("\n=== Amsi notification report content ===");
+                    Console.WriteLine(content);
+                }
+
+                var success = AmsiUtils.ReportContent(
+                    name: contentName,
+                    content: content);
+
+                if (DumpLogAMSIContent.Value)
+                {
+                    Console.WriteLine($"=== Amsi notification report success: {success} ===");
+                }
+            }
+            catch (PSSecurityException)
+            {
+                // ReportContent() will throw PSSecurityException if AMSI detects malware, which 
+                // must be propagated.
+                throw;
+            }
+            catch (Exception ex)
+            {
+                if (DumpLogAMSIContent.Value)
+                {
+                    Console.WriteLine($"!!! Amsi notification report exception: {ex} !!!");
+                }
+            }
         }
     }
 }

@@ -1128,7 +1128,9 @@ clean
             //  1. the 'Clean' block doesn't propagate up any exception (terminating error);
             //  2. only one expression in the script, so nothing else needs to be stopped when invoking the method fails.
             return @"
-    $steppablePipeline.Clean()
+    if ($null -ne $steppablePipeline) {
+        $steppablePipeline.Clean()
+    }
 ";
         }
 

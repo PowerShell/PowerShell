@@ -410,7 +410,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>The cloned object.</returns>
         public override InitialSessionStateEntry Clone()
         {
-            SessionStateAssemblyEntry entry = new SessionStateAssemblyEntry(Name, FileName);
+            var entry = new SessionStateAssemblyEntry(Name, FileName);
             entry.SetPSSnapIn(this.PSSnapIn);
             entry.SetModule(this.Module);
             return entry;
@@ -1663,11 +1663,6 @@ namespace System.Management.Automation.Runspaces
 
             ss.DisableFormatUpdates = this.DisableFormatUpdates;
 
-            foreach (var s in this.defaultSnapins)
-            {
-                ss.defaultSnapins.Add(s);
-            }
-
             foreach (var s in ImportedSnapins)
             {
                 ss.ImportedSnapins.Add(s.Key, s.Value);
@@ -2410,9 +2405,14 @@ namespace System.Management.Automation.Runspaces
             // Load the assemblies and initialize the assembly cache...
             foreach (SessionStateAssemblyEntry ssae in Assemblies)
             {
-                if (etwEnabled) RunspaceEventSource.Log.LoadAssemblyStart(ssae.Name, ssae.FileName);
-                Exception error = null;
-                Assembly asm = context.AddAssembly(ssae.Name, ssae.FileName, out error);
+                if (etwEnabled)
+                {
+                    RunspaceEventSource.Log.LoadAssemblyStart(ssae.Name, ssae.FileName);
+                }
+
+                // Specify the source only if this is for module loading.
+                // The source is used for porper cleaning of the assembly cache when a module is unloaded.
+                Assembly asm = context.AddAssembly(ssae.Module?.Name, ssae.Name, ssae.FileName, out Exception error);
 
                 if (asm == null || error != null)
                 {
@@ -3379,105 +3379,6 @@ namespace System.Management.Automation.Runspaces
             context.EngineSessionState.SetVariableAtScope(qv, "global", true, CommandOrigin.Internal);
         }
 
-        /// <summary>
-        /// Remove anything that would have been bound by this ISS instance.
-        /// At this point, it removes assemblies and cmdlet entries at the top level.
-        /// It also removes types and formats.
-        /// The other entry types - functions, variables, aliases
-        /// are not removed by this function.
-        /// </summary>
-        /// <param name="context"></param>
-        internal void Unbind(ExecutionContext context)
-        {
-            lock (_syncObject)
-            {
-                SessionStateInternal ss = context.EngineSessionState;
-
-                // Remove the assemblies from the assembly cache...
-                foreach (SessionStateAssemblyEntry ssae in Assemblies)
-                {
-                    context.RemoveAssembly(ssae.Name);
-                }
-
-                // Remove all of the commands from the top-level session state.
-                foreach (SessionStateCommandEntry cmd in Commands)
-                {
-                    SessionStateCmdletEntry ssce = cmd as SessionStateCmdletEntry;
-                    if (ssce != null)
-                    {
-                        List<CmdletInfo> matches;
-                        if (context.TopLevelSessionState.GetCmdletTable().TryGetValue(ssce.Name, out matches))
-                        {
-                            // Remove the name from the list...
-                            for (int i = matches.Count - 1; i >= 0; i--)
-                            {
-                                if (matches[i].ModuleName.Equals(cmd.PSSnapIn.Name))
-                                {
-                                    string name = matches[i].Name;
-                                    matches.RemoveAt(i);
-                                    context.TopLevelSessionState.RemoveCmdlet(name, i,  /*force*/ true);
-                                }
-                            }
-                            // And remove the entry if the list is now empty...
-                            if (matches.Count == 0)
-                            {
-                                context.TopLevelSessionState.RemoveCmdletEntry(ssce.Name, true);
-                            }
-                        }
-
-                        continue;
-                    }
-                }
-
-                // Remove all of the providers from the top-level provider table.
-                if (_providers != null && _providers.Count > 0)
-                {
-                    Dictionary<string, List<ProviderInfo>> providerTable = context.TopLevelSessionState.Providers;
-
-                    foreach (SessionStateProviderEntry sspe in _providers)
-                    {
-                        List<ProviderInfo> pl;
-                        if (providerTable.TryGetValue(sspe.Name, out pl))
-                        {
-                            Diagnostics.Assert(pl != null, "There should never be a null list of entries in the provider table");
-                            // For each provider with the same name...
-                            for (int i = pl.Count - 1; i >= 0; i--)
-                            {
-                                ProviderInfo pi = pl[i];
-
-                                // If it was implemented by this entry, remove it
-                                if (pi.ImplementingType == sspe.ImplementingType)
-                                {
-                                    RemoveAllDrivesForProvider(pi, context.TopLevelSessionState);
-                                    pl.RemoveAt(i);
-                                }
-                            }
-
-                            // If there are no providers left with this name, remove the key.
-                            if (pl.Count == 0)
-                            {
-                                providerTable.Remove(sspe.Name);
-                            }
-                        }
-                    }
-                }
-
-                List<string> formatFilesToRemove = new List<string>();
-                if (this.Formats != null)
-                {
-                    formatFilesToRemove.AddRange(this.Formats.Select(static f => f.FileName));
-                }
-
-                List<string> typeFilesToRemove = new List<string>();
-                if (this.Types != null)
-                {
-                    typeFilesToRemove.AddRange(this.Types.Select(static t => t.FileName));
-                }
-
-                RemoveTypesAndFormats(context, formatFilesToRemove, typeFilesToRemove);
-            }
-        }
-
         internal static void RemoveTypesAndFormats(ExecutionContext context, IList<string> formatFilesToRemove, IList<string> typeFilesToRemove)
         {
             // The formats and types tables are implemented in such a way that
@@ -3801,34 +3702,26 @@ namespace System.Management.Automation.Runspaces
 
             // Now actually load the snapin...
             PSSnapInInfo snapin = ImportPSSnapIn(newPSSnapIn, out warning);
-            if (snapin != null)
-            {
-                ImportedSnapins.Add(snapin.Name, snapin);
-            }
 
             return snapin;
         }
 
         internal PSSnapInInfo ImportCorePSSnapIn()
         {
-            // Load Microsoft.PowerShell.Core as a snapin
+            // Load Microsoft.PowerShell.Core as a snapin.
             PSSnapInInfo coreSnapin = PSSnapInReader.ReadCoreEngineSnapIn();
-            this.defaultSnapins.Add(coreSnapin);
-            try
-            {
-                PSSnapInException warning;
-                this.ImportPSSnapIn(coreSnapin, out warning);
-            }
-            catch (PSSnapInException)
-            {
-                throw;
-            }
-
+            ImportPSSnapIn(coreSnapin, out _);
             return coreSnapin;
         }
 
         internal PSSnapInInfo ImportPSSnapIn(PSSnapInInfo psSnapInInfo, out PSSnapInException warning)
         {
+            if (psSnapInInfo == null)
+            {
+                ArgumentNullException e = new ArgumentNullException(nameof(psSnapInInfo));
+                throw e;
+            }
+
             // See if the snapin is already loaded. If has been then there will be an entry in the
             // Assemblies list for it already...
             bool reload = true;
@@ -3860,12 +3753,6 @@ namespace System.Management.Automation.Runspaces
             Dictionary<string, SessionStateCmdletEntry> cmdlets = null;
             Dictionary<string, List<SessionStateAliasEntry>> aliases = null;
             Dictionary<string, SessionStateProviderEntry> providers = null;
-
-            if (psSnapInInfo == null)
-            {
-                ArgumentNullException e = new ArgumentNullException(nameof(psSnapInInfo));
-                throw e;
-            }
 
             Assembly assembly = null;
             string helpFile = null;
@@ -3923,11 +3810,9 @@ namespace System.Management.Automation.Runspaces
                 this.Formats.Add(formatEntry);
             }
 
-            SessionStateAssemblyEntry assemblyEntry = new SessionStateAssemblyEntry(psSnapInInfo.AssemblyName, psSnapInInfo.AbsoluteModulePath);
-
+            var assemblyEntry = new SessionStateAssemblyEntry(psSnapInInfo.AssemblyName, psSnapInInfo.AbsoluteModulePath);
             assemblyEntry.SetPSSnapIn(psSnapInInfo);
-
-            this.Assemblies.Add(assemblyEntry);
+            Assemblies.Add(assemblyEntry);
 
             // entry from types.ps1xml references a type (Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase) in this assembly
             if (psSnapInInfo.Name.Equals(CoreSnapin, StringComparison.OrdinalIgnoreCase))
@@ -3985,37 +3870,18 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
+            ImportedSnapins.Add(psSnapInInfo.Name, psSnapInInfo);
             return psSnapInInfo;
         }
 
-        internal List<PSSnapInInfo> GetPSSnapIn(string psSnapinName)
+        internal PSSnapInInfo GetPSSnapIn(string psSnapinName)
         {
-            List<PSSnapInInfo> loadedSnapins = null;
-            foreach (var defaultSnapin in defaultSnapins)
+            if (ImportedSnapins.TryGetValue(psSnapinName, out PSSnapInInfo importedSnapin))
             {
-                if (defaultSnapin.Name.Equals(psSnapinName, StringComparison.OrdinalIgnoreCase))
-                {
-                    if (loadedSnapins == null)
-                    {
-                        loadedSnapins = new List<PSSnapInInfo>();
-                    }
-
-                    loadedSnapins.Add(defaultSnapin);
-                }
+                return importedSnapin;
             }
 
-            PSSnapInInfo importedSnapin = null;
-            if (ImportedSnapins.TryGetValue(psSnapinName, out importedSnapin))
-            {
-                if (loadedSnapins == null)
-                {
-                    loadedSnapins = new List<PSSnapInInfo>();
-                }
-
-                loadedSnapins.Add(importedSnapin);
-            }
-
-            return loadedSnapins;
+            return null;
         }
 
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
@@ -4043,20 +3909,16 @@ namespace System.Management.Automation.Runspaces
                 throw e;
             }
 
-            Dictionary<string, SessionStateCmdletEntry> cmdlets = null;
-            Dictionary<string, List<SessionStateAliasEntry>> aliases = null;
-            Dictionary<string, SessionStateProviderEntry> providers = null;
-
             string assemblyPath = assembly.Location;
-            PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, assemblyPath, psSnapInInfo: null, module, out cmdlets, out aliases, out providers, helpFile: out _);
-
-            // If this is an in-memory assembly, don't added it to the list of AssemblyEntries
-            // since it can't be loaded by path or name
-            if (!string.IsNullOrEmpty(assembly.Location))
-            {
-                SessionStateAssemblyEntry assemblyEntry = new SessionStateAssemblyEntry(assembly.FullName, assemblyPath);
-                this.Assemblies.Add(assemblyEntry);
-            }
+            PSSnapInHelpers.AnalyzePSSnapInAssembly(
+                assembly,
+                assemblyPath,
+                psSnapInInfo: null,
+                module,
+                out Dictionary<string, SessionStateCmdletEntry> cmdlets,
+                out Dictionary<string, List<SessionStateAliasEntry>> aliases,
+                out Dictionary<string, SessionStateProviderEntry> providers,
+                helpFile: out _);
 
             if (cmdlets != null)
             {
@@ -4634,7 +4496,7 @@ end {
                 const ScopedItemOptions ReadOnly_AllScope = ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope;
                 const ScopedItemOptions ReadOnly = ScopedItemOptions.ReadOnly;
 
-                return new SessionStateAliasEntry[] {
+                var builtInAliases = new List<SessionStateAliasEntry> {
                     new SessionStateAliasEntry("foreach", "ForEach-Object", string.Empty, ReadOnly_AllScope),
                     new SessionStateAliasEntry("%", "ForEach-Object", string.Empty, ReadOnly_AllScope),
                     new SessionStateAliasEntry("where", "Where-Object", string.Empty, ReadOnly_AllScope),
@@ -4801,6 +4663,15 @@ end {
                     //   - do not use AllScope - this causes errors in profiles that set this somewhat commonly used alias.
                     new SessionStateAliasEntry("sls", "Select-String"),
                 };
+
+#if UNIX
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
+                {
+                    builtInAliases.Add(new SessionStateAliasEntry("exec", "Switch-Process"));
+                }
+#endif
+
+                return builtInAliases.ToArray();
             }
         }
 
@@ -4886,7 +4757,6 @@ end {
 
         internal static readonly string CoreSnapin = "Microsoft.PowerShell.Core";
         internal static readonly string CoreModule = "Microsoft.PowerShell.Core";
-        internal Collection<PSSnapInInfo> defaultSnapins = new Collection<PSSnapInInfo>();
 
         // The list of engine modules to create warnings when you try to remove them
         internal static readonly HashSet<string> EngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -5438,6 +5308,13 @@ end {
             {
                 cmdlets.Add("Get-PSSubsystem", new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile));
             }
+
+#if UNIX
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
+            {
+                cmdlets.Add("Switch-Process", new SessionStateCmdletEntry("Switch-Process", typeof(SwitchProcessCommand), helpFile));
+            }
+#endif
 
             foreach (var val in cmdlets.Values)
             {

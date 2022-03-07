@@ -35,7 +35,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.ApplicationInsights",
-          "Version": "2.19.0"
+          "Version": "2.20.0"
         }
       },
       "DevelopmentDependency": false
@@ -55,7 +55,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Analyzers",
-          "Version": "3.3.2"
+          "Version": "3.3.3"
         }
       },
       "DevelopmentDependency": true
@@ -65,7 +65,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.0.0-6.final"
+          "Version": "4.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -75,7 +75,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.0.0-6.final"
+          "Version": "4.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -235,7 +235,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Namotion.Reflection",
-          "Version": "2.0.3"
+          "Version": "2.0.10"
         }
       },
       "DevelopmentDependency": false
@@ -255,7 +255,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "NJsonSchema",
-          "Version": "10.5.2"
+          "Version": "10.6.9"
         }
       },
       "DevelopmentDependency": false
@@ -685,7 +685,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers.Unstable",
-          "Version": "1.2.0.354"
+          "Version": "1.2.0.406"
         }
       },
       "DevelopmentDependency": true
@@ -695,7 +695,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers",
-          "Version": "1.2.0-beta.354"
+          "Version": "1.1.118"
         }
       },
       "DevelopmentDependency": true
@@ -845,7 +845,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.DirectoryServices.Protocols",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -1405,7 +1405,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Web.Services.Description",
-          "Version": "4.9.0"
+          "Version": "4.9.0-rc2.21473.1"
         }
       },
       "DevelopmentDependency": false

@@ -44,6 +44,8 @@ variables:
     value: https://github.com/powershell/powershell
   - name: SBOMGenerator_Formats
     value: spdx:2.2
+  - name: BUILDSECMON_OPT_IN
+    value: true
 
 stages:
   - stage: prep
@@ -207,7 +209,7 @@ stages:
         pool:
           name: PowerShell1ES
           demands:
-          - ImageOverride -equals MMS2019
+          - ImageOverride -equals PSMMS2019-Secure
         steps:
         - checkout: self
           clean: true

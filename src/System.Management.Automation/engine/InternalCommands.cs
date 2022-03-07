@@ -382,17 +382,6 @@ namespace Microsoft.PowerShell.Commands
         private Exception _taskCollectionException;
         private string _currentLocationPath;
 
-        // List of Foreach-Object command names and aliases.
-        // TODO: Look into using SessionState.Internal.GetAliasTable() to find all user created aliases.
-        //       But update Alias command logic to maintain reverse table that lists all aliases mapping
-        //       to a single command definition, for performance.
-        private static readonly string[] forEachNames = new string[]
-        {
-            "ForEach-Object",
-            "foreach",
-            "%"
-        };
-
         private void InitParallelParameterSet()
         {
             // The following common parameters are not (yet) supported in this parameter set.
@@ -423,8 +412,7 @@ namespace Microsoft.PowerShell.Commands
             _usingValuesMap = ScriptBlockToPowerShellConverter.GetUsingValuesForEachParallel(
                 scriptBlock: Parallel,
                 isTrustedInput: allowUsingExpression,
-                context: this.Context,
-                foreachNames: forEachNames);
+                context: this.Context);
 
             // Validate using values map, which is a map of '$using:' variables referenced in the script.
             // Script block variables are not allowed since their behavior is undefined outside the runspace
