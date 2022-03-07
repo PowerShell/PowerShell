@@ -1724,6 +1724,7 @@ namespace System.Management.Automation
                         {
                             return;
                         }
+
                         resolvedTypeArguments[i] = resolvedType;
                     }
                 }
