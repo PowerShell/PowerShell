@@ -1742,7 +1742,7 @@ namespace System.Management.Automation
                             {
                                 result.Add(new PSTypeName(methodInfo.MakeGenericMethod(resolvedTypeArguments).ReturnType));
                             }
-                            catch
+                            catch // If we can't build the generic method then just skip it to retain other completion results.
                             {
                                 return;
                             }
