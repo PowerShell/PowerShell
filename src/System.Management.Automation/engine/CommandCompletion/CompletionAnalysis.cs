@@ -955,6 +955,11 @@ namespace System.Management.Automation
                         typeNameToComplete = FindTypeNameToComplete(typeConstraintAst.TypeName, _cursorPosition);
                     }
                 }
+                
+                if (typeNameToComplete is null && tokenAtCursor?.TokenFlags == TokenFlags.TypeName)
+                {
+                    typeNameToComplete = new TypeName(tokenAtCursor.Extent, tokenAtCursor.Text);
+                }
 
                 if (typeNameToComplete != null)
                 {
@@ -2180,13 +2185,6 @@ namespace System.Management.Automation
             result = CompletionCompleters.CompleteCommandArgument(completionContext);
             replacementIndex = completionContext.ReplacementIndex;
             replacementLength = completionContext.ReplacementLength;
-
-            if (result.Count == 0
-                && completionContext.TokenAtCursor.TokenFlags.HasFlag(TokenFlags.TypeName)
-                && lastAst?.Find(a => a is MemberExpressionAst, searchNestedScriptBlocks: false) is not null)
-            {
-                result = CompletionCompleters.CompleteType(completionContext.TokenAtCursor.Text).ToList();
-            }
 
             return result;
         }
