@@ -15,7 +15,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" version="4.5.0-*" />
-    <ProjectReference Include="..\..\..\..\..\src\System.Management.Automation\System.Management.Automation.csproj" PrivateAssets="All" />
+    <Reference Include="System.Management.Automation">
+      <HintPath>.\Ref\System.Management.Automation.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

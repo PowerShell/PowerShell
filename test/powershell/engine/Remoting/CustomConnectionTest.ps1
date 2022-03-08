@@ -19,9 +19,8 @@ function Start-PwshProcess
 Describe 'NamedPipe Custom Remote Connection Tests' {
 
     BeforeAll {
-        if (!$IsWindows) {
-            return
-        }
+        # Ensure $env:PSModulePath contains path to module to test at top of list.
+        # At .\PowerShell\test\tools\Modules  ?
         Import-Module -Name Microsoft.PowerShell.NamedPipeConnection -ErrorAction Stop
 
         $script:PwshProcId = Start-PwshProcess
@@ -29,9 +28,6 @@ Describe 'NamedPipe Custom Remote Connection Tests' {
     }
 
     AfterAll {
-        if (!$IsWindows) {
-            return
-        }
         if ($null -ne $script:session)
         {
             Remove-PSSession -Session $script:session
@@ -43,7 +39,7 @@ Describe 'NamedPipe Custom Remote Connection Tests' {
         }
     }
 
-    It 'Verifies that New-NamedPipeSession succeeds in connectiong to Pwsh process' -Skip:(!$IsWindows) {
+    It 'Verifies that New-NamedPipeSession succeeds in connectiong to Pwsh process' {
         $script:session = New-NamedPipeSession -ProcessId $script:PwshProcId -ConnectingTimeout 10 -Name CustomNPConnection -ErrorAction Stop
 
         # Verify created PSSession
@@ -54,7 +50,7 @@ Describe 'NamedPipe Custom Remote Connection Tests' {
         $script:session.ComputerName | Should -BeExactly "LocalMachine:$($script:PwshProcId)"
     }
 
-    It 'Verifies timeout error when trying to connect to pwsh process with current connection' -Skip:(!$IsWindows) {
+    It 'Verifies timeout error when trying to connect to pwsh process with current connection' {
         $brokenSession = New-NamedPipeSession -ProcessId $script:PwshProcId -ConnectingTimeout 2 -Name CustomNPConnection -ErrorAction Stop
 
         # Verify expected broken session
