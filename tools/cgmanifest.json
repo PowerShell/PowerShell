@@ -355,7 +355,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.linux-arm.runtime.native.System.IO.Ports",
-          "Version": "5.0.0-rtm.20519.4"
+          "Version": "4.7.0"
         }
       },
       "DevelopmentDependency": false
@@ -365,7 +365,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.linux-arm64.runtime.native.System.IO.Ports",
-          "Version": "5.0.0-rtm.20519.4"
+          "Version": "4.7.0"
         }
       },
       "DevelopmentDependency": false
@@ -375,7 +375,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.linux-x64.runtime.native.System.IO.Ports",
-          "Version": "5.0.0-rtm.20519.4"
+          "Version": "4.7.0"
         }
       },
       "DevelopmentDependency": false
@@ -395,7 +395,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.native.System.IO.Ports",
-          "Version": "5.0.0"
+          "Version": "4.7.0"
         }
       },
       "DevelopmentDependency": false
@@ -445,7 +445,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.osx-x64.runtime.native.System.IO.Ports",
-          "Version": "5.0.0-rtm.20519.4"
+          "Version": "4.7.0"
         }
       },
       "DevelopmentDependency": false
@@ -785,7 +785,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Drawing.Common",
-          "Version": "5.0.2"
+          "Version": "5.0.3"
         }
       },
       "DevelopmentDependency": false
