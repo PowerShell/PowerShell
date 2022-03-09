@@ -416,6 +416,11 @@ Fix steps:
         $Arguments += "/property:IsWindows=false"
     }
 
+    if ($Options.Runtime -like 'alpine*') {
+        Write-Verbose -Verbose "Disabling ReadyToRun for Alpine"
+        $Arguments += "/property:DisableR2R=true"
+    }
+
     # Framework Dependent builds do not support ReadyToRun as it needs a specific runtime to optimize for.
     # The property is set in Powershell.Common.props file.
     # We override the property through the build command line.

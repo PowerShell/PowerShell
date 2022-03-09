@@ -98,7 +98,7 @@
 
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>9.0</LangVersion>
-    <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
+    <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' and '$(DisableR2R)' == '' ">true</PublishReadyToRun>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -116,6 +116,7 @@
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
     <IsWindows Condition="'$(IsWindows)' =='true' or ( '$(IsWindows)' == '' and '$(OS)' == 'Windows_NT')">true</IsWindows>
   </PropertyGroup>
+
 
   <!-- Define non-windows, all configuration properties -->
   <PropertyGroup Condition=" '$(IsWindows)' != 'true' ">
