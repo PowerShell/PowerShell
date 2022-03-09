@@ -1040,6 +1040,11 @@ function Get-PesterTag {
 # testing PowerShell remote custom connections.
 function Publish-CustomConnectionTestModule
 {
+    # Build test module and run custom connection tests only for Windows platforms
+    if (! $environment.IsWindows) {
+        return
+    }
+
     $sourcePath = "${PSScriptRoot}/test/tools/NamedPipeConnection"
     $outPath = "${PSScriptRoot}/test/tools/NamedPipeConnection/out/Microsoft.PowerShell.NamedPipeConnection"
     $publishPath = "${PSScriptRoot}/test/tools/Modules"
@@ -1068,6 +1073,9 @@ function Publish-CustomConnectionTestModule
 
         # Publish the Microsoft.PowerShell.NamedPipeConnection module
         Copy-Item -Path $outPath -Destination $publishPath -Recurse -Force
+
+        # Clean up build artifacts
+        ./build.ps1 -Clean
     }
     finally {
         Pop-Location
