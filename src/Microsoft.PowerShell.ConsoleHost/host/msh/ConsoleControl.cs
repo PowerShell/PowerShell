@@ -2527,12 +2527,10 @@ namespace Microsoft.PowerShell
                     // We ignore this specific error as the console can still continue to operate
                     return;
                 }
-                else
-                {
-                    HostException e = CreateHostException(err, "SetConsoleWindowTitle",
-                        ErrorCategory.ResourceUnavailable, ConsoleControlStrings.SetConsoleWindowTitleExceptionTemplate);
-                    throw e;
-                }
+
+                HostException e = CreateHostException(err, "SetConsoleWindowTitle",
+                    ErrorCategory.ResourceUnavailable, ConsoleControlStrings.SetConsoleWindowTitleExceptionTemplate);
+                throw e;
             }
         }
 
