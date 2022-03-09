@@ -68,15 +68,18 @@ namespace Microsoft.PowerShell.Telemetry
     public class NameObscurerTelemetryInitializer : ITelemetryInitializer
     {
         // Report the platform name information as "na".
-        private const string notavailable = "na";
+        private const string _notavailable = "na";
+
         /// <summary>
         /// Initialize properties we are obscuring to "na".
         /// </summary>
+        /// <param name="telemetry">The instance of our telemetry.</param>
+
         public void Initialize(ITelemetry telemetry)
         {
-            telemetry.Context.Cloud.RoleName = notavailable;
-            telemetry.Context.GetInternalContext().NodeName = notavailable;
-            telemetry.Context.Cloud.RoleInstance = notavailable;
+            telemetry.Context.Cloud.RoleName = _notavailable;
+            telemetry.Context.GetInternalContext().NodeName = _notavailable;
+            telemetry.Context.Cloud.RoleInstance = _notavailable;
         }
     }
 
