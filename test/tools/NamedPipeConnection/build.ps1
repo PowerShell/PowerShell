@@ -41,6 +41,7 @@ param (
 )
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 $script:ModuleName = 'Microsoft.PowerShell.NamedPipeConnection'
 $script:SrcPath = Join-Path -Path $PSScriptRoot -ChildPath 'src'
 $script:OutDirectory = Join-Path -Path $PSScriptRoot -ChildPath 'out'
@@ -61,10 +62,16 @@ $script:ModuleRoot = $PSScriptRoot
 $script:Culture = $config.Culture
 $script:HelpPath = $config.HelpPath
 >>>>>>> Add NamedPipeConnection module to testing tools and add test.
+=======
+$script:ModuleName = 'Microsoft.PowerShell.NamedPipeConnection'
+$script:SrcPath = Join-Path -Path $PSScriptRoot -ChildPath 'src'
+$script:OutDirectory = Join-Path -Path $PSScriptRoot -ChildPath 'out'
+>>>>>>> Remove PSPackageProject dependency, make tool and test Windows only
 
 $script:BuildConfiguration = $BuildConfiguration
 $script:BuildFramework = $BuildFramework
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 . $PSScriptRoot/doBuild.ps1
 
@@ -85,12 +92,21 @@ if ($env:TF_BUILD) {
     Write-Host "##$vstsCommandString"
 }
 
+=======
+>>>>>>> Remove PSPackageProject dependency, make tool and test Windows only
 . $PSScriptRoot/doBuild.ps1
 
-if ($Clean -and (Test-Path $OutDirectory))
+if ($Clean)
 {
+<<<<<<< HEAD
     Remove-Item -Path $OutDirectory -Force -Recurse -ErrorAction Stop -Verbose
 >>>>>>> Add NamedPipeConnection module to testing tools and add test.
+=======
+    if (Test-Path "${PSScriptRoot}/out")
+    {
+        Remove-Item -Path "${PSScriptRoot}/out" -Force -Recurse -ErrorAction Stop -Verbose
+    }
+>>>>>>> Remove PSPackageProject dependency, make tool and test Windows only
 
     if (Test-Path "${SrcPath}/code/bin")
     {
@@ -115,6 +131,7 @@ else
 if ($Build.IsPresent)
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
     Write-Verbose -Verbose -Message "Invoking DoBuild script"
     DoBuild
     Write-Verbose -Verbose -Message "Finished invoking DoBuild script"
@@ -135,4 +152,9 @@ if ( $Test.IsPresent ) {
 if ($UpdateHelp.IsPresent) {
     Add-PSPackageProjectCmdletHelp -ProjectRoot $ModuleRoot -ModuleName $ModuleName -Culture $Culture
 >>>>>>> Add NamedPipeConnection module to testing tools and add test.
+=======
+    Write-Verbose -Verbose -Message "Invoking DoBuild script"
+    DoBuild
+    Write-Verbose -Verbose -Message "Finished invoking DoBuild script"
+>>>>>>> Remove PSPackageProject dependency, make tool and test Windows only
 }
