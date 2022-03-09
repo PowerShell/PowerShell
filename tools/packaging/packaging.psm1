@@ -1239,18 +1239,15 @@ function Test-Distribution
         throw "$Distribution is required for a Debian based distribution."
     }
 
-    if ( $Environment.IsDebianFamily -and $Script:DebianDistributions -notcontains $Distribution)
-    {
-        throw "$Distribution should be one of the following: $Script:DebianDistributions"
-    }
-
-    if ( $Environment.IsRedHatFamily -and $Script:RedHatDistributions -notcontains $Distribution)
-    {
-        throw "$Distribution should be one of the following: $Script:RedHatDistributions"
+    if ($Script:DebianDistributions -notcontains $Distribution -and
+        $Script:RedHatDistributions -notcontains $Distribution -and
+        $Distribution -ne 'macOS') {
+        throw "$Distribution should be one of the following: $Script:DebianDistributions $Script:RedHatDistributions"
     }
 
     return $true
 }
+
 function Get-PackageDependencies
 {
     param(
