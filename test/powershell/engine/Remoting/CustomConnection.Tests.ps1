@@ -16,7 +16,7 @@ function Start-PwshProcess
     return $proc.Id
 }
 
-Describe 'NamedPipe Custom Remote Connection Tests' {
+Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
         if (!$IsWindows) {
