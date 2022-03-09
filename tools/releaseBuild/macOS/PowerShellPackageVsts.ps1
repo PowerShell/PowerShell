@@ -42,15 +42,18 @@ param (
     [ValidatePattern("-signed.zip$")]
     [string]$BuildZip,
 
-    [string]$ArtifactName = 'result'
+
+    [string]$ArtifactName = 'result',
+
+    [switch]$SkipReleaseChecks
 )
 
 $repoRoot = $location
 
-if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
-    $releaseTagParam = @{ }
+if ($Build -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
+    $releaseTagParam = @{}
     if ($ReleaseTag) {
-        $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
+        $releaseTagParam['ReleaseTag'] = $ReleaseTag
 
         #Remove the initial 'v' from the ReleaseTag
         $version = $ReleaseTag -replace '^v'
@@ -65,13 +68,14 @@ if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
 
 Push-Location
 try {
+    $pspackageParams = @{ SkipReleaseChecks = $SkipReleaseChecks; MacOSRuntime = $Runtime }
     Write-Verbose -Message "Init..." -Verbose
     Set-Location $repoRoot
     Import-Module "$repoRoot/build.psm1"
     Import-Module "$repoRoot/tools/packaging"
     Sync-PSTags -AddRemoteIfMissing
 
-    if ($BootStrap.IsPresent) {
+    if ($BootStrap) {
         Start-PSBootstrap -Package
     }
 
@@ -81,15 +85,15 @@ try {
 
         Remove-Item -Path $BuildZip
 
-        Start-PSPackage @releaseTagParam
+        Start-PSPackage @pspackageParams @releaseTagParam
         switch ($ExtraPackage) {
-            "tar" { Start-PSPackage -Type tar @releaseTagParam }
+            "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam }
         }
 
         if ($LTS) {
-            Start-PSPackage @releaseTagParam -LTS
+            Start-PSPackage @pspackageParams @releaseTagParam -LTS
             switch ($ExtraPackage) {
-                "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+                "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam -LTS }
             }
         }
     }
@@ -121,7 +125,7 @@ try {
     Pop-Location
 }
 
-if ($Build.IsPresent -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
+if ($Build -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
     $macPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg, *.tar.gz, *.zip
     foreach ($macPackage in $macPackages) {
         $filePath = $macPackage.FullName
