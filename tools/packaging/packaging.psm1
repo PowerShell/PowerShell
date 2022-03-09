@@ -3897,14 +3897,6 @@ function Invoke-AzDevOpsLinuxPackageCreation {
         if ($BuildType -eq 'deb') {
             Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS
 
-            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${minSizeLinuxBuildFolder}-meta\psoptions.json"
-
-            Write-Verbose -Verbose "---- Min-Size ----"
-            Write-Verbose -Verbose "options.Output: $($options.Output)"
-            Write-Verbose -Verbose "options.Top $($options.Top)"
-
-            Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
-
             ## Create 'linux-arm' 'tar.gz' package.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm32LinuxBuildFolder}-meta\psoptions.json"
@@ -3969,7 +3961,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
         if ($BuildType -eq 'deb') {
             ## Build 'min-size'
             $options = Get-PSOptions
-            Write-Verbose -Verbose "---- Min-Size ----"
+            Write-Verbose -Verbose "---- other builds ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
             Write-Verbose -Verbose "options.Top $($options.Top)"
             $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
@@ -3977,14 +3969,6 @@ function Invoke-AzDevOpsLinuxPackageBuild {
                 Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
                 Remove-Item -Path $binDir -Recurse -Force
             }
-
-            $buildParams['Crossgen'] = $false
-            $buildParams['ForMinimalSize'] = $true
-            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${minSizeLinuxBuildFolder}"
-            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
-            # Remove symbol files, xml document files.
-            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
-
 
             ## Build 'linux-arm' and create 'tar.gz' package for it.
             ## Note that 'linux-arm' can only be built on Ubuntu environment.
