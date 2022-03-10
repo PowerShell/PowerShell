@@ -498,11 +498,7 @@ namespace System.Management.Automation.Remoting.Client
         private readonly Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
         private readonly Timer _closeTimeOutTimer;
         internal PowerShellTraceSource _tracer;
-
-        /// <summary>
-        /// Writer object for sending protocol messages.
-        /// </summary>
-        protected OutOfProcessTextWriter _messageWriter;
+        internal OutOfProcessTextWriter _messageWriter;
 
         #endregion
 
@@ -1029,6 +1025,34 @@ namespace System.Management.Automation.Remoting.Client
         #region Protected Methods
 
         /// <summary>
+        /// Standard handler for data received, to be used by custom transport implementations.
+        /// </summary>
+        /// <param name="data">Protocol text data received by custom transport.</param>
+        protected void HandleDataReceived(string data)
+        {
+            if (data.StartsWith(OutOfProcessTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                // Error message from the server.
+                string errorData = data.Substring(OutOfProcessTextWriter.ErrorPrefix.Length);
+                HandleErrorDataReceived(errorData);
+            }
+            else
+            {
+                // Normal output data.
+                HandleOutputDataReceived(data);
+            }
+        }
+
+        /// <summary>
+        /// Creates the transport message writer from the provided TexWriter object.
+        /// </summary>
+        /// <param name"textWriter">TextWriter object to be used in the message writer.</param>
+        protected void SetMessageWriter(TextWriter textWriter)
+        {
+            _messageWriter = new OutOfProcessTextWriter(textWriter);
+        }
+
+        /// <summary>
         /// Disposes message queue components.
         /// </summary>
         protected void DisposeMessageQueue()
@@ -1137,7 +1161,7 @@ namespace System.Management.Automation.Remoting.Client
                     _processInstance.Start();
 
                     StartRedirectionReaderThreads(_serverProcess);
-                    _messageWriter = new OutOfProcessTextWriter(_serverProcess.StandardInput);
+                    SetMessageWriter(_serverProcess.StandardInput);
                     _processInstance.StdInWriter = _messageWriter;
                 }
             }
@@ -1557,7 +1581,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // Create writer for Hyper-V socket.
-            _messageWriter = new OutOfProcessTextWriter(_client.TextWriter);
+            SetMessageWriter(_client.TextWriter);
 
             // Create reader thread for Hyper-V socket.
             StartReaderThread(_client.TextReader);
@@ -1616,7 +1640,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // Create writer for Hyper-V socket.
-            _messageWriter = new OutOfProcessTextWriter(_client.TextWriter);
+            SetMessageWriter(_client.TextWriter);
 
             // Create reader thread for Hyper-V socket.
             StartReaderThread(_client.TextReader);
@@ -1689,7 +1713,7 @@ namespace System.Management.Automation.Remoting.Client
             StartErrorThread(_stdErrReader);
 
             // Create writer for named pipe.
-            _messageWriter = new OutOfProcessTextWriter(_stdInWriter);
+            SetMessageWriter(_stdInWriter);
 
             // Create reader thread and send first PSRP message.
             StartReaderThread(_stdOutReader);
@@ -1980,7 +2004,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 if (e is ArgumentOutOfRangeException)
                 {
-                    Dbg.Assert(false, "Need to adjust transport fragmentor to accomodate read buffer size.");
+                    Dbg.Assert(false, "Need to adjust transport fragmentor to accommodate read buffer size.");
                 }
 
                 string errorMsg = e.Message ?? string.Empty;
@@ -2086,17 +2110,7 @@ namespace System.Management.Automation.Remoting.Client
                         break;
                     }
 
-                    if (data.StartsWith(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // Error message from the server.
-                        string errorData = data.Substring(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrefix.Length);
-                        HandleErrorDataReceived(errorData);
-                    }
-                    else
-                    {
-                        // Normal output data.
-                        HandleOutputDataReceived(data);
-                    }
+                    HandleDataReceived(data);
                 }
             }
             catch (ObjectDisposedException)
@@ -2163,7 +2177,7 @@ namespace System.Management.Automation.Remoting.Client
             _clientPipe.Connect(_connectionInfo.OpenTimeout);
 
             // Create writer for named pipe.
-            _messageWriter = new OutOfProcessTextWriter(_clientPipe.TextWriter);
+            SetMessageWriter(_clientPipe.TextWriter);
 
             // Create reader thread for named pipe.
             StartReaderThread(_clientPipe.TextReader);
@@ -2232,7 +2246,7 @@ namespace System.Management.Automation.Remoting.Client
             _clientPipe.Connect(_connectionInfo.OpenTimeout);
 
             // Create writer for named pipe.
-            _messageWriter = new OutOfProcessTextWriter(_clientPipe.TextWriter);
+            SetMessageWriter(_clientPipe.TextWriter);
 
             // Create reader thread for named pipe.
             StartReaderThread(_clientPipe.TextReader);
