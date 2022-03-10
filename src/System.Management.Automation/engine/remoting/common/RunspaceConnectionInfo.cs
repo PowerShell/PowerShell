@@ -2193,13 +2193,13 @@ namespace System.Management.Automation.Runspaces
 
         #endregion
 
-        #region Public Methods
+        #region Internal Methods
 
         /// <summary>
         /// StartSSHProcess.
         /// </summary>
         /// <returns></returns>
-        public int StartSSHProcess(
+        internal int StartSSHProcess(
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
             out StreamReader stdErrReaderVar)
