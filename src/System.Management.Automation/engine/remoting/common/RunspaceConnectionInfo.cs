@@ -2193,13 +2193,13 @@ namespace System.Management.Automation.Runspaces
 
         #endregion
 
-        #region Public Methods
+        #region Internal Methods
 
         /// <summary>
         /// StartSSHProcess.
         /// </summary>
         /// <returns></returns>
-        public int StartSSHProcess(
+        internal int StartSSHProcess(
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
             out StreamReader stdErrReaderVar)
@@ -2301,7 +2301,7 @@ namespace System.Management.Automation.Runspaces
         /// Terminates the SSH process by process Id.
         /// </summary>
         /// <param name="pid">Process id.</param>
-        public void KillSSHProcess(int pid)
+        internal void KillSSHProcess(int pid)
         {
             KillSSHProcessImpl(pid);
         }
