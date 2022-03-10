@@ -68,7 +68,7 @@ if ($Build -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
 
 Push-Location
 try {
-    $pspackageParams = @{ SkipReleaseChecks = $SkipReleaseChecks; MacOSRuntime = $Runtime }
+    $pspackageParams = @{ SkipReleaseChecks = $SkipReleaseChecks }
     Write-Verbose -Message "Init..." -Verbose
     Set-Location $repoRoot
     Import-Module "$repoRoot/build.psm1"
@@ -101,22 +101,21 @@ try {
     if ($Build.IsPresent) {
         if ($Symbols.IsPresent) {
             Start-PSBuild -Configuration 'Release' -Crossgen -NoPSModuleRestore @releaseTagParam
-            $pspackageParams = @{}
             $pspackageParams['Type']='zip'
             $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
             Write-Verbose "Starting powershell packaging(zip)..." -Verbose
             Start-PSPackage @pspackageParams @releaseTagParam
         } else {
             Start-PSBuild -Configuration 'Release' -Crossgen -PSModuleRestore @releaseTagParam
-            Start-PSPackage @releaseTagParam
+            Start-PSPackage @pspackageParams @releaseTagParam
             switch ($ExtraPackage) {
-                "tar" { Start-PSPackage -Type tar @releaseTagParam }
+                "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam }
             }
 
             if ($LTS) {
                 Start-PSPackage @releaseTagParam -LTS
                 switch ($ExtraPackage) {
-                    "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+                    "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam -LTS }
                 }
             }
         }
