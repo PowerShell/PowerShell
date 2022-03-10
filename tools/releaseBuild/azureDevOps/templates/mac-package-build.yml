@@ -109,6 +109,10 @@ jobs:
     displayName: Compress signed files
 
   - pwsh: |
+      sudo pwsh -c 'Remove-Item /Users/runner/.dotnet -Force -Recurse'
+    displayName: Remove /Users/runner/.dotnet
+
+  - pwsh: |
       tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
     displayName: 'Bootstrap VM'
 
