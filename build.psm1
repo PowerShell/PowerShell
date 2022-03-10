@@ -478,8 +478,10 @@ Fix steps:
 
             try {
                 Push-Location $globalToolSrcFolder
-                $Arguments += "--output", $publishPath
-                Write-Log "Run dotnet $Arguments from $pwd to build global tool entry point"
+                if ($Arguments -notcontains '--output') {
+                    $Arguments += "--output", $publishPath
+                }
+                Write-Log -message "Run dotnet $Arguments from $PWD to build global tool entry point"
                 Start-NativeExecution { dotnet $Arguments }
             }
             finally {
