@@ -74,7 +74,6 @@ namespace Microsoft.PowerShell.Telemetry
         /// Initialize properties we are obscuring to "na".
         /// </summary>
         /// <param name="telemetry">The instance of our telemetry.</param>
-
         public void Initialize(ITelemetry telemetry)
         {
             telemetry.Context.Cloud.RoleName = _notavailable;
@@ -137,8 +136,10 @@ namespace Microsoft.PowerShell.Telemetry
                 s_sessionId = Guid.NewGuid().ToString();
                 TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
                 configuration.InstrumentationKey = _psCoreTelemetryKey;
+
                 // Set this to true to reduce latency during development
                 configuration.TelemetryChannel.DeveloperMode = false;
+
                 // Be sure to obscure any information about the client node name.
                 configuration.TelemetryInitializers.Add(new NameObscurerTelemetryInitializer());
 
