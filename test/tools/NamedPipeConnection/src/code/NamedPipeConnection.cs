@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.CustomNamedPipeConnection
                 out StreamReader pipeTextReader);
 
             // Create writer for named pipe.
-            _messageWriter = new OutOfProcessTextWriter(pipeTextWriter);
+            SetMessageWriter(pipeTextWriter);
 
             // Create reader thread for named pipe.
             StartReaderThread(pipeTextReader);
@@ -277,17 +277,7 @@ namespace Microsoft.PowerShell.CustomNamedPipeConnection
                         break;
                     }
 
-                    if (data.StartsWith(OutOfProcessTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
-                    {
-                        // Error message from the server.
-                        string errorData = data.Substring(OutOfProcessTextWriter.ErrorPrefix.Length);
-                        HandleErrorDataReceived(errorData);
-                    }
-                    else
-                    {
-                        // Normal output data.
-                        HandleOutputDataReceived(data);
-                    }
+                    HandleDataReceived(data);
                 }
             }
             catch (ObjectDisposedException)
