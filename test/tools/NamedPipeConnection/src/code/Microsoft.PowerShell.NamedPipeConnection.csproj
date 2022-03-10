@@ -15,13 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" version="4.5.0-*" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <PackageReference Include="System.Management.Automation" Version="7.*" />
-    <Reference Include="System.Management.Automation">
-      <HintPath>.\Ref\System.Management.Automation.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\..\..\..\src\System.Management.Automation\System.Management.Automation.csproj" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
