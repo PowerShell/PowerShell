@@ -1187,7 +1187,8 @@ function Get-FpmArguments
         "-t", $Type,
         "-s", "dir"
     )
-    if ($Environment.IsRedHatFamily) {
+
+    if ($Type -eq "rpm") {
         $Arguments += @("--rpm-dist", $Distribution)
         $Arguments += @("--rpm-os", "linux")
     }
@@ -1259,7 +1260,7 @@ function Get-PackageDependencies
     End {
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
-        if ($Environment.IsDebianFamily) {
+        if ($Distribution -in $Script:DebianDistributions) {
             $Dependencies = @(
                 "libc6",
                 "libgcc1",
@@ -1271,14 +1272,9 @@ function Get-PackageDependencies
                 "libssl1.1|libssl1.0.2|libssl1.0.0"
             )
 
-        } elseif ($Environment.IsRedHatFamily) {
+        } elseif ($Distribution -in $Script:RedHatDistributions) {
             $Dependencies = @(
                 "openssl-libs",
-                "libicu"
-            )
-        } elseif ($Environment.IsSUSEFamily) {
-            $Dependencies = @(
-                "libopenssl1_0_0",
                 "libicu"
             )
         }
@@ -1327,13 +1323,13 @@ function New-AfterScripts
 
     Write-Verbose -Message "AfterScript Distribution: $Distribution" -Verbose
 
-    if ($Environment.IsRedHatFamily) {
+    if ($Distribution -in $script:RedhatDistributions) {
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
         $packagingStrings.RedHatAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
         $packagingStrings.RedHatAfterRemoveScript -f "$Link" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
     }
-    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
+    elseif ($Distribution -in $Script:DebianDistributions) {
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
         $packagingStrings.UbuntuAfterInstallScript -f "$Link" | Out-File -FilePath $AfterInstallScript -Encoding ascii
@@ -1366,42 +1362,35 @@ function New-PSSymbolicLinks
 
     Write-Verbose -Message "PSSymLinks-Distribution: $Distribution" -Verbose
 
-    if ($Environment.IsRedHatFamily) {
-        switch -regex ($Distribution)
-        {
-            # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
-            # platform specific changes. This is the only set of platforms needed for this currently
-            # as Ubuntu has these specific library files in the platform and macOS builds for itself
-            # against the correct versions.
-            'centos\.8' {
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.1.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
-            }
-            default {
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
-            }
+    switch -regex ($Distribution) {
+        # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+        # platform specific changes. This is the only set of platforms needed for this currently
+        # as Ubuntu has these specific library files in the platform and macOS builds for itself
+        # against the correct versions.
+        'centos\.8' {
+            New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
+            New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.1.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
         }
-    }
-    elseif ($Environment.IsDebianFamily -or $Environment.IsSUSEFamily) {
-         switch -regex ($Distribution)
-        {
-            # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
-            # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
-            # symlinks.
-            'debian\.9' {
-                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
-                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
-            }
-            'debian\.(10|11)' {
-                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
-                New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
-            }
-            default {
-                # Default to old behavior before this change
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
-                New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
-            }
+        'rhel\.7' {
+            New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
+            New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
+        }
+        # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+        # platform specific changes. This appears to be a change in Debian 9; Debian 8 did not need these
+        # symlinks.
+        'debian\.9' {
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.0.2" -Path "$Staging/libssl.so.1.0.0" > $null
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.0.2" -Path "$Staging/libcrypto.so.1.0.0" > $null
+        }
+        'debian\.(10|11)' {
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libssl.so.1.1" -Path "$Staging/libssl.so.1.0.0" > $null
+            New-Item -Force -ItemType SymbolicLink -Target "/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1" -Path "$Staging/libcrypto.so.1.0.0" > $null
+        }
+        default {
+            # Default to old behavior before this change
+            Write-Verbose -Verbose -Message "Default branch choosen for New-PSSymbolicLinks switch"
+            New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" > $null
+            New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" > $null
         }
     }
 }
