@@ -13,6 +13,7 @@ parameters:
     - Microsoft.PowerShell.Commands.Utility.dll
     - Microsoft.PowerShell.ConsoleHost.dll
     - Microsoft.PowerShell.CoreCLR.Eventing.dll
+    - Microsoft.PowerShell.MarkdownRender.dll
     - Microsoft.PowerShell.Security.dll
     - Microsoft.PowerShell.SDK.dll
     - Microsoft.WSMan.Management.dll
