@@ -37,23 +37,13 @@ jobs:
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
 
     - pwsh: |
-        Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
-
-        Find-Dotnet
-
-        if(-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue))
-        {
-            $nugetFeed = ([xml](Get-Content $(Build.SourcesDirectory)/nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
-            Register-PackageSource -Name 'dotnet5' -Location $nugetFeed -ProviderName NuGet
-            Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
-        }
-
         ## Remove old .NET SDKs if any exists
         if (Test-Path -Type Container $Home/.dotnet)
         {
             Remove-Item $Home/.dotnet -Recurse -Force
         }
 
+        Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
         Start-PSBootstrap
 
         Write-Verbose -Message "Installing .NET SDK completed." -Verbose
@@ -63,12 +53,12 @@ jobs:
     - pwsh: |
         $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
         Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
-        Start-PSBootstrap
+        Find-Dotnet
 
         $localLocation = "$(Pipeline.Workspace)/releasePipeline/finalResults"
         $xmlElement = @"
           <add key=`"local`" value=`"$localLocation`" />
-          <add key="dotnet5" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet5/nuget/v3/index.json" />
+          <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
         </packageSources>
         "@
 
