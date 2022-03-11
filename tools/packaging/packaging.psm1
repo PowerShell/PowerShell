@@ -1830,6 +1830,7 @@ function New-FileDependencies
 
         'Microsoft.PowerShell.Commands.Utility' {
             $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.MarkdownRender'), [tuple]::Create('version', $PackageVersion))) > $null
 
             foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $FileBaseName))
             {
@@ -1887,6 +1888,14 @@ function New-FileDependencies
         'System.Management.Automation' {
             $deps.Add([tuple]::Create([tuple]::Create('id', 'Microsoft.PowerShell.CoreCLR.Eventing'), [tuple]::Create('version', $PackageVersion))) > $null
             foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $FileBaseName))
+            {
+                $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
+            }
+        }
+
+        'Microsoft.PowerShell.MarkdownRender' {
+            $deps.Add([tuple]::Create([tuple]::Create('id', 'System.Management.Automation'), [tuple]::Create('version', $PackageVersion))) > $null
+            foreach($packageInfo in (Get-ProjectPackageInformation -ProjectName $fileBaseName))
             {
                 $deps.Add([tuple]::Create([tuple]::Create('id', $packageInfo.Name), [tuple]::Create('version', $packageInfo.Version))) > $null
             }
