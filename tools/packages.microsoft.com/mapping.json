@@ -1,43 +1,39 @@
 {
-  "Packages" : [
-      {
-          "url": "microsoft-centos8-prod",
-          "distribution" : ["centos"],
-          "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
-      },
-      {
-          "url": "microsoft-rhel8.0-prod",
-          "distribution" : ["trusty"],
-          "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
-      },
-      {
-          "url": "microsoft-rhel7.3-prod",
-          "distribution" : ["trusty"],
-          "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
-      },
-      {
-          "distribution" : ["stretch"],
-          "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-      },
-      {
-          "distribution" : ["buster"],
-          "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-      },
-      {
-          "distribution" : ["bionic"],
-          "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-      },
-      {
-          "distribution": ["focal"],
-          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-      },
-      {
-          "distribution": ["xenial"],
-          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-      },
-      {
-          "distribution": ["bullseye"],
-          "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
-      }
-  ]
+    "Packages" : [
+        {
+            "url": "microsoft-centos8-prod",
+            "distribution" : ["centos"],
+            "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.centos.8.x86_64.rpm"
+        },
+        {
+            "url": "microsoft-rhel8.0-prod",
+            "distribution" : ["trusty"],
+            "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.centos.8.x86_64.rpm"
+        },
+        {
+            "url": "microsoft-rhel7.3-prod",
+            "distribution" : ["trusty"],
+            "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.rhel.7.x86_64.rpm"
+        },
+        {
+            "distribution" : ["stretch"],
+            "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.debian.9_amd64.deb"
+        },
+        {
+            "distribution" : ["buster"],
+            "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.debian.10_amd64.deb"
+        },
+        {
+            "distribution" : ["bionic"],
+            "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.ubuntu.18.04_amd64.deb"
+        },
+        {
+            "distribution": ["focal"],
+            "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.ubuntu.20.04_amd64.deb"
+        },
+        {
+            "distribution": ["xenial"],
+            "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.ubuntu.16.04_amd64.deb"
+        }
+    ]
 }
