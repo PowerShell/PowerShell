@@ -177,8 +177,8 @@ function Get-CGRegistrations {
 
     $registrationChanged = $false
 
-    $dotnetTargetName = 'net5.0'
-    $dotnetTargetNameWin7 = 'net5.0-windows7.0'
+    $dotnetTargetName = '.NETCoreApp,Version=v3.1'
+    $dotnetTargetNameWin7 = '.NETCoreApp,Version=v3.1'
     $unixProjectName = 'powershell-unix'
     $windowsProjectName = 'powershell-win-core'
     $actualRuntime = $Runtime
@@ -264,7 +264,7 @@ function Get-CGRegistrations {
 $registrations = [System.Collections.Generic.Dictionary[string, Registration]]::new()
 $lastCount = 0
 $registrationChanged = $false
-foreach ($runtime in "win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win-arm", "linux-arm", "linux-arm64", "osx-arm64", "win-arm64", "win7-x86") {
+foreach ($runtime in "win7-x64", "linux-x64", "osx-x64", "alpine-x64", "win7-x86") {
     $registrationChanged = (Get-CGRegistrations -Runtime $runtime -RegistrationTable $registrations) -or $registrationChanged
     $count = $registrations.Count
     $newCount = $count - $lastCount
