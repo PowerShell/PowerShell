@@ -602,3 +602,24 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
         #>
     }
 }
+
+Describe 'Other Pipeline Behaviour' -Tag 'CI' {
+    It "Array with 'Automation.Null' elements can be piped to pipeline" {
+        $automationNull = & {}
+
+        ## 'Automation.Null' elements will not be sent to the pipeline (skipped).
+        1, $automationNull, 2, $automationNull, 3, 4, 5 | ForEach-Object { $_ } | Should -Be (1..5)
+        $array = 1, $automationNull, 2, $automationNull, 3, 4, 5
+        $array.Count | Should -Be 7
+        $array | ForEach-Object { $_ } | Should -Be (1..5)
+    }
+
+    It "Automation.Null is not written to pipeline in a function" {
+        $automationNull = & {}
+
+        function MyTest { 1, $automationNull, 2, $automationNull, 3, 4, 5 }
+        $result = MyTest
+        $result.Count | Should -Be 5
+        MyTest | Should -Be (1..5)
+    }
+}

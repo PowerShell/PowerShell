@@ -252,6 +252,9 @@ namespace System.Management.Automation.Language
                 new Type[] { typeof(int), typeof(IEqualityComparer) },
                 null);
 
+        internal static readonly MethodInfo ByRefOps_GetByRefPropertyValue =
+            typeof(ByRefOps).GetMethod(nameof(ByRefOps.GetByRefPropertyValue), StaticFlags);
+
         internal static readonly MethodInfo HashtableOps_Add =
             typeof(HashtableOps).GetMethod(nameof(HashtableOps.Add), StaticFlags);
 

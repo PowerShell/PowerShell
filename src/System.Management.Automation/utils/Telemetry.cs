@@ -322,6 +322,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "branchcache",
                         "CimCmdlets",
                         "clusterawareupdating",
+                        "CompatPowerShellGet",
                         "configci",
                         "ConfigurationManager",
                         "DataProtectionManager",
