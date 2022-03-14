@@ -49,7 +49,7 @@ $script:BuildFramework = $BuildFramework
 
 . $PSScriptRoot/doBuild.ps1
 
-if ($Clean)
+if ($Clean.IsPresent)
 {
     if (Test-Path "${PSScriptRoot}/out")
     {
@@ -67,17 +67,17 @@ if ($Clean)
     }
 }
 
-if (-not (Test-Path $OutDirectory))
-{
-    $script:OutModule = New-Item -ItemType Directory -Path (Join-Path $OutDirectory $ModuleName)
-}
-else
-{
-    $script:OutModule = Join-Path $OutDirectory $ModuleName
-}
-
 if ($Build.IsPresent)
 {
+    if (-not (Test-Path $OutDirectory))
+    {
+        $script:OutModule = New-Item -ItemType Directory -Path (Join-Path $OutDirectory $ModuleName)
+    }
+    else
+    {
+        $script:OutModule = Join-Path $OutDirectory $ModuleName
+    }
+
     Write-Verbose -Verbose -Message "Invoking DoBuild script"
     DoBuild
     Write-Verbose -Verbose -Message "Finished invoking DoBuild script"

@@ -1048,6 +1048,17 @@ function Publish-CustomConnectionTestModule
     $sourcePath = "${PSScriptRoot}/test/tools/NamedPipeConnection"
     $outPath = "${PSScriptRoot}/test/tools/NamedPipeConnection/out/Microsoft.PowerShell.NamedPipeConnection"
     $publishPath = "${PSScriptRoot}/test/tools/Modules"
+    $refPath = "${sourcePath}/src/code/Ref"
+
+    # Copy the current SMA build to the refPath.
+    $smaPath = Join-Path -Path (Split-Path -Path (Get-PSOutput)) -ChildPath 'System.Management.Automation.dll'
+    if (! (Test-Path -Path $smaPath)) {
+        throw "Publish-CustomConnectionTestModule: Cannot find reference SMA at: ${smaPath}"
+    }
+    if (! (Test-Path -Path $refPath)) {
+        New-Item -Path $refPath -ItemType Directory -Force
+    }
+    Copy-Item -Path $smapath -Destination $refPath -Force
 
     Find-DotNet
 
