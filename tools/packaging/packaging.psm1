@@ -1915,7 +1915,7 @@ function New-ILNugetPackageSource
 
     Write-Verbose -Verbose "New-ILNugetPackageSource: Creating package source folder for file: $FileName at: $filePackageFolder"
     #region ref
-    $refFolder = New-Item (Join-Path $filePackageFolder.FullName "ref/$script:netCoreRuntime") -ItemType Directory -Force
+    $refFolder = New-Item (Join-Path $filePackageFolder.FullName "ref/netcoreapp3.1") -ItemType Directory -Force
     CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
     #endregion ref
     $packageRuntimesFolderPath = $packageRuntimesFolder.FullName
@@ -1958,8 +1958,8 @@ function New-ILNugetPackageSource
             "Microsoft.PowerShell.Utility"
         )
 
-        $winModuleFolder = New-Item (Join-Path $contentFolder "runtimes\win\lib\$script:netCoreRuntime\Modules") -ItemType Directory -Force
-        $unixModuleFolder = New-Item (Join-Path $contentFolder "runtimes\unix\lib\$script:netCoreRuntime\Modules") -ItemType Directory -Force
+        $winModuleFolder = New-Item (Join-Path $contentFolder "runtimes\win\lib\netcoreapp3.1\Modules") -ItemType Directory -Force
+        $unixModuleFolder = New-Item (Join-Path $contentFolder "runtimes\unix\lib\netcoreapp3.1\Modules") -ItemType Directory -Force
 
         foreach ($module in $winBuiltInModules) {
             $source = Join-Path $WinFxdBinPath "Modules\$module"
