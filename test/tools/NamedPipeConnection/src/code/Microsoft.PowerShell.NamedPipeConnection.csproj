@@ -19,5 +19,4 @@
       <HintPath>.\Ref\System.Management.Automation.dll</HintPath>
     </Reference>
   </ItemGroup>
-
 </Project>
