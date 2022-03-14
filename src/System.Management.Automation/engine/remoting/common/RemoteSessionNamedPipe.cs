@@ -141,13 +141,10 @@ namespace System.Management.Automation.Remoting
                 pipeName = pipeName.Substring(0, Math.Max(pipeName.Length - charsToTrim, 0));
                 if (pipeName.Length < uniqueLength)
                 {
-                    Console.WriteLine("Not long enough");
                     throw new PSArgumentNullException(nameof(proc));
                 }
             }
 #endif
-
-            Console.WriteLine(string.Format("'{0}'", pipeName));
 
             return pipeName;
         }
