@@ -1076,6 +1076,7 @@ function Publish-CustomConnectionTestModule
 
         # Clean up build artifacts
         ./build.ps1 -Clean
+        Remove-Item -Path $refPath -Recurse -Force -ErrorAction SilentlyContinue
     }
     finally {
         Pop-Location
