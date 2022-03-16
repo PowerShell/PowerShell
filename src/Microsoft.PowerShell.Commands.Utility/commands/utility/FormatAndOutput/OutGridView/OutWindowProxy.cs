@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal void BlockUntillClosed()
+        internal void BlockUntilClosed()
         {
             if (_closedEvent != null)
             {
