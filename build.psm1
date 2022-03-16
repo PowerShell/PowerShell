@@ -1036,6 +1036,53 @@ function Get-PesterTag {
     $o
 }
 
+# Function to build and publish the Microsoft.PowerShell.NamedPipeConnection module for
+# testing PowerShell remote custom connections.
+function Publish-CustomConnectionTestModule
+{
+    # Build test module and run custom connection tests only for Windows platforms
+    if (! $environment.IsWindows) {
+        return
+    }
+
+    $sourcePath = "${PSScriptRoot}/test/tools/NamedPipeConnection"
+    $outPath = "${PSScriptRoot}/test/tools/NamedPipeConnection/out/Microsoft.PowerShell.NamedPipeConnection"
+    $publishPath = "${PSScriptRoot}/test/tools/Modules"
+    $refPath = "${sourcePath}/src/code/Ref"
+
+    # Copy the current SMA build to the refPath.
+    $smaPath = Join-Path -Path (Split-Path -Path (Get-PSOutput)) -ChildPath 'System.Management.Automation.dll'
+    if (! (Test-Path -Path $smaPath)) {
+        throw "Publish-CustomConnectionTestModule: Cannot find reference SMA at: ${smaPath}"
+    }
+    if (! (Test-Path -Path $refPath)) {
+        New-Item -Path $refPath -ItemType Directory -Force
+    }
+    Copy-Item -Path $smapath -Destination $refPath -Force
+
+    Find-DotNet
+
+    Push-Location -Path $sourcePath
+    try {
+        # Build the Microsoft.PowerShell.NamedPipeConnect module
+        ./build.ps1 -Clean -Build
+
+        if (! (Test-Path -Path $outPath)) {
+            throw "Publish-CustomConnectionTestModule: Build failed. Output path does not exist: $outPath"
+        }
+
+        # Publish the Microsoft.PowerShell.NamedPipeConnection module
+        Copy-Item -Path $outPath -Destination $publishPath -Recurse -Force
+
+        # Clean up build artifacts
+        ./build.ps1 -Clean
+        Remove-Item -Path $refPath -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    finally {
+        Pop-Location
+    }
+}
+
 function Publish-PSTestTools {
     [CmdletBinding()]
     param(
@@ -1204,6 +1251,9 @@ function Start-PSPester {
             $publishArgs['runtime'] = 'alpine-x64'
         }
         Publish-PSTestTools @publishArgs | ForEach-Object {Write-Host $_}
+
+        # Publish the Microsoft.PowerShell.NamedPipeConnection module for testing custom remote connections.
+        Publish-CustomConnectionTestModule
     }
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)

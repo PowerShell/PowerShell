@@ -182,10 +182,6 @@ namespace System.Management.Automation
                     CheckScriptCallOnRemoteRunspace(remoteRunspace);
                     if (remoteRunspace.GetCapabilities().Equals(Runspaces.RunspaceCapability.Default))
                     {
-                        // Capability:
-                        //      NamedPipeTransport (0x2)            -> If remoteMachine is Threshold or later
-                        //      SupportsDisconnect (0x1)            -> If remoteMachine is Win8 or later
-                        //      Default (0x0)                       -> If remoteMachine is Win7
                         // Remoting to a Win7 machine. Use the legacy tab completion function from V1/V2
                         int replacementIndex;
                         int replacementLength;
