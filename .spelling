@@ -952,4 +952,9 @@ createdump
 vPack
 NoLanguage
 PkgES
+buildinfo
+SKUs
+CGManifest
+vmImage
+ci.psm1
 centos-7
