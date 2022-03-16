@@ -3180,8 +3180,8 @@
       <Component Id="cmpE0DEAA289B2D4594A0C4791B2808C97C">
         <File Id="fil530EAD567BDB402FA6F02AFAA696D721" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Security.Cryptography.dll" />
       </Component>
-      <Component Id="cmpBE708E925DB44DF79A8EE11706572228">
-        <File Id="filD7A90BD005AC451EBF60D6DE0FB6781E" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.12204.dll" />
+      <Component Id="cmp05AA3332D604464298B922F34672061F">
+        <File Id="fil45EB1A6088AA4475B1B9B0413BC0FE02" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.15202.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4205,7 +4205,7 @@
       <ComponentRef Id="cmpB7C69B48760E47CD89D0641D4A9FEFE9" />
       <ComponentRef Id="cmpE5993DB9118640FD8C180A2D61C89C01" />
       <ComponentRef Id="cmpE0DEAA289B2D4594A0C4791B2808C97C" />
-      <ComponentRef Id="cmpBE708E925DB44DF79A8EE11706572228" />
+      <ComponentRef Id="cmp05AA3332D604464298B922F34672061F" />
     </ComponentGroup>
   </Fragment>
 </Wix>
