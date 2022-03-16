@@ -1495,3 +1495,4 @@ CGManifest
 vmImage
 ci.psm1
 jcotton42
+centos-7
