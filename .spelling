@@ -1425,6 +1425,8 @@ pwsh.exe
 6.0.100-rc.2.21505.57
 ThirdPartyNotices.txt
 rtm.21527.11
+SKUs
+vmImage
  - CHANGELOG/7.0.md
 codesign
 release-BuildJson
