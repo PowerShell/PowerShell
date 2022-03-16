@@ -58,7 +58,7 @@ jobs:
       Write-Host "##$vstsCommand"
     displayName: Determine file to upload
 
-  - task: AzureFileCopy@2
+  - task: AzureFileCopy@4
     displayName: 'AzureBlob pwsh.deps.json file Copy'
     inputs:
       SourcePath: '$(FileToUpload)'
