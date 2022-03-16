@@ -1156,4 +1156,10 @@ gukoff
 createdump
 vPack
 NoLanguage
+dotnet5
+buildinfo
+SKUs
+CGManifest
+vmImage
+ci.psm1
 jcotton42
