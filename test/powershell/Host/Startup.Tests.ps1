@@ -44,7 +44,6 @@ Describe "Validate start of console host" -Tag CI {
             'System.Reflection.Primitives.dll'
             'System.Runtime.dll'
             'System.Runtime.InteropServices.dll'
-            'System.Runtime.InteropServices.RuntimeInformation.dll'
             'System.Runtime.Loader.dll'
             'System.Runtime.Numerics.dll'
             'System.Runtime.Serialization.Formatters.dll'
