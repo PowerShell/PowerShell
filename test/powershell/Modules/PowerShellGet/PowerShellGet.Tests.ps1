@@ -111,12 +111,6 @@ function Remove-InstalledModules
 Describe "PowerShellGet - Module tests" -tags "Feature" {
 
     BeforeAll {
-        # Setting all It block to pending as the test fail due to https://github.com/dotnet/runtime/issues/65013
-        # These should be re-enabled when the issue is fixed
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:pending"] = $true
-        return
-
         if ($script:Initialized -eq $false) {
             Initialize
             $script:Initialized = $true
@@ -147,7 +141,6 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         Remove-InstalledModules
     }
 }
@@ -155,12 +148,6 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
 Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
 
     BeforeAll {
-        # Setting all It block to pending as the test fail due to https://github.com/dotnet/runtime/issues/65013
-        # These should be re-enabled when the issue is fixed
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:pending"] = $true
-        return
-
         if ($script:Initialized -eq $false) {
             Initialize
             $script:Initialized = $true
@@ -185,7 +172,6 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         Remove-InstalledModules
     }
 }
@@ -198,12 +184,6 @@ function Remove-InstalledScripts
 Describe "PowerShellGet - Script tests" -tags "Feature" {
 
     BeforeAll {
-        # Setting all It block to pending as the test fail due to https://github.com/dotnet/runtime/issues/65013
-        # These should be re-enabled when the issue is fixed
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:pending"] = $true
-        return
-
         if ($script:Initialized -eq $false) {
             Initialize
             $script:Initialized = $true
@@ -230,7 +210,6 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         Remove-InstalledScripts
     }
 }
@@ -238,12 +217,6 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
 Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
 
     BeforeAll {
-        # Setting all It block to pending as the test fail due to https://github.com/dotnet/runtime/issues/65013
-        # These should be re-enabled when the issue is fixed
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:pending"] = $true
-        return
-
         if ($script:Initialized -eq $false) {
             Initialize
             $script:Initialized = $true
@@ -264,7 +237,6 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         Remove-InstalledScripts
     }
 }
