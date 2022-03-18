@@ -34,7 +34,7 @@ jobs:
           $currentVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
           Set-GWVariable -Name OLD_VERSION -Value $currentVersion
 
-          ./tools/UpdateDotnetRuntime.ps1 -UpdateMSIPackaging -UseInternalFeed
+          ./tools/UpdateDotnetRuntime.ps1 -UpdateMSIPackaging
           $newVersion = (Get-Content .\global.json | ConvertFrom-Json).sdk.version
           Set-GWVariable -Name NEW_VERSION -Value $newVersion
 
