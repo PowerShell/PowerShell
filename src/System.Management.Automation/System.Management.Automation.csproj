@@ -44,7 +44,6 @@
     <Compile Remove="engine\hostifaces\RunspaceInvoke.cs" />
     <Compile Remove="engine\remoting\commands\ResumeJob.cs" />
     <Compile Remove="engine\remoting\commands\SuspendJob.cs" />
-    <Compile Remove="logging\eventlog\EventLogLogProvider.cs" />
     <Compile Remove="namespaces\SafeTransactionHandle.cs" />
     <Compile Remove="namespaces\SafeRegistryHandle.cs" />
     <Compile Remove="namespaces\TransactedRegistry.cs" />
