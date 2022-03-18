@@ -123,19 +123,22 @@ namespace Microsoft.PowerShell.CustomNamedPipeConnection
             System.Text.StringBuilder pipeNameBuilder = new System.Text.StringBuilder();
             pipeNameBuilder.Append(@"PSHost.");
 
+            string DefaultAppDomainName;
             if (OperatingSystem.IsWindows())
             {
+                DefaultAppDomainName = "DefaultAppDomain";
                 pipeNameBuilder.Append(proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture));
             }
             else
             {
+                DefaultAppDomainName = "None";
                 pipeNameBuilder.Append(proc.StartTime.ToFileTime().ToString("X8").AsSpan(1, 8));
             }
 
             pipeNameBuilder.Append('.')
                 .Append(proc.Id.ToString(CultureInfo.InvariantCulture))
                 .Append('.')
-                .Append(@"DefaultAppDomain")
+                .Append(DefaultAppDomainName)
                 .Append('.')
                 .Append(proc.ProcessName);
 
