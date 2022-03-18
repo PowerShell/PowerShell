@@ -23,7 +23,7 @@ function Start-PwshProcess
     return $proc.Id
 }
 
-Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature' {
+Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
         Import-Module -Name Microsoft.PowerShell.NamedPipeConnection -ErrorAction Stop
