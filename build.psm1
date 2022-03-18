@@ -1051,7 +1051,7 @@ function Publish-CustomConnectionTestModule
         throw "Publish-CustomConnectionTestModule: Cannot find reference SMA at: ${smaPath}"
     }
     if (! (Test-Path -Path $refPath)) {
-        New-Item -Path $refPath -ItemType Directory -Force
+        $null = New-Item -Path $refPath -ItemType Directory -Force
     }
     Copy-Item -Path $smapath -Destination $refPath -Force
 
@@ -1248,7 +1248,7 @@ function Start-PSPester {
         Publish-PSTestTools @publishArgs | ForEach-Object {Write-Host $_}
 
         # Publish the Microsoft.PowerShell.NamedPipeConnection module for testing custom remote connections.
-        Publish-CustomConnectionTestModule
+        Publish-CustomConnectionTestModule | ForEach-Object { Write-Host $_ }
     }
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
