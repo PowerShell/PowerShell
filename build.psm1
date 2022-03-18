@@ -1706,9 +1706,18 @@ function Test-PSPesterResults
     }
     elseif ($PSCmdlet.ParameterSetName -eq 'PesterPassThruObject')
     {
-        if ($ResultObject.TotalCount -le 0 -and -not $CanHaveNoResult)
+        if (-not $CanHaveNoResult)
         {
-            throw 'NO TESTS RUN'
+            $noTotalCountMember = if ($null -eq (Get-Member -InputObject $ResultObject -Name 'TotalCount')) { $true } else { $false }
+            if ($noTotalCountMember)
+            {
+                Write-Verbose -Verbose -Message "`$ResultObject has no 'TotalCount' property"
+                Write-Verbose -Verbose "$($ResultObject | Out-String)"
+            }
+            if ($noTotalCountMember -or $ResultObject.TotalCount -le 0)
+            {
+                throw 'NO TESTS RUN'
+            }
         }
         elseif ($ResultObject.FailedCount -gt 0)
         {
