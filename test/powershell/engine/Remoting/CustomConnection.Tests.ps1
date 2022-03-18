@@ -3,24 +3,24 @@
 
 function Start-PwshProcess
 {
-    param (
-        [string] $FilePath = $null
-    )
-
-    if ($FilePath -eq $null -or $FilePath -eq "") {
-        $FilePath = Join-Path -Path $PSHOME -ChildPath 'pwsh'
-    }
-
-    if ($isWindows)
+    $job = Start-Job -ScriptBlock { Write-Output $PID; Start-Sleep -Seconds 300 }
+    $script:JobId = $job.Id
+    $procId = -1
+    $count = 0
+    while (($procId -eq -1) -and ($count++ -lt 10))
     {
-        $proc = Start-Process -FilePath $FilePath -WindowStyle Hidden -PassThru -ErrorAction Stop
-    }
-    else
-    {
-        $proc = Start-Process -FilePath $FilePath -PassThru -ErrorAction Stop
+        Start-Sleep -Seconds 1
+        $procId = Receive-Job -Job $job
+        if ($null -eq $procId) {
+            $procId = -1
+        }
     }
 
-    return $proc.Id
+    if ($procId -eq -1) {
+        throw "Start-PwshProcess: Unable to start job process and obtain process Id."
+    }
+
+    return $procId
 }
 
 Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdminOnWindows' {
@@ -28,6 +28,7 @@ Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdmi
     BeforeAll {
         Import-Module -Name Microsoft.PowerShell.NamedPipeConnection -ErrorAction Stop
 
+        $script:JobId = -1
         $script:PwshProcId = Start-PwshProcess
         $script:session = $null
     }
@@ -38,10 +39,7 @@ Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdmi
             Remove-PSSession -Session $script:session
         }
 
-        if ($script:PwshProcId -gt 0)
-        {
-            Stop-Process -Id $script:PwshProcId
-        }
+        Remove-Job -Id $script:JobId -Force -ErrorAction SilentlyContinue
     }
 
     It 'Verifies that New-NamedPipeSession succeeds in connectiong to Pwsh process' {
