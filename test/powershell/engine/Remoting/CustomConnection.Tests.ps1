@@ -11,7 +11,14 @@ function Start-PwshProcess
         $FilePath = Join-Path -Path $PSHOME -ChildPath 'pwsh'
     }
 
-    $proc = Start-Process -FilePath $FilePath -WindowStyle Hidden -PassThru -ErrorAction Stop
+    if ($isWindows)
+    {
+        $proc = Start-Process -FilePath $FilePath -WindowStyle Hidden -PassThru -ErrorAction Stop
+    }
+    else
+    {
+        $proc = Start-Process -FilePath $FilePath -PassThru -ErrorAction Stop
+    }
 
     return $proc.Id
 }
