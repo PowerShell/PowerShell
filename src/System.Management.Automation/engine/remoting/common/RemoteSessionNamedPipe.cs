@@ -1002,7 +1002,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// Base class for RemoteSessionNamedPipeClient and ContainerSessionNamedPipeClient.
     /// </summary>
-    public class NamedPipeClientBase : IDisposable
+    internal class NamedPipeClientBase : IDisposable
     {
         #region Members
 
@@ -1132,7 +1132,7 @@ namespace System.Management.Automation.Remoting
     /// creates the named pipe name and initiates connection to
     /// target named pipe server.
     /// </summary>
-    public sealed class RemoteSessionNamedPipeClient : NamedPipeClientBase
+    internal sealed class RemoteSessionNamedPipeClient : NamedPipeClientBase
     {
         #region Members
 

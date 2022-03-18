@@ -2,8 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.IO;
 using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
+using System.IO.Pipes;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
@@ -13,13 +15,225 @@ using System.Threading;
 
 namespace Microsoft.PowerShell.CustomNamedPipeConnection
 {
+    #region NamedPipeClient
+
+    /// <summary>
+    /// This class is based on PowerShell core source code, and handles creating
+    /// a client side named pipe object that can connect to a running PowerShell 
+    /// process by its process Id.
+    /// </summary>
+    internal sealed class NamedPipeClient
+    {
+        #region Members
+
+        private NamedPipeClientStream _clientPipeStream;
+        private volatile bool _connecting;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Accessor for the named pipe reader.
+        /// </summary>
+        public StreamReader TextReader { get; private set; }
+
+        /// <summary>
+        /// Accessor for the named pipe writer.
+        /// </summary>
+        public StreamWriter TextWriter { get; private set; }
+
+        /// <summary>
+        /// Name of the pipe.
+        /// </summary>
+        public string PipeName { get; private set; }
+
+        #endregion
+
+        #region IDisposable
+
+        /// <summary>
+        /// Dispose object.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
+            if (TextReader != null)
+            {
+                try { TextReader.Dispose(); }
+                catch (ObjectDisposedException) { }
+
+                TextReader = null;
+            }
+
+            if (TextWriter != null)
+            {
+                try { TextWriter.Dispose(); }
+                catch (ObjectDisposedException) { }
+
+                TextWriter = null;
+            }
+
+            if (_clientPipeStream != null)
+            {
+                try { _clientPipeStream.Dispose(); }
+                catch (ObjectDisposedException) { }
+            }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        private NamedPipeClient()
+        { }
+
+        /// <summary>
+        /// Constructor. Creates Named Pipe based on process Id.
+        /// </summary>
+        /// <param name="procId">Target process Id for pipe.</param>
+        public NamedPipeClient(int procId)
+        {
+            PipeName = CreateProcessPipeName(
+                System.Diagnostics.Process.GetProcessById(procId));
+        }
+
+        #endregion
+
+        #region Static methods
+
+        /// <summary>
+        /// Create a pipe name based on process and appdomain name information.
+        /// E.g., "PSHost.ProcessStartTime.ProcessId.DefaultAppDomain.ProcessName"
+        /// </summary>
+        /// <param name="proc">Process object.</param>
+        /// <returns>Pipe name.</returns>
+        private static string CreateProcessPipeName(System.Diagnostics.Process proc)
+        {
+            System.Text.StringBuilder pipeNameBuilder = new System.Text.StringBuilder();
+            pipeNameBuilder.Append(@"PSHost.");
+
+            if (OperatingSystem.IsWindows())
+            {
+                pipeNameBuilder.Append(proc.StartTime.ToFileTime().ToString(CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                pipeNameBuilder.Append(proc.StartTime.ToFileTime().ToString("X8").AsSpan(1, 8));
+            }
+
+            pipeNameBuilder.Append('.')
+                .Append(proc.Id.ToString(CultureInfo.InvariantCulture))
+                .Append('.')
+                .Append(@"DefaultAppDomain")
+                .Append('.')
+                .Append(proc.ProcessName);
+
+            return pipeNameBuilder.ToString();
+        }
+
+        #endregion
+
+        #region Public methods
+
+        /// <summary>
+        /// Connect to named pipe server.  This is a blocking call until a
+        /// connection occurs or the timeout time has elapsed.
+        /// </summary>
+        /// <param name="timeout">Connection attempt timeout in milliseconds.</param>
+        public void Connect(
+            int timeout)
+        {
+            // Uses Native API to connect to pipe and return NamedPipeClientStream object.
+            _clientPipeStream = DoConnect(timeout);
+
+            // Create reader/writer streams.
+            TextReader = new StreamReader(_clientPipeStream);
+            TextWriter = new StreamWriter(_clientPipeStream);
+            TextWriter.AutoFlush = true;
+        }
+
+        /// <summary>
+        /// Closes the named pipe.
+        /// </summary>
+        public void Close()
+        {
+            if (_clientPipeStream != null)
+            {
+                _clientPipeStream.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Abort connection attempt.
+        /// </summary>
+        public void AbortConnect()
+        {
+            _connecting = false;
+        }
+
+        #endregion
+
+        #region Private methods
+
+        /// <summary>
+        /// Begin connection attempt.
+        /// </summary>
+        private NamedPipeClientStream DoConnect(int timeout)
+        {
+            // Repeatedly attempt connection to pipe until timeout expires.
+            int startTime = Environment.TickCount;
+            int elapsedTime = 0;
+            _connecting = true;
+
+            NamedPipeClientStream namedPipeClientStream = new NamedPipeClientStream(
+                serverName: ".",
+                pipeName: PipeName,
+                direction: PipeDirection.InOut,
+                options: PipeOptions.Asynchronous);
+
+            namedPipeClientStream.ConnectAsync(timeout);
+
+            do
+            {
+                if (!namedPipeClientStream.IsConnected)
+                {
+                    Thread.Sleep(100);
+                    elapsedTime = unchecked(Environment.TickCount - startTime);
+                    continue;
+                }
+
+                _connecting = false;
+                return namedPipeClientStream;
+            } while (_connecting && (elapsedTime < timeout));
+
+            _connecting = false;
+
+            throw new TimeoutException(@"Timeout expired before connection could be made to named pipe.");
+        }
+
+        #endregion
+    }
+
+    #endregion
+
     #region NamedPipeInfo
 
     internal sealed class NamedPipeInfo : RunspaceConnectionInfo
     {
         #region Fields
 
-        private RemoteSessionNamedPipeClient _clientPipe;
+        private NamedPipeClient _clientPipe;
         private readonly string _computerName;
 
         #endregion
@@ -61,9 +275,7 @@ namespace Microsoft.PowerShell.CustomNamedPipeConnection
             ProcessId = processId;
             ConnectingTimeout = connectingTimeout;
             _computerName = $"LocalMachine:{ProcessId}";
-            _clientPipe = new RemoteSessionNamedPipeClient(
-                procId: ProcessId,
-                appDomainName: string.Empty);
+            _clientPipe = new NamedPipeClient(ProcessId);
         }
 
         #endregion
