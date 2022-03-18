@@ -111,7 +111,7 @@ function Remove-InstalledModules
 Describe "PowerShellGet - Module tests" -tags "Feature" {
 
     BeforeAll {
-        # Setting all It block to pending as the test fail due to https://github.com/dotnet/runtime/issues/65013
+        # Setting all It block to pending as the test fail due to https://github.com/PowerShell/PowerShell/issues/17019
         # These should be re-enabled when the issue is fixed
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:pending"] = $true
@@ -155,7 +155,7 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
 Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
 
     BeforeAll {
-        # Setting all It block to pending as the test fail due to https://github.com/dotnet/runtime/issues/65013
+        # Setting all It block to pending as the test fail due to https://github.com/PowerShell/PowerShell/issues/17019
         # These should be re-enabled when the issue is fixed
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:pending"] = $true
@@ -198,7 +198,7 @@ function Remove-InstalledScripts
 Describe "PowerShellGet - Script tests" -tags "Feature" {
 
     BeforeAll {
-        # Setting all It block to pending as the test fail due to https://github.com/dotnet/runtime/issues/65013
+        # Setting all It block to pending as the test fail due to https://github.com/PowerShell/PowerShell/issues/17019
         # These should be re-enabled when the issue is fixed
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:pending"] = $true
@@ -238,7 +238,7 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
 Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
 
     BeforeAll {
-        # Setting all It block to pending as the test fail due to https://github.com/dotnet/runtime/issues/65013
+        # Setting all It block to pending as the test fail due to https://github.com/PowerShell/PowerShell/issues/17019
         # These should be re-enabled when the issue is fixed
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:pending"] = $true
