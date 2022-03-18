@@ -20,7 +20,9 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
  BeforeAll{
     Register-PackageSource -Name Nugettest -provider NuGet -Location https://www.nuget.org/api/v2 -Force
-    Register-PackageSource -Name $InternalSource -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
+
+    ## Comment out this line because 'poshtestgallery.com' is down, tracked by https://github.com/PowerShell/PowerShell/issues/17019
+    ## Register-PackageSource -Name $InternalSource -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
     $SavedProgressPreference = $ProgressPreference
     $ProgressPreference = "SilentlyContinue"
  }
@@ -41,7 +43,8 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
         $fpp | Should -Contain "PowerShellGet"
     }
 
-     It "install-packageprovider, Expect succeed" {
+    ## Make this test pending because 'poshtestgallery.com' is down, tracked by https://github.com/PowerShell/PowerShell/issues/17019
+    It "install-packageprovider, Expect succeed" -Pending {
         $ipp = (Install-PackageProvider -Name gistprovider -Force -Source $InternalSource -Scope CurrentUser).name
         $ipp | Should -Contain "gistprovider"
     }
