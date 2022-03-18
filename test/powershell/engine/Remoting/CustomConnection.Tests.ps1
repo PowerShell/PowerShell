@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+$script:JobId = -1
+
 function Start-PwshProcess
 {
     $job = Start-Job -ScriptBlock { Write-Output $PID; Start-Sleep -Seconds 300 }
@@ -28,7 +30,6 @@ Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdmi
     BeforeAll {
         Import-Module -Name Microsoft.PowerShell.NamedPipeConnection -ErrorAction Stop
 
-        $script:JobId = -1
         $script:PwshProcId = Start-PwshProcess
         $script:session = $null
     }
@@ -53,7 +54,7 @@ Describe 'NamedPipe Custom Remote Connection Tests' -Tags 'Feature','RequireAdmi
         $script:session.ComputerName | Should -BeExactly "LocalMachine:$($script:PwshProcId)"
     }
 
-    It 'Verifies timeout error when trying to connect to pwsh process with current connection' {
+    It 'Verifies timeout error when trying to connect to pwsh process with current connection' -Skip:(!$IsWindows) {
         $brokenSession = New-NamedPipeSession -ProcessId $script:PwshProcId -ConnectingTimeout 2 -Name CustomNPConnection -ErrorAction Stop
 
         # Verify expected broken session
