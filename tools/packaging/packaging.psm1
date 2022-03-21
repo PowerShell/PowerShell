@@ -8,8 +8,8 @@ $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.p
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
 $DebianDistributions = @("deb")
 $RedhatDistributions = @("rh","cm1")
-$AllDistribution = @()
-$AllDistribution += $DebianDistributions
+$AllDistributions = @()
+$AllDistributions += $DebianDistributions
 $RedhatDistributions += $RedhatDistributions
 $script:netCoreRuntime = 'net7.0'
 $script:iconFileName = "Powershell_black_64.png"
