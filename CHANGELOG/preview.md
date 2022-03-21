@@ -1,5 +1,45 @@
 # Current preview release
 
+## [7.3.0-preview.3] - 2022-03-21
+
+### Engine Updates and Fixes
+
+- Fix the parsing code for .NET method generic arguments (#16937)
+- Allow the `PSGetMemberBinder` to get value of `ByRef` property (#16956)
+- Allow a collection that contains `Automation.Null` elements to be piped to pipeline (#16957)
+
+### General Cmdlet Updates and Fixes
+
+- Add the module `CompatPowerShellGet` to the allow-list of telemetry modules (#16935)
+- Fix `Enter-PSHostProcess` and `Get-PSHostProcessInfo` cmdlets by handling processes that have exited (#16946)
+- Improve Hashtable completion in multiple scenarios (#16498) (Thanks @MartinGC94!)
+
+### Code Cleanup
+
+- Fix a typo in `CommandHelpProvider.cs` (#16949) (Thanks @eltociear!)
+
+### Tests
+
+- Update a few tests to make them more stable in CI (#16944)
+- Roll back Windows images used in testing to Windows Server 2019 (#16958)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+<p>Update .NET SDK to 7.0.0-preview.2</p>
+</summary>
+
+<ul>
+<li>Update .NET to 7.0.0-preview.2 build (#16930)</li>
+<li>Update <code>AzureFileCopy</code> task and fix the syntax for specifying <code>pool</code> (#17013)</li>
+</ul>
+
+</details>
+
+[7.3.0-preview.3]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.2...v7.3.0-preview.3
+
 ## [7.3.0-preview.2] - 2022-02-24
 
 ### Engine Updates and Fixes
