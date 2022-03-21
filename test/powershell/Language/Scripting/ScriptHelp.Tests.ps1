@@ -551,7 +551,8 @@ Describe 'get-help other tests' -Tags "CI" {
 
         $x = Get-Help helpFunc11 -det
         $x.Parameters.parameter | ForEach-Object {
-        It '$_.description' { $_.description[0].text | Should -Match "^$($_.Name)\s+help" }
+            $dText = $_.description[0].text
+            It ('$_.description ({0})' -f $title) { $dText | Should -Match "^$($_.Name)\s+help" }
         }
     }
 
