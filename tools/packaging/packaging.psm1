@@ -11,6 +11,7 @@ $RedhatDistributions = @("rh","cm1")
 $AllDistributions = @()
 $AllDistributions += $DebianDistributions
 $AllDistributions += $RedhatDistributions
+$AllDistributions += 'macOs'
 $script:netCoreRuntime = 'net7.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
