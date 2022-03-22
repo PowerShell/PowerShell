@@ -1406,8 +1406,10 @@ function Get-PackageDependencies
                 "icu"
                 "openssl-libs"
             )
+        } elseif ($Distribution -eq 'macOS') {
+            # do nothing
         } else {
-            throw "Unknown distributino $Distribution"
+            throw "Unknown distribution $Distribution"
         }
 
         return $Dependencies
