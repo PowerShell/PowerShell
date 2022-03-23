@@ -686,7 +686,7 @@ namespace Microsoft.WSMan.Management
     /// -SelectorSet {Name=Spooler}
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096937")]
-    [OutputType(typeof(XmlElement))]
+    [OutputType(typeof(XmlElement), typeof(string))]
     public class SetWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
         #region Parameters
