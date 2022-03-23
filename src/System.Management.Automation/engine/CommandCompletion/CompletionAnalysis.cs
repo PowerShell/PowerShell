@@ -811,7 +811,10 @@ namespace System.Management.Automation
                             }
                         }
 
-                        if (result is null && completionContext.TokenBeforeCursor is not null)
+                        // Handles following scenario where user is tab completing a member on an empty line:
+                        // "Hello".
+                        // <Tab>
+                        if ((result is null || result.Count == 0) && tokenBeforeCursor is not null)
                         {
                             switch (completionContext.TokenBeforeCursor.Kind)
                             {
@@ -894,9 +897,10 @@ namespace System.Management.Automation
                                 case TokenKind.Dot:
                                 case TokenKind.ColonColon:
                                 case TokenKind.QuestionDot:
+                                    // Handles following scenario with whitespace after member access token: "Hello". <Tab>
                                     replacementIndex = cursor.Offset;
                                     replacementLength = 0;
-                                    result = CompletionCompleters.CompleteMember(completionContext, @static: completionContext.TokenBeforeCursor.Kind == TokenKind.ColonColon, ref replacementLength);
+                                    result = CompletionCompleters.CompleteMember(completionContext, @static: tokenBeforeCursor.Kind == TokenKind.ColonColon, ref replacementLength);
                                     if (result is not null && result.Count > 0)
                                     {
                                         return result;
@@ -2041,6 +2045,9 @@ namespace System.Management.Automation
             if (isMemberCompletion)
             {
                 var currentExpression = (MemberExpressionAst)lastAst.Parent;
+                // Handles following scenario with an incomplete member access token at the end of the statement:
+                // [System.IO.FileInfo]::new<Tab>().Directory.BaseName.Length.
+                // Traverses up the expressions until it finds one under at the cursor
                 while (currentExpression.Extent.EndOffset >= completionContext.CursorPosition.Offset
                     && currentExpression.Expression is MemberExpressionAst memberExpression
                     && memberExpression.Member.Extent.EndOffset >= completionContext.CursorPosition.Offset)

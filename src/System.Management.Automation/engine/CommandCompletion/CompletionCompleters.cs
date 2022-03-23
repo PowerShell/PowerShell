@@ -5657,6 +5657,9 @@ namespace System.Management.Automation
                 }
 
                 targetExpr = LastAstAsMemberExpression.Expression;
+                // Handles scenario where the cursor is after the member access token but before the text
+                // like: "".<Tab>Le
+                // which completes the member using the partial text after the cursor.
                 if (LastAstAsMemberExpression.Member is StringConstantExpressionAst stringExpression && stringExpression.Extent.StartOffset <= context.CursorPosition.Offset)
                 {
                     memberName = $"{stringExpression.Value}*";
@@ -5729,6 +5732,15 @@ namespace System.Management.Automation
                         memberName = $"{stringExpression.Value}*";
                     }
                 }
+                // If 'targetExpr' has already been set, we should skip this step. This is for some member completion
+                // cases in ISE. In ISE, we may add a new statement in the middle of existing statements as follows:
+                //     $xml = New-Object Xml
+                //     $xml.
+                //     $xml.Save("C:\data.xml")
+                // In this example, we add $xml. between two existing statements, and the 'lastAst' in this case is
+                // a MemberExpressionAst '$xml.$xml', whose parent is still a MemberExpressionAst '$xml.$xml.Save'.
+                // But here we DO NOT want to re-assign 'targetExpr' to be '$xml.$xml'. 'targetExpr' in this case
+                // should be '$xml'.
                 else if (targetExpr is null)
                 {
                     targetExpr = parentAsMemberExpression.Expression;
