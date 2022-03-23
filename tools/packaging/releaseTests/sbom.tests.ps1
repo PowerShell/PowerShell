@@ -16,16 +16,20 @@ Describe "Verify SBOMs" {
                 Extension = $_.Extension
             }
         }
-        Get-ChildItem $env:PACKAGE_FOLDER -Filter *.rpm | ForEach-Object {
-            Write-Verbose "Found $($_.Name)..." -Verbose
-            $testCases += @{
-                FilePath = $_.FullName
-                Name = $_.Name
-                Extension = $_.Extension
+
+        if ($IsLinux) {
+            Get-ChildItem $env:PACKAGE_FOLDER -Filter *.rpm | ForEach-Object {
+                Write-Verbose "Found $($_.Name)..." -Verbose
+                $testCases += @{
+                    FilePath  = $_.FullName
+                    Name      = $_.Name
+                    Extension = $_.Extension
+                }
             }
         }
 
         foreach($case in $testCases) {
+            $skip = $null
             $name = $case.Name
             Write-Verbose "Testing $name..." -Verbose
             $extractedPath = Join-Path Testdrive:\ -ChildPath ([System.io.path]::GetRandomFileName())
@@ -39,8 +43,12 @@ Describe "Verify SBOMs" {
                 '.rpm' {
                     Push-Location $resolvedPath
                     try {
-                        rpm2cpio $case.FilePath | cpio -i --make-directories
-                        $manifestPath = Get-ChildItem -Path manifest.spdx.json -Recurse | Select-Object -First 1 -ExpandProperty FullName
+                        if (Get-Command -Name rpm2cpio -ErrorAction SilentlyContinue) {
+                            rpm2cpio $case.FilePath | cpio -i --make-directories
+                            $manifestPath = Get-ChildItem -Path manifest.spdx.json -Recurse | Select-Object -First 1 -ExpandProperty FullName
+                        } else {
+                            $skip = "rpm2cpio not found"
+                        }
                     } finally {
                         Pop-Location
                     }
@@ -51,6 +59,9 @@ Describe "Verify SBOMs" {
             }
 
             It "$name has a BOM" {
+                if ($skip) {
+                    Set-ItResult -Pending -Because $skip
+                }
                 $manifestPath | Should -Exist
             }
 
