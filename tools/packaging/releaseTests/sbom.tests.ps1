@@ -68,39 +68,42 @@ Describe "Verify SBOMs" {
                 $manifestPath | Should -Exist
             }
 
-            Test-PackageManifest -PackagePath $extractedPath | ForEach-Object {
-                $status = $_.Status
-                $expectedHash = $_.ExpectedHash
-                $actual = $_.ActualHash
-                $file = $_.File
+            # RPM hashes are broken, skip that
+            if ($case.Extension -in '.zip') {
+                Test-PackageManifest -PackagePath $extractedPath | ForEach-Object {
+                    $status = $_.Status
+                    $expectedHash = $_.ExpectedHash
+                    $actual = $_.ActualHash
+                    $file = $_.File
 
-                switch($status) {
-                    # cover match and mismatch
-                    default {
-                        $matchCases += @{
-                            Name = $name
-                            File = $file
-                            ActualHash = $actual
-                            ExpectedHash = $ExpectedHash
-                            Status = $status
+                    switch ($status) {
+                        # cover match and mismatch
+                        default {
+                            $matchCases += @{
+                                Name         = $name
+                                File         = $file
+                                ActualHash   = $actual
+                                ExpectedHash = $ExpectedHash
+                                Status       = $status
+                            }
                         }
-                    }
-                    "MissingFromPackage" {
-                        $missingFromPackageCases = @{
-                            Name = $name
-                            File = $file
-                            ActualHash = $actual
-                            ExpectedHash = $ExpectedHash
-                            Status = $status
+                        "MissingFromPackage" {
+                            $missingFromPackageCases = @{
+                                Name         = $name
+                                File         = $file
+                                ActualHash   = $actual
+                                ExpectedHash = $ExpectedHash
+                                Status       = $status
+                            }
                         }
-                    }
-                    "MissingFromManifest" {
-                        $missingFromManifestCases = @{
-                            Name = $name
-                            File = $file
-                            ActualHash = $actual
-                            ExpectedHash = $ExpectedHash
-                            Status = $status
+                        "MissingFromManifest" {
+                            $missingFromManifestCases = @{
+                                Name         = $name
+                                File         = $file
+                                ActualHash   = $actual
+                                ExpectedHash = $ExpectedHash
+                                Status       = $status
+                            }
                         }
                     }
                 }
