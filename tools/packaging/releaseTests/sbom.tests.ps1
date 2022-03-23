@@ -8,12 +8,14 @@ Describe "Verify SBOMs" {
         $missingFromPackageCases = @()
         $missingFromManifestCases = @()
         Write-Verbose "${env:PACKAGE_FOLDER}" -Verbose
-        Get-ChildItem $env:PACKAGE_FOLDER -Filter *.zip | ForEach-Object {
-            Write-Verbose "Found $($_.Name)..." -Verbose
-            $testCases += @{
-                FilePath = $_.FullName
-                Name = $_.Name
-                Extension = $_.Extension
+        Get-ChildItem $env:PACKAGE_FOLDER -Filter *.zip |
+            Where-Object { $_.Name -notlike 'powershell-symbols*' } |
+            ForEach-Object {
+                Write-Verbose "Found $($_.Name)..." -Verbose
+                $testCases += @{
+                    FilePath = $_.FullName
+                    Name = $_.Name
+                    Extension = $_.Extension
             }
         }
 
