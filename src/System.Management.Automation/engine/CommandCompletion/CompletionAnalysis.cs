@@ -2220,9 +2220,9 @@ namespace System.Management.Automation
                 var existingArguments = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 foreach (var namedArgument in attAst.NamedArguments)
                 {
-                    if (!(cursorPosition >= namedArgument.Extent.StartOffset && cursorPosition <= namedArgument.Extent.EndOffset))
+                    if (cursorPosition < namedArgument.Extent.StartOffset || cursorPosition > namedArgument.Extent.EndOffset)
                     {
-                        _ = existingArguments.Add(namedArgument.ArgumentName);
+                        existingArguments.Add(namedArgument.ArgumentName); 
                     }
                 }
 
