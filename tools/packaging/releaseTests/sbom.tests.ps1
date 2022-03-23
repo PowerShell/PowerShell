@@ -46,8 +46,9 @@ Describe "Verify SBOMs" {
                     Push-Location $resolvedPath
                     try {
                         if (Get-Command -Name rpm2cpio -ErrorAction SilentlyContinue) {
-                            rpm2cpio $case.FilePath | cpio -i --make-directories
+                            rpm2cpio $case.FilePath | cpio -i --make-directories 2>cpio.log
                             $manifestPath = Get-ChildItem -Path manifest.spdx.json -Recurse | Select-Object -First 1 -ExpandProperty FullName
+                            $extractedPath = Split-Path -Path $manifestPath
                         } else {
                             $skip = "rpm2cpio not found"
                         }
