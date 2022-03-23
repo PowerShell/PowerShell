@@ -5705,7 +5705,7 @@ namespace System.Management.Automation
             {
                 if (lastAst is ErrorExpressionAst)
                 {
-                    // Handles scenarios like $PSVersionTable.PSVersi^.Major.
+                    // Handles scenarios like $PSVersionTable.PSVersi<tab>.Major.
                     // where the cursor is moved back to a previous member expression while
                     // there's an incomplete member expression at the end
                     targetExpr = parentAsMemberExpression;
@@ -5750,7 +5750,7 @@ namespace System.Management.Automation
                 // Handles switches like:
                 // switch ($x)
                 // {
-                //     'RandomString'.^
+                //     'RandomString'.<tab>
                 //     { }
                 // }
                 Ast astBeforeMemberAccessToken = null;
