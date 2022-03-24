@@ -5733,7 +5733,7 @@ namespace System.Management.Automation
                     }
                 }
                 // If 'targetExpr' has already been set, we should skip this step. This is for some member completion
-                // cases in ISE. In ISE, we may add a new statement in the middle of existing statements as follows:
+                // cases in VSCode, where we may add a new statement in the middle of existing statements as follows:
                 //     $xml = New-Object Xml
                 //     $xml.
                 //     $xml.Save("C:\data.xml")
