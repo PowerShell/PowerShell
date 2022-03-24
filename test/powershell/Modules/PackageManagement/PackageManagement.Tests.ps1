@@ -13,7 +13,7 @@
 #
 # ------------------ PackageManagement Test  -----------------------------------
 
-$gallery = " https://www.powershellgallery.com/api/v2"
+$gallery = "https://www.powershellgallery.com/api/v2"
 $source = 'OneGetTestSource'
 
 Describe "PackageManagement Acceptance Test" -Tags "Feature" {
