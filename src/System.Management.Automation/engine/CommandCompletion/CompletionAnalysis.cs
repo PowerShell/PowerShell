@@ -2229,7 +2229,7 @@ namespace System.Management.Automation
                 {
                     if (cursorPosition < namedArgument.Extent.StartOffset || cursorPosition > namedArgument.Extent.EndOffset)
                     {
-                        existingArguments.Add(namedArgument.ArgumentName); 
+                        existingArguments.Add(namedArgument.ArgumentName);
                     }
                 }
 
