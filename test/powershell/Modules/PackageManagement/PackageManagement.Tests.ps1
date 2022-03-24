@@ -21,7 +21,13 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
  BeforeAll{
     Register-PackageSource -Name Nugettest -provider NuGet -Location https://www.nuget.org/api/v2 -Force
 
-    Register-PackageSource -Name $source -Location $gallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
+    $packageSource = Get-PackageSource -Location $gallery -ErrorAction SilentlyContinue
+    if ($packageSource) {
+        $source = $packageSource.Name
+    } else {
+        Register-PackageSource -Name $source -Location $gallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
+    }
+
     $SavedProgressPreference = $ProgressPreference
     $ProgressPreference = "SilentlyContinue"
  }
