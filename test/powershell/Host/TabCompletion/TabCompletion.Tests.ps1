@@ -74,6 +74,91 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'pscustomobject'
     }
 
+    It '<Intent>' -TestCases @(
+        @{
+            Intent = 'Complete member with space between dot and cursor'
+            Expected = 'value__'
+            TestString = '[System.Management.Automation.ActionPreference]::Break.  ^'
+        }
+        @{
+            Intent = 'Complete member when cursor is in-between existing members and spaces'
+            Expected = 'value__'
+            TestString = '[System.Management.Automation.ActionPreference]::Break. ^ ToString()'
+        }
+        @{
+            Intent = 'Complete static member with space between colons and cursor'
+            Expected = 'Break'
+            TestString = '[System.Management.Automation.ActionPreference]::  ^'
+        }
+        @{
+            Intent = 'Complete static member with new line between colons and cursor'
+            Expected = 'Break'
+            TestString = @'
+[System.Management.Automation.ActionPreference]::
+^
+'@
+        }
+        @{
+            Intent = 'Complete static member with partial input and incomplete input at end of line'
+            Expected = 'Break'
+            TestString = '[System.Management.Automation.ActionPreference]::  Brea^.   value__.'
+        }
+        @{
+            Intent = 'Complete static member with partial input and valid input at end of line'
+            Expected = 'Break'
+            TestString = '[System.Management.Automation.ActionPreference]::  Brea^.   value__'
+        }
+        @{
+            Intent = 'Complete member with new line between colons and cursor'
+            Expected = 'value__'
+            TestString = '[System.Management.Automation.ActionPreference]::Break. ^ ToString()'
+        }
+        @{
+            Intent = 'Complete type with incomplete expression input at end of line'
+            Expected = 'System.Management.Automation.ActionPreference'
+            TestString = '[System.Management.Automation.ActionPreference^]::'
+        }
+        @{
+            Intent = 'Complete member inside switch expression'
+            Expected = 'Length'
+            TestString = @'
+switch ($x)
+{
+    'RandomString'.^
+    {}
+}
+'@
+        }
+        @{
+            Intent = 'Complete member in commandast'
+            Expected = 'Length'
+            TestString = 'ls "".^'
+        }
+        ){
+            param($Expected, $TestString)
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $Expected
+        }
+    
+    It 'Should Complete and replace existing member with space in front of cursor and cursor in front of word' {
+        $TestString = '[System.Management.Automation.ActionPreference]:: ^Break'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.ReplacementIndex | Should -BeExactly $CursorIndex
+        $res.ReplacementLength | Should -Be 5
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Break'
+    }
+
+    It 'Complete and replace existing member with colons in front of cursor and cursor in front of word' {
+        $TestString = '[System.Management.Automation.ActionPreference]::^Break'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.ReplacementIndex | Should -BeExactly $CursorIndex
+        $res.ReplacementLength | Should -Be 5
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Break'
+    }
+
     It 'Should complete namespaces' {
         $res = TabExpansion2 -inputScript 'using namespace Sys' -cursorColumn 'using namespace Sys'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'System'
@@ -1161,7 +1246,7 @@ Describe "TabCompletion" -Tags CI {
         It "Test Attribute member completion multiple members" {
             $inputStr = "function bar { [parameter(Position,]param() }"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn ($inputStr.IndexOf(',') + 1)
-            $res.CompletionMatches | Should -HaveCount 10
+            $res.CompletionMatches | Should -HaveCount 9
             $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Mandatory"
             $entry.CompletionText | Should -BeExactly "Mandatory"
         }
@@ -1172,6 +1257,38 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches | Should -HaveCount 1
             $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Get-ChildItem"
             $entry.CompletionText | Should -BeExactly "Get-ChildItem"
+        }
+
+        It '<Intent>' -TestCases @(
+            @{
+                Intent = 'Complete attribute members on empty line'
+                Expected = 'Position'
+                TestString = @'
+function bar { [parameter(
+
+
+^
+
+        )]param() }
+'@
+            }
+            @{
+                Intent = 'Complete attribute members on empty line with preceding member'
+                Expected = 'Position'
+                TestString = @'
+function bar { [parameter(
+Mandatory,
+
+^
+
+        )]param() }
+'@
+            }
+        ){
+            param($Expected, $TestString)
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $Expected
         }
 
         It "Test completion with line continuation" {
