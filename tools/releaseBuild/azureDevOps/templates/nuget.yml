@@ -222,7 +222,7 @@ jobs:
       Write-Verbose -Verbose -Message $fileContent
 
       Copy-Item -Path "$packagePath\SHA512SUMS" -Destination '$(System.ArtifactsDirectory)\signed\' -verbose
-    displayName: Generate checksum file
+    displayName: Generate checksum file for packages
 
   - pwsh: |
       $packagePath = (Join-Path $(System.ArtifactsDirectory) checksum_gbltool)
