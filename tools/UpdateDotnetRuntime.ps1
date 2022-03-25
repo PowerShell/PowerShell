@@ -128,9 +128,15 @@ function Update-PackageVersion {
             foreach ($p in $pkgs.Values) {
                 # some packages are directly updated on nuget.org so need to check that too.
                 if ($p.Version -like "$versionPattern*" -or $p.Source -eq 'nuget.org') {
-                    if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
-                        $v.NewVersion = $p.Version
-                        break
+                    try {
+                        if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
+                            $v.NewVersion = $p.Version
+                            break
+                        }
+                    } catch {
+                        if ($_.FullyQualifiedErrorId -ne 'InvalidCastParseTargetInvocation') {
+                            throw $_
+                        }
                     }
                 }
             }
