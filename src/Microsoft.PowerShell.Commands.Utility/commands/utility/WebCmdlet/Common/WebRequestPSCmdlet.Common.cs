@@ -63,12 +63,12 @@ namespace Microsoft.PowerShell.Commands
         Default = 0,
 
         /// <summary>
-        /// Specifies the TLS 1.0 is obsolete. Using this value now defaults to TLS 1.2
+        /// Specifies the TLS 1.0 is obsolete. Using this value now defaults to TLS 1.2.
         /// </summary>
         Tls = SslProtocols.Tls12,
 
         /// <summary>
-        /// Specifies the TLS 1.1 is obsolete. Using this value now defaults to TLS 1.2
+        /// Specifies the TLS 1.1 is obsolete. Using this value now defaults to TLS 1.2.
         /// </summary>
         Tls11 = SslProtocols.Tls12,
 
