@@ -92,6 +92,7 @@ function Initialize
     if($repo)
     {
         $script:RepositoryName = $repo.Name
+        Set-PackageSource -Name $repo.Name -Trusted
     }
     else
     {

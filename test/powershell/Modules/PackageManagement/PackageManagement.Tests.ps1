@@ -50,7 +50,7 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
     }
 
     It "install-packageprovider, Expect succeed" {
-        $ipp = (Install-PackageProvider -Name gistprovider -Force -Source $source -Scope CurrentUser).name
+        $ipp = (Install-PackageProvider -Name GistProvider -Force -Source $source -Scope CurrentUser).name
         $ipp | Should -Contain "gistprovider"
     }
 
