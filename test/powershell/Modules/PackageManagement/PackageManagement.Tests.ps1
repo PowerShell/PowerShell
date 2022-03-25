@@ -24,6 +24,7 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
     $packageSource = Get-PackageSource -Location $gallery -ErrorAction SilentlyContinue
     if ($packageSource) {
         $source = $packageSource.Name
+        Set-PackageSource -Name $source -Trusted
     } else {
         Register-PackageSource -Name $source -Location $gallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
     }
