@@ -222,8 +222,35 @@ jobs:
       Write-Verbose -Verbose -Message $fileContent
 
       Copy-Item -Path "$packagePath\SHA512SUMS" -Destination '$(System.ArtifactsDirectory)\signed\' -verbose
+    displayName: Generate checksum file for packages
+
+  - pwsh: |
+      $packagePath = (Join-Path $(System.ArtifactsDirectory) checksum_gbltool)
+      New-Item $packagePath -ItemType Directory -Force > $null
+      $srcPaths = @("$(System.ArtifactsDirectory)\signed\globaltool")
+      $packages  = Get-ChildItem -Path $srcPaths -Include *.nupkg -Recurse
+      $packages | ForEach-Object { Copy-Item $_.FullName -Destination $packagePath -Verbose }
+
+      $packagePathList = Get-ChildItem $packagePath -Recurse | Select-Object -ExpandProperty FullName | Out-String
+      Write-Verbose -Verbose $packagePathList
+
+      $checksums = Get-ChildItem -Path $packagePath |
+          ForEach-Object {
+              Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
+              $packageName = $_.Name
+              $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA512).Hash.ToLower()
+
+              # the '*' before the packagename signifies it is a binary
+              "$hash *$packageName"
+          }
+
+      $checksums | Out-File -FilePath "$packagePath\SHA512SUMS" -Force
+
+      $fileContent = Get-Content -Path "$packagePath\SHA512SUMS" -Raw | Out-String
+      Write-Verbose -Verbose -Message $fileContent
+
       Copy-Item -Path "$packagePath\SHA512SUMS" -Destination '$(System.ArtifactsDirectory)\signed\globaltool\' -verbose
-    displayName: Generate checksum file
+    displayName: Generate checksum for global tools
 
   - template: upload-final-results.yml
     parameters:
