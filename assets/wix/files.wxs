@@ -1638,6 +1638,9 @@
         <Component Id="cmpA75DEF5617C54DA1937CB37D5824BF79">
           <File Id="fil3EE6096BD3C8407685E881F3CE6BF5C1" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Security.Cryptography.OpenSsl.dll" />
         </Component>
+        <Component Id="cmpE5993DB9118640FD8C180A2D61C89C01">
+          <File Id="fil7381E5F4FBC64B60A8B7D7841B89F4C6" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Security.Cryptography.dll" />
+        </Component>
       </Directory>
       <Directory Id="dirC72EEAF9434D4AD066E0F4D20D8E816C" Name="en-US">
         <Component Id="cmpDC2EF4541FA5A2E63F36A8CD6C5FA51B">
@@ -1832,9 +1835,29 @@
           <Component Id="cmpC0582B8F392548248FA3DE3080069F68">
             <File Id="fil1A3F0A1371A643AFAA4F896D9D5CBF70" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\Microsoft.PowerShell.PSReadLine2.dll" />
           </Component>
-          <Component Id="cmp6EEA835AD77246C8A01C0F3B8BB0568E">
-            <File Id="fil0A748F74DB0245539BF6ECEBFDB3C884" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\PSReadLine.cat" />
+          <Component Id="cmp3F48AB8F48674965B721E9D5DE5AC19F">
+            <File Id="fil27BA768E05A441E293BDC9F6481C272F" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\Microsoft.PowerShell.Pager.dll" />
           </Component>
+          <Directory Name="net6plus" Id="dir9F34466EDEF54D2BA03545D2BB152347">
+            <Component Id="cmp9207ABECCDB7479392AFC35A6133994E">
+              <File Id="fil07E2CE764A83431CAFEF1132FEDBE039" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\net6plus\Microsoft.PowerShell.PSReadLine.Polyfiller.dll" />
+            </Component>
+          </Directory>
+          <Directory Name="net461" Id="dir0BE8A79265FB414097A6FEEC3FD1A9DA">
+            <Component Id="cmpFDAD012AF60E4E3A9281239CB2D1814A">
+              <File Id="fil73F9E4ADB9644EA298A91C82BF1AE025" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\net461\Microsoft.PowerShell.PSReadLine.Polyfiller.dll" />
+            </Component>
+          </Directory>
+          <Directory Name="_manifest" Id="dirAB7C5C1B9B094AFDB92B0579CB436378">
+            <Directory Name="spdx_2.2" Id="dirC34C47323EC444F9ABBAD517851610A8">
+              <Component Id="cmp6BFA61E2CB7C40E2A92575EBFC772B96">
+                <File Id="fil7BAA3CF9CFB04BCF910EA3F975E30C36" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\_manifest\spdx_2.2\manifest.spdx.json" />
+              </Component>
+              <Component Id="cmp0F6EADB772B844B48C250D8F0469A19B">
+                <File Id="fil3555F9DC200B4AA5BC55BB5B411833DC" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\_manifest\spdx_2.2\manifest.spdx.json.sha256" />
+              </Component>
+            </Directory>
+          </Directory>
         </Directory>
         <Directory Name="PowerShellGet" Id="dir49159A33EB06456C9C2C971815311A6A">
           <Directory Name="en-US" Id="dirF5EBE6CBD04149359D3582351CB4438D">
@@ -3154,8 +3177,11 @@
       <Component Id="cmp22840874A8C84AA796496634FBEBF09C">
         <File Id="fil2067B616D1FA4B30932A0240ABE06089" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Web.Services.Description.dll" />
       </Component>
-      <Component Id="cmpC100F34A32A0436A973FE7F9A02F5A78">
-        <File Id="filC8B8F95747F64A97B511342C7F154B54" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.121.56705.dll" />
+      <Component Id="cmpE0DEAA289B2D4594A0C4791B2808C97C">
+        <File Id="fil530EAD567BDB402FA6F02AFAA696D721" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Security.Cryptography.dll" />
+      </Component>
+      <Component Id="cmp05AA3332D604464298B922F34672061F">
+        <File Id="fil45EB1A6088AA4475B1B9B0413BC0FE02" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.15202.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -3742,7 +3768,11 @@
       <ComponentRef Id="cmp6DDBFA3A9FED42B3AFDCDD4BE0416533" />
       <ComponentRef Id="cmp84599819161549BC82898469571ADE7B" />
       <ComponentRef Id="cmpC0582B8F392548248FA3DE3080069F68" />
-      <ComponentRef Id="cmp6EEA835AD77246C8A01C0F3B8BB0568E" />
+      <ComponentRef Id="cmp9207ABECCDB7479392AFC35A6133994E" />
+      <ComponentRef Id="cmp6BFA61E2CB7C40E2A92575EBFC772B96" />
+      <ComponentRef Id="cmp0F6EADB772B844B48C250D8F0469A19B" />
+      <ComponentRef Id="cmpFDAD012AF60E4E3A9281239CB2D1814A" />
+      <ComponentRef Id="cmp3F48AB8F48674965B721E9D5DE5AC19F" />
       <ComponentRef Id="cmpB9EF9DAB25064D92A757E7D390CC8922" />
       <ComponentRef Id="cmp092D1859608844F78D3211718ED31171" />
       <ComponentRef Id="cmpDCFC0B0822274CA2A1C954DF2E407911" />
@@ -4172,8 +4202,10 @@
       <ComponentRef Id="cmp0C4751F9D5C14419A45F234152D21DA9" />
       <ComponentRef Id="cmpF96C036EAE3B436DB096888697193FAF" />
       <ComponentRef Id="cmp789F545EA2CB4AC5A2688CF730A5F6B4" />
-      <ComponentRef Id="cmpC100F34A32A0436A973FE7F9A02F5A78" />
       <ComponentRef Id="cmpB7C69B48760E47CD89D0641D4A9FEFE9" />
+      <ComponentRef Id="cmpE5993DB9118640FD8C180A2D61C89C01" />
+      <ComponentRef Id="cmpE0DEAA289B2D4594A0C4791B2808C97C" />
+      <ComponentRef Id="cmp05AA3332D604464298B922F34672061F" />
     </ComponentGroup>
   </Fragment>
 </Wix>

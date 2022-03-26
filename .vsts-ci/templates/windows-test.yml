@@ -1,5 +1,5 @@
 parameters:
-  pool: 'windows-latest'
+  pool: 'windows-2019'
   parentJobs: []
   purpose: ''
   tagSet: 'CI'

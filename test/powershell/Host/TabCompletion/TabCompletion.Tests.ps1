@@ -74,6 +74,91 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'pscustomobject'
     }
 
+    It '<Intent>' -TestCases @(
+        @{
+            Intent = 'Complete member with space between dot and cursor'
+            Expected = 'value__'
+            TestString = '[System.Management.Automation.ActionPreference]::Break.  ^'
+        }
+        @{
+            Intent = 'Complete member when cursor is in-between existing members and spaces'
+            Expected = 'value__'
+            TestString = '[System.Management.Automation.ActionPreference]::Break. ^ ToString()'
+        }
+        @{
+            Intent = 'Complete static member with space between colons and cursor'
+            Expected = 'Break'
+            TestString = '[System.Management.Automation.ActionPreference]::  ^'
+        }
+        @{
+            Intent = 'Complete static member with new line between colons and cursor'
+            Expected = 'Break'
+            TestString = @'
+[System.Management.Automation.ActionPreference]::
+^
+'@
+        }
+        @{
+            Intent = 'Complete static member with partial input and incomplete input at end of line'
+            Expected = 'Break'
+            TestString = '[System.Management.Automation.ActionPreference]::  Brea^.   value__.'
+        }
+        @{
+            Intent = 'Complete static member with partial input and valid input at end of line'
+            Expected = 'Break'
+            TestString = '[System.Management.Automation.ActionPreference]::  Brea^.   value__'
+        }
+        @{
+            Intent = 'Complete member with new line between colons and cursor'
+            Expected = 'value__'
+            TestString = '[System.Management.Automation.ActionPreference]::Break. ^ ToString()'
+        }
+        @{
+            Intent = 'Complete type with incomplete expression input at end of line'
+            Expected = 'System.Management.Automation.ActionPreference'
+            TestString = '[System.Management.Automation.ActionPreference^]::'
+        }
+        @{
+            Intent = 'Complete member inside switch expression'
+            Expected = 'Length'
+            TestString = @'
+switch ($x)
+{
+    'RandomString'.^
+    {}
+}
+'@
+        }
+        @{
+            Intent = 'Complete member in commandast'
+            Expected = 'Length'
+            TestString = 'ls "".^'
+        }
+        ){
+            param($Expected, $TestString)
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $Expected
+        }
+    
+    It 'Should Complete and replace existing member with space in front of cursor and cursor in front of word' {
+        $TestString = '[System.Management.Automation.ActionPreference]:: ^Break'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.ReplacementIndex | Should -BeExactly $CursorIndex
+        $res.ReplacementLength | Should -Be 5
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Break'
+    }
+
+    It 'Complete and replace existing member with colons in front of cursor and cursor in front of word' {
+        $TestString = '[System.Management.Automation.ActionPreference]::^Break'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.ReplacementIndex | Should -BeExactly $CursorIndex
+        $res.ReplacementLength | Should -Be 5
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Break'
+    }
+
     It 'Should complete namespaces' {
         $res = TabExpansion2 -inputScript 'using namespace Sys' -cursorColumn 'using namespace Sys'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'System'
@@ -143,6 +228,50 @@ Describe "TabCompletion" -Tags CI {
         $res = TabExpansion2 -inputScript 'New-Object -TypeName X -Property @{ ' -cursorColumn 'New-Object -TypeName X -Property @{ '.Length
         $res.CompletionMatches | Should -HaveCount 3
         $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
+    }
+    It 'Complete hashtable key without duplicate keys' {
+        class X {
+            $A
+            $B
+            $C
+        }
+        $TestString = '[x]@{A="";^}'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches | Should -HaveCount 2
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'B C'
+    }
+    It 'Complete hashtable key on empty line after key/value pair' {
+        class X {
+            $A
+            $B
+            $C
+        }
+        $TestString = @'
+[x]@{
+    B=""
+    ^
+}
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches | Should -HaveCount 2
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A C'
+    }
+
+    It 'Complete hashtable keys for Get-WinEvent FilterHashtable' -Skip:(!$IsWindows) {
+        $TestString = 'Get-WinEvent -FilterHashtable @{^'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches | Should -HaveCount 11
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'LogName ProviderName Path Keywords ID Level StartTime EndTime UserID Data SuppressHashFilter'
+    }
+
+    It 'Complete hashtable keys for a hashtable used for splatting' {
+        $TestString = '$GetChildItemParams=@{^};Get-ChildItem @GetChildItemParams -Force -Recurse'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Path'
     }
 
     It 'Should complete "Get-Process -Id " with Id and name in tooltip' {
@@ -971,6 +1100,15 @@ using `
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'dog'
         }
 
+        It "Tab completion for validateSet attribute takes precedence over enums" {
+            function foo { param([ValidateSet('DarkBlue','DarkCyan')][ConsoleColor]$p) }
+            $inputStr = "foo "
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 2
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'DarkBlue'
+            $res.CompletionMatches[1].CompletionText | Should -BeExactly 'DarkCyan'
+        }
+
         It "Tab completion for ArgumentCompleter when AST is passed to CompleteInput" {
             $scriptBl = {
                 function Test-Completion {
@@ -1122,7 +1260,7 @@ using `
         It "Test Attribute member completion multiple members" {
             $inputStr = "function bar { [parameter(Position,]param() }"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn ($inputStr.IndexOf(',') + 1)
-            $res.CompletionMatches | Should -HaveCount 10
+            $res.CompletionMatches | Should -HaveCount 9
             $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Mandatory"
             $entry.CompletionText | Should -BeExactly "Mandatory"
         }
@@ -1133,6 +1271,38 @@ using `
             $res.CompletionMatches | Should -HaveCount 1
             $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Get-ChildItem"
             $entry.CompletionText | Should -BeExactly "Get-ChildItem"
+        }
+
+        It '<Intent>' -TestCases @(
+            @{
+                Intent = 'Complete attribute members on empty line'
+                Expected = 'Position'
+                TestString = @'
+function bar { [parameter(
+
+
+^
+
+        )]param() }
+'@
+            }
+            @{
+                Intent = 'Complete attribute members on empty line with preceding member'
+                Expected = 'Position'
+                TestString = @'
+function bar { [parameter(
+Mandatory,
+
+^
+
+        )]param() }
+'@
+            }
+        ){
+            param($Expected, $TestString)
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $Expected
         }
 
         It "Test completion with line continuation" {
@@ -1193,6 +1363,12 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount 2
             [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "1.0,1.1"
         }
+        
+        It 'Should complete Select-Object properties without duplicates' {
+            $res = TabExpansion2 -inputScript '$PSVersionTable | Select-Object -Property Count,'
+            $res.CompletionMatches.CompletionText | Should -Not -Contain "Count"
+        }
+        
         It '<Intent>' -TestCases @(
             @{
                 Intent = 'Complete loop labels with no input'
@@ -1551,6 +1727,18 @@ dir -Recurse `
                 @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassNam'; expected = 'CimClassName' }
                 @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassName.Substrin'; expected = 'Substring(' }
                 @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | %{ $_.ExecutableP'; expected = 'ExecutablePath' }
+                @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName SetPriority -Arguments @{'; expected = 'Priority' }
+                @{ inputStr = 'Get-CimInstance -ClassName Win32_Service | Invoke-CimMethod -MethodName Change -Arguments @{d'; expected = 'DesktopInteract' }
+                @{ inputStr = 'Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{'; expected = 'CommandLine' }
+                @{ inputStr = 'New-CimInstance Win32_Environment -Property @{'; expected = 'Caption' }
+                @{ inputStr = 'Get-CimInstance Win32_Environment | Set-CimInstance -Property @{'; expected = 'Name' }
+                @{ inputStr = 'Set-CimInstance -Namespace root/CIMV'; expected = 'root/CIMV2' }
+                @{ inputStr = 'Get-CimInstance Win32_Process -Property '; expected = 'Caption' }
+                @{ inputStr = 'Get-CimInstance Win32_Process -Property Caption,'; expected = 'Description' }
+            )
+            $FailCases = @(
+                @{ inputStr = "Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments " }
+                @{ inputStr = "New-CimInstance Win32_Process -Property " }
             )
         }
 
@@ -1560,6 +1748,13 @@ dir -Recurse `
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -Be $expected
+        }
+
+        It "CIM cmdlet input '<inputStr>' should not successfully complete" -TestCases $FailCases -Skip:(!$IsWindows) {
+            param($inputStr)
+
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches[0].ResultType | should -Not -Be 'Property'
         }
     }
 

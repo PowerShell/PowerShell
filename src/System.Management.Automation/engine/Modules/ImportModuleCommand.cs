@@ -548,32 +548,15 @@ namespace Microsoft.PowerShell.Commands
         private void ImportModule_ViaAssembly(ImportModuleOptions importModuleOptions, Assembly suppliedAssembly)
         {
             bool moduleLoaded = false;
+            string moduleName = "dynamic_code_module_" + suppliedAssembly.FullName;
+
             // Loop through Module Cache to ensure that the module is not already imported.
-            if (suppliedAssembly != null && Context.Modules.ModuleTable != null)
+            foreach (KeyValuePair<string, PSModuleInfo> pair in Context.Modules.ModuleTable)
             {
-                foreach (KeyValuePair<string, PSModuleInfo> pair in Context.Modules.ModuleTable)
+                if (pair.Value.Path == string.Empty)
                 {
-                    // if the module in the moduleTable is an assembly module without path, the moduleName is the key.
-                    string moduleName = "dynamic_code_module_" + suppliedAssembly;
-                    if (pair.Value.Path == string.Empty)
-                    {
-                        if (pair.Key.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            moduleLoaded = true;
-                            if (BasePassThru)
-                            {
-                                WriteObject(pair.Value);
-                            }
-
-                            break;
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
-
-                    if (pair.Value.Path.Equals(suppliedAssembly.Location, StringComparison.OrdinalIgnoreCase))
+                    // If the module in the moduleTable is an assembly module without path, the moduleName is the key.
+                    if (pair.Key.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
                     {
                         moduleLoaded = true;
                         if (BasePassThru)
@@ -583,12 +566,26 @@ namespace Microsoft.PowerShell.Commands
 
                         break;
                     }
+
+                    continue;
+                }
+
+                if (pair.Value.Path.Equals(suppliedAssembly.Location, StringComparison.OrdinalIgnoreCase))
+                {
+                    moduleLoaded = true;
+                    if (BasePassThru)
+                    {
+                        WriteObject(pair.Value);
+                    }
+
+                    break;
                 }
             }
 
             if (!moduleLoaded)
             {
                 PSModuleInfo module = LoadBinaryModule(
+                    parentModule: null,
                     moduleName: null,
                     fileName: null,
                     suppliedAssembly,
@@ -596,15 +593,13 @@ namespace Microsoft.PowerShell.Commands
                     ss: null,
                     importModuleOptions,
                     ManifestProcessingFlags.LoadElements | ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.NullOnFirstError,
-                    this.BasePrefix,
-                    loadTypes: false,
-                    loadFormats: false,
+                    BasePrefix,
                     out bool found);
 
-                if (found && module != null)
+                if (found && module is not null)
                 {
                     // Add it to all module tables ...
-                    AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, module);
+                    AddModuleToModuleTables(Context, TargetSessionState.Internal, module);
                     if (BasePassThru)
                     {
                         WriteObject(module);
@@ -1380,14 +1375,25 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsPs1xmlFileHelper_IsPresentInEntries(RemoteDiscoveryHelper.CimModuleFile cimModuleFile, IEnumerable<string> manifestEntries)
         {
-            if (manifestEntries.Any(s => s.EndsWith(cimModuleFile.FileName, StringComparison.OrdinalIgnoreCase)))
+            const string ps1xmlExt = ".ps1xml";
+            string fileName = cimModuleFile.FileName;
+
+            foreach (string entry in manifestEntries)
             {
-                return true;
+                if (entry.EndsWith(fileName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
             }
 
-            if (manifestEntries.Any(s => FixupFileName(string.Empty, s, ".ps1xml", isImportingModule: true).EndsWith(cimModuleFile.FileName, StringComparison.OrdinalIgnoreCase)))
+            foreach (string entry in manifestEntries)
             {
-                return true;
+                string tempName = entry.EndsWith(ps1xmlExt, StringComparison.OrdinalIgnoreCase) ? entry : entry + ps1xmlExt;
+                string resolvedPath = ResolveRootedFilePath(tempName, Context);
+                if (resolvedPath is not null && resolvedPath.EndsWith(fileName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
             }
 
             return false;
@@ -1894,13 +1900,10 @@ namespace Microsoft.PowerShell.Commands
             else if (this.ParameterSetName.Equals(ParameterSet_Assembly, StringComparison.OrdinalIgnoreCase))
             {
                 // Now load all of the supplied assemblies...
-                if (Assembly != null)
+                foreach (Assembly suppliedAssembly in Assembly)
                 {
-                    foreach (Assembly suppliedAssembly in Assembly)
-                    {
-                        ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, suppliedAssembly.GetName().Name);
-                        ImportModule_ViaAssembly(importModuleOptions, suppliedAssembly);
-                    }
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, suppliedAssembly.GetName().Name);
+                    ImportModule_ViaAssembly(importModuleOptions, suppliedAssembly);
                 }
             }
             else if (this.ParameterSetName.Equals(ParameterSet_Name, StringComparison.OrdinalIgnoreCase))

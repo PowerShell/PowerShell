@@ -17,6 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TimeZone", DefaultParameterSetName = "Name",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096904")]
+    [OutputType(typeof(TimeZoneInfo))]
     [Alias("gtz")]
     public class GetTimeZoneCommand : PSCmdlet
     {
@@ -121,6 +122,7 @@ namespace Microsoft.PowerShell.Commands
         SupportsShouldProcess = true,
         DefaultParameterSetName = "Name",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097056")]
+    [OutputType(typeof(TimeZoneInfo))]
     [Alias("stz")]
     public class SetTimeZoneCommand : PSCmdlet
     {
@@ -159,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameters
 
         /// <summary>
-        /// Implementation of the ProcessRecord method for Get-TimeZone.
+        /// Implementation of the ProcessRecord method for Set-TimeZone.
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly", Justification = "Since Name is not a parameter of this method, it confuses FXCop. It is the appropriate value for the exception.")]
         protected override void ProcessRecord()

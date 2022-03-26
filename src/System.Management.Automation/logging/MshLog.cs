@@ -134,11 +134,6 @@ namespace System.Management.Automation
 
             try
             {
-#if !CORECLR    // TODO:CORECLR EventLogLogProvider not handled yet
-                LogProvider eventLogLogProvider = new EventLogLogProvider(shellId);
-                providers.Add(eventLogLogProvider);
-#endif
-
 #if UNIX
                 LogProvider sysLogProvider = new PSSysLogProvider();
                 providers.Add(sysLogProvider);

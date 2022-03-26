@@ -389,6 +389,7 @@ namespace Microsoft.WSMan.Management
     /// authentication is achieved via a trusted X509 certificate or Kerberos.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096719")]
+    [OutputType(typeof(XmlElement))]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]
     public class EnableWSManCredSSPCommand : WSManCredSSPCommandBase, IDisposable/*, IDynamicParameters*/
@@ -736,6 +737,7 @@ namespace Microsoft.WSMan.Management
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SSP")]
     [Cmdlet(VerbsCommon.Get, "WSManCredSSP", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096838")]
+    [OutputType(typeof(string))]
     public class GetWSManCredSSPCommand : PSCmdlet, IDisposable
     {
         #region private

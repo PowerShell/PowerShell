@@ -539,16 +539,6 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public static Runspace CreateRunspace(RunspaceConnectionInfo connectionInfo, PSHost host, TypeTable typeTable, PSPrimitiveDictionary applicationArguments, string name)
         {
-            if (connectionInfo is not WSManConnectionInfo &&
-                connectionInfo is not NewProcessConnectionInfo &&
-                connectionInfo is not NamedPipeConnectionInfo &&
-                connectionInfo is not SSHConnectionInfo &&
-                connectionInfo is not VMConnectionInfo &&
-                connectionInfo is not ContainerConnectionInfo)
-            {
-                throw new NotSupportedException();
-            }
-
             if (connectionInfo is WSManConnectionInfo)
             {
                 RemotingCommandUtil.CheckHostRemotingPrerequisites();

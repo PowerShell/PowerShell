@@ -635,7 +635,7 @@ namespace System.Management.Automation.Internal
     /// Helper for exchanging keys and encrypting/decrypting
     /// secure strings for serialization in remoting.
     /// </summary>
-    internal abstract class PSRemotingCryptoHelper : IDisposable
+    public abstract class PSRemotingCryptoHelper : IDisposable
     {
         #region Protected Members
 
@@ -645,7 +645,7 @@ namespace System.Management.Automation.Internal
         /// it and performing symmetric key operations using the
         /// session key.
         /// </summary>
-        protected PSRSACryptoServiceProvider _rsaCryptoProvider;
+        internal PSRSACryptoServiceProvider _rsaCryptoProvider;
 
         /// <summary>
         /// Key exchange has been completed and both keys

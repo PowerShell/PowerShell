@@ -374,6 +374,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.New, "Variable", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097121")]
+    [OutputType(typeof(PSVariable))]
     public sealed class NewVariableCommand : VariableCommandBase
     {
         #region parameters

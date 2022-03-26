@@ -63,14 +63,14 @@ namespace Microsoft.PowerShell.Commands
         Default = 0,
 
         /// <summary>
-        /// Specifies the TLS 1.0 security protocol. The TLS protocol is defined in IETF RFC 2246.
+        /// Specifies the TLS 1.0 is obsolete. Using this value now defaults to TLS 1.2.
         /// </summary>
-        Tls = SslProtocols.Tls,
+        Tls = SslProtocols.Tls12,
 
         /// <summary>
-        /// Specifies the TLS 1.1 security protocol. The TLS protocol is defined in IETF RFC 4346.
+        /// Specifies the TLS 1.1 is obsolete. Using this value now defaults to TLS 1.2.
         /// </summary>
-        Tls11 = SslProtocols.Tls11,
+        Tls11 = SslProtocols.Tls12,
 
         /// <summary>
         /// Specifies the TLS 1.2 security protocol. The TLS protocol is defined in IETF RFC 5246.
