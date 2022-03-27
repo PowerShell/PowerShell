@@ -2494,7 +2494,7 @@ namespace Microsoft.PowerShell
             return consoleTitle.ToString();
         }
 
-        private static bool dontSetConsoleWindowTitle;
+        private static bool s_dontsetConsoleWindowTitle;
 
         /// <summary>
         /// Wraps Win32 SetConsoleTitle.
@@ -2507,7 +2507,7 @@ namespace Microsoft.PowerShell
         /// </exception>
         internal static void SetConsoleWindowTitle(string consoleTitle)
         {
-            if (dontSetConsoleWindowTitle)
+            if (s_dontsetConsoleWindowTitle)
             {
                 return;
             }
@@ -2522,7 +2522,7 @@ namespace Microsoft.PowerShell
                 if (err == 0x1f)
                 {
                     tracer.WriteLine("Call to SetConsoleTitle failed: {0}", err);
-                    dontSetConsoleWindowTitle = true;
+                    s_dontsetConsoleWindowTitle = true;
 
                     // We ignore this specific error as the console can still continue to operate
                     return;
