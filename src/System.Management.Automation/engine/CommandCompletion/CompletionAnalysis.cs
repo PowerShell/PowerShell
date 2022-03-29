@@ -525,8 +525,8 @@ namespace System.Management.Automation
 
                     case TokenKind.Comma:
                         // Handle array elements such as dir .\cd,<tab> || dir -Path: .\cd,<tab>
-                        if (lastAst is ErrorExpressionAst &&
-                            (lastAst.Parent is CommandAst || lastAst.Parent is CommandParameterAst))
+                        if ((lastAst is ErrorExpressionAst or ArrayLiteralAst) &&
+                            (lastAst.Parent is CommandAst or CommandParameterAst))
                         {
                             replacementIndex += replacementLength;
                             replacementLength = 0;

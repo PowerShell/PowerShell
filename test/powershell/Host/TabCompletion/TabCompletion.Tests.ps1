@@ -1135,6 +1135,46 @@ switch ($x)
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'dog'
         }
 
+        It "Tab completion for enum members after colon with <Space> space" -TestCases @(
+            @{ Space = 0 }
+            @{ Space = 1 }
+        ) {
+            param ($Space)
+            $inputStr = "Get-Command -Type:$(' ' * $Space)Al"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 2
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Alias'
+            $res.CompletionMatches[1].CompletionText | Should -BeExactly 'All'
+        }
+
+        It "Tab completion for enum members between colon with <LeftSpace> space and <RightSpace> space with value" -TestCases @(
+            @{ LeftSpace = 0; RightSpace = 0 }
+            @{ LeftSpace = 0; RightSpace = 1 }
+            @{ LeftSpace = 1; RightSpace = 0 }
+            @{ LeftSpace = 1; RightSpace = 1 }
+        ) {
+            param ($LeftSpace, $RightSpace)
+            $inputStrEndsWithCursor = "Get-Command -Type:$(' ' * $LeftSpace)"
+            $inputStr = $inputStrEndsWithCursor + "$(' ' * $RightSpace)Alias"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStrEndsWithCursor.Length
+            $expectedArray = [enum]::GetNames([System.Management.Automation.CommandTypes]) | Sort-Object
+            $res.CompletionMatches.CompletionText | Should -Be $expectedArray
+        }
+
+        It "Tab completion for enum members between comma with <LeftSpace> space and <RightSpace> space with parameter" -TestCases @(
+            @{ LeftSpace = 0; RightSpace = 0 }
+            @{ LeftSpace = 0; RightSpace = 1 }
+            @{ LeftSpace = 1; RightSpace = 0 }
+            @{ LeftSpace = 1; RightSpace = 1 }
+        ) {
+            param ($LeftSpace, $RightSpace)
+            $inputStrEndsWithCursor = "Get-Command -Type Alias,$(' ' * $LeftSpace)"
+            $inputStr = $inputStrEndsWithCursor + "$(' ' * $RightSpace)-All"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStrEndsWithCursor.Length
+            $expectedArray = [enum]::GetNames([System.Management.Automation.CommandTypes]) | Sort-Object
+            $res.CompletionMatches.CompletionText | Should -Be $expectedArray
+        }
+
         It "Tab completion for enum members after comma" {
             $inputStr = "Get-Command -Type Alias,c"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
@@ -1477,6 +1517,21 @@ dir -Recurse `
             $inputStr = "dir .\commaA.txt,"
             $expected = ".${separator}commaA.txt"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $expected
+        }
+
+        It "Tab completion for file array element between comma with <LeftSpace> space and <RightSpace> space with parameter" -TestCases @(
+            @{ LeftSpace = 0; RightSpace = 0 }
+            @{ LeftSpace = 0; RightSpace = 1 }
+            @{ LeftSpace = 1; RightSpace = 0 }
+            @{ LeftSpace = 1; RightSpace = 1 }
+        ) {
+            param ($LeftSpace, $RightSpace)
+            $inputStrEndsWithCursor = "dir .\commaA.txt,$(' ' * $LeftSpace)"
+            $inputStr = $inputStrEndsWithCursor + "$(' ' * $RightSpace)-File"
+            $expected = ".${separator}commaA.txt"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStrEndsWithCursor.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $expected
         }
