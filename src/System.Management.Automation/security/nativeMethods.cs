@@ -1145,62 +1145,6 @@ namespace System.Management.Automation.Security
                 DWORD idxCert
             );
 
-        /// Return Type: HRESULT->LONG->int
-        ///pszFile: PCWSTR->WCHAR*
-        ///hFile: HANDLE->void*
-        ///sigInfoFlags: SIGNATURE_INFO_FLAGS->Anonymous_5157c654_2076_48e7_9241_84ac648615e9
-        ///psiginfo: SIGNATURE_INFO*
-        ///ppCertContext: void**
-        ///phWVTStateData: HANDLE*
-        [DllImportAttribute("wintrust.dll", EntryPoint = "WTGetSignatureInfo", CallingConvention = CallingConvention.StdCall)]
-        internal static extern int WTGetSignatureInfo([InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string pszFile, [InAttribute()] System.IntPtr hFile, SIGNATURE_INFO_FLAGS sigInfoFlags, ref SIGNATURE_INFO psiginfo, ref System.IntPtr ppCertContext, ref System.IntPtr phWVTStateData);
-
-        internal static void FreeWVTStateData(System.IntPtr phWVTStateData)
-        {
-            WINTRUST_DATA wtd = new WINTRUST_DATA();
-            DWORD dwResult = Win32Errors.E_FAIL;
-            IntPtr WINTRUST_ACTION_GENERIC_VERIFY_V2 = IntPtr.Zero;
-            IntPtr wtdBuffer = IntPtr.Zero;
-
-            Guid actionVerify =
-                new Guid("00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
-
-            try
-            {
-                WINTRUST_ACTION_GENERIC_VERIFY_V2 =
-                    Marshal.AllocCoTaskMem(Marshal.SizeOf(actionVerify));
-                Marshal.StructureToPtr(actionVerify,
-                                       WINTRUST_ACTION_GENERIC_VERIFY_V2,
-                                       false);
-
-                wtd.cbStruct = (DWORD)Marshal.SizeOf(wtd);
-                wtd.dwUIChoice = (DWORD)WintrustUIChoice.WTD_UI_NONE;
-                wtd.fdwRevocationChecks = 0;
-                wtd.dwUnionChoice = (DWORD)WintrustUnionChoice.WTD_CHOICE_BLOB;
-                wtd.dwStateAction = (DWORD)WintrustAction.WTD_STATEACTION_CLOSE;
-                wtd.hWVTStateData = phWVTStateData;
-
-                wtdBuffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(wtd));
-                Marshal.StructureToPtr(wtd, wtdBuffer, false);
-
-                // The GetLastWin32Error of this is checked, but PreSharp doesn't seem to be
-                // able to see that.
-#pragma warning disable 56523
-                dwResult = WinVerifyTrust(
-                    IntPtr.Zero,
-                    WINTRUST_ACTION_GENERIC_VERIFY_V2,
-                    wtdBuffer);
-#pragma warning restore 56523
-            }
-            finally
-            {
-                Marshal.DestroyStructure<WINTRUST_DATA>(wtdBuffer);
-                Marshal.FreeCoTaskMem(wtdBuffer);
-                Marshal.DestroyStructure<Guid>(WINTRUST_ACTION_GENERIC_VERIFY_V2);
-                Marshal.FreeCoTaskMem(WINTRUST_ACTION_GENERIC_VERIFY_V2);
-            }
-        }
-
         //
         // stuff required for getting cert extensions
         //
