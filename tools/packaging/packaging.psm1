@@ -7,7 +7,7 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
 $DebianDistributions = @("deb")
-$RedhatDistributions = @("rh","cm1")
+$RedhatDistributions = @("rh","cm1","cm2")
 $AllDistributions = @()
 $AllDistributions += $DebianDistributions
 $AllDistributions += $RedhatDistributions
@@ -1394,7 +1394,7 @@ function Get-PackageDependencies
                 "openssl-libs",
                 "libicu"
             )
-        } elseif ($Distribution -eq 'cm1') {
+        } elseif ($Distribution -in 'cm1', 'cm2') {
             # Taken from the list here:
             # https://github.com/dotnet/dotnet-docker/blob/d451d6e9427f58c8508f1297c862663a27eb609f/src/runtime-deps/6.0/cbl-mariner1.0/amd64/Dockerfile#L6
             $Dependencies = @(
