@@ -208,13 +208,16 @@ $PID
         $createdEvents.Count | Should -BeGreaterOrEqual 3
 
         # Verify we log that we are executing a file
-        $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
+        $createdEvents[0].Message | Should -BeLike "*$testFileName*"
 
         # Verify we log that we are the script to create the scriptblock
-        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"⏎")))
+        $createdEvents[1].Message | Select-String '[scriptblock]::create(' -SimpleMatch | Should -Not -BeNullOrEmpty
+        $createdEvents[1].Message | Should -BeLike "*Write-Verbose 'testheader123'*"
+        $createdEvents[1].Message | Should -BeLike "*Write-Verbose 'after'*"
 
-        # Verify we log that we are excuting the created scriptblock
-        $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
+        # Verify we log that we are executing the created scriptblock
+        $createdEvents[2].Message | Should -BeLike "*Write-Verbose 'testheader123'*"
+        $createdEvents[2].Message | Should -BeLike "*Write-Verbose 'after'*"
     }
 
     It 'Verifies scriptblock logging with null character' -Skip:(!$IsSupportedEnvironment) {
@@ -237,13 +240,16 @@ $PID
         $createdEvents.Count | Should -BeGreaterOrEqual 3
 
         # Verify we log that we are executing a file
-        $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
+        $createdEvents[0].Message | Should -BeLike "*$testFileName*"
 
         # Verify we log that we are the script to create the scriptblock
-        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"⏎")))
+        $createdEvents[1].Message | Select-String '[scriptblock]::create(' -SimpleMatch | Should -Not -BeNullOrEmpty
+        $createdEvents[1].Message | Should -BeLike "*Write-Verbose 'testheader123*"
+        $createdEvents[1].Message | Should -BeLike "*Write-Verbose 'after'*"
 
-        # Verify we log that we are excuting the created scriptblock
-        $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123␀' ;Write\-verbose 'after'")
+        # Verify we log that we are executing the created scriptblock
+        $createdEvents[2].Message | Should -BeLike "*Write-Verbose 'testheader123*"
+        $createdEvents[2].Message | Should -BeLike "*Write-Verbose 'after'*"
     }
 
     It 'Verifies logging level filtering works' -Skip:(!$IsSupportedEnvironment) {
