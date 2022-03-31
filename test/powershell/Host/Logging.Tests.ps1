@@ -188,7 +188,9 @@ Creating Scriptblock text \(1 of 1\):#012{0}(⏎|#012)*ScriptBlock ID: [0-9a-z\-
         }
     }
 
-    It 'Verifies scriptblock logging' -Skip:(!$IsSupportedEnvironment) {
+    # Skip test as it is failing in PowerShell CI on Linux platform.
+    # Tracking Issue: https://github.com/PowerShell/PowerShell/issues/17092
+    It 'Verifies scriptblock logging' -Skip <#-Skip:(!$IsSupportedEnvironment)#> {
         $configFile = WriteLogSettings -LogId $logId -ScriptBlockLogging -LogLevel Verbose
         $script = @'
 $PID
@@ -217,7 +219,9 @@ $PID
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
     }
 
-    It 'Verifies scriptblock logging with null character' -Skip:(!$IsSupportedEnvironment) {
+    # Skip test as it is failing in PowerShell CI on Linux platform.
+    # Tracking Issue: https://github.com/PowerShell/PowerShell/issues/17092
+    It 'Verifies scriptblock logging with null character' -Skip <#-Skip:(!$IsSupportedEnvironment)#> {
         $configFile = WriteLogSettings -LogId $logId -ScriptBlockLogging -LogLevel Verbose
         $script = @'
 $PID
