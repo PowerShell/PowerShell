@@ -987,9 +987,9 @@ switch ($x)
 
         It "Tab completion UNC path with forward slashes" -Skip:(!$IsWindows) {
             $homeDrive = $env:HOMEDRIVE.Replace(":", "$")
-            $beforeTab = "//localhost/$homeDrive/wind"
+            $beforeTab = "//localhost/admin"
             # it is expected that tab completion turns forward slashes into backslashes
-            $afterTab = "& '\\localhost\$homeDrive\Windows'"
+            $afterTab = "\\localhost\ADMIN$"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
