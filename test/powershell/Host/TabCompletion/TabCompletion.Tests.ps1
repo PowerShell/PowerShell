@@ -986,7 +986,6 @@ switch ($x)
         }
 
         It "Tab completion UNC path with forward slashes" -Skip:(!$IsWindows) {
-            $homeDrive = $env:HOMEDRIVE.Replace(":", "$")
             $beforeTab = "//localhost/admin"
             # it is expected that tab completion turns forward slashes into backslashes
             $afterTab = "\\localhost\ADMIN$"
