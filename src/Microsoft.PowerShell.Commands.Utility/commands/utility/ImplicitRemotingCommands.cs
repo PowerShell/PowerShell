@@ -2109,7 +2109,7 @@ $script:MyModule = $MyInvocation.MyCommand.ScriptBlock.Module
 
             // In Win8, we are no longer loading all assemblies by default.
             // So we need to use the fully qualified name when accessing a type in that assembly
-            string versionOfScriptGenerator = "[" + typeof(ExportPSSessionCommand).AssemblyQualifiedName + "]" + "::VersionOfScriptGenerator";
+            string versionOfScriptGenerator = "$executionContext.InvokeCommand.GetCommand('Export-PSSession', [System.Management.Automation.CommandTypes]::Cmdlet).ImplementingType::VersionOfScriptGenerator";
             GenerateTopComment(writer);
             writer.Write(
                 HeaderTemplate,
