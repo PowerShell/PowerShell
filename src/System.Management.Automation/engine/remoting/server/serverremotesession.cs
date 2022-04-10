@@ -749,13 +749,6 @@ namespace System.Management.Automation.Remoting
             RemoteDataObject<PSObject> rcvdData = createRunspaceEventArg.ReceivedData;
             Dbg.Assert(rcvdData != null, "rcvdData must be non-null");
 
-            // set the PSSenderInfo sent in the first packets
-            // This is used by the initial session state configuration providers like Exchange.
-            if (Context != null)
-            {
-                _senderInfo.ClientTimeZone = Context.ClientCapability.TimeZone;
-            }
-
             _senderInfo.ApplicationArguments = RemotingDecoder.GetApplicationArguments(rcvdData.Data);
 
             // Get Initial Session State from custom session config suppliers

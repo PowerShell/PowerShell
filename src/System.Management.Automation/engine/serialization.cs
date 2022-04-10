@@ -7212,7 +7212,6 @@ namespace Microsoft.PowerShell
 
             PSSenderInfo senderInfo = new PSSenderInfo(psPrincipal, GetPropertyValue<string>(pso, "ConnectionString"));
 
-            senderInfo.ClientTimeZone = TimeZoneInfo.Local;
             senderInfo.ApplicationArguments = GetPropertyValue<PSPrimitiveDictionary>(pso, "ApplicationArguments");
 
             return senderInfo;
