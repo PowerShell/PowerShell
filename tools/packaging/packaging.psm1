@@ -4512,11 +4512,11 @@ function Invoke-AzDevOpsLinuxPackageCreation {
         } elseif ($BuildType -eq 'rpm') {
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\psoptions.json"
 
-            Write-Verbose -Verbose "---- Min-Size ----"
+            Write-Verbose -Verbose "---- rpm-fxdependent ----"
             Write-Verbose -Verbose "options.Output: $($options.Output)"
             Write-Verbose -Verbose "options.Top $($options.Top)"
 
-            Start-PSPackage -Type rpm @releaseTagParam -LTS:$LTS
+            Start-PSPackage -Type rpm-fxdependent @releaseTagParam -LTS:$LTS
         }
     }
     catch {
@@ -4608,8 +4608,7 @@ function Invoke-AzDevOpsLinuxPackageBuild {
                 Remove-Item -Path $binDir -Recurse -Force
             }
 
-            $buildParams['Runtime'] = 'fxdependent'
-            $buildParams['Mariner'] = $true
+            $buildParams['Runtime'] = 'fxdependent-linux-x64'
             $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64MarinerBuildFolder}"
             Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files, xml document files.
