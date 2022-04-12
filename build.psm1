@@ -327,8 +327,7 @@ function Start-PSBuild {
         [switch]$Detailed,
         [switch]$InteractiveAuth,
         [switch]$SkipRoslynAnalyzers,
-        [string]$PSOptionsPath,
-        [switch]$IncludeXmlDocumentation
+        [string]$PSOptionsPath
     )
 
     if ($ReleaseTag -and $ReleaseTag -notmatch "^v\d+\.\d+\.\d+(-(preview|rc)(\.\d{1,2})?)?$") {
@@ -623,13 +622,6 @@ Fix steps:
                 $null = New-Item -Force -ItemType SymbolicLink -Target $cryptoTarget -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
             }
         }
-    }
-
-    # Remove XML Documentation unless specifically requested to keep it
-    if (-not $IncludeXmlDocumentation) {
-        Get-ChildItem $publishPath\*.xml | Where-Object {
-            $_.Name -match '(System\.Management|Microsoft\.PowerShell|pwsh).*\.xml'
-        } | Remove-Item -Force
     }
 
     # download modules from powershell gallery.
