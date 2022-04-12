@@ -4301,7 +4301,8 @@ namespace System.Management.Automation
             var results = new List<CompletionResult>();
 
             // First, try to match \\server\share
-            var shareMatch = Regex.Match(wordToComplete, "^\\\\\\\\([^\\\\]+)\\\\([^\\\\]*)$");
+            // support both / and \ when entering UNC paths for typing convenience (#17111)
+            var shareMatch = Regex.Match(wordToComplete, @"^(?:\\\\|//)([^\\/]+)(?:\\|/)([^\\/]*)$");
             if (shareMatch.Success)
             {
                 // Only match share names, no filenames.

@@ -140,7 +140,7 @@ switch ($x)
             $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $Expected
         }
-    
+
     It 'Should Complete and replace existing member with space in front of cursor and cursor in front of word' {
         $TestString = '[System.Management.Automation.ActionPreference]:: ^Break'
         $CursorIndex = $TestString.IndexOf('^')
@@ -985,6 +985,16 @@ switch ($x)
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
         }
 
+        It "Tab completion UNC path with forward slashes" -Skip:(!$IsWindows) {
+            $beforeTab = "//localhost/admin"
+            # it is expected that tab completion turns forward slashes into backslashes
+            $afterTab = "\\localhost\ADMIN$"
+            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
+        }
+
+
         It "Tab completion for registry" -Skip:(!$IsWindows) {
             $beforeTab = 'registry::HKEY_l'
             $afterTab = 'registry::HKEY_LOCAL_MACHINE'
@@ -1349,12 +1359,12 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount 2
             [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "1.0,1.1"
         }
-        
+
         It 'Should complete Select-Object properties without duplicates' {
             $res = TabExpansion2 -inputScript '$PSVersionTable | Select-Object -Property Count,'
             $res.CompletionMatches.CompletionText | Should -Not -Contain "Count"
         }
-        
+
         It '<Intent>' -TestCases @(
             @{
                 Intent = 'Complete loop labels with no input'
