@@ -652,6 +652,8 @@ namespace System.Management.Automation.Configuration
         public UpdatableHelp UpdatableHelp { get; set; }
 
         public ConsoleSessionConfiguration ConsoleSessionConfiguration { get; set; }
+
+        public ConsoleSessionConfigFile ConsoleSessionConfigFile { get; set; }
     }
 
     internal abstract class PolicyBase { }
@@ -716,6 +718,13 @@ namespace System.Management.Automation.Configuration
         public bool? EnableConsoleSessionConfiguration { get; set; }
 
         public string ConsoleSessionConfigurationName { get; set; }
+    }
+
+    internal sealed class ConsoleSessionConfigFile : PolicyBase
+    {
+        public bool? EnableConsoleSessionConfigFile { get; set; }
+
+        public string ConsoleSessionConfigFilePath { get; set; }
     }
 
     /// <summary>

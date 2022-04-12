@@ -191,4 +191,7 @@ The current session does not support debugging; execution will continue.
   <data name="RunAsAdministrator" xml:space="preserve">
     <value>Run as Administrator</value>
   </data>
+  <data name="InvalidConfigurationParameters" xml:space="preserve"> 
+    <value>The ConfigurationName and ConfigurationFile options cannot be specified at the same time.  Both console options have been selected, either through the command line or policy setting.</value>
+  </data>
 </root>

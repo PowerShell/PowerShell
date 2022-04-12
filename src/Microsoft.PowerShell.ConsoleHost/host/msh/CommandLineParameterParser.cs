@@ -176,6 +176,7 @@ namespace Microsoft.PowerShell
             "mta",
             "command",
             "configurationname",
+            "configurationfile",
             "custompipename",
             "encodedcommand",
             "executionpolicy",
@@ -333,6 +334,23 @@ namespace Microsoft.PowerShell
                 if (!string.IsNullOrEmpty(value))
                 {
                     _configurationName = value;
+                }
+            }
+        }
+
+        internal string? ConfigurationFile
+        {
+            get
+            {
+                AssertArgumentsParsed();
+                return _configurationFile;
+            }
+
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _configurationFile = value;
                 }
             }
         }
@@ -575,11 +593,18 @@ namespace Microsoft.PowerShell
 
         internal static string GetConfigurationNameFromGroupPolicy()
         {
-            // Current user policy takes precedence.
             var consoleSessionSetting = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
 
             return (consoleSessionSetting?.EnableConsoleSessionConfiguration == true && !string.IsNullOrEmpty(consoleSessionSetting?.ConsoleSessionConfigurationName)) ?
                     consoleSessionSetting.ConsoleSessionConfigurationName : string.Empty;
+        }
+
+        internal static string GetConfigurationFilePathFromGroupPolicy()
+        {
+            var consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.CurrentUserThenSystemWideConfig);
+
+            return (consoleSessionConfigFile?.EnableConsoleSessionConfigFile == true && !string.IsNullOrEmpty(consoleSessionConfigFile?.ConsoleSessionConfigFilePath)) ?
+                consoleSessionConfigFile.ConsoleSessionConfigFilePath : string.Empty;
         }
 
         /// <summary>
@@ -817,6 +842,18 @@ namespace Microsoft.PowerShell
                     }
 
                     _configurationName = args[i];
+                }
+                else if (MatchSwitch(switchKey, "configurationfile", "configurationf"))
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        SetCommandLineError(
+                            CommandLineParameterParserStrings.MissingConfigurationFileArgument);
+                        break;
+                    }
+
+                    _configurationFile = args[i];
                 }
                 else if (MatchSwitch(switchKey, "custompipename", "cus"))
                 {
@@ -1341,6 +1378,7 @@ namespace Microsoft.PowerShell
         private bool _sshServerMode;
         private bool _showVersion;
         private string? _configurationName;
+        private string? _configurationFile;
         private string? _error;
         private bool _showHelp;
         private bool _showExtendedHelp;

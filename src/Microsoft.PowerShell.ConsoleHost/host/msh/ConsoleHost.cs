@@ -301,10 +301,11 @@ namespace Microsoft.PowerShell
                 PowerShellConfig.Instance.SetSystemConfigFilePath(s_cpp.SettingsFile);
             }
 
-            // Check registry setting for a Group Policy ConfigurationName entry and
-            // use it to override anything set by the user.
+            // Check registry setting for a Group Policy ConfigurationName and ConfigurationFile entries,
+            // and use it to override anything set by the user on the command line.
             // It depends on setting file so 'SetSystemConfigFilePath()' should be called before.
             s_cpp.ConfigurationName = CommandLineParameterParser.GetConfigurationNameFromGroupPolicy();
+            s_cpp.ConfigurationFile = CommandLineParameterParser.GetConfigurationFilePathFromGroupPolicy();
         }
 
         private static readonly CommandLineParameterParser s_cpp = new CommandLineParameterParser();
@@ -1489,7 +1490,7 @@ namespace Microsoft.PowerShell
 
                 // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
                 // Removed HandleUnexpectedExceptions infrastructure
-                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ConfigurationName);
+                exitCode = DoRunspaceLoop(cpp.InitialCommand, cpp.SkipProfiles, cpp.Args, cpp.StaMode, cpp.ConfigurationName, cpp.ConfigurationFile);
             }
             while (false);
 
@@ -1502,13 +1503,19 @@ namespace Microsoft.PowerShell
         /// <returns>
         /// The process exit code to be returned by Main.
         /// </returns>
-        private uint DoRunspaceLoop(string initialCommand, bool skipProfiles, Collection<CommandParameter> initialCommandArgs, bool staMode, string configurationName)
+        private uint DoRunspaceLoop(
+            string initialCommand,
+            bool skipProfiles,
+            Collection<CommandParameter> initialCommandArgs,
+            bool staMode,
+            string configurationName,
+            string configurationFilePath)
         {
             ExitCode = ExitCodeSuccess;
 
             while (!ShouldEndSession)
             {
-                RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, configurationName, initialCommandArgs);
+                RunspaceCreationEventArgs args = new RunspaceCreationEventArgs(initialCommand, skipProfiles, staMode, configurationName, configurationFilePath, initialCommandArgs);
                 CreateRunspace(args);
 
                 if (ExitCode == ExitCodeInitFailure) { break; }
@@ -1584,14 +1591,12 @@ namespace Microsoft.PowerShell
             return e;
         }
 
-        private void CreateRunspace(object runspaceCreationArgs)
+        private void CreateRunspace(RunspaceCreationEventArgs runspaceCreationArgs)
         {
-            RunspaceCreationEventArgs args = null;
             try
             {
-                args = runspaceCreationArgs as RunspaceCreationEventArgs;
-                Dbg.Assert(args != null, "Event Arguments to CreateRunspace should not be null");
-                DoCreateRunspace(args.InitialCommand, args.SkipProfiles, args.StaMode, args.ConfigurationName, args.InitialCommandArgs);
+                Dbg.Assert(runspaceCreationArgs != null, "Arguments to CreateRunspace should not be null.");
+                DoCreateRunspace(runspaceCreationArgs);
             }
             catch (ConsoleHostStartupException startupException)
             {
@@ -1603,7 +1608,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Check if a screen reviewer utility is running.
         /// When a screen reader is running, we don't auto-load the PSReadLine module at startup,
-        /// since PSReadLine is not accessibility-firendly enough as of today.
+        /// since PSReadLine is not accessibility-friendly enough as of today.
         /// </summary>
         private bool IsScreenReaderActive()
         {
@@ -1646,11 +1651,34 @@ namespace Microsoft.PowerShell
         /// Opens and Initializes the Host's sole Runspace.  Processes the startup scripts and runs any command passed on the
         /// command line.
         /// </summary>
-        private void DoCreateRunspace(string initialCommand, bool skipProfiles, bool staMode, string configurationName, Collection<CommandParameter> initialCommandArgs)
+        // Collection<CommandParameter> initialCommandArgs
+        private void DoCreateRunspace(RunspaceCreationEventArgs args)
         {
-            Dbg.Assert(_runspaceRef == null, "runspace should be null");
+            Dbg.Assert(_runspaceRef == null, "_runspaceRef field should be null");
             Dbg.Assert(DefaultInitialSessionState != null, "DefaultInitialSessionState should not be null");
             s_runspaceInitTracer.WriteLine("Calling RunspaceFactory.CreateRunspace");
+
+            // Use session configuration file if provided.
+            bool customConfigurationProvided = false;
+            if (!string.IsNullOrEmpty(args.ConfigurationFilePath))
+            {
+                try
+                {
+                    // TODO: Validate .pssc file.
+                    if (!string.IsNullOrEmpty(args.ConfigurationName))
+                    {
+                        throw new PSArgumentException(ConsoleHostStrings.InvalidConfigurationParameters);
+                    }
+
+                    // Replace DefaultInitialSessionState with the initial state configuration defined by the file.
+                    DefaultInitialSessionState = InitialSessionState.CreateFromSessionConfigurationFile(args.ConfigurationFilePath);
+                }
+                catch (Exception ex)
+                {
+                    throw new ConsoleHostStartupException(ConsoleHostStrings.ShellCannotBeStarted, ex);
+                }
+                customConfigurationProvided = true;
+            }
 
             try
             {
@@ -1667,7 +1695,7 @@ namespace Microsoft.PowerShell
                 //    powershell -command "Update-Module PSReadline"
                 // This should work just fine as long as no other instances of PowerShell are running.
                 ReadOnlyCollection<ModuleSpecification> defaultImportModulesList = null;
-                if (LoadPSReadline())
+                if (!customConfigurationProvided && LoadPSReadline())
                 {
                     if (IsScreenReaderActive())
                     {
@@ -1682,7 +1710,7 @@ namespace Microsoft.PowerShell
                         consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
                         try
                         {
-                            OpenConsoleRunspace(consoleRunspace, staMode);
+                            OpenConsoleRunspace(consoleRunspace, args.StaMode);
                         }
                         catch (Exception)
                         {
@@ -1702,7 +1730,7 @@ namespace Microsoft.PowerShell
                     }
 
                     consoleRunspace = RunspaceFactory.CreateRunspace(this, DefaultInitialSessionState);
-                    OpenConsoleRunspace(consoleRunspace, staMode);
+                    OpenConsoleRunspace(consoleRunspace, args.StaMode);
                 }
 
                 Runspace.PrimaryRunspace = consoleRunspace;
@@ -1734,7 +1762,7 @@ namespace Microsoft.PowerShell
             _readyForInputTimeInMS = (DateTime.Now - Process.GetCurrentProcess().StartTime).TotalMilliseconds;
 #endif
 
-            DoRunspaceInitialization(skipProfiles, initialCommand, configurationName, initialCommandArgs);
+            DoRunspaceInitialization(args.SkipProfiles, args.InitialCommand, args.ConfigurationName, args.InitialCommandArgs);
         }
 
         private static void OpenConsoleRunspace(Runspace runspace, bool staMode)
@@ -3021,12 +3049,14 @@ namespace Microsoft.PowerShell
             bool skipProfiles,
             bool staMode,
             string configurationName,
+            string configurationFilePath,
             Collection<CommandParameter> initialCommandArgs)
         {
             InitialCommand = initialCommand;
             SkipProfiles = skipProfiles;
             StaMode = staMode;
             ConfigurationName = configurationName;
+            ConfigurationFilePath = configurationFilePath;
             InitialCommandArgs = initialCommandArgs;
         }
 
@@ -3037,6 +3067,8 @@ namespace Microsoft.PowerShell
         internal bool StaMode { get; set; }
 
         internal string ConfigurationName { get; set; }
+
+        internal string ConfigurationFilePath { get; set; }
 
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }
