@@ -367,6 +367,16 @@ namespace System.Management.Automation
                 if (string.IsNullOrEmpty(rootedPath))
                 {
                     string personalModuleRoot = ModuleIntrinsics.GetPersonalModulePath();
+                    if (string.IsNullOrEmpty(personalModuleRoot))
+                    {
+                        cmdlet.ThrowTerminatingError(
+                            new ErrorRecord(
+                                new ArgumentException(PathUtilsStrings.ExportPSSession_ErrorModuleNameOrPath),
+                                "ExportPSSession_ErrorModuleNameOrPath",
+                                ErrorCategory.InvalidArgument,
+                                cmdlet));
+                    }
+
                     rootedPath = Path.Combine(personalModuleRoot, moduleNameOrPath);
                 }
 

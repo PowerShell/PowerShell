@@ -958,7 +958,8 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Utils.ModuleDirectory);
+            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
 #endif
         }
 
@@ -1180,7 +1181,18 @@ namespace System.Management.Automation
                     currentProcessModulePath = hkcuUserModulePath; // = EVT.User
                 }
 
-                currentProcessModulePath += Path.PathSeparator;
+                if (string.IsNullOrEmpty(currentProcessModulePath))
+                {
+                    if (currentProcessModulePath is null)
+                    {
+                        currentProcessModulePath = string.Empty;
+                    }
+                }
+                else
+                {
+                    currentProcessModulePath += Path.PathSeparator;
+                }
+
                 if (string.IsNullOrEmpty(hklmMachineModulePath)) // EVT.Machine does Not exist
                 {
                     currentProcessModulePath += CombineSystemModulePaths(); // += (SharedModulePath + $PSHome\Modules)
@@ -1201,11 +1213,23 @@ namespace System.Management.Automation
                 // personalModulePath
                 // sharedModulePath
                 // systemModulePath
-                currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, 0);
-                int insertIndex = PathContainsSubstring(currentProcessModulePath, personalModulePathToUse) + personalModulePathToUse.Length + 1;
-                currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
-                insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath) + sharedModulePath.Length + 1;
-                currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
+                int insertIndex = 0;
+                if (!string.IsNullOrEmpty(personalModulePathToUse))
+                {
+                    currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, insertIndex);
+                    insertIndex = PathContainsSubstring(currentProcessModulePath, personalModulePathToUse) + personalModulePathToUse.Length + 1;
+                }
+
+                if (!string.IsNullOrEmpty(sharedModulePath))
+                {
+                    currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
+                    insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath) + sharedModulePath.Length + 1;
+                }
+
+                if (!string.IsNullOrEmpty(systemModulePathToUse))
+                {
+                    currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
+                }
             }
 
             return currentProcessModulePath;
