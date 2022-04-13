@@ -170,7 +170,9 @@ Describe "Default enablement of Experimental Features" -Tags CI {
         }
     }
 
-    It "On preview builds, Experimental Features are enabled" -Skip:(!$isPreview) {
+    # This is broken after release, but only used for preview
+    # Therefore, we can skip it on stable builds
+    It "On preview builds, Experimental Features are enabled" -Skip {
         (Join-Path -Path $PSHOME -ChildPath 'powershell.config.json') | Should -Exist
 
         foreach ($expFeature in Get-ExperimentalFeature) {

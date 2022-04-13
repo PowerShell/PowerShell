@@ -51,7 +51,7 @@ jobs:
   displayName: Markdown and Common Tests
 
   pool:
-    vmImage: ubuntu-16.04
+    vmImage: ubuntu-20.04
 
   variables:
     - name: repoPath
