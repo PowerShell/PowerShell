@@ -22,6 +22,8 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Remoting
 {
+    #region WSMan endpoint configuration
+
     /// <summary>
     /// This struct is used to represent contents from configuration xml. The
     /// XML is passed to plugins by WSMan API.
@@ -56,6 +58,8 @@ namespace System.Management.Automation.Remoting
 
         #endregion
 
+        #region Fields
+
         internal string StartupScript;
         // this field is used only by an Out-Of-Process (IPC) server process
         internal string InitializationScriptForOutOfProcessRunspace;
@@ -70,6 +74,10 @@ namespace System.Management.Automation.Remoting
         internal ApartmentState? ShellThreadApartmentState;
         internal PSSessionConfigurationData SessionConfigurationData;
         internal string ConfigFilePath;
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Using optionName and optionValue updates the current object.
@@ -324,6 +332,8 @@ namespace System.Management.Automation.Remoting
             throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
                     EndPointConfigurationTypeName, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
         }
+
+        #endregion
     }
 
     /// <summary>
@@ -798,6 +808,8 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     internal sealed class DefaultRemotePowerShellConfiguration : PSSessionConfiguration
     {
+        #region Method overrides
+
         /// <summary>
         /// </summary>
         /// <param name="senderInfo"></param>
@@ -852,9 +864,15 @@ namespace System.Management.Automation.Remoting
 
             return sessionState;
         }
+
+        #endregion
     }
 
-    #region Declarative Initial Session Configuration
+    #endregion
+
+    #region Declarative InitialSession Configuration
+
+    #region Supporting types
 
     /// <summary>
     /// Specifies type of initial session state to use. Valid values are Empty and Default.
@@ -897,6 +915,10 @@ namespace System.Management.Automation.Remoting
             this.ValidationCallback = callback;
         }
     }
+
+    #endregion
+
+    #region ConfigFileConstants
 
     /// <summary>
     /// Configuration file constants.
@@ -1355,6 +1377,8 @@ namespace System.Management.Automation.Remoting
         }
     }
 
+    #endregion
+
     #region DISC Utilities
 
     /// <summary>
@@ -1681,6 +1705,8 @@ namespace System.Management.Automation.Remoting
 
     #endregion
 
+    #region DISCPowerShellConfiguration
+
     /// <summary>
     /// Creates an initial session state based on the configuration language for PSSC files.
     /// </summary>
@@ -1706,7 +1732,11 @@ namespace System.Management.Automation.Remoting
         /// target session. If you have a WindowsPrincipal for a user, for example, create a Function that
         /// checks windowsPrincipal.IsInRole().
         /// </param>
-        internal DISCPowerShellConfiguration(string configFile, Func<string, bool> roleVerifier)
+        /// <param name="validateFile">Validate file for supported configuration options.</param>
+        internal DISCPowerShellConfiguration(
+            string configFile,
+            Func<string, bool> roleVerifier,
+            bool validateFile = false)
         {
             _configFile = configFile;
             if (roleVerifier == null)
@@ -1726,6 +1756,12 @@ namespace System.Management.Automation.Remoting
                     configFile, out scriptName);
 
                 _configHash = DISCUtils.LoadConfigFile(Runspace.DefaultRunspace.ExecutionContext, script);
+
+                if (validateFile)
+                {
+                    DISCFileValidation.ValidateContents(_configHash);
+                }
+
                 MergeRoleRulesIntoConfigHash(roleVerifier);
                 MergeRoleCapabilitiesIntoConfigHash();
 
@@ -2889,5 +2925,80 @@ namespace System.Management.Automation.Remoting
             return result;
         }
     }
+    #endregion
+
+    #region DISCFileValidation
+
+    internal static class DISCFileValidation
+    {
+        // Set of supported configuration options for a PowerShell InitialSessionState.
+        private static readonly HashSet<string> SupportedConfigOptions = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
+        {
+            "SchemaVersion",
+            "GUID",
+            "Author",
+            "Description",
+            "CompanyName",
+            "Copyright",
+            "SessionType",
+            "TranscriptDirectory",
+            "MountUserDrive",
+            "UserDriveMaximumSize",
+            "ScriptsToProcess",
+            "LanguageMode",
+            "ExecutionPolicy",
+            "ModulesToImport",
+            "VisibleAliases",
+            "VisibleCmdlets",
+            "VisibleFunctions",
+            "VisibleExternalCommands",
+            "VisibleProviders",
+            "AliasDefinitions",
+            "FunctionDefinitions",
+            "VariableDefinitions",
+            "EnvironmentVariables",
+            "TypesToProcess",
+            "FormatsToProcess",
+            "AssembliesToLoad"
+        };
+
+        // These are configuration options for WSMan (WinRM) endpoint configurations, that 
+        // appearand in .pssc files, but are not part of PowerShell InitialSessionState.
+        private static readonly HashSet<string> UnsupportedConfigOptions = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
+        {
+            "RunAsVirtualAccount",
+            "RunAsVirtualAccountGroups",
+            "GroupManagedServiceAccount",
+            "RoleDefinitions",
+            "RequiredGroups",
+            "PowerShellVersion"
+        };
+
+        internal static void ValidateContents(Hashtable configHash)
+        {
+            foreach (var key in configHash.Keys)
+            {
+                if (!(key is string keyName))
+                {
+                    throw new PSInvalidOperationException(RemotingErrorIdStrings.DISCInvalidConfigKeyType);
+                }
+
+                if (!SupportedConfigOptions.Contains(keyName))
+                {
+                    if (UnsupportedConfigOptions.Contains(keyName))
+                    {
+                        throw new PSInvalidOperationException(
+                            StringUtil.Format(RemotingErrorIdStrings.DISCUnsupportedConfigName, keyName));
+                    }
+
+                    throw new PSInvalidOperationException(
+                            StringUtil.Format(RemotingErrorIdStrings.DISCUnknownConfigName, keyName));
+                }
+            }
+        }
+    }
+
+    #endregion
+    
     #endregion
 }

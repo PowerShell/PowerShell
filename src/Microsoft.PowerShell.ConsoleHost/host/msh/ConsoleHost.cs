@@ -1664,19 +1664,17 @@ namespace Microsoft.PowerShell
             {
                 try
                 {
-                    // TODO: Validate .pssc file.
-                    if (!string.IsNullOrEmpty(args.ConfigurationName))
-                    {
-                        throw new PSArgumentException(ConsoleHostStrings.InvalidConfigurationParameters);
-                    }
-
                     // Replace DefaultInitialSessionState with the initial state configuration defined by the file.
-                    DefaultInitialSessionState = InitialSessionState.CreateFromSessionConfigurationFile(args.ConfigurationFilePath);
+                    DefaultInitialSessionState = InitialSessionState.CreateFromSessionConfigurationFile(
+                        path: args.ConfigurationFilePath,
+                        roleVerifier: null,
+                        validateFile: true);
                 }
                 catch (Exception ex)
                 {
                     throw new ConsoleHostStartupException(ConsoleHostStrings.ShellCannotBeStarted, ex);
                 }
+                
                 customConfigurationProvided = true;
             }
 

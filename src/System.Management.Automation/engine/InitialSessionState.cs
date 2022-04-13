@@ -1312,7 +1312,7 @@ namespace System.Management.Automation.Runspaces
         /// Creates an initial session state from a PSSC configuration file.
         /// </summary>
         /// <param name="path">The path to the PSSC session configuration file.</param>
-        /// <returns></returns>
+        /// <returns>InitialSessionState object.</returns>
         public static InitialSessionState CreateFromSessionConfigurationFile(string path)
         {
             return CreateFromSessionConfigurationFile(path, null);
@@ -1327,10 +1327,31 @@ namespace System.Management.Automation.Runspaces
         /// target session. If you have a WindowsPrincipal for a user, for example, create a Function that
         /// checks windowsPrincipal.IsInRole().
         /// </param>
-        /// <returns></returns>
-        public static InitialSessionState CreateFromSessionConfigurationFile(string path, Func<string, bool> roleVerifier)
+        /// <returns>InitialSessionState object.</returns>
+        public static InitialSessionState CreateFromSessionConfigurationFile(
+            string path,
+            Func<string, bool> roleVerifier)
         {
-            Remoting.DISCPowerShellConfiguration discConfiguration = new Remoting.DISCPowerShellConfiguration(path, roleVerifier);
+            return CreateFromSessionConfigurationFile(path, roleVerifier, validateFile: false);
+        }
+
+        /// <summary>
+        /// Creates an initial session state from a PSSC configuration file.
+        /// </summary>
+        /// <param name="path">The path to the PSSC session configuration file.</param>
+        /// <param name="roleVerifier">
+        /// The verifier that PowerShell should call to determine if groups in the Role entry apply to the
+        /// target session. If you have a WindowsPrincipal for a user, for example, create a Function that
+        /// checks windowsPrincipal.IsInRole().
+        /// </param>
+        /// <param name="validateFile">Validates the file contents for supported SessionState options.</param>
+        /// <returns>InitialSessionState object.</returns>
+        public static InitialSessionState CreateFromSessionConfigurationFile(
+            string path,
+            Func<string, bool> roleVerifier,
+            bool validateFile)
+        {
+            Remoting.DISCPowerShellConfiguration discConfiguration = new Remoting.DISCPowerShellConfiguration(path, roleVerifier, validateFile);
             return discConfiguration.GetInitialSessionState(null);
         }
 
