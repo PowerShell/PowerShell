@@ -92,10 +92,11 @@ jobs:
     parentJobs:
       - mac_build
 
-- job: CodeCovTestPackage
-  displayName: CodeCoverage and Test Packages
-  steps:
-  - powershell: |
-      Import-Module .\tools\ci.psm1
-      New-CodeCoverageAndTestPackage
-    displayName: CodeCoverage and Test Package
+# this is no longer used
+# - job: CodeCovTestPackage
+#   displayName: CodeCoverage and Test Packages
+#   steps:
+#   - powershell: |
+#       Import-Module .\tools\ci.psm1
+#       New-CodeCoverageAndTestPackage
+#     displayName: CodeCoverage and Test Package
