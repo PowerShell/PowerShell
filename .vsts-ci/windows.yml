@@ -45,8 +45,14 @@ variables:
   __SuppressAnsiEscapeSequences: 1
 
 resources:
-- repo: self
-  clean: true
+  repositories:
+  - repository: self
+    clean: true
+  - repository: ComplianceRepo
+    type: github
+    endpoint: PowerShell
+    name: PowerShell/compliance
+    ref: master
 
 stages:
 - stage: BuildWin
