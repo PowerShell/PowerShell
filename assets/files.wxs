@@ -3021,8 +3021,8 @@
           </Component>
         </Directory>
       </Directory>
-      <Component Id="cmp5B6037D9B491402282E632C3E25D1799" Guid="{211e2110-de7b-42d3-bcd8-8dfdc799920a}">
-        <File Id="fil91FABFE32EE14970AFA3356FB8935794" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.22.11601.dll" />
+      <Component Id="cmp01C53C4AB31E46AA84CECCD2E0C09589" Guid="{2714501b-1660-4760-9d17-4bde0f6c0fd3}">
+        <File Id="filCE24BACF57D34A879F78A52FC00F1A46" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.22.16002.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -3995,7 +3995,7 @@
       <ComponentRef Id="cmpFCB00AF72E824B6691323BC8CC43E6CA" />
       <ComponentRef Id="cmpF8441388D55B4967B76B0BF3C58148D7" />
       <ComponentRef Id="cmp62FA25A3749A44F398EDF69176E12F36" />
-      <ComponentRef Id="cmp5B6037D9B491402282E632C3E25D1799" />
+      <ComponentRef Id="cmp01C53C4AB31E46AA84CECCD2E0C09589" />
     </ComponentGroup>
   </Fragment>
 </Wix>
