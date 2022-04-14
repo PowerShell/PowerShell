@@ -1674,7 +1674,7 @@ namespace Microsoft.PowerShell
                 {
                     throw new ConsoleHostStartupException(ConsoleHostStrings.ShellCannotBeStarted, ex);
                 }
-                
+
                 customConfigurationProvided = true;
             }
 
