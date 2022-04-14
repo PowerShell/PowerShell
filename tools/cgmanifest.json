@@ -128,7 +128,7 @@
           "Version": "2.0.0"
         }
       },
-      "DevelopmentDependency": false
+      "DevelopmentDependency": true
     },
     {
       "Component": {
