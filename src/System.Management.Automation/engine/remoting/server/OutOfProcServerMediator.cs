@@ -300,6 +300,7 @@ namespace System.Management.Automation.Remoting.Server
 
         protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(
             string configurationName,
+            string configurationFile,
             PSRemotingCryptoHelperServer cryptoHelper,
             string workingDirectory)
         {
@@ -320,11 +321,14 @@ namespace System.Management.Automation.Remoting.Server
             OutOfProcessServerSessionTransportManager tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr, cryptoHelper);
 
             ServerRemoteSession.CreateServerRemoteSession(
-                senderInfo,
-                _initialCommand,
-                tm,
-                configurationName,
-                workingDirectory);
+                senderInfo: senderInfo,
+                configurationProviderId: "Microsoft.PowerShell",
+                initializationParameters: string.Empty,
+                transportManager: tm,
+                initialCommand: _initialCommand,
+                configurationName: configurationName,
+                configurationFile: configurationFile,
+                initialLocation: workingDirectory);
 
             return tm;
         }
@@ -333,11 +337,16 @@ namespace System.Management.Automation.Remoting.Server
             string initialCommand,
             PSRemotingCryptoHelperServer cryptoHelper,
             string workingDirectory,
-            string configurationName)
+            string configurationName,
+            string configurationFile)
         {
             _initialCommand = initialCommand;
 
-            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
+            sessionTM = CreateSessionTransportManager(
+                configurationName: configurationName,
+                configurationFile: configurationFile,
+                cryptoHelper: cryptoHelper,
+                workingDirectory: workingDirectory);
 
             try
             {
@@ -348,7 +357,11 @@ namespace System.Management.Automation.Remoting.Server
                     {
                         if (sessionTM == null)
                         {
-                            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
+                            sessionTM = CreateSessionTransportManager(
+                                configurationName: configurationName,
+                                configurationFile: configurationFile,
+                                cryptoHelper: cryptoHelper,
+                                workingDirectory: workingDirectory);
                         }
                     }
 
@@ -464,10 +477,12 @@ namespace System.Management.Automation.Remoting.Server
         /// <param name="initialCommand">Specifies the initialization script.</param>
         /// <param name="workingDirectory">Specifies the initial working directory. The working directory is set before the initial command.</param>
         /// <param name="configurationName">Specifies an optional configuration name that configures the endpoint session.</param>
+        /// <param name="configurationFile">Specifies an optional path to a configuration (.pssc) file for the session.</param>
         internal static void Run(
             string initialCommand,
             string workingDirectory,
-            string configurationName)
+            string configurationName,
+            string configurationFile)
         {
             lock (SyncObject)
             {
@@ -484,7 +499,8 @@ namespace System.Management.Automation.Remoting.Server
                 initialCommand: initialCommand,
                 cryptoHelper: new PSRemotingCryptoHelperServer(),
                 workingDirectory: workingDirectory,
-                configurationName: configurationName);
+                configurationName: configurationName,
+                configurationFile: configurationFile);
         }
 
         #endregion
@@ -557,7 +573,8 @@ namespace System.Management.Automation.Remoting.Server
                 initialCommand: initialCommand,
                 cryptoHelper: new PSRemotingCryptoHelperServer(),
                 workingDirectory: null,
-                configurationName: namedPipeServer.ConfigurationName);
+                configurationName: namedPipeServer.ConfigurationName,
+                configurationFile: null);
         }
 
         #endregion
@@ -632,7 +649,8 @@ namespace System.Management.Automation.Remoting.Server
                 initialCommand: initialCommand,
                 cryptoHelper: new PSRemotingCryptoHelperServer(),
                 workingDirectory: null,
-                configurationName: configurationName);
+                configurationName: configurationName,
+                configurationFile: null);
         }
 
         #endregion

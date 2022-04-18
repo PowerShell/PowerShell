@@ -188,7 +188,6 @@ namespace Microsoft.PowerShell
 #if !UNIX
                 TaskbarJumpList.CreateRunAsAdministratorJumpList();
 #endif
-
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
                 {
@@ -197,7 +196,8 @@ namespace Microsoft.PowerShell
                     StdIOProcessMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
                         workingDirectory: s_cpp.WorkingDirectory,
-                        configurationName: null);
+                        configurationName: null,
+                        configurationFile: s_cpp.ConfigurationFile);
                     exitCode = 0;
                 }
                 else if (s_cpp.SSHServerMode)
@@ -207,7 +207,8 @@ namespace Microsoft.PowerShell
                     StdIOProcessMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
                         workingDirectory: null,
-                        configurationName: null);
+                        configurationName: null,
+                        configurationFile: s_cpp.ConfigurationFile);
                     exitCode = 0;
                 }
                 else if (s_cpp.NamedPipeServerMode)

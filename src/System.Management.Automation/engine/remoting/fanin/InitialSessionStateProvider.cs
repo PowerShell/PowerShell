@@ -460,7 +460,8 @@ namespace System.Management.Automation.Remoting
                     ...
                   </InitializationParameters>
          */
-        internal static ConfigurationDataFromXML LoadEndPointConfiguration(string shellId,
+        internal static ConfigurationDataFromXML LoadEndPointConfiguration(
+            string shellId,
             string initializationParameters)
         {
             ConfigurationDataFromXML configData = null;

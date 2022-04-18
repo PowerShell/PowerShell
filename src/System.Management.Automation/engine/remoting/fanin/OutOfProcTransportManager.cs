@@ -2592,6 +2592,11 @@ namespace System.Management.Automation.Remoting.Server
             _stdOutWriter = outWriter;
             _stdErrWriter = errWriter;
             _cmdTransportManagers = new Dictionary<Guid, OutOfProcessServerTransportManager>();
+
+            this.WSManTransportErrorOccured += (object sender, TransportErrorOccuredEventArgs e) => 
+            {
+                _stdErrWriter.WriteLine(StringUtil.Format(RemotingErrorIdStrings.RemoteTransportError, e.Exception.TransportMessage));
+            };
         }
 
         #endregion
