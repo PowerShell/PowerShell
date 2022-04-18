@@ -365,7 +365,7 @@ namespace System.Management.Automation
 
             if (signature.SignatureType == SignatureType.Catalog && !Signature.CatalogApiAvailable.HasValue)
             {
-                Signature.CatalogApiAvailable = signature.Status == SignatureStatus.Valid;
+                Signature.CatalogApiAvailable = fileSigInfo.State != SignatureState.Invalid;
             }
 
             return signature;
