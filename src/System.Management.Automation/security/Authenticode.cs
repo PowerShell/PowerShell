@@ -372,6 +372,7 @@ namespace System.Management.Automation
 #endif
         }
 
+#if !UNIX
         private static DWORD GetErrorFromSignatureState(SignatureState signatureState)
         {
             switch (signatureState)
@@ -393,6 +394,7 @@ namespace System.Management.Automation
                     return Win32Errors.TRUST_E_NOSIGNATURE;
             }
         }
+#endif
 
         private static Signature GetSignatureFromWinVerifyTrust(string fileName, string fileContent)
         {
