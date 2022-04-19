@@ -397,6 +397,11 @@ function Start-PSPackage {
                 if ($Runtime -match "-x86") {
                     $TargetArchitecture = "x86"
                 }
+                elseif ($Runtime -match "-arm64")
+                {
+                    $TargetArchitecture = "arm64"
+                }
+
                 Write-Verbose "TargetArchitecture = $TargetArchitecture" -Verbose
 
                 $Arguments = @{
@@ -3214,7 +3219,7 @@ function New-MSIPackage
 
         # Architecture to use when creating the MSI
         [Parameter(Mandatory = $true)]
-        [ValidateSet("x86", "x64")]
+        [ValidateSet("x86", "x64", "arm64")]
         [ValidateNotNullOrEmpty()]
         [string] $ProductTargetArchitecture,
 
@@ -3261,6 +3266,12 @@ function New-MSIPackage
     {
         $fileArchitecture = 'x86'
         $ProductProgFilesDir = "ProgramFilesFolder"
+    }
+    elseif ($ProductTargetArchitecture -eq "arm64")
+    {
+        $fileArchitecture = 'arm64'
+        $FilesWxsPath = "$RepoRoot\assets\wix\Files_arm64.wxs"
+
     }
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
@@ -3489,7 +3500,12 @@ function New-MsiArgsArray {
 
     $buildArguments = @()
     foreach ($key in $Argument.Keys) {
-        $buildArguments += "-d$key=`"$($Argument.$key)`""
+        if ($null -ne $Argument.$key -and $Argument.$key.ToString().Contains(' ')) {
+            $buildArguments += "-d$key=`"$($Argument.$key)`""
+        }
+        else {
+            $buildArguments += "-d$key=$($Argument.$key)"
+        }
     }
 
     return $buildArguments
