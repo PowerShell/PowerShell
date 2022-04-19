@@ -197,7 +197,8 @@ namespace Microsoft.PowerShell
                         initialCommand: s_cpp.InitialCommand,
                         workingDirectory: s_cpp.WorkingDirectory,
                         configurationName: null,
-                        configurationFile: s_cpp.ConfigurationFile);
+                        configurationFile: s_cpp.ConfigurationFile,
+                        combineErrOutStream: false);
                     exitCode = 0;
                 }
                 else if (s_cpp.SSHServerMode)
@@ -208,7 +209,8 @@ namespace Microsoft.PowerShell
                         initialCommand: s_cpp.InitialCommand,
                         workingDirectory: null,
                         configurationName: null,
-                        configurationFile: s_cpp.ConfigurationFile);
+                        configurationFile: s_cpp.ConfigurationFile,
+                        combineErrOutStream: true);
                     exitCode = 0;
                 }
                 else if (s_cpp.NamedPipeServerMode)

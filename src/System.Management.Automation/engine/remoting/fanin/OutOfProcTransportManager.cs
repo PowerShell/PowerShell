@@ -1980,10 +1980,10 @@ namespace System.Management.Automation.Remoting.Client
                         break;
                     }
 
-                    if (data.StartsWith(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
+                    if (data.StartsWith(System.Management.Automation.Remoting.Server.FormattedErrorTextWriter.ErrorPrefix, StringComparison.OrdinalIgnoreCase))
                     {
                         // Error message from the server.
-                        string errorData = data.Substring(System.Management.Automation.Remoting.Server.NamedPipeErrorTextWriter.ErrorPrefix.Length);
+                        string errorData = data.Substring(System.Management.Automation.Remoting.Server.FormattedErrorTextWriter.ErrorPrefix.Length);
                         HandleErrorDataReceived(errorData);
                     }
                     else
@@ -2595,7 +2595,8 @@ namespace System.Management.Automation.Remoting.Server
 
             this.WSManTransportErrorOccured += (object sender, TransportErrorOccuredEventArgs e) => 
             {
-                _stdErrWriter.WriteLine(StringUtil.Format(RemotingErrorIdStrings.RemoteTransportError, e.Exception.TransportMessage));
+                string msg = e.Exception.TransportMessage ?? e.Exception.InnerException?.Message ?? string.Empty;
+                _stdErrWriter.WriteLine(StringUtil.Format(RemotingErrorIdStrings.RemoteTransportError, msg));
             };
         }
 
