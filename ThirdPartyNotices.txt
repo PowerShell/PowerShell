@@ -483,47 +483,9 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.Win32.SystemEvents 6.0.0 - MIT
+Microsoft.Win32.SystemEvents 6.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
-(c) Microsoft Corporation.
-Copyright (c) Andrew Arnott
-Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
-Copyright (c) 2011, Google Inc.
-Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
-Copyright (c) 2017 Yoshifumi Kawai
-Copyright (c) Microsoft Corporation
-Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
-Copyright (c) 2013-2017, Alfred Klomp
-Copyright (c) 2015-2017, Wojciech Mula
-Copyright (c) 2005-2007, Nick Galbreath
-Copyright (c) 2018 Alexander Chermyanin
-Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
-Copyright (c) 2004-2006 Intel Corporation
-Copyright (c) 2013-2017, Milosz Krajewski
-Copyright (c) 2016-2017, Matthieu Darbois
-Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2019 Microsoft Corporation, Daan Leijen
-Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
-Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
-Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
-Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -1872,47 +1834,9 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Diagnostics.PerformanceCounter 6.0.0 - MIT
+System.Diagnostics.PerformanceCounter 6.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
-(c) Microsoft Corporation.
-Copyright (c) Andrew Arnott
-Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
-Copyright (c) 2011, Google Inc.
-Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
-Copyright (c) 2017 Yoshifumi Kawai
-Copyright (c) Microsoft Corporation
-Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
-Copyright (c) 2013-2017, Alfred Klomp
-Copyright (c) 2015-2017, Wojciech Mula
-Copyright (c) 2005-2007, Nick Galbreath
-Copyright (c) 2018 Alexander Chermyanin
-Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
-Copyright (c) 2004-2006 Intel Corporation
-Copyright (c) 2013-2017, Milosz Krajewski
-Copyright (c) 2016-2017, Matthieu Darbois
-Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2019 Microsoft Corporation, Daan Leijen
-Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
-Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
-Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
-Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
@@ -2563,47 +2487,9 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Net.Http.WinHttpHandler 6.0.0 - MIT
+System.Net.Http.WinHttpHandler 6.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
-(c) Microsoft Corporation.
-Copyright (c) Andrew Arnott
-Copyright 2018 Daniel Lemire
-Copyright 2012 the V8 project
-Copyright (c) .NET Foundation.
-Copyright (c) 2011, Google Inc.
-Copyright (c) 1998 Microsoft. To
-(c) 1997-2005 Sean Eron Anderson.
-Copyright (c) 2017 Yoshifumi Kawai
-Copyright (c) Microsoft Corporation
-Copyright (c) 2007 James Newton-King
-Copyright (c) 2012-2014, Yann Collet
-Copyright (c) 2013-2017, Alfred Klomp
-Copyright (c) 2015-2017, Wojciech Mula
-Copyright (c) 2005-2007, Nick Galbreath
-Copyright (c) 2018 Alexander Chermyanin
-Portions (c) International Organization
-Copyright (c) 2015 The Chromium Authors.
-Copyright (c) The Internet Society 1997.
-Copyright (c) 2004-2006 Intel Corporation
-Copyright (c) 2013-2017, Milosz Krajewski
-Copyright (c) 2016-2017, Matthieu Darbois
-Copyright (c) .NET Foundation Contributors
-Copyright (c) The Internet Society (2003).
-Copyright (c) .NET Foundation and Contributors
-Copyright (c) 2019 Microsoft Corporation, Daan Leijen
-Copyright (c) 2011 Novell, Inc (http://www.novell.com)
-Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
-Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
-Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
-Copyright (c) 2014 Ryan Juckett http://www.ryanjuckett.com
-Copyright (c) 1990- 1993, 1996 Open Software Foundation, Inc.
-Copyright (c) 2015 THL A29 Limited, a Tencent company, and Milo Yip.
-Copyright (c) YEAR W3C(r) (MIT, ERCIM, Keio, Beihang). Disclaimers THIS WORK IS PROVIDED AS
-Copyright 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018 The Regents of the University of California.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass.
-Copyright (c) 1989 by Hewlett-Packard Company, Palo Alto, Ca. & Digital Equipment Corporation, Maynard, Mass. To
 
 The MIT License (MIT)
 
