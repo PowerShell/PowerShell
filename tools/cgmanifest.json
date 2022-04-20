@@ -194,6 +194,16 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "Microsoft.Security.Extensions",
+          "Version": "1.2.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "Microsoft.Win32.Registry.AccessControl",
           "Version": "6.0.0"
         }
