@@ -363,7 +363,7 @@ namespace System.Management.Automation
 
             signature.IsOSBinary = fileSigInfo.IsOSBinary;
 
-            if (signature.SignatureType == SignatureType.Catalog && !signature.CatalogApiAvailable.HasValue)
+            if (signature.SignatureType == SignatureType.Catalog && !Signature.CatalogApiAvailable.HasValue)
             {
                 Signature.CatalogApiAvailable = fileSigInfo.State != SignatureState.Invalid;
             }
