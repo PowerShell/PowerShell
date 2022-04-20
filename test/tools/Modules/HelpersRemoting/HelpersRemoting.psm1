@@ -556,7 +556,29 @@ function Install-SSHRemotingOnLinux
     Write-Verbose -Verbose "Running Enable-SSHRemoting ..."
     Write-Verbose -Verbose "PSScriptRoot: $PSScriptRoot"
     $modulePath = "${PSScriptRoot}\..\Microsoft.PowerShell.RemotingTools\Microsoft.PowerShell.RemotingTools.psd1"
-    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath /etc/ssh/sshd_config -PowerShellFilePath $PowerShellPath -Force"
+    $sshdPath = '/etc/ssh/sshd_config'
+
+    # First create a default 'powershell' named endpoint.
+    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath  -PowerShellFilePath $PowerShellPath -Force"
+    Write-Verbose -Verbose "CmdLine: $cmdLine"
+    sudo pwsh -c $cmdLine
+
+    # Next create a 'pwshconfig' named configured endpoint.
+    # Configuration file:
+    $configFilePath = Join-Path -Path $sshdPath -ChildPath 'PSTestConfig.pssc'
+    @{
+        GUID = '6307763f-7729-4f60-a0c7-874fe006ddd2'
+        Author = 'Microsoft'
+        Description = 'Test local PowerShell session configuration'
+        LanguageMode = 'ConstrainedLanguage'
+        ExecutionPolicy = 'RemoteSigned'
+    } | Out-File -FilePath $configFilePath
+    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath $sshdPath -PowerShellFilePath $PowerShellPath -ConfigFilePath $configFilePath -SubsystemName 'pwshconfig' -Force"
+    Write-Verbose -Verbose "CmdLine: $cmdLine"
+    sudo pwsh -c $cmdLine
+
+    # Finally create a 'pwshbroken' named configured endpoint.
+    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath $sshdPath -PowerShellFilePath $PowerShellPath -ConfigFilePath 'C:\NoSuch.pssc' -SubsystemName 'pwshbroken' -Force"
     Write-Verbose -Verbose "CmdLine: $cmdLine"
     sudo pwsh -c $cmdLine
 

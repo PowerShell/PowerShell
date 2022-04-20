@@ -230,6 +230,24 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             VerifySession $script:sessions[1]
             Write-Verbose -Verbose "It Complete"
         }
+
+        It "Verifies the 'pwshconfig' configured endpoint." {
+            Write-Verbose -Verbose "It Starting: Verifies the 'pwshconfig' configured endpoint."
+            $script:session = TryNewPSSession -HostName localhost -Subsystem 'pwshconfig'
+            $script:session | Should -Not -BeNullOrEmpty
+            # Configured session should be in ConstrainedLanguage mode.
+            $sessionLangMode = Invoke-Command -Session $script:session -ScriptBlock { "$($ExecutionContext.SessionState.LanguageMode)" }
+            $sessionLangMode | Should -BeExactly "ConstrainedLanguage"
+            Write-Verbose -Verbose "It Complete"
+        }
+
+        It "Verifes that 'pwshbroken' throws expected error for missing config file." {
+            Write-Verbose -Verbose "It Starting: Verifes that 'pwshbroken' throws expected error for missing config file."
+            $script:session = TryNewPSSession -HostName localhost -Subsystem 'pwshbroken' -ErrorVariable ev 2>$null
+            $script:session | Should -BeNullOrEmpty
+            $ev.FullyQualifiedErrorId | Should -BeExactly '2100,PSSessionOpenFailed'
+            Write-Verbose -Verbose "It Complete"
+        }
     }
 
     function TryCreateRunspace
