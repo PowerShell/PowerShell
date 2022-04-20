@@ -9,7 +9,7 @@ Describe "Windows platform file signatures" -Tags 'Feature' {
             throw "Expected Windows platform environment path variable '%windir%' not available."
         }
 
-        $filePath = Join-Path -Path $env:windir -ChildPath 'System32\WindowsPowerShell\v1.0\Modules\PSDiagnostics\PSDiagnostics.psm1'
+        $filePath = Join-Path -Path $env:windir -ChildPath 'System32\ntdll.dll'
         if (! (Test-Path -Path $filePath)) {
             throw "Expected Windows PowerShell platform module path '$filePath' not found."
         }
