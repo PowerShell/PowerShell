@@ -1036,6 +1036,48 @@ function Get-PesterTag {
     $o
 }
 
+# Function to build and publish the Microsoft.PowerShell.NamedPipeConnection module for
+# testing PowerShell remote custom connections.
+function Publish-CustomConnectionTestModule
+{
+    $sourcePath = "${PSScriptRoot}/test/tools/NamedPipeConnection"
+    $outPath = "${PSScriptRoot}/test/tools/NamedPipeConnection/out/Microsoft.PowerShell.NamedPipeConnection"
+    $publishPath = "${PSScriptRoot}/test/tools/Modules"
+    $refPath = "${sourcePath}/src/code/Ref"
+
+    # Copy the current SMA build to the refPath.
+    $smaPath = Join-Path -Path (Split-Path -Path (Get-PSOutput)) -ChildPath 'System.Management.Automation.dll'
+    if (! (Test-Path -Path $smaPath)) {
+        throw "Publish-CustomConnectionTestModule: Cannot find reference SMA at: ${smaPath}"
+    }
+    if (! (Test-Path -Path $refPath)) {
+        $null = New-Item -Path $refPath -ItemType Directory -Force
+    }
+    Copy-Item -Path $smapath -Destination $refPath -Force
+
+    Find-DotNet
+
+    Push-Location -Path $sourcePath
+    try {
+        # Build the Microsoft.PowerShell.NamedPipeConnect module
+        ./build.ps1 -Clean -Build
+
+        if (! (Test-Path -Path $outPath)) {
+            throw "Publish-CustomConnectionTestModule: Build failed. Output path does not exist: $outPath"
+        }
+
+        # Publish the Microsoft.PowerShell.NamedPipeConnection module
+        Copy-Item -Path $outPath -Destination $publishPath -Recurse -Force
+
+        # Clean up build artifacts
+        ./build.ps1 -Clean
+        Remove-Item -Path $refPath -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    finally {
+        Pop-Location
+    }
+}
+
 function Publish-PSTestTools {
     [CmdletBinding()]
     param(
@@ -1046,9 +1088,10 @@ function Publish-PSTestTools {
     Find-Dotnet
 
     $tools = @(
-        @{Path="${PSScriptRoot}/test/tools/TestExe";Output="testexe"}
-        @{Path="${PSScriptRoot}/test/tools/WebListener";Output="WebListener"}
-        @{Path="${PSScriptRoot}/test/tools/TestService";Output="TestService"}
+        @{ Path="${PSScriptRoot}/test/tools/TestAlc";     Output="library" }
+        @{ Path="${PSScriptRoot}/test/tools/TestExe";     Output="exe" }
+        @{ Path="${PSScriptRoot}/test/tools/WebListener"; Output="exe" }
+        @{ Path="${PSScriptRoot}/test/tools/TestService"; Output="exe" }
     )
 
     $Options = Get-PSOptions -DefaultToNew
@@ -1069,11 +1112,18 @@ function Publish-PSTestTools {
                 Remove-Item -Path $objPath -Recurse -Force
             }
 
-            if (-not $runtime) {
-                dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
-            } else {
-                dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $runtime
+            if ($tool.Output -eq 'library') {
+                ## Handle building and publishing assemblies.
+                dotnet publish --configuration $Options.Configuration --framework $Options.Framework
+                continue
             }
+
+            ## Handle building and publishing executables.
+            if (-not $runtime) {
+                $runtime = $Options.Runtime
+            }
+
+            dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $runtime --self-contained
 
             if ( -not $env:PATH.Contains($toolPath) ) {
                 $env:PATH = $toolPath+$TestModulePathSeparator+$($env:PATH)
@@ -1196,6 +1246,9 @@ function Start-PSPester {
             $publishArgs['runtime'] = 'alpine-x64'
         }
         Publish-PSTestTools @publishArgs | ForEach-Object {Write-Host $_}
+
+        # Publish the Microsoft.PowerShell.NamedPipeConnection module for testing custom remote connections.
+        Publish-CustomConnectionTestModule | ForEach-Object { Write-Host $_ }
     }
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
@@ -1653,9 +1706,18 @@ function Test-PSPesterResults
     }
     elseif ($PSCmdlet.ParameterSetName -eq 'PesterPassThruObject')
     {
-        if ($ResultObject.TotalCount -le 0 -and -not $CanHaveNoResult)
+        if (-not $CanHaveNoResult)
         {
-            throw 'NO TESTS RUN'
+            $noTotalCountMember = if ($null -eq (Get-Member -InputObject $ResultObject -Name 'TotalCount')) { $true } else { $false }
+            if ($noTotalCountMember)
+            {
+                Write-Verbose -Verbose -Message "`$ResultObject has no 'TotalCount' property"
+                Write-Verbose -Verbose "$($ResultObject | Out-String)"
+            }
+            if ($noTotalCountMember -or $ResultObject.TotalCount -le 0)
+            {
+                throw 'NO TESTS RUN'
+            }
         }
         elseif ($ResultObject.FailedCount -gt 0)
         {
@@ -1739,6 +1801,7 @@ function Install-Dotnet {
         [string]$Channel = $dotnetCLIChannel,
         [string]$Version = $dotnetCLIRequiredVersion,
         [string]$Quality = $dotnetCLIQuality,
+        [switch]$RemovePreviousVersion,
         [switch]$NoSudo,
         [string]$InstallDir,
         [string]$AzureFeed,
@@ -1751,27 +1814,30 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $installObtainUrl = "https://dotnet.microsoft.com/download/dotnet-core/scripts/v1"
+    # $installObtainUrl = "https://dot.net/v1"
+    $installObtainUrl = "https://dotnet.microsoft.com/download/dotnet/scripts/v1"
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
     if ($environment.IsLinux -or $environment.IsMacOS) {
         $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
 
-        # Uninstall all previous dotnet packages
-        $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
-            "dotnet-uninstall-debian-packages.sh"
-        } elseif ($environment.IsMacOS) {
-            "dotnet-uninstall-pkgs.sh"
-        }
-
-        if ($uninstallScript) {
-            Start-NativeExecution {
-                & $wget $uninstallObtainUrl/uninstall/$uninstallScript
-                Invoke-Expression "$sudo bash ./$uninstallScript"
+        # Attempt to uninstall previous dotnet packages if requested
+        if ($RemovePreviousVersion) {
+            $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
+                "dotnet-uninstall-debian-packages.sh"
+            } elseif ($environment.IsMacOS) {
+                "dotnet-uninstall-pkgs.sh"
             }
-        } else {
-            Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
+
+            if ($uninstallScript) {
+                Start-NativeExecution {
+                    & $wget $uninstallObtainUrl/uninstall/$uninstallScript
+                    Invoke-Expression "$sudo bash ./$uninstallScript"
+                }
+            } else {
+                Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
+            }
         }
 
         Write-Verbose -Verbose "Invoking install script"
@@ -1805,6 +1871,8 @@ function Install-Dotnet {
                 $bashArgs += @('-FeedCredential', $FeedCredential)
             }
 
+            $bashArgs += @('-skipnonversionedfiles')
+
             $bashArgs | Out-String | Write-Verbose -Verbose
 
         Start-NativeExecution {
@@ -1835,6 +1903,8 @@ function Install-Dotnet {
                 $installArgs += @{FeedCredential = $FeedCredential}
             }
 
+            $installArgs += @{ SkipNonVersionedFiles = $true }
+
             $installArgs | Out-String | Write-Verbose -Verbose
 
             & ./$installScript @installArgs
@@ -1862,6 +1932,8 @@ function Install-Dotnet {
             if ($FeedCredential) {
                 $psArgs += @('-FeedCredential', $FeedCredential)
             }
+
+            $psArgs += @('-SkipNonVersionedFiles')
 
             $psArgs | Out-String | Write-Verbose -Verbose
 
@@ -2110,7 +2182,7 @@ function Start-PSBootstrap {
 
 function Get-LatestInstalledSDK {
     Start-NativeExecution -sb {
-        dotnet --list-sdks | Select-String -Pattern '\d*.\d*.\d*(-\w*\.\d*)?' | ForEach-Object { [System.Management.Automation.SemanticVersion]::new($_.matches.value) } | Sort-Object -Descending | Select-Object -First 1
+        dotnet --list-sdks | Select-String -Pattern '\d*.\d*.\d*(-\w*\.\d*.\d*.\d*)?' | ForEach-Object { [System.Management.Automation.SemanticVersion]::new($_.matches.value) } | Sort-Object -Descending | Select-Object -First 1
     } -IgnoreExitcode 2> $null
 }
 
@@ -3217,4 +3289,30 @@ function Set-CorrectLocale
 
     # Output the locale to log it
     locale
+}
+
+function Install-AzCopy {
+    $testPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+    if (Test-Path $testPath) {
+        Write-Verbose "AzCopy already installed" -Verbose
+        return
+    }
+
+    $destination = "$env:TEMP\azcopy81.msi"
+    Invoke-WebRequest "https://aka.ms/downloadazcopy" -OutFile $destination
+    Start-Process -FilePath $destination -ArgumentList "/quiet" -Wait
+}
+
+function Find-AzCopy {
+    $searchPaths = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+
+    foreach ($filter in $searchPaths) {
+        $azCopy = Get-ChildItem -Path $filter -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName -First 1
+        if ($azCopy) {
+            return $azCopy
+        }
+    }
+
+    $azCopy = Get-Command -Name azCopy -ErrorAction Stop | Select-Object -First 1
+    return $azCopy.Path
 }

@@ -81,7 +81,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     minPoolSz.ToString(CultureInfo.InvariantCulture),
                     maxPoolSz.ToString(CultureInfo.InvariantCulture));
 
-            _connectionInfo = connectionInfo.InternalCopy();
+            _connectionInfo = connectionInfo.Clone();
 
             this.host = host;
             ApplicationArguments = applicationArguments;
@@ -128,7 +128,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (connectionInfo is WSManConnectionInfo)
             {
-                _connectionInfo = connectionInfo.InternalCopy();
+                _connectionInfo = connectionInfo.Clone();
             }
             else
             {

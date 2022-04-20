@@ -32,7 +32,8 @@ function GetExternalHostAddress([string]$HostName)
     }
 }
 
-Describe "Test-Connection" -tags "CI" {
+# Adding RequireSudoOnUnix due to issue: https://github.com/dotnet/runtime/issues/66746
+Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
     BeforeAll {
         $hostName = [System.Net.Dns]::GetHostName()
         $gatewayAddress = GetGatewayAddress

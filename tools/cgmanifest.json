@@ -65,7 +65,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.0.1"
+          "Version": "4.1.0"
         }
       },
       "DevelopmentDependency": false
@@ -75,7 +75,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.0.1"
+          "Version": "4.1.0"
         }
       },
       "DevelopmentDependency": false
@@ -194,6 +194,16 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "Microsoft.Security.Extensions",
+          "Version": "1.2.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "Microsoft.Win32.Registry.AccessControl",
           "Version": "6.0.0"
         }
@@ -215,7 +225,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.Win32.SystemEvents",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -504,16 +514,6 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.OpenSsl",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
           "Name": "runtime.osx-arm64.runtime.native.System.IO.Ports",
           "Version": "6.0.0"
         }
@@ -526,6 +526,16 @@
         "Nuget": {
           "Name": "runtime.osx-x64.runtime.native.System.IO.Ports",
           "Version": "6.0.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.OpenSsl",
+          "Version": "4.3.0"
         }
       },
       "DevelopmentDependency": false
@@ -604,6 +614,36 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
+          "Name": "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni",
+          "Version": "4.4.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.win-x64.runtime.native.System.Data.SqlClient.sni",
+          "Version": "4.4.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
+          "Name": "runtime.win-x86.runtime.native.System.Data.SqlClient.sni",
+          "Version": "4.4.0"
+        }
+      },
+      "DevelopmentDependency": false
+    },
+    {
+      "Component": {
+        "Type": "nuget",
+        "Nuget": {
           "Name": "runtime.win.System.Diagnostics.Debug",
           "Version": "4.3.0"
         }
@@ -615,16 +655,6 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "runtime.win.System.Runtime.Extensions",
-          "Version": "4.3.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win7.System.Private.Uri",
           "Version": "4.3.0"
         }
       },
@@ -654,28 +684,8 @@
       "Component": {
         "Type": "nuget",
         "Nuget": {
-          "Name": "runtime.win-arm64.runtime.native.System.Data.SqlClient.sni",
-          "Version": "4.4.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win-x64.runtime.native.System.Data.SqlClient.sni",
-          "Version": "4.4.0"
-        }
-      },
-      "DevelopmentDependency": false
-    },
-    {
-      "Component": {
-        "Type": "nuget",
-        "Nuget": {
-          "Name": "runtime.win-x86.runtime.native.System.Data.SqlClient.sni",
-          "Version": "4.4.0"
+          "Name": "runtime.win7.System.Private.Uri",
+          "Version": "4.3.0"
         }
       },
       "DevelopmentDependency": false
@@ -825,7 +835,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Diagnostics.PerformanceCounter",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -975,7 +985,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Net.Http.WinHttpHandler",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false

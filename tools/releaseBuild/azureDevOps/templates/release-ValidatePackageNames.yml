@@ -12,7 +12,13 @@ steps:
   displayName: Set Release Name
 
 - pwsh: |
-    $azcopy = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+    Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+    Install-AzCopy
+  displayName: Install AzCopy
+
+- pwsh: |
+    Import-module '$(BUILD.SOURCESDIRECTORY)/build.psm1'
+    $azcopy = Find-AzCopy
 
     & $azcopy /Source:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) /Dest:$(System.ArtifactsDirectory) /S /SourceKey:$(StorageAccountKey)
   displayName: Download Azure Artifacts
@@ -24,7 +30,7 @@ steps:
 - pwsh: |
     $message = @()
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.rpm | ForEach-Object {
-        if($_.Name -notmatch 'powershell\-(preview-|lts-)?\d\.\d\.\d(_[a-z]*\.\d+)?-1.rh.x86_64\.rpm')
+        if($_.Name -notmatch 'powershell\-(preview-|lts-)?\d\.\d\.\d(_[a-z]*\.\d+)?-1.(rh|cm1).x86_64\.rpm')
         {
             $messageInstance = "$($_.Name) is not a valid package name"
             $message += $messageInstance

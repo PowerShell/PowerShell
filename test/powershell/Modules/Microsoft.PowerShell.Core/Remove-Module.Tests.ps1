@@ -145,7 +145,7 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
         }
     }
 
-    It "Remove-Module -FullyQualifiedName <FullyQualifiedName>" -TestCases $removeModuleByFQNTestCases {
+    It "Remove-Module -FullyQualifiedName <FqnToRemove>" -TestCases $removeModuleByFQNTestCases {
         param([Microsoft.PowerShell.Commands.ModuleSpecification[]]$FqnToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
 
         (Get-Module -Name "Bar", "Baz", "Foo").Name | Should -BeExactly "Bar", "Baz", "Foo", "Foo"
@@ -161,7 +161,7 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
         }
     }
 
-    It "Remove-Module -FullyQualifiedName <FullyQualifiedName> (Error cases)" -TestCases $removeModuleByFQNErrorTestCases {
+    It "Remove-Module -FullyQualifiedName <FqnToRemove> (Error cases)" -TestCases $removeModuleByFQNErrorTestCases {
         param([Microsoft.PowerShell.Commands.ModuleSpecification[]]$FqnToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
 
         (Get-Module -Name "Bar", "Baz", "Foo").Name | Should -BeExactly "Bar", "Baz", "Foo", "Foo"
@@ -177,7 +177,7 @@ Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
         }
     }
 
-    It "Remove-Module -ModuleInfo <ModuleInfo>" -TestCases $removeModuleByFQNTestCases {
+    It "Remove-Module -ModuleInfo <FqnToRemove>" -TestCases $removeModuleByFQNTestCases {
         param([Microsoft.PowerShell.Commands.ModuleSpecification[]]$FqnToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
 
         (Get-Module -Name "Bar", "Baz", "Foo").Name | Should -BeExactly "Bar", "Baz", "Foo", "Foo"

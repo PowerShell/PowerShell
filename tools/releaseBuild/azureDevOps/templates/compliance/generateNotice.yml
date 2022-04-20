@@ -32,6 +32,7 @@ jobs:
       if ($branchOnly -eq 'master') {
         $container = 'tpn'
       } else {
+        $branchOnly = $branchOnly -replace '[\./]', '-'
         $container = "tpn-$branchOnly"
       }
 
@@ -81,3 +82,4 @@ jobs:
       targetPath: $(System.ArtifactsDirectory)
       artifactName: notice
     displayName: Publish notice artifacts
+    condition: always()

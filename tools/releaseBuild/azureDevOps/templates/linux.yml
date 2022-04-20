@@ -61,12 +61,16 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
 
-  - powershell: |
+  - pwsh: |
+      try {
+        Import-Module "$env:POWERSHELLROOT/build.psm1"
+        Import-Module "$env:POWERSHELLROOT/tools/packaging"
 
-      Import-Module "$env:POWERSHELLROOT/build.psm1"
-      Import-Module "$env:POWERSHELLROOT/tools/packaging"
-
-      Invoke-AzDevOpsLinuxPackageBuild -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+        Invoke-AzDevOpsLinuxPackageBuild -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+      } catch {
+        Get-Error
+        throw
+      }
     displayName: 'Build'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
@@ -111,20 +115,25 @@ jobs:
         sourceScanPath: '$(PowerShellRoot)/tools'
 
   - powershell: |
-      Import-Module "$env:POWERSHELLROOT/build.psm1"
-      Import-Module "$env:POWERSHELLROOT/tools/packaging"
+      try {
+        Import-Module "$env:POWERSHELLROOT/build.psm1"
+        Import-Module "$env:POWERSHELLROOT/tools/packaging"
 
-      $metadata = Get-Content "$env:POWERSHELLROOT/tools/metadata.json" -Raw | ConvertFrom-Json
+        $metadata = Get-Content "$env:POWERSHELLROOT/tools/metadata.json" -Raw | ConvertFrom-Json
 
-      # LTSRelease.Package indicates that the release should be packaged as an LTS
-      $LTS = $metadata.LTSRelease.Package
-      Write-Verbose -Verbose -Message "LTS is set to: $LTS"
+        # LTSRelease.Package indicates that the release should be packaged as an LTS
+        $LTS = $metadata.LTSRelease.Package
+        Write-Verbose -Verbose -Message "LTS is set to: $LTS"
 
-      Invoke-AzDevOpsLinuxPackageCreation -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+        Invoke-AzDevOpsLinuxPackageCreation -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
 
-      if ($LTS) {
-          Write-Verbose -Verbose "Packaging LTS"
-          Invoke-AzDevOpsLinuxPackageCreation -LTS  -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+        if ($LTS) {
+            Write-Verbose -Verbose "Packaging LTS"
+            Invoke-AzDevOpsLinuxPackageCreation -LTS  -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+        }
+      } catch {
+        Get-Error
+        throw
       }
     displayName: 'Package'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
@@ -244,10 +253,25 @@ jobs:
           signOutputPath: $(Build.StagingDirectory)\signedPackages
           certificateId: "CP-450779-Pgp"
           pattern: |
-            **\*.rpm
+            **\*.rh.*.rpm
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
-          displayName: Sign RPM
+          displayName: Sign RedHat RPM
+          OutputMode: AlwaysCopy
+
+  - ${{ if eq(variables['buildName'], 'RPM') }}:
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+          # Sign in-place, previous task copied the files to this folder
+          buildOutputPath: $(Build.StagingDirectory)\signedPackages
+          signOutputPath: $(Build.StagingDirectory)\signedPackages
+          certificateId: "CP-459159-Pgp"
+          pattern: |
+            **\*.cm1.*.rpm
+          useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
+          displayName: Sign Mariner RPM
+          OutputMode: NeverCopy
 
   # requires windows
   - ${{ if ne(variables['buildName'], 'RPM') }}:
