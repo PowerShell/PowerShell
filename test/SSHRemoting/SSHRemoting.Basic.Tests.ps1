@@ -236,7 +236,9 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             ##
             # Testonly
             $config_sshd = Get-Content -Path '/etc/ssh/sshd_config' -Raw
-            Write-Verbose -Verbose -Message $config_sshd
+            Write-Verbose -Verbose -Message "Config_SSHD: $config_sshd"
+            $config = Get-Content -Path '/home/vsts_azpcontainer/PSTestConfig.pssc' -Raw
+            Write-Verbose -Verbose -Messaage "Config PSSC: $config"
             ##
             $script:session = TryNewPSSession -HostName localhost -Subsystem 'pwshconfig'
             $script:session | Should -Not -BeNullOrEmpty

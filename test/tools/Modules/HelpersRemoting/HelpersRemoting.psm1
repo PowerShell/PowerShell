@@ -578,7 +578,7 @@ function Install-SSHRemotingOnLinux
     sudo pwsh -c $cmdLine
 
     # Finally create a 'pwshbroken' named configured endpoint.
-    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath $sshdFilePath -PowerShellFilePath $PowerShellPath -ConfigFilePath 'C:\NoSuch.pssc' -SubsystemName 'pwshbroken' -Force"
+    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath $sshdFilePath -PowerShellFilePath $PowerShellPath -ConfigFilePath '$HOME/NoSuch.pssc' -SubsystemName 'pwshbroken' -Force"
     Write-Verbose -Verbose "CmdLine: $cmdLine"
     sudo pwsh -c $cmdLine
 
