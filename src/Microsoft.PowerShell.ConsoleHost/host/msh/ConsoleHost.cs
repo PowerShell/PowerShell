@@ -304,11 +304,10 @@ namespace Microsoft.PowerShell
                 PowerShellConfig.Instance.SetSystemConfigFilePath(s_cpp.SettingsFile);
             }
 
-            // Check registry setting for a Group Policy ConfigurationName and ConfigurationFile entries,
+            // Check registry setting for a Group Policy ConfigurationName entry,
             // and use it to override anything set by the user on the command line.
             // It depends on setting file so 'SetSystemConfigFilePath()' should be called before.
             s_cpp.ConfigurationName = CommandLineParameterParser.GetConfigurationNameFromGroupPolicy();
-            s_cpp.ConfigurationFile = CommandLineParameterParser.GetConfigurationFilePathFromGroupPolicy();
         }
 
         private static readonly CommandLineParameterParser s_cpp = new CommandLineParameterParser();

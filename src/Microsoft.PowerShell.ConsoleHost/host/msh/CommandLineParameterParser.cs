@@ -599,14 +599,6 @@ namespace Microsoft.PowerShell
                     consoleSessionSetting.ConsoleSessionConfigurationName : string.Empty;
         }
 
-        internal static string GetConfigurationFilePathFromGroupPolicy()
-        {
-            var consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.CurrentUserThenSystemWideConfig);
-
-            return (consoleSessionConfigFile?.EnableConsoleSessionConfigFile == true && !string.IsNullOrEmpty(consoleSessionConfigFile?.ConsoleSessionConfigFilePath)) ?
-                consoleSessionConfigFile.ConsoleSessionConfigFilePath : string.Empty;
-        }
-
         /// <summary>
         /// Gets the word in a switch from the current argument or parses a file.
         /// For example -foo, /foo, or --foo would return 'foo'.

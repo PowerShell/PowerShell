@@ -809,9 +809,6 @@ namespace System.Management.Automation
                         case nameof(ConsoleSessionConfiguration):
                             result = policies.ConsoleSessionConfiguration;
                             break;
-                        case nameof(ConsoleSessionConfigFile):
-                            result = policies.ConsoleSessionConfigFile;
-                            break;
                         default:
                             Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when new PowerShell policy types are added.");
                             break;
@@ -833,8 +830,7 @@ namespace System.Management.Automation
             {nameof(ProtectedEventLogging), @"Software\Policies\Microsoft\Windows\EventLog\ProtectedEventLogging"},
             {nameof(Transcription), @"Software\Policies\Microsoft\PowerShellCore\Transcription"},
             {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},
-            {nameof(ConsoleSessionConfiguration), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration"},
-            {nameof(ConsoleSessionConfigFile), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfigFile"}
+            {nameof(ConsoleSessionConfiguration), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration"}
         };
 
         private static readonly Dictionary<string, string> WindowsPowershellGroupPolicyKeys = new Dictionary<string, string>

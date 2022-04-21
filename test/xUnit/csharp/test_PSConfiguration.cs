@@ -79,8 +79,7 @@ namespace PSTests.Sequential
                 ProtectedEventLogging = new ProtectedEventLogging() { EnableProtectedEventLogging = false, EncryptionCertificate = new string[] { "Joe" } },
                 Transcription = new Transcription() { EnableInvocationHeader = true, EnableTranscripting = true, OutputDirectory = @"c:\tmp" },
                 UpdatableHelp = new UpdatableHelp() { DefaultSourcePath = @"f:\temp" },
-                ConsoleSessionConfiguration = new ConsoleSessionConfiguration() { EnableConsoleSessionConfiguration = true, ConsoleSessionConfigurationName = "name" },
-                ConsoleSessionConfigFile = new ConsoleSessionConfigFile() { EnableConsoleSessionConfigFile = true, ConsoleSessionConfigFilePath = "path" }
+                ConsoleSessionConfiguration = new ConsoleSessionConfiguration() { EnableConsoleSessionConfiguration = true, ConsoleSessionConfigurationName = "name" }
             };
 
             currentUserPolicies = new PowerShellPolicies()
@@ -246,19 +245,6 @@ namespace PSTests.Sequential
             }
         }
 
-        internal void CompareConsoleSessionConfigFile(ConsoleSessionConfigFile a, ConsoleSessionConfigFile b)
-        {
-            if (a == null)
-            {
-                Assert.Null(b);
-            }
-            else
-            {
-                Assert.Equal(a.EnableConsoleSessionConfigFile, b.EnableConsoleSessionConfigFile);
-                Assert.Equal(a.ConsoleSessionConfigFilePath, b.ConsoleSessionConfigFilePath);
-            }
-        }
-
         internal void CompareTwoPolicies(PowerShellPolicies a, PowerShellPolicies b)
         {
             // Compare 'ScriptExecution' settings
@@ -281,9 +267,6 @@ namespace PSTests.Sequential
 
             // Compare 'ConsoleSessionConfiguration' settings
             CompareConsoleSessionConfiguration(a.ConsoleSessionConfiguration, b.ConsoleSessionConfiguration);
-
-            // Compare 'ConsoleSessionConfigFile' settings
-            CompareConsoleSessionConfigFile(a.ConsoleSessionConfigFile, b.ConsoleSessionConfigFile);
         }
 
         #endregion
@@ -594,19 +577,6 @@ namespace PSTests.Sequential
 
             consoleSessionConfiguration = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, fixture.SystemWidePolicies.ConsoleSessionConfiguration);
-
-            ConsoleSessionConfigFile consoleSessionConfigFile;
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.SystemWideOnlyConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, fixture.SystemWidePolicies.ConsoleSessionConfigFile);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.CurrentUserOnlyConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.SystemWideThenCurrentUserConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, fixture.SystemWidePolicies.ConsoleSessionConfigFile);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.CurrentUserThenSystemWideConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, fixture.SystemWidePolicies.ConsoleSessionConfigFile);
         }
 
         [Fact, Priority(7)]
@@ -706,19 +676,6 @@ namespace PSTests.Sequential
 
             consoleSessionConfiguration = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, fixture.SystemWidePolicies.ConsoleSessionConfiguration);
-
-            ConsoleSessionConfigFile consoleSessionConfigFile;
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.SystemWideOnlyConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, fixture.SystemWidePolicies.ConsoleSessionConfigFile);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.CurrentUserOnlyConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.SystemWideThenCurrentUserConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, fixture.SystemWidePolicies.ConsoleSessionConfigFile);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.CurrentUserThenSystemWideConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, fixture.SystemWidePolicies.ConsoleSessionConfigFile);
         }
 
         [Fact, Priority(8)]
@@ -819,19 +776,6 @@ namespace PSTests.Sequential
 
             consoleSessionConfiguration = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
-
-            ConsoleSessionConfigFile consoleSessionConfigFile;
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.SystemWideOnlyConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.CurrentUserOnlyConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.SystemWideThenCurrentUserConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.CurrentUserThenSystemWideConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
         }
 
         [Fact, Priority(9)]
@@ -932,19 +876,6 @@ namespace PSTests.Sequential
 
             consoleSessionConfiguration = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
-
-            ConsoleSessionConfigFile consoleSessionConfigFile;
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.SystemWideOnlyConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.CurrentUserOnlyConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.SystemWideThenCurrentUserConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.CurrentUserThenSystemWideConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
         }
 
         [Fact, Priority(10)]
@@ -1045,19 +976,6 @@ namespace PSTests.Sequential
 
             consoleSessionConfiguration = Utils.GetPolicySetting<ConsoleSessionConfiguration>(Utils.CurrentUserThenSystemWideConfig);
             fixture.CompareConsoleSessionConfiguration(consoleSessionConfiguration, null);
-
-            ConsoleSessionConfigFile consoleSessionConfigFile;
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.SystemWideOnlyConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.CurrentUserOnlyConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.SystemWideThenCurrentUserConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
-
-            consoleSessionConfigFile = Utils.GetPolicySetting<ConsoleSessionConfigFile>(Utils.CurrentUserThenSystemWideConfig);
-            fixture.CompareConsoleSessionConfigFile(consoleSessionConfigFile, null);
         }
 
         [Fact, Priority(11)]
