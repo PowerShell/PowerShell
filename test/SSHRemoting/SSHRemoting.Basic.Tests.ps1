@@ -233,6 +233,11 @@ Describe "SSHRemoting Basic Tests" -tags CI {
 
         It "Verifies the 'pwshconfig' configured endpoint." {
             Write-Verbose -Verbose "It Starting: Verifies the 'pwshconfig' configured endpoint."
+            ##
+            # Testonly
+            $config_sshd = Get-Content -Path '/etc/ssh/sshd_config' -Raw
+            Write-Verbose -Verbose -Message $config_sshd
+            ##
             $script:session = TryNewPSSession -HostName localhost -Subsystem 'pwshconfig'
             $script:session | Should -Not -BeNullOrEmpty
             # Configured session should be in ConstrainedLanguage mode.
