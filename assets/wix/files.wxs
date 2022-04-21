@@ -3183,6 +3183,12 @@
       <Component Id="cmp05AA3332D604464298B922F34672061F">
         <File Id="fil45EB1A6088AA4475B1B9B0413BC0FE02" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.15202.dll" />
       </Component>
+      <Component Id="cmpFE56825F03274064A69AA43CA4B597C7">
+        <File Id="filAAE3E9B665914FF7A0164F83BD421829" KeyPath="yes" Source="$(var.ProductSourcePath)\getfilesiginforedist.dll" />
+      </Component>
+      <Component Id="cmp0AB1EF494922410AB17DC61097295172">
+        <File Id="fil70AB7246AA664FFCADD71E79322934EA" KeyPath="yes" Source="$(var.ProductSourcePath)\getfilesiginforedistwrapper.dll" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -4206,6 +4212,8 @@
       <ComponentRef Id="cmpE5993DB9118640FD8C180A2D61C89C01" />
       <ComponentRef Id="cmpE0DEAA289B2D4594A0C4791B2808C97C" />
       <ComponentRef Id="cmp05AA3332D604464298B922F34672061F" />
+      <ComponentRef Id="cmpFE56825F03274064A69AA43CA4B597C7" />
+      <ComponentRef Id="cmp0AB1EF494922410AB17DC61097295172" />
     </ComponentGroup>
   </Fragment>
 </Wix>
