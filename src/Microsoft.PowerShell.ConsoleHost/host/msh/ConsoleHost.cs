@@ -1762,7 +1762,7 @@ namespace Microsoft.PowerShell
             _readyForInputTimeInMS = (DateTime.Now - Process.GetCurrentProcess().StartTime).TotalMilliseconds;
 #endif
 
-            DoRunspaceInitialization(args.SkipProfiles, args.InitialCommand, args.ConfigurationName, args.InitialCommandArgs);
+            DoRunspaceInitialization(args);
         }
 
         private static void OpenConsoleRunspace(Runspace runspace, bool staMode)
@@ -1779,7 +1779,7 @@ namespace Microsoft.PowerShell
             runspace.Open();
         }
 
-        private void DoRunspaceInitialization(bool skipProfiles, string initialCommand, string configurationName, Collection<CommandParameter> initialCommandArgs)
+        private void DoRunspaceInitialization(RunspaceCreationEventArgs args)
         {
             if (_runspaceRef.Runspace.Debugger != null)
             {
@@ -1814,13 +1814,13 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            if (!string.IsNullOrEmpty(configurationName))
+            if (!string.IsNullOrEmpty(args.ConfigurationName))
             {
                 // If an endpoint configuration is specified then create a loop-back remote runspace targeting
                 // the endpoint and push onto runspace ref stack.  Ignore profile and configuration scripts.
                 try
                 {
-                    RemoteRunspace remoteRunspace = HostUtilities.CreateConfiguredRunspace(configurationName, this);
+                    RemoteRunspace remoteRunspace = HostUtilities.CreateConfiguredRunspace(args.ConfigurationName, this);
                     remoteRunspace.ShouldCloseOnPop = true;
                     PushRunspace(remoteRunspace);
 
@@ -1855,7 +1855,7 @@ namespace Microsoft.PowerShell
                         currentUserProfile,
                         currentUserHostSpecificProfile));
 
-                if (!skipProfiles)
+                if (!args.SkipProfiles)
                 {
                     // Run the profiles.
                     // Profiles are run in the following order:
@@ -1915,11 +1915,11 @@ namespace Microsoft.PowerShell
 
                 tempPipeline.Commands.Add(c);
 
-                if (initialCommandArgs != null)
+                if (args.InitialCommandArgs != null)
                 {
                     // add the args passed to the command.
 
-                    foreach (CommandParameter p in initialCommandArgs)
+                    foreach (CommandParameter p in args.InitialCommandArgs)
                     {
                         c.Parameters.Add(p);
                     }
@@ -1976,19 +1976,19 @@ namespace Microsoft.PowerShell
                     ReportException(e1, exec);
                 }
             }
-            else if (!string.IsNullOrEmpty(initialCommand))
+            else if (!string.IsNullOrEmpty(args.InitialCommand))
             {
                 // Run the command passed on the command line
 
                 s_tracer.WriteLine("running initial command");
 
-                Pipeline tempPipeline = exec.CreatePipeline(initialCommand, true);
+                Pipeline tempPipeline = exec.CreatePipeline(args.InitialCommand, true);
 
-                if (initialCommandArgs != null)
+                if (args.InitialCommandArgs != null)
                 {
                     // add the args passed to the command.
 
-                    foreach (CommandParameter p in initialCommandArgs)
+                    foreach (CommandParameter p in args.InitialCommandArgs)
                     {
                         tempPipeline.Commands[0].Parameters.Add(p);
                     }
@@ -2004,7 +2004,7 @@ namespace Microsoft.PowerShell
                     ParseError[] errors;
 
                     // Detect if they're using input. If so, read from it.
-                    Ast parsedInput = Parser.ParseInput(initialCommand, out tokens, out errors);
+                    Ast parsedInput = Parser.ParseInput(args.InitialCommand, out tokens, out errors);
                     if (AstSearcher.IsUsingDollarInput(parsedInput))
                     {
                         executionOptions |= Executor.ExecutionOptions.ReadInputObjects;
