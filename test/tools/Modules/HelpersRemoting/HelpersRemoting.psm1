@@ -559,7 +559,7 @@ function Install-SSHRemotingOnLinux
     $sshdPath = '/etc/ssh/sshd_config'
 
     # First create a default 'powershell' named endpoint.
-    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath  -PowerShellFilePath $PowerShellPath -Force"
+    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath $sshdPath -PowerShellFilePath $PowerShellPath -Force"
     Write-Verbose -Verbose "CmdLine: $cmdLine"
     sudo pwsh -c $cmdLine
 
