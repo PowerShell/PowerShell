@@ -1333,6 +1333,7 @@ function Get-FpmArguments
         "-s", "dir"
     )
     if ($Distribution -in $script:RedHatDistributions) {
+        $Arguments += @("--rpm-digest", "sha256")
         $Arguments += @("--rpm-dist", $Distribution)
         $Arguments += @("--rpm-os", "linux")
         $Arguments += @("--license", "MIT")
