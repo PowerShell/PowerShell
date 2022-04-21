@@ -556,8 +556,7 @@ function Install-SSHRemotingOnLinux
     Write-Verbose -Verbose "Running Enable-SSHRemoting ..."
     Write-Verbose -Verbose "PSScriptRoot: $PSScriptRoot"
     $modulePath = "${PSScriptRoot}\..\Microsoft.PowerShell.RemotingTools\Microsoft.PowerShell.RemotingTools.psd1"
-    $sshdPath = '/etc/ssh'
-    $sshdFilePath = Join-Path -Path $sshdPath -ChildPath 'sshd_config'
+    $sshdFilePath = '/etc/ssh/sshd_config'
 
     # First create a default 'powershell' named endpoint.
     $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath $sshdFilePath -PowerShellFilePath $PowerShellPath -Force"
@@ -566,7 +565,7 @@ function Install-SSHRemotingOnLinux
 
     # Next create a 'pwshconfig' named configured endpoint.
     # Configuration file:
-    $configFilePath = Join-Path -Path $sshdPath -ChildPath 'PSTestConfig.pssc'
+    $configFilePath = Join-Path -Path "$env:HOME" -ChildPath 'PSTestConfig.pssc'
     @{
         GUID = '6307763f-7729-4f60-a0c7-874fe006ddd2'
         Author = 'Microsoft'
