@@ -566,13 +566,13 @@ function Install-SSHRemotingOnLinux
     # Next create a 'pwshconfig' named configured endpoint.
     # Configuration file:
     $configFilePath = Join-Path -Path "$env:HOME" -ChildPath 'PSTestConfig.pssc'
-    @{
-        GUID = '6307763f-7729-4f60-a0c7-874fe006ddd2'
-        Author = 'Microsoft'
-        Description = 'Test local PowerShell session configuration'
-        LanguageMode = 'ConstrainedLanguage'
-        ExecutionPolicy = 'RemoteSigned'
-    } | Out-File -FilePath $configFilePath
+    '@{
+        GUID = "4d667b90-25f8-47d5-9c90-619b27954748"
+        Author = "Microsoft"
+        Description = "Test local PowerShell session configuration"
+        LanguageMode = "ConstrainedLanguage"
+        ExecutionPolicy = "RemoteSigned"
+    }' | Out-File -FilePath $configFilePath
     $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath $sshdFilePath -PowerShellFilePath $PowerShellPath -ConfigFilePath $configFilePath -SubsystemName 'pwshconfig' -Force"
     Write-Verbose -Verbose "CmdLine: $cmdLine"
     sudo pwsh -c $cmdLine
