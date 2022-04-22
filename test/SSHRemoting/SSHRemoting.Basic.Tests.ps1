@@ -244,6 +244,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
         It "Verifes that 'pwshbroken' throws expected error for missing config file." {
             Write-Verbose -Verbose "It Starting: Verifes that 'pwshbroken' throws expected error for missing config file."
             { $script:session = TryNewPSSession -HostName localhost -Subsystem 'pwshbroken' } | Should -Throw
+            $script:session = $null
             Write-Verbose -Verbose "It Complete"
         }
     }
@@ -292,6 +293,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             throw [System.Management.Automation.PSInvalidOperationException]::new($message)
         }
 
+        Write-Verbose -Verbose "Test: Runspace variable: $rs"
         Write-Verbose -Verbose "SSH Runspace Open remoting connect succeeded."
         Write-Output $rs
     }
