@@ -48,8 +48,9 @@ namespace System.Management.Automation
 
                 if (attributes.Count > 0)
                 {
-                    // When there is any attributes, it's possible the value was converted/transformed.
-                    value = var.Value;
+                    // When there are any attributes, it's possible the value was converted/transformed.
+                    // Use 'GetValueRaw' here so the debugger check won't be triggered.
+                    value = var.GetValueRaw();
                 }
 
                 // Marking untrusted values for assignments in 'ConstrainedLanguage' mode is done in
