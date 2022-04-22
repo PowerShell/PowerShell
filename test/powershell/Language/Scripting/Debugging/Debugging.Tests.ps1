@@ -334,30 +334,30 @@ elseif (Test-Path $PSCommandPath)
 
     Context "Break point on return should hit" {
         BeforeAll {
-            $if_script_1 = @'
+            $return_script_1 = @'
 return
 '@
-            $if_script_2 = @'
+            $return_script_2 = @'
 return 10
 '@
 
-            $IfScript_1 = Setup -PassThru -File IfScript_1.ps1 -Content $if_script_1
-            $bp_1 = Set-PSBreakpoint -Script $IfScript_1 -Line 1 -Action { continue }
+            $ReturnScript_1 = Setup -PassThru -File ReturnScript_1.ps1 -Content $return_script_1
+            $bp_1 = Set-PSBreakpoint -Script $ReturnScript_1 -Line 1 -Action { continue }
 
-            $IfScript_2 = Setup -PassThru -File IfScript_2.ps1 -Content $if_script_2
-            $bp_2 = Set-PSBreakpoint -Script $IfScript_2 -Line 1 -Action { continue }
+            $ReturnScript_2 = Setup -PassThru -File ReturnScript_2.ps1 -Content $return_script_2
+            $bp_2 = Set-PSBreakpoint -Script $ReturnScript_2 -Line 1 -Action { continue }
 
             $testCases = @(
-                @{ Name = "return without pipeline should be hit once"; Path = $IfScript_1; Breakpoint = $bp_1; HitCount = 1 }
-                @{ Name = "return with pipeline should be hit once";    Path = $IfScript_2; Breakpoint = $bp_2; HitCount = 1 }
+                @{ Name = "return without pipeline should be hit once"; Path = $ReturnScript_1; Breakpoint = $bp_1; HitCount = 1 }
+                @{ Name = "return with pipeline should be hit once";    Path = $ReturnScript_2; Breakpoint = $bp_2; HitCount = 1 }
             )
         }
 
         AfterAll {
-            Get-PSBreakpoint -Script $IfScript_1, $IfScript_2, $IfScript_3, $IfScript_4 | Remove-PSBreakpoint
+            Get-PSBreakpoint -Script $ReturnScript_1, $ReturnScript_2 | Remove-PSBreakpoint
         }
 
-        It "If statement <Name>" -TestCases $testCases {
+        It "Return statement <Name>" -TestCases $testCases {
             param($Path, $Breakpoint, $HitCount)
             $null = & $Path
             $Breakpoint.HitCount | Should -Be $HitCount
