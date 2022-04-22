@@ -2933,6 +2933,36 @@ namespace System.Management.Automation.Remoting
     internal static class DISCFileValidation
     {
         // Set of supported configuration options for a PowerShell InitialSessionState.
+#if UNIX
+        private static readonly HashSet<string> SupportedConfigOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "AliasDefinitions",
+            "AssembliesToLoad",
+            "Author",
+            "CompanyName",
+            "Copyright",
+            "Description",
+            "EnvironmentVariables",
+            "FormatsToProcess",
+            "FunctionDefinitions",
+            "GUID",
+            "LanguageMode",
+            "ModulesToImport",
+            "MountUserDrive",
+            "SchemaVersion",
+            "ScriptsToProcess",
+            "SessionType",
+            "TranscriptDirectory",
+            "TypesToProcess",
+            "UserDriveMaximumSize",
+            "VisibleAliases",
+            "VisibleCmdlets",
+            "VariableDefinitions",
+            "VisibleExternalCommands",
+            "VisibleFunctions",
+            "VisibleProviders"
+        };
+#else
         private static readonly HashSet<string> SupportedConfigOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "AliasDefinitions",
@@ -2962,6 +2992,7 @@ namespace System.Management.Automation.Remoting
             "VisibleFunctions",
             "VisibleProviders"
         };
+#endif
 
         // These are configuration options for WSMan (WinRM) endpoint configurations, that 
         // appearand in .pssc files, but are not part of PowerShell InitialSessionState.
