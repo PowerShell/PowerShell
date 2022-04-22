@@ -29,4 +29,10 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
         ## $arraylist.Clear() should be executed
         $arraylist.Count | Should -Be 0
     }
+
+    ## fix https://github.com/PowerShell/PowerShell/issues/17165
+    It "([bool] `$var = 42) should return the varaible value" {
+        ([bool]$var = 42).GetType().FullName | Should -Be "System.Boolean"
+        . { ([bool]$var = 42).GetType().FullName } | Should -Be "System.Boolean"
+    }
 }
