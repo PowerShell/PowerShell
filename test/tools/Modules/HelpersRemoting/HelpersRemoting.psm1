@@ -571,7 +571,6 @@ function Install-SSHRemotingOnLinux
         Author = "Microsoft"
         Description = "Test local PowerShell session configuration"
         LanguageMode = "ConstrainedLanguage"
-        ExecutionPolicy = "RemoteSigned"
     }' | Out-File -FilePath $configFilePath
     $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath $sshdFilePath -PowerShellFilePath $PowerShellPath -ConfigFilePath $configFilePath -SubsystemName 'pwshconfig' -Force"
     Write-Verbose -Verbose "CmdLine: $cmdLine"
