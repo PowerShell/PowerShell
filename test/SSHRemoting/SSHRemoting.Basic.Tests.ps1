@@ -241,12 +241,14 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             Write-Verbose -Verbose "It Complete"
         }
 
+        <#
         It "Verifes that 'pwshbroken' throws expected error for missing config file." {
             Write-Verbose -Verbose "It Starting: Verifes that 'pwshbroken' throws expected error for missing config file."
             { $script:session = TryNewPSSession -HostName localhost -Subsystem 'pwshbroken' } | Should -Throw
             $script:session = $null
             Write-Verbose -Verbose "It Complete"
         }
+        #>
     }
 
     function TryCreateRunspace
