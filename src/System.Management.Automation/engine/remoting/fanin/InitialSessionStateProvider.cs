@@ -2933,67 +2933,67 @@ namespace System.Management.Automation.Remoting
     internal static class DISCFileValidation
     {
         // Set of supported configuration options for a PowerShell InitialSessionState.
-        private static readonly HashSet<string> SupportedConfigOptions = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
+        private static readonly HashSet<string> SupportedConfigOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "SchemaVersion",
-            "GUID",
+            "AliasDefinitions",
+            "AssembliesToLoad",
             "Author",
-            "Description",
             "CompanyName",
             "Copyright",
+            "Description",
+            "EnvironmentVariables",
+            "ExecutionPolicy",
+            "FormatsToProcess",
+            "FunctionDefinitions",
+            "GUID",
+            "LanguageMode",
+            "ModulesToImport",
+            "MountUserDrive",
+            "SchemaVersion",
+            "ScriptsToProcess",
             "SessionType",
             "TranscriptDirectory",
-            "MountUserDrive",
+            "TypesToProcess",
             "UserDriveMaximumSize",
-            "ScriptsToProcess",
-            "LanguageMode",
-            "ExecutionPolicy",
-            "ModulesToImport",
             "VisibleAliases",
             "VisibleCmdlets",
-            "VisibleFunctions",
-            "VisibleExternalCommands",
-            "VisibleProviders",
-            "AliasDefinitions",
-            "FunctionDefinitions",
             "VariableDefinitions",
-            "EnvironmentVariables",
-            "TypesToProcess",
-            "FormatsToProcess",
-            "AssembliesToLoad"
+            "VisibleExternalCommands",
+            "VisibleFunctions",
+            "VisibleProviders"
         };
 
         // These are configuration options for WSMan (WinRM) endpoint configurations, that 
         // appearand in .pssc files, but are not part of PowerShell InitialSessionState.
-        private static readonly HashSet<string> UnsupportedConfigOptions = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
+        private static readonly HashSet<string> UnsupportedConfigOptions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "RunAsVirtualAccount",
-            "RunAsVirtualAccountGroups",
             "GroupManagedServiceAccount",
-            "RoleDefinitions",
+            "PowerShellVersion",
             "RequiredGroups",
-            "PowerShellVersion"
+            "RoleDefinitions",
+            "RunAsVirtualAccount",
+            "RunAsVirtualAccountGroups"
         };
 
         internal static void ValidateContents(Hashtable configHash)
         {
             foreach (var key in configHash.Keys)
             {
-                if (!(key is string keyName))
+                if (key is not string keyName)
                 {
                     throw new PSInvalidOperationException(RemotingErrorIdStrings.DISCInvalidConfigKeyType);
                 }
 
+                if (UnsupportedConfigOptions.Contains(keyName))
+                {
+                    throw new PSInvalidOperationException(
+                        StringUtil.Format(RemotingErrorIdStrings.DISCUnsupportedConfigName, keyName));
+                }
+
                 if (!SupportedConfigOptions.Contains(keyName))
                 {
-                    if (UnsupportedConfigOptions.Contains(keyName))
-                    {
-                        throw new PSInvalidOperationException(
-                            StringUtil.Format(RemotingErrorIdStrings.DISCUnsupportedConfigName, keyName));
-                    }
-
                     throw new PSInvalidOperationException(
-                            StringUtil.Format(RemotingErrorIdStrings.DISCUnknownConfigName, keyName));
+                        StringUtil.Format(RemotingErrorIdStrings.DISCUnknownConfigName, keyName));
                 }
             }
         }

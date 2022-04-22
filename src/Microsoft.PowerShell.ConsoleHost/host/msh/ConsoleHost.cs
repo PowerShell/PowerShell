@@ -1653,7 +1653,7 @@ namespace Microsoft.PowerShell
         /// Opens and Initializes the Host's sole Runspace.  Processes the startup scripts and runs any command passed on the
         /// command line.
         /// </summary>
-        // Collection<CommandParameter> initialCommandArgs
+        /// <param name="args">Runspace creation event arguments.</param>
         private void DoCreateRunspace(RunspaceCreationEventArgs args)
         {
             Dbg.Assert(_runspaceRef == null, "_runspaceRef field should be null");

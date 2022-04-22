@@ -175,8 +175,8 @@ namespace Microsoft.PowerShell
             "sta",
             "mta",
             "command",
-            "configurationname",
             "configurationfile",
+            "configurationname",
             "custompipename",
             "encodedcommand",
             "executionpolicy",
@@ -321,23 +321,6 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal string? ConfigurationName
-        {
-            get
-            {
-                AssertArgumentsParsed();
-                return _configurationName;
-            }
-
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    _configurationName = value;
-                }
-            }
-        }
-
         internal string? ConfigurationFile
         {
             get
@@ -351,6 +334,23 @@ namespace Microsoft.PowerShell
                 if (!string.IsNullOrEmpty(value))
                 {
                     _configurationFile = value;
+                }
+            }
+        }
+
+        internal string? ConfigurationName
+        {
+            get
+            {
+                AssertArgumentsParsed();
+                return _configurationName;
+            }
+
+            set
+            {
+                if (!string.IsNullOrEmpty(value))
+                {
+                    _configurationName = value;
                 }
             }
         }
@@ -823,6 +823,18 @@ namespace Microsoft.PowerShell
                 {
                     _noInteractive = false;
                 }
+                else if (MatchSwitch(switchKey, "configurationfile", "configurationfile"))
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        SetCommandLineError(
+                            CommandLineParameterParserStrings.MissingConfigurationFileArgument);
+                        break;
+                    }
+
+                    _configurationFile = args[i];
+                }
                 else if (MatchSwitch(switchKey, "configurationname", "config"))
                 {
                     ++i;
@@ -834,18 +846,6 @@ namespace Microsoft.PowerShell
                     }
 
                     _configurationName = args[i];
-                }
-                else if (MatchSwitch(switchKey, "configurationfile", "configurationf"))
-                {
-                    ++i;
-                    if (i >= args.Length)
-                    {
-                        SetCommandLineError(
-                            CommandLineParameterParserStrings.MissingConfigurationFileArgument);
-                        break;
-                    }
-
-                    _configurationFile = args[i];
                 }
                 else if (MatchSwitch(switchKey, "custompipename", "cus"))
                 {
