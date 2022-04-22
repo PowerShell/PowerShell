@@ -287,13 +287,12 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             }
         }
 
-        if ($null -eq $rs)
+        if (($null -eq $rs) -or !($rs -is [runspace]))
         {
             $message = "Runspace open unable to connect to SSH remoting endpoint after two attempts. Error: $($connectionError.Message)"
             throw [System.Management.Automation.PSInvalidOperationException]::new($message)
         }
 
-        Write-Verbose -Verbose "Test: Runspace variable: $rs"
         Write-Verbose -Verbose "SSH Runspace Open remoting connect succeeded."
         Write-Output $rs
     }
