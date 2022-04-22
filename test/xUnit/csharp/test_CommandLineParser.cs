@@ -440,7 +440,6 @@ namespace PSTests.Parallel
 
         [Theory]
         [InlineData("-configurationfile")]
-        [InlineData("-configurationf")]
         public static void TestParameter_ConfigurationFile_No_Name(params string[] commandLine)
         {
             var cpp = new CommandLineParameterParser();
@@ -457,7 +456,6 @@ namespace PSTests.Parallel
 
         [Theory]
         [InlineData("-configurationfile", "qwerty")]
-        [InlineData("-configurationf", "qwerty")]
         public static void TestParameter_ConfigurationFile_With_Name(params string[] commandLine)
         {
             var cpp = new CommandLineParameterParser();

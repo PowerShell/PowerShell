@@ -233,13 +233,6 @@ Describe "SSHRemoting Basic Tests" -tags CI {
 
         It "Verifies the 'pwshconfig' configured endpoint." {
             Write-Verbose -Verbose "It Starting: Verifies the 'pwshconfig' configured endpoint."
-            ##
-            # Testonly
-            $config_sshd = Get-Content -Path '/etc/ssh/sshd_config' -Raw
-            Write-Verbose -Verbose -Message "Config_SSHD: $config_sshd"
-            $config = Get-Content -Path '/home/vsts_azpcontainer/PSTestConfig.pssc' -Raw
-            Write-Verbose -Verbose -Message "Config PSSC: $config"
-            ##
             $script:session = TryNewPSSession -HostName localhost -Subsystem 'pwshconfig'
             $script:session | Should -Not -BeNullOrEmpty
             # Configured session should be in ConstrainedLanguage mode.
@@ -342,7 +335,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
 
         AfterEach {
             Write-Verbose -Verbose "Starting Runspace close AfterEach"
-            if ($script:rs -ne $null) { $script:rs.Dispose() }
+            if (($script:rs -ne $null) -and ($script:rs -is [runspace])) { $script:rs.Dispose() }
             Write-Verbose -Verbose "AfterEach complete"
         }
 
