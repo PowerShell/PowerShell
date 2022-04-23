@@ -1,3 +1,4 @@
+using System.Diagnostics;
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -97,6 +98,9 @@ namespace Microsoft.PowerShell.Telemetry
         // Use "anonymous" as the string to return when you can't report a name
         private const string _anonymous = "anonymous";
 
+        // Use '0.0.0.0' as the string for an anonymous module version
+        private const string _anonymousVersion = "0.0.0.0";
+
         // the telemetry failure string
         private const string _telemetryFailure = "TELEMETRY_FAILURE";
 
@@ -138,7 +142,7 @@ namespace Microsoft.PowerShell.Telemetry
                 configuration.InstrumentationKey = _psCoreTelemetryKey;
 
                 // Set this to true to reduce latency during development
-                configuration.TelemetryChannel.DeveloperMode = false;
+                configuration.TelemetryChannel.DeveloperMode = true;
 
                 // Be sure to obscure any information about the client node name.
                 configuration.TelemetryInitializers.Add(new NameObscurerTelemetryInitializer());
@@ -643,6 +647,28 @@ namespace Microsoft.PowerShell.Telemetry
         }
 
         /// <summary>
+        /// Send module load telemetry as a metric.
+        /// For modules we send the module name (if allowed), and the version.
+        /// Some modules (CIM) will continue use the string alternative method.
+        /// </summary>
+        /// <param name="telemetryType">The type of telemetry that we'll be sending.</param>
+        /// <param name="moduleName">The module name to report. If it is not allowed, then it is set to 'anonymous'</param>
+        /// <param name="moduleVersion">The module version to report. The default value is the anonymous version '0.0.0.0'.</param>
+        internal static void SendModuleTelemetryMetric(TelemetryType telemetryType, string moduleName, string moduleVersion = _anonymousVersion)
+        {
+            try
+            {
+                string allowedModuleName = GetModuleName(moduleName);
+                string allowedModuleVersion = allowedModuleName == _anonymous ? _anonymousVersion : moduleVersion;
+                s_telemetryClient.GetMetric(telemetryType.ToString(), "uuid", "SessionId", "ModuleName", "Version").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, allowedModuleName, allowedModuleVersion);
+            }
+            catch
+            {
+                // Ignore errors.
+            }
+        }
+
+        /// <summary>
         /// Send telemetry as a metric.
         /// </summary>
         /// <param name="metricId">The type of telemetry that we'll be sending.</param>
@@ -654,14 +680,17 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
 
-            SendPSCoreStartupTelemetry("hosted");
+            // SendPSCoreStartupTelemetry("hosted", 0);
+
+            // These should be handled by SendModuleTelemetryMetric.
+            Debug.Assert(metricId != TelemetryType.ModuleLoad);
+            Debug.Assert(metricId != TelemetryType.WinCompatModuleLoad);
 
             string metricName = metricId.ToString();
             try
             {
                 switch (metricId)
                 {
-                    case TelemetryType.ApplicationType:
                     case TelemetryType.PowerShellCreate:
                     case TelemetryType.RemoteSessionOpen:
                     case TelemetryType.ExperimentalEngineFeatureActivation:
@@ -670,11 +699,6 @@ namespace Microsoft.PowerShell.Telemetry
                     case TelemetryType.ExperimentalModuleFeatureActivation:
                         string experimentalFeatureName = GetExperimentalFeatureName(data);
                         s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, experimentalFeatureName);
-                        break;
-                    case TelemetryType.ModuleLoad:
-                    case TelemetryType.WinCompatModuleLoad:
-                        string moduleName = GetModuleName(data); // This will return anonymous if the modulename is not on the report list
-                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, moduleName);
                         break;
                 }
             }
@@ -716,7 +740,8 @@ namespace Microsoft.PowerShell.Telemetry
         /// This is done only once during for the console host.
         /// </summary>
         /// <param name="mode">The "mode" of the startup.</param>
-        internal static void SendPSCoreStartupTelemetry(string mode)
+        /// <param name="parametersUsed">The parameters (as a bitmap) used when starting.</param>
+        internal static void SendPSCoreStartupTelemetry(string mode, double parametersUsed)
         {
             // Check if we already sent startup telemetry
             if (Interlocked.CompareExchange(ref s_startupEventSent, 1, 0) == 1)
@@ -730,6 +755,7 @@ namespace Microsoft.PowerShell.Telemetry
             }
 
             var properties = new Dictionary<string, string>();
+            var parameters = new Dictionary<string, double>();
 
             // The variable POWERSHELL_DISTRIBUTION_CHANNEL is set in our docker images.
             // This allows us to track the actual docker OS as OSDescription provides only "linuxkit"
@@ -742,9 +768,10 @@ namespace Microsoft.PowerShell.Telemetry
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
             properties.Add("OSChannel", string.IsNullOrEmpty(channel) ? "unknown" : channel);
             properties.Add("StartMode", string.IsNullOrEmpty(mode) ? "unknown" : mode);
+            parameters.Add("Param", parametersUsed);
             try
             {
-                s_telemetryClient.TrackEvent("ConsoleHostStartup", properties, null);
+                s_telemetryClient.TrackEvent("ConsoleHostStartup", properties, parameters);
             }
             catch
             {

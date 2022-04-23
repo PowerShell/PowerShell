@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -194,6 +195,49 @@ namespace Microsoft.PowerShell
             "windowstyle",
             "workingdirectory"
         };
+
+        [Flags]
+        internal enum ParameterMask : long
+        {
+            Command           = 0x0000001, // -Command | -c
+            ConfigurationName = 0x0000002, // -ConfigurationName | -config
+            CustomPipeName    = 0x0000004, // -CustomPipeName
+            EncodedCommand    = 0x0000008, // -EncodedCommand | -e | -ec
+            ExecutionPolicy   = 0x0000010, // -ExecutionPolicy | -ex | -ep
+            File              = 0x00000020, // -File | -f
+            Help              = 0x00000040, // -Help, -?, /?
+            InputFormat       = 0x00000100, // -InputFormat | -inp | -if
+            Interactive       = 0x00000200, // -Interactive | -i
+            Login             = 0x00000400, // -Login | -l
+            MTA               = 0x00000800, // -MTA
+            NoExit            = 0x00001000, // -NoExit | -noe
+            NoLogo            = 0x00002000, // -NoLogo | -nol
+            NonInteractive    = 0x00004000, // -NonInteractive | -noni
+            NoProfile         = 0x00008000, // -NoProfile | -nop
+            OutputFormat      = 0x00010000, // -OutputFormat | -o | -of
+            SettingsFile      = 0x00020000, // -SettingsFile | -settings
+            SSHServerMode     = 0x00040000, // -SSHServerMode | -sshs
+            STA               = 0x00080000, // -STA
+            Version           = 0x00100000, // -Version | -v
+            WindowStyle       = 0x00200000, // -WindowStyle | -w
+            WorkingDirectory  = 0x00400000, // -WorkingDirectory | -wd
+            // Parameter values for ExecutionPolicy
+            EPUnrestricted    = 0x0000000100000000, // ExecutionPolicy unrestricted
+            EPRemoteSigned    = 0x0000000200000000, // ExecutionPolicy remote signed
+            EPAllSigned       = 0x0000000400000000, // ExecutionPolicy all signed
+            EPRestricted      = 0x0000000800000000, // ExecutionPolicy restricted
+            EPDefault         = 0x0000001000000000, // ExecutionPolicy default
+            EPBypass          = 0x0000002000000000, // ExecutionPolicy bypass
+            EPUndefined       = 0x0000004000000000, // ExecutionPolicy undefined
+            EPIncorrect       = 0x0000008000000000, // ExecutionPolicy incorrect
+        }
+
+        internal ParameterMask ParametersUsed = 0;
+
+        internal double ParametersUsedAsDouble
+        {
+            get { return (double)ParametersUsed; }
+        }
 
         [Conditional("DEBUG")]
         private void AssertArgumentsParsed()
@@ -641,6 +685,44 @@ namespace Microsoft.PowerShell
             return Path.GetFullPath(path);
         }
 
+        /// <summary>
+        /// Determine the execution policy based on the supplied string.
+        /// If the string doesn't match to any known execution policy, set it to incorrect
+        /// </summary>
+        /// <param name="_executionPolicy">The value provided on the command line.</param>
+        private static ParameterMask GetExecutionPolicy(string? _executionPolicy)
+        {
+            if (_executionPolicy is null)
+            {
+                return ParameterMask.EPUndefined;
+            }
+            if (MatchSwitch(_executionPolicy, "remotesigned", "remotesigned"))
+            {
+                return ParameterMask.EPRemoteSigned;
+            }
+            else if (MatchSwitch(_executionPolicy, "bypass", "bypass"))
+            {
+                return ParameterMask.EPBypass;
+            }
+            else if (MatchSwitch(_executionPolicy, "unrestricted", "unrestricted"))
+            {
+                return ParameterMask.EPUnrestricted;
+            }
+            else if (MatchSwitch(_executionPolicy, "allsigned", "allsigned"))
+            {
+                return ParameterMask.EPAllSigned;
+            }
+            else if (MatchSwitch(_executionPolicy, "restricted", "restricted"))
+            {
+                return ParameterMask.EPRestricted;
+            }
+            else if (MatchSwitch(_executionPolicy, "undefined", "undefined"))
+            {
+                return ParameterMask.EPUndefined;
+            }
+            return ParameterMask.EPIncorrect;
+        }
+
         private static bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
         {
             Dbg.Assert(!string.IsNullOrEmpty(match), "need a value");
@@ -755,6 +837,7 @@ namespace Microsoft.PowerShell
                     _noInteractive = true;
                     _skipUserInit = true;
                     _noExit = false;
+                    ParametersUsed |= ParameterMask.Version;
                     break;
                 }
 
@@ -763,27 +846,33 @@ namespace Microsoft.PowerShell
                     _showHelp = true;
                     _showExtendedHelp = true;
                     _abortStartup = true;
+                    ParametersUsed |= ParameterMask.Help;
                 }
                 else if (MatchSwitch(switchKey, "login", "l"))
                 {
                     // On Windows, '-Login' does nothing.
                     // On *nix, '-Login' is already handled much earlier to improve startup performance, so we do nothing here.
+                    ParametersUsed |= ParameterMask.Login;
                 }
                 else if (MatchSwitch(switchKey, "noexit", "noe"))
                 {
                     _noExit = true;
+                    ParametersUsed |= ParameterMask.NoExit;
                     noexitSeen = true;
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {
+                    ParametersUsed |= ParameterMask.NoProfile;
                     _skipUserInit = true;
                 }
                 else if (MatchSwitch(switchKey, "nologo", "nol"))
                 {
+                    ParametersUsed |= ParameterMask.NoLogo;
                     _showBanner = false;
                 }
                 else if (MatchSwitch(switchKey, "noninteractive", "noni"))
                 {
+                    ParametersUsed |= ParameterMask.NonInteractive;
                     _noInteractive = true;
                 }
                 else if (MatchSwitch(switchKey, "socketservermode", "so"))
@@ -800,10 +889,12 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "sshservermode", "sshs"))
                 {
+                    ParametersUsed |= ParameterMask.SSHServerMode;
                     _sshServerMode = true;
                 }
                 else if (MatchSwitch(switchKey, "interactive", "i"))
                 {
+                    ParametersUsed |= ParameterMask.Interactive;
                     _noInteractive = false;
                 }
                 else if (MatchSwitch(switchKey, "configurationname", "config"))
@@ -817,6 +908,7 @@ namespace Microsoft.PowerShell
                     }
 
                     _configurationName = args[i];
+                    ParametersUsed |= ParameterMask.ConfigurationName;
                 }
                 else if (MatchSwitch(switchKey, "custompipename", "cus"))
                 {
@@ -827,6 +919,7 @@ namespace Microsoft.PowerShell
                             CommandLineParameterParserStrings.MissingCustomPipeNameArgument);
                         break;
                     }
+                    ParametersUsed |= ParameterMask.CustomPipeName;
 
 #if UNIX
                     int maxNameLength = MaxNameLength();
@@ -849,9 +942,11 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
+                    ParametersUsed |= ParameterMask.Command;
                 }
                 else if (MatchSwitch(switchKey, "windowstyle", "w"))
                 {
+                    ParametersUsed |= ParameterMask.WindowStyle;
 #if UNIX
                     SetCommandLineError(
                         CommandLineParameterParserStrings.WindowStyleArgumentNotImplemented);
@@ -879,6 +974,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "file", "f"))
                 {
+                    ParametersUsed |= ParameterMask.File;
                     if (!ParseFile(args, ref i, noexitSeen))
                     {
                         break;
@@ -894,18 +990,23 @@ namespace Microsoft.PowerShell
                 {
                     ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
                     _outputFormatSpecified = true;
+                    ParametersUsed |= ParameterMask.OutputFormat;
                 }
                 else if (MatchSwitch(switchKey, "inputformat", "inp") || MatchSwitch(switchKey, "if", "if"))
                 {
                     ParseFormat(args, ref i, ref _inFormat, CommandLineParameterParserStrings.MissingInputFormatParameter);
+                    ParametersUsed |= ParameterMask.InputFormat;
                 }
                 else if (MatchSwitch(switchKey, "executionpolicy", "ex") || MatchSwitch(switchKey, "ep", "ep"))
                 {
                     ParseExecutionPolicy(args, ref i, ref _executionPolicy, CommandLineParameterParserStrings.MissingExecutionPolicyParameter);
+                    ParametersUsed |= ParameterMask.ExecutionPolicy;
+                    ParametersUsed |= GetExecutionPolicy(_executionPolicy);
                 }
                 else if (MatchSwitch(switchKey, "encodedcommand", "e") || MatchSwitch(switchKey, "ec", "e"))
                 {
                     _wasCommandEncoded = true;
+                    ParametersUsed |= ParameterMask.EncodedCommand;
                     if (!ParseCommand(args, ref i, noexitSeen, true))
                     {
                         break;
@@ -925,9 +1026,11 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
+                    ParametersUsed |= ParameterMask.SettingsFile;
                 }
                 else if (MatchSwitch(switchKey, "sta", "sta"))
                 {
+                    ParametersUsed |= ParameterMask.STA;
                     if (!Platform.IsWindowsDesktop || !Platform.IsStaSupported)
                     {
                         SetCommandLineError(
@@ -947,6 +1050,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "mta", "mta"))
                 {
+                    ParametersUsed |= ParameterMask.MTA;
                     if (!Platform.IsWindowsDesktop)
                     {
                         SetCommandLineError(
@@ -974,6 +1078,7 @@ namespace Microsoft.PowerShell
                         break;
                     }
 
+                    ParametersUsed |= ParameterMask.WorkingDirectory;
                     _workingDirectory = args[i];
                 }
 #if !UNIX
@@ -990,6 +1095,8 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
+                    // default to filename being the next argument.
+                    ParametersUsed |= ParameterMask.File;
                 }
             }
 
