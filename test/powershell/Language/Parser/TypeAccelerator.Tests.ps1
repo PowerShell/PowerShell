@@ -283,6 +283,10 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.ValidateNotNullOrEmptyAttribute]
                 }
                 @{
+                    Accelerator = 'ValidateNotNullOrWhiteSpace'
+                    Type        = [System.Management.Automation.ValidateNotNullOrWhiteSpaceAttribute]
+                }
+                @{
                     Accelerator = 'ValidatePattern'
                     Type        = [System.Management.Automation.ValidatePatternAttribute]
                 }
@@ -406,11 +410,11 @@ Describe "Type accelerators" -Tags "CI" {
 
             if ( !$IsWindows )
             {
-                $totalAccelerators = 99
+                $totalAccelerators = 101
             }
             else
             {
-                $totalAccelerators = 104
+                $totalAccelerators = 106
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{
