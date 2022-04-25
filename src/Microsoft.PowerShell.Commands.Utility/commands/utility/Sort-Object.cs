@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Tracking the index is necessary so that unsortable items can be output at the end, in the order
             // in which they were received.
-            for (int dataIndex = 0, discardedDuplicates = 0; dataIndex < dataToSort.Count - discardedDuplicates; dataIndex++)
+            for (int dataIndex = 0; dataIndex < dataToSort.Count; dataIndex++)
             {
                 // Min-heap: if the heap is full and the root item is larger than the entry, discard the entry
                 // Max-heap: if the heap is full and the root item is smaller than the entry, discard the entry
@@ -159,15 +159,8 @@ namespace Microsoft.PowerShell.Commands
                 // If we're doing a unique sort and the entry is not unique, discard the duplicate entry
                 if (Unique && !uniqueSet.Add(dataToSort[dataIndex]))
                 {
-                    discardedDuplicates++;
-                    if (dataIndex != dataToSort.Count - discardedDuplicates)
-                    {
-                        // When discarding duplicates, replace them with an item at the end of the list and
-                        // adjust our counter so that we check the item we just swapped in next
-                        dataToSort[dataIndex] = dataToSort[dataToSort.Count - discardedDuplicates];
-                        dataIndex--;
-                    }
-
+                    dataToSort.RemoveAt(dataIndex);
+                    dataIndex--;
                     continue;
                 }
 
