@@ -30,7 +30,7 @@ steps:
 - pwsh: |
     $message = @()
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.rpm | ForEach-Object {
-        if($_.Name -notmatch 'powershell\-(preview-|lts-)?\d\.\d\.\d(_[a-z]*\.\d+)?-1.(rh|cm1).x86_64\.rpm')
+        if($_.Name -notmatch 'powershell\-(preview-|lts-)?\d+\.\d+\.\d+(_[a-z]*\.\d+)?-1.(rh|cm1).x86_64\.rpm')
         {
             $messageInstance = "$($_.Name) is not a valid package name"
             $message += $messageInstance
@@ -43,7 +43,7 @@ steps:
 - pwsh: |
     $message = @()
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.tar.gz | ForEach-Object {
-        if($_.Name -notmatch 'powershell-(lts-)?\d\.\d\.\d\-([a-z]*.\d+\-)?(linux|osx|linux-alpine)+\-(x64\-fxdependent|x64|arm32|arm64)\.(tar\.gz)')
+        if($_.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?(linux|osx|linux-alpine)+\-(x64\-fxdependent|x64|arm32|arm64)\.(tar\.gz)')
         {
             $messageInstance = "$($_.Name) is not a valid package name"
             $message += $messageInstance
@@ -56,7 +56,7 @@ steps:
 - pwsh: |
     $message = @()
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.pkg | ForEach-Object {
-        if($_.Name -notmatch 'powershell-(lts-)?\d\.\d\.\d\-([a-z]*.\d+\-)?osx(\.10\.12)?\-(x64|arm64)\.pkg')
+        if($_.Name -notmatch 'powershell-(lts-)?\d+\.\d+\.\d+\-([a-z]*.\d+\-)?osx(\.10\.12)?\-(x64|arm64)\.pkg')
         {
             $messageInstance = "$($_.Name) is not a valid package name"
             $message += $messageInstance
@@ -69,7 +69,7 @@ steps:
 - pwsh: |
     $message = @()
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
-        if($_.Name -notmatch 'PowerShell-\d\.\d\.\d\-([a-z]*.\d+\-)?win\-(fxdependent|x64|arm32|arm64|x86|fxdependentWinDesktop)\.(msi|zip){1}')
+        if($_.Name -notmatch 'PowerShell-\d+\.\d+\.\d+\-([a-z]*.\d+\-)?win\-(fxdependent|x64|arm32|arm64|x86|fxdependentWinDesktop)\.(msi|zip){1}')
         {
             $messageInstance = "$($_.Name) is not a valid package name"
             $message += $messageInstance
@@ -83,7 +83,7 @@ steps:
 - pwsh: |
     $message = @()
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -filter *.deb | ForEach-Object {
-        if($_.Name -notmatch 'powershell(-preview|-lts)?_\d\.\d\.\d([\-~][a-z]*.\d+)?-\d\.deb_amd64\.deb')
+        if($_.Name -notmatch 'powershell(-preview|-lts)?_\d+\.\d+\.\d+([\-~][a-z]*.\d+)?-\d\.deb_amd64\.deb')
         {
             $messageInstance = "$($_.Name) is not a valid package name"
             $message += $messageInstance
