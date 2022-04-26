@@ -162,9 +162,11 @@ namespace Microsoft.PowerShell.Commands
                     discardedDuplicates++;
                     dataIndex--;
                     continue;
-                }               
+                }
+
                 // Shift next non-duplicate entry into place
-                if (discardedDuplicates > 0){
+                if (discardedDuplicates > 0)
+                {
                     dataToSort[dataIndex] = dataToSort[dataIndex + discardedDuplicates];
                 }
 

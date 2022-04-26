@@ -297,7 +297,7 @@ Describe 'Sort-Object Stable Unit Tests' -Tags 'CI' {
 			$results[2]  | Should -Be 3
 		}
 		
-		It "Sort-Object with Uniqe Stable should return proper records"{
+		It "Sort-Object with Unique Stable should return proper records"{
 			$Record1=[PSCustomObject]@{Key="A";Record="A1"}
 			$Record2=[PSCustomObject]@{Key="A";Record="A2"}
 			$Record3=[PSCustomObject]@{Key="B";Record="B1"}
