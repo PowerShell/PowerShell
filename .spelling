@@ -228,6 +228,7 @@ filecatalog
 filename
 filesystem
 filesystemprovider
+files.wxs
 filterhashtable
 find-dscresource
 find-packageprovider
@@ -434,6 +435,7 @@ mwrock
 myget
 namedpipe
 namespace
+NameObscurerTelemetryInitializer
 nano
 nanoserver
 nativeexecution
@@ -852,6 +854,7 @@ unvalidated
 Geweldig
 mjanko5
 v7.0.0
+v7.0.10
 renehernandez
 ece-jacob-scott
 st0le
