@@ -547,6 +547,7 @@ myget
 namedpipe
 NameObscurerTelemetryInitializer
 nameof
+NameObscurerTelemetryInitializer
 namespace
 nano
 nanoserver
@@ -991,6 +992,7 @@ v7.0.0
 v7.0.3
 v7.0.4
 v7.1.0
+v7.1.7
 validatenotnullorempty
 versioned
 versioning
