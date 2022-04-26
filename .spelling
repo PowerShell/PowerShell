@@ -280,10 +280,12 @@ filecatalog
 filename
 filesystem
 filesystemprovider
+files.wxs
 filterhashtable
 find-dscresource
 find-packageprovider
 find-rolecapability
+findMissingNotices.ps1
 firefox
 folderName
 foreach
@@ -533,6 +535,7 @@ mvps
 mwrock
 myget
 namedpipe
+NameObscurerTelemetryInitializer
 nameof
 namespace
 nano
@@ -1388,6 +1391,7 @@ SethFalco
 CodeQL
 slowy07
 rc.2.21505.57
+ThirdPartyNotices
 ThirdPartyNotices.txt
 cgmanifest.json
 buildinfo
@@ -1397,6 +1401,7 @@ manifest.spdx.json
 vPack
 kondratyev-nv
 v7.2.0
+v7.2.3
 cgmanifest.json
 pwsh.exe
 6.0.100-rtm.21527.11
