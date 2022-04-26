@@ -275,6 +275,7 @@ filecatalog
 filename
 filesystem
 filesystemprovider
+files.wxs
 filterhashtable
 find-dscresource
 find-packageprovider
@@ -523,6 +524,7 @@ mwrock
 myget
 namedpipe
 nameof
+NameObscurerTelemetryInitializer
 namespace
 nano
 nanoserver
@@ -956,6 +958,7 @@ v6.2.4
 v7.0.0
 v7.0.3
 v7.1.0
+v7.1.7
 validatenotnullorempty
 versioned
 versioning
