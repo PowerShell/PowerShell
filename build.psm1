@@ -393,7 +393,7 @@ function Start-PSBuild {
     }
 
     # Verify if the dotnet in-use is the required version
-    $dotnetCLIInstalledVersion = Get-LatestInstalledSDK
+    $dotnetCLIInstalledVersion = Get-DotNetVersionInPath
 
     If ($dotnetCLIInstalledVersion -ne $dotnetCLIRequiredVersion) {
         Write-Warning @"
@@ -2152,7 +2152,7 @@ function Start-PSBootstrap {
         $dotNetExists = precheck 'dotnet' $null
         $dotNetVersion = [string]::Empty
         if($dotNetExists) {
-            $dotNetVersion = Get-LatestInstalledSDK
+            $dotNetVersion = Get-DotNetVersionInPath
         }
 
         if(!$dotNetExists -or $dotNetVersion -ne $dotnetCLIRequiredVersion -or $Force.IsPresent) {
@@ -2194,9 +2194,9 @@ function Start-PSBootstrap {
     }
 }
 
-function Get-LatestInstalledSDK {
+function Get-DotNetVersionInPath {
     Start-NativeExecution -sb {
-        dotnet --list-sdks | Select-String -Pattern '\d*.\d*.\d*(-\w*\.\d*\.\d*\.\d*)?' | ForEach-Object { [System.Management.Automation.SemanticVersion]::new($_.matches.value) } | Sort-Object -Descending | Select-Object -First 1
+        dotnet --version
     } -IgnoreExitcode 2> $null
 }
 
@@ -2349,20 +2349,29 @@ function Find-Dotnet() {
     if (precheck dotnet) {
         # Must run from within repo to ensure global.json can specify the required SDK version
         Push-Location $PSScriptRoot
-        $dotnetCLIInstalledVersion = Get-LatestInstalledSDK
+        $dotnetCLIInstalledVersion = Get-DotNetVersionInPath
         Pop-Location
 
         Write-Verbose -Message "Find-DotNet: dotnetCLIInstalledVersion = $dotnetCLIInstalledVersion; chosenDotNetVersion = $chosenDotNetVersion"
 
         if ($dotnetCLIInstalledVersion -ne $chosenDotNetVersion) {
-            Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."
-            # Globally installed dotnet doesn't have the required SDK version, prepend the user local dotnet location
-            $env:PATH = $dotnetPath + [IO.Path]::PathSeparator + $env:PATH
+            if (Test-Path $dotnetPath) {
+                $dotnetPathEntry = $dotnetPath + [IO.Path]::PathSeparator
+                if ($env:PATH -notmatch "^$([Regex]::Escape("$dotnetPathEntry"))") {
+                    # Remove possible entries further down the list.
+                    $env:PATH = $env:PATH -replace [Regex]::Escape("$dotnetPathEntry"),''
+                    Write-Warning "The 'dotnet' in the current path can't find SDK version ${dotnetCLIRequiredVersion}, prepending $dotnetPath to PATH."
+                    # Globally installed dotnet doesn't have the required SDK version, prepend the user local dotnet location
+                    $env:PATH = $dotnetPathEntry + $env:PATH
+                }
+            }
         }
     }
     else {
-        Write-Warning "Could not find 'dotnet', appending $dotnetPath to PATH."
-        $env:PATH += [IO.Path]::PathSeparator + $dotnetPath
+        if (Test-Path $dotnetPath) {
+            Write-Warning "Could not find 'dotnet', appending $dotnetPath to PATH."
+            $env:PATH += [IO.Path]::PathSeparator + $dotnetPath
+        }
     }
 
     if (-not (precheck 'dotnet' "Still could not find 'dotnet', restoring PATH.")) {
