@@ -5277,7 +5277,17 @@ namespace System.Management.Automation.Language
                                     return GenerateGetPropertyException(restrictions).WriteToDebugLog(this);
                                 }
 
-                                expr = Expression.Property(targetExpr, propertyAccessor);
+                                if (propertyAccessor.PropertyType.IsByRef)
+                                {
+                                    expr = Expression.Call(
+                                        CachedReflectionInfo.ByRefOps_GetByRefPropertyValue,
+                                        targetExpr,
+                                        Expression.Constant(propertyAccessor));
+                                }
+                                else
+                                {
+                                    expr = Expression.Property(targetExpr, propertyAccessor);
+                                }
                             }
                             else
                             {

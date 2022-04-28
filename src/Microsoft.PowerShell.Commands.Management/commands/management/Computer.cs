@@ -1278,6 +1278,7 @@ $result
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "Computer", SupportsShouldProcess = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097054", RemotingCapability = RemotingCapability.SupportedByCommand)]
+    [OutputType(typeof(RenameComputerChangeInfo))]
     public class RenameComputerCommand : PSCmdlet
     {
         #region Private Members

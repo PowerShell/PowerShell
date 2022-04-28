@@ -139,17 +139,17 @@ namespace System.Management.Automation.Runspaces
             else
             {
                 _context.AddError(_readerLineInfo.LineNumber, TypesXmlStrings.UnknownNode, _reader.LocalName, expectedNodes);
-                SkipUntillNodeEnd(_reader.LocalName);
+                SkipUntilNodeEnd(_reader.LocalName);
             }
         }
 
-        private void SkipUntillNodeEnd(string nodeName)
+        private void SkipUntilNodeEnd(string nodeName)
         {
             while (_reader.Read())
             {
                 if (_reader.IsStartElement() && _reader.LocalName.Equals(nodeName))
                 {
-                    SkipUntillNodeEnd(nodeName);
+                    SkipUntilNodeEnd(nodeName);
                 }
                 else if ((_reader.NodeType == XmlNodeType.EndElement) && _reader.LocalName.Equals(nodeName))
                 {

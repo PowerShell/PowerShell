@@ -1329,7 +1329,8 @@ namespace System.Management.Automation
                         context.Options.Remove("LiteralPaths");
                 }
 
-                if (context.WordToComplete != string.Empty && context.WordToComplete.Contains('-'))
+                // The word to complete contains a dash and it's not the first character. We try command names in this case.
+                if (context.WordToComplete.IndexOf('-') > 0)
                 {
                     var commandResults = CompleteCommand(context);
                     if (commandResults != null)
@@ -1657,9 +1658,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// If the argument completion falls into these pre-defined cases:
-        ///   1. The matching parameter is of type Enum
-        ///   2. The matching parameter is of type SwitchParameter
-        ///   3. The matching parameter is declared with ValidateSetAttribute
+        ///   1. The matching parameter is declared with ValidateSetAttribute
+        ///   2. The matching parameter is of type Enum
+        ///   3. The matching parameter is of type SwitchParameter
         ///   4. Falls into the native command argument completion
         /// a null instance of CompletionResult is added to the end of the
         /// "result" list, to indicate that this particular argument completion
@@ -1680,6 +1681,74 @@ namespace System.Management.Automation
             if (parameterType.IsArray)
             {
                 parameterType = parameterType.GetElementType();
+            }
+
+            foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
+            {
+                if (att is ValidateSetAttribute setAtt)
+                {
+                    RemoveLastNullCompletionResult(result);
+
+                    string wordToComplete = context.WordToComplete;
+                    string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+
+                    var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+                    var setList = new List<string>();
+
+                    foreach (string value in setAtt.ValidValues)
+                    {
+                        if (value == string.Empty)
+                        {
+                            continue;
+                        }
+
+                        if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
+                        {
+                            string completionText = quote == string.Empty ? value : quote + value + quote;
+                            fullMatch = new CompletionResult(completionText, value, CompletionResultType.ParameterValue, value);
+                            continue;
+                        }
+
+                        if (pattern.IsMatch(value))
+                        {
+                            setList.Add(value);
+                        }
+                    }
+
+                    if (fullMatch != null)
+                    {
+                        result.Add(fullMatch);
+                    }
+
+                    setList.Sort();
+                    foreach (string entry in setList)
+                    {
+                        string realEntry = entry;
+                        string completionText = entry;
+                        if (quote == string.Empty)
+                        {
+                            if (CompletionRequiresQuotes(entry, false))
+                            {
+                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
+                                completionText = "'" + realEntry + "'";
+                            }
+                        }
+                        else
+                        {
+                            if (quote.Equals("'", StringComparison.OrdinalIgnoreCase))
+                            {
+                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
+                            }
+
+                            completionText = quote + realEntry + quote;
+                        }
+
+                        result.Add(new CompletionResult(completionText, entry, CompletionResultType.ParameterValue, entry));
+                    }
+
+                    result.Add(CompletionResult.Null);
+                    return;
+                }
             }
 
             if (parameterType.IsEnum)
@@ -1737,71 +1806,6 @@ namespace System.Management.Automation
 
                 result.Add(CompletionResult.Null);
                 return;
-            }
-
-            foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
-            {
-                if (att is ValidateSetAttribute setAtt)
-                {
-                    RemoveLastNullCompletionResult(result);
-
-                    string wordToComplete = context.WordToComplete;
-                    string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
-
-                    var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-                    var setList = new List<string>();
-
-                    foreach (string value in setAtt.ValidValues)
-                    {
-                        if (value == string.Empty) { continue; }
-
-                        if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
-                        {
-                            string completionText = quote == string.Empty ? value : quote + value + quote;
-                            fullMatch = new CompletionResult(completionText, value, CompletionResultType.ParameterValue, value);
-                            continue;
-                        }
-
-                        if (pattern.IsMatch(value))
-                        {
-                            setList.Add(value);
-                        }
-                    }
-
-                    if (fullMatch != null)
-                    {
-                        result.Add(fullMatch);
-                    }
-
-                    setList.Sort();
-                    foreach (string entry in setList)
-                    {
-                        string realEntry = entry;
-                        string completionText = entry;
-                        if (quote == string.Empty)
-                        {
-                            if (CompletionRequiresQuotes(entry, false))
-                            {
-                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
-                                completionText = "'" + realEntry + "'";
-                            }
-                        }
-                        else
-                        {
-                            if (quote.Equals("'", StringComparison.OrdinalIgnoreCase))
-                            {
-                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
-                            }
-
-                            completionText = quote + realEntry + quote;
-                        }
-
-                        result.Add(new CompletionResult(completionText, entry, CompletionResultType.ParameterValue, entry));
-                    }
-
-                    result.Add(CompletionResult.Null);
-                    return;
-                }
             }
 
             NativeCommandArgumentCompletion(commandName, parameter.Parameter, result, commandAst, context, boundArguments);
@@ -2274,7 +2278,7 @@ namespace System.Management.Automation
                     {
                         if (parameterName.Equals("MemberName", StringComparison.OrdinalIgnoreCase))
                         {
-                            NativeCompletionMemberName(context, result, commandAst);
+                            NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
                         }
 
                         break;
@@ -2286,7 +2290,7 @@ namespace System.Management.Automation
                     {
                         if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
                         {
-                            NativeCompletionMemberName(context, result, commandAst);
+                            NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
                         }
 
                         break;
@@ -2298,7 +2302,7 @@ namespace System.Management.Automation
                     {
                         if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
                         {
-                            NativeCompletionMemberName(context, result, commandAst);
+                            NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
                         }
                         else if (parameterName.Equals("View", StringComparison.OrdinalIgnoreCase))
                         {
@@ -2313,7 +2317,7 @@ namespace System.Management.Automation
                          || parameterName.Equals("ExcludeProperty", StringComparison.OrdinalIgnoreCase)
                          || parameterName.Equals("ExpandProperty", StringComparison.OrdinalIgnoreCase))
                         {
-                            NativeCompletionMemberName(context, result, commandAst);
+                            NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
                         }
 
                         break;
@@ -2335,8 +2339,22 @@ namespace System.Management.Automation
                 case "Invoke-CimMethod":
                 case "New-CimInstance":
                 case "Register-CimIndicationEvent":
+                case "Set-CimInstance":
                     {
-                        NativeCompletionCimCommands(parameterName, boundArguments, result, commandAst, context);
+                        // Avoids completion for parameters that expect a hashtable.
+                        if (parameterName.Equals("Arguments", StringComparison.OrdinalIgnoreCase)
+                            || (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase) && !commandName.Equals("Get-CimInstance")))
+                        {
+                            break;
+                        }
+
+                        HashSet<string> excludedValues = null;
+                        if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase) && boundArguments["Property"] is AstPair pair)
+                        {
+                            excludedValues = GetParameterValues(pair, context.CursorPosition.Offset);
+                        }
+
+                        NativeCompletionCimCommands(parameterName, boundArguments, result, commandAst, context, excludedValues, commandName);
                         break;
                     }
 
@@ -2507,7 +2525,9 @@ namespace System.Management.Automation
             Dictionary<string, AstParameterArgumentPair> boundArguments,
             List<CompletionResult> result,
             CommandAst commandAst,
-            CompletionContext context)
+            CompletionContext context,
+            HashSet<string> excludedValues,
+            string commandName)
         {
             if (boundArguments != null)
             {
@@ -2528,6 +2548,7 @@ namespace System.Management.Automation
                 }
             }
 
+            RemoveLastNullCompletionResult(result);
             if (parameter.Equals("Namespace", StringComparison.OrdinalIgnoreCase))
             {
                 NativeCompletionCimNamespace(result, context);
@@ -2572,6 +2593,16 @@ namespace System.Management.Automation
                         else if (parameter.Equals("MethodName", StringComparison.OrdinalIgnoreCase))
                         {
                             NativeCompletionCimMethodName(pseudoboundCimNamespace, pseudoboundClassName, !gotInstance, result, context);
+                        }
+                        else if (parameter.Equals("Arguments", StringComparison.OrdinalIgnoreCase))
+                        {
+                            string pseudoboundMethodName = NativeCommandArgumentCompletion_ExtractSecondaryArgument(boundArguments, "MethodName").FirstOrDefault();
+                            NativeCompletionCimMethodArgumentName(pseudoboundCimNamespace, pseudoboundClassName, pseudoboundMethodName, excludedValues, result, context);
+                        }
+                        else if (parameter.Equals("Property", StringComparison.OrdinalIgnoreCase))
+                        {
+                            bool includeReadOnly = !commandName.Equals("Set-CimInstance", StringComparison.OrdinalIgnoreCase);
+                            NativeCompletionCimPropertyName(pseudoboundCimNamespace, pseudoboundClassName, includeReadOnly, excludedValues, result, context);
                         }
                     }
                 }
@@ -2713,6 +2744,82 @@ namespace System.Management.Automation
             }
 
             result.AddRange(localResults.OrderBy(static x => x.ListItemText, StringComparer.OrdinalIgnoreCase));
+        }
+
+        private static void NativeCompletionCimMethodArgumentName(
+            string pseudoboundNamespace,
+            string pseudoboundClassName,
+            string pseudoboundMethodName,
+            HashSet<string> excludedParameters,
+            List<CompletionResult> result,
+            CompletionContext context)
+        {
+            if (string.IsNullOrWhiteSpace(pseudoboundClassName) || string.IsNullOrWhiteSpace(pseudoboundMethodName))
+            {
+                return;
+            }
+
+            CimClass cimClass;
+            using (var cimSession = CimSession.Create(null))
+            {
+                using var options = new CimOperationOptions();
+                options.Flags |= CimOperationFlags.LocalizedQualifiers;
+                cimClass = cimSession.GetClass(pseudoboundNamespace ?? "root/cimv2", pseudoboundClassName, options);
+            }
+
+            var methodParameters = cimClass.CimClassMethods[pseudoboundMethodName]?.Parameters;
+            if (methodParameters is null)
+            {
+                return;
+            }
+
+            foreach (var parameter in methodParameters)
+            {
+                if ((string.IsNullOrEmpty(context.WordToComplete) || parameter.Name.StartsWith(context.WordToComplete, StringComparison.OrdinalIgnoreCase))
+                        && (excludedParameters is null || !excludedParameters.Contains(parameter.Name))
+                        && parameter.Qualifiers["In"]?.Value is true)
+                {
+                    string parameterDescription = parameter.Qualifiers["Description"]?.Value as string ?? string.Empty;
+                    string toolTip = $"[{CimInstanceAdapter.CimTypeToTypeNameDisplayString(parameter.CimType)}] {parameterDescription}";
+                    result.Add(new CompletionResult(parameter.Name, parameter.Name, CompletionResultType.Property, toolTip));
+                }
+            }
+        }
+
+        private static void NativeCompletionCimPropertyName(
+            string pseudoboundNamespace,
+            string pseudoboundClassName,
+            bool includeReadOnly,
+            HashSet<string> excludedProperties,
+            List<CompletionResult> result,
+            CompletionContext context)
+        {
+            if (string.IsNullOrWhiteSpace(pseudoboundClassName))
+            {
+                return;
+            }
+
+            CimClass cimClass;
+            using (var cimSession = CimSession.Create(null))
+            {
+                using var options = new CimOperationOptions();
+                options.Flags |= CimOperationFlags.LocalizedQualifiers;
+                cimClass = cimSession.GetClass(pseudoboundNamespace ?? "root/cimv2", pseudoboundClassName, options);
+            }
+
+            foreach (var property in cimClass.CimClassProperties)
+            {
+                bool isReadOnly = (property.Flags & CimFlags.ReadOnly) != 0;
+                if ((!isReadOnly || (isReadOnly && includeReadOnly))
+                    && (string.IsNullOrEmpty(context.WordToComplete) || property.Name.StartsWith(context.WordToComplete, StringComparison.OrdinalIgnoreCase))
+                    && (excludedProperties is null || !excludedProperties.Contains(property.Name)))
+                {
+                    string propertyDescription = property.Qualifiers["Description"]?.Value as string ?? string.Empty;
+                    string accessString = isReadOnly ? "{ get; }" : "{ get; set; }";
+                    string toolTip = $"[{CimInstanceAdapter.CimTypeToTypeNameDisplayString(property.CimType)}] {accessString} {propertyDescription}";
+                    result.Add(new CompletionResult(property.Name, property.Name, CompletionResultType.Property, toolTip));
+                }
+            }
         }
 
         private static readonly ConcurrentDictionary<string, IEnumerable<string>> s_cimNamespaceToClassNames =
@@ -3844,15 +3951,36 @@ namespace System.Management.Automation
             return prevType;
         }
 
-        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst)
+        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, AstParameterArgumentPair parameterInfo)
         {
             IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
             if (prevType is not null)
             {
-                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false);
+                HashSet<string> excludedMembers = null;
+                if (parameterInfo is AstPair pair)
+                {
+                    excludedMembers = GetParameterValues(pair, context.CursorPosition.Offset);
+                }
+
+                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false, excludedMembers);
             }
 
             result.Add(CompletionResult.Null);
+        }
+
+        /// <summary>
+        /// Returns all string values bound to a parameter except the one the cursor is currently at.
+        /// </summary>
+        private static HashSet<string>GetParameterValues(AstPair parameter, int cursorOffset)
+        {
+            var result = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var parameterValues = parameter.Argument.FindAll(ast => !(cursorOffset >= ast.Extent.StartOffset && cursorOffset <= ast.Extent.EndOffset) && ast is StringConstantExpressionAst, searchNestedScriptBlocks: false);
+            foreach (Ast ast in parameterValues)
+            {
+                result.Add(ast.Extent.Text);
+            }
+
+            return result;
         }
 
         private static void NativeCompletionFormatViewName(
@@ -4173,7 +4301,8 @@ namespace System.Management.Automation
             var results = new List<CompletionResult>();
 
             // First, try to match \\server\share
-            var shareMatch = Regex.Match(wordToComplete, "^\\\\\\\\([^\\\\]+)\\\\([^\\\\]*)$");
+            // support both / and \ when entering UNC paths for typing convenience (#17111)
+            var shareMatch = Regex.Match(wordToComplete, @"^(?:\\\\|//)([^\\/]+)(?:\\|/)([^\\/]*)$");
             if (shareMatch.Success)
             {
                 // Only match share names, no filenames.
@@ -5506,10 +5635,10 @@ namespace System.Management.Automation
         private static readonly HashSet<string> s_dscCollectionVariables =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "SelectedNodes", "AllNodes" };
 
-        internal static List<CompletionResult> CompleteMember(CompletionContext context, bool @static)
+        internal static List<CompletionResult> CompleteMember(CompletionContext context, bool @static, ref int replacementLength)
         {
             // If we get here, we know that either:
-            //   * the cursor appeared immediately after a member access token ('.' or '::').
+            //   * the cursor appeared after a member access token ('.' or '::').
             //   * the parent of the ast on the cursor was a member expression.
             //
             // In the first case, we have 2 possibilities:
@@ -5517,31 +5646,35 @@ namespace System.Management.Automation
             //   * the last ast is a string constant, with something like:   echo $foo.
 
             var results = new List<CompletionResult>();
-
             var lastAst = context.RelatedAsts.Last();
-            var lastAstAsMemberExpr = lastAst as MemberExpressionAst;
+            var memberName = "*";
             Ast memberNameCandidateAst = null;
             ExpressionAst targetExpr = null;
-            if (lastAstAsMemberExpr != null)
+
+            if (lastAst is MemberExpressionAst LastAstAsMemberExpression)
             {
                 // If the cursor is not inside the member name in the member expression, assume
                 // that the user had incomplete input, but the parser got lucky and succeeded parsing anyway.
-                if (context.TokenAtCursor.Extent.StartOffset >= lastAstAsMemberExpr.Member.Extent.StartOffset)
+                if (context.TokenAtCursor is not null && context.TokenAtCursor.Extent.StartOffset >= LastAstAsMemberExpression.Member.Extent.StartOffset)
                 {
-                    memberNameCandidateAst = lastAstAsMemberExpr.Member;
+                    memberNameCandidateAst = LastAstAsMemberExpression.Member;
                 }
 
-                targetExpr = lastAstAsMemberExpr.Expression;
+                targetExpr = LastAstAsMemberExpression.Expression;
+                // Handles scenario where the cursor is after the member access token but before the text
+                // like: "".<Tab>Le
+                // which completes the member using the partial text after the cursor.
+                if (LastAstAsMemberExpression.Member is StringConstantExpressionAst stringExpression && stringExpression.Extent.StartOffset <= context.CursorPosition.Offset)
+                {
+                    memberName = $"{stringExpression.Value}*";
+                }
             }
             else
             {
                 memberNameCandidateAst = lastAst;
             }
 
-            var memberNameAst = memberNameCandidateAst as StringConstantExpressionAst;
-
-            var memberName = "*";
-            if (memberNameAst != null)
+            if (memberNameCandidateAst is StringConstantExpressionAst memberNameAst)
             {
                 // Make sure to correctly handle: echo $foo.
                 if (!memberNameAst.Value.Equals(".", StringComparison.OrdinalIgnoreCase) && !memberNameAst.Value.Equals("::", StringComparison.OrdinalIgnoreCase))
@@ -5555,8 +5688,7 @@ namespace System.Management.Automation
                 return results;
             }
 
-            var commandAst = lastAst.Parent as CommandAst;
-            if (commandAst != null)
+            if (lastAst.Parent is CommandAst commandAst)
             {
                 int i;
                 for (i = commandAst.CommandElements.Count - 1; i >= 0; --i)
@@ -5576,10 +5708,36 @@ namespace System.Management.Automation
                     targetExpr = nextToLastAst as ExpressionAst;
                 }
             }
-            else if (lastAst.Parent is MemberExpressionAst)
+            else if (lastAst.Parent is MemberExpressionAst parentAsMemberExpression)
             {
+                if (lastAst is ErrorExpressionAst)
+                {
+                    // Handles scenarios like $PSVersionTable.PSVersi<tab>.Major.
+                    // where the cursor is moved back to a previous member expression while
+                    // there's an incomplete member expression at the end
+                    targetExpr = parentAsMemberExpression;
+                    do
+                    {
+                        if (targetExpr is MemberExpressionAst memberExpression)
+                        {
+                            targetExpr = memberExpression.Expression;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    } while (targetExpr.Extent.EndOffset >= context.CursorPosition.Offset);
+
+                    if (targetExpr.Parent != parentAsMemberExpression
+                        && targetExpr.Parent is MemberExpressionAst memberAst
+                        && memberAst.Member is StringConstantExpressionAst stringExpression
+                        && stringExpression.Extent.StartOffset <= context.CursorPosition.Offset)
+                    {
+                        memberName = $"{stringExpression.Value}*";
+                    }
+                }
                 // If 'targetExpr' has already been set, we should skip this step. This is for some member completion
-                // cases in ISE. In ISE, we may add a new statement in the middle of existing statements as follows:
+                // cases in VSCode, where we may add a new statement in the middle of existing statements as follows:
                 //     $xml = New-Object Xml
                 //     $xml.
                 //     $xml.Save("C:\data.xml")
@@ -5587,22 +5745,43 @@ namespace System.Management.Automation
                 // a MemberExpressionAst '$xml.$xml', whose parent is still a MemberExpressionAst '$xml.$xml.Save'.
                 // But here we DO NOT want to re-assign 'targetExpr' to be '$xml.$xml'. 'targetExpr' in this case
                 // should be '$xml'.
-                if (targetExpr == null)
+                else if (targetExpr is null)
                 {
-                    var memberExprAst = (MemberExpressionAst)lastAst.Parent;
-                    targetExpr = memberExprAst.Expression;
+                    targetExpr = parentAsMemberExpression.Expression;
                 }
             }
-            else if (lastAst.Parent is BinaryExpressionAst && context.TokenAtCursor.Kind.Equals(TokenKind.Multiply))
+            else if (lastAst.Parent is BinaryExpressionAst binaryExpression && context.TokenAtCursor.Kind.Equals(TokenKind.Multiply))
             {
-                var memberExprAst = ((BinaryExpressionAst)lastAst.Parent).Left as MemberExpressionAst;
-                if (memberExprAst != null)
+                if (binaryExpression.Left is MemberExpressionAst memberExpression)
                 {
-                    targetExpr = memberExprAst.Expression;
-                    if (memberExprAst.Member is StringConstantExpressionAst)
+                    targetExpr = memberExpression.Expression;
+                    if (memberExpression.Member is StringConstantExpressionAst stringExpression)
                     {
-                        memberName = ((StringConstantExpressionAst)memberExprAst.Member).Value + "*";
+                        memberName = $"{stringExpression.Value}*";
                     }
+                }
+            }
+            else if (lastAst.Parent is ErrorStatementAst errorStatement)
+            {
+                // Handles switches like:
+                // switch ($x)
+                // {
+                //     'RandomString'.<tab>
+                //     { }
+                // }
+                Ast astBeforeMemberAccessToken = null;
+                for (int i = errorStatement.Bodies.Count - 1; i >= 0; i--)
+                {
+                    astBeforeMemberAccessToken = errorStatement.Bodies[i];
+                    if (astBeforeMemberAccessToken.Extent.EndOffset < lastAst.Extent.EndOffset)
+                    {
+                        break;
+                    }
+                }
+
+                if (astBeforeMemberAccessToken is ExpressionAst expression)
+                {
+                    targetExpr = expression;
                 }
             }
 
@@ -5691,6 +5870,12 @@ namespace System.Management.Automation
                         }
                     }
                 }
+            }
+
+            if (memberName != "*" && results.Count > 0)
+            {
+                // -1 because membername always has a trailing wildcard *
+                replacementLength = memberName.Length - 1;
             }
 
             return results;
@@ -5797,7 +5982,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic)
+        internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic, HashSet<string> excludedMembers = null)
         {
             bool extensionMethodsAdded = false;
             HashSet<string> typeNameUsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -5813,7 +5998,7 @@ namespace System.Management.Automation
                 var members = context.GetMembersByInferredType(psTypeName, isStatic, filter);
                 foreach (var member in members)
                 {
-                    AddInferredMember(member, memberNamePattern, results);
+                    AddInferredMember(member, memberNamePattern, results, excludedMembers);
                 }
 
                 // Check if we need to complete against the extension methods 'Where' and 'ForEach'
@@ -5840,7 +6025,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results)
+        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results, HashSet<string> excludedMembers)
         {
             string memberName = null;
             bool isMethod = false;
@@ -5893,7 +6078,7 @@ namespace System.Management.Automation
                 getToolTip = memberAst.GetTooltip;
             }
 
-            if (memberName == null || !memberNamePattern.IsMatch(memberName))
+            if (memberName == null || !memberNamePattern.IsMatch(memberName) || (excludedMembers is not null && excludedMembers.Contains(memberName)))
             {
                 return;
             }
@@ -6814,13 +6999,25 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteHashtableKey(CompletionContext completionContext, HashtableAst hashtableAst)
         {
+            int cursorOffset = completionContext.CursorPosition.Offset;
+            string wordToComplete = completionContext.WordToComplete;
+            var excludedKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var keyPair in hashtableAst.KeyValuePairs)
+            {
+                // Exclude all existing keys, except the key the cursor is currently at
+                if (!(cursorOffset >= keyPair.Item1.Extent.StartOffset && cursorOffset <= keyPair.Item1.Extent.EndOffset))
+                {
+                    excludedKeys.Add(keyPair.Item1.Extent.Text);
+                }
+            }
+
             var typeAst = hashtableAst.Parent as ConvertExpressionAst;
             if (typeAst != null)
             {
                 var result = new List<CompletionResult>();
                 CompleteMemberByInferredType(
                     completionContext.TypeInferenceContext, AstTypeInference.InferTypeOf(typeAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval),
-                    result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false);
+                    result, wordToComplete + "*", IsWriteablePropertyMember, isStatic: false, excludedKeys);
                 return result;
             }
 
@@ -6920,7 +7117,7 @@ namespace System.Management.Automation
                             case "Format-List":
                             case "Format-Wide":
                             case "Format-Custom":
-                                return GetSpecialHashTableKeyMembers("Expression", "FormatString", "Label");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label");
                         }
 
                         return null;
@@ -6935,23 +7132,104 @@ namespace System.Management.Automation
                                 var result = new List<CompletionResult>();
                                 CompleteMemberByInferredType(
                                     completionContext.TypeInferenceContext, inferredType,
-                                    result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false);
+                                    result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false, excludedKeys);
                                 return result;
                             case "Select-Object":
-                                return GetSpecialHashTableKeyMembers("Name", "Expression");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Name", "Expression");
                             case "Sort-Object":
-                                return GetSpecialHashTableKeyMembers("Expression", "Ascending", "Descending");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Ascending", "Descending");
                             case "Group-Object":
-                                return GetSpecialHashTableKeyMembers("Expression");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression");
                             case "Format-Table":
-                                return GetSpecialHashTableKeyMembers("Expression", "FormatString", "Label", "Width", "Alignment");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label", "Width", "Alignment");
                             case "Format-List":
-                                return GetSpecialHashTableKeyMembers("Expression", "FormatString", "Label");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label");
                             case "Format-Wide":
-                                return GetSpecialHashTableKeyMembers("Expression", "FormatString");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString");
                             case "Format-Custom":
-                                return GetSpecialHashTableKeyMembers("Expression", "Depth");
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Depth");
+                            case "Set-CimInstance":
+                            case "New-CimInstance":
+                                var results = new List<CompletionResult>();
+                                NativeCompletionCimCommands(parameterName, binding.BoundArguments, results, commandAst, completionContext, excludedKeys, binding.CommandName);
+                                // this method adds a null CompletionResult to the list but we don't want that here.
+                                if (results.Count > 1)
+                                {
+                                    results.RemoveAt(results.Count - 1);
+                                    return results;
+                                }
+
+                                return null;
                         }
+                    }
+
+                    if (parameterName.Equals("FilterHashtable", StringComparison.OrdinalIgnoreCase))
+                    {
+                        switch (binding.CommandName)
+                        {
+                            case "Get-WinEvent":
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "LogName", "ProviderName", "Path", "Keywords", "ID", "Level", 
+                                    "StartTime", "EndTime", "UserID", "Data", "SuppressHashFilter");
+                        }
+                    }
+
+                    if (parameterName.Equals("Arguments", StringComparison.OrdinalIgnoreCase))
+                    {
+                        switch (binding.CommandName)
+                        {
+                            case "Invoke-CimMethod":
+                                var result = new List<CompletionResult>();
+                                NativeCompletionCimCommands(parameterName, binding.BoundArguments, result, commandAst, completionContext, excludedKeys, binding.CommandName);
+                                // this method adds a null CompletionResult to the list but we don't want that here.
+                                if (result.Count > 1)
+                                {
+                                    result.RemoveAt(result.Count - 1);
+                                    return result;
+                                }
+
+                                return null;
+                        }
+                    }
+                }
+            }
+
+            if (ast.Parent is AssignmentStatementAst assignment && assignment.Left is VariableExpressionAst assignmentVar)
+            {
+                var firstSplatUse = completionContext.RelatedAsts[0].Find(
+                    currentAst =>
+                        currentAst.Extent.StartOffset > hashtableAst.Extent.EndOffset
+                        && currentAst is VariableExpressionAst splatVar
+                        && splatVar.Splatted
+                        && splatVar.VariablePath.UserPath.Equals(assignmentVar.VariablePath.UserPath, StringComparison.OrdinalIgnoreCase),
+                    searchNestedScriptBlocks: true) as VariableExpressionAst;
+
+                if (firstSplatUse is not null && firstSplatUse.Parent is CommandAst command)
+                {
+                    var binding = new PseudoParameterBinder()
+                        .DoPseudoParameterBinding(
+                            command,
+                            pipeArgumentType: null,
+                            paramAstAtCursor: null,
+                            PseudoParameterBinder.BindingType.ParameterCompletion);
+
+                    if (binding is null)
+                    {
+                        return null;
+                    }
+
+                    var results = new List<CompletionResult>();
+                    foreach (var parameter in binding.UnboundParameters)
+                    {
+                        if (!excludedKeys.Contains(parameter.Parameter.Name)
+                            && (wordToComplete is null || parameter.Parameter.Name.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            results.Add(new CompletionResult(parameter.Parameter.Name, parameter.Parameter.Name, CompletionResultType.ParameterName, $"[{parameter.Parameter.Type.Name}]"));
+                        }
+                    }
+
+                    if (results.Count > 0)
+                    {
+                        return results;
                     }
                 }
             }
@@ -6959,13 +7237,23 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static List<CompletionResult> GetSpecialHashTableKeyMembers(params string[] keys)
+        private static List<CompletionResult> GetSpecialHashTableKeyMembers(HashSet<string> excludedKeys, string wordToComplete, params string[] keys)
         {
-            // Resources were removed because they missed the deadline for loc.
-            // return keys.Select(key => new CompletionResult(key, key, CompletionResultType.Property,
-            //    ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).Assembly,
-            //                                           "TabCompletionStrings", key + "HashKeyDescription"))).ToList();
-            return keys.Select(static key => new CompletionResult(key, key, CompletionResultType.Property, key)).ToList();
+            var result = new List<CompletionResult>();
+            foreach (string key in keys)
+            {
+                if ((string.IsNullOrEmpty(wordToComplete) || key.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase)) && !excludedKeys.Contains(key))
+                {
+                    result.Add(new CompletionResult(key, key, CompletionResultType.Property, key));
+                }
+            }
+
+            if (result.Count == 0)
+            {
+                return null;
+            }
+
+            return result;
         }
 
         #endregion Hashtable Keys

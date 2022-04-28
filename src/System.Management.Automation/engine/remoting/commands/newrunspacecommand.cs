@@ -647,11 +647,11 @@ namespace Microsoft.PowerShell.Commands
 
                         if (remoteRunspace.ConnectionInfo is VMConnectionInfo)
                         {
-                            newConnectionInfo = remoteRunspace.ConnectionInfo.InternalCopy();
+                            newConnectionInfo = remoteRunspace.ConnectionInfo.Clone();
                         }
                         else if (remoteRunspace.ConnectionInfo is ContainerConnectionInfo)
                         {
-                            ContainerConnectionInfo newContainerConnectionInfo = remoteRunspace.ConnectionInfo.InternalCopy() as ContainerConnectionInfo;
+                            ContainerConnectionInfo newContainerConnectionInfo = remoteRunspace.ConnectionInfo.Clone() as ContainerConnectionInfo;
                             newContainerConnectionInfo.CreateContainerProcess();
                             newConnectionInfo = newContainerConnectionInfo;
                         }

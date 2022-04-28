@@ -269,6 +269,8 @@ function Test-IsReleaseCandidate
     return $false
 }
 
+$optimizedFddRegex = 'fxdependent-(linux|alpine|win|win7|osx)-(x64|x86|arm64|arm)'
+
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName="Default")]
     param(
@@ -303,6 +305,7 @@ function Start-PSBuild {
         # If this parameter is not provided it will get determined automatically.
         [ValidateSet("alpine-x64",
                      "fxdependent",
+                     "fxdependent-linux-x64",
                      "fxdependent-win-desktop",
                      "linux-arm",
                      "linux-arm64",
@@ -457,7 +460,7 @@ Fix steps:
     # Framework Dependent builds do not support ReadyToRun as it needs a specific runtime to optimize for.
     # The property is set in Powershell.Common.props file.
     # We override the property through the build command line.
-    if($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) {
+    if(($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) -and $Options.Runtime -notmatch $optimizedFddRegex) {
         $Arguments += "/property:PublishReadyToRun=false"
     }
 
@@ -472,6 +475,9 @@ Fix steps:
     if (-not $SMAOnly -and $Options.Runtime -notlike 'fxdependent*') {
         # libraries should not have runtime
         $Arguments += "--runtime", $Options.Runtime
+    } elseif ($Options.Runtime -match $optimizedFddRegex) {
+        $runtime = $Options.Runtime -replace 'fxdependent-', ''
+        $Arguments += "--runtime", $runtime
     }
 
     if ($ReleaseTag) {
@@ -495,7 +501,12 @@ Fix steps:
 
     # Handle TypeGen
     # .inc file name must be different for Windows and Linux to allow build on Windows and WSL.
-    $incFileName = "powershell_$($Options.Runtime).inc"
+    $runtime = $Options.Runtime
+    if ($Options.Runtime -match $optimizedFddRegex) {
+        $runtime = $Options.Runtime -replace 'fxdependent-', ''
+    }
+
+    $incFileName = "powershell_$runtime.inc"
     if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/TypeCatalogGen/$incFileName")) {
         Write-Log -message "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen -IncFileName $incFileName
@@ -513,7 +524,8 @@ Fix steps:
         # Relative paths do not work well if cwd is not changed to project
         Push-Location $Options.Top
 
-        if ($Options.Runtime -notlike 'fxdependent*') {
+        if ($Options.Runtime -notlike 'fxdependent*' -or $Options.Runtime -match $optimizedFddRegex) {
+            Write-Verbose "Building without shim" -Verbose
             $sdkToUse = 'Microsoft.NET.Sdk'
             if ($Options.Runtime -like 'win7-*' -and !$ForMinimalSize) {
                 ## WPF/WinForm and the PowerShell GraphicalHost assemblies are included
@@ -527,6 +539,7 @@ Fix steps:
             Start-NativeExecution { dotnet $Arguments }
             Write-Log -message "PowerShell output: $($Options.Output)"
         } else {
+            Write-Verbose "Building with shim" -Verbose
             $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
 
             if ($Options.Runtime -eq 'fxdependent') {
@@ -541,7 +554,9 @@ Fix steps:
 
             try {
                 Push-Location $globalToolSrcFolder
-                $Arguments += "--output", $publishPath
+                if ($Arguments -notcontains '--output') {
+                    $Arguments += "--output", $publishPath
+                }
                 Write-Log -message "Run dotnet $Arguments from $PWD to build global tool entry point"
                 Start-NativeExecution { dotnet $Arguments }
             }
@@ -801,14 +816,15 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("net6.0")]
-        [string]$Framework = "net6.0",
+        [ValidateSet("net7.0")]
+        [string]$Framework = "net7.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
         [ValidateSet("",
                      "alpine-x64",
                      "fxdependent",
+                     "fxdependent-linux-x64",
                      "fxdependent-win-desktop",
                      "linux-arm",
                      "linux-arm64",
@@ -1034,6 +1050,48 @@ function Get-PesterTag {
     $o
 }
 
+# Function to build and publish the Microsoft.PowerShell.NamedPipeConnection module for
+# testing PowerShell remote custom connections.
+function Publish-CustomConnectionTestModule
+{
+    $sourcePath = "${PSScriptRoot}/test/tools/NamedPipeConnection"
+    $outPath = "${PSScriptRoot}/test/tools/NamedPipeConnection/out/Microsoft.PowerShell.NamedPipeConnection"
+    $publishPath = "${PSScriptRoot}/test/tools/Modules"
+    $refPath = "${sourcePath}/src/code/Ref"
+
+    # Copy the current SMA build to the refPath.
+    $smaPath = Join-Path -Path (Split-Path -Path (Get-PSOutput)) -ChildPath 'System.Management.Automation.dll'
+    if (! (Test-Path -Path $smaPath)) {
+        throw "Publish-CustomConnectionTestModule: Cannot find reference SMA at: ${smaPath}"
+    }
+    if (! (Test-Path -Path $refPath)) {
+        $null = New-Item -Path $refPath -ItemType Directory -Force
+    }
+    Copy-Item -Path $smapath -Destination $refPath -Force
+
+    Find-DotNet
+
+    Push-Location -Path $sourcePath
+    try {
+        # Build the Microsoft.PowerShell.NamedPipeConnect module
+        ./build.ps1 -Clean -Build
+
+        if (! (Test-Path -Path $outPath)) {
+            throw "Publish-CustomConnectionTestModule: Build failed. Output path does not exist: $outPath"
+        }
+
+        # Publish the Microsoft.PowerShell.NamedPipeConnection module
+        Copy-Item -Path $outPath -Destination $publishPath -Recurse -Force
+
+        # Clean up build artifacts
+        ./build.ps1 -Clean
+        Remove-Item -Path $refPath -Recurse -Force -ErrorAction SilentlyContinue
+    }
+    finally {
+        Pop-Location
+    }
+}
+
 function Publish-PSTestTools {
     [CmdletBinding()]
     param(
@@ -1044,9 +1102,10 @@ function Publish-PSTestTools {
     Find-Dotnet
 
     $tools = @(
-        @{Path="${PSScriptRoot}/test/tools/TestExe";Output="testexe"}
-        @{Path="${PSScriptRoot}/test/tools/WebListener";Output="WebListener"}
-        @{Path="${PSScriptRoot}/test/tools/TestService";Output="TestService"}
+        @{ Path="${PSScriptRoot}/test/tools/TestAlc";     Output="library" }
+        @{ Path="${PSScriptRoot}/test/tools/TestExe";     Output="exe" }
+        @{ Path="${PSScriptRoot}/test/tools/WebListener"; Output="exe" }
+        @{ Path="${PSScriptRoot}/test/tools/TestService"; Output="exe" }
     )
 
     $Options = Get-PSOptions -DefaultToNew
@@ -1067,11 +1126,18 @@ function Publish-PSTestTools {
                 Remove-Item -Path $objPath -Recurse -Force
             }
 
-            if (-not $runtime) {
-                dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
-            } else {
-                dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $runtime
+            if ($tool.Output -eq 'library') {
+                ## Handle building and publishing assemblies.
+                dotnet publish --configuration $Options.Configuration --framework $Options.Framework
+                continue
             }
+
+            ## Handle building and publishing executables.
+            if (-not $runtime) {
+                $runtime = $Options.Runtime
+            }
+
+            dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $runtime --self-contained
 
             if ( -not $env:PATH.Contains($toolPath) ) {
                 $env:PATH = $toolPath+$TestModulePathSeparator+$($env:PATH)
@@ -1194,6 +1260,9 @@ function Start-PSPester {
             $publishArgs['runtime'] = 'alpine-x64'
         }
         Publish-PSTestTools @publishArgs | ForEach-Object {Write-Host $_}
+
+        # Publish the Microsoft.PowerShell.NamedPipeConnection module for testing custom remote connections.
+        Publish-CustomConnectionTestModule | ForEach-Object { Write-Host $_ }
     }
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
@@ -1651,9 +1720,18 @@ function Test-PSPesterResults
     }
     elseif ($PSCmdlet.ParameterSetName -eq 'PesterPassThruObject')
     {
-        if ($ResultObject.TotalCount -le 0 -and -not $CanHaveNoResult)
+        if (-not $CanHaveNoResult)
         {
-            throw 'NO TESTS RUN'
+            $noTotalCountMember = if ($null -eq (Get-Member -InputObject $ResultObject -Name 'TotalCount')) { $true } else { $false }
+            if ($noTotalCountMember)
+            {
+                Write-Verbose -Verbose -Message "`$ResultObject has no 'TotalCount' property"
+                Write-Verbose -Verbose "$($ResultObject | Out-String)"
+            }
+            if ($noTotalCountMember -or $ResultObject.TotalCount -le 0)
+            {
+                throw 'NO TESTS RUN'
+            }
         }
         elseif ($ResultObject.FailedCount -gt 0)
         {
@@ -1737,6 +1815,7 @@ function Install-Dotnet {
         [string]$Channel = $dotnetCLIChannel,
         [string]$Version = $dotnetCLIRequiredVersion,
         [string]$Quality = $dotnetCLIQuality,
+        [switch]$RemovePreviousVersion,
         [switch]$NoSudo,
         [string]$InstallDir,
         [string]$AzureFeed,
@@ -1745,36 +1824,34 @@ function Install-Dotnet {
 
     Write-Verbose -Verbose "In install-dotnet"
 
-    # This is needed workaround for RTM pre-release build as the SDK version is always 6.0.100 after installation for every pre-release
-    if ($dotnetCLIRequiredVersion -like '6.0.100-rtm.*') {
-        $dotnetCLIRequiredVersion = '6.0.100'
-    }
-
     # This allows sudo install to be optional; needed when running in containers / as root
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $installObtainUrl = "https://dotnet.microsoft.com/download/dotnet-core/scripts/v1"
+    # $installObtainUrl = "https://dot.net/v1"
+    $installObtainUrl = "https://dotnet.microsoft.com/download/dotnet/scripts/v1"
     $uninstallObtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
     if ($environment.IsLinux -or $environment.IsMacOS) {
         $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
 
-        # Uninstall all previous dotnet packages
-        $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
-            "dotnet-uninstall-debian-packages.sh"
-        } elseif ($environment.IsMacOS) {
-            "dotnet-uninstall-pkgs.sh"
-        }
-
-        if ($uninstallScript) {
-            Start-NativeExecution {
-                & $wget $uninstallObtainUrl/uninstall/$uninstallScript
-                Invoke-Expression "$sudo bash ./$uninstallScript"
+        # Attempt to uninstall previous dotnet packages if requested
+        if ($RemovePreviousVersion) {
+            $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
+                "dotnet-uninstall-debian-packages.sh"
+            } elseif ($environment.IsMacOS) {
+                "dotnet-uninstall-pkgs.sh"
             }
-        } else {
-            Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
+
+            if ($uninstallScript) {
+                Start-NativeExecution {
+                    & $wget $uninstallObtainUrl/uninstall/$uninstallScript
+                    Invoke-Expression "$sudo bash ./$uninstallScript"
+                }
+            } else {
+                Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
+            }
         }
 
         Write-Verbose -Verbose "Invoking install script"
@@ -1808,6 +1885,8 @@ function Install-Dotnet {
                 $bashArgs += @('-FeedCredential', $FeedCredential)
             }
 
+            $bashArgs += @('-skipnonversionedfiles')
+
             $bashArgs | Out-String | Write-Verbose -Verbose
 
         Start-NativeExecution {
@@ -1818,13 +1897,11 @@ function Install-Dotnet {
         $installScript = "dotnet-install.ps1"
         Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
         if (-not $environment.IsCoreCLR) {
-            $installArgs = @{
-                Quality = $Quality
-            }
-
+            $installArgs = @{}
             if ($Version) {
                 $installArgs += @{ Version = $Version }
             } elseif ($Channel) {
+                $installArgs += @{ Quality = $Quality }
                 $installArgs += @{ Channel = $Channel }
             }
 
@@ -1840,6 +1917,8 @@ function Install-Dotnet {
                 $installArgs += @{FeedCredential = $FeedCredential}
             }
 
+            $installArgs += @{ SkipNonVersionedFiles = $true }
+
             $installArgs | Out-String | Write-Verbose -Verbose
 
             & ./$installScript @installArgs
@@ -1850,7 +1929,7 @@ function Install-Dotnet {
             $fullDotnetInstallPath = Join-Path -Path (Convert-Path -Path $PWD.Path) -ChildPath $installScript
 
             if ($Version) {
-                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version, '-Quality', $Quality)
+                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version)
             }
             elseif ($Channel) {
                 $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Channel', $Channel, '-Quality', $Quality)
@@ -1867,6 +1946,8 @@ function Install-Dotnet {
             if ($FeedCredential) {
                 $psArgs += @('-FeedCredential', $FeedCredential)
             }
+
+            $psArgs += @('-SkipNonVersionedFiles')
 
             $psArgs | Out-String | Write-Verbose -Verbose
 
@@ -2115,7 +2196,7 @@ function Start-PSBootstrap {
 
 function Get-LatestInstalledSDK {
     Start-NativeExecution -sb {
-        dotnet --list-sdks | Select-String -Pattern '\d*.\d*.\d*(-\w*\.\d*)?' | ForEach-Object { [System.Management.Automation.SemanticVersion]::new($_.matches.value) } | Sort-Object -Descending | Select-Object -First 1
+        dotnet --list-sdks | Select-String -Pattern '\d*.\d*.\d*(-\w*\.\d*.\d*.\d*)?' | ForEach-Object { [System.Management.Automation.SemanticVersion]::new($_.matches.value) } | Sort-Object -Descending | Select-Object -First 1
     } -IgnoreExitcode 2> $null
 }
 
@@ -3222,4 +3303,30 @@ function Set-CorrectLocale
 
     # Output the locale to log it
     locale
+}
+
+function Install-AzCopy {
+    $testPath = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+    if (Test-Path $testPath) {
+        Write-Verbose "AzCopy already installed" -Verbose
+        return
+    }
+
+    $destination = "$env:TEMP\azcopy81.msi"
+    Invoke-WebRequest "https://aka.ms/downloadazcopy" -OutFile $destination
+    Start-Process -FilePath $destination -ArgumentList "/quiet" -Wait
+}
+
+function Find-AzCopy {
+    $searchPaths = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+
+    foreach ($filter in $searchPaths) {
+        $azCopy = Get-ChildItem -Path $filter -Recurse -ErrorAction SilentlyContinue | Select-Object -ExpandProperty FullName -First 1
+        if ($azCopy) {
+            return $azCopy
+        }
+    }
+
+    $azCopy = Get-Command -Name azCopy -ErrorAction Stop | Select-Object -First 1
+    return $azCopy.Path
 }

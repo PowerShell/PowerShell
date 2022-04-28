@@ -381,7 +381,7 @@ namespace System.Management.Automation.ComInterop
                     && (flags & ComTypes.INVOKEKIND.INVOKE_FUNC) != 0
                     && (flags & (ComTypes.INVOKEKIND.INVOKE_PROPERTYPUT | ComTypes.INVOKEKIND.INVOKE_PROPERTYPUTREF)) == 0)
                 {
-                    // Re-invoke with no result argument to accomodate Word
+                    // Re-invoke with no result argument to accommodate Word
                     hresult = pfnIDispatchInvoke(dispatchPointer,
                         memberDispId, &IID_NULL, 0, (ushort)ComTypes.INVOKEKIND.INVOKE_FUNC, pDispParams, null, pExcepInfo, pArgErr);
                 }

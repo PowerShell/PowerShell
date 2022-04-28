@@ -30,6 +30,12 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
         $arraylist.Count | Should -Be 0
     }
 
+    ## fix https://github.com/PowerShell/PowerShell/issues/17165
+    It "([bool] `$var = 42) should return the varaible value" {
+        ([bool]$var = 42).GetType().FullName | Should -Be "System.Boolean"
+        . { ([bool]$var = 42).GetType().FullName } | Should -Be "System.Boolean"
+    }
+
     It "Setting property using 'ForEach' method should work on a scalar object" {
         $obj = [pscustomobject] @{ p = 1 }
         $obj.ForEach('p', 32) | Should -BeNullOrEmpty
