@@ -1438,6 +1438,12 @@ vmImage
 codesign
 release-BuildJson
 yml
+dotnet5
+buildinfo
+SKUs
+CGManifest
+vmImage
+ci.psm1
 centos-7
 PSDesiredStateConfiguration
 NoLanguage
