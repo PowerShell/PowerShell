@@ -29,4 +29,10 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
         ## $arraylist.Clear() should be executed
         $arraylist.Count | Should -Be 0
     }
+
+    It "Setting property using 'ForEach' method should work on a scalar object" {
+        $obj = [pscustomobject] @{ p = 1 }
+        $obj.ForEach('p', 32) | Should -BeNullOrEmpty
+        $obj.p | Should -Be 32
+    }
 }
