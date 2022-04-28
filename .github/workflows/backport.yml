@@ -55,7 +55,6 @@ jobs:
           ## Customer Impact
 
           ## Testing
-
+- [ ] For any change that affects the release process, please work with a maintainer to come up with a plan to test this.
           ## Risk
 
-          IMPORTANT: If this change touches code that ships in a NuGet package, please make certain that you have added any necessary [package authoring](https://github.com/dotnet/runtime/blob/main/docs/project/library-servicing.md) and gotten it explicitly reviewed.
