@@ -55,8 +55,7 @@ jobs:
           ## Customer Impact
 
           ## Testing
-          
-          - [ ] For any change that affects the release process, please work with a maintainer to come up with a plan to test this.
-          
-          ## Risk
 
+          - [ ] For any change that affects the release process, please work with a maintainer to come up with a plan to test this.
+
+          ## Risk
