@@ -2197,7 +2197,7 @@ function Start-PSBootstrap {
 function Get-LatestInstalledSDK {
     Start-NativeExecution -sb {
         dotnet --list-sdks | ForEach-Object {
-            # this splits stings like
+            # this splits strings like
             # '6.0.202 [C:\Program Files\dotnet\sdk]'
             # '7.0.100-preview.2.22153.17 [C:\Users\johndoe\AppData\Local\Microsoft\dotnet\sdk]'
             # into version and path parts.
