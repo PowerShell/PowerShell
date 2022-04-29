@@ -1737,6 +1737,7 @@ function Install-Dotnet {
         [string]$Channel = $dotnetCLIChannel,
         [string]$Version = $dotnetCLIRequiredVersion,
         [string]$Quality = $dotnetCLIQuality,
+        [switch]$RemovePreviousVersion,
         [switch]$NoSudo,
         [string]$InstallDir,
         [string]$AzureFeed,
@@ -1762,20 +1763,22 @@ function Install-Dotnet {
     if ($environment.IsLinux -or $environment.IsMacOS) {
         $wget = Get-Command -Name wget -CommandType Application -TotalCount 1 -ErrorAction Stop
 
-        # Uninstall all previous dotnet packages
-        $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
-            "dotnet-uninstall-debian-packages.sh"
-        } elseif ($environment.IsMacOS) {
-            "dotnet-uninstall-pkgs.sh"
-        }
-
-        if ($uninstallScript) {
-            Start-NativeExecution {
-                & $wget $uninstallObtainUrl/uninstall/$uninstallScript
-                Invoke-Expression "$sudo bash ./$uninstallScript"
+        # Attempt to uninstall previous dotnet packages if requested
+        if ($RemovePreviousVersion) {
+            $uninstallScript = if ($environment.IsLinux -and $environment.IsUbuntu) {
+                "dotnet-uninstall-debian-packages.sh"
+            } elseif ($environment.IsMacOS) {
+                "dotnet-uninstall-pkgs.sh"
             }
-        } else {
-            Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
+
+            if ($uninstallScript) {
+                Start-NativeExecution {
+                    & $wget $uninstallObtainUrl/uninstall/$uninstallScript
+                    Invoke-Expression "$sudo bash ./$uninstallScript"
+                }
+            } else {
+                Write-Warning "This script only removes prior versions of dotnet for Ubuntu and OS X"
+            }
         }
 
         Write-Verbose -Verbose "Invoking install script"
@@ -1809,6 +1812,8 @@ function Install-Dotnet {
                 $bashArgs += @('-FeedCredential', $FeedCredential)
             }
 
+            $bashArgs += @('-skipnonversionedfiles')
+
             $bashArgs | Out-String | Write-Verbose -Verbose
 
         Start-NativeExecution {
@@ -1841,6 +1846,8 @@ function Install-Dotnet {
                 $installArgs += @{FeedCredential = $FeedCredential}
             }
 
+            $installArgs += @{ SkipNonVersionedFiles = $true }
+
             $installArgs | Out-String | Write-Verbose -Verbose
 
             & ./$installScript @installArgs
@@ -1868,6 +1875,8 @@ function Install-Dotnet {
             if ($FeedCredential) {
                 $psArgs += @('-FeedCredential', $FeedCredential)
             }
+
+            $psArgs += @('-SkipNonVersionedFiles')
 
             $psArgs | Out-String | Write-Verbose -Verbose
 
