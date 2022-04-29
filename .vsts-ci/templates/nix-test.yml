@@ -44,7 +44,7 @@ jobs:
 
   - pwsh: |
       if (Get-Command tdnf -errorAction SilentlyContinue) {
-        tdnf install -y unzip
+        sudo tdnf install -y unzip
       }
     displayName: 'Install unzip using tdnf'
     continueOnError: true
