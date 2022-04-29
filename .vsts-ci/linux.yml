@@ -113,7 +113,7 @@ stages:
       pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: CI
-      containerName: $[stageDependencies.BuildLinux.getContainer.outputs['getContainer.containerName']]
+      containerName: $[ stageDependencies.BuildLinux.outputs['getContainer.getContainer.containerName']]
 
   - template: templates/verify-xunit.yml
     parameters:
