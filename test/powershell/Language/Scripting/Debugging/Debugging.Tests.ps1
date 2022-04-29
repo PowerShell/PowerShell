@@ -342,6 +342,7 @@ return 10
 '@
             $return_script_3 = @'
 trap {
+    'statement to ignore trap registration sequence point'
     return
 }
 
@@ -355,7 +356,7 @@ throw
             $bp_2 = Set-PSBreakpoint -Script $ReturnScript_2 -Line 1 -Action { continue }
 
             $ReturnScript_3 = Setup -PassThru -File ReturnScript_3.ps1 -Content $return_script_3
-            $bp_3 = Set-PSBreakpoint -Script $ReturnScript_3 -Line 2 -Action { continue }
+            $bp_3 = Set-PSBreakpoint -Script $ReturnScript_3 -Line 3 -Action { continue }
 
             $testCases = @(
                 @{ Name = "return without pipeline should be hit once"; Path = $ReturnScript_1; Breakpoint = $bp_1; HitCount = 1 }
