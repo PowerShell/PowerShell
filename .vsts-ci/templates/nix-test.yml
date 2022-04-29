@@ -5,19 +5,23 @@ parameters:
   tagSet: 'CI'
   name: 'mac'
   containerName: ''
+  containerNameExpression: ''
 
 jobs:
 - job: ${{ parameters.name }}_test_${{ parameters.purpose }}_${{ parameters.tagSet }}
-  variables:
-    - name: containerName
-      value: $[ ${{ parameters.containerName }} ]
+  ${{ if ne(variables.containerNameExpression, '') }}:
+    variables:
+      - name: containerName
+        value: $[ ${{ parameters.containerNameExpression }} ]
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
     vmImage: ${{ parameters.pool }}
 
+  ${{ if and(ne(parameters.containerName, ''), not(contains(parameters.containerName, 'alpine'))) }}:
+    container: ${{ parameters.containerName }}
   ${{ if and(ne(variables.containerName, ''), not(contains(variables.containerName, 'alpine'))) }}:
-    container: ${{ variables.containerName }}
+    container: ${{ parameters.containerName }}
 
   displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
