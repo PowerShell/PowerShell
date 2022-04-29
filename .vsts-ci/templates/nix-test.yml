@@ -9,10 +9,12 @@ parameters:
 
 jobs:
 - job: ${{ parameters.name }}_test_${{ parameters.purpose }}_${{ parameters.tagSet }}
-  ${{ if ne(variables.containerNameExpression, '') }}:
+  ${{ if ne(parameters.containerNameExpression, '') }}:
     variables:
       - name: containerName
         value: $[ ${{ parameters.containerNameExpression }} ]
+      - name: variableDefined
+        value: 'true'
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
@@ -20,8 +22,8 @@ jobs:
 
   ${{ if and(ne(parameters.containerName, ''), not(contains(parameters.containerName, 'alpine'))) }}:
     container: ${{ parameters.containerName }}
-  ${{ if and(ne(variables.containerName, ''), not(contains(variables.containerName, 'alpine'))) }}:
-    container: ${{ parameters.containerName }}
+  ${{ if and(ne(parameters.containerNameExpression, ''), not(contains(variables.containerName, 'alpine'))) }}:
+    container: ${{ variables.containerName }}
 
   displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
