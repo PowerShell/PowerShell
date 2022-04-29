@@ -42,6 +42,13 @@ jobs:
       Invoke-CIInstall -SkipUser
     displayName: Bootstrap
 
+  - pwsh: |
+      if (Get-Command tdnf -errorAction SilentlyContinue) {
+        tdnf install -y unzip
+      }
+    displayName: 'Install unzip using tdnf'
+    continueOnError: true
+
   - task: ExtractFiles@1
     displayName: 'Extract Build ZIP'
     inputs:
