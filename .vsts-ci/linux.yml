@@ -89,6 +89,7 @@ stages:
         Set-BuildVariable -Name containerBuildName -Value $marinerImage.JobName -IsOutput
       name: getContainerTask
       displayName: Get Container
+      continueOnError: true
 
 - stage: TestUbuntu
   displayName: Test for Ubuntu
