@@ -59,6 +59,19 @@ stages:
       pool: ubuntu-20.04
       jobName: linux_build
       displayName: linux Build
+  - job: getContainer
+    displayName: Get Container
+    steps:
+    - checkout: self
+      clean: true
+    - pwsh: |
+        Import-Module ./tools/ci.psm1
+        $containerName = 'mcr.microsoft.com/powershell/test-deps/preview-mariner-1.0'
+        Set-BuildVariable -Name containerName -Value $containerName -IsOutput
+        $containerName = 'mariner1'
+        Set-BuildVariable -Name containerBuildName -Value $containerName -IsOutput
+      name: getContainer
+      displayName: Get Container
 
 - stage: TestLinux
   displayName: Test for Linux
