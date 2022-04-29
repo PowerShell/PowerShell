@@ -67,11 +67,18 @@ stages:
     - checkout: self
       clean: true
     - pwsh: |
+        git clone https://github.com/powerhell/powershell-docker.git
+        $matrix = ./powershell-docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
+        $linuxImages = $matrix.preview |
+          Where-Object {$_.osversion -notlike '*windows*' -and $_.osversion -notlike '*nano*' -and $_.osversion -notlike 'alpine*' -and $_.osversion -notlike '*arm*'} |
+          Select-Object -First 100  JobName, Taglist |
+          Sort-Object -property JobName
+        $marinerImage = $linuxImages | where-object {$_.JobName -like 'mariner*'}
         Import-Module ./tools/ci.psm1
-        $containerName = 'mcr.microsoft.com/powershell/test-deps/preview-mariner-1.0'
+        $tag = $marinerImage.Taglist -split ';' | select-object -first 1
+        $containerName = "mcr.microsoft.com/powershell/test-deps:$tag"
         Set-BuildVariable -Name containerName -Value $containerName -IsOutput
-        $containerName = 'mariner1'
-        Set-BuildVariable -Name containerBuildName -Value $containerName -IsOutput
+        Set-BuildVariable -Name containerBuildName -Value $marinerImage.JobName -IsOutput
       name: getContainerTask
       displayName: Get Container
 
