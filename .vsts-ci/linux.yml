@@ -75,8 +75,7 @@ stages:
       clean: true
 
     - pwsh: |
-        git clone https://github.com/powerhell/powershell-docker.git
-        $matrix = ./Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
+        $matrix = ./PowerShell-Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
         $linuxImages = $matrix.preview |
           Where-Object {$_.osversion -notlike '*windows*' -and $_.osversion -notlike '*nano*' -and $_.osversion -notlike 'alpine*' -and $_.osversion -notlike '*arm*'} |
           Select-Object -First 100  JobName, Taglist |
