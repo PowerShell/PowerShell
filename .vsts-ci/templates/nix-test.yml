@@ -38,16 +38,16 @@ jobs:
     continueOnError: true
 
   - pwsh: |
+      if (Get-Command tdnf -errorAction SilentlyContinue) {
+        sudo tdnf install -y unzip git
+      }
+    displayName: 'Install unzip, git using tdnf'
+    continueOnError: true
+
+  - pwsh: |
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall -SkipUser
     displayName: Bootstrap
-
-  - pwsh: |
-      if (Get-Command tdnf -errorAction SilentlyContinue) {
-        sudo tdnf install -y unzip
-      }
-    displayName: 'Install unzip using tdnf'
-    continueOnError: true
 
   - task: ExtractFiles@1
     displayName: 'Extract Build ZIP'
