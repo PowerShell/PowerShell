@@ -75,6 +75,7 @@ stages:
 
 - stage: TestLinux
   displayName: Test for Linux
+  dependsOn: [BuildLinux]
   jobs:
   - template: templates/nix-test.yml
     parameters:
@@ -107,6 +108,14 @@ stages:
   - template: templates/verify-xunit.yml
     parameters:
       pool: ubuntu-20.04
+
+  - template: templates/nix-test.yml
+    parameters:
+      name: $[stageDependencies.BuildLinux.getContainer.outputs['getContainer.containerBuildName']]
+      pool: ubuntu-20.04
+      purpose: UnelevatedPesterTests
+      tagSet: CI
+      containerName: $[stageDependencies.BuildLinux.getContainer.outputs['getContainer.containerName']]
 
 - stage: PackageLinux
   displayName: Package Linux
