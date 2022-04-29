@@ -47,8 +47,12 @@ variables:
   __SuppressAnsiEscapeSequences: 1
 
 resources:
-- repo: self
-  clean: true
+  repositories:
+    - repository: Docker
+      type: github
+      endpoint: PowerShell
+      name: PowerShell/PowerShell-Docker
+      ref: master
 
 stages:
 - stage: BuildLinuxStage
@@ -66,15 +70,19 @@ stages:
     steps:
     - checkout: self
       clean: true
+
+    - checkout: Docker
+      clean: true
+
     - pwsh: |
         git clone https://github.com/powerhell/powershell-docker.git
-        $matrix = ./powershell-docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
+        $matrix = ./Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
         $linuxImages = $matrix.preview |
           Where-Object {$_.osversion -notlike '*windows*' -and $_.osversion -notlike '*nano*' -and $_.osversion -notlike 'alpine*' -and $_.osversion -notlike '*arm*'} |
           Select-Object -First 100  JobName, Taglist |
           Sort-Object -property JobName
         $marinerImage = $linuxImages | where-object {$_.JobName -like 'mariner*'}
-        Import-Module ./tools/ci.psm1
+        Import-Module ./PowerShell/tools/ci.psm1
         $tag = $marinerImage.Taglist -split ';' | select-object -first 1
         $containerName = "mcr.microsoft.com/powershell/test-deps:$tag"
         Set-BuildVariable -Name containerName -Value $containerName -IsOutput
