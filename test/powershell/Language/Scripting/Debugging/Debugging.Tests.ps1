@@ -340,6 +340,13 @@ return
             $return_script_2 = @'
 return 10
 '@
+            $return_script_3 = @'
+trap {
+    return
+}
+
+throw
+'@
 
             $ReturnScript_1 = Setup -PassThru -File ReturnScript_1.ps1 -Content $return_script_1
             $bp_1 = Set-PSBreakpoint -Script $ReturnScript_1 -Line 1 -Action { continue }
@@ -347,14 +354,18 @@ return 10
             $ReturnScript_2 = Setup -PassThru -File ReturnScript_2.ps1 -Content $return_script_2
             $bp_2 = Set-PSBreakpoint -Script $ReturnScript_2 -Line 1 -Action { continue }
 
+            $ReturnScript_3 = Setup -PassThru -File ReturnScript_3.ps1 -Content $return_script_3
+            $bp_3 = Set-PSBreakpoint -Script $ReturnScript_3 -Line 2 -Action { continue }
+
             $testCases = @(
                 @{ Name = "return without pipeline should be hit once"; Path = $ReturnScript_1; Breakpoint = $bp_1; HitCount = 1 }
                 @{ Name = "return with pipeline should be hit once";    Path = $ReturnScript_2; Breakpoint = $bp_2; HitCount = 1 }
+                @{ Name = "return from trap should be hit once";        Path = $ReturnScript_3; Breakpoint = $bp_3; HitCount = 1 }
             )
         }
 
         AfterAll {
-            Get-PSBreakpoint -Script $ReturnScript_1, $ReturnScript_2 | Remove-PSBreakpoint
+            Get-PSBreakpoint -Script $ReturnScript_1, $ReturnScript_2, $ReturnScript_3 | Remove-PSBreakpoint
         }
 
         It "Return statement <Name>" -TestCases $testCases {
