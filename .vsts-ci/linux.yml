@@ -61,6 +61,8 @@ stages:
       displayName: linux Build
   - job: getContainer
     displayName: Get Container
+    pool:
+      vmImage: ubuntu-20.04
     steps:
     - checkout: self
       clean: true
