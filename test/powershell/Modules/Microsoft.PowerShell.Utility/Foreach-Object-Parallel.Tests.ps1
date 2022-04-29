@@ -5,6 +5,7 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
 
     BeforeAll {
         $sb = { "Hello!" }
+        $psosb = [psobject]{ "Hello!" }
     }
 
     It "Verifies dollar underbar variable" {
@@ -339,6 +340,11 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
     It 'Verifies error for using script block variable' {
 
         { 1..1 | ForEach-Object -Parallel { $using:sb } } | Should -Throw -ErrorId 'ParallelUsingVariableCannotBeScriptBlock,Microsoft.PowerShell.Commands.ForEachObjectCommand'
+    }
+
+    It 'Verifies error for using script block variable in PSObject' {
+
+        { 1..1 | ForEach-Object -Parallel { $using:psosb } } | Should -Throw -ErrorId 'ParallelUsingVariableCannotBeScriptBlock,Microsoft.PowerShell.Commands.ForEachObjectCommand'
     }
 
     It 'Verifies error for script block piped variable' {
