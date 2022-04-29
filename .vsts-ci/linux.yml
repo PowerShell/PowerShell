@@ -129,10 +129,10 @@ stages:
 - stage: TestContainer
   displayName: Test in a container
   dependsOn: [BuildLinuxStage]
-  condition: and(succeeded(), ne(dependencies.BuildLinuxStage.outputs['getContainerJob.getContainerTask.containerName'],''))
+  condition: and(succeeded(), ne(dependencies.BuildLinuxStage.outputs['getContainerJob.getContainerJob.getContainerTask.containerName'],''))
   variables:
-    containerName: $[ dependencies.BuildLinuxStage.outputs['getContainerJob.getContainerTask.containerName']]
-    containerBuildName: $[ dependencies.BuildLinuxStage.outputs['getContainerJob.getContainerTask.containerBuildName']]
+    containerName: $[ dependencies.BuildLinuxStage.outputs['getContainerJob.getContainerJob.getContainerTask.containerName']]
+    containerBuildName: $[ dependencies.BuildLinuxStage.outputs['getContainerJob.getContainerJob.getContainerTask.containerBuildName']]
   jobs:
   - template: templates/nix-test.yml
     parameters:
