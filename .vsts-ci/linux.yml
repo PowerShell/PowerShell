@@ -59,7 +59,7 @@ stages:
       pool: ubuntu-20.04
       jobName: linux_build
       displayName: linux Build
-  - job: getContainer
+  - job: getContainerJob
     displayName: Get Container
     pool:
       vmImage: ubuntu-20.04
@@ -72,7 +72,7 @@ stages:
         Set-BuildVariable -Name containerName -Value $containerName -IsOutput
         $containerName = 'mariner1'
         Set-BuildVariable -Name containerBuildName -Value $containerName -IsOutput
-      name: getContainer
+      name: getContainerTask
       displayName: Get Container
 
 - stage: TestUbuntu
@@ -114,9 +114,10 @@ stages:
 - stage: TestContainer
   displayName: Test in a container
   dependsOn: [BuildLinux]
+  condition: and(succeeded(), ne(dependencies.BuildLinux.outputs['getContainerJob.getContainerTask.containerName'],''))
   variables:
-    containerName: $[ dependencies.BuildLinux.outputs['getContainer.getContainer.containerName']]
-    containerBuildName: $[ dependencies.BuildLinux.outputs['getContainer.getContainer.containerBuildName']]
+    containerName: $[ dependencies.BuildLinux.outputs['getContainerJob.getContainerTask.containerName']]
+    containerBuildName: $[ dependencies.BuildLinux.outputs['getContainerJob.getContainerTask.containerBuildName']]
   jobs:
   - template: templates/nix-test.yml
     parameters:
