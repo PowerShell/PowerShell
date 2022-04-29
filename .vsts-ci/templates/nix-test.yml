@@ -9,7 +9,8 @@ parameters:
 jobs:
 - job: ${{ parameters.name }}_test_${{ parameters.purpose }}_${{ parameters.tagSet }}
   variables:
-    - containerName: $[ ${{ parameters.containerName }} ]
+    - name: containerName
+      value: $[ ${{ parameters.containerName }} ]
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
