@@ -107,7 +107,7 @@ stages:
 
   - template: templates/nix-test.yml
     parameters:
-      name: $[stageDependencies.BuildLinux.getContainer.outputs['getContainer.containerBuildName']]
+      name: container
       pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: CI
