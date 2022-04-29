@@ -79,28 +79,28 @@ stages:
   jobs:
   - template: templates/nix-test.yml
     parameters:
-      name: Linux
+      name: Ubuntu
       pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: CI
 
   - template: templates/nix-test.yml
     parameters:
-      name: Linux
+      name: Ubuntu
       pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: CI
 
   - template: templates/nix-test.yml
     parameters:
-      name: Linux
+      name: Ubuntu
       pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: Others
 
   - template: templates/nix-test.yml
     parameters:
-      name: Linux
+      name: Ubuntu
       pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: Others
