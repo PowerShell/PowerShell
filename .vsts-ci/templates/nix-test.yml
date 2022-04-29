@@ -4,6 +4,7 @@ parameters:
   purpose: ''
   tagSet: 'CI'
   name: 'mac'
+  containerName: ''
 
 jobs:
 - job: ${{ parameters.name }}_test_${{ parameters.purpose }}_${{ parameters.tagSet }}
@@ -11,6 +12,9 @@ jobs:
     ${{ parameters.parentJobs }}
   pool:
     vmImage: ${{ parameters.pool }}
+
+  ${{ if and(ne(parameters.containerName, ''), not(contains(parameters.containerName, 'alpine'))) }}:
+    container: ${{ parameters.containerName }}
 
   displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
