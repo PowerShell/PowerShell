@@ -115,17 +115,3 @@ stages:
   - template: linux/templates/packaging.yml
     parameters:
       pool: ubuntu-20.04
-
-- stage: CodeCovTestPackage
-  displayName: CodeCoverage and Test Packages
-  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
-  jobs:
-  - job: CodeCovTestPackage
-    displayName: CodeCoverage and Test Packages
-    pool:
-      vmImage: ubuntu-20.04
-    steps:
-    - pwsh: |
-        Import-Module .\tools\ci.psm1
-        New-CodeCoverageAndTestPackage
-      displayName: CodeCoverage and Test Package
