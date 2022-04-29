@@ -149,7 +149,7 @@ stages:
       pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: CI
-      containerName: dependencies.getContainerJob.outputs['getContainerTask.containerName']
+      containerNameExpression: dependencies.getContainerJob.outputs['getContainerTask.containerName']
       parentJobs:
         - getContainerJob
 
