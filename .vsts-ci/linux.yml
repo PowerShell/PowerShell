@@ -51,7 +51,7 @@ resources:
   clean: true
 
 stages:
-- stage: BuildLinux
+- stage: BuildLinuxStage
   displayName: Build for Linux
   jobs:
   - template: templates/ci-build.yml
@@ -77,7 +77,7 @@ stages:
 
 - stage: TestUbuntu
   displayName: Test for Ubuntu
-  dependsOn: [BuildLinux]
+  dependsOn: [BuildLinuxStage]
   jobs:
   - template: templates/nix-test.yml
     parameters:
@@ -113,11 +113,11 @@ stages:
 
 - stage: TestContainer
   displayName: Test in a container
-  dependsOn: [BuildLinux]
-  condition: and(succeeded(), ne(dependencies.BuildLinux.outputs['getContainerJob.getContainerTask.containerName'],''))
+  dependsOn: [BuildLinuxStage]
+  condition: and(succeeded(), ne(dependencies.BuildLinuxStage.outputs['getContainerJob.getContainerTask.containerName'],''))
   variables:
-    containerName: $[ dependencies.BuildLinux.outputs['getContainerJob.getContainerTask.containerName']]
-    containerBuildName: $[ dependencies.BuildLinux.outputs['getContainerJob.getContainerTask.containerBuildName']]
+    containerName: $[ dependencies.BuildLinuxStage.outputs['getContainerJob.getContainerTask.containerName']]
+    containerBuildName: $[ dependencies.BuildLinuxStage.outputs['getContainerJob.getContainerTask.containerBuildName']]
   jobs:
   - template: templates/nix-test.yml
     parameters:
@@ -129,7 +129,7 @@ stages:
 
 - stage: PackageLinux
   displayName: Package Linux
-  dependsOn: ["BuildLinux"]
+  dependsOn: ["BuildLinuxStage"]
   jobs:
   - template: linux/templates/packaging.yml
     parameters:
