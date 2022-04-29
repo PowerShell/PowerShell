@@ -63,32 +63,6 @@ stages:
       pool: ubuntu-20.04
       jobName: linux_build
       displayName: linux Build
-  - job: getContainerJob
-    displayName: Get Container
-    pool:
-      vmImage: ubuntu-20.04
-    steps:
-    - checkout: self
-      clean: true
-
-    - checkout: Docker
-      clean: true
-
-    - pwsh: |
-        $matrix = ./PowerShell-Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
-        $linuxImages = $matrix.preview |
-          Where-Object {$_.osversion -notlike '*windows*' -and $_.osversion -notlike '*nano*' -and $_.osversion -notlike 'alpine*' -and $_.osversion -notlike '*arm*'} |
-          Select-Object -First 100  JobName, Taglist |
-          Sort-Object -property JobName
-        $marinerImage = $linuxImages | where-object {$_.JobName -like 'mariner*'}
-        Import-Module ./PowerShell/tools/ci.psm1
-        $tag = $marinerImage.Taglist -split ';' | select-object -first 1
-        $containerName = "mcr.microsoft.com/powershell/test-deps:$tag"
-        Set-BuildVariable -Name containerName -Value $containerName -IsOutput
-        Set-BuildVariable -Name containerBuildName -Value $marinerImage.JobName -IsOutput
-      name: getContainerTask
-      displayName: Get Container
-      continueOnError: true
 
 - stage: TestUbuntu
   displayName: Test for Ubuntu
@@ -134,6 +108,33 @@ stages:
     containerName: $[ dependencies.BuildLinuxStage.outputs['getContainerJob.getContainerJob.getContainerTask.containerName']]
     containerBuildName: $[ dependencies.BuildLinuxStage.outputs['getContainerJob.getContainerJob.getContainerTask.containerBuildName']]
   jobs:
+  - job: getContainerJob
+    displayName: Get Container
+    pool:
+      vmImage: ubuntu-20.04
+    steps:
+    - checkout: self
+      clean: true
+
+    - checkout: Docker
+      clean: true
+
+    - pwsh: |
+        $matrix = ./PowerShell-Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
+        $linuxImages = $matrix.preview |
+          Where-Object {$_.osversion -notlike '*windows*' -and $_.osversion -notlike '*nano*' -and $_.osversion -notlike 'alpine*' -and $_.osversion -notlike '*arm*'} |
+          Select-Object -First 100  JobName, Taglist |
+          Sort-Object -property JobName
+        $marinerImage = $linuxImages | where-object {$_.JobName -like 'mariner*'}
+        Import-Module ./PowerShell/tools/ci.psm1
+        $tag = $marinerImage.Taglist -split ';' | select-object -first 1
+        $containerName = "mcr.microsoft.com/powershell/test-deps:$tag"
+        Set-BuildVariable -Name containerName -Value $containerName -IsOutput
+        Set-BuildVariable -Name containerBuildName -Value $marinerImage.JobName -IsOutput
+      name: getContainerTask
+      displayName: Get Container
+      continueOnError: true
+
   - template: templates/nix-test.yml
     parameters:
       name: container
@@ -141,13 +142,16 @@ stages:
       purpose: UnelevatedPesterTests
       tagSet: CI
       containerName: mcr.microsoft.com/powershell/test-deps:preview-mariner-1.0
+
   - template: templates/nix-test.yml
     parameters:
       name: container
       pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: CI
-      containerName: $(containerName)
+      containerName: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName']]
+      parentJobs:
+        - getContainerTask
 
 - stage: PackageLinux
   displayName: Package Linux
