@@ -114,6 +114,9 @@ stages:
 - stage: TestContainer
   displayName: Test in a container
   dependsOn: [BuildLinux]
+  variables:
+    containerName: $[ dependencies.BuildLinux.outputs['getContainer.getContainer.containerName']]
+    containerBuildName: $[ dependencies.BuildLinux.outputs['getContainer.getContainer.containerBuildName']]
   jobs:
   - template: templates/nix-test.yml
     parameters:
@@ -121,8 +124,7 @@ stages:
       pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: CI
-      containerName: $[ stageDependencies.BuildLinux.outputs['getContainer.getContainer.containerName']]
-
+      containerName: $(containerName)
 
 - stage: PackageLinux
   displayName: Package Linux
