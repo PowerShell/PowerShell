@@ -151,7 +151,7 @@ stages:
       tagSet: CI
       containerName: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName']]
       parentJobs:
-        - getContainerTask
+        - getContainerJob
 
 - stage: PackageLinux
   displayName: Package Linux
