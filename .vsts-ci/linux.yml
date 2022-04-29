@@ -142,6 +142,13 @@ stages:
       purpose: UnelevatedPesterTests
       tagSet: CI
       containerName: mcr.microsoft.com/powershell/test-deps:preview-mariner-1.0
+  - template: templates/nix-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: ElevatedPesterTests
+      tagSet: CI
+      containerName: $(containerName)
 
 - stage: PackageLinux
   displayName: Package Linux
