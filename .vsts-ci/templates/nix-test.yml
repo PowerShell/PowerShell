@@ -14,7 +14,7 @@ jobs:
     vmImage: ${{ parameters.pool }}
 
   ${{ if and(ne(parameters.containerName, ''), not(contains(parameters.containerName, 'alpine'))) }}:
-    container: $[ ${{ parameters.containerName }} ]
+    container: ${{ parameters.containerName }}
 
   displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
