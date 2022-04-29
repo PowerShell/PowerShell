@@ -105,10 +105,6 @@ stages:
       purpose: ElevatedPesterTests
       tagSet: Others
 
-  - template: templates/verify-xunit.yml
-    parameters:
-      pool: ubuntu-20.04
-
   - template: templates/nix-test.yml
     parameters:
       name: $[stageDependencies.BuildLinux.getContainer.outputs['getContainer.containerBuildName']]
@@ -116,6 +112,10 @@ stages:
       purpose: UnelevatedPesterTests
       tagSet: CI
       containerName: $[stageDependencies.BuildLinux.getContainer.outputs['getContainer.containerName']]
+
+  - template: templates/verify-xunit.yml
+    parameters:
+      pool: ubuntu-20.04
 
 - stage: PackageLinux
   displayName: Package Linux
