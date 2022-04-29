@@ -125,7 +125,7 @@ stages:
       pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: CI
-      containerName: $(containerName)
+      containerName: mcr.microsoft.com/powershell/test-deps/preview-mariner-1.0
 
 - stage: PackageLinux
   displayName: Package Linux
