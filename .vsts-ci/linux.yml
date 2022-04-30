@@ -105,7 +105,7 @@ stages:
   dependsOn: [BuildLinuxStage]
   jobs:
   - job: getContainerJob
-    displayName: Get Container
+    displayName: Choose a container
     pool:
       vmImage: ubuntu-20.04
     steps:
@@ -131,25 +131,19 @@ stages:
       displayName: Get Container
       continueOnError: true
 
-  - template: templates/nix-test.yml
+  - template: templates/test/nix-container-test.yml
     parameters:
       name: container
       pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: CI
-      useContainer: yes
-      parentJobs:
-        - getContainerJob
 
-  - template: templates/nix-test.yml
+  - template: templates/test/nix-container-test.yml
     parameters:
       name: container
       pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: CI
-      useContainer: yes
-      parentJobs:
-        - getContainerJob
 
 - stage: PackageLinux
   displayName: Package Linux
