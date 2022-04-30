@@ -22,7 +22,7 @@ jobs:
 
   ${{ if and(ne(parameters.containerName, ''), not(contains(parameters.containerName, 'alpine'))) }}:
     container: ${{ parameters.containerName }}
-  ${{ if and(ne(parameters.containerNameExpression, ''), not(contains(variables.containerName, 'alpine'))) }}:
+  ${{ if and(ne(variables.containerName, ''), not(contains(variables.containerName, 'alpine'))) }}:
     container: ${{ variables.containerName }}
 
   displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
