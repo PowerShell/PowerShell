@@ -5,16 +5,16 @@ parameters:
   tagSet: 'CI'
   name: 'mac'
   containerName: ''
-  containerNameExpression: ''
+  containerNameExpression: |
+    ''
 
 jobs:
 - job: ${{ parameters.name }}_test_${{ parameters.purpose }}_${{ parameters.tagSet }}
-  ${{ if ne(parameters.containerNameExpression, '') }}:
-    variables:
-      - name: containerName
-        value: $[ ${{ parameters.containerNameExpression }} ]
-      - name: variableDefined
-        value: 'true'
+  variables:
+    - name: containerName
+      value: $[ ${{ parameters.containerNameExpression }} ]
+    - name: variableDefined
+      value: 'true'
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
