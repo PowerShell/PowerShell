@@ -145,6 +145,20 @@ stages:
       purpose: ElevatedPesterTests
       tagSet: CI
 
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: UnelevatedPesterTests
+      tagSet: Others
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: ElevatedPesterTests
+      tagSet: Others
+
 - stage: PackageLinux
   displayName: Package Linux
   dependsOn: ["BuildLinuxStage"]
