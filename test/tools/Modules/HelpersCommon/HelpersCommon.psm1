@@ -385,3 +385,19 @@ function Get-PlatformInfo {
         return "unknown"
     }
 }
+
+# return true if WsMan is supported on the current platform
+function Get-WsManSupport {
+    $platformInfo = Get-PlatformInfo
+    if (
+        ($platformInfo.Platform -match "alpine|raspbian") -or
+        ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
+        ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8') -or
+        ($platformInfo.Platform -eq 'ubuntu' -and $platformInfo.Version -eq '20.04') -or
+        ($platformInfo.Platform -eq 'mariner') -or
+        ($IsMacOS)
+    ) {
+        return $false
+    }
+    return $true
+}
