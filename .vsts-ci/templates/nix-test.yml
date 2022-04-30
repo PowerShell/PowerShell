@@ -9,19 +9,17 @@ parameters:
 jobs:
 - job: ${{ parameters.name }}_test_${{ parameters.purpose }}_${{ parameters.tagSet }}
 
-  ${{ if ne(variables.useContainer, 'no') }}:
+  ${{ if ne(parameters.useContainer, 'no') }}:
     dependsOn:
       - getContainerJob
     variables:
       usingContainer: 'yes'
+    container: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName'] ]
 
   pool:
     vmImage: ${{ parameters.pool }}
 
-  condition: or(ne(variables.useContainer, 'no'), ne(dependencies.getContainerJob.outputs['getContainerTask.containerName'],''))
-
-  ${{ if ne(variables.useContainer, 'no') }}:
-    container: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName'] ]
+  condition: or(ne('${{ parameters.useContainer }}', 'no'), ne(dependencies.getContainerJob.outputs['getContainerTask.containerName'],''))
 
   displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
