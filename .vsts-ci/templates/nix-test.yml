@@ -8,10 +8,17 @@ parameters:
 
 jobs:
 - job: ${{ parameters.name }}_test_${{ parameters.purpose }}_${{ parameters.tagSet }}
-  dependsOn:
-    ${{ parameters.parentJobs }}
+
+  ${{ if ne(variables.useContainer, 'no') }}:
+    dependsOn:
+      - getContainerJob
+    variables:
+      usingContainer: 'yes'
+
   pool:
     vmImage: ${{ parameters.pool }}
+
+  condition: or(ne(variables.useContainer, 'no'), ne(dependencies.getContainerJob.outputs['getContainerTask.containerName'],''))
 
   ${{ if ne(variables.useContainer, 'no') }}:
     container: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName'] ]
