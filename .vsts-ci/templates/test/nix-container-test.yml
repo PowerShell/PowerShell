@@ -15,7 +15,7 @@ jobs:
     containerName: mcr.microsoft.com/powershell/test-deps:preview-mariner-1.0
     getContainerJob: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName'] ]
 
-  container: $[ variables.containerName ]
+  container: $[ variables.getContainerJob ]
 
   pool:
     vmImage: ${{ parameters.pool }}
