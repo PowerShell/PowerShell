@@ -55,7 +55,7 @@ Function Set-BuildVariable
         $IsOutput
     )
 
-    $IsOutputString = $IsOutput ? 'true' : 'false'
+    $IsOutputString = if ($IsOutput) { 'true' } else { 'false' }
     $command = "vso[task.setvariable variable=$Name;isOutput=$IsOutputString]$Value"
 
     # always log command to make local debugging easier
