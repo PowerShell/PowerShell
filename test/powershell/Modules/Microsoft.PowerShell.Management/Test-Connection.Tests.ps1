@@ -97,15 +97,8 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
             { Test-Connection "fakeHost" -Count 1 -ErrorAction Stop } |
                 Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
-            $platform = Get-PlatformInfo
-            if ($platform.Platform -match "raspbian" -or ( $platform.Platform -match 'ubuntu' -and $platform.Version -eq '20.04')) {
-                $code = 11
-            } elseif (!$IsWindows) {
-                $code = -131073
-            } else {
-                $code = 11001
-            }
-            $error[0].Exception.InnerException.ErrorCode | Should -Be $code
+            # Error code = -131073 - Invalid address
+            $error[0].Exception.InnerException.ErrorCode | Should -BeIn 11, -131073, 11001
         }
 
         It "Force IPv4 with implicit PingOptions" {
