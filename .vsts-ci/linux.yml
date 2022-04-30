@@ -137,7 +137,9 @@ stages:
       pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: CI
-      containerName: mcr.microsoft.com/powershell/test-deps:preview-mariner-1.0
+      useContainer: yes
+      parentJobs:
+        - getContainerJob
 
   - template: templates/nix-test.yml
     parameters:
@@ -145,6 +147,7 @@ stages:
       pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: CI
+      useContainer: yes
       parentJobs:
         - getContainerJob
 
