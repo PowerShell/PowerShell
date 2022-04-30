@@ -6,7 +6,7 @@ parameters:
   name: 'mac'
   containerName: ''
   containerNameExpression: |
-    'parameters.containerName'
+    parameters.containerName
 
 jobs:
 - job: ${{ parameters.name }}_test_${{ parameters.purpose }}_${{ parameters.tagSet }}
