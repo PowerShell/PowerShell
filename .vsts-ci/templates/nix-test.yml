@@ -6,7 +6,7 @@ parameters:
   name: 'mac'
   containerName: ''
   containerNameExpression: |
-    ''
+    'parameters.containerName'
 
 jobs:
 - job: ${{ parameters.name }}_test_${{ parameters.purpose }}_${{ parameters.tagSet }}
@@ -20,8 +20,6 @@ jobs:
   pool:
     vmImage: ${{ parameters.pool }}
 
-  ${{ if and(ne(parameters.containerName, ''), not(contains(parameters.containerName, 'alpine'))) }}:
-    container: ${{ parameters.containerName }}
   ${{ if and(ne(variables.containerName, ''), not(contains(variables.containerName, 'alpine'))) }}:
     container: ${{ variables.containerName }}
 
