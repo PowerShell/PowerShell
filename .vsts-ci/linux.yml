@@ -145,7 +145,6 @@ stages:
       pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: CI
-      containerNameExpression: dependencies.getContainerJob.outputs['getContainerTask.containerName']
       parentJobs:
         - getContainerJob
 
