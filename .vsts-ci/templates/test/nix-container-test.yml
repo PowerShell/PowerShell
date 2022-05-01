@@ -11,9 +11,8 @@ jobs:
     - getContainerJob
 
   variables:
-    usingContainer: 'yes'
-    containerName: mcr.microsoft.com/powershell/test-deps:preview-mariner-1.0
     getContainerJob: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName'] ]
+    __INCONTAINER: 1
 
   container: $[ variables.getContainerJob ]
 
