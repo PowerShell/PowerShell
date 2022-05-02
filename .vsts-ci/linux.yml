@@ -117,6 +117,8 @@ stages:
 
     - pwsh: |
         $matrix = ./PowerShell-Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
+        # Filter out containers that won't run on AzDevOps Linux host as an agent
+        # Windows, nano server, alpine, and any ARM image
         $linuxImages = $matrix.preview |
           Where-Object {$_.osversion -notlike '*windows*' -and $_.osversion -notlike '*nano*' -and $_.osversion -notlike 'alpine*' -and $_.osversion -notlike '*arm*'} |
           Select-Object -First 100  JobName, Taglist |
