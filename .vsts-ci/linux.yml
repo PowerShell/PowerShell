@@ -123,6 +123,7 @@ stages:
           Where-Object {$_.osversion -notmatch 'windows|nano|alpine|arm'} |
           Select-Object JobName, Taglist |
           Sort-Object -property JobName
+        # Force mariner for now, later we will add automated rotation by the month.
         $marinerImage = $linuxImages | where-object {$_.JobName -like 'mariner*'}
         Import-Module ./PowerShell/tools/ci.psm1
         $tag = $marinerImage.Taglist -split ';' | select-object -first 1
