@@ -121,7 +121,7 @@ stages:
         # Windows, nano server, alpine, and any ARM image
         $linuxImages = $matrix.preview |
           Where-Object {$_.osversion -notmatch 'windows|nano|alpine|arm'} |
-          Select-Object -First 100  JobName, Taglist |
+          Select-Object JobName, Taglist |
           Sort-Object -property JobName
         $marinerImage = $linuxImages | where-object {$_.JobName -like 'mariner*'}
         Import-Module ./PowerShell/tools/ci.psm1
