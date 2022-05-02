@@ -16,7 +16,8 @@ if(Test-Path $dotNetPath)
 }
 
 # import build into the global scope so it can be used by packaging
-Import-Module (Join-Path $repoRoot 'build.psm1') -Verbose -Scope Global
+# argumentList $true says ignore tha we may not be able to build
+Import-Module (Join-Path $repoRoot 'build.psm1') -Verbose -Scope Global -ArgumentList $true
 Import-Module (Join-Path $repoRoot 'tools\packaging') -Verbose -Scope Global
 
 # import the windows specific functcion only in Windows PowerShell or on Windows
@@ -48,21 +49,26 @@ Function Set-BuildVariable
 
         [Parameter(Mandatory=$true)]
         [string]
-        $Value
+        $Value,
+
+        [switch]
+        $IsOutput
     )
 
-    if($env:TF_BUILD)
-    {
+    $IsOutputString = if ($IsOutput) { 'true' } else { 'false' }
+    $command = "vso[task.setvariable variable=$Name;isOutput=$IsOutputString]$Value"
+
+    # always log command to make local debugging easier
+    Write-Verbose -Message "sending command: $command" -Verbose
+
+    if ($env:TF_BUILD) {
         # In VSTS
-        Write-Host "##vso[task.setvariable variable=$Name;]$Value"
+        Write-Host "##$command"
         # The variable will not show up until the next task.
-        # Setting in the current session for the same behavior as the CI
-        Set-Item env:/$name -Value $Value
     }
-    else
-    {
-        Set-Item env:/$name -Value $Value
-    }
+
+    # Setting in the current session for the same behavior as the CI and to make it show up in the same task
+    Set-Item env:/$name -Value $Value
 }
 
 # Emulates running all of CI but locally

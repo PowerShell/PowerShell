@@ -47,11 +47,15 @@ variables:
   __SuppressAnsiEscapeSequences: 1
 
 resources:
-- repo: self
-  clean: true
+  repositories:
+    - repository: Docker
+      type: github
+      endpoint: PowerShell
+      name: PowerShell/PowerShell-Docker
+      ref: master
 
 stages:
-- stage: BuildLinux
+- stage: BuildLinuxStage
   displayName: Build for Linux
   jobs:
   - template: templates/ci-build.yml
@@ -60,33 +64,34 @@ stages:
       jobName: linux_build
       displayName: linux Build
 
-- stage: TestLinux
-  displayName: Test for Linux
+- stage: TestUbuntu
+  displayName: Test for Ubuntu
+  dependsOn: [BuildLinuxStage]
   jobs:
   - template: templates/nix-test.yml
     parameters:
-      name: Linux
+      name: Ubuntu
       pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: CI
 
   - template: templates/nix-test.yml
     parameters:
-      name: Linux
+      name: Ubuntu
       pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: CI
 
   - template: templates/nix-test.yml
     parameters:
-      name: Linux
+      name: Ubuntu
       pool: ubuntu-20.04
       purpose: UnelevatedPesterTests
       tagSet: Others
 
   - template: templates/nix-test.yml
     parameters:
-      name: Linux
+      name: Ubuntu
       pool: ubuntu-20.04
       purpose: ElevatedPesterTests
       tagSet: Others
@@ -95,24 +100,72 @@ stages:
     parameters:
       pool: ubuntu-20.04
 
+- stage: TestContainer
+  displayName: Test in a container
+  dependsOn: [BuildLinuxStage]
+  jobs:
+  - job: getContainerJob
+    displayName: Choose a container
+    pool:
+      vmImage: ubuntu-20.04
+    steps:
+    - checkout: self
+      clean: true
+
+    - checkout: Docker
+      clean: true
+
+    - pwsh: |
+        $matrix = ./PowerShell-Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
+        # Filter out containers that won't run on AzDevOps Linux host as an agent
+        # Windows, nano server, alpine, and any ARM image
+        $linuxImages = $matrix.preview |
+          Where-Object {$_.osversion -notmatch 'windows|nano|alpine|arm'} |
+          Select-Object JobName, Taglist |
+          Sort-Object -property JobName
+        # Force mariner for now, later we will add automated rotation by the month.
+        $marinerImage = $linuxImages | where-object {$_.JobName -like 'mariner*'}
+        Import-Module ./PowerShell/tools/ci.psm1
+        $tag = $marinerImage.Taglist -split ';' | select-object -first 1
+        $containerName = "mcr.microsoft.com/powershell/test-deps:$tag"
+        Set-BuildVariable -Name containerName -Value $containerName -IsOutput
+        Set-BuildVariable -Name containerBuildName -Value $marinerImage.JobName -IsOutput
+      name: getContainerTask
+      displayName: Get Container
+      continueOnError: true
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: UnelevatedPesterTests
+      tagSet: CI
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: ElevatedPesterTests
+      tagSet: CI
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: UnelevatedPesterTests
+      tagSet: Others
+
+  - template: templates/test/nix-container-test.yml
+    parameters:
+      name: container
+      pool: ubuntu-20.04
+      purpose: ElevatedPesterTests
+      tagSet: Others
+
 - stage: PackageLinux
   displayName: Package Linux
-  dependsOn: ["BuildLinux"]
+  dependsOn: ["BuildLinuxStage"]
   jobs:
   - template: linux/templates/packaging.yml
     parameters:
       pool: ubuntu-20.04
-
-- stage: CodeCovTestPackage
-  displayName: CodeCoverage and Test Packages
-  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
-  jobs:
-  - job: CodeCovTestPackage
-    displayName: CodeCoverage and Test Packages
-    pool:
-      vmImage: ubuntu-20.04
-    steps:
-    - pwsh: |
-        Import-Module .\tools\ci.psm1
-        New-CodeCoverageAndTestPackage
-      displayName: CodeCoverage and Test Package
