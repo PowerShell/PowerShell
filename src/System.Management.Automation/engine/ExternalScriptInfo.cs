@@ -523,25 +523,36 @@ namespace System.Management.Automation
                             _scriptContents = scriptReader.ReadToEnd();
                             _originalEncoding = scriptReader.CurrentEncoding;
 
-                            // Check if this came from a trusted path. If so, set its language mode to FullLanguage.
-                            if (SystemPolicy.GetSystemLockdownPolicy() != SystemEnforcementMode.None)
+                            // Check this file against any system wide enforcement policies.
+                            SystemScriptFileEnforcement filePolicyEnforcement = SystemPolicy.GetFilePolicyEnforcement(_path, safeFileHandle);
+                            switch (filePolicyEnforcement)
                             {
-                                SystemEnforcementMode scriptSpecificPolicy = SystemPolicy.GetLockdownPolicy(_path, safeFileHandle);
-                                if (scriptSpecificPolicy != SystemEnforcementMode.Enforce)
-                                {
-                                    this.DefiningLanguageMode = PSLanguageMode.FullLanguage;
-                                }
-                                else
-                                {
-                                    this.DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
-                                }
-                            }
-                            else
-                            {
-                                if (this.Context != null)
-                                {
-                                    this.DefiningLanguageMode = this.Context.LanguageMode;
-                                }
+                                case SystemScriptFileEnforcement.None:
+                                    if (Context != null)
+                                    {
+                                        DefiningLanguageMode = Context.LanguageMode;
+                                    }
+                                    break;
+
+                                case SystemScriptFileEnforcement.Allow:
+                                    DefiningLanguageMode = PSLanguageMode.FullLanguage;
+                                    break;
+
+                                case SystemScriptFileEnforcement.AllowConstrained:
+                                    DefiningLanguageMode = PSLanguageMode.ConstrainedLanguage;
+                                    break;
+
+                                case SystemScriptFileEnforcement.Block:
+                                    throw new PSSecurityException(
+                                        string.Format(
+                                            Globalization.CultureInfo.CurrentUICulture,
+                                            SecuritySupportStrings.ScriptFileBlockedBySystemPolicy, _path));
+
+                                default:
+                                    throw new PSSecurityException(
+                                        string.Format(
+                                            Globalization.CultureInfo.CurrentUICulture,
+                                            SecuritySupportStrings.UnknownSystemScriptFileEnforcement, filePolicyEnforcement));
                             }
                         }
                     }
