@@ -120,7 +120,7 @@ stages:
         # Filter out containers that won't run on AzDevOps Linux host as an agent
         # Windows, nano server, alpine, and any ARM image
         $linuxImages = $matrix.preview |
-          Where-Object {$_.osversion -notlike '*windows*' -and $_.osversion -notlike '*nano*' -and $_.osversion -notlike 'alpine*' -and $_.osversion -notlike '*arm*'} |
+          Where-Object {$_.osversion -notmatch 'windows|nano|alpine|arm'} |
           Select-Object -First 100  JobName, Taglist |
           Sort-Object -property JobName
         $marinerImage = $linuxImages | where-object {$_.JobName -like 'mariner*'}
