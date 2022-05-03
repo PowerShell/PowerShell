@@ -516,7 +516,6 @@ namespace System.Management.Automation
                     using (FileStream readerStream = new FileStream(_path, FileMode.Open, FileAccess.Read))
                     {
                         Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
-                        Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = readerStream.SafeFileHandle;
 
                         using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))
                         {
@@ -524,7 +523,7 @@ namespace System.Management.Automation
                             _originalEncoding = scriptReader.CurrentEncoding;
 
                             // Check this file against any system wide enforcement policies.
-                            SystemScriptFileEnforcement filePolicyEnforcement = SystemPolicy.GetFilePolicyEnforcement(_path, safeFileHandle);
+                            SystemScriptFileEnforcement filePolicyEnforcement = SystemPolicy.GetFilePolicyEnforcement(_path, readerStream);
                             switch (filePolicyEnforcement)
                             {
                                 case SystemScriptFileEnforcement.None:
@@ -532,6 +531,7 @@ namespace System.Management.Automation
                                     {
                                         DefiningLanguageMode = Context.LanguageMode;
                                     }
+
                                     break;
 
                                 case SystemScriptFileEnforcement.Allow:
@@ -546,13 +546,15 @@ namespace System.Management.Automation
                                     throw new PSSecurityException(
                                         string.Format(
                                             Globalization.CultureInfo.CurrentUICulture,
-                                            SecuritySupportStrings.ScriptFileBlockedBySystemPolicy, _path));
+                                            SecuritySupportStrings.ScriptFileBlockedBySystemPolicy,
+                                            _path));
 
                                 default:
                                     throw new PSSecurityException(
                                         string.Format(
                                             Globalization.CultureInfo.CurrentUICulture,
-                                            SecuritySupportStrings.UnknownSystemScriptFileEnforcement, filePolicyEnforcement));
+                                            SecuritySupportStrings.UnknownSystemScriptFileEnforcement,
+                                            filePolicyEnforcement));
                             }
                         }
                     }

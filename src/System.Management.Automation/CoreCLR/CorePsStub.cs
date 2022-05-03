@@ -461,13 +461,13 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Gets the system wide script file policy enforcement for an open file.
         /// Based on system WDAC (Windows Defender Application Control) or AppLocker policies.
-        /// <summary>
+        /// </summary>
         /// <param name="filePath">Script file path for policy check.</param>
-        /// <param name="fileHandle">Open file handle to script file path.</param>
+        /// <param name="fileStream">FileStream object to script file path.</param>
         /// <retruns>Policy check result for script file.</returns>
         public static SystemScriptFileEnforcement GetFilePolicyEnforcement(
             string filePath,
-            SafeHandle fileHandle)
+            System.IO.FileStream fileStream)
         {
             return SystemScriptFileEnforcement.Allow;
         }

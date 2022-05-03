@@ -102,14 +102,16 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Gets the system wide script file policy enforcement for an open file.
         /// Based on system WDAC (Windows Defender Application Control) or AppLocker policies.
-        /// <summary>
+        /// </summary>
         /// <param name="filePath">Script file path for policy check.</param>
-        /// <param name="fileHandle">Open file handle to script file path.</param>
+        /// <param name="fileStream">FileStream object to script file path.</param>
         /// <retruns>Policy check result for script file.</returns>
         public static SystemScriptFileEnforcement GetFilePolicyEnforcement(
             string filePath,
-            SafeHandle fileHandle)
+            System.IO.FileStream fileStream)
         {
+            SafeHandle fileHandle = fileStream.SafeFileHandle;
+
             // First check latest WDAC APIs if available.
             if (s_wldpCanExecuteAvailable)
             {
@@ -144,6 +146,7 @@ namespace System.Management.Automation.Security
                                 break;
                         }
                     }
+
                     // If HResult is unsuccessful (such as E_NOTIMPL (0x80004001)), fall through to legacy system checks.
                 }
                 catch (DllNotFoundException)
@@ -674,8 +677,7 @@ namespace System.Management.Automation.Security
         }
 
         /// <summary>
-        /// Powershell Script Host
-        /// {8E9AAA7C-198B-4879-AE41-A50D47AD6458}
+        /// Powershell Script Host.
         /// </summary>
         internal static readonly Guid PowerShellHost = new Guid("8E9AAA7C-198B-4879-AE41-A50D47AD6458");
 
@@ -684,10 +686,13 @@ namespace System.Management.Automation.Security
         /// </summary>
         internal static class WldpNativeMethods
         {
+            /// <summary>
             /// Returns a WLDP_EXECUTION_POLICY enum value indicating if and how a script file
             /// should be executed.
+            /// </summary>
+            /// <returns>HResult value.</returns>
             [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
-            [DllImportAttribute("wldp.dll", EntryPoint= "WldpCanExecuteFile")]
+            [DllImportAttribute("wldp.dll", EntryPoint = "WldpCanExecuteFile")]
             internal static extern int WldpCanExecuteFile(
                 Guid host,
                 WLDP_EXECUTION_EVALUATION_OPTIONS options,
