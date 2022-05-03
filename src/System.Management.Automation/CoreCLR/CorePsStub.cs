@@ -469,7 +469,7 @@ namespace System.Management.Automation.Security
             string filePath,
             System.IO.FileStream fileStream)
         {
-            return SystemScriptFileEnforcement.Allow;
+            return SystemScriptFileEnforcement.None;
         }
     }
 
