@@ -105,7 +105,7 @@ namespace System.Management.Automation.Security
         /// </summary>
         /// <param name="filePath">Script file path for policy check.</param>
         /// <param name="fileStream">FileStream object to script file path.</param>
-        /// <retruns>Policy check result for script file.</returns>
+        /// <returns>Policy check result for script file.</returns>
         public static SystemScriptFileEnforcement GetFilePolicyEnforcement(
             string filePath,
             System.IO.FileStream fileStream)
@@ -690,6 +690,11 @@ namespace System.Management.Automation.Security
             /// Returns a WLDP_EXECUTION_POLICY enum value indicating if and how a script file
             /// should be executed.
             /// </summary>
+            /// <param name="host">Host guid.</param>
+            /// <param name="options">Evaluation options.</param>
+            /// <param name="fileHandle">Evaluated file handle.</param>
+            /// <param name="auditInfo">Auditing information string.</param>
+            /// <param name="result">Evaluation result.</param>
             /// <returns>HResult value.</returns>
             [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpCanExecuteFile")]
