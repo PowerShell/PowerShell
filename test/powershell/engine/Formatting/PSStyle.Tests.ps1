@@ -238,3 +238,102 @@ Describe 'Tests for $PSStyle automatic variable' {
         }
     }
 }
+
+Describe 'Handle strings with escape sequences in formatting' {
+
+    BeforeAll {
+        function Get-DemoObjects {
+            [PSCustomObject]@{PSTypeName = "User"; Name = "Bob Saggat"; Tenure = 2; Role = "Developer" }
+            [PSCustomObject]@{PSTypeName = "User"; Name = "John Seymour"; Tenure = 6; Role = "Sw Engineer" }
+            [PSCustomObject]@{PSTypeName = "User"; Name = "Billy Bob Thorton"; Tenure = 13; Role = "Senior DevOps Engineer" }
+        }
+
+        $colors = @("`e[32m", "`e[34m", "`e[33m", "`e[31m", "`e[33m", "`e[34m", "`e[32m")
+        $outFile = "$TestDrive\outFile.txt"
+    }
+
+    It 'Truncation for strings with no escape sequences' {
+        $expected = @"
+`e[32;1mName       Role            YIR`e[0m
+`e[32;1m----       ----            ---`e[0m
+Bob Saggat Developer         2
+John Seym… Sw Engineer       6
+Billy Bob… Senior DevOps …  13
+"@
+        Get-DemoObjects |
+            Format-Table @{Width = 10; Name = "Name"; E = { $_.Name }},
+                         @{Width = 15; Name = "Role";  E = { $_.Role }},
+                         @{Width = 3; Name = "YIR";  E = { $_.Tenure }} |
+            Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Truncation for strings with escape sequences - TableView-1" {
+        $expected = @"
+`e[32;1mName       Role            YIR`e[0m
+`e[32;1m----       ----            ---`e[0m
+`e[32mBob Saggat`e[39m`e[0m Developer         2
+`e[33mJohn Seym…`e[0m Sw Engineer       6
+`e[31mBilly Bob…`e[0m Senior DevOps …  13
+"@
+        Get-DemoObjects |
+            Format-Table @{Width = 10; Name = "Name"; E = {
+                                $index = [array]::BinarySearch(@(3, 5, 8), $_.Tenure)
+                                $color = $colors[$index]
+                                $color + $_.Name + "`e[39m"}
+                          },
+                         @{Width = 15; Name = "Role";  E = { $_.Role }},
+                         @{Width = 3; Name = "YIR";  E = { $_.Tenure }} |
+            Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Truncation for strings with escape sequences - TableView-2" {
+        $expected = @"
+`e[32;1mName       Role            YIR`e[0m
+`e[32;1m----       ----            ---`e[0m
+`e[32mBob Saggat`e[39m`e[0m Developer`e[0m         2
+`e[33mJohn Seym…`e[0m `e[1;33mSw Engineer`e[0m       6
+`e[31mBilly Bob…`e[0m `e[42m`e[1;33mSenior DevOps …`e[0m  13
+"@
+        Get-DemoObjects |
+            Format-Table @{Width = 10; Name = "Name"; E = {
+                                $index = [array]::BinarySearch(@(3, 5, 8), $_.Tenure)
+                                $color = $colors[$index]
+                                $color + $_.Name + "`e[39m"}
+                          },
+                         @{Width = 15; Name = "Role"; E = {
+                            $color = -join $(switch -regex ($_.Role){
+                                "Senior" { "`e[42m" }
+                                "Engineer" { "`e[1;33m" }
+                            })
+                            $color + $_.Role  + "`e[0m"}},
+                         @{Width = 3; Name = "YIR";  E = { $_.Tenure }} |
+            Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Truncation for strings with escape sequences - WideView" {
+        $expected = @"
+`e[32mBob Saggat`e[39m             `e[0m `e[33mJohn Seymour`e[39m`e[0m
+`e[31mBilly Bob Thorton`e[39m      `e[0m `e[32mBob Saggat`e[39m`e[0m
+`e[33mJohn Seymour`e[39m           `e[0m `e[31mBilly Bob Thorton`e[39m`e[0m
+"@
+        (Get-DemoObjects) + (Get-DemoObjects) |
+            Format-Wide @{E = {
+                            $index = [array]::BinarySearch(@(3, 5, 8), $_.Tenure)
+                            $color = $colors[$index]
+                            $color + $_.Name + "`e[39m" }
+                        } -Column 2 |
+            Out-String -Width 47 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+}

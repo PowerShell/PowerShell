@@ -451,7 +451,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         // we are not at the end of the string, select a sub string
                         // that would fit in the remaining display length
-                        int charactersToAdd = displayCells.GetHeadSplitLength(currentLine, offset, currentDisplayLen);
+                        int charactersToAdd = displayCells.TruncateTail(currentLine, offset, currentDisplayLen);
 
                         if (charactersToAdd <= 0)
                         {
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         else
                         {
                             // of the given length, add it to the accumulator
-                            accumulator.AddLine(currentLine.Substring(offset, charactersToAdd));
+                            accumulator.AddLine(currentLine.VtSubstring(offset, charactersToAdd));
                         }
 
                         // increase the offset by the # of characters added
@@ -474,7 +474,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     else
                     {
                         // we reached the last (partial) line, we add it all
-                        accumulator.AddLine(currentLine.Substring(offset));
+                        accumulator.AddLine(currentLine.VtSubstring(offset));
                         break;
                     }
                 }
@@ -553,7 +553,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // Handle soft hyphen
                     if (word.Delim == s_softHyphen.ToString())
                     {
-                        int wordWidthWithHyphen = displayCells.Length(wordToAdd) + displayCells.Length(s_softHyphen.ToString());
+                        int wordWidthWithHyphen = displayCells.Length(wordToAdd) + displayCells.Length(s_softHyphen);
 
                         // Add hyphen only if necessary
                         if (wordWidthWithHyphen == spacesLeft)

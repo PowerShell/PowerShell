@@ -88,19 +88,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             for (int k = 0; k < propertyNames.Length; k++)
             {
+                string propertyName = propertyNames[k];
                 if (propertyNameCellCounts[k] < _propertyLabelsDisplayLength)
                 {
                     // shorter than the max, add padding
-                    _propertyLabels[k] = propertyNames[k] + StringUtil.Padding(_propertyLabelsDisplayLength - propertyNameCellCounts[k]);
+                    _propertyLabels[k] = propertyName + StringUtil.Padding(_propertyLabelsDisplayLength - propertyNameCellCounts[k]);
                 }
                 else if (propertyNameCellCounts[k] > _propertyLabelsDisplayLength)
                 {
                     // longer than the max, clip
-                    _propertyLabels[k] = propertyNames[k].Substring(0, dc.GetHeadSplitLength(propertyNames[k], _propertyLabelsDisplayLength));
+                    _propertyLabels[k] = propertyName.VtSubstring(0, dc.TruncateTail(propertyName, _propertyLabelsDisplayLength));
                 }
                 else
                 {
-                    _propertyLabels[k] = propertyNames[k];
+                    _propertyLabels[k] = propertyName;
                 }
 
                 _propertyLabels[k] += Separator;
