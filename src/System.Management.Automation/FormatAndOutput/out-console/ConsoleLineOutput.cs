@@ -87,6 +87,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleLineOutput", "ConsoleLineOutput");
         #endregion tracer
 
+        /// <summary>
+        /// The default buffer cell calculation already works for the PowerShell console host and Visual studio code host.
+        /// </summary>
         private static readonly HashSet<string> s_psHost = new(StringComparer.Ordinal) { "ConsoleHost", "Visual Studio Code Host" };
 
         #region LineOutput implementation
