@@ -205,7 +205,7 @@ jobs:
       $packagePathList = Get-ChildItem $packagePath -Recurse | Select-Object -ExpandProperty FullName | Out-String
       Write-Verbose -Verbose $packagePathList
 
-      $checksums = Get-ChildItem -Path $packagePath |
+      $checksums = Get-ChildItem -Path $packagePath -Exclude "SHA512SUMS" |
           ForEach-Object {
               Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
               $packageName = $_.Name
@@ -234,7 +234,7 @@ jobs:
       $packagePathList = Get-ChildItem $packagePath -Recurse | Select-Object -ExpandProperty FullName | Out-String
       Write-Verbose -Verbose $packagePathList
 
-      $checksums = Get-ChildItem -Path $packagePath |
+      $checksums = Get-ChildItem -Path $packagePath -Exclude "SHA512SUMS" |
           ForEach-Object {
               Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
               $packageName = $_.Name
