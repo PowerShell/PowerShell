@@ -46,8 +46,8 @@ stages:
 - stage: TestLinux
   displayName: Test for Linux
   jobs:
-  timeoutInMinutes: 90
   - job: linux_test
+    timeoutInMinutes: 90
     pool:
       vmImage: ubuntu-20.04
     displayName: Linux Test
