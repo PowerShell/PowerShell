@@ -695,7 +695,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers.Unstable",
-          "Version": "1.2.0.406"
+          "Version": "1.2.0.435"
         }
       },
       "DevelopmentDependency": true
