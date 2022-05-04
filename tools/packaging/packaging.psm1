@@ -1197,7 +1197,6 @@ function Get-FpmArguments
         "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
         "--vendor", "Microsoft Corporation",
         "--url", "https://microsoft.com/powershell",
-        "--license", "MIT License",
         "--description", $Description,
         "--category", "shells",
         "-t", $Type,
@@ -1207,6 +1206,10 @@ function Get-FpmArguments
     if ($Type -eq "rpm") {
         $Arguments += @("--rpm-dist", $Distribution)
         $Arguments += @("--rpm-os", "linux")
+        $Arguments += @("--rpm-os", "linux")
+        $Arguments += @("--license", "MIT")
+    } else {
+        $Arguments += @("--license", "MIT License")
     }
 
     if ($Environment.IsMacOS) {
