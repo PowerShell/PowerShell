@@ -1843,8 +1843,6 @@
               <File Id="fil07E2CE764A83431CAFEF1132FEDBE039" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\net6plus\Microsoft.PowerShell.PSReadLine.Polyfiller.dll" />
             </Component>
           </Directory>
-          <Directory Name="net461" Id="dir0BE8A79265FB414097A6FEEC3FD1A9DA">
-          </Directory>
           <Directory Name="_manifest" Id="dirAB7C5C1B9B094AFDB92B0579CB436378">
             <Directory Name="spdx_2.2" Id="dirC34C47323EC444F9ABBAD517851610A8">
               <Component Id="cmp6BFA61E2CB7C40E2A92575EBFC772B96">
