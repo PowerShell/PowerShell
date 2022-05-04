@@ -132,10 +132,10 @@ jobs:
         id: cprcgmanifest
         if: env.CGMANIFEST_PATH != ''
         with:
-          commit-message: "Update to the latest NOTICES file"
+          commit-message: "Update the cgmanifest"
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          title: "Update to the latest NOTICES file"
+          title: "Update the cgmanifest"
           reviewers: travisez13
           base: master
           draft: false
