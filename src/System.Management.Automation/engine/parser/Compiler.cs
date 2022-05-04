@@ -642,7 +642,7 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo ArgumentTransformationAttribute_Transform =
             typeof(ArgumentTransformationAttribute).GetMethod(nameof(ArgumentTransformationAttribute.Transform), InstancePublicFlags);
-        
+
         internal static readonly MethodInfo MemberInvocationLoggingOps_LogMemberInvocation =
             typeof(MemberInvocationLoggingOps).GetMethod(nameof(MemberInvocationLoggingOps.LogMemberInvocation), StaticFlags);
     }
@@ -5617,7 +5617,9 @@ namespace System.Management.Automation.Language
                 return Expression.Block(returnValue, returnExpr);
             }
 
-            return returnExpr;
+            return Expression.Block(
+                UpdatePosition(returnStatementAst),
+                returnExpr);
         }
 
         public object VisitExitStatement(ExitStatementAst exitStatementAst)
