@@ -88,10 +88,54 @@ jobs:
         id: cprtpn
         if: env.CREATE_PR == 'true'
         with:
-          commit-message: "Update to the latest notice file"
+          commit-message: "Update to the latest NOTICES file"
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          title: "Update to the latest notice file"
+          title: "Update to the latest NOTICES file"
+          reviewers: travisez13
+          base: master
+          draft: false
+          branch: update-cgmanifest
+  update-cgmanifest:
+    name: Update cgmanifest
+    timeout-minutes: 15
+    runs-on: windows-latest
+    if: github.repository == 'PowerShell/PowerShell'
+    env:
+      CGMANIFEST_PATH: ''
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Sync tags
+        run: |
+          git fetch --prune --unshallow --tags
+      - name: Install Ships provider to deal with project.assets.json
+        run: |
+          Install-Module -Name dotnet.project.assets -force
+      - name: Bootstrap
+        run: |
+          Import-Module ./build.psm1
+          Start-PSBootStrap
+      - name: Verify cgmanifest is up to date
+        run: |
+          Import-Module ./build.psm1
+          Find-Dotnet
+          ./tools/findMissingNotices.ps1 -Fix
+      - name: Upload cgmanifest
+        uses: actions/upload-artifact@v2
+        if: always() && env.CGMANIFEST_PATH != ''
+        with:
+          name: cgmanifest
+          path: ${{ env.CGMANIFEST_PATH }}
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        id: cprcgmanifest
+        if: env.CGMANIFEST_PATH != ''
+        with:
+          commit-message: "Update the cgmanifest"
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          title: "Update the cgmanifest"
           reviewers: travisez13
           base: master
           draft: false
