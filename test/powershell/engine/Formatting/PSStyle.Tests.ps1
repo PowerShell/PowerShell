@@ -248,8 +248,14 @@ Describe 'Handle strings with escape sequences in formatting' {
             [PSCustomObject]@{PSTypeName = "User"; Name = "Billy Bob Thorton"; Tenure = 13; Role = "Senior DevOps Engineer" }
         }
 
+        $oldOutputRendering = $PSStyle.OutputRendering
+        $PSStyle.OutputRendering = [System.Management.Automation.OutputRendering]::Ansi
         $colors = @("`e[32m", "`e[34m", "`e[33m", "`e[31m", "`e[33m", "`e[34m", "`e[32m")
         $outFile = "$TestDrive\outFile.txt"
+    }
+
+    AfterAll {
+        $PSStyle.OutputRendering = $oldOutputRendering
     }
 
     It 'Truncation for strings with no escape sequences' {
@@ -267,7 +273,6 @@ Billy Bob… Senior DevOps …  13
             Out-File $outFile
 
         $text = Get-Content $outFile -Raw
-        Write-Verbose -Verbose $text
         $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
 
