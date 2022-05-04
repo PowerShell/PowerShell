@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             int kFinal = startFromHead ? str.Length - 1 : offset;
             while (true)
             {
-                if ((startFromHead && (k > kFinal)) || ((!startFromHead) && (k < kFinal)))
+                if ((startFromHead && k > kFinal) || (!startFromHead && k < kFinal))
                 {
                     break;
                 }
