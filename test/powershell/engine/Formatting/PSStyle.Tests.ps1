@@ -267,6 +267,7 @@ Billy Bob… Senior DevOps …  13
             Out-File $outFile
 
         $text = Get-Content $outFile -Raw
+        Write-Verbose -Verbose $text
         $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
 

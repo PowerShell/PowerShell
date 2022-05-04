@@ -107,7 +107,7 @@ namespace System.Management.Automation.Internal
         /// </param>
         internal static string VtSubstring(this string str, int startOffset)
         {
-            return VtSubstring(str, 0, int.MaxValue, prependStr: null, appendStr: null);
+            return VtSubstring(str, startOffset, int.MaxValue, prependStr: null, appendStr: null);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace System.Management.Automation.Internal
         /// <param name="appendStr">The string to be appended to the substring.</param>
         internal static string VtSubstring(this string str, int startOffset, string prependStr, string appendStr)
         {
-            return VtSubstring(str, 0, int.MaxValue, prependStr, appendStr);
+            return VtSubstring(str, startOffset, int.MaxValue, prependStr, appendStr);
         }
 
         /// <summary>
