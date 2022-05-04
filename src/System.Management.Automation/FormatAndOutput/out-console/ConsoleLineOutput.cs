@@ -187,9 +187,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal ConsoleLineOutput(PSHost host, bool paging, TerminatingErrorContext errorContext)
         {
             if (host == null)
+            {
                 throw PSTraceSource.NewArgumentNullException(nameof(host));
+            }
+
             if (errorContext == null)
+            {
                 throw PSTraceSource.NewArgumentNullException(nameof(errorContext));
+            }
 
             _console = host.UI;
             _errorContext = errorContext;
@@ -197,8 +202,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (paging)
             {
                 tracer.WriteLine("paging is needed");
-                // if we need to do paging, instantiate a prompt handler
-                // that will take care of the screen interaction
+
+                // If we need to do paging, instantiate a prompt handler that will take care of the screen interaction
                 string promptString = StringUtil.Format(FormatAndOut_out_xxx.ConsoleLineOutput_PagingPrompt);
                 _prompt = new PromptHandler(promptString, this);
             }

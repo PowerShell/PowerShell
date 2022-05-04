@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
     /// Base class providing support for string manipulation.
-    /// This class is a tear off class provided by the LineOutput class
+    /// This class is a tear off class provided by the LineOutput class.
     /// </summary>
     internal class DisplayCells
     {
@@ -61,6 +61,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Calculate the buffer cell length of the given character.
         /// </summary>
+        /// <param name="character"></param>
+        /// <returns>Number of buffer cells the character needs to take.</returns>
         internal virtual int Length(char character)
         {
             return CharLengthInBufferCells(character);
@@ -71,7 +73,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="str">String that may contain VT escape sequences.</param>
         /// <param name="displayCells">Number of buffer cells to fit in.</param>
-        /// <returns></returns>
+        /// <returns>Number of non-escape-sequence characters from head of the string that can fit in the space.</returns>
         internal int TruncateTail(string str, int displayCells)
         {
             return TruncateTail(str, offset: 0, displayCells);
