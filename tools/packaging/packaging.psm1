@@ -210,6 +210,20 @@ function Start-PSPackage {
         # Copy the default.help.txt so it's part of the package
         Copy-Item "$RepoRoot/assets/default.help.txt" -Destination "$Source/en-US" -Force
 
+        # Make sure psoptions.json file exists so appropriate files.wsx is generated
+        $psOptionsPath = (Join-Path -Path $Source "psoptions.json")
+        if (-not (Test-Path -Path $psOptionsPath)) {
+            $createdOptionsFile = New-Item -Path $psOptionsPath -Force
+            Write-Verbose -Verbose "Created psoptions file: $createdOptionsFile"
+        }
+
+        # Make sure _manifest\spdx_2.2\manifest.spdx.json file exists so appropriate files.wxs is generated
+        $manifestSpdxPath = (Join-Path -Path $Source "_manifest\spdx_2.2\manifest.spdx.json")
+        if (-not (Test-Path -Path $manifestSpdxPath)) {
+            $createdSpdxPath = New-Item -Path $manifestSpdxPath -Force
+            Write-Verbose -Verbose "Created manifest.spdx.json file: $createdSpdxPath"
+        }
+
         # If building a symbols package, we add a zip of the parent to publish
         if ($IncludeSymbols.IsPresent)
         {
