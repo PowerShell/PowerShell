@@ -34,6 +34,8 @@ variables:
     value: 1
   - name: NugetSecurityAnalysisWarningLevel
     value: none
+  - name: skipNugetSecurityAnalysis
+    value: true
   - name: branchCounterKey
     value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
   - name: branchCounter
