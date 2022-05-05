@@ -1843,11 +1843,6 @@
               <File Id="fil07E2CE764A83431CAFEF1132FEDBE039" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\net6plus\Microsoft.PowerShell.PSReadLine.Polyfiller.dll" />
             </Component>
           </Directory>
-          <Directory Name="net461" Id="dir0BE8A79265FB414097A6FEEC3FD1A9DA">
-            <Component Id="cmpFDAD012AF60E4E3A9281239CB2D1814A">
-              <File Id="fil73F9E4ADB9644EA298A91C82BF1AE025" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\net461\Microsoft.PowerShell.PSReadLine.Polyfiller.dll" />
-            </Component>
-          </Directory>
           <Directory Name="_manifest" Id="dirAB7C5C1B9B094AFDB92B0579CB436378">
             <Directory Name="spdx_2.2" Id="dirC34C47323EC444F9ABBAD517851610A8">
               <Component Id="cmp6BFA61E2CB7C40E2A92575EBFC772B96">
@@ -1857,6 +1852,11 @@
                 <File Id="fil3555F9DC200B4AA5BC55BB5B411833DC" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\_manifest\spdx_2.2\manifest.spdx.json.sha256" />
               </Component>
             </Directory>
+          </Directory>
+          <Directory Name="net462" Id="dirE8193E9A93A04D29BC5ECCFAB1DB4704">
+            <Component Id="cmpF735DF855B6A444E8874E7FD15796C37">
+              <File Id="fil7C020FDFFB144CA4890E8288E91F6926" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PSReadLine\net462\Microsoft.PowerShell.PSReadLine.Polyfiller.dll" />
+            </Component>
           </Directory>
         </Directory>
         <Directory Name="PowerShellGet" Id="dir49159A33EB06456C9C2C971815311A6A">
@@ -3777,7 +3777,6 @@
       <ComponentRef Id="cmp9207ABECCDB7479392AFC35A6133994E" />
       <ComponentRef Id="cmp6BFA61E2CB7C40E2A92575EBFC772B96" />
       <ComponentRef Id="cmp0F6EADB772B844B48C250D8F0469A19B" />
-      <ComponentRef Id="cmpFDAD012AF60E4E3A9281239CB2D1814A" />
       <ComponentRef Id="cmp3F48AB8F48674965B721E9D5DE5AC19F" />
       <ComponentRef Id="cmpB9EF9DAB25064D92A757E7D390CC8922" />
       <ComponentRef Id="cmp092D1859608844F78D3211718ED31171" />
@@ -4214,6 +4213,7 @@
       <ComponentRef Id="cmp05AA3332D604464298B922F34672061F" />
       <ComponentRef Id="cmpFE56825F03274064A69AA43CA4B597C7" />
       <ComponentRef Id="cmp0AB1EF494922410AB17DC61097295172" />
+      <ComponentRef Id="cmpF735DF855B6A444E8874E7FD15796C37" />
     </ComponentGroup>
   </Fragment>
 </Wix>
