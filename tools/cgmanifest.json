@@ -265,7 +265,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "NJsonSchema",
-          "Version": "10.6.9"
+          "Version": "10.6.10"
         }
       },
       "DevelopmentDependency": false
