@@ -196,14 +196,18 @@ namespace Microsoft.PowerShell
             "workingdirectory"
         };
 
+        /// <summary>
+        /// These represent the parameters that are used when starting pwsh.
+        /// We can query in our telemetry to determine how pwsh was invoked.
+        /// </summary>
         [Flags]
-        internal enum ParameterMask : long
+        internal enum ParameterBitmap : long
         {
-            Command           = 0x0000001, // -Command | -c
-            ConfigurationName = 0x0000002, // -ConfigurationName | -config
-            CustomPipeName    = 0x0000004, // -CustomPipeName
-            EncodedCommand    = 0x0000008, // -EncodedCommand | -e | -ec
-            ExecutionPolicy   = 0x0000010, // -ExecutionPolicy | -ex | -ep
+            Command           = 0x00000001, // -Command | -c
+            ConfigurationName = 0x00000002, // -ConfigurationName | -config
+            CustomPipeName    = 0x00000004, // -CustomPipeName
+            EncodedCommand    = 0x00000008, // -EncodedCommand | -e | -ec
+            ExecutionPolicy   = 0x00000010, // -ExecutionPolicy | -ex | -ep
             File              = 0x00000020, // -File | -f
             Help              = 0x00000040, // -Help, -?, /?
             InputFormat       = 0x00000100, // -InputFormat | -inp | -if
@@ -232,7 +236,7 @@ namespace Microsoft.PowerShell
             EPIncorrect       = 0x0000008000000000, // ExecutionPolicy incorrect
         }
 
-        internal ParameterMask ParametersUsed = 0;
+        internal ParameterBitmap ParametersUsed = 0;
 
         internal double ParametersUsedAsDouble
         {
@@ -690,37 +694,37 @@ namespace Microsoft.PowerShell
         /// If the string doesn't match to any known execution policy, set it to incorrect
         /// </summary>
         /// <param name="_executionPolicy">The value provided on the command line.</param>
-        private static ParameterMask GetExecutionPolicy(string? _executionPolicy)
+        private static ParameterBitmap GetExecutionPolicy(string? _executionPolicy)
         {
             if (_executionPolicy is null)
             {
-                return ParameterMask.EPUndefined;
+                return ParameterBitmap.EPUndefined;
             }
             if (MatchSwitch(_executionPolicy, "remotesigned", "remotesigned"))
             {
-                return ParameterMask.EPRemoteSigned;
+                return ParameterBitmap.EPRemoteSigned;
             }
             else if (MatchSwitch(_executionPolicy, "bypass", "bypass"))
             {
-                return ParameterMask.EPBypass;
+                return ParameterBitmap.EPBypass;
             }
             else if (MatchSwitch(_executionPolicy, "unrestricted", "unrestricted"))
             {
-                return ParameterMask.EPUnrestricted;
+                return ParameterBitmap.EPUnrestricted;
             }
             else if (MatchSwitch(_executionPolicy, "allsigned", "allsigned"))
             {
-                return ParameterMask.EPAllSigned;
+                return ParameterBitmap.EPAllSigned;
             }
             else if (MatchSwitch(_executionPolicy, "restricted", "restricted"))
             {
-                return ParameterMask.EPRestricted;
+                return ParameterBitmap.EPRestricted;
             }
             else if (MatchSwitch(_executionPolicy, "undefined", "undefined"))
             {
-                return ParameterMask.EPUndefined;
+                return ParameterBitmap.EPUndefined;
             }
-            return ParameterMask.EPIncorrect;
+            return ParameterBitmap.EPIncorrect;
         }
 
         private static bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
@@ -837,7 +841,7 @@ namespace Microsoft.PowerShell
                     _noInteractive = true;
                     _skipUserInit = true;
                     _noExit = false;
-                    ParametersUsed |= ParameterMask.Version;
+                    ParametersUsed |= ParameterBitmap.Version;
                     break;
                 }
 
@@ -846,33 +850,33 @@ namespace Microsoft.PowerShell
                     _showHelp = true;
                     _showExtendedHelp = true;
                     _abortStartup = true;
-                    ParametersUsed |= ParameterMask.Help;
+                    ParametersUsed |= ParameterBitmap.Help;
                 }
                 else if (MatchSwitch(switchKey, "login", "l"))
                 {
                     // On Windows, '-Login' does nothing.
                     // On *nix, '-Login' is already handled much earlier to improve startup performance, so we do nothing here.
-                    ParametersUsed |= ParameterMask.Login;
+                    ParametersUsed |= ParameterBitmap.Login;
                 }
                 else if (MatchSwitch(switchKey, "noexit", "noe"))
                 {
                     _noExit = true;
-                    ParametersUsed |= ParameterMask.NoExit;
+                    ParametersUsed |= ParameterBitmap.NoExit;
                     noexitSeen = true;
                 }
                 else if (MatchSwitch(switchKey, "noprofile", "nop"))
                 {
-                    ParametersUsed |= ParameterMask.NoProfile;
+                    ParametersUsed |= ParameterBitmap.NoProfile;
                     _skipUserInit = true;
                 }
                 else if (MatchSwitch(switchKey, "nologo", "nol"))
                 {
-                    ParametersUsed |= ParameterMask.NoLogo;
+                    ParametersUsed |= ParameterBitmap.NoLogo;
                     _showBanner = false;
                 }
                 else if (MatchSwitch(switchKey, "noninteractive", "noni"))
                 {
-                    ParametersUsed |= ParameterMask.NonInteractive;
+                    ParametersUsed |= ParameterBitmap.NonInteractive;
                     _noInteractive = true;
                 }
                 else if (MatchSwitch(switchKey, "socketservermode", "so"))
@@ -889,12 +893,12 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "sshservermode", "sshs"))
                 {
-                    ParametersUsed |= ParameterMask.SSHServerMode;
+                    ParametersUsed |= ParameterBitmap.SSHServerMode;
                     _sshServerMode = true;
                 }
                 else if (MatchSwitch(switchKey, "interactive", "i"))
                 {
-                    ParametersUsed |= ParameterMask.Interactive;
+                    ParametersUsed |= ParameterBitmap.Interactive;
                     _noInteractive = false;
                 }
                 else if (MatchSwitch(switchKey, "configurationname", "config"))
@@ -908,7 +912,7 @@ namespace Microsoft.PowerShell
                     }
 
                     _configurationName = args[i];
-                    ParametersUsed |= ParameterMask.ConfigurationName;
+                    ParametersUsed |= ParameterBitmap.ConfigurationName;
                 }
                 else if (MatchSwitch(switchKey, "custompipename", "cus"))
                 {
@@ -919,7 +923,7 @@ namespace Microsoft.PowerShell
                             CommandLineParameterParserStrings.MissingCustomPipeNameArgument);
                         break;
                     }
-                    ParametersUsed |= ParameterMask.CustomPipeName;
+                    ParametersUsed |= ParameterBitmap.CustomPipeName;
 
 #if UNIX
                     int maxNameLength = MaxNameLength();
@@ -942,11 +946,11 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
-                    ParametersUsed |= ParameterMask.Command;
+                    ParametersUsed |= ParameterBitmap.Command;
                 }
                 else if (MatchSwitch(switchKey, "windowstyle", "w"))
                 {
-                    ParametersUsed |= ParameterMask.WindowStyle;
+                    ParametersUsed |= ParameterBitmap.WindowStyle;
 #if UNIX
                     SetCommandLineError(
                         CommandLineParameterParserStrings.WindowStyleArgumentNotImplemented);
@@ -974,7 +978,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "file", "f"))
                 {
-                    ParametersUsed |= ParameterMask.File;
+                    ParametersUsed |= ParameterBitmap.File;
                     if (!ParseFile(args, ref i, noexitSeen))
                     {
                         break;
@@ -990,23 +994,23 @@ namespace Microsoft.PowerShell
                 {
                     ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
                     _outputFormatSpecified = true;
-                    ParametersUsed |= ParameterMask.OutputFormat;
+                    ParametersUsed |= ParameterBitmap.OutputFormat;
                 }
                 else if (MatchSwitch(switchKey, "inputformat", "inp") || MatchSwitch(switchKey, "if", "if"))
                 {
                     ParseFormat(args, ref i, ref _inFormat, CommandLineParameterParserStrings.MissingInputFormatParameter);
-                    ParametersUsed |= ParameterMask.InputFormat;
+                    ParametersUsed |= ParameterBitmap.InputFormat;
                 }
                 else if (MatchSwitch(switchKey, "executionpolicy", "ex") || MatchSwitch(switchKey, "ep", "ep"))
                 {
                     ParseExecutionPolicy(args, ref i, ref _executionPolicy, CommandLineParameterParserStrings.MissingExecutionPolicyParameter);
-                    ParametersUsed |= ParameterMask.ExecutionPolicy;
+                    ParametersUsed |= ParameterBitmap.ExecutionPolicy;
                     ParametersUsed |= GetExecutionPolicy(_executionPolicy);
                 }
                 else if (MatchSwitch(switchKey, "encodedcommand", "e") || MatchSwitch(switchKey, "ec", "e"))
                 {
                     _wasCommandEncoded = true;
-                    ParametersUsed |= ParameterMask.EncodedCommand;
+                    ParametersUsed |= ParameterBitmap.EncodedCommand;
                     if (!ParseCommand(args, ref i, noexitSeen, true))
                     {
                         break;
@@ -1026,11 +1030,11 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
-                    ParametersUsed |= ParameterMask.SettingsFile;
+                    ParametersUsed |= ParameterBitmap.SettingsFile;
                 }
                 else if (MatchSwitch(switchKey, "sta", "sta"))
                 {
-                    ParametersUsed |= ParameterMask.STA;
+                    ParametersUsed |= ParameterBitmap.STA;
                     if (!Platform.IsWindowsDesktop || !Platform.IsStaSupported)
                     {
                         SetCommandLineError(
@@ -1050,7 +1054,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "mta", "mta"))
                 {
-                    ParametersUsed |= ParameterMask.MTA;
+                    ParametersUsed |= ParameterBitmap.MTA;
                     if (!Platform.IsWindowsDesktop)
                     {
                         SetCommandLineError(
@@ -1078,7 +1082,7 @@ namespace Microsoft.PowerShell
                         break;
                     }
 
-                    ParametersUsed |= ParameterMask.WorkingDirectory;
+                    ParametersUsed |= ParameterBitmap.WorkingDirectory;
                     _workingDirectory = args[i];
                 }
 #if !UNIX
@@ -1096,7 +1100,7 @@ namespace Microsoft.PowerShell
                         break;
                     }
                     // default to filename being the next argument.
-                    ParametersUsed |= ParameterMask.File;
+                    ParametersUsed |= ParameterBitmap.File;
                 }
             }
 
