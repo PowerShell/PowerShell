@@ -117,25 +117,36 @@ stages:
 
     - pwsh: |
         # For PRs set the seed to the PR number so that the image is always the same
-        $seed = '$(System.PullRequest.PullRequestId)'
+        $seed = $env:SYSTEM_PULLREQUEST_PULLREQUESTID
         if(!$seed) {
           # for non-PRs use the integer identifier of the build as the seed.
-          $seed = '$(System.Build.BuildId)'
+          $seed = $env:SYSTEM_BUILD_BUILDID
         }
+        Write-Verbose "Seed: $seed" -Verbose
+
+        # Get the latest image matrix JSON for preview
         $matrix = ./PowerShell-Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
+
         # Filter out containers that won't run on AzDevOps Linux host as an agent
         # Windows, nano server, alpine, and any ARM image
         $linuxImages = $matrix.preview |
           Where-Object {$_.osversion -notmatch 'windows|nano|alpine|arm'} |
           Select-Object JobName, Taglist |
           Sort-Object -property JobName
+
         # Force mariner for now
         $marinerImage = $linuxImages | where-object {$_.JobName -like 'mariner*'}
-        $i=Get-Random -Minimum 0 -Maximum $marinerImage.Count -SetSeed $seed
-        $selectedImage = $marinerImage[$i]}
-        Import-Module ./PowerShell/tools/ci.psm1
+
+        # Use the selected seed to pick a container
+        $index = Get-Random -Minimum 0 -Maximum $marinerImage.Count -SetSeed $seed
+        $selectedImage = $marinerImage[$index]
+
+        # Calculate the container name
         $tag = $selectedImage.Taglist -split ';' | select-object -first 1
         $containerName = "mcr.microsoft.com/powershell/test-deps:$tag"
+
+        # Set variables for later jobs to use
+        Import-Module ./PowerShell/tools/ci.psm1
         Set-BuildVariable -Name containerName -Value $containerName -IsOutput
         Set-BuildVariable -Name containerBuildName -Value $selectedImage.JobName -IsOutput
       name: getContainerTask
