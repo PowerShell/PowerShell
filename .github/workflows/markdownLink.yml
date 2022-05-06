@@ -17,3 +17,4 @@ jobs:
         use-quiet-mode: 'yes'
         use-verbose-mode: 'yes'
         check-modified-files-only: 'yes'
+        config-file: .github/workflows/markdown-link/config.json
