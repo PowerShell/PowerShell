@@ -26,6 +26,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion tracer
 
         internal const char Ellipsis = '\u2026';
+        internal const string EllipsisStr = "\u2026";
 
         internal static string PSObjectIsOfExactType(Collection<string> typeNames)
         {

@@ -42,8 +42,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private ScreenInfo _si;
 
-        private const char ESC = '\u001b';
-
         private List<string> _header;
 
         internal static int ComputeWideViewBestItemsPerRowFit(int stringLen, int screenColumns)
@@ -457,8 +455,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                sb.Append(GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding));
-                if (values[k] is not null && values[k].Contains(ESC))
+                string rowField = GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding);
+                sb.Append(rowField);
+
+                if (rowField is not null && rowField.Contains(ValueStringDecorated.ESC) && !rowField.AsSpan().TrimEnd().EndsWith(PSStyle.Instance.Reset))
                 {
                     // Reset the console output if the content of this column contains ESC
                     sb.Append(PSStyle.Instance.Reset);
@@ -472,9 +472,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // make sure the string does not have any embedded <CR> in it
             string s = StringManipulationHelper.TruncateAtNewLine(val);
-
-            string currentValue = s;
-            int currentValueDisplayLength = dc.Length(currentValue);
+            int currentValueDisplayLength = dc.Length(s);
 
             if (currentValueDisplayLength < width)
             {
@@ -531,18 +529,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         case TextAlignment.Right:
                             {
                                 // get from "abcdef" to "...f"
-                                int tailCount = dc.GetTailSplitLength(s, truncationDisplayLength);
-                                s = s.Substring(s.Length - tailCount);
-                                s = PSObjectHelper.Ellipsis + s;
-                            }
-
-                            break;
-
-                        case TextAlignment.Center:
-                            {
-                                // get from "abcdef" to "a..."
-                                s = s.Substring(0, dc.GetHeadSplitLength(s, truncationDisplayLength));
-                                s += PSObjectHelper.Ellipsis;
+                                s = s.VtSubstring(
+                                    startOffset: dc.TruncateHead(s, truncationDisplayLength),
+                                    prependStr: PSObjectHelper.EllipsisStr,
+                                    appendStr: null);
                             }
 
                             break;
@@ -551,8 +541,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             {
                                 // left align is the default
                                 // get from "abcdef" to "a..."
-                                s = s.Substring(0, dc.GetHeadSplitLength(s, truncationDisplayLength));
-                                s += PSObjectHelper.Ellipsis;
+                                s = s.VtSubstring(
+                                    startOffset: 0,
+                                    length: dc.TruncateTail(s, truncationDisplayLength),
+                                    prependStr: null,
+                                    appendStr: PSObjectHelper.EllipsisStr);
                             }
 
                             break;
@@ -561,23 +554,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else
                 {
                     // not enough space for the ellipsis, just truncate at the width
-                    int len = width;
-
                     switch (alignment)
                     {
                         case TextAlignment.Right:
                             {
                                 // get from "abcdef" to "f"
-                                int tailCount = dc.GetTailSplitLength(s, len);
-                                s = s.Substring(s.Length - tailCount, tailCount);
-                            }
-
-                            break;
-
-                        case TextAlignment.Center:
-                            {
-                                // get from "abcdef" to "a"
-                                s = s.Substring(0, dc.GetHeadSplitLength(s, len));
+                                s = s.VtSubstring(startOffset: dc.TruncateHead(s, width));
                             }
 
                             break;
@@ -586,7 +568,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             {
                                 // left align is the default
                                 // get from "abcdef" to "a"
-                                s = s.Substring(0, dc.GetHeadSplitLength(s, len));
+                                s = s.VtSubstring(startOffset: 0, length: dc.TruncateTail(s, width));
                             }
 
                             break;
