@@ -141,8 +141,10 @@ stages:
         $index = Get-Random -Minimum 0 -Maximum $marinerImage.Count -SetSeed $seed
         $selectedImage = $marinerImage[$index]
 
+        # Filter to the first test-deps compatible tag
+        $tag = $selectedImage.Taglist -split ';' | Where-Object {$_ -match 'preview-\D+'} | Select-Object -First 1
+
         # Calculate the container name
-        $tag = $selectedImage.Taglist -split ';' | select-object -first 1
         $containerName = "mcr.microsoft.com/powershell/test-deps:$tag"
 
         # Set variables for later jobs to use
