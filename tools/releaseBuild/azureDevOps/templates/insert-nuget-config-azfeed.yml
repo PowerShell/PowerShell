@@ -25,4 +25,5 @@ steps:
   condition: and(succeededOrFailed(), ne(variables['PSInternalNugetFeed'], ''))
 
 - task: nuget-security-analysis@0
+  displayName: 'Run Secure Supply Chain analysis'
 
