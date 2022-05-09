@@ -10,8 +10,13 @@ jobs:
   dependsOn:
     - getContainerJob
 
+  strategy:
+    matrix:
+      ${{ dependencies.getContainerJob.outputs['getContainerTask.containerBuildName'] }}:
+        getContainerJob: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName'] ]
+        containerBuildName: $[ dependencies.getContainerJob.outputs['getContainerTask.containerBuildName'] ]
+
   variables:
-    getContainerJob: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName'] ]
     __INCONTAINER: 1
 
   container: $[ variables.getContainerJob ]
@@ -26,3 +31,4 @@ jobs:
       parameters:
         purpose: ${{ parameters.purpose }}
         tagSet: ${{ parameters.tagSet }}
+        buildName: ${{ variables.containerBuildName}}
