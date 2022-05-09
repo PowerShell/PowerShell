@@ -15,11 +15,18 @@ Describe "Set-Date for admin" -Tag @('CI', 'RequireAdminOnWindows', 'RequireSudo
         { Get-Date | Set-Date } | Should -Not -Throw
     }
 
-    # Fails in VSTS Linux with Operation not permitted
+    # Check the individual properties as the types may be different
     It "Set-Date should be able to set the date with -Date parameter" {
         $target = Get-Date
         $expected = $target
-        Set-Date -Date $target | Should -Be $expected
+        $observed = Set-Date -Date $target
+        $observed.Day | Should -Be $expected.Day
+        $observed.DayOfWeek | Should -Be $expected.DayOfWeek
+        $observed.Hour | Should -Be $expected.Hour
+        $observed.Minutes | Should -Be $expected.Minutes
+        $observed.Month | Should -Be $expected.Month
+        $observed.Second | Should -Be $expected.Second
+        $observed.Year | Should -Be $expected.Year
     }
 }
 
