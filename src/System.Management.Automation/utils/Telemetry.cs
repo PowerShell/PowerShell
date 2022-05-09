@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Telemetry
                 configuration.InstrumentationKey = _psCoreTelemetryKey;
 
                 // Set this to true to reduce latency during development
-                configuration.TelemetryChannel.DeveloperMode = true;
+                configuration.TelemetryChannel.DeveloperMode = false;
 
                 // Be sure to obscure any information about the client node name.
                 configuration.TelemetryInitializers.Add(new NameObscurerTelemetryInitializer());
@@ -741,7 +741,7 @@ namespace Microsoft.PowerShell.Telemetry
         /// This is done only once during for the console host.
         /// </summary>
         /// <param name="mode">The "mode" of the startup.</param>
-        /// <param name="parametersUsed">The parameters (as a bitmap) used when starting.</param>
+        /// <param name="parametersUsed">The parameter bitmap used when starting.</param>
         internal static void SendPSCoreStartupTelemetry(string mode, double parametersUsed)
         {
             // Check if we already sent startup telemetry
@@ -755,7 +755,9 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
 
+            // This is the payload which reports the startup information of OS and shell details.
             var properties = new Dictionary<string, string>();
+            // This is the payload for the parameter data which is sent as a metric.
             var parameters = new Dictionary<string, double>();
 
             // The variable POWERSHELL_DISTRIBUTION_CHANNEL is set in our docker images.
@@ -763,12 +765,14 @@ namespace Microsoft.PowerShell.Telemetry
             // which has limited usefulness
             var channel = Environment.GetEnvironmentVariable("POWERSHELL_DISTRIBUTION_CHANNEL");
 
+            // Construct the payload for the OS and shell details.
             properties.Add("SessionId", s_sessionId);
             properties.Add("UUID", s_uniqueUserIdentifier);
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
             properties.Add("OSChannel", string.IsNullOrEmpty(channel) ? "unknown" : channel);
             properties.Add("StartMode", string.IsNullOrEmpty(mode) ? "unknown" : mode);
+            // Construct the payload for the parameters used.
             parameters.Add("Param", parametersUsed);
             try
             {
