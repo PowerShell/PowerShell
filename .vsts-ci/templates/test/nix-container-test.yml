@@ -12,7 +12,7 @@ jobs:
 
   strategy:
     matrix:
-      ${{ dependencies.getContainerJob.outputs['getContainerTask.containerBuildName'] }}:
+      $[ dependencies.getContainerJob.outputs['getContainerTask.containerBuildName'] ]:
         getContainerJob: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName'] ]
         containerBuildName: $[ dependencies.getContainerJob.outputs['getContainerTask.containerBuildName'] ]
 
