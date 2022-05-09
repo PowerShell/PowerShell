@@ -658,7 +658,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---------------------------------------------------------
 
-NJsonSchema 10.6.9 - MIT
+NJsonSchema 10.6.10 - MIT
 
 
 (c) 2008 VeriSign, Inc.
