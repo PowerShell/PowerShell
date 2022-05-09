@@ -245,7 +245,7 @@ function Invoke-CITest
 
     if($IsLinux -or $IsMacOS)
     {
-        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet
+        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet -TitlePrefix $TitlePrefix
     }
 
     # CoreCLR
