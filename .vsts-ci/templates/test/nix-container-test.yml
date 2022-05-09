@@ -20,7 +20,7 @@ jobs:
   pool:
     vmImage: ${{ parameters.pool }}
 
-  displayName: $[ dependencies.getContainerJob.outputs['getContainerTask.containerBuildName'] ] Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
+  displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
   steps:
     - pwsh: |
