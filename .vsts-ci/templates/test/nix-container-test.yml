@@ -20,7 +20,7 @@ jobs:
   pool:
     vmImage: ${{ parameters.pool }}
 
-  displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
+  displayName: $[ dependencies.getContainerJob.outputs['getContainerTask.containerBuildName'] ] Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
   steps:
     - template: ./nix-test-steps.yml
