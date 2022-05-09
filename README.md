@@ -142,7 +142,7 @@ For more information on how and why we built this dashboard, check out this [blo
 
 ## Discussions
 
-[GitHub Discussions](https://docs.github.com/en/free-pro-team@latest/discussions/quickstart) is a feature to enable fluid and open discussions within the community
+[GitHub Discussions](https://docs.github.com/discussions/quickstart) is a feature to enable fluid and open discussions within the community
 for topics that are not related to code, unlike issues.
 
 This is an experiment we are trying in our repositories to see if it helps move discussions out of issues so that issues remain actionable by the team or members of the community.
