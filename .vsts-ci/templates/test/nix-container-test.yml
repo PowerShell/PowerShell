@@ -23,6 +23,10 @@ jobs:
   displayName: $[ dependencies.getContainerJob.outputs['getContainerTask.containerBuildName'] ] Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
   steps:
+    - pwsh: |
+        Write-Host "##vso[build.updatebuildnumber]PR-$(System.PullRequest.PullRequestNumber)-$(containerBuildName)-$((get-date).ToString("yyyyMMddhhmmss"))"
+        Write-Host "##vso[build.addbuildtag]$(containerBuildName)"
+      displayName: Update build name and add tag
     - template: ./nix-test-steps.yml
       parameters:
         purpose: ${{ parameters.purpose }}
