@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -29,6 +30,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Column width of the screen.
         /// </summary>
         private int _columnWidth = 0;
+
+        /// <summary>
+        /// A cached string builder used within this type to reduce creation of temporary strings.
+        /// </summary>
+        private readonly StringBuilder _cachedBuilder = new();
 
         /// <summary>
         /// </summary>
@@ -207,7 +213,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void WriteSingleLineHelper(string prependString, string line, LineOutput lo)
         {
             if (line == null)
+            {
                 line = string.Empty;
+            }
 
             // compute the width of the field for the value string (in screen cells)
             int fieldCellCount = _columnWidth - _propertyLabelsDisplayLength;
@@ -221,14 +229,30 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // display the string collection
             for (int k = 0; k < sc.Count; k++)
             {
+                string str = sc[k];
+                _cachedBuilder.Clear();
+
                 if (k == 0)
                 {
-                    lo.WriteLine(PSStyle.Instance.Formatting.FormatAccent + prependString + PSStyle.Instance.Reset + sc[k]);
+                    _cachedBuilder
+                        .Append(PSStyle.Instance.Formatting.FormatAccent)
+                        .Append(prependString)
+                        .Append(PSStyle.Instance.Reset)
+                        .Append(str);
                 }
                 else
                 {
-                    lo.WriteLine(padding + PSStyle.Instance.Formatting.FormatAccent + PSStyle.Instance.Reset + sc[k]);
+                    _cachedBuilder
+                        .Append(padding)
+                        .Append(str);
                 }
+
+                if (str.Contains(ValueStringDecorated.ESC) && !str.EndsWith(PSStyle.Instance.Reset))
+                {
+                    _cachedBuilder.Append(PSStyle.Instance.Reset);
+                }
+
+                lo.WriteLine(_cachedBuilder.ToString());
             }
         }
 
