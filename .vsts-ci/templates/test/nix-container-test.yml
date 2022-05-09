@@ -27,4 +27,4 @@ jobs:
       parameters:
         purpose: ${{ parameters.purpose }}
         tagSet: ${{ parameters.tagSet }}
-        buildName: ${{ variables.containerBuildName}}
+        buildName: $(containerBuildName)
