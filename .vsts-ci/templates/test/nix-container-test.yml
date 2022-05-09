@@ -23,17 +23,6 @@ jobs:
   displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 
   steps:
-    - pwsh: |
-        if($env:BUILD_REASON -eq 'PullRequest') {
-          Write-Host "##vso[build.updatebuildnumber]PR-$(System.PullRequest.PullRequestNumber)-$(containerBuildName)-$((get-date).ToString("yyyyMMddhhmmss"))"
-        } else {
-          Write-Host "##vso[build.updatebuildnumber]${env:BUILD_SOURCEBRANCHNAME}-${env:BUILD_SOURCEVERSION}-$(containerBuildName)-$((get-date).ToString("yyyyMMddhhmmss"))"
-        }
-
-        # Add tag for container that is being tested
-        Write-Host "##vso[build.addbuildtag]$(containerBuildName)"
-      displayName: Update build name and Add tag
-
     - template: ./nix-test-steps.yml
       parameters:
         purpose: ${{ parameters.purpose }}

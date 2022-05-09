@@ -153,6 +153,15 @@ stages:
         Import-Module ./PowerShell/tools/ci.psm1
         Set-BuildVariable -Name containerName -Value $containerName -IsOutput
         Set-BuildVariable -Name containerBuildName -Value $selectedImage.JobName -IsOutput
+
+        if($env:BUILD_REASON -eq 'PullRequest') {
+          Write-Host "##vso[build.updatebuildnumber]PR-$(System.PullRequest.PullRequestNumber)-$containerBuildName-$((get-date).ToString("yyyyMMddhhmmss"))"
+        } else {
+          Write-Host "##vso[build.updatebuildnumber]${env:BUILD_SOURCEBRANCHNAME}-${env:BUILD_SOURCEVERSION}-$containerBuildName-$((get-date).ToString("yyyyMMddhhmmss"))"
+
+          # Cannot do this for a PR
+          Write-Host "##vso[build.addbuildtag]$containerBuildName"
+        }
       name: getContainerTask
       displayName: Get Container
       continueOnError: true
