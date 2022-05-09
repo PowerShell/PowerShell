@@ -20,8 +20,8 @@ Describe "Set-Date for admin" -Tag @('CI', 'RequireAdminOnWindows', 'RequireSudo
         $target = Get-Date
         $expected = $target
         $observed = Set-Date -Date $target
+        # do not test dayofweek because the number of the day is different between native and managed
         $observed.Day | Should -Be $expected.Day
-        $observed.DayOfWeek | Should -Be $expected.DayOfWeek
         $observed.Hour | Should -Be $expected.Hour
         $observed.Minutes | Should -Be $expected.Minutes
         $observed.Month | Should -Be $expected.Month
