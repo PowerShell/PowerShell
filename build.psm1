@@ -393,7 +393,7 @@ function Start-PSBuild {
     }
 
     # Verify if the dotnet in-use is the required version
-    $dotnetCLIInstalledVersion = Get-LatestInstalledSDK
+    $dotnetCLIInstalledVersion = Find-RequiredSDK $dotnetCLIRequiredVersion
 
     If ($dotnetCLIInstalledVersion -ne $dotnetCLIRequiredVersion) {
         Write-Warning @"
@@ -2152,7 +2152,7 @@ function Start-PSBootstrap {
         $dotNetExists = precheck 'dotnet' $null
         $dotNetVersion = [string]::Empty
         if($dotNetExists) {
-            $dotNetVersion = Get-LatestInstalledSDK
+            $dotNetVersion = Find-RequiredSDK $dotnetCLIRequiredVersion
         }
 
         if(!$dotNetExists -or $dotNetVersion -ne $dotnetCLIRequiredVersion -or $Force.IsPresent) {
@@ -2194,22 +2194,30 @@ function Start-PSBootstrap {
     }
 }
 
-function Get-LatestInstalledSDK {
+## If the required SDK version is found, return it.
+## Otherwise, return the latest installed SDK version that can be found.
+function Find-RequiredSDK {
+    param(
+        [Parameter(Mandatory, Position = 0)]
+        [string] $requiredSdkVersion
+    )
+
     $output = Start-NativeExecution -sb { dotnet --list-sdks } -IgnoreExitcode 2> $null
 
-    $output | ForEach-Object {
+    $installedSdkVersions = $output | ForEach-Object {
         # this splits strings like
         # '6.0.202 [C:\Program Files\dotnet\sdk]'
         # '7.0.100-preview.2.22153.17 [C:\Users\johndoe\AppData\Local\Microsoft\dotnet\sdk]'
         # into version and path parts.
         $version, $null = $_ -split '\s',2
-        try {
-            [System.Management.Automation.SemanticVersion]::new($version)
-        }
-        catch {
-            Write-Warning -Message "Unable to parse dotnet version semantically: $version"
-        }
-    } | Sort-Object -Descending | Select-Object -First 1
+    }
+
+    if ($installedSdkVersions -contains $requiredSdkVersion) {
+        $requiredSdkVersion
+    }
+    else {
+        $installedSdkVersions | Sort-Object -Descending | Select-Object -First 1
+    }
 }
 
 function Start-DevPowerShell {
@@ -2361,7 +2369,7 @@ function Find-Dotnet() {
     if (precheck dotnet) {
         # Must run from within repo to ensure global.json can specify the required SDK version
         Push-Location $PSScriptRoot
-        $dotnetCLIInstalledVersion = Get-LatestInstalledSDK
+        $dotnetCLIInstalledVersion = Find-RequiredSDK $chosenDotNetVersion
         Pop-Location
 
         Write-Verbose -Message "Find-DotNet: dotnetCLIInstalledVersion = $dotnetCLIInstalledVersion; chosenDotNetVersion = $chosenDotNetVersion"
