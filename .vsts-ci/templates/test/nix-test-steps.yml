@@ -1,6 +1,7 @@
 parameters:
   purpose: ''
   tagSet: 'CI'
+  buildName: 'Ubuntu'
 
 steps:
   - pwsh: |
@@ -54,6 +55,6 @@ steps:
       chmod a+x $pwshPath
       $options.Output = $pwshPath
       Set-PSOptions $options
-      Invoke-CITest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}'
+      Invoke-CITest -Purpose '${{ parameters.purpose }}' -TagSet '${{ parameters.tagSet }}' -TitlePrefix '${{ parameters.buildName }}'
     displayName: Test
     condition: succeeded()

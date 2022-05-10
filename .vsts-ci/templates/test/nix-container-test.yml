@@ -11,8 +11,9 @@ jobs:
     - getContainerJob
 
   variables:
-    getContainerJob: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName'] ]
     __INCONTAINER: 1
+    getContainerJob: $[ dependencies.getContainerJob.outputs['getContainerTask.containerName'] ]
+    containerBuildName: $[ dependencies.getContainerJob.outputs['getContainerTask.containerBuildName'] ]
 
   container: $[ variables.getContainerJob ]
 
@@ -26,3 +27,4 @@ jobs:
       parameters:
         purpose: ${{ parameters.purpose }}
         tagSet: ${{ parameters.tagSet }}
+        buildName: $(containerBuildName)

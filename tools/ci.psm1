@@ -219,7 +219,8 @@ function Invoke-CITest
         [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests')]
         [string] $Purpose,
         [ValidateSet('CI', 'Others')]
-        [string] $TagSet
+        [string] $TagSet,
+        [string] $TitlePrefix
     )
 
     # Set locale correctly for Linux CIs
@@ -244,7 +245,7 @@ function Invoke-CITest
 
     if($IsLinux -or $IsMacOS)
     {
-        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet
+        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet -TitlePrefix $TitlePrefix
     }
 
     # CoreCLR
@@ -271,7 +272,12 @@ function Invoke-CITest
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
         }
 
-        Start-PSPester @arguments -Title "Pester Unelevated - $TagSet"
+        $title = "Pester Unelevated - $TagSet"
+        if ($TitlePrefix) {
+            $title = "$TitlePrefix - $title"
+        }
+        Start-PSPester @arguments -Title $title
+
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
 
@@ -293,7 +299,11 @@ function Invoke-CITest
                 $arguments['Path'] = $testFiles
             }
 
-            Start-PSPester @arguments -Title "Pester Experimental Unelevated - $featureName"
+            $title = "Pester Experimental Unelevated - $featureName"
+            if ($TitlePrefix) {
+                $title = "$TitlePrefix - $title"
+            }
+            Start-PSPester @arguments -Title $title
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
@@ -309,7 +319,11 @@ function Invoke-CITest
             ExcludeTag = $ExcludeTag
         }
 
-        Start-PSPester @arguments -Title "Pester Elevated - $TagSet"
+        $title = "Pester Elevated - $TagSet"
+        if ($TitlePrefix) {
+            $title = "$TitlePrefix - $title"
+        }
+        Start-PSPester @arguments -Title $title
 
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsAdminFile
@@ -334,7 +348,12 @@ function Invoke-CITest
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $arguments['Path'] = $testFiles
             }
-            Start-PSPester @arguments -Title "Pester Experimental Elevated - $featureName"
+
+            $title = "Pester Experimental >levated - $featureName"
+            if ($TitlePrefix) {
+                $title = "$TitlePrefix - $title"
+            }
+            Start-PSPester @arguments -Title $title
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
@@ -612,7 +631,8 @@ function Invoke-LinuxTestsCore
         [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests', 'All')]
         [string] $Purpose = 'All',
         [string[]] $ExcludeTag = @('Slow', 'Feature', 'Scenario'),
-        [string] $TagSet = 'CI'
+        [string] $TagSet = 'CI',
+        [string] $TitlePrefix
     )
 
     $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
@@ -639,7 +659,11 @@ function Invoke-LinuxTestsCore
     # Running tests which do not require sudo.
     if($Purpose -eq 'UnelevatedPesterTests' -or $Purpose -eq 'All')
     {
-        $pesterPassThruNoSudoObject = Start-PSPester @noSudoPesterParam -Title "Pester No Sudo - $TagSet"
+        $title = "Pester No Sudo - $TagSet"
+        if ($TitlePrefix) {
+            $title = "$TitlePrefix - $title"
+        }
+        $pesterPassThruNoSudoObject = Start-PSPester @noSudoPesterParam -Title $title
 
         # Running tests that do not require sudo, with specified experimental features enabled
         $noSudoResultsWithExpFeatures = @()
@@ -660,7 +684,12 @@ function Invoke-LinuxTestsCore
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $noSudoPesterParam['Path'] = $testFiles
             }
-            $passThruResult = Start-PSPester @noSudoPesterParam -Title "Pester Experimental No Sudo - $featureName - $TagSet"
+            $title = "Pester Experimental No Sudo - $featureName - $TagSet"
+            if ($TitlePrefix) {
+                $title = "$TitlePrefix - $title"
+            }
+            $passThruResult = Start-PSPester @noSudoPesterParam -Title $title
+
             $noSudoResultsWithExpFeatures += $passThruResult
         }
     }
@@ -674,7 +703,12 @@ function Invoke-LinuxTestsCore
         $sudoPesterParam['ExcludeTag'] = $ExcludeTag
         $sudoPesterParam['Sudo'] = $true
         $sudoPesterParam['OutputFile'] = $testResultsSudo
-        $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam -Title "Pester Sudo - $TagSet"
+
+        $title = "Pester Sudo - $TagSet"
+        if ($TitlePrefix) {
+            $title = "$TitlePrefix - $title"
+        }
+        $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam -Title $title
 
         # Running tests that require sudo, with specified experimental features enabled
         $sudoResultsWithExpFeatures = @()
@@ -696,7 +730,13 @@ function Invoke-LinuxTestsCore
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $sudoPesterParam['Path'] = $testFiles
             }
-            $passThruResult = Start-PSPester @sudoPesterParam -Title "Pester Experimental Sudo - $featureName - $TagSet"
+
+            $title = "Pester Experimental Sudo - $featureName - $TagSet"
+            if ($TitlePrefix) {
+                $title = "$TitlePrefix - $title"
+            }
+            $passThruResult = Start-PSPester @sudoPesterParam -Title $title
+
             $sudoResultsWithExpFeatures += $passThruResult
         }
     }
