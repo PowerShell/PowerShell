@@ -116,13 +116,13 @@ stages:
       clean: true
 
     - pwsh: |
-        $buildId = $env:BUILD_BUILDID
-        Write-Verbose "Fall back seed: $buildId" -Verbose
+        $fallbackSeed = (get-date).DayOfYear
+        Write-Verbose "Fall back seed: $fallbackSeed" -Verbose
         # For PRs set the seed to the PR number so that the image is always the same
         $seed = $env:SYSTEM_PULLREQUEST_PULLREQUESTID
         if(!$seed) {
           # for non-PRs use the integer identifier of the build as the seed.
-          $seed = $buildId
+          $seed = $fallbackSeed
         }
         Write-Verbose "Seed: $seed" -Verbose
 
