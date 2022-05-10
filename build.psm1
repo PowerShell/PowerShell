@@ -2209,7 +2209,7 @@ function Find-RequiredSDK {
         # '6.0.202 [C:\Program Files\dotnet\sdk]'
         # '7.0.100-preview.2.22153.17 [C:\Users\johndoe\AppData\Local\Microsoft\dotnet\sdk]'
         # into version and path parts.
-        $version, $null = $_ -split '\s',2
+        ($_ -split '\s',2)[0]
     }
 
     if ($installedSdkVersions -contains $requiredSdkVersion) {
