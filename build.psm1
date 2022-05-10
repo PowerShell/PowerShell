@@ -1949,7 +1949,7 @@ function Install-Dotnet {
 
             $psArgs += @('-SkipNonVersionedFiles')
 
-            $psArgs | Out-String | Write-Verbose -Verbose
+            $psArgs -join ' ' | Write-Verbose -Verbose
 
             Start-NativeExecution {
                 & $fullPSPath @psArgs
