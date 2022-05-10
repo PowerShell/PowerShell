@@ -6,8 +6,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -353,27 +355,45 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static IEnumerable<GetWordsResult> GetWords(string s)
         {
             StringBuilder sb = new StringBuilder();
-            GetWordsResult result = new GetWordsResult();
+            StringBuilder vtSeqs = null;
+            Dictionary<int, int> ansiRanges = null;
+
+            var valueStrDec = new ValueStringDecorated(s);
+            if (valueStrDec.IsDecorated)
+            {
+                vtSeqs = new StringBuilder();
+                ansiRanges = new Dictionary<int, int>();
+                foreach (Match match in ValueStringDecorated.AnsiRegex.Matches(s))
+                {
+                    ansiRanges.Add(match.Index, match.Length);
+                }
+            }
 
             for (int i = 0; i < s.Length; i++)
             {
                 // Soft hyphen = \u00AD - Should break, and add a hyphen if needed. If not needed for a break, hyphen should be absent
                 if (s[i] == ' ' || s[i] == '\t' || s[i] == s_softHyphen)
                 {
-                    result.Word = sb.ToString();
-                    sb.Clear();
-                    result.Delim = new string(s[i], 1);
+                    if (valueStrDec.IsDecorated && !sb.EndsWith(PSStyle.Instance.Reset))
+                    {
+                        sb.Append(PSStyle.Instance.Reset);
+                    }
 
+                    var result = new GetWordsResult() { Word = sb.ToString(), Delim = new string(s[i], 1) };
+                    sb.Clear();
                     yield return result;
                 }
                 // Non-breaking space = \u00A0 - ideally shouldn't wrap
                 // Hard hyphen = \u2011 - Should not break
                 else if (s[i] == s_hardHyphen || s[i] == s_nonBreakingSpace)
                 {
-                    result.Word = sb.ToString();
-                    sb.Clear();
-                    result.Delim = string.Empty;
+                    if (valueStrDec.IsDecorated && !sb.EndsWith(PSStyle.Instance.Reset))
+                    {
+                        sb.Append(PSStyle.Instance.Reset);
+                    }
 
+                    var result = new GetWordsResult() { Word = sb.ToString(), Delim = string.Empty };
+                    sb.Clear();
                     yield return result;
                 }
                 else
@@ -382,10 +402,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            result.Word = sb.ToString();
-            result.Delim = string.Empty;
-
-            yield return result;
+            yield return new GetWordsResult() { Word = sb.ToString(), Delim = string.Empty };
         }
 
         internal static StringCollection GenerateLines(DisplayCells displayCells, string val, int firstLineLen, int followingLinesLen)
