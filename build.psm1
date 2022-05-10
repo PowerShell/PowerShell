@@ -1949,7 +1949,7 @@ function Install-Dotnet {
 
             $psArgs += @('-SkipNonVersionedFiles')
 
-            $psArgs | Out-String | Write-Verbose -Verbose
+            $psArgs -join ' ' | Write-Verbose -Verbose
 
             Start-NativeExecution {
                 & $fullPSPath @psArgs
@@ -2195,21 +2195,21 @@ function Start-PSBootstrap {
 }
 
 function Get-LatestInstalledSDK {
-    Start-NativeExecution -sb {
-        dotnet --list-sdks | ForEach-Object {
-            # this splits strings like
-            # '6.0.202 [C:\Program Files\dotnet\sdk]'
-            # '7.0.100-preview.2.22153.17 [C:\Users\johndoe\AppData\Local\Microsoft\dotnet\sdk]'
-            # into version and path parts.
-            $version, $null = $_ -split '\s',2
-            try {
-                [System.Management.Automation.SemanticVersion]::new($version)
-            }
-            catch {
-                Write-Warning -Message "Unable to parse dotnet version semantically: $version"
-            }
-        } | Sort-Object -Descending | Select-Object -First 1
-    } -IgnoreExitcode 2> $null
+    $output = Start-NativeExecution -sb { dotnet --list-sdks } -IgnoreExitcode 2> $null
+
+    $output | ForEach-Object {
+        # this splits strings like
+        # '6.0.202 [C:\Program Files\dotnet\sdk]'
+        # '7.0.100-preview.2.22153.17 [C:\Users\johndoe\AppData\Local\Microsoft\dotnet\sdk]'
+        # into version and path parts.
+        $version, $null = $_ -split '\s',2
+        try {
+            [System.Management.Automation.SemanticVersion]::new($version)
+        }
+        catch {
+            Write-Warning -Message "Unable to parse dotnet version semantically: $version"
+        }
+    } | Sort-Object -Descending | Select-Object -First 1
 }
 
 function Start-DevPowerShell {
