@@ -82,7 +82,7 @@ namespace mvc
                             var certificate = new X509Certificate2(args[0], args[1]);
                             HttpsConnectionAdapterOptions httpsOption = new HttpsConnectionAdapterOptions();
 
-                            //TLS is obsolete. Using this value now defaults to TLS 1.2.
+                            // TLS is obsolete. Using this value now defaults to TLS 1.2.
                             httpsOption.SslProtocols = SslProtocols.Tls12;
 
                             httpsOption.ClientCertificateMode = ClientCertificateMode.AllowCertificate;
