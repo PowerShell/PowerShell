@@ -57,3 +57,5 @@ jobs:
       BuildTestPackage -runtime linux-musl-x64
 
     displayName: Build test package and upload
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
