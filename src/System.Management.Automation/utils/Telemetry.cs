@@ -680,8 +680,6 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
 
-            // SendPSCoreStartupTelemetry("hosted", 0);
-
             // These should be handled by SendModuleTelemetryMetric.
             Debug.Assert(metricId != TelemetryType.ModuleLoad);
             Debug.Assert(metricId != TelemetryType.WinCompatModuleLoad);
