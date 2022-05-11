@@ -254,10 +254,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
     }
 
     Context "MTUSizeDetect" {
-        # We skip the MtuSize detection tests when in containers, as the environments throw raw exceptions
-        # instead of returning a PacketTooBig response cleanly.
-        # Test disabled due to .NET runtime issue: https://github.com/dotnet/runtime/issues/55961
-        It "MTUSizeDetect works" -Pending:(($env:__INCONTAINER -eq 1) -or $IsMacOS) {
+        It "MTUSizeDetect works" {
             $result = Test-Connection $testAddress -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
@@ -266,8 +263,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
             $result.MtuSize | Should -BeGreaterThan 0
         }
 
-        # Test disabled due to .NET runtime issue: https://github.com/dotnet/runtime/issues/55961
-        It "Quiet works" -Pending:(($env:__INCONTAINER -eq 1) -or $IsMacOS) {
+        It "Quiet works" {
             $result = Test-Connection $gatewayAddress -MtuSize -Quiet
 
             $result | Should -BeOfType Int32
