@@ -1,7 +1,5 @@
-using System.Reflection.Metadata;
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-
 #nullable enable
 
 using System;
@@ -691,15 +689,17 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Determine the execution policy based on the supplied string.
-        /// If the string doesn't match to any known execution policy, set it to incorrect
+        /// If the string doesn't match to any known execution policy, set it to incorrect.
         /// </summary>
         /// <param name="_executionPolicy">The value provided on the command line.</param>
+        /// <returns>The execution policy.</returns>
         private static ParameterBitmap GetExecutionPolicy(string? _executionPolicy)
         {
             if (_executionPolicy is null)
             {
                 return ParameterBitmap.EPUndefined;
             }
+
             if (MatchSwitch(_executionPolicy, "remotesigned", "remotesigned"))
             {
                 return ParameterBitmap.EPRemoteSigned;
@@ -724,6 +724,7 @@ namespace Microsoft.PowerShell
             {
                 return ParameterBitmap.EPUndefined;
             }
+
             return ParameterBitmap.EPIncorrect;
         }
 
@@ -923,6 +924,7 @@ namespace Microsoft.PowerShell
                             CommandLineParameterParserStrings.MissingCustomPipeNameArgument);
                         break;
                     }
+
                     ParametersUsed |= ParameterBitmap.CustomPipeName;
 
 #if UNIX
@@ -946,6 +948,7 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
+
                     ParametersUsed |= ParameterBitmap.Command;
                 }
                 else if (MatchSwitch(switchKey, "windowstyle", "w"))
@@ -1030,6 +1033,7 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
+
                     ParametersUsed |= ParameterBitmap.SettingsFile;
                 }
                 else if (MatchSwitch(switchKey, "sta", "sta"))
@@ -1099,6 +1103,7 @@ namespace Microsoft.PowerShell
                     {
                         break;
                     }
+
                     // default to filename being the next argument.
                     ParametersUsed |= ParameterBitmap.File;
                 }

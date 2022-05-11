@@ -1,9 +1,9 @@
-using System.Diagnostics;
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
@@ -652,7 +652,7 @@ namespace Microsoft.PowerShell.Telemetry
         /// Some modules (CIM) will continue use the string alternative method.
         /// </summary>
         /// <param name="telemetryType">The type of telemetry that we'll be sending.</param>
-        /// <param name="moduleName">The module name to report. If it is not allowed, then it is set to 'anonymous'</param>
+        /// <param name="moduleName">The module name to report. If it is not allowed, then it is set to 'anonymous'.</param>
         /// <param name="moduleVersion">The module version to report. The default value is the anonymous version '0.0.0.0'.</param>
         internal static void SendModuleTelemetryMetric(TelemetryType telemetryType, string moduleName, string moduleVersion = _anonymousVersion)
         {
@@ -681,8 +681,8 @@ namespace Microsoft.PowerShell.Telemetry
             }
 
             // These should be handled by SendModuleTelemetryMetric.
-            Debug.Assert(metricId != TelemetryType.ModuleLoad);
-            Debug.Assert(metricId != TelemetryType.WinCompatModuleLoad);
+            Debug.Assert(metricId != TelemetryType.ModuleLoad, "ModuleLoad should be handled by SendModuleTelemetryMetric.");
+            Debug.Assert(metricId != TelemetryType.WinCompatModuleLoad, "WinCompatModuleLoad should be handled by SendModuleTelemetryMetric.");
 
             string metricName = metricId.ToString();
             try
@@ -755,12 +755,13 @@ namespace Microsoft.PowerShell.Telemetry
 
             // This is the payload which reports the startup information of OS and shell details.
             var properties = new Dictionary<string, string>();
+
             // This is the payload for the parameter data which is sent as a metric.
             var parameters = new Dictionary<string, double>();
 
             // The variable POWERSHELL_DISTRIBUTION_CHANNEL is set in our docker images.
             // This allows us to track the actual docker OS as OSDescription provides only "linuxkit"
-            // which has limited usefulness
+            // which has limited usefulness.
             var channel = Environment.GetEnvironmentVariable("POWERSHELL_DISTRIBUTION_CHANNEL");
 
             // Construct the payload for the OS and shell details.
@@ -770,6 +771,7 @@ namespace Microsoft.PowerShell.Telemetry
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
             properties.Add("OSChannel", string.IsNullOrEmpty(channel) ? "unknown" : channel);
             properties.Add("StartMode", string.IsNullOrEmpty(mode) ? "unknown" : mode);
+
             // Construct the payload for the parameters used.
             parameters.Add("Param", parametersUsed);
             try
