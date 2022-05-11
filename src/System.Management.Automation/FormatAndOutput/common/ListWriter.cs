@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Management.Automation;
@@ -180,12 +181,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 propertyValue = string.Empty;
 
             // make sure we honor embedded newlines
-            string[] lines = StringManipulationHelper.SplitLines(propertyValue);
+            List<string> lines = StringManipulationHelper.SplitLines(propertyValue);
 
             // padding to use in the lines after the first
             string padding = null;
 
-            for (int i = 0; i < lines.Length; i++)
+            for (int i = 0; i < lines.Count; i++)
             {
                 string prependString = null;
 
@@ -212,7 +213,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="lo">LineOuput to write to.</param>
         private void WriteSingleLineHelper(string prependString, string line, LineOutput lo)
         {
-            if (line == null)
+            if (line is null)
             {
                 line = string.Empty;
             }
@@ -223,8 +224,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // split the lines
             StringCollection sc = StringManipulationHelper.GenerateLines(lo.DisplayCells, line, fieldCellCount, fieldCellCount);
 
-            // padding to use in the lines after the first
-            string padding = StringUtil.Padding(_propertyLabelsDisplayLength);
+            // The padding to use in the lines after the first.
+            string headPadding = null;
 
             // display the string collection
             for (int k = 0; k < sc.Count; k++)
@@ -234,17 +235,24 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (k == 0)
                 {
-                    _cachedBuilder
-                        .Append(PSStyle.Instance.Formatting.FormatAccent)
-                        .Append(prependString)
-                        .Append(PSStyle.Instance.Reset)
-                        .Append(str);
+                    if (string.IsNullOrWhiteSpace(prependString))
+                    {
+                        _cachedBuilder.Append(prependString).Append(str);
+                    }
+                    else
+                    {
+                        _cachedBuilder
+                            .Append(PSStyle.Instance.Formatting.FormatAccent)
+                            .Append(prependString)
+                            .Append(PSStyle.Instance.Reset)
+                            .Append(str);
+                    }
                 }
                 else
                 {
-                    _cachedBuilder
-                        .Append(padding)
-                        .Append(str);
+                    // Lazily calculate the padding to use for the subsequent lines as it's quite often that only the first line exists.
+                    headPadding ??= StringUtil.Padding(_propertyLabelsDisplayLength);
+                    _cachedBuilder.Append(headPadding).Append(str);
                 }
 
                 if (str.Contains(ValueStringDecorated.ESC) && !str.EndsWith(PSStyle.Instance.Reset))

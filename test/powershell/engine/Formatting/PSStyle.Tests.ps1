@@ -342,4 +342,42 @@ Billy Bob… Senior DevOps …  13
         $text = Get-Content $outFile -Raw
         $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
     }
+
+    It "Word wrapping for string with escape sequences" {
+       $expected = @"
+`e[32;1mLongDescription : `e[0m`e[33mPowerShell`e[0m 
+                  `e[33mscripting`e[0m 
+                  `e[33mlanguage`e[0m
+"@
+        $obj = [pscustomobject] @{ LongDescription = "`e[33mPowerShell scripting language" }
+        $obj | Format-List | Out-String -Width 35 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Splitting multi-line string with escape sequences" {
+        $expected = @"
+`e[32;1mb : `e[0m`e[33mPowerShell is a task automation and configuration management program from Microsoft,`e[0m
+    `e[33mconsisting of a command-line shell and the associated scripting language`e[0m
+"@
+        $obj = [pscustomobject] @{ b = "`e[33mPowerShell is a task automation and configuration management program from Microsoft,`nconsisting of a command-line shell and the associated scripting language" }
+        $obj | Format-List | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
+
+    It "Wrapping long word with escape sequences" {
+        $expected = @"
+`e[32;1mb : `e[0m`e[33mC:\repos\PowerShell\src\powershell-w`e[0m
+    `e[33min-core\bin\Debug\net7.0\win7-x64\pu`e[0m
+    `e[33mblish\pwsh.exe`e[0m
+"@
+        $obj = [pscustomobject] @{ b = "`e[33mC:\repos\PowerShell\src\powershell-win-core\bin\Debug\net7.0\win7-x64\publish\pwsh.exe" }
+        $obj | Format-List | Out-String -Width 40 | Out-File $outFile
+
+        $text = Get-Content $outFile -Raw
+        $text.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
 }

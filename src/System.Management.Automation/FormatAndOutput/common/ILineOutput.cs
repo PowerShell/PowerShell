@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System.Globalization;
+using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Host;
@@ -379,10 +380,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // check for line breaks
-            string[] lines = StringManipulationHelper.SplitLines(val);
+            List<string> lines = StringManipulationHelper.SplitLines(val);
 
             // process the substrings as separate lines
-            for (int k = 0; k < lines.Length; k++)
+            for (int k = 0; k < lines.Count; k++)
             {
                 // compute the display length of the string
                 int displayLength = _displayCells.Length(lines[k]);
