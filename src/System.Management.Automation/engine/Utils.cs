@@ -2069,6 +2069,8 @@ namespace System.Management.Automation.Internal
         internal static bool SetConsoleWidthToZero;
         internal static bool SetConsoleHeightToZero;
 
+        internal static bool SetDate;
+
         // A location to test PSEdition compatibility functionality for Windows PowerShell modules with
         // since we can't manipulate the System32 directory in a test
         internal static string TestWindowsPowerShellPSHomeLocation;
