@@ -78,3 +78,5 @@ jobs:
     inputs:
       sourceScanPath: '$(PowerShellRoot)\tools'
       snapshotForceEnabled: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
