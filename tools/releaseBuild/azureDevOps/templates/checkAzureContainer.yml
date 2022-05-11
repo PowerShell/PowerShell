@@ -19,6 +19,7 @@ jobs:
       ReleaseTagVar: $(ReleaseTagVar)
 
   - task: AzurePowerShell@4
+    displayName: Check if blob exists and delete if specified
     inputs:
       azureSubscription: '$(AzureFileCopySubscription)'
       scriptType: inlineScript
@@ -44,4 +45,4 @@ jobs:
             }
         }
 
-
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

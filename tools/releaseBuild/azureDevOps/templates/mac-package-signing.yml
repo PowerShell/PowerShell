@@ -129,3 +129,5 @@ jobs:
     inputs:
       sourceScanPath: '$(repoRoot)/tools'
       snapshotForceEnabled: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

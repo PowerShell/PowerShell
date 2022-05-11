@@ -271,3 +271,5 @@ jobs:
       }
     displayName: Clean up local Clone
     condition: always()
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

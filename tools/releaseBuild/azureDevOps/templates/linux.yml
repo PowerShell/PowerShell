@@ -134,6 +134,8 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
 
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
+
 - job: upload_${{ parameters.buildName }}
   displayName: ${{ parameters.uploadDisplayName }} ${{ parameters.buildName }}
   dependsOn: build_${{ parameters.buildName }}
@@ -254,3 +256,5 @@ jobs:
     parameters:
       artifactPath: '$(Build.StagingDirectory)\signedPackages\release'
       condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
