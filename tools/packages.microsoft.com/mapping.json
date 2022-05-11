@@ -38,6 +38,10 @@
           "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
       },
       {
+          "distribution" : ["jammy"],
+          "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+      },
+      {
           "distribution": ["focal"],
           "PackageFormat": "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
       },
