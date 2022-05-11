@@ -129,19 +129,15 @@ stages:
         # Get the latest image matrix JSON for preview
         $matrix = ./PowerShell-Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
 
-        # Filter out containers that won't run on AzDevOps Linux host as an agent
-        # Windows, nano server, alpine, and any ARM image
+        # Chose images that are validated or validating, Linux and can be used in CI.
         $linuxImages = $matrix.preview |
-          Where-Object {$_.osversion -notmatch 'windows|nano|alpine|arm'} |
+          Where-Object {$_.IsLinux -and $_.UseInCi -and $_.DistributionState -match 'Validat.*'} |
           Select-Object JobName, Taglist |
           Sort-Object -property JobName
 
-        # Force mariner for now
-        $marinerImage = $linuxImages | where-object {$_.JobName -like 'mariner*'}
-
         # Use the selected seed to pick a container
-        $index = Get-Random -Minimum 0 -Maximum $marinerImage.Count -SetSeed $seed
-        $selectedImage = $marinerImage[$index]
+        $index = Get-Random -Minimum 0 -Maximum $linuxImages.Count -SetSeed $seed
+        $selectedImage = $linuxImages[$index]
 
         # Filter to the first test-deps compatible tag
         $tag = $selectedImage.Taglist -split ';' | Where-Object {$_ -match 'preview-\D+'} | Select-Object -First 1
