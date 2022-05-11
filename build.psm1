@@ -2044,7 +2044,6 @@ function Start-PSBootstrap {
                 $Deps += "curl", "wget"
 
                 # .NET Core required runtime libraries
-                $Deps += "libunwind8"
                 if ($environment.IsUbuntu16) { $Deps += "libicu55" }
                 elseif ($environment.IsUbuntu18) { $Deps += "libicu60"}
 
@@ -2070,7 +2069,7 @@ function Start-PSBootstrap {
                 $Deps += "which", "curl", "wget"
 
                 # .NET Core required runtime libraries
-                $Deps += "libicu", "libunwind"
+                $Deps += "libicu", "openssl-libs"
 
                 # Packaging tools
                 if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff", 'libffi-devel', "gcc-c++" }
