@@ -1963,7 +1963,7 @@ function Get-RedHatPackageManager {
         "yum install -y -q"
     } elseif ($environment.IsFedora -or (Get-Command -Name dnf -CommandType Application -ErrorAction SilentlyContinue)) {
         "dnf install -y -q"
-    } elseif (Get-Command -Name dnf -CommandType Application -ErrorAction SilentlyContinue) {
+    } else {
         throw "Error determining package manager for this distribution."
     }
 }
