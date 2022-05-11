@@ -855,7 +855,7 @@ function Invoke-InitializeContainerStage {
     Set-BuildVariable -Name containerBuildName -Value $selectedImage.JobName -IsOutput
 
     if($env:BUILD_REASON -eq 'PullRequest') {
-      Write-Host "##vso[build.updatebuildnumber]PR-$(System.PullRequest.PullRequestNumber)-$($selectedImage.JobName)-$((get-date).ToString("yyyyMMddhhmmss"))"
+      Write-Host "##vso[build.updatebuildnumber]PR-${env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}-$($selectedImage.JobName)-$((get-date).ToString("yyyyMMddhhmmss"))"
     } else {
       Write-Host "##vso[build.updatebuildnumber]${env:BUILD_SOURCEBRANCHNAME}-${env:BUILD_SOURCEVERSION}-$($selectedImage.JobName)-$((get-date).ToString("yyyyMMddhhmmss"))"
 
