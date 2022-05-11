@@ -237,6 +237,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     if (string.IsNullOrWhiteSpace(prependString))
                     {
+                        // Sometimes 'prependString' is just padding white spaces.
+                        // We don't need to add formatting escape sequences in such a case.
                         _cachedBuilder.Append(prependString).Append(str);
                     }
                     else
