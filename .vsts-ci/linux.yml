@@ -127,7 +127,7 @@ stages:
     - pwsh: |
         # Initialize container test stage
         Import-Module ./PowerShell/tools/ci.psm1
-        Invoke-InitializeContainerStage -ContainerPattern '$(ContainerPattern)'
+        Invoke-InitializeContainerStage -ContainerPattern '${{ parameters.ContainerPattern }}'
       name: getContainerTask
       displayName: Initialize Container Stage
       continueOnError: true
