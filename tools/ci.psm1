@@ -811,3 +811,55 @@ function New-LinuxPackage
         Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
     }
 }
+
+function Invoke-InitializeContainerStage {
+    param(
+        [string]
+        $ContainerPattern = '.'
+    )
+
+    Write-Verbose "Invoking InitializeContainerStage with ContainerPatter: ${ContainerPattern}" -Verbose
+
+    $fallbackSeed = (get-date).DayOfYear
+    Write-Verbose "Fall back seed: $fallbackSeed" -Verbose
+
+    # For PRs set the seed to the PR number so that the image is always the same
+    $seed = $env:SYSTEM_PULLREQUEST_PULLREQUESTID
+    if(!$seed) {
+      # for non-PRs use the integer identifier of the build as the seed.
+      $seed = $fallbackSeed
+    }
+
+    Write-Verbose "Seed: $seed" -Verbose
+
+    # Get the latest image matrix JSON for preview
+    $matrix = ./PowerShell-Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
+
+    # Chose images that are validated or validating, Linux and can be used in CI.
+    $linuxImages = $matrix.preview |
+      Where-Object {$_.IsLinux -and $_.UseInCi -and $_.DistributionState -match 'Validat.*' -and $_.JobName -match $ContainerPattern} |
+      Select-Object JobName, Taglist |
+      Sort-Object -property JobName
+
+    # Use the selected seed to pick a container
+    $index = Get-Random -Minimum 0 -Maximum $linuxImages.Count -SetSeed $seed
+    $selectedImage = $linuxImages[$index]
+
+    # Filter to the first test-deps compatible tag
+    $tag = $selectedImage.Taglist -split ';' | Where-Object {$_ -match 'preview-\D+'} | Select-Object -First 1
+
+    # Calculate the container name
+    $containerName = "mcr.microsoft.com/powershell/test-deps:$tag"
+
+    Set-BuildVariable -Name containerName -Value $containerName -IsOutput
+    Set-BuildVariable -Name containerBuildName -Value $selectedImage.JobName -IsOutput
+
+    if($env:BUILD_REASON -eq 'PullRequest') {
+      Write-Host "##vso[build.updatebuildnumber]PR-$(System.PullRequest.PullRequestNumber)-$($selectedImage.JobName)-$((get-date).ToString("yyyyMMddhhmmss"))"
+    } else {
+      Write-Host "##vso[build.updatebuildnumber]${env:BUILD_SOURCEBRANCHNAME}-${env:BUILD_SOURCEVERSION}-$($selectedImage.JobName)-$((get-date).ToString("yyyyMMddhhmmss"))"
+
+      # Cannot do this for a PR
+      Write-Host "##vso[build.addbuildtag]$($selectedImage.JobName)"
+    }
+}
