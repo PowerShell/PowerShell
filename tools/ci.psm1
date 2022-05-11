@@ -818,7 +818,7 @@ function Invoke-InitializeContainerStage {
         $ContainerPattern = '.'
     )
 
-    Write-Verbose "Invoking InitializeContainerStage with ContainerPatter: ${ContainerPattern}" -Verbose
+    Write-Verbose "Invoking InitializeContainerStage with ContainerPattern: ${ContainerPattern}" -Verbose
 
     $fallbackSeed = (get-date).DayOfYear
     Write-Verbose "Fall back seed: $fallbackSeed" -Verbose
