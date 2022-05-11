@@ -345,8 +345,8 @@ Billy Bob… Senior DevOps …  13
 
     It "Word wrapping for string with escape sequences" {
        $expected = @"
-`e[32;1mLongDescription : `e[0m`e[33mPowerShell`e[0m 
-                  `e[33mscripting`e[0m 
+`e[32;1mLongDescription : `e[0m`e[33mPowerShell `e[0m
+                  `e[33mscripting `e[0m
                   `e[33mlanguage`e[0m
 "@
         $obj = [pscustomobject] @{ LongDescription = "`e[33mPowerShell scripting language" }

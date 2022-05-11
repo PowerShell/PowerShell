@@ -597,24 +597,29 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 foreach (GetWordsResult word in GetWords(lines[k]))
                 {
                     string wordToAdd = word.Word;
+                    string suffix = null;
 
                     // Handle soft hyphen
-                    if (word.Delim == s_softHyphen.ToString())
+                    if (word.Delim.Length == 1 && word.Delim[0] == s_softHyphen)
                     {
                         int wordWidthWithHyphen = displayCells.Length(wordToAdd) + displayCells.Length(s_softHyphen);
 
                         // Add hyphen only if necessary
                         if (wordWidthWithHyphen == spacesLeft)
                         {
-                            wordToAdd = wordToAdd.EndsWith(resetStr)
-                                ? wordToAdd.Insert(wordToAdd.Length - resetStr.Length, "-")
-                                : wordToAdd + "-";
+                            suffix = "-";
                         }
                     }
                     else if (!string.IsNullOrEmpty(word.Delim))
                     {
-                        // Other non-empty delimiters are white-space characters, which we can directly add to the end. 
-                        wordToAdd += word.Delim;
+                        suffix = word.Delim;
+                    }
+
+                    if (suffix is not null)
+                    {
+                        wordToAdd = wordToAdd.EndsWith(resetStr)
+                            ? wordToAdd.Insert(wordToAdd.Length - resetStr.Length, suffix)
+                            : wordToAdd + suffix;
                     }
 
                     int wordWidth = displayCells.Length(wordToAdd);
