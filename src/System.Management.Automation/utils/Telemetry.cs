@@ -95,6 +95,9 @@ namespace Microsoft.PowerShell.Telemetry
         // private const string _psCoreTelemetryKey = "ee4b2115-d347-47b0-adb6-b19c2c763808"; // Production
         private const string _psCoreTelemetryKey = "d26a5ef4-d608-452c-a6b8-a4a55935f70d"; // V7 Preview 3
 
+        // In the event there is a problem in creating the node identifier file, use the default identifier.
+        private static readonly Guid _defaultNodeIdentifier = new Guid("2f998828-3f4a-4741-bf50-d11c6be42f50");
+
         // Use "anonymous" as the string to return when you can't report a name
         private const string _anonymous = "anonymous";
 
@@ -845,35 +848,39 @@ namespace Microsoft.PowerShell.Telemetry
 
             // The directory may not exist, so attempt to create it
             // CreateDirectory will simply return the directory if exists
+            bool attemptFileCreation = true;
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(telemetryFilePath));
             }
             catch
             {
-                // send a telemetry indicating a problem with the cache dir
-                // it's likely something is seriously wrong so we should at least report it.
-                // We don't want to provide reasons here, that's not the point, but we
-                // would like to know if we're having a generalized problem which we can trace statistically
-                CanSendTelemetry = false;
-                s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "cachedir");
-                return false;
+                // There was a problem in creating the directory for the file, do not attempt to create the file.
+                // We don't send telemetry here because there are valid reasons for the directory to not exist 
+                // and not be able to be created.
+                attemptFileCreation = false;
             }
 
-            // Create and save the new identifier, and if there's a problem, disable telemetry
-            try
+            // If we were able to create the directory, try to create the file,
+            // if this fails we will send telemetry to indicate this and then use the default identifier.
+            if (attemptFileCreation)
             {
-                id = Guid.NewGuid();
-                File.WriteAllBytes(telemetryFilePath, id.ToByteArray());
-                return true;
-            }
-            catch
-            {
-                // another bit of telemetry to notify us about a problem with saving the unique id.
-                s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "saveuuid");
+                try
+                {
+                    id = Guid.NewGuid();
+                    File.WriteAllBytes(telemetryFilePath, id.ToByteArray());
+                    return true;
+                }
+                catch
+                {
+                    // another bit of telemetry to notify us about a problem with saving the unique id.
+                    s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "saveuuid");
+                }
             }
 
-            return false;
+            // all attempts to create an identifier have failed, so use the default node id.
+            id = _defaultNodeIdentifier;
+            return true;
         }
 
         /// <summary>
