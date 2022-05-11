@@ -857,7 +857,7 @@ function Invoke-InitializeContainerStage {
     if($env:BUILD_REASON -eq 'PullRequest') {
       Write-Host "##vso[build.updatebuildnumber]PR-${env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}-$($selectedImage.JobName)-$((get-date).ToString("yyyyMMddhhmmss"))"
     } else {
-      Write-Host "##vso[build.updatebuildnumber]${env:BUILD_SOURCEBRANCHNAME}-${env:BUILD_SOURCEVERSION}-$($selectedImage.JobName)-$((get-date).ToString("yyyyMMddhhmmss"))"
+      Write-Host "##vso[build.updatebuildnumber]${env:BUILD_SOURCEBRANCHNAME}-$($selectedImage.JobName)-${env:BUILD_SOURCEVERSION}-$((get-date).ToString("yyyyMMddhhmmss"))"
 
       # Cannot do this for a PR
       Write-Host "##vso[build.addbuildtag]$($selectedImage.JobName)"
