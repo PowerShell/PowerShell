@@ -1415,7 +1415,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Web.Services.Description",
-          "Version": "4.9.0-rc2.21473.1"
+          "Version": "4.9.0"
         }
       },
       "DevelopmentDependency": false
