@@ -47,7 +47,19 @@ namespace Microsoft.PowerShell
         /// <param name="argc">
         /// Length of the passed in argument array.
         /// </param>
-        public static int Start([MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)] string[] args, int argc)
+        public static int Start([MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)] string[] args, int argc) => Start(args, argc, InitialSessionState.CreateDefault2());
+
+        /// <summary>
+        /// Starts managed MSH.
+        /// </summary>
+        /// <param name="args">
+        /// Command line arguments to the managed MSH
+        /// </param>
+        /// <param name="argc">
+        /// Length of the passed in argument array.
+        /// </param>
+        /// <param name="initialSessionState">InitialSessionState to be used by the ConsoleHost.</param>
+        public static int Start([MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)] string[] args, int argc, InitialSessionState initialSessionState)
         {
             if (args == null)
             {
@@ -94,7 +106,7 @@ namespace Microsoft.PowerShell
                     ManagedEntranceStrings.ShellBannerNonWindowsPowerShell,
                     PSVersionInfo.GitCommitId);
 
-                ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
+                ConsoleHost.DefaultInitialSessionState = initialSessionState;
 
                 exitCode = ConsoleHost.Start(banner, ManagedEntranceStrings.UsageHelp);
             }
