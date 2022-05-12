@@ -906,9 +906,12 @@ namespace System.Management.Automation.Language
             return AstVisitAction.Continue;
         }
 
+        private static bool IsOrderedAttribute(TypeConstraintAst typeConstraint)
+            => typeConstraint.TypeName.FullName.Equals(LanguagePrimitives.OrderedAttribute, StringComparison.OrdinalIgnoreCase);
+
         public override AstVisitAction VisitConvertExpression(ConvertExpressionAst convertExpressionAst)
         {
-            if (convertExpressionAst.Type.TypeName.FullName.Equals(LanguagePrimitives.OrderedAttribute, StringComparison.OrdinalIgnoreCase))
+            if (IsOrderedAttribute(convertExpressionAst.Type))
             {
                 if (convertExpressionAst.Child is not HashtableAst)
                 {
@@ -920,9 +923,15 @@ namespace System.Management.Automation.Language
                         ParserStrings.OrderedAttributeOnlyOnHashLiteralNode,
                         convertExpressionAst.Type.TypeName.FullName);
                 }
+
+                // Skip any further type checks on [ordered],
+                // type resolution failure is costly and unnecessary
+                return AstVisitAction.Continue;
             }
 
-            if (typeof(PSReference) == convertExpressionAst.Type.TypeName.GetReflectionType())
+            Type targetType = convertExpressionAst.Type.TypeName.GetReflectionType();
+
+            if (typeof(PSReference) == targetType)
             {
                 // Check for [ref][ref]
                 ExpressionAst child = convertExpressionAst.Child;
@@ -933,7 +942,7 @@ namespace System.Management.Automation.Language
                     if (childAttrExpr != null)
                     {
                         var childConvert = childAttrExpr as ConvertExpressionAst;
-                        if (childConvert != null && typeof(PSReference) == childConvert.Type.TypeName.GetReflectionType())
+                        if (childConvert != null && !IsOrderedAttribute(childConvert.Type) && typeof(PSReference) == childConvert.Type.TypeName.GetReflectionType())
                         {
                             multipleRefs = true;
                             _parser.ReportError(childConvert.Type.Extent,
@@ -994,7 +1003,7 @@ namespace System.Management.Automation.Language
             }
 
             // Converting to Type is suspicious
-            if (typeof(Type) == convertExpressionAst.Type.TypeName.GetReflectionType())
+            if (typeof(Type) == targetType)
             {
                 MarkAstParentsAsSuspicious(convertExpressionAst);
             }
