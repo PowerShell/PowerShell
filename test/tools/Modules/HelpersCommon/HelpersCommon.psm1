@@ -396,6 +396,7 @@ function Get-WsManSupport {
         ($platformInfo.Platform -eq 'ubuntu' -and $platformInfo.Version -eq '20.04') -or
         ($platformInfo.Platform -eq 'mariner') -or
         ($platformInfo.Platform -eq 'rhel') -or
+        ($platformInfo.Platform -eq 'fedora') -or
         ($IsMacOS)
     ) {
         return $false
