@@ -362,11 +362,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (valueStrDec.IsDecorated)
             {
                 vtSeqs = new StringBuilder();
-                vtRanges = new Dictionary<int, int>();
-                foreach (Match match in ValueStringDecorated.AnsiRegex.Matches(s))
-                {
-                    vtRanges.Add(match.Index, match.Length);
-                }
+                vtRanges = valueStrDec.EscapeSequenceRanges;
             }
 
             bool wordHasVtSeqs = false;
@@ -424,6 +420,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (sb.Length == vtSeqs.Length)
                 {
                     // This indicates 'sb' only contains all VT sequences, which may happen when the string ends with a word delimiter.
+                    // For a word that contains VT sequence only, it's the same as an empty string to the formatting system,
+                    // because nothing will actually be rendered.
+                    // So, we use an empty string in this case to avoid unneeded string allocations.
                     sb.Clear();
                 }
                 else if (!sb.EndsWith(PSStyle.Instance.Reset))
@@ -646,14 +645,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         Dictionary<int, int> vtRanges = null;
                         StringBuilder vtSeqs = null;
-                        if (wordToAdd.Contains(ValueStringDecorated.ESC))
+
+                        var valueStrDec = new ValueStringDecorated(wordToAdd);
+                        if (valueStrDec.IsDecorated)
                         {
                             vtSeqs = new StringBuilder();
-                            vtRanges = new Dictionary<int, int>();
-                            foreach (Match match in ValueStringDecorated.AnsiRegex.Matches(wordToAdd))
-                            {
-                                vtRanges.Add(match.Index, match.Length);
-                            }
+                            vtRanges = valueStrDec.EscapeSequenceRanges;
                         }
 
                         bool hasEscSeqs = false;
@@ -758,11 +755,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (valueStrDec.IsDecorated)
             {
                 vtSeqs = new StringBuilder();
-                vtRanges = new Dictionary<int, int>();
-                foreach (Match match in ValueStringDecorated.AnsiRegex.Matches(s))
-                {
-                    vtRanges.Add(match.Index, match.Length);
-                }
+                vtRanges = valueStrDec.EscapeSequenceRanges;
             }
 
             bool hasVtSeqs = false;
@@ -801,6 +794,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (sb.Length == vtSeqs.Length)
                 {
                     // This indicates 'sb' only contains all VT sequences, which may happen when the string ends with '\n'.
+                    // For a sub-string that contains VT sequence only, it's the same as an empty string to the formatting
+                    // system, because nothing will actually be rendered.
+                    // So, we use an empty string in this case to avoid unneeded string allocations.
                     sb.Clear();
                 }
                 else if (!sb.EndsWith(PSStyle.Instance.Reset))
