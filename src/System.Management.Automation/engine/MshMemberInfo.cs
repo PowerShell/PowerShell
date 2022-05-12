@@ -2691,7 +2691,7 @@ namespace System.Management.Automation
 
                 return DelegateHelpers.MakeDelegate(methodTypes);
             }
-            catch (TypeLoadException)
+            catch (Exception)
             {
                 return typeof(Func<PSNonBindableType>);
             }
