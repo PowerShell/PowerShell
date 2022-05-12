@@ -11,6 +11,7 @@
 #define DEBUG
 
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace System.Management.Automation
@@ -71,7 +72,7 @@ namespace System.Management.Automation
             return frameString.ToString();
         }
 
-        private static object s_throwInsteadOfAssertLock = 1;
+        private static readonly object s_throwInsteadOfAssertLock = 1;
 
         private static bool s_throwInsteadOfAssert = false;
         /// <summary>
@@ -126,6 +127,7 @@ namespace System.Management.Automation
 #if RESHARPER_ATTRIBUTES
             [JetBrains.Annotations.AssertionCondition(JetBrains.Annotations.AssertionConditionType.IS_TRUE)]
 #endif
+            [DoesNotReturnIf(false)]
             bool condition,
             string whyThisShouldNeverHappen)
         {
@@ -159,6 +161,7 @@ namespace System.Management.Automation
 #if RESHARPER_ATTRIBUTES
             [JetBrains.Annotations.AssertionCondition(JetBrains.Annotations.AssertionConditionType.IS_TRUE)]
 #endif
+            [DoesNotReturnIf(false)]
             bool condition,
             string whyThisShouldNeverHappen, string detailMessage)
         {
@@ -201,4 +204,3 @@ namespace System.Management.Automation
         }
     }
 }
-

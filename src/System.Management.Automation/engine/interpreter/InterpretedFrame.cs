@@ -34,7 +34,8 @@ namespace System.Management.Automation.Interpreter
         internal InterpretedFrame _parent;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2105:ArrayFieldsShouldNotBeReadOnly")]
-        private int[] _continuations;
+        private readonly int[] _continuations;
+
         private int _continuationIndex;
         private int _pendingContinuation;
         private object _pendingValue;
@@ -294,12 +295,12 @@ namespace System.Management.Automation.Interpreter
 
         internal static MethodInfo GotoMethod
         {
-            get { return s_goto ?? (s_goto = typeof(InterpretedFrame).GetMethod("Goto")); }
+            get { return s_goto ??= typeof(InterpretedFrame).GetMethod("Goto"); }
         }
 
         internal static MethodInfo VoidGotoMethod
         {
-            get { return s_voidGoto ?? (s_voidGoto = typeof(InterpretedFrame).GetMethod("VoidGoto")); }
+            get { return s_voidGoto ??= typeof(InterpretedFrame).GetMethod("VoidGoto"); }
         }
 
         public int VoidGoto(int labelIndex)

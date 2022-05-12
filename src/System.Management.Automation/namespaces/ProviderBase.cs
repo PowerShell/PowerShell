@@ -9,17 +9,18 @@ using System.IO;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
-using System.Reflection;
 using System.Resources;
 using System.Diagnostics.CodeAnalysis; // for fxcop
 using System.Security.AccessControl;
 
 namespace System.Management.Automation.Provider
 {
+
     /// <summary>
     /// This interface needs to be implemented by providers that want users to see
     /// provider-specific help.
     /// </summary>
+#nullable enable
     public interface ICmdletProviderSupportsHelp
     {
         /// <summary>
@@ -38,7 +39,7 @@ namespace System.Management.Automation.Provider
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Maml", Justification = "Maml is an acronym.")]
         string GetHelpMaml(string helpItemName, string path);
     }
-
+#nullable restore
     #region CmdletProvider
 
     /// <summary>
@@ -78,7 +79,7 @@ namespace System.Management.Automation.Provider
         [TraceSourceAttribute(
              "CmdletProviderClasses",
              "The namespace provider base classes tracer")]
-        internal static PSTraceSource providerBaseTracer = PSTraceSource.GetTracer(
+        internal static readonly PSTraceSource providerBaseTracer = PSTraceSource.GetTracer(
                                                                "CmdletProviderClasses",
                                                                "The namespace provider base classes tracer");
 
@@ -98,7 +99,7 @@ namespace System.Management.Automation.Provider
         {
             if (providerInfoToSet == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerInfoToSet");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerInfoToSet));
             }
 
             _providerInformation = providerInfoToSet;
@@ -259,9 +260,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -299,9 +298,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -330,9 +327,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -370,9 +365,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -404,9 +397,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -444,9 +435,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IPropertyCmdletProvider propertyProvider = this as IPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -490,9 +479,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -537,9 +524,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -571,9 +556,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -610,9 +593,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -648,9 +629,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -691,9 +670,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -733,9 +710,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -780,9 +755,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -822,9 +795,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -869,9 +840,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IDynamicPropertyCmdletProvider propertyProvider = this as IDynamicPropertyCmdletProvider;
-
-            if (propertyProvider == null)
+            if (!(this is IDynamicPropertyCmdletProvider propertyProvider))
             {
                 return null;
             }
@@ -902,9 +871,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
-
-            if (contentProvider == null)
+            if (!(this is IContentCmdletProvider contentProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -937,9 +904,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
-
-            if (contentProvider == null)
+            if (!(this is IContentCmdletProvider contentProvider))
             {
                 return null;
             }
@@ -966,9 +931,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
-
-            if (contentProvider == null)
+            if (!(this is IContentCmdletProvider contentProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -1001,9 +964,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
-
-            if (contentProvider == null)
+            if (!(this is IContentCmdletProvider contentProvider))
             {
                 return null;
             }
@@ -1027,9 +988,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
-
-            if (contentProvider == null)
+            if (!(this is IContentCmdletProvider contentProvider))
             {
                 throw
                     PSTraceSource.NewNotSupportedException(
@@ -1062,9 +1021,7 @@ namespace System.Management.Automation.Provider
         {
             Context = cmdletProviderContext;
 
-            IContentCmdletProvider contentProvider = this as IContentCmdletProvider;
-
-            if (contentProvider == null)
+            if (!(this is IContentCmdletProvider contentProvider))
             {
                 return null;
             }
@@ -1425,12 +1382,12 @@ namespace System.Management.Automation.Provider
             {
                 if (string.IsNullOrEmpty(baseName))
                 {
-                    throw PSTraceSource.NewArgumentException("baseName");
+                    throw PSTraceSource.NewArgumentException(nameof(baseName));
                 }
 
                 if (string.IsNullOrEmpty(resourceId))
                 {
-                    throw PSTraceSource.NewArgumentException("resourceId");
+                    throw PSTraceSource.NewArgumentException(nameof(resourceId));
                 }
 
                 ResourceManager manager =
@@ -1447,12 +1404,12 @@ namespace System.Management.Automation.Provider
                 }
                 catch (MissingManifestResourceException)
                 {
-                    throw PSTraceSource.NewArgumentException("baseName", GetErrorText.ResourceBaseNameFailure, baseName);
+                    throw PSTraceSource.NewArgumentException(nameof(baseName), GetErrorText.ResourceBaseNameFailure, baseName);
                 }
 
                 if (retValue == null)
                 {
-                    throw PSTraceSource.NewArgumentException("resourceId", GetErrorText.ResourceIdFailure, resourceId);
+                    throw PSTraceSource.NewArgumentException(nameof(resourceId), GetErrorText.ResourceIdFailure, resourceId);
                 }
 
                 return retValue;
@@ -1462,13 +1419,14 @@ namespace System.Management.Automation.Provider
 
         #region ThrowTerminatingError
         /// <Content contentref="System.Management.Automation.Cmdlet.ThrowTerminatingError" />
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             using (PSTransactionManager.GetEngineProtectionScope())
             {
                 if (errorRecord == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("errorRecord");
+                    throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
                 }
 
                 if (errorRecord.ErrorDetails != null
@@ -1677,7 +1635,7 @@ namespace System.Management.Automation.Provider
 
                 if (progressRecord == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("progressRecord");
+                    throw PSTraceSource.NewArgumentNullException(nameof(progressRecord));
                 }
 
                 Context.WriteProgress(progressRecord);
@@ -1801,7 +1759,7 @@ namespace System.Management.Automation.Provider
         {
             if (item == null)
             {
-                throw PSTraceSource.NewArgumentNullException("item");
+                throw PSTraceSource.NewArgumentNullException(nameof(item));
             }
 
             PSObject result = new PSObject(item);
@@ -1865,11 +1823,11 @@ namespace System.Management.Automation.Provider
 #if UNIX
 
                 // Add a commonstat structure to file system objects
-                if (ExperimentalFeature.IsEnabled("PSUnixFileStat") && ProviderInfo.ImplementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider))
+                if (ProviderInfo.ImplementingType == typeof(Microsoft.PowerShell.Commands.FileSystemProvider))
                 {
                     try
                     {
-                        // Use LStat because if you get a link, you want the information about the 
+                        // Use LStat because if you get a link, you want the information about the
                         // link, not the file.
                         var commonStat = Platform.Unix.GetLStat(path);
                         result.AddOrSetProperty("UnixStat", commonStat);
@@ -2000,7 +1958,7 @@ namespace System.Management.Automation.Provider
 
                 if (errorRecord == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("errorRecord");
+                    throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
                 }
 
                 if (errorRecord.ErrorDetails != null

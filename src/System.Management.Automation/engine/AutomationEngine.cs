@@ -96,7 +96,7 @@ namespace System.Management.Automation
                 EngineParser.SetPreviousFirstLastToken(Context);
             }
 
-            if (errors.Any())
+            if (errors.Length > 0)
             {
                 if (errors[0].IncompleteInput)
                 {
@@ -110,4 +110,3 @@ namespace System.Management.Automation
         }
     }
 }
-

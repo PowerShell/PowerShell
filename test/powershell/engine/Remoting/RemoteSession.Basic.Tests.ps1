@@ -3,36 +3,31 @@
 
 Import-Module HelpersCommon
 
+function GetRandomString()
+{
+    return [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName())
+}
+
 Describe "New-PSSession basic test" -Tag @("CI") {
     It "New-PSSession should not crash powershell" {
-        $platformInfo = Get-PlatformInfo
-        if (
-            ($platformInfo.Platform -match "alpine|raspbian") -or
-            ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
-            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
-        ) {
-            Set-ItResult -Skipped -Because "MI library not available for Alpine, Raspberry Pi, Debian 10 and 11, and CentOS 8"
+        if ( -not (Get-WsManSupport)) {
+            Set-ItResult -Skipped -Because "MI library not available for this platform"
             return
         }
 
-        { New-PSSession -ComputerName nonexistcomputer -Authentication Basic } |
+        { New-PSSession -ComputerName (GetRandomString) -Authentication Basic } |
            Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.NewPSSessionCommand"
     }
 }
 
 Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
-    It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -skip:($IsWindows) {
-        $platformInfo = Get-PlatformInfo
-        if (
-            ($platformInfo.Platform -match "alpine|raspbian") -or
-            ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
-            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
-        ) {
-            Set-ItResult -Skipped -Because "MI library not available for Alpine, Raspberry Pi, Debian 10 and 11, and CentOS 8"
+    It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -Skip:($IsWindows) {
+        if ( -not (Get-WsManSupport)) {
+            Set-ItResult -Skipped -Because "MI library not available for this platform"
             return
         }
 
-        $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
+        $password = ConvertTo-SecureString -String (GetRandomString) -AsPlainText -Force
         $credential = [PSCredential]::new('username', $password)
 
         $err = ({New-PSSession -ComputerName 'localhost' -Credential $credential -Authentication Basic}  | Should -Throw -PassThru  -ErrorId 'System.Management.Automation.Remoting.PSRemotingDataStructureException,Microsoft.PowerShell.Commands.NewPSSessionCommand')
@@ -42,18 +37,14 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
         $err.Exception.ErrorCode | Should -Be 801
     }
 
-    It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -skip:($IsWindows) {
-        $platformInfo = Get-PlatformInfo
-        if (
-            ($platformInfo.Platform -match "alpine|raspbian") -or
-            ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
-            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
-        ) {
-            Set-ItResult -Skipped -Because "MI library not available for Alpine, Raspberry Pi, Debian 10 and 11, and CentOS 8"
+    # Skip this test for macOS because the latest OS release is incompatible with our shipped libmi for WinRM/OMI.
+    It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -Skip:($IsWindows) {
+        if ( -not (Get-WsManSupport)) {
+            Set-ItResult -Skipped -Because "MI library not available for this platform"
             return
         }
 
-        $password = ConvertTo-SecureString -String "password" -AsPlainText -Force
+        $password = ConvertTo-SecureString -String (GetRandomString) -AsPlainText -Force
         $credential = [PSCredential]::new('username', $password)
 
         # use a Uri that specifies HTTPS to test Basic Auth logic.
@@ -335,6 +326,17 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
         $number = 100
         $result = Invoke-Command -Session $openSession -ScriptBlock { $using:number }
         $result | Should -Be 100
+    }
+
+    It '$Host.Version should be PSVersion' {
+        $session = New-RemoteSession -ConfigurationName $endPoint
+        try {
+            $result = Invoke-Command -Session $session -ScriptBlock { $Host.Version }
+            $result | Should -Be $PSVersionTable.PSVersion
+        }
+        finally {
+            $session | Remove-PSSession -ErrorAction Ignore
+        }
     }
 }
 

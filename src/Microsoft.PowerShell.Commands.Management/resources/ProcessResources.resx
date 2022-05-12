@@ -175,7 +175,7 @@
     <value>This command stopped operation because process "{0} ({1})" is not stopped in the specified time-out.</value>
   </data>
   <data name="InvalidStartProcess" xml:space="preserve">
-    <value>This command cannot be run due to the error: {0}.</value>
+    <value>This command cannot be run due to the error: {0}</value>
   </data>
   <data name="InvalidApplication" xml:space="preserve">
     <value>This command cannot be run because the input "{0}" is not a valid Application.  Give a valid application and run your command again.</value>

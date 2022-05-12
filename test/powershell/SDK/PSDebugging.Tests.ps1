@@ -183,7 +183,7 @@ Describe "PowerShell Command Debugging" -tags "CI" {
 }
 
 # Scripting\Debugging\RunspaceDebuggingTests.cs
-Describe "Runspace Debugging API tests" -tag CI {
+Describe "Runspace Debugging API tests" -Tag CI {
     Context "PSStandaloneMonitorRunspaceInfo tests" {
         BeforeAll {
             $runspace = [runspacefactory]::CreateRunspace()
@@ -204,7 +204,7 @@ Describe "Runspace Debugging API tests" -tag CI {
                 Should -Throw -ErrorId 'PSArgumentNullException'
         }
 
-        it "PSStandaloneMonitorRunspaceInfo properties should have proper values" {
+        It "PSStandaloneMonitorRunspaceInfo properties should have proper values" {
             $monitorInfo.Runspace.InstanceId | Should -Be $InstanceId
             $monitorInfo.RunspaceType | Should -BeExactly "Standalone"
             $monitorInfo.NestedDebugger | Should -BeNullOrEmpty

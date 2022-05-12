@@ -9,13 +9,13 @@ namespace Microsoft.PowerShell.Commands
     internal class WebProxy : IWebProxy
     {
         private ICredentials _credentials;
-        private Uri _proxyAddress;
+        private readonly Uri _proxyAddress;
 
         internal WebProxy(Uri address)
         {
             if (address == null)
             {
-                throw new ArgumentNullException("address");
+                throw new ArgumentNullException(nameof(address));
             }
 
             _proxyAddress = address;
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (destination == null)
             {
-                throw new ArgumentNullException("destination");
+                throw new ArgumentNullException(nameof(destination));
             }
 
             if (destination.IsLoopback)

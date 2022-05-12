@@ -38,7 +38,7 @@ Describe 'Get-Error tests' -Tag CI {
         }
 
         try {
-            get-item (new-guid) -ErrorAction SilentlyContinue
+            Get-Item (New-Guid) -ErrorAction SilentlyContinue
         }
         catch {
         }
@@ -124,5 +124,33 @@ Describe 'Get-Error tests' -Tag CI {
         }
 
         $out | Should -BeLikeExactly "*$expectedExceptionType*"
+    }
+
+    It 'Get-Error uses Error color for Message and PositionMessage members' {
+        $suppressVT = $false
+        if (Test-Path env:/__SuppressAnsiEscapeSequences) {
+            $suppressVT = $true
+            $env:__SuppressAnsiEscapeSequences = $null
+        }
+
+        try {
+            $originalRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'Ansi'
+            $out = pwsh -noprofile -command '$PSStyle.OutputRendering = "ANSI"; try { 1/0 } catch { }; Get-Error' | Out-String
+
+            # need to escape the open square bracket so the regex works
+            $resetColor = $PSStyle.Reset.Replace('[','\[')
+            $errorColor = $PSStyle.Formatting.Error.Replace('[','\[')
+            $out | Should -Match "Message +: ${resetColor}${errorColor}[A-z]+"
+            # match the position message underline
+            $out | Should -Match ".*?${errorColor}~~~"
+        }
+        finally
+        {
+            $PSStyle.OutputRendering = $originalRendering
+            if ($suppressVT) {
+                $env:__SuppressAnsiEscapeSequences = 1
+            }
+        }
     }
 }

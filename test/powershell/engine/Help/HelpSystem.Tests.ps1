@@ -15,7 +15,9 @@ $script:cmdletsToSkip = @(
     "Enable-PSRemoting",
     "Get-ExperimentalFeature",
     "Enable-ExperimentalFeature",
-    "Disable-ExperimentalFeature"
+    "Disable-ExperimentalFeature",
+    "Get-PSSubsystem",
+    "Switch-Process"
 )
 
 function UpdateHelpFromLocalContentPath {
@@ -60,7 +62,7 @@ Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') 
         $help = & {
             # run in nested scope to keep strict mode from affecting other tests
             Set-StrictMode -Version 3.0
-            Help
+            help
         }
         # the help function renders the help content as text so just verify that there is content
         $help | Should -Not -BeNullOrEmpty
@@ -91,7 +93,7 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
 
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases {
             param($cmdletName)
-            $help = get-help -name $cmdletName
+            $help = Get-Help -Name $cmdletName
             $help.Description | Out-String | Should -Match $cmdletName
             $help.Examples | Out-String | Should -Match $cmdletName
         }
@@ -101,7 +103,7 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
 Describe "Testing Get-Help Progress" -Tags @('Feature') {
     It "Last ProgressRecord should be Completed" {
         try {
-            $j = Start-Job { Get-Help DoesNotExist }
+            $j = Start-Job { Get-Help ([guid]::NewGuid().ToString("N")) }
             $j | Wait-Job
             $j.ChildJobs[0].Progress[-1].RecordType | Should -Be ([System.Management.Automation.ProgressRecordType]::Completed)
         }
@@ -135,7 +137,7 @@ Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature', 'R
 
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases -Skip:(!(Test-CanWriteToPsHome)) {
             param($cmdletName)
-            $help = get-help -name $cmdletName
+            $help = Get-Help -Name $cmdletName
             $help.Description | Out-String | Should -Match $cmdletName
             $help.Examples | Out-String | Should -Match $cmdletName
         }
@@ -574,7 +576,9 @@ Describe "Help failure cases" -Tags Feature {
     ) {
         param($command)
 
-        { & $command DoesNotExist -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
+        # under some conditions this does not throw, so include what we actually got
+        $helpTopic = [guid]::NewGuid().ToString("N")
+        { & $command $helpTopic -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand" -Because "A help topic was unexpectantly found for $helpTopic"
     }
 }
 

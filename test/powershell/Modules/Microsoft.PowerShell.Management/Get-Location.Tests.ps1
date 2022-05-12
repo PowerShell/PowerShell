@@ -7,7 +7,7 @@ Describe "Get-Location" -Tags "CI" {
     }
 
     AfterEach {
-	Pop-location
+	Pop-Location
     }
 
     It "Should list the output of the current working directory" {

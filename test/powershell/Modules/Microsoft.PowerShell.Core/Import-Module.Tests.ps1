@@ -81,7 +81,7 @@ Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
 
     AfterEach {
         $m = @('module1','module2','script1','script2')
-        remove-module $m -Force -ErrorAction SilentlyContinue
+        Remove-Module $m -Force -ErrorAction SilentlyContinue
         Remove-Item out.txt -Force -ErrorAction SilentlyContinue
     }
 
@@ -163,7 +163,7 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         try {
             $TestModulePath = Join-Path $TESTDRIVE "System.$extension"
             $job = Start-Job -ScriptBlock {
-                $module = Import-Module $using:TestModulePath -Passthru;
+                $module = Import-Module $using:TestModulePath -PassThru;
                 $module.ImplementingAssembly.Location;
                 Test-BinaryModuleCmdlet1
             }
@@ -359,5 +359,38 @@ Describe "Import-Module -Force behaviour" -Tag "CI" {
 
         Test-One | Should -Be 101
         { Test-Two } | Should -Throw -ErrorId 'CommandNotFoundException'
+    }
+}
+
+Describe "Module with FileList" -Tag "CI" {
+    BeforeAll {
+        $src = @"
+            using System;
+            namespace ModuleCmdlets
+            {
+                public class FileListLoad
+                {
+                }
+            }
+"@
+
+        $originalPSModulePath = $env:PSModulePath
+        New-Item -ItemType Directory -Path "$testdrive\Modules\FileListLoadTest\" -Force > $null
+
+        $asmPath = "$TESTDRIVE\Modules\FileListLoadTest\FileListLoadTest.dll"
+        Add-Type -TypeDefinition $src -OutputAssembly $asmPath
+
+        $env:PSModulePath += [System.IO.Path]::PathSeparator + "$testdrive\Modules"
+        New-ModuleManifest -Path "$testdrive\Modules\FileListLoadTest\FileListLoadTest.psd1" -FileList @("FileListLoadTest.dll")
+    }
+
+    AfterAll {
+        $env:PSModulePath = $originalPSModulePath
+    }
+
+    It "Assemblies in FileList are not loaded" {
+        Import-Module FileListLoadTest
+        $asms = [System.AppDomain]::CurrentDomain.GetAssemblies().Location
+        $asmPath | Should -Not -BeIn $asms
     }
 }

@@ -42,6 +42,7 @@ Describe 'Online help tests for PowerShell Cmdlets' -Tags "Feature" {
 
             # TopicTitle - is the cmdlet name in the csv file
             # HelpURI - is the expected help URI in the csv file
+            # If this is correct, then launching the cmdlet should open the expected help URI.
 
             It "Validate 'get-help $($cmdlet.TopicTitle) -Online'" -Skip:$skipTest {
                 $actualURI = Get-Help $cmdlet.TopicTitle -Online
@@ -52,53 +53,11 @@ Describe 'Online help tests for PowerShell Cmdlets' -Tags "Feature" {
     }
 }
 
-Describe 'Get-Help -Online opens the default web browser and navigates to the cmdlet help content' -Tags "Feature" {
-
-    $skipTest = [System.Management.Automation.Platform]::IsIoT -or
-                [System.Management.Automation.Platform]::IsNanoServer -or
-                $env:__INCONTAINER -eq 1
-
-    # this code is a workaround for issue: https://github.com/PowerShell/PowerShell/issues/3079
-    if((-not ($skipTest)) -and $IsWindows)
-    {
-        $skipTest = $true
-        $regKey = "HKCU:\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice"
-
-        try
-        {
-            $progId = (Get-ItemProperty $regKey).ProgId
-            if($progId)
-            {
-                if (-not (Test-Path 'HKCR:\'))
-                {
-                    New-PSDrive -PSProvider registry -Root HKEY_CLASSES_ROOT -Name HKCR | Should -Not -BeNullOrEmpty
-                }
-                $browserExe = ((Get-ItemProperty "HKCR:\$progId\shell\open\command")."(default)" -replace '"', '') -split " "
-                if ($browserExe.count -ge 1)
-                {
-                    if($browserExe[0] -match '.exe')
-                    {
-                        $skipTest = $false
-                    }
-                }
-            }
-        }
-        catch
-        {
-            # We are not able to access Registry, skipping test.
-        }
-    }
-
-    It "Get-Help get-process -online" -skip:$skipTest {
-        { Get-Help get-process -online } | Should -Not -Throw
-    }
-}
-
 Describe 'Get-Help -Online is not supported on Nano Server and IoT' -Tags "CI" {
 
     $skipTest = -not ([System.Management.Automation.Platform]::IsIoT -or [System.Management.Automation.Platform]::IsNanoServer)
 
-    It "Get-help -online <cmdletName> throws InvalidOperation." -skip:$skipTest {
+    It "Get-help -online <cmdletName> throws InvalidOperation." -Skip:$skipTest {
         { Get-Help Get-Help -Online } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetHelpCommand"
     }
 }

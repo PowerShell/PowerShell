@@ -38,7 +38,10 @@ namespace Microsoft.WSMan.Management
         [Alias("cred", "c")]
         public virtual PSCredential Credential
         {
-            get { return credential; }
+            get
+            {
+                return credential;
+            }
 
             set
             {
@@ -69,7 +72,10 @@ namespace Microsoft.WSMan.Management
         [Alias("auth", "am")]
         public virtual AuthenticationMechanism Authentication
         {
-            get { return authentication; }
+            get
+            {
+                return authentication;
+            }
 
             set
             {
@@ -88,7 +94,10 @@ namespace Microsoft.WSMan.Management
         [ValidateNotNullOrEmpty]
         public virtual string CertificateThumbprint
         {
-            get { return thumbPrint; }
+            get
+            {
+                return thumbPrint;
+            }
 
             set
             {
@@ -144,7 +153,10 @@ namespace Microsoft.WSMan.Management
         [Alias("cn")]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {
@@ -201,15 +213,15 @@ namespace Microsoft.WSMan.Management
         [Parameter]
         [ValidateNotNullOrEmpty]
         [Parameter(ParameterSetName = "ComputerName")]
-        [ValidateRange(1, Int32.MaxValue)]
-        public Int32 Port
+        [ValidateRange(1, int.MaxValue)]
+        public int Port
         {
             get { return port; }
 
             set { port = value; }
         }
 
-        private Int32 port = 0;
+        private int port = 0;
 
         /// <summary>
         /// The following is the definition of the input parameter "SessionOption".
@@ -269,11 +281,7 @@ namespace Microsoft.WSMan.Management
                 }
             }
 
-            string crtComputerName = computername;
-            if (crtComputerName == null)
-            {
-                crtComputerName = "localhost";
-            }
+            string crtComputerName = computername ?? "localhost";
 
             if (this.SessionState.Path.CurrentProviderLocation(WSManStringLiterals.rootpath).Path.StartsWith(this.SessionState.Drive.Current.Name + ":" + WSManStringLiterals.DefaultPathSeparator + crtComputerName, StringComparison.OrdinalIgnoreCase))
             {
@@ -292,7 +300,6 @@ namespace Microsoft.WSMan.Management
     /// is the local computer. Type the fully qualified domain name, NETBIOS name or
     /// IP address to indicate the remote host(s)
     /// </summary>
-
     [Cmdlet(VerbsCommunications.Disconnect, "WSMan", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096839")]
     public class DisconnectWSManCommand : PSCmdlet, IDisposable
     {
@@ -305,7 +312,10 @@ namespace Microsoft.WSMan.Management
         [Parameter(Position = 0)]
         public string ComputerName
         {
-            get { return computername; }
+            get
+            {
+                return computername;
+            }
 
             set
             {

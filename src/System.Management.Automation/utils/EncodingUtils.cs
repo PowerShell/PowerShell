@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Text;
 
 using System.Management.Automation.Internal;
@@ -25,11 +23,12 @@ namespace System.Management.Automation
         internal const string Utf32 = "utf32";
         internal const string Default = "default";
         internal const string OEM = "oem";
+
         internal static readonly string[] TabCompletionResults = {
                 Ascii, BigEndianUnicode, BigEndianUtf32, OEM, Unicode, Utf7, Utf8, Utf8Bom, Utf8NoBom, Utf32
             };
 
-        internal static Dictionary<string, Encoding> encodingMap = new Dictionary<string, Encoding>(StringComparer.OrdinalIgnoreCase)
+        internal static readonly Dictionary<string, Encoding> encodingMap = new Dictionary<string, Encoding>(StringComparer.OrdinalIgnoreCase)
         {
             { Ascii, System.Text.Encoding.ASCII },
             { BigEndianUnicode, System.Text.Encoding.BigEndianUnicode },
@@ -37,7 +36,9 @@ namespace System.Management.Automation
             { Default, ClrFacade.GetDefaultEncoding() },
             { OEM, ClrFacade.GetOEMEncoding() },
             { Unicode, System.Text.Encoding.Unicode },
+#pragma warning disable SYSLIB0001
             { Utf7, System.Text.Encoding.UTF7 },
+#pragma warning restore SYSLIB0001
             { Utf8, ClrFacade.GetDefaultEncoding() },
             { Utf8Bom, System.Text.Encoding.UTF8 },
             { Utf8NoBom, ClrFacade.GetDefaultEncoding() },
@@ -62,6 +63,12 @@ namespace System.Management.Automation
             Encoding foundEncoding;
             if (encodingMap.TryGetValue(encoding, out foundEncoding))
             {
+                // Write a warning if using utf7 as it is obsolete in .NET5
+                if (string.Equals(encoding, Utf7, StringComparison.OrdinalIgnoreCase))
+                {
+                    cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
+                }
+
                 return foundEncoding;
             }
 
@@ -79,6 +86,21 @@ namespace System.Management.Automation
             cmdlet.ThrowTerminatingError(errorRecord);
 
             return null;
+        }
+
+        /// <summary>
+        /// Warn if the encoding has been designated as obsolete.
+        /// </summary>
+        /// <param name="cmdlet">A cmdlet instance which is used to emit the warning.</param>
+        /// <param name="encoding">The encoding to check for obsolescence.</param>
+        internal static void WarnIfObsolete(Cmdlet cmdlet, Encoding encoding)
+        {
+            // Check for UTF-7 by checking for code page 65000
+            // See: https://docs.microsoft.com/en-us/dotnet/core/compatibility/corefx#utf-7-code-paths-are-obsolete
+            if (encoding != null && encoding.CodePage == 65000)
+            {
+                cmdlet.WriteWarning(PathUtilsStrings.Utf7EncodingObsolete);
+            }
         }
     }
 

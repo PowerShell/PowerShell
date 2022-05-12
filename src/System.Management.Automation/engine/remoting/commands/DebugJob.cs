@@ -100,7 +100,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets a flag that tells PowerShell to automatically perform a BreakAll when the debugger is attached to the remote target.
         /// </summary>
-        [Experimental("Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace", ExperimentAction.Show)]
         [Parameter]
         public SwitchParameter BreakAll { get; set; }
 
@@ -222,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
         private bool CheckForDebuggableJob()
         {
             // Check passed in job object.
-            bool debuggableJobFound = GetJobDebuggable(_job); ;
+            bool debuggableJobFound = GetJobDebuggable(_job);
 
             if (!debuggableJobFound)
             {
@@ -237,7 +236,7 @@ namespace Microsoft.PowerShell.Commands
             return debuggableJobFound;
         }
 
-        private bool GetJobDebuggable(Job job)
+        private static bool GetJobDebuggable(Job job)
         {
             if (job is IJobDebugger)
             {

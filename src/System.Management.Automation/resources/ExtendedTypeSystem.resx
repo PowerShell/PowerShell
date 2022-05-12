@@ -156,6 +156,9 @@
   <data name="MethodArgumentCountException" xml:space="preserve">
     <value>Cannot find an overload for "{0}" and the argument count: "{1}".</value>
   </data>
+  <data name="MethodGenericArgumentCountException" xml:space="preserve">
+    <value>Could not find a suitable generic method overload for "{0}" with "{1}" type parameters, and the argument count: "{2}".</value>
+  </data>
   <data name="MethodAmbiguousException" xml:space="preserve">
     <value>Multiple ambiguous overloads found for "{0}" and the argument count: "{1}".</value>
   </data>

@@ -3,11 +3,11 @@
 Repository Maintainers are trusted stewards of the PowerShell repository responsible for maintaining consistency and quality of PowerShell code.
 One of their primary responsibilities is merging pull requests after all requirements have been fulfilled.
 
-They have [write access](https://help.github.com/articles/repository-permission-levels-for-an-organization/) to the PowerShell repositories which gives them the power to:
+They have [write access](https://docs.github.com/en/free-pro-team@latest/github/setting-up-and-managing-organizations-and-teams/repository-permission-levels-for-an-organization) to the PowerShell repositories which gives them the power to:
 
 1. `git push` to the official PowerShell repository
-1. Merge [pull requests](https://www.thinkful.com/learn/github-pull-request-tutorial/)
-1. Assign labels, milestones, and people to [issues](https://guides.github.com/features/issues/) and [pull requests](https://www.thinkful.com/learn/github-pull-request-tutorial/)
+1. Merge [pull requests](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)
+1. Assign labels, milestones, and people to [issues](https://guides.github.com/features/issues/) and [pull requests](https://docs.github.com/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)
 
 ## Table of Contents
 
@@ -26,6 +26,7 @@ They have [write access](https://help.github.com/articles/repository-permission-
 - Andrew Menagarishvili ([anmenaga](https://github.com/anmenaga))
 - Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
 - Ilya Sazonov ([iSazonov](https://github.com/iSazonov))
+- Robert Holt ([rjmholt](https://github.com/rjmholt))
 - Travis Plunk ([TravisEz13](https://github.com/TravisEz13))
 
 ## Former Repository Maintainers

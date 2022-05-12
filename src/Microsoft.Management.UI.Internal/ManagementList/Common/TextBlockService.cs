@@ -25,7 +25,7 @@ namespace Microsoft.Management.UI.Internal
                 return;
             }
 
-            if ((bool)e.OldValue == true)
+            if ((bool)e.OldValue)
             {
                 tb.SizeChanged -= OnTextBlockSizeChanged;
             }

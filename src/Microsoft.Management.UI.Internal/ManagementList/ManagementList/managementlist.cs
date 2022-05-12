@@ -128,16 +128,16 @@ namespace Microsoft.Management.UI.Internal
             {
                 e.OldValue.RemoveFilterExpressionProvider(this.SearchBox);
                 e.OldValue.RemoveFilterExpressionProvider(this.FilterRulePanel);
-                e.OldValue.FilterExpressionChanged -= new EventHandler(this.Evaluator_FilterExpressionChanged);
-                e.NewValue.PropertyChanged -= new PropertyChangedEventHandler(this.Evaluator_PropertyChanged);
+                e.OldValue.FilterExpressionChanged -= this.Evaluator_FilterExpressionChanged;
+                e.NewValue.PropertyChanged -= this.Evaluator_PropertyChanged;
             }
 
             // Register the new evaluator \\
             e.NewValue.FilterTarget = this.List;
             e.NewValue.AddFilterExpressionProvider(this.SearchBox);
             e.NewValue.AddFilterExpressionProvider(this.FilterRulePanel);
-            e.NewValue.FilterExpressionChanged += new EventHandler(this.Evaluator_FilterExpressionChanged);
-            e.NewValue.PropertyChanged += new PropertyChangedEventHandler(this.Evaluator_PropertyChanged);
+            e.NewValue.FilterExpressionChanged += this.Evaluator_FilterExpressionChanged;
+            e.NewValue.PropertyChanged += this.Evaluator_PropertyChanged;
         }
 
         private void Evaluator_PropertyChanged(object sender, PropertyChangedEventArgs e)

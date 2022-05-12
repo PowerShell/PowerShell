@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #pragma warning disable 1634, 1691
 
 using System.Collections;
@@ -13,7 +14,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class DefaultCommandRuntime : ICommandRuntime2
     {
-        private List<object> _output;
+        private readonly List<object> _output;
         /// <summary>
         /// Constructs an instance of the default ICommandRuntime object
         /// that will write objects into the list that was passed.
@@ -21,7 +22,7 @@ namespace System.Management.Automation
         public DefaultCommandRuntime(List<object> outputList)
         {
             if (outputList == null)
-                throw new System.ArgumentNullException("outputList");
+                throw new System.ArgumentNullException(nameof(outputList));
 
             _output = outputList;
         }
@@ -29,14 +30,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Return the instance of PSHost - null by default.
         /// </summary>
-        public PSHost Host { set; get; }
+        public PSHost Host { get; set; }
 
         #region Write
         /// <summary>
         /// Implementation of WriteDebug - just discards the input.
         /// </summary>
         /// <param name="text">Text to write.</param>
-        public void WriteDebug(string text) {; }
+        public void WriteDebug(string text) { }
 
         /// <summary>
         /// Default implementation of WriteError - if the error record contains
@@ -97,38 +98,38 @@ namespace System.Management.Automation
         /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="progressRecord">Progress record to write.</param>
-        public void WriteProgress(ProgressRecord progressRecord) {; }
+        public void WriteProgress(ProgressRecord progressRecord) { }
 
         /// <summary>
         /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="sourceId">Source ID to write for.</param>
         /// <param name="progressRecord">Record to write.</param>
-        public void WriteProgress(Int64 sourceId, ProgressRecord progressRecord) {; }
+        public void WriteProgress(Int64 sourceId, ProgressRecord progressRecord) { }
 
         /// <summary>
         /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="text">Text to write.</param>
-        public void WriteVerbose(string text) {; }
+        public void WriteVerbose(string text) { }
 
         /// <summary>
         /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="text">Text to write.</param>
-        public void WriteWarning(string text) {; }
+        public void WriteWarning(string text) { }
 
         /// <summary>
         /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="text">Text to write.</param>
-        public void WriteCommandDetail(string text) {; }
+        public void WriteCommandDetail(string text) { }
 
         /// <summary>
         /// Default implementation - just discards it's arguments.
         /// </summary>
         /// <param name="informationRecord">Record to write.</param>
-        public void WriteInformation(InformationRecord informationRecord) {; }
+        public void WriteInformation(InformationRecord informationRecord) { }
 
         #endregion Write
 
@@ -229,6 +230,7 @@ namespace System.Management.Automation
         /// if it exists, otherwise throw an invalid operation exception.
         /// </summary>
         /// <param name="errorRecord">The error record to throw.</param>
+        [System.Diagnostics.CodeAnalysis.DoesNotReturn]
         public void ThrowTerminatingError(ErrorRecord errorRecord)
         {
             if (errorRecord.Exception != null)

@@ -37,7 +37,7 @@ namespace System.Management.Automation
                (engineIntrinsics.Host == null) ||
                (engineIntrinsics.Host.UI == null))
             {
-                throw PSTraceSource.NewArgumentNullException("engineIntrinsics");
+                throw PSTraceSource.NewArgumentNullException(nameof(engineIntrinsics));
             }
 
             if (inputData == null)

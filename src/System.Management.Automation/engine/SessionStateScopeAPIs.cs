@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-
 using Dbg = System.Management.Automation;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings

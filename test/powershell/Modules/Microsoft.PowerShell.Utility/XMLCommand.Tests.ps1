@@ -32,7 +32,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 	}
 
     AfterEach {
-		remove-item $testfile -Force -ErrorAction SilentlyContinue
+		Remove-Item $testfile -Force -ErrorAction SilentlyContinue
     }
 
  	It "Import with CliXml directive should work" {

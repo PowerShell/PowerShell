@@ -155,7 +155,13 @@ public class SMAAttributeTest$guid : PSCmdlet
 
         ## The assembly files cannot be removed once they are loaded, unless the current PowerShell session exits.
         ## If we use $TestDrive here, then Pester will try to remove them afterward and result in errors.
-        $TempPath = [System.IO.Path]::GetTempFileName()
+        if ($IsWindows) {
+            $TempPath = [System.IO.Path]::GetTempFileName()
+        }
+        else {
+            $TempPath = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
+        }
+
         if (Test-Path $TempPath) { Remove-Item -Path $TempPath -Force -Recurse }
         New-Item -Path $TempPath -ItemType Directory -Force > $null
 
@@ -245,5 +251,13 @@ public class AttributeTest$guid : PSCmdlet
     ) {
         param ($assemblyName, $errorid)
         { Add-Type -AssemblyName $assemblyName } | Should -Throw -ErrorId $errorid
+    }
+
+    It "Throw terminating error when '-OutputType' is '<outputType>'" -TestCases @(
+        @{ outputType = 'ConsoleApplication' }
+        @{ outputType = 'WindowsApplication' }
+    ) {
+        param($outputType)
+        { Add-Type -TypeDefinition "Hello" -OutputType $outputType } | Should -Throw -ErrorId 'AssemblyTypeNotSupported,Microsoft.PowerShell.Commands.AddTypeCommand'
     }
 }

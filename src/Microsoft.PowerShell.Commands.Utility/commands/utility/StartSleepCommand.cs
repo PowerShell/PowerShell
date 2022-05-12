@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public void Dispose()
         {
-            if (_disposed == false)
+            if (!_disposed)
             {
                 if (_waitHandle != null)
                 {
@@ -55,6 +55,15 @@ namespace Microsoft.PowerShell.Commands
         [Alias("ms")]
         public int Milliseconds { get; set; }
 
+        /// <summary>
+        /// Allows sleep time to be specified as a TimeSpan.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "FromTimeSpan", ValueFromPipeline = true,
+                   ValueFromPipelineByPropertyName = true)]
+        [ValidateRange(ValidateRangeKind.NonNegative)]
+        [Alias("ts")]
+        public TimeSpan Duration { get; set; }
+
         #endregion
 
         #region methods
@@ -64,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
 
         // object used for synchronizes pipeline thread and stop thread
         // access to waitHandle
-        private object _syncObject = new object();
+        private readonly object _syncObject = new();
 
         // this is set to true by stopProcessing
         private bool _stopping = false;
@@ -76,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
         {
             lock (_syncObject)
             {
-                if (_stopping == false)
+                if (!_stopping)
                 {
                     _waitHandle = new ManualResetEvent(false);
                 }
@@ -103,6 +112,26 @@ namespace Microsoft.PowerShell.Commands
 
                 case "Milliseconds":
                     sleepTime = Milliseconds;
+                    break;
+                
+                case "FromTimeSpan":
+                    if (Duration.TotalMilliseconds > int.MaxValue)
+                    {
+                        PSArgumentException argumentException = PSTraceSource.NewArgumentException(
+                            nameof(Duration),
+                            StartSleepStrings.MaximumDurationExceeded,
+                            TimeSpan.FromMilliseconds(int.MaxValue),
+                            Duration);
+
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                argumentException,
+                                "MaximumDurationExceeded",
+                                ErrorCategory.InvalidArgument,
+                                targetObject: null));
+                    }
+
+                    sleepTime = (int)Math.Floor(Duration.TotalMilliseconds);
                     break;
 
                 default:

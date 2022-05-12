@@ -69,7 +69,7 @@ Describe "Write-Error Tests" -Tags "CI" {
     }
 
     It "Should be works with all parameters" {
-        $e = write-error -Activity fooAct -Reason fooReason -TargetName fooTargetName -TargetType fooTargetType -Message fooMessage 2>&1
+        $e = Write-Error -Activity fooAct -Reason fooReason -TargetName fooTargetName -TargetType fooTargetType -Message fooMessage 2>&1
         $e.CategoryInfo.Activity | Should -Be 'fooAct'
         $e.CategoryInfo.Reason | Should -Be 'fooReason'
         $e.CategoryInfo.TargetName | Should -Be 'fooTargetName'
@@ -91,7 +91,7 @@ Describe "Write-Error Tests" -Tags "CI" {
 
     It "Should output the error message to the `$error automatic variable" {
         $theError = "Error: Too many input values."
-        write-error -message $theError -category InvalidArgument -ErrorAction SilentlyContinue
+        Write-Error -Message $theError -Category InvalidArgument -ErrorAction SilentlyContinue
 
         [string]$error[0] | Should -Be $theError
     }
@@ -104,5 +104,32 @@ Describe "Write-Error Tests" -Tags "CI" {
         $result = & "$PSHOME/pwsh" -noprofile -command "`$ErrorView = 'NormalView'; Write-Error -Message '$longtext'" 2>&1
         $result.Count | Should -BeExactly 3
         $result[0] | Should -Match $longtext
+    }
+
+    It "Should be able to pass ErrorRecord to parameter position 0." {
+        try {
+            [int]::parse('foo')
+        } catch { }
+
+        (Write-Error $Error[0] 2>&1).Exception.GetType().FullName |
+            Should -Be System.Management.Automation.MethodInvocationException
+    }
+
+    It "Should be able to pass Exception to parameter position 0." {
+        try {
+            [int]::parse('foo')
+        } catch { }
+
+        (Write-Error $Error[0].Exception.InnerException 2>&1).Exception.GetType().FullName |
+            Should -Be System.FormatException
+    }
+
+    It "Should be able to pass string to parameter position 0." {
+        try {
+            [int]::parse('foo')
+        } catch { }
+
+        (Write-Error "$($Error[0])" 2>&1).Exception.GetType().FullName |
+            Should -Be Microsoft.PowerShell.Commands.WriteErrorException
     }
 }

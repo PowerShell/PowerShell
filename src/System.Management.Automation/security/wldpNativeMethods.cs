@@ -7,7 +7,6 @@
 #if !UNIX
 
 using System.Management.Automation.Internal;
-using Microsoft.Win32;
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 
@@ -48,21 +47,28 @@ namespace System.Management.Automation.Security
         /// <returns>An EnforcementMode that describes the system policy.</returns>
         public static SystemEnforcementMode GetSystemLockdownPolicy()
         {
-            if (s_allowDebugOverridePolicy || (s_systemLockdownPolicy == null))
+            if (s_systemLockdownPolicy == null)
             {
                 lock (s_systemLockdownPolicyLock)
                 {
-                    if (s_allowDebugOverridePolicy || (s_systemLockdownPolicy == null))
+                    if (s_systemLockdownPolicy == null)
                     {
-                        s_systemLockdownPolicy = GetLockdownPolicy(null, null);
+                        s_systemLockdownPolicy = GetLockdownPolicy(path: null, handle: null);
                     }
+                }
+            }
+            else if (s_allowDebugOverridePolicy)
+            {
+                lock (s_systemLockdownPolicyLock)
+                {
+                    s_systemLockdownPolicy = GetDebugLockdownPolicy(path: null);
                 }
             }
 
             return s_systemLockdownPolicy.Value;
         }
 
-        private static object s_systemLockdownPolicyLock = new object();
+        private static readonly object s_systemLockdownPolicyLock = new object();
         private static SystemEnforcementMode? s_systemLockdownPolicy = null;
         private static bool s_allowDebugOverridePolicy = false;
 
@@ -72,28 +78,31 @@ namespace System.Management.Automation.Security
         /// <returns>An EnforcementMode that describes policy.</returns>
         public static SystemEnforcementMode GetLockdownPolicy(string path, SafeHandle handle)
         {
-            // Check the WLDP API
-            SystemEnforcementMode lockdownPolicy = GetWldpPolicy(path, handle);
-            if (lockdownPolicy == SystemEnforcementMode.Enforce)
+            // Check the WLDP File policy via API
+            var wldpFilePolicy = GetWldpPolicy(path, handle);
+            if (wldpFilePolicy == SystemEnforcementMode.Enforce)
             {
-                return lockdownPolicy;
+                return wldpFilePolicy;
+            }
+
+            // Check the AppLocker File policy via API
+            // This needs to be checked before WLDP audit policy
+            // So, that we don't end up in Audit mode,
+            // when we should be enforce mode.
+            var appLockerFilePolicy = GetAppLockerPolicy(path, handle);
+            if (appLockerFilePolicy == SystemEnforcementMode.Enforce)
+            {
+                return appLockerFilePolicy;
             }
 
             // At this point, LockdownPolicy = Audit or Allowed.
             // If there was a WLDP policy, but WLDP didn't block it,
             // then it was explicitly allowed. Therefore, return the result for the file.
             SystemEnforcementMode systemWldpPolicy = s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
-            if ((systemWldpPolicy == SystemEnforcementMode.Enforce) ||
-                (systemWldpPolicy == SystemEnforcementMode.Audit))
+            if ((systemWldpPolicy == SystemEnforcementMode.Audit) ||
+                (systemWldpPolicy == SystemEnforcementMode.Enforce))
             {
-                return lockdownPolicy;
-            }
-
-            // Check the AppLocker API
-            lockdownPolicy = GetAppLockerPolicy(path, handle);
-            if (lockdownPolicy == SystemEnforcementMode.Enforce)
-            {
-                return lockdownPolicy;
+                return wldpFilePolicy;
             }
 
             // If there was a system-wide AppLocker policy, but AppLocker didn't block it,
@@ -101,7 +110,7 @@ namespace System.Management.Automation.Security
             if (s_cachedSaferSystemPolicy.GetValueOrDefault(SaferPolicy.Allowed) ==
                 SaferPolicy.Disallowed)
             {
-                return lockdownPolicy;
+                return appLockerFilePolicy;
             }
 
             // If it's not set to 'Enforce' by the platform, allow debug overrides
@@ -176,6 +185,7 @@ namespace System.Management.Automation.Security
 
         private const string AppLockerTestFileName = "__PSScriptPolicyTest_";
         private const string AppLockerTestFileContents = "# PowerShell test file to determine AppLocker lockdown mode ";
+
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
         {
             SaferPolicy result = SaferPolicy.Disallowed;
@@ -223,7 +233,7 @@ namespace System.Management.Automation.Security
 
                                 // AppLocker fails when you try to check a policy on a file
                                 // with no content. So create a scratch file and test on that.
-                                string dtAppLockerTestFileContents = AppLockerTestFileContents + DateTime.Now;
+                                string dtAppLockerTestFileContents = AppLockerTestFileContents + Environment.TickCount64;
                                 IO.File.WriteAllText(testPathScript, dtAppLockerTestFileContents);
                                 IO.File.WriteAllText(testPathModule, dtAppLockerTestFileContents);
                             }
@@ -351,39 +361,12 @@ namespace System.Management.Automation.Security
             {
                 // Assume everything under SYSTEM32 is trusted, with a purposefully sloppy
                 // check so that we can actually put it in the filename during testing.
-                if (path.IndexOf("System32", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (path.Contains("System32", StringComparison.OrdinalIgnoreCase))
                 {
                     return SystemEnforcementMode.None;
                 }
 
-                using (RegistryKey hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default))
-                {
-                    using (RegistryKey wldpPolicy = hklm.OpenSubKey("SYSTEM\\CurrentControlSet\\Control\\CI\\TRSData"))
-                    {
-                        if (wldpPolicy != null)
-                        {
-                            object exclusionPathsKey = wldpPolicy.GetValue("TestPath");
-
-                            wldpPolicy.Close();
-                            hklm.Close();
-
-                            if (exclusionPathsKey != null)
-                            {
-                                string[] exclusionPaths = (string[])exclusionPathsKey;
-                                foreach (string exclusionPath in exclusionPaths)
-                                {
-                                    if (path.IndexOf(exclusionPath, StringComparison.OrdinalIgnoreCase) >= 0)
-                                    {
-                                        return SystemEnforcementMode.None;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // No explicit debug allowance for the file, so return the system policy if there
-                // is one.
+                // No explicit debug allowance for the file, so return the system policy if there is one.
                 return s_systemLockdownPolicy.GetValueOrDefault(SystemEnforcementMode.None);
             }
 
@@ -408,6 +391,14 @@ namespace System.Management.Automation.Security
         /// <returns>True if the COM object is allowed, False otherwise.</returns>
         internal static bool IsClassInApprovedList(Guid clsid)
         {
+            // This method is called only if there is an AppLocker and/or WLDP system wide lock down enforcement policy.
+            if (s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None) != SystemEnforcementMode.Enforce)
+            {
+                // No WLDP policy implies only AppLocker policy enforcement. Disallow all COM object instantiation.
+                return false;
+            }
+
+            // WLDP policy must be in system wide enforcement, look up COM Id in WLDP approval list.
             try
             {
                 WLDP_HOST_INFORMATION hostInformation = new WLDP_HOST_INFORMATION();
@@ -508,7 +499,7 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Native constants for dealing with the lockdown policy.
         /// </summary>
-        internal class WldpNativeConstants
+        internal static class WldpNativeConstants
         {
             internal const uint WLDP_HOST_INFORMATION_REVISION = 0x00000001;
 
@@ -558,12 +549,13 @@ namespace System.Management.Automation.Security
         /// <summary>
         /// Native methods for dealing with the lockdown policy.
         /// </summary>
-        internal class WldpNativeMethods
+        internal static class WldpNativeMethods
         {
             /// Return Type: HRESULT->LONG->int
             /// pHostInformation: PWLDP_HOST_INFORMATION->_WLDP_HOST_INFORMATION*
             /// pdwLockdownState: PDWORD->DWORD*
             /// dwFlags: DWORD->unsigned int
+            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpGetLockdownPolicy")]
             internal static extern int WldpGetLockdownPolicy(ref WLDP_HOST_INFORMATION pHostInformation, ref uint pdwLockdownState, uint dwFlags);
 
@@ -572,6 +564,7 @@ namespace System.Management.Automation.Security
             /// pHostInformation: PWLDP_HOST_INFORMATION->_WLDP_HOST_INFORMATION*
             /// ptIsApproved: PBOOL->BOOL*
             /// dwFlags: DWORD->unsigned int
+            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpIsClassInApprovedList")]
             internal static extern int WldpIsClassInApprovedList(ref Guid rclsid, ref WLDP_HOST_INFORMATION pHostInformation, ref int ptIsApproved, uint dwFlags);
 

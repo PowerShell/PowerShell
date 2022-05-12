@@ -74,7 +74,7 @@ namespace System.Management.Automation
             _xmlNode = xmlNode;
         }
 
-        private XmlNode _xmlNode;
+        private readonly XmlNode _xmlNode;
 
         /// <summary>
         /// Underline xmlNode for this MamlNode object.
@@ -123,7 +123,7 @@ namespace System.Management.Automation
         ///         </atomicXml>
         ///        In this case, an PSObject that wraps string "atomic xml text" will be returned with following properties
         ///             attribute => name
-        ///     3. Composite xml, which is an xmlNode with structured child nodes, but not a special case for Maml formating.
+        ///     3. Composite xml, which is an xmlNode with structured child nodes, but not a special case for Maml formatting.
         ///         <compositeXml attribute="attribute">
         ///             <singleChildNode>
         ///                 single child node text
@@ -214,9 +214,9 @@ namespace System.Management.Automation
 
                 if (xmlNode.Attributes["type"] != null)
                 {
-                    if (string.Compare(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Equals(xmlNode.Attributes["type"].Value, "field", StringComparison.OrdinalIgnoreCase))
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#field");
-                    else if (string.Compare(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase) == 0)
+                    else if (string.Equals(xmlNode.Attributes["type"].Value, "method", StringComparison.OrdinalIgnoreCase))
                         mshObject.TypeNames.Add("MamlPSClassHelpInfo#method");
                 }
 
@@ -646,7 +646,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="nodes"></param>
         /// <returns></returns>
-        private int GetParaMamlNodeCount(XmlNodeList nodes)
+        private static int GetParaMamlNodeCount(XmlNodeList nodes)
         {
             int i = 0;
 

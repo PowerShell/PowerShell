@@ -34,9 +34,10 @@ namespace System.Management.Automation
         /// <summary>
         /// The instance of session state the provider belongs to.
         /// </summary>
-        private SessionState _sessionState;
+        private readonly SessionState _sessionState;
 
         private string _fullName;
+        private string _cachedModuleName;
 
         /// <summary>
         /// Gets the name of the provider.
@@ -44,13 +45,13 @@ namespace System.Management.Automation
         public string Name { get; }
 
         /// <summary>
-        /// Gets the full name of the provider including the pssnapin name if available.
+        /// Gets the full name of the provider including the module name if available.
         /// </summary>
         internal string FullName
         {
             get
             {
-                string GetFullName(string name, string psSnapInName, string moduleName)
+                static string GetFullName(string name, string psSnapInName, string moduleName)
                 {
                     string result = name;
                     if (!string.IsNullOrEmpty(psSnapInName))
@@ -77,7 +78,13 @@ namespace System.Management.Automation
                     return result;
                 }
 
-                return _fullName ?? (_fullName = GetFullName(Name, PSSnapInName, ModuleName));
+                if (_fullName != null && ModuleName.Equals(_cachedModuleName, StringComparison.Ordinal))
+                {
+                    return _fullName;
+                }
+
+                _cachedModuleName = ModuleName;
+                return _fullName = GetFullName(Name, PSSnapInName, ModuleName);
             }
         }
 
@@ -214,7 +221,7 @@ namespace System.Management.Automation
         /// A hidden drive for the provider that is used for setting
         /// the location to a provider-qualified path.
         /// </summary>
-        private PSDriveInfo _hiddenDrive;
+        private readonly PSDriveInfo _hiddenDrive;
 
         /// <summary>
         /// Gets the hidden drive for the provider that is used
@@ -290,7 +297,7 @@ namespace System.Management.Automation
         {
             if (providerInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerInfo));
             }
 
             Name = providerInfo.Name;
@@ -387,17 +394,17 @@ namespace System.Management.Automation
             // Verify parameters
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             if (implementingType == null)
             {
-                throw PSTraceSource.NewArgumentNullException("implementingType");
+                throw PSTraceSource.NewArgumentNullException(nameof(implementingType));
             }
 
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             _sessionState = sessionState;
@@ -666,6 +673,7 @@ namespace System.Management.Automation
         private Dictionary<string, List<PSTypeName>> _providerOutputType;
 
         private PSNoteProperty _noteProperty;
+
         internal PSNoteProperty GetNotePropertyForProviderCmdlets(string name)
         {
             if (_noteProperty == null)
@@ -678,4 +686,3 @@ namespace System.Management.Automation
         }
     }
 }
-

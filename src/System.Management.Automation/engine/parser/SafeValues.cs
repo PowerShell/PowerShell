@@ -64,6 +64,7 @@ namespace System.Management.Automation.Language
 
         // This is a check of the number of visits
         private uint _visitCount = 0;
+
         private const uint MaxVisitCount = 5000;
         private const int MaxHashtableKeyCount = 500;
 
@@ -355,13 +356,14 @@ namespace System.Management.Automation.Language
      * except in the case of handling the unary operator
      * ExecutionContext is provided to ensure we can resolve variables
      */
-    internal class GetSafeValueVisitor : ICustomAstVisitor2
+    internal sealed class GetSafeValueVisitor : ICustomAstVisitor2
     {
         internal enum SafeValueContext
         {
             Default,
             GetPowerShell,
-            ModuleAnalysis
+            ModuleAnalysis,
+            SkipHashtableSizeCheck,
         }
 
         // future proofing
@@ -370,7 +372,8 @@ namespace System.Management.Automation.Language
         public static object GetSafeValue(Ast ast, ExecutionContext context, SafeValueContext safeValueContext)
         {
             t_context = context;
-            if (IsSafeValueVisitor.IsAstSafe(ast, safeValueContext))
+
+            if (safeValueContext == SafeValueContext.SkipHashtableSizeCheck || IsSafeValueVisitor.IsAstSafe(ast, safeValueContext))
             {
                 return ast.Accept(new GetSafeValueVisitor());
             }
@@ -479,7 +482,7 @@ namespace System.Management.Automation.Language
         // this can throw, but there really isn't useful information we can add, as the
         // offending expression will be presented in the case of any failure
         //
-        private object GetSingleValueFromTarget(object target, object index)
+        private static object GetSingleValueFromTarget(object target, object index)
         {
             var targetString = target as string;
             if (targetString != null)
@@ -516,7 +519,7 @@ namespace System.Management.Automation.Language
             throw new Exception();
         }
 
-        private object GetIndexedValueFromTarget(object target, object index)
+        private static object GetIndexedValueFromTarget(object target, object index)
         {
             var indexArray = index as object[];
             return indexArray != null ? ((object[])indexArray).Select(i => GetSingleValueFromTarget(target, i)).ToArray() : GetSingleValueFromTarget(target, index);
@@ -529,7 +532,7 @@ namespace System.Management.Automation.Language
             var target = indexExpressionAst.Target.Accept(this);
             if (index == null || target == null)
             {
-                throw new ArgumentNullException("indexExpressionAst");
+                throw new ArgumentNullException(nameof(indexExpressionAst));
             }
 
             return GetIndexedValueFromTarget(target, index);

@@ -341,6 +341,6 @@ function Test-FullyTerminatingError
     It "Recognises invalid assignment" {
         {
             Invoke-Expression -Command '$x = $x, $y += $z = testexe -returncode 0 && testexe -returncode 1'
-        } | Should -Throw -ErrorID 'InvalidLeftHandSide,Microsoft.PowerShell.Commands.InvokeExpressionCommand'
+        } | Should -Throw -ErrorId 'InvalidLeftHandSide,Microsoft.PowerShell.Commands.InvokeExpressionCommand'
     }
 }

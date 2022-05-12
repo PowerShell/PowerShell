@@ -15,12 +15,13 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
     It 'Exceptions not thrown do not get formatted as ErrorRecord' {
         $exp = [System.Exception]::new('test') | Out-String
-        $exp | Should -BeLike "*Message        : test*"
+        $exp | Should -BeLike "*Message        : *test*"
     }
 
     Context 'ConciseView tests' {
         BeforeEach {
             $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'test.ps1'
+            $testModulePath = Join-Path -Path $TestDrive -ChildPath 'test.psm1'
         }
 
         AfterEach {
@@ -49,7 +50,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
         }
 
         It "Remote errors show up correctly" {
-            Start-Job -ScriptBlock { get-item (new-guid) } | Wait-Job | Receive-Job -ErrorVariable e -ErrorAction SilentlyContinue
+            Start-Job -ScriptBlock { Get-Item (New-Guid) } | Wait-Job | Receive-Job -ErrorVariable e -ErrorAction SilentlyContinue
             ($e | Out-String).Trim().Count | Should -Be 1
         }
 
@@ -59,7 +60,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
         }
 
         It "Function shows up correctly" {
-            function test-myerror { [cmdletbinding()] param() write-error 'myError' }
+            function test-myerror { [cmdletbinding()] param() Write-Error 'myError' }
 
             $e = & "$PSHOME/pwsh" -noprofile -command 'function test-myerror { [cmdletbinding()] param() write-error "myError" }; test-myerror -ErrorAction SilentlyContinue; $error[0] | Out-String'
             [string]::Join('', $e).Trim() | Should -BeLike "*test-myerror:*myError*" # wildcard due to VT100
@@ -102,8 +103,52 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
         It "Position message does not contain line information" {
 
-            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" | Out-String
+            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" 2>&1 | Out-String
+            $e | Should -Not -BeNullOrEmpty
             $e | Should -Not -BeLike "*At line*"
+        }
+
+        It "Error shows if `$PSModuleAutoLoadingPreference is set to 'none'" {
+            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' 2>&1 | Out-String
+            $e | Should -BeLike "*cmdletThatDoesntExist*"
+        }
+
+        It "Error shows for advanced function" {
+            # need to have it virtually interactive so that InvocationInfo.MyCommand is empty
+            $e = '[cmdletbinding()]param()$pscmdlet.writeerror([System.Management.Automation.ErrorRecord]::new(([System.NotImplementedException]::new("myTest")),"stub","notimplemented","command"))' | pwsh -noprofile -file - 2>&1 | Out-String
+            $e | Should -Not -BeNullOrEmpty
+
+            # need to see if ANSI escape sequences are in the output as ANSI is disabled for CI
+            if ($e.Contains("`e")) {
+                $e | Should -BeLike "*: `e*myTest*"
+            }
+            else {
+                $e | Should -BeLike "*: myTest*"
+            }
+        }
+
+        It "Error containing '<type>' are rendered correctly for scripts" -TestCases @(
+            @{ type = 'CRLF'; newline = "`r`n" }
+            @{ type = 'LF'  ; newline = "`n" }
+        ) {
+            param($newline)
+
+            Set-Content -path $testScriptPath -Value "throw 'hello${newline}there'"
+            $e = & "$PSHOME/pwsh" -noprofile -file $testScriptPath 2>&1 | Out-String
+            $e.Split("o${newline}t").Count | Should -Be 1 -Because "Error message should not contain newline"
+        }
+
+        It "Script module error should not show line information" {
+            $testModule = @'
+                function Invoke-Error() {
+                    throw 'oops'
+                }
+'@
+
+            Set-Content -Path $testModulePath -Value $testModule
+            $e = & "$PSHOME/pwsh" -noprofile -command "Import-Module '$testModulePath'; Invoke-Error" 2>&1 | Out-String
+            $e | Should -Not -BeNullOrEmpty
+            $e | Should -Not -BeLike "*Line*"
         }
     }
 
@@ -123,6 +168,22 @@ Describe 'Tests for $ErrorView' -Tag CI {
             }
 
             $e | Should -BeLike '*Oops!*'
+        }
+    }
+
+    Context 'DetailedView tests' {
+
+        It 'Detailed error is rendered' {
+            try {
+                $ErrorView = 'DetailedView'
+                throw 'Oops!'
+            }
+            catch {
+                # an extra newline gets added by the formatting system so we remove them
+                $e = ($_ | Out-String).Trim([Environment]::NewLine.ToCharArray())
+            }
+
+            $e | Should -BeExactly (Get-Error | Out-String).Trim([Environment]::NewLine.ToCharArray())
         }
     }
 }

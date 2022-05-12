@@ -70,11 +70,11 @@ namespace System.Management.Automation.Remoting
     internal class ServerRemoteSession : RemoteSession
     {
         [TraceSourceAttribute("ServerRemoteSession", "ServerRemoteSession")]
-        private static PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
+        private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
 
-        private PSSenderInfo _senderInfo;
-        private string _configProviderId;
-        private string _initParameters;
+        private readonly PSSenderInfo _senderInfo;
+        private readonly string _configProviderId;
+        private readonly string _initParameters;
         private string _initScriptForOutOfProcRS;
         private PSSessionConfiguration _sessionConfigProvider;
 
@@ -83,7 +83,7 @@ namespace System.Management.Automation.Remoting
         private int? _maxRecvdDataSizeCommand;
 
         private ServerRunspacePoolDriver _runspacePoolDriver;
-        private PSRemotingCryptoHelperServer _cryptoHelper;
+        private readonly PSRemotingCryptoHelperServer _cryptoHelper;
 
         // Specifies an optional endpoint configuration for out-of-proc session use.
         // Creates a pushed remote runspace session created with this configuration name.
@@ -141,8 +141,7 @@ namespace System.Management.Automation.Remoting
             SessionDataStructureHandler.CreateRunspacePoolReceived += HandleCreateRunspacePool;
             SessionDataStructureHandler.NegotiationReceived += HandleNegotiationReceived;
             SessionDataStructureHandler.SessionClosing += HandleSessionDSHandlerClosing;
-            SessionDataStructureHandler.PublicKeyReceived +=
-                new EventHandler<RemoteDataEventArgs<string>>(HandlePublicKeyReceived);
+            SessionDataStructureHandler.PublicKeyReceived += HandlePublicKeyReceived;
             transportManager.Closing += HandleResourceClosing;
 
             // update the quotas from sessionState..start with default size..and
@@ -207,7 +206,7 @@ namespace System.Management.Automation.Remoting
                 throw PSTraceSource.NewInvalidOperationException("RemotingErrorIdStrings.NonExistentInitialSessionStateProvider", configurationProviderId);
             }
 
-            string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
+            const string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
             int index = configurationProviderId.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);
             senderInfo.ConfigurationName = (index == 0) ? configurationProviderId.Substring(shellPrefix.Length) : string.Empty;
             ServerRemoteSession result = new ServerRemoteSession(
@@ -286,10 +285,10 @@ namespace System.Management.Automation.Remoting
         /// This parameter contains the remote data received from client.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// If the parameter <paramref name="dataEventArg" /> is null.
+        /// If the parameter <paramref name="dataEventArg"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If the parameter <paramref name="dataEventArg" /> does not contain remote data.
+        /// If the parameter <paramref name="dataEventArg"/> does not contain remote data.
         /// </exception>
         /// <exception cref="PSRemotingDataStructureException">
         /// If the destination of the data is not for server.
@@ -298,14 +297,14 @@ namespace System.Management.Automation.Remoting
         {
             if (dataEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataEventArg));
             }
 
             RemoteDataObject<PSObject> rcvdData = dataEventArg.ReceivedData;
 
             if (rcvdData == null)
             {
-                throw PSTraceSource.NewArgumentException("dataEventArg");
+                throw PSTraceSource.NewArgumentException(nameof(dataEventArg));
             }
 
             RemotingDestination destination = rcvdData.Destination;
@@ -634,9 +633,9 @@ namespace System.Management.Automation.Remoting
             {
                 RunServerNegotiationAlgorithm(clientCapability, true);
             }
-            catch (PSRemotingDataStructureException ex)
+            catch (PSRemotingDataStructureException)
             {
-                throw ex;
+                throw;
             }
 
             // validate client connect_runspacepool request
@@ -697,7 +696,7 @@ namespace System.Management.Automation.Remoting
             // as this is executed only when connecting from a new client that does not have any previous fragments context.
             // no problem even if fragment Ids in this response and the sessiontransport stream clash (interfere) and its guaranteed
             // that the fragments in connect response are always complete (enclose a complete object).
-            SerializedDataStream stream = new SerializedDataStream(4 * 1024);//Each message with fragment headers cannot cross 4k
+            SerializedDataStream stream = new SerializedDataStream(4 * 1024); //Each message with fragment headers cannot cross 4k
             stream.Enter();
             capability.Serialize(stream, fragmentor);
             stream.Exit();
@@ -713,7 +712,7 @@ namespace System.Management.Automation.Remoting
             // enqueue a connect event in state machine to let session do any other post-connect operation
             // Do this outside of the synchronous connect operation, as otherwise connect can easily get deadlocked
             ThreadPool.QueueUserWorkItem(new WaitCallback(
-                delegate (object state)
+                (object state) =>
                 {
                     RemoteSessionStateMachineEventArgs startEventArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.ConnectSession);
                     SessionDataStructureHandler.StateMachine.RaiseEvent(startEventArg);
@@ -744,7 +743,7 @@ namespace System.Management.Automation.Remoting
         {
             if (createRunspaceEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("createRunspaceEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(createRunspaceEventArg));
             }
 
             RemoteDataObject<PSObject> rcvdData = createRunspaceEventArg.ReceivedData;
@@ -922,7 +921,7 @@ namespace System.Management.Automation.Remoting
         {
             if (negotiationEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("negotiationEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(negotiationEventArg));
             }
 
             try

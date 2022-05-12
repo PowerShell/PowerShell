@@ -22,12 +22,10 @@ Describe "Validate start of console host" -Tag CI {
             'System.ComponentModel.TypeConverter.dll'
             'System.Console.dll'
             'System.Data.Common.dll'
-            'System.Diagnostics.FileVersionInfo.dll'
             'System.Diagnostics.Process.dll'
             'System.Diagnostics.TraceSource.dll'
             'System.Diagnostics.Tracing.dll'
             'System.IO.FileSystem.AccessControl.dll'
-            'System.IO.FileSystem.dll'
             'System.IO.FileSystem.DriveInfo.dll'
             'System.IO.Pipes.dll'
             'System.Linq.dll'
@@ -46,14 +44,12 @@ Describe "Validate start of console host" -Tag CI {
             'System.Reflection.Primitives.dll'
             'System.Runtime.dll'
             'System.Runtime.InteropServices.dll'
-            'System.Runtime.InteropServices.RuntimeInformation.dll'
             'System.Runtime.Loader.dll'
             'System.Runtime.Numerics.dll'
             'System.Runtime.Serialization.Formatters.dll'
             'System.Runtime.Serialization.Primitives.dll'
             'System.Security.AccessControl.dll'
-            'System.Security.Cryptography.Encoding.dll'
-            'System.Security.Cryptography.X509Certificates.dll'
+            'System.Security.Cryptography.dll'
             'System.Security.Principal.Windows.dll'
             'System.Text.Encoding.Extensions.dll'
             'System.Text.RegularExpressions.dll'
@@ -70,16 +66,13 @@ Describe "Validate start of console host" -Tag CI {
                 'System.DirectoryServices.dll'
                 'System.Management.dll'
                 'System.Security.Claims.dll'
-                'System.Security.Cryptography.Primitives.dll'
                 'System.Threading.Overlapped.dll'
             )
         }
         else {
             $allowedAssemblies += @(
-                'System.Collections.Immutable.dll'
-                'System.IO.MemoryMappedFiles.dll'
                 'System.Net.Sockets.dll'
-                'System.Reflection.Metadata.dll'
+                'System.Reflection.Emit.dll'
             )
         }
 
@@ -93,7 +86,7 @@ Describe "Validate start of console host" -Tag CI {
             Remove-Item $profileDataFile -Force
         }
 
-        $loadedAssemblies = & "$PSHOME/pwsh" -noprofile -command '([System.AppDomain]::CurrentDomain.GetAssemblies()).manifestmodule | Where-Object { $_.Name -notlike ""<*>"" } | ForEach-Object { $_.Name }'
+        $loadedAssemblies = & "$PSHOME/pwsh" -noprofile -command '([System.AppDomain]::CurrentDomain.GetAssemblies()).manifestmodule | Where-Object { $_.Name -notlike "<*>" } | ForEach-Object { $_.Name }'
     }
 
     It "No new assemblies are loaded" {
@@ -105,8 +98,8 @@ Describe "Validate start of console host" -Tag CI {
         $diffs = Compare-Object -ReferenceObject $allowedAssemblies -DifferenceObject $loadedAssemblies
 
         if ($null -ne $diffs) {
-            $assembliesAllowedButNotLoaded = $diffs | Where-Object SideIndicator -eq "<=" | ForEach-Object InputObject
-            $assembliesLoadedButNotAllowed = $diffs | Where-Object SideIndicator -eq "=>" | ForEach-Object InputObject
+            $assembliesAllowedButNotLoaded = $diffs | Where-Object SideIndicator -EQ "<=" | ForEach-Object InputObject
+            $assembliesLoadedButNotAllowed = $diffs | Where-Object SideIndicator -EQ "=>" | ForEach-Object InputObject
 
             if ($assembliesAllowedButNotLoaded) {
                 Write-Host ("Assemblies that are expected but not loaded: {0}" -f ($assembliesAllowedButNotLoaded -join ", "))

@@ -20,7 +20,7 @@ $data
 @"
 #!/usr/bin/python3
 print('Hi!')
-"@ | out-file -encoding ascii hi
+"@ | Out-File -Encoding ascii hi
 
 # Make it executable
 chmod +x hi
@@ -35,7 +35,7 @@ cat class1.py
 ./class1.py
 
 # Capture the data as structured objects (arrays and hashtables)
-$data = ./class1.py | ConvertFrom-JSON
+$data = ./class1.py | ConvertFrom-Json
 
 # look at the first element of the returned array
 $data[0]

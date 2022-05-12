@@ -164,20 +164,21 @@ namespace System.Management.Automation
             return retValue;
         }
 
-        internal static PSMemberInfoInternalCollection<U> TransformMemberInfoCollection<T, U>(PSMemberInfoCollection<T> source) where T : PSMemberInfo where U : PSMemberInfo
+        internal static PSMemberInfoInternalCollection<TResult> TransformMemberInfoCollection<TSource, TResult>(PSMemberInfoCollection<TSource> source)
+            where TSource : PSMemberInfo where TResult : PSMemberInfo
         {
-            if (typeof(T) == typeof(U))
+            if (typeof(TSource) == typeof(TResult))
             {
                 // If the types are the same, don't make a copy, return the cached collection.
-                return source as PSMemberInfoInternalCollection<U>;
+                return source as PSMemberInfoInternalCollection<TResult>;
             }
 
-            PSMemberInfoInternalCollection<U> returnValue = new PSMemberInfoInternalCollection<U>();
-            foreach (T member in source)
+            PSMemberInfoInternalCollection<TResult> returnValue = new PSMemberInfoInternalCollection<TResult>();
+            foreach (TSource member in source)
             {
-                if (member is U tAsU)
+                if (member is TResult result)
                 {
-                    returnValue.Add(tAsU);
+                    returnValue.Add(result);
                 }
             }
 
@@ -424,6 +425,7 @@ namespace System.Management.Automation
         #region Adapter Mappings
 
         private static readonly ConcurrentDictionary<Type, AdapterSet> s_adapterMapping = new ConcurrentDictionary<Type, AdapterSet>();
+
         private static readonly List<Func<object, AdapterSet>> s_adapterSetMappers = new List<Func<object, AdapterSet>>
                                                                                     {
                                                                                         MappedInternalAdapterSet
@@ -569,7 +571,7 @@ namespace System.Management.Automation
         {
             if (obj == null)
             {
-                throw PSTraceSource.NewArgumentNullException("obj");
+                throw PSTraceSource.NewArgumentNullException(nameof(obj));
             }
 
             CommonInitialization(obj);
@@ -584,14 +586,12 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
-            string serializedData = info.GetValue("CliXml", typeof(string)) as string;
-
-            if (serializedData == null)
+            if (!(info.GetValue("CliXml", typeof(string)) is string serializedData))
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             PSObject result = PSObject.AsPSObject(PSSerializer.Deserialize(serializedData));
@@ -647,10 +647,12 @@ namespace System.Management.Automation
         private static readonly AdapterSet s_dotNetInstanceAdapterSet = new AdapterSet(DotNetInstanceAdapter, null);
         private static readonly AdapterSet s_mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
         private static readonly AdapterSet s_mshObjectAdapter = new AdapterSet(new PSObjectAdapter(), null);
+
         private static readonly PSObject.AdapterSet s_cimInstanceAdapter =
             new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
                                     PSObject.DotNetInstanceAdapter);
+
 #if !UNIX
         private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter);
         private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter);
@@ -773,7 +775,6 @@ namespace System.Management.Automation
                 return _properties;
             }
         }
-
 
         /// <summary>
         /// Gets the Method collection, or the members that are actually methods.
@@ -947,6 +948,7 @@ namespace System.Management.Automation
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
@@ -955,6 +957,7 @@ namespace System.Management.Automation
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
@@ -963,6 +966,7 @@ namespace System.Management.Automation
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
@@ -971,6 +975,7 @@ namespace System.Management.Automation
         {
             return PSObject.AsPSObject(valueToConvert);
         }
+
         /// <summary>
         /// </summary>
         /// <param name="valueToConvert"></param>
@@ -987,8 +992,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static object Base(object obj)
         {
-            PSObject mshObj = obj as PSObject;
-            if (mshObj == null)
+            if (!(obj is PSObject mshObj))
             {
                 return obj;
             }
@@ -1051,7 +1055,7 @@ namespace System.Management.Automation
         {
             if (obj == null)
             {
-                throw PSTraceSource.NewArgumentNullException("obj");
+                throw PSTraceSource.NewArgumentNullException(nameof(obj));
             }
 
             if (obj is PSObject so)
@@ -1072,8 +1076,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static object GetKeyForResurrectionTables(object obj)
         {
-            var pso = obj as PSObject;
-            if (pso == null)
+            if (!(obj is PSObject pso))
             {
                 return obj;
             }
@@ -1174,7 +1177,7 @@ namespace System.Management.Automation
 
                 isFirst = false;
                 returnValue.Append(property.Name);
-                returnValue.Append("=");
+                returnValue.Append('=');
 
                 // Don't evaluate script properties during a ToString() operation.
                 var propertyValue = property is PSScriptProperty ? property.GetType().FullName : property.Value;
@@ -1187,7 +1190,7 @@ namespace System.Management.Automation
                 return string.Empty;
             }
 
-            returnValue.Append("}");
+            returnValue.Append('}');
             return returnValue.ToString();
         }
 
@@ -1815,7 +1818,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             // We create a wrapper PSObject, so that we can successfully deserialize it
@@ -1860,8 +1863,7 @@ namespace System.Management.Automation
                 settings.ReplicateInstance(ownerObject);
             }
 
-            PSNoteProperty note = settings.Members[noteName] as PSNoteProperty;
-            if (note == null)
+            if (!(settings.Members[noteName] is PSNoteProperty note))
             {
                 return defaultValue;
             }
@@ -2149,7 +2151,7 @@ namespace System.Management.Automation
             private bool MustDeferIDMOP()
             {
                 var baseObject = PSObject.Base(Value);
-                return baseObject is IDynamicMetaObjectProvider && !(baseObject is PSObject);
+                return baseObject is IDynamicMetaObjectProvider && baseObject is not PSObject;
             }
 
             private DynamicMetaObject DeferForIDMOP(DynamicMetaObjectBinder binder, params DynamicMetaObject[] args)
@@ -2464,7 +2466,8 @@ namespace System.Management.Automation
         /// </summary>
         private PSCustomObject() { }
 
-        internal static PSCustomObject SelfInstance = new PSCustomObject();
+        internal static readonly PSCustomObject SelfInstance = new PSCustomObject();
+
         /// <summary>
         /// Returns an empty string.
         /// </summary>
@@ -2536,13 +2539,13 @@ namespace Microsoft.PowerShell
             {
                 string elementDefinition = Type(type.GetElementType(), dropNamespaces);
                 var sb = new StringBuilder(elementDefinition, elementDefinition.Length + 10);
-                sb.Append("[");
+                sb.Append('[');
                 for (int i = 0; i < type.GetArrayRank() - 1; ++i)
                 {
-                    sb.Append(",");
+                    sb.Append(',');
                 }
 
-                sb.Append("]");
+                sb.Append(']');
                 result = sb.ToString();
             }
             else

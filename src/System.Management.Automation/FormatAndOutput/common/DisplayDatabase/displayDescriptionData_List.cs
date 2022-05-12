@@ -173,7 +173,7 @@ namespace System.Management.Automation
             : this()
         {
             if (entries == null)
-                throw PSTraceSource.NewArgumentNullException("entries");
+                throw PSTraceSource.NewArgumentNullException(nameof(entries));
             foreach (ListControlEntry entry in entries)
             {
                 this.Entries.Add(entry);
@@ -242,7 +242,7 @@ namespace System.Management.Automation
             : this()
         {
             if (listItems == null)
-                throw PSTraceSource.NewArgumentNullException("listItems");
+                throw PSTraceSource.NewArgumentNullException(nameof(listItems));
             foreach (ListControlEntryItem item in listItems)
             {
                 this.Items.Add(item);
@@ -253,9 +253,9 @@ namespace System.Management.Automation
         public ListControlEntry(IEnumerable<ListControlEntryItem> listItems, IEnumerable<string> selectedBy)
         {
             if (listItems == null)
-                throw PSTraceSource.NewArgumentNullException("listItems");
+                throw PSTraceSource.NewArgumentNullException(nameof(listItems));
             if (selectedBy == null)
-                throw PSTraceSource.NewArgumentNullException("selectedBy");
+                throw PSTraceSource.NewArgumentNullException(nameof(selectedBy));
 
             EntrySelectedBy = new EntrySelectedBy { TypeNames = new List<string>(selectedBy) };
             foreach (ListControlEntryItem item in listItems)

@@ -35,7 +35,7 @@ function Test-ResourceStrings
     #
     # This is the reason why this is not a general module for use. There is
     # no other way to run these tests
-    Describe "Resources strings in $AssemblyName (was -ResGen used with Start-PSBuild)" -tag Feature {
+    Describe "Resources strings in $AssemblyName (was -ResGen used with Start-PSBuild)" -Tag Feature {
 
         function NormalizeLineEnd
         {

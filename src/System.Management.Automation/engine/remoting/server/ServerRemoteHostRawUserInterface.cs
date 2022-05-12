@@ -17,12 +17,12 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Remote host user interface.
         /// </summary>
-        private ServerRemoteHostUserInterface _remoteHostUserInterface;
+        private readonly ServerRemoteHostUserInterface _remoteHostUserInterface;
 
         /// <summary>
         /// Server method executor.
         /// </summary>
-        private ServerMethodExecutor _serverMethodExecutor;
+        private readonly ServerMethodExecutor _serverMethodExecutor;
 
         /// <summary>
         /// Host default data.
@@ -345,7 +345,7 @@ namespace System.Management.Automation.Remoting
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             return source.Length;
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Remoting
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             Dbg.Assert(offset >= 0, "offset >= 0");

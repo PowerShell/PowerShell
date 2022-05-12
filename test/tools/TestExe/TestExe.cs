@@ -1,18 +1,19 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 using System;
 using System.Threading;
 using System.Diagnostics;
 
 namespace TestExe
 {
-    class TestExe
+    internal class TestExe
     {
-        static int Main(string[] args)
+        private static int Main(string[] args)
         {
             if (args.Length > 0)
             {
-                switch(args[0].ToLowerInvariant())
+                switch (args[0].ToLowerInvariant())
                 {
                     case "-echoargs":
                         EchoArgs(args);
@@ -24,6 +25,9 @@ namespace TestExe
                         // Used to test functionality depending on $LASTEXITCODE, like &&/|| operators
                         Console.WriteLine(args[1]);
                         return int.Parse(args[1]);
+                    case "-stderr":
+                        Console.Error.WriteLine(args[1]);
+                        break;
                     default:
                         Console.WriteLine("Unknown test {0}", args[0]);
                         break;
@@ -40,11 +44,11 @@ namespace TestExe
         // <Summary>
         // Echos back to stdout the arguments passed in
         // </Summary>
-        static void EchoArgs(string[] args)
+        private static void EchoArgs(string[] args)
         {
             for (int i = 1; i < args.Length; i++)
             {
-                Console.WriteLine("Arg {0} is <{1}>", i-1, args[i]);
+                Console.WriteLine("Arg {0} is <{1}>", i - 1, args[i]);
             }
         }
 
@@ -52,7 +56,7 @@ namespace TestExe
         // First argument is the number of child processes to create which are instances of itself
         // Processes automatically exit after 100 seconds
         // </Summary>
-        static void CreateChildProcess(string[] args)
+        private static void CreateChildProcess(string[] args)
         {
             if (args.Length > 1)
             {
@@ -60,7 +64,7 @@ namespace TestExe
                 for (uint i = 0; i < num; i++)
                 {
                     Process child = new Process();
-                    child.StartInfo.FileName = Process.GetCurrentProcess().MainModule.FileName;
+                    child.StartInfo.FileName = Environment.ProcessPath;
                     child.StartInfo.Arguments = "-createchildprocess";
                     child.Start();
                 }

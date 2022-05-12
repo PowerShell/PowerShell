@@ -9,7 +9,7 @@ $assemblyName = "Microsoft.WSMan.Management"
 $excludeList = @()
 # load the module since it isn't there by default
 if ( $IsWindows ) {
-    import-module Microsoft.WSMan.Management
+    Import-Module Microsoft.WSMan.Management
 }
 
 # run the tests

@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            List<string> pathsToProcess = new List<string>();
+            List<string> pathsToProcess = new();
             ProviderInfo provider = null;
 
             switch (ParameterSetName)
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (!WildcardPattern.ContainsWildcardCharacters(path))
                             {
-                                ErrorRecord errorRecord = new ErrorRecord(e,
+                                ErrorRecord errorRecord = new(e,
                                     "FileNotFound",
                                     ErrorCategory.ObjectNotFound,
                                     path);
@@ -126,48 +126,9 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in pathsToProcess)
             {
-                byte[] bytehash = null;
-                string hash = null;
-                Stream openfilestream = null;
-
-                try
+                if (ComputeFileHash(path, out string hash))
                 {
-                    openfilestream = File.OpenRead(path);
-                    bytehash = hasher.ComputeHash(openfilestream);
-
-                    hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);
                     WriteHashResult(Algorithm, hash, path);
-                }
-                catch (FileNotFoundException ex)
-                {
-                    var errorRecord = new ErrorRecord(
-                        ex,
-                        "FileNotFound",
-                        ErrorCategory.ObjectNotFound,
-                        path);
-                    WriteError(errorRecord);
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    var errorRecord = new ErrorRecord(
-                        ex,
-                        "UnauthorizedAccessError",
-                        ErrorCategory.InvalidData,
-                        path);
-                    WriteError(errorRecord);
-                }
-                catch (IOException ioException)
-                {
-                    var errorRecord = new ErrorRecord(
-                        ioException,
-                        "FileReadError",
-                        ErrorCategory.ReadError,
-                        path);
-                    WriteError(errorRecord);
-                }
-                finally
-                {
-                    openfilestream?.Dispose();
                 }
             }
         }
@@ -191,11 +152,66 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Read the file and calculate the hash.
+        /// </summary>
+        /// <param name="path">Path to file which will be hashed.</param>
+        /// <param name="hash">Will contain the hash of the file content.</param>
+        /// <returns>Boolean value indicating whether the hash calculation succeeded or failed.</returns>
+        private bool ComputeFileHash(string path, out string hash)
+        {
+            byte[] bytehash = null;
+            Stream openfilestream = null;
+
+            hash = null;
+
+            try
+            {
+                openfilestream = File.OpenRead(path);
+
+                bytehash = hasher.ComputeHash(openfilestream);
+                hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);
+            }
+            catch (FileNotFoundException ex)
+            {
+                var errorRecord = new ErrorRecord(
+                    ex,
+                    "FileNotFound",
+                    ErrorCategory.ObjectNotFound,
+                    path);
+                WriteError(errorRecord);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var errorRecord = new ErrorRecord(
+                    ex,
+                    "UnauthorizedAccessError",
+                    ErrorCategory.InvalidData,
+                    path);
+                WriteError(errorRecord);
+            }
+            catch (IOException ioException)
+            {
+                var errorRecord = new ErrorRecord(
+                    ioException,
+                    "FileReadError",
+                    ErrorCategory.ReadError,
+                    path);
+                WriteError(errorRecord);
+            }
+            finally
+            {
+                openfilestream?.Dispose();
+            }
+
+            return hash != null;
+        }
+
+        /// <summary>
         /// Create FileHashInfo object and output it.
         /// </summary>
         private void WriteHashResult(string Algorithm, string hash, string path)
         {
-            FileHashInfo result = new FileHashInfo();
+            FileHashInfo result = new();
             result.Algorithm = Algorithm;
             result.Hash = hash;
             result.Path = path;

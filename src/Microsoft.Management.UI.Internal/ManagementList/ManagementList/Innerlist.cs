@@ -296,7 +296,7 @@ namespace Microsoft.Management.UI.Internal
 
             this.itemsSourceIsEmpty = this.ItemsSource != null && this.ItemsSource.GetEnumerator().MoveNext() == false;
 
-            // A view can be created if there is data to auto-generate columns, or columns are added programatically \\
+            // A view can be created if there is data to auto-generate columns, or columns are added programmatically \\
             bool canCreateView = (this.ItemsSource != null) &&
                 (this.itemsSourceIsEmpty == false || this.AutoGenerateColumns == false);
 
@@ -355,7 +355,7 @@ namespace Microsoft.Management.UI.Internal
         {
             base.OnKeyDown(e);
 
-            if ((Key.Left == e.Key || Key.Right == e.Key) &&
+            if ((e.Key == Key.Left || e.Key == Key.Right) &&
                 Keyboard.Modifiers == ModifierKeys.None)
             {
                 // If pressing Left or Right on a column header, move the focus \\
@@ -388,8 +388,8 @@ namespace Microsoft.Management.UI.Internal
                 throw new NotSupportedException(string.Format(
                     CultureInfo.InvariantCulture,
                    InvariantResources.ViewSetWithType,
-                   typeof(GridView).Name,
-                   typeof(InnerListGridView).Name));
+                   nameof(GridView),
+                   nameof(InnerListGridView)));
             }
 
             ((InnerList)obj).innerGrid = innerGrid;
@@ -405,7 +405,7 @@ namespace Microsoft.Management.UI.Internal
                 string.Format(
                     CultureInfo.InvariantCulture,
                     InvariantResources.NotSupportAddingToItems,
-                    typeof(InnerList).Name,
+                    nameof(InnerList),
                     ItemsControl.ItemsSourceProperty.Name));
         }
         #endregion static private methods
@@ -543,8 +543,8 @@ namespace Microsoft.Management.UI.Internal
                 if (header != null)
                 {
                     // header Click
-                    header.Click += new RoutedEventHandler(this.Header_Click);
-                    header.PreviewKeyDown += new KeyEventHandler(this.Header_KeyDown);
+                    header.Click += this.Header_Click;
+                    header.PreviewKeyDown += this.Header_KeyDown;
                 }
 
                 // If it is a GridViewColumnHeader we will not have the same nice sorting and grouping
@@ -695,7 +695,7 @@ namespace Microsoft.Management.UI.Internal
             MenuItem columnPicker = new MenuItem();
             AutomationProperties.SetAutomationId(columnPicker, "ChooseColumns");
             columnPicker.Header = UICultureResources.ColumnPicker;
-            columnPicker.Click += new RoutedEventHandler(this.innerGrid.OnColumnPicker);
+            columnPicker.Click += this.innerGrid.OnColumnPicker;
 
             this.contextMenu.Items.Add(columnPicker);
 

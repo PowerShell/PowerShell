@@ -33,37 +33,37 @@ Describe "String cmdlets" -Tags "CI" {
         }
 
         It "Select-String does not throw on subdirectory (path without wildcard)" {
-            { select-string -Path  $pathWithoutWildcard "noExists" -ErrorAction Stop } | Should -Not -Throw
+            { Select-String -Path  $pathWithoutWildcard "noExists" -ErrorAction Stop } | Should -Not -Throw
         }
 
         It "Select-String does not throw on subdirectory (path with wildcard)" {
-            { select-string -Path  $pathWithWildcard "noExists" -ErrorAction Stop } | Should -Not -Throw
+            { Select-String -Path  $pathWithWildcard "noExists" -ErrorAction Stop } | Should -Not -Throw
         }
 
         It "LiteralPath with relative path" {
-            (select-string -LiteralPath (Get-Item -LiteralPath $fileName).Name "b").count | Should -Be 2
+            (Select-String -LiteralPath (Get-Item -LiteralPath $fileName).Name "b").count | Should -Be 2
         }
 
         It "LiteralPath with absolute path" {
-            (select-string -LiteralPath $fileName "b").count | Should -Be 2
+            (Select-String -LiteralPath $fileName "b").count | Should -Be 2
         }
 
         It "LiteralPath with dots in path" {
-            (select-string -LiteralPath $fileNameWithDots "b").count | Should -Be 2
+            (Select-String -LiteralPath $fileNameWithDots "b").count | Should -Be 2
         }
 
-        It "Network path" -skip:(!$IsWindows) {
-            (select-string -LiteralPath $fileNameAsNetworkPath "b").count | Should -Be 2
+        It "Network path" -Skip:(!$IsWindows) {
+            (Select-String -LiteralPath $fileNameAsNetworkPath "b").count | Should -Be 2
         }
 
         It "throws error for non filesystem providers" {
             $aaa = "aaaaaaaaaa"
-            select-string -literalPath variable:\aaa "a" -ErrorAction SilentlyContinue -ErrorVariable selectStringError
+            Select-String -LiteralPath variable:\aaa "a" -ErrorAction SilentlyContinue -ErrorVariable selectStringError
             $selectStringError.FullyQualifiedErrorId | Should -Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectStringCommand'
         }
 
         It "throws parameter binding exception for invalid context" {
-            { select-string It $PSScriptRoot -Context -1,-1 } | Should -Throw Context
+            { Select-String It $PSScriptRoot -Context -1,-1 } | Should -Throw Context
         }
 
         It "match object supports RelativePath method" {

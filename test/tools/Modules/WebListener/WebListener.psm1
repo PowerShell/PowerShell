@@ -102,13 +102,16 @@ function Start-WebListener
         [int]$HttpPort = 8083,
 
         [ValidateRange(1,65535)]
-        [int]$HttpsPort = 8084,
+        [int]$HttpsPort = 9084,
 
         [ValidateRange(1,65535)]
         [int]$Tls11Port = 8085,
 
         [ValidateRange(1,65535)]
-        [int]$TlsPort = 8086
+        [int]$TlsPort = 8086,
+
+        [ValidateRange(1,65535)]
+        [int]$Tls13Port = 8087
     )
 
     process
@@ -120,7 +123,7 @@ function Start-WebListener
         }
 
         $initTimeoutSeconds  = 15
-        $appExe              = (get-command WebListener).Path
+        $appExe              = (Get-Command WebListener).Path
         $serverPfx           = 'ServerCert.pfx'
         $serverPfxPassword   = New-RandomHexString
         $clientPfx           = 'ClientCert.pfx'
@@ -134,17 +137,18 @@ function Start-WebListener
         New-ClientCertificate -CertificatePath $Script:ClientPfxPath -Password $Script:ClientPfxPassword
 
         $Job = Start-Job {
-            $path = Split-Path -parent (get-command WebListener).Path -Verbose
+            $path = Split-Path -Parent (Get-Command WebListener).Path -Verbose
             Push-Location $path -Verbose
             'appEXE: {0}' -f $using:appExe
             'serverPfxPath: {0}' -f $using:serverPfxPath
             'serverPfxPassword: {0}' -f $using:serverPfxPassword
             'HttpPort: {0}' -f $using:HttpPort
             'Https: {0}' -f $using:HttpsPort
+            'Tls13Port: {0}' -f $using:Tls13Port
             'Tls11Port: {0}' -f $using:Tls11Port
             'TlsPort: {0}' -f $using:TlsPort
             $env:ASPNETCORE_ENVIRONMENT = 'Development'
-            & $using:appExe $using:serverPfxPath $using:serverPfxPassword $using:HttpPort $using:HttpsPort $using:Tls11Port $using:TlsPort
+            & $using:appExe $using:serverPfxPath $using:serverPfxPassword $using:HttpPort $using:HttpsPort $using:Tls11Port $using:TlsPort $using:Tls13Port
         }
 
         $Script:WebListener = [WebListener]@{
@@ -208,7 +212,7 @@ function Get-WebListenerUrl {
     param (
         [switch]$Https,
 
-        [ValidateSet('Default', 'Tls12', 'Tls11', 'Tls')]
+        [ValidateSet('Default', 'Tls13', 'Tls12', 'Tls11', 'Tls')]
         [string]$SslProtocol = 'Default',
 
         [ValidateSet(

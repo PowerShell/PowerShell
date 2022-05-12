@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Basic debugger command tests' -tag 'CI' {
+Describe 'Basic debugger command tests' -Tag 'CI' {
 
     BeforeAll {
         Register-DebuggerHandler
@@ -27,11 +27,11 @@ Describe 'Basic debugger command tests' -tag 'CI' {
                     $bp = Set-PSBreakpoint -Command Get-Process
                     Get-Process -Id $PID > $null
                 } finally {
-                    Remove-PSBreakPoint -Breakpoint $bp
+                    Remove-PSBreakpoint -Breakpoint $bp
                 }
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue '?','h')
+            $results = @(Test-Debugger -Scriptblock $testScript -CommandQueue '?','h')
             $result = @{
                 '?' = if ($results.Count -gt 0) {$results[0].Output -join [Environment]::NewLine}
                 'h' = if ($results.Count -gt 1) {$results[1].Output -join [Environment]::NewLine}
@@ -71,7 +71,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
                     $bp = Set-PSBreakpoint -Command Get-Process
                     Get-Process -Id $PID > $null
                 } finally {
-                    Remove-PSBreakPoint -Breakpoint $bp
+                    Remove-PSBreakpoint -Breakpoint $bp
                 }
             }
 
@@ -81,13 +81,13 @@ Describe 'Basic debugger command tests' -tag 'CI' {
     3:                      $bp = Set-PSBreakpoint -Command Get-Process
     4:*                     Get-Process -Id $PID > $null
     5:                  } finally {
-    6:                      Remove-PSBreakPoint -Breakpoint $bp
+    6:                      Remove-PSBreakpoint -Breakpoint $bp
     7:                  }
     8:
 '@
             $testScriptList = NormalizeLineEnd -string $testScriptList
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'l','list')
+            $results = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'l','list')
             $result = @{
                 'l' = if ($results.Count -gt 0) {$results[0].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
                 'list' = if ($results.Count -gt 1) {$results[1].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
@@ -120,21 +120,21 @@ Describe 'Basic debugger command tests' -tag 'CI' {
                     $bp = Set-PSBreakpoint -Command Get-Process
                     Get-Process -Id $PID > $null
                 } finally {
-                    Remove-PSBreakPoint -Breakpoint $bp
+                    Remove-PSBreakpoint -Breakpoint $bp
                 }
             }
 
             $testScriptList = @'
     4:*                     Get-Process -Id $PID > $null
     5:                  } finally {
-    6:                      Remove-PSBreakPoint -Breakpoint $bp
+    6:                      Remove-PSBreakpoint -Breakpoint $bp
     7:                  }
     8:
 '@
 
             $testScriptList = NormalizeLineEnd -string $testScriptList
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'l 4','list 4')
+            $results = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'l 4','list 4')
             $result = @{
                 'l 4' = if ($results.Count -gt 0) {$results[0].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
                 'list 4' = if ($results.Count -gt 1) {$results[1].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
@@ -167,7 +167,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
                     $bp = Set-PSBreakpoint -Command Get-Process
                     Get-Process -Id $PID > $null
                 } finally {
-                    Remove-PSBreakPoint -Breakpoint $bp
+                    Remove-PSBreakpoint -Breakpoint $bp
                 }
             }
 
@@ -178,7 +178,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
 
             $testScriptList = NormalizeLineEnd -string $testScriptList
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'l 3 2','list 3 2')
+            $results = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'l 3 2','list 3 2')
             $result = @{
                 'l 3 2' = if ($results.Count -gt 0) {$results[0].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
                 'list 3 2' = if ($results.Count -gt 1) {$results[1].Output -replace '\s+$' -join [Environment]::NewLine -replace "^[`r`n]+|[`r`n]+$"}
@@ -211,11 +211,11 @@ Describe 'Basic debugger command tests' -tag 'CI' {
                     $bp = Set-PSBreakpoint -Command Get-Process
                     Get-Process -Id $PID > $null
                 } finally {
-                    Remove-PSBreakPoint -Breakpoint $bp
+                    Remove-PSBreakpoint -Breakpoint $bp
                 }
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'k','Get-PSCallStack')
+            $results = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'k','Get-PSCallStack')
             $result = @{
                 'k' = if ($results.Count -gt 0) {$results[0].Output}
                 'Get-PSCallStack' = if ($results.Count -gt 1) {$results[1].Output}
@@ -238,7 +238,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
 
 }
 
-Describe 'Simple debugger stepping command tests' -tag 'CI' {
+Describe 'Simple debugger stepping command tests' -Tag 'CI' {
 
     BeforeAll {
         Register-DebuggerHandler
@@ -258,13 +258,13 @@ Describe 'Simple debugger stepping command tests' -tag 'CI' {
                         'Red fish, blue fish'
                     } *> $null
                 } finally {
-                    Remove-PSBreakPoint -Breakpoint $bp
+                    Remove-PSBreakpoint -Breakpoint $bp
                 }
             }
 
             $result = @{
-                's' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 's','s','s','s')
-                'stepInto' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'stepInto','stepInto','stepInto','stepInto')
+                's' = @(Test-Debugger -Scriptblock $testScript -CommandQueue 's','s','s','s')
+                'stepInto' = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'stepInto','stepInto','stepInto','stepInto')
             }
         }
 
@@ -311,13 +311,13 @@ Describe 'Simple debugger stepping command tests' -tag 'CI' {
                         Get-Date | ConvertTo-Csv
                     } *> $null
                 } finally {
-                    Remove-PSBreakPoint -Breakpoint $bp1,$bp2
+                    Remove-PSBreakpoint -Breakpoint $bp1,$bp2
                 }
             }
 
             $result = @{
-                'v' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v','v','v','v')
-                'stepOver' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'stepOver','stepOver','stepOver','stepOver')
+                'v' = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'v','v','v','v')
+                'stepOver' = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'stepOver','stepOver','stepOver','stepOver')
             }
         }
 
@@ -362,13 +362,13 @@ Describe 'Simple debugger stepping command tests' -tag 'CI' {
                     $date = Get-Date
                     $date | ConvertTo-Csv
                 } finally {
-                    Remove-PSBreakPoint -Breakpoint $bps
+                    Remove-PSBreakpoint -Breakpoint $bps
                 }
             }
 
             $result = @{
-                'o' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'o','o','o')
-                'stepOut' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'stepOut','stepOut','stepOut')
+                'o' = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'o','o','o')
+                'stepOut' = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'stepOut','stepOut','stepOut')
             }
         }
 
@@ -398,7 +398,7 @@ Describe 'Simple debugger stepping command tests' -tag 'CI' {
     }
 }
 
-Describe 'Debugger bug fix tests' -tag 'CI' {
+Describe 'Debugger bug fix tests' -Tag 'CI' {
 
     BeforeAll {
         Register-DebuggerHandler
@@ -413,16 +413,16 @@ Describe 'Debugger bug fix tests' -tag 'CI' {
             $testScript = {
                 function Test-Issue9824 {
                     $bp = Set-PSBreakpoint -Command Remove-PSBreakpoint
-                    Remove-PSBreakPoint -Breakpoint $bp
+                    Remove-PSBreakpoint -Breakpoint $bp
                 }
                 Test-Issue9824
                 1 + 1
             }
 
             $result = @{
-                's' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 's','s','s')
-                'v' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v','v','v')
-                'o' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'o','o')
+                's' = @(Test-Debugger -Scriptblock $testScript -CommandQueue 's','s','s')
+                'v' = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'v','v','v')
+                'o' = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'o','o')
             }
         }
 

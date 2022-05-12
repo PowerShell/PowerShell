@@ -20,65 +20,9 @@ namespace System.Management.Automation
     /// </summary>
     internal static class PsUtils
     {
-        /// <summary>
-        /// Safely retrieves the MainModule property of a
-        /// process. Version 2.0 and below of the .NET Framework are
-        /// impacted by a Win32 API usability knot that throws an
-        /// exception if API tries to enumerate the process' modules
-        /// while it is still loading them. This generates the error
-        /// message: Only part of a ReadProcessMemory or
-        /// WriteProcessMemory request was completed.
-        /// The BCL fix in V3 was to just try more, so we do the same
-        /// thing.
-        ///
-        /// Note: If you attempt to retrieve the MainModule of a 64-bit
-        /// process from a WOW64 (32-bit) process, the Win32 API has a fatal
-        /// flaw that causes this to return the same error.
-        ///
-        /// If you need the MainModule of a 64-bit process from a WOW64
-        /// process, you will need to write the P/Invoke yourself.
-        /// </summary>
-        /// <param name="targetProcess">The process from which to
-        /// retrieve the MainModule</param>
-        /// <exception cref="NotSupportedException">
-        /// You are trying to access the MainModule property for a process that is running
-        /// on a remote computer. This property is available only for processes that are
-        /// running on the local computer.
-        /// </exception>
-        /// <exception cref="InvalidOperationException">
-        /// The process Id is not available (or) The process has exited.
-        /// </exception>
-        /// <exception cref="System.ComponentModel.Win32Exception">
-        /// </exception>
-        internal static ProcessModule GetMainModule(Process targetProcess)
-        {
-            int caughtCount = 0;
-
-            while (true)
-            {
-                try
-                {
-                    return targetProcess.MainModule;
-                }
-                catch (System.ComponentModel.Win32Exception e)
-                {
-                    // If this is an Access Denied error (which can happen with thread impersonation)
-                    // then re-throw immediately.
-                    if (e.NativeErrorCode == 5)
-                        throw;
-
-                    // Otherwise retry to ensure module is loaded.
-                    caughtCount++;
-                    System.Threading.Thread.Sleep(100);
-                    if (caughtCount == 5)
-                        throw;
-                }
-            }
-        }
-
         // Cache of the current process' parentId
         private static int? s_currentParentProcessId;
-        private static readonly int s_currentProcessId = Process.GetCurrentProcess().Id;
+        private static readonly int s_currentProcessId = Environment.ProcessId;
 
         /// <summary>
         /// Retrieve the parent process of a process.
@@ -137,31 +81,6 @@ namespace System.Management.Automation
         {
             Architecture arch = RuntimeInformation.OSArchitecture;
             return arch == Architecture.Arm || arch == Architecture.Arm64;
-        }
-
-        /// <summary>
-        /// Get a temporary directory to use, needs to be unique to avoid collision.
-        /// </summary>
-        internal static string GetTemporaryDirectory()
-        {
-            string tempDir = string.Empty;
-            string tempPath = Path.GetTempPath();
-            do
-            {
-                tempDir = Path.Combine(tempPath, System.Guid.NewGuid().ToString());
-            }
-            while (Directory.Exists(tempDir));
-
-            try
-            {
-                Directory.CreateDirectory(tempDir);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                tempDir = string.Empty; // will become current working directory
-            }
-
-            return tempDir;
         }
 
         internal static string GetHostName()
@@ -298,11 +217,11 @@ namespace System.Management.Automation
                                      bool allowEnvironmentVariables,
                                      bool skipPathValidation)
         {
-            if (!skipPathValidation && string.IsNullOrEmpty(parameterName)) { throw PSTraceSource.NewArgumentNullException("parameterName"); }
+            if (!skipPathValidation && string.IsNullOrEmpty(parameterName)) { throw PSTraceSource.NewArgumentNullException(nameof(parameterName)); }
 
-            if (string.IsNullOrEmpty(psDataFilePath)) { throw PSTraceSource.NewArgumentNullException("psDataFilePath"); }
+            if (string.IsNullOrEmpty(psDataFilePath)) { throw PSTraceSource.NewArgumentNullException(nameof(psDataFilePath)); }
 
-            if (context == null) { throw PSTraceSource.NewArgumentNullException("context"); }
+            if (context == null) { throw PSTraceSource.NewArgumentNullException(nameof(context)); }
 
             string resolvedPath;
             if (skipPathValidation)
@@ -386,8 +305,7 @@ namespace System.Management.Automation
                          ex.Message);
             }
 
-            var retResult = evaluationResult as Hashtable;
-            if (retResult == null)
+            if (!(evaluationResult is Hashtable retResult))
             {
                 throw PSTraceSource.NewInvalidOperationException(
                          ParserStrings.InvalidPowerShellDataFile,
@@ -404,6 +322,7 @@ namespace System.Management.Automation
         internal static readonly string[] ManifestModuleVersionPropertyName = new[] { "ModuleVersion" };
         internal static readonly string[] ManifestGuidPropertyName = new[] { "GUID" };
         internal static readonly string[] ManifestPrivateDataPropertyName = new[] { "PrivateData" };
+
         internal static readonly string[] FastModuleManifestAnalysisPropertyNames = new[]
         {
             "AliasesToExport",
@@ -486,7 +405,7 @@ namespace System.Management.Automation
             // shell crashes if you pass an empty script block to a native command
             if (input == null)
             {
-                throw PSTraceSource.NewArgumentNullException("input");
+                throw PSTraceSource.NewArgumentNullException(nameof(input));
             }
 
             string base64 = Convert.ToBase64String
@@ -505,7 +424,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(base64))
             {
-                throw PSTraceSource.NewArgumentNullException("base64");
+                throw PSTraceSource.NewArgumentNullException(nameof(base64));
             }
 
             string output = new string(Encoding.Unicode.GetChars(Convert.FromBase64String(base64)));
@@ -521,7 +440,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(base64))
             {
-                throw PSTraceSource.NewArgumentNullException("base64");
+                throw PSTraceSource.NewArgumentNullException(nameof(base64));
             }
 
             string decoded = new string(Encoding.Unicode.GetChars(Convert.FromBase64String(base64)));
@@ -531,23 +450,21 @@ namespace System.Management.Automation
             object dso;
             Deserializer deserializer = new Deserializer(reader);
             dso = deserializer.Deserialize();
-            if (deserializer.Done() == false)
+            if (!deserializer.Done())
             {
                 // This helper function should move to host and it should provide appropriate
                 // error message there.
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            PSObject mo = dso as PSObject;
-            if (mo == null)
+            if (!(dso is PSObject mo))
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.
                 throw PSTraceSource.NewArgumentException(MinishellParameterBinderController.ArgsParameter);
             }
 
-            var argsList = mo.BaseObject as ArrayList;
-            if (argsList == null)
+            if (!(mo.BaseObject is ArrayList argsList))
             {
                 // This helper function should move the host. Provide appropriate error message.
                 // Format of args parameter is not correct.
@@ -562,11 +479,12 @@ namespace System.Management.Automation
     /// A simple implementation of CRC32.
     /// See "CRC-32 algorithm" in https://en.wikipedia.org/wiki/Cyclic_redundancy_check.
     /// </summary>
-    internal class CRC32Hash
+    internal static class CRC32Hash
     {
         // CRC-32C polynomial representations
         private const uint polynomial = 0x1EDC6F41;
-        private static uint[] table;
+
+        private static readonly uint[] table;
 
         static CRC32Hash()
         {
@@ -646,4 +564,3 @@ namespace System.Management.Automation
 
     #endregion
 }
-

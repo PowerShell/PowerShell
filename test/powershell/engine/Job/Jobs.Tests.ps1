@@ -6,7 +6,7 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
         # Make sure we do not have any jobs running
         Get-Job | Remove-Job -Force
         $timeBeforeStartedJob = Get-Date
-        $startedJob = Start-Job -Name 'StartedJob' -ScriptBlock { 1 + 1 } | Wait-Job
+        $startedJob = Start-Job -Name 'StartedJob' -Scriptblock { 1 + 1 } | Wait-Job
         $timeAfterStartedJob = Get-Date
 
         function script:ValidateJobInfo($job, $state, $hasMoreData, $command)
@@ -114,7 +114,7 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
 
         It "Create job with native command" {
             try {
-                $nativeJob = Start-job { & "$PSHOME/pwsh" -c 1+1 }
+                $nativeJob = Start-Job { & "$PSHOME/pwsh" -c 1+1 }
                 $nativeJob | Wait-Job
                 $nativeJob.State | Should -BeExactly "Completed"
                 $nativeJob.HasMoreData | Should -BeTrue
@@ -315,7 +315,7 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
 
         BeforeEach {
             # 20 seconds is chosen to be large, so that the job is in running state when Stop-Job is called.
-            $jobToStop = Start-Job -ScriptBlock {
+            $jobToStop = Start-Job -Scriptblock {
                 1..80 | ForEach-Object {
                     Write-Output $_
                     Start-Sleep -Milliseconds 250

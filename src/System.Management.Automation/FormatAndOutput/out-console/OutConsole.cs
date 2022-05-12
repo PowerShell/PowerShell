@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
         /// This parameter specifies the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
-        public PSObject InputObject { set; get; } = AutomationNull.Value;
+        public PSObject InputObject { get; set; } = AutomationNull.Value;
 
         /// <summary>
         /// Do nothing.
@@ -65,8 +65,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            PSHostUserInterface console = this.Host.UI;
-            ConsoleLineOutput lineOutput = new ConsoleLineOutput(console, false, new TerminatingErrorContext(this));
+            var lineOutput = new ConsoleLineOutput(Host, false, new TerminatingErrorContext(this));
 
             ((OutputManagerInner)this.implementation).LineOutput = lineOutput;
 
@@ -109,11 +108,10 @@ namespace Microsoft.PowerShell.Commands
                 object inputObjectBase = PSObject.Base(InputObject);
 
                 // Ignore errors and formatting records, as those can't be captured
-                if (
-                    (inputObjectBase != null) &&
-                    (!(inputObjectBase is ErrorRecord)) &&
-                    (!inputObjectBase.GetType().FullName.StartsWith(
-                        "Microsoft.PowerShell.Commands.Internal.Format", StringComparison.OrdinalIgnoreCase)))
+                if (inputObjectBase != null &&
+                    inputObjectBase is not ErrorRecord &&
+                    !inputObjectBase.GetType().FullName.StartsWith(
+                        "Microsoft.PowerShell.Commands.Internal.Format", StringComparison.OrdinalIgnoreCase))
                 {
                     _outVarResults.Add(InputObject);
                 }
@@ -207,8 +205,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            PSHostUserInterface console = this.Host.UI;
-            ConsoleLineOutput lineOutput = new ConsoleLineOutput(console, _paging, new TerminatingErrorContext(this));
+            var lineOutput = new ConsoleLineOutput(Host, _paging, new TerminatingErrorContext(this));
 
             ((OutputManagerInner)this.implementation).LineOutput = lineOutput;
             base.BeginProcessing();

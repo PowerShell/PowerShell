@@ -5,7 +5,7 @@ Describe "Invoke-Expression" -Tags "CI" {
     Context "Should execute the invoked command validly" {
 
 	It "Should return the echoed text" {
-	    (Invoke-Expression -command "echo pestertest1") | Should -BeExactly "pestertest1"
+	    (Invoke-Expression -Command "echo pestertest1") | Should -BeExactly "pestertest1"
 	}
 
 	It "Should return the echoed text from a script" {
@@ -19,7 +19,7 @@ Describe "Invoke-Expression" -Tags "CI" {
 }
 Describe "Invoke-Expression DRT Unit Tests" -Tags "CI" {
 	It "Invoke-Expression should work"{
-		$result=invoke-expression -Command 2+2
+		$result=Invoke-Expression -Command 2+2
 		$result | Should -Be 4
 	}
 }

@@ -302,7 +302,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count)"
+            Write-Warning -Message "Could not split EventId $($item.EventId) on '[] ' Count:$($subparts.Count) -> $content"
         }
 
         # (commitid:TID:ChannelID)
@@ -317,7 +317,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count)"
+            Write-Warning -Message "Could not split CommitId $($item.CommitId) on '(): ' Count:$($subparts.Count) -> $content"
         }
 
         # nameid[PID]
@@ -331,7 +331,7 @@ class PSLogItem
         }
         else
         {
-            Write-Warning -Message "Could not split LogId $($item.LogId) on '[]:' Count:$($subparts.Count)"
+            Write-Warning -Message "Could not split LogId $($item.LogId) on '[]:' Count:$($subparts.Count) -> $content"
         }
 
         return $item
@@ -497,11 +497,18 @@ function ConvertFrom-SysLog
     {
         foreach ($line in $Content)
         {
-            [PSLogItem] $item = [PSLogItem]::ConvertSysLog($line, $id, $after)
-            if ($item -ne $null)
+            try
             {
-                $totalWritten++
-                Write-Output $item
+                [PSLogItem] $item = [PSLogItem]::ConvertSysLog($line, $id, $after)
+                if ($item -ne $null)
+                {
+                    $totalWritten++
+                    Write-Output $item
+                }
+            }
+            catch
+            {
+                Write-Warning -Message "Could not convert '$line' to PSLogItem"
             }
         }
     }
@@ -615,7 +622,7 @@ function Get-PSSysLog
     else
     {
         [string] $filter = [string]::Format(" {0}[", $id)
-        Get-Content @contentParms -filter {$_.Contains($filter)} | ConvertFrom-SysLog -Id $Id -After $After | Select-Object -First $maxItems
+        Get-Content @contentParms -Filter {$_.Contains($filter)} | ConvertFrom-SysLog -Id $Id -After $After | Select-Object -First $maxItems
     }
 }
 
@@ -811,7 +818,7 @@ function Get-PSOsLog
     {
         [string] $filter = [string]::Format("com.microsoft.powershell.{0}: (", $id)
         Write-Warning "this code path `Get-PSOsLog -TotalCount` should not be used if the message field is needed!"
-        Get-Content @contentParms -filter {$_.Contains($filter)} | Where-Object {![string]::IsNullOrEmpty($_)} | ConvertFrom-OsLog -Id $Id -After $After | Select-Object -First $maxItems
+        Get-Content @contentParms -Filter {$_.Contains($filter)} | Where-Object {![string]::IsNullOrEmpty($_)} | ConvertFrom-OsLog -Id $Id -After $After | Select-Object -First $maxItems
     }
 }
 
@@ -1009,7 +1016,7 @@ function Get-OsLogPersistence
         # Not configured
         # Expecting a format like the following:
         # Mode for 'com.microsoft.powershell'  PERSIST_DEFAULT
-        $result = new-object PSObject -Property @{
+        $result = New-Object PSObject -Property @{
             Level = 'DEFAULT'
             Persist = $parts[$parts.Length- 1]
             Enabled = $false
@@ -1019,7 +1026,7 @@ function Get-OsLogPersistence
     {
         # Expecting a format like the following:
         # Mode for 'com.microsoft.powershell'  INFO PERSIST_INFO
-        $result = new-object PSObject -Property @{
+        $result = New-Object PSObject -Property @{
             Level = $parts[$parts.Length - 2]
             Persist = $parts[$parts.Length -1]
             Enabled = $true
@@ -1068,17 +1075,17 @@ function Wait-PSWinEvent
         $All
     )
 
-    $startTime = [DateTime]::Now
+    $startTime = [DateTime]::Now
     $lastFoundCount = 0;
 
-    do
-    {
-        Start-Sleep -Seconds $pause
+    do
+    {
+        Start-Sleep -Seconds $pause
 
         $recordsToReturn = @()
 
-        foreach ($thisRecord in (get-winevent -FilterHashtable $filterHashtable -Oldest 2> $null))
-        {
+        foreach ($thisRecord in (Get-WinEvent -FilterHashtable $filterHashtable -Oldest 2> $null))
+        {
             if($PSCmdlet.ParameterSetName -eq "ByPropertyName")
             {
                 if ($thisRecord."$propertyName" -like "*$propertyValue*")
@@ -1108,7 +1115,7 @@ function Wait-PSWinEvent
                     }
                 }
             }
-        }
+        }
 
         if($recordsToReturn.Count -gt 0)
         {
@@ -1119,7 +1126,7 @@ function Wait-PSWinEvent
 
             $lastFoundCount = $recordsToReturn.Count
         }
-    } while (([DateTime]::Now - $startTime).TotalSeconds -lt $timeout)
+    } while (([DateTime]::Now - $startTime).TotalSeconds -lt $timeout)
 }
 #endregion eventlog support
 

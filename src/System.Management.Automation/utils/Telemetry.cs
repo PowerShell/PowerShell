@@ -9,7 +9,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 
 using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights.Extensibility.Implementation;
 
 namespace Microsoft.PowerShell.Telemetry
 {
@@ -61,6 +63,26 @@ namespace Microsoft.PowerShell.Telemetry
     }
 
     /// <summary>
+    /// Set up the telemetry initializer to mask the platform specific names.
+    /// </summary>
+    internal class NameObscurerTelemetryInitializer : ITelemetryInitializer
+    {
+        // Report the platform name information as "na".
+        private const string _notavailable = "na";
+
+        /// <summary>
+        /// Initialize properties we are obscuring to "na".
+        /// </summary>
+        /// <param name="telemetry">The instance of our telemetry.</param>
+        public void Initialize(ITelemetry telemetry)
+        {
+            telemetry.Context.Cloud.RoleName = _notavailable;
+            telemetry.Context.GetInternalContext().NodeName = _notavailable;
+            telemetry.Context.Cloud.RoleInstance = _notavailable;
+        }
+    }
+
+    /// <summary>
     /// Send up telemetry for startup.
     /// </summary>
     public static class ApplicationInsightsTelemetry
@@ -79,13 +101,13 @@ namespace Microsoft.PowerShell.Telemetry
         private const string _telemetryFailure = "TELEMETRY_FAILURE";
 
         // Telemetry client to be reused when we start sending more telemetry
-        private static TelemetryClient s_telemetryClient { get; set; }
+        private static TelemetryClient s_telemetryClient { get; }
 
         // the unique identifier for the user, when we start we
-        private static string s_uniqueUserIdentifier { get; set; }
+        private static string s_uniqueUserIdentifier { get; }
 
         // the session identifier
-        private static string s_sessionId { get; set; }
+        private static string s_sessionId { get; }
 
         // private semaphore to determine whether we sent the startup telemetry event
         private static int s_startupEventSent = 0;
@@ -93,7 +115,7 @@ namespace Microsoft.PowerShell.Telemetry
         /// Use a hashset for quick lookups.
         /// We send telemetry only a known set of modules.
         /// If it's not in the list (initialized in the static constructor), then we report anonymous.
-        private static HashSet<string> s_knownModules;
+        private static readonly HashSet<string> s_knownModules;
 
         /// <summary>Gets a value indicating whether telemetry can be sent.</summary>
         public static bool CanSendTelemetry { get; private set; }
@@ -111,14 +133,17 @@ namespace Microsoft.PowerShell.Telemetry
             CanSendTelemetry = !GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false);
             if (CanSendTelemetry)
             {
+                s_sessionId = Guid.NewGuid().ToString();
                 TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
                 configuration.InstrumentationKey = _psCoreTelemetryKey;
 
                 // Set this to true to reduce latency during development
                 configuration.TelemetryChannel.DeveloperMode = false;
 
+                // Be sure to obscure any information about the client node name.
+                configuration.TelemetryInitializers.Add(new NameObscurerTelemetryInitializer());
+
                 s_telemetryClient = new TelemetryClient(configuration);
-                s_sessionId = Guid.NewGuid().ToString();
 
                 // use a hashset when looking for module names, it should be quicker than a string comparison
                 s_knownModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -318,6 +343,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "branchcache",
                         "CimCmdlets",
                         "clusterawareupdating",
+                        "CompatPowerShellGet",
                         "configci",
                         "ConfigurationManager",
                         "DataProtectionManager",
@@ -383,13 +409,18 @@ namespace Microsoft.PowerShell.Telemetry
                         "Microsoft.PowerApps.Checker.PowerShell",
                         "Microsoft.PowerShell.Archive",
                         "Microsoft.PowerShell.Core",
+                        "Microsoft.PowerShell.Crescendo",
                         "Microsoft.PowerShell.Diagnostics",
                         "Microsoft.PowerShell.Host",
                         "Microsoft.PowerShell.LocalAccounts",
                         "Microsoft.PowerShell.Management",
                         "Microsoft.PowerShell.ODataUtils",
                         "Microsoft.PowerShell.Operation.Validation",
+                        "Microsoft.PowerShell.RemotingTools",
+                        "Microsoft.PowerShell.SecretManagement",
+                        "Microsoft.PowerShell.SecretStore",
                         "Microsoft.PowerShell.Security",
+                        "Microsoft.PowerShell.TextUtility",
                         "Microsoft.PowerShell.Utility",
                         "Microsoft.SharePoint.Powershell",
                         "Microsoft.SystemCenter.ServiceManagementAutomation",
@@ -559,19 +590,56 @@ namespace Microsoft.PowerShell.Telemetry
                 return defaultValue;
             }
 
-            switch (str.ToLowerInvariant())
+            var boolStr = str.AsSpan();
+
+            if (boolStr.Length == 1)
             {
-                case "true":
-                case "1":
-                case "yes":
+                if (boolStr[0] == '1')
+                {
                     return true;
-                case "false":
-                case "0":
-                case "no":
+                }
+
+                if (boolStr[0] == '0')
+                {
                     return false;
-                default:
-                    return defaultValue;
+                }
             }
+
+            if (boolStr.Length == 3 &&
+                (boolStr[0] == 'y' || boolStr[0] == 'Y') &&
+                (boolStr[1] == 'e' || boolStr[1] == 'E') &&
+                (boolStr[2] == 's' || boolStr[2] == 'S'))
+            {
+                return true;
+            }
+
+            if (boolStr.Length == 2 &&
+                (boolStr[0] == 'n' || boolStr[0] == 'N') &&
+                (boolStr[1] == 'o' || boolStr[1] == 'O'))
+            {
+                return false;
+            }
+
+            if (boolStr.Length == 4 &&
+                (boolStr[0] == 't' || boolStr[0] == 'T') &&
+                (boolStr[1] == 'r' || boolStr[1] == 'R') &&
+                (boolStr[2] == 'u' || boolStr[2] == 'U') &&
+                (boolStr[3] == 'e' || boolStr[3] == 'E'))
+            {
+                return true;
+            }
+
+            if (boolStr.Length == 5 &&
+                (boolStr[0] == 'f' || boolStr[0] == 'F') &&
+                (boolStr[1] == 'a' || boolStr[1] == 'A') &&
+                (boolStr[2] == 'l' || boolStr[2] == 'L') &&
+                (boolStr[3] == 's' || boolStr[3] == 'S') &&
+                (boolStr[4] == 'e' || boolStr[4] == 'E'))
+            {
+                return false;
+            }
+
+            return defaultValue;
         }
 
         /// <summary>
@@ -794,28 +862,29 @@ namespace Microsoft.PowerShell.Telemetry
 
             // Multiple processes may start simultaneously so we need a system wide
             // way to control access to the file in the case (although remote) when we have
-            // simulataneous shell starts without the persisted file which attempt to create the file.
-            using (var m = new Mutex(true, "CreateUniqueUserId"))
+            // simultaneous shell starts without the persisted file which attempt to create the file.
+            try
             {
                 // TryCreateUniqueIdentifierAndFile shouldn't throw, but the mutex might
+                using var m = new Mutex(true, "CreateUniqueUserId");
+                m.WaitOne();
                 try
                 {
-                    m.WaitOne();
                     if (TryCreateUniqueIdentifierAndFile(uuidPath, out id))
                     {
                         return id;
                     }
                 }
-                catch (Exception)
-                {
-                    // Any problem in generating a uuid will result in no telemetry being sent.
-                    // Try to send the failure in telemetry, but it will have no unique id.
-                    s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "mutex");
-                }
                 finally
                 {
                     m.ReleaseMutex();
                 }
+            }
+            catch (Exception)
+            {
+                // Any problem in generating a uuid will result in no telemetry being sent.
+                // Try to send the failure in telemetry, but it will have no unique id.
+                s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "mutex");
             }
 
             // something bad happened, turn off telemetry since the unique id wasn't set.

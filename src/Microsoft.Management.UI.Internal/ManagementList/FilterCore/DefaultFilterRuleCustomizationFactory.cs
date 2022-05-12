@@ -168,8 +168,7 @@ namespace Microsoft.Management.UI.Internal
                 throw new ArgumentNullException("typeToParseTo");
             }
 
-            bool isNumericType = false
-                || typeToParseTo == typeof(byte)
+            bool isNumericType = typeToParseTo == typeof(byte)
                 || typeToParseTo == typeof(sbyte)
                 || typeToParseTo == typeof(short)
                 || typeToParseTo == typeof(ushort)

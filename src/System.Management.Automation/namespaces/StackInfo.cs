@@ -29,12 +29,12 @@ namespace System.Management.Automation
         {
             if (locationStack == null)
             {
-                throw PSTraceSource.NewArgumentNullException("locationStack");
+                throw PSTraceSource.NewArgumentNullException(nameof(locationStack));
             }
 
             if (string.IsNullOrEmpty(stackName))
             {
-                throw PSTraceSource.NewArgumentException("stackName");
+                throw PSTraceSource.NewArgumentException(nameof(stackName));
             }
 
             Name = stackName;

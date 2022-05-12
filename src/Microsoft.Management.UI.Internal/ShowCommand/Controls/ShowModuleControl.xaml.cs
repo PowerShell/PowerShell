@@ -26,10 +26,10 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             InitializeComponent();
 
             // See comment in method summary to understand why this event is handled
-            this.CommandList.PreviewMouseMove += new MouseEventHandler(this.CommandList_PreviewMouseMove);
+            this.CommandList.PreviewMouseMove += this.CommandList_PreviewMouseMove;
 
             // See comment in method summary to understand why this event is handled
-            this.CommandList.SelectionChanged += new SelectionChangedEventHandler(this.CommandList_SelectionChanged);
+            this.CommandList.SelectionChanged += this.CommandList_SelectionChanged;
         }
 
         /// <summary>

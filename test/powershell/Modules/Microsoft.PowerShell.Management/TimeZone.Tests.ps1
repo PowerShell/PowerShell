@@ -143,7 +143,7 @@ try {
         }
         AfterAll {
             if ($IsWindows) {
-                Set-TimeZone -ID $originalTimeZoneId
+                Set-TimeZone -Id $originalTimeZoneId
             }
         }
 
@@ -172,7 +172,7 @@ try {
         }
         AfterAll {
             if ($IsWindows) {
-                Set-TimeZone -ID $originalTimeZoneId
+                Set-TimeZone -Id $originalTimeZoneId
             }
         }
 

@@ -49,7 +49,7 @@ namespace Microsoft.Management.UI.Internal
         protected SingleValueComparableValueFilterRule()
         {
             this.Value = new ValidatingValue<T>();
-            this.Value.PropertyChanged += new PropertyChangedEventHandler(this.Value_PropertyChanged);
+            this.Value.PropertyChanged += this.Value_PropertyChanged;
         }
 
         #endregion Ctor
@@ -65,7 +65,7 @@ namespace Microsoft.Management.UI.Internal
         [OnDeserialized]
         private void Initialize(StreamingContext context)
         {
-            this.Value.PropertyChanged += new PropertyChangedEventHandler(this.Value_PropertyChanged);
+            this.Value.PropertyChanged += this.Value_PropertyChanged;
         }
     }
 }

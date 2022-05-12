@@ -51,6 +51,7 @@ namespace System.Management.Automation.Configuration
         private const string ExecutionPolicyDefaultShellKey = "Microsoft.PowerShell:ExecutionPolicy";
         private const string DisableImplicitWinCompatKey = "DisableImplicitWinCompat";
         private const string WindowsPowerShellCompatibilityModuleDenyListKey = "WindowsPowerShellCompatibilityModuleDenyList";
+        private const string WindowsPowerShellCompatibilityNoClobberModuleListKey = "WindowsPowerShellCompatibilityNoClobberModuleList";
 
         // Provide a singleton
         internal static readonly PowerShellConfig Instance = new PowerShellConfig();
@@ -173,7 +174,7 @@ namespace System.Management.Automation.Configuration
             WriteValueToFile<string>(scope, key, executionPolicy);
         }
 
-        private string GetExecutionPolicySettingKey(string shellId)
+        private static string GetExecutionPolicySettingKey(string shellId)
         {
             return string.Equals(shellId, Utils.DefaultPowerShellShellID, StringComparison.Ordinal)
                 ? ExecutionPolicyDefaultShellKey
@@ -218,26 +219,23 @@ namespace System.Management.Automation.Configuration
 
         internal bool IsImplicitWinCompatEnabled()
         {
-            bool? settingValue = ReadValueFromFile<bool?>(ConfigScope.CurrentUser, DisableImplicitWinCompatKey);
-            if (!settingValue.HasValue)
-            {
-                // if the setting is not mentioned in configuration files, then the default DisableImplicitWinCompat value is False
-                settingValue = ReadValueFromFile<bool?>(ConfigScope.AllUsers, DisableImplicitWinCompatKey, defaultValue: false);
-            }
+            bool settingValue = ReadValueFromFile<bool?>(ConfigScope.CurrentUser, DisableImplicitWinCompatKey)
+                ?? ReadValueFromFile<bool?>(ConfigScope.AllUsers, DisableImplicitWinCompatKey)
+                ?? false;
 
-            return !settingValue.Value;
+            return !settingValue;
         }
 
         internal string[] GetWindowsPowerShellCompatibilityModuleDenyList()
         {
-            string[] settingValue = ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityModuleDenyListKey);
-            if (settingValue == null)
-            {
-                // if the setting is not mentioned in configuration files, then the default WindowsPowerShellCompatibilityModuleDenyList value is null
-                settingValue = ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey);
-            }
+            return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityModuleDenyListKey)
+                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey);
+        }
 
-            return settingValue;
+        internal string[] GetWindowsPowerShellCompatibilityNoClobberModuleList()
+        {
+            return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityNoClobberModuleListKey)
+                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityNoClobberModuleListKey);
         }
 
         /// <summary>
@@ -292,12 +290,12 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// The supported separator characters for listing channels and keywords in configuration.
         /// </summary>
-        static readonly char[] s_valueSeparators = new char[] {' ', ',', '|'};
+        private static readonly char[] s_valueSeparators = new char[] {' ', ',', '|'};
 
         /// <summary>
         /// Provides a string name to indicate the default for a configuration setting.
         /// </summary>
-        const string LogDefaultValue = "default";
+        private const string LogDefaultValue = "default";
 
         /// <summary>
         /// Gets the bitmask of the PSChannel values to log.
@@ -403,6 +401,10 @@ namespace System.Management.Automation.Configuration
                         using var jsonReader = new JsonTextReader(new StreamReader(stream));
 
                         configData = serializer.Deserialize<JObject>(jsonReader) ?? emptyConfig;
+                    }
+                    catch (Exception exc)
+                    {
+                        throw PSTraceSource.NewInvalidOperationException(exc, PSConfigurationStrings.CanNotConfigurationFile, args: fileName);
                     }
                     finally
                     {
@@ -564,7 +566,7 @@ namespace System.Management.Automation.Configuration
         /// <param name="value">The value to write.</param>
         private void WriteValueToFile<T>(ConfigScope scope, string key, T value)
         {
-            if (ConfigScope.CurrentUser == scope && !Directory.Exists(perUserConfigDirectory))
+            if (scope == ConfigScope.CurrentUser && !Directory.Exists(perUserConfigDirectory))
             {
                 Directory.CreateDirectory(perUserConfigDirectory);
             }
@@ -638,11 +640,17 @@ namespace System.Management.Automation.Configuration
     internal sealed class PowerShellPolicies
     {
         public ScriptExecution ScriptExecution { get; set; }
+
         public ScriptBlockLogging ScriptBlockLogging { get; set; }
+
         public ModuleLogging ModuleLogging { get; set; }
+
         public ProtectedEventLogging ProtectedEventLogging { get; set; }
+
         public Transcription Transcription { get; set; }
+
         public UpdatableHelp UpdatableHelp { get; set; }
+
         public ConsoleSessionConfiguration ConsoleSessionConfiguration { get; set; }
     }
 
@@ -654,6 +662,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ScriptExecution : PolicyBase
     {
         public string ExecutionPolicy { get; set; }
+
         public bool? EnableScripts { get; set; }
     }
 
@@ -663,6 +672,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ScriptBlockLogging : PolicyBase
     {
         public bool? EnableScriptBlockInvocationLogging { get; set; }
+
         public bool? EnableScriptBlockLogging { get; set; }
     }
 
@@ -672,6 +682,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ModuleLogging : PolicyBase
     {
         public bool? EnableModuleLogging { get; set; }
+
         public string[] ModuleNames { get; set; }
     }
 
@@ -681,7 +692,9 @@ namespace System.Management.Automation.Configuration
     internal sealed class Transcription : PolicyBase
     {
         public bool? EnableTranscripting { get; set; }
+
         public bool? EnableInvocationHeader { get; set; }
+
         public string OutputDirectory { get; set; }
     }
 
@@ -691,6 +704,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class UpdatableHelp : PolicyBase
     {
         public bool? EnableUpdateHelpDefaultSourcePath { get; set; }
+
         public string DefaultSourcePath { get; set; }
     }
 
@@ -700,6 +714,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ConsoleSessionConfiguration : PolicyBase
     {
         public bool? EnableConsoleSessionConfiguration { get; set; }
+
         public string ConsoleSessionConfigurationName { get; set; }
     }
 
@@ -709,6 +724,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ProtectedEventLogging : PolicyBase
     {
         public bool? EnableProtectedEventLogging { get; set; }
+
         public string[] EncryptionCertificate { get; set; }
     }
 

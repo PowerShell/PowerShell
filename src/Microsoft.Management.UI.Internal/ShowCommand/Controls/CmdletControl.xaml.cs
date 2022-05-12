@@ -23,10 +23,10 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         public CmdletControl()
         {
             InitializeComponent();
-            this.NotImportedControl.ImportModuleButton.Click += new RoutedEventHandler(ImportModuleButton_Click);
+            this.NotImportedControl.ImportModuleButton.Click += ImportModuleButton_Click;
             this.ParameterSetTabControl.DataContextChanged += new DependencyPropertyChangedEventHandler(this.ParameterSetTabControl_DataContextChanged);
-            this.KeyDown += new System.Windows.Input.KeyEventHandler(this.CmdletControl_KeyDown);
-            this.helpButton.innerButton.Click += new RoutedEventHandler(this.HelpButton_Click);
+            this.KeyDown += this.CmdletControl_KeyDown;
+            this.helpButton.innerButton.Click += this.HelpButton_Click;
         }
         #endregion
 

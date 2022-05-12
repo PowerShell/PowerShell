@@ -45,11 +45,7 @@ namespace Microsoft.Management.UI.Internal
                 return base.SelectTemplate(item, container);
             }
 
-            Type type = item as Type;
-            if (type == null)
-            {
-                type = item.GetType();
-            }
+            Type type = item as Type ?? item.GetType();
 
             DataTemplate template;
 

@@ -8,7 +8,7 @@ using System.Net.Http;
 
 namespace Microsoft.PowerShell.Commands
 {
-    internal static partial class WebResponseHelper
+    internal static class WebResponseHelper
     {
         internal static string GetCharacterSet(HttpResponseMessage response)
         {

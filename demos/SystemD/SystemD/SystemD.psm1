@@ -11,7 +11,7 @@ Function Get-SystemDJournal {
         $Result = & $sudocmd $cmd $journalctlParameters -o json --no-pager
         Try
         {
-                  $JSONResult = $Result|ConvertFrom-JSON
+                  $JSONResult = $Result|ConvertFrom-Json
                   $JSONResult
         }
         Catch

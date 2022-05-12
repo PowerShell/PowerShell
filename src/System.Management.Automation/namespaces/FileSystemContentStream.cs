@@ -38,31 +38,33 @@ namespace Microsoft.PowerShell.Commands
         [Dbg.TraceSourceAttribute(
             "FileSystemContentStream",
             "The provider content reader and writer for the file system")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("FileSystemContentStream",
             "The provider content reader and writer for the file system");
 
         #endregion tracer
 
-        private string _path;
-        private string _streamName;
-        private FileMode _mode;
-        private FileAccess _access;
-        private FileShare _share;
-        private Encoding _encoding;
-        private CmdletProvider _provider;
+        private readonly string _path;
+        private readonly string _streamName;
+        private readonly FileMode _mode;
+        private readonly FileAccess _access;
+        private readonly FileShare _share;
+        private readonly Encoding _encoding;
+        private readonly CmdletProvider _provider;
 
         private FileStream _stream;
         private StreamReader _reader;
         private StreamWriter _writer;
-        private bool _usingByteEncoding;
+        private readonly bool _usingByteEncoding;
+
         private const char DefaultDelimiter = '\n';
-        private string _delimiter = $"{DefaultDelimiter}";
-        private int[] _offsetDictionary;
-        private bool _usingDelimiter;
-        private StringBuilder _currentLineContent;
+
+        private readonly string _delimiter = $"{DefaultDelimiter}";
+        private readonly int[] _offsetDictionary;
+        private readonly bool _usingDelimiter;
+        private readonly StringBuilder _currentLineContent;
         private bool _waitForChanges;
-        private bool _isRawStream;
+        private readonly bool _isRawStream;
         private long _fileOffset;
 
         private FileAttributes _oldAttributes;
@@ -73,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _alreadyDetectEncoding = false;
 
         // False to add a newline to the end of the output string, true if not.
-        private bool _suppressNewline = false;
+        private readonly bool _suppressNewline = false;
 
         /// <summary>
         /// Constructor for the content stream.
@@ -107,10 +109,26 @@ namespace Microsoft.PowerShell.Commands
         /// Indicates raw stream.
         /// </param>
         public FileSystemContentReaderWriter(
-            string path, FileMode mode, FileAccess access,
-            FileShare share, Encoding encoding, bool usingByteEncoding,
-            bool waitForChanges, CmdletProvider provider, bool isRawStream) :
-                this(path, null, mode, access, share, encoding, usingByteEncoding, waitForChanges, provider, isRawStream)
+            string path,
+            FileMode mode,
+            FileAccess access,
+            FileShare share,
+            Encoding encoding,
+            bool usingByteEncoding,
+            bool waitForChanges,
+            CmdletProvider provider,
+            bool isRawStream)
+            : this(
+                path,
+                streamName: null,
+                mode,
+                access,
+                share,
+                encoding,
+                usingByteEncoding,
+                waitForChanges,
+                provider,
+                isRawStream)
         {
         }
 
@@ -156,7 +174,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (s_tracer.IsEnabled)
@@ -435,7 +453,7 @@ namespace Microsoft.PowerShell.Commands
             if (backCount < 0)
             {
                 // The caller needs to guarantee that 'backCount' is greater or equals to 0
-                throw PSTraceSource.NewArgumentException("backCount");
+                throw PSTraceSource.NewArgumentException(nameof(backCount));
             }
 
             if (_isRawStream && _waitForChanges)
@@ -549,7 +567,7 @@ namespace Microsoft.PowerShell.Commands
                     (e is UnauthorizedAccessException) ||
                     (e is ArgumentNullException))
                 {
-                    // Exception contains specific message about the error occured and so no need for errordetails.
+                    // Exception contains specific message about the error occurred and so no need for errordetails.
                     _provider.WriteError(new ErrorRecord(e, "GetContentReaderIOError", ErrorCategory.ReadError, _path));
                 }
                 else
@@ -901,8 +919,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 ErrorEventArgs errorEventArgs = null;
                 var tcs = new TaskCompletionSource<FileSystemEventArgs>();
-                FileSystemEventHandler onChangedHandler = (object source, FileSystemEventArgs e) => { tcs.TrySetResult(e); };
-                RenamedEventHandler onRenamedHandler = (object source, RenamedEventArgs e) => { tcs.TrySetResult(e); };
+                FileSystemEventHandler onChangedHandler = (object source, FileSystemEventArgs e) => tcs.TrySetResult(e);
+                RenamedEventHandler onRenamedHandler = (object source, RenamedEventArgs e) => tcs.TrySetResult(e);
                 ErrorEventHandler onErrorHandler = (object source, ErrorEventArgs e) =>
                 {
                     errorEventArgs = e;
@@ -1088,7 +1106,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (InvalidCastException)
                 {
-                    throw PSTraceSource.NewArgumentException("content", FileSystemProviderStrings.ByteEncodingError);
+                    throw PSTraceSource.NewArgumentException(nameof(content), FileSystemProviderStrings.ByteEncodingError);
                 }
             }
             else
@@ -1156,6 +1174,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly Encoding _defaultAnsiEncoding;
 
         private const int BuffSize = 4096;
+
         private readonly byte[] _byteBuff = new byte[BuffSize];
         private readonly char[] _charBuff = new char[BuffSize];
         private int _byteCount = 0;
@@ -1379,7 +1398,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            do
+            while (true)
             {
                 while (_charCount > 0)
                 {
@@ -1400,7 +1419,7 @@ namespace Microsoft.PowerShell.Commands
                     line.Remove(line.Length - charsToRemove, charsToRemove);
                     return line.ToString();
                 }
-            } while (true);
+            }
         }
 
         /// <summary>
@@ -1512,7 +1531,7 @@ namespace Microsoft.PowerShell.Commands
 
                 [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_LEADBYTES)]
                 public byte[] LeadBytes;
-            };
+            }
 
             /// <summary>
             /// Get information on a named code page.

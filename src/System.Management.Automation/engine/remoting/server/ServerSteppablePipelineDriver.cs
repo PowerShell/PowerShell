@@ -14,9 +14,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Execution context used for stepping.
     /// </summary>
-    internal class ExecutionContextForStepping : IDisposable
+    internal sealed class ExecutionContextForStepping : IDisposable
     {
-        private ExecutionContext _executionContext;
+        private readonly ExecutionContext _executionContext;
         private PSInformationalBuffers _originalInformationalBuffers;
         private PSHost _originalHost;
 
@@ -72,13 +72,13 @@ namespace System.Management.Automation
         // information
         // data to client
         // was created
-        private bool _addToHistory;
+        private readonly bool _addToHistory;
         // associated with this powershell
-        private ApartmentState apartmentState;  // apartment state for this powershell
+        private readonly ApartmentState apartmentState;  // apartment state for this powershell
 
         // pipeline that runs the actual command.
-        private ServerSteppablePipelineSubscriber _eventSubscriber;
-        private PSDataCollection<object> _powershellInput; // input collection of the PowerShell pipeline
+        private readonly ServerSteppablePipelineSubscriber _eventSubscriber;
+        private readonly PSDataCollection<object> _powershellInput; // input collection of the PowerShell pipeline
 
         #endregion
 
@@ -130,12 +130,11 @@ namespace System.Management.Automation
             RemoteHost = DataStructureHandler.GetHostAssociatedWithPowerShell(hostInfo, runspacePoolDriver.ServerRemoteHost);
 
             // subscribe to various data structure handler events
-            DataStructureHandler.InputEndReceived += new EventHandler(HandleInputEndReceived);
-            DataStructureHandler.InputReceived += new EventHandler<RemoteDataEventArgs<object>>(HandleInputReceived);
-            DataStructureHandler.StopPowerShellReceived += new EventHandler(HandleStopReceived);
-            DataStructureHandler.HostResponseReceived +=
-                new EventHandler<RemoteDataEventArgs<RemoteHostResponse>>(HandleHostResponseReceived);
-            DataStructureHandler.OnSessionConnected += new EventHandler(HandleSessionConnected);
+            DataStructureHandler.InputEndReceived += HandleInputEndReceived;
+            DataStructureHandler.InputReceived += HandleInputReceived;
+            DataStructureHandler.StopPowerShellReceived += HandleStopReceived;
+            DataStructureHandler.HostResponseReceived += HandleHostResponseReceived;
+            DataStructureHandler.OnSessionConnected += HandleSessionConnected;
 
             if (rsToUse == null)
             {

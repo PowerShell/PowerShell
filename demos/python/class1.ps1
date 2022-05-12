@@ -10,5 +10,5 @@
 # picking up the Python script from the same directory
 #
 
-& $PSScriptRoot/class1.py | ConvertFrom-JSON
+& $PSScriptRoot/class1.py | ConvertFrom-Json
 

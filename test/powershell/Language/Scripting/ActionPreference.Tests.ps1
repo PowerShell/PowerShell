@@ -209,7 +209,7 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
     }
 }
 
-Describe 'ActionPreference.Break tests' -tag 'CI' {
+Describe 'ActionPreference.Break tests' -Tag 'CI' {
 
     BeforeAll {
         Register-DebuggerHandler
@@ -239,7 +239,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                 Test-Break -ErrorAction Break
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v', 'v')
+            $results = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'v', 'v')
         }
 
         It 'Should show 3 debugger commands were invoked' {
@@ -280,7 +280,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                 Test-Break -ErrorAction Break
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v', 'v')
+            $results = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'v', 'v')
         }
 
         It 'Should show 3 debugger commands were invoked' {
@@ -321,7 +321,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                 Test-Break -ErrorAction Break
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript)
+            $results = @(Test-Debugger -Scriptblock $testScript)
         }
 
         It 'Should show 1 debugger command was invoked' {
@@ -354,7 +354,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                 Test-Break -ErrorAction Break
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript)
+            $results = @(Test-Debugger -Scriptblock $testScript)
         }
 
         It 'Should show 2 debugger commands were invoked' {
@@ -390,7 +390,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                 Test-Break *>$null
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript)
+            $results = @(Test-Debugger -Scriptblock $testScript)
         }
 
         It 'Should show 7 debugger commands were invoked' {

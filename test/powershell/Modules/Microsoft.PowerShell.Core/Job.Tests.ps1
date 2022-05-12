@@ -29,8 +29,8 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             { Get-Job $j -ErrorAction Stop } | Should -Throw -ErrorId "JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand"
         }
         It "Receive-Job can retrieve job results" {
-            Wait-Job -Timeout 60 -id $j.id | Should -Not -BeNullOrEmpty
-            receive-job -id $j.id | Should -Be 2
+            Wait-Job -Timeout 60 -Id $j.id | Should -Not -BeNullOrEmpty
+            Receive-Job -Id $j.id | Should -Be 2
         }
         It "-RunAs32 not supported from 64-bit pwsh" -Skip:(-not [System.Environment]::Is64BitProcess) {
             { Start-Job -ScriptBlock {} -RunAs32 } | Should -Throw -ErrorId "RunAs32NotSupported,Microsoft.PowerShell.Commands.StartJobCommand"
@@ -44,7 +44,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         It "Start-Job accepts arguments" {
             $sb = { Write-Output $args[1]; Write-Output $args[0] }
             $j = Start-Job -ScriptBlock $sb -ArgumentList "$TestDrive", 42
-            Wait-job -Timeout (5 * 60) $j | Should -Be $j
+            Wait-Job -Timeout (5 * 60) $j | Should -Be $j
             $r = Receive-Job $j
             $r -Join "," | Should -Be "42,$TestDrive"
         }
@@ -150,7 +150,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         }
     }
 }
-Describe "Debug-job test" -tag "Feature" {
+Describe "Debug-job test" -Tag "Feature" {
     BeforeAll {
         $rs = [runspacefactory]::CreateRunspace()
         $rs.Open()
@@ -165,7 +165,7 @@ Describe "Debug-job test" -tag "Feature" {
     }
     # we check this via implication.
     # if we're debugging a job, then the debugger will have a callstack
-    It "Debug-Job will break into debugger" -pending {
+    It "Debug-Job will break into debugger" -Pending {
         $ps.AddScript('$job = start-job { 1..300 | ForEach-Object { Start-Sleep 1 } }').Invoke()
         $ps.Commands.Clear()
         $ps.Runspace.Debugger.GetCallStack() | Should -BeNullOrEmpty
@@ -178,7 +178,7 @@ Describe "Debug-job test" -tag "Feature" {
     }
 }
 
-Describe "Ampersand background test" -tag "CI","Slow" {
+Describe "Ampersand background test" -Tag "CI", "Slow" {
     Context "Simple background job" {
         AfterEach {
             Get-Job | Remove-Job -Force
@@ -194,7 +194,7 @@ Describe "Ampersand background test" -tag "CI","Slow" {
         }
         It "doesn't cause error when variable is missing" {
             Remove-Item variable:name -ErrorAction Ignore
-            $j = write-output "Hi $name" &
+            $j = Write-Output "Hi $name" &
             Receive-Job $j -Wait | Should -BeExactly "Hi "
         }
         It "Copies variables to the child process" {
@@ -215,8 +215,18 @@ Describe "Ampersand background test" -tag "CI","Slow" {
             $PID | Should -Not -BeExactly $cpid
         }
         It "starts in the current directory" {
-            $j = Get-Location | Foreach-Object -MemberName Path &
+            $j = Get-Location | ForEach-Object -MemberName Path &
             Receive-Job -Wait $j | Should -Be ($PWD.Path)
+        }
+        It "Make sure Set-Location is not used in the job's script block to set the working directory" {
+            $j = (Get-Variable -Value ExecutionContext).SessionState.PSVariable.Get("MyInvocation").Value.MyCommand.ScriptBlock & 
+            (Receive-Job -Wait $j).ToString() | Should -BeExactly "(Get-Variable -Value ExecutionContext).SessionState.PSVariable.Get(`"MyInvocation`").Value.MyCommand.ScriptBlock"
+        }
+        It "Test that changing working directory also changes background job's working directory" {
+            Set-Location ..
+            $WorkingDirectory = (Get-Location).ToString()
+            $BackgroundJob = (Get-Location &) 
+            (Receive-Job -Wait $BackgroundJob).ToString() | Should -BeExactly $WorkingDirectory
         }
         It "Test that output redirection is done in the background job" {
             $j = Write-Output hello > $TESTDRIVE/hello.txt &
@@ -241,5 +251,18 @@ Describe "Ampersand background test" -tag "CI","Slow" {
             $j = 1..10 | ForEach-Object -Begin {$s=0} -Process {$s += $_} -End {$s} &
             Receive-Job -Wait $j | Should -Be 55
         }
+    }
+}
+
+Describe "Start-Job with -PSVersion parameter" -Tag "CI" {
+
+    It "Verifies that -PSVersion is not supported except for version 5.1" {
+        { Start-Job -PSVersion 2.0 } | Should -Throw -ErrorId 'ParameterBindingFailed,Microsoft.PowerShell.Commands.StartJobCommand'
+    }
+
+    It "Verifies that -PSVersion 5.1 runs the job in a version 5.1 PowerShell session" -Skip:(-not $IsWindows) {
+        $version = Start-Job -PSVersion 5.1 -ScriptBlock { $PSVersionTable } | Receive-Job -Wait -AutoRemoveJob
+        $version.PSVersion.Major | Should -Be 5
+        $version.PSVersion.Minor | Should -Be 1
     }
 }

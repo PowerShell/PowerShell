@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-set-strictmode -v 2
+Set-StrictMode -v 2
 
 Describe 'for statement parsing' -Tags "CI" {
     ShouldBeParseError 'for' MissingOpenParenthesisAfterKeyword 4 -CheckColumnNumber
@@ -148,17 +148,21 @@ Describe 'named blocks parsing' -Tags "CI" {
     ShouldBeParseError 'begin' MissingNamedStatementBlock 5
     ShouldBeParseError 'process' MissingNamedStatementBlock 7
     ShouldBeParseError 'end' MissingNamedStatementBlock 3
+    ShouldBeParseError 'clean' MissingNamedStatementBlock 5
     ShouldBeParseError 'dynamicparam' MissingNamedStatementBlock 12
     ShouldBeParseError 'begin process {}' MissingNamedStatementBlock 6 -CheckColumnNumber
     ShouldBeParseError 'end process {}' MissingNamedStatementBlock 4 -CheckColumnNumber
+    ShouldBeParseError 'clean process {}' MissingNamedStatementBlock 6 -CheckColumnNumber
     ShouldBeParseError 'dynamicparam process {}' MissingNamedStatementBlock 13 -CheckColumnNumber
     ShouldBeParseError 'process begin {}' MissingNamedStatementBlock 8 -CheckColumnNumber
-    ShouldBeParseError 'begin process end' MissingNamedStatementBlock,MissingNamedStatementBlock,MissingNamedStatementBlock 6,14,18 -CheckColumnNumber
+    ShouldBeParseError 'begin process end clean' MissingNamedStatementBlock, MissingNamedStatementBlock, MissingNamedStatementBlock, MissingNamedStatementBlock 6, 14, 18, 24 -CheckColumnNumber
 
     Test-Ast 'begin' 'begin' 'begin'
     Test-Ast 'begin end' 'begin end' 'begin' 'end'
     Test-Ast 'begin end process' 'begin end process' 'begin' 'end' 'process'
     Test-Ast 'begin {} end' 'begin {} end' 'begin {}' 'end'
+    Test-Ast 'begin process end clean' 'begin process end clean' 'begin' 'clean' 'end' 'process'
+    Test-Ast 'begin {} process end clean {}' 'begin {} process end clean {}' 'begin {}' 'clean {}' 'end' 'process'
 }
 
 #
@@ -279,37 +283,18 @@ Describe 'null coalescing statement parsing' -Tag "CI" {
 }
 
 Describe 'null conditional member access statement parsing' -Tag 'CI' {
-    BeforeAll {
-        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullConditionalOperators')
+    ShouldBeParseError '[datetime]?::now' ExpectedValueExpression, UnexpectedToken 11, 11
+    ShouldBeParseError '$x ?.name' ExpectedValueExpression, UnexpectedToken 4, 4
+    ShouldBeParseError 'Get-Date ?.ToString()' ExpectedExpression 20
+    ShouldBeParseError '${x}?.' MissingPropertyName 6
+    ShouldBeParseError '${x}?.name = "value"' InvalidLeftHandSide 0
 
-        if ($skipTest) {
-            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullConditionalOperators' to be enabled." -Verbose
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-    }
-
-    AfterAll {
-        if ($skipTest) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
-        }
-    }
-
-    # We need to add this check as parsing on script block is done before an `It` is called.
-    if (-not $skipTest) {
-        ShouldBeParseError '[datetime]?::now' ExpectedValueExpression, UnexpectedToken 11, 11
-        ShouldBeParseError '$x ?.name' ExpectedValueExpression, UnexpectedToken 4, 4
-        ShouldBeParseError 'Get-Date ?.ToString()' ExpectedExpression 20
-        ShouldBeParseError '${x}?.' MissingPropertyName 6
-        ShouldBeParseError '${x}?.name = "value"' InvalidLeftHandSide 0
-
-        ShouldBeParseError '[datetime]?[0]' MissingTypename, ExpectedValueExpression, UnexpectedToken 12, 11, 11
-        ShouldBeParseError '${x} ?[1]' MissingTypename, ExpectedValueExpression, UnexpectedToken 7, 6, 6
-        ShouldBeParseError '${x}?[]' MissingArrayIndexExpression 6
-        ShouldBeParseError '${x}?[-]' MissingExpressionAfterOperator 7
-        ShouldBeParseError '${x}?[             ]' MissingArrayIndexExpression 6
-        ShouldBeParseError '${x}?[0] = 1' InvalidLeftHandSide 0
-    }
+    ShouldBeParseError '[datetime]?[0]' MissingTypename, ExpectedValueExpression, UnexpectedToken 12, 11, 11
+    ShouldBeParseError '${x} ?[1]' MissingTypename, ExpectedValueExpression, UnexpectedToken 7, 6, 6
+    ShouldBeParseError '${x}?[]' MissingArrayIndexExpression 6
+    ShouldBeParseError '${x}?[-]' MissingExpressionAfterOperator 7
+    ShouldBeParseError '${x}?[             ]' MissingArrayIndexExpression 6
+    ShouldBeParseError '${x}?[0] = 1' InvalidLeftHandSide 0
 }
 
 Describe 'splatting parsing' -Tags "CI" {
@@ -476,6 +461,186 @@ Describe "ParserError type tests" -Tag CI {
         # `r`n
         if (!$IsWindows) {
             $measureResult = $ers[0].ToString() | Should -Not -Contain "`r`n"
+        }
+    }
+}
+
+Describe "Keywords 'default', 'hidden', 'in', 'static' Token parsing" -Tags CI {
+    BeforeAll {
+        $testCases_basic = @(
+            @{
+                Script = 'switch (1) {default {0} 1 {1}}'
+                TokensToCheck = @{
+                    5 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Default
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::Keyword
+                    }
+                }
+            }
+            @{
+                Script = 'switch (1) {"default" {0} 1 {1}}'
+                TokensToCheck = @{
+                    5 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::StringExpandable
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                }
+            }
+            @{
+                Script = 'switch (1) {adefault {0} 1 {1}}'
+                TokensToCheck = @{
+                    5 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Identifier
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                }
+            }
+            @{
+                Script = 'foreach ($i in 1..2) {$i}'
+                TokensToCheck = @{
+                    3 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::In
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::Keyword
+                    }
+                }
+            }
+            @{
+                Script = 'class test {hidden $a; static aMethod () {return $this.a} }'
+                TokensToCheck = @{
+                    3 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Hidden
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::Keyword
+                    }
+                    6 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Static
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::Keyword
+                    }
+                }
+            }
+            @{
+                Script = 'echo default hidden in static'
+                TokensToCheck = @{
+                    1 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                    2 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                    3 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                    4 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                }
+            }
+            @{
+                Script = 'default'
+                TokensToCheck = @{
+                    0 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Default
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword -bor [System.Management.Automation.Language.TokenFlags]::CommandName
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::CommandName
+                    }
+                }
+            }
+            @{
+                Script = 'hidden'
+                TokensToCheck = @{
+                    0 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Hidden
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword -bor [System.Management.Automation.Language.TokenFlags]::CommandName
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::CommandName
+                    }
+                }
+            }
+            @{
+                Script = 'in'
+                TokensToCheck = @{
+                    0 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::In
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword -bor [System.Management.Automation.Language.TokenFlags]::CommandName
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::CommandName
+                    }
+                }
+            }
+            @{
+                Script = 'static'
+                TokensToCheck = @{
+                    0 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Static
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword -bor [System.Management.Automation.Language.TokenFlags]::CommandName
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::CommandName
+                    }
+                }
+            }
+        )
+    }
+
+    AfterAll {
+    }
+
+    It "Keywords 'default', 'hidden', 'in', 'static' in {<Script>} correctly tokenized." -TestCases $testCases_basic {
+        param($Script, $TokensToCheck)
+
+        $tks = $null
+        $ers = $null
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+
+        foreach ($token in $TokensToCheck.Keys ) {
+            if ($TokensToCheck[$Token].ContainsKey('TokenKind')) {
+                $tks[$token].Kind | Should -Be $TokensToCheck[$token].TokenKind -Because 'because TokenKind must be as expected'
+            }
+            if ($TokensToCheck[$Token].ContainsKey('TokenFlags_Value')) {
+                $tks[$token].TokenFlags -band $TokensToCheck[$token].TokenFlags_Mask | Should -Be $TokensToCheck[$token].TokenFlags_Value -Because 'because TokenFlags must be as expected after masking'
+            }
+        }
+    }
+
+    $testKeywordsAsCmds = @(
+        @{ Keyword = 'default' }
+        @{ Keyword = 'hidden' }
+        @{ Keyword = 'in' }         # Note: this overwrites Pester's `In` function.
+        @{ Keyword = 'static' }
+    )
+
+    It "<Keyword> can be used as command name" -TestCases $testKeywordsAsCmds {
+        param($Keyword)
+
+        Invoke-Expression "function $Keyword { '$Keyword' }"
+
+        . $Keyword | Should -BeExactly $Keyword
+    }
+}
+
+Describe "Parsing array that has too many dimensions" -Tag CI {
+    It "ParseError for '<Script>'" -TestCases @(
+        @{ Script = '[int[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,'; ErrorId = @('ArrayHasTooManyDimensions', 'EndSquareBracketExpectedAtEndOfAttribute'); StartOffset = @(5, 37); EndOffset = @(37, 37) }
+        @{ Script = '[int[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]'; ErrorId = @('ArrayHasTooManyDimensions', 'EndSquareBracketExpectedAtEndOfAttribute'); StartOffset = @(5, 38); EndOffset = @(37, 38) }
+        @{ Script = '[int[,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,]]'; ErrorId = @('ArrayHasTooManyDimensions'); StartOffset = @(5); EndOffset = @(37) }
+    ) {
+        param($Script, $ErrorId, $StartOffset, $EndOffset)
+
+        $errs = Get-ParseResults -src $Script
+        $errs.Count | Should -Be $ErrorId.Count
+        for ($i = 0; $i -lt $errs.Count; $i++) {
+            $errs[$i].ErrorId | Should -BeExactly $ErrorId[$i]
+            $errs[$i].Extent.StartScriptPosition.Offset | Should -Be $StartOffset[$i]
+            $errs[$i].Extent.EndScriptPosition.Offset | Should -Be $EndOffset[$i]
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Microsoft.Management.UI.Internal
     public class PropertyValueGetter : IPropertyValueGetter
     {
         private const string PropertyDescriptorColumnId = "PropertyDescriptor";
+
         private DataTable cachedProperties;
 
         /// <summary>

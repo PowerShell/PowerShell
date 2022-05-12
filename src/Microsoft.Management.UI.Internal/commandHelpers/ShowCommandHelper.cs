@@ -289,7 +289,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Finalizes an instance of the ShowCommandHelper class.
+        /// Finalizes an instance of the <see cref="ShowCommandHelper"/> class.
         /// </summary>
         ~ShowCommandHelper()
         {
@@ -597,11 +597,7 @@ Function PSGetSerializedShowCommandInfo
         /// <returns>An array of objects out of <paramref name="commandObjects"/>.</returns>
         internal static object[] ObjectArrayFromObjectCollection(object commandObjects)
         {
-            object[] objectArray = commandObjects as object[];
-            if (objectArray == null)
-            {
-                objectArray = ((System.Collections.ArrayList)commandObjects).ToArray();
-            }
+            object[] objectArray = commandObjects as object[] ?? ((System.Collections.ArrayList)commandObjects).ToArray();
 
             return objectArray;
         }
@@ -754,7 +750,7 @@ Function PSGetSerializedShowCommandInfo
 
             try
             {
-                return property.GetValue(obj, new object[] { });
+                return property.GetValue(obj, Array.Empty<object>());
             }
             catch (ArgumentException)
             {
@@ -798,7 +794,7 @@ Function PSGetSerializedShowCommandInfo
 
             try
             {
-                property.SetValue(obj, value, new object[] { });
+                property.SetValue(obj, value, Array.Empty<object>());
             }
             catch (ArgumentException)
             {
@@ -969,7 +965,7 @@ Function PSGetSerializedShowCommandInfo
                 this.commandViewModel = (CommandViewModel)commandViewModelObj;
                 ShowCommandWindow showCommandWindow = new ShowCommandWindow();
 
-                this.commandViewModel.HelpNeeded += new EventHandler<HelpNeededEventArgs>(this.CommandNeedsHelp);
+                this.commandViewModel.HelpNeeded += this.CommandNeedsHelp;
                 showCommandWindow.DataContext = this.commandViewModel;
 
                 this.SetupButtonEvents(showCommandWindow.Run, showCommandWindow.Copy, showCommandWindow.Cancel, passThrough);
@@ -1004,7 +1000,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate (object ignored)
+                        delegate(object ignored)
                         {
                             this.allModulesViewModel = ShowCommandHelper.GetNewAllModulesViewModel(
                                 this.allModulesViewModel,
@@ -1054,7 +1050,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate (object ignored)
+                        delegate(object ignored)
                         {
                             HelpWindow help = new HelpWindow(getHelpResults[0]);
                             help.Owner = this.window;
@@ -1101,8 +1097,8 @@ Function PSGetSerializedShowCommandInfo
         private void SetupWindow(Window commandWindow)
         {
             this.window = commandWindow;
-            this.window.Closed += new EventHandler(this.Window_Closed);
-            this.window.Loaded += new RoutedEventHandler(this.Window_Loaded);
+            this.window.Closed += this.Window_Closed;
+            this.window.Loaded += this.Window_Loaded;
         }
 
         /// <summary>
@@ -1153,7 +1149,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="e">Event arguments.</param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.window.Loaded -= new RoutedEventHandler(this.Window_Loaded);
+            this.window.Loaded -= this.Window_Loaded;
             this.windowLoaded.Set();
         }
 
@@ -1172,9 +1168,9 @@ Function PSGetSerializedShowCommandInfo
                 run.Content = ShowCommandResources.ActionButtons_Button_Ok;
             }
 
-            run.Click += new RoutedEventHandler(this.Buttons_RunClick);
-            copy.Click += new RoutedEventHandler(this.Buttons_CopyClick);
-            cancel.Click += new RoutedEventHandler(this.Buttons_CancelClick);
+            run.Click += this.Buttons_RunClick;
+            copy.Click += this.Buttons_CopyClick;
+            cancel.Click += this.Buttons_CancelClick;
         }
 
         /// <summary>
@@ -1182,8 +1178,8 @@ Function PSGetSerializedShowCommandInfo
         /// </summary>
         private void SetupViewModel()
         {
-            this.allModulesViewModel.SelectedCommandInSelectedModuleNeedsHelp += new EventHandler<HelpNeededEventArgs>(this.CommandNeedsHelp);
-            this.allModulesViewModel.SelectedCommandInSelectedModuleNeedsImportModule += new EventHandler<ImportModuleEventArgs>(this.CommandNeedsImportModule);
+            this.allModulesViewModel.SelectedCommandInSelectedModuleNeedsHelp += this.CommandNeedsHelp;
+            this.allModulesViewModel.SelectedCommandInSelectedModuleNeedsImportModule += this.CommandNeedsImportModule;
             this.window.DataContext = this.allModulesViewModel;
         }
 

@@ -247,6 +247,30 @@ namespace System.Management.Automation
             return commandMetadata.GetEndBlock();
         }
 
+        /// <summary>
+        /// This method constructs a string representing the clean block of the command
+        /// specified by <paramref name="commandMetadata"/>. The returned string only contains the
+        /// script, it is not enclosed in "clean { }".
+        /// </summary>
+        /// <param name="commandMetadata">
+        /// An instance of CommandMetadata representing a command.
+        /// </param>
+        /// <returns>
+        /// A string representing the end block of the command.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// If <paramref name="commandMetadata"/> is null.
+        /// </exception>
+        public static string GetClean(CommandMetadata commandMetadata)
+        {
+            if (commandMetadata == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
+            }
+
+            return commandMetadata.GetCleanBlock();
+        }
+
         private static T GetProperty<T>(PSObject obj, string property) where T : class
         {
             T result = null;
@@ -278,11 +302,11 @@ namespace System.Management.Automation
                 string text = GetObjText(obj);
                 if (!string.IsNullOrEmpty(text))
                 {
-                    sb.Append("\n");
+                    sb.Append('\n');
                     sb.Append(section);
                     sb.Append("\n\n");
                     sb.Append(text);
-                    sb.Append("\n");
+                    sb.Append('\n');
                 }
             }
         }
@@ -306,13 +330,13 @@ namespace System.Management.Automation
                         }
 
                         sb.Append(text);
-                        sb.Append("\n");
+                        sb.Append('\n');
                     }
                 }
 
                 if (!first)
                 {
-                    sb.Append("\n");
+                    sb.Append('\n');
                 }
             }
         }
@@ -327,7 +351,7 @@ namespace System.Management.Automation
                 sb.Append(section);
                 sb.Append("\n\n");
                 sb.Append(GetObjText(name));
-                sb.Append("\n");
+                sb.Append('\n');
             }
             else
             {
@@ -338,7 +362,7 @@ namespace System.Management.Automation
                     sb.Append(section);
                     sb.Append("\n\n");
                     sb.Append(GetObjText(uri));
-                    sb.Append("\n");
+                    sb.Append('\n');
                 }
             }
         }
@@ -354,7 +378,7 @@ namespace System.Management.Automation
         {
             if (help == null)
             {
-                throw new ArgumentNullException("help");
+                throw new ArgumentNullException(nameof(help));
             }
 
             bool isHelpObject = false;
@@ -395,7 +419,7 @@ namespace System.Management.Automation
                         if (!string.IsNullOrEmpty(text))
                         {
                             sb.Append(text);
-                            sb.Append("\n");
+                            sb.Append('\n');
                         }
                     }
                 }
@@ -430,18 +454,18 @@ namespace System.Management.Automation
                     PSObject[] remarks = GetProperty<PSObject[]>(ex, "remarks");
                     if (remarks != null)
                     {
-                        exsb.Append("\n");
+                        exsb.Append('\n');
                         foreach (PSObject remark in remarks)
                         {
                             string remarkText = GetProperty<string>(remark, "text");
-                            exsb.Append(remarkText.ToString());
+                            exsb.Append(remarkText);
                         }
                     }
 
                     if (exsb.Length > 0)
                     {
                         sb.Append("\n\n.EXAMPLE\n\n");
-                        sb.Append(exsb.ToString());
+                        sb.Append(exsb);
                     }
                 }
             }

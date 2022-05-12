@@ -11,7 +11,7 @@ GUID = 'e11d52a1-d5a0-4e4d-92cd-e87114bf4a5c'
 
 Author = 'Microsoft Corporation'
 CompanyName = 'Microsoft Corporation'
-Copyright = '(c) Microsoft Corporation. All rights reserved.'
+Copyright = '(c) Microsoft Corporation.'
 
 Description = '
 This module contains remoting tool cmdlets.

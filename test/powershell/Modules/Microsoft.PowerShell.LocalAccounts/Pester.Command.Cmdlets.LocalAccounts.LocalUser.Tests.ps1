@@ -6,9 +6,9 @@
 
 return
 
-Set-Variable dateInFuture -option Constant -value "12/12/2036 09:00"
-Set-Variable dateInPast -option Constant -value "12/12/2010 09:00"
-Set-Variable dateInvalid -option Constant -value "12/12/2016 25:00"
+Set-Variable dateInFuture -Option Constant -Value "12/12/2036 09:00"
+Set-Variable dateInPast -Option Constant -Value "12/12/2010 09:00"
+Set-Variable dateInvalid -Option Constant -Value "12/12/2016 25:00"
 
 function RemoveTestUsers
 {
@@ -66,7 +66,7 @@ try {
     Describe "Verify Expected LocalUser Aliases are present" -Tags @('CI', 'RequireAdminOnWindows') {
 
         It "Test command presence" {
-            $result = get-alias | ForEach-Object { if ($_.Source -eq "Microsoft.PowerShell.LocalAccounts") {$_}}
+            $result = Get-Alias | ForEach-Object { if ($_.Source -eq "Microsoft.PowerShell.LocalAccounts") {$_}}
 
             $result.Name -contains "algm" | Should -BeTrue
             $result.Name -contains "dlu" | Should -BeTrue
@@ -328,7 +328,7 @@ try {
 
         It "Errors when Password is an empty string" {
             $sb = {
-                New-LocalUser TestUserNew1 -Password (ConvertTo-SecureString "" -Asplaintext -Force)
+                New-LocalUser TestUserNew1 -Password (ConvertTo-SecureString "" -AsPlainText -Force)
             }
             VerifyFailingTest $sb "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ConvertToSecureStringCommand"
         }
@@ -375,7 +375,7 @@ try {
 
         It "Can set PasswordNeverExpires to create a user with null for PasswordExpires date" {
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
-            $result = New-LocalUser TestUserNew1 -Password (ConvertTo-SecureString "p@ssw0rd" -Asplaintext -Force) -PasswordNeverExpires
+            $result = New-LocalUser TestUserNew1 -Password (ConvertTo-SecureString "p@ssw0rd" -AsPlainText -Force) -PasswordNeverExpires
 
             $result.Name | Should -BeExactly TestUserNew1
             $result.PasswordExpires | Should -BeNullOrEmpty
@@ -750,21 +750,21 @@ try {
 
         It "Errors when Password is an empty string" {
             $sb = {
-                Set-LocalUser -Name TestUserSet1 -Password (ConvertTo-SecureString "" -Asplaintext -Force)
+                Set-LocalUser -Name TestUserSet1 -Password (ConvertTo-SecureString "" -AsPlainText -Force)
             }
             VerifyFailingTest $sb "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ConvertToSecureStringCommand"
         }
 
         It "Errors when Password is null" {
             $sb = {
-                Set-LocalUser -Name TestUserSet1 -Password (ConvertTo-SecureString $null -Asplaintext -Force)
+                Set-LocalUser -Name TestUserSet1 -Password (ConvertTo-SecureString $null -AsPlainText -Force)
             }
             VerifyFailingTest $sb "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ConvertToSecureStringCommand"
         }
 
         It "Can set Password value at max 256" {
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
-            Set-LocalUser -Name TestUserSet1 -Password (ConvertTo-SecureString ("123@"+"A"*252) -asplaintext -Force)
+            Set-LocalUser -Name TestUserSet1 -Password (ConvertTo-SecureString ("123@"+"A"*252) -AsPlainText -Force)
             $result = Get-LocalUser -Name TestUserSet1
 
             $result.Name | Should -BeExactly TestUserSet1
@@ -775,14 +775,14 @@ try {
 
         It "Errors when Password over max 257" {
             $sb = {
-                Set-LocalUser -Name TestUserSet1 -Password (ConvertTo-SecureString ("A"*257) -asplaintext -Force) -ErrorAction Stop
+                Set-LocalUser -Name TestUserSet1 -Password (ConvertTo-SecureString ("A"*257) -AsPlainText -Force) -ErrorAction Stop
             }
             VerifyFailingTest $sb "InvalidPassword,Microsoft.PowerShell.Commands.SetLocalUserCommand"
         }
 
         It 'Can use PasswordNeverExpires:$true to null a PasswordExpires date' {
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
-            $user = New-LocalUser TestUserSet2 -Password (ConvertTo-SecureString "p@ssw0rd" -Asplaintext -Force)
+            $user = New-LocalUser TestUserSet2 -Password (ConvertTo-SecureString "p@ssw0rd" -AsPlainText -Force)
             $user | Set-LocalUser -PasswordNeverExpires:$true
             $result = Get-LocalUser TestUserSet2
 
@@ -792,7 +792,7 @@ try {
 
         It 'Can use PasswordNeverExpires:$false to activate a PasswordExpires date' {
             #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
-            $user = New-LocalUser TestUserSet2 -Password (ConvertTo-SecureString "p@ssw0rd" -Asplaintext -Force) -PasswordNeverExpires
+            $user = New-LocalUser TestUserSet2 -Password (ConvertTo-SecureString "p@ssw0rd" -AsPlainText -Force) -PasswordNeverExpires
             $user | Set-LocalUser -PasswordNeverExpires:$false
             $result = Get-LocalUser TestUserSet2
 

@@ -11,13 +11,14 @@ param (
     # Destination location of the package on docker host
     [string] $destination = '/mnt',
 
-    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d+)?)?$")]
+    [ValidatePattern("^v\d+\.\d+\.\d+(-\w+(\.\d{1,2})?)?$")]
     [ValidateNotNullOrEmpty()]
     [string]$ReleaseTag,
 
     [switch]$TarX64,
     [switch]$TarArm,
     [switch]$TarArm64,
+    [switch]$TarMinSize,
     [switch]$FxDependent,
     [switch]$Alpine
 )
@@ -34,7 +35,7 @@ $semVersion = [System.Management.Automation.SemanticVersion] $version
 
 $metadata = Get-Content "$location/tools/metadata.json" -Raw | ConvertFrom-Json
 
-$LTS = $metadata.LTSRelease
+$LTS = $metadata.LTSRelease.Package
 
 Write-Verbose -Verbose -Message "LTS is set to: $LTS"
 
@@ -61,11 +62,11 @@ function BuildPackages {
             $buildParams.Add("Runtime", 'alpine-x64')
         } else {
             # make the artifact name unique
-            $projectAssetsZipName = "linuxProjectAssets-$((get-date).Ticks)-symbols.zip"
-            $buildParams.Add("Crossgen", $true)
+            $projectAssetsZipName = "linuxProjectAssets-$((Get-Date).Ticks)-symbols.zip"
         }
 
         Start-PSBuild @buildParams @releaseTagParam
+        $options = Get-PSOptions
 
         if ($FxDependent) {
             Start-PSPackage -Type 'fxdependent' @releaseTagParam -LTS:$LTS
@@ -76,6 +77,21 @@ function BuildPackages {
         }
 
         if ($TarX64) { Start-PSPackage -Type tar @releaseTagParam -LTS:$LTS }
+
+        if ($TarMinSize) {
+            Write-Verbose -Verbose "---- Min-Size ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+
+            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
+            Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
+            Remove-Item -Path $binDir -Recurse -Force
+
+            ## Build 'min-size' and create 'tar.gz' package for it.
+            $buildParams['ForMinimalSize'] = $true
+            Start-PSBuild @buildParams @releaseTagParam
+            Start-PSPackage -Type min-size @releaseTagParam -LTS:$LTS
+        }
 
         if ($TarArm) {
             ## Build 'linux-arm' and create 'tar.gz' package for it.
@@ -106,10 +122,10 @@ foreach ($linuxPackage in $linuxPackages)
 {
     $filePath = $linuxPackage.FullName
     Write-Verbose "Copying $filePath to $destination" -Verbose
-    Copy-Item -Path $filePath -Destination $destination -force
+    Copy-Item -Path $filePath -Destination $destination -Force
 }
 
-Write-Verbose "Exporting project.assets files ..." -verbose
+Write-Verbose "Exporting project.assets files ..." -Verbose
 
 $projectAssetsCounter = 1
 $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
@@ -120,7 +136,7 @@ Get-ChildItem $location\project.assets.json -Recurse | ForEach-Object {
     $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $subfolder
     New-Item -Path $itemDestination -ItemType Directory -Force
     $file = $_.FullName
-    Write-Verbose "Copying $file to $itemDestination" -verbose
+    Write-Verbose "Copying $file to $itemDestination" -Verbose
     Copy-Item -Path $file -Destination "$itemDestination\" -Force
     $projectAssetsCounter++
 }

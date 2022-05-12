@@ -1,0 +1,49 @@
+steps:
+- checkout: self
+  clean: true
+
+- pwsh: |
+    Get-ChildItem ENV:
+  displayName: Capture environment
+
+- template: release-SetReleaseTagAndContainerName.yml
+
+- pwsh: |
+    $name = "{0}_{1:x}" -f '$(releaseTag)', (Get-Date).Ticks
+    Write-Host $name
+    Write-Host "##vso[build.updatebuildnumber]$name"
+  displayName: Set Release Name
+
+- task: DownloadPipelineArtifact@2
+  inputs:
+    source: specific
+    project: PowerShellCore
+    pipeline: '696'
+    preferTriggeringPipeline: true
+    runVersion: latestFromBranch
+    runBranch: '$(Build.SourceBranch)'
+    artifact: finalResults
+    path: $(System.ArtifactsDirectory)
+
+
+- pwsh: |
+    Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name
+  displayName: Capture Artifact Listing
+
+- pwsh: |
+    Install-module Pester -Scope CurrentUser -Force -MaximumVersion 4.99
+  displayName: Install Pester
+  condition: succeededOrFailed()
+
+- pwsh: |
+    Import-module './build.psm1'
+    Import-module './tools/packaging'
+    $env:PACKAGE_FOLDER = '$(System.ArtifactsDirectory)'
+    $path = Join-Path -Path $pwd -ChildPath './packageReleaseTests.xml'
+    $results = invoke-pester -Script './tools/packaging/releaseTests' -OutputFile $path -OutputFormat NUnitXml -PassThru
+    Write-Host "##vso[results.publish type=NUnit;mergeResults=true;runTitle=Package Release Tests;publishRunAttachments=true;resultFiles=$path;]"
+    if($results.TotalCount -eq 0 -or $results.FailedCount -gt 0)
+    {
+      throw "Package Release Tests failed"
+    }
+  displayName: Run packaging release tests

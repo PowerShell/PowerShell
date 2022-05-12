@@ -7,7 +7,6 @@
 using System.Runtime.Serialization;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
-using System.Security.Permissions;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -33,7 +32,7 @@ namespace System.Management.Automation
         {
             if (errorRecord == null)
             {
-                throw new ArgumentNullException("errorRecord");
+                throw new ArgumentNullException(nameof(errorRecord));
             }
 
             _errorRecord = errorRecord;
@@ -58,7 +57,7 @@ namespace System.Management.Automation
         {
             if (innerException == null)
             {
-                throw new ArgumentNullException("innerException");
+                throw new ArgumentNullException(nameof(innerException));
             }
             // invocationInfo may be null
 
@@ -137,12 +136,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -208,7 +206,7 @@ namespace System.Management.Automation
         {
             if (innerException == null)
             {
-                throw new ArgumentNullException("innerException");
+                throw new ArgumentNullException(nameof(innerException));
             }
 
             _providerInvocationException = innerException;
@@ -276,7 +274,7 @@ namespace System.Management.Automation
         }
 
         [NonSerialized]
-        private ProviderInvocationException _providerInvocationException;
+        private readonly ProviderInvocationException _providerInvocationException;
 
         /// <summary>
         /// This is the ProviderInfo associated with the provider which
@@ -287,9 +285,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (_providerInvocationException == null)
-                    ? null
-                    : _providerInvocationException.ProviderInfo;
+                return _providerInvocationException?.ProviderInfo;
             }
         }
 
@@ -298,7 +294,7 @@ namespace System.Management.Automation
         #region Internal
         private static Exception GetInnerException(Exception e)
         {
-            return (e == null) ? null : e.InnerException;
+            return e?.InnerException;
         }
         #endregion Internal
     }
@@ -473,7 +469,7 @@ namespace System.Management.Automation
         {
             if (error == null)
             {
-                throw new ArgumentNullException("error");
+                throw new ArgumentNullException(nameof(error));
             }
 
             _errorRecord = error;
@@ -501,7 +497,7 @@ namespace System.Management.Automation
         {
             if (errorRecord == null)
             {
-                throw new ArgumentNullException("errorRecord");
+                throw new ArgumentNullException(nameof(errorRecord));
             }
 
             _errorRecord = errorRecord;
@@ -537,7 +533,6 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
@@ -712,7 +707,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _message ?? (_message = (_wrapperException != null) ? _wrapperException.Message : string.Empty);
+                return _message ??= (_wrapperException != null) ? _wrapperException.Message : string.Empty;
             }
         }
 
@@ -725,7 +720,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -878,9 +873,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Context.</param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override
-        void GetObjectData(SerializationInfo info, StreamingContext context)
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
         }
@@ -987,9 +980,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Context.</param>
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override
-        void GetObjectData(SerializationInfo info, StreamingContext context)
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             base.GetObjectData(info, context);
         }

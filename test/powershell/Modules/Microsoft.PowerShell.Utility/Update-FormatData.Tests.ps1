@@ -14,7 +14,7 @@ Describe "Update-FormatData" -Tags "CI" {
 
         It "Should validly load formatting data" {
             $path = Join-Path -Path $TestDrive -ChildPath "outputfile.ps1xml"
-            Get-FormatData -typename System.Diagnostics.Process | Export-FormatData -Path $path
+            Get-FormatData -TypeName System.Diagnostics.Process | Export-FormatData -Path $path
             $null = $ps.AddScript("Update-FormatData -prependPath $path")
             $ps.Invoke()
             $ps.HadErrors | Should -BeFalse

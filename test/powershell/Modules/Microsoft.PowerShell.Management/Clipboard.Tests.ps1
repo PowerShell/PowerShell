@@ -13,7 +13,7 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
         }
 
         AfterAll {
-            $PSDefaultParameterValues = $defaultParamValues
+            $global:PSDefaultParameterValues = $defaultParamValues
         }
 
         It 'Get-Clipboard returns what is in Set-Clipboard' {
@@ -40,6 +40,47 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
             'hello' | Set-Clipboard
             'world' | Set-Clipboard -Append
             Get-Clipboard -Raw | Should -BeExactly "hello$([Environment]::NewLine)world"
+        }
+
+        It 'Set-Clipboard accepts <value> string' -TestCases @(
+            @{ value = 'empty'; text = "" }
+            @{ value = 'null' ; text = $null }
+        ){
+            param ($text)
+
+            $text | Set-Clipboard
+            Get-Clipboard -Raw | Should -BeNullOrEmpty
+        }
+
+        It 'Set-Clipboard should not return object' {
+            $result = 'hello' | Set-Clipboard
+            $result | Should -BeNullOrEmpty
+        }
+
+        It 'Set-Clipboard -PassThru returns single object with -Append = <Append>' -TestCases @(
+            @{ Append = $false }
+            @{ Append = $true }
+        ){
+            param ($append)
+
+            $params = @{ PassThru = $true; Append = $append }
+
+            Set-Clipboard -Value 'world'
+            $result = 'hello' | Set-Clipboard @params
+            $result | Should -BeExactly 'hello'
+        }
+
+        It 'Set-Clipboard -PassThru returns multiple objects with -Append = <Append>' -TestCases @(
+            @{ Append = $false }
+            @{ Append = $true }
+        ){
+            param ($append)
+
+            $params = @{ PassThru = $true; Append = $append }
+
+            Set-Clipboard -Value 'world'
+            $result = 'hello', 'world' | Set-Clipboard @params
+            $result | Should -BeExactly @('hello', 'world')
         }
     }
 }

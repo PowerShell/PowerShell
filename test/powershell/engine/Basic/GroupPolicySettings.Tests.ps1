@@ -29,8 +29,8 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
         }
 
         AfterEach {
-            Remove-item $KeyRoot -Recurse -Force > $null
-            Remove-item $WinPSKeyRoot -Recurse -Force > $null
+            Remove-Item $KeyRoot -Recurse -Force > $null
+            Remove-Item $WinPSKeyRoot -Recurse -Force > $null
         }
 
         It 'Execution policy test' {
@@ -82,7 +82,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
 
                 (Get-Module $ModuleToLog).LogPipelineExecutionDetails = $false # turn off logging
                 Remove-ItemProperty -Path $KeyPath -Name EnableModuleLogging -Force # turn off GP setting
-                Remove-item $ModuleNamesKeyPath -Recurse -Force
+                Remove-Item $ModuleNamesKeyPath -Recurse -Force
                 # usually event becomes visible in the log after ~500 ms
                 # set timeout for 5 seconds
                 Wait-UntilTrue -sb { Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4103 } -MaxEvents 5 | ? {$_.Message.Contains($RareCommand)} } -TimeoutInMilliseconds (5*1000) -IntervalInMilliseconds 100 | Should -BeTrue
@@ -143,14 +143,14 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             {
                 param([string]$KeyPath)
 
-                $OutputDirectory = Join-path $([System.IO.Path]::GetTempPath()) $(Get-Random)
+                $OutputDirectory = Join-Path $([System.IO.Path]::GetTempPath()) $(Get-Random)
                 $null = New-Item -Type Directory -Path $OutputDirectory -Force
 
                 Set-ItemProperty -Path $KeyPath -Name EnableTranscripting -Value 1 -Force
                 Set-ItemProperty -Path $KeyPath -Name OutputDirectory -Value $OutputDirectory -Force
                 Set-ItemProperty -Path $KeyPath -Name EnableInvocationHeader -Value 1 -Force
 
-                $number = get-random
+                $number = Get-Random
                 $null = & "$PSHOME/pwsh" -NoProfile -NonInteractive -c "$number"
 
                 Remove-ItemProperty -Path $KeyPath -Name OutputDirectory -Force
@@ -182,7 +182,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             {
                 param([string]$KeyPath)
 
-                $HelpPath = Join-path 'TestDrive:\' $(Get-Random)
+                $HelpPath = Join-Path 'TestDrive:\' $(Get-Random)
                 $null = New-Item -Type Directory -Path $HelpPath -ErrorAction SilentlyContinue
                 $ModuleName = 'Microsoft.PowerShell.Utility'
                 Save-Help -Module $ModuleName -DestinationPath $HelpPath -Force
@@ -213,8 +213,8 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
 
             TestFeature -KeyPath $WinKeyPath
 
-            Remove-item $HKLM_KeyRoot -Recurse -Force
-            Remove-item $HKLM_WinPSKeyRoot -Recurse -Force
+            Remove-Item $HKLM_KeyRoot -Recurse -Force
+            Remove-Item $HKLM_WinPSKeyRoot -Recurse -Force
         }
 
         It 'Session configuration policy test' {
@@ -223,7 +223,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 param([string]$KeyPath)
 
                 # set policy to use unique non-existing configuration session name
-                $SessionName = "TestSessionConfiguration-$(get-random)"
+                $SessionName = "TestSessionConfiguration-$(Get-Random)"
                 Set-ItemProperty -Path $KeyPath -Name EnableConsoleSessionConfiguration -Value 1 -Force
                 Set-ItemProperty -Path $KeyPath -Name ConsoleSessionConfigurationName -Value $SessionName -Force
 

@@ -18,19 +18,16 @@ Describe "Built-in type information tests" -Tag "CI" {
     }
 
     It "Should have correct number of built-in type items in type table" {
-        $isUnixStatEnabled = $EnabledExperimentalFeatures -contains 'PSUnixFileStat'
         $expected = if ($IsWindows) {
             273
-        } elseif ($isUnixStatEnabled) {
-            272
         } else {
-            271
+            272
         }
         $types.Count | Should -BeExactly $expected
     }
 
     It "Should have expected member info for 'System.Diagnostics.ProcessModule'" {
-        $typeData = $types | Where-Object TypeName -eq "System.Diagnostics.ProcessModule"
+        $typeData = $types | Where-Object TypeName -EQ "System.Diagnostics.ProcessModule"
         $typeData | Should -Not -BeNullOrEmpty
 
         $typeData.Members.Count | Should -BeExactly 6
@@ -86,7 +83,7 @@ Describe "Built-in type information tests" -Tag "CI" {
     }
 
     It "Should have expected member info for 'System.Management.Automation.ParameterSetMetadata'" {
-        $typeData = $types | Where-Object TypeName -eq "System.Management.Automation.ParameterSetMetadata"
+        $typeData = $types | Where-Object TypeName -EQ "System.Management.Automation.ParameterSetMetadata"
         $typeData | Should -Not -BeNullOrEmpty
 
         $typeData.Members.Count | Should -BeExactly 1
@@ -112,7 +109,7 @@ Describe "Built-in type information tests" -Tag "CI" {
     }
 
     It "Should have expected member info for 'System.Management.Automation.JobStateEventArgs'" {
-        $typeData = $types | Where-Object TypeName -eq "System.Management.Automation.JobStateEventArgs"
+        $typeData = $types | Where-Object TypeName -EQ "System.Management.Automation.JobStateEventArgs"
         $typeData | Should -Not -BeNullOrEmpty
 
         $typeData.Members.Count | Should -BeExactly 0

@@ -11,7 +11,7 @@ Describe "SSHTransport switch parameter value" -Tags 'Feature' {
         $TestCasesSSHTransport = @(
             @{scriptBlock = {New-PSSession -HostName localhost -UserName UserA -SSHTransport:$false}; testName = 'New-PSSession SSHTransport parameter cannot have false value'}
             @{scriptBlock = {Enter-PSSession -HostName localhost -UserName UserA -SSHTransport:$false}; testName = 'Enter-PSSession SSHTransport parameter cannot have false value'}
-            @{scriptBlock = {Invoke-Command -ScriptBlock {"Hello"} -HostName localhost -UserName UserA -SSHTransport:$false}; testName = 'Invoke-Command SSHTransport parameter cannot have false value'}
+            @{scriptBlock = {Invoke-Command -Scriptblock {"Hello"} -HostName localhost -UserName UserA -SSHTransport:$false}; testName = 'Invoke-Command SSHTransport parameter cannot have false value'}
         )
     }
 

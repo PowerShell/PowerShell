@@ -34,8 +34,8 @@ namespace Microsoft.Management.UI.Internal
         {
             this.asyncProgress = list as IAsyncProgress;
 
-            ((INotifyCollectionChanged)this.Items).CollectionChanged += new NotifyCollectionChangedEventHandler(this.HandleCollectionChanged);
-            ((INotifyPropertyChanged)this.Items).PropertyChanged += new PropertyChangedEventHandler(this.HandlePropertyChanged);
+            ((INotifyCollectionChanged)this.Items).CollectionChanged += this.HandleCollectionChanged;
+            ((INotifyPropertyChanged)this.Items).PropertyChanged += this.HandlePropertyChanged;
         }
         #endregion Constructors
 

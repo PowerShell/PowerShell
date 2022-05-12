@@ -68,6 +68,7 @@ namespace System.Management.Automation.PSTasks
             _powershell.Streams.Warning.DataAdded += (sender, args) => HandleWarningData();
             _powershell.Streams.Verbose.DataAdded += (sender, args) => HandleVerboseData();
             _powershell.Streams.Debug.DataAdded += (sender, args) => HandleDebugData();
+            _powershell.Streams.Progress.DataAdded += (sender, args) => HandleProgressData();
             _powershell.Streams.Information.DataAdded += (sender, args) => HandleInformationData();
 
             // State change handler
@@ -129,6 +130,15 @@ namespace System.Management.Automation.PSTasks
             {
                 _dataStreamWriter.Add(
                     new PSStreamObject(PSStreamObjectType.Information, item));
+            }
+        }
+
+        private void HandleProgressData()
+        {
+            foreach (var item in _powershell.Streams.Progress.ReadAll())
+            {
+                _dataStreamWriter.Add(
+                    new PSStreamObject(PSStreamObjectType.Progress, item));
             }
         }
 
@@ -447,7 +457,12 @@ namespace System.Management.Automation.PSTasks
                 try
                 {
                     Runspace.DefaultRunspace = runspace;
-                    runspace.ExecutionContext.SessionState.Internal.SetLocation(_currentLocationPath);
+                    var context = new CmdletProviderContext(runspace.ExecutionContext)
+                    {
+                        // _currentLocationPath denotes the current path as-is, and should not be attempted expanded.
+                        SuppressWildcardExpansion = true
+                    };
+                    runspace.ExecutionContext.SessionState.Internal.SetLocation(_currentLocationPath, context);
                 }
                 catch (DriveNotFoundException)
                 {
@@ -534,7 +549,7 @@ namespace System.Management.Automation.PSTasks
         public PSTaskDataStreamWriter(PSCmdlet psCmdlet)
         {
             _cmdlet = psCmdlet;
-            _cmdletThreadId = Thread.CurrentThread.ManagedThreadId;
+            _cmdletThreadId = Environment.CurrentManagedThreadId;
             _dataStream = new PSDataCollection<PSStreamObject>();
         }
 
@@ -600,7 +615,7 @@ namespace System.Management.Automation.PSTasks
 
         private void CheckCmdletThread()
         {
-            if (Thread.CurrentThread.ManagedThreadId != _cmdletThreadId)
+            if (Environment.CurrentManagedThreadId != _cmdletThreadId)
             {
                 throw new PSInvalidOperationException(InternalCommandStrings.PSTaskStreamWriterWrongThread);
             }
@@ -735,7 +750,7 @@ namespace System.Management.Automation.PSTasks
             {
                 item.Value.Dispose();
             }
-            
+
             _activeRunspaces.Clear();
         }
 
@@ -1186,7 +1201,7 @@ namespace System.Management.Automation.PSTasks
         {
             if (debugger == null)
             {
-                throw new PSArgumentNullException("debugger");
+                throw new PSArgumentNullException(nameof(debugger));
             }
 
             _wrappedDebugger = debugger;

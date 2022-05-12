@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Basic debugger tests' -tag 'CI' {
+Describe 'Basic debugger tests' -Tag 'CI' {
 
     BeforeAll {
         Register-DebuggerHandler
@@ -17,7 +17,7 @@ Describe 'Basic debugger tests' -tag 'CI' {
                 function Test-DollarQuestionMark {
                     [CmdletBinding()]
                     param()
-                    Get-Process -id ([int]::MaxValue)
+                    Get-Process -Id ([int]::MaxValue)
                     if (-not $?) {
                         'The value of $? was preserved during debugging.'
                     } else {
@@ -27,7 +27,7 @@ Describe 'Basic debugger tests' -tag 'CI' {
                 $global:DollarQuestionMarkResults = Test-DollarQuestionMark -ErrorAction Break
             }
 
-            $global:results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue '$?')
+            $global:results = @(Test-Debugger -Scriptblock $testScript -CommandQueue '$?')
         }
 
         AfterAll {
@@ -51,7 +51,7 @@ Describe 'Basic debugger tests' -tag 'CI' {
     }
 }
 
-Describe "Breakpoints when set should be hit" -tag "CI" {
+Describe "Breakpoints when set should be hit" -Tag "CI" {
     Context "Basic tests" {
         BeforeAll {
             $script = @'
@@ -63,11 +63,11 @@ Describe "Breakpoints when set should be hit" -tag "CI" {
 'bbb'
 '@
             $path = Setup -PassThru -File BasicTest.ps1 -Content $script
-            $bps = 1..6 | ForEach-Object { set-psbreakpoint -script $path -line $_ -Action { continue } }
+            $bps = 1..6 | ForEach-Object { Set-PSBreakpoint -Script $path -Line $_ -Action { continue } }
         }
 
         AfterAll {
-            $bps | Remove-PSBreakPoint
+            $bps | Remove-PSBreakpoint
         }
 
         It "A redirected breakpoint is hit" {
@@ -331,9 +331,53 @@ elseif (Test-Path $PSCommandPath)
             $Breakpoint.HitCount | Should -Be $HitCount
         }
     }
+
+    Context "Break point on return should hit" {
+        BeforeAll {
+            $return_script_1 = @'
+return
+'@
+            $return_script_2 = @'
+return 10
+'@
+            $return_script_3 = @'
+trap {
+    'statement to ignore trap registration sequence point'
+    return
 }
 
-Describe "It should be possible to reset runspace debugging" -tag "Feature" {
+throw
+'@
+
+            $ReturnScript_1 = Setup -PassThru -File ReturnScript_1.ps1 -Content $return_script_1
+            $bp_1 = Set-PSBreakpoint -Script $ReturnScript_1 -Line 1 -Action { continue }
+
+            $ReturnScript_2 = Setup -PassThru -File ReturnScript_2.ps1 -Content $return_script_2
+            $bp_2 = Set-PSBreakpoint -Script $ReturnScript_2 -Line 1 -Action { continue }
+
+            $ReturnScript_3 = Setup -PassThru -File ReturnScript_3.ps1 -Content $return_script_3
+            $bp_3 = Set-PSBreakpoint -Script $ReturnScript_3 -Line 3 -Action { continue }
+
+            $testCases = @(
+                @{ Name = "return without pipeline should be hit once"; Path = $ReturnScript_1; Breakpoint = $bp_1; HitCount = 1 }
+                @{ Name = "return with pipeline should be hit once";    Path = $ReturnScript_2; Breakpoint = $bp_2; HitCount = 1 }
+                @{ Name = "return from trap should be hit once";        Path = $ReturnScript_3; Breakpoint = $bp_3; HitCount = 1 }
+            )
+        }
+
+        AfterAll {
+            Get-PSBreakpoint -Script $ReturnScript_1, $ReturnScript_2, $ReturnScript_3 | Remove-PSBreakpoint
+        }
+
+        It "Return statement <Name>" -TestCases $testCases {
+            param($Path, $Breakpoint, $HitCount)
+            $null = & $Path
+            $Breakpoint.HitCount | Should -Be $HitCount
+        }
+    }
+}
+
+Describe "It should be possible to reset runspace debugging" -Tag "Feature" {
     BeforeAll {
         $script = @'
 "line 1"

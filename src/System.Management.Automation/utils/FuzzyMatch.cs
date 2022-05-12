@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Globalization;
 
 namespace System.Management.Automation
@@ -21,7 +20,6 @@ namespace System.Management.Automation
             return GetDamerauLevenshteinDistance(string1, string2) <= MinimumDistance;
         }
 
-
         /// <summary>
         /// Compute the case-insensitive distance between two strings.
         /// Based off https://www.csharpstar.com/csharp-string-distance-algorithm/.
@@ -38,8 +36,8 @@ namespace System.Management.Automation
 
             int[,] matrix = new int[bounds.Height, bounds.Width];
 
-            for (int height = 0; height < bounds.Height; height++) { matrix[height, 0] = height; };
-            for (int width = 0; width < bounds.Width; width++) { matrix[0, width] = width; };
+            for (int height = 0; height < bounds.Height; height++) { matrix[height, 0] = height; }
+            for (int width = 0; width < bounds.Width; width++) { matrix[0, width] = width; }
 
             for (int height = 1; height < bounds.Height; height++)
             {

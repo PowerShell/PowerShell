@@ -342,10 +342,7 @@ namespace System.Management.Automation
 #pragma warning disable 56500
             try
             {
-                if (handler != null)
-                {
-                    handler(this, eventArgs);
-                }
+                handler?.Invoke(this, eventArgs);
             }
             catch (Exception exception)
             {
@@ -502,9 +499,11 @@ namespace System.Management.Automation
         #region Private Members
 
         private const string TraceClassName = "ContainerParentJob";
+
         private bool _moreData = true;
         private readonly object _syncObject = new object();
         private int _isDisposed = 0;
+
         private const int DisposedTrue = 1;
         private const int DisposedFalse = 0;
         // This variable is set to true if atleast one child job failed.
@@ -531,9 +530,13 @@ namespace System.Management.Automation
         private readonly PSDataCollection<ErrorRecord> _executionError = new PSDataCollection<ErrorRecord>();
 
         private PSEventManager _eventManager;
+
         internal PSEventManager EventManager
         {
-            get { return _eventManager; }
+            get
+            {
+                return _eventManager;
+            }
 
             set
             {
@@ -543,6 +546,7 @@ namespace System.Management.Automation
         }
 
         private ManualResetEvent _jobRunning;
+
         private ManualResetEvent JobRunning
         {
             get
@@ -567,6 +571,7 @@ namespace System.Management.Automation
         }
 
         private ManualResetEvent _jobSuspendedOrAborted;
+
         private ManualResetEvent JobSuspendedOrAborted
         {
             get
@@ -704,7 +709,7 @@ namespace System.Management.Automation
             AssertNotDisposed();
             if (childJob == null)
             {
-                throw new ArgumentNullException("childJob");
+                throw new ArgumentNullException(nameof(childJob));
             }
 
             _tracer.WriteMessage(TraceClassName, "AddChildJob", Guid.Empty, childJob, "Adding Child to Parent with InstanceId : ", InstanceId.ToString());
@@ -715,7 +720,7 @@ namespace System.Management.Automation
                 // Store job's state and subscribe to State Changed event. Locking here will
                 // ensure that the jobstateinfo we get is the state before any state changed events are handled by ContainerParentJob.
                 childJobStateInfo = childJob.JobStateInfo;
-                childJob.StateChanged += new EventHandler<JobStateEventArgs>(HandleChildJobStateChanged);
+                childJob.StateChanged += HandleChildJobStateChanged;
             }
 
             ChildJobs.Add(childJob);
@@ -883,7 +888,7 @@ namespace System.Management.Automation
             _tracer.WriteMessage(TraceClassName, "StartJob", Guid.Empty, this, "Exiting method", null);
         }
 
-        private static Tracer s_structuredTracer = new Tracer();
+        private static readonly Tracer s_structuredTracer = new Tracer();
 
         /// <summary>
         /// Starts all child jobs asynchronously.
@@ -2033,7 +2038,7 @@ namespace System.Management.Automation
         {
             if (ChildJobs == null || ChildJobs.Count == 0)
                 return string.Empty;
-            string location = ChildJobs.Select((job) => job.Location).Aggregate((s1, s2) => s1 + ',' + s2);
+            string location = ChildJobs.Select(static (job) => job.Location).Aggregate((s1, s2) => s1 + ',' + s2);
             return location;
         }
 
@@ -2053,7 +2058,7 @@ namespace System.Management.Automation
 
                 if (i < (ChildJobs.Count - 1))
                 {
-                    sb.Append(",");
+                    sb.Append(',');
                 }
             }
 
@@ -2164,14 +2169,14 @@ namespace System.Management.Automation
         /// </summary>
         public Exception Reason { get { return _reason; } }
 
-        private Exception _reason;
+        private readonly Exception _reason;
 
         /// <summary>
         /// The user-focused location from where this error originated.
         /// </summary>
         public ScriptExtent DisplayScriptPosition { get { return _displayScriptPosition; } }
 
-        private ScriptExtent _displayScriptPosition;
+        private readonly ScriptExtent _displayScriptPosition;
 
         /// <summary>
         /// Gets the information for serialization.
@@ -2181,7 +2186,7 @@ namespace System.Management.Automation
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
 
             base.GetObjectData(info, context);
 

@@ -188,9 +188,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
                 if (this.selectedCommand != null)
                 {
-                    this.selectedCommand.PropertyChanged -= new PropertyChangedEventHandler(this.SelectedCommand_PropertyChanged);
-                    this.selectedCommand.HelpNeeded -= new EventHandler<HelpNeededEventArgs>(this.SelectedCommand_HelpNeeded);
-                    this.selectedCommand.ImportModule -= new EventHandler<EventArgs>(this.SelectedCommand_ImportModule);
+                    this.selectedCommand.PropertyChanged -= this.SelectedCommand_PropertyChanged;
+                    this.selectedCommand.HelpNeeded -= this.SelectedCommand_HelpNeeded;
+                    this.selectedCommand.ImportModule -= this.SelectedCommand_ImportModule;
                 }
 
                 this.selectedCommand = value;
@@ -199,9 +199,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
                 if (this.selectedCommand != null)
                 {
-                    this.selectedCommand.PropertyChanged += new PropertyChangedEventHandler(this.SelectedCommand_PropertyChanged);
-                    this.selectedCommand.HelpNeeded += new EventHandler<HelpNeededEventArgs>(this.SelectedCommand_HelpNeeded);
-                    this.selectedCommand.ImportModule += new EventHandler<EventArgs>(this.SelectedCommand_ImportModule);
+                    this.selectedCommand.PropertyChanged += this.SelectedCommand_PropertyChanged;
+                    this.selectedCommand.HelpNeeded += this.SelectedCommand_HelpNeeded;
+                    this.selectedCommand.ImportModule += this.SelectedCommand_ImportModule;
                     this.IsThereASelectedCommand = true;
                 }
                 else
@@ -373,7 +373,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Callled in response to a GUI event that requires the command to be run.
+        /// Called in response to a GUI event that requires the command to be run.
         /// </summary>
         internal void OnRunSelectedCommand()
         {

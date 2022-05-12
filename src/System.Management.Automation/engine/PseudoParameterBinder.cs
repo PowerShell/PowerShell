@@ -36,7 +36,7 @@ namespace System.Management.Automation
             {
                 string key = pair.Key;
                 RuntimeDefinedParameter pp = pair.Value;
-                string ppName = (pp == null) ? null : pp.Name;
+                string ppName = pp?.Name;
                 if (pp == null || key != ppName)
                 {
                     ParameterBindingException bindingException =
@@ -124,7 +124,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             Target[name].Value = value;

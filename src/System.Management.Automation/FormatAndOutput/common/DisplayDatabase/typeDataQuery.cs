@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return BestMatchIndexUndefined;
         }
 
-        private bool MatchCondition(PSObject currentObject, PSPropertyExpression ex)
+        private static bool MatchCondition(PSObject currentObject, PSPropertyExpression ex)
         {
             if (ex == null)
                 return true;
@@ -230,10 +230,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return retVal;
         }
 
-        private PSPropertyExpressionFactory _expressionFactory;
-        private TypeInfoDataBase _db;
-        private Collection<string> _typeNameHierarchy;
-        private bool _useInheritance;
+        private readonly PSPropertyExpressionFactory _expressionFactory;
+        private readonly TypeInfoDataBase _db;
+        private readonly Collection<string> _typeNameHierarchy;
+        private readonly bool _useInheritance;
 
         private int _bestMatchIndex = BestMatchIndexUndefined;
         private TypeMatchItem _bestMatchItem;
@@ -588,7 +588,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         internal static AppliesTo GetAllApplicableTypes(TypeInfoDataBase db, AppliesTo appliesTo)
         {
-            Hashtable allTypes = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            var allTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (TypeOrGroupReference r in appliesTo.referenceList)
             {
@@ -596,15 +596,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 TypeReference tr = r as TypeReference;
                 if (tr != null)
                 {
-                    if (!allTypes.ContainsKey(tr.name))
-                        allTypes.Add(tr.name, null);
+                    if (!allTypes.Contains(tr.name))
+                        allTypes.Add(tr.name);
                 }
                 else
                 {
                     // check if we have a type group reference
-                    TypeGroupReference tgr = r as TypeGroupReference;
-
-                    if (tgr == null)
+                    if (!(r is TypeGroupReference tgr))
                         continue;
 
                     // find the type group definition the reference points to
@@ -616,16 +614,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // we found the group, go over it
                     foreach (TypeReference x in tgd.typeReferenceList)
                     {
-                        if (!allTypes.ContainsKey(x.name))
-                            allTypes.Add(x.name, null);
+                        if (!allTypes.Contains(x.name))
+                            allTypes.Add(x.name);
                     }
                 }
             }
 
             AppliesTo retVal = new AppliesTo();
-            foreach (DictionaryEntry x in allTypes)
+            foreach (string x in allTypes)
             {
-                retVal.AddAppliesToType(x.Key as string);
+                retVal.AddAppliesToType(x);
             }
 
             return retVal;
@@ -662,7 +660,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (x.controlBody.GetType() != controlReference.controlType)
                     continue;
-                if (string.Compare(controlReference.name, x.name, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(controlReference.name, x.name, StringComparison.OrdinalIgnoreCase))
                     return x.controlBody;
             }
 
