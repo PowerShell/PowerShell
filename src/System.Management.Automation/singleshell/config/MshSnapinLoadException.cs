@@ -116,7 +116,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private bool _warning = false;
+        private readonly bool _warning = false;
 
         private ErrorRecord _errorRecord;
         private bool _isErrorRecordOriginallyNull;
@@ -146,8 +146,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private string _PSSnapin = string.Empty;
-        private string _reason = string.Empty;
+        private readonly string _PSSnapin = string.Empty;
+        private readonly string _reason = string.Empty;
 
         /// <summary>
         /// Gets message for this exception.
@@ -187,7 +187,6 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="info">Serialization information.</param>
         /// <param name="context">Streaming context.</param>
-        [SecurityPermissionAttribute(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -204,4 +203,3 @@ namespace System.Management.Automation.Runspaces
         #endregion Serialization
     }
 }
-

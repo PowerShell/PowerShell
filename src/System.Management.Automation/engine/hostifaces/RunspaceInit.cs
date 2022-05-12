@@ -9,7 +9,6 @@ namespace System.Management.Automation.Runspaces
     /// <summary>
     /// Runspace class for local runspace.
     /// </summary>
-
     internal sealed partial
     class LocalRunspace : RunspaceBase
     {
@@ -27,4 +26,3 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-

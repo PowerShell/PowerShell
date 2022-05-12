@@ -78,9 +78,9 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// Used to create a CabinetExtractor class.
     /// </summary>
-    internal class CabinetExtractorFactory
+    internal static class CabinetExtractorFactory
     {
-        private static ICabinetExtractorLoader s_cabinetLoader;
+        private static readonly ICabinetExtractorLoader s_cabinetLoader;
         internal static readonly ICabinetExtractor EmptyExtractor = new EmptyCabinetExtractor();
 
         /// <summary>
@@ -137,4 +137,3 @@ namespace System.Management.Automation.Internal
         }
     }
 }
-

@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #if !UNIX
 
 using System;
@@ -60,6 +61,9 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(RegistryKey), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(RegistryKey), typeof(string), typeof(Int32), typeof(Int64), ProviderCmdlet = ProviderCmdlet.GetItemProperty)]
     [OutputType(typeof(RegistryKey), ProviderCmdlet = ProviderCmdlet.NewItem)]
+    [OutputType(typeof(string), typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.ResolvePath)]
+    [OutputType(typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.PushLocation)]
+    [OutputType(typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.PopLocation)]
     public sealed partial class RegistryProvider :
         NavigationCmdletProvider,
         IPropertyCmdletProvider,
@@ -75,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
         [Dbg.TraceSourceAttribute(
             "RegistryProvider",
             "The namespace navigation provider for the Windows Registry")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("RegistryProvider",
             "The namespace navigation provider for the Windows Registry");
 
@@ -798,7 +802,7 @@ namespace Microsoft.PowerShell.Commands
                 if (textElement.Contains(charactersThatNeedEscaping))
                 {
                     // This text element needs espacing
-                    result.Append("`");
+                    result.Append('`');
                 }
 
                 result.Append(textElement);
@@ -847,7 +851,7 @@ namespace Microsoft.PowerShell.Commands
                 if (textElement.Contains(charactersThatNeedEscaping))
                 {
                     // This text element needs espacing
-                    result.Append("`");
+                    result.Append('`');
                 }
 
                 result.Append(textElement);
@@ -1517,7 +1521,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool result = false;
 
-            do
+            while (true)
             {
                 // See if the paths are equal
 
@@ -1550,7 +1554,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 destinationPath = newDestinationPath;
-            } while (true);
+            }
 
             if (result)
             {
@@ -1818,7 +1822,7 @@ namespace Microsoft.PowerShell.Commands
                     // as the property name when adding the note, as
                     // PSObject does not allow an empty propertyName
 
-                    notePropertyName = GetLocalizedDefaultToken();
+                    notePropertyName = LocalizedDefaultToken;
                 }
 
                 propertyResults.Properties.Add(new PSNoteProperty(notePropertyName, key.GetValue(valueName)));
@@ -2023,7 +2027,7 @@ namespace Microsoft.PowerShell.Commands
                     string propertyNameToAdd = valueName;
                     if (string.IsNullOrEmpty(valueName))
                     {
-                        propertyNameToAdd = GetLocalizedDefaultToken();
+                        propertyNameToAdd = LocalizedDefaultToken;
                     }
 
                     result.Properties.Add(new PSNoteProperty(propertyNameToAdd, defaultValue));
@@ -2955,7 +2959,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private bool HasRelativePathTokens(string path)
+        private static bool HasRelativePathTokens(string path)
         {
             return (
                 path.StartsWith('\\') ||
@@ -3055,13 +3059,13 @@ namespace Microsoft.PowerShell.Commands
 
                         if (!string.IsNullOrEmpty(requestedValueName))
                         {
-                            valueNameToMatch = GetLocalizedDefaultToken();
+                            valueNameToMatch = LocalizedDefaultToken;
                         }
                     }
 
                     if (
                         expandAll ||
-                        ((Context.SuppressWildcardExpansion == false) && (valueNameMatcher.IsMatch(valueNameToMatch))) ||
+                        ((!Context.SuppressWildcardExpansion) && (valueNameMatcher.IsMatch(valueNameToMatch))) ||
                        ((Context.SuppressWildcardExpansion) && (string.Equals(valueNameToMatch, requestedValueName, StringComparison.OrdinalIgnoreCase))))
                     {
                         if (string.IsNullOrEmpty(valueNameToMatch))
@@ -3070,7 +3074,7 @@ namespace Microsoft.PowerShell.Commands
                             // as the property name when adding the note, as
                             // PSObject does not allow an empty propertyName
 
-                            valueNameToMatch = GetLocalizedDefaultToken();
+                            valueNameToMatch = LocalizedDefaultToken;
                         }
 
                         hadAMatch = true;
@@ -3194,7 +3198,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// true if the path is empty, a \ or a /, else false
         /// </returns>
-        private bool IsHiveContainer(string path)
+        private static bool IsHiveContainer(string path)
         {
             bool result = false;
             if (path == null)
@@ -3782,7 +3786,7 @@ namespace Microsoft.PowerShell.Commands
             string propertyNameToAdd = propertyName;
             if (string.IsNullOrEmpty(propertyName))
             {
-                propertyNameToAdd = GetLocalizedDefaultToken();
+                propertyNameToAdd = LocalizedDefaultToken;
             }
 
             result.Properties.Add(new PSNoteProperty(propertyNameToAdd, value));
@@ -3813,7 +3817,7 @@ namespace Microsoft.PowerShell.Commands
                             value,
                             typeof(byte[]),
                             CultureInfo.CurrentCulture)
-                        : new byte[] { };
+                        : Array.Empty<byte>();
                     break;
 
                 case RegistryValueKind.DWord:
@@ -3833,7 +3837,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             value = 0;
                         }
-                    } break;
+                    }
+
+                    break;
 
                 case RegistryValueKind.ExpandString:
                     value = (value != null)
@@ -3850,7 +3856,7 @@ namespace Microsoft.PowerShell.Commands
                             value,
                             typeof(string[]),
                             CultureInfo.CurrentCulture)
-                        : new string[] { };
+                        : Array.Empty<string>();
                     break;
 
                 case RegistryValueKind.QWord:
@@ -3870,7 +3876,9 @@ namespace Microsoft.PowerShell.Commands
                         {
                             value = 0;
                         }
-                    } break;
+                    }
+
+                    break;
 
                 case RegistryValueKind.String:
                     value = (value != null)
@@ -4028,7 +4036,7 @@ namespace Microsoft.PowerShell.Commands
                 if (string.IsNullOrEmpty(valueNames[index]))
                 {
                     // The first unnamed value becomes the default value
-                    valueNames[index] = GetLocalizedDefaultToken();
+                    valueNames[index] = LocalizedDefaultToken;
                     break;
                 }
             }
@@ -4103,16 +4111,13 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the default value name token from the resource.
         /// In English that token is "(default)" without the quotes.
         /// </summary>
+        /// <remarks>
+        /// This should not be localized as it will break scripts.
+        /// </remarks>
         /// <returns>
         /// A string containing the default value name.
         /// </returns>
-        private string GetLocalizedDefaultToken()
-        {
-            // This shouldn't be localized as it will break scripts
-
-            string defaultValueName = "(default)";
-            return defaultValueName;
-        }
+        private static string LocalizedDefaultToken => "(default)";
 
         /// <summary>
         /// Converts an empty or null userEnteredPropertyName to the localized
@@ -4135,7 +4140,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (stringComparer.Compare(
                         userEnteredPropertyName,
-                        GetLocalizedDefaultToken(),
+                        LocalizedDefaultToken,
                         CompareOptions.IgnoreCase) == 0)
                 {
                     result = null;

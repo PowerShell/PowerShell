@@ -2,13 +2,13 @@
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.Commands.Utility project</Description>
-    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <NoWarn>$(NoWarn);CS1570;CA1416</NoWarn>
     <AssemblyName>Microsoft.PowerShell.Commands.Utility</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-    <ProjectReference Include="..\Microsoft.PowerShell.MarkdownRender\Microsoft.PowerShell.MarkdownRender.csproj" />
+    <PackageReference Include="Microsoft.PowerShell.MarkdownRender" Version="7.2.0" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -31,10 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />
-    <PackageReference Include="System.Threading.AccessControl" Version="5.0.0-preview.6.20305.6" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.0-preview.6.20305.6" />
-    <PackageReference Include="NJsonSchema" Version="10.1.22" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.3.0-1.final" />
+    <PackageReference Include="System.Threading.AccessControl" Version="7.0.0-preview.4.22229.4" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0-preview.4.22229.4" />
+    <PackageReference Include="NJsonSchema" Version="10.6.10" />
   </ItemGroup>
 
 </Project>

@@ -505,14 +505,19 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public virtual Version PSVersion
         {
-            get { return _psVersion; }
+            get
+            {
+                return _psVersion;
+            }
 
             set
             {
-                RemotingCommandUtil.CheckPSVersion(value);
-
-                // Check if specified version of PowerShell is installed
-                RemotingCommandUtil.CheckIfPowerShellVersionIsInstalled(value);
+                // PSVersion value can only be 5.1 for Start-Job.
+                if (!(value.Major == 5 && value.Minor == 1))
+                {
+                    throw new ArgumentException(
+                        StringUtil.Format(RemotingErrorIdStrings.PSVersionParameterOutOfRange, value, "PSVersion"));
+                }
 
                 _psVersion = value;
             }

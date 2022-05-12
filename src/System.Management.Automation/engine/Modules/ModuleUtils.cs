@@ -81,8 +81,7 @@ namespace System.Management.Automation.Internal
                 string directoryToCheck = directoriesToCheck.Dequeue();
                 try
                 {
-                    string[] subDirectories = Directory.GetDirectories(directoryToCheck, "*", options);
-                    foreach (string toAdd in subDirectories)
+                    foreach (string toAdd in Directory.EnumerateDirectories(directoryToCheck, "*", options))
                     {
                         if (firstSubDirs || !IsPossibleResourceDirectory(toAdd))
                         {
@@ -94,8 +93,7 @@ namespace System.Management.Automation.Internal
                 catch (UnauthorizedAccessException) { }
 
                 firstSubDirs = false;
-                string[] files = Directory.GetFiles(directoryToCheck, "*", options);
-                foreach (string moduleFile in files)
+                foreach (string moduleFile in Directory.EnumerateFiles(directoryToCheck, "*", options))
                 {
                     foreach (string ext in ModuleIntrinsics.PSModuleExtensions)
                     {
@@ -123,7 +121,7 @@ namespace System.Management.Automation.Internal
 #if UNIX
             return true;
 #else
-            if (!ModuleUtils.IsOnSystem32ModulePath(moduleManifestPath))
+            if (!IsOnSystem32ModulePath(moduleManifestPath))
             {
                 return true;
             }
@@ -332,14 +330,14 @@ namespace System.Management.Automation.Internal
             if (!string.IsNullOrWhiteSpace(moduleBase) && Directory.Exists(moduleBase))
             {
                 var options = Utils.PathIsUnc(moduleBase) ? s_uncPathEnumerationOptions : s_defaultEnumerationOptions;
-                string[] subdirectories = Directory.GetDirectories(moduleBase, "*", options);
+                IEnumerable<string> subdirectories = Directory.EnumerateDirectories(moduleBase, "*", options);
                 ProcessPossibleVersionSubdirectories(subdirectories, versionFolders);
             }
 
             return versionFolders;
         }
 
-        private static void ProcessPossibleVersionSubdirectories(string[] subdirectories, List<Version> versionFolders)
+        private static void ProcessPossibleVersionSubdirectories(IEnumerable<string> subdirectories, List<Version> versionFolders)
         {
             foreach (string subdir in subdirectories)
             {
@@ -352,7 +350,7 @@ namespace System.Management.Automation.Internal
 
             if (versionFolders.Count > 1)
             {
-                versionFolders.Sort((x, y) => y.CompareTo(x));
+                versionFolders.Sort(static (x, y) => y.CompareTo(x));
             }
         }
 
@@ -437,7 +435,7 @@ namespace System.Management.Automation.Internal
                         // 1. We continue to the next module path if we don't want to re-discover those imported modules
                         // 2. If we want to re-discover the imported modules, but one or more commands from the module were made private,
                         //    then we don't do re-discovery
-                        if (!rediscoverImportedModules || modules.Exists(module => module.ModuleHasPrivateMembers))
+                        if (!rediscoverImportedModules || modules.Exists(static module => module.ModuleHasPrivateMembers))
                         {
                             continue;
                         }
@@ -615,4 +613,3 @@ namespace System.Management.Automation.Internal
         public int Score;
     }
 }
-

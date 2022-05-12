@@ -596,7 +596,7 @@ namespace System.Management.Automation
         /// Get the PSModuleInfo object for the module that defined this
         /// scriptblock.
         /// </summary>
-        public PSModuleInfo Module { get => SessionStateInternal != null ? SessionStateInternal.Module : null; }
+        public PSModuleInfo Module { get => SessionStateInternal?.Module; }
 
         /// <summary>
         /// Return the PSToken object for this function definition...
@@ -709,7 +709,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                return SessionStateInternal != null ? SessionStateInternal.PublicSessionState : null;
+                return SessionStateInternal?.PublicSessionState;
             }
 
             set
@@ -778,7 +778,7 @@ namespace System.Management.Automation
                 CachedReflectionInfo.ScriptBlock_InvokeAsDelegateHelper,
                 dollarUnderExpr,
                 dollarThisExpr,
-                Expression.NewArrayInit(typeof(object), parameterExprs.Select(p => p.Cast(typeof(object)))));
+                Expression.NewArrayInit(typeof(object), parameterExprs.Select(static p => p.Cast(typeof(object)))));
             if (returnsSomething)
             {
                 call = DynamicExpression.Dynamic(
@@ -1113,21 +1113,21 @@ namespace System.Management.Automation
             _context = context;
         }
 
-        private PipelineProcessor _pipeline;
-        private ExecutionContext _context;
+        private readonly PipelineProcessor _pipeline;
+        private readonly ExecutionContext _context;
         private bool _expectInput;
 
         /// <summary>
         /// Begin execution of a steppable pipeline. This overload doesn't reroute output and error pipes.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c> otherwise.</param>
+        /// <param name="expectInput"><see langword="true"/> if you plan to write input into this pipe; <see langword="false"/> otherwise.</param>
         public void Begin(bool expectInput) => Begin(expectInput, commandRuntime: (ICommandRuntime)null);
 
         /// <summary>
         /// Begin execution of a steppable pipeline, using the command running currently in the specified context to figure
         /// out how to route the output and errors.
         /// </summary>
-        /// <param name="expectInput"><c>true</c> if you plan to write input into this pipe; <c>false</c> otherwise.</param>
+        /// <param name="expectInput"><see langword="true"/> if you plan to write input into this pipe; <see langword="false"/> otherwise.</param>
         /// <param name="contextToRedirectTo">Context used to figure out how to route the output and errors.</param>
         public void Begin(bool expectInput, EngineIntrinsics contextToRedirectTo)
         {
@@ -1138,7 +1138,7 @@ namespace System.Management.Automation
 
             ExecutionContext executionContext = contextToRedirectTo.SessionState.Internal.ExecutionContext;
             CommandProcessorBase commandProcessor = executionContext.CurrentCommandProcessor;
-            ICommandRuntime crt = commandProcessor == null ? null : commandProcessor.CommandRuntime;
+            ICommandRuntime crt = commandProcessor?.CommandRuntime;
             Begin(expectInput, crt);
         }
 
@@ -1280,7 +1280,42 @@ namespace System.Management.Automation
             {
                 // then pop this pipeline and dispose it...
                 _context.PopPipelineProcessor(true);
-                _pipeline.Dispose();
+                Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Clean resources for script commands of this steppable pipeline.
+        /// </summary>
+        /// <remarks>
+        /// The way we handle 'Clean' blocks in a steppable pipeline makes sure that:
+        ///  1. The 'Clean' blocks get to run if any exception is thrown from 'Begin/Process/End'.
+        ///  2. The 'Clean' blocks get to run if 'End' finished successfully.
+        /// However, this is not enough for a steppable pipeline, because the function, where the steppable
+        /// pipeline gets used, may fail (think about a proxy function). And that may lead to the situation
+        /// where "no exception was thrown from the steppable pipeline" but "the steppable pipeline didn't
+        /// run to the end". In that case, 'Clean' won't run unless it's triggered explicitly on the steppable
+        /// pipeline. This method allows a user to do that from the 'Clean' block of the proxy function.
+        /// </remarks>
+        public void Clean()
+        {
+            if (_pipeline.Commands is null)
+            {
+                // The pipeline commands have been disposed. In this case, 'Clean'
+                // should have already been called on the pipeline processor.
+                return;
+            }
+
+            try
+            {
+                _context.PushPipelineProcessor(_pipeline);
+                _pipeline.DoCleanup();
+            }
+            finally
+            {
+                // then pop this pipeline and dispose it...
+                _context.PopPipelineProcessor(true);
+                Dispose();
             }
         }
 
@@ -1294,31 +1329,13 @@ namespace System.Management.Automation
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool disposing)
-        {
             if (_disposed)
             {
                 return;
             }
 
-            if (disposing)
-            {
-                _pipeline.Dispose();
-            }
-
+            _pipeline.Dispose();
             _disposed = true;
-        }
-
-        /// <summary>
-        /// Finalizer for class SteppablePipeline.
-        /// </summary>
-        ~SteppablePipeline()
-        {
-            Dispose(false);
         }
 
         #endregion IDispose
@@ -1447,13 +1464,21 @@ namespace System.Management.Automation
         }
 
         internal ScriptBlock ScriptBlock { get; set; }
+
         internal bool UseLocalScope { get; set; }
+
         internal ScriptBlock.ErrorHandlingBehavior ErrorHandlingBehavior { get; set; }
+
         internal object DollarUnder { get; set; }
+
         internal object Input { get; set; }
+
         internal object ScriptThis { get; set; }
+
         internal Pipe OutputPipe { get; set; }
+
         internal InvocationInfo InvocationInfo { get; set; }
+
         internal object[] Args { get; set; }
 
         /// <summary>

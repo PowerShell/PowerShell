@@ -9,7 +9,6 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -299,7 +298,7 @@ namespace System.Management.Automation
     public static class LanguagePrimitives
     {
         [TraceSource("ETS", "Extended Type System")]
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("ETS", "Extended Type System");
 
         internal delegate void MemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType);
 
@@ -339,12 +338,13 @@ namespace System.Management.Automation
         {
             lock (s_converterCache)
             {
-                var toRemove = s_converterCache.Keys.Where(
-                    conv => string.Equals(conv.to.FullName, typeName, StringComparison.OrdinalIgnoreCase) ||
-                            string.Equals(conv.from.FullName, typeName, StringComparison.OrdinalIgnoreCase)).ToArray();
-                foreach (var k in toRemove)
+                foreach (var key in s_converterCache.Keys)
                 {
-                    s_converterCache.Remove(k);
+                    if (string.Equals(key.to.FullName, typeName, StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(key.from.FullName, typeName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        s_converterCache.Remove(key);
+                    }
                 }
 
                 // Note we do not clear possibleTypeConverter even when removing.
@@ -362,10 +362,10 @@ namespace System.Management.Automation
         /// implementation of an object when we can't use it's non-generic
         /// implementation.
         /// </summary>
-        private class EnumerableTWrapper : IEnumerable
+        private sealed class EnumerableTWrapper : IEnumerable
         {
-            private object _enumerable;
-            private Type _enumerableType;
+            private readonly object _enumerable;
+            private readonly Type _enumerableType;
             private DynamicMethod _getEnumerator;
 
             internal EnumerableTWrapper(object enumerable, Type enumerableType)
@@ -384,7 +384,7 @@ namespace System.Management.Automation
 
                 emitter.Emit(OpCodes.Ldarg_0);
                 emitter.Emit(OpCodes.Castclass, _enumerableType);
-                MethodInfo methodInfo = _enumerableType.GetMethod("GetEnumerator", new Type[] { });
+                MethodInfo methodInfo = _enumerableType.GetMethod("GetEnumerator", Array.Empty<Type>());
                 emitter.Emit(OpCodes.Callvirt, methodInfo);
                 emitter.Emit(OpCodes.Ret);
             }
@@ -414,7 +414,7 @@ namespace System.Management.Automation
 
         private delegate IEnumerable GetEnumerableDelegate(object obj);
 
-        private static Dictionary<Type, GetEnumerableDelegate> s_getEnumerableCache = new Dictionary<Type, GetEnumerableDelegate>(32);
+        private static readonly Dictionary<Type, GetEnumerableDelegate> s_getEnumerableCache = new Dictionary<Type, GetEnumerableDelegate>(32);
 
         private static GetEnumerableDelegate GetOrCalculateEnumerable(Type type)
         {
@@ -637,8 +637,7 @@ namespace System.Management.Automation
                 formatProvider = CultureInfo.InvariantCulture;
             }
 
-            var culture = formatProvider as CultureInfo;
-            if (culture == null)
+            if (!(formatProvider is CultureInfo culture))
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -785,8 +784,7 @@ namespace System.Management.Automation
                 formatProvider = CultureInfo.InvariantCulture;
             }
 
-            var culture = formatProvider as CultureInfo;
-            if (culture == null)
+            if (!(formatProvider is CultureInfo culture))
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -906,7 +904,7 @@ namespace System.Management.Automation
                 formatProvider = CultureInfo.InvariantCulture;
             }
 
-            if (!(formatProvider is CultureInfo culture))
+            if (formatProvider is not CultureInfo culture)
             {
                 throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
@@ -936,7 +934,7 @@ namespace System.Management.Automation
 
             if (first is string firstString)
             {
-                if (!(second is string secondString))
+                if (second is not string secondString)
                 {
                     if (!TryConvertTo(second, culture, out secondString))
                     {
@@ -1045,9 +1043,7 @@ namespace System.Management.Automation
                     // but since we don't want this to recurse indefinitely
                     // we explicitly check the case where it would recurse
                     // and deal with it.
-                    IList firstElement = PSObject.Base(objectArray[0]) as IList;
-
-                    if (firstElement == null)
+                    if (!(PSObject.Base(objectArray[0]) is IList firstElement))
                     {
                         return IsTrue(objectArray[0]);
                     }
@@ -1506,47 +1502,38 @@ namespace System.Management.Automation
 
         private static object NewConverterInstance(string assemblyQualifiedTypeName)
         {
-            int typeSeparator = assemblyQualifiedTypeName.IndexOf(',');
-            if (typeSeparator == -1)
+            if (!assemblyQualifiedTypeName.Contains(','))
             {
                 typeConversion.WriteLine("Type name \"{0}\" should be assembly qualified.", assemblyQualifiedTypeName);
                 return null;
             }
 
-            string assemblyName = assemblyQualifiedTypeName.Substring(typeSeparator + 2);
-            string typeName = assemblyQualifiedTypeName.Substring(0, typeSeparator);
-
-            foreach (Assembly assembly in ClrFacade.GetAssemblies(typeName))
+            Type converterType;
+            try
             {
-                if (assembly.FullName == assemblyName)
-                {
-                    Type converterType = null;
-                    try
-                    {
-                        converterType = assembly.GetType(typeName, false, false);
-                    }
-                    catch (ArgumentException e)
-                    {
-                        typeConversion.WriteLine("Assembly \"{0}\" threw an exception when retrieving the type \"{1}\": \"{2}\".", assemblyName, typeName, e.Message);
-                        return null;
-                    }
-
-                    try
-                    {
-                        return Activator.CreateInstance(converterType);
-                    }
-                    catch (Exception e)
-                    {
-                        TargetInvocationException inner = e as TargetInvocationException;
-                        string message = (inner == null) || (inner.InnerException == null) ? e.Message : inner.InnerException.Message;
-                        typeConversion.WriteLine("Creating an instance of type \"{0}\" caused an exception to be thrown: \"{1}\"", assemblyQualifiedTypeName, message);
-                        return null;
-                    }
-                }
+                // Type.GetType() can load an assembly.
+                // PowerShell is allowed to load only TPA.
+                // Since a type is already loaded we trust to an attribute assigned to the type
+                // and can use Type.GetType() without additional checks.
+                converterType = Type.GetType(assemblyQualifiedTypeName, throwOnError: true, ignoreCase: false);
+            }
+            catch (Exception e)
+            {
+                typeConversion.WriteLine("Threw an exception when retrieving the type \"{1}\": \"{2}\".", assemblyQualifiedTypeName, e.Message);
+                return null;
             }
 
-            typeConversion.WriteLine("Could not create an instance of type \"{0}\".", assemblyQualifiedTypeName);
-            return null;
+            try
+            {
+                return Activator.CreateInstance(converterType);
+            }
+            catch (Exception e)
+            {
+                TargetInvocationException inner = e as TargetInvocationException;
+                string message = (inner == null) || (inner.InnerException == null) ? e.Message : inner.InnerException.Message;
+                typeConversion.WriteLine("Creating an instance of type \"{0}\" caused an exception to be thrown: \"{1}\"", assemblyQualifiedTypeName, message);
+                return null;
+            }
         }
 
         /// <summary>
@@ -1588,7 +1575,7 @@ namespace System.Management.Automation
         // CIM name string to .NET namestring mapping table
         // (Considered using the MI routines but they didn't do quite the right thing.
         //
-        private static Dictionary<string, string> s_nameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
+        private static readonly Dictionary<string, string> s_nameMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) {
             { "SInt8",          "SByte" },
             { "UInt8",          "Byte" },
             { "SInt16",         "Int16" },
@@ -1608,8 +1595,8 @@ namespace System.Management.Automation
             { "BooleanArray",   "bool[]" },
             { "UInt8Array",     "byte[]" },
             { "SInt8Array",     "Sbyte[]" },
-            { "UInt16Array",    "uint16[]" },
-            { "SInt16Array",    "int64[]" },
+            { "UInt16Array",    "UInt16[]" },
+            { "SInt16Array",    "Int16[]" },
             { "UInt32Array",    "UInt32[]" },
             { "SInt32Array",    "Int32[]" },
             { "UInt64Array",    "UInt64[]" },
@@ -1902,7 +1889,7 @@ namespace System.Management.Automation
 
         internal class EnumSingleTypeConverter : PSTypeConverter
         {
-            private class EnumHashEntry
+            private sealed class EnumHashEntry
             {
                 internal EnumHashEntry(string[] names, Array values, UInt64 allValues, bool hasNegativeValue, bool hasFlagsAttribute)
                 {
@@ -2104,8 +2091,7 @@ namespace System.Management.Automation
             protected static object BaseConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase, bool multipleValues)
             {
                 Diagnostics.Assert(sourceValue != null, "the type converter has a special case for null source values");
-                string sourceValueString = sourceValue as string;
-                if (sourceValueString == null)
+                if (!(sourceValue is string sourceValueString))
                 {
                     throw new PSInvalidCastException("InvalidCastEnumFromTypeNotAString", null,
                         ExtendedTypeSystem.InvalidCastException,
@@ -2147,7 +2133,7 @@ namespace System.Management.Automation
                 WildcardPattern[] fromValuePatterns;
                 if (!multipleValues)
                 {
-                    if (sourceValueString.Contains(","))
+                    if (sourceValueString.Contains(','))
                     {
                         throw new PSInvalidCastException("InvalidCastEnumCommaAndNoFlags", null,
                             ExtendedTypeSystem.InvalidCastExceptionEnumerationNoFlagAndComma,
@@ -2888,8 +2874,16 @@ namespace System.Management.Automation
         {
             try
             {
+                var parsedNumber = Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false);
+                if (resultType == typeof(BigInteger) || parsedNumber is BigInteger)
+                {
+                    // Convert.ChangeType() cannot be used here as BigInteger is not IConvertible.
+                    result = ConvertTo(parsedNumber, resultType);
+                    return true;
+                }
+
                 result = Convert.ChangeType(
-                    Parser.ScanNumber(strToConvert, resultType, shouldTryCoercion: false),
+                    parsedNumber,
                     resultType,
                     System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
                 return true;
@@ -2902,41 +2896,61 @@ namespace System.Management.Automation
             }
         }
 
-        private static object ConvertStringToInteger(object valueToConvert,
-                                                     Type resultType,
-                                                     bool recursion,
-                                                     PSObject originalValueToConvert,
-                                                     IFormatProvider formatProvider,
-                                                     TypeTable backupTable)
+        private static object ConvertStringToInteger(
+            object valueToConvert,
+            Type resultType,
+            bool recursion,
+            PSObject originalValueToConvert,
+            IFormatProvider formatProvider,
+            TypeTable backupTable)
         {
             var strToConvert = valueToConvert as string;
             Diagnostics.Assert(strToConvert != null, "Value to convert must be a string");
-            Diagnostics.Assert(IsNumeric(GetTypeCode(resultType)), "Result type must be numeric");
+            Diagnostics.Assert(
+                IsNumeric(GetTypeCode(resultType)) || resultType == typeof(BigInteger),
+                "Result type must be numeric");
 
             if (strToConvert.Length == 0)
             {
                 typeConversion.WriteLine("Returning numeric zero.");
+
+                // BigInteger is not IConvertible and will throw from ChangeType; we know the value we're after is zero.
+                if (resultType == typeof(BigInteger))
+                {
+                    return BigInteger.Zero;
+                }
+
                 // This is not wrapped in a try/catch because it can't fail.
-                return System.Convert.ChangeType(0, resultType, CultureInfo.InvariantCulture);
+                return System.Convert.ChangeType(value: 0, resultType, CultureInfo.InvariantCulture);
             }
 
             typeConversion.WriteLine("Converting to integer.");
-            TypeConverter integerConverter = LanguagePrimitives.GetIntegerSystemConverter(resultType);
+
             try
             {
                 if (TryScanNumber(strToConvert, resultType, out object result))
                 {
                     return result;
                 }
-                else
+
+                if (resultType == typeof(BigInteger))
                 {
-                    return integerConverter.ConvertFrom(strToConvert);
+                    // Fallback for BigInteger: manual parsing using any common format.
+                    NumberStyles style = NumberStyles.AllowLeadingSign
+                        | NumberStyles.AllowDecimalPoint
+                        | NumberStyles.AllowExponent
+                        | NumberStyles.AllowHexSpecifier;
+
+                    return BigInteger.Parse(strToConvert, style, NumberFormatInfo.InvariantInfo);
                 }
+
+                // Fallback conversion for regular numeric types.
+                return GetIntegerSystemConverter(resultType).ConvertFrom(strToConvert);
             }
             catch (Exception e)
             {
                 // This catch has one extra reason to be generic (Exception e).
-                // integerConverter.ConvertFrom warps its exceptions in a System.Exception.
+                // TypeConverter.ConvertFrom wraps its exceptions in a System.Exception.
                 if (e.InnerException != null)
                 {
                     e = e.InnerException;
@@ -3228,6 +3242,24 @@ namespace System.Management.Automation
         {
             return ((Decimal)valueToConvert) != default(Decimal);
         }
+
+        private static bool ConvertBigIntegerToBool(
+            object valueToConvert,
+            Type resultType,
+            bool recursion,
+            PSObject originalValueToConvert,
+            IFormatProvider formatProvider,
+            TypeTable backupTable)
+                => ((BigInteger)valueToConvert) != BigInteger.Zero;
+
+        private static object ConvertBoolToBigInteger(
+            object valueToConvert,
+            Type resultType,
+            bool recursion,
+            PSObject originalValueToConvert,
+            IFormatProvider formatProvider,
+            TypeTable backupTable)
+                => (bool)valueToConvert ? BigInteger.One : BigInteger.Zero;
 
         private static PSConverter<bool> CreateNumericToBoolConverter(Type fromType)
         {
@@ -3652,7 +3684,7 @@ namespace System.Management.Automation
             return ConvertStringToEnum(sbResult.ToString(), resultType, recursion, originalValueToConvert, formatProvider, backupTable);
         }
 
-        private class PSMethodToDelegateConverter
+        private sealed class PSMethodToDelegateConverter
         {
             // Index of the matching overload method.
             private readonly int _matchIndex;
@@ -3712,7 +3744,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaParseMethod
+        private sealed class ConvertViaParseMethod
         {
             // TODO - use an ETS wrapper that generates a dynamic method
             internal MethodInfo parse;
@@ -3778,7 +3810,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaConstructor
+        private sealed class ConvertViaConstructor
         {
             internal Func<object, object> TargetCtorLambda;
 
@@ -3822,7 +3854,7 @@ namespace System.Management.Automation
         /// 1. toType is a closed generic type and it has a constructor that takes IEnumerable[T], ICollection[T] or IList[T]
         /// 2. fromType is System.Array, System.Object[] or it's the same as the element type of toType
         /// </remark>
-        private class ConvertViaIEnumerableConstructor
+        private sealed class ConvertViaIEnumerableConstructor
         {
             internal Func<int, IList> ListCtorLambda;
             internal Func<IList, object> TargetCtorLambda;
@@ -3915,7 +3947,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaNoArgumentConstructor
+        private sealed class ConvertViaNoArgumentConstructor
         {
             private readonly Func<object> _constructor;
 
@@ -4018,7 +4050,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertViaCast
+        private sealed class ConvertViaCast
         {
             internal MethodInfo cast;
 
@@ -4098,7 +4130,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class ConvertCheckingForCustomConverter
+        private sealed class ConvertCheckingForCustomConverter
         {
             internal PSConverter<object> tryfirstConverter;
             internal PSConverter<object> fallbackConverter;
@@ -4141,14 +4173,22 @@ namespace System.Management.Automation
         }
 
         #region Delegates converting null
-        private static object ConvertNullToNumeric(object valueToConvert,
-                                                   Type resultType,
-                                                   bool recursion,
-                                                   PSObject originalValueToConvert,
-                                                   IFormatProvider formatProvider,
-                                                   TypeTable backupTable)
+        private static object ConvertNullToNumeric(
+            object valueToConvert,
+            Type resultType,
+            bool recursion,
+            PSObject originalValueToConvert,
+            IFormatProvider formatProvider,
+            TypeTable backupTable)
         {
             typeConversion.WriteLine("Converting null to zero.");
+
+            // Handle BigInteger first, as it is not IConvertible
+            if (resultType == typeof(BigInteger))
+            {
+                return BigInteger.Zero;
+            }
+
             // If the destination type is numeric, convert 0 to resultType
             return System.Convert.ChangeType(0, resultType, CultureInfo.InvariantCulture);
         }
@@ -4292,7 +4332,7 @@ namespace System.Management.Automation
 
             public override bool Equals(object other)
             {
-                if (!(other is ConversionTypePair))
+                if (other is not ConversionTypePair)
                     return false;
 
                 var ctp = (ConversionTypePair)other;
@@ -4309,19 +4349,21 @@ namespace System.Management.Automation
 
         internal delegate object PSNullConverter(object nullOrAutomationNull);
 
+#nullable enable
         internal interface IConversionData
         {
             object Converter { get; }
 
             ConversionRank Rank { get; }
 
-            object Invoke(object valueToConvert,
+            object? Invoke(object? valueToConvert,
                           Type resultType,
                           bool recurse,
-                          PSObject originalValueToConvert,
-                          IFormatProvider formatProvider,
-                          TypeTable backupTable);
+                          PSObject? originalValueToConvert,
+                          IFormatProvider? formatProvider,
+                          TypeTable? backupTable);
         }
+#nullable restore
 
         [System.Diagnostics.DebuggerDisplay("{_converter.Method.Name}")]
         internal class ConversionData<T> : IConversionData
@@ -4347,7 +4389,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static Dictionary<ConversionTypePair, IConversionData> s_converterCache = new Dictionary<ConversionTypePair, IConversionData>(256);
+        private static readonly Dictionary<ConversionTypePair, IConversionData> s_converterCache = new Dictionary<ConversionTypePair, IConversionData>(256);
 
         private static IConversionData CacheConversion<T>(Type fromType, Type toType, PSConverter<T> converter, ConversionRank rank)
         {
@@ -4385,7 +4427,7 @@ namespace System.Management.Automation
             return FigureConversion(fromType, toType).Rank;
         }
 
-        private static Type[] s_numericTypes = new Type[] {
+        private static readonly Type[] s_numericTypes = new Type[] {
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
             typeof(sbyte), typeof(byte),
@@ -4393,17 +4435,17 @@ namespace System.Management.Automation
             typeof(BigInteger)
         };
 
-        private static Type[] s_integerTypes = new Type[] {
+        private static readonly Type[] s_integerTypes = new Type[] {
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
             typeof(sbyte), typeof(byte)
         };
 
         // Do not reorder the elements of these arrays, we depend on them being ordered by increasing size.
-        private static Type[] s_signedIntegerTypes = new Type[] { typeof(sbyte), typeof(Int16), typeof(Int32), typeof(Int64) };
-        private static Type[] s_unsignedIntegerTypes = new Type[] { typeof(byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
+        private static readonly Type[] s_signedIntegerTypes = new Type[] { typeof(sbyte), typeof(Int16), typeof(Int32), typeof(Int64) };
+        private static readonly Type[] s_unsignedIntegerTypes = new Type[] { typeof(byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
 
-        private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(double), typeof(decimal) };
+        private static readonly Type[] s_realTypes = new Type[] { typeof(Single), typeof(double), typeof(decimal) };
 
         internal static void RebuildConversionCache()
         {
@@ -4425,6 +4467,8 @@ namespace System.Management.Automation
                     CacheConversion<object>(typeofNull, type, LanguagePrimitives.ConvertNullToNumeric, ConversionRank.NullToValue);
                 }
 
+                CacheConversion<object>(typeofBool, typeof(BigInteger), ConvertBoolToBigInteger, ConversionRank.Language);
+
                 CacheConversion<bool>(typeof(Int16), typeofBool, ConvertInt16ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(Int32), typeofBool, ConvertInt32ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(Int64), typeofBool, ConvertInt64ToBool, ConversionRank.Language);
@@ -4436,6 +4480,7 @@ namespace System.Management.Automation
                 CacheConversion<bool>(typeof(Single), typeofBool, ConvertSingleToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(double), typeofBool, ConvertDoubleToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(decimal), typeofBool, ConvertDecimalToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(BigInteger), typeofBool, ConvertBigIntegerToBool, ConversionRank.Language);
 
                 for (int i = 0; i < LanguagePrimitives.s_unsignedIntegerTypes.Length; i++)
                 {
@@ -4489,6 +4534,8 @@ namespace System.Management.Automation
                         CacheConversion<object>(realType, integerType, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
                     }
                 }
+
+                CacheConversion<object>(typeofString, typeof(BigInteger), ConvertStringToInteger, ConversionRank.NumericString);
 
                 CacheConversion<object>(typeofFloat, typeofDouble, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericImplicit);
                 CacheConversion<object>(typeofDouble, typeofFloat, LanguagePrimitives.ConvertNumeric, ConversionRank.NumericExplicit);
@@ -4697,7 +4744,7 @@ namespace System.Management.Automation
             {
                 foreach (PSPropertyInfo p in pso.Properties)
                 {
-                    if (first == false)
+                    if (!first)
                     {
                         availableProperties.Append(" , ");
                     }
@@ -5059,7 +5106,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private struct SignatureComparator
+        private readonly struct SignatureComparator
         {
             private enum TypeMatchingContext
             {
@@ -5530,7 +5577,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static Dictionary<string, bool> s_possibleTypeConverter = new Dictionary<string, bool>(16);
+        private static readonly Dictionary<string, bool> s_possibleTypeConverter = new Dictionary<string, bool>(16);
 
         // This is the internal dummy type used when an IDictionary is converted to a pscustomobject
         // PS C:\> $ps = [pscustomobject]@{a=10;b=5}
@@ -5602,15 +5649,6 @@ namespace System.Management.Automation
                         return CacheConversion(fromType, toType, converter, rank);
                     }
                 }
-            }
-
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types.
-            if (!TypeResolver.IsPublic(toType) && DotNetAdapter.DisallowPrivateReflection(toType))
-            {
-                // If the type is non-public and reflection execution is not allowed on it, then we return
-                // 'ConvertNoConversion', because we won't be able to invoke constructor, methods or set
-                // properties on an instance of this type through reflection.
-                return CacheConversion(fromType, toType, ConvertNoConversion, ConversionRank.None);
             }
 
             PSConverter<object> valueDependentConversion = null;
@@ -5734,7 +5772,7 @@ namespace System.Management.Automation
             return CacheConversion(fromType, toType, converter, rank);
         }
 
-        internal class Null { };
+        internal class Null { }
 
         private static IConversionData FigureConversionFromNull(Type toType)
         {

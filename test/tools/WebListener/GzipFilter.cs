@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -10,7 +11,7 @@ namespace mvc.Controllers
 {
     internal sealed class GzipFilter : ResultFilterAttribute
     {
-        public override async Task OnResultExecutionAsync( ResultExecutingContext context, ResultExecutionDelegate next)
+        public override async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
         {
             var httpContext = context.HttpContext;
             using (var memoryStream = new MemoryStream())
@@ -22,7 +23,7 @@ namespace mvc.Controllers
 
                 using (var compressedStream = new GZipStream(responseStream, CompressionLevel.Fastest))
                 {
-                    httpContext.Response.Headers.Add("Content-Encoding", new [] { "gzip" });
+                    httpContext.Response.Headers.Add("Content-Encoding", new[] { "gzip" });
                     memoryStream.Seek(0, SeekOrigin.Begin);
                     await memoryStream.CopyToAsync(compressedStream);
                 }

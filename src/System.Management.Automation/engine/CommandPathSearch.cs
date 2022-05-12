@@ -278,9 +278,9 @@ namespace System.Management.Automation
                 GetNewDirectoryResults(_patternEnumerator.Current, _lookupPathsEnumerator.Current);
             }
 
-            do // while lookupPathsEnumerator is valid
+            while (true) // while lookupPathsEnumerator is valid
             {
-                do // while patternEnumerator is valid
+                while (true) // while patternEnumerator is valid
                 {
                     // Try moving to the next path in the current results
 
@@ -309,7 +309,7 @@ namespace System.Management.Automation
                     }
 
                     // Since we have reset the results, loop again to find the next result.
-                } while (true);
+                }
 
                 if (result)
                 {
@@ -336,7 +336,7 @@ namespace System.Management.Automation
                 }
 
                 GetNewDirectoryResults(_patternEnumerator.Current, _lookupPathsEnumerator.Current);
-            } while (true);
+            }
 
             return result;
         }
@@ -346,9 +346,12 @@ namespace System.Management.Automation
         /// </summary>
         public void Reset()
         {
+            _lookupPathsEnumerator.Dispose();
             _lookupPathsEnumerator = _lookupPaths.GetEnumerator();
+            _patternEnumerator.Dispose();
             _patternEnumerator = _patterns.GetEnumerator();
             _currentDirectoryResults = Array.Empty<string>();
+            _currentDirectoryResultsEnumerator.Dispose();
             _currentDirectoryResultsEnumerator = _currentDirectoryResults.GetEnumerator();
             _justReset = true;
         }
@@ -531,7 +534,7 @@ namespace System.Management.Automation
         /// The directory paths in which to look for commands.
         /// This is derived from the PATH environment variable.
         /// </summary>
-        private LookupPathCollection _lookupPaths;
+        private readonly LookupPathCollection _lookupPaths;
 
         /// <summary>
         /// The enumerator for the lookup paths.
@@ -552,7 +555,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The command name to search for.
         /// </summary>
-        private IEnumerable<string> _patterns;
+        private readonly IEnumerable<string> _patterns;
 
         /// <summary>
         /// The enumerator for the patterns.
@@ -562,7 +565,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A reference to the execution context for this runspace.
         /// </summary>
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
 
         /// <summary>
         /// When reset is called, this gets set to true. Once MoveNext
@@ -573,14 +576,13 @@ namespace System.Management.Automation
         /// <summary>
         /// If not null, called with the enumerated files for further processing.
         /// </summary>
-        private Func<string[], IEnumerable<string>?> _postProcessEnumeratedFiles;
+        private readonly Func<string[], IEnumerable<string>?> _postProcessEnumeratedFiles;
 
-        private string[] _orderedPathExt;
-        private Collection<string>? _acceptableCommandNames;
+        private readonly string[] _orderedPathExt;
+        private readonly Collection<string>? _acceptableCommandNames;
 
-        private bool _useFuzzyMatch = false;
+        private readonly bool _useFuzzyMatch = false;
 
         #endregion private members
     }
 }
-

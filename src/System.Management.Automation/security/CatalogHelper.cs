@@ -1,19 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
 #if !UNIX
 
-using Dbg = System.Management.Automation;
-using System;
-using System.Text;
 using System.Security.Cryptography;
 using System.Collections.Generic;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Management.Automation.Internal;
-using System.Management.Automation.Provider;
 using System.Management.Automation.Security;
 using System.Runtime.InteropServices;
 using DWORD = System.UInt32;
@@ -73,14 +68,14 @@ namespace System.Management.Automation
     internal static class CatalogHelper
     {
         // Catalog Version is (0X100 = 256) for Catalog Version 1
-        private static int catalogVersion1 = 256;
+        private const int catalogVersion1 = 256;
 
         // Catalog Version is (0X200 = 512) for Catalog Version 2
-        private static int catalogVersion2 = 512;
+        private const int catalogVersion2 = 512;
 
         // Hash Algorithms supported by Windows Catalog
-        private static string HashAlgorithmSHA1 = "SHA1";
-        private static string HashAlgorithmSHA256 = "SHA256";
+        private const string HashAlgorithmSHA1 = "SHA1";
+        private const string HashAlgorithmSHA256 = "SHA256";
         private static PSCmdlet _cmdlet = null;
 
         /// <summary>
@@ -342,7 +337,7 @@ namespace System.Management.Automation
             {
                 // Generate Path for Catalog Definition File
                 string cdfFilePath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
-                cdfFilePath = cdfFilePath + ".cdf";
+                cdfFilePath += ".cdf";
                 try
                 {
                     cdfFilePath = GenerateCDFFile(Path, catalogFilePath, cdfFilePath, catalogVersion, hashAlgorithm);
@@ -414,8 +409,8 @@ namespace System.Management.Automation
                 _cmdlet.ThrowTerminatingError(errorRecord);
             }
 
-            DWORD GENERIC_READ = 0x80000000;
-            DWORD OPEN_EXISTING = 3;
+            const DWORD GENERIC_READ = 0x80000000;
+            const DWORD OPEN_EXISTING = 3;
             IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
 
             // Open the file that is to be hashed for reading and get its handle

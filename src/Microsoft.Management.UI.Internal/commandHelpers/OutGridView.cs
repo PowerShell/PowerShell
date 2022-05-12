@@ -213,7 +213,7 @@ namespace Microsoft.Management.UI.Internal
 
             if (this.zoomLevel < ZOOM_MAX)
             {
-                this.zoomLevel = this.zoomLevel + ZOOM_INCREMENT;
+                this.zoomLevel += ZOOM_INCREMENT;
                 Grid g = this.gridViewWindow.Content as Grid;
 
                 if (g != null)
@@ -232,7 +232,7 @@ namespace Microsoft.Management.UI.Internal
         {
             if (this.zoomLevel >= ZOOM_MIN)
             {
-                this.zoomLevel = this.zoomLevel - ZOOM_INCREMENT;
+                this.zoomLevel -= ZOOM_INCREMENT;
                 Grid g = this.gridViewWindow.Content as Grid;
                 if (g != null)
                 {

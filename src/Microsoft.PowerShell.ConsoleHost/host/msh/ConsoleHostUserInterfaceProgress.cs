@@ -16,7 +16,6 @@ namespace Microsoft.PowerShell
         /// Called at the end of a prompt loop to take down any progress display that might have appeared and purge any
         /// outstanding progress activity state.
         /// </summary>
-
         internal
         void
         ResetProgress()
@@ -48,6 +47,13 @@ namespace Microsoft.PowerShell
                 }
 
                 _pendingProgress = null;
+
+                if (SupportsVirtualTerminal && PSStyle.Instance.Progress.UseOSCIndicator)
+                {
+                    // OSC sequence to turn off progress indicator
+                    // https://github.com/microsoft/terminal/issues/6700
+                    Console.Write("\x1b]9;4;0\x1b\\");
+                }
             }
         }
 
@@ -55,10 +61,9 @@ namespace Microsoft.PowerShell
         /// Invoked by ConsoleHostUserInterface.WriteProgress to update the set of outstanding activities for which
         /// ProgressRecords have been received.
         /// </summary>
-
         private
         void
-        HandleIncomingProgressRecord(Int64 sourceId, ProgressRecord record)
+        HandleIncomingProgressRecord(long sourceId, ProgressRecord record)
         {
             Dbg.Assert(record != null, "record should not be null");
 
@@ -94,6 +99,27 @@ namespace Microsoft.PowerShell
             {
                 // Update the progress pane only when the timer set up the update flag or WriteProgress is completed.
                 // As a result, we do not block WriteProgress and whole script and eliminate unnecessary console locks and updates.
+                if (SupportsVirtualTerminal && PSStyle.Instance.Progress.UseOSCIndicator)
+                {
+                    int percentComplete = record.PercentComplete;
+                    if (percentComplete < 0)
+                    {
+                        // Write-Progress allows for negative percent complete, but not greater than 100
+                        // but OSC sequence is limited from 0 to 100.
+                        percentComplete = 0;
+                    }
+
+                    // OSC sequence to turn on progress indicator
+                    // https://github.com/microsoft/terminal/issues/6700
+                    Console.Write($"\x1b]9;4;1;{percentComplete}\x1b\\");
+                }
+
+                // If VT is not supported, we change ProgressView to classic
+                if (!SupportsVirtualTerminal)
+                {
+                    PSStyle.Instance.Progress.View = ProgressView.Classic;
+                }
+
                 _progPane.Show(_pendingProgress);
             }
         }
@@ -101,7 +127,6 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// TimerCallback for '_progPaneUpdateTimer' to update 'progPaneUpdateFlag'
         /// </summary>
-
         private
         void
         ProgressPaneUpdateTimerElapsed(object sender)
@@ -198,4 +223,3 @@ namespace Microsoft.PowerShell
         private int progPaneUpdateFlag = 0;
     }
 }   // namespace
-

@@ -337,7 +337,7 @@ namespace System.Management.Automation
         /// If ResolvedCommand returns null, this property will
         /// return the name of the command that could not be resolved.
         /// If ResolvedCommand has not yet been called or was able
-        /// to resolve the command, this this property will return null.
+        /// to resolve the command, this property will return null.
         /// </summary>
         internal string UnresolvedCommandName { get; private set; }
 

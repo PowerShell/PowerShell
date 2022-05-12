@@ -13,12 +13,13 @@ namespace Microsoft.PowerShell.Commands
     /// This command makes an HTTP or HTTPS request to a web server and returns the results.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "WebRequest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097126", DefaultParameterSetName = "StandardMethod")]
+    [OutputType(typeof(BasicHtmlWebResponseObject))]
     public class InvokeWebRequestCommand : WebRequestPSCmdlet
     {
         #region Virtual Method Overrides
 
         /// <summary>
-        /// Default constructor for InvokeWebRequestCommand.
+        /// Initializes a new instance of the <see cref="InvokeWebRequestCommand"/> class.
         /// </summary>
         public InvokeWebRequestCommand() : base()
         {

@@ -5,6 +5,11 @@
 # PSSession tests for non-Windows platforms
 #
 
+function GetRandomString()
+{
+    return [System.IO.Path]::GetFileNameWithoutExtension([System.IO.Path]::GetRandomFileName())
+}
+
 Describe "New-PSSessionOption parameters for non-Windows platforms" -Tag "CI" {
 
     BeforeAll {
@@ -36,12 +41,13 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        if ($IsWindows)  {
+        # Skip this test for macOS because the latest OS release is incompatible with our shipped libmi for WinRM/OMI.
+        if ($IsWindows -or $IsMacOS)  {
             $PSDefaultParameterValues['it:skip'] = $true
         }
         else {
             $userName = "User_$(Get-Random -Maximum 99999)"
-            $userPassword = "Password_$(Get-Random -Maximum 99999)"
+            $userPassword = GetRandomString
             $cred = [pscredential]::new($userName, (ConvertTo-SecureString -String $userPassword -AsPlainText -Force))
             $soSkipCA = New-PSSessionOption -SkipCACheck
             $soSkipCN = New-PSSessionOption -SkipCNCheck
@@ -54,7 +60,7 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
 
     $testCases = @(
         @{
-            Name = 'Verifies expected error when session options is missing'
+            Name = 'Verifies expected error when session option is missing'
             ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL }
             ExpectedErrorCode = 825
         },
@@ -73,13 +79,8 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
     It "<Name>" -TestCases $testCases {
         param ($scriptBlock, $expectedErrorCode)
 
-        $platformInfo = Get-PlatformInfo
-        if (
-            ($platformInfo.Platform -match "alpine|raspbian") -or
-            ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
-            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
-        ) {
-            Set-ItResult -Skipped -Because "MI library not available for Alpine, Raspberry Pi, Debian 10 and 11, and CentOS 8"
+        if ( -not (Get-WsManSupport)) {
+            Set-ItResult -Skipped -Because "MI library not available for this platform"
             return
         }
 

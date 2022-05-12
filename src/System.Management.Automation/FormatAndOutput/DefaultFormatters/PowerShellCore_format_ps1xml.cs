@@ -134,6 +134,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_PSDriveInfo());
 
             yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.Subsystem.SubsystemInfo",
+                ViewsOf_System_Management_Automation_Subsystem_SubsystemInfo());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.ShellVariable",
                 ViewsOf_System_Management_Automation_ShellVariable());
 
@@ -263,6 +267,30 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.ByteCollection",
                 ViewsOf_Microsoft_PowerShell_Commands_ByteCollection());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle",
+                ViewsOf_System_Management_Automation_PSStyle());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle+FormattingData",
+                ViewsOf_System_Management_Automation_PSStyleFormattingData());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle+ProgressConfiguration",
+                ViewsOf_System_Management_Automation_PSStyleProgressConfiguration());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle+FileInfoFormatting",
+                ViewsOf_System_Management_Automation_PSStyleFileInfoFormat());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle+ForegroundColor",
+                ViewsOf_System_Management_Automation_PSStyleForegroundColor());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle+BackgroundColor",
+                ViewsOf_System_Management_Automation_PSStyleBackgroundColor());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_RuntimeType()
@@ -683,7 +711,6 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"Description")
                         .AddItemProperty(@"Capabilities")
                         .AddItemProperty(@"ImplementingType")
-                        .AddItemProperty(@"AssemblyInfo")
                     .EndEntry()
                 .EndList());
         }
@@ -697,7 +724,6 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"CommandType")
                         .AddItemProperty(@"Definition")
                         .AddItemProperty(@"Path")
-                        .AddItemProperty(@"AssemblyInfo")
                         .AddItemProperty(@"DLL")
                         .AddItemProperty(@"HelpFile")
                         .AddItemProperty(@"ParameterSets")
@@ -732,6 +758,24 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"CurrentLocation")
                     .EndEntry()
                 .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_Subsystem_SubsystemInfo()
+        {
+            yield return new FormatViewDefinition(
+                "System.Management.Automation.Subsystem.SubsystemInfo",
+                TableControl.Create()
+                    .AddHeader(Alignment.Left, width: 17, label: "Kind")
+                    .AddHeader(Alignment.Left, width: 18, label: "SubsystemType")
+                    .AddHeader(Alignment.Right, width: 12, label: "IsRegistered")
+                    .AddHeader(Alignment.Left, label: "Implementations")
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Kind")
+                        .AddScriptBlockColumn("$_.SubsystemType.Name")
+                        .AddPropertyColumn("IsRegistered")
+                        .AddPropertyColumn("Implementations")
+                    .EndRowDefinition()
+                .EndTable());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ShellVariable()
@@ -770,7 +814,12 @@ namespace System.Management.Automation.Runspaces
                             $maxDepth = 10
                             $ellipsis = ""`u{2026}""
                             $resetColor = ''
+                            $errorColor = ''
                             if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
+                                if ($null -ne $psstyle) {
+                                    $errorColor = $psstyle.Formatting.Error
+                                }
+
                                 $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
                                     [System.Management.Automation.VTUtility+VT]::Reset
                                 )
@@ -907,6 +956,13 @@ namespace System.Management.Automation.Runspaces
                                             $value = $null
                                             if ([System.Management.Automation.LanguagePrimitives]::TryConvertTo($prop.Value, [string], [ref]$value) -and $value -ne $null)
                                             {
+                                                if ($prop.Name -eq 'PositionMessage') {
+                                                    $value = $value.Insert($value.IndexOf('~'), $errorColor)
+                                                }
+                                                elseif ($prop.Name -eq 'Message') {
+                                                    $value = $errorColor + $value
+                                                }
+
                                                 $isFirstLine = $true
                                                 if ($value.Contains($newline)) {
                                                     # the 3 is to account for ' : '
@@ -960,7 +1016,7 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
-                                    if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView') -notcontains $ErrorView)
+                                    if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView','DetailedView') -notcontains $ErrorView)
                                     {
                                         $myinv = $_.InvocationInfo
                                         if ($myinv -and $myinv.MyCommand)
@@ -1069,7 +1125,8 @@ namespace System.Management.Automation.Runspaces
                                         $message = ''
                                         $prefix = ''
 
-                                        if ($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') {
+                                        # Don't show line information if script module
+                                        if (($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') -and !($myinv.ScriptName.EndsWith('.psm1', [System.StringComparison]::OrdinalIgnoreCase))) {
                                             $useTargetObject = $false
 
                                             # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
@@ -1168,7 +1225,7 @@ namespace System.Management.Automation.Runspaces
                                             $prefixVtLength = $prefix.Length - $prefixLength
 
                                             # replace newlines in message so it lines up correct
-                                            $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
+                                            $message = $message.Replace($newline, ' ').Replace(""`n"", ' ').Replace(""`t"", ' ')
 
                                             $windowWidth = 120
                                             if ($Host.UI.RawUI -ne $null) {
@@ -1210,7 +1267,7 @@ namespace System.Management.Automation.Runspaces
                                             $reason = 'Exception'
                                         }
                                         # MyCommand can be the script block, so we don't want to show that so check if it's an actual command
-                                        elseif ($myinv.MyCommand -and (Get-Command -Name $myinv.MyCommand -ErrorAction Ignore))
+                                        elseif ($myinv.MyCommand -and $myinv.MyCommand.Name -and (Get-Command -Name $myinv.MyCommand -ErrorAction Ignore))
                                         {
                                             $reason = $myinv.MyCommand
                                         }
@@ -1249,7 +1306,10 @@ namespace System.Management.Automation.Runspaces
                                     else
                                     {
                                         $myinv = $err.InvocationInfo
-                                        if ($ErrorView -eq 'ConciseView') {
+                                        if ($ErrorView -eq 'DetailedView') {
+                                            return (Get-Error | Out-String)
+                                        }
+                                        elseif ($ErrorView -eq 'ConciseView') {
                                             $posmsg = Get-ConciseViewPositionMessage
                                         }
                                         elseif ($myinv -and ($myinv.MyCommand -or ($err.CategoryInfo.Category -ne 'ParserError'))) {
@@ -1301,7 +1361,7 @@ namespace System.Management.Automation.Runspaces
                                             $err.CategoryInfo.GetMessage()
                                         }
                                         elseif (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
-                                            $err.Exception.Message + $posmsg + $newline
+                                            $err.Exception.Message + $posmsg
                                         } else {
                                             $err.ErrorDetails.Message + $posmsg
                                         }
@@ -1651,8 +1711,8 @@ namespace System.Management.Automation.Runspaces
         }
 
         private const string PreReleaseStringScriptBlock = @"
-                            if ($_.PrivateData -and 
-                                $_.PrivateData.ContainsKey('PSData') -and 
+                            if ($_.PrivateData -and
+                                $_.PrivateData.ContainsKey('PSData') -and
                                 $_.PrivateData.PSData.ContainsKey('PreRelease'))
                             {
                                     $_.PrivateData.PSData.PreRelease
@@ -2012,6 +2072,190 @@ namespace System.Management.Automation.Runspaces
                     .EndRowDefinition()
                     .GroupByProperty("Label")
                 .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStyle()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.Reset)$($_.Reset.Replace(""""`e"""",'`e'))""", label: "Reset")
+                        .AddItemScriptBlock(@"""$($_.BlinkOff)$($_.BlinkOff.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "BlinkOff")
+                        .AddItemScriptBlock(@"""$($_.Blink)$($_.Blink.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "Blink")
+                        .AddItemScriptBlock(@"""$($_.BoldOff)$($_.BoldOff.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "BoldOff")
+                        .AddItemScriptBlock(@"""$($_.Bold)$($_.Bold.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "Bold")
+                        .AddItemScriptBlock(@"""$($_.Hidden)$($_.Hidden.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "Hidden")
+                        .AddItemScriptBlock(@"""$($_.HiddenOff)$($_.HiddenOff.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "HiddenOff")
+                        .AddItemScriptBlock(@"""$($_.Reverse)$($_.Reverse.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "Reverse")
+                        .AddItemScriptBlock(@"""$($_.ReverseOff)$($_.ReverseOff.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "ReverseOff")
+                        .AddItemScriptBlock(@"""$($_.ItalicOff)$($_.ItalicOff.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "ItalicOff")
+                        .AddItemScriptBlock(@"""$($_.Italic)$($_.Italic.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "Italic")
+                        .AddItemScriptBlock(@"""$($_.UnderlineOff)$($_.UnderlineOff.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "UnderlineOff")
+                        .AddItemScriptBlock(@"""$($_.Underline)$($_.Underline.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "Underline")
+                        .AddItemScriptBlock(@"""$($_.StrikethroughOff)$($_.StrikethroughOff.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "StrikethroughOff")
+                        .AddItemScriptBlock(@"""$($_.Strikethrough)$($_.Strikethrough.Replace(""""`e"""",'`e'))$($_.Reset)""", label: "Strikethrough")
+                        .AddItemProperty(@"OutputRendering")
+                        .AddItemScriptBlock(@"""$($_.Formatting.FormatAccent)$($_.Formatting.FormatAccent.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.FormatAccent")
+                        .AddItemScriptBlock(@"""$($_.Formatting.TableHeader)$($_.Formatting.TableHeader.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.TableHeader")
+                        .AddItemScriptBlock(@"""$($_.Formatting.ErrorAccent)$($_.Formatting.ErrorAccent.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.ErrorAccent")
+                        .AddItemScriptBlock(@"""$($_.Formatting.Error)$($_.Formatting.Error.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Error")
+                        .AddItemScriptBlock(@"""$($_.Formatting.Warning)$($_.Formatting.Warning.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Warning")
+                        .AddItemScriptBlock(@"""$($_.Formatting.Verbose)$($_.Formatting.Verbose.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Verbose")
+                        .AddItemScriptBlock(@"""$($_.Formatting.Debug)$($_.Formatting.Debug.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Formatting.Debug")
+                        .AddItemScriptBlock(@"""$($_.Progress.Style)$($_.Progress.Style.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Progress.Style")
+                        .AddItemScriptBlock(@"""$($_.Progress.MaxWidth)""", label: "Progress.MaxWidth")
+                        .AddItemScriptBlock(@"""$($_.Progress.View)""", label: "Progress.View")
+                        .AddItemScriptBlock(@"""$($_.Progress.UseOSCIndicator)""", label: "Progress.UseOSCIndicator")
+                        .AddItemScriptBlock(@"""$($_.FileInfo.Directory)$($_.FileInfo.Directory.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.Directory")
+                        .AddItemScriptBlock(@"""$($_.FileInfo.SymbolicLink)$($_.FileInfo.SymbolicLink.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.SymbolicLink")
+                        .AddItemScriptBlock(@"""$($_.FileInfo.Executable)$($_.FileInfo.Executable.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FileInfo.Executable")
+                        .AddItemScriptBlock(@"""$([string]::Join(',',$_.FileInfo.Extension.Keys))""", label: "FileInfo.Extension")
+                        .AddItemScriptBlock(@"""$($_.Foreground.Black)$($_.Foreground.Black.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.Black")
+                        .AddItemScriptBlock(@"""$($_.Foreground.BrightBlack)$($_.Foreground.BrightBlack.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.BrightBlack")
+                        .AddItemScriptBlock(@"""$($_.Foreground.White)$($_.Foreground.White.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.White")
+                        .AddItemScriptBlock(@"""$($_.Foreground.BrightWhite)$($_.Foreground.BrightWhite.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.BrightWhite")
+                        .AddItemScriptBlock(@"""$($_.Foreground.Red)$($_.Foreground.Red.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.Red")
+                        .AddItemScriptBlock(@"""$($_.Foreground.BrightRed)$($_.Foreground.BrightRed.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.BrightRed")
+                        .AddItemScriptBlock(@"""$($_.Foreground.Magenta)$($_.Foreground.Magenta.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.Magenta")
+                        .AddItemScriptBlock(@"""$($_.Foreground.BrightMagenta)$($_.Foreground.BrightMagenta.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.BrightMagenta")
+                        .AddItemScriptBlock(@"""$($_.Foreground.Blue)$($_.Foreground.Blue.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.Blue")
+                        .AddItemScriptBlock(@"""$($_.Foreground.BrightBlue)$($_.Foreground.BrightBlue.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.BrightBlue")
+                        .AddItemScriptBlock(@"""$($_.Foreground.Cyan)$($_.Foreground.Cyan.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.Cyan")
+                        .AddItemScriptBlock(@"""$($_.Foreground.BrightCyan)$($_.Foreground.BrightCyan.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.BrightCyan")
+                        .AddItemScriptBlock(@"""$($_.Foreground.Green)$($_.Foreground.Green.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.Green")
+                        .AddItemScriptBlock(@"""$($_.Foreground.BrightGreen)$($_.Foreground.BrightGreen.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.BrightGreen")
+                        .AddItemScriptBlock(@"""$($_.Foreground.Yellow)$($_.Foreground.Yellow.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.Yellow")
+                        .AddItemScriptBlock(@"""$($_.Foreground.BrightYellow)$($_.Foreground.BrightYellow.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Foreground.BrightYellow")
+                        .AddItemScriptBlock(@"""$($_.Background.Black)$($_.Background.Black.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.Black")
+                        .AddItemScriptBlock(@"""$($_.Background.BrightBlack)$($_.Background.BrightBlack.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.BrightBlack")
+                        .AddItemScriptBlock(@"""$($_.Background.White)$($_.Background.White.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.White")
+                        .AddItemScriptBlock(@"""$($_.Background.BrightWhite)$($_.Background.BrightWhite.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.BrightWhite")
+                        .AddItemScriptBlock(@"""$($_.Background.Red)$($_.Background.Red.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.Red")
+                        .AddItemScriptBlock(@"""$($_.Background.BrightRed)$($_.Background.BrightRed.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.BrightRed")
+                        .AddItemScriptBlock(@"""$($_.Background.Magenta)$($_.Background.Magenta.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.Magenta")
+                        .AddItemScriptBlock(@"""$($_.Background.BrightMagenta)$($_.Background.BrightMagenta.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.BrightMagenta")
+                        .AddItemScriptBlock(@"""$($_.Background.Blue)$($_.Background.Blue.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.Blue")
+                        .AddItemScriptBlock(@"""$($_.Background.BrightBlue)$($_.Background.BrightBlue.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.BrightBlue")
+                        .AddItemScriptBlock(@"""$($_.Background.Cyan)$($_.Background.Cyan.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.Cyan")
+                        .AddItemScriptBlock(@"""$($_.Background.BrightCyan)$($_.Background.BrightCyan.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.BrightCyan")
+                        .AddItemScriptBlock(@"""$($_.Background.Green)$($_.Background.Green.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.Green")
+                        .AddItemScriptBlock(@"""$($_.Background.BrightGreen)$($_.Background.BrightGreen.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.BrightGreen")
+                        .AddItemScriptBlock(@"""$($_.Background.Yellow)$($_.Background.Yellow.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.Yellow")
+                        .AddItemScriptBlock(@"""$($_.Background.BrightYellow)$($_.Background.BrightYellow.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Background.BrightYellow")
+                        .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStyleFormattingData()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle+FormattingData",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.FormatAccent)$($_.FormatAccent.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "FormatAccent")
+                        .AddItemScriptBlock(@"""$($_.TableHeader)$($_.TableHeader.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "TableHeader")
+                        .AddItemScriptBlock(@"""$($_.ErrorAccent)$($_.ErrorAccent.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "ErrorAccent")
+                        .AddItemScriptBlock(@"""$($_.Error)$($_.Error.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Error")
+                        .AddItemScriptBlock(@"""$($_.Warning)$($_.Warning.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Warning")
+                        .AddItemScriptBlock(@"""$($_.Verbose)$($_.Verbose.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Verbose")
+                        .AddItemScriptBlock(@"""$($_.Debug)$($_.Debug.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Debug")
+                    .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStyleProgressConfiguration()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle+ProgressConfiguration",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.Style)$($_.Style.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Style")
+                        .AddItemProperty(@"MaxWidth")
+                        .AddItemProperty(@"View")
+                        .AddItemProperty(@"UseOSCIndicator")
+                    .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStyleFileInfoFormat()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle+FileInfoFormatting",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.Directory)$($_.Directory.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Directory")
+                        .AddItemScriptBlock(@"""$($_.SymbolicLink)$($_.SymbolicLink.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "SymbolicLink")
+                        .AddItemScriptBlock(@"""$($_.Executable)$($_.Executable.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Executable")
+                        .AddItemScriptBlock(@"
+                            $sb = [System.Text.StringBuilder]::new()
+                            $maxKeyLength = 0
+                            foreach ($key in $_.Extension.Keys) {
+                                if ($key.Length -gt $maxKeyLength) {
+                                    $maxKeyLength = $key.Length
+                                }
+                            }
+
+                            foreach ($key in $_.Extension.Keys) {
+                                $null = $sb.Append($key.PadRight($maxKeyLength))
+                                $null = $sb.Append(' = ""')
+                                $null = $sb.Append($_.Extension[$key])
+                                $null = $sb.Append($_.Extension[$key].Replace(""`e"",'`e'))
+                                $null = $sb.Append($PSStyle.Reset)
+                                $null = $sb.Append('""')
+                                $null = $sb.Append([Environment]::NewLine)
+                            }
+
+                            $sb.ToString()",
+                            label: "Extension")
+                    .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStyleForegroundColor()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle+ForegroundColor",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.Black)$($_.Black.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Black")
+                        .AddItemScriptBlock(@"""$($_.BrightBlack)$($_.BrightBlack.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightBlack")
+                        .AddItemScriptBlock(@"""$($_.White)$($_.White.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "White")
+                        .AddItemScriptBlock(@"""$($_.BrightWhite)$($_.BrightWhite.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightWhite")
+                        .AddItemScriptBlock(@"""$($_.Red)$($_.Red.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Red")
+                        .AddItemScriptBlock(@"""$($_.BrightRed)$($_.BrightRed.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightRed")
+                        .AddItemScriptBlock(@"""$($_.Magenta)$($_.Magenta.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Magenta")
+                        .AddItemScriptBlock(@"""$($_.BrightMagenta)$($_.BrightMagenta.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightMagenta")
+                        .AddItemScriptBlock(@"""$($_.Blue)$($_.Blue.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Blue")
+                        .AddItemScriptBlock(@"""$($_.BrightBlue)$($_.BrightBlue.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightBlue")
+                        .AddItemScriptBlock(@"""$($_.Cyan)$($_.Cyan.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Cyan")
+                        .AddItemScriptBlock(@"""$($_.BrightCyan)$($_.BrightCyan.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightCyan")
+                        .AddItemScriptBlock(@"""$($_.Green)$($_.Green.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Green")
+                        .AddItemScriptBlock(@"""$($_.BrightGreen)$($_.BrightGreen.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightGreen")
+                        .AddItemScriptBlock(@"""$($_.Yellow)$($_.Yellow.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Yellow")
+                        .AddItemScriptBlock(@"""$($_.BrightYellow)$($_.BrightYellow.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightYellow")
+                    .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStyleBackgroundColor()
+        {
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle+BackgroundColor",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.Black)$($_.Black.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Black")
+                        .AddItemScriptBlock(@"""$($_.BrightBlack)$($_.BrightBlack.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightBlack")
+                        .AddItemScriptBlock(@"""$($_.White)$($_.White.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "White")
+                        .AddItemScriptBlock(@"""$($_.BrightWhite)$($_.BrightWhite.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightWhite")
+                        .AddItemScriptBlock(@"""$($_.Red)$($_.Red.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Red")
+                        .AddItemScriptBlock(@"""$($_.BrightRed)$($_.BrightRed.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightRed")
+                        .AddItemScriptBlock(@"""$($_.Magenta)$($_.Magenta.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Magenta")
+                        .AddItemScriptBlock(@"""$($_.BrightMagenta)$($_.BrightMagenta.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightMagenta")
+                        .AddItemScriptBlock(@"""$($_.Blue)$($_.Blue.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Blue")
+                        .AddItemScriptBlock(@"""$($_.BrightBlue)$($_.BrightBlue.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightBlue")
+                        .AddItemScriptBlock(@"""$($_.Cyan)$($_.Cyan.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Cyan")
+                        .AddItemScriptBlock(@"""$($_.BrightCyan)$($_.BrightCyan.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightCyan")
+                        .AddItemScriptBlock(@"""$($_.Green)$($_.Green.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Green")
+                        .AddItemScriptBlock(@"""$($_.BrightGreen)$($_.BrightGreen.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightGreen")
+                        .AddItemScriptBlock(@"""$($_.Yellow)$($_.Yellow.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Yellow")
+                        .AddItemScriptBlock(@"""$($_.BrightYellow)$($_.BrightYellow.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "BrightYellow")
+                    .EndEntry()
+                .EndList());
         }
     }
 }

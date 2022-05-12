@@ -1,26 +1,73 @@
 # Current preview release
 
-## [7.1.0-preview.3] - 2020-05-14
-
-### Breaking Changes
-
-- Fix string parameter binding for `BigInteger` numeric literals (#11634) (Thanks @vexx32!)
+## [7.3.0-preview.3] - 2022-03-21
 
 ### Engine Updates and Fixes
 
-- Set correct `PSProvider` full name at module load time (#11813) (Thanks @iSazonov!)
-
-### Experimental Features
-
-- Support passing `PSPath` to native commands (#12386)
+- Fix the parsing code for .NET method generic arguments (#16937)
+- Allow the `PSGetMemberBinder` to get value of `ByRef` property (#16956)
+- Allow a collection that contains `Automation.Null` elements to be piped to pipeline (#16957)
 
 ### General Cmdlet Updates and Fixes
 
-- Fix incorrect index in format string in ParameterBinderBase (#12630) (Thanks @powercode!)
-- Copy the `CommandInfo` property in `Command.Clone()` (#12301) (Thanks @TylerLeonhardt!)
-- Apply `-IncludeEqual` in `Compare-Object` when `-ExcludeDifferent` is specified (#12317) (Thanks @davidseibel!)
-- Change `Get-FileHash` to close file handles before writing output (#12474) (Thanks @HumanEquivalentUnit!)
-- Fix inconsistent exception message in `-replace` operator (#12388) (Thanks @jackdcasey!)
+- Add the module `CompatPowerShellGet` to the allow-list of telemetry modules (#16935)
+- Fix `Enter-PSHostProcess` and `Get-PSHostProcessInfo` cmdlets by handling processes that have exited (#16946)
+- Improve Hashtable completion in multiple scenarios (#16498) (Thanks @MartinGC94!)
+
+### Code Cleanup
+
+- Fix a typo in `CommandHelpProvider.cs` (#16949) (Thanks @eltociear!)
+
+### Tests
+
+- Update a few tests to make them more stable in CI (#16944)
+- Roll back Windows images used in testing to Windows Server 2019 (#16958)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+<p>Update .NET SDK to 7.0.0-preview.2</p>
+</summary>
+
+<ul>
+<li>Update .NET to 7.0.0-preview.2 build (#16930)</li>
+<li>Update <code>AzureFileCopy</code> task and fix the syntax for specifying <code>pool</code> (#17013)</li>
+</ul>
+
+</details>
+
+[7.3.0-preview.3]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.2...v7.3.0-preview.3
+
+## [7.3.0-preview.2] - 2022-02-24
+
+### Engine Updates and Fixes
+
+- Fix the `clean` block for generated proxy function (#16827)
+- Add support to allow invoking method with generic type arguments (#12412 and #16822) (Thanks @vexx32!)
+- Report error when PowerShell built-in modules are missing (#16628)
+
+### General Cmdlet Updates and Fixes
+
+- Prevent command completion if the word to complete is a single dash (#16781) (Thanks @ayousuf23!)
+- Use `FindFirstFileW` instead of `FindFirstFileExW` to correctly handle Unicode file names on FAT32 (#16840) (Thanks @iSazonov!)
+- Add completion for loop labels after Break/Continue (#16438) (Thanks @MartinGC94!)
+- Support OpenSSH options for `PSRP` over SSH commands (#12802) (Thanks @BrannenGH!)
+- Adds a `.ResolvedTarget` Property to `File-System` Items to Reflect a Symlink's Target as `FileSystemInfo` (#16490) (Thanks @hammy3502!)
+- Use `NotifyEndApplication` to re-enable VT mode (#16612)
+- Add new parameter to `Start-Sleep`: `[-Duration] <timespan>` (#16185) (Thanks @IISResetMe!)
+- Add lock and null check to remoting internals (#16542) (#16683) (Thanks @SergeyZalyadeev!)
+- Make `Measure-Object` ignore missing properties unless running in strict mode (#16589) (Thanks @KiwiThePoodle!)
+- Add `-StrictMode` to `Invoke-Command` to allow specifying strict mode when invoking command locally (#16545) (Thanks @Thomas-Yu!)
+- Fix `$PSNativeCommandArgPassing` = `Windows` to handle empty args correctly (#16639)
+- Reduce the amount of startup banner text (#16516) (Thanks @rkeithhill!)
+- Add `exec` cmdlet for bash compatibility (#16462)
+- Add AMSI method invocation logging as experimental feature (#16496)
+- Fix web cmdlets so that an empty `Get` does not include a `content-length` header (#16587)
+- Update `HelpInfoUri` for 7.3 release (#16646)
+- Fix parsing `SemanticVersion` build label from version string (#16608)
+- Fix `ForEach-Object -Parallel` when passing in script block variable (#16564)
 
 ### Code Cleanup
 
@@ -29,30 +76,28 @@
 <summary>
 
 <p>We thank the following contributors!</p>
-<p>@xtqqczze, @RDIL, @powercode, @xtqqczze, @xtqqczze</p>
+<p>@eltociear, @iSazonov, @xtqqczze</p>
 
 </summary>
 
 <ul>
-<li>Replace Unicode <code>non-breaking space</code> character with space (#12576) (Thanks @xtqqczze!)</li>
-<li>Remove unused <code>New-DockerTestBuild.ps1</code> (#12610) (Thanks @RDIL!)</li>
-<li>Annotate <code>Assert</code> methods for better code analysis (#12618) (Thanks @powercode!)</li>
-<li>Use correct casing for cmdlet names and parameters in *.ps1 files throughout the codebase (#12584) (Thanks @xtqqczze!)</li>
-<li>Document why <code>PackageVersion</code> is used in <code>PowerShell.Common.props</code> (#12523) (Thanks @xtqqczze!)</li>
+<li>Fix typo in PowerShellExecutionHelper.cs (#16776) (Thanks @eltociear!)</li>
+<li>Use more efficient platform detection API (#16760) (Thanks @iSazonov!)</li>
+<li>Seal <code>ClientRemotePowerShell</code> (#15802) (Thanks @xtqqczze!)</li>
+<li>Fix the DSC overview URL in a markdown file and some small cleanup changes (#16629)</li>
 </ul>
 
 </details>
 
 ### Tools
 
-- Update `@PoshChan` config to include `SSH` (#12526) (Thanks @vexx32!)
-- Update log message in `Start-PSBootstrap` (#12573) (Thanks @xtqqczze!)
-- Add the `.NET SDK` installation path to the current process path in `tools/UpdateDotnetRuntime.ps1` (#12525)
+- Fix automation to update experimental JSON files in GitHub action (#16837)
 
 ### Tests
 
-- Make CIM tab completion test case insensitive (#12636)
-- Mark ping tests as Pending due to stability issues in macOS (#12504)
+- Update `markdownlint` to the latest version (#16825)
+- Bump the package `path-parse` from `1.0.6` to `1.0.7` (#16820)
+- Remove assert that is incorrect and affecting our tests (#16588)
 
 ### Build and Packaging Improvements
 
@@ -61,80 +106,118 @@
 <summary>
 
 <p>We thank the following contributors!</p>
-<p>@jcotton42, @iSazonov, @iSazonov, @iSazonov</p>
+<p>@dahlia</p>
 
 </summary>
 
 <ul>
-<li>Update build to use the new .NET SDK <code>5.0.100-preview.4.20258.7</code> (#12637)</li>
-<li>Bump NJsonSchema from 10.1.14 to 10.1.15 (#12608)</li>
-<li>Bump NJsonSchema from 10.1.13 to 10.1.14 (#12598)</li>
-<li>Bump NJsonSchema from 10.1.12 to 10.1.13 (#12583)</li>
-<li>Update the build to sign any unsigned files as 3rd party Dlls (#12581)</li>
-<li>Update .NET SDK to <code>5.0.100-preview.4.20229.10</code> (#12538)</li>
-<li>Add ability to <code>Install-Dotnet</code> to specify directory (#12469)</li>
-<li>Allow <code>/</code> in relative paths for <code>using module</code> (#7424) (#12492) (Thanks @jcotton42!)</li>
-<li>Update dotnet metadata for next channel for automated updates (#12502)</li>
-<li>Bump .NET to 5.0.0-preview.4 (#12507)</li>
-<li>Bump <code>Microsoft.ApplicationInsights</code> from <code>2.13.1</code> to <code>2.14.0</code> (#12479)</li>
-<li>Bump PackageManagement from 1.4.6 to 1.4.7 in /src/Modules (#12506)</li>
-<li>Bump <code>Xunit.SkippableFact</code> from <code>1.3.12</code> to <code>1.4.8</code> (#12480)</li>
-<li>Fix quotes to allow variable expansion (#12512)</li>
-<li>Use new <code>TargetFramework</code> as <code>net5.0</code> in packaging scripts (#12503) (Thanks @iSazonov!)</li>
-<li>Use new value for <code>TargetFramework</code> as <code>net5.0</code> instead of <code>netcoreapp5.0</code> (#12486) (Thanks @iSazonov!)</li>
-<li>Disable <code>PublishReadyToRun</code> for framework dependent packages (#12450)</li>
-<li>Add <code>dependabot</code> rules to ignore updates from .NET (#12466)</li>
-<li>Update <code>README.md</code> and <code>metadata.json</code> for upcoming release (#12441)</li>
-<li>Turn on <code>ReadyToRun</code> (#12361) (Thanks @iSazonov!)</li>
-<li>Add summary to compressed sections of change log (#12429)</li>
+<li>Update NuGet Testing to not re-install dotnet,
+when not needed and dynamically determine the DOTNET_ROOT (Internal 19268, 19269, 19272, 19273, and 19274)</li>
+<li>Remove SkipExperimentalFeatureGeneration when building alpine (Internal 19248)</li>
+<li>Revert .NET 7 changes, Update to the latest .NET 6 and Update WXS file due to blocking issue in .NET 7 Preview 1 </li>
+<li>Install and Find AzCopy</li>
+<li>Use Start-PSBootStrap for installing .NET during nuget packaging</li>
+<li>Fix pool syntax for deployments (Internal 19189)</li>
+<li>Bump NJsonSchema from 10.5.2 to 10.6.9 (#16888)</li>
+<li>Update projects and scripts to use .NET 7 preview 1 pre-release builds (#16856)</li>
+<li>Add warning messages when package precheck fails (#16867)</li>
+<li>Refactor Global Tool packaging to include SBOM generation (#16860)</li>
+<li>Update to use <code>windows-latest</code> as the build agent image (#16831)</li>
+<li>Ensure alpine and arm SKUs have <code>powershell.config.json</code> file with experimental features enabled (#16823)</li>
+<li>Update experimental feature json files (#16838) (Thanks @github-actions[bot]!)</li>
+<li>Remove WiX install (#16834)</li>
+<li>Add experimental json update automation (#16833)</li>
+<li>Update .NET SDK to 6.0.101 and fix <code>Microsoft.PowerShell.GlobalTool.Shim.csproj</code> (#16821)</li>
+<li>Add SBOM manifest to nuget packages (#16711)</li>
+<li>Improve logic for updating .NET in CI (#16808)</li>
+<li>Add Linux package dependencies for packaging (#16807)</li>
+<li>Switch to our custom images for build and release (#16801)</li>
+<li>Remove all references to <code>cmake</code> for the builds in this repo (#16578)</li>
+<li>Fix build for new <code>InvokeCommand</code> attributes (#16800)</li>
+<li>Let macOS installer run without Rosetta on Apple Silicon (#16742) (Thanks @dahlia!)</li>
+<li>Update the expect .NET SDK quality to GA for installing dotnet (#16784)</li>
+<li>Change nuget release yaml to use <code>UseDotNet</code> task (#16701)</li>
+<li>Bump Microsoft.ApplicationInsights from 2.19.0 to 2.20.0 (#16642)</li>
+<li>Register NuGet source when generating <code>CGManifest</code> (#16570)</li>
+<li>Update Images used for release (#16580)</li>
+<li>Update SBOM generation (#16641)</li>
+<li>Bring changes from 7.3.0-preview.1 (#16640)</li>
+<li>Update the <code>vmImage</code> and PowerShell root directory for macOS builds (#16611)</li>
+<li>Update macOS build image and root folder for build (#16609)</li>
+<li>Disabled Yarn cache in markdown.yml (#16599)</li>
+<li>Update cgmanifest (#16600)</li>
+<li>Fix broken links in markdown (#16598)</li>
 </ul>
 
 </details>
 
 ### Documentation and Help Content
 
-- Add link to life cycle doc to distribution request template (#12638)
-- Update TFM reference in build docs (#12514) (Thanks @xtqqczze!)
-- Fix broken link for blogs in documents (#12471)
+- Add newly joined members to their respective Working Groups (#16849)
+- Update Engine Working Group members (#16780)
+- Replace the broken link about pull request (#16771)
+- Update change log to remove a broken URL (#16735)
+- Updated `README.md` and `metadata.json` for `v7.3.0-preview.1` release (#16627)
+- Updating changelog for `7.2.1` (#16616)
+- Updated `README.md` and `metadata.json` for `7.2.1` release (#16586)
 
-## [7.1.0-preview.2] - 2020-04-23
+[7.3.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.1...v7.3.0-preview.2
+
+## [7.3.0-preview.1] - 2021-12-16
 
 ### Breaking Changes
 
-- On Windows, `Start-Process` creates a process environment with
-  all the environment variables from current session,
-  using `-UseNewEnvironment` creates a new default process environment (#10830) (Thanks @iSazonov!)
-- Do not wrap return result to `PSObject` when converting ScriptBlock to delegate (#10619)
+- Add `clean` block to script block as a peer to `begin`, `process`, and `end` to allow easy resource cleanup (#15177)
+- Change default for `$PSStyle.OutputRendering` to `Ansi` (Internal 18449)
 
 ### Engine Updates and Fixes
 
-- Allow case insensitive paths for determining `PSModulePath` (#12192)
-- Add PowerShell version 7.0 to compatible version list (#12184)
-- Discover assemblies loaded by `Assembly.Load(byte[])` and `Assembly.LoadFile` (#12203)
+- Remove duplicate remote server mediator code (#16027)
+- Fix `PSVersion` parameter version checks and error messages for PowerShell 7 remoting (#16228)
+- Use the same temporary home directory when `HOME` env variable is not set (#16263)
+- Fix parser to generate error when array has more than 32 dimensions (#16276)
+
+### Performance
+
+- Avoid validation for built-in file extension and color VT sequences (#16320) (Thanks @iSazonov!)
 
 ### General Cmdlet Updates and Fixes
 
-- Fix `WinCompat` module loading to treat PowerShell 7 modules with higher priority (#12269)
-- Implement `ForEach-Object -Parallel` runspace reuse (#12122)
-- Fix `Get-Service` to not modify collection while enumerating it (#11851) (Thanks @NextTurn!)
-- Clean up the IPC named pipe on PowerShell exit (#12187)
-- Fix `<img />` detection regex in web cmdlets (#12099) (Thanks @vexx32!)
-- Allow shorter signed hex literals with appropriate type suffixes (#11844) (Thanks @vexx32!)
-- Update `UseNewEnvironment` parameter behavior of `Start-Process` cmdlet on Windows (#10830) (Thanks @iSazonov!)
-- Add `-Shuffle` switch to `Get-Random` command (#11093) (Thanks @eugenesmlv!)
-- Make `GetWindowsPowerShellModulePath` compatible with multiple PS installations (#12280)
-- Fix `Start-Job` to work on systems that don't have Windows PowerShell registered as default shell (#12296)
-- Specifying an alias and `-Syntax` to `Get-Command` returns the aliased commands syntax (#10784) (Thanks @ChrisLGardner!)
-- Make CSV cmdlets work when using `-AsNeeded` and there is an incomplete row (#12281) (Thanks @iSazonov!)
-- In local invocations, do not require `-PowerShellVersion 5.1` for `Get-FormatData` in order to see all format data. (#11270) (Thanks @mklement0!)
-- Added Support For Big Endian `UTF-32` (#11947) (Thanks @NoMoreFood!)
-- Fix possible race that leaks PowerShell object dispose in `ForEach-Object -Parallel` (#12227)
-- Add `-FromUnixTime` to `Get-Date` to allow Unix time input (#12179) (Thanks @jackdcasey!)
-- Change default progress foreground and background colors to provide improved contrast (#11455) (Thanks @rkeithhill!)
-- Fix `foreach -parallel` when current drive is not available (#12197)
-- Do not wrap return result to `PSObject` when converting `ScriptBlock` to `delegate` (#10619)
-- Don't write DNS resolution errors on `Test-Connection -Quiet` (#12204) (Thanks @vexx32!)
-- Use dedicated threads to read the redirected output and error streams from the child process for out-of-proc jobs (#11713)
+- Update `README.md` and `metadata.json` for next preview release (#16107)
+- Use `PlainText` when writing to a host that doesn't support VT (#16092)
+- Remove support for `AppExeCLinks` to retrieve target (#16044)
+- Move `GetOuputString()` and `GetFormatStyleString()` to `PSHostUserInterface` as public API (#16075)
+- Fix `ConvertTo-SecureString` with key regression due to .NET breaking change (#16068)
+- Fix regression in `Move-Item` to only fallback to `copy and delete` in specific cases (#16029)
+- Set `$?` correctly for command expression with redirections (#16046)
+- Use `CurrentCulture` when handling conversions to `DateTime` in `Add-History` (#16005) (Thanks @vexx32!)
+- Fix link header parsing to handle unquoted `rel` types (#15973) (Thanks @StevenLiekens!)
+- Fix a casting error when using `$PSNativeCommandUsesErrorActionPreference` (#15993)
+- Format-Wide: Fix `NullReferenceException` (#15990) (Thanks @DarylGraves!)
+- Make the native command error handling optionally honor `ErrorActionPreference` (#15897)
+- Remove declaration of experimental features in Utility module manifest as they are stable (#16460)
+- Fix race condition between `DisconnectAsync` and `Dispose` (#16536) (Thanks @i3arnon!)
+- Fix the `Max_PATH` condition check to handle long path correctly (#16487) (Thanks @Shriram0908!)
+- Update `HelpInfoUri` for 7.2 release (#16456)
+- Fix tab completion within the script block specified for the `ValidateScriptAttribute`. (#14550) (Thanks @MartinGC94!)
+- Update `README.md` to specify gathered telemetry (#16379)
+- Fix typo for "privacy" in MSI installer (#16407)
+- Remove unneeded call to `File.ResolveLinkTarget` from `IsWindowsApplication` (#16371) (Thanks @iSazonov!)
+- Add `-HttpVersion` parameter to web cmdlets (#15853) (Thanks @hayhay27!)
+- Add support to web cmdlets for open-ended input tags (#16193) (Thanks @farmerau!)
+- Add more tests to `Tee-Object -Encoding` (#14539) (Thanks @rpolley!)
+- Don't throw exception when trying to resolve a possible link path (#16310)
+- Fix `ConvertTo-Json -Depth` to allow 100 at maximum (#16197) (Thanks @KevRitchie!)
+- Fix for SSH remoting when banner is enabled on SSHD endpoint (#16205)
+- Disallow all COM for AppLocker system lock down (#16268)
+- Configure `ApplicationInsights` to not send cloud role name (#16246)
+- Disallow `Add-Type` in NoLanguage mode on a locked down machine (#16245)
+- Specify the executable path as `TargetObect` for non-zero exit code `ErrorRecord` (#16108) (Thanks @rkeithhill!)
+- Don't allow `Move-Item` with FileSystemProvider to move a directory into itself (#16198)
+- Make property names for the color VT sequences consistent with documentations (#16212)
+- Fix `PipelineVariable` to set variable in the right scope (#16199)
+- Invoke-Command: improve handling of variables with $using: expression (#16113) (Thanks @dwtaber!)
+- Change `Target` from a `CodeProperty` to be an `AliasProperty` that points to `FileSystemInfo.LinkTarget` (#16165)
 
 ### Code Cleanup
 
@@ -143,27 +226,38 @@
 <summary>
 
 <p>We thank the following contributors!</p>
-<p>@ShaydeNofziger, @RDIL</p>
+<p>@xtqqczze, @eltociear, @iSazonov</p>
 
 </summary>
 
 <ul>
-<li>Fix erroneous comment in <code>tokenizer.cs</code> (#12206) (Thanks @ShaydeNofziger!)</li>
-<li>Fix terms checker issues (#12189)</li>
-<li>Update copyright notice to latest guidance (#12190)</li>
-<li>CodeFactor cleanup (#12251) (Thanks @RDIL!)</li>
+<li>Improve <code>CommandInvocationIntrinsics</code> API documentation and style (#14369)</li>
+<li>Use <code>bool?.GetValueOrDefault()</code> in <code>FormatWideCommand</code> (#15988) (Thanks @xtqqczze!)</li>
+<li>Remove 4 assertions which cause debug build test runs to fail (#15963)</li>
+<li>Fix typo in `Job.cs` (#16454) (Thanks @eltociear!)</li>
+<li>Remove unnecessary call to `ToArray` (#16307) (Thanks @iSazonov!)</li>
+<li>Remove the unused `FollowSymLink` function (#16231)</li>
+<li>Fix typo in `TypeTable.cs` (#16220) (Thanks @eltociear!)</li>
+<li>Fixes #16176 - replace snippet tag with code tag in comments (#16177)</li>
 </ul>
 
 </details>
 
 ### Tools
 
-- Update .NET dependency update script to include test `csproj` files (#12372)
-- Scripts to update to .NET prerelease version (#12284)
+- Fix typo in build.psm1 (#16038) (Thanks @eltociear!)
+- Add `.stylecop` to `filetypexml` and format it (#16025)
+- Enable sending Teams notification when workflow fails (#15982)
+- Use `Convert-Path` for unknown drive in `Build.psm1` (#16416) (Thanks @matt9ucci!)
 
 ### Tests
 
-- Pin major Pester version to 4 to prevent breaking changes caused by upcoming release of v5 (#12262) (Thanks @bergmeister!)
+- Add benchmark to test compiler performance (#16083)
+- Enable two previously disabled `Get-Process` tests (#15845) (Thanks @iSazonov!)
+- Set clean state before testing `UseMU` in the MSI (#16543)
+- Fix global tool and SDK tests in release pipeline (#16342)
+- Remove the outdated test (#16269)
+- Removed old not-used-anymore docker-based tests for PS release packages (#16224)
 
 ### Build and Packaging Improvements
 
@@ -172,193 +266,128 @@
 <summary>
 
 <p>We thank the following contributors!</p>
-<p>@rkitover, @bergmeister</p>
+<p>@github-actions[bot], @kondratyev-nv</p>
 
 </summary>
 
 <ul>
-<li>Add the <code>nuget.config</code> from root to the temporary build folder (#12394)</li>
-<li>Bump System.IO.Packaging (#12365)</li>
-<li>Bump Markdig.Signed from 0.18.3 to 0.20.0 (#12379)</li>
-<li>Bump to .NET 5 Preview 3 pre-release (#12353)</li>
-<li>Bump PowerShellGet from 2.2.3 to 2.2.4 (#12342)</li>
-<li>Linux: Initial support for Gentoo installations. (#11429) (Thanks @rkitover!)</li>
-<li>Upgrade to .NET 5 Preview 2 (#12250) (Thanks @bergmeister!)</li>
-<li>Fix the <code>Sync PSGalleryModules to Artifacts</code> build (#12277)</li>
-<li>Bump PSReadLine from 2.0.0 to 2.0.1 (#12243)</li>
-<li>Bump <code>NJsonSchema</code> from <code>10.1.11</code> to <code>10.1.12</code> (#12230)</li>
-<li>Update change log generation script to support collapsible sections (#12214)</li>
+<li>fix issue with hash file getting created before we have finished get-childitem (#16170)</li>
+<li>Add sha256 hashes to release (#16147)</li>
+<li>Change path for Component Governance for build to the path we actually use to build (#16137)</li>
+<li>Update <code>Microsoft.CodeAnalysis.CSharp</code> version (#16138)</li>
+<li>Bump Microsoft.CodeAnalysis.NetAnalyzers (#16070)</li>
+<li>Update .NET to <code>6.0.100-rc.1.21458.32</code> (#16066)</li>
+<li>Update minimum required OS version for macOS (#16088)</li>
+<li>Set locale correctly on Linux CI (#16073)</li>
+<li>Ensure locale is set correctly on Ubuntu 20.04 in CI (#16067)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.NetAnalyzers</code> (#16045)</li>
+<li>Update .NET SDK version from `6.0.100-rc.1.21430.44` to `6.0.100-rc.1.21455.2` (#16041) (Thanks @github-actions[bot]!)</li>
+<li>Fix the GitHub Action for updating .NET daily builds (#16042)</li>
+<li>Bump Microsoft.CodeAnalysis.CSharp from 4.0.0-3.final to 4.0.0-4.21430.4 (#16036)</li>
+<li>Bump .NET to `6.0.100-rc.1.21430.44` (#16028)</li>
+<li>Move from <code>PkgES</code> hosted agents to 1ES hosted agents (#16023)</li>
+<li>Bump Microsoft.CodeAnalysis.NetAnalyzers (#16021)</li>
+<li>Update Ubuntu images to use Ubuntu 20.04 (#15906)</li>
+<li>Fix the mac build by updating the pool image name (#16010)</li>
+<li>Use Alpine 3.12 for building PowerShell for alpine (#16008)</li>
+<li>Update .NET SDK version from `6.0.100-preview.6.21355.2` to `6.0.100-rc.1.21426.1` (#15648) (Thanks @github-actions[bot]!)</li>
+<li>Ignore error from <code>Find-Package</code> (#15999)</li>
+<li>Find packages separately for each source in <code>UpdateDotnetRuntime.ps1</code> script (#15998)</li>
+<li>Update metadata to start using .NET 6 RC1 builds (#15981)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.NetAnalyzers</code> (#15985)</li>
+<li>Merge the v7.2.0-preview.9 release branch back to GitHub master (#15983)</li>
+<li>Publish global tool package for stable releases (#15961)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.NetAnalyzers</code> to newer version (#15962)</li>
+<li>Disabled Yarn cache in markdown.yml (#16599)</li>
+<li>Update cgmanifest (#16600)</li>
+<li>Fix broken links in markdown (#16598)</li>
+<li>Add explicit job name for approval tasks in Snap stage (#16579)</li>
+<li>Bring back <code>pwsh.exe</code> for framework dependent packages to support Start-Job (#16535)</li>
+<li>Fix NuGet package generation in release build (#16509)</li>
+<li>Add `Microsoft.PowerShell.Commands.SetStrictModeCommand.ArgumentToPSVersionTransformationAttribute` to list of patterns to remove for generated ref assembly (#16489)</li>
+<li>Bump Microsoft.CodeAnalysis.CSharp from `4.0.0-6.final` to `4.0.1` (#16423)</li>
+<li>use different containers for different branches (#16434)</li>
+<li>Add import so we can use common GitHub workflow function. (#16433)</li>
+<li>Remove pre-release .NET 6 build sources (#16418)</li>
+<li>Update release instructions with link to new build (#16419)</li>
+<li>Bump <code>Microsoft.ApplicationInsights</code> from <code>2.18.0</code> to <code>2.19.0</code> (#16413)</li>
+<li>Update <code>metadata.json</code> to make 7.2.0 the latest LTS (#16417)</li>
+<li>Make static CI a matrix (#16397)</li>
+<li>Update <code>metadata.json</code> in preparation on <code>7.3.0-preview.1</code> release (#16406)</li>
+<li>Update cgmanifest (#16405)</li>
+<li>Add diagnostics used to take corrective action when releasing `buildInfoJson` (#16404)</li>
+<li>`vPack` release should use `buildInfoJson` new to 7.2 (#16402)</li>
+<li>Update the usage of metadata.json for getting LTS information (#16381)</li>
+<li>Add checkout to build json stage to get `ci.psm1` (#16399)</li>
+<li>Update CgManifest.json for 6.0.0 .NET packages (#16398)</li>
+<li>Add current folder to the beginning of the module import (#16353)</li>
+<li>Increment RC MSI build number by 100 (#16354)</li>
+<li>Bump <code>XunitXml.TestLogger</code> from 3.0.66 to 3.0.70 (#16356)</li>
+<li>Move PR Quantifier config to subfolder (#16352)</li>
+<li>Release build info json when it is preview (#16335)</li>
+<li>Add an approval for releasing build-info json (#16351)</li>
+<li>Generate manifest with latest public version of the packages (#16337)</li>
+<li>Update to the latest notices file (#16339) (Thanks @github-actions[bot]!)</li>
+<li>Use notice task to generate license assuming cgmanifest contains all components (#16340)</li>
+<li>Refactor cgmanifest generator to include all components (#16326)</li>
+<li>Fix issues in release build (#16332)</li>
+<li>Update feed and analyzer dependency (#16327)</li>
+<li>Bump <code>Microsoft.NET.Test.Sdk</code> from 16.11.0 to 17.0.0 (#16312)</li>
+<li>Update license and cgmanifest (#16325) (Thanks @github-actions[bot]!)</li>
+<li>Fix condition in cgmanifest logic (#16324)</li>
+<li>Add GitHub Workflow to keep notices up to date (#16284)</li>
+<li>Update to latest .NET 6 GA build <code> 6.0.100-rtm.21527.11</code> (#16309)</li>
+<li>Create compliance build (#16286)</li>
+<li>Move mapping file into product repo and add Debian 11  (#16316)</li>
+<li>Add a major-minor build info JSON file (#16301)</li>
+<li>Clean up <code>crossgen</code> related build scripts also generate native symbols for <code>R2R</code> images (#16297)</li>
+<li>Fix Windows build ZIP packaging (#16299) (Thanks @kondratyev-nv!)</li>
+<li>Revert &quot;Update to use .NET 6 GA build (#16296)&quot; (#16308)</li>
+<li>Add <code>wget</code> as a dependency for Bootstrap script (#16303) (Thanks @kondratyev-nv!)</li>
+<li>Fix issues reported by code signing verification tool (#16291)</li>
+<li>Update to use .NET 6 GA build (#16296)</li>
+<li>Revert &quot;add GH workflow to keep the cgmanifest up to date.&quot; (#16294)</li>
+<li>Update ChangeLog for 7.2.0-rc.1 and also fix RPM packaging (#16290)</li>
+<li>Bump Microsoft.CodeAnalysis.NetAnalyzers (#16271)</li>
+<li>add GH workflow to keep the cgmanifest up to date.</li>
+<li>Update <code>ThirdPartyNotices.txt</code> (#16283)</li>
+<li>Update `testartifacts.yml` to use <code>ubuntu-latest</code> image (#16279)</li>
+<li>Update version of <code>Microsoft.PowerShell.Native</code> and <code>Microsoft.PowerShell.MarkdownRender</code> packages (#16277)</li>
+<li>Add script to generate <code>cgmanifest.json</code> (#16278)</li>
+<li>Add <code>cgmanifest.json</code> for generating correct third party notice file (#16266)</li>
+<li>Bump Microsoft.CodeAnalysis.NetAnalyzers from `6.0.0-rtm.21504.2` to `6.0.0-rtm.21516.1` (#16264)</li>
+<li>Only upload stable <code>buildinfo</code> for stable releases (#16251)</li>
+<li>Make RPM license recognized (#16189)</li>
+<li>Don't upload dep or tar.gz for RPM because there are none. (#16230)</li>
+<li>Add condition to generate release files in local dev build only (#16259)</li>
+<li>Update .NET 6 to version 6.0.100-rc.2.21505.57 (#16249)</li>
+<li>change order of try-catch-finally and split out arm runs (#16252)</li>
+<li>Ensure <code>psoptions.json</code> and <code>manifest.spdx.json</code> files always exist in packages (#16258)</li>
+<li>Update to vPack task version to 12 (#16250)</li>
+<li>Remove unneeded `NuGetConfigFile` resource string (#16232)</li>
+<li>Add Software Bill of Materials to the main packages (#16202)</li>
+<li>Sign third party exes (#16229)</li>
+<li>Upgrade <code>set-value</code> package for markdown test (#16196)</li>
+<li>Use Ubuntu 20.04 for SSH remoting test (#16225)</li>
+<li>Bump Microsoft.CodeAnalysis.NetAnalyzers (#16194)</li>
+<li>Bump `Microsoft.CodeAnalysis.NetAnalyzers` from `6.0.0-rc2.21458.5` to `6.0.0-rtm.21480.8` (#16183)</li>
+<li>Move vPack build to 1ES Pool (#16169)</li>
+<li>Fix Microsoft update spelling issue. (#16178)</li>
 </ul>
 
 </details>
 
 ### Documentation and Help Content
 
-- Add documentation for `WebResponseObject` and `BasicHtmlWebResponseObject` properties (#11876) (Thanks @kevinoid!)
-- Add Windows 10 IoT Core reference in `Adopters.md` (#12266) (Thanks @parameshbabu!)
-- Update `README.md` and `metadata.json` for `7.1.0-preview.1` (#12211)
+- Update Windows PowerShell issues link (#16105) (Thanks @andschwa!)
+- Remove Joey from Committee and WG membership (#16119)
+- Update more docs for `net6.0` TFM (#16102) (Thanks @xtqqczze!)
+- Change `snippet` tag to `code` tag in XML comments (#16106)
+- Update build documentation to reflect .NET 6 (#15751) (Thanks @Kellen-Stuart!)
+- Update `README.md` about the change logs (#16471) (Thanks @powershellpr0mpt!)
+- Update change log for 7.2.0 (#16401)
+- Update `metadata.json` and `README.md` for 7.2.0 release (#16395)
+- Update `README.md` and `metadata.json` files for `v7.2.0-rc.1` release (#16285)
+- Update the change logs for `v7.0.8` and `v7.1.5` releases (#16248)
 
-## [7.1.0-preview.1] - 2020-03-26
-
-### Breaking Changes
-
-- Use invariant culture string conversion for `-replace` operator (#10954) (Thanks @iSazonov!)
-
-### Engine Updates and Fixes
-
-- Revert the PRs that made `DBNull.Value` and `NullString.Value` treated as `$null` (#11648)
-
-### Experimental Features
-
-- Use invariant culture string conversion for `-replace` operator (#10954) (Thanks @iSazonov!)
-
-### General Cmdlet Updates and Fixes
-
-- Fix an operator preference order issue in binder code (#12075) (Thanks @DamirAinullin!)
-- Fix `NullReferenceException` when binding common parameters of type `ActionPreference` (#12124)
-- Fix default formatting for deserialized `MatchInfo` (#11728) (Thanks @iSazonov!)
-- Use asynchronous streams in `Invoke-RestMethod` (#11095) (Thanks @iSazonov!)
-- Address UTF-8 Detection In `Get-Content -Tail` (#11899) (Thanks @NoMoreFood!)
-- Handle the `IOException` in `Get-FileHash` (#11944) (Thanks @iSazonov!)
-- Change `PowerShell Core` to `PowerShell` in a resource string (#11928) (Thanks @alexandair!)
-- Bring back `MainWindowTitle` in `PSHostProcessInfo` (#11885) (Thanks @iSazonov!)
-- Miscellaneous minor updates to Windows Compatibility (#11980)
-- Fix `ConciseView` to split `PositionMessage` using `[Environment]::NewLine` (#12010)
-- Remove network hop restriction for interactive sessions (#11920)
-- Fix `NullReferenceException` in `SuspendStoppingPipeline()` and `RestoreStoppingPipeline()` (#11870) (Thanks @iSazonov!)
-- Generate GUID for `FormatViewDefinition` `InstanceId` if not provided (#11896)
-- Fix `ConciseView` where error message is wider than window width and doesn't have whitespace (#11880)
-- Allow cross-platform `CAPI-compatible` remote key exchange (#11185) (Thanks @silijon!)
-- Fix error message (#11862) (Thanks @NextTurn!)
-- Fix `ConciseView` to handle case where there isn't a console to obtain the width (#11784)
-- Update `CmsCommands` to use Store vs certificate provider (#11643) (Thanks @mikeTWC1984!)
-- Enable `pwsh` to work on Windows systems where `mpr.dll` and STA is not available (#11748)
-- Refactor and implement `Restart-Computer` for `Un*x` and macOS (#11319)
-- Add an implementation of `Stop-Computer` for Linux and macOS (#11151)
-- Fix `help` function to check if `less` is available before using (#11737)
-- Update `PSPath` in `certificate_format_ps1.xml` (#11603) (Thanks @xtqqczze!)
-- Change regular expression to match relation-types without quotes in Link header (#11711) (Thanks @Marusyk!)
-- Fix error message during symbolic link deletion (#11331)
-- Add custom `Selected.*` type to `PSCustomObject` in `Select-Object` only once (#11548) (Thanks @iSazonov!)
-- Add `-AsUTC` to the `Get-Date` cmdlet (#11611)
-- Fix grouping behavior with Boolean values in `Format-Hex` (#11587) (Thanks @vexx32!)
-- Make `Test-Connection` always use the default synchronization context for sending ping requests (#11517)
-- Correct startup error messages (#11473) (Thanks @iSazonov!)
-- Ignore headers with null values in web cmdlets (#11424) (Thanks @iSazonov!)
-- Re-add check for `Invoke-Command` job dispose. (#11388)
-- Revert "Update formatter to not write newlines if content is empty (#11193)" (#11342) (Thanks @iSazonov!)
-- Allow `CompleteInput` to return results from `ArgumentCompleter` when `AST` or Script has matching function definition (#10574) (Thanks @M1kep!)
-- Update formatter to not write new lines if content is empty (#11193)
-
-### Code Cleanup
-
-<details>
-
-<ul>
-<li>Use span-based overloads (#11884) (Thanks @iSazonov!)</li>
-<li>Use new <code>string.Split()</code> overloads (#11867) (Thanks @iSazonov!)</li>
-<li>Remove unreachable DSC code (#12076) (Thanks @DamirAinullin!)</li>
-<li>Remove old dead code from FullCLR (#11886) (Thanks @iSazonov!)</li>
-<li>Use <code>Dictionary.TryAdd()</code> where possible (#11767) (Thanks @iSazonov!)</li>
-<li>Use <code>Environment.NewLine</code> instead of hard-coded linefeed in <code>ParseError.ToString</code> (#11746)</li>
-<li>Fix <code>FileSystem</code> provider error message (#11741) (Thanks @iSazonov!)</li>
-<li>Reformat code according to <code>EditorConfig</code> rules (#11681) (Thanks @xtqqczze!)</li>
-<li>Replace use of throw <code>GetExceptionForHR</code> with <code>ThrowExceptionForHR</code> (#11640) (Thanks @xtqqczze!)</li>
-<li>Refactor delegate types to lambda expressions (#11690) (Thanks @xtqqczze!)</li>
-<li>Remove Unicode BOM from text files (#11546) (Thanks @xtqqczze!)</li>
-<li>Fix Typo in <code>Get-ComputerInfo</code> cmdlet description (#11321) (Thanks @doctordns!)</li>
-<li>Fix typo in description for <code>Get-ExperimentalFeature</code> <code>PSWindowsPowerShellCompatibility</code> (#11282) (Thanks @alvarodelvalle!)</li>
-<li>Cleanups in command discovery (#10815) (Thanks @iSazonov!)</li>
-<li>Review <code>CurrentCulture</code> (#11044) (Thanks @iSazonov!)</li>
-</ul>
-
-</details>
-
-### Tools
-
-- Change recommended VS Code extension name from `ms-vscode.csharp` to `ms-dotnettools.csharp` (#12083) (Thanks @devlead!)
-- Specify `csharp_preferred_modifier_order` in `EditorConfig` (#11775) (Thanks @xtqqczze!)
-- Update `.editorconfig` (#11675) (Thanks @xtqqczze!)
-- Enable `EditorConfig` support in `OmniSharp` (#11627) (Thanks @xtqqczze!)
-- Specify charset in `.editorconfig` as `utf-8` (no BOM) (#11654) (Thanks @xtqqczze!)
-- Configure the issue label bot (#11527)
-- Avoid variable names that conflict with automatic variables (#11392) (Thanks @xtqqczze!)
-
-### Tests
-
-- Add empty `preview.md` file to fix broken link (#12041)
-- Add helper functions for SSH remoting tests (#11955)
-- Add new tests for `Get-ChildItem` for `FileSystemProvider` (#11602) (Thanks @iSazonov!)
-- Ensure that types referenced by `PowerShellStandard` are present (#10634)
-- Check state and report reason if it's not "opened" (#11574)
-- Fixes for running tests on Raspbian (#11661)
-- Unify pester test syntax for the arguments of `-BeOfType`  (#11558) (Thanks @xtqqczze!)
-- Correct casing for automatic variables (#11568) (Thanks @iSazonov!)
-- Avoid variable names that conflict with automatic variables part 2 (#11559) (Thanks @xtqqczze!)
-- Update pester syntax to v4 (#11544) (Thanks @xtqqczze!)
-- Allow error 504 (Gateway Timeout) in `markdown-link` tests (#11439) (Thanks @xtqqczze!)
-- Re-balance CI tests (#11420) (Thanks @iSazonov!)
-- Include URL in the markdown-links test error message (#11438) (Thanks @xtqqczze!)
-- Use CIM cmdlets instead of WMI cmdlets in tests (#11423) (Thanks @xtqqczze!)
-
-### Build and Packaging Improvements
-
-<details>
-
-<ul>
-<li>Put symbols in separate package (#12169)</li>
-<li>Disable <code>x86</code> PDB generation (#12167)</li>
-<li>Bump <code>NJsonSchema</code> from <code>10.1.5</code> to <code>10.1.11</code> (#12050) (#12088) (#12166)</li>
-<li>Create <code>crossgen</code> symbols for Windows <code>x64</code> and <code>x86</code> (#12157)</li>
-<li>Move to <code>.NET 5 preview.1</code> (#12140)</li>
-<li>Bump <code>Microsoft.CodeAnalysis.CSharp</code> from <code>3.4.0</code> to <code>3.5.0</code> (#12136)</li>
-<li>Move to standard internal pool for building (#12119)</li>
-<li>Fix package syncing to private Module Feed  (#11841)</li>
-<li>Add Ubuntu SSH remoting tests CI (#12033)</li>
-<li>Bump <code>Markdig.Signed</code> from <code>0.18.1</code> to <code>0.18.3</code> (#12078)</li>
-<li>Fix MSIX packaging to determine if a Preview release by inspecting the semantic version string (#11991)</li>
-<li>Ignore last exit code in the build step as <code>dotnet</code> may return error when SDK is not installed (#11972)</li>
-<li>Fix daily package build (#11882)</li>
-<li>Fix package sorting for syncing to private Module Feed (#11838)</li>
-<li>Set <code>StrictMode</code> version <code>3.0</code> (#11563) (Thanks @xtqqczze!)</li>
-<li>Bump <code>.devcontainer</code> version to dotnet <code>3.1.101</code> (#11707) (Thanks @Jawz84!)</li>
-<li>Move to version 3 of <code>AzFileCopy</code> (#11697)</li>
-<li>Update <code>README.md</code> and <code>metadata.json</code> for next release (#11664)</li>
-<li>Code Cleanup for environment data gathering in <code>build.psm1</code> (#11572) (Thanks @xtqqczze!)</li>
-<li>Update Debian Install Script To Support Debian 10 (#11540) (Thanks @RandomNoun7!)</li>
-<li>Update <code>ADOPTERS.md</code> (#11261) (Thanks @edyoung!)</li>
-<li>Change back to use powershell.exe in 'SetVersionVariables.yml' to unblock daily build (#11207)</li>
-<li>Change to use pwsh to have consistent JSON conversion for <code>DateTime</code> (#11126)</li>
-</ul>
-
-</details>
-
-### Documentation and Help Content
-
-- Replace `VSCode` link in `CONTRIBUTING.md` (#11475) (Thanks @stevend811!)
-- Remove the version number of PowerShell from LICENSE (#12019)
-- Add the 7.0 change log link to `CHANGELOG/README.md` (#12062) (Thanks @LabhanshAgrawal!)
-- Improvements to the contribution guide (#12086) (Thanks @ShaydeNofziger!)
-- Update the doc about debugging dotnet core in VSCode (#11969)
-- Update `README.md` and `metadata.json` for the next release (#11918) (#11992)
-- Update `Adopters.md` to include info on Azure Pipelines and GitHub Actions (#11888) (Thanks @alepauly!)
-- Add information about how Amazon AWS uses PowerShell. (#11365) (Thanks @bpayette!)
-- Add link to .NET CLI version in build documentation (#11725) (Thanks @joeltankam!)
-- Added info about `DeploymentScripts` in `ADOPTERS.md` (#11703)
-- Update `CHANGELOG.md` for `6.2.4` release (#11699)
-- Update `README.md` and `metadata.json` for next release (#11597)
-- Update the breaking change definition (#11516)
-- Adding System Frontier to the PowerShell Core adopters list `ADOPTERS.md` (#11480) (Thanks @OneScripter!)
-- Update `ChangeLog`, `README.md` and `metadata.json` for `7.0.0-rc.1` release (#11363)
-- Add `AzFunctions` to `ADOPTERS.md` (#11311) (Thanks @Francisco-Gamino!)
-- Add `Universal Dashboard` to `ADOPTERS.md` (#11283) (Thanks @adamdriscoll!)
-- Add `config.yml` for `ISSUE_TEMPLATE` so that Doc, Security, Support, and Windows PowerShell issues go to URLs (#11153)
-- Add `Adopters.md` file (#11256)
-- Update `Readme.md` for `preview.6` release (#11108)
-- Update `SUPPORT.md` (#11101) (Thanks @mklement0!)
-- Update `README.md` (#11100) (Thanks @mklement0!)
-
-[7.1.0-preview.3]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.2...v7.1.0-preview.3
-[7.1.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.1...v7.1.0-preview.2
-[7.1.0-preview.1]: https://github.com/PowerShell/PowerShell/compare/v7.0.0-preview.6...v7.1.0-preview.1
-
+[7.3.0-preview.1]: https://github.com/PowerShell/PowerShell/compare/v7.2.0-preview.10...v7.3.0-preview.1

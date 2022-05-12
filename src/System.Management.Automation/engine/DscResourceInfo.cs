@@ -57,7 +57,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Name of the DSC Resource.
         /// </summary>
-        public string Name { get; private set; }
+        public string Name { get; }
 
         /// <summary>
         /// Gets or sets resource type name.

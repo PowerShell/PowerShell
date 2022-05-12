@@ -20,7 +20,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The action to take when the breakpoint is hit.
         /// </summary>
-        public ScriptBlock Action { get; private set; }
+        public ScriptBlock Action { get; }
 
         /// <summary>
         /// Gets whether this breakpoint is enabled.
@@ -40,7 +40,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This breakpoint's Id.
         /// </summary>
-        public int Id { get; private set; }
+        public int Id { get; }
 
         /// <summary>
         /// True if breakpoint is set on a script, false if the breakpoint is not scoped.
@@ -53,7 +53,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The script this breakpoint is on, or null if the breakpoint is not scoped.
         /// </summary>
-        public string Script { get; private set; }
+        public string Script { get; }
 
         #endregion properties
 
@@ -191,9 +191,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Which command this breakpoint is on.
         /// </summary>
-        public string Command { get; private set; }
+        public string Command { get; }
 
-        internal WildcardPattern CommandPattern { get; private set; }
+        internal WildcardPattern CommandPattern { get; }
 
         /// <summary>
         /// Gets a string representation of this breakpoint.
@@ -312,12 +312,12 @@ namespace System.Management.Automation
         /// <summary>
         /// The access mode to trigger this variable breakpoint on.
         /// </summary>
-        public VariableAccessMode AccessMode { get; private set; }
+        public VariableAccessMode AccessMode { get; }
 
         /// <summary>
         /// Which variable this breakpoint is on.
         /// </summary>
-        public string Variable { get; private set; }
+        public string Variable { get; }
 
         /// <summary>
         /// Gets the string representation of this breakpoint.
@@ -415,12 +415,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Which column this breakpoint is on.
         /// </summary>
-        public int Column { get; private set; }
+        public int Column { get; }
 
         /// <summary>
         /// Which line this breakpoint is on.
         /// </summary>
-        public int Line { get; private set; }
+        public int Line { get; }
 
         /// <summary>
         /// Gets a string representation of this breakpoint.
@@ -434,10 +434,12 @@ namespace System.Management.Automation
         }
 
         internal int SequencePointIndex { get; set; }
+
         internal IScriptExtent[] SequencePoints { get; set; }
+
         internal BitArray BreakpointBitArray { get; set; }
 
-        private class CheckBreakpointInScript : AstVisitor
+        private sealed class CheckBreakpointInScript : AstVisitor
         {
             public static bool IsInNestedScriptBlock(Ast ast, LineBreakpoint breakpoint)
             {
@@ -529,15 +531,16 @@ namespace System.Management.Automation
 
             // Not found.  First, we check if the line/column is before any real code.  If so, we'll
             // move the breakpoint to the first interesting sequence point (could be a dynamicparam,
-            // begin, process, or end block.)
+            // begin, process, end, or clean block.)
             if (scriptBlock != null)
             {
                 var ast = scriptBlock.Ast;
                 var bodyAst = ((IParameterMetadataProvider)ast).Body;
-                if ((bodyAst.DynamicParamBlock == null || bodyAst.DynamicParamBlock.Extent.IsAfter(Line, Column)) &&
-                    (bodyAst.BeginBlock == null || bodyAst.BeginBlock.Extent.IsAfter(Line, Column)) &&
-                    (bodyAst.ProcessBlock == null || bodyAst.ProcessBlock.Extent.IsAfter(Line, Column)) &&
-                    (bodyAst.EndBlock == null || bodyAst.EndBlock.Extent.IsAfter(Line, Column)))
+                if ((bodyAst.DynamicParamBlock == null || bodyAst.DynamicParamBlock.Extent.IsAfter(Line, Column))
+                    && (bodyAst.BeginBlock == null || bodyAst.BeginBlock.Extent.IsAfter(Line, Column))
+                    && (bodyAst.ProcessBlock == null || bodyAst.ProcessBlock.Extent.IsAfter(Line, Column))
+                    && (bodyAst.EndBlock == null || bodyAst.EndBlock.Extent.IsAfter(Line, Column))
+                    && (bodyAst.CleanBlock == null || bodyAst.CleanBlock.Extent.IsAfter(Line, Column)))
                 {
                     SetBreakpoint(functionContext, 0);
                     return true;

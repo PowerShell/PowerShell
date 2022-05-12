@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -44,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
                     // Since the alias already exists, write an error.
 
                     SessionStateException aliasExists =
-                        new SessionStateException(
+                        new(
                             Name,
                             SessionStateCategory.Alias,
                             "AliasAlreadyExists",
@@ -62,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
             // Create the alias info
 
             AliasInfo newAlias =
-                new AliasInfo(
+                new(
                     Name,
                     Value,
                     Context,

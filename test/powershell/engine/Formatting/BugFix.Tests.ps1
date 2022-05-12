@@ -2,6 +2,18 @@
 # Licensed under the MIT License.
 
 Describe "Hidden properties should not be returned by the 'FirstOrDefault' primitive" -Tag CI {
+    BeforeAll {
+        if ($null -ne $PSStyle) {
+            $outputRendering = $PSStyle.OutputRendering
+            $PSStyle.OutputRendering = 'plaintext'
+        }
+    }
+
+    AfterAll {
+        if ($null -ne $PSStyle) {
+            $PSStyle.OutputRendering = $outputRendering
+        }
+    }
 
     It "Formatting for an object with no property/field should use 'ToString'" {
         class Empty {

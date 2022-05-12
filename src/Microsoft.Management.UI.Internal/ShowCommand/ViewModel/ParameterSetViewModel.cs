@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// Initializes a new instance of the ParameterSetViewModel class.
         /// </summary>
         /// <param name="name">The name of the parameterSet.</param>
-        /// <param name="parameters">The array parametes of the parameterSet.</param>
+        /// <param name="parameters">The array parameters of the parameterSet.</param>
         [SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists", Justification = "this type is internal, made public only for WPF Binding")]
         public ParameterSetViewModel(
             string name,
@@ -369,11 +369,13 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <param name="propertyName">The changed property.</param>
         private void OnNotifyPropertyChanged(string propertyName)
         {
+            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             PropertyChangedEventHandler handler = this.PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+            #pragma warning restore IDE1005
         }
 
         /// <summary>

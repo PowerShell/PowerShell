@@ -1,6 +1,6 @@
 parameters:
   parentJobs: []
-  pool: 'vs2017-win2016'
+  pool: 'windows-latest'
   jobName: 'xunit_verify'
 
 jobs:

@@ -22,6 +22,22 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             $v.BuildLabel | Should -BeNullOrEmpty
             $v.ToString() | Should -Be "1.0.0"
 
+            $v = [SemanticVersion]::new("1.2.3+BLD.a1-xxx.03")
+            $v.Major | Should -Be 1
+            $v.Minor | Should -Be 2
+            $v.Patch | Should -Be 3
+            $v.PreReleaseLabel | Should -BeNullOrEmpty
+            $v.BuildLabel | Should -Be "BLD.a1-xxx.03"
+            $v.ToString() | Should -Be "1.2.3+BLD.a1-xxx.03"
+
+            $v = [SemanticVersion]::new("1.0.0+META")
+            $v.Major | Should -Be 1
+            $v.Minor | Should -Be 0
+            $v.Patch | Should -Be 0
+            $v.PreReleaseLabel | Should -BeNullOrEmpty
+            $v.BuildLabel | Should -Be "META"
+            $v.ToString() | Should -Be "1.0.0+META"
+
             $v = [SemanticVersion]::new("3.0")
             $v.Major | Should -Be 3
             $v.Minor | Should -Be 0

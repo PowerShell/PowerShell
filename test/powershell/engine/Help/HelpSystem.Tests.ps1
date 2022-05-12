@@ -15,7 +15,9 @@ $script:cmdletsToSkip = @(
     "Enable-PSRemoting",
     "Get-ExperimentalFeature",
     "Enable-ExperimentalFeature",
-    "Disable-ExperimentalFeature"
+    "Disable-ExperimentalFeature",
+    "Get-PSSubsystem",
+    "Switch-Process"
 )
 
 function UpdateHelpFromLocalContentPath {
@@ -101,7 +103,7 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
 Describe "Testing Get-Help Progress" -Tags @('Feature') {
     It "Last ProgressRecord should be Completed" {
         try {
-            $j = Start-Job { Get-Help DoesNotExist }
+            $j = Start-Job { Get-Help ([guid]::NewGuid().ToString("N")) }
             $j | Wait-Job
             $j.ChildJobs[0].Progress[-1].RecordType | Should -Be ([System.Management.Automation.ProgressRecordType]::Completed)
         }
@@ -574,7 +576,9 @@ Describe "Help failure cases" -Tags Feature {
     ) {
         param($command)
 
-        { & $command DoesNotExist -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
+        # under some conditions this does not throw, so include what we actually got
+        $helpTopic = [guid]::NewGuid().ToString("N")
+        { & $command $helpTopic -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand" -Because "A help topic was unexpectantly found for $helpTopic"
     }
 }
 

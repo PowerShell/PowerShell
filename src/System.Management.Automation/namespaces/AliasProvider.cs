@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Management.Automation;
@@ -332,7 +331,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public ScopedItemOptions Options
         {
-            get { return _options; }
+            get
+            {
+                return _options;
+            }
 
             set
             {
@@ -355,4 +357,3 @@ namespace Microsoft.PowerShell.Commands
         private bool _optionsSet = false;
     }
 }
-

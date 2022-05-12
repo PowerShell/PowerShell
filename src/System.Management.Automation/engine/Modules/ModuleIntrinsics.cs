@@ -54,15 +54,6 @@ namespace System.Management.Automation
 
         private const int MaxModuleNestingDepth = 10;
 
-        /// <summary>
-        /// Gets and sets boolean that indicates when an implicit remoting module is loaded.
-        /// </summary>
-        internal bool IsImplicitRemotingModuleLoaded
-        {
-            get;
-            set;
-        }
-
         internal void IncrementModuleNestingDepth(PSCmdlet cmdlet, string path)
         {
             if (++ModuleNestingDepth > MaxModuleNestingDepth)
@@ -358,7 +349,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return modulesMatched.OrderBy(m => m.Name).ToList();
+            return modulesMatched.OrderBy(static m => m.Name).ToList();
         }
 
         internal List<PSModuleInfo> GetModules(ModuleSpecification[] fullyQualifiedName, bool all)
@@ -417,7 +408,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return modulesMatched.OrderBy(m => m.Name).ToList();
+            return modulesMatched.OrderBy(static m => m.Name).ToList();
         }
 
         /// <summary>
@@ -703,9 +694,9 @@ namespace System.Management.Automation
             }
 
 #if UNIX
-            StringComparison strcmp = StringComparison.Ordinal;
+            const StringComparison strcmp = StringComparison.Ordinal;
 #else
-            StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
+            const StringComparison strcmp = StringComparison.OrdinalIgnoreCase;
 #endif
 
             // We must check modulePath (e.g. /path/to/module/module.psd1) against several possibilities:
@@ -894,25 +885,35 @@ namespace System.Management.Automation
         }
 
         // The extensions of all of the files that can be processed with Import-Module, put the ni.dll in front of .dll to have higher priority to be loaded.
-        internal static readonly string[] PSModuleProcessableExtensions = new string[] {
-                            StringLiterals.PowerShellDataFileExtension,
-                            StringLiterals.PowerShellScriptFileExtension,
-                            StringLiterals.PowerShellModuleFileExtension,
-                            StringLiterals.PowerShellCmdletizationFileExtension,
-                            StringLiterals.PowerShellNgenAssemblyExtension,
-                            StringLiterals.PowerShellILAssemblyExtension,
-                            StringLiterals.PowerShellILExecutableExtension,
-                        };
+        internal static readonly string[] PSModuleProcessableExtensions = new string[]
+        {
+            StringLiterals.PowerShellDataFileExtension,
+            StringLiterals.PowerShellScriptFileExtension,
+            StringLiterals.PowerShellModuleFileExtension,
+            StringLiterals.PowerShellCmdletizationFileExtension,
+            StringLiterals.PowerShellNgenAssemblyExtension,
+            StringLiterals.PowerShellILAssemblyExtension,
+            StringLiterals.PowerShellILExecutableExtension,
+        };
 
         // A list of the extensions to check for implicit module loading and discovery, put the ni.dll in front of .dll to have higher priority to be loaded.
-        internal static readonly string[] PSModuleExtensions = new string[] {
-                            StringLiterals.PowerShellDataFileExtension,
-                            StringLiterals.PowerShellModuleFileExtension,
-                            StringLiterals.PowerShellCmdletizationFileExtension,
-                            StringLiterals.PowerShellNgenAssemblyExtension,
-                            StringLiterals.PowerShellILAssemblyExtension,
-                            StringLiterals.PowerShellILExecutableExtension,
-                        };
+        internal static readonly string[] PSModuleExtensions = new string[]
+        {
+            StringLiterals.PowerShellDataFileExtension,
+            StringLiterals.PowerShellModuleFileExtension,
+            StringLiterals.PowerShellCmdletizationFileExtension,
+            StringLiterals.PowerShellNgenAssemblyExtension,
+            StringLiterals.PowerShellILAssemblyExtension,
+            StringLiterals.PowerShellILExecutableExtension,
+        };
+
+        // A list of the extensions to check for required assemblies.
+        internal static readonly string[] ProcessableAssemblyExtensions = new string[]
+        {
+            StringLiterals.PowerShellNgenAssemblyExtension,
+            StringLiterals.PowerShellILAssemblyExtension,
+            StringLiterals.PowerShellILExecutableExtension
+        };
 
         /// <summary>
         /// Returns true if the extension is one of the module extensions...
@@ -924,7 +925,9 @@ namespace System.Management.Automation
             foreach (string ext in PSModuleProcessableExtensions)
             {
                 if (extension.Equals(ext, StringComparison.OrdinalIgnoreCase))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -967,7 +970,8 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Utils.ModuleDirectory);
+            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
 #endif
         }
 
@@ -985,20 +989,17 @@ namespace System.Management.Automation
             try
             {
                 string psHome = Utils.DefaultPowerShellAppBase;
-                if (!string.IsNullOrEmpty(psHome))
-                {
-                    // Win8: 584267 Powershell Modules are listed twice in x86, and cannot be removed
-                    // This happens because ModuleTable uses Path as the key and CBS installer
-                    // expands the path to include "SysWOW64" (for
-                    // HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\PowerShell\3\PowerShellEngine ApplicationBase).
-                    // Because of this, the module that is getting loaded during startup (through LocalRunspace)
-                    // is using "SysWow64" in the key. Later, when Import-Module is called, it loads the
-                    // module using ""System32" in the key.
 #if !UNIX
-                    psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
+                // Win8: 584267 Powershell Modules are listed twice in x86, and cannot be removed.
+                // This happens because 'ModuleTable' uses Path as the key and x86 WinPS has "SysWOW64" in its $PSHOME.
+                // Because of this, the module that is getting loaded during startup (through LocalRunspace) is using
+                // "SysWow64" in the key. Later, when 'Import-Module' is called, it loads the module using ""System32"
+                // in the key.
+                // For the cross-platform PowerShell, a user can choose to install it under "C:\Windows\SysWOW64", and
+                // thus it may have the same problem as described above. So we keep this line of code.
+                psHome = psHome.ToLowerInvariant().Replace(@"\syswow64\", @"\system32\");
 #endif
-                    Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
-                }
+                Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
             }
             catch (System.Security.SecurityException)
             {
@@ -1014,7 +1015,7 @@ namespace System.Management.Automation
         /// It's known as "Program Files" module path in windows powershell.
         /// </summary>
         /// <returns></returns>
-        private static string GetSharedModulePath()
+        internal static string GetSharedModulePath()
         {
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.SHARED_MODULES);
@@ -1189,7 +1190,18 @@ namespace System.Management.Automation
                     currentProcessModulePath = hkcuUserModulePath; // = EVT.User
                 }
 
-                currentProcessModulePath += Path.PathSeparator;
+                if (string.IsNullOrEmpty(currentProcessModulePath))
+                {
+                    if (currentProcessModulePath is null)
+                    {
+                        currentProcessModulePath = string.Empty;
+                    }
+                }
+                else
+                {
+                    currentProcessModulePath += Path.PathSeparator;
+                }
+
                 if (string.IsNullOrEmpty(hklmMachineModulePath)) // EVT.Machine does Not exist
                 {
                     currentProcessModulePath += CombineSystemModulePaths(); // += (SharedModulePath + $PSHome\Modules)
@@ -1210,11 +1222,23 @@ namespace System.Management.Automation
                 // personalModulePath
                 // sharedModulePath
                 // systemModulePath
-                currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, 0);
-                int insertIndex = PathContainsSubstring(currentProcessModulePath, personalModulePathToUse) + personalModulePathToUse.Length + 1;
-                currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
-                insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath) + sharedModulePath.Length + 1;
-                currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
+                int insertIndex = 0;
+                if (!string.IsNullOrEmpty(personalModulePathToUse))
+                {
+                    currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, insertIndex);
+                    insertIndex = PathContainsSubstring(currentProcessModulePath, personalModulePathToUse) + personalModulePathToUse.Length + 1;
+                }
+
+                if (!string.IsNullOrEmpty(sharedModulePath))
+                {
+                    currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
+                    insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath) + sharedModulePath.Length + 1;
+                }
+
+                if (!string.IsNullOrEmpty(systemModulePathToUse))
+                {
+                    currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
+                }
             }
 
             return currentProcessModulePath;
@@ -1432,25 +1456,16 @@ namespace System.Management.Automation
             if ((input == null) || (input.Count == 0))
             { return; }
 
-            List<FunctionInfo> output = new List<FunctionInfo>(input.Count);
-            foreach (var fnInfo in input)
-            {
-                if (module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase))
-                {
-                    output.Add(fnInfo);
-                }
-            }
-
-            input.Clear();
-            input.AddRange(output);
+            input.RemoveAll(fnInfo => !module.Name.Equals(fnInfo.ModuleName, StringComparison.OrdinalIgnoreCase));
         }
 
+#nullable enable
         private static void SortAndRemoveDuplicates<T>(List<T> input, Func<T, string> keyGetter)
         {
-            Dbg.Assert(input != null, "Caller should verify that input != null");
+            Dbg.Assert(input is not null, "Caller should verify that input != null");
 
             input.Sort(
-                delegate (T x, T y)
+                (T x, T y) =>
                 {
                     string kx = keyGetter(x);
                     string ky = keyGetter(y);
@@ -1458,24 +1473,19 @@ namespace System.Management.Automation
                 }
             );
 
-            bool firstItem = true;
-            string previousKey = null;
-            List<T> output = new List<T>(input.Count);
-            foreach (T item in input)
+            string? previousKey = null;
+            input.RemoveAll(ShouldRemove);
+
+            bool ShouldRemove(T item)
             {
                 string currentKey = keyGetter(item);
-                if ((firstItem) || !currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase))
-                {
-                    output.Add(item);
-                }
-
+                bool match = previousKey is not null
+                    && currentKey.Equals(previousKey, StringComparison.OrdinalIgnoreCase);
                 previousKey = currentKey;
-                firstItem = false;
+                return match;
             }
-
-            input.Clear();
-            input.AddRange(output);
         }
+#nullable restore
 
         /// <summary>
         /// Mark stuff to be exported from the current environment using the various patterns.
@@ -1527,7 +1537,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedFunctions, delegate (FunctionInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedFunctions, static (FunctionInfo ci) => ci.Name);
             }
 
             if (cmdletPatterns != null)
@@ -1582,7 +1592,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, delegate (CmdletInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.Module.CompiledExports, static (CmdletInfo ci) => ci.Name);
             }
 
             if (variablePatterns != null)
@@ -1605,7 +1615,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedVariables, delegate (PSVariable v) { return v.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedVariables, static (PSVariable v) => v.Name);
             }
 
             if (aliasPatterns != null)
@@ -1645,7 +1655,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                SortAndRemoveDuplicates(sessionState.ExportedAliases, delegate (AliasInfo ci) { return ci.Name; });
+                SortAndRemoveDuplicates(sessionState.ExportedAliases, static (AliasInfo ci) => ci.Name);
             }
         }
 
@@ -1715,10 +1725,12 @@ namespace System.Management.Automation
         NullModuleSpecification,
     }
 
+#nullable enable
     /// <summary>
     /// Used by Modules/Snapins to provide a hook to the engine for startup initialization
     /// w.r.t compiled assembly loading.
     /// </summary>
+#nullable enable
     public interface IModuleAssemblyInitializer
     {
         /// <summary>

@@ -17,6 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Test-Json command.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Json", DefaultParameterSetName = ParameterAttribute.AllParameterSets, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096609")]
+    [OutputType(typeof(bool))]
     public class TestJsonCommand : PSCmdlet
     {
         private const string SchemaFileParameterSet = "SchemaFile";
@@ -41,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         public string Schema { get; set; }
 
         /// <summary>
-        /// Gets or sets path to the file containg schema to validate the JSON string against.
+        /// Gets or sets path to the file containing schema to validate the JSON string against.
         /// This is optional parameter.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = SchemaFileParameterSet)]
@@ -59,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Return value is unreachable since we always rethrow.</returns>
         private static bool UnwrapException(Exception e)
         {
-            if (e is TargetInvocationException)
+            if (e.InnerException != null && e is TargetInvocationException)
             {
                 ExceptionDispatchInfo.Capture(e.InnerException).Throw();
             }
@@ -115,7 +116,7 @@ namespace Microsoft.PowerShell.Commands
                 e is SecurityException
             )
             {
-                Exception exception = new Exception(
+                Exception exception = new(
                     string.Format(
                         CultureInfo.CurrentUICulture,
                         TestJsonCmdletStrings.JsonSchemaFileOpenFailure,
@@ -125,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception e)
             {
-                Exception exception = new Exception(TestJsonCmdletStrings.InvalidJsonSchema, e);
+                Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, e);
                 ThrowTerminatingError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, resolvedpath));
             }
         }
@@ -149,11 +150,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         result = false;
 
-                        Exception exception = new Exception(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
+                        Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
 
                         foreach (var message in errorMessages)
                         {
-                            ErrorRecord errorRecord = new ErrorRecord(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
+                            ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
                             errorRecord.ErrorDetails = new ErrorDetails(message.ToString());
                             WriteError(errorRecord);
                         }
@@ -164,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 result = false;
 
-                Exception exception = new Exception(TestJsonCmdletStrings.InvalidJson, exc);
+                Exception exception = new(TestJsonCmdletStrings.InvalidJson, exc);
                 WriteError(new ErrorRecord(exception, "InvalidJson", ErrorCategory.InvalidData, Json));
             }
 

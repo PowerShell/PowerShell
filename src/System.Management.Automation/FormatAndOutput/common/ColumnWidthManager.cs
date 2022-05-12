@@ -201,8 +201,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return columnWidths.Length - 1;
         }
 
-        private int _tableWidth;
-        private int _minimumColumnWidth;
-        private int _separatorWidth;
+        private readonly int _tableWidth;
+        private readonly int _minimumColumnWidth;
+        private readonly int _separatorWidth;
     }
 }

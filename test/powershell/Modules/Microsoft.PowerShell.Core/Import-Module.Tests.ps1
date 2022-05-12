@@ -361,3 +361,36 @@ Describe "Import-Module -Force behaviour" -Tag "CI" {
         { Test-Two } | Should -Throw -ErrorId 'CommandNotFoundException'
     }
 }
+
+Describe "Module with FileList" -Tag "CI" {
+    BeforeAll {
+        $src = @"
+            using System;
+            namespace ModuleCmdlets
+            {
+                public class FileListLoad
+                {
+                }
+            }
+"@
+
+        $originalPSModulePath = $env:PSModulePath
+        New-Item -ItemType Directory -Path "$testdrive\Modules\FileListLoadTest\" -Force > $null
+
+        $asmPath = "$TESTDRIVE\Modules\FileListLoadTest\FileListLoadTest.dll"
+        Add-Type -TypeDefinition $src -OutputAssembly $asmPath
+
+        $env:PSModulePath += [System.IO.Path]::PathSeparator + "$testdrive\Modules"
+        New-ModuleManifest -Path "$testdrive\Modules\FileListLoadTest\FileListLoadTest.psd1" -FileList @("FileListLoadTest.dll")
+    }
+
+    AfterAll {
+        $env:PSModulePath = $originalPSModulePath
+    }
+
+    It "Assemblies in FileList are not loaded" {
+        Import-Module FileListLoadTest
+        $asms = [System.AppDomain]::CurrentDomain.GetAssemblies().Location
+        $asmPath | Should -Not -BeIn $asms
+    }
+}
