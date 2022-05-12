@@ -310,9 +310,11 @@ namespace System.Management.Automation
 
         internal static void CreateMemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType)
         {
-            string availableProperties = GetAvailableProperties(pso);
+            string settableProperties = GetSettableProperties(pso);
 
-            string message = StringUtil.Format(ExtendedTypeSystem.PropertyNotFound, property.Key.ToString(), resultType.FullName, availableProperties);
+            string message = settableProperties == string.Empty
+                ? StringUtil.Format(ExtendedTypeSystem.NoSettableProperty, property.Key.ToString(), resultType.FullName)
+                : StringUtil.Format(ExtendedTypeSystem.PropertyNotFound, property.Key.ToString(), resultType.FullName, settableProperties);
 
             typeConversion.WriteLine("Issuing an error message about not being able to create an object from hashtable.");
             throw new InvalidOperationException(message);
@@ -4735,18 +4737,23 @@ namespace System.Management.Automation
             return pso;
         }
 
-        private static string GetAvailableProperties(PSObject pso)
+        private static string GetSettableProperties(PSObject pso)
         {
+            if (pso is null || pso.Properties is null)
+            {
+                return string.Empty;
+            }
+
             StringBuilder availableProperties = new StringBuilder();
             bool first = true;
 
-            if (pso != null && pso.Properties != null)
+            foreach (PSPropertyInfo p in pso.Properties)
             {
-                foreach (PSPropertyInfo p in pso.Properties)
+                if (p.IsSettable)
                 {
                     if (!first)
                     {
-                        availableProperties.Append(" , ");
+                        availableProperties.Append(", ");
                     }
 
                     availableProperties.Append("[" + p.Name + " <" + p.TypeNameOfValue + ">]");
