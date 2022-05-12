@@ -1,3 +1,12 @@
+parameters:
+  - name: ContainerPattern
+    displayName: |
+      Pattern to match JobName of the container.
+      Update this to force a container.
+      `.` will match everything
+    type: string
+    default: .
+
 name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
 trigger:
   # Batch merge builds together while a merge build is running
@@ -116,54 +125,11 @@ stages:
       clean: true
 
     - pwsh: |
-        $buildId = $env:BUILD_BUILDID
-        Write-Verbose "Fall back seed: $buildId" -Verbose
-        # For PRs set the seed to the PR number so that the image is always the same
-        $seed = $env:SYSTEM_PULLREQUEST_PULLREQUESTID
-        if(!$seed) {
-          # for non-PRs use the integer identifier of the build as the seed.
-          $seed = $buildId
-        }
-        Write-Verbose "Seed: $seed" -Verbose
-
-        # Get the latest image matrix JSON for preview
-        $matrix = ./PowerShell-Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
-
-        # Filter out containers that won't run on AzDevOps Linux host as an agent
-        # Windows, nano server, alpine, and any ARM image
-        $linuxImages = $matrix.preview |
-          Where-Object {$_.osversion -notmatch 'windows|nano|alpine|arm'} |
-          Select-Object JobName, Taglist |
-          Sort-Object -property JobName
-
-        # Force mariner for now
-        $marinerImage = $linuxImages | where-object {$_.JobName -like 'mariner*'}
-
-        # Use the selected seed to pick a container
-        $index = Get-Random -Minimum 0 -Maximum $marinerImage.Count -SetSeed $seed
-        $selectedImage = $marinerImage[$index]
-
-        # Filter to the first test-deps compatible tag
-        $tag = $selectedImage.Taglist -split ';' | Where-Object {$_ -match 'preview-\D+'} | Select-Object -First 1
-
-        # Calculate the container name
-        $containerName = "mcr.microsoft.com/powershell/test-deps:$tag"
-
-        # Set variables for later jobs to use
+        # Initialize container test stage
         Import-Module ./PowerShell/tools/ci.psm1
-        Set-BuildVariable -Name containerName -Value $containerName -IsOutput
-        Set-BuildVariable -Name containerBuildName -Value $selectedImage.JobName -IsOutput
-
-        if($env:BUILD_REASON -eq 'PullRequest') {
-          Write-Host "##vso[build.updatebuildnumber]PR-$(System.PullRequest.PullRequestNumber)-$($selectedImage.JobName)-$((get-date).ToString("yyyyMMddhhmmss"))"
-        } else {
-          Write-Host "##vso[build.updatebuildnumber]${env:BUILD_SOURCEBRANCHNAME}-${env:BUILD_SOURCEVERSION}-$($selectedImage.JobName)-$((get-date).ToString("yyyyMMddhhmmss"))"
-
-          # Cannot do this for a PR
-          Write-Host "##vso[build.addbuildtag]$($selectedImage.JobName)"
-        }
+        Invoke-InitializeContainerStage -ContainerPattern '${{ parameters.ContainerPattern }}'
       name: getContainerTask
-      displayName: Get Container
+      displayName: Initialize Container Stage
       continueOnError: true
 
   - template: templates/test/nix-container-test.yml
