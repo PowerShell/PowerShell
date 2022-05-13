@@ -176,11 +176,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         string labelText = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(colHeader.label);
                         if (so.Properties[labelText] != null)
                         {
-                            ci.label = labelText;
+                            ci.label = PSStyle.Instance.Formatting.TableHeader + labelText + PSStyle.Instance.Reset;
                         }
                         else
                         {
-                            ci.label = PSStyle.Instance.Formatting.ModifiedTableHeader + labelText;
+                            ci.label = PSStyle.Instance.Formatting.ModifiedTableHeader + labelText + PSStyle.Instance.Reset;
                         }
                     }
                 }
@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             TextToken tt = token as TextToken;
                             if (tt != null)
                             {
-                                ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
+                                ci.label = PSStyle.Instance.Formatting.TableHeader + this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt) + PSStyle.Instance.Reset;
                             }
                         }
                     }
