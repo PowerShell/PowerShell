@@ -96,6 +96,7 @@ namespace Microsoft.PowerShell.Telemetry
         private const string _psCoreTelemetryKey = "d26a5ef4-d608-452c-a6b8-a4a55935f70d"; // V7 Preview 3
 
         // In the event there is a problem in creating the node identifier file, use the default identifier.
+        // This can happen if we are running in a system which has a read-only filesystem.
         private static readonly Guid _defaultNodeIdentifier = new Guid("2f998828-3f4a-4741-bf50-d11c6be42f50");
 
         // Use "anonymous" as the string to return when you can't report a name
