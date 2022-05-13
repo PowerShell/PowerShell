@@ -4006,7 +4006,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Web.Services.Description 4.9.0-rc2.21473.1 - MIT
+System.Web.Services.Description 4.9.0 - MIT
 
 
 (c) 2008 VeriSign, Inc.
