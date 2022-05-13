@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell
         /// <param name="argc">
         /// Length of the passed in argument array.
         /// </param>
-        public static int Start([MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)] string[] args, int argc) => Start(args, argc, InitialSessionState.CreateDefault2());
+        public static int Start([MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)] string[] args, int argc) => Start(args, argc, initialSessionState: null);
 
         /// <summary>
         /// Starts managed MSH.
