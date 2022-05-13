@@ -392,8 +392,8 @@ function Get-WsManSupport {
     if (
         ($platformInfo.Platform -match "alpine|raspbian") -or
         ($platformInfo.Platform -eq "debian" -and $platformInfo.Version -ne '9') -or
-        ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8') -or
-        ($platformInfo.Platform -eq 'ubuntu' -and $platformInfo.Version -eq '20.04') -or
+        ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -ne '7') -or
+        ($platformInfo.Platform -eq 'ubuntu' -and $platformInfo.Version -notin '18.04', '16.04') -or
         ($platformInfo.Platform -eq 'mariner') -or
         ($platformInfo.Platform -eq 'rhel') -or
         ($platformInfo.Platform -eq 'fedora') -or
