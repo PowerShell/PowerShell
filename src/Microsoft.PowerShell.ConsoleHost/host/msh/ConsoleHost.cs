@@ -1845,9 +1845,28 @@ namespace Microsoft.PowerShell
                     sw.Stop();
 
                     var profileLoadTimeInMs = sw.ElapsedMilliseconds;
-                    if (profileLoadTimeInMs > 500 && s_cpp.ShowBanner)
+
+                    // Only check profile load time against threshold if we're actually going to show the message
+                    if (s_cpp.ShowBanner)
                     {
-                        Console.Error.WriteLine(ConsoleHostStrings.SlowProfileLoadingMessage, profileLoadTimeInMs);
+                        int showMessageThresholdMs = 500;
+
+                        int thresholdMs = PowerShellConfig.Instance.GetSlowProfileLoadingMessageThreshold(ConfigScope.AllUsers);
+                        if (thresholdMs > 0)
+                        {
+                            showMessageThresholdMs = thresholdMs;
+                        }
+
+                        thresholdMs = PowerShellConfig.Instance.GetSlowProfileLoadingMessageThreshold(ConfigScope.CurrentUser);
+                        if (thresholdMs > 0)
+                        {
+                            showMessageThresholdMs = thresholdMs;
+                        }
+
+                        if (profileLoadTimeInMs > showMessageThresholdMs)
+                        {
+                            Console.Error.WriteLine(ConsoleHostStrings.SlowProfileLoadingMessage, profileLoadTimeInMs);
+                        }
                     }
 
                     _profileLoadTimeInMS = profileLoadTimeInMs;

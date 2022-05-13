@@ -181,6 +181,7 @@ namespace System.Management.Automation.Configuration
                 : string.Concat(shellId, ":", "ExecutionPolicy");
         }
 
+        /// <summary>
         /// Get the names of experimental features enabled in the config file.
         /// </summary>
         internal string[] GetExperimentalFeatures()
@@ -215,6 +216,15 @@ namespace System.Management.Automation.Configuration
                 features.Remove(featureName);
                 WriteValueToFile<string[]>(scope, "ExperimentalFeatures", features.ToArray());
             }
+        }
+
+        /// <summary>
+        /// Gets the number of milliseconds profile loading must exceed in order to show the slow profile loading message.
+        /// </summary>
+        internal int GetSlowProfileLoadingMessageThreshold(ConfigScope scope)
+        {
+            int threshold = ReadValueFromFile<int>(scope, "SlowProfileLoadingMessageThreshold");
+            return threshold;            
         }
 
         internal bool IsImplicitWinCompatEnabled()
