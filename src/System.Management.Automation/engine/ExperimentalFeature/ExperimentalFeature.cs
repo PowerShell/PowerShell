@@ -22,6 +22,7 @@ namespace System.Management.Automation
 
         internal const string EngineSource = "PSEngine";
         internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
+        internal const string PSModifiedTableHeaderDecoration = "PSModifiedTableHeaderDecoration";
 
         #endregion
 
@@ -116,6 +117,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSNativeCommandErrorActionPreferenceFeatureName,
                     description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
+                new ExperimentalFeature(
+                    name: PSModifiedTableHeaderDecoration,
+                    description: "Formatting differentiation for table headers that aren't property members"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

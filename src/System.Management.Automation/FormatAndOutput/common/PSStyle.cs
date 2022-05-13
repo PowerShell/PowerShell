@@ -375,7 +375,7 @@ namespace System.Management.Automation
                 set => _modifiedTableHeader = ValidateNoContent(value);
             }
 
-            private string _modifiedTableHeader = "\x1b[32;3m";
+            private string _modifiedTableHeader = "\x1b[32;1;3m";
 
             /// <summary>
             /// Gets or sets the accent style for errors.
