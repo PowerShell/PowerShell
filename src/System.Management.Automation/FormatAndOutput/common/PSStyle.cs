@@ -367,6 +367,17 @@ namespace System.Management.Automation
             private string _tableHeader = "\x1b[32;1m";
 
             /// <summary>
+            /// Gets or sets the style for modified table headers.
+            /// </summary>
+            public string ModifiedTableHeader
+            {
+                get => _modifiedTableHeader;
+                set => _modifiedTableHeader = ValidateNoContent(value);
+            }
+
+            private string _modifiedTableHeader = "\x1b[32;3m";
+
+            /// <summary>
             /// Gets or sets the accent style for errors.
             /// </summary>
             public string ErrorAccent
