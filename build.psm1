@@ -1167,6 +1167,7 @@ function Start-PSPester {
     [CmdletBinding(DefaultParameterSetName='default')]
     param(
         [Parameter(Position=0)]
+        [ArgumentCompleter({param($c,$p,$word) Get-ChildItem -Recurse -File -LiteralPath $PSScriptRoot/Test -filter *.tests.ps1 | Where-Object FullName -like "*$word*" })]
         [string[]]$Path = @("$PSScriptRoot/test/powershell"),
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
