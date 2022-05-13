@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     if (colHeader.label != null)
                     {
                         string labelText = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(colHeader.label);
-                        if (so.Properties[labelText] != null || !ExperimentalFeature.IsEnabled(ExperimentalFeature.PSModifiedTableHeaderDecoration))
+                        if (so.Properties[labelText] != null || !ExperimentalFeature.IsEnabled(ExperimentalFeature.PSCustomTableHeaderDecoration))
                         {
                             ci.label = PSStyle.Instance.Reset + PSStyle.Instance.Formatting.TableHeader + labelText + PSStyle.Instance.Reset;
                         }

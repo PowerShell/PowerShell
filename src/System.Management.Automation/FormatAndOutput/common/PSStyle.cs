@@ -371,11 +371,11 @@ namespace System.Management.Automation
             /// </summary>
             public string ModifiedTableHeader
             {
-                get => _modifiedTableHeader;
-                set => _modifiedTableHeader = ValidateNoContent(value);
+                get => _customTableHeader;
+                set => _customTableHeader = ValidateNoContent(value);
             }
 
-            private string _modifiedTableHeader = "\x1b[32;1;3m";
+            private string _customTableHeader = "\x1b[32;1;3m";
 
             /// <summary>
             /// Gets or sets the accent style for errors.
