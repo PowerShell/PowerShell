@@ -369,13 +369,13 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets the style for custom table headers.
             /// </summary>
-            public string CustomTableHeader
+            public string CustomTableHeaderLabel
             {
-                get => _customTableHeader;
-                set => _customTableHeader = ValidateNoContent(value);
+                get => _customTableHeaderLabel;
+                set => _customTableHeaderLabel = ValidateNoContent(value);
             }
 
-            private string _customTableHeader = "\x1b[32;1;3m";
+            private string _customTableHeaderLabel = "\x1b[32;1;3m";
 
             /// <summary>
             /// Gets or sets the accent style for errors.

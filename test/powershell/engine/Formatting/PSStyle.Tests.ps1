@@ -24,7 +24,7 @@ Describe 'Tests for $PSStyle automatic variable' {
         $formattingDefaults = @{
             FormatAccent = "`e[32;1m"
             TableHeader = "`e[32;1m"
-            CustomTableHeader = "`e[32;1;3m"
+            CustomTableHeaderLabel = "`e[32;1;3m"
             ErrorAccent = "`e[36;1m"
             Error = "`e[31;1m"
             Debug = "`e[33;1m"
@@ -200,22 +200,22 @@ Describe 'Tests for $PSStyle automatic variable' {
         }
     }
 
-    It '$PSStyle.Formatting.CustomTableHeader is applied to Format-Table' {
-        $old = $PSStyle.Formatting.CustomTableHeader
+    It '$PSStyle.Formatting.CustomTableHeaderLabel is applied to Format-Table' {
+        $old = $PSStyle.Formatting.CustomTableHeaderLabel
         $oldRender = $PSStyle.OutputRendering
 
         try {
             $PSStyle.OutputRendering = 'Ansi'
-            $PSStyle.Formatting.CustomTableHeader = $PSStyle.Foreground.Blue + $PSStyle.Background.White + $PSStyle.Bold
+            $PSStyle.Formatting.CustomTableHeaderLabel = $PSStyle.Foreground.Blue + $PSStyle.Background.White + $PSStyle.Bold
             $out = Get-Process pwsh | Select-Object -First 1 | Format-Table | Out-String
-            $format = $PSStyle.Formatting.CustomTableHeader.Replace('[',"``[")
+            $format = $PSStyle.Formatting.CustomTableHeaderLabel.Replace('[',"``[")
             $header = $PSStyle.Formatting.TableHeader.Replace('[',"``[")
             $reset = $PSStyle.Reset.Replace('[',"``[")
             $out | Should -BeLike "*${format}*NPM(K)${reset}*${format}*PM(M)${reset}*${format}*WS(M)${reset}*${format}*CPU(s)${reset}*${header}*Id${reset}*${header}*SI${reset}*${header}*ProcessName${reset}*"
         }
         finally {
             $PSStyle.OutputRendering = $oldRender
-            $PSStyle.Formatting.CustomTableHeader = $old
+            $PSStyle.Formatting.CustomTableHeaderLabel = $old
         }
     }
 
@@ -235,7 +235,7 @@ Describe 'Tests for $PSStyle automatic variable' {
         @{ Submember = 'Strikethrough' }
         @{ Member = 'Formatting'; Submember = 'FormatAccent' }
         @{ Member = 'Formatting'; Submember = 'TableHeader' }
-        @{ Member = 'Formatting'; Submember = 'CustomTableHeader' }
+        @{ Member = 'Formatting'; Submember = 'CustomTableHeaderLabel' }
         @{ Member = 'Formatting'; Submember = 'ErrorAccent' }
         @{ Member = 'Formatting'; Submember = 'Error' }
         @{ Member = 'Formatting'; Submember = 'Warning' }

@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                         else
                         {
-                            sb.Append(PSStyle.Instance.Formatting.CustomTableHeader);
+                            sb.Append(PSStyle.Instance.Formatting.CustomTableHeaderLabel);
                         }
                     }
 
