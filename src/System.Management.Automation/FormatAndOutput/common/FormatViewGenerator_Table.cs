@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         if (so.Properties[colHeader.label.text] == null && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSCustomTableHeaderDecoration))
                         {
-                            ci.headerMatchesProperty = false;
+                            ci.HeaderMatchesProperty = false;
                         }
 
                         ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(colHeader.label);

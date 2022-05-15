@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal int startCol = 0;
             internal int width = 0;
             internal int alignment = TextAlignment.Left;
-            internal bool headerMatchesProperty = true;
+            internal bool HeaderMatchesProperty = true;
         }
         /// <summary>
         /// Class containing information about the tabular layout.
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _si.columnInfo[k].alignment = alignment[k];
                 if (headerMatchesProperty != null)
                 {
-                    _si.columnInfo[k].headerMatchesProperty = headerMatchesProperty[k];
+                    _si.columnInfo[k].HeaderMatchesProperty = headerMatchesProperty[k];
                 }
 
                 startCol += columnWidths[k] + ScreenInfo.separatorCharacterCount;
@@ -306,8 +306,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // obtain a set of tokens for each field
-                scArray[k] = GenerateMultiLineRowField(values[validColumnArray[k]], validColumnArray[k],
-                    alignment[validColumnArray[k]], ds, addPadding);
+                scArray[k] = GenerateMultiLineRowField(values[validColumnArray[k]], validColumnArray[k], alignment[validColumnArray[k]], ds, addPadding);
 
                 // NOTE: the following padding operations assume that we
                 // pad with a blank (or any character that ALWAYS maps to a single screen cell
@@ -338,7 +337,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             for (int k = 0; k < scArray.Length; k++)
             {
                 if (scArray[k].Count > screenRows)
+                {
                     screenRows = scArray[k].Count;
+                }
             }
 
             // column headers can span multiple rows if the width of the column is shorter than the header text like:
@@ -350,7 +351,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // 1    2       3
             //
             // To ensure we don't add whitespace to the end, we need to determine the last column in each row with content
-
             System.Span<int> lastColWithContent = screenRows <= OutCommandInner.StackAllocThreshold ? stackalloc int[screenRows] : new int[screenRows];
             for (int row = 0; row < screenRows; row++)
             {
@@ -405,10 +405,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             for (int row = 0; row < screenRows; row++)
             {
                 StringBuilder sb = new StringBuilder();
+
                 // for a given row, walk the columns
                 for (int col = 0; col < scArray.Length; col++)
                 {
                     string value;
+
                     // if the column is the last column with content, we need to trim trailing whitespace, unless there is only one row
                     if (col == lastColWithContent[row] && screenRows > 1)
                     {
@@ -421,7 +423,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     if (isHeader)
                     {
-                        if (_si.columnInfo[col].headerMatchesProperty)
+                        if (_si.columnInfo[col].HeaderMatchesProperty)
                         {
                             sb.Append(PSStyle.Instance.Formatting.TableHeader);
                         }
@@ -504,7 +506,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 sb.Append(rowField);
 
-                if (rowField is not null && rowField.Contains(ValueStringDecorated.ESC) && !rowField.AsSpan().TrimEnd().EndsWith(PSStyle.Instance.Reset) || isHeader)
+                if (isHeader || (rowField is not null && rowField.Contains(ValueStringDecorated.ESC) && !rowField.AsSpan().TrimEnd().EndsWith(PSStyle.Instance.Reset)))
                 {
                     // Reset the console output if the content of this column contains ESC
                     sb.Append(PSStyle.Instance.Reset);

@@ -1003,7 +1003,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     columnWidths[k] = (columnWidthsHint != null) ? columnWidthsHint[k] : tci.width;
                     alignment[k] = tci.alignment;
-                    headerMatchesProperty[k] = tci.headerMatchesProperty;
+                    headerMatchesProperty[k] = tci.HeaderMatchesProperty;
                     k++;
                 }
 
