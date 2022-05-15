@@ -3,5 +3,5 @@
   "PSCustomTableHeaderDecoration",
   "PSLoadAssemblyFromNativeCode",
   "PSNativeCommandErrorActionPreference",
-  "PSPSCustomTableHeaderDecoration"
+  "PSSubsystemPluginModel"
 ]
