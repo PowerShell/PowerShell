@@ -367,7 +367,7 @@ namespace System.Management.Automation
             private string _tableHeader = "\x1b[32;1m";
 
             /// <summary>
-            /// Gets or sets the style for modified table headers.
+            /// Gets or sets the style for custom table headers.
             /// </summary>
             public string CustomTableHeader
             {

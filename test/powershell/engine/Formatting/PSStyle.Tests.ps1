@@ -211,7 +211,7 @@ Describe 'Tests for $PSStyle automatic variable' {
             $format = $PSStyle.Formatting.CustomTableHeader.Replace('[',"``[")
             $header = $PSStyle.Formatting.TableHeader.Replace('[',"``[")
             $reset = $PSStyle.Reset.Replace('[',"``[")
-            $out | Should -BeLike "*${format}NPM(K)${reset}*${format}PM(M)${reset}*${format}WS(M)${reset}*${format}CPU(s)${reset}*${header}Id${reset}*${header}SI${reset}*${header}ProcessName${reset}*"
+            $out | Should -BeLike "*${format}*NPM(K)${reset}*${format}*PM(M)${reset}*${format}*WS(M)${reset}*${format}*CPU(s)${reset}*${header}*Id${reset}*${header}*SI${reset}*${header}*ProcessName${reset}*"
         }
         finally {
             $PSStyle.OutputRendering = $oldRender
@@ -401,8 +401,8 @@ Describe 'Handle strings with escape sequences in formatting' {
 
     It 'Truncation for strings with no escape sequences' {
         $expected = @"
-`e[32;1mName       Role            YIR`e[0m
-`e[32;1m----       ----            ---`e[0m
+`e[32;1mName      `e[0m`e[32;1m Role           `e[0m`e[32;1m YIR`e[0m
+`e[32;1m----      `e[0m `e[32;1m----           `e[0m `e[32;1m---`e[0m
 Bob Saggat Developer         2
 John Seym… Sw Engineer       6
 Billy Bob… Senior DevOps …  13
@@ -419,8 +419,8 @@ Billy Bob… Senior DevOps …  13
 
     It "Truncation for strings with escape sequences - TableView-1" {
         $expected = @"
-`e[32;1mName       Role            YIR`e[0m
-`e[32;1m----       ----            ---`e[0m
+`e[32;1mName      `e[0m`e[32;1m Role           `e[0m`e[32;1m YIR`e[0m
+`e[32;1m----      `e[0m `e[32;1m----           `e[0m `e[32;1m---`e[0m
 `e[32mBob Saggat`e[39m`e[0m Developer         2
 `e[33mJohn Seym…`e[0m Sw Engineer       6
 `e[31mBilly Bob…`e[0m Senior DevOps …  13
@@ -441,8 +441,8 @@ Billy Bob… Senior DevOps …  13
 
     It "Truncation for strings with escape sequences - TableView-2" {
         $expected = @"
-`e[32;1mName       Role            YIR`e[0m
-`e[32;1m----       ----            ---`e[0m
+`e[32;1mName      `e[0m`e[32;1m Role           `e[0m`e[32;1m YIR`e[0m
+`e[32;1m----      `e[0m `e[32;1m----           `e[0m `e[32;1m---`e[0m
 `e[32mBob Saggat`e[39m`e[0m Developer`e[0m         2
 `e[33mJohn Seym…`e[0m `e[1;33mSw Engineer`e[0m       6
 `e[31mBilly Bob…`e[0m `e[42m`e[1;33mSenior DevOps …`e[0m  13

@@ -173,15 +173,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     ci.alignment = colHeader.alignment;
                     if (colHeader.label != null)
                     {
-                        string labelText = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(colHeader.label);
-                        if (so.Properties[labelText] != null || !ExperimentalFeature.IsEnabled(ExperimentalFeature.PSCustomTableHeaderDecoration))
+                        if (so.Properties[colHeader.label.text] == null && ExperimentalFeature.IsEnabled(ExperimentalFeature.PSCustomTableHeaderDecoration))
                         {
-                            ci.label = PSStyle.Instance.Reset + PSStyle.Instance.Formatting.TableHeader + labelText + PSStyle.Instance.Reset;
+                            ci.headerMatchesProperty = false;
                         }
-                        else
-                        {
-                            ci.label = PSStyle.Instance.Reset + PSStyle.Instance.Formatting.CustomTableHeader + labelText + PSStyle.Instance.Reset;
-                        }
+
+                        ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(colHeader.label);
                     }
                 }
 
@@ -200,14 +197,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         FieldPropertyToken fpt = token as FieldPropertyToken;
                         if (fpt != null)
                         {
-                            ci.label = PSStyle.Instance.Reset + PSStyle.Instance.Formatting.TableHeader + fpt.expression.expressionValue + PSStyle.Instance.Reset;
+                            ci.label = fpt.expression.expressionValue;
                         }
                         else
                         {
                             TextToken tt = token as TextToken;
                             if (tt != null)
                             {
-                                ci.label = PSStyle.Instance.Reset + PSStyle.Instance.Formatting.TableHeader + this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt) + PSStyle.Instance.Reset;
+                                ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(tt);
                             }
                         }
                     }

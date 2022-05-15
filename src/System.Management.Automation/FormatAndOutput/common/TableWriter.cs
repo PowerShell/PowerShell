@@ -22,6 +22,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal int startCol = 0;
             internal int width = 0;
             internal int alignment = TextAlignment.Left;
+            internal bool headerMatchesProperty = true;
         }
         /// <summary>
         /// Class containing information about the tabular layout.
@@ -82,9 +83,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="screenColumns">Number of character columns on the screen.</param>
         /// <param name="columnWidths">Array of specified column widths.</param>
         /// <param name="alignment">Array of alignment flags.</param>
+        /// <param name="headerMatchesProperty">Array of flags where the header label matches a property name.</param>
         /// <param name="suppressHeader">If true, suppress header printing.</param>
         /// <param name="screenRows">Number of rows on the screen.</param>
-        internal void Initialize(int leftMarginIndent, int screenColumns, Span<int> columnWidths, ReadOnlySpan<int> alignment, bool suppressHeader, int screenRows = int.MaxValue)
+        internal void Initialize(int leftMarginIndent, int screenColumns, Span<int> columnWidths, ReadOnlySpan<int> alignment, ReadOnlySpan<bool> headerMatchesProperty, bool suppressHeader, int screenRows = int.MaxValue)
         {
             if (leftMarginIndent < 0)
             {
@@ -139,6 +141,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _si.columnInfo[k].startCol = startCol;
                 _si.columnInfo[k].width = columnWidths[k];
                 _si.columnInfo[k].alignment = alignment[k];
+                if (headerMatchesProperty != null)
+                {
+                    _si.columnInfo[k].headerMatchesProperty = headerMatchesProperty[k];
+                }
+
                 startCol += columnWidths[k] + ScreenInfo.separatorCharacterCount;
             }
         }
@@ -156,7 +163,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 foreach (string line in _header)
                 {
-                    lo.WriteLine(style == string.Empty ? line : style + line + reset);
+                    lo.WriteLine(line);
                 }
 
                 return _header.Count;
@@ -234,9 +241,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (multiLine)
             {
-                foreach (string line in GenerateTableRow(values, currentAlignment, lo.DisplayCells))
+                foreach (string line in GenerateTableRow(values, currentAlignment, lo.DisplayCells, isHeader))
                 {
                     generatedRows?.Add(line);
+<<<<<<< HEAD
                     if (isHeader)
                     {
                         lo.WriteLine(style == string.Empty ? line : style + line + reset);
@@ -245,12 +253,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         lo.WriteLine(line);
                     }
+=======
+                    lo.WriteLine(line);
+>>>>>>> 21e3c01cf (fix applying decoration to header where the label may split across multiple lines and fix tests)
                 }
             }
             else
             {
-                string line = GenerateRow(values, currentAlignment, dc);
+                string line = GenerateRow(values, currentAlignment, dc, isHeader);
                 generatedRows?.Add(line);
+<<<<<<< HEAD
                 if (isHeader)
                 {
                     lo.WriteLine(style == string.Empty ? line : style + line + reset);
@@ -259,10 +271,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     lo.WriteLine(line);
                 }
+=======
+                lo.WriteLine(line);
+>>>>>>> 21e3c01cf (fix applying decoration to header where the label may split across multiple lines and fix tests)
             }
         }
 
-        private string[] GenerateTableRow(string[] values, ReadOnlySpan<int> alignment, DisplayCells ds)
+        private string[] GenerateTableRow(string[] values, ReadOnlySpan<int> alignment, DisplayCells ds, bool isHeader)
         {
             // select the active columns (skip hidden ones)
             Span<int> validColumnArray = _si.columnInfo.Length <= OutCommandInner.StackAllocThreshold ? stackalloc int[_si.columnInfo.Length] : new int[_si.columnInfo.Length];
@@ -393,14 +408,34 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // for a given row, walk the columns
                 for (int col = 0; col < scArray.Length; col++)
                 {
+                    string value;
                     // if the column is the last column with content, we need to trim trailing whitespace, unless there is only one row
                     if (col == lastColWithContent[row] && screenRows > 1)
                     {
-                        sb.Append(scArray[col][row].TrimEnd());
+                        value = scArray[col][row].TrimEnd();
                     }
                     else
                     {
-                        sb.Append(scArray[col][row]);
+                        value = scArray[col][row];
+                    }
+
+                    if (isHeader)
+                    {
+                        if (_si.columnInfo[col].headerMatchesProperty)
+                        {
+                            sb.Append(PSStyle.Instance.Formatting.TableHeader);
+                        }
+                        else
+                        {
+                            sb.Append(PSStyle.Instance.Formatting.CustomTableHeader);
+                        }
+                    }
+
+                    sb.Append(value);
+
+                    if (isHeader)
+                    {
+                        sb.Append(PSStyle.Instance.Reset);
                     }
                 }
 
@@ -427,7 +462,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return sc;
         }
 
-        private string GenerateRow(string[] values, ReadOnlySpan<int> alignment, DisplayCells dc)
+        private string GenerateRow(string[] values, ReadOnlySpan<int> alignment, DisplayCells dc, bool isHeader)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -462,9 +497,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 string rowField = GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding);
+                if (isHeader)
+                {
+                    sb.Append(PSStyle.Instance.Formatting.TableHeader);
+                }
+
                 sb.Append(rowField);
 
-                if (rowField is not null && rowField.Contains(ValueStringDecorated.ESC) && !rowField.AsSpan().TrimEnd().EndsWith(PSStyle.Instance.Reset))
+                if (rowField is not null && rowField.Contains(ValueStringDecorated.ESC) && !rowField.AsSpan().TrimEnd().EndsWith(PSStyle.Instance.Reset) || isHeader)
                 {
                     // Reset the console output if the content of this column contains ESC
                     sb.Append(PSStyle.Instance.Reset);

@@ -996,16 +996,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // create arrays for widths and alignment
                 Span<int> columnWidths = columns <= StackAllocThreshold ? stackalloc int[columns] : new int[columns];
                 Span<int> alignment = columns <= StackAllocThreshold ? stackalloc int[columns] : new int[columns];
+                Span<bool> headerMatchesProperty = columns <= StackAllocThreshold ? stackalloc bool[columns] : new bool[columns];
 
                 int k = 0;
                 foreach (TableColumnInfo tci in this.CurrentTableHeaderInfo.tableColumnInfoList)
                 {
                     columnWidths[k] = (columnWidthsHint != null) ? columnWidthsHint[k] : tci.width;
                     alignment[k] = tci.alignment;
+                    headerMatchesProperty[k] = tci.headerMatchesProperty;
                     k++;
                 }
 
-                this.Writer.Initialize(0, _consoleWidth, columnWidths, alignment, this.CurrentTableHeaderInfo.hideHeader);
+                this.Writer.Initialize(0, _consoleWidth, columnWidths, alignment, headerMatchesProperty, this.CurrentTableHeaderInfo.hideHeader);
             }
 
             /// <summary>
@@ -1234,7 +1236,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     alignment[k] = TextAlignment.Left;
                 }
 
-                this.Writer.Initialize(0, columnsOnTheScreen, columnWidths, alignment, false, GetConsoleWindowHeight(this.InnerCommand._lo.RowNumber));
+                this.Writer.Initialize(0, columnsOnTheScreen, columnWidths, alignment, null, false, GetConsoleWindowHeight(this.InnerCommand._lo.RowNumber));
             }
 
             /// <summary>
