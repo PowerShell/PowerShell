@@ -124,6 +124,7 @@ namespace System.Management.Automation.Runspaces
 
             this.ThreadOptions = initialSessionState.ThreadOptions;
             this.ApartmentState = initialSessionState.ApartmentState;
+            this.ServiceProvider = initialSessionState.ServiceProvider;
         }
 
         /// <summary>

@@ -1650,6 +1650,7 @@ namespace System.Management.Automation.Runspaces
             ss.ThreadOptions = this.ThreadOptions;
             ss.ThrowOnRunspaceOpenError = this.ThrowOnRunspaceOpenError;
             ss.ApartmentState = this.ApartmentState;
+            ss.ServiceProvider = this.ServiceProvider;
 
             foreach (ModuleSpecification modSpec in this.ModuleSpecificationsToImport)
             {
@@ -1790,6 +1791,11 @@ namespace System.Management.Automation.Runspaces
         /// ApartmentState of the thread used to execute commands.
         /// </summary>
         public ApartmentState ApartmentState { get; set; } = Runspace.DefaultApartmentState;
+
+        /// <summary>
+        /// An <see cref="IServiceProvider"/> instance that provides custom services to other objects.
+        /// </summary>
+        public IServiceProvider ServiceProvider { get; set; }
 
         /// <summary>
         /// This property determines whether a new thread is created for each invocation of a command.

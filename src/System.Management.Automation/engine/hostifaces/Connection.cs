@@ -616,6 +616,11 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
+        /// <summary>
+        /// An <see cref="IServiceProvider"/> instance that provides custom services to other objects.
+        /// </summary>
+        public IServiceProvider ServiceProvider { get; set; }
+
         private ApartmentState apartmentState = Runspace.DefaultApartmentState;
 
         /// <summary>

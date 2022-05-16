@@ -133,6 +133,7 @@ namespace System.Management.Automation.Runspaces.Internal
             this.host = host;
             ThreadOptions = initialSessionState.ThreadOptions;
             this.ApartmentState = initialSessionState.ApartmentState;
+            this.ServiceProvider = initialSessionState.ServiceProvider;
             pool = new Stack<Runspace>();
             runspaceRequestQueue = new Queue<GetRunspaceAsyncResult>();
             ultimateRequestQueue = new Queue<GetRunspaceAsyncResult>();
@@ -860,6 +861,11 @@ namespace System.Management.Automation.Runspaces.Internal
         internal ApartmentState ApartmentState { get; set; } = Runspace.DefaultApartmentState;
 
         /// <summary>
+        /// An <see cref="IServiceProvider"/> instance that provides custom services to other objects.
+        /// </summary>
+        internal IServiceProvider ServiceProvider { get; set; }
+
+        /// <summary>
         /// Gets Runspace asynchronously from the runspace pool. The caller
         /// will get notified with the runspace using <paramref name="callback"/>
         /// </summary>
@@ -1256,6 +1262,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             result.ThreadOptions = this.ThreadOptions == PSThreadOptions.Default ? PSThreadOptions.ReuseThread : this.ThreadOptions;
             result.ApartmentState = this.ApartmentState;
+            result.ServiceProvider = this.ServiceProvider;
 
             this.PropagateApplicationPrivateData(result);
 
