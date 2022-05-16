@@ -125,9 +125,8 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Contains the TimeZone information from the client machine.
-        /// This value is obsolete and is always set to TimeZoneInfo.Local.
         /// </summary>
-        public TimeZoneInfo ClientTimeZone => TimeZoneInfo.Local;
+        public TimeZoneInfo ClientTimeZone => null;
 
         /// <summary>
         /// Connection string used by the client to connect to the server. This is
