@@ -100,10 +100,10 @@ namespace Microsoft.PowerShell.Telemetry
         private static readonly Guid _defaultNodeIdentifier = new Guid("2f998828-3f4a-4741-bf50-d11c6be42f50");
 
         // Use "anonymous" as the string to return when you can't report a name
-        private const string _anonymous = "anonymous";
+        private const string Anonymous = "anonymous";
 
         // Use '0.0' as the string for an anonymous module version
-        private const string _anonymousVersion = "0.0";
+        private const string AnonymousVersion = "0.0";
 
         // the telemetry failure string
         private const string _telemetryFailure = "TELEMETRY_FAILURE";
@@ -659,12 +659,12 @@ namespace Microsoft.PowerShell.Telemetry
         /// <param name="telemetryType">The type of telemetry that we'll be sending.</param>
         /// <param name="moduleName">The module name to report. If it is not allowed, then it is set to 'anonymous'.</param>
         /// <param name="moduleVersion">The module version to report. The default value is the anonymous version '0.0.0.0'.</param>
-        internal static void SendModuleTelemetryMetric(TelemetryType telemetryType, string moduleName, string moduleVersion = _anonymousVersion)
+        internal static void SendModuleTelemetryMetric(TelemetryType telemetryType, string moduleName, string moduleVersion = AnonymousVersion)
         {
             try
             {
                 string allowedModuleName = GetModuleName(moduleName);
-                string allowedModuleVersion = allowedModuleName == _anonymous ? _anonymousVersion : moduleVersion;
+                string allowedModuleVersion = allowedModuleName == Anonymous ? AnonymousVersion : moduleVersion;
                 s_telemetryClient.GetMetric(telemetryType.ToString(), "uuid", "SessionId", "ModuleName", "Version").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, allowedModuleName, allowedModuleVersion);
             }
             catch
@@ -725,7 +725,7 @@ namespace Microsoft.PowerShell.Telemetry
                 return featureNameToValidate;
             }
 
-            return _anonymous;
+            return Anonymous;
         }
 
         // Get the module name. If we can report it, we'll return the name, otherwise, we'll return "anonymous"
@@ -736,7 +736,7 @@ namespace Microsoft.PowerShell.Telemetry
                 return moduleNameToValidate;
             }
 
-            return _anonymous;
+            return Anonymous;
         }
 
         /// <summary>

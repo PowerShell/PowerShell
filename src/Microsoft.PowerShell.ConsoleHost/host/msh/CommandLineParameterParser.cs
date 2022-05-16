@@ -704,7 +704,7 @@ namespace Microsoft.PowerShell
                 return ParameterBitmap.EPUndefined;
             }
 
-            ParameterBitmap executionPolicySetting = ParameterBitmap.EPUndefined;
+            ParameterBitmap executionPolicySetting = ParameterBitmap.EPIncorrect;
 
             if (string.Equals(_executionPolicy, "default", StringComparison.OrdinalIgnoreCase))
             {
@@ -733,10 +733,6 @@ namespace Microsoft.PowerShell
             else if (string.Equals(_executionPolicy, "undefined", StringComparison.OrdinalIgnoreCase))
             {
                 executionPolicySetting = ParameterBitmap.EPUndefined;
-            }
-            else
-            {
-                executionPolicySetting = ParameterBitmap.EPIncorrect;
             }
 
             return executionPolicySetting;
