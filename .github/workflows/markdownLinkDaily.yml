@@ -1,9 +1,9 @@
 name: PowerShell Daily Markdown Link Verification
 on:
-  workflow_dispatch:
-  schedule:
-  # At 13:00 UTC every day.
-  - cron:  '0 13 * * *'
+    workflow_dispatch:
+    schedule:
+    # At 13:00 UTC every day.
+    - cron:  '0 13 * * *'
 
 jobs:
   markdown-link-check:
