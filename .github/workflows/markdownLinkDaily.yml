@@ -1,0 +1,27 @@
+name: PowerShell Daily Markdown Link Verification
+on:
+  workflow_dispatch:
+  schedule:
+  # At 13:00 UTC every day.
+  - cron:  '0 13 * * *'
+
+name: Check links for all Markdown files
+jobs:
+  markdown-link-check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Check Links
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: 'yes'
+        use-verbose-mode: 'yes'
+        check-modified-files-only: 'yes'
+        config-file: .github/workflows/markdown-link/config.json
+    # - name: Microsoft Teams Notifier
+    #   uses: skitionek/notify-microsoft-teams@master
+    #   if: failure()
+    #   with:
+    #     webhook_url: ${{ secrets.PS_BUILD_TEAMS_CHANNEL }}
+    #     overwrite: "{title: `Failure in .github/markdownLinkDaily.yml validating links. Look at ${workflow_link}`}"  
