@@ -64,6 +64,7 @@ namespace System.Management.Automation
             }
 
             _sessionState.PublicSessionState = this;
+            ServiceProvider = context.EngineSessionState.ServiceProvider;
         }
 
         /// <summary>
@@ -162,7 +163,11 @@ namespace System.Management.Automation
         /// <summary>
         /// An <see cref="IServiceProvider"/> instance that provides custom services to other objects.
         /// </summary>
-        public IServiceProvider ServiceProvider => this.Internal.ExecutionContext.InitialSessionState.ServiceProvider;
+        public IServiceProvider ServiceProvider
+        {
+            get => _sessionState.ExecutionContext.ServiceProvider;
+            set => _sessionState.ExecutionContext.ServiceProvider = value;
+        }
 
         /// <summary>
         /// The provider intrinsics for this session state instance.

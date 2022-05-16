@@ -211,6 +211,11 @@ namespace System.Management.Automation
         internal AuthorizationManager AuthorizationManager { get; private set; }
 
         /// <summary>
+        /// Gets or sets an <see cref="IServiceProvider"/> instance that provides custom services to other objects.
+        /// </summary>
+        internal IServiceProvider ServiceProvider { get; set; }
+
+        /// <summary>
         /// Gets the appropriate provider names for the default
         /// providers based on the type of the shell
         /// (single shell or custom shell).
@@ -1643,6 +1648,7 @@ namespace System.Management.Automation
         {
             InitialSessionState = initialSessionState;
             AuthorizationManager = initialSessionState.AuthorizationManager;
+            ServiceProvider = initialSessionState.ServiceProvider;
 
             InitializeCommon(engine, hostInterface);
         }
