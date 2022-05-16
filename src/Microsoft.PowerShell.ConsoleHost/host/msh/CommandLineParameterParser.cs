@@ -704,27 +704,27 @@ namespace Microsoft.PowerShell
                 return ParameterBitmap.EPUndefined;
             }
 
-            if (String.Equals(_executionPolicy, "remotesigned", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(_executionPolicy, "remotesigned", StringComparison.OrdinalIgnoreCase))
             {
                 return ParameterBitmap.EPRemoteSigned;
             }
-            else if (String.Equals(_executionPolicy, "bypass", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(_executionPolicy, "bypass", StringComparison.OrdinalIgnoreCase))
             {
                 return ParameterBitmap.EPBypass;
             }
-            else if (String.Equals(_executionPolicy, "unrestricted", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(_executionPolicy, "unrestricted", StringComparison.OrdinalIgnoreCase))
             {
                 return ParameterBitmap.EPUnrestricted;
             }
-            else if (String.Equals(_executionPolicy, "allsigned", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(_executionPolicy, "allsigned", StringComparison.OrdinalIgnoreCase))
             {
                 return ParameterBitmap.EPAllSigned;
             }
-            else if (String.Equals(_executionPolicy, "restricted", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(_executionPolicy, "restricted", StringComparison.OrdinalIgnoreCase))
             {
                 return ParameterBitmap.EPRestricted;
             }
-            else if (String.Equals(_executionPolicy, "undefined", StringComparison.OrdinalIgnoreCase))
+            else if (string.Equals(_executionPolicy, "undefined", StringComparison.OrdinalIgnoreCase))
             {
                 return ParameterBitmap.EPUndefined;
             }
