@@ -704,36 +704,36 @@ namespace Microsoft.PowerShell
                 return ParameterBitmap.EPUndefined;
             }
 
-            ParameterBitmap ExecutionPolicySetting = ParameterBitmap.EPUndefined;
+            ParameterBitmap executionPolicySetting = ParameterBitmap.EPUndefined;
             switch (_executionPolicy)
             {
                 case var b when string.Equals(_executionPolicy, "default", StringComparison.OrdinalIgnoreCase):
-                    ExecutionPolicySetting = ParameterBitmap.EPDefault;
+                    executionPolicySetting = ParameterBitmap.EPDefault;
                     break;
                 case var b when string.Equals(_executionPolicy, "remotesigned", StringComparison.OrdinalIgnoreCase):
-                    ExecutionPolicySetting = ParameterBitmap.EPRemoteSigned;
+                    executionPolicySetting = ParameterBitmap.EPRemoteSigned;
                     break;
                 case var b when string.Equals(_executionPolicy, "bypass", StringComparison.OrdinalIgnoreCase):
-                    ExecutionPolicySetting = ParameterBitmap.EPBypass;
+                    executionPolicySetting = ParameterBitmap.EPBypass;
                     break;
                 case var b when string.Equals(_executionPolicy, "unrestricted", StringComparison.OrdinalIgnoreCase):
-                    ExecutionPolicySetting = ParameterBitmap.EPUnrestricted;
+                    executionPolicySetting = ParameterBitmap.EPUnrestricted;
                     break;
                 case var b when string.Equals(_executionPolicy, "allsigned", StringComparison.OrdinalIgnoreCase):
-                    ExecutionPolicySetting = ParameterBitmap.EPAllSigned;
+                    executionPolicySetting = ParameterBitmap.EPAllSigned;
                     break;
                 case var b when string.Equals(_executionPolicy, "restricted", StringComparison.OrdinalIgnoreCase):
-                    ExecutionPolicySetting = ParameterBitmap.EPRestricted;
+                    executionPolicySetting = ParameterBitmap.EPRestricted;
                     break;
                 case var b when string.Equals(_executionPolicy, "undefined", StringComparison.OrdinalIgnoreCase):
-                    ExecutionPolicySetting = ParameterBitmap.EPUndefined;
+                    executionPolicySetting = ParameterBitmap.EPUndefined;
                     break;
                 default:
-                    ExecutionPolicySetting = ParameterBitmap.EPIncorrect;
+                    executionPolicySetting = ParameterBitmap.EPIncorrect;
                     break;
             }
 
-            return ExecutionPolicySetting;
+            return executionPolicySetting;
         }
 
         private static bool MatchSwitch(string switchKey, string match, string smallestUnambiguousMatch)
