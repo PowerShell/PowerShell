@@ -705,32 +705,38 @@ namespace Microsoft.PowerShell
             }
 
             ParameterBitmap executionPolicySetting = ParameterBitmap.EPUndefined;
-            switch (_executionPolicy)
+
+            if (string.Equals(_executionPolicy, "default", StringComparison.OrdinalIgnoreCase))
             {
-                case var b when string.Equals(_executionPolicy, "default", StringComparison.OrdinalIgnoreCase):
-                    executionPolicySetting = ParameterBitmap.EPDefault;
-                    break;
-                case var b when string.Equals(_executionPolicy, "remotesigned", StringComparison.OrdinalIgnoreCase):
-                    executionPolicySetting = ParameterBitmap.EPRemoteSigned;
-                    break;
-                case var b when string.Equals(_executionPolicy, "bypass", StringComparison.OrdinalIgnoreCase):
-                    executionPolicySetting = ParameterBitmap.EPBypass;
-                    break;
-                case var b when string.Equals(_executionPolicy, "unrestricted", StringComparison.OrdinalIgnoreCase):
-                    executionPolicySetting = ParameterBitmap.EPUnrestricted;
-                    break;
-                case var b when string.Equals(_executionPolicy, "allsigned", StringComparison.OrdinalIgnoreCase):
-                    executionPolicySetting = ParameterBitmap.EPAllSigned;
-                    break;
-                case var b when string.Equals(_executionPolicy, "restricted", StringComparison.OrdinalIgnoreCase):
-                    executionPolicySetting = ParameterBitmap.EPRestricted;
-                    break;
-                case var b when string.Equals(_executionPolicy, "undefined", StringComparison.OrdinalIgnoreCase):
-                    executionPolicySetting = ParameterBitmap.EPUndefined;
-                    break;
-                default:
-                    executionPolicySetting = ParameterBitmap.EPIncorrect;
-                    break;
+                executionPolicySetting = ParameterBitmap.EPDefault;
+            }
+            else if (string.Equals(_executionPolicy, "remotesigned", StringComparison.OrdinalIgnoreCase))
+            {
+                executionPolicySetting = ParameterBitmap.EPRemoteSigned;
+            }
+            else if (string.Equals(_executionPolicy, "bypass", StringComparison.OrdinalIgnoreCase))
+            {
+                executionPolicySetting = ParameterBitmap.EPBypass;
+            }
+            else if (string.Equals(_executionPolicy, "allsigned", StringComparison.OrdinalIgnoreCase))
+            {
+                executionPolicySetting = ParameterBitmap.EPAllSigned;
+            }
+            else if (string.Equals(_executionPolicy, "restricted", StringComparison.OrdinalIgnoreCase))
+            {
+                executionPolicySetting = ParameterBitmap.EPRestricted;
+            }
+            else if (string.Equals(_executionPolicy, "unrestricted", StringComparison.OrdinalIgnoreCase))
+            {
+                executionPolicySetting = ParameterBitmap.EPUnrestricted;
+            }
+            else if (string.Equals(_executionPolicy, "undefined", StringComparison.OrdinalIgnoreCase))
+            {
+                executionPolicySetting = ParameterBitmap.EPUndefined;
+            }
+            else
+            {
+                executionPolicySetting = ParameterBitmap.EPIncorrect;
             }
 
             return executionPolicySetting;
@@ -1054,7 +1060,6 @@ namespace Microsoft.PowerShell
                 }
                 else if (MatchSwitch(switchKey, "sta", "sta"))
                 {
-                    ParametersUsed |= ParameterBitmap.STA;
                     if (!Platform.IsWindowsDesktop || !Platform.IsStaSupported)
                     {
                         SetCommandLineError(
@@ -1071,10 +1076,10 @@ namespace Microsoft.PowerShell
                     }
 
                     _staMode = true;
+                    ParametersUsed |= ParameterBitmap.STA;
                 }
                 else if (MatchSwitch(switchKey, "mta", "mta"))
                 {
-                    ParametersUsed |= ParameterBitmap.MTA;
                     if (!Platform.IsWindowsDesktop)
                     {
                         SetCommandLineError(
@@ -1091,6 +1096,7 @@ namespace Microsoft.PowerShell
                     }
 
                     _staMode = false;
+                    ParametersUsed |= ParameterBitmap.MTA;
                 }
                 else if (MatchSwitch(switchKey, "workingdirectory", "wo") || MatchSwitch(switchKey, "wd", "wd"))
                 {
@@ -1102,8 +1108,8 @@ namespace Microsoft.PowerShell
                         break;
                     }
 
-                    ParametersUsed |= ParameterBitmap.WorkingDirectory;
                     _workingDirectory = args[i];
+                    ParametersUsed |= ParameterBitmap.WorkingDirectory;
                 }
 #if !UNIX
                 else if (MatchSwitch(switchKey, "removeworkingdirectorytrailingcharacter", "removeworkingdirectorytrailingcharacter"))
