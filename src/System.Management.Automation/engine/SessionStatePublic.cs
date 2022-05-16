@@ -160,7 +160,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// An <see cref="IServiceProvider"/> instance that provides custom services to other objects.
+        /// Gets or sets an <see cref="IServiceProvider"/> instance that provides custom services to other objects.
         /// </summary>
         public IServiceProvider ServiceProvider
         {
