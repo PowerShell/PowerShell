@@ -102,8 +102,8 @@ namespace Microsoft.PowerShell.Telemetry
         // Use "anonymous" as the string to return when you can't report a name
         private const string _anonymous = "anonymous";
 
-        // Use '0.0.0.0' as the string for an anonymous module version
-        private const string _anonymousVersion = "0.0.0.0";
+        // Use '0.0' as the string for an anonymous module version
+        private const string _anonymousVersion = "0.0";
 
         // the telemetry failure string
         private const string _telemetryFailure = "TELEMETRY_FAILURE";
@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Telemetry
                 configuration.InstrumentationKey = _psCoreTelemetryKey;
 
                 // Set this to true to reduce latency during development
-                configuration.TelemetryChannel.DeveloperMode = false;
+                configuration.TelemetryChannel.DeveloperMode = true;
 
                 // Be sure to obscure any information about the client node name.
                 configuration.TelemetryInitializers.Add(new NameObscurerTelemetryInitializer());
@@ -763,9 +763,9 @@ namespace Microsoft.PowerShell.Telemetry
             // This is the payload for the parameter data which is sent as a metric.
             var parameters = new Dictionary<string, double>();
 
-            // The variable POWERSHELL_DISTRIBUTION_CHANNEL is set in our docker images.
-            // This allows us to track the actual docker OS as OSDescription provides only "linuxkit"
-            // which has limited usefulness.
+            // The variable POWERSHELL_DISTRIBUTION_CHANNEL is set in our docker images and 
+            // by various other environments. This allows us to track the actual docker OS as
+            // OSDescription provides only "linuxkit" which has limited usefulness.
             var channel = Environment.GetEnvironmentVariable("POWERSHELL_DISTRIBUTION_CHANNEL");
 
             // Construct the payload for the OS and shell details.
@@ -834,17 +834,16 @@ namespace Microsoft.PowerShell.Telemetry
         /// Try to create a unique identifier and persist it to the telemetry.uuid file.
         /// </summary>
         /// <param name="telemetryFilePath">The path to the persisted telemetry.uuid file.</param>
-        /// <param name="id">The created identifier.</param>
         /// <returns>
-        /// The method returns a bool indicating success or failure of creating the id.
+        /// The method node id.
         /// </returns>
-        private static bool TryCreateUniqueIdentifierAndFile(string telemetryFilePath, out Guid id)
+        private static Guid CreateUniqueIdentifierAndFile(string telemetryFilePath)
         {
             // one last attempt to retrieve before creating incase we have a lot of simultaneous entry into the mutex.
-            id = Guid.Empty;
+            Guid id = Guid.Empty;
             if (TryGetIdentifier(telemetryFilePath, out id))
             {
-                return true;
+                return id;
             }
 
             // The directory may not exist, so attempt to create it
@@ -870,7 +869,7 @@ namespace Microsoft.PowerShell.Telemetry
                 {
                     id = Guid.NewGuid();
                     File.WriteAllBytes(telemetryFilePath, id.ToByteArray());
-                    return true;
+                    return id;
                 }
                 catch
                 {
@@ -881,7 +880,7 @@ namespace Microsoft.PowerShell.Telemetry
 
             // all attempts to create an identifier have failed, so use the default node id.
             id = _defaultNodeIdentifier;
-            return true;
+            return id;
         }
 
         /// <summary>
@@ -905,15 +904,12 @@ namespace Microsoft.PowerShell.Telemetry
             // simultaneous shell starts without the persisted file which attempt to create the file.
             try
             {
-                // TryCreateUniqueIdentifierAndFile shouldn't throw, but the mutex might
+                // CreateUniqueIdentifierAndFile shouldn't throw, but the mutex might
                 using var m = new Mutex(true, "CreateUniqueUserId");
                 m.WaitOne();
                 try
                 {
-                    if (TryCreateUniqueIdentifierAndFile(uuidPath, out id))
-                    {
-                        return id;
-                    }
+                    return CreateUniqueIdentifierAndFile(uuidPath);
                 }
                 finally
                 {
