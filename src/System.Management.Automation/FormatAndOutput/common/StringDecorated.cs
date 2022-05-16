@@ -3,6 +3,7 @@
 
 #nullable enable
 
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace System.Management.Automation.Internal
@@ -87,6 +88,7 @@ namespace System.Management.Automation.Internal
         private readonly bool _isDecorated;
         private readonly string _text;
         private string? _plaintextcontent;
+        private Dictionary<int, int>? _vtRanges;
 
         private string PlainText
         {
@@ -111,6 +113,30 @@ namespace System.Management.Automation.Internal
         internal static readonly Regex AnsiRegex = new Regex($"{GraphicsRegex}|{CsiRegex}", RegexOptions.Compiled);
 
         /// <summary>
+        /// Get the ranges of all escape sequences in the text.
+        /// </summary>
+        /// <returns>
+        /// A dictionary with the key being the starting index of an escape sequence,
+        /// and the value being the length of the escape sequence.
+        /// </returns>
+        internal Dictionary<int, int>? EscapeSequenceRanges
+        {
+            get
+            {
+                if (_isDecorated && _vtRanges is null)
+                {
+                    _vtRanges = new Dictionary<int, int>();
+                    foreach (Match match in AnsiRegex.Matches(_text))
+                    {
+                        _vtRanges.Add(match.Index, match.Length);
+                    }
+                }
+
+                return _vtRanges;
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ValueStringDecorated"/> struct.
         /// </summary>
         /// <param name="text">The input string.</param>
@@ -118,7 +144,8 @@ namespace System.Management.Automation.Internal
         {
             _text = text;
             _isDecorated = text.Contains(ESC);
-            _plaintextcontent = null;
+            _plaintextcontent = _isDecorated ? null : text;
+            _vtRanges = null;
         }
 
         /// <summary>

@@ -157,22 +157,16 @@ namespace System.Management.Automation.Internal
             if (valueStrDec.IsDecorated)
             {
                 // Handle strings with VT sequences.
-                var sb = new StringBuilder(capacity: str.Length);
                 bool copyStarted = startOffset == 0;
                 bool hasEscSeqs = false;
                 bool firstNonEscChar = true;
-
-                // Find all escape sequences in the string, and keep track of their starting indexes and length.
-                var ansiRanges = new Dictionary<int, int>();
-                foreach (Match match in ValueStringDecorated.AnsiRegex.Matches(str))
-                {
-                    ansiRanges.Add(match.Index, match.Length);
-                }
+                StringBuilder sb = new(capacity: str.Length);
+                Dictionary<int, int> vtRanges = valueStrDec.EscapeSequenceRanges;
 
                 for (int i = 0, offset = 0; i < str.Length; i++)
                 {
                     // Keep all leading ANSI escape sequences.
-                    if (ansiRanges.TryGetValue(i, out int len))
+                    if (vtRanges.TryGetValue(i, out int len))
                     {
                         hasEscSeqs = true;
                         sb.Append(str.AsSpan(i, len));
