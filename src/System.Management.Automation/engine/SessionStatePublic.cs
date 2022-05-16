@@ -31,7 +31,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
-            _sessionState = sessionState;
+            _sessionState = sessionState;            
         }
 
         /// <summary>
@@ -158,6 +158,11 @@ namespace System.Management.Automation
         {
             get { return _sessionState.Module; }
         }
+
+        /// <summary>
+        /// An <see cref="IServiceProvider"/> instance that provides custom services to other objects.
+        /// </summary>
+        public IServiceProvider ServiceProvider => this.Internal.ExecutionContext.InitialSessionState.ServiceProvider;
 
         /// <summary>
         /// The provider intrinsics for this session state instance.
