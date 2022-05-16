@@ -1,9 +1,9 @@
 name: PowerShell Daily Markdown Link Verification
 on:
-    workflow_dispatch:
-    schedule:
-    # At 13:00 UTC every day.
-    - cron:  '0 13 * * *'
+  workflow_dispatch:
+  schedule:
+  # At 13:00 UTC every day.
+  - cron:  '0 13 * * *'
 
 jobs:
   markdown-link-check:
@@ -16,7 +16,6 @@ jobs:
       with:
         use-quiet-mode: 'yes'
         use-verbose-mode: 'yes'
-        check-modified-files-only: 'yes'
         config-file: .github/workflows/markdown-link/config.json
     # - name: Microsoft Teams Notifier
     #   uses: skitionek/notify-microsoft-teams@master
