@@ -5,7 +5,6 @@ on:
   # At 13:00 UTC every day.
   - cron:  '0 13 * * *'
 
-name: Check links for all Markdown files
 jobs:
   markdown-link-check:
     runs-on: ubuntu-latest
