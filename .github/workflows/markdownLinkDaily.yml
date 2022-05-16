@@ -26,4 +26,4 @@ jobs:
       if: failure()
       with:
         webhook_url: ${{ secrets.PS_BUILD_TEAMS_CHANNEL }}
-        overwrite: "{title: `Failure in .github/markdownLinkDaily.yml validating links. Look at ${workflow_link}`}"  
+        overwrite: "{title: `Failure in .github/markdownLinkDaily.yml validating links. Look at ${workflow_link}`}"
