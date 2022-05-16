@@ -423,7 +423,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     if (isHeader)
                     {
-                        if (_si.columnInfo[col].HeaderMatchesProperty)
+                        if (_si.columnInfo[col].HeaderMatchesProperty || !ExperimentalFeature.IsEnabled("PSCustomTableHeaderLabelDecoration"))
                         {
                             sb.Append(PSStyle.Instance.Formatting.TableHeader);
                         }
