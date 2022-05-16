@@ -390,16 +390,9 @@ function Get-PlatformInfo {
 function Get-WsManSupport {
     $platformInfo = Get-PlatformInfo
     if (
-        ($platformInfo.Platform -match "alpine|raspbian") -or
-        ($platformInfo.Platform -eq "debian" -and $platformInfo.Version -ne '9') -or
-        ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -ne '7') -or
-        ($platformInfo.Platform -eq 'ubuntu' -and $platformInfo.Version -notin '18.04', '16.04') -or
-        ($platformInfo.Platform -eq 'mariner') -or
-        ($platformInfo.Platform -eq 'rhel') -or
-        ($platformInfo.Platform -eq 'fedora') -or
-        ($IsMacOS)
+        ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '7') -or
     ) {
-        return $false
+        return $true
     }
-    return $true
+    return $false
 }
