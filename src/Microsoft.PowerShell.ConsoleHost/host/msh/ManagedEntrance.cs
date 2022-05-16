@@ -53,12 +53,13 @@ namespace Microsoft.PowerShell
         /// Starts managed MSH.
         /// </summary>
         /// <param name="args">
-        /// Command line arguments to the managed MSH
+        /// Command line arguments to the managed MSH.
         /// </param>
         /// <param name="argc">
         /// Length of the passed in argument array.
         /// </param>
         /// <param name="initialSessionState">InitialSessionState to be used by the ConsoleHost.</param>
+        /// <returns>An exit code for the process.</returns>
         public static int Start([MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)] string[] args, int argc, InitialSessionState? initialSessionState)
         {
             if (args == null)
