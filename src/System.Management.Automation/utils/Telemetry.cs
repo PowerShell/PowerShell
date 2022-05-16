@@ -248,6 +248,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "Az.StorageTable",
                         "Az.StreamAnalytics",
                         "Az.Subscription",
+                        "Az.Tools.Predictor",
                         "Az.TrafficManager",
                         "Az.Websites",
                         "Azs.Azurebridge.Admin",
