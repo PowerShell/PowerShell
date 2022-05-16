@@ -31,7 +31,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
-            _sessionState = sessionState;            
+            _sessionState = sessionState;
         }
 
         /// <summary>
