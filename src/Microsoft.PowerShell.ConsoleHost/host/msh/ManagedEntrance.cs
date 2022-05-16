@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell
         /// Length of the passed in argument array.
         /// </param>
         /// <param name="initialSessionState">InitialSessionState to be used by the ConsoleHost.</param>
-        public static int Start([MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)] string[] args, int argc, InitialSessionState initialSessionState)
+        public static int Start([MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 1)] string[] args, int argc, InitialSessionState? initialSessionState)
         {
             if (args == null)
             {
