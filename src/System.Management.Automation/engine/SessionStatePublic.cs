@@ -63,8 +63,7 @@ namespace System.Management.Automation
                 _sessionState = new SessionStateInternal(context);
             }
 
-            _sessionState.PublicSessionState = this;
-            ServiceProvider = context.EngineSessionState.ServiceProvider;
+            _sessionState.PublicSessionState = this;            
         }
 
         /// <summary>
