@@ -1,4 +1,8 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 name: PowerShell Daily Markdown Link Verification
+
 on:
   workflow_dispatch:
   schedule:
