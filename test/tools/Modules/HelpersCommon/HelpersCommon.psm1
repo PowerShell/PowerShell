@@ -390,7 +390,7 @@ function Get-PlatformInfo {
 function Get-WsManSupport {
     $platformInfo = Get-PlatformInfo
     if (
-        ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '7') -or
+        ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '7')
     ) {
         return $true
     }
