@@ -619,7 +619,7 @@ namespace Microsoft.PowerShell.Commands
                 // avoid double reporting for WinCompat modules that go through CommandDiscovery\AutoloadSpecifiedModule
                 if (!foundModule.IsWindowsPowerShellCompatModule)
                 {
-                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name, foundModule.Version.ToString());
+                    ApplicationInsightsTelemetry.SendModuleTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name, foundModule.Version?.ToString());
 #if LEGACYTELEMETRY
                     TelemetryAPI.ReportModuleLoad(foundModule);
 #endif
