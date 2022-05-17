@@ -1443,6 +1443,7 @@ ThirdPartyNotices.txt
 rtm.21527.11
 SKUs
 vmImage
+Ubuntu22.04
  - CHANGELOG/7.0.md
 codesign
 release-BuildJson
