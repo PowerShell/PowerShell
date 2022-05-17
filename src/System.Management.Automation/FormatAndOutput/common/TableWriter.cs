@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _si.columnInfo[k].startCol = startCol;
                 _si.columnInfo[k].width = columnWidths[k];
                 _si.columnInfo[k].alignment = alignment[k];
-                if (headerMatchesProperty != null)
+                if (!headerMatchesProperty.IsEmpty)
                 {
                     _si.columnInfo[k].HeaderMatchesProperty = headerMatchesProperty[k];
                 }
@@ -244,36 +244,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 foreach (string line in GenerateTableRow(values, currentAlignment, lo.DisplayCells, isHeader))
                 {
                     generatedRows?.Add(line);
-<<<<<<< HEAD
-                    if (isHeader)
-                    {
-                        lo.WriteLine(style == string.Empty ? line : style + line + reset);
-                    }
-                    else
-                    {
-                        lo.WriteLine(line);
-                    }
-=======
                     lo.WriteLine(line);
->>>>>>> 21e3c01cf (fix applying decoration to header where the label may split across multiple lines and fix tests)
                 }
             }
             else
             {
                 string line = GenerateRow(values, currentAlignment, dc, isHeader);
                 generatedRows?.Add(line);
-<<<<<<< HEAD
-                if (isHeader)
-                {
-                    lo.WriteLine(style == string.Empty ? line : style + line + reset);
-                }
-                else
-                {
-                    lo.WriteLine(line);
-                }
-=======
                 lo.WriteLine(line);
->>>>>>> 21e3c01cf (fix applying decoration to header where the label may split across multiple lines and fix tests)
             }
         }
 
@@ -423,7 +401,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                     if (isHeader)
                     {
-                        if (_si.columnInfo[col].HeaderMatchesProperty || !ExperimentalFeature.IsEnabled("PSCustomTableHeaderLabelDecoration"))
+                        if (_si.columnInfo[col].HeaderMatchesProperty || !ExperimentalFeature.IsEnabled(ExperimentalFeature.PSCustomTableHeaderLabelDecoration))
                         {
                             sb.Append(PSStyle.Instance.Formatting.TableHeader);
                         }
