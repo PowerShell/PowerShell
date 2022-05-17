@@ -1157,6 +1157,14 @@ SergeyZalyadeev
 KiwiThePoodle
 Thomas-Yu
 cgmanifest.json
+mcr.microsoft.com
+global.json
+tar.gz
+psoptions.json
+manifest.spdx.json
+buildinfo
+SKUs
+vmImage
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1300,6 +1308,7 @@ package.json
 jcotton42
 RPMs
 PSDesiredStateConfiguration
+dotnet5
  - CHANGELOG/7.2.md
 Gimly
 jborean93
