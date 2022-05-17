@@ -241,7 +241,7 @@ function Get-DotnetUpdate {
     return @{
         ShouldUpdate = $shouldUpdate
         NewVersion   = $newVersion
-        Message      = $Message
+        Message      = $Message ?? "No update needed."
         FeedUrl      = $feedUrl
         Quality      = $selectedQuality
     }
