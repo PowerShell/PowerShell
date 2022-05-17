@@ -3,8 +3,6 @@ on:
     branches:
       - master
       - 'release/**'
-    paths:
-      - '**.md'
 
 name: Check links for modified files
 jobs:
