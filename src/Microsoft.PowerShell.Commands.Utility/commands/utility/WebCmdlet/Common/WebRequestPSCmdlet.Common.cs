@@ -1438,7 +1438,6 @@ namespace Microsoft.PowerShell.Commands
                             WebCmdletStrings.WebMethodInvocationVerboseMsg,
                             requestWithoutRange.Version,
                             requestWithoutRange.Method,
-                            requestWithoutRange.RequestUri,
                             requestContentLength);
                         WriteVerbose(reqVerboseMsg);
 
@@ -1534,7 +1533,6 @@ namespace Microsoft.PowerShell.Commands
                                     WebCmdletStrings.WebMethodInvocationVerboseMsg,
                                     request.Version,
                                     request.Method,
-                                    request.RequestUri,
                                     requestContentLength);
 
                                 WriteVerbose(reqVerboseMsg);
