@@ -1077,8 +1077,6 @@ namespace System.Management.Automation.Internal
                     CommandState.Started,
                     commandProcessor.Command.MyInvocation);
 
-                // Send telemetry that includes the type of command.
-                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ApplicationType, commandProcessor.Command.CommandInfo.CommandType.ToString());
 #if LEGACYTELEMETRY
                 Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.TraceExecutedCommand(commandProcessor.Command.CommandInfo, commandProcessor.Command.CommandOrigin);
 #endif
