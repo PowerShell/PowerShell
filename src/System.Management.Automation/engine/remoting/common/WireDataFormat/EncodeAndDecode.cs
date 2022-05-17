@@ -1601,8 +1601,6 @@ namespace System.Management.Automation
                 Guid runspacePoolId)
         {
             PSObject temp = GenerateSessionCapability(capability);
-            temp.Properties.Add(
-                new PSNoteProperty(RemoteDataNameStrings.TimeZone, Array.Empty<byte>()));
             return RemoteDataObject.CreateFrom(capability.RemotingDestination,
                 RemotingDataType.SessionCapability, runspacePoolId, Guid.Empty, temp);
         }
