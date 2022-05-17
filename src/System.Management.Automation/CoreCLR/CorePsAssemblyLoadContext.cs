@@ -232,6 +232,9 @@ namespace System.Management.Automation
         ///                     |
         ///                     |--- 'osx-x64' subfolder
         ///                     |       |--- native.dylib
+        ///                     |
+        ///                     |--- 'osx-arm64' subfolder
+        ///                     |       |--- native.dylib
         /// </summary>
         internal static IntPtr NativeDllHandler(Assembly assembly, string libraryName)
         {
@@ -552,7 +555,7 @@ namespace System.Management.Automation
             }
             else if (Platform.IsMacOS)
             {
-                folderName = "osx-x64";
+                folderName = "osx-" + processArch;
                 ext = ".dylib";
             }
 
