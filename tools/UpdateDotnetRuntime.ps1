@@ -227,9 +227,7 @@ function Get-DotnetUpdate {
         } else {
             $shouldUpdate = $false
             $newVersion = $latestSDKVersionString
-            if ($null -eq $currentVersion.PreReleaseLabel) {
-                $Message = "$latestSDKversion is not preview, update manually."
-            }
+            $Message = $null -eq $currentVersion.PreReleaseLabel ? "$latestSDKversion is not preview, update manually." : "No update needed."
         }
     } catch {
         Write-Verbose -Verbose "Error occured: $_.message"
@@ -241,7 +239,7 @@ function Get-DotnetUpdate {
     return @{
         ShouldUpdate = $shouldUpdate
         NewVersion   = $newVersion
-        Message      = $Message ?? "No update needed."
+        Message      = $Message
         FeedUrl      = $feedUrl
         Quality      = $selectedQuality
     }
