@@ -7168,7 +7168,7 @@ namespace System.Management.Automation
                         switch (binding.CommandName)
                         {
                             case "Get-WinEvent":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "LogName", "ProviderName", "Path", "Keywords", "ID", "Level", 
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "LogName", "ProviderName", "Path", "Keywords", "ID", "Level",
                                     "StartTime", "EndTime", "UserID", "Data", "SuppressHashFilter");
                         }
                     }
@@ -7300,6 +7300,12 @@ namespace System.Management.Automation
             var varPath = variableAst.VariablePath;
             if (varPath.IsVariable || varPath.DriveName.Equals("env", StringComparison.OrdinalIgnoreCase))
             {
+                if (varPath.UnqualifiedPath.Equals(SpecialVariables.PSScriptRoot, StringComparison.OrdinalIgnoreCase)
+                    && !string.IsNullOrEmpty(variableAst.Extent.File))
+                {
+                    return Path.GetDirectoryName(variableAst.Extent.File) + extraText;
+                }
+
                 try
                 {
                     // We check the strict mode inside GetVariableValue
