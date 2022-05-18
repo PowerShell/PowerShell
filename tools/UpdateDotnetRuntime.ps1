@@ -262,7 +262,7 @@ function Update-DotnetRuntimeMetadataChannel {
         [string] $newSdk
     )
 
-    # -replace uses regex so we are splitting on "." and not on "\.". "\" is escaped in the regex.
+    # -replace uses regex so in order to split on `.`, we need to use `\.` to escape the dot character.
     $sdkParts = $newSdk -split '\.'
 
     # Transform SDK Version '7.0.100-preview.5.22263.22' -> '7.0.1xx-preview5'
