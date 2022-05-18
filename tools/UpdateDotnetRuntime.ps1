@@ -262,8 +262,10 @@ function Update-DotnetRuntimeMetadataChannel {
         [string] $newSdk
     )
 
-    # -replace uses regex so we are splitting on "."
+    # -replace uses regex so we are splitting on "." and not on "\.". "\" is escaped in the regex.
     $sdkParts = $newSdk -split '\.'
+
+    # Transform SDK Version '7.0.100-preview.5.22263.22' -> '7.0.1xx-preview5'
     $newChannel = $sdkParts[0] + "." + $sdkParts[1] + "." + ($sdkParts[2] -replace '0','x') + $sdkParts[3]
 
     Write-Verbose -Verbose -Message "Updating DotnetRuntimeMetadata.json with channel $newChannel"
