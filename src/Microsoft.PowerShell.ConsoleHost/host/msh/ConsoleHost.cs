@@ -1851,17 +1851,11 @@ namespace Microsoft.PowerShell
                     {
                         int showMessageThresholdMs = 500;
 
-                        int thresholdMs = PowerShellConfig.Instance.GetSlowProfileLoadingMessageThreshold(ConfigScope.AllUsers);
-                        if (thresholdMs > 0)
-                        {
-                            showMessageThresholdMs = thresholdMs;
-                        }
+                        int? userSpecifiedThresholdMs = PowerShellConfig.Instance.GetSlowProfileLoadingMessageThreshold(ConfigScope.AllUsers);
+                        showMessageThresholdMs = userSpecifiedThresholdMs ?? showMessageThresholdMs;
 
-                        thresholdMs = PowerShellConfig.Instance.GetSlowProfileLoadingMessageThreshold(ConfigScope.CurrentUser);
-                        if (thresholdMs > 0)
-                        {
-                            showMessageThresholdMs = thresholdMs;
-                        }
+                        userSpecifiedThresholdMs = PowerShellConfig.Instance.GetSlowProfileLoadingMessageThreshold(ConfigScope.CurrentUser);
+                        showMessageThresholdMs = userSpecifiedThresholdMs ?? showMessageThresholdMs;
 
                         if (profileLoadTimeInMs > showMessageThresholdMs)
                         {

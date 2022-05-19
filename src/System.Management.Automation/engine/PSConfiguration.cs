@@ -221,10 +221,9 @@ namespace System.Management.Automation.Configuration
         /// <summary>
         /// Gets the number of milliseconds profile loading must exceed in order to show the slow profile loading message.
         /// </summary>
-        internal int GetSlowProfileLoadingMessageThreshold(ConfigScope scope)
+        internal int? GetSlowProfileLoadingMessageThreshold(ConfigScope scope)
         {
-            int threshold = ReadValueFromFile<int>(scope, "SlowProfileLoadingMessageThreshold");
-            return threshold;            
+            return ReadValueFromFile<int?>(scope, "SlowProfileLoadingMessageThreshold");
         }
 
         internal bool IsImplicitWinCompatEnabled()
