@@ -11,6 +11,11 @@
           "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
       },
       {
+          "url": "microsoft-fedora34-prod",
+          "distribution" : ["bionic"],
+          "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
+      },
+      {
           "url": "microsoft-rhel7.3-prod",
           "distribution" : ["trusty"],
           "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
