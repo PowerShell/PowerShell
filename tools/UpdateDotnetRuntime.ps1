@@ -254,6 +254,27 @@ function Update-DevContainer {
     $devContainerDocker | Out-File -FilePath $dockerFilePath -Force
 }
 
+<#
+ .DESCRIPTION Update the DotnetMetadata.json file with the latest version of the SDK
+ #>
+function Update-DotnetRuntimeMetadataChannel {
+    param (
+        [string] $newSdk
+    )
+
+    # -replace uses regex so in order to split on `.`, we need to use `\.` to escape the dot character.
+    $sdkParts = $newSdk -split '\.'
+
+    # Transform SDK Version '7.0.100-preview.5.22263.22' -> '7.0.1xx-preview5'
+    $newChannel = $sdkParts[0] + "." + $sdkParts[1] + "." + ($sdkParts[2] -replace '0','x') + $sdkParts[3]
+
+    Write-Verbose -Verbose -Message "Updating DotnetRuntimeMetadata.json with channel $newChannel"
+
+    $metadata = Get-Content -Raw "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json
+    $metadata.sdk.channel = $newChannel
+    $metadata | ConvertTo-Json | Out-File -FilePath "$PSScriptRoot/../DotnetRuntimeMetadata.json" -Force
+}
+
 $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
 $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
 $channel = $dotnetMetadataJson.sdk.channel
@@ -364,6 +385,8 @@ if ($dotnetUpdate.ShouldUpdate) {
     }
 
     Update-DevContainer
+
+    Update-DotnetRuntimeMetadataChannel -newSdk $latestSdkVersion
 }
 else {
     Write-Verbose -Verbose -Message $dotnetUpdate.Message
