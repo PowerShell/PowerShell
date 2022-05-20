@@ -46,7 +46,7 @@ Describe "Can load a native assembly" -Tags "CI" {
         $archFolder = Join-Path $root $arch
         New-Item -Path $archFolder -ItemType Directory -Force > $null
         #New-Item -Path $archFolder\$nativeDllName -ItemType File -Force > $null
-        Copy-Item -Path $PSHOME\$sourceDllName -Destination $archFolder\$nativeDllName
+        Copy-Item -Path $sourceDllName -Destination $archFolder\$nativeDllName
 
         $managedDllPath = Join-Path $root managed.dll
 
