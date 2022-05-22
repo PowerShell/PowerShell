@@ -650,7 +650,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---------------------------------------------------------
 
-NJsonSchema 10.7.0 - MIT
+NJsonSchema 10.7.1 - MIT
 
 
 
