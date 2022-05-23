@@ -1729,29 +1729,42 @@ namespace System.Management.Automation
                     }
                 }
 
+                var tempResult = new Dictionary<string, PSTypeName>();
                 foreach (var method in methodCacheEntry.methodInformationStructures)
                 {
                     if (method.method is MethodInfo methodInfo)
                     {
+                        PSTypeName typeToAdd = null;
                         if (!methodInfo.ReturnType.ContainsGenericParameters)
                         {
-                            result.Add(new PSTypeName(methodInfo.ReturnType));
+                            typeToAdd = new PSTypeName(methodInfo.ReturnType);
                         }
                         else if (genericTypeArguments is not null)
                         {
                             try
                             {
-                                result.Add(new PSTypeName(methodInfo.MakeGenericMethod(resolvedTypeArguments).ReturnType));
+                                typeToAdd = new PSTypeName(methodInfo.MakeGenericMethod(resolvedTypeArguments).ReturnType);
                             }
                             catch
                             {
                                 // If we can't build the generic method then just skip it to retain other completion results.
-                                return;
+                                break;
                             }
+                        }
+
+                        if (typeToAdd is not null
+                            && !typeToAdd.Name.Equals("System.Void", StringComparison.OrdinalIgnoreCase)
+                            && !tempResult.ContainsKey(typeToAdd.Name))
+                        {
+                            tempResult.Add(typeToAdd.Name, typeToAdd);
                         }
                     }
                 }
 
+                if (tempResult.Count > 0)
+                {
+                    result.AddRange(tempResult.Values);
+                }
                 return;
             }
 
