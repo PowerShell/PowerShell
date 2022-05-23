@@ -14,9 +14,9 @@
           "url": "microsoft-rhel7.3-prod",
           "distribution" : ["trusty"],
           "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
-      },      
+      },
       {
-          "url": "cbl-mariner-2.0-prod-Microsoft-x86_64-rpms",
+          "url": "cbl-mariner-2.0-prod-Microsoft-x86_64",
           "distribution" : ["bionic"],
           "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm1.x86_64.rpm"
       },
