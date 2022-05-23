@@ -1729,21 +1729,21 @@ namespace System.Management.Automation
                     }
                 }
 
-                var tempResult = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var tempResult = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "System.Void" };
                 foreach (var method in methodCacheEntry.methodInformationStructures)
                 {
                     if (method.method is MethodInfo methodInfo)
                     {
-                        PSTypeName typeToAdd = null;
+                        Type retType = null;
                         if (!methodInfo.ReturnType.ContainsGenericParameters)
                         {
-                            typeToAdd = new PSTypeName(methodInfo.ReturnType);
+                            retType = methodInfo.ReturnType;
                         }
                         else if (genericTypeArguments is not null)
                         {
                             try
                             {
-                                typeToAdd = new PSTypeName(methodInfo.MakeGenericMethod(resolvedTypeArguments).ReturnType);
+                                retType = methodInfo.MakeGenericMethod(resolvedTypeArguments).ReturnType;
                             }
                             catch
                             {
@@ -1752,11 +1752,9 @@ namespace System.Management.Automation
                             }
                         }
 
-                        if (typeToAdd is not null
-                            && !typeToAdd.Name.Equals("System.Void", StringComparison.OrdinalIgnoreCase)
-                            && tempResult.Add(typeToAdd.Name))
+                        if (retType is not null && tempResult.Add(retType.FullName))
                         {
-                            result.Add(typeToAdd);
+                            result.Add(new PSTypeName(retType));
                         }
                     }
                 }
