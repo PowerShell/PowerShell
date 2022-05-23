@@ -7318,7 +7318,7 @@ namespace System.Management.Automation
                 if (strValue == null)
                 {
                     object baseObj = PSObject.Base(value);
-                    if (baseObj is string || baseObj.GetType().IsPrimitive)
+                    if (baseObj is string || baseObj?.GetType()?.IsPrimitive is true)
                     {
                         strValue = LanguagePrimitives.ConvertTo<string>(value);
                     }
