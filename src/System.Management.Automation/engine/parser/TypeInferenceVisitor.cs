@@ -1729,7 +1729,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                var tempResult = new Dictionary<string, PSTypeName>();
+                var tempResult = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 foreach (var method in methodCacheEntry.methodInformationStructures)
                 {
                     if (method.method is MethodInfo methodInfo)
@@ -1754,17 +1754,13 @@ namespace System.Management.Automation
 
                         if (typeToAdd is not null
                             && !typeToAdd.Name.Equals("System.Void", StringComparison.OrdinalIgnoreCase)
-                            && !tempResult.ContainsKey(typeToAdd.Name))
+                            && tempResult.Add(typeToAdd.Name))
                         {
-                            tempResult.Add(typeToAdd.Name, typeToAdd);
+                            result.Add(typeToAdd);
                         }
                     }
                 }
 
-                if (tempResult.Count > 0)
-                {
-                    result.AddRange(tempResult.Values);
-                }
                 return;
             }
 
