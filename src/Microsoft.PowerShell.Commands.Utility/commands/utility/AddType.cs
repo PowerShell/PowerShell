@@ -685,10 +685,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static IEnumerable<PortableExecutableReference> InitDefaultRefAssemblies()
         {
-            var dotnetRefAsmFiles = Directory.EnumerateFiles(s_netcoreAppRefFolder, "*.dll", SearchOption.TopDirectoryOnly);
-            var defaultRefAssemblies = new List<PortableExecutableReference>(dotnetRefAsmFiles.Count() + 1);
+            // Default reference assemblies consist of .NET reference assemblies and the 'S.M.A' assembly.
+            // Today, there are 161 .NET reference assemblies, so the needed capacity is 162, but we use 200
+            // as the initial capacity to cover the possible increase of .NET reference assemblies in future.
+            var defaultRefAssemblies = new List<PortableExecutableReference>(capacity: 200);
 
-            foreach (string file in dotnetRefAsmFiles)
+            foreach (string file in Directory.EnumerateFiles(s_netcoreAppRefFolder, "*.dll", SearchOption.TopDirectoryOnly))
             {
                 defaultRefAssemblies.Add(MetadataReference.CreateFromFile(file));
             }
