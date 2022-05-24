@@ -269,6 +269,8 @@ function Test-IsReleaseCandidate
     return $false
 }
 
+$optimizedFddRegex = 'fxdependent-(linux|alpine|win|win7|osx)-(x64|x86|arm64|arm)'
+
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName="Default")]
     param(
@@ -303,6 +305,7 @@ function Start-PSBuild {
         # If this parameter is not provided it will get determined automatically.
         [ValidateSet("alpine-x64",
                      "fxdependent",
+                     "fxdependent-linux-x64",
                      "fxdependent-win-desktop",
                      "linux-arm",
                      "linux-arm64",
@@ -457,7 +460,7 @@ Fix steps:
     # Framework Dependent builds do not support ReadyToRun as it needs a specific runtime to optimize for.
     # The property is set in Powershell.Common.props file.
     # We override the property through the build command line.
-    if($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) {
+    if(($Options.Runtime -like 'fxdependent*' -or $ForMinimalSize) -and $Options.Runtime -notmatch $optimizedFddRegex) {
         $Arguments += "/property:PublishReadyToRun=false"
     }
 
@@ -472,6 +475,9 @@ Fix steps:
     if (-not $SMAOnly -and $Options.Runtime -notlike 'fxdependent*') {
         # libraries should not have runtime
         $Arguments += "--runtime", $Options.Runtime
+    } elseif ($Options.Runtime -match $optimizedFddRegex) {
+        $runtime = $Options.Runtime -replace 'fxdependent-', ''
+        $Arguments += "--runtime", $runtime
     }
 
     if ($ReleaseTag) {
@@ -495,7 +501,12 @@ Fix steps:
 
     # Handle TypeGen
     # .inc file name must be different for Windows and Linux to allow build on Windows and WSL.
-    $incFileName = "powershell_$($Options.Runtime).inc"
+    $runtime = $Options.Runtime
+    if ($Options.Runtime -match $optimizedFddRegex) {
+        $runtime = $Options.Runtime -replace 'fxdependent-', ''
+    }
+
+    $incFileName = "powershell_$runtime.inc"
     if ($TypeGen -or -not (Test-Path "$PSScriptRoot/src/TypeCatalogGen/$incFileName")) {
         Write-Log -message "Run TypeGen (generating CorePsTypeCatalog.cs)"
         Start-TypeGen -IncFileName $incFileName
@@ -513,7 +524,8 @@ Fix steps:
         # Relative paths do not work well if cwd is not changed to project
         Push-Location $Options.Top
 
-        if ($Options.Runtime -notlike 'fxdependent*') {
+        if ($Options.Runtime -notlike 'fxdependent*' -or $Options.Runtime -match $optimizedFddRegex) {
+            Write-Verbose "Building without shim" -Verbose
             $sdkToUse = 'Microsoft.NET.Sdk'
             if ($Options.Runtime -like 'win7-*' -and !$ForMinimalSize) {
                 ## WPF/WinForm and the PowerShell GraphicalHost assemblies are included
@@ -527,6 +539,7 @@ Fix steps:
             Start-NativeExecution { dotnet $Arguments }
             Write-Log -message "PowerShell output: $($Options.Output)"
         } else {
+            Write-Verbose "Building with shim" -Verbose
             $globalToolSrcFolder = Resolve-Path (Join-Path $Options.Top "../Microsoft.PowerShell.GlobalTool.Shim") | Select-Object -ExpandProperty Path
 
             if ($Options.Runtime -eq 'fxdependent') {
@@ -809,6 +822,7 @@ function New-PSOptions {
         [ValidateSet("",
                      "alpine-x64",
                      "fxdependent",
+                     "fxdependent-linux-x64",
                      "fxdependent-win-desktop",
                      "linux-arm",
                      "linux-arm64",
