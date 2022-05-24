@@ -237,6 +237,14 @@ Describe 'Tests for $PSStyle automatic variable' {
             $PSStyle.Progress.MaxWidth = $maxWidth
         }
     }
+
+    It 'Do not use OSC indicator when the stdout is redirected' {
+        $pwsh = Join-Path $PSHOME 'pwsh'
+
+        ## In the case that the stdout is redirected, pwsh should not write the OSC indicator Ansi sequence.
+        $result = & $pwsh -noprofile -Command { $PSStyle.Progress.UseOSCIndicator = $true; 'hello'} | Format-List
+        $result | Should -BeExactly 'hello'
+    }
 }
 
 Describe 'Handle strings with escape sequences in formatting' {
