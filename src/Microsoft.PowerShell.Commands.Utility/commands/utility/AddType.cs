@@ -686,7 +686,7 @@ namespace Microsoft.PowerShell.Commands
         private static IEnumerable<PortableExecutableReference> InitDefaultRefAssemblies()
         {
             // Define number of reference assemblies distributed with PowerShell.
-            const int maxPowershellRefAssemblies = 160;
+            const int maxPowershellRefAssemblies = 161;
 
             const int capacity = maxPowershellRefAssemblies + 1;
             var defaultRefAssemblies = new List<PortableExecutableReference>(capacity);
