@@ -122,9 +122,7 @@ stages:
     displayName: Validate Package BOM
     pool:
       # testing
-      vmImage: windows-latest
-    variables:
-    - group: 'Azure Blob variable group'
+      vmImage: ubuntu-latest
     steps:
       - template: templates/release-ValidatePackageBOM.yml
 
