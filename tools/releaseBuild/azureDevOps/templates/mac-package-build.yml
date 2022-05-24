@@ -109,13 +109,23 @@ jobs:
     displayName: Compress signed files
 
   - pwsh: |
-      tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
+      try {
+        tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -location $(PowerShellRoot) -BootStrap
+      } catch {
+        Get-Error
+        throw
+      }
     displayName: 'Bootstrap VM'
 
   - pwsh: |
       # Add -SkipReleaseChecks as a mitigation to unblock release.
       # macos-10.15 does not allow creating a folder under root. Hence, moving the folder.
-      $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar" -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
+      try {
+        $(Build.SourcesDirectory)/tools/releaseBuild/macOS/PowerShellPackageVsts.ps1 -ReleaseTag $(ReleaseTagVar) -Destination $(System.ArtifactsDirectory) -location $(PowerShellRoot) -ArtifactName macosPkgResults -BuildZip $(BuildPackagePath) -ExtraPackage "tar" -Runtime 'osx-${{ parameters.buildArchitecture }}' -SkipReleaseChecks
+      } catch {
+        Get-Error
+        throw
+      }
     displayName: 'Package'
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
@@ -123,3 +133,5 @@ jobs:
     inputs:
       sourceScanPath: '$(PowerShellRoot)/tools'
       snapshotForceEnabled: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

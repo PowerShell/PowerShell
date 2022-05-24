@@ -2,10 +2,12 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Text;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -29,6 +31,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// Column width of the screen.
         /// </summary>
         private int _columnWidth = 0;
+
+        /// <summary>
+        /// A cached string builder used within this type to reduce creation of temporary strings.
+        /// </summary>
+        private readonly StringBuilder _cachedBuilder = new();
 
         /// <summary>
         /// </summary>
@@ -88,19 +95,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             for (int k = 0; k < propertyNames.Length; k++)
             {
+                string propertyName = propertyNames[k];
                 if (propertyNameCellCounts[k] < _propertyLabelsDisplayLength)
                 {
                     // shorter than the max, add padding
-                    _propertyLabels[k] = propertyNames[k] + StringUtil.Padding(_propertyLabelsDisplayLength - propertyNameCellCounts[k]);
+                    _propertyLabels[k] = propertyName + StringUtil.Padding(_propertyLabelsDisplayLength - propertyNameCellCounts[k]);
                 }
                 else if (propertyNameCellCounts[k] > _propertyLabelsDisplayLength)
                 {
                     // longer than the max, clip
-                    _propertyLabels[k] = propertyNames[k].Substring(0, dc.GetHeadSplitLength(propertyNames[k], _propertyLabelsDisplayLength));
+                    _propertyLabels[k] = propertyName.VtSubstring(0, dc.TruncateTail(propertyName, _propertyLabelsDisplayLength));
                 }
                 else
                 {
-                    _propertyLabels[k] = propertyNames[k];
+                    _propertyLabels[k] = propertyName;
                 }
 
                 _propertyLabels[k] += Separator;
@@ -173,12 +181,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 propertyValue = string.Empty;
 
             // make sure we honor embedded newlines
-            string[] lines = StringManipulationHelper.SplitLines(propertyValue);
+            List<string> lines = StringManipulationHelper.SplitLines(propertyValue);
 
             // padding to use in the lines after the first
             string padding = null;
 
-            for (int i = 0; i < lines.Length; i++)
+            for (int i = 0; i < lines.Count; i++)
             {
                 string prependString = null;
 
@@ -205,8 +213,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="lo">LineOuput to write to.</param>
         private void WriteSingleLineHelper(string prependString, string line, LineOutput lo)
         {
-            if (line == null)
+            if (line is null)
+            {
                 line = string.Empty;
+            }
 
             // compute the width of the field for the value string (in screen cells)
             int fieldCellCount = _columnWidth - _propertyLabelsDisplayLength;
@@ -214,20 +224,45 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // split the lines
             StringCollection sc = StringManipulationHelper.GenerateLines(lo.DisplayCells, line, fieldCellCount, fieldCellCount);
 
-            // padding to use in the lines after the first
-            string padding = StringUtil.Padding(_propertyLabelsDisplayLength);
+            // The padding to use in the lines after the first.
+            string headPadding = null;
 
             // display the string collection
             for (int k = 0; k < sc.Count; k++)
             {
+                string str = sc[k];
+                _cachedBuilder.Clear();
+
                 if (k == 0)
                 {
-                    lo.WriteLine(PSStyle.Instance.Formatting.FormatAccent + prependString + PSStyle.Instance.Reset + sc[k]);
+                    if (string.IsNullOrWhiteSpace(prependString))
+                    {
+                        // Sometimes 'prependString' is just padding white spaces.
+                        // We don't need to add formatting escape sequences in such a case.
+                        _cachedBuilder.Append(prependString).Append(str);
+                    }
+                    else
+                    {
+                        _cachedBuilder
+                            .Append(PSStyle.Instance.Formatting.FormatAccent)
+                            .Append(prependString)
+                            .Append(PSStyle.Instance.Reset)
+                            .Append(str);
+                    }
                 }
                 else
                 {
-                    lo.WriteLine(padding + PSStyle.Instance.Formatting.FormatAccent + PSStyle.Instance.Reset + sc[k]);
+                    // Lazily calculate the padding to use for the subsequent lines as it's quite often that only the first line exists.
+                    headPadding ??= StringUtil.Padding(_propertyLabelsDisplayLength);
+                    _cachedBuilder.Append(headPadding).Append(str);
                 }
+
+                if (str.Contains(ValueStringDecorated.ESC) && !str.EndsWith(PSStyle.Instance.Reset))
+                {
+                    _cachedBuilder.Append(PSStyle.Instance.Reset);
+                }
+
+                lo.WriteLine(_cachedBuilder.ToString());
             }
         }
 

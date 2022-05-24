@@ -24,6 +24,7 @@ namespace Microsoft.WSMan.Management
     /// -SelectorSet {Name=Spooler}
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "WSManAction", DefaultParameterSetName = "URI", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096843")]
+    [OutputType(typeof(XmlElement))]
     public class InvokeWSManActionCommand : AuthenticatingWSManCommand, IDisposable
     {
         /// <summary>

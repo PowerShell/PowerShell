@@ -245,6 +245,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Gets the value without triggering debugger check.
+        /// </summary>
+        internal virtual object GetValueRaw()
+        {
+            return _value;
+        }
+
+        /// <summary>
         /// Gets or sets the value of the variable.
         /// </summary>
         /// <exception cref="SessionStateUnauthorizedAccessException">
@@ -794,6 +802,11 @@ namespace System.Management.Automation
                 _tuple.SetValue(_tupleSlot, value);
                 DebuggerCheckVariableWrite();
             }
+        }
+
+        internal override object GetValueRaw()
+        {
+            return _tuple.GetValue(_tupleSlot);
         }
 
         internal override void SetValueRaw(object newValue, bool preserveValueTypeSemantics)

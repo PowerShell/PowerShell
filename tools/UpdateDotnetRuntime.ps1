@@ -128,9 +128,15 @@ function Update-PackageVersion {
             foreach ($p in $pkgs.Values) {
                 # some packages are directly updated on nuget.org so need to check that too.
                 if ($p.Version -like "$versionPattern*" -or $p.Source -eq 'nuget.org') {
-                    if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
-                        $v.NewVersion = $p.Version
-                        break
+                    try {
+                        if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
+                            $v.NewVersion = $p.Version
+                            break
+                        }
+                    } catch {
+                        if ($_.FullyQualifiedErrorId -ne 'InvalidCastParseTargetInvocation') {
+                            throw $_
+                        }
                     }
                 }
             }
@@ -221,9 +227,7 @@ function Get-DotnetUpdate {
         } else {
             $shouldUpdate = $false
             $newVersion = $latestSDKVersionString
-            if ($null -eq $currentVersion.PreReleaseLabel) {
-                $Message = "$latestSDKversion is not preview, update manually."
-            }
+            $Message = $null -eq $currentVersion.PreReleaseLabel ? "$latestSDKversion is not preview, update manually." : "No update needed."
         }
     } catch {
         Write-Verbose -Verbose "Error occured: $_.message"
@@ -248,6 +252,27 @@ function Update-DevContainer {
     $devContainerDocker = (Get-Content $dockerFilePath) -replace 'FROM mcr\.microsoft\.com/dotnet.*', "FROM mcr.microsoft.com/dotnet/nightly/sdk:$sdkImageVersion"
 
     $devContainerDocker | Out-File -FilePath $dockerFilePath -Force
+}
+
+<#
+ .DESCRIPTION Update the DotnetMetadata.json file with the latest version of the SDK
+ #>
+function Update-DotnetRuntimeMetadataChannel {
+    param (
+        [string] $newSdk
+    )
+
+    # -replace uses regex so in order to split on `.`, we need to use `\.` to escape the dot character.
+    $sdkParts = $newSdk -split '\.'
+
+    # Transform SDK Version '7.0.100-preview.5.22263.22' -> '7.0.1xx-preview5'
+    $newChannel = $sdkParts[0] + "." + $sdkParts[1] + "." + ($sdkParts[2] -replace '0','x') + $sdkParts[3]
+
+    Write-Verbose -Verbose -Message "Updating DotnetRuntimeMetadata.json with channel $newChannel"
+
+    $metadata = Get-Content -Raw "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json
+    $metadata.sdk.channel = $newChannel
+    $metadata | ConvertTo-Json | Out-File -FilePath "$PSScriptRoot/../DotnetRuntimeMetadata.json" -Force
 }
 
 $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
@@ -360,6 +385,8 @@ if ($dotnetUpdate.ShouldUpdate) {
     }
 
     Update-DevContainer
+
+    Update-DotnetRuntimeMetadataChannel -newSdk $latestSdkVersion
 }
 else {
     Write-Verbose -Verbose -Message $dotnetUpdate.Message

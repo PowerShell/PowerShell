@@ -642,7 +642,7 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo ArgumentTransformationAttribute_Transform =
             typeof(ArgumentTransformationAttribute).GetMethod(nameof(ArgumentTransformationAttribute.Transform), InstancePublicFlags);
-        
+
         internal static readonly MethodInfo MemberInvocationLoggingOps_LogMemberInvocation =
             typeof(MemberInvocationLoggingOps).GetMethod(nameof(MemberInvocationLoggingOps.LogMemberInvocation), StaticFlags);
     }
@@ -1064,7 +1064,7 @@ namespace System.Management.Automation.Language
 
         internal Expression GetAutomaticVariable(VariableExpressionAst varAst)
         {
-            // Generate, in psuedo code:
+            // Generate, in pseudo code:
             //
             //     return (localsTuple.IsValueSet(tupleIndex)
             //          ? localsTuple.ItemXXX
@@ -1074,7 +1074,7 @@ namespace System.Management.Automation.Language
             //
             //     * $PSCmdlet - always set if the script uses cmdletbinding.
             //     * $_ - always set in process and end block, otherwise need dynamic checks.
-            //     * $this - can never know if it's set, always need above psuedo code.
+            //     * $this - can never know if it's set, always need above pseudo code.
             //     * $input - also can never know - it's always set from a command process, but not necessarily set from ScriptBlock.Invoke.
             //
             // These optimizations are not yet performed.
@@ -3907,7 +3907,7 @@ namespace System.Management.Automation.Language
             //       funcContext.OutputPipe = oldPipe;
             //   }
             //
-            // In the above psuedo-code, any of {outputFileRedirection, nonOutputFileRedirection, mergingRedirection} may
+            // In the above pseudo-code, any of {outputFileRedirection, nonOutputFileRedirection, mergingRedirection} may
             // not exist, but the order is preserved, so that file redirections go before merging redirections (so that
             // funcContext.OutputPipe has the correct value when setting up merging.)
             //
@@ -5178,7 +5178,7 @@ namespace System.Management.Automation.Language
         // If the automatic var has no value in the current frame, then we set the variable's value to $null
         // after leaving the stmt.
         //
-        // The psuedo-code:
+        // The pseudo-code:
         //
         //    try {
         //        oldValue = (localSet.Get(automaticVar)) ? locals.ItemNNN : null;
@@ -5617,7 +5617,9 @@ namespace System.Management.Automation.Language
                 return Expression.Block(returnValue, returnExpr);
             }
 
-            return returnExpr;
+            return Expression.Block(
+                UpdatePosition(returnStatementAst),
+                returnExpr);
         }
 
         public object VisitExitStatement(ExitStatementAst exitStatementAst)

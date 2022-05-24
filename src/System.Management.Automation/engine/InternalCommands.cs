@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Commands
             // in which they were created.
             foreach (object item in _usingValuesMap.Values)
             {
-                if (item is ScriptBlock)
+                if (item is ScriptBlock or PSObject { BaseObject: ScriptBlock })
                 {
                     ThrowTerminatingError(
                         new ErrorRecord(

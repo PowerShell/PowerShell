@@ -1658,9 +1658,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// If the argument completion falls into these pre-defined cases:
-        ///   1. The matching parameter is of type Enum
-        ///   2. The matching parameter is of type SwitchParameter
-        ///   3. The matching parameter is declared with ValidateSetAttribute
+        ///   1. The matching parameter is declared with ValidateSetAttribute
+        ///   2. The matching parameter is of type Enum
+        ///   3. The matching parameter is of type SwitchParameter
         ///   4. Falls into the native command argument completion
         /// a null instance of CompletionResult is added to the end of the
         /// "result" list, to indicate that this particular argument completion
@@ -1681,6 +1681,74 @@ namespace System.Management.Automation
             if (parameterType.IsArray)
             {
                 parameterType = parameterType.GetElementType();
+            }
+
+            foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
+            {
+                if (att is ValidateSetAttribute setAtt)
+                {
+                    RemoveLastNullCompletionResult(result);
+
+                    string wordToComplete = context.WordToComplete;
+                    string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
+
+                    var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
+                    var setList = new List<string>();
+
+                    foreach (string value in setAtt.ValidValues)
+                    {
+                        if (value == string.Empty)
+                        {
+                            continue;
+                        }
+
+                        if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
+                        {
+                            string completionText = quote == string.Empty ? value : quote + value + quote;
+                            fullMatch = new CompletionResult(completionText, value, CompletionResultType.ParameterValue, value);
+                            continue;
+                        }
+
+                        if (pattern.IsMatch(value))
+                        {
+                            setList.Add(value);
+                        }
+                    }
+
+                    if (fullMatch != null)
+                    {
+                        result.Add(fullMatch);
+                    }
+
+                    setList.Sort();
+                    foreach (string entry in setList)
+                    {
+                        string realEntry = entry;
+                        string completionText = entry;
+                        if (quote == string.Empty)
+                        {
+                            if (CompletionRequiresQuotes(entry, false))
+                            {
+                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
+                                completionText = "'" + realEntry + "'";
+                            }
+                        }
+                        else
+                        {
+                            if (quote.Equals("'", StringComparison.OrdinalIgnoreCase))
+                            {
+                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
+                            }
+
+                            completionText = quote + realEntry + quote;
+                        }
+
+                        result.Add(new CompletionResult(completionText, entry, CompletionResultType.ParameterValue, entry));
+                    }
+
+                    result.Add(CompletionResult.Null);
+                    return;
+                }
             }
 
             if (parameterType.IsEnum)
@@ -1738,71 +1806,6 @@ namespace System.Management.Automation
 
                 result.Add(CompletionResult.Null);
                 return;
-            }
-
-            foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
-            {
-                if (att is ValidateSetAttribute setAtt)
-                {
-                    RemoveLastNullCompletionResult(result);
-
-                    string wordToComplete = context.WordToComplete;
-                    string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
-
-                    var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
-                    var setList = new List<string>();
-
-                    foreach (string value in setAtt.ValidValues)
-                    {
-                        if (value == string.Empty) { continue; }
-
-                        if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
-                        {
-                            string completionText = quote == string.Empty ? value : quote + value + quote;
-                            fullMatch = new CompletionResult(completionText, value, CompletionResultType.ParameterValue, value);
-                            continue;
-                        }
-
-                        if (pattern.IsMatch(value))
-                        {
-                            setList.Add(value);
-                        }
-                    }
-
-                    if (fullMatch != null)
-                    {
-                        result.Add(fullMatch);
-                    }
-
-                    setList.Sort();
-                    foreach (string entry in setList)
-                    {
-                        string realEntry = entry;
-                        string completionText = entry;
-                        if (quote == string.Empty)
-                        {
-                            if (CompletionRequiresQuotes(entry, false))
-                            {
-                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
-                                completionText = "'" + realEntry + "'";
-                            }
-                        }
-                        else
-                        {
-                            if (quote.Equals("'", StringComparison.OrdinalIgnoreCase))
-                            {
-                                realEntry = CodeGeneration.EscapeSingleQuotedStringContent(entry);
-                            }
-
-                            completionText = quote + realEntry + quote;
-                        }
-
-                        result.Add(new CompletionResult(completionText, entry, CompletionResultType.ParameterValue, entry));
-                    }
-
-                    result.Add(CompletionResult.Null);
-                    return;
-                }
             }
 
             NativeCommandArgumentCompletion(commandName, parameter.Parameter, result, commandAst, context, boundArguments);
@@ -4299,7 +4302,8 @@ namespace System.Management.Automation
             var results = new List<CompletionResult>();
 
             // First, try to match \\server\share
-            var shareMatch = Regex.Match(wordToComplete, "^\\\\\\\\([^\\\\]+)\\\\([^\\\\]*)$");
+            // support both / and \ when entering UNC paths for typing convenience (#17111)
+            var shareMatch = Regex.Match(wordToComplete, @"^(?:\\\\|//)([^\\/]+)(?:\\|/)([^\\/]*)$");
             if (shareMatch.Success)
             {
                 // Only match share names, no filenames.
@@ -5632,10 +5636,10 @@ namespace System.Management.Automation
         private static readonly HashSet<string> s_dscCollectionVariables =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "SelectedNodes", "AllNodes" };
 
-        internal static List<CompletionResult> CompleteMember(CompletionContext context, bool @static)
+        internal static List<CompletionResult> CompleteMember(CompletionContext context, bool @static, ref int replacementLength)
         {
             // If we get here, we know that either:
-            //   * the cursor appeared immediately after a member access token ('.' or '::').
+            //   * the cursor appeared after a member access token ('.' or '::').
             //   * the parent of the ast on the cursor was a member expression.
             //
             // In the first case, we have 2 possibilities:
@@ -5643,31 +5647,35 @@ namespace System.Management.Automation
             //   * the last ast is a string constant, with something like:   echo $foo.
 
             var results = new List<CompletionResult>();
-
             var lastAst = context.RelatedAsts.Last();
-            var lastAstAsMemberExpr = lastAst as MemberExpressionAst;
+            var memberName = "*";
             Ast memberNameCandidateAst = null;
             ExpressionAst targetExpr = null;
-            if (lastAstAsMemberExpr != null)
+
+            if (lastAst is MemberExpressionAst LastAstAsMemberExpression)
             {
                 // If the cursor is not inside the member name in the member expression, assume
                 // that the user had incomplete input, but the parser got lucky and succeeded parsing anyway.
-                if (context.TokenAtCursor.Extent.StartOffset >= lastAstAsMemberExpr.Member.Extent.StartOffset)
+                if (context.TokenAtCursor is not null && context.TokenAtCursor.Extent.StartOffset >= LastAstAsMemberExpression.Member.Extent.StartOffset)
                 {
-                    memberNameCandidateAst = lastAstAsMemberExpr.Member;
+                    memberNameCandidateAst = LastAstAsMemberExpression.Member;
                 }
 
-                targetExpr = lastAstAsMemberExpr.Expression;
+                targetExpr = LastAstAsMemberExpression.Expression;
+                // Handles scenario where the cursor is after the member access token but before the text
+                // like: "".<Tab>Le
+                // which completes the member using the partial text after the cursor.
+                if (LastAstAsMemberExpression.Member is StringConstantExpressionAst stringExpression && stringExpression.Extent.StartOffset <= context.CursorPosition.Offset)
+                {
+                    memberName = $"{stringExpression.Value}*";
+                }
             }
             else
             {
                 memberNameCandidateAst = lastAst;
             }
 
-            var memberNameAst = memberNameCandidateAst as StringConstantExpressionAst;
-
-            var memberName = "*";
-            if (memberNameAst != null)
+            if (memberNameCandidateAst is StringConstantExpressionAst memberNameAst)
             {
                 // Make sure to correctly handle: echo $foo.
                 if (!memberNameAst.Value.Equals(".", StringComparison.OrdinalIgnoreCase) && !memberNameAst.Value.Equals("::", StringComparison.OrdinalIgnoreCase))
@@ -5681,8 +5689,7 @@ namespace System.Management.Automation
                 return results;
             }
 
-            var commandAst = lastAst.Parent as CommandAst;
-            if (commandAst != null)
+            if (lastAst.Parent is CommandAst commandAst)
             {
                 int i;
                 for (i = commandAst.CommandElements.Count - 1; i >= 0; --i)
@@ -5702,10 +5709,36 @@ namespace System.Management.Automation
                     targetExpr = nextToLastAst as ExpressionAst;
                 }
             }
-            else if (lastAst.Parent is MemberExpressionAst)
+            else if (lastAst.Parent is MemberExpressionAst parentAsMemberExpression)
             {
+                if (lastAst is ErrorExpressionAst)
+                {
+                    // Handles scenarios like $PSVersionTable.PSVersi<tab>.Major.
+                    // where the cursor is moved back to a previous member expression while
+                    // there's an incomplete member expression at the end
+                    targetExpr = parentAsMemberExpression;
+                    do
+                    {
+                        if (targetExpr is MemberExpressionAst memberExpression)
+                        {
+                            targetExpr = memberExpression.Expression;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    } while (targetExpr.Extent.EndOffset >= context.CursorPosition.Offset);
+
+                    if (targetExpr.Parent != parentAsMemberExpression
+                        && targetExpr.Parent is MemberExpressionAst memberAst
+                        && memberAst.Member is StringConstantExpressionAst stringExpression
+                        && stringExpression.Extent.StartOffset <= context.CursorPosition.Offset)
+                    {
+                        memberName = $"{stringExpression.Value}*";
+                    }
+                }
                 // If 'targetExpr' has already been set, we should skip this step. This is for some member completion
-                // cases in ISE. In ISE, we may add a new statement in the middle of existing statements as follows:
+                // cases in VSCode, where we may add a new statement in the middle of existing statements as follows:
                 //     $xml = New-Object Xml
                 //     $xml.
                 //     $xml.Save("C:\data.xml")
@@ -5713,22 +5746,43 @@ namespace System.Management.Automation
                 // a MemberExpressionAst '$xml.$xml', whose parent is still a MemberExpressionAst '$xml.$xml.Save'.
                 // But here we DO NOT want to re-assign 'targetExpr' to be '$xml.$xml'. 'targetExpr' in this case
                 // should be '$xml'.
-                if (targetExpr == null)
+                else if (targetExpr is null)
                 {
-                    var memberExprAst = (MemberExpressionAst)lastAst.Parent;
-                    targetExpr = memberExprAst.Expression;
+                    targetExpr = parentAsMemberExpression.Expression;
                 }
             }
-            else if (lastAst.Parent is BinaryExpressionAst && context.TokenAtCursor.Kind.Equals(TokenKind.Multiply))
+            else if (lastAst.Parent is BinaryExpressionAst binaryExpression && context.TokenAtCursor.Kind.Equals(TokenKind.Multiply))
             {
-                var memberExprAst = ((BinaryExpressionAst)lastAst.Parent).Left as MemberExpressionAst;
-                if (memberExprAst != null)
+                if (binaryExpression.Left is MemberExpressionAst memberExpression)
                 {
-                    targetExpr = memberExprAst.Expression;
-                    if (memberExprAst.Member is StringConstantExpressionAst)
+                    targetExpr = memberExpression.Expression;
+                    if (memberExpression.Member is StringConstantExpressionAst stringExpression)
                     {
-                        memberName = ((StringConstantExpressionAst)memberExprAst.Member).Value + "*";
+                        memberName = $"{stringExpression.Value}*";
                     }
+                }
+            }
+            else if (lastAst.Parent is ErrorStatementAst errorStatement)
+            {
+                // Handles switches like:
+                // switch ($x)
+                // {
+                //     'RandomString'.<tab>
+                //     { }
+                // }
+                Ast astBeforeMemberAccessToken = null;
+                for (int i = errorStatement.Bodies.Count - 1; i >= 0; i--)
+                {
+                    astBeforeMemberAccessToken = errorStatement.Bodies[i];
+                    if (astBeforeMemberAccessToken.Extent.EndOffset < lastAst.Extent.EndOffset)
+                    {
+                        break;
+                    }
+                }
+
+                if (astBeforeMemberAccessToken is ExpressionAst expression)
+                {
+                    targetExpr = expression;
                 }
             }
 
@@ -5822,6 +5876,12 @@ namespace System.Management.Automation
                         }
                     }
                 }
+            }
+
+            if (memberName != "*" && results.Count > 0)
+            {
+                // -1 because membername always has a trailing wildcard *
+                replacementLength = memberName.Length - 1;
             }
 
             return results;

@@ -50,7 +50,6 @@ Describe "Validate start of console host" -Tag CI {
             'System.Runtime.Serialization.Primitives.dll'
             'System.Security.AccessControl.dll'
             'System.Security.Cryptography.dll'
-            'System.Security.Cryptography.X509Certificates.dll'
             'System.Security.Principal.Windows.dll'
             'System.Text.Encoding.Extensions.dll'
             'System.Text.RegularExpressions.dll'
