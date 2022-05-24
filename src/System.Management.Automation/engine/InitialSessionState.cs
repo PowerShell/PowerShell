@@ -3967,6 +3967,7 @@ namespace System.Management.Automation.Runspaces
 #>
 
 [CmdletBinding(DefaultParameterSetName = 'ScriptInputSet')]
+[OutputType([System.Management.Automation.CommandCompletion])]
 Param(
     [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 0)]
     [string] $inputScript,

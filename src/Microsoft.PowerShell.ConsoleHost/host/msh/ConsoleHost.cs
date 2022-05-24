@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
                 {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode");
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("ServerMode", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-ServerMode");
                     StdIOProcessMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (s_cpp.SSHServerMode)
                 {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer");
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SSHServer", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-SSHServerMode");
                     StdIOProcessMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
@@ -212,7 +212,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (s_cpp.NamedPipeServerMode)
                 {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe");
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("NamedPipe", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-NamedPipeServerMode");
                     RemoteSessionNamedPipeServer.RunServerMode(
                         configurationName: s_cpp.ConfigurationName);
@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell
                 }
                 else if (s_cpp.SocketServerMode)
                 {
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode");
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("SocketServerMode", s_cpp.ParametersUsedAsDouble);
                     ProfileOptimization.StartProfile("StartupProfileData-SocketServerMode");
                     HyperVSocketMediator.Run(
                         initialCommand: s_cpp.InitialCommand,
@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell
                     PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 
                     // Send startup telemetry for ConsoleHost startup
-                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal");
+                    ApplicationInsightsTelemetry.SendPSCoreStartupTelemetry("Normal", s_cpp.ParametersUsedAsDouble);
 
                     exitCode = s_theConsoleHost.Run(s_cpp, false);
                 }

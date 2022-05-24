@@ -229,4 +229,17 @@ Describe 'Format-List color tests' {
         $out[0] | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)Short      : $($PSStyle.Reset)1" -Because ($out[0] | Format-Hex)
         $out[1] | Should -BeExactly "$($PSStyle.Formatting.FormatAccent)LongLabelN : $($PSStyle.Reset)2"
     }
+
+    It 'VT decorations in a property value should not be leaked in list view' {
+        $expected = @"
+`e[32;1ma : `e[0mHello
+`e[32;1mb : `e[0m`e[36mworld`e[0m
+"@
+        ## Format-List should append the 'reset' escape sequence to the value of 'b' property.
+        $obj = [pscustomobject]@{ a = "Hello"; b = $PSStyle.Foreground.Cyan + "world"; }
+        $obj | Format-List | Out-File "$TestDrive/outfile.txt"
+
+        $output = Get-Content "$TestDrive/outfile.txt" -Raw
+        $output.Trim().Replace("`r", "") | Should -BeExactly $expected.Replace("`r", "")
+    }
 }

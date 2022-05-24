@@ -5277,7 +5277,17 @@ namespace System.Management.Automation.Language
                                     return GenerateGetPropertyException(restrictions).WriteToDebugLog(this);
                                 }
 
-                                expr = Expression.Property(targetExpr, propertyAccessor);
+                                if (propertyAccessor.PropertyType.IsByRef)
+                                {
+                                    expr = Expression.Call(
+                                        CachedReflectionInfo.ByRefOps_GetByRefPropertyValue,
+                                        targetExpr,
+                                        Expression.Constant(propertyAccessor));
+                                }
+                                else
+                                {
+                                    expr = Expression.Property(targetExpr, propertyAccessor);
+                                }
                             }
                             else
                             {
@@ -7444,7 +7454,20 @@ namespace System.Management.Automation.Language
             if (string.Equals(methodName, "Foreach", StringComparison.OrdinalIgnoreCase))
             {
                 var enumerator = (new object[] { obj }).GetEnumerator();
-                return EnumerableOps.ForEach(enumerator, args[0], Array.Empty<object>());
+                object[] argsToPass;
+
+                if (args.Length > 1)
+                {
+                    int length = args.Length - 1;
+                    argsToPass = new object[length];
+                    Array.Copy(args, sourceIndex: 1, argsToPass, destinationIndex: 0, length: length);
+                }
+                else
+                {
+                    argsToPass = Array.Empty<object>();
+                }
+
+                return EnumerableOps.ForEach(enumerator, args[0], argsToPass);
             }
 
             throw InterpreterError.NewInterpreterException(methodName, typeof(RuntimeException), null,

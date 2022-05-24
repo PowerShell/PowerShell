@@ -26,6 +26,7 @@ namespace Microsoft.WSMan.Management
     /// Connect-WSMan.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "WSManSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096845")]
+    [OutputType(typeof(SessionOption))]
     public class NewWSManSessionOptionCommand : PSCmdlet
     {
         /// <summary>

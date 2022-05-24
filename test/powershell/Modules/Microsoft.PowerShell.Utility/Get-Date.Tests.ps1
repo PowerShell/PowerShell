@@ -56,7 +56,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     # The 'week of year' test cases is from https://en.wikipedia.org/wiki/ISO_week_date
-    It "using -uformat 'V' produces the correct output" -TestCases @(
+    It "using -uformat 'V' produces the correct output (<date>:<week>)" -TestCases @(
         @{date="1998-01-02"; week = "01"},
         @{date="1998-01-03"; week = "01"},
         @{date="2003-01-03"; week = "01"},
@@ -98,7 +98,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     # Using the same test cases as V for ISO week date component parity, plus some more esoteric ones
-    It "using -uformat 'G' produces the correct output" -TestCases @(
+    It "using -uformat 'G' produces the correct output (<date>:<year>)" -TestCases @(
         @{date="0055-12-31"; year = "0055"},
         @{date="0325-01-01"; year = "0325"},
         @{date="0777-01-01"; year = "0776"},
@@ -143,7 +143,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     # Using the same test cases as V for ISO week date component parity, plus some more esoteric ones
-    It "using -uformat 'g' produces the correct output" -TestCases @(
+    It "using -uformat 'g' produces the correct output (<date>:<yy>" -TestCases @(
         @{date="0055-12-31"; yy = "55"},
         @{date="0325-01-01"; yy = "25"},
         @{date="0777-01-01"; yy = "76"},
@@ -188,7 +188,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     # Using the same test cases as V for ISO week date component parity
-    It "using -uformat 'u' produces the correct output" -TestCases @(
+    It "using -uformat 'u' produces the correct output (<date>:<dayOfWeek>)" -TestCases @(
         @{date="1998-01-02"; dayOfWeek = "5"},
         @{date="1998-01-03"; dayOfWeek = "6"},
         @{date="2003-01-03"; dayOfWeek = "5"},
@@ -228,7 +228,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         param($date, $dayOfWeek)
         Get-Date -Date $date -UFormat %u | Should -BeExactly $dayOfWeek
     }
-    It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(
+    It "Passing '<name>' to -uformat produces a descriptive error (<errorId>)" -TestCases @(
         @{ name = "`$null"      ; value = $null; errorId = "ParameterArgumentValidationErrorNullNotAllowed" }
         @{ name = "empty string"; value = ""; errorId = "ParameterArgumentValidationErrorEmptyStringNotAllowed" }
     ) {
@@ -286,11 +286,11 @@ Describe "Get-Date" -Tags "CI" {
         Get-Date -Date 0030-01-01T01:02:03.0004 -Format FileDateTime | Should -Be "00300101T0102030004"
     }
 
-    It "-Format FileDateTimeUniversal works" {
+    It "-Format FileDateTimeUniversal works (1)" {
         Get-Date -Date 0030-01-01T01:02:03.0004z -Format FileDateTimeUniversal | Should -Be "00300101T0102030004Z"
     }
 
-    It "-Format FileDateTimeUniversal works" {
+    It "-Format FileDateTimeUniversal works (2)" {
         Get-Date -Date 0030-01-01T01:02:03.0004z -Format FileDateUniversal | Should -Be "00300101Z"
     }
 
@@ -324,7 +324,7 @@ Describe "Get-Date" -Tags "CI" {
         $timeDifference.Ticks        | Should -BeLessThan 10000
     }
 
-    It "-UnixTimeSeconds works" -TestCases @(
+    It "-UnixTimeSeconds works (<Expected>)" -TestCases @(
         @{ UnixTimeSeconds = 1577836800; Expected = [System.DateTimeOffset]::FromUnixTimeSeconds(1577836800).LocalDateTime },
         @{ UnixTimeSeconds = 0;          Expected = [System.DateTimeOffset]::UnixEpoch.LocalDateTime },
         @{ UnixTimeSeconds = -1;         Expected = [System.DateTimeOffset]::FromUnixTimeSeconds(-1).LocalDateTime }
@@ -360,7 +360,7 @@ Describe "Get-Date -UFormat tests" -Tags "CI" {
         $timeZone1 = [String]::Format("{0:+00;-00}", [Timezone]::CurrentTimeZone.GetUtcOffset( $date1 ).Hours)
     }
 
-    It "Get-Date -UFormat <format>" -TestCases @(
+    It "Get-Date -UFormat <format> (<result>)" -TestCases @(
             # Some format specifiers is locale sensetive:
             #   - and tests work on EN-US only
             #   - and can not be full compatible with Unix 'date' utility.

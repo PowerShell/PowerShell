@@ -47,6 +47,8 @@ Describe 'native commands with pipeline' -tags 'Feature' {
     It 'native command should be killed when pipeline is disposed' -Skip:($IsWindows) {
         $yes = (Get-Process 'yes' -ErrorAction Ignore).Count
         yes | Select-Object -First 2
+        # wait a little to be sure that the process is ended
+        Start-Sleep -Milliseconds 500
         (Get-Process 'yes' -ErrorAction Ignore).Count | Should -Be $yes
     }
 }
