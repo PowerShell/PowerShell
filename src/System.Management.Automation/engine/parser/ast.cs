@@ -3469,6 +3469,8 @@ namespace System.Management.Automation.Language
 
         internal IScriptExtent NameExtent { get { return _functionDefinitionAst.NameExtent; } }
 
+        private string _toolTip;
+
         /// <summary>
         /// Copy a function member ast.
         /// </summary>
@@ -3483,6 +3485,10 @@ namespace System.Management.Automation.Language
 
         internal override string GetTooltip()
         {
+            if (!string.IsNullOrEmpty(_toolTip))
+            {
+                return _toolTip;
+            }
             var sb = new StringBuilder();
             var classMembers = ((TypeDefinitionAst)Parent).Members;
             for (int i = 0; i < classMembers.Count; i++)
@@ -3525,8 +3531,8 @@ namespace System.Management.Automation.Language
 
                 sb.Append(')');
             }
-            
-            return sb.ToString();
+            _toolTip = sb.ToString();
+            return _toolTip;
         }
 
         #region Visitors

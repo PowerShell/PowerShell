@@ -463,6 +463,16 @@ switch ($x)
         $completionText -join ' ' | Should -BeExactly 'Equals( new( ReferenceEquals('
     }
 
+    It 'Should show multiple constructors in the tooltip' {
+        $res = TabExpansion2 -inputScript 'class ConstructorTestClass{ConstructorTestClass ([string] $s){}ConstructorTestClass ([int] $i){}ConstructorTestClass ([int] $i, [bool]$b){}};[ConstructorTestClass]::new'
+        $res.CompletionMatches | Should -HaveCount 1
+        $completionText = $res.CompletionMatches.ToolTip | Should -BeExactly @'
+ConstructorTestClass(string s)
+ConstructorTestClass(int i)
+ConstructorTestClass(int i, bool b)
+'@
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'

@@ -1901,21 +1901,21 @@ namespace System.Management.Automation
                 return;
             }
 
-            // Look for our variable as a parameter or on the lhs of an assignment - hopefully we'll find either
-            // a type constraint or at least we can use the rhs to infer the type.
-            while (parent?.Parent != null)
-            {
-                parent = parent.Parent;
-            }
-
-            if (parent?.Parent is FunctionDefinitionAst)
-            {
-                parent = parent.Parent;
-            }
-
             if (parent is null)
             {
                 return;
+            }
+
+            // Look for our variable as a parameter or on the lhs of an assignment - hopefully we'll find either
+            // a type constraint or at least we can use the rhs to infer the type.
+            while (parent.Parent != null)
+            {
+                parent = parent.Parent;
+            }
+
+            if (parent.Parent is FunctionDefinitionAst)
+            {
+                parent = parent.Parent;
             }
 
             int startOffset = variableExpressionAst.Extent.StartOffset;
