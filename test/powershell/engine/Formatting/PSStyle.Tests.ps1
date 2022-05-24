@@ -243,7 +243,7 @@ Describe 'Tests for $PSStyle automatic variable' {
 
         ## In the case that the stdout is redirected, pwsh should not write the OSC indicator Ansi sequence.
         $result = & $pwsh -noprofile -Command { $PSStyle.Progress.UseOSCIndicator = $true; 'hello'} | Format-List
-        $result | Out-String | Should -BeExactly 'hello'
+        $result | Out-String -Stream | Should -BeExactly 'hello'
     }
 }
 
