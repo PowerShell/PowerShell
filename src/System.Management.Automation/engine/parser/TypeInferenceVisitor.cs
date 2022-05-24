@@ -1719,13 +1719,7 @@ namespace System.Management.Automation
                     resolvedTypeArguments = new Type[genericTypeArguments.Count];
                     for (int i = 0; i < genericTypeArguments.Count; i++)
                     {
-                        Type resolvedType = genericTypeArguments[i].GetReflectionType();
-                        if (resolvedType is null)
-                        {
-                            return;
-                        }
-
-                        resolvedTypeArguments[i] = resolvedType;
+                        resolvedTypeArguments[i] = genericTypeArguments[i].GetReflectionType();
                     }
                 }
 
