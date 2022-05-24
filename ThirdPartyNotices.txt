@@ -126,7 +126,6 @@ limitations under the License.
 Markdig.Signed 0.22.0 - BSD-2-Clause
 
 
-(c) 2008 VeriSign, Inc.
 
 Copyright (c) <year> <owner> . All rights reserved.
 
@@ -145,7 +144,6 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 Microsoft.ApplicationInsights 2.20.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 
 MIT License
@@ -165,7 +163,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.Bcl.AsyncInterfaces 5.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -271,7 +268,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.Management.Infrastructure 2.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 
 MIT License
@@ -291,7 +287,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.Management.Infrastructure.Runtime.Unix 2.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 
 MIT License
@@ -311,7 +306,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.PowerShell.MarkdownRender 7.2.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 (c) Microsoft Corporation. PowerShell's Markdown Rendering project PowerShell Markdown Renderer
 
@@ -332,7 +326,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.PowerShell.Native 7.2.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) by P.J. Plauger
 
@@ -371,7 +364,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Microsoft.Win32.Registry 4.7.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation.
 Copyright (c) 2011, Google Inc.
@@ -425,7 +417,6 @@ SOFTWARE.
 Microsoft.Win32.Registry.AccessControl 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -529,7 +520,6 @@ SOFTWARE.
 Microsoft.Windows.Compatibility 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -600,7 +590,6 @@ SOFTWARE.
 Namotion.Reflection 2.0.10 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 
 MIT License
 
@@ -619,7 +608,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 Newtonsoft.Json 13.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 Copyright James Newton-King 2008
 Copyright (c) 2007 James Newton-King
 Copyright (c) James Newton-King 2008
@@ -671,7 +659,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 runtime.linux-arm.runtime.native.System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -742,7 +729,6 @@ SOFTWARE.
 runtime.linux-arm64.runtime.native.System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -813,7 +799,6 @@ SOFTWARE.
 runtime.linux-x64.runtime.native.System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -884,7 +869,6 @@ SOFTWARE.
 runtime.native.System.Data.SqlClient.sni 4.7.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation.
 Copyright (c) 2011, Google Inc.
@@ -938,7 +922,6 @@ SOFTWARE.
 runtime.native.System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1009,7 +992,6 @@ SOFTWARE.
 runtime.osx-arm64.runtime.native.System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1080,7 +1062,6 @@ SOFTWARE.
 runtime.osx-x64.runtime.native.System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1151,7 +1132,6 @@ SOFTWARE.
 System.CodeDom 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1222,7 +1202,6 @@ SOFTWARE.
 System.Collections.Immutable 5.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1292,7 +1271,6 @@ SOFTWARE.
 System.ComponentModel.Composition 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1363,7 +1341,6 @@ SOFTWARE.
 System.ComponentModel.Composition.Registration 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1434,7 +1411,6 @@ SOFTWARE.
 System.Configuration.ConfigurationManager 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1505,7 +1481,6 @@ SOFTWARE.
 System.Data.Odbc 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1576,7 +1551,6 @@ SOFTWARE.
 System.Data.OleDb 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1648,7 +1622,6 @@ System.Data.SqlClient 4.8.3 - MIT
 
 
 2008 SQL Server 2012
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation.
 Copyright (c) 2011, Google Inc.
@@ -1702,7 +1675,6 @@ SOFTWARE.
 System.Diagnostics.DiagnosticSource 5.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1772,7 +1744,6 @@ SOFTWARE.
 System.Diagnostics.EventLog 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1876,7 +1847,6 @@ SOFTWARE.
 System.DirectoryServices 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -1947,7 +1917,6 @@ SOFTWARE.
 System.DirectoryServices.AccountManagement 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2018,7 +1987,6 @@ SOFTWARE.
 System.DirectoryServices.Protocols 6.0.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2093,7 +2061,6 @@ SOFTWARE.
 System.Drawing.Common 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2164,7 +2131,6 @@ SOFTWARE.
 System.Formats.Asn1 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2235,7 +2201,6 @@ SOFTWARE.
 System.IO.Packaging 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2306,7 +2271,6 @@ SOFTWARE.
 System.IO.Ports 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2377,7 +2341,6 @@ SOFTWARE.
 System.Management 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2448,7 +2411,6 @@ SOFTWARE.
 System.Memory 4.5.4 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) 2011, Google Inc.
 (c) 1997-2005 Sean Eron Anderson.
@@ -2529,7 +2491,6 @@ SOFTWARE.
 System.Numerics.Vectors 4.5.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) 2011, Google Inc.
 (c) 1997-2005 Sean Eron Anderson.
@@ -2577,7 +2538,6 @@ SOFTWARE.
 System.Private.ServiceModel 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -2614,7 +2574,6 @@ SOFTWARE.
 System.Reflection.Context 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2685,7 +2644,6 @@ SOFTWARE.
 System.Reflection.DispatchProxy 4.7.1 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation.
 Copyright (c) 2011, Google Inc.
@@ -2739,7 +2697,6 @@ SOFTWARE.
 System.Reflection.Metadata 5.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2809,7 +2766,6 @@ SOFTWARE.
 System.Runtime.Caching 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2880,7 +2836,6 @@ SOFTWARE.
 System.Runtime.CompilerServices.Unsafe 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -2951,7 +2906,6 @@ SOFTWARE.
 System.Security.AccessControl 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3055,7 +3009,6 @@ SOFTWARE.
 System.Security.Cryptography.ProtectedData 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3126,7 +3079,6 @@ SOFTWARE.
 System.Security.Cryptography.Xml 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3197,7 +3149,6 @@ SOFTWARE.
 System.Security.Permissions 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3268,7 +3219,6 @@ SOFTWARE.
 System.Security.Principal.Windows 5.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3338,7 +3288,6 @@ SOFTWARE.
 System.ServiceModel.Duplex 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -3375,7 +3324,6 @@ SOFTWARE.
 System.ServiceModel.Http 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -3412,7 +3360,6 @@ SOFTWARE.
 System.ServiceModel.NetTcp 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -3449,7 +3396,6 @@ SOFTWARE.
 System.ServiceModel.Primitives 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -3486,7 +3432,6 @@ SOFTWARE.
 System.ServiceModel.Security 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -3523,7 +3468,6 @@ SOFTWARE.
 System.ServiceModel.Syndication 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3594,7 +3538,6 @@ SOFTWARE.
 System.ServiceProcess.ServiceController 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3665,7 +3608,6 @@ SOFTWARE.
 System.Speech 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3736,7 +3678,6 @@ SOFTWARE.
 System.Text.Encoding.CodePages 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3807,7 +3748,6 @@ SOFTWARE.
 System.Text.Encodings.Web 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3878,7 +3818,6 @@ SOFTWARE.
 System.Threading.AccessControl 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
@@ -3949,7 +3888,6 @@ SOFTWARE.
 System.Threading.Tasks.Extensions 4.5.4 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) 2011, Google Inc.
 (c) 1997-2005 Sean Eron Anderson.
@@ -3997,7 +3935,6 @@ SOFTWARE.
 System.Web.Services.Description 4.9.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) .NET Foundation and Contributors
 Copyright (c) 2000-2014 The Legion of the Bouncy Castle Inc. (http://www.bouncycastle.org)
@@ -4034,7 +3971,6 @@ SOFTWARE.
 System.Windows.Extensions 6.0.0 - MIT
 
 
-(c) 2008 VeriSign, Inc.
 (c) Microsoft Corporation.
 Copyright (c) Andrew Arnott
 Copyright 2018 Daniel Lemire
