@@ -1,0 +1,5 @@
+steps:
+  - pwsh: |
+      throw "Jobs with an Issue will not work for release. Please fix the issue and try again."
+    displayName: Check for SucceededWithIssues
+    condition: eq(variables['Agent.JobStatus'],'SucceededWithIssues')
