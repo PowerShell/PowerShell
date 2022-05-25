@@ -1494,11 +1494,15 @@ namespace System.Management.Automation
                 return Array.Empty<PSTypeName>();
             }
 
+            bool isInvokeMemberExpressionAst = false;
             var res = new List<PSTypeName>(10);
+            IList<ITypeName> genericTypeArguments = null;
 
-            var invokeMemberExpression = memberExpressionAst as InvokeMemberExpressionAst;
-            bool isInvokeMemberExpressionAst = invokeMemberExpression is not null;
-            IList<ITypeName> genericTypeArguments = isInvokeMemberExpressionAst ? invokeMemberExpression.GenericTypeArguments : null;
+            if (memberExpressionAst is InvokeMemberExpressionAst invokeMemberExpression)
+            {
+                isInvokeMemberExpressionAst = true;
+                genericTypeArguments = invokeMemberExpression.GenericTypeArguments;
+            }
 
             var maybeWantDefaultCtor = isStatic
                                        && isInvokeMemberExpressionAst
