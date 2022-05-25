@@ -1719,7 +1719,16 @@ namespace System.Management.Automation
                     resolvedTypeArguments = new Type[genericTypeArguments.Count];
                     for (int i = 0; i < genericTypeArguments.Count; i++)
                     {
-                        resolvedTypeArguments[i] = genericTypeArguments[i].GetReflectionType();
+                        Type resolvedType = genericTypeArguments[i].GetReflectionType();
+                        if (resolvedType is null)
+                        {
+                            // If any generic type argument cannot be resolved yet,
+                            // we simply assume this information is unavailable.
+                            resolvedTypeArguments = null;
+                            break;
+                        }
+
+                        resolvedTypeArguments[i] = resolvedType;
                     }
                 }
 
@@ -1733,7 +1742,7 @@ namespace System.Management.Automation
                         {
                             retType = methodInfo.ReturnType;
                         }
-                        else if (genericTypeArguments is not null)
+                        else if (resolvedTypeArguments is not null)
                         {
                             try
                             {
@@ -1742,7 +1751,7 @@ namespace System.Management.Automation
                             catch
                             {
                                 // If we can't build the generic method then just skip it to retain other completion results.
-                                break;
+                                continue;
                             }
                         }
 
