@@ -109,7 +109,7 @@ namespace System.Management.Automation.Internal
         // CSI escape sequences
         private const string CsiRegex = @"(\x1b\[\?\d+[hl])";
 
-        // Hyperlink escape sequences
+        // Hyperlink escape sequences. Note: '.*?' makes '.*' do non-greedy match.
         private const string HyperlinkRegex = @"(\x1b\]8;;.*?\x1b\\)";
 
         // replace regex with .NET 6 API once available
