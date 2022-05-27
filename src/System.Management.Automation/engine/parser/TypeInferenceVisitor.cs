@@ -1494,8 +1494,16 @@ namespace System.Management.Automation
                 return Array.Empty<PSTypeName>();
             }
 
+            bool isInvokeMemberExpressionAst = false;
             var res = new List<PSTypeName>(10);
-            bool isInvokeMemberExpressionAst = memberExpressionAst is InvokeMemberExpressionAst;
+            IList<ITypeName> genericTypeArguments = null;
+
+            if (memberExpressionAst is InvokeMemberExpressionAst invokeMemberExpression)
+            {
+                isInvokeMemberExpressionAst = true;
+                genericTypeArguments = invokeMemberExpression.GenericTypeArguments;
+            }
+
             var maybeWantDefaultCtor = isStatic
                                        && isInvokeMemberExpressionAst
                                        && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");
@@ -1512,7 +1520,7 @@ namespace System.Management.Automation
 
                 var members = _context.GetMembersByInferredType(type, isStatic, filter: null);
 
-                AddTypesOfMembers(type, memberNameList, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, res);
+                AddTypesOfMembers(type, memberNameList, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, genericTypeArguments, res);
 
                 // We didn't find any constructors but they used [T]::new() syntax
                 if (maybeWantDefaultCtor)
@@ -1533,7 +1541,7 @@ namespace System.Management.Automation
             List<PSTypeName> inferredTypes)
         {
             var memberNamesToCheck = new List<string> { memberName };
-            AddTypesOfMembers(thisType, memberNamesToCheck, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, inferredTypes);
+            AddTypesOfMembers(thisType, memberNamesToCheck, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, genericTypeArguments: null, inferredTypes);
         }
 
         private void AddTypesOfMembers(
@@ -1542,6 +1550,7 @@ namespace System.Management.Automation
             IList<object> members,
             ref bool maybeWantDefaultCtor,
             bool isInvokeMemberExpressionAst,
+            IList<ITypeName> genericTypeArguments,
             List<PSTypeName> result)
         {
             for (int i = 0; i < memberNamesToCheck.Count; i++)
@@ -1549,7 +1558,7 @@ namespace System.Management.Automation
                 string memberNameToCheck = memberNamesToCheck[i];
                 foreach (var member in members)
                 {
-                    if (TryGetTypeFromMember(currentType, member, memberNameToCheck, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, result, memberNamesToCheck))
+                    if (TryGetTypeFromMember(currentType, member, memberNameToCheck, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, genericTypeArguments, result, memberNamesToCheck))
                     {
                         break;
                     }
@@ -1563,6 +1572,7 @@ namespace System.Management.Automation
             string memberName,
             ref bool maybeWantDefaultCtor,
             bool isInvokeMemberExpressionAst,
+            IList<ITypeName> genericTypeArguments,
             List<PSTypeName> result,
             List<string> memberNamesToCheck)
         {
@@ -1588,7 +1598,7 @@ namespace System.Management.Automation
                     if (methodCacheEntry[0].method.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
                     {
                         maybeWantDefaultCtor = false;
-                        AddTypesFromMethodCacheEntry(methodCacheEntry, result, isInvokeMemberExpressionAst);
+                        AddTypesFromMethodCacheEntry(methodCacheEntry, genericTypeArguments, result, isInvokeMemberExpressionAst);
                         return true;
                     }
 
@@ -1637,7 +1647,7 @@ namespace System.Management.Automation
                         case PSMethod m:
                             if (m.adapterData is DotNetAdapter.MethodCacheEntry methodCacheEntry)
                             {
-                                AddTypesFromMethodCacheEntry(methodCacheEntry, result, isInvokeMemberExpressionAst);
+                                AddTypesFromMethodCacheEntry(methodCacheEntry, genericTypeArguments, result, isInvokeMemberExpressionAst);
                                 return true;
                             }
 
@@ -1701,16 +1711,58 @@ namespace System.Management.Automation
 
         private static void AddTypesFromMethodCacheEntry(
             DotNetAdapter.MethodCacheEntry methodCacheEntry,
+            IList<ITypeName> genericTypeArguments,
             List<PSTypeName> result,
             bool isInvokeMemberExpressionAst)
         {
             if (isInvokeMemberExpressionAst)
             {
+                Type[] resolvedTypeArguments = null;
+                if (genericTypeArguments is not null)
+                {
+                    resolvedTypeArguments = new Type[genericTypeArguments.Count];
+                    for (int i = 0; i < genericTypeArguments.Count; i++)
+                    {
+                        Type resolvedType = genericTypeArguments[i].GetReflectionType();
+                        if (resolvedType is null)
+                        {
+                            // If any generic type argument cannot be resolved yet,
+                            // we simply assume this information is unavailable.
+                            resolvedTypeArguments = null;
+                            break;
+                        }
+
+                        resolvedTypeArguments[i] = resolvedType;
+                    }
+                }
+
+                var tempResult = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "System.Void" };
                 foreach (var method in methodCacheEntry.methodInformationStructures)
                 {
-                    if (method.method is MethodInfo methodInfo && !methodInfo.ReturnType.ContainsGenericParameters)
+                    if (method.method is MethodInfo methodInfo)
                     {
-                        result.Add(new PSTypeName(methodInfo.ReturnType));
+                        Type retType = null;
+                        if (!methodInfo.ReturnType.ContainsGenericParameters)
+                        {
+                            retType = methodInfo.ReturnType;
+                        }
+                        else if (resolvedTypeArguments is not null)
+                        {
+                            try
+                            {
+                                retType = methodInfo.MakeGenericMethod(resolvedTypeArguments).ReturnType;
+                            }
+                            catch
+                            {
+                                // If we can't build the generic method then just skip it to retain other completion results.
+                                continue;
+                            }
+                        }
+
+                        if (retType is not null && tempResult.Add(retType.FullName))
+                        {
+                            result.Add(new PSTypeName(retType));
+                        }
                     }
                 }
 
