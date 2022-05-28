@@ -286,6 +286,55 @@ Describe 'Tests for $PSStyle automatic variable' {
         $strDec.ContentLength | Should -Be $word.Length
         $strDec.ToString("PlainText") | Should -Be $word
     }
+
+    It "String intput to Out-String should be intact" {
+        $oldRender = $PSStyle.OutputRendering
+        $testStr = "`e[31mABC`e[0m"
+
+        try {
+            $PSStyle.OutputRendering = 'Ansi'
+            (Get-Verb -Verb Get | Out-String).Contains("`e[") | Should -BeTrue 
+            ($testStr | Out-String).Trim() | Should -BeExactly $testStr
+
+            $PSStyle.OutputRendering = 'Host'
+            ## For input that actually goes through formatting, Out-String should remove VT sequences from the formatting output.
+            (Get-Verb -Verb Get | Out-String).Contains("`e[") | Should -BeFalse
+            ## For string input, since no formatting is applied, Out-String should keep the string intact.
+            ($testStr | Out-String).Trim() | Should -BeExactly $testStr
+
+            $PSStyle.OutputRendering = 'PlainText'
+            ## For input that actually goes through formatting, Out-String should remove VT sequences from the formatting output.
+            (Get-Verb -Verb Get | Out-String).Contains("`e[") | Should -BeFalse
+            ## For string input, since no formatting is applied, Out-String should keep the string intact.
+            ($testStr | Out-String).Trim() | Should -BeExactly $testStr
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+        }
+    }
+
+    It "String input to Out-File should be intact" {
+        $oldRender = $PSStyle.OutputRendering
+        $content = "Read-Host -Prompt '`e[33mEnter your device code`e[0m'"
+        Set-Content -Path $TestDrive\test.ps1 -Value $content -Encoding utf8NoBOM
+
+        try {
+            $PSStyle.OutputRendering = 'Ansi'
+            Get-Content $TestDrive\test.ps1 > $TestDrive\copy1.ps1
+            (Get-Content $TestDrive\copy1.ps1 -Raw).Trim() | Should -BeExactly $content
+
+            $PSStyle.OutputRendering = 'Host'
+            Get-Content $TestDrive\test.ps1 > $TestDrive\copy2.ps1
+            (Get-Content $TestDrive\copy2.ps1 -Raw).Trim() | Should -BeExactly $content
+
+            $PSStyle.OutputRendering = 'PlainText'
+            Get-Content $TestDrive\test.ps1 > $TestDrive\copy3.ps1
+            (Get-Content $TestDrive\copy3.ps1 -Raw).Trim() | Should -BeExactly $content
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+        }
+    }
 }
 
 Describe 'Handle strings with escape sequences in formatting' {
