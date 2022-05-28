@@ -335,6 +335,31 @@ Describe 'Tests for $PSStyle automatic variable' {
             $PSStyle.OutputRendering = $oldRender
         }
     }
+
+    It "Comment based help works with `$PSStyle" {
+        $oldRender = $PSStyle.OutputRendering
+
+        function Test-PSStyle {
+            <#
+            .Description
+            Get-Function [31mdisplays[0m the name and syntax of all functions in the session.
+            #>
+        }
+
+        try {
+            $PSStyle.OutputRendering = 'Ansi'
+            (Get-Help Test-PSStyle | Out-String).Contains("`e[31mdisplays`e[0m") | Should -BeTrue
+
+            $PSStyle.OutputRendering = 'Host'
+            (Get-Help Test-PSStyle | Out-String).Contains("`e[31mdisplays`e[0m") | Should -BeFalse
+
+            $PSStyle.OutputRendering = 'PlainText'
+            (Get-Help Test-PSStyle | Out-String).Contains("`e[31mdisplays`e[0m") | Should -BeFalse
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+        }
+    }
 }
 
 Describe 'Handle strings with escape sequences in formatting' {
