@@ -74,7 +74,8 @@ namespace System.Management.Automation
 
             var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
             var executionContext = helper.CurrentPowerShell.Runspace.ExecutionContext;
-            return CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = helper, ExecutionContext = executionContext }, moduleName, commandTypes);
+            return CompleteCommand(new CompletionContext(wordToComplete: commandName, helper, executionContext), moduleName, commandTypes);
+            
         }
 
         internal static List<CompletionResult> CompleteCommand(CompletionContext context)
@@ -4288,7 +4289,7 @@ namespace System.Management.Automation
 
             var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
             var executionContext = helper.CurrentPowerShell.Runspace.ExecutionContext;
-            return CompleteFilename(new CompletionContext { WordToComplete = fileName, Helper = helper, ExecutionContext = executionContext });
+            return CompleteFilename(new CompletionContext(wordToComplete: fileName, helper, executionContext));
         }
 
         internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context)
@@ -4754,7 +4755,7 @@ namespace System.Management.Automation
 
             var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
             var executionContext = helper.CurrentPowerShell.Runspace.ExecutionContext;
-            return CompleteVariable(new CompletionContext { WordToComplete = variableName, Helper = helper, ExecutionContext = executionContext });
+            return CompleteVariable(new CompletionContext(wordToComplete: variableName, helper, executionContext));
         }
 
         private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:" };
@@ -5404,7 +5405,7 @@ namespace System.Management.Automation
                 replacementIndex = context.TokenAtCursor.Extent.StartOffset + lineKeyword.Index;
                 replacementLength = lineKeyword.Value.Length;
 
-                var validKeywords = new HashSet<String>(s_commentHelpKeywords.Keys, StringComparer.OrdinalIgnoreCase);
+                var validKeywords = new HashSet<string>(s_commentHelpKeywords.Keys, StringComparer.OrdinalIgnoreCase);
                 foreach (Match keyword in usedKeywords)
                 {
                     if (keyword == lineKeyword || s_commentHelpAllowedDuplicateKeywords.Contains(keyword.Value))
@@ -6731,7 +6732,7 @@ namespace System.Management.Automation
 
             var helper = new PowerShellExecutionHelper(powershell);
             var executionContext = helper.CurrentPowerShell.Runspace.ExecutionContext;
-            return CompleteType(new CompletionContext { WordToComplete = typeName, Helper = helper, ExecutionContext = executionContext });
+            return CompleteType(new CompletionContext(wordToComplete: typeName, helper, executionContext));
         }
 
         internal static List<CompletionResult> CompleteType(CompletionContext context, string prefix = "", string suffix = "")
