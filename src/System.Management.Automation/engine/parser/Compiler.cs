@@ -1645,6 +1645,10 @@ namespace System.Management.Automation.Language
                         typeof(System.Management.Automation.IValidateSetValuesGenerator).FullName);
                 }
             }
+            else if (ast.PositionalArguments.Count == 1 && ast.PositionalArguments[0] is ScriptBlockExpressionAst scriptBlockAst)
+            {
+                result = new ValidateSetAttribute(scriptBlockAst.ScriptBlock.GetScriptBlock());
+            }
             else
             {
                 // 'ValidateSet("value1","value2", IgnoreCase=$false)' is supported in scripts.

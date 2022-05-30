@@ -1096,6 +1096,15 @@ switch ($x)
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'dog'
         }
 
+        It "Tab completion for validateSet attribute with ScriptBlock" {
+            function foo { param([ValidateSet({'cat','dog'})]$p) }
+            $inputStr = "foo "
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 2
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'cat'
+            $res.CompletionMatches[1].CompletionText | Should -BeExactly 'dog'
+        }
+
         It "Tab completion for validateSet attribute takes precedence over enums" {
             function foo { param([ValidateSet('DarkBlue','DarkCyan')][ConsoleColor]$p) }
             $inputStr = "foo "

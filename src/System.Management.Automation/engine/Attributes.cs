@@ -1595,7 +1595,7 @@ namespace System.Management.Automation
         // Cached valid values.
         private string[] _validValues;
         private readonly int _validValuesCacheExpiration;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="CachedValidValuesGeneratorBase"/> class.
         /// </summary>
@@ -1655,7 +1655,7 @@ namespace System.Management.Automation
         // of 'validValuesGenerator'.
         private readonly string[] _validValues;
         private readonly IValidateSetValuesGenerator validValuesGenerator = null;
-
+        private readonly ScriptBlock validValuesScript = null;
         // The valid values generator cache works across 'ValidateSetAttribute' instances.
         private static readonly ConcurrentDictionary<Type, IValidateSetValuesGenerator> s_ValidValuesGeneratorCache =
             new ConcurrentDictionary<Type, IValidateSetValuesGenerator>();
@@ -1686,11 +1686,32 @@ namespace System.Management.Automation
         {
             get
             {
-                if (validValuesGenerator == null)
+                if (validValuesGenerator == null && validValuesScript == null)
                 {
                     return _validValues;
                 }
+                if (validValuesScript is not null)
+                {
+                    var validValuesFromScript = new List<string>();
+                    var customResults = validValuesScript.Invoke();
+                    if (customResults == null || customResults.Count == 0)
+                    {
+                        validValuesFromScript = null;
+                    }
 
+                    foreach (var customResult in customResults)
+                    {
+                        var resultAsString = customResult.BaseObject as string;
+                        if (resultAsString != null)
+                        {
+                            validValuesFromScript.Add(resultAsString);
+                            continue;
+                        }
+                        var resultToString = customResult.ToString();
+                        validValuesFromScript.Add(resultToString);
+                    }
+                    return validValuesFromScript;
+                }
                 var validValuesLocal = validValuesGenerator.GetValidValues();
 
                 if (validValuesLocal == null)
@@ -1789,6 +1810,16 @@ namespace System.Management.Automation
             // We don't cache valid values; we expect that valid values will be cached in the generator.
             validValuesGenerator = s_ValidValuesGeneratorCache.GetOrAdd(
                 valuesGeneratorType, static (key) => (IValidateSetValuesGenerator)Activator.CreateInstance(key));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ValidateSetAttribute"/> class.
+        /// </summary>
+        /// <param name="scriptBlock">ScriptBlock that generates list of valid values</param>
+        /// <exception cref="ArgumentNullException">For null arguments.</exception>
+        public ValidateSetAttribute(ScriptBlock scriptBlock)
+        {
+            validValuesScript = scriptBlock;
         }
     }
 
