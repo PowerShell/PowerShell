@@ -227,6 +227,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // The padding to use in the lines after the first.
             string headPadding = null;
 
+            // The VT style used for the list label.
+            string style = PSStyle.Instance.Formatting.FormatAccent;
+            string reset = PSStyle.Instance.Reset;
+
             // display the string collection
             for (int k = 0; k < sc.Count; k++)
             {
@@ -235,18 +239,21 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (k == 0)
                 {
-                    if (string.IsNullOrWhiteSpace(prependString))
+                    if (string.IsNullOrWhiteSpace(prependString) || style == string.Empty)
                     {
-                        // Sometimes 'prependString' is just padding white spaces.
-                        // We don't need to add formatting escape sequences in such a case.
+                        // - Sometimes 'prependString' is just padding white spaces, and we don't
+                        //   need to add formatting escape sequences in such a case.
+                        // - Otherwise, if the style is an empty string, then the user has chosen
+                        //   to not apply a style to the list label.
                         _cachedBuilder.Append(prependString).Append(str);
                     }
                     else
                     {
+                        // Apply the style to the list label.
                         _cachedBuilder
-                            .Append(PSStyle.Instance.Formatting.FormatAccent)
+                            .Append(style)
                             .Append(prependString)
-                            .Append(PSStyle.Instance.Reset)
+                            .Append(reset)
                             .Append(str);
                     }
                 }
@@ -257,9 +264,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     _cachedBuilder.Append(headPadding).Append(str);
                 }
 
-                if (str.Contains(ValueStringDecorated.ESC) && !str.EndsWith(PSStyle.Instance.Reset))
+                if (str.Contains(ValueStringDecorated.ESC) && !str.EndsWith(reset))
                 {
-                    _cachedBuilder.Append(PSStyle.Instance.Reset);
+                    _cachedBuilder.Append(reset);
                 }
 
                 lo.WriteLine(_cachedBuilder.ToString());
