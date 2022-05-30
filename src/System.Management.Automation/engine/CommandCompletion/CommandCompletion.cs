@@ -14,6 +14,8 @@ using System.Text.RegularExpressions;
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
 
+#nullable enable
+
 namespace System.Management.Automation
 {
     /// <summary>
@@ -91,7 +93,7 @@ namespace System.Management.Automation
         /// <param name="cursorIndex">The index of the cursor in the input.</param>
         /// <param name="options">Optional options to configure how completion is performed.</param>
         /// <returns></returns>
-        public static CommandCompletion CompleteInput(string input, int cursorIndex, Hashtable options)
+        public static CommandCompletion CompleteInput(string input, int cursorIndex, Hashtable? options)
         {
             if (input == null)
             {
@@ -209,7 +211,7 @@ namespace System.Management.Automation
         /// <param name="powershell">The powershell to use to invoke the script function TabExpansion2.</param>
         /// <returns></returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "powershell")]
-        public static CommandCompletion CompleteInput(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options, PowerShell powershell)
+        public static CommandCompletion CompleteInput(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable? options, PowerShell powershell)
         {
             if (ast == null)
             {
@@ -288,9 +290,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="forward">True if we should move forward through the list, false if backwards.</param>
         /// <returns>The next completion result, or null if no results.</returns>
-        public CompletionResult GetNextResult(bool forward)
+        public CompletionResult? GetNextResult(bool forward)
         {
-            CompletionResult result = null;
+            CompletionResult? result = null;
             var count = CompletionMatches.Count;
             if (count > 0)
             {
@@ -322,7 +324,7 @@ namespace System.Management.Automation
         /// <param name="options">Optional parameter that specifies configurable options for completion.</param>
         /// <param name="debugger">Current debugger.</param>
         /// <returns>A collection of completions with the replacement start and length.</returns>
-        internal static CommandCompletion CompleteInputInDebugger(string input, int cursorIndex, Hashtable options, Debugger debugger)
+        internal static CommandCompletion CompleteInputInDebugger(string input, int cursorIndex, Hashtable? options, Debugger debugger)
         {
             if (input == null)
             {
@@ -356,7 +358,7 @@ namespace System.Management.Automation
         /// <param name="options">Optional options to configure how completion is performed.</param>
         /// <param name="debugger">Current debugger.</param>
         /// <returns>Command completion.</returns>
-        internal static CommandCompletion CompleteInputInDebugger(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options, Debugger debugger)
+        internal static CommandCompletion CompleteInputInDebugger(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable? options, Debugger debugger)
         {
             if (ast == null)
             {
@@ -436,7 +438,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static CommandCompletion CallScriptWithStringParameterSet(string input, int cursorIndex, Hashtable options, PowerShell powershell)
+        private static CommandCompletion CallScriptWithStringParameterSet(string input, int cursorIndex, Hashtable? options, PowerShell powershell)
         {
             try
             {
@@ -472,7 +474,7 @@ namespace System.Management.Automation
             return s_emptyCommandCompletion;
         }
 
-        private static CommandCompletion CallScriptWithAstParameterSet(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options, PowerShell powershell)
+        private static CommandCompletion CallScriptWithAstParameterSet(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable? options, PowerShell powershell)
         {
             try
             {
@@ -510,7 +512,7 @@ namespace System.Management.Automation
         }
 
         // This is the start of the real implementation of autocomplete/intellisense/tab completion
-        private static CommandCompletion CompleteInputImpl(Ast ast, Token[] tokens, IScriptPosition positionOfCursor, Hashtable options)
+        private static CommandCompletion CompleteInputImpl(Ast ast, Token[] tokens, IScriptPosition positionOfCursor, Hashtable? options)
         {
 #if LEGACYTELEMETRY
             // We could start collecting telemetry at a later date.
@@ -526,7 +528,7 @@ namespace System.Management.Automation
                 // the built-in version, so we should continue to use theirs.
                 int replacementIndex = -1;
                 int replacementLength = -1;
-                List<CompletionResult> results = null;
+                List<CompletionResult>? results = null;
 
                 if (NeedToInvokeLegacyTabExpansion(powershell))
                 {
@@ -625,9 +627,9 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static List<CompletionResult> InvokeLegacyTabExpansion(PowerShell powershell, string input, int cursorIndex, bool remoteToWin7, out int replacementIndex, out int replacementLength)
+        private static List<CompletionResult>? InvokeLegacyTabExpansion(PowerShell powershell, string input, int cursorIndex, bool remoteToWin7, out int replacementIndex, out int replacementLength)
         {
-            List<CompletionResult> results = null;
+            List<CompletionResult>? results = null;
 
             var legacyInput = (cursorIndex != input.Length) ? input.Substring(0, cursorIndex) : input;
             char quote;
@@ -771,7 +773,7 @@ namespace System.Management.Automation
                     {
                         PSObject command = commands[i];
                         string cmdletFullName = CmdletInfo.GetFullName(command);
-                        cmdlets[i] = new CommandAndName(command, PSSnapinQualifiedName.GetInstance(cmdletFullName));
+                        cmdlets[i] = new CommandAndName(command, PSSnapinQualifiedName.GetInstance(cmdletFullName)!);
                     }
 
                     if (isSnapinSpecified)
@@ -804,11 +806,11 @@ namespace System.Management.Automation
                 }
 
                 string toolTip;
-                string displayName = SafeGetProperty<string>(commandAndName.Command, "Name");
+                string displayName = SafeGetProperty<string>(commandAndName.Command, "Name")!;
 
                 if (commandType.Value == CommandTypes.Cmdlet || commandType.Value == CommandTypes.Application)
                 {
-                    toolTip = SafeGetProperty<string>(commandAndName.Command, "Definition");
+                    toolTip = SafeGetProperty<string>(commandAndName.Command, "Definition")!;
                 }
                 else
                 {
@@ -889,8 +891,8 @@ namespace System.Management.Automation
                 bool isProviderDirectPath = lastWord.StartsWith(@"\\", StringComparison.Ordinal) ||
                                             lastWord.StartsWith("//", StringComparison.Ordinal);
 
-                List<PathItemAndConvertedPath> s1 = null;
-                List<PathItemAndConvertedPath> s2 = null;
+                List<PathItemAndConvertedPath>? s1 = null;
+                List<PathItemAndConvertedPath>? s2 = null;
 
                 if (containsGlobChars && !isLastWordEmpty)
                 {
@@ -908,7 +910,7 @@ namespace System.Management.Automation
                             shouldFullyQualifyPaths);
                 }
 
-                IEnumerable<PathItemAndConvertedPath> combinedMatches = CombineMatchSets(s1, s2);
+                IEnumerable<PathItemAndConvertedPath>? combinedMatches = CombineMatchSets(s1, s2);
 
                 if (combinedMatches != null)
                 {
@@ -921,7 +923,7 @@ namespace System.Management.Automation
                         completionText = AddQuoteIfNecessary(completionText, quote, completingAtStartOfLine);
 
                         bool? isContainer = SafeGetProperty<bool?>(combinedMatch.Item, "PSIsContainer");
-                        string childName = SafeGetProperty<string>(combinedMatch.Item, "PSChildName");
+                        string? childName = SafeGetProperty<string>(combinedMatch.Item, "PSChildName");
                         string toolTip = PowerShellExecutionHelper.SafeToString(combinedMatch.ConvertedPath);
 
                         if (isContainer != null && childName != null && toolTip != null)
@@ -955,7 +957,7 @@ namespace System.Management.Automation
                 return completionText;
             }
 
-            private static IEnumerable<PathItemAndConvertedPath> CombineMatchSets(List<PathItemAndConvertedPath> s1, List<PathItemAndConvertedPath> s2)
+            private static IEnumerable<PathItemAndConvertedPath>? CombineMatchSets(List<PathItemAndConvertedPath>? s1, List<PathItemAndConvertedPath>? s2)
             {
                 if (s1 == null || s1.Count < 1)
                 {
@@ -1003,26 +1005,26 @@ namespace System.Management.Automation
                 return result;
             }
 
-            private static T SafeGetProperty<T>(PSObject psObject, string propertyName)
+            private static T? SafeGetProperty<T>(PSObject? psObject, string propertyName)
             {
                 if (psObject == null)
                 {
                     return default(T);
                 }
 
-                PSPropertyInfo property = psObject.Properties[propertyName];
+                PSPropertyInfo? property = psObject.Properties[propertyName];
                 if (property == null)
                 {
                     return default(T);
                 }
 
-                object propertyValue = property.Value;
+                object? propertyValue = property.Value;
                 if (propertyValue == null)
                 {
                     return default(T);
                 }
 
-                T returnValue;
+                T? returnValue;
                 if (LanguagePrimitives.TryConvertTo(propertyValue, out returnValue))
                 {
                     return returnValue;
@@ -1065,7 +1067,7 @@ namespace System.Management.Automation
                 }
             }
 
-            private static List<PathItemAndConvertedPath> PSv2FindMatches(PowerShellExecutionHelper helper, string path, bool shouldFullyQualifyPaths)
+            private static List<PathItemAndConvertedPath>? PSv2FindMatches(PowerShellExecutionHelper helper, string path, bool shouldFullyQualifyPaths)
             {
                 Diagnostics.Assert(!string.IsNullOrEmpty(path), "path should have a value");
                 var result = new List<PathItemAndConvertedPath>();
@@ -1100,9 +1102,9 @@ namespace System.Management.Automation
                     var pathsArray = t.BaseObject as IList;
                     if (pathsArray != null && pathsArray.Count == 3)
                     {
-                        object objectPath = pathsArray[0];
-                        PSObject item = pathsArray[1] as PSObject;
-                        object convertedPath = pathsArray[1];
+                        object? objectPath = pathsArray[0];
+                        PSObject? item = pathsArray[1] as PSObject;
+                        object? convertedPath = pathsArray[1];
 
                         if (objectPath == null || item == null || convertedPath == null)
                         {
@@ -1241,7 +1243,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                string result = new string(_wordBuffer, 0, _wordBufferIndex);
+                string result = new string(_wordBuffer!, 0, _wordBufferIndex);
 
                 closingQuote = inSingleQuote ? '\'' : inDoubleQuote ? '"' : '\0';
                 replacementIndexOut = ReplacementIndex;
@@ -1309,7 +1311,7 @@ namespace System.Management.Automation
             }
 
             private readonly string _sentence;
-            private char[] _wordBuffer;
+            private char[]? _wordBuffer;
             private int _wordBufferIndex;
             private int _replacementIndex;
             private int _sentenceIndex;

@@ -3957,7 +3957,7 @@ namespace System.Management.Automation
 
         private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, AstParameterArgumentPair? parameterInfo, bool propertiesOnly = true)
         {
-            IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
+            IEnumerable<PSTypeName>? prevType = GetInferenceTypes(context, commandAst);
             if (prevType is not null)
             {
                 HashSet<string>? excludedMembers = null;
@@ -3966,7 +3966,7 @@ namespace System.Management.Automation
                     excludedMembers = GetParameterValues(pair, context.CursorPosition.Offset);
                 }
 
-                Func<object, bool> filter = propertiesOnly ? IsPropertyMember : null;
+                Func<object, bool>? filter = propertiesOnly ? IsPropertyMember : null;
                 CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter, isStatic: false, excludedMembers);
             }
 
@@ -5577,7 +5577,7 @@ namespace System.Management.Automation
             }
 
             Ast lastAst = context.RelatedAsts[^1];
-            Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= context.TokenAtCursor.Extent.EndOffset, searchNestedScriptBlocks: false);
+            Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= tokenAtCursor.Extent.EndOffset, searchNestedScriptBlocks: false);
 
             // Comment-based help can apply to a following function definition if it starts within 2 lines
             int commentEndLine = tokenAtCursor.Extent.EndLineNumber + 2;
@@ -5864,7 +5864,7 @@ namespace System.Management.Automation
                     inferredTypes = AstTypeInference.InferTypeOf(targetExpr, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval).ToArray();
                 }
 
-                if (!@static && inferredTypes.Length == 1 && inferredTypes[0].Name.Equals("System.Void", StringComparison.OrdinalIgnoreCase))
+                if (!@static && inferredTypes!.Length == 1 && inferredTypes[0].Name.Equals("System.Void", StringComparison.OrdinalIgnoreCase))
                 {
                     return results;
                 }
