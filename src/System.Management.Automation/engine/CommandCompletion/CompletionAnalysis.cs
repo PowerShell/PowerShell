@@ -30,8 +30,12 @@ namespace System.Management.Automation
             NativeArgumentCompleters = executionContext.NativeArgumentCompleters;            
         }
 
-        public CompletionContext(Hashtable options, IScriptPosition cursorPosition, Token? tokenAtCursor, Token? tokenBeforeCursor, List<Ast> relatedAsts, int replacementIndex, ExecutionContext executionContext, TypeInferenceContext typeInferenceContext)
+        public CompletionContext(Hashtable? options, IScriptPosition cursorPosition, Token? tokenAtCursor, Token? tokenBeforeCursor, List<Ast> relatedAsts, int replacementIndex, ExecutionContext executionContext, TypeInferenceContext typeInferenceContext)
         {
+            if (tokenAtCursor is null && tokenBeforeCursor is null)
+            { 
+                throw new ArgumentException($"{nameof(tokenAtCursor)} and {nameof(tokenBeforeCursor)} must not both be null.");
+            }
             WordToComplete = string.Empty;
             Options = options;
             CursorPosition = cursorPosition;
@@ -43,7 +47,7 @@ namespace System.Management.Automation
             _typeInferenceContext = typeInferenceContext;
             Helper = typeInferenceContext.Helper;
             CustomArgumentCompleters = executionContext.CustomArgumentCompleters;
-            NativeArgumentCompleters = executionContext.NativeArgumentCompleters;
+            NativeArgumentCompleters = executionContext.NativeArgumentCompleters;            
         }
 
         internal IList<Ast> RelatedAsts { get; }
@@ -73,9 +77,13 @@ namespace System.Management.Automation
 
         internal ExecutionContext ExecutionContext { get; }
 
-        internal PseudoBindingInfo? PseudoBindingInfo { get; set; }
+        internal PseudoBindingInfo PseudoBindingInfo 
+        { 
+            get => _pseudoBindingInfo ??  throw new InvalidOperationException($"Accessing property '{nameof(PseudoBindingInfo)}' on CompletionContext without first setting it.");
+            set => _pseudoBindingInfo = value;
+        }
 
-        internal TypeInferenceContext TypeInferenceContext => _typeInferenceContext ?? throw new InvalidOperationException($"Accessing property {nameof(TypeInferenceContext)} on CompletionContext created without it.");
+        internal TypeInferenceContext TypeInferenceContext => _typeInferenceContext ?? throw new InvalidOperationException($"Accessing property '{nameof(TypeInferenceContext)}' on a CompletionContext created without it.");
 
         internal bool GetOption(string option, bool @default)
         {
@@ -88,6 +96,7 @@ namespace System.Management.Automation
         }
 
         private readonly TypeInferenceContext? _typeInferenceContext;
+        private PseudoBindingInfo? _pseudoBindingInfo;
     }
 
     internal class CompletionAnalysis
@@ -95,9 +104,9 @@ namespace System.Management.Automation
         private readonly Ast _ast;
         private readonly Token[] _tokens;
         private readonly IScriptPosition _cursorPosition;
-        private readonly Hashtable _options;
+        private readonly Hashtable? _options;
 
-        internal CompletionAnalysis(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable options)
+        internal CompletionAnalysis(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable? options)
         {
             _ast = ast;
             _tokens = tokens;
@@ -1677,7 +1686,7 @@ namespace System.Management.Automation
             // When it's the content of a quoted string, we only handle variable/member completion
             if (isQuotedString) { return null; }
 
-            var tokenAtCursor = completionContext.TokenAtCursor;
+            var tokenAtCursor = completionContext.TokenAtCursor!;
             var lastAst = completionContext.RelatedAsts.Last();
 
             List<CompletionResult>? result = null;
@@ -1712,7 +1721,7 @@ namespace System.Management.Automation
             // Handle variable/member completion
             if (subInput != null)
             {
-                int stringStartIndex = tokenAtCursor!.Extent.StartScriptPosition.Offset;
+                int stringStartIndex = tokenAtCursor.Extent.StartScriptPosition.Offset;
                 int cursorIndexInString = _cursorPosition.Offset - stringStartIndex - 1;
                 if (cursorIndexInString >= strValue.Length)
                     cursorIndexInString = strValue.Length;
@@ -1749,7 +1758,7 @@ namespace System.Management.Automation
             else
             {
                 var commandElementAst = lastAst as CommandElementAst;
-                string wordToComplete =
+                string? wordToComplete =
                     CompletionCompleters.ConcatenateStringPathArguments(commandElementAst, string.Empty, completionContext);
 
                 if (wordToComplete != null)
@@ -1995,7 +2004,7 @@ namespace System.Management.Automation
                     {
                         if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
                         {
-                            string wordToComplete =
+                            string? wordToComplete =
                                 CompletionCompleters.ConcatenateStringPathArguments(cursorAst as CommandElementAst, tokenAtCursorText, completionContext);
                             if (wordToComplete != null)
                             {
@@ -2223,7 +2232,7 @@ namespace System.Management.Automation
             bool needFileCompletion = false;
             if (lastAst.Parent is FileRedirectionAst || CompleteAgainstSwitchFile(lastAst, completionContext.TokenBeforeCursor))
             {
-                string wordToComplete =
+                string? wordToComplete =
                     CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, string.Empty, completionContext);
                 if (wordToComplete != null)
                 {
@@ -2241,7 +2250,7 @@ namespace System.Management.Automation
                         fileRedirection.Extent.EndLineNumber == lastAst.Extent.StartLineNumber &&
                         fileRedirection.Extent.EndColumnNumber == lastAst.Extent.StartColumnNumber)
                     {
-                        string wordToComplete =
+                        string? wordToComplete =
                             CompletionCompleters.ConcatenateStringPathArguments(fileRedirection.Location, tokenAtCursorText, completionContext);
 
                         if (wordToComplete != null)
@@ -2264,7 +2273,7 @@ namespace System.Management.Automation
             }
             else
             {
-                string wordToComplete =
+                string? wordToComplete =
                     CompletionCompleters.ConcatenateStringPathArguments(lastAst as CommandElementAst, string.Empty, completionContext);
                 if (wordToComplete != null)
                 {
