@@ -7,6 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation.Language;
 
+#nullable enable
+
 namespace System.Management.Automation
 {
     /// <summary>
@@ -24,15 +26,15 @@ namespace System.Management.Automation
     {
         /// <summary/>
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods")]
-        public Type Type { get; }
+        public Type? Type { get; }
 
         /// <summary/>
-        public ScriptBlock ScriptBlock { get; }
+        public ScriptBlock? ScriptBlock { get; }
 
-        /// <param name="type">The type must implement <see cref="IArgumentCompleter"/> and have a default constructor.</param>
+        /// <param name="type">The type must implement <see cref="IArgumentCompleter"/> or <see cref="IArgumentCompleter2"/> and have a default constructor.</param>
         public ArgumentCompleterAttribute(Type type)
         {
-            if (type == null || (type.GetInterfaces().All(static t => t != typeof(IArgumentCompleter))))
+            if (type == null || type.GetInterfaces().All(static t => t != typeof(IArgumentCompleter) && t != typeof(IArgumentCompleter2)))
             {
                 throw PSTraceSource.NewArgumentException(nameof(type));
             }
@@ -42,11 +44,11 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ArgumentCompleterAttribute"/> class.
-        /// This constructor is used by derived attributes implementing <see cref="IArgumentCompleterFactory"/>.
+        /// This constructor is used by derived attributes implementing <see cref="IArgumentCompleterFactory"/> or <see cref="IArgumentCompleterFactory2"/>.
         /// </summary>
         protected ArgumentCompleterAttribute()
         {
-            if (this is not IArgumentCompleterFactory)
+            if (this is not IArgumentCompleterFactory && this is not IArgumentCompleterFactory2)
             {
                 throw PSTraceSource.NewInvalidOperationException();
             }
@@ -66,20 +68,31 @@ namespace System.Management.Automation
             ScriptBlock = scriptBlock;
         }
 
-        internal IArgumentCompleter CreateArgumentCompleter()
-        {
-            return Type != null
-                ? Activator.CreateInstance(Type) as IArgumentCompleter
-                : this is IArgumentCompleterFactory factory
-                    ? factory.Create()
-                    : null;
+        internal (IArgumentCompleter? completer, IArgumentCompleter2? completer2) CreateArgumentCompleter()
+        {            
+            return this switch
+            {
+                IArgumentCompleterFactory2 factory2 => (null, factory2.Create()),
+                IArgumentCompleterFactory factory => (factory.Create(), null),
+                { Type: { } } => CreateFromType(Type),
+                _ => (null, null)
+            };
+
+            static (IArgumentCompleter? completer, IArgumentCompleter2? completer2) CreateFromType(Type type)
+            {
+                return Activator.CreateInstance(type) switch
+                {
+                    IArgumentCompleter2 completer2 => (null, completer2),
+                    IArgumentCompleter completer => (completer, null),
+                    _ => (null, null)
+                };
+            }
         }
     }
 
     /// <summary>
     /// A type specified by the <see cref="ArgumentCompleterAttribute"/> must implement this interface.
     /// </summary>
-#nullable enable
     public interface IArgumentCompleter
     {
         /// <summary>
@@ -104,7 +117,31 @@ namespace System.Management.Automation
             CommandAst commandAst,
             IDictionary fakeBoundParameters);
     }
-#nullable restore
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IArgumentCompleter2
+    {
+        /// <summary>
+        /// Implementations of this function are called by PowerShell to complete arguments.
+        /// </summary>
+        /// <param name="commandName">The name of the command that needs argument completion.</param>
+        /// <param name="parameterName">The name of the parameter that needs argument completion.</param>
+        /// <param name="wordToComplete">The (possibly empty) word being completed.</param>        
+        /// This parameter is similar to $PSBoundParameters, except that sometimes PowerShell cannot or
+        /// will not attempt to evaluate an argument, in which case you may need to use <paramref name="commandAst"/>.
+        /// </param>
+        /// <returns>
+        /// A collection of completion results, most like with <see cref="CompletionResult.ResultType"/> set to
+        /// <see cref="CompletionResultType.ParameterValue"/>.
+        /// </returns>
+        IEnumerable<CompletionResult> CompleteArgument(
+            string commandName,
+            string parameterName,
+            string wordToComplete,
+            IArgumentCompletionInfo completionInfo);
+    }
 
     /// <summary>
     /// Creates a new argument completer.
@@ -154,7 +191,57 @@ namespace System.Management.Automation
         /// Creates an instance of a class implementing the <see cref="IArgumentCompleter"/> interface.
         /// </summary>
         /// <returns>An IArgumentCompleter instance.</returns>
-        IArgumentCompleter Create();
+        IArgumentCompleter? Create();
+    }
+
+    /// <summary>
+    /// Creates a new argument completer.
+    /// </summary>
+    /// <para>
+    /// If an attribute that derives from <see cref="ArgumentCompleterAttribute"/> implements this interface,
+    /// it will be used to create the <see cref="IArgumentCompleter2"/>, thus giving a way to parameterize a completer.
+    /// The derived attribute can have properties or constructor arguments that are used when creating the completer.
+    /// </para>
+    /// <example>
+    /// This example shows the intended usage of <see cref="IArgumentCompleterFactory2"/> to pass arguments to an argument completer.
+    /// <code>
+    /// public class NumberCompleterAttribute : ArgumentCompleterAttribute, IArgumentCompleterFactory2 {
+    ///    private readonly int _from;
+    ///    private readonly int _to;
+    ///
+    ///    public NumberCompleterAttribute(int from, int to){
+    ///       _from = from;
+    ///       _to = to;
+    ///    }
+    ///
+    ///    // use the attribute parameters to create a parameterized completer
+    ///    IArgumentCompleter Create() => new NumberCompleter(_from, _to);
+    /// }
+    ///
+    /// class NumberCompleter : IArgumentCompleter2 {
+    ///    private readonly int _from;
+    ///    private readonly int _to;
+    ///
+    ///    public NumberCompleter(int from, int to){
+    ///       _from = from;
+    ///       _to = to;
+    ///    }
+    ///
+    ///    IEnumerable{CompletionResult} CompleteArgument(string commandName, string parameterName, string wordToComplete, IArgumentCompletionInfo completionInfo) {
+    ///       for(int i = _from; i &lt; _to; i++) {
+    ///           yield return new CompletionResult(i.ToString());
+    ///       }
+    ///    }
+    /// }
+    /// </code>
+    /// </example>
+    public interface IArgumentCompleterFactory2
+    {
+        /// <summary>
+        /// Creates an instance of a class implementing the <see cref="IArgumentCompleter2"/> interface.
+        /// </summary>
+        /// <returns>An <see cref="IArgumentCompleter2 "/> instance.</returns>
+        IArgumentCompleter2 Create();
     }
 
     /// <summary>
@@ -164,7 +251,17 @@ namespace System.Management.Automation
     public abstract class ArgumentCompleterFactoryAttribute : ArgumentCompleterAttribute, IArgumentCompleterFactory
     {
         /// <inheritdoc />
-        public abstract IArgumentCompleter Create();
+        public abstract IArgumentCompleter? Create();
+    }
+
+    /// <summary>
+    /// Base class for parameterized argument completer attributes that creates IArgumentCompleter2 completers.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public abstract class ArgumentCompleterFactory2Attribute : ArgumentCompleterAttribute, IArgumentCompleterFactory2
+    {
+        /// <inheritdoc />
+        public abstract IArgumentCompleter2 Create();
     }
 
     /// <summary>
@@ -177,18 +274,18 @@ namespace System.Management.Automation
         [Parameter(ParameterSetName = "NativeSet", Mandatory = true)]
         [Parameter(ParameterSetName = "PowerShellSet")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] CommandName { get; set; }
+        public string[] CommandName { get; set; } = null!;
 
         /// <summary>
         /// </summary>
         [Parameter(ParameterSetName = "PowerShellSet", Mandatory = true)]
-        public string ParameterName { get; set; }
+        public string? ParameterName { get; set; }
 
         /// <summary>
         /// </summary>
         [Parameter(Mandatory = true)]
         [AllowNull()]
-        public ScriptBlock ScriptBlock { get; set; }
+        public ScriptBlock ScriptBlock { get; set; } = null!;
 
         /// <summary>
         /// </summary>
@@ -286,5 +383,49 @@ namespace System.Management.Automation
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IArgumentCompletionInfo
+    {
+
+        /// <summary>
+        /// The word to complete.
+        /// </summary>
+        string WordToComplete { get; }
+
+        /// <summary>
+        /// The Ast of the command to complete.
+        /// </summary>
+        CommandAst CommandAst { get; }
+
+        /// <summary>
+        /// This property is similar to $PSBoundParameters, except that sometimes PowerShell cannot or
+        /// will not attempt to evaluate an argument, in which case you may need to use <see cref="CommandAst"/>.
+        /// </summary>
+        IReadOnlyDictionary<string, object?> FakeBoundParameters { get; }
+        /// <summary>
+        /// The index where an argumentCompletion should begin
+        /// </summary>
+        int ReplacementIndex { get; set; }
+
+        /// <summary>
+        /// The length of the text to replace
+        /// </summary>
+        int ReplacementLength { get; set; }
+
+        /// <summary>
+        /// A relative distance to adjust the cursor position, relative to the end of the replacement.
+        /// </summary>
+        int RelativeCursorPositionAdjustment { get; set; }
+
+        /// <summary>
+        /// Gets an option, if available.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        string? GetOption(string key);
     }
 }

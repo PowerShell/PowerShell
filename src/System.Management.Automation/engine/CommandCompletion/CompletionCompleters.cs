@@ -1309,7 +1309,7 @@ namespace System.Management.Automation
                 {
                     if (InvokeScriptArgumentCompleter(
                         customCompleter,
-                        new object[] { context.WordToComplete, commandAst, context.CursorPosition.Offset },
+                        new object[] { context.WordToComplete, commandAst, context.CursorPosition.Offset, GetCompletionInfo(context, commandAst) },
                         result))
                     {
                         return result;
@@ -2020,67 +2020,21 @@ namespace System.Management.Automation
 
             string parameterFullName = $"{actualCommandName}:{parameterName}";
 
-            ScriptBlock? customCompleter = GetCustomArgumentCompleter(
-                "CustomArgumentCompleters",
-                new[] { parameterFullName, parameterName },
-                context);
+            var completionInfo = GetCompletionInfo(context, commandAst);
 
-            if (customCompleter != null)
+            if (CompleteWithCustomArgumentCompleter(commandName, result, completionInfo, parameterName, parameterFullName))
             {
-                if (InvokeScriptArgumentCompleter(
-                    customCompleter,
-                    commandName, parameterName, context.WordToComplete, commandAst, context,
-                    result))
-                {
-                    return;
-                }
+                return;
             }
 
-            var argumentCompleterAttribute = parameter.CompiledAttributes.OfType<ArgumentCompleterAttribute>().FirstOrDefault();
-            if (argumentCompleterAttribute != null)
+            if (CompleteWithArgumentCompleterAttribute(commandName, parameter, result, completionInfo, parameterName))
             {
-                try
-                {
-                    var completer = argumentCompleterAttribute.CreateArgumentCompleter();
-
-                    if (completer != null)
-                    {
-                        var customResults = completer.CompleteArgument(commandName, parameterName,
-                            context.WordToComplete, commandAst, GetBoundArgumentsAsHashtable(context));
-                        if (customResults != null)
-                        {
-                            result.AddRange(customResults);
-                            result.Add(CompletionResult.Null);
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        if (InvokeScriptArgumentCompleter(
-                            argumentCompleterAttribute.ScriptBlock,
-                            commandName, parameterName, context.WordToComplete, commandAst, context,
-                            result))
-                        {
-                            return;
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                }
+                return;
             }
 
-            var argumentCompletionsAttribute = parameter.CompiledAttributes.OfType<ArgumentCompletionsAttribute>().FirstOrDefault();
-            if (argumentCompletionsAttribute != null)
+            if (CompleteWithArgumentCompletionsAttribute(commandName, parameter, result, completionInfo, parameterName))
             {
-                var customResults = argumentCompletionsAttribute.CompleteArgument(commandName, parameterName,
-                        context.WordToComplete, commandAst, GetBoundArgumentsAsHashtable(context));
-                if (customResults != null)
-                {
-                    result.AddRange(customResults);
-                    result.Add(CompletionResult.Null);
-                    return;
-                }
+                return;
             }
 
             switch (commandName)
@@ -2372,9 +2326,89 @@ namespace System.Management.Automation
             }
         }
 
-        private static Hashtable GetBoundArgumentsAsHashtable(CompletionContext context)
+        private static bool CompleteWithCustomArgumentCompleter(string commandName, List<CompletionResult> result, ArgumentCompletionInfo completionInfo, string parameterName, string parameterFullName)
         {
-            var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            ScriptBlock? customCompleter = GetCustomArgumentCompleter(
+                "CustomArgumentCompleters",
+                new[] { parameterFullName, parameterName },
+                completionInfo.Context);
+
+            if (customCompleter != null)
+            {
+                
+                if (InvokeScriptArgumentCompleter(
+                    customCompleter,
+                    commandName, parameterName, completionInfo.WordToComplete, completionInfo,
+                    result))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool CompleteWithArgumentCompletionsAttribute(string commandName, CompiledCommandParameter parameter, List<CompletionResult> result, IArgumentCompletionInfo completionInfo, string parameterName)
+        {
+            var argumentCompletionsAttribute = parameter.CompiledAttributes.OfType<ArgumentCompletionsAttribute>().FirstOrDefault();
+            if (argumentCompletionsAttribute != null)
+            {
+                var customResults = argumentCompletionsAttribute.CompleteArgument(commandName, parameterName,
+                        completionInfo.WordToComplete, completionInfo.CommandAst, (IDictionary)completionInfo.FakeBoundParameters);
+                if (customResults != null)
+                {
+                    result.AddRange(customResults);
+                    result.Add(CompletionResult.Null);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool CompleteWithArgumentCompleterAttribute(string commandName, CompiledCommandParameter parameter, List<CompletionResult> result, IArgumentCompletionInfo completionInfo, string parameterName)
+        {
+            ArgumentCompleterAttribute? argumentCompleterAttribute = parameter.CompiledAttributes.OfType<ArgumentCompleterAttribute>().FirstOrDefault();
+            if (argumentCompleterAttribute != null)
+            {
+                try
+                {
+                    var (completer, completer2) = argumentCompleterAttribute.CreateArgumentCompleter();
+                    
+                    if (completer is not null || completer2 is not null)
+                    {                        
+                        var customResults = 
+                              completer2?.CompleteArgument(commandName, parameterName, completionInfo.WordToComplete, completionInfo) ??
+                               completer?.CompleteArgument(commandName, parameterName, completionInfo.WordToComplete, completionInfo.CommandAst, (IDictionary)completionInfo.FakeBoundParameters);
+                        if (customResults != null)
+                        {
+                            result.AddRange(customResults);
+                            result.Add(CompletionResult.Null);
+                            return true;
+                        }
+                    }                    
+                    else
+                    {
+                        if (InvokeScriptArgumentCompleter(
+                            argumentCompleterAttribute.ScriptBlock!,
+                            commandName, parameterName, completionInfo.WordToComplete, completionInfo,
+                            result))
+                        {
+                            return true;
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            return false;
+        }
+
+        private static IDictionary<string, object?> GetBoundArgumentsAsHashtable(CompletionContext context)
+        {
+            var result = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
             if (context.HasPseudoBindingInfo)
             {
                 var boundArguments = context.PseudoBindingInfo.BoundArguments;
@@ -2461,14 +2495,13 @@ namespace System.Management.Automation
             ScriptBlock scriptBlock,
             string commandName,
             string parameterName,
-            string wordToComplete,
-            CommandAst commandAst,
-            CompletionContext context,
+            string wordToComplete,            
+            IArgumentCompletionInfo completionInfo,
             List<CompletionResult> resultList)
-        {
+        {            
             bool result = InvokeScriptArgumentCompleter(
                 scriptBlock,
-                new object[] { commandName, parameterName, wordToComplete, commandAst, GetBoundArgumentsAsHashtable(context) },
+                new object[] { commandName, parameterName, wordToComplete, completionInfo.CommandAst, completionInfo.FakeBoundParameters, completionInfo },
                 resultList);
             if (result)
             {
@@ -2517,6 +2550,11 @@ namespace System.Management.Automation
         // "result" list, to indicate that this particular argument completion has fallen into one of the native command argument completion methods,
         // and has been processed already. So if the "result" list is still empty afterward, we will not go through the default argument completion anymore.
         #region Native Command Argument Completion
+
+        private static ArgumentCompletionInfo GetCompletionInfo(CompletionContext context, CommandAst commandAst)
+        {
+            return new ArgumentCompletionInfo(context, commandAst, GetBoundArgumentsAsHashtable(context).AsReadOnly());
+        }
 
         private static void RemoveLastNullCompletionResult(List<CompletionResult> result)
         {
@@ -4075,6 +4113,50 @@ namespace System.Management.Automation
             }
 
             result.Add(CompletionResult.Null);
+        }
+
+        /// <summary>
+        /// Extra completion context info for extensible completion
+        /// </summary>
+        private class ArgumentCompletionInfo : IArgumentCompletionInfo
+        {
+            private readonly CompletionContext _completionContext;
+            private readonly CommandAst _commandAst;
+            private readonly IReadOnlyDictionary<string, object?> _boundParameters;            
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="completionContext"></param>
+            /// <param name="commandAst"></param>
+            /// <param name="boundParameters"></param>            
+            public ArgumentCompletionInfo(CompletionContext completionContext, CommandAst commandAst, IReadOnlyDictionary<string, object?> boundParameters)
+            {
+                _completionContext = completionContext;
+                _commandAst = commandAst;
+                _boundParameters = boundParameters;                
+            }
+            
+            /// <inheritdoc/>
+            public CommandAst CommandAst => _commandAst;
+            /// <inheritdoc/>
+            public IReadOnlyDictionary<string, object?> FakeBoundParameters => _boundParameters;
+            
+            /// <inheritdoc/>
+            public int ReplacementIndex { get => _completionContext.ReplacementIndex; set => _completionContext.ReplacementIndex = value; }
+            
+            /// <inheritdoc/>
+            public int ReplacementLength { get => _completionContext.ReplacementLength; set => _completionContext.ReplacementLength = value; }
+            
+            /// <inheritdoc/>
+            public int RelativeCursorPositionAdjustment { get => _completionContext.RelativeCursorPositionAdjustment; set => _completionContext.RelativeCursorPositionAdjustment = value; }
+
+            public string WordToComplete => _completionContext.WordToComplete;
+
+            /// <inheritdoc/>
+            public string? GetOption(string key) => _completionContext.Options?[key] as string;
+
+            internal CompletionContext Context => _completionContext;
         }
 
         #endregion Native Command Argument Completion
@@ -8068,5 +8150,5 @@ namespace System.Management.Automation
             CompletionCompleters.CompleteMemberByInferredType(typeInferenceContext, prevType, result, wordToComplete + "*", filter: CompletionCompleters.IsPropertyMember, isStatic: false);
             return result;
         }
-    }
+    }    
 }

@@ -75,6 +75,8 @@ namespace System.Management.Automation
 
         internal int ReplacementLength { get; set; }
 
+        internal int RelativeCursorPositionAdjustment { get; set; }
+
         internal ExecutionContext ExecutionContext { get; }
 
         internal bool HasPseudoBindingInfo => _pseudoBindingInfo is not null;
@@ -107,6 +109,8 @@ namespace System.Management.Automation
         private readonly Token[] _tokens;
         private readonly IScriptPosition _cursorPosition;
         private readonly Hashtable? _options;
+
+        internal int RelativeCursorPositionAdjustment { get; set; }
 
         internal CompletionAnalysis(Ast ast, Token[] tokens, IScriptPosition cursorPosition, Hashtable? options)
         {
@@ -413,8 +417,10 @@ namespace System.Management.Automation
             {
                 if (previousLanguageMode.HasValue)
                 {
-                    completionContext.ExecutionContext.LanguageMode = previousLanguageMode.Value;
+                    completionContext.ExecutionContext.LanguageMode = previousLanguageMode.Value;                    
                 }
+                
+                RelativeCursorPositionAdjustment = completionContext.RelativeCursorPositionAdjustment;
             }
         }
 

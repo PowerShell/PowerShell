@@ -21,7 +21,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Provides a set of possible completions for given input.
     /// </summary>
-    public class CommandCompletion
+    public class CommandCompletion : ICommandCompletion2
     {
         /// <summary>
         /// Construct the result CompleteInput or TabExpansion2.
@@ -56,11 +56,19 @@ namespace System.Management.Automation
         /// </summary>
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Collection<CompletionResult> CompletionMatches { get; set; }
-
+        
         internal static readonly IList<CompletionResult> EmptyCompletionResult = Array.Empty<CompletionResult>();
 
         private static readonly CommandCompletion s_emptyCommandCompletion = new CommandCompletion(
             new Collection<CompletionResult>(EmptyCompletionResult), -1, -1, -1);
+
+        int ICommandCompletion2.RelativeCursorPositionAdjustment 
+        { 
+            get => _relativeCursorPositionAdjustment; 
+            set => _relativeCursorPositionAdjustment = value; 
+        }
+
+        private int _relativeCursorPositionAdjustment;
 
         #endregion Fields and Properties
 
@@ -264,11 +272,11 @@ namespace System.Management.Automation
 
                         // When call the win7 TabExpansion script, the input should be the single current line
                         powershell.Commands.Clear();
-                        var inputAndCursor = GetInputAndCursorFromAst(cursorPosition);
-                        var results = InvokeLegacyTabExpansion(powershell, inputAndCursor.Item1, inputAndCursor.Item2, true, out replacementIndex, out replacementLength);
+                        var (input, cursor, adjustment) = GetInputAndCursorFromAst(cursorPosition);
+                        var results = InvokeLegacyTabExpansion(powershell, input, cursor, true, out replacementIndex, out replacementLength);
                         return new CommandCompletion(
                             new Collection<CompletionResult>(results ?? EmptyCompletionResult),
-                            -1, replacementIndex + inputAndCursor.Item3, replacementLength);
+                            -1, replacementIndex + adjustment, replacementLength);
                     }
                     else
                     {
@@ -532,10 +540,12 @@ namespace System.Management.Automation
 
                 if (NeedToInvokeLegacyTabExpansion(powershell))
                 {
-                    var inputAndCursor = GetInputAndCursorFromAst(positionOfCursor);
-                    results = InvokeLegacyTabExpansion(powershell, inputAndCursor.Item1, inputAndCursor.Item2, false, out replacementIndex, out replacementLength);
-                    replacementIndex += inputAndCursor.Item3;
+                    var (input, cursor, adjustment) = GetInputAndCursorFromAst(positionOfCursor);
+                    results = InvokeLegacyTabExpansion(powershell, input, cursor, false, out replacementIndex, out replacementLength);
+                    replacementIndex += adjustment;
                 }
+
+                int relativeCursorPositionAdjustment = 0;
 
                 if (results == null || results.Count == 0)
                 {
@@ -575,6 +585,7 @@ namespace System.Management.Automation
                     */
                     var completionAnalysis = new CompletionAnalysis(ast, tokens, positionOfCursor, options);
                     results = completionAnalysis.GetResults(powershell, out replacementIndex, out replacementLength);
+                    relativeCursorPositionAdjustment = completionAnalysis.RelativeCursorPositionAdjustment;
                     /*
                     }
                     finally
@@ -595,11 +606,14 @@ namespace System.Management.Automation
                     TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
                         completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);
 #endif
-                return new CommandCompletion(
-                    new Collection<CompletionResult>(completionResults),
-                    -1,
-                    replacementIndex,
-                    replacementLength);
+                var commandCompletion = new CommandCompletion(
+                                    new Collection<CompletionResult>(completionResults),
+                                    -1,
+                                    replacementIndex,
+                                    replacementLength);
+
+                ((ICommandCompletion2)commandCompletion).RelativeCursorPositionAdjustment = relativeCursorPositionAdjustment;
+                return commandCompletion;                
             }
         }
 
@@ -1319,5 +1333,16 @@ namespace System.Management.Automation
         }
 
         #endregion private methods
+    }
+
+    /// <summary>
+    /// Adds extra information from extensible completion
+    /// </summary>
+    public interface ICommandCompletion2
+    {
+        /// <summary>
+        /// The amount the cursor should be moved relative to the end of the replacement
+        /// </summary>
+        int RelativeCursorPositionAdjustment { get; set; }
     }
 }

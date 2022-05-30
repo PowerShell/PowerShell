@@ -6977,7 +6977,10 @@ namespace Microsoft.PowerShell
             var currentMatchIndex = GetPropertyValue<int>(pso, "CurrentMatchIndex");
             var replacementIndex = GetPropertyValue<int>(pso, "ReplacementIndex");
             var replacementLength = GetPropertyValue<int>(pso, "ReplacementLength");
-            return new CommandCompletion(completions, currentMatchIndex, replacementIndex, replacementLength);
+            var relativeCursorPositionAdjustment = GetPropertyValue<int>(pso, "RelativeCursorPositionAdjustment", RehydrationFlags.MissingPropertyOk);
+            var commandCompletion = new CommandCompletion(completions, currentMatchIndex, replacementIndex, replacementLength);                        
+            ((ICommandCompletion2)commandCompletion).RelativeCursorPositionAdjustment = relativeCursorPositionAdjustment;            
+            return commandCompletion;
         }
 
         private static JobStateInfo RehydrateJobStateInfo(PSObject pso)

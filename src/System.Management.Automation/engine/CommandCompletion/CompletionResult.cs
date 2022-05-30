@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Diagnostics;
 
 #nullable enable
 
@@ -62,6 +63,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Class used to store a tab completion or Intellisense result.
     /// </summary>
+    [DebuggerDisplay("{DebuggerDisplay}")]
     public class CompletionResult
     {
         /// <summary>
@@ -217,6 +219,16 @@ namespace System.Management.Automation
             _completionText = null!;
             _listItemText = null!;
             _toolTip = null!;
+        }
+
+        private string DebuggerDisplay
+        {
+            get
+            {
+                return _completionText is null ? "<NullMarker>" 
+                    : _completionText == _toolTip ? $"{ResultType} '{_completionText}'"
+                        : $"{ResultType} '{_completionText}' tooltip: '{ToolTip}'";
+            }
         }
     }
 }
