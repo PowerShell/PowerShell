@@ -1595,7 +1595,6 @@ namespace System.Management.Automation
         // Cached valid values.
         private string[] _validValues;
         private readonly int _validValuesCacheExpiration;
-        
         /// <summary>
         /// Initializes a new instance of the <see cref="CachedValidValuesGeneratorBase"/> class.
         /// </summary>
