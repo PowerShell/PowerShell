@@ -1708,11 +1708,14 @@ namespace System.Management.Automation
                             validValuesFromScript.Add(resultAsString);
                             continue;
                         }
+
                         var resultToString = customResult.ToString();
                         validValuesFromScript.Add(resultToString);
                     }
+
                     return validValuesFromScript;
                 }
+
                 var validValuesLocal = validValuesGenerator.GetValidValues();
 
                 if (validValuesLocal == null)
