@@ -229,10 +229,60 @@ class NumberCompletionAttribute : ArgumentCompleterAttribute, IArgumentCompleter
     [IArgumentCompleter] Create() { return [NumberCompleter]::new($this.From, $this.To, $this.Step) }
 }
 
+
+class AdvancedFactoryCompleter : IArgumentCompleter2
+{
+    [int] $ReplacementIndex
+    [int] $ReplacementLength
+    [int] $RelativeCursorPositionAdjustment
+
+    AdvancedFactoryCompleter([int] $ReplacementIndex, [int] $ReplacementLength, [int] $RelativeCursorPositionAdjustment)
+    {
+        $this.ReplacementIndex = $ReplacementIndex
+        $this.ReplacementLength = $ReplacementLength
+        $this.RelativeCursorPositionAdjustment = $RelativeCursorPositionAdjustment
+    }
+
+    [IEnumerable[CompletionResult]] CompleteArgument(
+        [string] $CommandName,
+        [string] $parameterName,
+        [string] $wordToComplete,
+        [IArgumentCompletionInfo] $completionInfo
+        )
+    {
+        $resultList = [List[CompletionResult]]::new()
+        $resultList.Add([CompletionResult]::new("Abcde", "Abcde", "ParameterValue", $parameterName))
+
+        $completionInfo.ReplacementIndex = $this.ReplacementIndex
+        $completionInfo.ReplacementLength = $this.ReplacementLength
+        $completionInfo.RelativeCursorPositionAdjustment = $this.RelativeCursorPositionAdjustment
+
+        return $resultList
+    }
+}
+
+class AdvancedFactoryCompletion2Attribute : ArgumentCompleterAttribute, IArgumentCompleterFactory2
+{
+    [int] $ReplacementIndex
+    [int] $ReplacementLength
+    [int] $RelativeCursorPositionAdjustment
+
+    AdvancedFactoryCompletion2Attribute([int] $ReplacementIndex, [int] $ReplacementLength, [int] $RelativeCursorPositionAdjustment)
+    {
+        $this.ReplacementIndex = $ReplacementIndex
+        $this.ReplacementLength = $ReplacementLength
+        $this.RelativeCursorPositionAdjustment = $RelativeCursorPositionAdjustment
+    }
+
+    [IArgumentCompleter2] Create() { return [AdvancedFactoryCompleter]::new($this.ReplacementIndex, $this.ReplacementLength, $this.RelativeCursorPositionAdjustment) }
+}
+
 function FactoryCompletionAdd {
     param(
         [NumberCompletion(0, 50, Step = 5)]
-        [int] $Number
+        [int] $Number,
+        [AdvancedFactoryCompletion2(2, 50, 5)]
+        [int] $ParameterToComplete
     )
 }
 
@@ -244,6 +294,24 @@ Describe "Factory based extensible completion" -Tags "CI" {
         )
         TestInput       = 'FactoryCompletionAdd -Number 5'
     } | Get-CompletionTestCaseData | Test-Completions
+}
+
+Describe "Factory2 based extensible completion" -Tags "CI" {
+    @{
+        ExpectedResults = @(
+            @{CompletionText = "A text"; ResultType = "ParameterValue" }
+        )
+        TestInput       = 'FactoryCompletionAdd -ParameterToComplete '
+    } | Get-CompletionTestCaseData | foreach-object {
+        $testInput = $_.TestInput
+        It "should pass extended completion info" {
+           $result = Get-Completions -inputScript $testInput
+            $result.ReplacementIndex | Should -Be 2
+            $result.ReplacementLength | Should -Be 50
+            [ICommandCompletion2] $cc2 = $result
+            $cc2.RelativeCursorPositionAdjustment | Should -Be 5
+        }
+    }
 }
 
 Describe "Script block based extensible completion" -Tags "CI" {
