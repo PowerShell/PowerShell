@@ -1351,6 +1351,23 @@ namespace System.Management.Automation.Runspaces
             Func<string, bool> roleVerifier,
             bool validateFile)
         {
+            if (path is null)
+            {
+                throw new PSArgumentNullException(nameof(path));
+            }
+
+            if (!File.Exists(path))
+            {
+                throw new PSInvalidOperationException(
+                    StringUtil.Format(ConsoleInfoErrorStrings.ConfigurationFileDoesNotExist, path));
+            }
+
+            if (!Path.GetExtension(path).Equals(".pssc", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new PSInvalidOperationException(
+                    StringUtil.Format(ConsoleInfoErrorStrings.NotConfigurationFile, path));
+            }
+
             Remoting.DISCPowerShellConfiguration discConfiguration = new Remoting.DISCPowerShellConfiguration(path, roleVerifier, validateFile);
             return discConfiguration.GetInitialSessionState(null);
         }

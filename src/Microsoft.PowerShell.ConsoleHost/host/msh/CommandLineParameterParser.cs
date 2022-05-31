@@ -378,14 +378,6 @@ namespace Microsoft.PowerShell
                 AssertArgumentsParsed();
                 return _configurationFile;
             }
-
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    _configurationFile = value;
-                }
-            }
         }
 
         internal string? ConfigurationName
@@ -933,7 +925,7 @@ namespace Microsoft.PowerShell
                     _noInteractive = false;
                     ParametersUsed |= ParameterBitmap.Interactive;
                 }
-                else if (MatchSwitch(switchKey, "configurationfile", "configurationFile"))
+                else if (MatchSwitch(switchKey, "configurationfile", "configurationfile"))
                 {
                     ++i;
                     if (i >= args.Length)
