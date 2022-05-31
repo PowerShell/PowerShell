@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell
             Version             = 0x00800000, // -Version | -v
             WindowStyle         = 0x01000000, // -WindowStyle | -w
             WorkingDirectory    = 0x02000000, // -WorkingDirectory | -wd
-            ConfigurationFile   = 0x04000000, // -ConfigurationFile | -ConfigurationFile
+            ConfigurationFile   = 0x04000000, // -ConfigurationFile | -cf
             // Enum values for specified ExecutionPolicy
             EPUnrestricted      = 0x0000000100000000, // ExecutionPolicy unrestricted
             EPRemoteSigned      = 0x0000000200000000, // ExecutionPolicy remote signed
@@ -933,7 +933,7 @@ namespace Microsoft.PowerShell
                     _noInteractive = false;
                     ParametersUsed |= ParameterBitmap.Interactive;
                 }
-                else if (MatchSwitch(switchKey, "configurationfile", "configurationfile"))
+                else if (MatchSwitch(switchKey, "configurationfile", "cf"))
                 {
                     ++i;
                     if (i >= args.Length)
