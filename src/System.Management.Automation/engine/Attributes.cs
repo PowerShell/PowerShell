@@ -1655,7 +1655,7 @@ namespace System.Management.Automation
         // of 'validValuesGenerator'.
         private readonly string[] _validValues;
         private readonly IValidateSetValuesGenerator validValuesGenerator = null;
-        private readonly ScriptBlock validValuesScript = null;
+        private readonly ScriptBlock validValuesScript;
         // The valid values generator cache works across 'ValidateSetAttribute' instances.
         private static readonly ConcurrentDictionary<Type, IValidateSetValuesGenerator> s_ValidValuesGeneratorCache =
             new ConcurrentDictionary<Type, IValidateSetValuesGenerator>();
