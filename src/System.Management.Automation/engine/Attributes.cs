@@ -1690,6 +1690,7 @@ namespace System.Management.Automation
                 {
                     return _validValues;
                 }
+
                 if (validValuesScript is not null)
                 {
                     var validValuesFromScript = new List<string>();
