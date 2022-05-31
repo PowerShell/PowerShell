@@ -1390,9 +1390,11 @@ namespace System.Management.Automation
             ArgumentLocation argLocation,
             CommandAst commandAst)
         {
-            List<CompletionResult> result = new List<CompletionResult>();
+            Debug.Assert(context.HasPseudoBindingInfo);
+            
+            List<CompletionResult> result = new List<CompletionResult>();                        
 
-            PseudoBindingInfo bindingInfo = context.PseudoBindingInfo!;
+            PseudoBindingInfo bindingInfo = context.PseudoBindingInfo;
             if (argLocation.IsPositional)
             {
                 CompletePositionalArgument(
@@ -1444,7 +1446,7 @@ namespace System.Management.Automation
             ArgumentLocation argLocation,
             CommandAst commandAst)
         {
-            PseudoBindingInfo bindingInfo = context.PseudoBindingInfo!;
+            PseudoBindingInfo bindingInfo = context.PseudoBindingInfo;
             Diagnostics.Assert(bindingInfo.InfoType.Equals(PseudoBindingInfoType.PseudoBindingSucceed), "Caller needs to make sure the pseudo binding was successful");
             List<CompletionResult> result = new List<CompletionResult>();
 
@@ -2373,7 +2375,7 @@ namespace System.Management.Automation
         private static Hashtable GetBoundArgumentsAsHashtable(CompletionContext context)
         {
             var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
-            if (context.PseudoBindingInfo != null)
+            if (context.HasPseudoBindingInfo)
             {
                 var boundArguments = context.PseudoBindingInfo.BoundArguments;
                 if (boundArguments != null)

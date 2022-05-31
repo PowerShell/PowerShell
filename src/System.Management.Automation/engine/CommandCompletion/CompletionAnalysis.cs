@@ -77,6 +77,8 @@ namespace System.Management.Automation
 
         internal ExecutionContext ExecutionContext { get; }
 
+        internal bool HasPseudoBindingInfo => _pseudoBindingInfo is not null;
+
         internal PseudoBindingInfo PseudoBindingInfo 
         { 
             get => _pseudoBindingInfo ??  throw new InvalidOperationException($"Accessing property '{nameof(PseudoBindingInfo)}' on CompletionContext without first setting it.");
