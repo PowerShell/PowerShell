@@ -362,7 +362,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="ast">The ast for pre-parsed input.</param>
         /// <param name="tokens"></param>
-        /// <param name="cursorPosition"></param>
+        /// <param name="cursorPosition">The position of the cursor when tabcompletion was invoked.</param>
         /// <param name="options">Optional options to configure how completion is performed.</param>
         /// <param name="debugger">Current debugger.</param>
         /// <returns>Command completion.</returns>
@@ -1336,12 +1336,12 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Adds extra information from extensible completion
+    /// Adds extra information for use in extensible completion.
     /// </summary>
     public interface ICommandCompletion2
     {
         /// <summary>
-        /// The amount the cursor should be moved relative to the end of the replacement
+        /// The amount the cursor should be moved relative to the end of the replacement.
         /// </summary>
         int RelativeCursorPositionAdjustment { get; set; }
     }
