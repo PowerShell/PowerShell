@@ -1701,7 +1701,7 @@ namespace System.Management.Automation
 
                     foreach (var customResult in customResults)
                     {
-                        var resultAsString = customResult.BaseObject as string;
+                        var resultAsString = LanguagePrimitives.ConvertTo<string>(customResult);
                         if (resultAsString != null)
                         {
                             validValuesFromScript.Add(resultAsString);
