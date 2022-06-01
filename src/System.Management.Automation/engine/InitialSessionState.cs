@@ -1362,7 +1362,7 @@ namespace System.Management.Automation.Runspaces
                     StringUtil.Format(ConsoleInfoErrorStrings.ConfigurationFileDoesNotExist, path));
             }
 
-            if (!Path.GetExtension(path).Equals(".pssc", StringComparison.OrdinalIgnoreCase))
+            if (!path.EndsWith(".pssc", StringComparison.OrdinalIgnoreCase))
             {
                 throw new PSInvalidOperationException(
                     StringUtil.Format(ConsoleInfoErrorStrings.NotConfigurationFile, path));
