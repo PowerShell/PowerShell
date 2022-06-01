@@ -1133,6 +1133,10 @@ Microsoft.Management.UI.Internal
 StringComparison
 osx-arm64
 crossgen2
+mcr.microsoft.com
+global.json
+sha256
+PkgES
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1410,6 +1414,7 @@ ThirdPartyNotices.txt
 rtm.21527.11
 SKUs
 vmImage
+Ubuntu22.04
  - CHANGELOG/7.0.md
 codesign
 release-BuildJson
