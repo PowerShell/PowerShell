@@ -151,6 +151,22 @@ Describe 'Tests for $PSStyle automatic variable' {
         }
     }
 
+    It '$PSStyle.Formatting.FormatAccent is ignored when it''s set to be an empty string' {
+        $old = $PSStyle.Formatting.FormatAccent
+        $oldRender = $PSStyle.OutputRendering
+
+        try {
+            $PSStyle.OutputRendering = 'Ansi'
+            $PSStyle.Formatting.FormatAccent = ''
+            $out = $PSVersionTable | Format-List | Out-String
+            $out.Contains("`e[") | Should -BeFalse
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+            $PSStyle.Formatting.FormatAccent = $old
+        }
+    }
+
     It '$PSStyle.Formatting.TableHeader is applied to Format-Table' {
         $old = $PSStyle.Formatting.TableHeader
         $oldRender = $PSStyle.OutputRendering
@@ -160,6 +176,22 @@ Describe 'Tests for $PSStyle automatic variable' {
             $PSStyle.Formatting.TableHeader = $PSStyle.Foreground.Blue + $PSStyle.Background.White + $PSStyle.Bold
             $out = $PSVersionTable | Format-Table | Out-String
             $out | Should -BeLike "*$($PSStyle.Formatting.TableHeader.Replace('[',"``["))*"
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+            $PSStyle.Formatting.TableHeader = $old
+        }
+    }
+
+    It '$PSStyle.Formatting.TableHeader is ignored when it''s set to be an empty string' {
+        $old = $PSStyle.Formatting.TableHeader
+        $oldRender = $PSStyle.OutputRendering
+
+        try {
+            $PSStyle.OutputRendering = 'Ansi'
+            $PSStyle.Formatting.TableHeader = ''
+            $out = $PSVersionTable | Format-Table | Out-String
+            $out.Contains("`e[") | Should -BeFalse
         }
         finally {
             $PSStyle.OutputRendering = $oldRender
