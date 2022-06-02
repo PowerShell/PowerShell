@@ -73,6 +73,9 @@ namespace Microsoft.PowerShell
         /// <param name="helpText">
         /// Help text for minishell. This is displayed on 'minishell -?'.
         /// </param>
+        /// <param name="issProvidedExternally">
+        /// True when an external caller provides an InitialSessionState object, which can conflict with '-ConfigurationFile' argument.
+        /// </param>
         /// <returns>
         /// The exit code for the shell.
         ///
@@ -99,7 +102,10 @@ namespace Microsoft.PowerShell
         /// Anyone checking the exit code of the shell or monitor can mask off the high word to determine the exit code passed
         /// by the script that the shell last executed.
         /// </returns>
-        internal static int Start(string bannerText, string helpText)
+        internal static int Start(
+            string bannerText,
+            string helpText,
+            bool issProvidedExternally)
         {
 #if DEBUG
             if (Environment.GetEnvironmentVariable("POWERSHELL_DEBUG_STARTUP") != null)
@@ -110,6 +116,12 @@ namespace Microsoft.PowerShell
                 }
             }
 #endif
+
+            // Check for external InitialSessionState configuration conflict with '-ConfigurationFile' argument.
+            if (issProvidedExternally && !string.IsNullOrEmpty(s_cpp.ConfigurationFile))
+            {
+                throw new ConsoleHostStartupException(ConsoleHostStrings.ShellCannotBeStartedWithConfigConflict);
+            }
 
             // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
             string path = Environment.GetEnvironmentVariable("PATH");

@@ -183,6 +183,30 @@ namespace PowerShell.Hosting.SDK.Tests
             Assert.Equal(42, ret);
         }
 
+        /// <summary>
+        /// ConsoleShell cannot start with both InitialSessionState and -ConfigurationFile argument configurations specified.
+        /// </summary>
+        [Fact]
+        public static void TestConsoleShellConfigConflictError()
+        {
+            var iss = System.Management.Automation.Runspaces.InitialSessionState.CreateDefault2();
+            Exception ex = null;
+            try
+            {
+                ConsoleShell.Start(iss, "BannerText", string.Empty, new string[] { "-ConfigurationFile noneSuch" });
+            }
+            catch (Exception e)
+            {
+                ex = e;
+            }
+
+            Assert.True(ex != null);
+            if (ex != null)
+            {
+                Assert.Equal(ex.GetType().FullName, "Microsoft.PowerShell.ConsoleHost.ConsoleHostStartupException");
+            }
+        }
+
         [Fact]
         public static void TestBuiltInModules()
         {
