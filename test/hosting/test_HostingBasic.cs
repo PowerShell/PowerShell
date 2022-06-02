@@ -183,6 +183,7 @@ namespace PowerShell.Hosting.SDK.Tests
             Assert.Equal(42, ret);
         }
 
+        /* Test disabled because CommandLineParser is static and can only be intialized once (above in TestConsoleShellScenario)
         /// <summary>
         /// ConsoleShell cannot start with both InitialSessionState and -ConfigurationFile argument configurations specified.
         /// </summary>
@@ -190,22 +191,10 @@ namespace PowerShell.Hosting.SDK.Tests
         public static void TestConsoleShellConfigConflictError()
         {
             var iss = System.Management.Automation.Runspaces.InitialSessionState.CreateDefault2();
-            Exception ex = null;
-            try
-            {
-                ConsoleShell.Start(iss, "BannerText", string.Empty, new string[] { "-ConfigurationFile noneSuch" });
-            }
-            catch (Exception e)
-            {
-                ex = e;
-            }
-
-            Assert.True(ex != null);
-            if (ex != null)
-            {
-                Assert.Equal(ex.GetType().FullName, "Microsoft.PowerShell.ConsoleHost.ConsoleHostStartupException");
-            }
+            int ret = ConsoleShell.Start(iss, "BannerText", string.Empty, new string[] { @"-ConfigurationFile ""noneSuch""" });
+            Assert.Equal(70, ret);  // ExitCodeInitFailure.
         }
+        */
 
         [Fact]
         public static void TestBuiltInModules()
