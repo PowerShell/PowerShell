@@ -115,7 +115,7 @@ Describe 'Get-Error tests' -Tag CI {
         }
 
         $out = Get-Error | Out-String
-        $out | Should -Match "Type\s+:\s.\[\d+mSystem.ArgumentException"
+        $out | Should -Match "Type\s+:\s(.\[\d+m)?System.ArgumentException"
     }
 
     It 'Get-Error uses Error color for Message and PositionMessage members' {
