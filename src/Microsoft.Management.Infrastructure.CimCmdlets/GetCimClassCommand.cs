@@ -45,6 +45,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
+        /// Get or sets flag to retrieve a localized data for WMI class.
+        /// </para>
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Amended { get; set; }
+
+        /// <summary>
+        /// <para>
         /// The following is the definition of the input parameter "ClassName".
         /// </para>
         /// <para>
