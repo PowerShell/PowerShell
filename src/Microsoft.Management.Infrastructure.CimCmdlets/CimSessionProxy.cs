@@ -540,7 +540,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region set operation options
 
         /// <summary>
-        /// Gets or sets the flag to retrieve a localized information for CIM class.
+        /// Gets or sets a value indicating whether to retrieve localized information for the CIM class.
         /// </summary>
         public bool Amended
         {

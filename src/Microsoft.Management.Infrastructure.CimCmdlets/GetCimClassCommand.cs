@@ -44,9 +44,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region parameters
 
         /// <summary>
-        /// <para>
-        /// Get or sets flag to retrieve a localized data for WMI class.
-        /// </para>
+        /// Gets or sets flag to retrieve a localized data for WMI class.
         /// </summary>
         [Parameter]
         public SwitchParameter Amended { get; set; }
