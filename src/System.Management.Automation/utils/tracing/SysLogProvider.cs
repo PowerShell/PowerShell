@@ -381,7 +381,7 @@ namespace System.Management.Automation.Tracing
         /// See man 3 syslog for more info.
         /// </summary>
         /// <param name="priority">
-        /// The OR of a priority and facility in the SysLogPriority enum indicating the the priority and facility of the log entry.
+        /// The OR of a priority and facility in the SysLogPriority enum indicating the priority and facility of the log entry.
         /// </param>
         /// <param name="message">The message to put in the log entry.</param>
         [DllImport(libpslnative, CharSet = CharSet.Ansi, EntryPoint = "Native_SysLog")]

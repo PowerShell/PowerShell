@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// </summary>
         /// <param name="prependString">String to add to the left.</param>
         /// <param name="line">Line to print.</param>
-        /// <param name="lo">LineOuput to write to.</param>
+        /// <param name="lo">LineOutput to write to.</param>
         private void WriteSingleLineHelper(string prependString, string line, LineOutput lo)
         {
             if (line is null)

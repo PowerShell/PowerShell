@@ -545,7 +545,7 @@ namespace System.Management.Automation
             // is a pipeline that emits nothing then result.Count will
             // be zero so we catch that and "convert" it to null. Note that
             // the return statement is still required in the method, it
-            // just recieves nothing from it's argument.
+            // just receives nothing from it's argument.
             if (result.Count == 0)
             {
                 return default(T);

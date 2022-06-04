@@ -2360,7 +2360,7 @@ namespace System.Management.Automation
 
         #region finish logic
 
-        // This variable is set to true if atleast one child job failed.
+        // This variable is set to true if at least one child job failed.
         private bool _atleastOneChildJobFailed = false;
 
         // count of number of child jobs which have finished
@@ -3926,7 +3926,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
         /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
-        /// <returns>A a breakpoint with the specified id.</returns>
+        /// <returns>A breakpoint with the specified id.</returns>
         public override Breakpoint GetBreakpoint(int id, int? runspaceId) =>
             _wrappedDebugger.GetBreakpoint(id, runspaceId);
 

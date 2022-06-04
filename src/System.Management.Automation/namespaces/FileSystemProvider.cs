@@ -9155,7 +9155,7 @@ namespace System.Management.Automation.Internal
 
         # Return a hash table in the following format:
         #      DirectoryPath is the directory to be created.
-        #      PathExists is a bool to to keep track of whether the directory already exist.
+        #      PathExists is a bool to keep track of whether the directory already exist.
         #
         # 1) If DirectoryPath already exists:
         #     a) If -Force is specified, force create the directory. Set DirectoryPath to the created directory path.
