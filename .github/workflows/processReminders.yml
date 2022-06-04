@@ -1,0 +1,14 @@
+name: 'Process reminders'
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  reminder:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: check reminders and notify
+        uses: agrc/reminder-action@v1
