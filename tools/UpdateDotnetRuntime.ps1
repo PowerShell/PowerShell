@@ -231,7 +231,7 @@ function Get-DotnetUpdate {
             $Message = $null -eq $currentVersion.PreReleaseLabel ? "$latestSDKversion is not preview, update manually." : "No update needed."
         }
     } catch {
-        Write-Verbose -Verbose "Error occured: $_.message"
+        Write-Verbose -Verbose "Error occurred: $_.message"
         $shouldUpdate = $false
         $newVersion = $null
         Write-Error "Error while checking .NET SDK update: $($_.message)"
