@@ -2706,73 +2706,201 @@ namespace System.Management.Automation.Language
             return false;
         }
 
-        private Token ScanHereStringLiteral()
+        private class LineInfo
         {
-            // On entry, we've see @'.  Remember the position in case we reach the end of file and want
-            // to use this position as the error position.
-            int headerOffset = _currentIndex - 2;
-            int falseFooterOffset = -1;
+            internal int linestartIndex;
+            internal int whitespaceCount;
+            internal int newlineCharCount;
 
-            if (!ScanAfterHereStringHeader("@'"))
+            internal LineInfo(int linestartIndex, int newlineCharCount)
             {
-                return NewStringLiteralToken(string.Empty, TokenKind.HereStringLiteral, TokenFlags.TokenInError);
+                this.linestartIndex = linestartIndex;
+                this.whitespaceCount = 0;
+                this.newlineCharCount = newlineCharCount;
+            }
+        }
+
+        private Token ScanHereStringLiteral(char firstChar)
+        {
+            int tokenStartIndex = _currentIndex - 2;
+            int atSignsUsed = 1;
+            char currentChar = firstChar;
+            while (currentChar == '@')
+            {
+                atSignsUsed++;
+                currentChar = GetChar();
             }
 
-            TokenFlags flags = TokenFlags.None;
-            var sb = GetStringBuilder();
-            Action<char> appendChar = c => sb.Append(c);
-            if (!ScanPossibleHereStringFooter(CharExtensions.IsSingleQuote, appendChar, ref falseFooterOffset))
+            if (!currentChar.IsSingleQuote())
             {
-                while (true)
+                UngetChar();
+                ReportError(tokenStartIndex, nameof(ParserStrings.UnrecognizedToken), ParserStrings.UnrecognizedToken);
+                return NewToken(TokenKind.Unknown);
+            }
+
+            var sb = GetStringBuilder();
+            TokenFlags flags = TokenFlags.None;
+            var endSequenceBuffer = new char[atSignsUsed + 1];
+            var lineInfoList = new List<LineInfo>(1) { new LineInfo(0, -1) };
+            int lastFooterOffset = -1;
+            int lowestWhitespaceCount = -1;
+
+            while (true)
+            {
+                if (sb.Length == lineInfoList[^1].linestartIndex)
                 {
-                    char c = GetChar();
-
-                    if (c == '\r' || c == '\n')
+                    while (true)
                     {
-                        // Remember the length, we may remove this newline (which is 1 or 2 characters).
-                        int length = sb.Length;
-
-                        sb.Append(c);
-                        if (c == '\r' && PeekChar() == '\n')
+                        currentChar = GetChar();
+                        if (!currentChar.IsWhitespace())
                         {
-                            SkipChar();
-                            sb.Append('\n');
-                        }
-
-                        if (ScanPossibleHereStringFooter(CharExtensions.IsSingleQuote, appendChar, ref falseFooterOffset))
-                        {
-                            // Remove the last newline appended.
-                            sb.Length = length;
                             break;
                         }
+                        _ = sb.Append(currentChar);
                     }
-                    else if (c != '\0' || !AtEof())
-                    {
-                        sb.Append(c);
-                    }
-                    else
-                    {
-                        UngetChar();
-                        if (falseFooterOffset != -1)
-                        {
-                            ReportIncompleteInput(falseFooterOffset,
-                                nameof(ParserStrings.WhitespaceBeforeHereStringFooter),
-                                ParserStrings.WhitespaceBeforeHereStringFooter);
-                        }
-                        else
-                        {
-                            ReportIncompleteInput(headerOffset,
-                                nameof(ParserStrings.TerminatorExpectedAtEndOfString),
-                                ParserStrings.TerminatorExpectedAtEndOfString,
-                                "'@");
-                        }
 
+                    if (sb.Length > lineInfoList[^1].linestartIndex)
+                    {
+                        int whitespaceCount = sb.Length - lineInfoList[^1].linestartIndex; // - 1 ?
+                        lineInfoList[^1].whitespaceCount = whitespaceCount;
+                        // Save the lowest whitespace count so indented multi-line strings can be trimmed
+                        // Skip first line because it's the header line
+                        if (lineInfoList.Count > 1 && (lowestWhitespaceCount == -1 || whitespaceCount < lowestWhitespaceCount))
+                        {
+                            lowestWhitespaceCount = whitespaceCount;
+                        }
+                    }
+                }
+                else
+                {
+                    currentChar = GetChar();
+                }
+
+                if (currentChar is '\r' or '\n')
+                {
+                    int newlineCharCount = 1;
+                    _ = sb.Append(currentChar);
+                    if (currentChar == '\r' && PeekChar() == '\n')
+                    {
+                        newlineCharCount++;
+                        SkipChar();
+                        _ = sb.Append('\n');
+                    }
+                    lineInfoList.Add(new LineInfo(sb.Length, newlineCharCount));
+                }
+                else if (currentChar.IsSingleQuote())
+                {
+                    endSequenceBuffer[0] = currentChar;
+                    currentChar = GetChar();
+                    bool completedSequence = true;
+                    for (int i = 1; i < endSequenceBuffer.Length; i++)
+                    {
+                        if (currentChar != '@')
+                        {
+                            completedSequence = false;
+                            _ = sb.Append(endSequenceBuffer, 0, i);
+                            Array.Clear(endSequenceBuffer);
+                            break;
+                        }
+                        endSequenceBuffer[i] = currentChar;
+                        currentChar = GetChar();
+                    }
+                    UngetChar();
+
+                    if (completedSequence)
+                    {
+                        lastFooterOffset = _currentIndex - atSignsUsed - 1;
+                        // Original here-string syntax required the footer to be at the start of a new line
+                        // we are keeping that behavior if it looks like an original here-string (Multi-line with single @)
+                        if (!(atSignsUsed == 1 && lineInfoList.Count > 1 && lineInfoList[^1].linestartIndex != sb.Length))
+                        {
+                            break;
+                        }
+                        _ = sb.Append(endSequenceBuffer);
+                        Array.Clear(endSequenceBuffer);
+                    }
+                }
+                else if (currentChar != '\0' || !AtEof())
+                {
+                    _ = sb.Append(currentChar);
+                }
+                else
+                {
+                    UngetChar();
+                    flags = TokenFlags.TokenInError;
+                    break;
+                }
+            }
+
+            if (flags == TokenFlags.TokenInError)
+            {
+                if (lastFooterOffset != -1)
+                {
+                    ReportIncompleteInput(lastFooterOffset,
+                        nameof(ParserStrings.CharacterBeforeHereStringFooter),
+                        ParserStrings.CharacterBeforeHereStringFooter);
+                }
+                else
+                {
+                    ReportIncompleteInput(tokenStartIndex,
+                        nameof(ParserStrings.TerminatorExpectedAtEndOfString),
+                        ParserStrings.TerminatorExpectedAtEndOfString,
+                        $"'${new string('@', atSignsUsed)}");
+                }
+            }
+            else
+            {
+                if (lineInfoList.Count > 1)
+                {
+                    if (lineInfoList[1].linestartIndex != lineInfoList[1].newlineCharCount + lineInfoList[0].whitespaceCount)
+                    {
                         flags = TokenFlags.TokenInError;
-                        break;
+                        ReportError(tokenStartIndex + 1 + atSignsUsed + lineInfoList[0].whitespaceCount,
+                            nameof(ParserStrings.UnexpectedCharactersAfterHereStringHeader),
+                            ParserStrings.UnexpectedCharactersAfterHereStringHeader);
+                    }
+                    
+                    if (lineInfoList[^1].linestartIndex + lineInfoList[^1].whitespaceCount != sb.Length)
+                    {
+                        flags = TokenFlags.TokenInError;
+                        ReportIncompleteInput(lastFooterOffset,
+                            nameof(ParserStrings.NonWhitespaceCharacterBeforeHereStringFooter),
+                            ParserStrings.NonWhitespaceCharacterBeforeHereStringFooter);
                     }
                 }
             }
 
+            if (lineInfoList.Count > 1 && flags != TokenFlags.TokenInError)
+            {
+                if (lineInfoList[^1].whitespaceCount < lowestWhitespaceCount)
+                {
+                    lowestWhitespaceCount = lineInfoList[^1].whitespaceCount;
+                }
+                int whitespacesRemoved = 0;
+
+                if (lowestWhitespaceCount > 0)
+                {
+                    for (int i = 1; i < lineInfoList.Count - 1; i++)
+                    {
+                        if (lineInfoList[i].whitespaceCount >= lowestWhitespaceCount)
+                        {
+                            _ = sb.Remove(lineInfoList[i].linestartIndex - whitespacesRemoved, lowestWhitespaceCount);
+                            whitespacesRemoved += lowestWhitespaceCount;
+                        }
+                    }
+                }
+
+                _ = sb.Remove(0, lineInfoList[1].linestartIndex);
+                if (sb.Length > 0)
+                {
+                    int removeIndex = lineInfoList[^1].linestartIndex - lineInfoList[^1].newlineCharCount - whitespacesRemoved;
+                    if (lineInfoList.Count > 2)
+                    {
+                        removeIndex -= lineInfoList[1].linestartIndex;
+                    }
+                    _ = sb.Remove(removeIndex, sb.Length - removeIndex);
+                }
+            }
             return NewStringLiteralToken(GetStringAndRelease(sb), TokenKind.HereStringLiteral, flags);
         }
 
@@ -4676,9 +4804,9 @@ namespace System.Management.Automation.Language
                         return NewToken(TokenKind.AtParen);
                     }
 
-                    if (c1.IsSingleQuote())
+                    if (c1.IsSingleQuote() || c1 == '@')
                     {
-                        return ScanHereStringLiteral();
+                        return ScanHereStringLiteral(c1);
                     }
 
                     if (c1.IsDoubleQuote())
