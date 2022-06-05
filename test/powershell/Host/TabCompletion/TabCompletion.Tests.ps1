@@ -74,6 +74,14 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'pscustomobject'
     }
 
+    foreach ($Operator in [System.Management.Automation.CompletionCompleters]::CompleteOperator(""))
+    {
+        It "Should complete $($Operator.CompletionText)" {
+            $res = TabExpansion2 -inputScript "'' $($Operator.CompletionText)" -cursorColumn ($Operator.CompletionText.Length + 3)
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $Operator.CompletionText
+        }
+    }
+
     It '<Intent>' -TestCases @(
         @{
             Intent = 'Complete member with space between dot and cursor'
