@@ -877,7 +877,7 @@ switch ($x)
                 @{ inputStr = '[math].G'; expected = 'GenericParameterAttributes'; setup = $null }
                 @{ inputStr = '[Environment+specialfolder]::App'; expected = 'ApplicationData'; setup = $null }
                 @{ inputStr = 'icm {get-pro'; expected = 'Get-Process'; setup = $null }
-                @{ inputStr = 'write-ouput (get-pro'; expected = 'Get-Process'; setup = $null }
+                @{ inputStr = 'write-output (get-pro'; expected = 'Get-Process'; setup = $null }
                 @{ inputStr = 'iex "get-pro'; expected = '"Get-Process"'; setup = $null }
                 @{ inputStr = '$variab'; expected = '$variableA'; setup = { $variableB = 2; $variableA = 1 } }
                 @{ inputStr = 'a -'; expected = '-keys'; setup = { function a {param($keys) $a} } }
