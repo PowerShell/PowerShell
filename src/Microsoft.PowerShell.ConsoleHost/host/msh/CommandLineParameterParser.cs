@@ -227,6 +227,7 @@ namespace Microsoft.PowerShell
             Version             = 0x00800000, // -Version | -v
             WindowStyle         = 0x01000000, // -WindowStyle | -w
             WorkingDirectory    = 0x02000000, // -WorkingDirectory | -wd
+            ConfigurationFile   = 0x04000000, // -ConfigurationFile
             // Enum values for specified ExecutionPolicy
             EPUnrestricted      = 0x0000000100000000, // ExecutionPolicy unrestricted
             EPRemoteSigned      = 0x0000000200000000, // ExecutionPolicy remote signed
@@ -367,6 +368,15 @@ namespace Microsoft.PowerShell
             {
                 AssertArgumentsParsed();
                 return _collectedArgs;
+            }
+        }
+
+        internal string? ConfigurationFile
+        {
+            get
+            {
+                AssertArgumentsParsed();
+                return _configurationFile;
             }
         }
 
@@ -914,6 +924,19 @@ namespace Microsoft.PowerShell
                 {
                     _noInteractive = false;
                     ParametersUsed |= ParameterBitmap.Interactive;
+                }
+                else if (MatchSwitch(switchKey, "configurationfile", "configurationfile"))
+                {
+                    ++i;
+                    if (i >= args.Length)
+                    {
+                        SetCommandLineError(
+                            CommandLineParameterParserStrings.MissingConfigurationFileArgument);
+                        break;
+                    }
+
+                    _configurationFile = args[i];
+                    ParametersUsed |= ParameterBitmap.ConfigurationFile;
                 }
                 else if (MatchSwitch(switchKey, "configurationname", "config"))
                 {
@@ -1474,6 +1497,7 @@ namespace Microsoft.PowerShell
         private bool _namedPipeServerMode;
         private bool _sshServerMode;
         private bool _showVersion;
+        private string? _configurationFile;
         private string? _configurationName;
         private string? _error;
         private bool _showHelp;
