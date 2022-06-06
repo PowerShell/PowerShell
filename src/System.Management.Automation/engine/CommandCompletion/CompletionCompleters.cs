@@ -1759,7 +1759,7 @@ namespace System.Management.Automation
                 string separator = CultureInfo.CurrentUICulture.TextInfo.ListSeparator;
                 string[] enumArray = enumString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
-                string wordToComplete = context.WordToComplete;
+                string wordToComplete = context.WordToComplete ?? string.Empty;
                 string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
                 var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
@@ -4125,9 +4125,11 @@ namespace System.Management.Automation
                                     return GenerateArgumentLocation(prevArg, position);
                                 }
 
-                                if (!arg.ParameterContainsArgument && arg.Argument.Extent.StartOffset > token.Extent.StartOffset)
+                                if (token.Kind == TokenKind.Parameter
+                                    || (token.Extent.StartOffset > arg.Argument.Extent.StartOffset && token.Extent.EndOffset < arg.Argument.Extent.EndOffset))
                                 {
-                                    // case: Get-Cmdlet -Param <tab> abc
+                                    // case 1: Get-Cmdlet -Param <tab> abc
+                                    // case 2: dir -Path .\abc.txt, <tab> -File
                                     return new ArgumentLocation() { Argument = arg, IsPositional = false, Position = -1 };
                                 }
                             }
