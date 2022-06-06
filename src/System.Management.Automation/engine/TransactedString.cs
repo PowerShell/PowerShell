@@ -8,7 +8,7 @@ using System.Transactions;
 namespace Microsoft.PowerShell.Commands.Management
 {
     /// <summary>
-    /// Represents a a string that can be used in transactions.
+    /// Represents a string that can be used in transactions.
     /// </summary>
     public class TransactedString : IEnlistmentNotification
     {

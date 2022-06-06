@@ -5940,7 +5940,7 @@ namespace System.Management.Automation
                 try
                 {
                     MethodInfo instantiatedMethod = genericMethod.MakeGenericMethod(inferredTypeParameters.ToArray());
-                    s_tracer.WriteLine("Inference succesful: {0}", instantiatedMethod);
+                    s_tracer.WriteLine("Inference successful: {0}", instantiatedMethod);
                     return instantiatedMethod;
                 }
                 catch (ArgumentException e)

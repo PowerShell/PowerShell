@@ -158,7 +158,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        // Ok see it it's in the applications list
+                        // Ok, see if it's in the applications list
                         foreach (string path in _context.EngineSessionState.Applications)
                         {
                             if (checkPath(path, _commandName))

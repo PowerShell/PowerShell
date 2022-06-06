@@ -1306,7 +1306,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <summary>
         /// Cleans the pool closing the runspaces that are idle.
         /// This method is called as part of a timer callback.
-        /// This method will make sure atleast minPoolSz number
+        /// This method will make sure at least minPoolSz number
         /// of Runspaces are active.
         /// </summary>
         /// <param name="state"></param>

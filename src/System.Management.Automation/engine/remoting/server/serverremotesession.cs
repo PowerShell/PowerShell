@@ -900,7 +900,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This handler method runs the negotiation algorithm. It decides if the negotiation is succesful,
+        /// This handler method runs the negotiation algorithm. It decides if the negotiation is successful,
         /// or fails.
         /// </summary>
         /// <param name="sender"></param>

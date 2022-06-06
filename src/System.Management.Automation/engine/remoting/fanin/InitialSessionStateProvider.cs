@@ -2446,7 +2446,7 @@ namespace System.Management.Automation.Remoting
             // Parameters = A dictionary of parameter names -> Modifications
             // Modifications = A dictionary of modification types (ValidatePattern, ValidateSet) to the interim value
             //  for that attribute, as a HashSet of strings. For ValidateSet, this will be used as a collection of strings
-            //  directly during proxy generation. For For ValidatePattern, it will be combined into a regex
+            //  directly during proxy generation. For ValidatePattern, it will be combined into a regex
             //  like: '^(Pattern1|Pattern2|Pattern3)$' during proxy generation.
             Dictionary<string, Hashtable> commandModifications = new Dictionary<string, Hashtable>(StringComparer.OrdinalIgnoreCase);
 
