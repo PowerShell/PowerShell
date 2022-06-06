@@ -822,6 +822,26 @@ switch ($x)
             $expected = ($expected | Sort-Object -CaseSensitive | ForEach-Object { "./$_" }) -join ":"
 
         }
+
+        It "PSScriptRoot path completion when AST extent has file identity" {
+            $scriptText = '"$PSScriptRoot\BugFix.Tests"'
+            $tokens = $null
+            $scriptAst = [System.Management.Automation.Language.Parser]::ParseInput(
+                $scriptText,
+                $PSCommandPath,
+                [ref] $tokens,
+                [ref] $null)
+
+            $cursorPosition = $scriptAst.Extent.StartScriptPosition.
+                GetType().
+                GetMethod('CloneWithNewOffset', [System.Reflection.BindingFlags]'NonPublic, Instance').
+                Invoke($scriptAst.Extent.StartScriptPosition, @($scriptText.Length - 1))
+
+            $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
+            $res.CompletionMatches | Should -HaveCount 1
+            $expectedPath = Join-Path $PSScriptRoot -ChildPath BugFix.Tests.ps1
+            $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
+        }
     }
 
     Context "Cmdlet name completion" {
