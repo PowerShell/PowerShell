@@ -1167,6 +1167,7 @@ function Start-PSPester {
     [CmdletBinding(DefaultParameterSetName='default')]
     param(
         [Parameter(Position=0)]
+        [ArgumentCompleter({param($c,$p,$word) Get-ChildItem -Recurse -File -LiteralPath $PSScriptRoot/Test/PowerShell -filter *.tests.ps1 | Where-Object FullName -like "*$word*" })]
         [string[]]$Path = @("$PSScriptRoot/test/powershell"),
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
@@ -1560,7 +1561,7 @@ function Publish-TestResults
 
         # If we attempt to upload a result file which has no test cases in it, then vsts will produce a warning
         # so check to be sure we actually have a result file that contains test cases to upload.
-        # If the the "test-case" count is greater than 0, then we have results.
+        # If the "test-case" count is greater than 0, then we have results.
         # Regardless, we want to upload this as an artifact, so this logic doesn't pertain to that.
         if ( @(([xml](Get-Content $Path)).SelectNodes(".//test-case")).Count -gt 0 -or $Type -eq 'XUnit' ) {
             Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;failTaskOnFailedTests=true]"

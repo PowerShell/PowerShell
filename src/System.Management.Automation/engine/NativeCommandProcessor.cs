@@ -1277,7 +1277,7 @@ namespace System.Management.Automation
         /// <param name="redirectOutput">A boolean that indicates that, when true, output from the process is redirected to a stream, and otherwise is sent to stdout.</param>
         /// <param name="redirectError">A boolean that indicates that, when true, error output from the process is redirected to a stream, and otherwise is sent to stderr.</param>
         /// <param name="redirectInput">A boolean that indicates that, when true, input to the process is taken from a stream, and otherwise is taken from stdin.</param>
-        /// <param name="soloCommand">A boolean that indicates, when true, that the command to be executed is not part of a pipeline, and otherwise indicates that is is.</param>
+        /// <param name="soloCommand">A boolean that indicates, when true, that the command to be executed is not part of a pipeline, and otherwise indicates that it is.</param>
         /// <returns>A ProcessStartInfo object which is the base of the native invocation.</returns>
         private ProcessStartInfo GetProcessStartInfo(
             bool redirectOutput,

@@ -135,6 +135,9 @@
   <data name="ShellCannotBeStarted" xml:space="preserve">
     <value>The shell cannot be started. A failure occurred during initialization:</value>
   </data>
+  <data name="ShellCannotBeStartedWithConfigConflict" xml:space="preserve">
+    <value>The shell cannot be started. An InitialSessionState object has been provided along with a -ConfigurationFile argument. Both configuration directives cannot be used at the same time.</value>
+  </data>
   <data name="UnhandledExceptionShutdownMessage" xml:space="preserve">
     <value>An error has occurred that was not properly handled. Additional information is shown below. The PowerShell process will exit.</value>
   </data>

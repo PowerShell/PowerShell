@@ -151,9 +151,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else if (_header != null)
             {
+                string style = PSStyle.Instance.Formatting.TableHeader;
+                string reset = PSStyle.Instance.Reset;
+
                 foreach (string line in _header)
                 {
-                    lo.WriteLine(PSStyle.Instance.Formatting.TableHeader + line + PSStyle.Instance.Reset);
+                    lo.WriteLine(style == string.Empty ? line : style + line + reset);
                 }
 
                 return _header.Count;
@@ -226,6 +229,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
+            string style = PSStyle.Instance.Formatting.TableHeader;
+            string reset = PSStyle.Instance.Reset;
+
             if (multiLine)
             {
                 foreach (string line in GenerateTableRow(values, currentAlignment, lo.DisplayCells))
@@ -233,7 +239,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     generatedRows?.Add(line);
                     if (isHeader)
                     {
-                        lo.WriteLine(PSStyle.Instance.Formatting.TableHeader + line + PSStyle.Instance.Reset);
+                        lo.WriteLine(style == string.Empty ? line : style + line + reset);
                     }
                     else
                     {
@@ -247,7 +253,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 generatedRows?.Add(line);
                 if (isHeader)
                 {
-                    lo.WriteLine(PSStyle.Instance.Formatting.TableHeader + line + PSStyle.Instance.Reset);
+                    lo.WriteLine(style == string.Empty ? line : style + line + reset);
                 }
                 else
                 {
@@ -477,7 +483,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (currentValueDisplayLength < width)
             {
                 // the string is shorter than the width of the column
-                // need to pad with with blanks to reach the desired width
+                // need to pad with blanks to reach the desired width
                 int padCount = width - currentValueDisplayLength;
                 switch (alignment)
                 {

@@ -5226,7 +5226,7 @@ namespace System.Management.Automation.Language
                                 SkipToken();
                                 // we don't allow syntax
                                 // : base{ script }
-                                // as a short for for
+                                // as a short for
                                 // : base( { script } )
                                 baseCtorCallParams = InvokeParamParenListRule(lParen, out baseCallLastExtent);
                                 this.SkipNewlines();
