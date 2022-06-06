@@ -471,7 +471,7 @@ namespace System.Management.Automation
                         replacementIndex += tokenAtCursor.Text.Length;
                         replacementLength = 0;
                         result = CompletionCompleters.CompleteMember(completionContext, @static: tokenAtCursor.Kind == TokenKind.ColonColon, ref replacementLength);
-                        
+
                         break;
 
                     case TokenKind.Comment:
@@ -691,6 +691,57 @@ namespace System.Management.Automation
 
                             break;
                         }
+
+                    case TokenKind.Format:
+                    case TokenKind.Not:
+                    case TokenKind.Bnot:
+                    case TokenKind.And:
+                    case TokenKind.Or:
+                    case TokenKind.Xor:
+                    case TokenKind.Band:
+                    case TokenKind.Bor:
+                    case TokenKind.Bxor:
+                    case TokenKind.Join:
+                    case TokenKind.Ieq:
+                    case TokenKind.Ine:
+                    case TokenKind.Ige:
+                    case TokenKind.Igt:
+                    case TokenKind.Ilt:
+                    case TokenKind.Ile:
+                    case TokenKind.Ilike:
+                    case TokenKind.Inotlike:
+                    case TokenKind.Imatch:
+                    case TokenKind.Inotmatch:
+                    case TokenKind.Ireplace:
+                    case TokenKind.Icontains:
+                    case TokenKind.Inotcontains:
+                    case TokenKind.Iin:
+                    case TokenKind.Inotin:
+                    case TokenKind.Isplit:
+                    case TokenKind.Ceq:
+                    case TokenKind.Cne:
+                    case TokenKind.Cge:
+                    case TokenKind.Cgt:
+                    case TokenKind.Clt:
+                    case TokenKind.Cle:
+                    case TokenKind.Clike:
+                    case TokenKind.Cnotlike:
+                    case TokenKind.Cmatch:
+                    case TokenKind.Cnotmatch:
+                    case TokenKind.Creplace:
+                    case TokenKind.Ccontains:
+                    case TokenKind.Cnotcontains:
+                    case TokenKind.Cin:
+                    case TokenKind.Cnotin:
+                    case TokenKind.Csplit:
+                    case TokenKind.Is:
+                    case TokenKind.IsNot:
+                    case TokenKind.As:
+                    case TokenKind.Shl:
+                    case TokenKind.Shr:
+                        result = CompletionCompleters.CompleteOperator(tokenAtCursor.Text);
+                        break;
+
                     default:
                         if ((tokenAtCursor.TokenFlags & TokenFlags.Keyword) != 0)
                         {
