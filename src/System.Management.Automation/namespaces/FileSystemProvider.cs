@@ -155,9 +155,9 @@ namespace Microsoft.PowerShell.Commands
 
                         break;
                     }
-                    else if (item.Contains('~'))
+                    else if (item.Contains('~') || item.IndexOfAny(Utils.Separators.StarOrQuestion) >= 0)
                     {
-                        // This handles short path names
+                        // This handles short path names and wildcard characters that could resolve erroneously
                         exactPath += StringLiterals.DefaultPathSeparator + item;
                     }
                     else

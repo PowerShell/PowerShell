@@ -230,4 +230,79 @@ Describe "Set-Location" -Tags "CI" {
             $PWD.Path | Should -Be $location.Path
         }
     }
+
+    It 'Should not match directory containing wildcard character *' -Skip:([System.IO.Path]::GetInvalidFileNameChars() -contains '*') {
+        Set-Location $TestDrive
+        $currentPath = (Get-Location).Path
+        $literalPathActual = Join-Path $TestDrive '*****'
+        $literalPathAttempt = Join-Path $TestDrive 'aaaaa'
+        New-Item -ItemType Directory -Path $literalPathActual
+        { Set-Location -LiteralPath $literalPathAttempt -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand"
+        (Get-Location).Path | Should -BeExactly $currentPath
+    }
+
+    It 'Should not match directory containing wildcard character ?' -Skip:([System.IO.Path]::GetInvalidFileNameChars() -contains '?') {
+        Set-Location $TestDrive
+        $currentPath = (Get-Location).Path
+        $literalPathActual = Join-Path $TestDrive '?????'
+        $literalPathAttempt = Join-Path $TestDrive 'aaaaa'
+        New-Item -ItemType Directory -Path $literalPathActual
+        { Set-Location -LiteralPath $literalPathAttempt -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand"
+        (Get-Location).Path | Should -BeExactly $currentPath
+    }
+}
+
+Describe "Set-Location: Name with special/wildcards characters" -Tags "CI" {
+
+    BeforeAll {
+
+        $startLocation = (Get-Location).Path
+
+        # printable ascii characters excluding alphanumerics
+        $specialChars =  ' !"#$%&''()*+,-./:;<=>?@[\]^_`{|}~	'.ToCharArray()
+        $testCases = @()
+        ForEach ($specialChar in $specialChars) {
+            If ($specialChar -ne '.') { $testCases += @{Name=([string] $specialChar)} }
+            $testCases += @{Name=('foo' + $specialChar)}
+            $testCases += @{Name=($specialChar + 'foo')}
+        }
+    }
+
+    It "Should be able to create and set location to <Name>" -TestCases $testCases {
+        param ( $Name )
+
+        # skip unsupported characters for the current platform 
+        if ($Name.IndexOfAny([System.IO.Path]::GetInvalidFileNameChars()) -ge 0 -or `
+            ($IsWindows -and ($Name.EndsWith('.') -or $Name.EndsWith(' ')))) {
+            Set-ItResult -Skipped -Because "'${Name}' is not supported as directory name on this operating system."
+            return
+        }
+
+        # note processing of '\' should be allowed on posix systems but 
+        # is quite broken in many powershell cmdlets
+        if ($Name.Contains('\')) 
+        {
+            Set-ItResult -Pending -Because "path elements with backslashes are not fully supported in PowerShell on MacOs/Linux."
+            return
+        }
+
+        $dirFullName = (Join-Path $TestDrive $Name) 
+        
+        $newDir = [System.IO.Directory]::CreateDirectory($dirFullName)
+        $newDir.Name | Should -BeExactly $Name
+        
+        $newDirGetCheck = Get-Item -LiteralPath $dirFullName -Force
+        $newDirGetCheck.Name | Should -BeExactly $Name
+
+        try {
+            Set-Location -LiteralPath $dirFullName
+            [System.IO.Path]::GetFileName((Get-Location).Path) | Should -BeExactly $Name
+        }
+        catch {
+            throw ("Set-Location $Name Failed; Exception: " + $_.Exception.Message)
+        }
+        finally { 
+            Set-Location -LiteralPath $startLocation
+        }
+    }
 }
