@@ -70,7 +70,7 @@ namespace System.Management.Automation.Runspaces
         /// time.
         /// </summary>
         /// <param name="loadErrors">
-        /// The errors that occurred
+        /// The errors that occurred.
         /// </param>
         internal FormatTableLoadException(ConcurrentBag<string> loadErrors)
             : base(StringUtil.Format(FormatAndOutXmlLoadingStrings.FormatTableLoadErrors))
