@@ -446,6 +446,19 @@ switch ($x)
         $actual | Should -BeExactly $expected
     }
 
+    It 'Should complete parameter in param block' {
+        $res = TabExpansion2 -inputScript 'Param($Param1=(Get-ChildItem -))' -cursorColumn 30
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Path'
+    }
+    It 'Should complete member in param block' {
+        $res = TabExpansion2 -inputScript 'Param($Param1=($PSVersionTable.))' -cursorColumn 31
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Count'
+    }
+    It 'Should complete attribute argument in param block' {
+        $res = TabExpansion2 -inputScript 'Param([Parameter()]$Param1)' -cursorColumn 17
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Position'
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'
@@ -1968,6 +1981,30 @@ function MyFunction ($param1, $param2)
     #>
     function MyFunction2 ($param3, $param4)
     {
+    }
+}
+'@
+            }
+            @{
+                Intent = 'Complete help keyword PARAMETER argument for function inside advanced function'
+                Expected = 'param1','param2'
+                TestString = @'
+function Verb-Noun
+{
+    Param
+    (
+        [Parameter()]
+        [string[]]
+        $ParamA
+    )
+    Begin
+    {
+        <#
+            .Parameter ^
+        #>
+        function MyFunction ($param1, $param2)
+        {
+        }
     }
 }
 '@

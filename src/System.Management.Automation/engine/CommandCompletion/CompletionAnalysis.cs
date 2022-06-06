@@ -155,6 +155,14 @@ namespace System.Management.Automation
                 ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent),
                 searchNestedScriptBlocks: true).ToList();
 
+            // If the last ast is an unnamed block that starts with "param" the cursor is inside a param block.
+            // To avoid adding special handling to all the completers that look at the last ast, we remove it here because it's not useful for completion. 
+            if (relatedAsts[^1].Extent.Text.StartsWith("param", StringComparison.OrdinalIgnoreCase)
+                && relatedAsts[^1] is NamedBlockAst namedBlock && namedBlock.Unnamed)
+            {
+                relatedAsts.RemoveAt(relatedAsts.Count - 1);
+            }
+
             Diagnostics.Assert(tokenAtCursor == null || tokenBeforeCursor == null, "Only one of these tokens can be non-null");
 
             return new AstAnalysisContext(tokenAtCursor, tokenBeforeCursor, relatedAsts, replacementIndex);
