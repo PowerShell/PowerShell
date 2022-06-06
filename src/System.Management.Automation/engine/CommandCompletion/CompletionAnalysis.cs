@@ -960,7 +960,7 @@ namespace System.Management.Automation
                     }
                 }
                 
-                if (typeNameToComplete is null && (tokenAtCursor?.TokenFlags & TokenFlags.TypeName) != 0)
+                if (typeNameToComplete is null && tokenAtCursor is not null && (tokenAtCursor.TokenFlags & TokenFlags.TypeName) != 0)
                 {
                     typeNameToComplete = new TypeName(tokenAtCursor.Extent, tokenAtCursor.Text);
                 }
