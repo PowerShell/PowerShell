@@ -524,9 +524,14 @@ namespace System.Management.Automation
                         break;
 
                     case TokenKind.Comma:
-                        // Handle array elements such as dir .\cd,<tab> || dir -Path: .\cd,<tab>
-                        if ((lastAst is ErrorExpressionAst or ArrayLiteralAst) &&
-                            (lastAst.Parent is CommandAst or CommandParameterAst))
+                        // Handle array elements such as the followings:
+                        //  - `dir .\cd,<tab>`
+                        //  - `dir -Path: .\cd,<tab>`
+                        //  - `dir .\abc.txt,<tab> -File`
+                        //  - `dir -Path .\abc.txt,<tab> -File`
+                        //  - `dir -Path: .\abc.txt,<tab> -File`
+                        if (lastAst is ErrorExpressionAst or ArrayLiteralAst &&
+                            lastAst.Parent is CommandAst or CommandParameterAst)
                         {
                             replacementIndex += replacementLength;
                             replacementLength = 0;
