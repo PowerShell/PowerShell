@@ -4126,9 +4126,10 @@ namespace System.Management.Automation
                                 }
 
                                 if (token.Kind == TokenKind.Parameter
-                                || (token.Extent.StartOffset > arg.Argument.Extent.StartOffset && token.Extent.EndOffset < arg.Argument.Extent.EndOffset))
+                                    || (token.Extent.StartOffset > arg.Argument.Extent.StartOffset && token.Extent.EndOffset < arg.Argument.Extent.EndOffset))
                                 {
-                                    // case: Get-Cmdlet -Param <tab> abc
+                                    // case 1: Get-Cmdlet -Param <tab> abc
+                                    // case 2: dir -Path .\abc.txt, <tab> -File
                                     return new ArgumentLocation() { Argument = arg, IsPositional = false, Position = -1 };
                                 }
                             }
