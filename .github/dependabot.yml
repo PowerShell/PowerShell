@@ -1,5 +1,8 @@
 version: 2
-
+registeries:
+  nuget-org:
+    type: nuget-feed
+    url: https://api.nuget.org/v3/index.json
 updates:
   - package-ecosystem: "nuget"
     directory: "/"
