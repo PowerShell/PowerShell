@@ -101,7 +101,7 @@ namespace System.Management.Automation
                     return string.Empty;
                 }
 
-                // I think every provider description should atleast have 400 characters...
+                // I think every provider description should at least have 400 characters...
                 // so starting with this assumption..I did an average of all the help content
                 // available at the time of writing this code and came up with this number.
                 Text.StringBuilder result = new Text.StringBuilder(400);

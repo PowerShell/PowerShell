@@ -884,7 +884,7 @@ namespace System.Management.Automation.Runspaces
                     return runspaces;
                 });
 
-            // Notify Engine components that that runspace is closing.
+            // Notify Engine components that runspace is closing.
             _engine.Context.RunspaceClosingNotification();
 
             // Log engine lifecycle event.

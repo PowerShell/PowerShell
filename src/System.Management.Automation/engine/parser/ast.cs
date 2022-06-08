@@ -3489,6 +3489,7 @@ namespace System.Management.Automation.Language
             {
                 return _toolTip;
             }
+
             var sb = new StringBuilder();
             var classMembers = ((TypeDefinitionAst)Parent).Members;
             for (int i = 0; i < classMembers.Count; i++)
@@ -3531,6 +3532,7 @@ namespace System.Management.Automation.Language
 
                 sb.Append(')');
             }
+
             _toolTip = sb.ToString();
             return _toolTip;
         }

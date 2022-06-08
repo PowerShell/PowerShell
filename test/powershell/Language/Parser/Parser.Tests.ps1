@@ -143,7 +143,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         { ExecuteCommand "(" } | Should -Throw -ErrorId "IncompleteParseException"
     }
 
-    It "Throws an exception if the the first statement starts with an empty pipe element (line 188)" {
+    It "Throws an exception if the first statement starts with an empty pipe element (line 188)" {
         { ExecuteCommand "| Get-Location" } | Should -Throw -ErrorId "ParseException"
     }
 

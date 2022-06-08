@@ -1967,7 +1967,7 @@ namespace System.Management.Automation
             string driveRoot = drive.Root.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
             driveRoot = driveRoot.TrimEnd(StringLiterals.DefaultPathSeparator);
 
-            // Keep on lopping off children until the the remaining path
+            // Keep on lopping off children until the remaining path
             // is the drive root.
             while ((!string.IsNullOrEmpty(providerPath)) &&
                 (!providerPath.Equals(driveRoot, StringComparison.OrdinalIgnoreCase)))

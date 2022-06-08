@@ -227,10 +227,11 @@ function Get-DotnetUpdate {
         } else {
             $shouldUpdate = $false
             $newVersion = $latestSDKVersionString
+
             $Message = $null -eq $currentVersion.PreReleaseLabel ? "$latestSDKversion is not preview, update manually." : "No update needed."
         }
     } catch {
-        Write-Verbose -Verbose "Error occured: $_.message"
+        Write-Verbose -Verbose "Error occurred: $_.message"
         $shouldUpdate = $false
         $newVersion = $null
         Write-Error "Error while checking .NET SDK update: $($_.message)"
@@ -257,7 +258,7 @@ function Update-DevContainer {
 <#
  .DESCRIPTION Update the DotnetMetadata.json file with the latest version of the SDK
  #>
-function Update-DotnetRuntimeMetadataChannel {
+function Update-DotnetRuntimeMetadata {
     param (
         [string] $newSdk
     )
@@ -267,11 +268,15 @@ function Update-DotnetRuntimeMetadataChannel {
 
     # Transform SDK Version '7.0.100-preview.5.22263.22' -> '7.0.1xx-preview5'
     $newChannel = $sdkParts[0] + "." + $sdkParts[1] + "." + ($sdkParts[2] -replace '0','x') + $sdkParts[3]
-
     Write-Verbose -Verbose -Message "Updating DotnetRuntimeMetadata.json with channel $newChannel"
+
+    # Transform SDK Version '7.0.100-preview.5.22263.22' -> '7.0.100-preview.5'
+    $newPackageVersionPattern = $sdkParts[0] + "." + $sdkParts[1] + "." + '0-' + ($sdkParts[2] -split '-')[-1] + "." + $sdkParts[3]
+    Write-Verbose -Verbose -Message "Updating DotnetRuntimeMetadata.json with package filter $newPackageVersionPattern"
 
     $metadata = Get-Content -Raw "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json
     $metadata.sdk.channel = $newChannel
+    $metadata.sdk.packageVersionPattern = $newPackageVersionPattern
     $metadata | ConvertTo-Json | Out-File -FilePath "$PSScriptRoot/../DotnetRuntimeMetadata.json" -Force
 }
 
@@ -355,6 +360,8 @@ if ($dotnetUpdate.ShouldUpdate) {
 
     Write-Verbose -Message "Updating global.json completed." -Verbose
 
+    Update-DotnetRuntimeMetadata -newSdk $latestSdkVersion
+
     Update-PackageVersion
 
     Write-Verbose -Message "Updating project files completed." -Verbose
@@ -385,8 +392,6 @@ if ($dotnetUpdate.ShouldUpdate) {
     }
 
     Update-DevContainer
-
-    Update-DotnetRuntimeMetadataChannel -newSdk $latestSdkVersion
 }
 else {
     Write-Verbose -Verbose -Message $dotnetUpdate.Message

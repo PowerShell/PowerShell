@@ -24,15 +24,21 @@ Describe "Can load a native assembly" -Tags "CI" {
         if ($IsWindows) {
             $arch = "win-" + $processArch
             $nativeDllName = "nativedll.dll"
-            $sourceDllName = "hostpolicy.dll"
+            $sourceDllName = Join-Path $PSHome "hostpolicy.dll"
         } elseif ($IsLinux) {
             $arch = "linux-" + $processArch
             $nativeDllName = "nativedll.so"
-            $sourceDllName = "libhostpolicy.so"
+            $sourceDllName = Join-Path $PSHome "libhostpolicy.so"
+            # This won't be in PSHome in a FX Dependent install
+            # Fallback to finding it using the process object
+            if (!(Test-Path $sourceDllName)) {
+                $thisProcess = Get-Process -pid $pid
+                $sourceDllName = ($thisProcess.Modules | Where-Object {$_.moduleName -eq 'libhostpolicy.so'}).FileName
+            }
         } elseif ($IsMacOS) {
             $arch = "osx-" + $processArch
             $nativeDllName = "nativedll.dylib"
-            $sourceDllName = "libhostpolicy.dylib"
+            $sourceDllName = Join-Path $PSHome "libhostpolicy.dylib"
         } else {
             throw "Unsupported OS"
         }
@@ -40,7 +46,7 @@ Describe "Can load a native assembly" -Tags "CI" {
         $archFolder = Join-Path $root $arch
         New-Item -Path $archFolder -ItemType Directory -Force > $null
         #New-Item -Path $archFolder\$nativeDllName -ItemType File -Force > $null
-        Copy-Item -Path $PSHOME\$sourceDllName -Destination $archFolder\$nativeDllName
+        Copy-Item -Path $sourceDllName -Destination $archFolder\$nativeDllName
 
         $managedDllPath = Join-Path $root managed.dll
 

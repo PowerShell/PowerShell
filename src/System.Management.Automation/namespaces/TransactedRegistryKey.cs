@@ -1331,7 +1331,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /**
          * Retrieves the current state of the dirty property.
          *
-         * A key is marked as dirty if any operation has occured that modifies the
+         * A key is marked as dirty if any operation has occurred that modifies the
          * contents of the key.
          *
          * @return <b>true</b> if the key has been modified.

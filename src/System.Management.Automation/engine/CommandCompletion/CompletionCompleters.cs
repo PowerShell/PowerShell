@@ -1759,7 +1759,7 @@ namespace System.Management.Automation
                 string separator = CultureInfo.CurrentUICulture.TextInfo.ListSeparator;
                 string[] enumArray = enumString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
-                string wordToComplete = context.WordToComplete;
+                string wordToComplete = context.WordToComplete ?? string.Empty;
                 string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
                 var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
@@ -4126,9 +4126,11 @@ namespace System.Management.Automation
                                     return GenerateArgumentLocation(prevArg, position);
                                 }
 
-                                if (!arg.ParameterContainsArgument && arg.Argument.Extent.StartOffset > token.Extent.StartOffset)
+                                if (token.Kind == TokenKind.Parameter
+                                    || (token.Extent.StartOffset > arg.Argument.Extent.StartOffset && token.Extent.EndOffset < arg.Argument.Extent.EndOffset))
                                 {
-                                    // case: Get-Cmdlet -Param <tab> abc
+                                    // case 1: Get-Cmdlet -Param <tab> abc
+                                    // case 2: dir -Path .\abc.txt, <tab> -File
                                     return new ArgumentLocation() { Argument = arg, IsPositional = false, Position = -1 };
                                 }
                             }
@@ -7186,7 +7188,7 @@ namespace System.Management.Automation
                         switch (binding.CommandName)
                         {
                             case "Get-WinEvent":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "LogName", "ProviderName", "Path", "Keywords", "ID", "Level", 
+                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "LogName", "ProviderName", "Path", "Keywords", "ID", "Level",
                                     "StartTime", "EndTime", "UserID", "Data", "SuppressHashFilter");
                         }
                     }
@@ -7316,31 +7318,39 @@ namespace System.Management.Automation
         internal static string CombineVariableWithPartialPath(VariableExpressionAst variableAst, string extraText, ExecutionContext executionContext)
         {
             var varPath = variableAst.VariablePath;
-            if (varPath.IsVariable || varPath.DriveName.Equals("env", StringComparison.OrdinalIgnoreCase))
+            if (!varPath.IsVariable && !varPath.DriveName.Equals("env", StringComparison.OrdinalIgnoreCase))
             {
-                try
+                return null;
+            }
+
+            if (varPath.UnqualifiedPath.Equals(SpecialVariables.PSScriptRoot, StringComparison.OrdinalIgnoreCase)
+                && !string.IsNullOrEmpty(variableAst.Extent.File))
+            {
+                return Path.GetDirectoryName(variableAst.Extent.File) + extraText;
+            }
+
+            try
+            {
+                // We check the strict mode inside GetVariableValue
+                object value = VariableOps.GetVariableValue(varPath, executionContext, variableAst);
+                var strValue = (value == null) ? string.Empty : value as string;
+
+                if (strValue == null)
                 {
-                    // We check the strict mode inside GetVariableValue
-                    object value = VariableOps.GetVariableValue(varPath, executionContext, variableAst);
-                    var strValue = (value == null) ? string.Empty : value as string;
-
-                    if (strValue == null)
+                    object baseObj = PSObject.Base(value);
+                    if (baseObj is string || baseObj?.GetType()?.IsPrimitive is true)
                     {
-                        object baseObj = PSObject.Base(value);
-                        if (baseObj is string || baseObj.GetType().IsPrimitive)
-                        {
-                            strValue = LanguagePrimitives.ConvertTo<string>(value);
-                        }
-                    }
-
-                    if (strValue != null)
-                    {
-                        return strValue + extraText;
+                        strValue = LanguagePrimitives.ConvertTo<string>(value);
                     }
                 }
-                catch (Exception)
+
+                if (strValue != null)
                 {
+                    return strValue + extraText;
                 }
+            }
+            catch (Exception)
+            {
             }
 
             return null;

@@ -288,6 +288,14 @@ All parameters are case-insensitive.</value>
 
     Example: "pwsh -ConfigurationName AdminRoles"
 
+-ConfigurationFile
+
+    Specifies a session configuration (.pssc) file path. The configuration
+    contained in the configuration file will be applied to the PowerShell
+    session.
+
+    Example: "pwsh -ConfigurationFile "C:\ProgramData\PowerShell\MyConfig.pssc"
+
 -CustomPipeName
 
     Specifies the name to use for an additional IPC server (named pipe) used
