@@ -84,7 +84,7 @@ jobs:
       PackageVersion: $(Version)
       sourceScanPath: '$(PowerShellRoot)/tools'
 
-  - ${{ if eq(variables.build,'deb') }} :
+  - ${{ if eq(variables.build,'rpm') }} :
     - template: Sbom.yml@ComplianceRepo
       parameters:
         BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
