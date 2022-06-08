@@ -277,6 +277,15 @@ Describe 'Tests for $PSStyle automatic variable' {
         $result = & $pwsh -noprofile -Command { $PSStyle.Progress.UseOSCIndicator = $true; 'hello'} | Format-List
         $result | Out-String -Stream | Should -BeExactly 'hello'
     }
+
+    It 'Able to handle Hyperlink ansi sequences' {
+        $word = "This is a link"
+        $hyperlink = $PSStyle.FormatHyperlink($word, "some random text as a link")
+        $strDec = [System.Management.Automation.Internal.StringDecorated]::new($hyperlink)
+        $strDec.IsDecorated | Should -BeTrue
+        $strDec.ContentLength | Should -Be $word.Length
+        $strDec.ToString("PlainText") | Should -Be $word
+    }
 }
 
 Describe 'Handle strings with escape sequences in formatting' {
