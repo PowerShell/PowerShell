@@ -479,6 +479,7 @@ ConstructorTestClass(string s)
 ConstructorTestClass(int i)
 ConstructorTestClass(int i, bool b)
 '@
+    }
 
     It 'Should complete parameter in param block' {
         $res = TabExpansion2 -inputScript 'Param($Param1=(Get-ChildItem -))' -cursorColumn 30
