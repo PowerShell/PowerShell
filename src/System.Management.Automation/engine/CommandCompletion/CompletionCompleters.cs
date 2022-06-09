@@ -5529,7 +5529,7 @@ namespace System.Management.Automation
             }
 
             Ast lastAst = context.RelatedAsts[^1];
-            Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= context.TokenAtCursor.Extent.EndOffset, searchNestedScriptBlocks: false);
+            Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= context.TokenAtCursor.Extent.EndOffset && ast is not NamedBlockAst, searchNestedScriptBlocks: false);
 
             // Comment-based help can apply to a following function definition if it starts within 2 lines
             int commentEndLine = context.TokenAtCursor.Extent.EndLineNumber + 2;
@@ -5556,9 +5556,7 @@ namespace System.Management.Automation
                 // Helpblock before function
                 if (firstAstAfterComment is not null
                     && firstAstAfterComment.Extent.StartLineNumber <= commentEndLine
-                    && firstAstAfterComment is NamedBlockAst block
-                    && block.Statements.Count > 0
-                    && block.Statements[0] is FunctionDefinitionAst statement)
+                    && firstAstAfterComment is FunctionDefinitionAst statement)
                 {
                     return statement;
                 }
