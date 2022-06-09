@@ -155,6 +155,14 @@ namespace System.Management.Automation
                 ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent),
                 searchNestedScriptBlocks: true).ToList();
 
+            // If the last ast is an unnamed block that starts with "param" the cursor is inside a param block.
+            // To avoid adding special handling to all the completers that look at the last ast, we remove it here because it's not useful for completion. 
+            if (relatedAsts[^1].Extent.Text.StartsWith("param", StringComparison.OrdinalIgnoreCase)
+                && relatedAsts[^1] is NamedBlockAst namedBlock && namedBlock.Unnamed)
+            {
+                relatedAsts.RemoveAt(relatedAsts.Count - 1);
+            }
+
             Diagnostics.Assert(tokenAtCursor == null || tokenBeforeCursor == null, "Only one of these tokens can be non-null");
 
             return new AstAnalysisContext(tokenAtCursor, tokenBeforeCursor, relatedAsts, replacementIndex);
@@ -471,7 +479,7 @@ namespace System.Management.Automation
                         replacementIndex += tokenAtCursor.Text.Length;
                         replacementLength = 0;
                         result = CompletionCompleters.CompleteMember(completionContext, @static: tokenAtCursor.Kind == TokenKind.ColonColon, ref replacementLength);
-                        
+
                         break;
 
                     case TokenKind.Comment:
@@ -691,6 +699,57 @@ namespace System.Management.Automation
 
                             break;
                         }
+
+                    case TokenKind.Format:
+                    case TokenKind.Not:
+                    case TokenKind.Bnot:
+                    case TokenKind.And:
+                    case TokenKind.Or:
+                    case TokenKind.Xor:
+                    case TokenKind.Band:
+                    case TokenKind.Bor:
+                    case TokenKind.Bxor:
+                    case TokenKind.Join:
+                    case TokenKind.Ieq:
+                    case TokenKind.Ine:
+                    case TokenKind.Ige:
+                    case TokenKind.Igt:
+                    case TokenKind.Ilt:
+                    case TokenKind.Ile:
+                    case TokenKind.Ilike:
+                    case TokenKind.Inotlike:
+                    case TokenKind.Imatch:
+                    case TokenKind.Inotmatch:
+                    case TokenKind.Ireplace:
+                    case TokenKind.Icontains:
+                    case TokenKind.Inotcontains:
+                    case TokenKind.Iin:
+                    case TokenKind.Inotin:
+                    case TokenKind.Isplit:
+                    case TokenKind.Ceq:
+                    case TokenKind.Cne:
+                    case TokenKind.Cge:
+                    case TokenKind.Cgt:
+                    case TokenKind.Clt:
+                    case TokenKind.Cle:
+                    case TokenKind.Clike:
+                    case TokenKind.Cnotlike:
+                    case TokenKind.Cmatch:
+                    case TokenKind.Cnotmatch:
+                    case TokenKind.Creplace:
+                    case TokenKind.Ccontains:
+                    case TokenKind.Cnotcontains:
+                    case TokenKind.Cin:
+                    case TokenKind.Cnotin:
+                    case TokenKind.Csplit:
+                    case TokenKind.Is:
+                    case TokenKind.IsNot:
+                    case TokenKind.As:
+                    case TokenKind.Shl:
+                    case TokenKind.Shr:
+                        result = CompletionCompleters.CompleteOperator(tokenAtCursor.Text);
+                        break;
+
                     default:
                         if ((tokenAtCursor.TokenFlags & TokenFlags.Keyword) != 0)
                         {

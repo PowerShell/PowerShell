@@ -552,7 +552,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    _lo.WriteLine(rte.text);
+                    // Write out raw text without any changes to it.
+                    _lo.WriteRawText(rte.text);
                 }
 
                 return;
