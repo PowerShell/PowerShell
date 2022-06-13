@@ -2278,7 +2278,7 @@ namespace System.Management.Automation
                     {
                         if (parameterName.Equals("MemberName", StringComparison.OrdinalIgnoreCase))
                         {
-                            NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
+                            NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName], propertiesOnly: false);
                         }
 
                         break;
@@ -3951,7 +3951,7 @@ namespace System.Management.Automation
             return prevType;
         }
 
-        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, AstParameterArgumentPair parameterInfo)
+        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, AstParameterArgumentPair parameterInfo, bool propertiesOnly = true)
         {
             IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
             if (prevType is not null)
@@ -3962,7 +3962,8 @@ namespace System.Management.Automation
                     excludedMembers = GetParameterValues(pair, context.CursorPosition.Offset);
                 }
 
-                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter: IsPropertyMember, isStatic: false, excludedMembers);
+                Func<object, bool> filter = propertiesOnly ? IsPropertyMember : null;
+                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter, isStatic: false, excludedMembers);
             }
 
             result.Add(CompletionResult.Null);
@@ -5816,6 +5817,11 @@ namespace System.Management.Automation
                     inferredTypes = AstTypeInference.InferTypeOf(targetExpr, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval).ToArray();
                 }
 
+                if (!@static && inferredTypes.Length == 1 && inferredTypes[0].Name.Equals("System.Void", StringComparison.OrdinalIgnoreCase))
+                {
+                    return results;
+                }
+
                 if (inferredTypes != null && inferredTypes.Length > 0)
                 {
                     // Use inferred types if we have any
@@ -6070,11 +6076,23 @@ namespace System.Management.Automation
                 getToolTip = () => GetCimPropertyToString(cimProperty);
             }
 
-            var memberAst = member as MemberAst;
-            if (memberAst != null)
+            if (member is MemberAst memberAst)
             {
-                memberName = memberAst is CompilerGeneratedMemberFunctionAst ? "new" : memberAst.Name;
-                isMethod = memberAst is FunctionMemberAst || memberAst is CompilerGeneratedMemberFunctionAst;
+                if (memberAst is CompilerGeneratedMemberFunctionAst)
+                {
+                    memberName = "new";
+                    isMethod = true;
+                }
+                else if (memberAst is FunctionMemberAst functionMember)
+                {
+                    memberName = functionMember.IsConstructor ? "new" : functionMember.Name;
+                    isMethod = true;
+                }
+                else
+                {
+                    memberName = memberAst.Name;
+                    isMethod = false;
+                }
                 getToolTip = memberAst.GetTooltip;
             }
 
