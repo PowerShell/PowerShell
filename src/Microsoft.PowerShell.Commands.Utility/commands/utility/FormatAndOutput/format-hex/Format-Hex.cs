@@ -391,10 +391,7 @@ namespace Microsoft.PowerShell.Commands
             byte[] result = null;
             int elements = 1;
             bool isArray = false;
-            bool isBool = false;
             bool isEnum = false;
-            bool isShort = false;
-            bool isHalf = false;
             if (baseType.IsArray)
             {
                 FlushInputBuffer();
@@ -426,21 +423,6 @@ namespace Microsoft.PowerShell.Commands
                     _lastInputType = baseType;
                 }
 
-                if (baseType == typeof(bool))
-                {
-                    isBool = true;
-                }
-
-                if (baseType == typeof(short))
-                {
-                    isShort = true;
-                }
-
-                if (baseType == typeof(System.Half))
-                {
-                    isHalf = true;
-                }
-
                 var elementSize = Marshal.SizeOf(baseType);
                 result = new byte[elementSize * elements];
                 if (!isArray)
@@ -458,14 +440,9 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         dynamic toBytes;
-                        if (isEnum || isShort || isHalf)
+                        if (isEnum)
                         {
                             toBytes = Convert.ChangeType(obj, baseType);
-                        }
-                        else if (isBool)
-                        {
-                            // bool is 1 byte apparently
-                            toBytes = Convert.ToByte(obj);
                         }
                         else
                         {
