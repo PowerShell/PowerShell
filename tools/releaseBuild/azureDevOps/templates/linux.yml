@@ -84,6 +84,16 @@ jobs:
       PackageVersion: $(Version)
       sourceScanPath: '$(PowerShellRoot)/tools'
 
+  - ${{ if eq(variables.build,'rpm') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Mariner SBOM
+        PackageName: PowerShell Linux Framework Dependent
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
+
   - ${{ if eq(variables.build,'deb') }} :
     - template: Sbom.yml@ComplianceRepo
       parameters:
@@ -269,7 +279,8 @@ jobs:
           signOutputPath: $(Build.StagingDirectory)\signedPackages
           certificateId: "CP-459159-Pgp"
           pattern: |
-            **\*.cm1.*.rpm
+            **\*.cm.*.rpm
+            **\*.cm?.*.rpm
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
           displayName: Sign Mariner RPM
