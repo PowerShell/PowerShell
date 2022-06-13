@@ -1382,7 +1382,7 @@ ConstructorTestClass(int i, bool b)
         It '<Intent>' -TestCases @(
             @{
                 Intent = 'Complete attribute members on empty line'
-                Expected = 'Position'
+                Expected = @('Position','ParameterSetName','Mandatory','ValueFromPipeline','ValueFromPipelineByPropertyName','ValueFromRemainingArguments','HelpMessage','HelpMessageBaseName','HelpMessageResourceId','DontShow')
                 TestString = @'
 function bar { [parameter(
 
@@ -1394,7 +1394,7 @@ function bar { [parameter(
             }
             @{
                 Intent = 'Complete attribute members on empty line with preceding member'
-                Expected = 'Position'
+                Expected = @('Position','ParameterSetName','Mandatory','ValueFromPipeline','ValueFromPipelineByPropertyName','ValueFromRemainingArguments','HelpMessage','HelpMessageBaseName','HelpMessageResourceId','DontShow')
                 TestString = @'
 function bar { [parameter(
 Mandatory,
@@ -1408,7 +1408,7 @@ Mandatory,
             param($Expected, $TestString)
             $CursorIndex = $TestString.IndexOf('^')
             $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
-            $res.CompletionMatches[0].CompletionText | Should -BeExactly $Expected
+            $res.CompletionMatches[0].CompletionText | Should -BeIn $Expected
         }
 
         It "Test completion with line continuation" {
