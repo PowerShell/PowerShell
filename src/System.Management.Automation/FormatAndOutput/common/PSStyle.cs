@@ -369,7 +369,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets the style for modified table headers.
             /// </summary>
-            public string ModifiedTableHeader
+            public string CustomTableHeader
             {
                 get => _customTableHeader;
                 set => _customTableHeader = ValidateNoContent(value);

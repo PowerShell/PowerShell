@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                         else
                         {
-                            ci.label = PSStyle.Instance.Reset + PSStyle.Instance.Formatting.ModifiedTableHeader + labelText + PSStyle.Instance.Reset;
+                            ci.label = PSStyle.Instance.Reset + PSStyle.Instance.Formatting.CustomTableHeader + labelText + PSStyle.Instance.Reset;
                         }
                     }
                 }
