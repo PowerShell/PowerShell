@@ -3154,8 +3154,8 @@
       <Component Id="cmp22840874A8C84AA796496634FBEBF09C">
         <File Id="fil2067B616D1FA4B30932A0240ABE06089" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Web.Services.Description.dll" />
       </Component>
-      <Component Id="cmpA74437DC37244F279B4E9219A4457202">
-        <File Id="filE30B5454CBFC4840812DCAC120ECD962" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.522.21309.dll" />
+      <Component Id="cmpC520D874B9BB4524893E563774B70B0E">
+        <File Id="filABAB2F157E0643769210BC36B605566A" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.622.26707.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4172,8 +4172,8 @@
       <ComponentRef Id="cmp0C4751F9D5C14419A45F234152D21DA9" />
       <ComponentRef Id="cmpF96C036EAE3B436DB096888697193FAF" />
       <ComponentRef Id="cmp789F545EA2CB4AC5A2688CF730A5F6B4" />
-      <ComponentRef Id="cmpA74437DC37244F279B4E9219A4457202" />
       <ComponentRef Id="cmpB2EF287C99374D839EDF65DF6D2610F0" />
+      <ComponentRef Id="cmpC520D874B9BB4524893E563774B70B0E" />
     </ComponentGroup>
   </Fragment>
 </Wix>
