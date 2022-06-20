@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Internal;
+using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
 namespace System.Management.Automation
@@ -882,21 +883,37 @@ namespace System.Management.Automation
             public static int GetProcFSParentPid(int pid)
             {
                 const int invalidPid = -1;
+                TimeSpan matchTimeout = new(0, 0, 5);  // 5 Seconds
 
-                // read /proc/<pid>/stat
-                // 4th column will contain the ppid, 92 in the example below
-                // ex: 93 (bash) S 92 93 2 4294967295 ...
-                var path = $"/proc/{pid}/stat";
+                // read /proc/<pid>/status
+                // Row beginning with PPid: \d is the parent process id.
+                // This used to check /proc/<pid>/stat but that file was meant
+                // to be a space delimited line but it contains a value which
+                // could contain spaces itself. Using the status file is a lot
+                // simpler because each line contains a record with a simple
+                // label.
+                // https://github.com/PowerShell/PowerShell/issues/17541#issuecomment-1159911577
+                var path = $"/proc/{pid}/status";
                 try
                 {
-                    var stat = System.IO.File.ReadAllText(path);
-                    var parts = stat.Split(' ', 5);
-                    if (parts.Length < 5)
+                    using FileStream fs = File.OpenRead(path);
+                    using StreamReader sr = new(fs);
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
                     {
-                        return invalidPid;
+                        Match ppidMatch = Regex.Match(
+                            line,
+                            @"^PPid:\s+(\d+)$",
+                            RegexOptions.CultureInvariant | RegexOptions.IgnoreCase,
+                            matchTimeout);
+
+                        if (ppidMatch.Success)
+                        {
+                            return int.Parse(ppidMatch.Groups[1].Value);
+                        }
                     }
 
-                    return int.Parse(parts[3]);
+                    return invalidPid;
                 }
                 catch (Exception)
                 {
