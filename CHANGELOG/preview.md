@@ -1,5 +1,93 @@
 # Current preview release
 
+## [7.3.0-preview.5] - 2022-06-21
+
+### Engine Updates and Fixes
+
+- Improve type inference and completions (#16963) (Thanks @MartinGC94!)
+- Make `Out-String` and `Out-File` keep string input unchanged (#17455)
+- Make `AnsiRegex` able to capture Hyperlink ANSI sequences (#17442)
+- Add the `-ConfigurationFile` command line parameter to `pwsh` to support local session configuration (#17447)
+- Fix native library loading for `osx-arm64` (#17365) (Thanks @awakecoding!)
+- Fix formatting to act appropriately when the style of table header or list label is empty string (#17463)
+
+### General Cmdlet Updates and Fixes
+
+- Fix various completion issues inside the `param` block (#17489) (Thanks @MartinGC94!)
+- Add Amended switch to `Get-CimClass` cmdlet (#17477) (Thanks @iSazonov!)
+- Improve completion on operators (#17486) (Thanks @MartinGC94!)
+- Improve array element completion for command arguments (#17078) (Thanks @matt9ucci!)
+- Use AST extent for `PSScriptRoot` path completion (#17376)
+- Add type inference support for generic methods with type parameters (#16951) (Thanks @MartinGC94!)
+- Write out OSC indicator only if the `stdout` is not redirected (#17419)
+- Remove the assert and use a relatively larger capacity to cover possible increase of .NET reference assemblies (#17423)
+- Increase reference assembly count to 161 (#17420)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@Yulv-git, @eltociear</p>
+
+</summary>
+
+<ul>
+<li>Fix some typos in source code (#17481) (Thanks @Yulv-git!)</li>
+<li>Fix typo in `AsyncResult.cs` (#17396) (Thanks @eltociear!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Update script to pin to .NET 7 preview 5 version (#17448)
+- Start-PSPester: argument completer for `-Path` (#17334) (Thanks @powercode!)
+- Add reminder workflows (#17387)
+- Move to configuring the fabric bot via JSON (#17411)
+- Update Documentation Issue Template URL (#17410) (Thanks @michaeltlombardi!)
+- Update script to automatically take new preview pre-release builds (#17375)
+
+### Tests
+
+- Make Assembly Load Native test work on a FX Dependent Linux Install (#17380)
+- Update `Get-Error` test to not depend on DNS APIs (#17471)
+
+### Build and Packaging Improvements
+
+<details>
+
+<ul>
+<li>Update .NET SDK version from <code>7.0.100-preview.4.22252.9</code> to <code>7.0.100-preview.5.22307.18</code> (#17402)</li>
+<li>Downgrade the <code>Microsoft.CodeAnalysis.NetAnalyzers</code> package to <code>7.0.0-preview1.22217.1</code> (#17515)</li>
+<li>Rename mariner package to cm (#17505)</li>
+<li>Bump Microsoft.CodeAnalysis.NetAnalyzers (#17476)</li>
+<li>Bump <code>NJsonSchema</code> from 10.7.1 to 10.7.2 (#17475)</li>
+<li>Publish preview versions of mariner to preview repo (#17451)</li>
+<li>Update to the latest NOTICES file (#17421)</li>
+<li>Do not publish package for Mariner 1.0 (#17415)</li>
+<li>Add <code>AppX</code> capabilities in MSIX manifest so that PS7 can call the <code>AppX</code> APIs (#17416)</li>
+<li>Update to the latest NOTICES file (#17401)</li>
+<li>Fix mariner mappings (#17413)</li>
+<li>Update the cgmanifest (#17393)</li>
+<li>Bump `NJsonSchema` from `10.7.0` to `10.7.1` (#17381)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update to the latest NOTICES file (#17493) (Thanks @github-actions[bot]!)
+- Update the cgmanifest (#17478) (Thanks @github-actions[bot]!)
+- Correct spelling in Comments and tests (#17480) (Thanks @Yulv-git!)
+- Fix spelling errors introduced in changelog (#17414)
+- Update change log for v7.3.0-preview.4 release (#17412)
+- Update readme and metadata for 7.3.0-preview.4 release (#17378)
+
+[7.3.0-preview.5]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.4...v7.3.0-preview.5
+
 ## [7.3.0-preview.4] - 2022-05-23
 
 ### Engine Updates and Fixes
