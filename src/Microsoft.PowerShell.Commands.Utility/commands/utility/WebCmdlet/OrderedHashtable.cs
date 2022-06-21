@@ -151,7 +151,8 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Get a shallow clone of the hashtable.
-        /// </summary>    
+        /// </summary>
+        /// <returns>A shallow clone of the hashtable.</returns>    
         public override object Clone()
         {
             return new OrderedHashtable(_orderedDictionary);
@@ -161,6 +162,7 @@ namespace Microsoft.PowerShell.Commands
         /// Determines whether the hashtable contains a specific key.
         /// </summary>
         /// <param name="key">The key to locate in the hashtable.</param>
+        /// <returns>true if the hashtable contains an element with the specified key; otherwise, false.</returns>
         public override bool Contains(object key)
         {
             return _orderedDictionary.Contains(key);
@@ -170,6 +172,7 @@ namespace Microsoft.PowerShell.Commands
         /// Determines whether the hashtable contains a specific key.
         /// </summary>
         /// <param name="key">The key to locate in the hashtable.</param>
+        /// <returns>true if the hashtable contains an element with the specified key; otherwise, false.</returns>
         public override bool ContainsKey(object key)
         {
             return _orderedDictionary.Contains(key);
@@ -179,6 +182,7 @@ namespace Microsoft.PowerShell.Commands
         /// Determines whether the hashtable contains a specific value.
         /// </summary>
         /// <param name="value">The value to locate in the hashtable.</param>
+        /// <returns>true if the hashtable contains an element with the specified value; otherwise, false.</returns>
         public override bool ContainsValue(object? value)
         {
             foreach (DictionaryEntry entry in _orderedDictionary)
@@ -205,6 +209,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get the enumerator.
         /// </summary>
+        /// <returns>The enumerator.</returns>
         public override IDictionaryEnumerator GetEnumerator()
         {
             return _orderedDictionary.GetEnumerator();
@@ -212,7 +217,8 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Get the enumerator.
-        /// </summary>    
+        /// </summary>
+        /// <returns>The enumerator.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
