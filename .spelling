@@ -57,6 +57,7 @@ APIScan
 appimage
 applocker
 appveyor
+AppX
 args
 argumentlist
 arm32
@@ -514,6 +515,7 @@ messageanalyzer
 metadata
 metadata.json
 miaromero
+michaeltlombardi
 microsoft
 Microsoft.ApplicationInsights
 Microsoft.CodeAnalysis.CSharp
@@ -690,6 +692,7 @@ preview.5.20278.13
 preview.5.20269.29
 preview.5.20268.9
 preview.5.20272.6
+preview.5.22307.18
 preview.6
 preview.6.20318.15
 preview.6.21355.2
@@ -704,6 +707,7 @@ preview.4.20229.10
 preview.4.22252.9
 preview.8
 preview1-24530-04
+preview1.22217.1
 preview7
 productversion
 program.cs
@@ -1075,6 +1079,7 @@ yecril71pl
 yml
 youtube
 Youssef1313
+Yulv-git
 zackjknight
 ComInterop
 ryneandal
