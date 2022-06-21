@@ -10,7 +10,6 @@ using System.Runtime.Serialization;
 
 namespace Microsoft.PowerShell.Commands
 {
-
     /// <summary>
     /// OrderedHashtable is a hashtable that preserves the order of the keys.
     /// </summary>
@@ -118,6 +117,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the value associated with the specified key.
         /// </summary>
         /// <param name="key">The key.</param>
+        /// <returns>The value associated with the key.</returns>
         public override object? this[object key]
         {
             get 
