@@ -7,11 +7,15 @@
 #if !UNIX
 using Microsoft.Security.Extensions;
 #endif
+using System.Collections.Generic;
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Security;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 using Dbg = System.Management.Automation;
 using DWORD = System.UInt32;
@@ -290,7 +294,99 @@ namespace System.Management.Automation
                 signature = GetSignatureFromWinVerifyTrust(fileName, fileContent);
             }
 
+#if !UNIX
+            signature.Signatures = GetSignaturesFromCrypto(fileName, fileContent);
+#endif
             return signature;
+        }
+
+        /// <summary>
+        /// Gets the list of signatures and their details using the Crypt APIs.
+        /// is used to get all the signatures in a file/content rather than
+        /// just the overall trust information.
+        /// </summary>
+        private static SignatureDetail[] GetSignaturesFromCrypto(string fileName,
+            string fileContent)
+        {
+            byte[] sigData;
+            if (fileContent == null)
+            {
+                // FIXME: Handle a missing file
+                using NativeMethods.SafeCryptMsg msg = NativeMethods.CryptQueryFile(
+                    fileName,
+                    NativeMethods.CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED,
+                    NativeMethods.CERT_QUERY_FORMAT_FLAG_BINARY);
+
+                sigData = NativeMethods.CryptMsgGetParam(msg, NativeMethods.CMSG_ENCODED_MESSAGE);
+            }
+            else
+            {
+                byte[] contentBytes = Encoding.Unicode.GetBytes(fileContent);
+                using NativeMethods.SafeCryptMsg msg = NativeMethods.CryptQueryBlob(
+                    contentBytes,
+                    NativeMethods.CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED,
+                    NativeMethods.CERT_QUERY_FORMAT_FLAG_BINARY);
+
+                sigData = NativeMethods.CryptMsgGetParam(msg, NativeMethods.CMSG_ENCODED_MESSAGE);
+            }
+
+            SignedCms cmsInfo = new();
+            cmsInfo.Decode(sigData);
+
+            return ExtractSignatures(cmsInfo).ToArray();
+        }
+
+        private static List<SignatureDetail> ExtractSignatures(SignedCms cmsInfo)
+        {
+            const string counterSignOid = "1.3.6.1.4.1.311.3.3.1";
+            const string nestedSignatureOid = "1.3.6.1.4.1.311.2.4.1";
+
+            List<SignatureDetail> details = new();
+
+            // It seems like certs can only have 1 signature present at the root
+            // level. The code is written defensively to handle multiple signatures
+            // in case that changes.
+            foreach (SignerInfo signature in cmsInfo.SignerInfos)
+            {
+                // The timestamp is either under the CounterSignerInfos property or as
+                // a raw value in unsigned attributes. I'm not sure why they are
+                // different as they might have different OID values but they are seen
+                // as the same thing in explorer.
+                SignerInfo timestampInfo = null;
+                if (signature.CounterSignerInfos.Count > 0)
+                {
+                    timestampInfo = signature.CounterSignerInfos[0];
+                }
+
+                List<SignatureDetail> nestedSignatures = new();
+                foreach (CryptographicAttributeObject attr in signature.UnsignedAttributes)
+                {
+                    if (attr.Oid.Value == counterSignOid)
+                    {
+                        SignedCms counterSigner = new();
+                        counterSigner.Decode(attr.Values[0].RawData);
+                        timestampInfo = counterSigner.SignerInfos[0];
+                    }
+                    else if (attr.Oid.Value == nestedSignatureOid)
+                    {
+                        // Multiple signatures are stored under an unsigned
+                        // attribute on the root signature.
+                        foreach (AsnEncodedData sigBytes in attr.Values)
+                        {
+                            SignedCms nestedSig = new();
+                            nestedSig.Decode(sigBytes.RawData);
+                            nestedSignatures.AddRange(ExtractSignatures(nestedSig));
+                        }
+                    }
+                }
+
+                SignatureDetail info = new(signature,
+                    timestampInfo != null ? new(timestampInfo, null) : null);
+                details.Add(info);
+                details.AddRange(nestedSignatures);
+            }
+
+            return details;
         }
 
         /// <summary>

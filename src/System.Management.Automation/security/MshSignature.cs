@@ -3,6 +3,8 @@
 
 using System.ComponentModel;
 using System.Management.Automation.Internal;
+using System.Security.Cryptography;
+using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 
 using DWORD = System.UInt32;
@@ -184,6 +186,13 @@ namespace System.Management.Automation
         /// True if the item is signed as part of an operating system release.
         /// </summary>
         public bool IsOSBinary { get; internal set; }
+
+        /// <summary>
+        /// The signatures that have been applied to the file or blob. Each
+        /// entry contains more details about the signature, such as the digest
+        /// algorithm and time stamp information.
+        /// </summary>
+        public SignatureDetail[] Signatures { get; internal set; } = Array.Empty<SignatureDetail>();
 
         /// <summary>
         /// Constructor for class Signature
@@ -388,6 +397,66 @@ namespace System.Management.Automation
             }
 
             return message;
+        }
+    }
+
+    /// <summary>
+    /// Represents an authenticode signature entry.
+    /// </summary>
+    public sealed class SignatureDetail
+    {
+        private const string SIGNING_TIME_OID = "1.2.840.113549.1.9.5";
+
+        /// <summary>
+        /// The X509 certificate of the authority of this signature entry.
+        /// </summary>
+        public X509Certificate2 Certificate { get; }
+
+        /// <summary>
+        /// The digest algorithm used to sign this signature entry. For example
+        /// sha1, sha256, etc.
+        /// </summary>
+        public string DigestAlgorithm { get; }
+
+        /// <summary>
+        /// The signature algorithm used to sign this signature entry. For
+        /// example rsa.
+        /// </summary>
+        public string SignatureAlgorithm { get; }
+
+        /// <summary>
+        /// The timestamp details used to countersign this signature entry.
+        /// Will be null if this entry was not countersigned by a timestamp
+        /// server.
+        /// </summary>
+        public SignatureDetail Timestamp { get; }
+
+        /// <summary>
+        /// Used for a timestamp signature entry which contains the DateTime
+        /// when the signature was countersigned by a timestamp server. The
+        /// DateTime is in the UTC kind.
+        /// </summary>
+        public DateTime? SigningTime { get; }
+
+        internal SignatureDetail(SignerInfo signature, SignatureDetail timestamp)
+        {
+            Certificate = signature.Certificate;
+            DigestAlgorithm = signature.DigestAlgorithm.FriendlyName ?? signature.DigestAlgorithm.Value ?? string.Empty;
+            SignatureAlgorithm = signature.SignatureAlgorithm.FriendlyName ?? signature.SignatureAlgorithm.Value ?? string.Empty;
+            Timestamp = timestamp;
+
+            foreach (CryptographicAttributeObject attr in signature.SignedAttributes)
+            {
+                if (attr.Oid.Value == SIGNING_TIME_OID)
+                {
+                    AsnEncodedData attrData = attr.Values[0];
+                    if (attrData is Pkcs9SigningTime time)
+                    {
+                        SigningTime = time.SigningTime;
+                        break;
+                    }
+                }
+            }
         }
     }
 }

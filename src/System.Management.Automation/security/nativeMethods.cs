@@ -4,6 +4,7 @@
 #pragma warning disable 1634, 1691
 #pragma warning disable 56523
 
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Management.Automation.Internal;
@@ -1875,6 +1876,126 @@ namespace System.Management.Automation.Security
 
         // CRYPTCAT_E_CDF_ATTR_TYPECOMBO = "0x00020004";
         public const int CRYPTCAT_E_CDF_ATTR_TYPECOMBO = 131076;
+    }
+
+    /// <summary>
+    /// PInvoke methods from crypt32.dll
+    /// These are used to parse authenticode signature information.
+    /// </summary>
+    internal static partial class NativeMethods
+    {
+        internal const int CERT_QUERY_OBJECT_FILE = 1;
+        internal const int CERT_QUERY_OBJECT_BLOB = 2;
+        internal const int CMSG_ENCODED_MESSAGE = 29;
+        internal const int CERT_QUERY_CONTENT_PKCS7_SIGNED_EMBED = 10;
+        internal const int CERT_QUERY_CONTENT_FLAG_PKCS7_SIGNED_EMBED = (1 << CERT_QUERY_CONTENT_PKCS7_SIGNED_EMBED);
+        internal const int CERT_QUERY_FORMAT_BINARY = 1;
+        internal const int CERT_QUERY_FORMAT_FLAG_BINARY = (1 << CERT_QUERY_FORMAT_BINARY);
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct CERT_BLOB
+        {
+            public int cbData;
+            public unsafe byte* pbData;
+        }
+
+        [DllImport("Crypt32.dll", EntryPoint = "CryptQueryObject", SetLastError = true)]
+        private static extern unsafe bool NativeCryptQueryObject(
+            int dwObjectType,
+            void* pvObject,
+            int dwExpectedContentTypeFlags,
+            int dwExpectedFormatTypeFlags,
+            int dwFlags,
+            out int pdwMsgAndCertEncodingType,
+            out int pdwContentType,
+            out int pdwFormatType,
+            IntPtr phCertStore,
+            out SafeCryptMsg phMsg,
+            IntPtr ppvContext);
+
+        private static unsafe SafeCryptMsg CryptQueryObject(int objectType, void* obj, int expectedContentType,
+            int expectedFormatType)
+        {
+            if (!NativeCryptQueryObject(objectType, obj, expectedContentType, expectedFormatType, 0,
+                out var _1, out var _2, out var _3, IntPtr.Zero, out var msg,
+                IntPtr.Zero))
+            {
+                throw new Win32Exception();
+            }
+
+            return msg;
+        }
+
+        internal static SafeCryptMsg CryptQueryBlob(Span<byte> blob, int expectedContentType,
+            int expectedFormatType)
+        {
+            unsafe
+            {
+                fixed (byte* blobPtr = blob)
+                {
+                    CERT_BLOB blobStruct = new()
+                    {
+                        cbData = blob.Length,
+                        pbData = blobPtr,
+                    };
+                    return CryptQueryObject(CERT_QUERY_OBJECT_BLOB, &blobStruct, expectedContentType,
+                        expectedFormatType);
+                }
+            }
+        }
+
+        internal static SafeCryptMsg CryptQueryFile(string filePath, int expectedContentType,
+            int expectedFormatType)
+        {
+            unsafe
+            {
+                fixed (char* filePathPtr = filePath.AsSpan())
+                {
+                    return CryptQueryObject(CERT_QUERY_OBJECT_FILE, filePathPtr, expectedContentType,
+                        expectedFormatType);
+                }
+            }
+        }
+
+        [DllImport("Crypt32.dll", CharSet = CharSet.Unicode, EntryPoint = "CryptMsgGetParam", SetLastError = true)]
+        private static extern unsafe bool NativeCryptMsgGetParam(
+            SafeCryptMsg hCryptMsg,
+            int dwParamType,
+            int dwIndex,
+            byte* pvData,
+            ref int pcbData);
+
+        public static byte[] CryptMsgGetParam(SafeCryptMsg msg, int paramType, int idx = 0)
+        {
+            int dataLength = 0;
+            unsafe
+            {
+                NativeCryptMsgGetParam(msg, paramType, idx, null, ref dataLength);
+
+                byte[] data = new byte[dataLength];
+                fixed (byte* dataPtr = data)
+                {
+                    if (!NativeCryptMsgGetParam(msg, paramType, idx, dataPtr, ref dataLength))
+                    {
+                        throw new Win32Exception();
+                    }
+                }
+                return data;
+            }
+        }
+
+        [DllImport("Crypt32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        internal static extern bool CryptMsgClose(
+            IntPtr hCryptMsg);
+
+        internal class SafeCryptMsg : SafeHandle
+        {
+            internal SafeCryptMsg() : base(IntPtr.Zero, true) { }
+
+            public override bool IsInvalid => handle == IntPtr.Zero;
+
+            protected override bool ReleaseHandle() => CryptMsgClose(handle);
+        }
     }
 
     /// <summary>
