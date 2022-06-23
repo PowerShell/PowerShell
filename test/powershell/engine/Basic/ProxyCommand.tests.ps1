@@ -7,6 +7,7 @@ Describe 'ProxyCommand Tests' -Tag 'CI' {
             @{ Name = 'ValidateLengthAttribute';                         ParamBlock = '[ValidateLength(1, 10)][int]${Parameter}' }
             @{ Name = 'ValidateRangeAttribute with Minimum and Maximum'; ParamBlock = '[ValidateRange(1, 10)][int]${Parameter}' }
             @{ Name = 'ValidateRangeAttribute with RangeKind';           ParamBlock = '[ValidateRange([System.Management.Automation.ValidateRangeKind]::Positive)][int]${Parameter}' }
+            @{ Name = 'ValidateRangeAttribute with Enum';                ParamBlock = '[ValidateRange([Microsoft.PowerShell.ExecutionPolicy]::Unrestricted, [Microsoft.PowerShell.ExecutionPolicy]::Undefined)][Microsoft.PowerShell.ExecutionPolicy]${Parameter}' }
             @{ Name = 'AllowNullAttribute';                              ParamBlock = '[AllowNull()][int]${Parameter}' }
             @{ Name = 'AllowEmptyStringAttribute';                       ParamBlock = '[AllowEmptyString()][int]${Parameter}' }
             @{ Name = 'AllowEmptyCollectionAttribute';                   ParamBlock = '[AllowEmptyCollection()][int]${Parameter}' }
