@@ -1810,7 +1810,7 @@ function Install-Dotnet {
             }
 
             if ($Version) {
-                $bashArgs = @("./$installScript", '-v', $Version, '-q', $Quality)
+                $bashArgs = @("./$installScript", '-v', $Version)
             }
             elseif ($Channel) {
                 $bashArgs = @("./$installScript", '-c', $Channel, '-q', $Quality)
