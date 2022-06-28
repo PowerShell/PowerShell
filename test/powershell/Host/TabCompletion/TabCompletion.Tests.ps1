@@ -493,7 +493,10 @@ ConstructorTestClass(int i, bool b)
 
     It 'Should complete attribute argument in param block' {
         $res = TabExpansion2 -inputScript 'Param([Parameter()]$Param1)' -cursorColumn 17
-        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Position'
+        $names = [Parameter].GetProperties() | Where-Object CanWrite | ForEach-Object Name
+
+        $diffs = Compare-Object -ReferenceObject $res.CompletionMatches.CompletionText -DifferenceObject $names
+        $diffs | Should -BeNullOrEmpty
     }
 
     Context "Format cmdlet's View paramter completion" {
