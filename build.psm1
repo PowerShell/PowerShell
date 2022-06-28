@@ -1699,7 +1699,12 @@ function Install-Dotnet {
                 throw "./$installScript was 0 length"
             }
 
-            $bashArgs = @("./$installScript", '-c', $Channel, '-v', $Version)
+            if ($Version) {
+                $bashArgs = @("./$installScript", '-v', $Version)
+            }
+            elseif ($Channel) {
+                $bashArgs = @("./$installScript", '-c', $Channel, '-q', $Quality)
+            }
 
             if ($InstallDir) {
                 $bashArgs += @('-i', $InstallDir)
