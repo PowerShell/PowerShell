@@ -280,8 +280,7 @@ namespace System.Management.Automation.Language
             var parser = new Parser();
             var tokenizer = parser._tokenizer;
             tokenizer.Initialize(null, typename, null);
-            Token unused;
-            var result = parser.TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out unused);
+            var result = parser.TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out _);
 
             SemanticChecks.CheckArrayTypeNameDepth(result, PositionUtilities.EmptyExtent, parser);
             if (!ignoreErrors && parser.ErrorList.Count > 0)
@@ -4265,11 +4264,10 @@ namespace System.Management.Automation.Language
                     this.SkipToken();
                     SkipNewlines();
                     ITypeName superClass;
-                    Token unused;
                     Token commaToken = null;
                     while (true)
                     {
-                        superClass = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
+                        superClass = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out _);
                         if (superClass == null)
                         {
                             ReportIncompleteInput(After(ExtentFromFirstOf(commaToken, colonToken)),
@@ -4750,8 +4748,7 @@ namespace System.Management.Automation.Language
                     this.SkipToken();
                     SkipNewlines();
                     ITypeName underlyingType;
-                    Token unused;
-                    underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
+                    underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out _);
                     if (underlyingType == null)
                     {
                         ReportIncompleteInput(

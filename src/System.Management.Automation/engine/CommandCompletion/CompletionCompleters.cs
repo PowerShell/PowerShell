@@ -6024,8 +6024,7 @@ namespace System.Management.Automation
                     .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object")
                     .AddParameter("Property", new[] { "ResultType", "ListItemText" })
                     .AddParameter("Unique");
-                Exception unused;
-                var sortedResults = powerShellExecutionHelper.ExecuteCurrentPowerShell(out unused, results);
+                var sortedResults = powerShellExecutionHelper.ExecuteCurrentPowerShell(out _, results);
                 results.Clear();
                 results.AddRange(sortedResults.Select(static psobj => PSObject.Base(psobj) as CompletionResult));
             }

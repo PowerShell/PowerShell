@@ -1434,8 +1434,7 @@ namespace System.Management.Automation
                                 return;
                             }
 
-                            int unUsedChildrenNotMatchingFilterCriteria = 0;
-                            ProcessPathItems(providerInstance, providerPath, recurse, depth, context, out unUsedChildrenNotMatchingFilterCriteria, ProcessMode.Enumerate);
+                            ProcessPathItems(providerInstance, providerPath, recurse, depth, context, out _, ProcessMode.Enumerate);
                         }
                     }
                     else
@@ -1496,12 +1495,11 @@ namespace System.Management.Automation
                 {
                     // Do the recursion manually so that we can apply the
                     // include and exclude filters
-                    int unUsedChildrenNotMatchingFilterCriteria = 0;
                     try
                     {
                         // Temeporary set literal path as false to apply filter
                         context.SuppressWildcardExpansion = false;
-                        ProcessPathItems(providerInstance, path, recurse, depth, context, out unUsedChildrenNotMatchingFilterCriteria, ProcessMode.Enumerate);
+                        ProcessPathItems(providerInstance, path, recurse, depth, context, out _, ProcessMode.Enumerate);
                     }
                     finally
                     {
@@ -4162,7 +4160,6 @@ namespace System.Management.Automation
 
             // Get the provider specific path for the destination
 
-            PSDriveInfo unusedDrive = null;
             ProviderInfo destinationProvider = null;
             Microsoft.PowerShell.Commands.CopyItemDynamicParameters dynamicParams = context.DynamicParameters as Microsoft.PowerShell.Commands.CopyItemDynamicParameters;
             bool destinationIsRemote = false;
@@ -4213,7 +4210,7 @@ namespace System.Management.Automation
                        copyPath,
                        context,
                        out destinationProvider,
-                       out unusedDrive);
+                       out _);
             }
             else
             {

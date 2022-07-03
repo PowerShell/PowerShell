@@ -1639,9 +1639,7 @@ namespace System.Management.Automation.Language
         private string GetWithInputHandlingForInvokeCommandImpl(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple)
         {
             // do not add "$input |" to complex pipelines
-            string unused1;
-            string unused2;
-            var pipelineAst = GetSimplePipeline(false, out unused1, out unused2);
+            var pipelineAst = GetSimplePipeline(false, out _, out _);
             if (pipelineAst == null)
             {
                 return (usingVariablesTuple == null)

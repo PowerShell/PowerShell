@@ -2089,9 +2089,7 @@ namespace System.Management.Automation.Language
 
         internal static object CopyInstanceMembersOfValueType<T>(T t, object boxedT) where T : struct
         {
-            PSMemberInfoInternalCollection<PSMemberInfo> unused1;
-            ConsolidatedString unused2;
-            if (PSObject.HasInstanceMembers(boxedT, out unused1) || PSObject.HasInstanceTypeName(boxedT, out unused2))
+            if (PSObject.HasInstanceMembers(boxedT, out _) || PSObject.HasInstanceTypeName(boxedT, out _))
             {
                 var psobj = PSObject.AsPSObject(boxedT);
                 return PSObject.Base(psobj.Copy());
@@ -5623,8 +5621,7 @@ namespace System.Management.Automation.Language
 
             canOptimize = false;
 
-            PSMemberInfo unused;
-            Diagnostics.Assert(!TryGetInstanceMember(target.Value, Name, out unused),
+            Diagnostics.Assert(!TryGetInstanceMember(target.Value, Name, out _),
                                 "shouldn't get here if there is an instance member");
 
             PSMemberInfo memberInfo = null;

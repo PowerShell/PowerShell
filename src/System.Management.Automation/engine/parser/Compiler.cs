@@ -6135,9 +6135,7 @@ namespace System.Management.Automation.Language
                 {
                     // We'll wrap the variable in a PSReference, but not the constant variables ($true, $false, $null) because those
                     // can't be changed.
-                    IEnumerable<PropertyInfo> unused1;
-                    bool unused2;
-                    var varType = varExpr.GetVariableType(this, out unused1, out unused2);
+                    var varType = varExpr.GetVariableType(this, out _, out _);
                     return Expression.Call(
                         CachedReflectionInfo.VariableOps_GetVariableAsRef,
                         Expression.Constant(varExpr.VariablePath),

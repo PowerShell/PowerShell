@@ -189,8 +189,7 @@ namespace Microsoft.PowerShell
                     return null;
 
                 case DataFormat.XML:
-                    string unused;
-                    o = _xmlDeserializer.Deserialize(out unused);
+                    o = _xmlDeserializer.Deserialize(out _);
                     break;
 
                 case DataFormat.Text:

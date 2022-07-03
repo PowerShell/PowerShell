@@ -2873,8 +2873,7 @@ namespace Microsoft.PowerShell
 
             private string EvaluatePrompt()
             {
-                Exception unused = null;
-                string promptString = _promptExec.ExecuteCommandAndGetResultAsString("prompt", out unused);
+                string promptString = _promptExec.ExecuteCommandAndGetResultAsString("prompt", out _);
 
                 if (string.IsNullOrEmpty(promptString))
                 {
