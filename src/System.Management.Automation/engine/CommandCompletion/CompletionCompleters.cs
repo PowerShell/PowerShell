@@ -1689,7 +1689,7 @@ namespace System.Management.Automation
                 {
                     RemoveLastNullCompletionResult(result);
 
-                    string wordToComplete = context.WordToComplete;
+                    string wordToComplete = context.WordToComplete is null ? string.Empty : context.WordToComplete;
                     string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
                     var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
@@ -4126,7 +4126,7 @@ namespace System.Management.Automation
                                     return GenerateArgumentLocation(prevArg, position);
                                 }
 
-                                if (token.Kind == TokenKind.Parameter
+                                if ((token.Kind == TokenKind.Parameter && token.Extent.StartOffset == arg.Parameter.Extent.StartOffset)
                                     || (token.Extent.StartOffset > arg.Argument.Extent.StartOffset && token.Extent.EndOffset < arg.Argument.Extent.EndOffset))
                                 {
                                     // case 1: Get-Cmdlet -Param <tab> abc
