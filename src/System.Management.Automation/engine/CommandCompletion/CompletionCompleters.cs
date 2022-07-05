@@ -1689,7 +1689,7 @@ namespace System.Management.Automation
                 {
                     RemoveLastNullCompletionResult(result);
 
-                    string wordToComplete = context.WordToComplete is null ? string.Empty : context.WordToComplete;
+                    string wordToComplete ??= string.Empty;
                     string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
 
                     var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
