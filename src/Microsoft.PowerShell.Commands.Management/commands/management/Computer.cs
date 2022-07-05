@@ -2231,8 +2231,7 @@ $result
                 bool isIPAddress = false;
                 try
                 {
-                    IPAddress unused;
-                    isIPAddress = IPAddress.TryParse(nameToCheck, out unused);
+                    isIPAddress = IPAddress.TryParse(nameToCheck, out _);
                 }
                 catch (Exception)
                 {

@@ -2270,14 +2270,13 @@ namespace Microsoft.PowerShell
             c.X = (short)origin.X;
             c.Y = (short)origin.Y;
 
-            DWORD unused = 0;
             bool result =
                 NativeMethods.FillConsoleOutputCharacter(
                     consoleHandle.DangerousGetHandle(),
                     character,
                     (DWORD)numberToWrite,
                     c,
-                    out unused);
+                    out _);
             if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
@@ -2324,14 +2323,13 @@ namespace Microsoft.PowerShell
             c.X = (short)origin.X;
             c.Y = (short)origin.Y;
 
-            DWORD unused = 0;
             bool result =
                 NativeMethods.FillConsoleOutputAttribute(
                     consoleHandle.DangerousGetHandle(),
                     attribute,
                     (DWORD)numberToWrite,
                     c,
-                    out unused);
+                    out _);
 
             if (!result)
             {

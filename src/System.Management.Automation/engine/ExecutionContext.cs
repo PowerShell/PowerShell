@@ -379,8 +379,7 @@ namespace System.Management.Automation
             var baseValue = PSObject.Base(value);
             if (baseValue != null && baseValue != NullString.Value)
             {
-                object unused;
-                result = UntrustedObjects.TryGetValue(baseValue, out unused);
+                result = UntrustedObjects.TryGetValue(baseValue, out _);
             }
 
             return result;
@@ -1584,8 +1583,7 @@ namespace System.Management.Automation
             try
             {
                 Cmdlet currentRunningModuleCommand;
-                string unused;
-                if (IsModuleCommandCurrentlyRunning(out currentRunningModuleCommand, out unused))
+                if (IsModuleCommandCurrentlyRunning(out currentRunningModuleCommand, out _))
                 {
                     currentRunningModuleCommand.WriteError(errorRecord);
                 }

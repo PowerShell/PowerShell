@@ -2148,8 +2148,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         {
                             try
                             {
-                                string unused;
-                                foundResources = ImportCimKeywordsFromModule(moduleInfo, resourceToImport, out unused);
+                                foundResources = ImportCimKeywordsFromModule(moduleInfo, resourceToImport, out _);
                             }
                             catch (Exception)
                             {

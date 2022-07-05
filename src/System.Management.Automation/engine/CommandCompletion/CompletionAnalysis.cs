@@ -564,8 +564,7 @@ namespace System.Management.Automation
                             //     {
                             //         DependsOn=@('[user]x',|)
                             //
-                            bool unused;
-                            result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
+                            result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out _);
                         }
 
                         break;
@@ -693,8 +692,7 @@ namespace System.Management.Automation
                                 //         DependsOn=@(|)
                                 //         DependsOn=(|
                                 //
-                                bool unused;
-                                result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
+                                result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out _);
                             }
 
                             break;
@@ -944,8 +942,7 @@ namespace System.Management.Automation
                                             break;
                                         }
 
-                                        bool unused;
-                                        result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
+                                        result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out _);
                                         break;
                                     }
                                 case TokenKind.Break:
