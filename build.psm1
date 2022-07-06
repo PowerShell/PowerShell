@@ -1767,7 +1767,7 @@ function Start-PSxUnit {
 
         # Add workaround to unblock xUnit testing see issue: https://github.com/dotnet/sdk/issues/26462
         $dotnetPath = if ($environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
-        $env:DOTNET_ROOT ??= $dotnetPath
+        $env:DOTNET_ROOT = $dotnetPath
 
         # Path manipulation to obtain test project output directory
 
