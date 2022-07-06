@@ -1760,8 +1760,14 @@ function Start-PSxUnit {
         throw "PowerShell must be built before running tests!"
     }
 
+    $originalDOTNET_ROOT = $env:DOTNET_ROOT
+
     try {
         Push-Location $PSScriptRoot/test/xUnit
+
+        # Add workaround to unblock xUnit testing see issue: https://github.com/dotnet/sdk/issues/26462
+        $dotnetPath = if ($environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
+        $env:DOTNET_ROOT ??= $dotnetPath
 
         # Path manipulation to obtain test project output directory
 
@@ -1806,6 +1812,7 @@ function Start-PSxUnit {
         Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
     }
     finally {
+        $env:DOTNET_ROOT = $originalDOTNET_ROOT
         Pop-Location
     }
 }
