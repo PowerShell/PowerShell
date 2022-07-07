@@ -499,6 +499,17 @@ ConstructorTestClass(int i, bool b)
         $diffs | Should -BeNullOrEmpty
     }
 
+    It 'Should complete argument for second parameter' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem -Path $HOME -ErrorAction '
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly Break
+    }
+
+    It 'Should complete argument with validateset attribute after comma' {
+        $TestString = 'function Test-ValidateSet{Param([ValidateSet("Cat","Dog")]$Param1,$Param2)};Test-ValidateSet -Param1 Dog, -Param2'
+        $res = TabExpansion2 -inputScript $TestString -cursorColumn ($TestString.LastIndexOf(',') + 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'
