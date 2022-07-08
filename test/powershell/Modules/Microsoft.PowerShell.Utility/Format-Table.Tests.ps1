@@ -846,23 +846,23 @@ A Name                                  B
             ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
         }
 
-        It 'Table should format floats, doubles, and decimals to two decimals' {
+        It 'Table should format floats, doubles, and decimals to right number of decimals' {
             $o = [PSCustomObject]@{
                 double = [double]1234.56789
                 float = [float]9876.54321
                 decimal = [decimal]4567.123456789
             }
 
-            $expected = @"
+            $table = $o | Format-Table | Out-String
 
- double   float decimal
- ------   ----- -------
-1234.57 9876.54 4567.12
+            $line = foreach ($line in $table.split([System.Environment]::NewLine)) { if ($line -match '^1234+') { $line } }
+            $line | Should -Not -BeNullOrEmpty
+            $expectedDecimals = (Get-Culture).NumberFormat.NumberDecimalDigits
 
-
-"@
-            $actual = $o | Format-Table | Out-String
-            ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
+            foreach ($num in $line.split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)) {
+                $numDecimals = $num.length - $num.indexOf('.') - 1
+                $numDecimals | Should -Be $expectedDecimals -Because $num
+            }
         }
     }
 

@@ -297,17 +297,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 if (formatFloat && so.BaseObject is not null)
                 {
+                    // format numbers using the current culture
                     if (so.BaseObject is double)
                     {
-                        return ((double)so.BaseObject).ToString("0.00");
+                        return ((double)so.BaseObject).ToString("F");
                     }
                     else if (so.BaseObject is float)
                     {
-                        return ((float)so.BaseObject).ToString("0.00");
+                        return ((float)so.BaseObject).ToString("F");
                     }
                     else if (so.BaseObject is decimal)
                     {
-                        return ((decimal)so.BaseObject).ToString("0.00");
+                        return ((decimal)so.BaseObject).ToString("F");
                     }
                 }
 
