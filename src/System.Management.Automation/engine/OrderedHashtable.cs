@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// <summary>
     /// OrderedHashtable is a hashtable that preserves the order of the keys.
     /// </summary>
-    public class OrderedHashtable : Hashtable, IEnumerable
+    public sealed class OrderedHashtable : Hashtable, IEnumerable
     {
         private readonly OrderedDictionary _orderedDictionary;
 
