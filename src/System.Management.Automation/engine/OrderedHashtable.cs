@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 
 #nullable enable
 
-namespace Microsoft.PowerShell.Commands
+namespace System.Management.Automation
 {
     /// <summary>
     /// OrderedHashtable is a hashtable that preserves the order of the keys.
@@ -120,12 +120,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The value associated with the key.</returns>
         public override object? this[object key]
         {
-            get 
+            get
             {
                 return _orderedDictionary[key];
             }
 
-            set 
+            set
             {
                 _orderedDictionary[key] = value;
             }
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get a shallow clone of the hashtable.
         /// </summary>
-        /// <returns>A shallow clone of the hashtable.</returns>    
+        /// <returns>A shallow clone of the hashtable.</returns>
         public override object Clone()
         {
             return new OrderedHashtable(_orderedDictionary);
