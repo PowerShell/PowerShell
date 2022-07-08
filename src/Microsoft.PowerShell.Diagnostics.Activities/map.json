@@ -1,0 +1,7 @@
+{
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Diagnostics_Activities/ExportCounterActivity.cs":  "Generated/ExportCounterActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Diagnostics_Activities/GetCounterActivity.cs":  "Generated/GetCounterActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Diagnostics_Activities/GetWinEventActivity.cs":  "Generated/GetWinEventActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Diagnostics_Activities/NewWinEventActivity.cs":  "Generated/NewWinEventActivity.cs",
+    "monad/src/Activities/Generated/Microsoft_PowerShell_Diagnostics_Activities/ImportCounterActivity.cs":  "Generated/ImportCounterActivity.cs"
+}
