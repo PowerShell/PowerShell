@@ -845,6 +845,25 @@ A Name                                  B
             $actual = $obj | Format-Table | Out-String
             ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
         }
+
+        It 'Table should format floats, doubles, and decimals to two decimals' {
+            $o = [PSCustomObject]@{
+                double = [double]1234.56789
+                float = [float]9876.54321
+                decimal = [decimal]4567.123456789
+            }
+
+            $expected = @"
+
+ double   float decimal
+ ------   ----- -------
+1234.57 9876.54 4567.12
+
+
+"@
+            $actual = $o | Format-Table | Out-String
+            ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
+        }
     }
 
 Describe 'Table color tests' {
