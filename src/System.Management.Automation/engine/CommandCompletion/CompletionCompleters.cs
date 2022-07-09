@@ -2292,6 +2292,11 @@ namespace System.Management.Automation
                         {
                             NativeCompletionMemberName(context, result, commandAst, boundArguments?[parameterName]);
                         }
+                        else if (parameterName.Equals("Value", StringComparison.OrdinalIgnoreCase)
+                            && boundArguments?["Property"] is AstPair pair && pair.Argument is StringConstantExpressionAst stringAst)
+                        {
+                            NativeCompletionMemberValue(context, result, commandAst, stringAst.Value);
+                        }
 
                         break;
                     }
@@ -3964,6 +3969,37 @@ namespace System.Management.Automation
 
                 Func<object, bool> filter = propertiesOnly ? IsPropertyMember : null;
                 CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter, isStatic: false, excludedMembers);
+            }
+
+            result.Add(CompletionResult.Null);
+        }
+
+        private static void NativeCompletionMemberValue(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, string propertyName)
+        {
+            string wordToComplete = context.WordToComplete.Trim('"', '\'');
+            IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
+            if (prevType is not null)
+            {
+                foreach (var type in prevType)
+                {
+                    if (type.Type is null)
+                    {
+                        continue;
+                    }
+
+                    PropertyInfo property = type.Type.GetProperty(propertyName, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+                    if (property is not null && property.PropertyType.IsEnum)
+                    {
+                        foreach (var value in property.PropertyType.GetEnumNames())
+                        {
+                            if (value.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                            {
+                                result.Add(new CompletionResult(value, value, CompletionResultType.ParameterValue, value));
+                            }
+                        }
+                        break;
+                    }
+                }
             }
 
             result.Add(CompletionResult.Null);
@@ -5885,6 +5921,44 @@ namespace System.Management.Automation
             }
 
             return results;
+        }
+
+        internal static List<CompletionResult> CompleteComparisonOperatorValues(CompletionContext context, ExpressionAst operatorLeftValue)
+        {
+            var result = new List<CompletionResult>();
+            var resolvedTypes = new List<Type>();
+
+            if (SafeExprEvaluator.TrySafeEval(operatorLeftValue, context.ExecutionContext, out object value) && value is not null)
+            {
+                resolvedTypes.Add(value.GetType());
+            }
+            else
+            {
+                var inferredTypes = AstTypeInference.InferTypeOf(operatorLeftValue, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+                foreach (var type in inferredTypes)
+                {
+                    if (type.Type is not null)
+                    {
+                        resolvedTypes.Add(type.Type);
+                    }
+                }
+            }
+
+            foreach (var type in resolvedTypes)
+            {
+                if (type.IsEnum)
+                {
+                    foreach (var name in type.GetEnumNames())
+                    {
+                        if (name.StartsWith(context.WordToComplete, StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.Add(new CompletionResult($"'{name}'", name, CompletionResultType.ParameterValue, name));
+                        }
+                    }
+                    break;
+                }
+            }
+            return result;
         }
 
         /// <summary>
