@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="expressionFactory">Expression factory to create PSPropertyExpression.</param>
         /// <param name="enumerationLimit">Limit on IEnumerable enumeration.</param>
         /// <param name="formatErrorObject">Stores errors during string conversion.</param>
-        /// <param name="formatFloat">Determine if to format floating point numbers to two decimal places.</param>
+        /// <param name="formatFloat">Determine if to format floating point numbers using current culture.</param>
         /// <returns>String representation.</returns>
         internal static string SmartToString(PSObject so, PSPropertyExpressionFactory expressionFactory, int enumerationLimit, StringFormatError formatErrorObject, bool formatFloat = false)
         {
