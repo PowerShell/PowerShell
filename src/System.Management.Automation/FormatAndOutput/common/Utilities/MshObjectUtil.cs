@@ -370,7 +370,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                         // we fall back to the PSObject's IFormattable.ToString()
                         // pass a null IFormatProvider
-                        return so.ToString(directive.formatString, null);
+                        return so.ToString(directive.formatString, formatProvider: null);
                     }
                     catch (Exception e) // 2004/11/17-JonN This covers exceptions thrown in
                                         // string.Format and PSObject.ToString().
