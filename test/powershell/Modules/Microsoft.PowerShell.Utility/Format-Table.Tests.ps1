@@ -846,7 +846,7 @@ A Name                                  B
             ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
         }
 
-        It 'Table should format floats, doubles, and decimals to right number of decimals' {
+        It 'Table should format floats, doubles, and decimals with number of decimals from current culture' {
             $o = [PSCustomObject]@{
                 double = [double]1234.56789
                 float = [float]9876.54321
