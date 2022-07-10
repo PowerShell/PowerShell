@@ -227,44 +227,53 @@ switch ($x)
         $completionText -join ' ' | Should -BeExactly 'Ascending Descending Expression'
     }
 
-    It 'Should complete New-Object hashtable' {
-        class X {
-            $A
-            $B
-            $C
+    context TypeConstructionWithHashtable {
+        BeforeAll {
+            class X {
+                $A
+                $B
+                $C
+            }
+            function xClassTestCompletion([x]$Param1){}
         }
-        $res = TabExpansion2 -inputScript 'New-Object -TypeName X -Property @{ ' -cursorColumn 'New-Object -TypeName X -Property @{ '.Length
-        $res.CompletionMatches | Should -HaveCount 3
-        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
-    }
-    It 'Complete hashtable key without duplicate keys' {
-        class X {
-            $A
-            $B
-            $C
+        It 'Should complete New-Object hashtable' {
+            $res = TabExpansion2 -inputScript 'New-Object -TypeName X -Property @{ ' -cursorColumn 'New-Object -TypeName X -Property @{ '.Length
+            $res.CompletionMatches | Should -HaveCount 3
+            $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
         }
-        $TestString = '[x]@{A="";^}'
-        $CursorIndex = $TestString.IndexOf('^')
-        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
-        $res.CompletionMatches | Should -HaveCount 2
-        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'B C'
-    }
-    It 'Complete hashtable key on empty line after key/value pair' {
-        class X {
-            $A
-            $B
-            $C
+
+        It 'Complete hashtable key without duplicate keys' {
+            $TestString = '[x]@{A="";^}'
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+            $res.CompletionMatches | Should -HaveCount 2
+            $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'B C'
         }
-        $TestString = @'
+
+        It 'Complete hashtable key on empty line after key/value pair' {
+            $TestString = @'
 [x]@{
     B=""
     ^
 }
 '@
-        $CursorIndex = $TestString.IndexOf('^')
-        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
-        $res.CompletionMatches | Should -HaveCount 2
-        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A C'
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+            $res.CompletionMatches | Should -HaveCount 2
+            $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A C'
+        }
+
+        It 'Should complete class properties for typed variable declaration with hashtable' {
+            $res = TabExpansion2 -inputScript '[X]$TestVar = @{'
+            $res.CompletionMatches | Should -HaveCount 3
+            $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
+        }
+
+        It 'Should complete class properties for typed command parameter with hashtable input' {
+            $res = TabExpansion2 -inputScript 'xClassTestCompletion -Param1 @{'
+            $res.CompletionMatches | Should -HaveCount 3
+            $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
+        }
     }
 
     It 'Complete hashtable keys for Get-WinEvent FilterHashtable' -Skip:(!$IsWindows) {

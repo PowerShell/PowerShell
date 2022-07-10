@@ -7028,12 +7028,19 @@ namespace System.Management.Automation
                 }
             }
 
-            var typeAst = hashtableAst.Parent as ConvertExpressionAst;
-            if (typeAst != null)
+            ConvertExpressionAst convertExpression = hashtableAst.Parent as ConvertExpressionAst;
+            if (convertExpression is null
+                && hashtableAst.Parent is CommandExpressionAst
+                && hashtableAst.Parent.Parent is AssignmentStatementAst assignStatement)
+            {
+                convertExpression = assignStatement.Left as ConvertExpressionAst;
+            }
+
+            if (convertExpression is not null)
             {
                 var result = new List<CompletionResult>();
                 CompleteMemberByInferredType(
-                    completionContext.TypeInferenceContext, AstTypeInference.InferTypeOf(typeAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval),
+                    completionContext.TypeInferenceContext, AstTypeInference.InferTypeOf(convertExpression, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval),
                     result, wordToComplete + "*", IsWriteablePropertyMember, isStatic: false, excludedKeys);
                 return result;
             }
@@ -7126,6 +7133,7 @@ namespace System.Management.Automation
 
                 if (parameterName != null)
                 {
+                    List<CompletionResult> results;
                     if (parameterName.Equals("GroupBy", StringComparison.OrdinalIgnoreCase))
                     {
                         switch (binding.CommandName)
@@ -7146,11 +7154,11 @@ namespace System.Management.Automation
                         {
                             case "New-Object":
                                 var inferredType = AstTypeInference.InferTypeOf(commandAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
-                                var result = new List<CompletionResult>();
+                                results = new List<CompletionResult>();
                                 CompleteMemberByInferredType(
                                     completionContext.TypeInferenceContext, inferredType,
-                                    result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false, excludedKeys);
-                                return result;
+                                    results, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false, excludedKeys);
+                                return results;
                             case "Select-Object":
                                 return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Name", "Expression");
                             case "Sort-Object":
@@ -7167,7 +7175,7 @@ namespace System.Management.Automation
                                 return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Depth");
                             case "Set-CimInstance":
                             case "New-CimInstance":
-                                var results = new List<CompletionResult>();
+                                results = new List<CompletionResult>();
                                 NativeCompletionCimCommands(parameterName, binding.BoundArguments, results, commandAst, completionContext, excludedKeys, binding.CommandName);
                                 // this method adds a null CompletionResult to the list but we don't want that here.
                                 if (results.Count > 1)
@@ -7195,18 +7203,29 @@ namespace System.Management.Automation
                         switch (binding.CommandName)
                         {
                             case "Invoke-CimMethod":
-                                var result = new List<CompletionResult>();
-                                NativeCompletionCimCommands(parameterName, binding.BoundArguments, result, commandAst, completionContext, excludedKeys, binding.CommandName);
+                                results = new List<CompletionResult>();
+                                NativeCompletionCimCommands(parameterName, binding.BoundArguments, results, commandAst, completionContext, excludedKeys, binding.CommandName);
                                 // this method adds a null CompletionResult to the list but we don't want that here.
-                                if (result.Count > 1)
+                                if (results.Count > 1)
                                 {
-                                    result.RemoveAt(result.Count - 1);
-                                    return result;
+                                    results.RemoveAt(results.Count - 1);
+                                    return results;
                                 }
 
                                 return null;
                         }
                     }
+
+                    results = new List<CompletionResult>();
+                    CompleteMemberByInferredType(
+                        completionContext.TypeInferenceContext,
+                        new PSTypeName[] { new PSTypeName(binding.BoundParameters[parameterName].Parameter.Type) },
+                        results,
+                        $"{wordToComplete}*",
+                        IsWriteablePropertyMember,
+                        isStatic: false,
+                        excludedKeys);
+                    return results;
                 }
             }
 
