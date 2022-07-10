@@ -378,7 +378,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         // NOTE: we catch all the exceptions, since we do not know
                         // what the underlying object access would throw
-                        if (formatErrorObject != null)
+                        if (formatErrorObject is not null)
                         {
                             formatErrorObject.sourceObject = so;
                             formatErrorObject.exception = e;
