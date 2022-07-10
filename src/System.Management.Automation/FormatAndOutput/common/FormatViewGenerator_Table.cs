@@ -483,8 +483,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     directive = activeAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
 
-                directive ??= new FieldFormattingDirective()
+                if (directive is null)
                 {
+                    directive = new FieldFormattingDirective();
                     directive.isTable = true;
                 }
 
