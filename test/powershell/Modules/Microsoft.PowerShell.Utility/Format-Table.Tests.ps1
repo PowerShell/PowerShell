@@ -855,7 +855,7 @@ A Name                                  B
 
             $table = $o | Format-Table | Out-String
 
-            $line = foreach ($line in $table.split([System.Environment]::NewLine)) { if ($line -match '^1234+') { $line } }
+            $line = foreach ($line in $table.split([System.Environment]::NewLine)) { if ($line -match '^1234') { $line } }
             $line | Should -Not -BeNullOrEmpty
             $expectedDecimals = (Get-Culture).NumberFormat.NumberDecimalDigits
 
