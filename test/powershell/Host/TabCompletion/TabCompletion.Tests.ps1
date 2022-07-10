@@ -510,6 +510,11 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
     }
 
+    it 'Should complete provider dynamic parameters with quoted path' -Skip:(!$IsWindows) {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem -Path "Get-ChildItem -Path "C:\" -Director" -Director'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Directory'
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'
