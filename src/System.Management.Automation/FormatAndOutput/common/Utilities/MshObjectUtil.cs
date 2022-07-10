@@ -351,7 +351,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             PSObject so = PSObjectHelper.AsPSObject(val);
             bool isTable = false;
-            if (directive != null)
+            if (directive is not null)
             {
                 isTable = directive.isTable;
                 if (!string.IsNullOrEmpty(directive.formatString))
