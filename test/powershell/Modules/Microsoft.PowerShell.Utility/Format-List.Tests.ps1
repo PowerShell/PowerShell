@@ -210,7 +210,7 @@ dbda : KM
         $actual | Should -BeExactly $expected
     }
 
-    It 'Float, double, and decimal should not be truncated' {
+    It 'Float, double, and decimal should not be truncated to number of decimals from current culture' {
         $o = [PSCustomObject]@{
             double = [double]1234.56789
             float = [float]9876.543
