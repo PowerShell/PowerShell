@@ -502,7 +502,7 @@ namespace Microsoft.Management.UI.Internal
                             {
                                 if (property.Value is string)
                                 {
-                                    StringDecorated decoratedString = new StringDecorated((string)property.Value);
+                                    StringDecorated decoratedString = new StringDecorated(property.Value as string);
                                     property.Value = decoratedString.ToString(OutputRendering.PlainText);
                                 }
                             }
