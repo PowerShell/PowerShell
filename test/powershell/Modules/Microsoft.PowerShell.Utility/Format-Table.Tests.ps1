@@ -860,7 +860,7 @@ A Name                                  B
             $expectedDecimals = (Get-Culture).NumberFormat.NumberDecimalDigits
 
             foreach ($num in $line.split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)) {
-                $numDecimals = $num.length - $num.indexOf('.') - 1
+                $numDecimals = $num.length - $num.indexOf((Get-Culture).NumberFormat.NumberDecimalSeparator) - 1
                 $numDecimals | Should -Be $expectedDecimals -Because $num
             }
         }
