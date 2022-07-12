@@ -500,9 +500,9 @@ namespace Microsoft.Management.UI.Internal
                             // Remove any potential ANSI decoration
                             foreach (var property in value.Properties)
                             {
-                                if (property.Value is string)
+                                if (property.Value is string str)
                                 {
-                                    StringDecorated decoratedString = new StringDecorated(property.Value as string);
+                                    StringDecorated decoratedString = new StringDecorated(str);
                                     property.Value = decoratedString.ToString(OutputRendering.PlainText);
                                 }
                             }
