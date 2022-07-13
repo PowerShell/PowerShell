@@ -14,11 +14,7 @@
     <PackageReference Include="PowerShellGet" Version="2.2.5" />
     <PackageReference Include="PackageManagement" Version="1.4.8.1" />
     <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.2.5" />
-<<<<<<< HEAD
     <PackageReference Include="PSReadLine" Version="2.2.6" />
-=======
-    <PackageReference Include="PSReadLine" Version="2.2.2" />
->>>>>>> Bump PSReadLine from 2.1.0 to 2.2.2 in /src/Modules
     <PackageReference Include="ThreadJob" Version="2.0.3" />
   </ItemGroup>
 
