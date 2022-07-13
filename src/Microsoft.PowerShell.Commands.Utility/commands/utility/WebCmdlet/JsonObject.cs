@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
         private static Hashtable PopulateHashTableFromJDictionary(JObject entries, out ErrorRecord error)
         {
             error = null;
-            Hashtable result = new(entries.Count);
+            OrderedHashtable result = new(entries.Count);
             foreach (var entry in entries)
             {
                 // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
