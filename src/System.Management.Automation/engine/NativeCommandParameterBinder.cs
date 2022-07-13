@@ -283,6 +283,7 @@ namespace System.Management.Automation
                         if (NeedQuotes(arg))
                         {
                             _arguments.Append('"');
+                            AddToArgumentList(parameter, arg);
 
                             // need to escape all trailing backslashes so the native command receives it correctly
                             // according to http://www.daviddeley.com/autohotkey/parameters/parameters.htm#WINCRULESDOC
@@ -385,6 +386,7 @@ namespace System.Management.Automation
                                 _arguments.Append(expandedPath);
                             }
 
+                            AddToArgumentList(parameter, expandedPath);
                             argExpanded = true;
                         }
                     }
@@ -399,12 +401,14 @@ namespace System.Management.Automation
                 if (string.Equals(arg, "~"))
                 {
                     _arguments.Append(home);
+                    AddToArgumentList(parameter, home);
                     argExpanded = true;
                 }
                 else if (arg.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
                 {
                     var replacementString = string.Concat(home, arg.AsSpan(1));
                     _arguments.Append(replacementString);
+                    AddToArgumentList(parameter, replacementString);
                     argExpanded = true;
                 }
             }
@@ -471,8 +475,6 @@ namespace System.Management.Automation
         /// The native command to bind to.
         /// </summary>
         private readonly NativeCommand _nativeCommand;
-        private static readonly string TildeDirectorySeparator = $"~{Path.DirectorySeparatorChar}";
-        private static readonly string TildeAltDirectorySeparator = $"~{Path.AltDirectorySeparatorChar}";
 
         #endregion private members
     }
