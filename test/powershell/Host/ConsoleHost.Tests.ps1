@@ -860,9 +860,8 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
 
     Context "Startup banner text tests" -Tag Slow {
         BeforeAll {
-            $inputPath  = "Temp:\StartupBannerTest-Input.txt"
             $outputPath = "Temp:\StartupBannerTest-Output-${Pid}.txt"
-            $errorPath = "Temp:\StartupBannerTest-Error-${Pid}.txt"
+            $inputPath  = "Temp:\StartupBannerTest-Input.txt"
             "exit" > $inputPath
 
             # Not testing update notification banner text here
@@ -878,9 +877,9 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
 
             $spArgs = @{
                 FilePath = $powershell
+                ArgumentList = @("-NoProfile")
                 RedirectStandardInput = $inputPath
                 RedirectStandardOutput = $outputPath
-                RedirectStandardError = $errorPath
                 WorkingDirectory = $pwd
                 PassThru = $true
                 NoNewWindow = $true
@@ -893,48 +892,13 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
 
             Remove-Item $inputPath -Force -ErrorAction Ignore
             Remove-Item $outputPath -Force -ErrorAction Ignore
-            Remove-Item $errorPath -Force -ErrorAction Ignore
         }
         BeforeEach {
             Remove-Item $outputPath -Force -ErrorAction Ignore
-            Remove-Item $errorPath -Force -ErrorAction Ignore
         }
         It "Displays expected startup banner text by default" {
-            $spArgs["ArgumentList"] = @("-NoProfile")
             $process = Start-Process @spArgs
             Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
-
-            $err = @(Get-Content $errorPath)
-            $err | Write-Warning
-            $err.Count | Should -Be 0
-
-            $out = @(Get-Content $outputPath)
-            $out.Count | Should -Be 2
-            $out[0] | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
-            $out[1] | Should -MatchExactly $expectedPromptPattern
-        }
-        It "Displays the profile load time with -ShowProfileLoadTime" {
-            # This test requires loading profiles so it may not run well on a machine with profiles that generate errors.
-            $spArgs["ArgumentList"] = @("-ShowProfileLoadTime")
-            $process = Start-Process @spArgs
-            Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
-
-            $err = @(Get-Content $errorPath)
-            $err.Count | Should -Be 1
-            $err[0] | Should -MatchExactly "Loading personal and system profiles took \d+ms\."
-
-            $out = @(Get-Content $outputPath)
-            $out.Count | Should -Be 2
-            $out[0] | Should -BeExactly "PowerShell $($PSVersionTable.GitCommitId)"
-            $out[1] | Should -MatchExactly $expectedPromptPattern
-        }
-        It "Displays no profile load time with -ShowProfileLoadTime and -NoProfile" {
-            $spArgs["ArgumentList"] = "-NoProfile", "-ShowProfileLoadTime"
-            $process = Start-Process @spArgs
-            Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
-
-            $err = @(Get-Content $errorPath)
-            $err.Count | Should -Be 0
 
             $out = @(Get-Content $outputPath)
             $out.Count | Should -Be 2
@@ -942,12 +906,9 @@ $powershell -c '[System.Management.Automation.Platform]::SelectProductNameForDir
             $out[1] | Should -MatchExactly $expectedPromptPattern
         }
         It "Displays only the prompt with -NoLogo" {
-            $spArgs["ArgumentList"] = "-NoProfile", "-NoLogo"
+            $spArgs["ArgumentList"] += "-NoLogo"
             $process = Start-Process @spArgs
             Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250 | Should -BeTrue
-
-            $err = @(Get-Content $errorPath)
-            $err.Count | Should -Be 0
 
             $out = @(Get-Content $outputPath)
             $out.Count | Should -Be 1

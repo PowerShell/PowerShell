@@ -186,10 +186,10 @@ namespace Microsoft.PowerShell
             "nologo",
             "noninteractive",
             "noprofile",
+            "noprofileloadtime",
             "outputformat",
             "removeworkingdirectorytrailingcharacter",
             "settingsfile",
-            "showprofileloadtime",
             "version",
             "windowstyle",
             "workingdirectory"
@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell
             WindowStyle         = 0x01000000, // -WindowStyle | -w
             WorkingDirectory    = 0x02000000, // -WorkingDirectory | -wd
             ConfigurationFile   = 0x04000000, // -ConfigurationFile
-            ShowProfileLoadTime = 0x08000000, // -ShowProfileLoadTime
+            NoProfileLoadTime   = 0x08000000, // -NoProfileLoadTime
             // Enum values for specified ExecutionPolicy
             EPUnrestricted      = 0x0000000100000000, // ExecutionPolicy unrestricted
             EPRemoteSigned      = 0x0000000200000000, // ExecutionPolicy remote signed
@@ -465,12 +465,12 @@ namespace Microsoft.PowerShell
             }
         }
 
-        internal bool ShowProfileLoadTime
+        internal bool NoProfileLoadTime
         {
             get
             {
                 AssertArgumentsParsed();
-                return _showProfileLoadTime;
+                return _noProfileLoadTime;
             }
         }
 
@@ -931,10 +931,10 @@ namespace Microsoft.PowerShell
                     _sshServerMode = true;
                     ParametersUsed |= ParameterBitmap.SSHServerMode;
                 }
-                else if (MatchSwitch(switchKey, "showprofileloadtime", "showprofileloadtime"))
+                else if (MatchSwitch(switchKey, "noprofileloadtime", "noprofileloadtime"))
                 {
-                    _showProfileLoadTime = true;
-                    ParametersUsed |= ParameterBitmap.ShowProfileLoadTime;
+                    _noProfileLoadTime = true;
+                    ParametersUsed |= ParameterBitmap.NoProfileLoadTime;
                 }
                 else if (MatchSwitch(switchKey, "interactive", "i"))
                 {
@@ -1512,7 +1512,7 @@ namespace Microsoft.PowerShell
         private bool _serverMode;
         private bool _namedPipeServerMode;
         private bool _sshServerMode;
-        private bool _showProfileLoadTime;
+        private bool _noProfileLoadTime;
         private bool _showVersion;
         private string? _configurationFile;
         private string? _configurationName;

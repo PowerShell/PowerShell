@@ -1885,7 +1885,7 @@ namespace Microsoft.PowerShell
                     sw.Stop();
 
                     var profileLoadTimeInMs = sw.ElapsedMilliseconds;
-                    if (s_cpp.ShowProfileLoadTime)
+                    if (s_cpp.ShowBanner && !s_cpp.NoProfileLoadTime && profileLoadTimeInMs > 500)
                     {
                         Console.Error.WriteLine(ConsoleHostStrings.SlowProfileLoadingMessage, profileLoadTimeInMs);
                     }
