@@ -1235,7 +1235,7 @@ namespace System.Management.Automation.Language
                         ExpressionAst expressionToAdd;
                         if (_commandElements[commandIndex] is ConstantExpressionAst constant)
                         {
-                            if (constant.Extent.Text.Equals("-", StringComparison.Ordinal)
+                            if (constant.Extent.Text.Equals("-", StringComparison.Ordinal))
                             {
                                 // A value of "-" is most likely the user trying to tab here,
                                 // and we don't want it be treated as an argument
