@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation.Internal;
+using Microsoft.PowerShell.Commands;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -357,7 +358,9 @@ namespace System.Management.Automation
             DirectoryInfo directoryInfo = null;
             try
             {
-                string rootedPath = Microsoft.PowerShell.Commands.ModuleCmdletBase.ResolveRootedFilePath(moduleNameOrPath, cmdlet.Context);
+                // Even if 'moduleNameOrPath' is a rooted path, 'ResolveRootedFilePath' may return null when the path doesn't exist yet,
+                // or when it contains wildcards but cannot be resolved to a single path.
+                string rootedPath = ModuleCmdletBase.ResolveRootedFilePath(moduleNameOrPath, cmdlet.Context);
                 if (string.IsNullOrEmpty(rootedPath) && moduleNameOrPath.StartsWith('.'))
                 {
                     PathInfo currentPath = cmdlet.CurrentProviderLocation(cmdlet.Context.ProviderNames.FileSystem);
