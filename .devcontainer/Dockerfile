@@ -1,24 +1,23 @@
-#-------------------------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
-#-------------------------------------------------------------------------------------------------------------
+# See here for image contents: https://github.com/microsoft/vscode-dev-containers/tree/v0.241.1/containers/dotnet/.devcontainer/base.Dockerfile
 
-FROM mcr.microsoft.com/powershell/test-deps:ubuntu-18.04
+#Required parameter. Specify a .NET version e.g. 6.0.100, 7.0.100-preview.6
+ARG VERSION
 
-# Avoid warnings by switching to noninteractive
-ENV DEBIAN_FRONTEND=noninteractive
+#"Jammy" is Ubuntu 22.04 LTS. Update when a new devcontainer OS is desired
+#NOTE: .NET has made Debian the default container type for .NET but PowerShell build tooling still only recognizes Ubuntu.
+FROM mcr.microsoft.com/dotnet/sdk:${VERSION}-jammy
 
-# Configure apt and install packages
-RUN apt-get update \
-    && apt-get -y install --no-install-recommends apt-utils 2>&1 \
-    #
-    # Verify git, process tools, lsb-release (common in install instructions for CLIs) installed
-    && apt-get -y install --no-install-recommends git procps lsb-release \
-    #
-    # Clean up
-    && apt-get autoremove -y \
-    && apt-get clean -y \
-    && rm -rf /var/lib/apt/lists/*
+COPY library-scripts/*.sh /tmp/library-scripts/
+#NOTE: common-debian will run apt update which is why we dont run it again
+RUN \
+export DEBIAN_FRONTEND=noninteractive \
+&& /tmp/library-scripts/common-debian.sh \
+&& rm -rf /tmp/library-scripts \
+&& apt install -y --no-install-recommends \
+nodejs \
+yarn
 
-# Switch back to dialog for any ad-hoc use of apt-get
-ENV DEBIAN_FRONTEND=dialog
+USER vscode
+SHELL ["pwsh","-c"]
+ENTRYPOINT [ "pwsh" ]
+

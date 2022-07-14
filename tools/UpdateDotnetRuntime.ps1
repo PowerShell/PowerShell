@@ -247,12 +247,13 @@ function Get-DotnetUpdate {
 }
 
 function Update-DevContainer {
-    $dockerFilePath = "$PSScriptRoot/../.devcontainer/Dockerfile"
+    $devContainerConfigPath = "$PSScriptRoot/../.devcontainer/devcontainer.json"
     $sdkImageVersion = (Get-Content -Raw "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.sdkImageVersion
-
-    $devContainerDocker = (Get-Content $dockerFilePath) -replace 'FROM mcr\.microsoft\.com/dotnet.*', "FROM mcr.microsoft.com/dotnet/nightly/sdk:$sdkImageVersion"
-
-    $devContainerDocker | Out-File -FilePath $dockerFilePath -Force
+    #Preview images dont have a build number
+    $stripBuildNumberRegex = '(-preview\.\d+)[\d\.]+', '$1'
+    $containerVersion = $sdkImageVersion -replace $stripBuildNumberRegex
+    $devContainerConfig = (Get-Content $devContainerConfigPath) -replace '"VERSION": "(.+?)"', ('"VERSION": "{0}"' -f $containerVersion)
+    $devContainerDocker | Out-File -FilePath $devContainerConfigPath -Force
 }
 
 <#

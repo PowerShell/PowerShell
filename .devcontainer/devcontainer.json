@@ -1,16 +1,38 @@
-// See https://aka.ms/vscode-remote/devcontainer.json for format details.
+// For format details, see https://aka.ms/devcontainer.json
 {
-	"name": ".NET Core 6.0, including pwsh (Ubuntu 18.04)",
-	"dockerFile": "Dockerfile",
-
-	// Uncomment the next line to run commands after the container is created.
-	"postCreateCommand": "cd src/powershell-unix && dotnet restore",
-
-	"extensions": [
-		"ms-azure-devops.azure-pipelines",
-		"ms-dotnettools.csharp",
-		"ms-vscode.powershell",
-		"DavidAnson.vscode-markdownlint",
-		"vitaliymaz.vscode-svg-previewer"
-	]
+  "name": "PowerShell Development",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      //NOTE: Use UpdateDotnetRuntime.ps1 to increment this value, do not edit it manually
+      "VERSION": "7.0.100-preview.6"
+    }
+  },
+  "updateContentCommand": "pwsh -noprofile -command \"Import-Module ./build.psm1;Start-PSBootstrap\"", //Import-Module build.psm1; Start-PSBootstrap
+  // We only need to restore the linux components for development on a linux machine
+  "postCreateCommand": "git config --global --add safe.directory /workspaces/PowerShell && dotnet restore src/powershell-unix",
+  // Configure tool-specific properties.
+  "customizations": {
+    // Configure properties specific to VS Code.
+    "vscode": {
+      // Add the IDs of extensions you want installed when the container is created.
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "josefpihrt-vscode.roslynator",
+        "ms-vscode.powershell-preview",
+        "ms-azure-devops.azure-pipelines",
+        "DavidAnson.vscode-markdownlint",
+        "vitaliymaz.vscode-svg-previewer"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "pwsh",
+        "terminal.integrated.automationProfile.linux": {
+          "path": "pwsh",
+          "icon": "terminal-powershell",
+          "color": "terminal.ansiGreen"
+        }
+      }
+    }
+  },
+  "remoteUser": "vscode"
 }
