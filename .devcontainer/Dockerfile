@@ -11,6 +11,7 @@ COPY library-scripts/*.sh /tmp/library-scripts/
 #NOTE: common-debian will run apt update which is why we dont run it again
 RUN \
 export DEBIAN_FRONTEND=noninteractive \
+&& chmod +x /tmp/library-scripts/common-debian.sh \
 && /tmp/library-scripts/common-debian.sh \
 && rm -rf /tmp/library-scripts \
 && apt install -y --no-install-recommends \
