@@ -510,6 +510,11 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
     }
 
+    It 'Should complete parameter with invalid type' {
+        $res = TabExpansion2 -inputScript 'function MyFunction ([ThisTypeDoesNotExist]$Param1){};MyFunction -'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "-Param1"
+    }
+
     Context "Format cmdlet's View paramter completion" {
         BeforeAll {
             $viewDefinition = @'
@@ -733,6 +738,27 @@ ConstructorTestClass(int i, bool b)
             $res = TabExpansion2 -inputScript $command -cursorColumn $command.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $expectedCommand
+        }
+    }
+
+    Context "Script parameter completion" {
+        BeforeAll {
+            Setup -File -Path 'ScriptParamTabCompletionTest.ps1' -Content @'
+#requires -Modules ThisModuleDoesNotExist
+param ($Param1)
+Get-Command
+'@
+            Push-Location ${TestDrive}\
+        }
+
+        AfterAll {
+            Pop-Location
+        }
+
+        It "Input should successfully complete script parameter for script with failed script requirements" {
+            $res = TabExpansion2 -inputScript '.\ScriptParamTabCompletionTest.ps1 -'
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Param1'
         }
     }
 
