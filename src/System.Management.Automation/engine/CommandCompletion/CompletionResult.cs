@@ -3,6 +3,8 @@
 
 using System;
 
+#nullable enable
+
 namespace System.Management.Automation
 {
     /// <summary>
@@ -210,6 +212,11 @@ namespace System.Management.Automation
         /// This can be used in argument completion, to indicate that the completion attempt has gone through the
         /// native command argument completion methods.
         /// </remarks>
-        private CompletionResult() { }
+        private CompletionResult() 
+		{
+            _completionText = null!;
+            _listItemText = null!;
+            _toolTip = null!;
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -26,6 +27,8 @@ using Microsoft.PowerShell.Cim;
 using Microsoft.PowerShell.Commands;
 using Microsoft.PowerShell.Commands.Internal.Format;
 
+#nullable enable
+
 namespace System.Management.Automation
 {
     /// <summary>
@@ -37,7 +40,7 @@ namespace System.Management.Automation
             AppDomain.CurrentDomain.AssemblyLoad += UpdateTypeCacheOnAssemblyLoad;
         }
 
-        private static void UpdateTypeCacheOnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
+        private static void UpdateTypeCacheOnAssemblyLoad(object? sender, AssemblyLoadEventArgs args)
         {
             // Just null out the cache - we'll rebuild it the next time someone tries to complete a type.
             // We could rebuild it now, but we could be loading multiple assemblies (e.g. dependent assemblies)
@@ -51,7 +54,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="commandName"></param>
         /// <returns></returns>
-        public static IEnumerable<CompletionResult> CompleteCommand(string commandName)
+        public static IEnumerable<CompletionResult>? CompleteCommand(string commandName)
         {
             return CompleteCommand(commandName, null);
         }
@@ -63,7 +66,7 @@ namespace System.Management.Automation
         /// <param name="commandTypes"></param>
         /// <returns></returns>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
-        public static IEnumerable<CompletionResult> CompleteCommand(string commandName, string moduleName, CommandTypes commandTypes = CommandTypes.All)
+        public static IEnumerable<CompletionResult>? CompleteCommand(string commandName, string? moduleName, CommandTypes commandTypes = CommandTypes.All)
         {
             var runspace = Runspace.DefaultRunspace;
             if (runspace == null)
@@ -74,28 +77,29 @@ namespace System.Management.Automation
 
             var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
             var executionContext = helper.CurrentPowerShell.Runspace.ExecutionContext;
-            return CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = helper, ExecutionContext = executionContext }, moduleName, commandTypes);
+            return CompleteCommand(new CompletionContext(wordToComplete: commandName, helper, executionContext), moduleName, commandTypes);
+            
         }
 
-        internal static List<CompletionResult> CompleteCommand(CompletionContext context)
+        internal static List<CompletionResult>? CompleteCommand(CompletionContext context)
         {
             return CompleteCommand(context, null);
         }
 
-        private static List<CompletionResult> CompleteCommand(CompletionContext context, string moduleName, CommandTypes types = CommandTypes.All)
+        private static List<CompletionResult>? CompleteCommand(CompletionContext context, string? moduleName, CommandTypes types = CommandTypes.All)
         {
             var addAmpersandIfNecessary = IsAmpersandNeeded(context, false);
 
             string commandName = context.WordToComplete;
             string quote = HandleDoubleAndSingleQuote(ref commandName);
 
-            List<CompletionResult> commandResults = null;
+            List<CompletionResult>? commandResults = null;
 
             if (commandName.IndexOfAny(Utils.Separators.DirectoryOrDrive) == -1)
             {
                 // The name to complete is neither module qualified nor is it a relative/rooted file path.
 
-                Ast lastAst = null;
+                Ast? lastAst = null;
                 if (context.RelatedAsts != null && context.RelatedAsts.Count > 0)
                 {
                     lastAst = context.RelatedAsts.Last();
@@ -190,7 +194,7 @@ namespace System.Management.Automation
                     commandInfos = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
                 }
 
-                List<CompletionResult> completionResults = null;
+                List<CompletionResult>? completionResults = null;
 
                 if (commandInfos != null && commandInfos.Count > 1)
                 {
@@ -266,7 +270,7 @@ namespace System.Management.Automation
             return new CompletionResult(name, listItem, CompletionResultType.Command, syntax);
         }
 
-        internal static List<CompletionResult> MakeCommandsUnique(IEnumerable<PSObject> commandInfoPsObjs, bool includeModulePrefix, bool addAmpersandIfNecessary, string quote)
+        internal static List<CompletionResult> MakeCommandsUnique(IEnumerable<PSObject>? commandInfoPsObjs, bool includeModulePrefix, bool addAmpersandIfNecessary, string quote)
         {
             List<CompletionResult> results = new List<CompletionResult>();
             if (commandInfoPsObjs == null || !commandInfoPsObjs.Any())
@@ -278,7 +282,7 @@ namespace System.Management.Automation
             foreach (var psobj in commandInfoPsObjs)
             {
                 object baseObj = PSObject.Base(psobj);
-                string name = null;
+                string? name = null;
 
                 var commandInfo = baseObj as CommandInfo;
                 if (commandInfo != null)
@@ -307,7 +311,7 @@ namespace System.Management.Automation
                     if (name == null) { continue; }
                 }
 
-                object value;
+                object? value;
                 if (!commandTable.TryGetValue(name, out value))
                 {
                     commandTable.Add(name, baseObj);
@@ -327,7 +331,7 @@ namespace System.Management.Automation
                 }
             }
 
-            List<CompletionResult> endResults = null;
+            List<CompletionResult>? endResults = null;
             foreach (var keyValuePair in commandTable)
             {
                 var commandList = keyValuePair.Value as List<object>;
@@ -485,14 +489,14 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteCommandParameter(CompletionContext context)
         {
-            string partialName = null;
+            string? partialName = null;
             bool withColon = false;
-            CommandAst commandAst = null;
+            CommandAst? commandAst = null;
             List<CompletionResult> result = new List<CompletionResult>();
 
             // Find the parameter ast, it will be near or at the end
-            CommandParameterAst parameterAst = null;
-            DynamicKeywordStatementAst keywordAst = null;
+            CommandParameterAst? parameterAst = null;
+            DynamicKeywordStatementAst? keywordAst = null;
             for (int i = context.RelatedAsts.Count - 1; i >= 0; i--)
             {
                 if (keywordAst == null)
@@ -514,7 +518,7 @@ namespace System.Management.Automation
                 var lastAst = context.RelatedAsts.Last();
                 var wordToMatch = string.Concat(context.WordToComplete.AsSpan(1), "*");
                 var pattern = WildcardPattern.Get(wordToMatch, WildcardOptions.IgnoreCase);
-                var parameterNames = keywordAst.CommandElements.Where(static ast => ast is CommandParameterAst).Select(static ast => (ast as CommandParameterAst).ParameterName);
+                var parameterNames = keywordAst.CommandElements.OfType<CommandParameterAst>().Select(static ast => ast.ParameterName);
                 foreach (var parameterName in s_parameterNamesOfImportDSCResource)
                 {
                     if (pattern.IsMatch(parameterName) && !parameterNames.Contains(parameterName, StringComparer.OrdinalIgnoreCase))
@@ -553,7 +557,7 @@ namespace System.Management.Automation
                 partialName = string.Empty;
             }
 
-            PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
+            PseudoBindingInfo? pseudoBinding = new PseudoParameterBinder()
                                                 .DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion);
             // The command cannot be found or it's not a cmdlet, not a script cmdlet, not a function.
             // Try completing as if it the parameter is a command argument for native command completion.
@@ -570,7 +574,7 @@ namespace System.Management.Automation
                     break;
                 case PseudoBindingInfoType.PseudoBindingSucceed:
                     // The command is a cmdlet or script cmdlet. Binding succeeded.
-                    result = GetParameterCompletionResults(partialName, pseudoBinding, parameterAst, withColon);
+                    result = GetParameterCompletionResults(partialName, pseudoBinding, parameterAst!, withColon);
                     break;
             }
 
@@ -647,7 +651,7 @@ namespace System.Management.Automation
             }
 
             // The parameter should be bound in the pseudo binding during the named binding
-            string matchedParameterName = null;
+            string? matchedParameterName = null;
             foreach (KeyValuePair<string, AstParameterArgumentPair> entry in bindingInfo.BoundArguments)
             {
                 switch (entry.Value.ParameterArgumentType)
@@ -832,12 +836,12 @@ namespace System.Management.Automation
 
         internal static List<CompletionResult> CompleteCommandArgument(CompletionContext context)
         {
-            CommandAst commandAst = null;
+            CommandAst? commandAst = null;
             List<CompletionResult> result = new List<CompletionResult>();
 
             // Find the expression ast. It should be at the end if there is one
-            ExpressionAst expressionAst = null;
-            MemberExpressionAst secondToLastMemberAst = null;
+            ExpressionAst? expressionAst = null;
+            MemberExpressionAst? secondToLastMemberAst = null;
             Ast lastAst = context.RelatedAsts.Last();
 
             expressionAst = lastAst as ExpressionAst;
@@ -867,7 +871,7 @@ namespace System.Management.Automation
                                 break;
                         }
 
-                        CommandElementAst secondToLastAst = null;
+                        CommandElementAst? secondToLastAst = null;
                         if (index > 1)
                         {
                             secondToLastAst = commandAst.CommandElements[index - 1];
@@ -890,12 +894,12 @@ namespace System.Management.Automation
                             {
                                 var fullPath = ConcatenateStringPathArguments(secondToLastAst, partialPathAst.Value, context);
                                 expressionAst = secondToLastStringConstantAst != null
-                                                    ? (ExpressionAst)secondToLastStringConstantAst
-                                                    : (ExpressionAst)secondToLastExpandableStringAst;
+                                                    ? secondToLastStringConstantAst
+                                                    : secondToLastExpandableStringAst;
 
                                 context.ReplacementIndex = ((InternalScriptPosition)secondToLastAst.Extent.StartScriptPosition).Offset;
                                 context.ReplacementLength += ((InternalScriptPosition)secondToLastAst.Extent.EndScriptPosition).Offset - context.ReplacementIndex;
-                                context.WordToComplete = fullPath;
+                                context.WordToComplete = fullPath!;
                                 // context.CursorPosition = secondToLastAst.Extent.StartScriptPosition;
                             }
                             else if (secondToLastArrayAst != null)
@@ -907,7 +911,7 @@ namespace System.Management.Automation
                                 {
                                     expressionAst = secondToLastArrayAst;
 
-                                    context.ReplacementIndex = ((InternalScriptPosition)lastArrayElement.Extent.StartScriptPosition).Offset;
+                                    context.ReplacementIndex = ((InternalScriptPosition)lastArrayElement!.Extent.StartScriptPosition).Offset;
                                     context.ReplacementLength += ((InternalScriptPosition)lastArrayElement.Extent.EndScriptPosition).Offset - context.ReplacementIndex;
                                     context.WordToComplete = fullPath;
                                 }
@@ -935,7 +939,7 @@ namespace System.Management.Automation
                                         {
                                             expressionAst = arrayArgAst;
 
-                                            context.ReplacementIndex = ((InternalScriptPosition)lastArrayElement.Extent.StartScriptPosition).Offset;
+                                            context.ReplacementIndex = ((InternalScriptPosition)lastArrayElement!.Extent.StartScriptPosition).Offset;
                                             context.ReplacementLength += ((InternalScriptPosition)lastArrayElement.Extent.EndScriptPosition).Offset - context.ReplacementIndex;
                                             context.WordToComplete = fullPath;
                                         }
@@ -1024,7 +1028,7 @@ namespace System.Management.Automation
 
                 if (pseudoBinding.AllParsedArguments != null && pseudoBinding.AllParsedArguments.Count > 0)
                 {
-                    ArgumentLocation argLocation;
+                    ArgumentLocation? argLocation;
                     bool treatAsExpression = false;
 
                     if (expressionAst != null)
@@ -1044,12 +1048,12 @@ namespace System.Management.Automation
                     if (treatAsExpression)
                     {
                         argLocation = FindTargetArgumentLocation(
-                            pseudoBinding.AllParsedArguments, expressionAst);
+                            pseudoBinding.AllParsedArguments, expressionAst!);
                     }
                     else
                     {
                         argLocation = FindTargetArgumentLocation(
-                            pseudoBinding.AllParsedArguments, context.TokenAtCursor ?? context.TokenBeforeCursor);
+                            pseudoBinding.AllParsedArguments, context.TokenAtCursor ?? context.TokenBeforeCursor!);
                     }
 
                     if (argLocation != null)
@@ -1072,7 +1076,7 @@ namespace System.Management.Automation
                 if (!parsedArgumentsProvidesMatch)
                 {
                     int index = 0;
-                    CommandElementAst prevElem = null;
+                    CommandElementAst? prevElem = null;
                     if (expressionAst != null)
                     {
                         foreach (CommandElementAst eleAst in commandAst.CommandElements)
@@ -1085,7 +1089,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        var token = context.TokenAtCursor ?? context.TokenBeforeCursor;
+                        var token = context.TokenAtCursor ?? context.TokenBeforeCursor!;
                         foreach (CommandElementAst eleAst in commandAst.CommandElements)
                         {
                             if (eleAst.Extent.StartOffset > token.Extent.EndOffset)
@@ -1188,7 +1192,7 @@ namespace System.Management.Automation
                 finally
                 {
                     if (clearLiteralPathsKey)
-                        context.Options.Remove("LiteralPaths");
+                        context.Options!.Remove("LiteralPaths");
                 }
             }
 
@@ -1286,7 +1290,7 @@ namespace System.Management.Automation
                         finally
                         {
                             if (clearLiteralPathKey)
-                                context.Options.Remove("LiteralPaths");
+                                context.Options!.Remove("LiteralPaths");
                         }
                     }
                 }
@@ -1326,7 +1330,7 @@ namespace System.Management.Automation
                 finally
                 {
                     if (clearLiteralPathKey)
-                        context.Options.Remove("LiteralPaths");
+                        context.Options!.Remove("LiteralPaths");
                 }
 
                 // The word to complete contains a dash and it's not the first character. We try command names in this case.
@@ -1340,8 +1344,8 @@ namespace System.Management.Automation
 
             return result;
         }
-
-        internal static string ConcatenateStringPathArguments(CommandElementAst stringAst, string partialPath, CompletionContext completionContext)
+        
+        internal static string? ConcatenateStringPathArguments(CommandElementAst? stringAst, string partialPath, CompletionContext completionContext)
         {
             var constantPathAst = stringAst as StringConstantExpressionAst;
             if (constantPathAst != null)
@@ -1364,7 +1368,7 @@ namespace System.Management.Automation
             else
             {
                 var expandablePathAst = stringAst as ExpandableStringExpressionAst;
-                string fullPath = null;
+                string? fullPath = null;
                 if (expandablePathAst != null &&
                     IsPathSafelyExpandable(expandableStringAst: expandablePathAst,
                                            extraText: partialPath,
@@ -1386,7 +1390,9 @@ namespace System.Management.Automation
             ArgumentLocation argLocation,
             CommandAst commandAst)
         {
-            List<CompletionResult> result = new List<CompletionResult>();
+            Debug.Assert(context.HasPseudoBindingInfo);
+            
+            List<CompletionResult> result = new List<CompletionResult>();                        
 
             PseudoBindingInfo bindingInfo = context.PseudoBindingInfo;
             if (argLocation.IsPositional)
@@ -1446,8 +1452,8 @@ namespace System.Management.Automation
 
             if (argLocation.IsPositional && argLocation.Argument == null)
             {
-                AstPair lastPositionalArg;
-                AstParameterArgumentPair targetPositionalArg =
+                AstPair? lastPositionalArg;
+                AstParameterArgumentPair? targetPositionalArg =
                     FindTargetPositionalArgument(
                         bindingInfo.AllParsedArguments,
                         argLocation.Position,
@@ -1568,12 +1574,12 @@ namespace System.Management.Automation
             uint defaultParameterSetFlag,
             uint validParameterSetFlags,
             int position,
-            Dictionary<string, AstParameterArgumentPair> boundArguments = null)
+            Dictionary<string, AstParameterArgumentPair>? boundArguments = null)
         {
             bool isProcessedAsPositional = false;
             bool isDefaultParameterSetValid = defaultParameterSetFlag != 0 &&
                                               (defaultParameterSetFlag & validParameterSetFlags) != 0;
-            MergedCompiledCommandParameter positionalParam = null;
+            MergedCompiledCommandParameter? positionalParam = null;
 
             foreach (MergedCompiledCommandParameter param in parameters)
             {
@@ -1673,14 +1679,14 @@ namespace System.Management.Automation
             CompletionContext context,
             List<CompletionResult> result,
             MergedCompiledCommandParameter parameter,
-            Dictionary<string, AstParameterArgumentPair> boundArguments = null)
+            Dictionary<string, AstParameterArgumentPair>? boundArguments = null)
         {
-            CompletionResult fullMatch = null;
+            CompletionResult? fullMatch = null;
             Type parameterType = GetEffectiveParameterType(parameter.Parameter.Type);
 
             if (parameterType.IsArray)
             {
-                parameterType = parameterType.GetElementType();
+                parameterType = parameterType.GetElementType()!;
             }
 
             foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
@@ -1812,7 +1818,7 @@ namespace System.Management.Automation
         }
 
         private static IEnumerable<PSTypeName> NativeCommandArgumentCompletion_InferTypesOfArgument(
-            Dictionary<string, AstParameterArgumentPair> boundArguments,
+            Dictionary<string, AstParameterArgumentPair>? boundArguments,
             CommandAst commandAst,
             CompletionContext context,
             string parameterName)
@@ -1822,13 +1828,13 @@ namespace System.Management.Automation
                 yield break;
             }
 
-            AstParameterArgumentPair astParameterArgumentPair;
+            AstParameterArgumentPair? astParameterArgumentPair;
             if (!boundArguments.TryGetValue(parameterName, out astParameterArgumentPair))
             {
                 yield break;
             }
 
-            Ast argumentAst = null;
+            Ast? argumentAst = null;
             switch (astParameterArgumentPair.ParameterArgumentType)
             {
                 case AstParameterArgumentType.AstPair:
@@ -1869,17 +1875,17 @@ namespace System.Management.Automation
                 yield break;
             }
 
-            ExpressionAst argumentExpressionAst = argumentAst as ExpressionAst;
+            ExpressionAst? argumentExpressionAst = argumentAst as ExpressionAst;
             if (argumentExpressionAst == null)
             {
-                CommandExpressionAst argumentCommandExpressionAst = argumentAst as CommandExpressionAst;
+                CommandExpressionAst? argumentCommandExpressionAst = argumentAst as CommandExpressionAst;
                 if (argumentCommandExpressionAst != null)
                 {
                     argumentExpressionAst = argumentCommandExpressionAst.Expression;
                 }
             }
 
-            object argumentValue;
+            object? argumentValue;
             if (argumentExpressionAst != null && SafeExprEvaluator.TrySafeEval(argumentExpressionAst, context.ExecutionContext, out argumentValue))
             {
                 if (argumentValue != null)
@@ -1916,7 +1922,7 @@ namespace System.Management.Automation
         }
 
         internal static IList<string> NativeCommandArgumentCompletion_ExtractSecondaryArgument(
-            Dictionary<string, AstParameterArgumentPair> boundArguments,
+            Dictionary<string, AstParameterArgumentPair>? boundArguments,
             string parameterName)
         {
             List<string> result = new List<string>();
@@ -1926,7 +1932,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            AstParameterArgumentPair argumentValue;
+            AstParameterArgumentPair? argumentValue;
             if (!boundArguments.TryGetValue(parameterName, out argumentValue))
             {
                 return result;
@@ -1996,7 +2002,7 @@ namespace System.Management.Automation
             List<CompletionResult> result,
             CommandAst commandAst,
             CompletionContext context,
-            Dictionary<string, AstParameterArgumentPair> boundArguments = null)
+            Dictionary<string, AstParameterArgumentPair>? boundArguments = null)
         {
             string parameterName = parameter.Name;
 
@@ -2014,7 +2020,7 @@ namespace System.Management.Automation
 
             string parameterFullName = $"{actualCommandName}:{parameterName}";
 
-            ScriptBlock customCompleter = GetCustomArgumentCompleter(
+            ScriptBlock? customCompleter = GetCustomArgumentCompleter(
                 "CustomArgumentCompleters",
                 new[] { parameterFullName, parameterName },
                 context);
@@ -2167,7 +2173,7 @@ namespace System.Management.Automation
                 case "Get-Module":
                     {
                         bool loadedModulesOnly = boundArguments == null || !boundArguments.ContainsKey("ListAvailable");
-                        bool skipEditionCheck = !loadedModulesOnly && boundArguments.ContainsKey("SkipEditionCheck");
+                        bool skipEditionCheck = !loadedModulesOnly && boundArguments!.ContainsKey("SkipEditionCheck");
                         NativeCompletionModuleCommands(context, parameterName, result, loadedModulesOnly, skipEditionCheck: skipEditionCheck);
                         break;
                     }
@@ -2348,8 +2354,8 @@ namespace System.Management.Automation
                             break;
                         }
 
-                        HashSet<string> excludedValues = null;
-                        if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase) && boundArguments["Property"] is AstPair pair)
+                        HashSet<string>? excludedValues = null;
+                        if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase) && boundArguments?["Property"] is AstPair pair)
                         {
                             excludedValues = GetParameterValues(pair, context.CursorPosition.Offset);
                         }
@@ -2369,7 +2375,7 @@ namespace System.Management.Automation
         private static Hashtable GetBoundArgumentsAsHashtable(CompletionContext context)
         {
             var result = new Hashtable(StringComparer.OrdinalIgnoreCase);
-            if (context.PseudoBindingInfo != null)
+            if (context.HasPseudoBindingInfo)
             {
                 var boundArguments = context.PseudoBindingInfo.BoundArguments;
                 if (boundArguments != null)
@@ -2383,7 +2389,7 @@ namespace System.Management.Automation
                             var exprAst = parameterAst != null
                                               ? parameterAst.Argument
                                               : astPair.Argument as ExpressionAst;
-                            object value;
+                            object? value;
                             if (exprAst != null && SafeExprEvaluator.TrySafeEval(exprAst, context.ExecutionContext, out value))
                             {
                                 result[boundArgument.Key] = value;
@@ -2409,12 +2415,12 @@ namespace System.Management.Automation
             return result;
         }
 
-        private static ScriptBlock GetCustomArgumentCompleter(
+        private static ScriptBlock? GetCustomArgumentCompleter(
             string optionKey,
             IEnumerable<string> keys,
             CompletionContext context)
         {
-            ScriptBlock scriptBlock;
+            ScriptBlock? scriptBlock;
             var options = context.Options;
             if (options != null)
             {
@@ -2477,7 +2483,7 @@ namespace System.Management.Automation
             object[] argumentsToCompleter,
             List<CompletionResult> result)
         {
-            Collection<PSObject> customResults = null;
+            Collection<PSObject>? customResults = null;
             try
             {
                 customResults = scriptBlock.Invoke(argumentsToCompleter);
@@ -2522,16 +2528,16 @@ namespace System.Management.Automation
 
         private static void NativeCompletionCimCommands(
             string parameter,
-            Dictionary<string, AstParameterArgumentPair> boundArguments,
+            Dictionary<string, AstParameterArgumentPair>? boundArguments,
             List<CompletionResult> result,
             CommandAst commandAst,
             CompletionContext context,
-            HashSet<string> excludedValues,
+            HashSet<string>? excludedValues,
             string commandName)
         {
             if (boundArguments != null)
             {
-                AstParameterArgumentPair astParameterArgumentPair;
+                AstParameterArgumentPair? astParameterArgumentPair;
                 if ((boundArguments.TryGetValue("ComputerName", out astParameterArgumentPair)
                      || boundArguments.TryGetValue("CimSession", out astParameterArgumentPair))
                     && astParameterArgumentPair != null)
@@ -2556,7 +2562,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            string pseudoboundCimNamespace = NativeCommandArgumentCompletion_ExtractSecondaryArgument(boundArguments, "Namespace").FirstOrDefault();
+            string? pseudoboundCimNamespace = NativeCommandArgumentCompletion_ExtractSecondaryArgument(boundArguments, "Namespace").FirstOrDefault();
             if (parameter.Equals("ClassName", StringComparison.OrdinalIgnoreCase))
             {
                 NativeCompletionCimClassName(pseudoboundCimNamespace, result, context);
@@ -2565,8 +2571,8 @@ namespace System.Management.Automation
             }
 
             bool gotInstance = false;
-            IEnumerable<PSTypeName> cimClassTypeNames = null;
-            string pseudoboundClassName = NativeCommandArgumentCompletion_ExtractSecondaryArgument(boundArguments, "ClassName").FirstOrDefault();
+            IEnumerable<PSTypeName>? cimClassTypeNames = null;
+            string? pseudoboundClassName = NativeCommandArgumentCompletion_ExtractSecondaryArgument(boundArguments, "ClassName").FirstOrDefault();
             if (pseudoboundClassName != null)
             {
                 gotInstance = false;
@@ -2596,7 +2602,7 @@ namespace System.Management.Automation
                         }
                         else if (parameter.Equals("Arguments", StringComparison.OrdinalIgnoreCase))
                         {
-                            string pseudoboundMethodName = NativeCommandArgumentCompletion_ExtractSecondaryArgument(boundArguments, "MethodName").FirstOrDefault();
+                            string? pseudoboundMethodName = NativeCommandArgumentCompletion_ExtractSecondaryArgument(boundArguments, "MethodName").FirstOrDefault();
                             NativeCompletionCimMethodArgumentName(pseudoboundCimNamespace, pseudoboundClassName, pseudoboundMethodName, excludedValues, result, context);
                         }
                         else if (parameter.Equals("Property", StringComparison.OrdinalIgnoreCase))
@@ -2615,7 +2621,7 @@ namespace System.Management.Automation
             new ConcurrentDictionary<string, IEnumerable<string>>(StringComparer.OrdinalIgnoreCase);
 
         private static IEnumerable<string> NativeCompletionCimAssociationResultClassName_GetResultClassNames(
-            string cimNamespaceOfSource,
+            string? cimNamespaceOfSource,
             string cimClassNameOfSource)
         {
             StringBuilder safeClassName = new StringBuilder();
@@ -2747,10 +2753,10 @@ namespace System.Management.Automation
         }
 
         private static void NativeCompletionCimMethodArgumentName(
-            string pseudoboundNamespace,
-            string pseudoboundClassName,
-            string pseudoboundMethodName,
-            HashSet<string> excludedParameters,
+            string? pseudoboundNamespace,
+            string? pseudoboundClassName,
+            string? pseudoboundMethodName,
+            HashSet<string>? excludedParameters,
             List<CompletionResult> result,
             CompletionContext context)
         {
@@ -2787,10 +2793,10 @@ namespace System.Management.Automation
         }
 
         private static void NativeCompletionCimPropertyName(
-            string pseudoboundNamespace,
-            string pseudoboundClassName,
+            string? pseudoboundNamespace,
+            string? pseudoboundClassName,
             bool includeReadOnly,
-            HashSet<string> excludedProperties,
+            HashSet<string>? excludedProperties,
             List<CompletionResult> result,
             CompletionContext context)
         {
@@ -2843,7 +2849,7 @@ namespace System.Management.Automation
         }
 
         private static void NativeCompletionCimClassName(
-            string pseudoBoundNamespace,
+            string? pseudoBoundNamespace,
             List<CompletionResult> result,
             CompletionContext context)
         {
@@ -2941,7 +2947,7 @@ namespace System.Management.Automation
             result.AddRange(namespaceResults.OrderBy(static x => x.ListItemText, StringComparer.OrdinalIgnoreCase));
         }
 
-        private static void NativeCompletionGetCommand(CompletionContext context, string moduleName, string paramName, List<CompletionResult> result)
+        private static void NativeCompletionGetCommand(CompletionContext context, string? moduleName, string paramName, List<CompletionResult> result)
         {
             if (!string.IsNullOrEmpty(paramName) && paramName.Equals("Name", StringComparison.OrdinalIgnoreCase))
             {
@@ -3436,7 +3442,7 @@ namespace System.Management.Automation
             result.Add(CompletionResult.Null);
         }
 
-        private static void NativeCompletionDriveCommands(CompletionContext context, string psProvider, string paramName, List<CompletionResult> result)
+        private static void NativeCompletionDriveCommands(CompletionContext context, string? psProvider, string paramName, List<CompletionResult> result)
         {
             if (string.IsNullOrEmpty(paramName) || !paramName.Equals("Name", StringComparison.OrdinalIgnoreCase))
                 return;
@@ -3762,7 +3768,7 @@ namespace System.Management.Automation
             finally
             {
                 if (clearLiteralPath)
-                    context.Options.Remove("LiteralPaths");
+                    context.Options!.Remove("LiteralPaths");
             }
 
             result.Add(CompletionResult.Null);
@@ -3864,7 +3870,7 @@ namespace System.Management.Automation
                 finally
                 {
                     if (clearLiteralPath)
-                        context.Options.Remove("LiteralPaths");
+                        context.Options!.Remove("LiteralPaths");
                 }
 
                 result.Add(CompletionResult.Null);
@@ -3899,13 +3905,13 @@ namespace System.Management.Automation
             finally
             {
                 if (clearLiteralPath)
-                    context.Options.Remove("LiteralPaths");
+                    context.Options!.Remove("LiteralPaths");
             }
 
             result.Add(CompletionResult.Null);
         }
 
-        private static IEnumerable<PSTypeName> GetInferenceTypes(CompletionContext context, CommandAst commandAst)
+        private static IEnumerable<PSTypeName>? GetInferenceTypes(CompletionContext context, CommandAst commandAst)
         {
             // Command is something like where-object/foreach-object/format-list/etc. where there is a parameter that is a property name
             // and we want member names based on the input object, which is either the parameter InputObject, or comes from the pipeline.
@@ -3923,11 +3929,11 @@ namespace System.Management.Automation
                 }
             }
 
-            IEnumerable<PSTypeName> prevType = null;
+            IEnumerable<PSTypeName>? prevType = null;
             if (i == 0)
             {
                 // based on a type of the argument which is binded to 'InputObject' parameter.
-                AstParameterArgumentPair pair;
+                AstParameterArgumentPair? pair;
                 if (!context.PseudoBindingInfo.BoundArguments.TryGetValue("InputObject", out pair)
                     || !pair.ArgumentSpecified)
                 {
@@ -3951,18 +3957,18 @@ namespace System.Management.Automation
             return prevType;
         }
 
-        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, AstParameterArgumentPair parameterInfo, bool propertiesOnly = true)
+        private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, AstParameterArgumentPair? parameterInfo, bool propertiesOnly = true)
         {
-            IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
+            IEnumerable<PSTypeName>? prevType = GetInferenceTypes(context, commandAst);
             if (prevType is not null)
             {
-                HashSet<string> excludedMembers = null;
+                HashSet<string>? excludedMembers = null;
                 if (parameterInfo is AstPair pair)
                 {
                     excludedMembers = GetParameterValues(pair, context.CursorPosition.Offset);
                 }
 
-                Func<object, bool> filter = propertiesOnly ? IsPropertyMember : null;
+                Func<object, bool>? filter = propertiesOnly ? IsPropertyMember : null;
                 CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter, isStatic: false, excludedMembers);
             }
 
@@ -3986,12 +3992,12 @@ namespace System.Management.Automation
 
         private static void NativeCompletionFormatViewName(
             CompletionContext context,
-            Dictionary<string, AstParameterArgumentPair> boundArguments,
+            Dictionary<string, AstParameterArgumentPair>? boundArguments,
             List<CompletionResult> result,
             CommandAst commandAst,
             string commandName)
         {
-            IEnumerable<PSTypeName> prevType = NativeCommandArgumentCompletion_InferTypesOfArgument(boundArguments, commandAst, context, "InputObject");
+            IEnumerable<PSTypeName>? prevType = NativeCommandArgumentCompletion_InferTypesOfArgument(boundArguments, commandAst, context, "InputObject");
 
             if (prevType is not null)
             {
@@ -4019,7 +4025,7 @@ namespace System.Management.Automation
             if (wordToComplete.Contains('['))
             {
                 var cursor = (InternalScriptPosition)context.CursorPosition;
-                cursor = cursor.CloneWithNewOffset(cursor.Offset - context.TokenAtCursor.Extent.StartOffset - (isQuoted ? 1 : 0));
+                cursor = cursor.CloneWithNewOffset(cursor.Offset - context.TokenAtCursor!.Extent.StartOffset - (isQuoted ? 1 : 0));
                 var fullTypeName = Parser.ScanType(wordToComplete, ignoreErrors: true);
                 var typeNameToComplete = CompletionAnalysis.FindTypeNameToComplete(fullTypeName, cursor);
                 if (typeNameToComplete == null)
@@ -4084,7 +4090,7 @@ namespace System.Management.Automation
         /// If the command line after the [tab] will not be truncated, the return value could be non-null: Get-Cmdlet [tab] abc
         /// If the command line after the [tab] is truncated, the return value will always be null
         /// </returns>
-        private static AstPair FindTargetPositionalArgument(Collection<AstParameterArgumentPair> parsedArguments, int position, out AstPair lastPositionalArgument)
+        private static AstPair? FindTargetPositionalArgument(Collection<AstParameterArgumentPair> parsedArguments, int position, out AstPair? lastPositionalArgument)
         {
             int index = 0;
             lastPositionalArgument = null;
@@ -4109,7 +4115,7 @@ namespace System.Management.Automation
         private static ArgumentLocation FindTargetArgumentLocation(Collection<AstParameterArgumentPair> parsedArguments, Token token)
         {
             int position = 0;
-            AstParameterArgumentPair prevArg = null;
+            AstParameterArgumentPair? prevArg = null;
             foreach (AstParameterArgumentPair pair in parsedArguments)
             {
                 switch (pair.ParameterArgumentType)
@@ -4131,7 +4137,7 @@ namespace System.Management.Automation
                                 {
                                     // case 1: Get-Cmdlet -Param <tab> abc
                                     // case 2: dir -Path .\abc.txt, <tab> -File
-                                    return new ArgumentLocation() { Argument = arg, IsPositional = false, Position = -1 };
+                                    return new ArgumentLocation(arg);
                                 }
                             }
                             else
@@ -4178,12 +4184,12 @@ namespace System.Management.Automation
         /// <param name="prev">The argument that is right before the 'tab' location.</param>
         /// <param name="position">The number of positional arguments before the 'tab' location.</param>
         /// <returns></returns>
-        private static ArgumentLocation GenerateArgumentLocation(AstParameterArgumentPair prev, int position)
+        private static ArgumentLocation GenerateArgumentLocation(AstParameterArgumentPair? prev, int position)
         {
             // Tab is typed before the first argument
             if (prev == null)
             {
-                return new ArgumentLocation() { Argument = null, IsPositional = true, Position = 0 };
+                return new ArgumentLocation(position: 0);
             }
 
             switch (prev.ParameterArgumentType)
@@ -4191,14 +4197,13 @@ namespace System.Management.Automation
                 case AstParameterArgumentType.AstPair:
                 case AstParameterArgumentType.Switch:
                     if (!prev.ParameterSpecified)
-                        return new ArgumentLocation() { Argument = null, IsPositional = true, Position = position };
+                        return new ArgumentLocation(position);
 
                     return prev.Parameter.Extent.Text.EndsWith(':')
-                        ? new ArgumentLocation() { Argument = prev, IsPositional = false, Position = -1 }
-
-                        : new ArgumentLocation() { Argument = null, IsPositional = true, Position = position };
+                        ? new ArgumentLocation(previousArgument: prev)
+                        : new ArgumentLocation(position);
                 case AstParameterArgumentType.Fake:
-                    return new ArgumentLocation() { Argument = prev, IsPositional = false, Position = -1 };
+                    return new ArgumentLocation(previousArgument: prev);
                 default:
                     Diagnostics.Assert(false, "parsed arguments should not contain AstArray and PipeObject");
                     return null;
@@ -4211,7 +4216,7 @@ namespace System.Management.Automation
         /// <param name="parsedArguments"></param>
         /// <param name="expAst"></param>
         /// <returns></returns>
-        private static ArgumentLocation FindTargetArgumentLocation(Collection<AstParameterArgumentPair> parsedArguments, ExpressionAst expAst)
+        private static ArgumentLocation? FindTargetArgumentLocation(Collection<AstParameterArgumentPair> parsedArguments, ExpressionAst expAst)
         {
             Diagnostics.Assert(expAst != null, "Caller needs to make sure expAst is not null");
             int position = 0;
@@ -4227,14 +4232,14 @@ namespace System.Management.Automation
 
                             if (arg.ParameterContainsArgument && arg.Argument == expAst)
                             {
-                                return new ArgumentLocation() { IsPositional = false, Position = -1, Argument = arg };
+                                return new ArgumentLocation(arg);
                             }
 
                             if (arg.Argument.GetHashCode() == expAst.GetHashCode())
                             {
                                 return arg.ParameterSpecified ?
-                                    new ArgumentLocation() { IsPositional = false, Position = -1, Argument = arg } :
-                                    new ArgumentLocation() { IsPositional = true, Position = position, Argument = arg };
+                                    new ArgumentLocation(arg) :
+                                    new ArgumentLocation(arg, position);
                             }
 
                             if (!arg.ParameterSpecified)
@@ -4261,11 +4266,48 @@ namespace System.Management.Automation
 
         private sealed class ArgumentLocation
         {
-            internal bool IsPositional { get; set; }
+            /// <summary>
+            /// Initializes a new instance of an <see cref="ArgumentLocation"/> that is non-positional.
+            /// </summary>
+            /// <param name="previousArgument"></param>
+            public ArgumentLocation(AstParameterArgumentPair previousArgument)
+            {
+                Argument = previousArgument;
+                Position = -1;
+                IsPositional = false;
+            }
 
-            internal int Position { get; set; }
+            /// <summary>
+            /// Initializes a new instance of an <see cref="ArgumentLocation"/> from a position.
+            /// </summary>
+            /// <param name="position">The number of positional arguments before the 'tab' location.</param>
+            public ArgumentLocation(int position)
+            {
+                Debug.Assert(position >= 0);
+                Position = position;
+                IsPositional = position > -1;
+            }
 
-            internal AstParameterArgumentPair Argument { get; set; }
+            /// <summary>
+            /// Initializes a new instance of an <see cref="ArgumentLocation"/> with a previousArgument and a position.
+            /// </summary>
+            /// <param name="previousArgument"></param>
+            /// <param name="position"></param>
+            public ArgumentLocation(AstParameterArgumentPair previousArgument, int position)
+            {
+                Debug.Assert(position > -1);
+                Position = position;
+                IsPositional = position > -1;
+                Argument = previousArgument;
+            }
+
+            [MemberNotNullWhen(returnValue: false, nameof(Argument))]
+            internal bool IsPositional { get; }
+
+            internal int Position { get; }
+
+            [DisallowNull]
+            internal AstParameterArgumentPair? Argument { get;  set; }
         }
 
         #endregion Command Arguments
@@ -4288,7 +4330,7 @@ namespace System.Management.Automation
 
             var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
             var executionContext = helper.CurrentPowerShell.Runspace.ExecutionContext;
-            return CompleteFilename(new CompletionContext { WordToComplete = fileName, Helper = helper, ExecutionContext = executionContext });
+            return CompleteFilename(new CompletionContext(wordToComplete: fileName, helper, executionContext));
         }
 
         internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context)
@@ -4297,7 +4339,7 @@ namespace System.Management.Automation
         }
 
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context, bool containerOnly, HashSet<string> extension)
+        internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context, bool containerOnly, HashSet<string>? extension)
         {
             var wordToComplete = context.WordToComplete;
             var quote = HandleDoubleAndSingleQuote(ref wordToComplete);
@@ -4344,7 +4386,7 @@ namespace System.Management.Automation
                     wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.StarOrQuestion);
                 }
 
-                if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]) && executionContext != null)
+                if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]))
                 {
                     // We don't actually need the drive, but the drive must be "mounted" in PowerShell before completion
                     // can succeed.  This call will mount the drive if it wasn't already.
@@ -4401,7 +4443,7 @@ namespace System.Management.Automation
 
                         if (psobjs.Count > 0 && !LocationGlobber.StringContainsGlobCharacters(wordToComplete))
                         {
-                            string leaf = null;
+                            string? leaf = null;
                             string pathWithoutProvider = wordContainsProviderId
                                     ? wordToComplete.Substring(wordToComplete.IndexOf(':') + 2)
                                     : wordToComplete;
@@ -4415,7 +4457,7 @@ namespace System.Management.Automation
                             }
 
                             var notHiddenEntries = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                            string providerPath = null;
+                            string? providerPath = null;
 
                             foreach (dynamic entry in psobjs)
                             {
@@ -4441,7 +4483,7 @@ namespace System.Management.Automation
                                 // ProviderPath should be absolute path for FileSystem entries
                                 if (!string.IsNullOrEmpty(parentPath))
                                 {
-                                    string[] entries = null;
+                                    string[]? entries = null;
                                     try
                                     {
                                         entries = Directory.GetFileSystemEntries(parentPath, leaf, _enumerationOptions);
@@ -4506,7 +4548,7 @@ namespace System.Management.Automation
                     foreach (PSObject psobj in sortedPsobjs)
                     {
                         object baseObj = PSObject.Base(psobj);
-                        string path = null, providerPath = null;
+                        string? path = null, providerPath = null;
 
                         // Get the path, the PSObject could be:
                         // 1. a PathInfo object -- results of Resolve-Path
@@ -4607,7 +4649,7 @@ namespace System.Management.Automation
                             completionText = quote + completionText + quote;
                         }
 
-                        if (isFileSystem)
+                        if (isFileSystem && providerPath is not null)
                         {
                             // Use .NET APIs directly to reduce the time overhead
                             var isContainer = Directory.Exists(providerPath);
@@ -4640,7 +4682,7 @@ namespace System.Management.Automation
                                     .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Convert-Path")
                                     .AddParameter("LiteralPath", item.PSPath);
                                 var tooltips = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
-                                string tooltip = null, listItemText = item.PSChildName;
+                                string? tooltip = null, listItemText = item.PSChildName;
                                 if (tooltips != null && tooltips.Count == 1)
                                 {
                                     tooltip = PSObject.Base(tooltips[0]) as string;
@@ -4726,7 +4768,7 @@ namespace System.Management.Automation
 #endif
         }
 
-        private static bool CheckFileExtension(string path, HashSet<string> extension)
+        private static bool CheckFileExtension(string path, HashSet<string>? extension)
         {
             if (extension == null || extension.Count == 0)
                 return true;
@@ -4754,7 +4796,7 @@ namespace System.Management.Automation
 
             var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
             var executionContext = helper.CurrentPowerShell.Runspace.ExecutionContext;
-            return CompleteVariable(new CompletionContext { WordToComplete = variableName, Helper = helper, ExecutionContext = executionContext });
+            return CompleteVariable(new CompletionContext(wordToComplete: variableName, helper, executionContext));
         }
 
         private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:" };
@@ -4771,7 +4813,7 @@ namespace System.Management.Automation
             var wordToComplete = context.WordToComplete;
             var colon = wordToComplete.IndexOf(':');
 
-            var lastAst = context.RelatedAsts?.Last();
+            var lastAst = context.RelatedAsts?.LastOrDefault();
             var variableAst = lastAst as VariableExpressionAst;
             var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
 
@@ -4781,7 +4823,7 @@ namespace System.Management.Automation
             if (lastAst != null)
             {
                 Ast parent = lastAst.Parent;
-                var findVariablesVisitor = new FindVariablesVisitor { CompletionVariableAst = lastAst };
+                var findVariablesVisitor = new FindVariablesVisitor(completionVariableAst: lastAst);
                 while (parent != null)
                 {
                     if (parent is IParameterMetadataProvider)
@@ -4795,10 +4837,10 @@ namespace System.Management.Automation
 
                 foreach (Tuple<string, Ast> varAst in findVariablesVisitor.VariableSources)
                 {
-                    Ast astTarget = null;
-                    string userPath = null;
+                    Ast? astTarget = null;
+                    string? userPath = null;
 
-                    VariableExpressionAst variableDefinitionAst = varAst.Item2 as VariableExpressionAst;
+                    VariableExpressionAst? variableDefinitionAst = varAst.Item2 as VariableExpressionAst;
                     if (variableDefinitionAst != null)
                     {
                         userPath = varAst.Item1;
@@ -4806,7 +4848,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        CommandAst commandParameterAst = varAst.Item2 as CommandAst;
+                        CommandAst? commandParameterAst = varAst.Item2 as CommandAst;
                         if (commandParameterAst != null)
                         {
                             userPath = varAst.Item1;
@@ -4855,7 +4897,7 @@ namespace System.Management.Automation
                             var commandAst = ast as CommandAst;
                             if (commandAst != null)
                             {
-                                PSTypeName discoveredType = AstTypeInference.InferTypeOf(ast, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval).FirstOrDefault<PSTypeName>();
+                                PSTypeName? discoveredType = AstTypeInference.InferTypeOf(ast, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval).FirstOrDefault<PSTypeName>();
                                 if (discoveredType != null)
                                 {
                                     tooltip = StringUtil.Format("[{0}]${1}", discoveredType.Name, userPath);
@@ -5021,7 +5063,12 @@ namespace System.Management.Automation
 
         private sealed class FindVariablesVisitor : AstVisitor
         {
-            internal Ast Top;
+            public FindVariablesVisitor(Ast completionVariableAst)
+            {                
+                CompletionVariableAst = completionVariableAst;
+            }
+
+            internal Ast? Top;
             internal Ast CompletionVariableAst;
             internal readonly List<Tuple<string, Ast>> VariableSources = new List<Tuple<string, Ast>>();
 
@@ -5049,7 +5096,7 @@ namespace System.Management.Automation
                     StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, false, desiredParameters);
                     if (bindingResult != null)
                     {
-                        ParameterBindingResult parameterBindingResult;
+                        ParameterBindingResult? parameterBindingResult;
 
                         foreach (string commandVariableParameter in desiredParameters)
                         {
@@ -5089,7 +5136,7 @@ namespace System.Management.Automation
             {
                 if (member.FieldType.Equals(typeof(string)))
                 {
-                    result.Add((string)member.GetValue(null));
+                    result.Add((string)member.GetValue(null)!);
                 }
             }
 
@@ -5100,7 +5147,7 @@ namespace System.Management.Automation
 
         #region Comments
 
-        internal static List<CompletionResult> CompleteComment(CompletionContext context, ref int replacementIndex, ref int replacementLength)
+        internal static List<CompletionResult>? CompleteComment(CompletionContext context, ref int replacementIndex, ref int replacementLength)
         {
             if (context.WordToComplete.StartsWith("<#", StringComparison.Ordinal))
             {
@@ -5372,21 +5419,22 @@ namespace System.Management.Automation
             ' ',
         };
 
-        private static List<CompletionResult> CompleteCommentHelp(CompletionContext context, ref int replacementIndex, ref int replacementLength)
+        private static List<CompletionResult>? CompleteCommentHelp(CompletionContext context, ref int replacementIndex, ref int replacementLength)
         {
             // Finds comment keywords like ".DESCRIPTION"
-            MatchCollection usedKeywords = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.)\w*", RegexOptions.Multiline);
+            Token tokenAtCursor = context.TokenAtCursor!;
+            MatchCollection usedKeywords = Regex.Matches(tokenAtCursor.Text, @"(?<=^\s*\.)\w*", RegexOptions.Multiline);
             if (usedKeywords.Count == 0)
             {
                 return null;
             }
 
             // Last keyword at or before the cursor
-            Match lineKeyword = null;
+            Match? lineKeyword = null;
             for (int i = usedKeywords.Count - 1; i >= 0; i--)
             {
                 Match keyword = usedKeywords[i];
-                if (context.CursorPosition.Offset >= keyword.Index + context.TokenAtCursor.Extent.StartOffset)
+                if (context.CursorPosition.Offset >= keyword.Index + tokenAtCursor.Extent.StartOffset)
                 {
                     lineKeyword = keyword;
                     break;
@@ -5399,12 +5447,12 @@ namespace System.Management.Automation
             }
 
             // Cursor is within or at the start/end of the keyword
-            if (context.CursorPosition.Offset <= lineKeyword.Index + lineKeyword.Length + context.TokenAtCursor.Extent.StartOffset)
+            if (context.CursorPosition.Offset <= lineKeyword.Index + lineKeyword.Length + tokenAtCursor.Extent.StartOffset)
             {
-                replacementIndex = context.TokenAtCursor.Extent.StartOffset + lineKeyword.Index;
+                replacementIndex = tokenAtCursor.Extent.StartOffset + lineKeyword.Index;
                 replacementLength = lineKeyword.Value.Length;
 
-                var validKeywords = new HashSet<String>(s_commentHelpKeywords.Keys, StringComparer.OrdinalIgnoreCase);
+                var validKeywords = new HashSet<string>(s_commentHelpKeywords.Keys, StringComparer.OrdinalIgnoreCase);
                 foreach (Match keyword in usedKeywords)
                 {
                     if (keyword == lineKeyword || s_commentHelpAllowedDuplicateKeywords.Contains(keyword.Value))
@@ -5429,7 +5477,7 @@ namespace System.Management.Automation
 
             // Finds the argument for the keyword (any characters following the keyword, ignoring leading/trailing whitespace). For example "C:\New folder"
             Match keywordArgument = Regex.Match(context.CursorPosition.Line, @"(?<=^\s*\.\w+\s+)\S.*(?<=\S)");
-            int lineStartIndex = lineKeyword.Index - context.CursorPosition.Line.IndexOf(lineKeyword.Value) + context.TokenAtCursor.Extent.StartOffset;
+            int lineStartIndex = lineKeyword.Index - context.CursorPosition.Line.IndexOf(lineKeyword.Value) + tokenAtCursor.Extent.StartOffset;
             int argumentIndex = keywordArgument.Success ? keywordArgument.Index : context.CursorPosition.ColumnNumber - 1;
 
             replacementIndex = lineStartIndex + argumentIndex;
@@ -5442,11 +5490,11 @@ namespace System.Management.Automation
 
             if (lineKeyword.Value.Equals("FORWARDHELPTARGETNAME", StringComparison.OrdinalIgnoreCase))
             {
-                var result = new List<CompletionResult>(CompleteCommand(keywordArgument.Value, "*", CommandTypes.All));
-                return result.Count > 0 ? result : null;
+                var result = CompleteCommand(keywordArgument.Value, "*", CommandTypes.All)?.ToList();
+                return result?.Count > 0 ? result : null;
             }
 
-            if (lineKeyword.Value.Equals("FORWARDHELPCATEGORY", StringComparison.OrdinalIgnoreCase))
+            if (lineKeyword.Value.Equals("FORWARDHELPCATEGORY", StringComparison.OrdinalIgnoreCase)) 
             {
                 var result = new List<CompletionResult>();
                 foreach (string category in s_commentHelpForwardCategories)
@@ -5473,8 +5521,8 @@ namespace System.Management.Automation
             if (lineKeyword.Value.Equals("EXTERNALHELP", StringComparison.OrdinalIgnoreCase))
             {
                 context.WordToComplete = keywordArgument.Value;
-                var result = new List<CompletionResult>(CompleteFilename(context, containerOnly: false, (new HashSet<string>() { ".xml" })));
-                return result.Count > 0 ? result : null;
+                var result = CompleteFilename(context, containerOnly: false, (new HashSet<string>() { ".xml" }))?.ToList();
+                return result?.Count > 0 ? result : null;
             }
 
             return null;
@@ -5522,18 +5570,19 @@ namespace System.Management.Automation
             "All"
         };
 
-        private static FunctionDefinitionAst GetCommentHelpFunctionTarget(CompletionContext context)
+        private static FunctionDefinitionAst? GetCommentHelpFunctionTarget(CompletionContext context)
         {
-            if (context.TokenAtCursor.Kind != TokenKind.Comment)
+            Token tokenAtCursor = context.TokenAtCursor!;
+            if (tokenAtCursor.Kind != TokenKind.Comment)
             {
                 return null;
             }
 
             Ast lastAst = context.RelatedAsts[^1];
-            Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= context.TokenAtCursor.Extent.EndOffset && ast is not NamedBlockAst, searchNestedScriptBlocks: false);
+            Ast firstAstAfterComment = lastAst.Find(ast => ast.Extent.StartOffset >= tokenAtCursor.Extent.EndOffset, searchNestedScriptBlocks: false);
 
             // Comment-based help can apply to a following function definition if it starts within 2 lines
-            int commentEndLine = context.TokenAtCursor.Extent.EndLineNumber + 2;
+            int commentEndLine = tokenAtCursor.Extent.EndLineNumber + 2;
 
             if (lastAst is NamedBlockAst)
             {
@@ -5572,11 +5621,11 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static List<CompletionResult> CompleteCommentParameterValue(CompletionContext context, string wordToComplete)
+        private static List<CompletionResult>? CompleteCommentParameterValue(CompletionContext context, string wordToComplete)
         {
-            FunctionDefinitionAst foundFunction = GetCommentHelpFunctionTarget(context);
+            FunctionDefinitionAst? foundFunction = GetCommentHelpFunctionTarget(context);
 
-            ReadOnlyCollection<ParameterAst> foundParameters = null;
+            ReadOnlyCollection<ParameterAst>? foundParameters = null;
             if (foundFunction is not null)
             {
                 foundParameters = foundFunction.Parameters ?? foundFunction.Body.ParamBlock?.Parameters;
@@ -5601,7 +5650,7 @@ namespace System.Management.Automation
                 }
             }
 
-            MatchCollection usedParameters = Regex.Matches(context.TokenAtCursor.Text, @"(?<=^\s*\.parameter\s+)\w.*(?<=\S)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
+            MatchCollection usedParameters = Regex.Matches(context.TokenAtCursor!.Text, @"(?<=^\s*\.parameter\s+)\w.*(?<=\S)", RegexOptions.Multiline | RegexOptions.IgnoreCase);
             foreach (Match parameter in usedParameters)
             {
                 if (wordToComplete.Equals(parameter.Value, StringComparison.OrdinalIgnoreCase))
@@ -5649,8 +5698,8 @@ namespace System.Management.Automation
             var results = new List<CompletionResult>();
             var lastAst = context.RelatedAsts.Last();
             var memberName = "*";
-            Ast memberNameCandidateAst = null;
-            ExpressionAst targetExpr = null;
+            Ast? memberNameCandidateAst = null;
+            ExpressionAst? targetExpr = null;
 
             if (lastAst is MemberExpressionAst LastAstAsMemberExpression)
             {
@@ -5751,7 +5800,7 @@ namespace System.Management.Automation
                     targetExpr = parentAsMemberExpression.Expression;
                 }
             }
-            else if (lastAst.Parent is BinaryExpressionAst binaryExpression && context.TokenAtCursor.Kind.Equals(TokenKind.Multiply))
+            else if (lastAst.Parent is BinaryExpressionAst binaryExpression && context.TokenAtCursor!.Kind.Equals(TokenKind.Multiply))
             {
                 if (binaryExpression.Left is MemberExpressionAst memberExpression)
                 {
@@ -5770,7 +5819,7 @@ namespace System.Management.Automation
                 //     'RandomString'.<tab>
                 //     { }
                 // }
-                Ast astBeforeMemberAccessToken = null;
+                Ast? astBeforeMemberAccessToken = null;
                 for (int i = errorStatement.Bodies.Count - 1; i >= 0; i--)
                 {
                     astBeforeMemberAccessToken = errorStatement.Bodies[i];
@@ -5802,7 +5851,7 @@ namespace System.Management.Automation
 
             if (results.Count == 0)
             {
-                PSTypeName[] inferredTypes = null;
+                PSTypeName[]? inferredTypes = null;
 
                 if (@static)
                 {
@@ -5817,7 +5866,7 @@ namespace System.Management.Automation
                     inferredTypes = AstTypeInference.InferTypeOf(targetExpr, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval).ToArray();
                 }
 
-                if (!@static && inferredTypes.Length == 1 && inferredTypes[0].Name.Equals("System.Void", StringComparison.OrdinalIgnoreCase))
+                if (!@static && inferredTypes!.Length == 1 && inferredTypes[0].Name.Equals("System.Void", StringComparison.OrdinalIgnoreCase))
                 {
                     return results;
                 }
@@ -5944,7 +5993,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            Type controlBodyType = commandName switch
+            Type? controlBodyType = commandName switch
             {
                 "Format-Table" => typeof(TableControlBody),
                 "Format-List" => typeof(ListControlBody),
@@ -5988,7 +6037,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic, HashSet<string> excludedMembers = null)
+        internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool>? filter, bool isStatic, HashSet<string>? excludedMembers = null)
         {
             bool extensionMethodsAdded = false;
             HashSet<string> typeNameUsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -6026,15 +6075,15 @@ namespace System.Management.Automation
                     .AddParameter("Unique");
                 var sortedResults = powerShellExecutionHelper.ExecuteCurrentPowerShell(out _, results);
                 results.Clear();
-                results.AddRange(sortedResults.Select(static psobj => PSObject.Base(psobj) as CompletionResult));
+                results.AddRange(sortedResults.Select(static psobj => (CompletionResult)PSObject.Base(psobj)));
             }
         }
 
-        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results, HashSet<string> excludedMembers)
+        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results, HashSet<string>? excludedMembers)
         {
-            string memberName = null;
+            string? memberName = null;
             bool isMethod = false;
-            Func<string> getToolTip = null;
+            Func<string>? getToolTip = null;
             var propertyInfo = member as PropertyInfo;
             if (propertyInfo != null)
             {
@@ -6064,7 +6113,7 @@ namespace System.Management.Automation
             {
                 memberName = psMemberInfo.Name;
                 isMethod = member is PSMethodInfo;
-                getToolTip = psMemberInfo.ToString;
+                getToolTip = psMemberInfo.ToString!;
             }
 
             var cimProperty = member as CimPropertyDeclaration;
@@ -6103,7 +6152,7 @@ namespace System.Management.Automation
             var completionResultType = isMethod ? CompletionResultType.Method : CompletionResultType.Property;
             var completionText = isMethod ? memberName + "(" : memberName;
 
-            results.Add(new CompletionResult(completionText, memberName, completionResultType, getToolTip()));
+            results.Add(new CompletionResult(completionText, memberName, completionResultType, getToolTip!()));
         }
 
         private static string GetCimPropertyToString(CimPropertyDeclaration cimProperty)
@@ -6199,7 +6248,7 @@ namespace System.Management.Automation
         {
             internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix);
 
-            internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove);
+            internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string? namespaceToRemove);
 
             internal static string RemoveBackTick(string typeName)
             {
@@ -6217,10 +6266,15 @@ namespace System.Management.Automation
         /// </summary>
         private class TypeCompletionInStringFormat : TypeCompletionBase
         {
+            public TypeCompletionInStringFormat(string fullTypeName)
+            {
+                FullTypeName = fullTypeName;
+            }
+
             /// <summary>
             /// Get the full type name of the type represented by this instance.
             /// </summary>
-            internal string FullTypeName;
+            internal string FullTypeName { get; }
 
             /// <summary>
             /// Get the short type name of the type represented by this instance.
@@ -6242,7 +6296,7 @@ namespace System.Management.Automation
                 }
             }
 
-            private string _shortTypeName;
+            private string? _shortTypeName;
 
             /// <summary>
             /// Get the namespace of the type represented by this instance.
@@ -6261,7 +6315,7 @@ namespace System.Management.Automation
                 }
             }
 
-            private string _namespace;
+            private string? _namespace;
 
             /// <summary>
             /// Construct the CompletionResult based on the information of this instance.
@@ -6274,7 +6328,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Construct the CompletionResult based on the information of this instance.
             /// </summary>
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
+            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string? namespaceToRemove)
             {
                 string completion = string.IsNullOrEmpty(namespaceToRemove)
                                         ? FullTypeName
@@ -6316,6 +6370,10 @@ namespace System.Management.Automation
 
             private int _genericArgumentCount = 0;
 
+            public GenericTypeCompletionInStringFormat(string fullTypeName) : base(fullTypeName)
+            {
+            }
+
             /// <summary>
             /// Construct the CompletionResult based on the information of this instance.
             /// </summary>
@@ -6327,7 +6385,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Construct the CompletionResult based on the information of this instance.
             /// </summary>
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
+            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string? namespaceToRemove)
             {
                 string fullNameWithoutBacktip = RemoveBackTick(FullTypeName);
                 string completion = string.IsNullOrEmpty(namespaceToRemove)
@@ -6362,6 +6420,11 @@ namespace System.Management.Automation
         {
             internal Type Type;
 
+            public TypeCompletion(Type type)
+            {
+                Type = type;
+            }
+
             protected string GetTooltipPrefix()
             {
                 if (typeof(Delegate).IsAssignableFrom(Type))
@@ -6383,7 +6446,7 @@ namespace System.Management.Automation
                 return GetCompletionResult(keyMatched, prefix, suffix, null);
             }
 
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
+            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string? namespaceToRemove)
             {
                 string completion = ToStringCodeMethods.Type(Type, false, keyMatched);
 
@@ -6392,7 +6455,7 @@ namespace System.Management.Automation
                 // probably didn't want the accelerator.
                 if (keyMatched.Contains('.') && !completion.Contains('.'))
                 {
-                    completion = Type.FullName;
+                    completion = Type.FullName!;
                 }
 
                 if (!string.IsNullOrEmpty(namespaceToRemove) && completion.Equals(Type.FullName, StringComparison.OrdinalIgnoreCase))
@@ -6413,14 +6476,18 @@ namespace System.Management.Automation
         /// </summary>
         private sealed class GenericTypeCompletion : TypeCompletion
         {
+            public GenericTypeCompletion(Type type) : base(type)
+            {
+            }
+
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
             {
                 return GetCompletionResult(keyMatched, prefix, suffix, null);
             }
 
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
+            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string? namespaceToRemove)
             {
-                string fullNameWithoutBacktip = RemoveBackTick(Type.FullName);
+                string fullNameWithoutBacktip = RemoveBackTick(Type.FullName!);
                 string completion = string.IsNullOrEmpty(namespaceToRemove)
                                         ? fullNameWithoutBacktip
                                         : fullNameWithoutBacktip.Substring(namespaceToRemove.Length + 1);
@@ -6452,6 +6519,11 @@ namespace System.Management.Automation
         {
             internal string Namespace;
 
+            public NamespaceCompletion(string @namespace)
+            {
+                Namespace = @namespace;
+            }
+
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix)
             {
                 var listItemText = Namespace;
@@ -6464,7 +6536,7 @@ namespace System.Management.Automation
                 return new CompletionResult(prefix + Namespace + suffix, listItemText, CompletionResultType.Namespace, "Namespace " + Namespace);
             }
 
-            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
+            internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string? namespaceToRemove)
             {
                 return GetCompletionResult(keyMatched, prefix, suffix);
             }
@@ -6475,9 +6547,20 @@ namespace System.Management.Automation
             // The Key is the string we'll be searching on.  It could complete to various things.
             internal string Key;
             internal List<TypeCompletionBase> Completions = new List<TypeCompletionBase>();
+
+            public TypeCompletionMapping(string key)
+            {
+                Key = key;
+            }
+
+            public TypeCompletionMapping(string key, TypeCompletionBase typeCompletionInstance)
+                : this(key)
+            {                
+                Completions.Add(typeCompletionInstance);
+            }
         }
 
-        private static TypeCompletionMapping[][] s_typeCache;
+        private static TypeCompletionMapping[][]? s_typeCache;
 
         private static TypeCompletionMapping[][] InitializeTypeCache()
         {
@@ -6486,8 +6569,8 @@ namespace System.Management.Automation
             var entries = new Dictionary<string, TypeCompletionMapping>(StringComparer.OrdinalIgnoreCase);
             foreach (var type in TypeAccelerators.Get)
             {
-                TypeCompletionMapping entry;
-                var typeCompletionInstance = new TypeCompletion { Type = type.Value };
+                TypeCompletionMapping? entry;
+                var typeCompletionInstance = new TypeCompletion(type.Value);
 
                 if (entries.TryGetValue(type.Key, out entry))
                 {
@@ -6513,15 +6596,15 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    entries.Add(type.Key, new TypeCompletionMapping { Key = type.Key, Completions = { typeCompletionInstance } });
+                    entries.Add(type.Key, new TypeCompletionMapping(type.Key, typeCompletionInstance));
                 }
 
                 // If the full type name has already been included, then we know for sure that the short type name has also been included.
-                string fullTypeName = type.Value.FullName;
+                string fullTypeName = type.Value.FullName!;
                 if (entries.ContainsKey(fullTypeName)) { continue; }
 
                 // Otherwise, add the mapping from full type name to the type
-                entries.Add(fullTypeName, new TypeCompletionMapping { Key = fullTypeName, Completions = { typeCompletionInstance } });
+                entries.Add(fullTypeName, new TypeCompletionMapping(key: fullTypeName, typeCompletionInstance));
 
                 // If the short type name is the same as the accelerator name, then skip it to avoid duplication.
                 string shortTypeName = type.Value.Name;
@@ -6532,7 +6615,7 @@ namespace System.Management.Automation
                 // are in the TypeAccelerator cache.
                 if (!entries.TryGetValue(shortTypeName, out entry))
                 {
-                    entry = new TypeCompletionMapping { Key = shortTypeName };
+                    entry = new TypeCompletionMapping(key: shortTypeName);
                     entries.Add(shortTypeName, entry);
                 }
 
@@ -6547,7 +6630,7 @@ namespace System.Management.Automation
             // Populate the type completion cache using the namespace-qualified type names.
             foreach (string fullTypeName in ClrFacade.AvailableDotNetTypeNames)
             {
-                var typeCompInString = new TypeCompletionInStringFormat { FullTypeName = fullTypeName };
+                var typeCompInString = new TypeCompletionInStringFormat(fullTypeName);
                 HandleNamespace(entries, typeCompInString.Namespace);
                 HandleType(entries, fullTypeName, typeCompInString.ShortTypeName, null);
             }
@@ -6595,7 +6678,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="entryCache">The TypeCompletionMapping dictionary.</param>
         /// <param name="namespace">The namespace.</param>
-        private static void HandleNamespace(Dictionary<string, TypeCompletionMapping> entryCache, string @namespace)
+        private static void HandleNamespace(Dictionary<string, TypeCompletionMapping> entryCache, string? @namespace)
         {
             if (string.IsNullOrEmpty(@namespace))
             {
@@ -6610,19 +6693,15 @@ namespace System.Management.Automation
                                         ? @namespace.Substring(0, dotIndex)
                                         : @namespace;
 
-                TypeCompletionMapping entry;
+                TypeCompletionMapping? entry;
                 if (!entryCache.TryGetValue(subNamespace, out entry))
                 {
-                    entry = new TypeCompletionMapping
-                    {
-                        Key = subNamespace,
-                        Completions = { new NamespaceCompletion { Namespace = subNamespace } }
-                    };
+                    entry = new TypeCompletionMapping(key: subNamespace, typeCompletionInstance: new NamespaceCompletion(@namespace: subNamespace));                    
                     entryCache.Add(subNamespace, entry);
                 }
                 else if (!entry.Completions.OfType<NamespaceCompletion>().Any())
                 {
-                    entry.Completions.Add(new NamespaceCompletion { Namespace = subNamespace });
+                    entry.Completions.Add(new NamespaceCompletion(@namespace: subNamespace));
                 }
             }
         }
@@ -6634,11 +6713,11 @@ namespace System.Management.Automation
         /// <param name="fullTypeName">The full type name.</param>
         /// <param name="shortTypeName">The short type name.</param>
         /// <param name="actualType">The actual type object. It may be null if we are handling type information from the CoreCLR TypeCatalog.</param>
-        private static void HandleType(Dictionary<string, TypeCompletionMapping> entryCache, string fullTypeName, string shortTypeName, Type actualType)
+        private static void HandleType(Dictionary<string, TypeCompletionMapping> entryCache, string? fullTypeName, string shortTypeName, Type? actualType)
         {
             if (string.IsNullOrEmpty(fullTypeName)) { return; }
 
-            TypeCompletionBase typeCompletionBase = null;
+            TypeCompletionBase? typeCompletionBase = null;
             var backtick = fullTypeName.LastIndexOf('`');
             var plusChar = fullTypeName.LastIndexOf('+');
 
@@ -6651,9 +6730,8 @@ namespace System.Management.Automation
                 if (isNested) { return; }
 
                 typeCompletionBase = actualType != null
-                                         ? (TypeCompletionBase)new GenericTypeCompletion { Type = actualType }
-
-                                         : new GenericTypeCompletionInStringFormat { FullTypeName = fullTypeName };
+                                         ? (TypeCompletionBase)new GenericTypeCompletion(actualType)
+                                         : new GenericTypeCompletionInStringFormat(fullTypeName);
 
                 // Remove the backtick, we only want 1 generic in our results for types like Func or Action.
                 fullTypeName = fullTypeName.Substring(0, backtick);
@@ -6662,28 +6740,23 @@ namespace System.Management.Automation
             else
             {
                 typeCompletionBase = actualType != null
-                                         ? (TypeCompletionBase)new TypeCompletion { Type = actualType }
-
-                                         : new TypeCompletionInStringFormat { FullTypeName = fullTypeName };
+                                         ? (TypeCompletionBase)new TypeCompletion(actualType)
+                                         : new TypeCompletionInStringFormat(fullTypeName);
             }
 
             // If the full type name has already been included, then we know for sure that the short type
             // name and the accelerator type names (if there are any) have also been included.
-            TypeCompletionMapping entry;
+            TypeCompletionMapping? entry;
             if (!entryCache.TryGetValue(fullTypeName, out entry))
             {
-                entry = new TypeCompletionMapping
-                {
-                    Key = fullTypeName,
-                    Completions = { typeCompletionBase }
-                };
+                entry = new TypeCompletionMapping(fullTypeName, typeCompletionBase);                
                 entryCache.Add(fullTypeName, entry);
 
                 // Add a new mapping entry, or put the TypeCompletion instance in the existing mapping entry of the shortTypeName.
                 // For example, this may happen to System.ServiceProcess.TimeoutException when System.TimeoutException is already in the cache.
                 if (!entryCache.TryGetValue(shortTypeName, out entry))
                 {
-                    entry = new TypeCompletionMapping { Key = shortTypeName };
+                    entry = new TypeCompletionMapping(shortTypeName);
                     entryCache.Add(shortTypeName, entry);
                 }
 
@@ -6730,7 +6803,7 @@ namespace System.Management.Automation
 
             var helper = new PowerShellExecutionHelper(powershell);
             var executionContext = helper.CurrentPowerShell.Runspace.ExecutionContext;
-            return CompleteType(new CompletionContext { WordToComplete = typeName, Helper = helper, ExecutionContext = executionContext });
+            return CompleteType(new CompletionContext(wordToComplete: typeName, helper, executionContext));
         }
 
         internal static List<CompletionResult> CompleteType(CompletionContext context, string prefix = "", string suffix = "")
@@ -6752,7 +6825,7 @@ namespace System.Management.Automation
             {
                 foreach (var completion in entry.Completions)
                 {
-                    string namespaceToRemove = GetNamespaceToRemove(context, completion);
+                    string? namespaceToRemove = GetNamespaceToRemove(context, completion);
                     var completionResult = completion.GetCompletionResult(entry.Key, prefix, suffix, namespaceToRemove);
 
                     // We might get the same completion result twice. For example, the type cache has:
@@ -6790,7 +6863,7 @@ namespace System.Management.Automation
             return results;
         }
 
-        private static string GetNamespaceToRemove(CompletionContext context, TypeCompletionBase completion)
+        private static string? GetNamespaceToRemove(CompletionContext context, TypeCompletionBase completion)
         {
             if (completion is NamespaceCompletion || context.RelatedAsts == null || context.RelatedAsts.Count == 0)
             {
@@ -6798,7 +6871,7 @@ namespace System.Management.Automation
             }
 
             var typeCompletion = completion as TypeCompletion;
-            string typeNameSpace = typeCompletion != null
+            string? typeNameSpace = typeCompletion != null
                                        ? typeCompletion.Type.Namespace
                                        : ((TypeCompletionInStringFormat)completion).Namespace;
 
@@ -6871,7 +6944,7 @@ namespace System.Management.Automation
 
         #region Statement Parameters
 
-        internal static List<CompletionResult> CompleteStatementFlags(TokenKind kind, string wordToComplete)
+        internal static List<CompletionResult>? CompleteStatementFlags(TokenKind kind, string wordToComplete)
         {
             switch (kind)
             {
@@ -6889,7 +6962,7 @@ namespace System.Management.Automation
                     var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
                     var enumList = new List<string>();
                     var result = new List<CompletionResult>();
-                    CompletionResult fullMatch = null;
+                    CompletionResult? fullMatch = null;
 
                     foreach (string value in enumArray)
                     {
@@ -6948,13 +7021,13 @@ namespace System.Management.Automation
         /// <param name="ast"></param>
         /// <param name="hashtableAst"></param>
         /// <returns></returns>
-        internal static List<CompletionResult> CompleteHashtableKeyForDynamicKeyword(
+        internal static List<CompletionResult>? CompleteHashtableKeyForDynamicKeyword(
             CompletionContext completionContext,
             DynamicKeywordStatementAst ast,
             HashtableAst hashtableAst)
         {
             Diagnostics.Assert(ast.Keyword != null, "DynamicKeywordStatementAst.Keyword can never be null");
-            List<CompletionResult> results = null;
+            List<CompletionResult>? results = null;
             var dynamicKeywordProperties = ast.Keyword.Properties;
             var memberPattern = completionContext.WordToComplete + "*";
 
@@ -7014,7 +7087,7 @@ namespace System.Management.Automation
             return results;
         }
 
-        internal static List<CompletionResult> CompleteHashtableKey(CompletionContext completionContext, HashtableAst hashtableAst)
+        internal static List<CompletionResult>? CompleteHashtableKey(CompletionContext completionContext, HashtableAst hashtableAst)
         {
             int cursorOffset = completionContext.CursorPosition.Offset;
             string wordToComplete = completionContext.WordToComplete;
@@ -7096,7 +7169,7 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                string parameterName = null;
+                string? parameterName = null;
                 foreach (var boundArg in binding.BoundArguments)
                 {
                     var astPair = boundArg.Value as AstPair;
@@ -7254,7 +7327,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static List<CompletionResult> GetSpecialHashTableKeyMembers(HashSet<string> excludedKeys, string wordToComplete, params string[] keys)
+        private static List<CompletionResult>? GetSpecialHashTableKeyMembers(HashSet<string> excludedKeys, string wordToComplete, params string[] keys)
         {
             var result = new List<CompletionResult>();
             foreach (string key in keys)
@@ -7277,7 +7350,7 @@ namespace System.Management.Automation
 
         #region Helpers
 
-        internal static bool IsPathSafelyExpandable(ExpandableStringExpressionAst expandableStringAst, string extraText, ExecutionContext executionContext, out string expandedString)
+        internal static bool IsPathSafelyExpandable(ExpandableStringExpressionAst expandableStringAst, string extraText, ExecutionContext executionContext, [NotNullWhen(returnValue: true)] out string? expandedString)
         {
             expandedString = null;
             // Expand the string if its type is DoubleQuoted or BareWord
@@ -7294,7 +7367,7 @@ namespace System.Management.Automation
             {
                 if (!(nestedAst is VariableExpressionAst variableAst)) { return false; }
 
-                string strValue = CombineVariableWithPartialPath(variableAst, null, executionContext);
+                string? strValue = CombineVariableWithPartialPath(variableAst, null, executionContext);
                 if (strValue != null)
                 {
                     varValues.Add(strValue);
@@ -7312,7 +7385,7 @@ namespace System.Management.Automation
             return true;
         }
 
-        internal static string CombineVariableWithPartialPath(VariableExpressionAst variableAst, string extraText, ExecutionContext executionContext)
+        internal static string? CombineVariableWithPartialPath(VariableExpressionAst variableAst, string? extraText, ExecutionContext executionContext)
         {
             var varPath = variableAst.VariablePath;
             if (!varPath.IsVariable && !varPath.DriveName.Equals("env", StringComparison.OrdinalIgnoreCase))
@@ -7329,7 +7402,7 @@ namespace System.Management.Automation
             try
             {
                 // We check the strict mode inside GetVariableValue
-                object value = VariableOps.GetVariableValue(varPath, executionContext, variableAst);
+                object? value = VariableOps.GetVariableValue(varPath, executionContext, variableAst);
                 var strValue = (value == null) ? string.Empty : value as string;
 
                 if (strValue == null)
@@ -7403,7 +7476,7 @@ namespace System.Management.Automation
             CompletionContext context,
             List<CompletionResult> results)
         {
-            object value;
+            object? value;
             if (SafeExprEvaluator.TrySafeEval(targetExpr, context.ExecutionContext, out value) && value != null)
             {
                 if (targetExpr is ArrayExpressionAst && value is not object[])
@@ -7465,7 +7538,7 @@ namespace System.Management.Automation
                         completionText += '(';
                     }
 
-                    string tooltip = memberInfo.ToString();
+                    string tooltip = memberInfo.ToString()!;
                     if (tooltip.Contains("),", StringComparison.Ordinal))
                     {
                         var overloads = tooltip.Split("),", StringSplitOptions.RemoveEmptyEntries);
@@ -7599,7 +7672,7 @@ namespace System.Management.Automation
         /// <param name="completionContext"></param>
         /// <returns>
         /// Indicate whether the "LiteralPaths" option needs to be removed after operation
-        /// </returns>
+        /// </returns>        
         private static bool TurnOnLiteralPathOption(CompletionContext completionContext)
         {
             bool clearLiteralPathsKey = false;
@@ -7627,9 +7700,9 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static bool IsAmpersandNeeded(CompletionContext context, bool defaultChoice)
         {
-            if (context.RelatedAsts != null && !string.IsNullOrEmpty(context.WordToComplete))
+            var lastAst = context.RelatedAsts.LastOrDefault();
+            if (lastAst != null && !string.IsNullOrEmpty(context.WordToComplete))
             {
-                var lastAst = context.RelatedAsts.Last();
                 var parent = lastAst.Parent as CommandAst;
 
                 if (parent != null && parent.CommandElements.Count == 1 &&
@@ -7649,7 +7722,7 @@ namespace System.Management.Automation
 
         private sealed class ItemPathComparer : IComparer<PSObject>
         {
-            public int Compare(PSObject x, PSObject y)
+            public int Compare(PSObject? x, PSObject? y)
             {
                 var xPathInfo = PSObject.Base(x) as PathInfo;
                 var xFileInfo = PSObject.Base(x) as IO.FileSystemInfo;
@@ -7659,7 +7732,7 @@ namespace System.Management.Automation
                 var yFileInfo = PSObject.Base(y) as IO.FileSystemInfo;
                 var yPathStr = PSObject.Base(y) as string;
 
-                string xPath = null, yPath = null;
+                string? xPath = null, yPath = null;
 
                 if (xPathInfo != null)
                     xPath = xPathInfo.ProviderPath;
@@ -7684,10 +7757,10 @@ namespace System.Management.Automation
 
         private sealed class CommandNameComparer : IComparer<PSObject>
         {
-            public int Compare(PSObject x, PSObject y)
+            public int Compare(PSObject? x, PSObject? y)
             {
-                string xName = null;
-                string yName = null;
+                string? xName = null;
+                string? yName = null;
 
                 object xObj = PSObject.Base(x);
                 object yObj = PSObject.Base(y);
@@ -7716,7 +7789,7 @@ namespace System.Management.Automation
     /// </summary>
     internal class SafeExprEvaluator : ICustomAstVisitor2
     {
-        internal static bool TrySafeEval(ExpressionAst ast, ExecutionContext executionContext, out object value)
+        internal static bool TrySafeEval(ExpressionAst ast, ExecutionContext executionContext, [NotNullWhen(returnValue:true)] out object? value)
         {
             if (!(bool)ast.Accept(new SafeExprEvaluator()))
             {
@@ -7980,7 +8053,7 @@ namespace System.Management.Automation
         {
             if (commandAst.Parent is not PipelineAst pipelineAst)
             {
-                return null;
+                return Array.Empty<CompletionResult>();
             }
 
             int i;
@@ -8000,7 +8073,7 @@ namespace System.Management.Automation
                 var pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion);
                 if (!pseudoBinding.BoundArguments.TryGetValue(_parameterNameOfInput, out var pair) || !pair.ArgumentSpecified)
                 {
-                    return null;
+                    return Array.Empty<CompletionResult>();
                 }
 
                 if (pair is AstPair astPair && astPair.Argument != null)
@@ -8008,7 +8081,7 @@ namespace System.Management.Automation
                     prevType = AstTypeInference.InferTypeOf(astPair.Argument, typeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
                 }
 
-                return null;
+                return Array.Empty<CompletionResult>();
             }
             else
             {
