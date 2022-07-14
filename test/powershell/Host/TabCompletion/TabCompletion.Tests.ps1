@@ -1575,12 +1575,12 @@ dir -Recurse `
     }
 
     it 'Should complete parameters for Switch statement without conflicting parameters' {
-        $res = TabExpansion2 -cursorColumn 'switch -Wildcard -'
+        $res = TabExpansion2 -inputScript 'switch -Wildcard -'
         $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly "-CaseSensitive -File"
     }
 
     it 'Should complete parameters for Switch statement without duplicate parameters' {
-        $res = TabExpansion2 -cursorColumn 'switch -CaseSensitive -'
+        $res = TabExpansion2 -inputScript 'switch -CaseSensitive -'
         $res.CompletionMatches.CompletionText | should -Not -Contain '-CaseSensitive'
     }
 
