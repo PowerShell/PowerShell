@@ -291,7 +291,8 @@ function SkipCounterTests
 {
     if ([System.Management.Automation.Platform]::IsLinux -or
         [System.Management.Automation.Platform]::IsMacOS -or
-        [System.Management.Automation.Platform]::IsIoT)
+        [System.Management.Automation.Platform]::IsIoT   -or
+        [System.Environment]::Is64BitOperatingSystem -eq $false)
     {
         return $true
     }
