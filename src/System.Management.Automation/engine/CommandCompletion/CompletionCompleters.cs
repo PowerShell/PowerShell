@@ -553,8 +553,26 @@ namespace System.Management.Automation
                 partialName = string.Empty;
             }
 
+            bool bindPositionalParameters = true;
+            // If the user tries to tab complete a new parameter in front of a positional argument like: ls -<Tab> C:\
+            // the user may want to add the parameter name so we don't want to bind positional arguments
+            if (commandAst is not null && string.Equals(context.TokenAtCursor?.Text, "-", StringComparison.OrdinalIgnoreCase))
+            {
+                foreach (var element in commandAst.CommandElements)
+                {
+                    if (element.Extent.StartOffset > context.TokenAtCursor.Extent.StartOffset)
+                    {
+                        if (element is not CommandParameterAst)
+                        {
+                            bindPositionalParameters = false;
+                        }
+                        break;
+                    }
+                }
+            }
+
             PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
-                                                .DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion);
+                                                .DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion, bindPositionalParameters);
             // The command cannot be found or it's not a cmdlet, not a script cmdlet, not a function.
             // Try completing as if it the parameter is a command argument for native command completion.
             if (pseudoBinding == null)

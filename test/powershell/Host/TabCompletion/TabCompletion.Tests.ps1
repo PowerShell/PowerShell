@@ -691,6 +691,13 @@ ConstructorTestClass(int i, bool b)
         $completionText -join ' ' | Should -BeExactly 'blg csv tsv'
     }
 
+    it 'Should include positionally bound parameters when completing in front of parameter value' {
+        $TestString = 'Get-ChildItem -^ $HOME'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches.CompletionText | should -Contain "-Path"
+    }
+
     Context "Script name completion" {
         BeforeAll {
             Setup -f 'install-powershell.ps1' -Content ""
