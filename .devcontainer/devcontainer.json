@@ -1,38 +1,60 @@
 // For format details, see https://aka.ms/devcontainer.json
 {
   "name": "PowerShell Development",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "args": {
-      //NOTE: Use UpdateDotnetRuntime.ps1 to increment this value, do not edit it manually
-      "VERSION": "7.0.100-preview.6"
-    }
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:ubuntu-18.04",
+  "features": {
+    "powershell": "latest",
+    "node": "lts" //See: https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#contributing-to-documentation-related-to-maintaining-or-contributing-to-the-powershell-project
   },
-  "updateContentCommand": "pwsh -noprofile -command \"Import-Module ./build.psm1;Start-PSBootstrap\"", //Import-Module build.psm1; Start-PSBootstrap
-  // We only need to restore the linux components for development on a linux machine
-  "postCreateCommand": "git config --global --add safe.directory /workspaces/PowerShell && dotnet restore src/powershell-unix",
+  "onCreateCommand": "pwsh -f .devcontainer/scripts/onCreate.ps1",
+  "postCreateCommand": "pwsh -f .devcontainer/scripts/postCreate.ps1",
+  "postStartCommand": "pwsh -f .devcontainer/scripts/postStart.ps1",
+  "postAttachCommand": "pwsh -f .devcontainer/scripts/postAttach.ps1",
+  "updateContentCommand": "pwsh -f .devcontainer/scripts/updateContent.ps1",
   // Configure tool-specific properties.
   "customizations": {
     // Configure properties specific to VS Code.
     "vscode": {
-      // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
-        "ms-dotnettools.csharp",
-        "josefpihrt-vscode.roslynator",
-        "ms-vscode.powershell-preview",
+        "ms-vscode.PowerShell-Preview",
+        "josefpihrt-vscode.roslynator", //This also installs the C# extension. We cant specify them both because it leads to a race condition currently due to bug in codespaces loading
+        "editorconfig.editorconfig",
         "ms-azure-devops.azure-pipelines",
+        "ms-vscode.cpptools",
+        "twxs.cmake",
         "DavidAnson.vscode-markdownlint",
         "vitaliymaz.vscode-svg-previewer"
       ],
       "settings": {
+        "terminal.integrated.profiles.linux": {
+          "pwsh": {
+            "path": "pwsh",
+            "args": [
+              "-nologo"
+            ],
+            "icon": "terminal-powershell"
+          },
+          "bash": {
+            "path": "bash",
+            "icon": "terminal-bash"
+          },
+          "zsh": {
+            "path": "zsh"
+          }
+        },
         "terminal.integrated.defaultProfile.linux": "pwsh",
         "terminal.integrated.automationProfile.linux": {
           "path": "pwsh",
           "icon": "terminal-powershell",
           "color": "terminal.ansiGreen"
-        }
+        },
+        "workbench.startupEditor": "readme"
       }
     }
   },
-  "remoteUser": "vscode"
+  "remoteUser": "vscode",
+  "remoteEnv": {
+    // Add dotnet, dotnet global tools, and local binaries to the path
+    "PATH": "/home/vscode/bin:/home/vscode/.dotnet:/home/vscode/.dotnet/tools:${containerEnv:PATH}"
+  }
 }

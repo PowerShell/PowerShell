@@ -10,7 +10,8 @@ project.lock.json
 
 # dotnet cli install/uninstall scripts
 dotnet-install.ps1
-dotnet-install.sh
+# sometimes the scripts will download dotnet-install.sh.1, dotnet-install.sh.2 and so on
+dotnet-install.sh*
 dotnet-uninstall-pkgs.sh
 dotnet-uninstall-debian-packages.sh
 
