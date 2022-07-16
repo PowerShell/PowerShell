@@ -695,7 +695,7 @@ ConstructorTestClass(int i, bool b)
         $TestString = 'Get-ChildItem -^ $HOME'
         $CursorIndex = $TestString.IndexOf('^')
         $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
-        $res.CompletionMatches.CompletionText | should -Contain "-Path"
+        $res.CompletionMatches.CompletionText | Should -Contain "-Path"
     }
 
     Context "Script name completion" {
