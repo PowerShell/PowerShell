@@ -35,6 +35,16 @@
             ],
             "icon": "terminal-powershell"
           },
+          "PowerShell [Build]": {
+            // TODO: Make this more relative?
+            "path": "/workspaces/PowerShell/src/powershell-unix/bin/Debug/net7.0/linux-x64/publish/pwsh",
+            "args": [
+            "-nologo"
+            ],
+            "icon": "terminal-powershell",
+            "overrideName": true,
+            "color": "terminal.ansiYellow"
+          },
           "bash": {
             "path": "bash",
             "icon": "terminal-bash"
