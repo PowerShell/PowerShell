@@ -18,6 +18,7 @@
       "extensions": [
         "ms-vscode.PowerShell-Preview",
         "josefpihrt-vscode.roslynator", //This also installs the C# extension. We cant specify them both because it leads to a race condition currently due to bug in codespaces loading
+        "GitHub.vscode-pull-request-github",
         "editorconfig.editorconfig",
         "ms-azure-devops.azure-pipelines",
         "ms-vscode.cpptools",
