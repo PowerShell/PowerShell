@@ -533,6 +533,7 @@ namespace System.Management.Automation
                 return result;
             }
 
+            bool bindPositionalParameters = true;
             if (parameterAst != null)
             {
                 // Parent must be a command
@@ -551,22 +552,21 @@ namespace System.Management.Automation
                 // Parent must be a command
                 commandAst = (CommandAst)dashAst.Parent;
                 partialName = string.Empty;
-            }
 
-            bool bindPositionalParameters = true;
-            // If the user tries to tab complete a new parameter in front of a positional argument like: ls -<Tab> C:\
-            // the user may want to add the parameter name so we don't want to bind positional arguments
-            if (commandAst is not null && string.Equals(context.TokenAtCursor?.Text, "-", StringComparison.OrdinalIgnoreCase))
-            {
-                foreach (var element in commandAst.CommandElements)
+                // If the user tries to tab complete a new parameter in front of a positional argument like: ls -<Tab> C:\
+                // the user may want to add the parameter name so we don't want to bind positional arguments
+                if (commandAst is not null)
                 {
-                    if (element.Extent.StartOffset > context.TokenAtCursor.Extent.StartOffset)
+                    foreach (var element in commandAst.CommandElements)
                     {
-                        if (element is not CommandParameterAst)
+                        if (element.Extent.StartOffset > context.TokenAtCursor.Extent.StartOffset)
                         {
-                            bindPositionalParameters = false;
+                            if (element is not CommandParameterAst)
+                            {
+                                bindPositionalParameters = false;
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
             }
