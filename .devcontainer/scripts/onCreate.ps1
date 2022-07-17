@@ -1,10 +1,10 @@
 #Reference: https://code.visualstudio.com/docs/remote/devcontainerjson-reference#_lifecycle-scripts
-Start-PSBuild -Clean
+$ErrorActionPreference = 'Stop'
 Import-Module ./build.psm1
+
+# If we are rebuilding the container, we probably want to reset our build environment too
+Start-PSBuild -Clean
+
+#Bootstrap initial requirements such as downloading the appropriate dotnet
 Start-PSBootstrap
 
-# Link the bootstrapped dotnet to /usr/share/dotnet
-# There are some build steps that still hardcode to this path improperly
-& sudo ln -s $HOME/.dotnet /usr/share/dotnet
-
-Restore-PSPackage
