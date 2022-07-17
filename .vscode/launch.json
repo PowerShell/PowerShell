@@ -2,15 +2,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch",
+            "name": "Dev PowerShell",
             "type": "coreclr",
             "request": "launch",
-            "justMyCode": false,
-            "stopAtEntry": true,
             "program": "${workspaceRoot}/debug/pwsh",
             "preLaunchTask": "Build",
-            "externalConsole": true,
-            "cwd": "${workspaceRoot}"
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "openOnSessionStart",
+            "cwd": "${workspaceRoot}",
+            "justMyCode": true,
+            "allowFastEvaluate": true,
+            "enableStepFiltering": true,
+            "logging": {
+              "moduleLoad": false // Suppresses "Just My Code" warnings
+            },
+            "stopAtEntry": false,
         },
         {
             "name": ".NET Core Attach",

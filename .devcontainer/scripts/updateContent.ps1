@@ -1,7 +1,7 @@
 #Reference: https://code.visualstudio.com/docs/remote/devcontainerjson-reference#_lifecycle-scripts
 
-#Perform a build so that it is cached in the precached layer. This will make both restore and delta compliations faster for actual devcontainer use
-Start-PSBuild -Restore -ErrorAction 'Continue'
+#Perform a restore that will be kept in the container percache
+'powershell-unix','Modules' | ForEach-Object {
+    & dotnet restore ./src/$PSItem --runtime linux-x64 /property:SDKToUse=Microsoft.NET.Sdk
+}
 
-#Alternative: Perform a dotnet restore only
-#& dotnet restore ./src/powershell-unix
