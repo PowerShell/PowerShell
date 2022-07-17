@@ -6,14 +6,14 @@
     "powershell": "latest",
     "node": "lts" //See: https://github.com/PowerShell/PowerShell/blob/master/.github/CONTRIBUTING.md#contributing-to-documentation-related-to-maintaining-or-contributing-to-the-powershell-project
   },
-  
+
   // Devcontainer setup commands run in this order
   "onCreateCommand": ["pwsh", "-f", ".devcontainer/scripts/onCreate.ps1"],
   "updateContentCommand": ["pwsh", "-f", ".devcontainer/scripts/updateContent.ps1"],
   "postCreateCommand": ["pwsh", "-f", ".devcontainer/scripts/postCreate.ps1"],
   "postStartCommand": ["pwsh", "-f", ".devcontainer/scripts/postStart.ps1"],
   "postAttachCommand": ["pwsh", "-f", ".devcontainer/scripts/postAttach.ps1"],
-  
+
   // Configure tool-specific properties.
   "customizations": {
     // Configure properties specific to VS Code.
