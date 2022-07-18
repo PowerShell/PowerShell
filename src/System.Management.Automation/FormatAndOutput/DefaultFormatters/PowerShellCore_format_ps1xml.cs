@@ -1296,6 +1296,16 @@ namespace System.Management.Automation.Runspaces
                                         $myinv = $err.InvocationInfo
                                     }
 
+                                    if ($ErrorView -ne 'ConciseView' -and $null -ne $host.PrivateData) {
+                                        if ($null -ne $host.PrivateData.ErrorForegroundColor) {
+                                            [Console]::ForegroundColor = $host.PrivateData.ErrorForegroundColor
+                                        }
+
+                                        if ($null -ne $host.PrivateData.ErrorBackgroundColor) {
+                                            [Console]::BackgroundColor = $host.PrivateData.ErrorBackgroundColor
+                                        }
+                                    }
+
                                     if ($err.FullyQualifiedErrorId -eq 'NativeCommandErrorMessage' -or $err.FullyQualifiedErrorId -eq 'NativeCommandError') {
                                         $err.Exception.Message
                                     }
