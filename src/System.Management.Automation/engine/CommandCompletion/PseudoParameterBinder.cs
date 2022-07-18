@@ -1235,21 +1235,32 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        var dash = _commandElements[commandIndex] as StringConstantExpressionAst;
-                        if (dash != null && dash.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
+                        object valueToAdd;
+                        ExpressionAst expressionToAdd;
+                        if (_commandElements[commandIndex] is ConstantExpressionAst constant)
                         {
-                            // "-" is represented by StringConstantExpressionAst. Most likely the user type a tab here,
-                            // and we don't want it be treated as an argument
+                            if (constant.Extent.Text.Equals("-", StringComparison.Ordinal))
+                            {
+                                // A value of "-" is most likely the user trying to tab here,
+                                // and we don't want it be treated as an argument
+                                continue;
+                            }
+
+                            valueToAdd = constant.Value;
+                            expressionToAdd = constant;
+                        }
+                        else if (_commandElements[commandIndex] is ExpressionAst expression)
+                        {
+                            valueToAdd = expression.Extent.Text;
+                            expressionToAdd = expression;
+                        }
+                        else
+                        {
                             continue;
                         }
 
-                        var expressionArgument = _commandElements[commandIndex] as ExpressionAst;
-                        if (expressionArgument != null)
-                        {
-                            argumentsToGetDynamicParameters?.Add(expressionArgument.Extent.Text);
-
-                            _arguments.Add(new AstPair(null, expressionArgument));
-                        }
+                        argumentsToGetDynamicParameters?.Add(valueToAdd);
+                        _arguments.Add(new AstPair(null, expressionToAdd));
                     }
                 }
             }
