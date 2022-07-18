@@ -553,7 +553,7 @@ namespace System.Management.Automation
                 commandAst = (CommandAst)dashAst.Parent;
                 partialName = string.Empty;
 
-                // If the user tries to tab complete a new parameter in front of a positional argument like: ls -<Tab> C:\
+                // If the user tries to tab complete a new parameter in front of a positional argument like: dir -<Tab> C:\
                 // the user may want to add the parameter name so we don't want to bind positional arguments
                 if (commandAst is not null)
                 {
@@ -561,10 +561,7 @@ namespace System.Management.Automation
                     {
                         if (element.Extent.StartOffset > context.TokenAtCursor.Extent.StartOffset)
                         {
-                            if (element is not CommandParameterAst)
-                            {
-                                bindPositionalParameters = false;
-                            }
+                            bindPositionalParameters = element is CommandParameterAst;
                             break;
                         }
                     }
