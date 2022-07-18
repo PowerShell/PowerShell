@@ -1,5 +1,75 @@
 # Current preview release
 
+## [7.3.0-preview.6] - 2022-07-18
+
+### General Cmdlet Updates and Fixes
+
+- Fix `Export-PSSession` to not throw error when a rooted path is specified for `-OutputModule` (#17671)
+- Change `ConvertFrom-Json -AsHashtable` to use ordered hashtable (#17405)
+- Remove potential ANSI escape sequences in strings before using in `Out-GridView` (#17664)
+- Add the `-Milliseconds` parameter to `New-TimeSpan` (#17621) (Thanks @NoMoreFood!)
+- Update `Set-AuthenticodeSignature` to use `SHA256` as the default (#17560) (Thanks @jborean93!)
+- Fix tab completion regression when completing `ValidateSet` values (#17628) (Thanks @MartinGC94!)
+- Show optional parameters as such when displaying method definition and overloads (#13799) (Thanks @eugenesmlv!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@sethvs, @MartinGC94, @eltociear</p>
+
+</summary>
+
+<ul>
+<li>Fix comment in InternalCommands.cs (#17669) (Thanks @sethvs!)</li>
+<li>Use discards for unused variables (#17620) (Thanks @MartinGC94!)</li>
+<li>Fix typo in CommonCommandParameters.cs (#17524) (Thanks @eltociear!)</li>
+</ul>
+
+</details>
+
+### Tests
+
+- Fix SDK tests for release build (#17678)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@tamasvajk</p>
+
+</summary>
+
+<ul>
+<li>Create test artifacts for Windows ARM64 (#17675)</li>
+<li>Update to the latest NOTICES file (#17607)</li>
+<li>Update .NET SDK version from <code>7.0.100-preview.5.22307.18</code> to <code>7.0.100-preview.6.22352.1</code> (#17634)</li>
+<li>Set the compound assignment preference to false (#17632)</li>
+<li>Update DotnetMetadata.json to start consuming .NET 7 Preview 6 builds (#17630)</li>
+<li>Install .NET 3.1 as it is required by the vPack task (#17600)</li>
+<li>Update to use PSReadLine <code>v2.2.6</code> (#17595)</li>
+<li>Fix <code>build.psm1</code> to not specify both version and quality for <code>dotnet-install</code> (#17589) (Thanks @tamasvajk!)</li>
+<li>Bump Newtonsoft.Json in /test/perf/dotnet-tools/Reporting (#17592)</li>
+<li>Bump Newtonsoft.Json in /test/perf/dotnet-tools/ResultsComparer (#17566)</li>
+<li>Disable RPM SBOM test. (#17532)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Remove `katacoda.com` from doc as it now returns 404 (#17625)
+- Update change log for `v7.2.5` and `v7.3.0-preview.5` (#17565)
+- Update `README.md` and `metadata.json` for upcoming releases (#17526)
+
+[7.3.0-preview.6]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.5...v7.3.0-preview.6
+
 ## [7.3.0-preview.5] - 2022-06-21
 
 ### Engine Updates and Fixes
