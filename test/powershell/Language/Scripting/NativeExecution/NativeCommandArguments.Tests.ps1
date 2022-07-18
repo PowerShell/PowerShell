@@ -285,5 +285,11 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
             }
 
         }
+
+        It 'Should treat a PSPath as literal' {
+            $lines = testexe -echoargs temp:/foo
+            $lines.Count | Should -Be 1
+            $lines | Should -BeExactly 'Arg 0 is <temp:/foo>'
+        }
     }
 }
