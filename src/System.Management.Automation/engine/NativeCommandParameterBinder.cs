@@ -173,7 +173,17 @@ namespace System.Management.Automation
             {
                 if (argument != parameter.ParameterText)
                 {
-                    _argumentList.Add(parameter.ParameterText + argument);
+                    // Only combine the text and argument if there was no space after the parameter,
+                    // otherwise, add the parameter and arguments as separate elements.
+                    if (parameter.SpaceAfterParameter)
+                    {
+                        _argumentList.Add(parameter.ParameterText);
+                        _argumentList.Add(argument);
+                    }
+                    else
+                    {
+                        _argumentList.Add(parameter.ParameterText + argument);
+                    }
                 }
             }
             else
