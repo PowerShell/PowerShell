@@ -949,8 +949,9 @@ namespace System.Management.Automation.Language
         /// <param name="pipeArgumentType">Indicate the type of the piped-in argument.</param>
         /// <param name="paramAstAtCursor">The CommandParameterAst the cursor is pointing at.</param>
         /// <param name="bindingType">Indicates whether pseudo binding is for argument binding, argument completion, or parameter completion.</param>
+        /// <param name="bindPositional">Indicates if the pseudo binding should bind positional parameters</param>
         /// <returns>PseudoBindingInfo.</returns>
-        internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType)
+        internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType, bool bindPositional = true)
         {
             if (command == null)
             {
@@ -1008,12 +1009,15 @@ namespace System.Management.Automation.Language
                 unboundArguments = BindNamedParameters();
                 _bindingEffective = _currentParameterSetFlag != 0;
 
-                // positional binding
-                unboundArguments = BindPositionalParameter(
-                    unboundArguments,
-                    _currentParameterSetFlag,
-                    _defaultParameterSetFlag,
-                    bindingType);
+                if (bindPositional)
+                {
+                    // positional binding
+                    unboundArguments = BindPositionalParameter(
+                        unboundArguments,
+                        _currentParameterSetFlag,
+                        _defaultParameterSetFlag,
+                        bindingType);
+                }
 
                 // VFRA/pipeline binding if the given command is a binary cmdlet or a script cmdlet
                 if (!_function)
