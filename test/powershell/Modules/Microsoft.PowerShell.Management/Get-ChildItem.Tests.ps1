@@ -217,6 +217,17 @@ Describe "Get-ChildItem" -Tags "CI" {
         It "Should list the folder present when path length equal to MAX_PATH" {
             (Get-ChildItem -Path TestDrive:\$item_I -Recurse -Force).Name.Length | Should -BeGreaterThan 0
         }
+
+        It 'Trailing slash for -Path should treat it as a folder only when used with -recurse' {
+            $foo = New-Item -ItemType Directory -Path TestDrive:\foo
+            $foo2 = New-Item -ItemType Directory -Path TestDrive:\foo\foo
+            $bar = New-Item -ItemType File -Path TestDrive:\foo\bar
+            $bar2 = New-Item -ItemType File -Path TestDrive:\foo\foo\bar
+
+            { Get-ChildItem -Path testdrive:/foo/bar/ -Recurse -ErrorAction Stop } | Should -Throw -ErrorId 'ItemNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand'
+            $barFiles = Get-ChildItem -Path testdrive:/foo/bar -Recurse
+            $barFiles.Count | Should -Be 2
+        }
     }
 
     Context 'Env: Provider' {
