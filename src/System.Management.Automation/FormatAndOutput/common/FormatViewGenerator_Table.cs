@@ -483,6 +483,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     directive = activeAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
                 }
 
+                if (directive is null)
+                {
+                    directive = new FieldFormattingDirective();
+                    directive.isTable = true;
+                }
+
                 fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, this.activeAssociationList[k].ResolvedExpression, directive);
                 tre.formatPropertyFieldList.Add(fpf);
             }
