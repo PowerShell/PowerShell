@@ -505,6 +505,7 @@ namespace System.Management.Automation
                         }
                         else if (lastAst.Parent is IndexExpressionAst indexExpressionAst)
                         {
+                            // handles quoted string inside index expression like: $PSVersionTable["<Tab>"]
                             completionContext.WordToComplete = (tokenAtCursor as StringToken).Value;
                             return CompletionCompleters.CompleteIndexExpression(completionContext, indexExpressionAst.Target);
                         }
@@ -758,6 +759,7 @@ namespace System.Management.Automation
                     case TokenKind.LBracket:
                         if (lastAst.Parent is IndexExpressionAst indexExpression)
                         {
+                            // handles index expression with cursor right after lbracket like: $PSVersionTable[<Tab>]
                             completionContext.WordToComplete = string.Empty;
                             result = CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
                             if (result.Count > 0)
@@ -919,6 +921,7 @@ namespace System.Management.Automation
                                 case TokenKind.LBracket:
                                     if (lastAst.Parent is IndexExpressionAst indexExpression)
                                     {
+                                        // handles index expression where cursor is on a new line after the lbracket like: $PSVersionTable[\n<Tab>]
                                         completionContext.WordToComplete = string.Empty;
                                         result = CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
                                     }
@@ -997,6 +1000,7 @@ namespace System.Management.Automation
                                 case TokenKind.LBracket:
                                     if (lastAst.Parent is IndexExpressionAst indexExpression)
                                     {
+                                        // handles index expression with whitespace between lbracket and cursor like: $PSVersionTable[ <Tab>]
                                         completionContext.WordToComplete = string.Empty;
                                         result = CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
                                     }
@@ -2051,6 +2055,7 @@ namespace System.Management.Automation
                             {
                                 completionContext.WordToComplete = completionContext.WordToComplete.Remove(completionContext.WordToComplete.Length - 1);
                             }
+                            // handles index expression with unquoted word like: $PSVersionTable[psver<Tab>]
                             return CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
                         }
                     }
