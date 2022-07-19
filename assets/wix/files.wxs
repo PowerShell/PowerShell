@@ -1669,9 +1669,6 @@
               <File Id="fil28C672F884A14B9D8ACFB6534423CA51" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PackageManagement\DSCResources\PackageManagementDscUtilities.psm1" />
             </Component>
             <Directory Name="MSFT_PackageManagementSource" Id="dir467F7C8961D842AEBB4188D2F3004198">
-              <Component Id="cmp8C23BECAFDBB4039A255DE6246A30726">
-                <File Id="filB3CEF74508FF4DEDADF38F9046799EFB" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.schema.mfl" />
-              </Component>
               <Component Id="cmp09A46C31077C4BDCB8606FB4DD6CAE01">
                 <File Id="fil3127E5CBC6F84A86A649AEEC7F05EE4F" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.psm1" />
               </Component>
@@ -1685,9 +1682,6 @@
             <Directory Name="MSFT_PackageManagement" Id="dirBFCFB87C5E0E43C5BE7FD2C052C5946A">
               <Component Id="cmpF297CB46D5944DC38C68B376140BDF5C">
                 <File Id="filFB1C81A053634DCFB01E3A3F7E9FE84F" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.strings.psd1" />
-              </Component>
-              <Component Id="cmpA5CB9D3B3C794D2E9750BFF7C9709C83">
-                <File Id="fil27BF11C40A504DDB9CDAE9E293F5EAD8" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.schema.mfl" />
               </Component>
               <Component Id="cmp98E30699A7504181B61707E99DCC0EC1">
                 <File Id="fil5C51CE77EF584ECDB345C613EB0EA4FE" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.psm1" />
@@ -3669,12 +3663,10 @@
       <ComponentRef Id="cmpF79A92F228AF5EA2BA60CC33BE9DC6A0" />
       <ComponentRef Id="cmp603C5B38651EE30C8E23FD7C8A4B828D" />
       <ComponentRef Id="cmpDDD9F623B3DC4A6DB15A013734FFFACB" />
-      <ComponentRef Id="cmp8C23BECAFDBB4039A255DE6246A30726" />
       <ComponentRef Id="cmp09A46C31077C4BDCB8606FB4DD6CAE01" />
       <ComponentRef Id="cmpC2EEED1CA2094DB1B760297F2374216A" />
       <ComponentRef Id="cmp8B763D3852654517B3E25C9CA5247D5F" />
       <ComponentRef Id="cmpF297CB46D5944DC38C68B376140BDF5C" />
-      <ComponentRef Id="cmpA5CB9D3B3C794D2E9750BFF7C9709C83" />
       <ComponentRef Id="cmp98E30699A7504181B61707E99DCC0EC1" />
       <ComponentRef Id="cmp61560691133844F886A1E72130659721" />
       <ComponentRef Id="cmpA83063651AF54638A78187CA67953118" />
