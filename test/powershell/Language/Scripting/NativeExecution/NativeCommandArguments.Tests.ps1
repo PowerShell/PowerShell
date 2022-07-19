@@ -239,6 +239,14 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
             $lines[1] | Should -BeExactly "Arg 1 is <com:port=\\devbox\pipe\debug,pipe,resets=0,reconnect>"
         }
 
+        It "Should handle when the ':' is the parameter value" {
+            $lines = testexe -echoargs awk -F: '{print $1}'
+            $lines.Count | Should -Be 3
+            $lines[0] | Should -BeExactly 'Arg 0 is <awk>'
+            $lines[1] | Should -BeExactly 'Arg 1 is <-F:>'
+            $lines[2] | Should -BeExactly 'Arg 2 is <{print $1}>'
+        }
+
         It "Should handle DOS style arguments" {
             $lines = testexe -echoargs /arg1 /c:"a string"
             $lines.Count | Should -Be 2
