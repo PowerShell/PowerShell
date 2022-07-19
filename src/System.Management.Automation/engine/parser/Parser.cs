@@ -2932,7 +2932,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            if (configurationNameToken.Kind == TokenKind.EndOfInput)
+            if (configurationNameToken.Kind is TokenKind.EndOfInput or TokenKind.Comma)
             {
                 UngetToken(configurationNameToken);
 
@@ -5017,13 +5017,19 @@ namespace System.Management.Automation.Language
                     SkipToken();
 
                     var aliasToken = NextToken();
-                    if (aliasToken.Kind == TokenKind.EndOfInput)
+                    if (aliasToken.Kind is TokenKind.EndOfInput or TokenKind.NewLine or TokenKind.Semi)
                     {
                         UngetToken(aliasToken);
                         ReportIncompleteInput(After(equalsToken),
                             nameof(ParserStrings.MissingNamespaceAlias),
                             ParserStrings.MissingNamespaceAlias);
                         return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
+                    }
+
+                    if (aliasToken.Kind == TokenKind.Comma)
+                    {
+                        ReportError(aliasToken.Extent, nameof(ParserStrings.UnexpectedUnaryOperator), ParserStrings.UnexpectedUnaryOperator, aliasToken.Text);
+                        return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
                     }
 
                     var aliasAst = GetCommandArgument(CommandArgumentContext.CommandArgument, aliasToken);
@@ -5033,7 +5039,19 @@ namespace System.Management.Automation.Language
                     }
                     else if (aliasAst is not StringConstantExpressionAst)
                     {
-                        return new ErrorStatementAst(ExtentOf(usingToken, aliasAst), new Ast[] { itemAst, aliasAst });
+                        var errorExtent = ExtentFromFirstOf(aliasAst, aliasToken);
+                        Ast[] nestedAsts;
+                        if (aliasAst is null)
+                        {
+                            nestedAsts = new Ast[] { itemAst };
+                        }
+                        else
+                        {
+                            nestedAsts = new Ast[] { itemAst, aliasAst };
+                        }
+
+                        ReportError(errorExtent, nameof(ParserStrings.InvalidValueForUsingItemName), ParserStrings.InvalidValueForUsingItemName, errorExtent.Text);
+                        return new ErrorStatementAst(ExtentOf(usingToken, errorExtent), nestedAsts);
                     }
 
                     RequireStatementTerminator();
