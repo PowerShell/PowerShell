@@ -1904,7 +1904,7 @@ namespace System.Management.Automation
                             return;
                         }
 
-                        AddInferredTypesForDollarUnderbar(pipelineAst.PipelineElements[0], inferredTypes);
+                        AddInferredTypesForDollarUnderbar(pipelineAst.PipelineElements[previousCommandIndex], inferredTypes);
 
                         return;
                     }

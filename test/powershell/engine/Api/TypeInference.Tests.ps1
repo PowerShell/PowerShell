@@ -1079,6 +1079,14 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be System.Exception
     }
 
+    It 'Infers type of variable $_ in pipeline with more than one element' {
+        $memberAst = { Get-Date | New-Guid | Select-Object -Property {$_} }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
+        $res = [AstTypeInference]::InferTypeOf($memberAst)
+
+        $res | Should -HaveCount 1
+        $res.Name | Should -Be System.Guid
+    }
+
     $catchClauseTypes = @(
         @{ Type = 'System.ArgumentException' }
         @{ Type = 'System.ArgumentNullException' }
