@@ -1209,6 +1209,12 @@ ConstructorTestClass(int i, bool b)
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'DarkCyan'
         }
 
+        It "Tab completion for attribute type" {
+            $inputStr = '[validateset()]$var1'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn 2
+            $res.CompletionMatches.CompletionText | Should -Contain 'ValidateSet'
+        }
+
         It "Tab completion for ArgumentCompleter when AST is passed to CompleteInput" {
             $scriptBl = {
                 function Test-Completion {

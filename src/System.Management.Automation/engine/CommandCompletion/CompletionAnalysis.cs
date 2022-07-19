@@ -424,7 +424,7 @@ namespace System.Management.Automation
                     case TokenKind.Generic:
                     case TokenKind.MinusMinus: // for native commands '--'
                     case TokenKind.Identifier:
-                        if (tokenAtCursor.TokenFlags != TokenFlags.TypeName)
+                        if (!tokenAtCursor.TokenFlags.HasFlag(TokenFlags.TypeName))
                         {
                             result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
                         }
@@ -1021,7 +1021,7 @@ namespace System.Management.Automation
                     }
                 }
                 
-                if (typeNameToComplete is null && tokenAtCursor?.TokenFlags == TokenFlags.TypeName)
+                if (typeNameToComplete is null && tokenAtCursor?.TokenFlags.HasFlag(TokenFlags.TypeName) == true)
                 {
                     typeNameToComplete = new TypeName(tokenAtCursor.Extent, tokenAtCursor.Text);
                 }
