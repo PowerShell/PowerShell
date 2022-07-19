@@ -2001,51 +2001,47 @@ namespace System.Management.Automation
                     {
                         if (cursorAst.Extent.EndOffset == tokenAtCursor.Extent.StartOffset)
                         {
-                            if (cursorAst.Extent.EndLineNumber == tokenAtCursor.Extent.StartLineNumber &&
-                                cursorAst.Extent.EndColumnNumber == tokenAtCursor.Extent.StartColumnNumber)
+                            if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
                             {
-                                if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
+                                string wordToComplete =
+                                    CompletionCompleters.ConcatenateStringPathArguments(cursorAst as CommandElementAst, tokenAtCursorText, completionContext);
+                                if (wordToComplete != null)
                                 {
-                                    string wordToComplete =
-                                        CompletionCompleters.ConcatenateStringPathArguments(cursorAst as CommandElementAst, tokenAtCursorText, completionContext);
-                                    if (wordToComplete != null)
+                                    completionContext.WordToComplete = wordToComplete;
+                                    result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
+                                    if (result.Count > 0)
                                     {
-                                        completionContext.WordToComplete = wordToComplete;
-                                        result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
-                                        if (result.Count > 0)
-                                        {
-                                            replacementIndex = cursorAst.Extent.StartScriptPosition.Offset;
-                                            replacementLength += cursorAst.Extent.Text.Length;
-                                        }
-
-                                        return result;
-                                    }
-                                    else
-                                    {
-                                        var variableAst = cursorAst as VariableExpressionAst;
-                                        string fullPath = variableAst != null
-                                            ? CompletionCompleters.CombineVariableWithPartialPath(
-                                                variableAst: variableAst,
-                                                extraText: tokenAtCursorText,
-                                                executionContext: completionContext.ExecutionContext)
-                                            : null;
-
-                                        if (fullPath == null) { return result; }
-
-                                        // Continue trying the filename/commandname completion for scenarios like this: $aa\d<tab>
-                                        completionContext.WordToComplete = fullPath;
                                         replacementIndex = cursorAst.Extent.StartScriptPosition.Offset;
                                         replacementLength += cursorAst.Extent.Text.Length;
-
-                                        completionContext.ReplacementIndex = replacementIndex;
-                                        completionContext.ReplacementLength = replacementLength;
                                     }
-                                }
-                                // Continue trying the filename/commandname completion for scenarios like this: $aa[get-<tab>
-                                else if (cursorAst is not ErrorExpressionAst || cursorAst.Parent is not IndexExpressionAst)
-                                {
+
                                     return result;
                                 }
+                                else
+                                {
+                                    var variableAst = cursorAst as VariableExpressionAst;
+                                    string fullPath = variableAst != null
+                                        ? CompletionCompleters.CombineVariableWithPartialPath(
+                                            variableAst: variableAst,
+                                            extraText: tokenAtCursorText,
+                                            executionContext: completionContext.ExecutionContext)
+                                        : null;
+
+                                    if (fullPath == null) { return result; }
+
+                                    // Continue trying the filename/commandname completion for scenarios like this: $aa\d<tab>
+                                    completionContext.WordToComplete = fullPath;
+                                    replacementIndex = cursorAst.Extent.StartScriptPosition.Offset;
+                                    replacementLength += cursorAst.Extent.Text.Length;
+
+                                    completionContext.ReplacementIndex = replacementIndex;
+                                    completionContext.ReplacementLength = replacementLength;
+                                }
+                            }
+                            // Continue trying the filename/commandname completion for scenarios like this: $aa[get-<tab>
+                            else if (cursorAst is not ErrorExpressionAst || cursorAst.Parent is not IndexExpressionAst)
+                            {
+                                return result;
                             }
                         }
 
