@@ -171,6 +171,25 @@ Describe "Will error correctly if an attempt to set variable to improper value" 
     }
 }
 
+Describe "find.exe uses legacy behavior on Windows" {
+    BeforeAll {
+        $currentSetting = $PSNativeCommandArgumentPassing
+        $PSNativeCommandArgumentPassing = "Windows"
+        $testCases = @{ pattern = "" },
+            @{ pattern = "blat" },
+            @{ pattern = "bl at" }
+    }
+    AfterAll {
+        $PSNativeCommandArgumentPassing = $currentSetting
+    }
+    It "The pattern '<pattern>' is used properly by find.exe" -skip:(! $IsWindows) -testCases $testCases {
+        param ($pattern)
+        $expr = "'foo' | find.exe --% /v ""$pattern"""
+        $result = Invoke-Expression $expr
+        $result | Should -Be 'foo'
+    }
+}
+
 foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
     $PSNativeCommandArgumentPassing = $argumentListValue
     Describe "Native Command Arguments (${PSNativeCommandArgumentPassing})" -tags "CI" {
