@@ -837,7 +837,7 @@ function Invoke-InitializeContainerStage {
 
     # Chose images that are validated or validating, Linux and can be used in CI.
     $linuxImages = $matrix.preview |
-      Where-Object {$_.IsLinux -and $_.UseInCi -and $_.DistributionState -match 'Validat.*' -and $_.JobName -match $ContainerPattern} |
+      Where-Object {$_.IsLinux -and $_.UseInCi -and $_.DistributionState -match 'Validat.*' -and $_.JobName -match $ContainerPattern -and $_.JobName -notlike "*arm*"} |
       Select-Object JobName, Taglist |
       Sort-Object -property JobName
 
