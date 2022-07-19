@@ -186,6 +186,7 @@ namespace Microsoft.PowerShell
             "nologo",
             "noninteractive",
             "noprofile",
+            "noprofileloadtime",
             "outputformat",
             "removeworkingdirectorytrailingcharacter",
             "settingsfile",
@@ -228,6 +229,7 @@ namespace Microsoft.PowerShell
             WindowStyle         = 0x01000000, // -WindowStyle | -w
             WorkingDirectory    = 0x02000000, // -WorkingDirectory | -wd
             ConfigurationFile   = 0x04000000, // -ConfigurationFile
+            NoProfileLoadTime   = 0x08000000, // -NoProfileLoadTime
             // Enum values for specified ExecutionPolicy
             EPUnrestricted      = 0x0000000100000000, // ExecutionPolicy unrestricted
             EPRemoteSigned      = 0x0000000200000000, // ExecutionPolicy remote signed
@@ -460,6 +462,15 @@ namespace Microsoft.PowerShell
             {
                 AssertArgumentsParsed();
                 return _showExtendedHelp;
+            }
+        }
+
+        internal bool NoProfileLoadTime
+        {
+            get
+            {
+                AssertArgumentsParsed();
+                return _noProfileLoadTime;
             }
         }
 
@@ -919,6 +930,11 @@ namespace Microsoft.PowerShell
                 {
                     _sshServerMode = true;
                     ParametersUsed |= ParameterBitmap.SSHServerMode;
+                }
+                else if (MatchSwitch(switchKey, "noprofileloadtime", "noprofileloadtime"))
+                {
+                    _noProfileLoadTime = true;
+                    ParametersUsed |= ParameterBitmap.NoProfileLoadTime;
                 }
                 else if (MatchSwitch(switchKey, "interactive", "i"))
                 {
@@ -1496,6 +1512,7 @@ namespace Microsoft.PowerShell
         private bool _serverMode;
         private bool _namedPipeServerMode;
         private bool _sshServerMode;
+        private bool _noProfileLoadTime;
         private bool _showVersion;
         private string? _configurationFile;
         private string? _configurationName;
