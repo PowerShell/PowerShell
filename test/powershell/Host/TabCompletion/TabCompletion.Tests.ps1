@@ -82,6 +82,48 @@ Describe "TabCompletion" -Tags CI {
         }
     }
 
+    It 'should complete index expression for <Intent>' -TestCases @(
+        @{
+            Intent = 'Hashtable with no user input'
+            Expected = "'PSVersion'"
+            TestString = '$PSVersionTable[^'
+        }
+        @{
+            Intent = 'Hashtable with partial input'
+            Expected = "'PSVersion'"
+            TestString = '$PSVersionTable[ PSvers^'
+        }
+        @{
+            Intent = 'Hashtable with partial quoted input'
+            Expected = "'PSVersion'"
+            TestString = '$PSVersionTable["PSvers^'
+        }
+        @{
+            Intent = 'Hashtable from Ast'
+            Expected = "'Hello'"
+            TestString = '$Table = @{Hello = "World"};$Table[^'
+        }
+        @{
+            Intent = 'Hashtable with cursor on new line'
+            Expected = "'Hello'"
+            TestString = @'
+$Table = @{Hello = "World"}
+$Table[
+^
+'@
+        }
+    ) -Test {
+        param($Expected, $TestString)
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly $Expected
+    }
+
+    it 'should add quotes when completing hashtable key from Ast with member syntax' -Test {
+        $res = TabExpansion2 -inputScript '$Table = @{"Hello World" = "World"};$Table.'
+        $res.CompletionMatches.CompletionText | Where-Object {$_ -eq "'Hello World'"} | Should -BeExactly "'Hello World'"
+    }
+
     It '<Intent>' -TestCases @(
         @{
             Intent = 'Complete member with space between dot and cursor'
