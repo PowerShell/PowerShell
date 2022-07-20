@@ -1087,6 +1087,14 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be System.Guid
     }
 
+    It 'Infers type of variable $_ in array of calculated properties' {
+        $memberAst = { Get-Date | Select-Object -Property Day,@{n="min";e={$_}} }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
+        $res = [AstTypeInference]::InferTypeOf($memberAst)
+
+        $res | Should -HaveCount 1
+        $res.Name | Should -Be System.DateTime
+    }
+
     $catchClauseTypes = @(
         @{ Type = 'System.ArgumentException' }
         @{ Type = 'System.ArgumentNullException' }
@@ -1153,6 +1161,19 @@ Describe "Type inference Tests" -tags "CI" {
         $res | Should -HaveCount 2
         $res[0].Name | Should -Be System.ArgumentException
         $res[1].Name | Should -Be System.Exception
+    }
+
+    It 'falls back to a generic ErrorRecord if catch exception type is invalid' {
+        $VariableAst = {
+            try {}
+            catch [ThisTypeDoesNotExist] { $_ }
+        }.Ast.FindAll(
+            { param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] },
+            $true
+        )
+        $res = [AstTypeInference]::InferTypeOf($VariableAst)
+
+        $res.Name | Should -Be System.Management.Automation.ErrorRecord
     }
 
     It 'Infers type of function member' {

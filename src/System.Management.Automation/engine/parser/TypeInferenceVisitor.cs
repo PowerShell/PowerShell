@@ -1840,82 +1840,67 @@ namespace System.Management.Automation
                 (SpecialVariables.IsUnderbar(astVariablePath.UserPath)
                  || astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.PSItem)))
             {
-                // $_ is special, see if we're used in a script block in some pipeline.
-                while (parent != null)
+                bool hasSeenScriptBlock = false;
+                while (parent is not null)
                 {
-                    if (parent is ScriptBlockExpressionAst || parent is CatchClauseAst)
+                    if (parent is CatchClauseAst)
                     {
                         break;
                     }
-
+                    else if (parent is ScriptBlockExpressionAst)
+                    {
+                        hasSeenScriptBlock = true;
+                    }
+                    else if (hasSeenScriptBlock)
+                    {
+                        if (parent is InvokeMemberExpressionAst invokeMember)
+                        {
+                            parent = invokeMember.Expression;
+                            break;
+                        }
+                        else if (parent is CommandAst cmdAst && cmdAst.Parent is PipelineAst pipeline && pipeline.PipelineElements.Count > 1)
+                        {
+                            var indexOfPreviousCommand = pipeline.PipelineElements.IndexOf(cmdAst) - 1;
+                            if (indexOfPreviousCommand >= 0)
+                            {
+                                parent = pipeline.PipelineElements[indexOfPreviousCommand];
+                                break;
+                            }
+                        }
+                    }
                     parent = parent.Parent;
                 }
 
-                if (parent != null)
+                if (parent is CatchClauseAst catchBlock)
                 {
-                    if (parent.Parent is CommandExpressionAst && parent.Parent.Parent is PipelineAst)
+                    if (catchBlock.CatchTypes.Count > 0)
                     {
-                        // Script block in a hash table, could be something like:
-                        //     dir | ft @{ Expression = { $_ } }
-
-                        if (parent.Parent.Parent.Parent is HashtableAst)
+                        foreach (TypeConstraintAst catchType in catchBlock.CatchTypes)
                         {
-                            parent = parent.Parent.Parent.Parent;
-                        }
-                        else if (parent.Parent.Parent.Parent is ArrayLiteralAst && parent.Parent.Parent.Parent.Parent is HashtableAst)
-                        {
-                            parent = parent.Parent.Parent.Parent.Parent;
-                        }
-                    }
-
-                    if (parent.Parent is CommandParameterAst)
-                    {
-                        parent = parent.Parent;
-                    }
-
-                    if (parent is CatchClauseAst catchBlock)
-                    {
-                        if (catchBlock.CatchTypes.Count > 0)
-                        {
-                            foreach (TypeConstraintAst catchType in catchBlock.CatchTypes)
+                            Type exceptionType = catchType.TypeName.GetReflectionType();
+                            if (exceptionType != null && typeof(Exception).IsAssignableFrom(exceptionType))
                             {
-                                Type exceptionType = catchType.TypeName.GetReflectionType();
-                                if (exceptionType != null && typeof(Exception).IsAssignableFrom(exceptionType))
-                                {
-                                    inferredTypes.Add(new PSTypeName(typeof(ErrorRecord<>).MakeGenericType(exceptionType)));
-                                }
+                                inferredTypes.Add(new PSTypeName(typeof(ErrorRecord<>).MakeGenericType(exceptionType)));
                             }
                         }
-                        else
+
+                        // All the specified catch types were unavailable but we still know it's an error record.
+                        if (inferredTypes.Count == 0)
                         {
                             inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
                         }
-
-                        return;
                     }
-
-                    if (parent.Parent is CommandAst commandAst)
+                    else
                     {
-                        // We found a command, see if there is a previous command in the pipeline.
-                        PipelineAst pipelineAst = (PipelineAst)commandAst.Parent;
-                        var previousCommandIndex = pipelineAst.PipelineElements.IndexOf(commandAst) - 1;
-                        if (previousCommandIndex < 0)
-                        {
-                            return;
-                        }
-
-                        AddInferredTypesForDollarUnderbar(pipelineAst.PipelineElements[previousCommandIndex], inferredTypes);
-
-                        return;
-                    }
-
-                    if (parent.Parent is InvokeMemberExpressionAst memberExpression)
-                    {
-                        AddInferredTypesForDollarUnderbar(memberExpression.Expression, inferredTypes);
-                        
-                        return;
+                        inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
                     }
                 }
+                else if (parent is not null)
+                {
+                    AddInferredTypesForDollarUnderbar(parent, inferredTypes);
+                }
+
+                return;
             }
 
             // For certain variables, we always know their type, well at least we can assume we know.
