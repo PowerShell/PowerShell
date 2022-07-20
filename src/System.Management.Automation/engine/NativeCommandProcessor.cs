@@ -248,6 +248,7 @@ namespace System.Management.Automation
             "cmd",
             "cscript",
             "wscript",
+            "find",
         };
 
         #region ctor/native command properties
