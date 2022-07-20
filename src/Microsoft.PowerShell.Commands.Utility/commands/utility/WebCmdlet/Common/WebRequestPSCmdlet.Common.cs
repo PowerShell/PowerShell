@@ -583,10 +583,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void PrepareSession()
         {
             // make sure we have a valid WebRequestSession object to work with
-            if (WebSession == null)
-            {
-                WebSession = new WebRequestSession();
-            }
+            WebSession ??= new WebRequestSession();
 
             if (SessionVariable != null)
             {

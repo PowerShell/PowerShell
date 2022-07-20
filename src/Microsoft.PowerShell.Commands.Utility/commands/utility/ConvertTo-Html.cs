@@ -344,10 +344,7 @@ namespace Microsoft.PowerShell.Commands
             TerminatingErrorContext invocationContext = new(this);
             ParameterProcessor processor =
                 new(new ConvertHTMLExpressionParameterDefinition());
-            if (properties == null)
-            {
-                properties = new object[] { "*" };
-            }
+            properties ??= new object[] { "*" };
 
             return processor.ProcessParameters(properties, invocationContext);
         }
