@@ -761,6 +761,7 @@ namespace System.Management.Automation
         private const string AliasesFormat = @"{0}[Alias({1})]";
         private const string ValidateLengthFormat = @"{0}[ValidateLength({1}, {2})]";
         private const string ValidateRangeRangeKindFormat = @"{0}[ValidateRange([System.Management.Automation.ValidateRangeKind]::{1})]";
+        private const string ValidateRangeEnumFormat = @"{0}[ValidateRange([{3}]::{1}, [{3}]::{2})]";
         private const string ValidateRangeFloatFormat = @"{0}[ValidateRange({1:R}, {2:R})]";
         private const string ValidateRangeFormat = @"{0}[ValidateRange({1}, {2})]";
         private const string ValidatePatternFormat = "{0}[ValidatePattern('{1}')]";
@@ -931,6 +932,10 @@ namespace System.Management.Automation
                     {
                         format = ValidateRangeFloatFormat;
                     }
+                    else if (rangeType.IsEnum)
+                    {
+                        format = ValidateRangeEnumFormat;
+                    }
                     else
                     {
                         format = ValidateRangeFormat;
@@ -941,7 +946,8 @@ namespace System.Management.Automation
                         format,
                         prefix,
                         validRangeAttrib.MinRange,
-                        validRangeAttrib.MaxRange);
+                        validRangeAttrib.MaxRange,
+                        rangeType.FullName);
                     return result;
                 }
             }
