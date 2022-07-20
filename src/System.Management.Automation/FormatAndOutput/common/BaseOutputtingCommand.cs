@@ -128,10 +128,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // instantiate the cache if not done yet
-            if (_cache == null)
-            {
-                _cache = new FormattedObjectsCache(this.LineOutput.RequiresBuffering);
-            }
+            _cache ??= new FormattedObjectsCache(this.LineOutput.RequiresBuffering);
 
             // no need for formatting, just process the object
             FormatStartData formatStart = o as FormatStartData;
