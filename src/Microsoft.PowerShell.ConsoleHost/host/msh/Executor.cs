@@ -116,10 +116,7 @@ namespace Microsoft.PowerShell
                 er = new ErrorRecord(er, ex);
             }
 
-            if (er == null)
-            {
-                er = new ErrorRecord(ex, "ConsoleHostAsyncPipelineFailure", ErrorCategory.NotSpecified, null);
-            }
+            er ??= new ErrorRecord(ex, "ConsoleHostAsyncPipelineFailure", ErrorCategory.NotSpecified, null);
 
             _parent.ErrorSerializer.Serialize(er);
         }
