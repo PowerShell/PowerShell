@@ -1110,10 +1110,7 @@ namespace System.Management.Automation.Language
 
         internal static Expression IsStrictMode(int version, Expression executionContext = null)
         {
-            if (executionContext == null)
-            {
-                executionContext = ExpressionCache.NullExecutionContext;
-            }
+            executionContext ??= ExpressionCache.NullExecutionContext;
 
             return Expression.Call(
                 CachedReflectionInfo.ExecutionContext_IsStrictVersion,
@@ -1758,18 +1755,15 @@ namespace System.Management.Automation.Language
                 // Unwrap the wrapped exception
                 var innerException = tie.InnerException;
                 var rte = innerException as RuntimeException;
-                if (rte == null)
-                {
-                    rte = InterpreterError.NewInterpreterExceptionWithInnerException(
-                        null,
-                        typeof(RuntimeException),
-                        attributeAst.Extent,
-                        "ExceptionConstructingAttribute",
-                        ExtendedTypeSystem.ExceptionConstructingAttribute,
-                        innerException,
-                        innerException.Message,
-                        attributeAst.TypeName.FullName);
-                }
+                rte ??= InterpreterError.NewInterpreterExceptionWithInnerException(
+                    null,
+                    typeof(RuntimeException),
+                    attributeAst.Extent,
+                    "ExceptionConstructingAttribute",
+                    ExtendedTypeSystem.ExceptionConstructingAttribute,
+                    innerException,
+                    innerException.Message,
+                    attributeAst.TypeName.FullName);
 
                 InterpreterError.UpdateExceptionErrorRecordPosition(rte, attributeAst.Extent);
                 throw rte;
@@ -2054,10 +2048,7 @@ namespace System.Management.Automation.Language
 
             // The sequence points are identical optimized or not.  Regardless, we want to ensure
             // that the list is unique no matter when the property is accessed, so make sure it is set just once.
-            if (scriptBlock.SequencePoints == null)
-            {
-                scriptBlock.SequencePoints = _sequencePoints.ToArray();
-            }
+            scriptBlock.SequencePoints ??= _sequencePoints.ToArray();
         }
 
         private static Action<FunctionContext> CompileTree(Expression<Action<FunctionContext>> lambda, CompileInterpretChoice compileInterpretChoice)
@@ -2126,10 +2117,7 @@ namespace System.Management.Automation.Language
 
             // Can't be exposed to untrusted input - invoking arbitrary code could result in remote code
             // execution.
-            if (lambda == null)
-            {
-                lambda = (new Compiler()).CompileSingleExpression(expressionAst, out sequencePoints, out localsTupleType);
-            }
+            lambda ??= (new Compiler()).CompileSingleExpression(expressionAst, out sequencePoints, out localsTupleType);
 
             SessionStateInternal oldSessionState = context.EngineSessionState;
             try
@@ -3946,10 +3934,7 @@ namespace System.Management.Automation.Language
                 // This will simply return a Linq.Expression representing the redirection.
                 var compiledRedirection = VisitFileRedirection(fileRedirectionAst);
 
-                if (extraFileRedirectExprs == null)
-                {
-                    extraFileRedirectExprs = new List<Expression>(commandExpr.Redirections.Count);
-                }
+                extraFileRedirectExprs ??= new List<Expression>(commandExpr.Redirections.Count);
 
                 // Hold the current 'FileRedirection' instance for later use
                 var redirectionExpr = NewTemp(typeof(FileRedirection), "fileRedirection");
@@ -6146,10 +6131,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (childExpr == null)
-            {
-                childExpr = Compile(convertExpressionAst.Child);
-            }
+            childExpr ??= Compile(convertExpressionAst.Child);
 
             if (typeName.FullName.Equals("PSCustomObject", StringComparison.OrdinalIgnoreCase))
             {

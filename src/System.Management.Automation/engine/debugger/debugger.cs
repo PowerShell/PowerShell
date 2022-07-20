@@ -1057,12 +1057,9 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_isLocalSession == null)
-                {
-                    // Remote debug sessions always have a ServerRemoteHost.  Otherwise it is a local session.
-                    _isLocalSession = !(((_context.InternalHost.ExternalHost != null) &&
-                                         (_context.InternalHost.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost)));
-                }
+                // Remote debug sessions always have a ServerRemoteHost.  Otherwise it is a local session.
+                _isLocalSession ??= !((_context.InternalHost.ExternalHost != null) &&
+                    (_context.InternalHost.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost));
 
                 return _isLocalSession.Value;
             }
@@ -1949,10 +1946,7 @@ namespace System.Management.Automation
                 if (_preserveUnhandledDebugStopEvent)
                 {
                     // Lazily create the event object.
-                    if (_preserveDebugStopEvent == null)
-                    {
-                        _preserveDebugStopEvent = new ManualResetEventSlim(true);
-                    }
+                    _preserveDebugStopEvent ??= new ManualResetEventSlim(true);
 
                     // Set the event handle to non-signaled.
                     if (!_preserveDebugStopEvent.IsSet)
@@ -2152,11 +2146,8 @@ namespace System.Management.Automation
                 {
                     lock (_syncObject)
                     {
-                        if (_isSystemLockedDown == null)
-                        {
-                            _isSystemLockedDown = (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
-                                System.Management.Automation.Security.SystemEnforcementMode.Enforce);
-                        }
+                        _isSystemLockedDown ??= (System.Management.Automation.Security.SystemPolicy.GetSystemLockdownPolicy() ==
+                            System.Management.Automation.Security.SystemEnforcementMode.Enforce);
                     }
                 }
 
