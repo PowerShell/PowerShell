@@ -686,10 +686,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 this.OperationOptions = new CimOperationOptions(operOptions);
             }
-            else if (this.OperationOptions == null)
-            {
-                this.OperationOptions = new CimOperationOptions();
-            }
+            else this.OperationOptions ??= new CimOperationOptions();
 
             this.EnableMethodResultStreaming = true;
             this.EnablePSSemantics();
