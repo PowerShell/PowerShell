@@ -183,10 +183,7 @@ namespace System.Management.Automation
         {
             var astContext = ExtractAstContext(_ast, _tokens, _cursorPosition);
 
-            if (typeInferenceContext.CurrentTypeDefinitionAst == null)
-            {
-                typeInferenceContext.CurrentTypeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(astContext.RelatedAsts.Last());
-            }
+            typeInferenceContext.CurrentTypeDefinitionAst ??= Ast.GetAncestorTypeDefinitionAst(astContext.RelatedAsts.Last());
 
             ExecutionContext executionContext = typeInferenceContext.ExecutionContext;
 
@@ -1894,10 +1891,7 @@ namespace System.Management.Automation
                         usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
                     }
 
-                    if (results == null)
-                    {
-                        results = new List<CompletionResult>();
-                    }
+                    results ??= new List<CompletionResult>();
 
                     results.Add(new CompletionResult(
                         keyword.Keyword,

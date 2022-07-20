@@ -114,10 +114,7 @@ namespace System.Management.Automation.ComInterop
         {
             get
             {
-                if (_paramVariants == null)
-                {
-                    _paramVariants = Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants");
-                }
+                _paramVariants ??= Expression.Variable(VariantArray.GetStructType(_args.Length), "paramVariants");
                 return _paramVariants;
             }
         }
