@@ -609,13 +609,12 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    _readWaitHandle ??=
-                        // Create the handle signaled if there are objects in the stream
-                        // or the stream has been closed.  The closed scenario addresses
-                        // Pipeline readers that execute asynchronously.  Since the pipeline
-                        // may complete with zero objects before the caller objects this
-                        // handle, it will block indefinitely unless it is set.
-                        new ManualResetEvent(_objects.Count > 0 || !_isOpen);
+                    // Create the handle signaled if there are objects in the stream
+                    // or the stream has been closed.  The closed scenario addresses
+                    // Pipeline readers that execute asynchronously.  Since the pipeline
+                    // may complete with zero objects before the caller objects this
+                    // handle, it will block indefinitely unless it is set.
+                    _readWaitHandle ??= new ManualResetEvent(_objects.Count > 0 || !_isOpen);
 
                     handle = _readWaitHandle;
                 }
@@ -660,15 +659,14 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    _reader ??=
-                        // Always return an object reader, even if the stream
-                        // is closed. This is to address requesting the object reader
-                        // after calling Pipeline.Execute(). NOTE: If Execute completes
-                        // without writing data to the output queue, the
-                        // stream will be in the EndOfPipeline state because the
-                        // stream is closed and has zero data.  Since this is a valid
-                        // and expected execution path, we don't want to throw an exception.
-                        new ObjectReader(this);
+                    // Always return an object reader, even if the stream
+                    // is closed. This is to address requesting the object reader
+                    // after calling Pipeline.Execute(). NOTE: If Execute completes
+                    // without writing data to the output queue, the
+                    // stream will be in the EndOfPipeline state because the
+                    // stream is closed and has zero data.  Since this is a valid
+                    // and expected execution path, we don't want to throw an exception.
+                    _reader ??= new ObjectReader(this);
 
                     reader = _reader;
                 }
@@ -688,15 +686,14 @@ namespace System.Management.Automation.Internal
 
                 lock (_monitorObject)
                 {
-                    _mshreader ??=
-                        // Always return an object reader, even if the stream
-                        // is closed. This is to address requesting the object reader
-                        // after calling Pipeline.Execute(). NOTE: If Execute completes
-                        // without writing data to the output queue, the
-                        // stream will be in the EndOfPipeline state because the
-                        // stream is closed and has zero data.  Since this is a valid
-                        // and expected execution path, we don't want to throw an exception.
-                        new PSObjectReader(this);
+                    // Always return an object reader, even if the stream
+                    // is closed. This is to address requesting the object reader
+                    // after calling Pipeline.Execute(). NOTE: If Execute completes
+                    // without writing data to the output queue, the
+                    // stream will be in the EndOfPipeline state because the
+                    // stream is closed and has zero data.  Since this is a valid
+                    // and expected execution path, we don't want to throw an exception.
+                    _mshreader ??= new PSObjectReader(this);
 
                     reader = _mshreader;
                 }
