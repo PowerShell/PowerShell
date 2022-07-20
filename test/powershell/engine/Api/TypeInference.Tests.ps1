@@ -1079,20 +1079,25 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be System.Exception
     }
 
-    It 'Infers type of variable $_ in pipeline with more than one element' {
+        It 'Infers type of variable $_ in pipeline with more than one element' {
         $memberAst = { Get-Date | New-Guid | Select-Object -Property {$_} }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
         $res = [AstTypeInference]::InferTypeOf($memberAst)
 
         $res | Should -HaveCount 1
         $res.Name | Should -Be System.Guid
     }
-
     It 'Infers type of variable $_ in array of calculated properties' {
-        $memberAst = { Get-Date | Select-Object -Property Day,@{n="min";e={$_}} }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
-        $res = [AstTypeInference]::InferTypeOf($memberAst)
+        $variableAst = { New-TimeSpan | Select-Object -Property Day,@{n="min";e={$_}} }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
+        $res = [AstTypeInference]::InferTypeOf($variableAst)
 
         $res | Should -HaveCount 1
-        $res.Name | Should -Be System.DateTime
+        $res.Name | Should -Be System.TimeSpan
+    }
+
+    It 'Does not infer string in pipeline as char' {
+        $variableAst = { "Hello" | Select-Object -Property @{n="min";e={$_}} }.Ast.Find({ param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] }, $true)
+        $res = [AstTypeInference]::InferTypeOf($variableAst)
+        $res.Name | Should -Be System.String
     }
 
     $catchClauseTypes = @(
@@ -1167,7 +1172,7 @@ Describe "Type inference Tests" -tags "CI" {
         $VariableAst = {
             try {}
             catch [ThisTypeDoesNotExist] { $_ }
-        }.Ast.FindAll(
+        }.Ast.Find(
             { param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] },
             $true
         )

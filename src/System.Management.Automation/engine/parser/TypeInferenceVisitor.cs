@@ -2057,7 +2057,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    if (typeof(IEnumerable).IsAssignableFrom(result.Type))
+                    if (result.Type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(result.Type))
                     {
                         // We can't deduce much from IEnumerable, but we can if it's generic.
                         var enumerableInterfaces = result.Type.GetInterfaces();
