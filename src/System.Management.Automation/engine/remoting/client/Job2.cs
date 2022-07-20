@@ -93,8 +93,7 @@ namespace System.Management.Automation
                 {
                     lock (_syncobject)
                     {
-                        if (_parameters == null)
-                            _parameters = new List<CommandParameterCollection>();
+                        _parameters ??= new List<CommandParameterCollection>();
                     }
                 }
 

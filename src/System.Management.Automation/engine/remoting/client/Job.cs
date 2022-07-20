@@ -633,10 +633,7 @@ namespace System.Management.Automation
                 {
                     lock (syncObject)
                     {
-                        if (_childJobs == null)
-                        {
-                            _childJobs = new List<Job>();
-                        }
+                        _childJobs ??= new List<Job>();
                     }
                 }
 
@@ -3371,13 +3368,10 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (failureException == null)
-                {
-                    failureException = new RuntimeException(
-                        PSRemotingErrorInvariants.FormatResourceString(
-                            RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState,
-                            runspace.RunspaceStateInfo.State));
-                }
+                failureException ??= new RuntimeException(
+                    PSRemotingErrorInvariants.FormatResourceString(
+                        RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState,
+                        runspace.RunspaceStateInfo.State));
 
                 failureErrorRecord = new ErrorRecord(failureException, targetObject,
                                 fullyQualifiedErrorId, ErrorCategory.OpenError,

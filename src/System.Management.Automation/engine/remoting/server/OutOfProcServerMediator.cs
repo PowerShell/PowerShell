@@ -358,14 +358,11 @@ namespace System.Management.Automation.Remoting.Server
                     string data = originalStdIn.ReadLine();
                     lock (_syncObject)
                     {
-                        if (sessionTM == null)
-                        {
-                            sessionTM = CreateSessionTransportManager(
-                                configurationName: configurationName,
-                                configurationFile: configurationFile,
-                                cryptoHelper: cryptoHelper,
-                                workingDirectory: workingDirectory);
-                        }
+                        sessionTM ??= CreateSessionTransportManager(
+                            configurationName: configurationName,
+                            configurationFile: configurationFile,
+                            cryptoHelper: cryptoHelper,
+                            workingDirectory: workingDirectory);
                     }
 
                     if (string.IsNullOrEmpty(data))

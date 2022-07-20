@@ -2911,10 +2911,7 @@ namespace System.Management.Automation
 
         private void CheckRemoteBreakpointManagementSupport(string breakpointCommandNameToCheck)
         {
-            if (_remoteBreakpointManagementIsSupported == null)
-            {
-                _remoteBreakpointManagementIsSupported = _remoteDebuggingCapability.IsCommandSupported(breakpointCommandNameToCheck);
-            }
+            _remoteBreakpointManagementIsSupported ??= _remoteDebuggingCapability.IsCommandSupported(breakpointCommandNameToCheck);
 
             if (!_remoteBreakpointManagementIsSupported.Value)
             {
