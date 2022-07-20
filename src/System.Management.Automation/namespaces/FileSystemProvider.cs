@@ -1373,10 +1373,7 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
             FileInfo result = new FileInfo(path);
 
-            // FileInfo.Exists is always false for a directory path, so we check the attribute for existence.
             var attributes = result.Attributes;
-            if ((int)attributes == -1) { /* Path doesn't exist. */ return null; }
-
             bool hidden = attributes.HasFlag(FileAttributes.Hidden);
             isContainer = attributes.HasFlag(FileAttributes.Directory);
 
