@@ -17,7 +17,7 @@ namespace PSTests.Sequential
 {
     public static class NativeInterop
     {
-        [Fact()]
+        [Fact]
         public static void TestLoadNativeInMemoryAssembly()
         {
             string tempDir = Path.Combine(Path.GetTempPath(), "TestLoadNativeInMemoryAssembly");
