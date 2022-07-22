@@ -1876,6 +1876,7 @@ namespace System.Management.Automation
                             }
                         }
                     }
+
                     parent = parent.Parent;
                 }
 
