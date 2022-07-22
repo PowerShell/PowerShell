@@ -1181,6 +1181,42 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should -Be System.Management.Automation.ErrorRecord
     }
 
+    It 'Infers type of trap statement' {
+        $VariableAst = {
+            trap { $_ }
+        }.Ast.Find(
+            { param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] },
+            $true
+        )
+        $res = [AstTypeInference]::InferTypeOf($VariableAst)
+
+        $res.Name | Should -Be System.Management.Automation.ErrorRecord
+    }
+
+    It 'Infers type of exception in typed trap statement' {
+        $memberAst = {
+            trap [System.DivideByZeroException] { $_.Exception }
+        }.Ast.Find(
+            { param($a) $a -is [System.Management.Automation.Language.MemberExpressionAst] },
+            $true
+        )
+        $res = [AstTypeInference]::InferTypeOf($memberAst)
+
+        $res.Name | Should -Be System.DivideByZeroException
+    }
+
+    It 'falls back to a generic ErrorRecord if trap exception type is invalid' {
+        $VariableAst = {
+            trap [ThisTypeDoesNotExist] { $_ }
+        }.Ast.Find(
+            { param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst] },
+            $true
+        )
+        $res = [AstTypeInference]::InferTypeOf($VariableAst)
+
+        $res.Name | Should -Be System.Management.Automation.ErrorRecord
+    }
+
     It 'Infers type of function member' {
         $res = [AstTypeInference]::InferTypeOf( {
                 class X {

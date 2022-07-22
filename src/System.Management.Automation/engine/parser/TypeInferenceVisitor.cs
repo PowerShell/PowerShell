@@ -1840,10 +1840,16 @@ namespace System.Management.Automation
                 (SpecialVariables.IsUnderbar(astVariablePath.UserPath)
                  || astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.PSItem)))
             {
+                // The automatic variable $_ is assigned a value in scriptblocks and Catch/Trap statements
+                // This loop will find whichever Ast that determines the value of $_
+                // The value in scriptblocks is determined by the parents of that scriptblock, the only interesting scenarios are:
+                // 1: MemberInvocation like: $Collection.Where({$_})
+                // 2: Command pipelines like: dir | where {$_}
+                // The value in Catch/Trap statements is always an error record
                 bool hasSeenScriptBlock = false;
                 while (parent is not null)
                 {
-                    if (parent is CatchClauseAst)
+                    if (parent is CatchClauseAst or TrapStatementAst)
                     {
                         break;
                     }
@@ -1860,6 +1866,8 @@ namespace System.Management.Automation
                         }
                         else if (parent is CommandAst cmdAst && cmdAst.Parent is PipelineAst pipeline && pipeline.PipelineElements.Count > 1)
                         {
+                            // We've found a pipeline with multiple commands, now we need to determine what command came before the command with the scriptblock:
+                            // eg Get-Partition in this example: Get-Disk | Get-Partition | Where {$_}
                             var indexOfPreviousCommand = pipeline.PipelineElements.IndexOf(cmdAst) - 1;
                             if (indexOfPreviousCommand >= 0)
                             {
@@ -1883,14 +1891,25 @@ namespace System.Management.Automation
                                 inferredTypes.Add(new PSTypeName(typeof(ErrorRecord<>).MakeGenericType(exceptionType)));
                             }
                         }
+                    }
 
-                        // All the specified catch types were unavailable but we still know it's an error record.
-                        if (inferredTypes.Count == 0)
+                    // Either no type constraint was specified, or all the specified catch types were unavailable but we still know it's an error record.
+                    if (inferredTypes.Count == 0)
+                    {
+                        inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
+                    }
+                }
+                else if (parent is TrapStatementAst trap)
+                {
+                    if (trap.TrapType is not null)
+                    {
+                        Type exceptionType = trap.TrapType.TypeName.GetReflectionType();
+                        if (exceptionType is not null && typeof(Exception).IsAssignableFrom(exceptionType))
                         {
-                            inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
+                            inferredTypes.Add(new PSTypeName(typeof(ErrorRecord<>).MakeGenericType(exceptionType)));
                         }
                     }
-                    else
+                    if (inferredTypes.Count == 0)
                     {
                         inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
                     }
