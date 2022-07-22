@@ -1580,7 +1580,7 @@ namespace System.Management.Automation.Runspaces
         public string WorkingDirectory { get; set; }
 
         /// <summary>
-        /// Gets or sets whether the child job process starts the PowerShell IPC listener.
+        /// Gets or sets a value indicating whether the child job process starts the PowerShell IPC listener.
         /// </summary>
         public bool StartIPCListener { get; set; }
 
