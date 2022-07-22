@@ -1901,7 +1901,7 @@ namespace System.Management.Automation
                         foreach (TypeConstraintAst catchType in catchBlock.CatchTypes)
                         {
                             Type exceptionType = catchType.TypeName.GetReflectionType();
-                            if (exceptionType != null && typeof(Exception).IsAssignableFrom(exceptionType))
+                            if (typeof(Exception).IsAssignableFrom(exceptionType))
                             {
                                 inferredTypes.Add(new PSTypeName(typeof(ErrorRecord<>).MakeGenericType(exceptionType)));
                             }
@@ -1919,7 +1919,7 @@ namespace System.Management.Automation
                     if (trap.TrapType is not null)
                     {
                         Type exceptionType = trap.TrapType.TypeName.GetReflectionType();
-                        if (exceptionType is not null && typeof(Exception).IsAssignableFrom(exceptionType))
+                        if (typeof(Exception).IsAssignableFrom(exceptionType))
                         {
                             inferredTypes.Add(new PSTypeName(typeof(ErrorRecord<>).MakeGenericType(exceptionType)));
                         }
