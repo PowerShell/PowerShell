@@ -1840,17 +1840,31 @@ namespace System.Management.Automation
                 (SpecialVariables.IsUnderbar(astVariablePath.UserPath)
                  || astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.PSItem)))
             {
-                // The automatic variable $_ is assigned a value in scriptblocks and Catch/Trap statements
+                // The automatic variable $_ is assigned a value in scriptblocks, Switch loops and Catch/Trap statements
                 // This loop will find whichever Ast that determines the value of $_
                 // The value in scriptblocks is determined by the parents of that scriptblock, the only interesting scenarios are:
                 // 1: MemberInvocation like: $Collection.Where({$_})
                 // 2: Command pipelines like: dir | where {$_}
-                // The value in Catch/Trap statements is always an error record
+                // The value in a Switch loop is whichever item is in the condition part of the statement.
+                // The value in Catch/Trap statements is always an error record.
                 bool hasSeenScriptBlock = false;
                 while (parent is not null)
                 {
                     if (parent is CatchClauseAst or TrapStatementAst)
                     {
+                        break;
+                    }
+                    else if (parent is SwitchStatementAst switchStatement)
+                    {
+                        parent = switchStatement.Condition;
+                        break;
+                    }
+                    else if (parent is ErrorStatementAst switchErrorStatement && switchErrorStatement.Kind?.Kind == TokenKind.Switch)
+                    {
+                        if (switchErrorStatement.Conditions?.Count > 0)
+                        {
+                            parent = switchErrorStatement.Conditions[0];
+                        }
                         break;
                     }
                     else if (parent is ScriptBlockExpressionAst)
