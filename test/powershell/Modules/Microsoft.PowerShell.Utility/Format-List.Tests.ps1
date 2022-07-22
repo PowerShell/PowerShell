@@ -209,6 +209,27 @@ dbda : KM
         $actual = $actual -replace "`r`n", "`n"
         $actual | Should -BeExactly $expected
     }
+
+    It 'Float, double, and decimal should not be truncated to number of decimals from current culture' {
+        $o = [PSCustomObject]@{
+            double = [double]1234.56789
+            float = [float]9876.543
+            decimal = [decimal]4567.123456789
+        }
+
+        $expected = @"
+
+double  : 1234.56789
+float   : 9876.543
+decimal : 4567.123456789
+
+
+
+"@
+
+        $actual = $o | Format-List | Out-String
+        ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
+    }
 }
 
 Describe 'Format-List color tests' {

@@ -7390,7 +7390,7 @@ namespace Microsoft.PowerShell.Commands
         ///
         /// Note that module loading order is important with this check when the system is *locked down with DeviceGuard*.
         /// If a submodule that does not explicitly export any functions is imported from the command line, its useless
-        /// because no functions are exported (default fn export is explictly disallowed on locked down systems).
+        /// because no functions are exported (default fn export is explicitly disallowed on locked down systems).
         /// But if a parentmodule that imports the submodule is then imported, it will get the useless version of the
         /// module from the ModuleTable and the parent module will not work.
         ///   $mSub = import-module SubModule  # No functions exported, useless
@@ -7398,7 +7398,7 @@ namespace Microsoft.PowerShell.Commands
         ///   $mParent.DoSomething  # This will likely be broken because SubModule functions are not accessible
         /// But this is not a realistic scenario because SubModule is useless with DeviceGuard lock down and must explicitly
         /// export its functions to become useful, at which point this check is no longer in effect and there is no issue.
-        ///   $mSub = import-module SubModule  # Explictly exports functions, useful
+        ///   $mSub = import-module SubModule  # Explicitly exports functions, useful
         ///   $mParent = import-module ParentModule  # This internally imports SubModule
         ///   $mParent.DoSomething  # This works because SubModule functions are exported and accessible.
         /// </summary>

@@ -171,6 +171,25 @@ Describe "Will error correctly if an attempt to set variable to improper value" 
     }
 }
 
+Describe "find.exe uses legacy behavior on Windows" {
+    BeforeAll {
+        $currentSetting = $PSNativeCommandArgumentPassing
+        $PSNativeCommandArgumentPassing = "Windows"
+        $testCases = @{ pattern = "" },
+            @{ pattern = "blat" },
+            @{ pattern = "bl at" }
+    }
+    AfterAll {
+        $PSNativeCommandArgumentPassing = $currentSetting
+    }
+    It "The pattern '<pattern>' is used properly by find.exe" -skip:(! $IsWindows) -testCases $testCases {
+        param ($pattern)
+        $expr = "'foo' | find.exe --% /v ""$pattern"""
+        $result = Invoke-Expression $expr
+        $result | Should -Be 'foo'
+    }
+}
+
 foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
     $PSNativeCommandArgumentPassing = $argumentListValue
     Describe "Native Command Arguments (${PSNativeCommandArgumentPassing})" -tags "CI" {
@@ -239,6 +258,14 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
             $lines[1] | Should -BeExactly "Arg 1 is <com:port=\\devbox\pipe\debug,pipe,resets=0,reconnect>"
         }
 
+        It "Should handle when the ':' is the parameter value" {
+            $lines = testexe -echoargs awk -F: '{print $1}'
+            $lines.Count | Should -Be 3
+            $lines[0] | Should -BeExactly 'Arg 0 is <awk>'
+            $lines[1] | Should -BeExactly 'Arg 1 is <-F:>'
+            $lines[2] | Should -BeExactly 'Arg 2 is <{print $1}>'
+        }
+
         It "Should handle DOS style arguments" {
             $lines = testexe -echoargs /arg1 /c:"a string"
             $lines.Count | Should -Be 2
@@ -285,99 +312,11 @@ foreach ( $argumentListValue in "Standard","Legacy","Windows" ) {
             }
 
         }
-    }
-}
-Describe 'PSPath to native commands' -tags "CI" {
-    BeforeAll {
-        $featureEnabled = $EnabledExperimentalFeatures.Contains('PSNativePSPathResolution')
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
 
-        $PSDefaultParameterValues["it:skip"] = (-not $featureEnabled)
-
-        if ($IsWindows) {
-            $cmd = "cmd"
-            $cmdArg1 = "/c"
-            $cmdArg2 = "type"
-            $dir = "cmd"
-            $dirArg1 = "/c"
-            $dirArg2 = "dir"
+        It 'Should treat a PSPath as literal' {
+            $lines = testexe -echoargs temp:/foo
+            $lines.Count | Should -Be 1
+            $lines | Should -BeExactly 'Arg 0 is <temp:/foo>'
         }
-        else {
-            $cmd = "cat"
-            $dir = "ls"
-        }
-
-        Set-Content -Path testdrive:/test.txt -Value 'Hello'
-        Set-Content -Path "testdrive:/test file.txt" -Value 'Hello'
-        Set-Content -Path "env:/test var" -Value 'Hello'
-        $filePath = Join-Path -Path ~ -ChildPath (New-Guid)
-        Set-Content -Path $filePath -Value 'Home'
-        $complexDriveName = 'My test! ;+drive'
-        New-PSDrive -Name $complexDriveName -Root $testdrive -PSProvider FileSystem
-    }
-
-    AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
-
-        Remove-Item -Path "env:/test var"
-        Remove-Item -Path $filePath
-        Remove-PSDrive -Name $complexDriveName
-    }
-
-    It 'PSPath with ~/path works' {
-        $out = & $cmd $cmdArg1 $cmdArg2 $filePath
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -BeExactly 'Home'
-    }
-
-    It 'PSPath with ~ works' {
-        $out = & $dir $dirArg1 $dirArg2 ~
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -Not -BeNullOrEmpty
-    }
-
-    It 'PSPath that is file system path works with native commands: <path>' -TestCases @(
-        @{ path = "testdrive:/test.txt" }
-        @{ path = "testdrive:/test file.txt" }
-    ){
-        param($path)
-
-        $out = & $cmd $cmdArg1 $cmdArg2 "$path"
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -BeExactly 'Hello'
-    }
-
-    It 'PSPath passed with single quotes should be treated as literal' {
-        $out = & $cmd $cmdArg1 $cmdArg2 'testdrive:/test.txt'
-        $LASTEXITCODE | Should -Not -Be 0
-        $out | Should -BeNullOrEmpty
-    }
-
-    It 'PSPath that is not a file system path fails with native commands: <path>' -TestCases @(
-        @{ path = "env:/PSModulePath" }
-        @{ path = "env:/test var" }
-    ){
-        param($path)
-
-        $out = & $cmd $cmdArg1 $cmdArg2 "$path"
-        $LASTEXITCODE | Should -Not -Be 0
-        $out | Should -BeNullOrEmpty
-    }
-
-    It 'Relative PSPath works' {
-        New-Item -Path $testdrive -Name TestFolder -ItemType Directory -ErrorAction Stop
-        $cwd = Get-Location
-        Set-Content -Path (Join-Path -Path $testdrive -ChildPath 'TestFolder' -AdditionalChildPath 'test.txt') -Value 'hello'
-        Set-Location -Path (Join-Path -Path $testdrive -ChildPath 'TestFolder')
-        Set-Location -Path $cwd
-        $out = & $cmd $cmdArg1 $cmdArg2 "TestDrive:test.txt"
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -BeExactly 'Hello'
-    }
-
-    It 'Complex PSDrive name works' {
-        $out = & $cmd $cmdArg1 $cmdArg2 "${complexDriveName}:/test.txt"
-        $LASTEXITCODE | Should -Be 0
-        $out | Should -BeExactly 'Hello'
     }
 }

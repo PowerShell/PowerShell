@@ -1324,8 +1324,8 @@ namespace System.Management.Automation
                 try
                 {
                     // If we're recursing, do some path fixups to match user
-                    // expectations:
-                    if (recurse)
+                    // expectations, but only if the last part is a file and not a directory:
+                    if (recurse && !path.EndsWith(Path.DirectorySeparatorChar) && !path.EndsWith(Path.AltDirectorySeparatorChar))
                     {
                         string childName = GetChildName(path, context);
 

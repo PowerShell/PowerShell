@@ -149,8 +149,10 @@
                   [-EncodedCommand &lt;Base64EncodedCommand&gt;]
                   [-ExecutionPolicy &lt;ExecutionPolicy&gt;] [-InputFormat {Text | XML}]
                   [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
-                  [-OutputFormat {Text | XML}] [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA]
-                  [-Version] [-WindowStyle &lt;style&gt;] [-WorkingDirectory &lt;directoryPath&gt;]
+                  [-NoProfileLoadTime] [-OutputFormat {Text | XML}] 
+                  [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA] 
+                  [-Version] [-WindowStyle &lt;style&gt;] 
+                  [-WorkingDirectory &lt;directoryPath&gt;]
 
        pwsh[.exe] -h | -Help | -? | /?
 
@@ -398,6 +400,11 @@ All parameters are case-insensitive.</value>
 -NoProfile | -nop
 
     Does not load the PowerShell profiles.
+
+-NoProfileLoadTime
+
+    Hides the PowerShell profile load time text shown at startup when the load
+    time exceeds 500 milliseconds.
 
 -OutputFormat | -o | -of
 
