@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Remoting;
 using System.Runtime.Serialization;
 using System.Threading;
 
@@ -455,6 +456,7 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private static int s_globalId;
+        private static RemoteSessionNamedPipeServer s_IPCNamedPipeServer;
         private readonly Stack<PowerShell> _runningPowerShells;
         private PowerShell _baseRunningPowerShell;
         private readonly object _syncObject;
@@ -1271,6 +1273,26 @@ namespace System.Management.Automation.Runspaces
         public static Runspace GetRunspace(RunspaceConnectionInfo connectionInfo, Guid sessionId, Guid? commandId, PSHost host, TypeTable typeTable)
         {
             return RemoteRunspace.GetRemoteRunspace(connectionInfo, sessionId, commandId, host, typeTable);
+        }
+
+        /// <summary>
+        /// Starts the IPC named pipe listener that allows other PowerShell sessions to connect
+        /// and debug this session. The connection is via a PowerShell remoting connection. The 
+        /// listener can only be started once per PowerShell session.
+        /// </summary>
+        /// <returns>
+        /// True if the listener was created and started, or false if the listener has already
+        /// been created.
+        /// </returns>
+        public static bool StartIPCListener()
+        {
+            if (s_IPCNamedPipeServer == null)
+            {
+                s_IPCNamedPipeServer = RemoteSessionNamedPipeServer.IPCNamedPipeServer;
+                return true;
+            }
+
+            return false;
         }
 
         #endregion

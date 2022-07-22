@@ -153,6 +153,7 @@
                   [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA] 
                   [-Version] [-WindowStyle &lt;style&gt;] 
                   [-WorkingDirectory &lt;directoryPath&gt;]
+                  [-StartIPCListener] 
 
        pwsh[.exe] -h | -Help | -? | /?
 
@@ -453,6 +454,12 @@ All parameters are case-insensitive.</value>
     PowerShell file path is supported.
 
     To start PowerShell in your home directory, use: pwsh -WorkingDirectory ~
+
+-StartIPCListener | -startipc
+
+    Start PowerShell with the IPC (inter-process communication) listener
+    running, which can be used with Enter-PSHostProcess to attach to and
+    debug running PowerShell host processes.
 
 -Help, -?, /?
 

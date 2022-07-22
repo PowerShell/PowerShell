@@ -200,6 +200,13 @@ namespace Microsoft.PowerShell
 #if !UNIX
                 TaskbarJumpList.CreateRunAsAdministratorJumpList();
 #endif
+
+                // Start IPC named pipe listener for this process, if requested.
+                if (s_cpp.StartIPClistener)
+                {
+                    Runspace.StartIPCListener();
+                }
+
                 // First check for and handle PowerShell running in a server mode.
                 if (s_cpp.ServerMode)
                 {

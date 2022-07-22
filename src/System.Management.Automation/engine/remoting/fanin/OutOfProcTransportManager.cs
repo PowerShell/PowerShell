@@ -1128,7 +1128,8 @@ namespace System.Management.Automation.Remoting.Client
                                                                                            _connectionInfo.Credential,
                                                                                            _connectionInfo.InitializationScript,
                                                                                            _connectionInfo.RunAs32,
-                                                                                           _connectionInfo.WorkingDirectory);
+                                                                                           _connectionInfo.WorkingDirectory,
+                                                                                           _connectionInfo.StartIPCListener);
                 if (_connectionInfo.Process != null)
                 {
                     _processCreated = false;

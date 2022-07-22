@@ -5,16 +5,20 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
     BeforeAll {
         $si = [System.Diagnostics.ProcessStartInfo]::new()
         $si.FileName = "pwsh"
-        $si.Arguments = "-noexit"
+        $si.Arguments = "-noexit -startipclistener"
         $si.RedirectStandardInput = $true
         $si.RedirectStandardOutput = $true
         $si.RedirectStandardError = $true
         $pwsh = [System.Diagnostics.Process]::Start($si)
 
         if ($IsWindows) {
+            $si.Arguments = "-noexit"
             $si.FileName = "powershell"
             $powershell = [System.Diagnostics.Process]::Start($si)
         }
+
+        # Ensure this PowerShell process allows IPC connection.
+        [runspace]::StartIPCListener()
     }
 
     AfterAll {
@@ -80,7 +84,7 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
         # Create PowerShell process to monitor.
         $psFileName = $IsWindows ? 'pwsh.exe' : 'pwsh'
         $psPath = Join-Path -Path $PSHOME -ChildPath $psFileName
-        $psProc = Start-Process -FilePath $psPath -ArgumentList "-File $testfilePath -LiveFilePath $aliveFile" -PassThru
+        $psProc = Start-Process -FilePath $psPath -ArgumentList "-StartIPCListener -File $testfilePath -LiveFilePath $aliveFile" -PassThru
         Wait-UntilTrue -sb {
             (Get-PSHostProcessInfo -Id $psProc.Id) -ne $null
         } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250

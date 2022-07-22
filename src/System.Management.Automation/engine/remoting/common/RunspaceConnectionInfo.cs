@@ -1580,6 +1580,11 @@ namespace System.Management.Automation.Runspaces
         public string WorkingDirectory { get; set; }
 
         /// <summary>
+        /// Gets or sets whether the child job process starts the PowerShell IPC listener.
+        /// </summary>
+        public bool StartIPCListener { get; set; }
+
+        /// <summary>
         /// Powershell version to execute the job in.
         /// </summary>
         public Version PSVersion { get; set; }
@@ -1659,6 +1664,7 @@ namespace System.Management.Automation.Runspaces
             result.AuthenticationMechanism = this.AuthenticationMechanism;
             result.InitializationScript = this.InitializationScript;
             result.WorkingDirectory = this.WorkingDirectory;
+            result.StartIPCListener = this.StartIPCListener;
             result.RunAs32 = this.RunAs32;
             result.PSVersion = this.PSVersion;
             result.Process = Process;

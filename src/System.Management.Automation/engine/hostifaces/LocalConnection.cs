@@ -68,6 +68,8 @@ namespace System.Management.Automation.Runspaces
         }
         #endregion constructors
 
+        #region Methods
+
         /// <summary>
         /// Private data to be used by applications built on top of PowerShell.
         ///
@@ -210,6 +212,8 @@ namespace System.Management.Automation.Runspaces
             // last to so that changes to the default MaximumHistorySize will be picked up.
             _history = new History(this.ExecutionContext);
         }
+
+        #endregion
 
         #region protected_methods
 
@@ -584,6 +588,8 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion
+
+        #region Helpers
 
         /// <summary>
         /// Open the runspace.
@@ -1030,6 +1036,8 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
+        #endregion
+
         #region SessionStateProxy
 
         protected override void DoSetVariable(string name, object value)
@@ -1303,11 +1311,6 @@ namespace System.Management.Automation.Runspaces
         [TraceSource("RunspaceInit", "Initialization code for Runspace")]
         private static readonly PSTraceSource s_runspaceInitTracer =
             PSTraceSource.GetTracer("RunspaceInit", "Initialization code for Runspace", false);
-
-        /// <summary>
-        /// This ensures all processes have a server/listener.
-        /// </summary>
-        private static readonly RemoteSessionNamedPipeServer s_IPCNamedPipeServer = RemoteSessionNamedPipeServer.IPCNamedPipeServer;
 
         #endregion private fields
     }

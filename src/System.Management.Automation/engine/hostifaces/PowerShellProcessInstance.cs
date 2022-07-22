@@ -11,6 +11,7 @@ using System.Text;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
+    /// Class for creating a PowerShell process.
     /// </summary>
     public sealed class PowerShellProcessInstance : IDisposable
     {
@@ -51,7 +52,14 @@ namespace System.Management.Automation.Runspaces
         /// <param name="initializationScript">Specifies a script that will be executed when the powershell process is initialized.</param>
         /// <param name="useWow64">Specifies if the powershell process will be 32-bit.</param>
         /// <param name="workingDirectory">Specifies the initial working directory for the new powershell process.</param>
-        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64, string workingDirectory)
+        /// <param name="startIPCListener">Specifies if the powershell process will start the IPC listener.</param>
+        public PowerShellProcessInstance(
+            Version powerShellVersion,
+            PSCredential credential,
+            ScriptBlock initializationScript,
+            bool useWow64,
+            string workingDirectory,
+            bool startIPCListener)
         {
             string exePath = PwshExePath;
             bool startingWindowsPowerShell51 = false;
@@ -113,6 +121,11 @@ namespace System.Management.Automation.Runspaces
             _startInfo.ArgumentList.Add("-NoLogo");
             _startInfo.ArgumentList.Add("-NoProfile");
 
+            if (startIPCListener)
+            {
+                _startInfo.ArgumentList.Add("-StartIPCListener");
+            }
+
             if (!string.IsNullOrWhiteSpace(workingDirectory) && !startingWindowsPowerShell51)
             {
                 _startInfo.ArgumentList.Add("-wd");
@@ -145,18 +158,42 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class.
         /// </summary>
+        /// <param name="powerShellVersion">Specifies the version of powershell.</param>
+        /// <param name="credential">Specifies a user account credentials.</param>
+        /// <param name="initializationScript">Specifies a script that will be executed when the powershell process is initialized.</param>
+        /// <param name="useWow64">Specifies if the powershell process will be 32-bit.</param>
+        /// <param name="workingDirectory">Specifies the initial working directory for the new powershell process.</param>
+        public PowerShellProcessInstance(
+            Version powerShellVersion,
+            PSCredential credential,
+            ScriptBlock initializationScript,
+            bool useWow64,
+            string workingDirectory)
+            : this(powerShellVersion, credential, initializationScript, useWow64, workingDirectory, startIPCListener: false)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Initializes the underlying dotnet process class.
+        /// </summary>
         /// <param name="powerShellVersion"></param>
         /// <param name="credential"></param>
         /// <param name="initializationScript"></param>
         /// <param name="useWow64"></param>
-        public PowerShellProcessInstance(Version powerShellVersion, PSCredential credential, ScriptBlock initializationScript, bool useWow64) : this(powerShellVersion, credential, initializationScript, useWow64, workingDirectory: null)
+        public PowerShellProcessInstance(
+            Version powerShellVersion,
+            PSCredential credential,
+            ScriptBlock initializationScript,
+            bool useWow64)
+            : this(powerShellVersion, credential, initializationScript, useWow64, workingDirectory: null, startIPCListener: false)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PowerShellProcessInstance"/> class. Default initializes the underlying dotnet process class.
         /// </summary>
-        public PowerShellProcessInstance() : this(powerShellVersion: null, credential: null, initializationScript: null, useWow64: false, workingDirectory: null)
+        public PowerShellProcessInstance()
+        : this(powerShellVersion: null, credential: null, initializationScript: null, useWow64: false, workingDirectory: null, startIPCListener: false)
         {
         }
 

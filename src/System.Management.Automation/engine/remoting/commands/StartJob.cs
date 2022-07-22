@@ -481,6 +481,12 @@ namespace Microsoft.PowerShell.Commands
         private ScriptBlock _initScript;
 
         /// <summary>
+        /// Gets or sets whether the job host process starts the PowerShell IPC listener.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter StartIPCListener { get; set; }
+
+        /// <summary>
         /// Gets or sets an initial working directory for the powershell background job.
         /// </summary>
         [Parameter]
@@ -664,6 +670,7 @@ namespace Microsoft.PowerShell.Commands
             connectionInfo.AuthenticationMechanism = this.Authentication;
             connectionInfo.PSVersion = this.PSVersion;
             connectionInfo.WorkingDirectory = this.WorkingDirectory;
+            connectionInfo.StartIPCListener = this.StartIPCListener;
 
             RemoteRunspace remoteRunspace = (RemoteRunspace)RunspaceFactory.CreateRunspace(connectionInfo, this.Host,
                         Utils.GetTypeTableFromExecutionContextTLS());

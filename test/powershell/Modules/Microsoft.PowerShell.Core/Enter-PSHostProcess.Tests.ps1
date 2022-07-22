@@ -65,6 +65,9 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
         BeforeAll {
             $oldColor = $env:NO_COLOR
             $env:NO_COLOR = 1
+
+            # Ensure this PowerShell process allows IPC connection.
+            [runspace]::StartIPCListener()
         }
 
         AfterAll {
@@ -79,7 +82,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 while ($true) {
                     Start-Sleep -Seconds 30 | Out-Null
                 }
-            }
+            } -StartIPCListener
 
             $pwshId = Wait-JobPid $pwshJob
         }
@@ -204,7 +207,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
                 [System.Management.Automation.Remoting.RemoteSessionNamedPipeServer]::CreateCustomNamedPipeServer($args[0])
                 $PID
                 while ($true) { Start-Sleep -Seconds 30 | Out-Null }
-            }
+            } -StartIPCListener
 
             $pwshId = Wait-JobPid $pwshJob
 

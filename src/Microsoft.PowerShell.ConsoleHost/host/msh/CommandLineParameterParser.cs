@@ -190,6 +190,7 @@ namespace Microsoft.PowerShell
             "outputformat",
             "removeworkingdirectorytrailingcharacter",
             "settingsfile",
+            "startipclistener",
             "version",
             "windowstyle",
             "workingdirectory"
@@ -230,6 +231,7 @@ namespace Microsoft.PowerShell
             WorkingDirectory    = 0x02000000, // -WorkingDirectory | -wd
             ConfigurationFile   = 0x04000000, // -ConfigurationFile
             NoProfileLoadTime   = 0x08000000, // -NoProfileLoadTime
+            StartIPCListener    = 0x10000000, // -StartIPCListener | -startipc
             // Enum values for specified ExecutionPolicy
             EPUnrestricted      = 0x0000000100000000, // ExecutionPolicy unrestricted
             EPRemoteSigned      = 0x0000000200000000, // ExecutionPolicy remote signed
@@ -396,6 +398,15 @@ namespace Microsoft.PowerShell
                 {
                     _configurationName = value;
                 }
+            }
+        }
+
+        internal bool StartIPClistener
+        {
+            get
+            {
+                AssertArgumentsParsed();
+                return _startIPCListener;
             }
         }
 
@@ -940,6 +951,11 @@ namespace Microsoft.PowerShell
                 {
                     _noInteractive = false;
                     ParametersUsed |= ParameterBitmap.Interactive;
+                }
+                else if (MatchSwitch(switchKey, "startipclistener", "startipc"))
+                {
+                    _startIPCListener = true;
+                    ParametersUsed |= ParameterBitmap.StartIPCListener;
                 }
                 else if (MatchSwitch(switchKey, "configurationfile", "configurationfile"))
                 {
@@ -1514,6 +1530,7 @@ namespace Microsoft.PowerShell
         private bool _sshServerMode;
         private bool _noProfileLoadTime;
         private bool _showVersion;
+        private bool _startIPCListener;
         private string? _configurationFile;
         private string? _configurationName;
         private string? _error;
