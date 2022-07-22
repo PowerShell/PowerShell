@@ -206,10 +206,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             lock (cimSessionProxyCacheLock)
             {
-                if (this.cimSessionProxyCache == null)
-                {
-                    this.cimSessionProxyCache = new List<CimSessionProxy>();
-                }
+                this.cimSessionProxyCache ??= new List<CimSessionProxy>();
 
                 if (!this.cimSessionProxyCache.Contains(sessionproxy))
                 {
