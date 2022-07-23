@@ -1770,9 +1770,28 @@ namespace System.Management.Automation
             {
                 RemoveLastNullCompletionResult(result);
 
-                string enumString = LanguagePrimitives.EnumSingleTypeConverter.EnumValues(parameterType);
-                string separator = CultureInfo.CurrentUICulture.TextInfo.ListSeparator;
-                string[] enumArray = enumString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                var enumNames = new List<string>();
+                foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
+                {
+                    if (att is ValidateRangeAttribute rangeAtt)
+                    {
+                        foreach (var value in parameterType.GetEnumValues())
+                        {
+                            // ValidateRangeAttribute ctor already validated MinRange/MaxRange not null and comparable type
+                            if (LanguagePrimitives.Compare(value, rangeAtt.MaxRange) != 1
+                                && LanguagePrimitives.Compare(value, rangeAtt.MinRange) != -1)
+                            {
+                                enumNames.Add(value.ToString());
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                if (enumNames.Count == 0)
+                {
+                    enumNames.AddRange(parameterType.GetEnumNames());
+                }
 
                 string wordToComplete = context.WordToComplete ?? string.Empty;
                 string quote = HandleDoubleAndSingleQuote(ref wordToComplete);
@@ -1780,7 +1799,7 @@ namespace System.Management.Automation
                 var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
                 var enumList = new List<string>();
 
-                foreach (string value in enumArray)
+                foreach (string value in enumNames)
                 {
                     if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
                     {
