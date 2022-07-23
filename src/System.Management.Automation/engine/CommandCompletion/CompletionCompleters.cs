@@ -4789,6 +4789,7 @@ namespace System.Management.Automation
             var lastAst = context.RelatedAsts?.Last();
             var variableAst = lastAst as VariableExpressionAst;
             var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
+            bool tokenAtCursorUsedBraces = (bool)(context.TokenAtCursor?.Text.StartsWith("${"));
 
             // Look for variables in the input (e.g. parameters, etc.) before checking session state - these
             // variables might not exist in session state yet.
@@ -4934,7 +4935,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        var completedName = (name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                        var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                 ? prefix + provider + name
                                                 : prefix + "{" + provider + name + "}";
                         AddUniqueVariable(hashedResults, results, completedName, name, tooltip);
@@ -4957,7 +4958,7 @@ namespace System.Management.Automation
                         if (!string.IsNullOrEmpty(name))
                         {
                             name = "env:" + name;
-                            var completedName = (name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                            var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                     ? prefix + name
                                                     : prefix + "{" + name + "}";
                             AddUniqueVariable(hashedResults, results, completedName, name, "[string]" + name);
@@ -4972,7 +4973,7 @@ namespace System.Management.Automation
             {
                 if (wildcardPattern.IsMatch(specialVariable))
                 {
-                    var completedName = (specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                    var completedName = (!tokenAtCursorUsedBraces && specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                             ? prefix + specialVariable
                                             : prefix + "{" + specialVariable + "}";
 
@@ -4998,7 +4999,7 @@ namespace System.Management.Automation
                             var name = driveInfo.Name;
                             if (name != null && !string.IsNullOrWhiteSpace(name) && name.Length > 1)
                             {
-                                var completedName = (name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                                var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                         ? prefix + name + ":"
                                                         : prefix + "{" + name + ":}";
 
@@ -5014,7 +5015,7 @@ namespace System.Management.Automation
                 {
                     if (scopePattern.IsMatch(scope))
                     {
-                        var completedName = (scope.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                        var completedName = (!tokenAtCursorUsedBraces && scope.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                 ? prefix + scope
                                                 : prefix + "{" + scope + "}";
                         AddUniqueVariable(hashedResults, results, completedName, scope, scope);

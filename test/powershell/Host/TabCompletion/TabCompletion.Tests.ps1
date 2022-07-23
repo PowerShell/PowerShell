@@ -358,6 +358,12 @@ switch ($x)
         $res.CompletionMatches[1].CompletionText | Should -BeExactly '-Functionality'
     }
 
+    It 'Should not remove braces when completing variable with braces' {
+        $Text = '"Hello${psversiont}World"'
+        $res = TabExpansion2 -inputScript $Text -cursorColumn $Text.IndexOf('p')
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '${PSVersionTable}'
+    }
+
     It 'Should work for variable assignment of enum type: <inputStr>' -TestCases @(
         @{ inputStr = '$ErrorActionPreference = '; filter = ''; doubleQuotes = $false }
         @{ inputStr = '$ErrorActionPreference='; filter = ''; doubleQuotes = $false }
