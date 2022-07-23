@@ -1345,6 +1345,16 @@ ConstructorTestClass(int i, bool b)
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'Configuration'
         }
 
+        It 'Tab completion for enum type parameter with ValidateRange is filtered' {
+            function baz ([ValidateRange([System.ConsoleColor]::Blue, [System.ConsoleColor]::Cyan)][consolecolor]$color) {}
+            $inputStr = 'baz -color '
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 3
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Blue'
+            $res.CompletionMatches[1].CompletionText | Should -BeExactly 'Cyan'
+            $res.CompletionMatches[2].CompletionText | Should -BeExactly 'Green'
+        }
+
         It "Test [CommandCompletion]::GetNextResult" {
             $inputStr = "Get-Command -Type Alias,c"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
