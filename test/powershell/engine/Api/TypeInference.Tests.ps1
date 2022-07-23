@@ -1251,6 +1251,12 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should -Be 1
         $res.Name | Should -Be 'System.Int32[]'
     }
+
+    It 'Infers type of index item in an ICollection' -Skip:(!$IsWindows) {
+        $res = [AstTypeInference]::InferTypeOf( { (Get-Acl -Path C:\).Access[0] }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Security.AccessControl.AuthorizationRule'
+    }
 }
 
 Describe "AstTypeInference tests" -Tags CI {
