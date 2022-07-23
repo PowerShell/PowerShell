@@ -1115,7 +1115,7 @@ ConstructorTestClass(int i, bool b)
                 @{ inputStr = '[System.Management.Automation.Runspaces.runspacef'; expected = 'System.Management.Automation.Runspaces.RunspaceFactory'; setup = $null }
                 @{ inputStr = '[specialfol'; expected = 'System.Environment+SpecialFolder'; setup = $null }
                 ## tab completion for variable names in '{}'
-                @{ inputStr = '${PSDefault'; expected = '$PSDefaultParameterValues'; setup = $null }
+                @{ inputStr = '${PSDefault'; expected = '${PSDefaultParameterValues}'; setup = $null }
             )
         }
 
