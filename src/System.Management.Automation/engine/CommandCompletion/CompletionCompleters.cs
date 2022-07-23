@@ -1770,27 +1770,22 @@ namespace System.Management.Automation
             {
                 RemoveLastNullCompletionResult(result);
 
-                var enumNames = new List<string>();
+                var enumValues = parameterType.GetEnumValues().Cast<Enum>().ToList();
+                // Exclude values not accepted by ValidateRange-attributes
                 foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
                 {
                     if (att is ValidateRangeAttribute rangeAtt)
                     {
-                        foreach (var value in parameterType.GetEnumValues())
+                        for (int i = enumValues.Count - 1; i >= 0; i--)
                         {
                             // ValidateRangeAttribute ctor already validated MinRange/MaxRange not null and comparable type
-                            if (LanguagePrimitives.Compare(value, rangeAtt.MaxRange) != 1
-                                && LanguagePrimitives.Compare(value, rangeAtt.MinRange) != -1)
+                            if (LanguagePrimitives.Compare(enumValues[i], rangeAtt.MaxRange) == 1
+                                || LanguagePrimitives.Compare(enumValues[i], rangeAtt.MinRange) == -1)
                             {
-                                enumNames.Add(value.ToString());
+                                enumValues.RemoveAt(i);
                             }
                         }
-                        break;
                     }
-                }
-
-                if (enumNames.Count == 0)
-                {
-                    enumNames.AddRange(parameterType.GetEnumNames());
                 }
 
                 string wordToComplete = context.WordToComplete ?? string.Empty;
@@ -1799,7 +1794,7 @@ namespace System.Management.Automation
                 var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
                 var enumList = new List<string>();
 
-                foreach (string value in enumNames)
+                foreach (string value in enumValues.ConvertAll(v => v.ToString()))
                 {
                     if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
                     {
