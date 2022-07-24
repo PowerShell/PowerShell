@@ -1347,7 +1347,7 @@ ConstructorTestClass(int i, bool b)
 
         It 'Tab completion for enum parameter is filtered against <Name>' -TestCases @(
             @{ Name = 'ValidateRange with enum-values'; Attribute = '[ValidateRange([System.ConsoleColor]::Blue, [System.ConsoleColor]::Cyan)]' }
-            @{ Name = 'ValidateRange with enum-values'; Attribute = '[ValidateRange(9, 11)]' }
+            @{ Name = 'ValidateRange with int-values'; Attribute = '[ValidateRange(9, 11)]' }
             @{ Name = 'multiple ValidateRange-attributes'; Attribute = '[ValidateRange([System.ConsoleColor]::Blue, [System.ConsoleColor]::Cyan)][ValidateRange([System.ConsoleColor]::Gray, [System.ConsoleColor]::Red)]' }
         ) {
             param($Name, $Attribute)
@@ -1359,6 +1359,15 @@ ConstructorTestClass(int i, bool b)
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Blue'
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'Cyan'
             $res.CompletionMatches[2].CompletionText | Should -BeExactly 'Green'
+        }
+
+        It 'Tab completion for enum parameter is filtered with ValidateRange using rangekind' {
+            $functionDefinition = 'param ( [ValidateRange([System.Management.Automation.ValidateRangeKind]::NonPositive)][consolecolor]$color )' -f $Attribute
+            Set-Item -Path function:baz -Value $functionDefinition
+            $inputStr = 'baz -color '
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Black' # 0 = NonPositive
         }
 
         It "Test [CommandCompletion]::GetNextResult" {
