@@ -3228,20 +3228,22 @@ namespace Microsoft.PowerShell.Commands
                 {
                     newManifestInfo.PrivateData = manifestInfo.PrivateData;
                 }
-
-                // Assign the PowerShellGet related properties from the module manifest
-                foreach (var tag in manifestInfo.Tags)
+                else
                 {
-                    newManifestInfo.AddToTags(tag);
+                    // Assign the PowerShellGet related properties from the module manifest
+                    foreach (var tag in manifestInfo.Tags)
+                    {
+                        newManifestInfo.AddToTags(tag);
+                    }
+
+                    newManifestInfo.ReleaseNotes = manifestInfo.ReleaseNotes;
+                    newManifestInfo.ProjectUri = manifestInfo.ProjectUri;
+                    newManifestInfo.LicenseUri = manifestInfo.LicenseUri;
+                    newManifestInfo.IconUri = manifestInfo.IconUri;
                 }
 
-                newManifestInfo.ReleaseNotes = manifestInfo.ReleaseNotes;
-                newManifestInfo.ProjectUri = manifestInfo.ProjectUri;
-                newManifestInfo.LicenseUri = manifestInfo.LicenseUri;
-                newManifestInfo.IconUri = manifestInfo.IconUri;
                 newManifestInfo.RepositorySourceLocation = manifestInfo.RepositorySourceLocation;
                 newManifestInfo.IsConsideredEditionCompatible = manifestInfo.IsConsideredEditionCompatible;
-
                 newManifestInfo.ExperimentalFeatures = manifestInfo.ExperimentalFeatures;
 
                 // If we are in module discovery, then fix the path.
