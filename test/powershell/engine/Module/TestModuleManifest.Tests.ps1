@@ -274,3 +274,24 @@ Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
         }
     }
 }
+
+Describe 'Testing module with wildcard export' -Tags 'CI' {
+    BeforeAll {
+        $modulePath = 'testdrive:/wildcardexport'
+        New-Item -ItemType Directory -Path $modulePath > $null
+    }
+
+    AfterAll {
+        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue testdrive:/module
+    }
+
+    It 'PSModuleInfo does not accumulate tags' {
+        # https://github.com/PowerShell/PowerShell/issues/17694
+        New-Item -ItemType File -Path "$modulePath\tags.psm1" > $null
+        New-ModuleManifest -Path "$modulePath\tags.psd1" -RootModule 'tags.psm1' -FunctionsToExport '*' -Tags 'one'
+        $module = Test-ModuleManifest -Path "$modulePath\tags.psd1"
+        $module = Test-ModuleManifest -Path "$modulePath\tags.psd1"
+        $module.Tags | Should -HaveCount 1
+        $module.Tags | Should -BeExactly 'one'
+    }
+}
