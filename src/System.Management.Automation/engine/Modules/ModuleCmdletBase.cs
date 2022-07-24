@@ -6240,7 +6240,12 @@ namespace Microsoft.PowerShell.Commands
             }
 
             if (module != null)
-                return module.Clone();
+            {
+                var cachedModule = module.Clone();
+                // Create new Tags-list to break reference
+                cachedModule.ResetTags();
+                return cachedModule;
+            }
 
             // fake/empty manifestInfo for processing in (!loadElements) mode
             module = new PSModuleInfo(filename, null, null);

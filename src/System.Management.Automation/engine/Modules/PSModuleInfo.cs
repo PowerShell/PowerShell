@@ -400,11 +400,16 @@ namespace System.Management.Automation
             get { return _tags; }
         }
 
-        private readonly List<string> _tags = new List<string>();
+        private List<string> _tags = new List<string>();
 
         internal void AddToTags(string tag)
         {
             _tags.Add(tag);
+        }
+
+        internal void ResetTags()
+        {
+            _tags = new List<string>();
         }
 
         /// <summary>
