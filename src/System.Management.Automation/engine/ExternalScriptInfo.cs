@@ -384,7 +384,7 @@ namespace System.Management.Automation
 
                 // If we got here, there was some sort of parsing exception.  We'll just
                 // ignore it and assume the script does not implement dynamic parameters.
-                // Futhermore, we'll clear out the fields so that the next attempt to
+                // Furthermore, we'll clear out the fields so that the next attempt to
                 // access ScriptBlock will result in an exception that doesn't get ignored.
                 _scriptBlock = null;
                 _scriptContents = null;

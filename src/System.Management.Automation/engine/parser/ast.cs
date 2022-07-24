@@ -1639,9 +1639,7 @@ namespace System.Management.Automation.Language
         private string GetWithInputHandlingForInvokeCommandImpl(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple)
         {
             // do not add "$input |" to complex pipelines
-            string unused1;
-            string unused2;
-            var pipelineAst = GetSimplePipeline(false, out unused1, out unused2);
+            var pipelineAst = GetSimplePipeline(false, out _, out _);
             if (pipelineAst == null)
             {
                 return (usingVariablesTuple == null)
@@ -3469,6 +3467,8 @@ namespace System.Management.Automation.Language
 
         internal IScriptExtent NameExtent { get { return _functionDefinitionAst.NameExtent; } }
 
+        private string _toolTip;
+
         /// <summary>
         /// Copy a function member ast.
         /// </summary>
@@ -3483,28 +3483,56 @@ namespace System.Management.Automation.Language
 
         internal override string GetTooltip()
         {
-            var sb = new StringBuilder();
-            if (IsStatic)
+            if (!string.IsNullOrEmpty(_toolTip))
             {
-                sb.Append("static ");
+                return _toolTip;
             }
 
-            sb.Append(IsReturnTypeVoid() ? "void" : ReturnType.TypeName.FullName);
-            sb.Append(' ');
-            sb.Append(Name);
-            sb.Append('(');
-            for (int i = 0; i < Parameters.Count; i++)
+            var sb = new StringBuilder();
+            var classMembers = ((TypeDefinitionAst)Parent).Members;
+            for (int i = 0; i < classMembers.Count; i++)
             {
-                if (i > 0)
+                var methodMember = classMembers[i] as FunctionMemberAst;
+                if (methodMember is null ||
+                    !Name.Equals(methodMember.Name) ||
+                    IsStatic != methodMember.IsStatic)
                 {
-                    sb.Append(", ");
+                    continue;
                 }
 
-                sb.Append(Parameters[i].GetTooltip());
+                if (sb.Length > 0)
+                {
+                    sb.AppendLine();
+                }
+
+                if (methodMember.IsStatic)
+                {
+                    sb.Append("static ");
+                }
+
+                if (!methodMember.IsConstructor)
+                {
+                    sb.Append(methodMember.IsReturnTypeVoid() ? "void" : methodMember.ReturnType.TypeName.FullName);
+                    sb.Append(' ');
+                }
+
+                sb.Append(methodMember.Name);
+                sb.Append('(');
+                for (int j = 0; j < methodMember.Parameters.Count; j++)
+                {
+                    if (j > 0)
+                    {
+                        sb.Append(", ");
+                    }
+
+                    sb.Append(methodMember.Parameters[j].GetTooltip());
+                }
+
+                sb.Append(')');
             }
 
-            sb.Append(')');
-            return sb.ToString();
+            _toolTip = sb.ToString();
+            return _toolTip;
         }
 
         #region Visitors

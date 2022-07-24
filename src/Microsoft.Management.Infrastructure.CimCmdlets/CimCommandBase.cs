@@ -390,10 +390,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             // Looking for default parameter set
-            if (boundParameterSetName == null)
-            {
-                boundParameterSetName = defaultParameterSetName;
-            }
+            boundParameterSetName ??= defaultParameterSetName;
 
             // throw if still can not find the parameter set name
             if (boundParameterSetName == null)

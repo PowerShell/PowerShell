@@ -506,7 +506,7 @@ namespace System.Management.Automation
 
         private const int DisposedTrue = 1;
         private const int DisposedFalse = 0;
-        // This variable is set to true if atleast one child job failed.
+        // This variable is set to true if at least one child job failed.
 
         // count of number of child jobs which have finished
         private int _finishedChildJobsCount = 0;

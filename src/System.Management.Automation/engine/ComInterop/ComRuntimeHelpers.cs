@@ -322,7 +322,7 @@ namespace System.Management.Automation.ComInterop
             Debug.Assert(obj != null);
 
             // GetNativeVariantForObject is very expensive for values that marshal as VT_DISPATCH
-            // also is is extremely common scenario when object at hand is an RCW.
+            // also is extremely common scenario when object at hand is an RCW.
             // Therefore we are going to test for IDispatch before defaulting to GetNativeVariantForObject.
             if (obj is IDispatch)
             {

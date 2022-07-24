@@ -1561,7 +1561,7 @@ function Publish-TestResults
 
         # If we attempt to upload a result file which has no test cases in it, then vsts will produce a warning
         # so check to be sure we actually have a result file that contains test cases to upload.
-        # If the the "test-case" count is greater than 0, then we have results.
+        # If the "test-case" count is greater than 0, then we have results.
         # Regardless, we want to upload this as an artifact, so this logic doesn't pertain to that.
         if ( @(([xml](Get-Content $Path)).SelectNodes(".//test-case")).Count -gt 0 -or $Type -eq 'XUnit' ) {
             Write-Host "##vso[results.publish type=$Type;mergeResults=true;runTitle=$Title;publishRunAttachments=true;resultFiles=$tempFilePath;failTaskOnFailedTests=true]"
@@ -1760,8 +1760,14 @@ function Start-PSxUnit {
         throw "PowerShell must be built before running tests!"
     }
 
+    $originalDOTNET_ROOT = $env:DOTNET_ROOT
+
     try {
         Push-Location $PSScriptRoot/test/xUnit
+
+        # Add workaround to unblock xUnit testing see issue: https://github.com/dotnet/sdk/issues/26462
+        $dotnetPath = if ($environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
+        $env:DOTNET_ROOT = $dotnetPath
 
         # Path manipulation to obtain test project output directory
 
@@ -1806,6 +1812,7 @@ function Start-PSxUnit {
         Publish-TestResults -Path $xUnitTestResultsFile -Type 'XUnit' -Title 'Xunit Sequential'
     }
     finally {
+        $env:DOTNET_ROOT = $originalDOTNET_ROOT
         Pop-Location
     }
 }
@@ -1868,7 +1875,7 @@ function Install-Dotnet {
             }
 
             if ($Version) {
-                $bashArgs = @("./$installScript", '-v', $Version, '-q', $Quality)
+                $bashArgs = @("./$installScript", '-v', $Version)
             }
             elseif ($Channel) {
                 $bashArgs = @("./$installScript", '-c', $Channel, '-q', $Quality)

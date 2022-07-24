@@ -721,7 +721,7 @@ namespace System.Management.Automation
             string moduleDirPath = Path.GetDirectoryName(modulePath);
 
             // The module itself may be in a versioned directory (case 3)
-            if (Version.TryParse(Path.GetFileName(moduleDirPath), out Version unused))
+            if (Version.TryParse(Path.GetFileName(moduleDirPath), out _))
             {
                 moduleDirPath = Path.GetDirectoryName(moduleDirPath);
             }

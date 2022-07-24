@@ -185,8 +185,7 @@ namespace System.Management.Automation.Language
                         // valuetype because the parameter has no value yet.  For example:
                         //     & { param([System.Reflection.MemberTypes]$m) ($null -eq $m) }
 
-                        object unused;
-                        if (!Compiler.TryGetDefaultParameterValue(analysisDetails.Type, out unused))
+                        if (!Compiler.TryGetDefaultParameterValue(analysisDetails.Type, out _))
                         {
                             analysisDetails.LocalTupleIndex = VariableAnalysis.ForceDynamic;
                         }

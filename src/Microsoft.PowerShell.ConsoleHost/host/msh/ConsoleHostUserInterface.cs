@@ -207,9 +207,8 @@ namespace Microsoft.PowerShell
             HandleThrowOnReadAndPrompt();
 
             // call our internal version such that it does not end input on a tab
-            ReadLineResult unused;
 
-            return ReadLine(false, string.Empty, out unused, true, true);
+            return ReadLine(false, string.Empty, out _, true, true);
         }
 
         /// <summary>
@@ -1209,8 +1208,7 @@ namespace Microsoft.PowerShell
         public override void WriteDebugLine(string message)
         {
             // don't lock here as WriteLine is already protected.
-            bool unused;
-            message = HostUtilities.RemoveGuidFromMessage(message, out unused);
+            message = HostUtilities.RemoveGuidFromMessage(message, out _);
 
             // We should write debug to error stream only if debug is redirected.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
@@ -1270,8 +1268,7 @@ namespace Microsoft.PowerShell
         public override void WriteVerboseLine(string message)
         {
             // don't lock here as WriteLine is already protected.
-            bool unused;
-            message = HostUtilities.RemoveGuidFromMessage(message, out unused);
+            message = HostUtilities.RemoveGuidFromMessage(message, out _);
 
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
@@ -1314,8 +1311,7 @@ namespace Microsoft.PowerShell
         public override void WriteWarningLine(string message)
         {
             // don't lock here as WriteLine is already protected.
-            bool unused;
-            message = HostUtilities.RemoveGuidFromMessage(message, out unused);
+            message = HostUtilities.RemoveGuidFromMessage(message, out _);
 
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)

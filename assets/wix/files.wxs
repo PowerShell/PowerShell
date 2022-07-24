@@ -1554,17 +1554,8 @@
         <Component Id="cmp19ADFEFDD03047828CF493B5B5CE7B6E">
           <File Id="filCE65C019A32144BB9E9CCA3D5E634E32" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Net.Http.Json.dll" />
         </Component>
-        <Component Id="cmp72C41225E0B4457C8CB5F4C5FE6E3187" Guid="{ee32f38f-14ee-4a85-914f-d02522cc3635}">
-          <File Id="fil04B0F83A7AED430A86A7E6E3E99AB45D" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Formats.Asn1.dll" />
-        </Component>
-        <Component Id="cmpEE26930D65E346FDAE1B3E07F5DBEF77">
-          <File Id="filBC93A3F22F78439F8D4173E4C64ACFDC" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Text.Encodings.Web.dll" />
-        </Component>
         <Component Id="cmp834F3E0C83664E92B0D115A39A8FAACB">
           <File Id="fil6A09131961874B31AC3EBEC863CC12C4" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Runtime.CompilerServices.Unsafe.dll" />
-        </Component>
-        <Component Id="cmp68158D010ECB439582D041355BFACCBB">
-          <File Id="filB8694A0190CA422E9462870B514B813C" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\System.Text.Encoding.CodePages.dll" />
         </Component>
         <Component Id="cmp690F24F04C044127A61754363A4D63E3">
           <File Id="fil5BF6895A87684AC088DAB3759AA465BA" KeyPath="yes" Source="$(var.ProductSourcePath)\ref\Microsoft.Win32.Registry.dll" />
@@ -1678,9 +1669,6 @@
               <File Id="fil28C672F884A14B9D8ACFB6534423CA51" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PackageManagement\DSCResources\PackageManagementDscUtilities.psm1" />
             </Component>
             <Directory Name="MSFT_PackageManagementSource" Id="dir467F7C8961D842AEBB4188D2F3004198">
-              <Component Id="cmp8C23BECAFDBB4039A255DE6246A30726">
-                <File Id="filB3CEF74508FF4DEDADF38F9046799EFB" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.schema.mfl" />
-              </Component>
               <Component Id="cmp09A46C31077C4BDCB8606FB4DD6CAE01">
                 <File Id="fil3127E5CBC6F84A86A649AEEC7F05EE4F" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagementSource\MSFT_PackageManagementSource.psm1" />
               </Component>
@@ -1694,9 +1682,6 @@
             <Directory Name="MSFT_PackageManagement" Id="dirBFCFB87C5E0E43C5BE7FD2C052C5946A">
               <Component Id="cmpF297CB46D5944DC38C68B376140BDF5C">
                 <File Id="filFB1C81A053634DCFB01E3A3F7E9FE84F" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.strings.psd1" />
-              </Component>
-              <Component Id="cmpA5CB9D3B3C794D2E9750BFF7C9709C83">
-                <File Id="fil27BF11C40A504DDB9CDAE9E293F5EAD8" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.schema.mfl" />
               </Component>
               <Component Id="cmp98E30699A7504181B61707E99DCC0EC1">
                 <File Id="fil5C51CE77EF584ECDB345C613EB0EA4FE" KeyPath="yes" Source="$(var.ProductSourcePath)\Modules\PackageManagement\DSCResources\MSFT_PackageManagement\MSFT_PackageManagement.psm1" />
@@ -3138,8 +3123,8 @@
       <Component Id="cmp8A466581FE0540CEB2210C64DA5F970B">
         <File Id="filE75D9761159B495A8DF7A1035E36EF05" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Formats.Tar.dll" />
       </Component>
-      <Component Id="cmp1BCC0D0458494D89B527324A8E131D18">
-        <File Id="fil81CF1F7D16E34E6BAD003EF106FE384A" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.22904.dll" />
+      <Component Id="cmpCFB2D3927EB549CC9C65DA87B6BDC1F0">
+        <File Id="filCDB455902F6848C4ADC51ECA2BD8D99E" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.32404.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -3678,12 +3663,10 @@
       <ComponentRef Id="cmpF79A92F228AF5EA2BA60CC33BE9DC6A0" />
       <ComponentRef Id="cmp603C5B38651EE30C8E23FD7C8A4B828D" />
       <ComponentRef Id="cmpDDD9F623B3DC4A6DB15A013734FFFACB" />
-      <ComponentRef Id="cmp8C23BECAFDBB4039A255DE6246A30726" />
       <ComponentRef Id="cmp09A46C31077C4BDCB8606FB4DD6CAE01" />
       <ComponentRef Id="cmpC2EEED1CA2094DB1B760297F2374216A" />
       <ComponentRef Id="cmp8B763D3852654517B3E25C9CA5247D5F" />
       <ComponentRef Id="cmpF297CB46D5944DC38C68B376140BDF5C" />
-      <ComponentRef Id="cmpA5CB9D3B3C794D2E9750BFF7C9709C83" />
       <ComponentRef Id="cmp98E30699A7504181B61707E99DCC0EC1" />
       <ComponentRef Id="cmp61560691133844F886A1E72130659721" />
       <ComponentRef Id="cmpA83063651AF54638A78187CA67953118" />
@@ -4092,15 +4075,12 @@
       <ComponentRef Id="cmpBB705B2570064C99A71B6FA65CDF9DC8" />
       <ComponentRef Id="cmpE9599A00802144DF98F5792E029C8875" />
       <ComponentRef Id="cmp0989343D60B74AF082291F612F0E6FA6" />
-      <ComponentRef Id="cmp72C41225E0B4457C8CB5F4C5FE6E3187" />
       <ComponentRef Id="cmp0BD7D15E0377407FA4C43BFE89F0C12E" />
       <ComponentRef Id="cmpC0FFB3F4FB30438082D2DC0F4E4BF12D" />
       <ComponentRef Id="cmpB92B70CEFC2F438386F97264FB436CDD" />
-      <ComponentRef Id="cmpEE26930D65E346FDAE1B3E07F5DBEF77" />
       <ComponentRef Id="cmp8635213A03B04AAE8E1BFB7EA85E0DB2" />
       <ComponentRef Id="cmp834F3E0C83664E92B0D115A39A8FAACB" />
       <ComponentRef Id="cmp2BB002B115C247FFB3353C80CAAC10B3" />
-      <ComponentRef Id="cmp68158D010ECB439582D041355BFACCBB" />
       <ComponentRef Id="cmp3547A55EA9D04784B4CF2FC717447E16" />
       <ComponentRef Id="cmp690F24F04C044127A61754363A4D63E3" />
       <ComponentRef Id="cmpFAD6557C4AEC48B89DDC4E6485C020C4" />
@@ -4148,8 +4128,8 @@
       <ComponentRef Id="cmp0AB1EF494922410AB17DC61097295172" />
       <ComponentRef Id="cmpF735DF855B6A444E8874E7FD15796C37" />
       <ComponentRef Id="cmp8A466581FE0540CEB2210C64DA5F970B" />
-      <ComponentRef Id="cmp1BCC0D0458494D89B527324A8E131D18" />
       <ComponentRef Id="cmp044F67223E6D490D8533691BF50B2B86" />
+      <ComponentRef Id="cmpCFB2D3927EB549CC9C65DA87B6BDC1F0" />
     </ComponentGroup>
   </Fragment>
 </Wix>

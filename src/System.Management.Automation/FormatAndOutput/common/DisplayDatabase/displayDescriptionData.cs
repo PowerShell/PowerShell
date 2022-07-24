@@ -361,6 +361,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class FieldFormattingDirective
     {
         internal string formatString = null; // optional
+        internal bool isTable = false;
     }
 
     #endregion Elementary Tokens

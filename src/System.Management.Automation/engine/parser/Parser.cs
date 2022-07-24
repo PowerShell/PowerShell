@@ -280,8 +280,7 @@ namespace System.Management.Automation.Language
             var parser = new Parser();
             var tokenizer = parser._tokenizer;
             tokenizer.Initialize(null, typename, null);
-            Token unused;
-            var result = parser.TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out unused);
+            var result = parser.TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out _);
 
             SemanticChecks.CheckArrayTypeNameDepth(result, PositionUtilities.EmptyExtent, parser);
             if (!ignoreErrors && parser.ErrorList.Count > 0)
@@ -2933,7 +2932,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            if (configurationNameToken.Kind == TokenKind.EndOfInput)
+            if (configurationNameToken.Kind is TokenKind.EndOfInput or TokenKind.Comma)
             {
                 UngetToken(configurationNameToken);
 
@@ -4265,11 +4264,10 @@ namespace System.Management.Automation.Language
                     this.SkipToken();
                     SkipNewlines();
                     ITypeName superClass;
-                    Token unused;
                     Token commaToken = null;
                     while (true)
                     {
-                        superClass = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
+                        superClass = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out _);
                         if (superClass == null)
                         {
                             ReportIncompleteInput(After(ExtentFromFirstOf(commaToken, colonToken)),
@@ -4750,8 +4748,7 @@ namespace System.Management.Automation.Language
                     this.SkipToken();
                     SkipNewlines();
                     ITypeName underlyingType;
-                    Token unused;
-                    underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
+                    underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out _);
                     if (underlyingType == null)
                     {
                         ReportIncompleteInput(
@@ -5020,13 +5017,19 @@ namespace System.Management.Automation.Language
                     SkipToken();
 
                     var aliasToken = NextToken();
-                    if (aliasToken.Kind == TokenKind.EndOfInput)
+                    if (aliasToken.Kind is TokenKind.EndOfInput or TokenKind.NewLine or TokenKind.Semi)
                     {
                         UngetToken(aliasToken);
                         ReportIncompleteInput(After(equalsToken),
                             nameof(ParserStrings.MissingNamespaceAlias),
                             ParserStrings.MissingNamespaceAlias);
                         return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
+                    }
+
+                    if (aliasToken.Kind == TokenKind.Comma)
+                    {
+                        ReportError(aliasToken.Extent, nameof(ParserStrings.UnexpectedUnaryOperator), ParserStrings.UnexpectedUnaryOperator, aliasToken.Text);
+                        return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
                     }
 
                     var aliasAst = GetCommandArgument(CommandArgumentContext.CommandArgument, aliasToken);
@@ -5036,7 +5039,19 @@ namespace System.Management.Automation.Language
                     }
                     else if (aliasAst is not StringConstantExpressionAst)
                     {
-                        return new ErrorStatementAst(ExtentOf(usingToken, aliasAst), new Ast[] { itemAst, aliasAst });
+                        var errorExtent = ExtentFromFirstOf(aliasAst, aliasToken);
+                        Ast[] nestedAsts;
+                        if (aliasAst is null)
+                        {
+                            nestedAsts = new Ast[] { itemAst };
+                        }
+                        else
+                        {
+                            nestedAsts = new Ast[] { itemAst, aliasAst };
+                        }
+
+                        ReportError(errorExtent, nameof(ParserStrings.InvalidValueForUsingItemName), ParserStrings.InvalidValueForUsingItemName, errorExtent.Text);
+                        return new ErrorStatementAst(ExtentOf(usingToken, errorExtent), nestedAsts);
                     }
 
                     RequireStatementTerminator();
@@ -5226,7 +5241,7 @@ namespace System.Management.Automation.Language
                                 SkipToken();
                                 // we don't allow syntax
                                 // : base{ script }
-                                // as a short for for
+                                // as a short for
                                 // : base( { script } )
                                 baseCtorCallParams = InvokeParamParenListRule(lParen, out baseCallLastExtent);
                                 this.SkipNewlines();

@@ -3937,8 +3937,7 @@ namespace System.Management.Automation.Runspaces
                     throw PSTraceSource.NewArgumentException("typeFile", TypesXmlStrings.TypeFileNotRooted, typefile);
                 }
 
-                bool unused;
-                Initialize(string.Empty, typefile, errors, authorizationManager, host, out unused);
+                Initialize(string.Empty, typefile, errors, authorizationManager, host, out _);
                 _typeFileList.Add(typefile);
             }
 

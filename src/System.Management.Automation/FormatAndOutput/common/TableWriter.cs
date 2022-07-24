@@ -483,7 +483,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (currentValueDisplayLength < width)
             {
                 // the string is shorter than the width of the column
-                // need to pad with with blanks to reach the desired width
+                // need to pad with blanks to reach the desired width
                 int padCount = width - currentValueDisplayLength;
                 switch (alignment)
                 {

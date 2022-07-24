@@ -504,7 +504,7 @@ Describe "Type inference Tests" -tags "CI" {
     It "Infers typeof Select-Object when Parameter is ExcludeProperty" {
         $res = [AstTypeInference]::InferTypeOf( {  [io.fileinfo]::new("file")  |  Select-Object -ExcludeProperty *Time*, E* }.Ast)
         $res.Count | Should -Be 1
-        $res[0].Name | Should -BeExactly "System.Management.Automation.PSObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LengthString:LinkTarget:LinkType:Mode:ModeWithoutHardLink:Name:NameString:ResolvedTarget:Target:VersionInfo"
+        $res[0].Name | Should -BeExactly "System.Management.Automation.PSObject#Attributes:BaseName:Directory:DirectoryName:FullName:IsReadOnly:Length:LengthString:LinkTarget:LinkType:Mode:ModeWithoutHardLink:Name:NameString:ResolvedTarget:Target:UnixFileMode:VersionInfo"
         $names = $res[0].Members.Name
         $names -contains "BaseName" | Should -BeTrue
         $names -contains "Name" | Should -BeTrue
@@ -1226,6 +1226,24 @@ Describe "Type inference Tests" -tags "CI" {
             }.Ast.Find( {param($ast) $ast -is [System.Management.Automation.Language.BaseCtorInvokeMemberExpressionAst]}, $true))
 
         $res.Count | Should -Be BaseType
+    }
+
+    It 'Infers type of "as" operator statement' {
+        $res = [AstTypeInference]::InferTypeOf( { $null -as [int] }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Int32'
+    }
+
+    It 'Infers type of $_ in a method scriptblock' {
+        $res = [AstTypeInference]::InferTypeOf( { ("","").ForEach({$_}) }.Ast.Find({param($ast) $ast -is [System.Management.Automation.Language.VariableExpressionAst]}, $true))
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.String'
+    }
+
+    It 'Infers type of index item in an IList' {
+        $res = [AstTypeInference]::InferTypeOf( { ([System.Collections.Generic.IList[System.Text.StringBuilder]]$null)[0] }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Text.StringBuilder'
     }
 
     It 'Infers type of generic method invocation with type parameters' {

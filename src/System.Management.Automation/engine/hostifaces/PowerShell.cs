@@ -4351,7 +4351,7 @@ namespace System.Management.Automation
                     }
                     finally
                     {
-                        // takes care exception occured with invokeAsyncResult
+                        // takes care exception occurred with invokeAsyncResult
                         if (isExceptionOccured && (tempStopAsyncResult != null))
                         {
                             tempStopAsyncResult.Release();
@@ -4402,7 +4402,7 @@ namespace System.Management.Automation
                     }
                     finally
                     {
-                        // takes care exception occured with invokeAsyncResult
+                        // takes care exception occurred with invokeAsyncResult
                         if (isExceptionOccured && (tempStopAsyncResult != null))
                         {
                             tempStopAsyncResult.Release();
