@@ -1776,15 +1776,7 @@ namespace System.Management.Automation
                 {
                     if (att is ValidateRangeAttribute rangeAtt)
                     {
-                        for (int i = enumValues.Count - 1; i >= 0; i--)
-                        {
-                            // ValidateRangeAttribute ctor already validated MinRange/MaxRange not null and comparable type
-                            if (LanguagePrimitives.Compare(enumValues[i], rangeAtt.MaxRange) == 1
-                                || LanguagePrimitives.Compare(enumValues[i], rangeAtt.MinRange) == -1)
-                            {
-                                enumValues.RemoveAt(i);
-                            }
-                        }
+                        enumValues = rangeAtt.FilterElements(enumValues);
                     }
                 }
 

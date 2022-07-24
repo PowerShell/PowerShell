@@ -1311,6 +1311,21 @@ namespace System.Management.Automation
 
             return resultType;
         }
+
+        internal List<T> FilterElements<T>(IEnumerable<T> elements)
+        {
+            var result = new List<T>();
+            foreach (var value in elements)
+            {
+                try
+                {
+                    ValidateElement(value);
+                    result.Add(value);
+                }
+                catch { }
+            }
+            return result;
+        }
     }
 
     /// <summary>
