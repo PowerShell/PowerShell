@@ -178,12 +178,12 @@ Creating Scriptblock text \(1 of 1\):#012{0}(⏎|#012)*ScriptBlock ID: [0-9a-z\-
         $items | Should -Not -Be $null
         $items.Length | Should -BeGreaterThan 1
         $items[0].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStart:PowershellConsoleStartup.WinStart.Informational'
-        $items[2].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
+        $items[1].EventId | Should -BeExactly 'Perftrack_ConsoleStartupStop:PowershellConsoleStartup.WinStop.Informational'
         # if there are more items than expected...
-        if ($items.Length -gt 3)
+        if ($items.Length -gt 2)
         {
             # Force reporting of the first unexpected item to help diagnosis
-            $items[3] | Should -Be $null
+            $items[2] | Should -Be $null
         }
     }
 
