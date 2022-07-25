@@ -114,10 +114,7 @@ namespace System.Management.Automation
         // Helper for generated code to handle running w/ no execution context
         internal static bool IsStrictVersion(ExecutionContext context, int majorVersion)
         {
-            if (context == null)
-            {
-                context = LocalPipeline.GetExecutionContextFromTLS();
-            }
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
 
             return (context != null) && context.IsStrictVersion(majorVersion);
         }
@@ -219,10 +216,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (_providerNames == null)
-                {
-                    _providerNames = new SingleShellProviderNames();
-                }
+                _providerNames ??= new SingleShellProviderNames();
 
                 return _providerNames;
             }
@@ -1660,12 +1654,9 @@ namespace System.Management.Automation
             // Initialize the fixed toplevel session state and the current session state
             TopLevelSessionState = EngineSessionState = new SessionStateInternal(this);
 
-            if (AuthorizationManager == null)
-            {
-                // if authorizationmanager==null, this means the configuration
-                // explicitly asked for dummy authorization manager.
-                AuthorizationManager = new AuthorizationManager(null);
-            }
+            // if authorizationmanager==null, this means the configuration
+            // explicitly asked for dummy authorization manager.
+            AuthorizationManager ??= new AuthorizationManager(null);
 
             // Set up the module intrinsics
             Modules = new ModuleIntrinsics(this);

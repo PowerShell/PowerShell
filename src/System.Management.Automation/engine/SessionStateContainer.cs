@@ -4087,10 +4087,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (copyPath == null)
-            {
-                copyPath = string.Empty;
-            }
+            copyPath ??= string.Empty;
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
             context.Force = force;
@@ -4153,10 +4150,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
-            if (copyPath == null)
-            {
-                copyPath = string.Empty;
-            }
+            copyPath ??= string.Empty;
 
             // Get the provider specific path for the destination
 

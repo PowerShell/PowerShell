@@ -634,10 +634,7 @@ namespace System.Management.Automation
             // If second can be converted to the type of the first, it does so and returns first.Equals(secondConverted)
             // Otherwise false is returned
 
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
             if (!(formatProvider is CultureInfo culture))
             {
@@ -781,10 +778,7 @@ namespace System.Management.Automation
         /// </exception>
         public static int Compare(object first, object second, bool ignoreCase, IFormatProvider formatProvider)
         {
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
             if (!(formatProvider is CultureInfo culture))
             {
@@ -901,10 +895,7 @@ namespace System.Management.Automation
         public static bool TryCompare(object first, object second, bool ignoreCase, IFormatProvider formatProvider, out int result)
         {
             result = 0;
-            if (formatProvider == null)
-            {
-                formatProvider = CultureInfo.InvariantCulture;
-            }
+            formatProvider ??= CultureInfo.InvariantCulture;
 
             if (formatProvider is not CultureInfo culture)
             {
@@ -4675,7 +4666,7 @@ namespace System.Management.Automation
                                     Type propType;
                                     if (TypeResolver.TryResolveType(property.TypeNameOfValue, out propType))
                                     {
-                                        if (formatProvider == null) { formatProvider = CultureInfo.InvariantCulture; }
+                                        formatProvider ??= CultureInfo.InvariantCulture;
 
                                         try
                                         {
@@ -5743,10 +5734,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (converter == null)
-            {
-                converter = FigurePropertyConversion(fromType, toType, ref rank);
-            }
+            converter ??= FigurePropertyConversion(fromType, toType, ref rank);
 
             if (TypeConverterPossiblyExists(fromType) || TypeConverterPossiblyExists(toType)
                 || (converter != null && valueDependentConversion != null))

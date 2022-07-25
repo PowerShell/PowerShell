@@ -999,10 +999,7 @@ namespace System.Management.Automation
 
             // Construct the collection type information if it wasn't passed in.
 
-            if (collectionTypeInfo == null)
-            {
-                collectionTypeInfo = new ParameterCollectionTypeInformation(toType);
-            }
+            collectionTypeInfo ??= new ParameterCollectionTypeInformation(toType);
 
             object originalValue = currentValue;
             object result = currentValue;
