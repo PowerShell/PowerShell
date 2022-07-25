@@ -3,6 +3,7 @@
 
 Describe -Name "Windows MSI" -Fixture {
     BeforeAll {
+        Set-StrictMode -Off
         function Test-Elevated {
             [CmdletBinding()]
             [OutputType([bool])]
@@ -12,6 +13,62 @@ Describe -Name "Windows MSI" -Fixture {
             # the Administrator Group's well-known SID will show up in the Groups for the current identity.
             # Note that the SID won't show up unless the process is elevated.
             return (([Security.Principal.WindowsIdentity]::GetCurrent()).Groups -contains "S-1-5-32-544")
+        }
+
+        function Test-IsMuEnabled {
+            $sm = (New-Object -ComObject Microsoft.Update.ServiceManager)
+            $mu = $sm.Services | Where-Object { $_.ServiceId -eq '7971f918-a847-4430-9279-4a52d1efe18d' }
+            if ($mu) {
+                return $true
+            }
+            return $false
+        }
+
+        function Invoke-TestAndUploadLogOnFailure {
+            param (
+                [scriptblock] $Test
+            )
+
+            try {
+                & $Test
+            }
+            catch {
+                Send-VstsLogFile -Path $msiLog
+                throw
+            }
+        }
+
+        function Get-UseMU {
+            $useMu = $null
+            $key = 'HKLM:\SOFTWARE\Microsoft\PowerShellCore\'
+            if ($runtime -like '*x86*') {
+                $key = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\PowerShellCore\'
+            }
+
+            try {
+                $useMu = Get-ItemPropertyValue -Path $key -Name UseMU -ErrorAction SilentlyContinue
+            } catch {}
+
+            if (!$useMu) {
+                $useMu = 0
+            }
+
+            return $useMu
+        }
+
+        function Set-UseMU {
+            param(
+                [int]
+                $Value
+            )
+            $key = 'HKLM:\SOFTWARE\Microsoft\PowerShellCore\'
+            if ($runtime -like '*x86*') {
+                $key = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\PowerShellCore\'
+            }
+
+            Set-ItemProperty -Path $key -Name UseMU -Value $Value -Type DWord
+
+            return $useMu
         }
 
         function Invoke-Msiexec {
@@ -45,6 +102,7 @@ Describe -Name "Windows MSI" -Fixture {
             }
 
             $argumentList = "$switch $MsiPath /quiet /l*vx $msiLog $additionalOptions"
+            Write-Verbose -Message "running msiexec $argumentList"
             $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList $argumentList -NoNewWindow -PassThru
             if ($msiExecProcess.ExitCode -ne 0) {
                 $exitCode = $msiExecProcess.ExitCode
@@ -55,6 +113,7 @@ Describe -Name "Windows MSI" -Fixture {
         $msiX64Path = $env:PsMsiX64Path
         $channel = $env:PSMsiChannel
         $runtime = $env:PSMsiRuntime
+        $muEnabled = Test-IsMuEnabled
 
         # Get any existing powershell in the path
         $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
@@ -71,15 +130,13 @@ Describe -Name "Windows MSI" -Fixture {
         }
         $uploadedLog = $false
     }
+
+    AfterAll {
+        Set-StrictMode -Version 3.0
+    }
+
     BeforeEach {
         $error.Clear()
-    }
-    AfterEach {
-        if ($error.Count -ne 0 -and !$uploadedLog) {
-            Copy-Item -Path $msiLog -Destination $env:temp -Force
-            Write-Verbose "MSI log is at $env:temp\msilog.txt" -Verbose
-            $uploadedLog = $true
-        }
     }
 
     Context "Upgrade code" {
@@ -147,9 +204,18 @@ Describe -Name "Windows MSI" -Fixture {
     }
 
     Context "Add Path disabled" {
+        BeforeAll {
+            Set-UseMU -Value 0
+        }
+
+        It "UseMU should be 0 before install" -Skip:(!(Test-Elevated)) {
+            $useMu = Get-UseMU
+            $useMu | Should -Be 0
+        }
+
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
             {
-                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 0}
+                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 0; USE_MU = 1; ENABLE_MU = 1}
             } | Should -Not -Throw
         }
 
@@ -158,6 +224,43 @@ Describe -Name "Windows MSI" -Fixture {
                 Where-Object { $_ -like '*files\powershell*' -and $_ -notin $beforePath }
 
             $psPath | Should -BeNullOrEmpty
+        }
+
+        It "UseMU should be 1" -Skip:(!(Test-Elevated)) {
+            Invoke-TestAndUploadLogOnFailure -Test {
+                $useMu = Get-UseMU
+                $useMu | Should -Be 1
+            }
+        }
+
+        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
+            {
+                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
+            } | Should -Not -Throw
+        }
+    }
+
+    Context "USE_MU disabled" {
+        BeforeAll {
+            Set-UseMU -Value 0
+        }
+
+        It "UseMU should be 0 before install" -Skip:(!(Test-Elevated)) {
+            $useMu = Get-UseMU
+            $useMu | Should -Be 0
+        }
+
+        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
+            {
+                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{USE_MU = 0}
+            } | Should -Not -Throw
+        }
+
+        It "UseMU should be 0" -Skip:(!(Test-Elevated)) {
+            Invoke-TestAndUploadLogOnFailure -Test {
+                $useMu = Get-UseMU
+                $useMu | Should -Be 0
+            }
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {

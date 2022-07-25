@@ -51,6 +51,7 @@ pr:
     - src/Microsoft.WSMan.Runtime/Microsoft.WSMan.Runtime.csproj
     - src/Modules/PSGalleryModules.csproj
     - src/powershell-win-core/powershell-win-core.csproj
+    - test/packaging/windows/*
     - tools/ci.psm1
     - tools/packaging/*
 
@@ -67,10 +68,17 @@ variables:
   - name: __SuppressAnsiEscapeSequences
     value: 1
   - group: fakeNugetKey
+  - name: SBOMGenerator_Formats
+    value: spdx:2.2
 
 resources:
-- repo: self
-  clean: true
+  repositories:
+    - repository: ComplianceRepo
+      type: github
+      endpoint: PowerShell
+      name: PowerShell/compliance
+      ref: master
+
 stages:
 - stage: PackagingWin
   displayName: Packaging for Windows
@@ -86,3 +94,13 @@ stages:
     parameters:
       channel: preview
       architecture: x86
+  - template: templates/windows-packaging.yml
+    parameters:
+      channel: preview
+      architecture: arm
+      runtimePrefix: win
+  - template: templates/windows-packaging.yml
+    parameters:
+      channel: preview
+      architecture: arm64
+      runtimePrefix: win

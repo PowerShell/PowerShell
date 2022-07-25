@@ -233,10 +233,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ci.propertyName = (string)key;
                 }
 
-                if (ci.propertyName == null)
-                {
-                    ci.propertyName = this.activeAssociationList[k].ResolvedExpression.ToString();
-                }
+                ci.propertyName ??= this.activeAssociationList[k].ResolvedExpression.ToString();
 
                 // set the width of the table
                 if (a.OriginatingParameter != null)
@@ -391,10 +388,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (matchingRowDefinition == null)
-            {
-                matchingRowDefinition = match.BestMatch as TableRowDefinition;
-            }
+            matchingRowDefinition ??= match.BestMatch as TableRowDefinition;
 
             if (matchingRowDefinition == null)
             {
@@ -412,10 +406,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                     }
 
-                    if (matchingRowDefinition == null)
-                    {
-                        matchingRowDefinition = match.BestMatch as TableRowDefinition;
-                    }
+                    matchingRowDefinition ??= match.BestMatch as TableRowDefinition;
                 }
             }
 
@@ -481,6 +472,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (activeAssociationList[k].OriginatingParameter != null)
                 {
                     directive = activeAssociationList[k].OriginatingParameter.GetEntry(FormatParameterDefinitionKeys.FormatStringEntryKey) as FieldFormattingDirective;
+                }
+
+                if (directive is null)
+                {
+                    directive = new FieldFormattingDirective();
+                    directive.isTable = true;
                 }
 
                 fpf.propertyValue = this.GetExpressionDisplayValue(so, enumerationLimit, this.activeAssociationList[k].ResolvedExpression, directive);

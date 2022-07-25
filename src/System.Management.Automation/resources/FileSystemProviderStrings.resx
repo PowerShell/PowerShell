@@ -345,4 +345,7 @@
   <data name="AlreadyListedDirectory" xml:space="preserve">
     <value>Skip already-visited directory {0}.</value>
   </data>
+  <data name="TargetCannotBeSubdirectoryOfSource" xml:space="preserve">
+    <value>Destination path cannot be a subdirectory of the source: {0}.</value>
+  </data>
 </root>

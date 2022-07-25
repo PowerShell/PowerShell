@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Helper class for writing formatting directives to XML.
     /// </summary>
-    internal class FormatXmlWriter
+    internal sealed class FormatXmlWriter
     {
         private XmlWriter _writer;
         private bool _exportScriptBlock;

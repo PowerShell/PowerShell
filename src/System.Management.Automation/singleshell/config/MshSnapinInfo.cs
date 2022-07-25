@@ -118,25 +118,13 @@ namespace System.Management.Automation
                 version = new Version("0.0");
             }
 
-            if (types == null)
-            {
-                types = new Collection<string>();
-            }
+            types ??= new Collection<string>();
 
-            if (formats == null)
-            {
-                formats = new Collection<string>();
-            }
+            formats ??= new Collection<string>();
 
-            if (descriptionFallback == null)
-            {
-                descriptionFallback = string.Empty;
-            }
+            descriptionFallback ??= string.Empty;
 
-            if (vendorFallback == null)
-            {
-                vendorFallback = string.Empty;
-            }
+            vendorFallback ??= string.Empty;
 
             Name = name;
             IsDefault = isDefault;
@@ -262,8 +250,8 @@ namespace System.Management.Automation
         /// </summary>
         public Collection<string> Formats { get; }
 
-        private string _descriptionIndirect;
-        private string _descriptionFallback = string.Empty;
+        private readonly string _descriptionIndirect;
+        private readonly string _descriptionFallback = string.Empty;
         private string _description;
         /// <summary>
         /// Description of mshsnapin.
@@ -281,8 +269,8 @@ namespace System.Management.Automation
             }
         }
 
-        private string _vendorIndirect;
-        private string _vendorFallback = string.Empty;
+        private readonly string _vendorIndirect;
+        private readonly string _vendorFallback = string.Empty;
         private string _vendor;
         /// <summary>
         /// Vendor of mshsnapin.
@@ -1335,10 +1323,10 @@ namespace System.Management.Automation
         }
 
         private static IList<DefaultPSSnapInInformation> s_defaultMshSnapins = null;
-        private static object s_syncObject = new object();
+        private static readonly object s_syncObject = new object();
 
         #endregion
 
-        private static PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
+        private static readonly PSTraceSource s_mshsnapinTracer = PSTraceSource.GetTracer("MshSnapinLoadUnload", "Loading and unloading mshsnapins", false);
     }
 }

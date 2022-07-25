@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             var args = "-P now";
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            if (Platform.IsMacOS)
             {
                 args = "now";
             }

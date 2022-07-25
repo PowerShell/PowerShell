@@ -131,4 +131,19 @@ Describe 'ConvertTo-Json' -tags "CI" {
             $p2.psobject.Properties.Remove('nullstr')
         }
     }
+
+    It 'Should not serialize ETS properties added to DateTime' {
+        $date = "2021-06-24T15:54:06.796999-07:00"
+        $d = [DateTime]::Parse($date)
+
+        # need to use wildcard here due to some systems may be configured with different culture setting showing time in different format
+        $d | ConvertTo-Json -Compress | Should -BeLike '"2021-06-24T*'
+        $d | ConvertTo-Json | ConvertFrom-Json | Should -Be $d
+    }
+
+    It 'Should not serialize ETS properties added to String' {
+        $text = "Hello there"
+        $t = Add-Member -InputObject $text -MemberType NoteProperty -Name text -Value $text -PassThru
+        $t | ConvertTo-Json -Compress | Should -BeExactly "`"$text`""
+    }
 }

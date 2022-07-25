@@ -524,10 +524,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        if (reason == null)
-                        {
-                            reason = new RuntimeException(this.GetMessage(RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState, state));
-                        }
+                        reason ??= new RuntimeException(this.GetMessage(RemotingErrorIdStrings.RemoteRunspaceOpenUnknownState, state));
 
                         string fullyQualifiedErrorId = WSManTransportManagerUtils.GetFQEIDFromTransportError(
                             transErrorCode,
@@ -647,11 +644,11 @@ namespace Microsoft.PowerShell.Commands
 
                         if (remoteRunspace.ConnectionInfo is VMConnectionInfo)
                         {
-                            newConnectionInfo = remoteRunspace.ConnectionInfo.InternalCopy();
+                            newConnectionInfo = remoteRunspace.ConnectionInfo.Clone();
                         }
                         else if (remoteRunspace.ConnectionInfo is ContainerConnectionInfo)
                         {
-                            ContainerConnectionInfo newContainerConnectionInfo = remoteRunspace.ConnectionInfo.InternalCopy() as ContainerConnectionInfo;
+                            ContainerConnectionInfo newContainerConnectionInfo = remoteRunspace.ConnectionInfo.Clone() as ContainerConnectionInfo;
                             newContainerConnectionInfo.CreateContainerProcess();
                             newConnectionInfo = newContainerConnectionInfo;
                         }
@@ -1093,7 +1090,8 @@ namespace Microsoft.PowerShell.Commands
                     this.KeyFilePath,
                     port,
                     Subsystem,
-                    ConnectingTimeout);
+                    ConnectingTimeout,
+                    Options);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;
@@ -1120,7 +1118,8 @@ namespace Microsoft.PowerShell.Commands
                     sshConnection.KeyFilePath,
                     sshConnection.Port,
                     sshConnection.Subsystem,
-                    sshConnection.ConnectingTimeout);
+                    sshConnection.ConnectingTimeout,
+                    sshConnection.Options);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;

@@ -16,7 +16,8 @@ namespace Microsoft.PowerShell.Commands
     /// This command converts an object to a Json string representation.
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
-    public class ConvertToJsonCommand : PSCmdlet
+    [OutputType(typeof(string))]
+    public class ConvertToJsonCommand : PSCmdlet, IDisposable
     {
         /// <summary>
         /// Gets or sets the InputObject property.
@@ -27,15 +28,13 @@ namespace Microsoft.PowerShell.Commands
 
         private int _depth = 2;
 
-        private const int maxDepthAllowed = 100;
-
         private readonly CancellationTokenSource _cancellationSource = new();
 
         /// <summary>
         /// Gets or sets the Depth property.
         /// </summary>
         [Parameter]
-        [ValidateRange(0, int.MaxValue)]
+        [ValidateRange(0, 100)]
         public int Depth
         {
             get { return _depth; }
@@ -78,21 +77,28 @@ namespace Microsoft.PowerShell.Commands
         public StringEscapeHandling EscapeHandling { get; set; } = StringEscapeHandling.Default;
 
         /// <summary>
-        /// Prerequisite checks.
+        /// IDisposable implementation, dispose of any disposable resources created by the cmdlet.
         /// </summary>
-        protected override void BeginProcessing()
+        public void Dispose()
         {
-            if (_depth > maxDepthAllowed)
-            {
-                string errorMessage = StringUtil.Format(WebCmdletStrings.ReachedMaximumDepthAllowed, maxDepthAllowed);
-                ThrowTerminatingError(new ErrorRecord(
-                                new InvalidOperationException(errorMessage),
-                                "ReachedMaximumDepthAllowed",
-                                ErrorCategory.InvalidOperation,
-                                null));
-            }
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Implementation of IDisposable for both manual Dispose() and finalizer-called disposal of resources.
+        /// </summary>
+        /// <param name="disposing">
+        /// Specified as true when Dispose() was called, false if this is called from the finalizer.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _cancellationSource.Dispose();
+            }
+        }
+        
         private readonly List<object> _inputObjects = new();
 
         /// <summary>

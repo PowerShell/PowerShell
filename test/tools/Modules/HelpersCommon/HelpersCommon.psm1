@@ -219,22 +219,21 @@ function Send-VstsLogFile {
         }
     }
 
+    $newName = ([System.Io.Path]::GetRandomFileName() + "-$LogName.txt")
     if($Contents)
     {
-        $logFile = Join-Path -Path $logFolder -ChildPath ([System.Io.Path]::GetRandomFileName() + "-$LogName.txt")
-        $name = Split-Path -Leaf -Path $logFile
+        $logFile = Join-Path -Path $logFolder -ChildPath $newName
 
         $Contents | Out-File -path $logFile -Encoding ascii
     }
     else
     {
-        $name = Split-Path -Leaf -Path $path
-        $logFile = Join-Path -Path $logFolder -ChildPath ([System.Io.Path]::GetRandomFileName() + '-' + $name)
+        $logFile = Join-Path -Path $logFolder -ChildPath $newName
         Copy-Item -Path $Path -Destination $logFile
     }
 
-    Write-Host "##vso[artifact.upload containerfolder=$name;artifactname=$name]$logFile"
-    Write-Verbose "Log file captured as $name" -Verbose
+    Write-Host "##vso[artifact.upload containerfolder=$newName;artifactname=$newName]$logFile"
+    Write-Verbose "Log file captured as $newName" -Verbose
 }
 
 # Tests if the Linux or macOS user is root
@@ -327,19 +326,16 @@ function Test-CanWriteToPsHome
         return $script:CanWriteToPsHome
     }
 
-    $script:CanWriteToPsHome = $true
+    $script:CanWriteToPsHome = $false
 
     try {
         $testFileName = Join-Path $PSHOME (New-Guid).Guid
         $null = New-Item -ItemType File -Path $testFileName -ErrorAction Stop
+        $script:CanWriteToPsHome = $true
+        Remove-Item -Path $testFileName -ErrorAction SilentlyContinue
     }
-    catch [System.UnauthorizedAccessException] {
-        $script:CanWriteToPsHome = $false
-    }
-    finally {
-        if ($script:CanWriteToPsHome) {
-            Remove-Item -Path $testFileName -ErrorAction SilentlyContinue
-        }
+    catch {
+        ; # do nothing
     }
 
     $script:CanWriteToPsHome
@@ -388,4 +384,15 @@ function Get-PlatformInfo {
         }
         return "unknown"
     }
+}
+
+# return true if WsMan is supported on the current platform
+function Get-WsManSupport {
+    $platformInfo = Get-PlatformInfo
+    if (
+        ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '7')
+    ) {
+        return $true
+    }
+    return $false
 }

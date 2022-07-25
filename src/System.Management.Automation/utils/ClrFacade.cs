@@ -356,7 +356,7 @@ namespace System.Management.Automation
             dmtfDateTime += date.Second.ToString(frmInt32).PadLeft(2, '0');
             dmtfDateTime += ".";
 
-            // Construct a DateTime with with the precision to Second as same as the passed DateTime and so get
+            // Construct a DateTime with the precision to Second as same as the passed DateTime and so get
             // the ticks difference so that the microseconds can be calculated
             DateTime dtTemp = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, 0);
             Int64 microsec = ((date.Ticks - dtTemp.Ticks) * 1000) / TimeSpan.TicksPerMillisecond;

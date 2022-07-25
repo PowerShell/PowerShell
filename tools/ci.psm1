@@ -16,8 +16,9 @@ if(Test-Path $dotNetPath)
 }
 
 # import build into the global scope so it can be used by packaging
-Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global
-Import-Module (Join-Path $repoRoot 'tools\packaging') -Scope Global
+# argumentList $true says ignore tha we may not be able to build
+Import-Module (Join-Path $repoRoot 'build.psm1') -Verbose -Scope Global -ArgumentList $true
+Import-Module (Join-Path $repoRoot 'tools\packaging') -Verbose -Scope Global
 
 # import the windows specific functcion only in Windows PowerShell or on Windows
 if($PSVersionTable.PSEdition -eq 'Desktop' -or $IsWindows)
@@ -48,21 +49,26 @@ Function Set-BuildVariable
 
         [Parameter(Mandatory=$true)]
         [string]
-        $Value
+        $Value,
+
+        [switch]
+        $IsOutput
     )
 
-    if($env:TF_BUILD)
-    {
+    $IsOutputString = if ($IsOutput) { 'true' } else { 'false' }
+    $command = "vso[task.setvariable variable=$Name;isOutput=$IsOutputString]$Value"
+
+    # always log command to make local debugging easier
+    Write-Verbose -Message "sending command: $command" -Verbose
+
+    if ($env:TF_BUILD) {
         # In VSTS
-        Write-Host "##vso[task.setvariable variable=$Name;]$Value"
+        Write-Host "##$command"
         # The variable will not show up until the next task.
-        # Setting in the current session for the same behavior as the CI
-        Set-Item env:/$name -Value $Value
     }
-    else
-    {
-        Set-Item env:/$name -Value $Value
-    }
+
+    # Setting in the current session for the same behavior as the CI and to make it show up in the same task
+    Set-Item env:/$name -Value $Value
 }
 
 # Emulates running all of CI but locally
@@ -99,7 +105,7 @@ function Invoke-CIBuild
         Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -CI -ReleaseTag $releaseTag
     }
 
-    Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
+    Start-PSBuild -PSModuleRestore -Configuration 'Release' -CI -ReleaseTag $releaseTag
     Save-PSOptions
 
     $options = (Get-PSOptions)
@@ -171,6 +177,7 @@ function Invoke-CIInstall
     }
 
     Set-BuildVariable -Name TestPassed -Value False
+    Write-Verbose -Verbose -Message "Calling Start-PSBootstrap from Invoke-CIInstall"
     Start-PSBootstrap
 }
 
@@ -212,8 +219,12 @@ function Invoke-CITest
         [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests')]
         [string] $Purpose,
         [ValidateSet('CI', 'Others')]
-        [string] $TagSet
+        [string] $TagSet,
+        [string] $TitlePrefix
     )
+
+    # Set locale correctly for Linux CIs
+    Set-CorrectLocale
 
     # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
     # https://github.com/pester/Pester/issues/608
@@ -234,7 +245,7 @@ function Invoke-CITest
 
     if($IsLinux -or $IsMacOS)
     {
-        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet
+        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet -TitlePrefix $TitlePrefix
     }
 
     # CoreCLR
@@ -261,7 +272,12 @@ function Invoke-CITest
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
         }
 
-        Start-PSPester @arguments -Title "Pester Unelevated - $TagSet"
+        $title = "Pester Unelevated - $TagSet"
+        if ($TitlePrefix) {
+            $title = "$TitlePrefix - $title"
+        }
+        Start-PSPester @arguments -Title $title
+
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
 
@@ -283,7 +299,11 @@ function Invoke-CITest
                 $arguments['Path'] = $testFiles
             }
 
-            Start-PSPester @arguments -Title "Pester Experimental Unelevated - $featureName"
+            $title = "Pester Experimental Unelevated - $featureName"
+            if ($TitlePrefix) {
+                $title = "$TitlePrefix - $title"
+            }
+            Start-PSPester @arguments -Title $title
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
@@ -299,7 +319,11 @@ function Invoke-CITest
             ExcludeTag = $ExcludeTag
         }
 
-        Start-PSPester @arguments -Title "Pester Elevated - $TagSet"
+        $title = "Pester Elevated - $TagSet"
+        if ($TitlePrefix) {
+            $title = "$TitlePrefix - $title"
+        }
+        Start-PSPester @arguments -Title $title
 
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsAdminFile
@@ -324,7 +348,12 @@ function Invoke-CITest
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $arguments['Path'] = $testFiles
             }
-            Start-PSPester @arguments -Title "Pester Experimental Elevated - $featureName"
+
+            $title = "Pester Experimental >levated - $featureName"
+            if ($TitlePrefix) {
+                $title = "$TitlePrefix - $title"
+            }
+            Start-PSPester @arguments -Title $title
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
@@ -439,138 +468,148 @@ function Invoke-CIFinish
 {
     param(
         [string] $Runtime = 'win7-x64',
-        [string] $Channel = 'preview'
+        [string] $Channel = 'preview',
+        [Validateset('Build','Package')]
+        [string[]] $Stage = ('Build','Package')
     )
 
-    if($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS))
-    {
+    if ($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS) -and $Stage -contains 'Build') {
         return New-LinuxPackage
     }
 
+    $artifacts = New-Object System.Collections.ArrayList
     try {
+        $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/mainBuild"
 
-        if($Channel -eq 'preview')
-        {
-            $releaseTag = Get-ReleaseTag
+        if ($Stage -contains "Build") {
+            if ($Channel -eq 'preview') {
+                $releaseTag = Get-ReleaseTag
 
-            $previewVersion = $releaseTag.Split('-')
-            $previewPrefix = $previewVersion[0]
-            $previewLabel = $previewVersion[1].replace('.','')
+                $previewVersion = $releaseTag.Split('-')
+                $previewPrefix = $previewVersion[0]
+                $previewLabel = $previewVersion[1].replace('.','')
 
-            if(Test-DailyBuild)
-            {
-                $previewLabel= "daily{0}" -f $previewLabel
+                if (Test-DailyBuild) {
+                    $previewLabel = "daily{0}" -f $previewLabel
+                }
+
+                $prereleaseIteration = (get-date).Day
+                $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
+                # Build clean before backing to remove files from testing
+                Start-PSBuild -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}/psoptions.json"
+                $options = Get-PSOptions
+                # Remove symbol files.
+                $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
+                Write-Verbose "Removing symbol files from $filter" -Verbose
+                Remove-Item $filter -Force -Recurse
+            } else {
+                $releaseTag = Get-ReleaseTag
+                $releaseTagParts = $releaseTag.split('.')
+                $preReleaseVersion = $releaseTagParts[0]+ ".9.9"
+                Write-Verbose "newPSReleaseTag: $preReleaseVersion" -Verbose
+                Start-PSBuild -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime -output $buildFolder -PSOptionsPath "${buildFolder}/psoptions.json"
+                $options = Get-PSOptions
+                # Remove symbol files.
+                $filter = Join-Path -Path (Split-Path $options.Output) -ChildPath '*.pdb'
+                Write-Verbose "Removing symbol files from $filter" -Verbose
+                Remove-Item $filter -Force -Recurse
             }
 
-            $prereleaseIteration = (get-date).Day
-            $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
-            # Build clean before backing to remove files from testing
-            Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime
-        }
-        else {
-            $releaseTag = Get-ReleaseTag
-            $releaseTagParts = $releaseTag.split('.')
-            $preReleaseVersion = $releaseTagParts[0]+ ".9.9"
-            Write-Verbose "newPSReleaseTag: $preReleaseVersion" -Verbose
-            Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean -Runtime $Runtime
-        }
-
-        # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
-        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
-
-        $artifacts = New-Object System.Collections.ArrayList
-        foreach ($package in $packages) {
-            if (Test-Path $package -ErrorAction Ignore)
-            {
-                Write-Log "Package found: $package"
-            }
-            else
-            {
-                Write-Warning -Message "Package NOT found: $package"
-            }
-
-            if($package -is [string])
-            {
-                $null = $artifacts.Add($package)
-            }
-            elseif($package -is [pscustomobject] -and $package.psobject.Properties['msi'])
-            {
-                $null = $artifacts.Add($package.msi)
-                $null = $artifacts.Add($package.wixpdb)
-            }
+            # Set a variable, both in the current process and in AzDevOps for the packaging stage to get the release tag
+            $env:CI_FINISH_RELASETAG=$preReleaseVersion
+            $vstsCommandString = "vso[task.setvariable variable=CI_FINISH_RELASETAG]$preReleaseVersion"
+            Write-Verbose -Message "$vstsCommandString" -Verbose
+            Write-Host -Object "##$vstsCommandString"
         }
 
-        # the packaging tests find the MSI package using env:PSMsiX64Path
-        $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
-        $architechture = $Runtime.Split('-')[1]
-        $exePath = New-ExePackage -ProductVersion ($preReleaseVersion -replace '^v') -ProductTargetArchitecture $architechture -MsiLocationPath $env:PSMsiX64Path
-        Write-Verbose "exe Path: $exePath" -Verbose
-        $artifacts.Add($exePath)
-        $env:PSExePath = $exePath
-        $env:PSMsiChannel = $Channel
-        $env:PSMsiRuntime = $Runtime
+        if ($Stage -contains "Package") {
+            Restore-PSOptions -PSOptionsPath "${buildFolder}/psoptions.json"
+            $preReleaseVersion = $env:CI_FINISH_RELASETAG
 
-        # Install the latest Pester and import it
-        $maximumPesterVersion = '4.99'
-        Install-Module Pester -Force -SkipPublisherCheck -MaximumVersion $maximumPesterVersion
-        Import-Module Pester -Force -MaximumVersion $maximumPesterVersion
+            # Build packages	            $preReleaseVersion = "$previewPrefix-$previewLabel.$prereleaseIteration"
+            switch -regex ($Runtime){
+                default {
+                    $runPackageTest = $true
+                    $packageTypes = 'msi', 'nupkg', 'zip', 'zip-pdb', 'msix'
+                }
+                'win-arm.*' {
+                    $runPackageTest = $false
+                    $packageTypes = 'zip', 'zip-pdb', 'msix'
+                }
+            }
+            $packages = Start-PSPackage -Type $packageTypes -ReleaseTag $preReleaseVersion -SkipReleaseChecks -WindowsRuntime $Runtime
 
-        $testResultPath = Join-Path -Path $env:TEMP -ChildPath "win-package-$channel-$runtime.xml"
+            foreach ($package in $packages) {
+                if (Test-Path $package -ErrorAction Ignore) {
+                    Write-Log "Package found: $package"
+                } else {
+                    Write-Warning -Message "Package NOT found: $package"
+                }
 
-        # start the packaging tests and get the results
-        $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru -OutputFormat NUnitXml -OutputFile $testResultPath
+                if ($package -is [string]) {
+                    $null = $artifacts.Add($package)
+                } elseif ($package -is [pscustomobject] -and $package.psobject.Properties['msi']) {
+                    $null = $artifacts.Add($package.msi)
+                    $null = $artifacts.Add($package.wixpdb)
+                }
+            }
 
-        Publish-TestResults -Title "win-package-$channel-$runtime" -Path $testResultPath
+            if ($runPackageTest) {
+                # the packaging tests find the MSI package using env:PSMsiX64Path
+                $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
+                $architechture = $Runtime.Split('-')[1]
+                $exePath = New-ExePackage -ProductVersion ($preReleaseVersion -replace '^v') -ProductTargetArchitecture $architechture -MsiLocationPath $env:PSMsiX64Path
+                Write-Verbose "exe Path: $exePath" -Verbose
+                $artifacts.Add($exePath)
+                $env:PSExePath = $exePath
+                $env:PSMsiChannel = $Channel
+                $env:PSMsiRuntime = $Runtime
 
-        # fail the CI job if the tests failed, or nothing passed
-        if(-not $packagingTestResult -is [pscustomobject] -or $packagingTestResult.FailedCount -ne 0 -or $packagingTestResult.PassedCount -eq 0)
-        {
-            throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
-        }
+                # Install the latest Pester and import it
+                $maximumPesterVersion = '4.99'
+                Install-Module Pester -Force -SkipPublisherCheck -MaximumVersion $maximumPesterVersion
+                Import-Module Pester -Force -MaximumVersion $maximumPesterVersion
 
-        # only publish assembly nuget packages if it is a daily build and tests passed
-        if(Test-DailyBuild)
-        {
-            $nugetArtifacts = Get-ChildItem $PSScriptRoot\packaging\nugetOutput -ErrorAction SilentlyContinue -Filter *.nupkg | Select-Object -ExpandProperty FullName
-            if($nugetArtifacts)
-            {
-                $artifacts.AddRange(@($nugetArtifacts))
+                $testResultPath = Join-Path -Path $env:TEMP -ChildPath "win-package-$channel-$runtime.xml"
+
+                # start the packaging tests and get the results
+                $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru -OutputFormat NUnitXml -OutputFile $testResultPath
+
+                Publish-TestResults -Title "win-package-$channel-$runtime" -Path $testResultPath
+
+                # fail the CI job if the tests failed, or nothing passed
+                if (-not $packagingTestResult -is [pscustomobject] -or $packagingTestResult.FailedCount -ne 0 -or $packagingTestResult.PassedCount -eq 0) {
+                    throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
+                }
+            }
+
+            # only publish assembly nuget packages if it is a daily build and tests passed
+            if (Test-DailyBuild) {
+                $nugetArtifacts = Get-ChildItem $PSScriptRoot\packaging\nugetOutput -ErrorAction SilentlyContinue -Filter *.nupkg | Select-Object -ExpandProperty FullName
+                if ($nugetArtifacts) {
+                    $artifacts.AddRange(@($nugetArtifacts))
+                }
             }
         }
-
-        # produce win-arm and win-arm64 packages if it is a daily build
-        Start-PSBuild -Restore -Runtime win-arm -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
-        $arm32Package = Start-PSPackage -Type zip -WindowsRuntime win-arm -ReleaseTag $releaseTag -SkipReleaseChecks
-        $artifacts.Add($arm32Package)
-
-        Start-PSBuild -Restore -Runtime win-arm64 -PSModuleRestore -Configuration 'Release' -ReleaseTag $releaseTag
-        $arm64Package = Start-PSPackage -Type zip -WindowsRuntime win-arm64 -ReleaseTag $releaseTag -SkipReleaseChecks
-        $artifacts.Add($arm64Package)
-
+    } catch {
+        Get-Error -InputObject $_
+        throw
+    } finally {
         $pushedAllArtifacts = $true
 
         $artifacts | ForEach-Object {
             Write-Log -Message "Pushing $_ as CI artifact"
-            if(Test-Path $_)
-            {
+            if (Test-Path $_) {
                 Push-Artifact -Path $_ -Name 'artifacts'
-            }
-            else
-            {
+            } else {
                 $pushedAllArtifacts = $false
                 Write-Warning "Artifact $_ does not exist."
             }
         }
-        if(!$pushedAllArtifacts)
-        {
+
+        if (!$pushedAllArtifacts) {
             throw "Some artifacts did not exist!"
         }
-    }
-    catch
-    {
-        Write-Host -Foreground Red $_
-        Write-Host -Foreground Red $_.ScriptStackTrace
-        throw $_
     }
 }
 
@@ -592,7 +631,8 @@ function Invoke-LinuxTestsCore
         [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests', 'All')]
         [string] $Purpose = 'All',
         [string[]] $ExcludeTag = @('Slow', 'Feature', 'Scenario'),
-        [string] $TagSet = 'CI'
+        [string] $TagSet = 'CI',
+        [string] $TitlePrefix
     )
 
     $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
@@ -619,7 +659,11 @@ function Invoke-LinuxTestsCore
     # Running tests which do not require sudo.
     if($Purpose -eq 'UnelevatedPesterTests' -or $Purpose -eq 'All')
     {
-        $pesterPassThruNoSudoObject = Start-PSPester @noSudoPesterParam -Title "Pester No Sudo - $TagSet"
+        $title = "Pester No Sudo - $TagSet"
+        if ($TitlePrefix) {
+            $title = "$TitlePrefix - $title"
+        }
+        $pesterPassThruNoSudoObject = Start-PSPester @noSudoPesterParam -Title $title
 
         # Running tests that do not require sudo, with specified experimental features enabled
         $noSudoResultsWithExpFeatures = @()
@@ -640,7 +684,12 @@ function Invoke-LinuxTestsCore
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $noSudoPesterParam['Path'] = $testFiles
             }
-            $passThruResult = Start-PSPester @noSudoPesterParam -Title "Pester Experimental No Sudo - $featureName - $TagSet"
+            $title = "Pester Experimental No Sudo - $featureName - $TagSet"
+            if ($TitlePrefix) {
+                $title = "$TitlePrefix - $title"
+            }
+            $passThruResult = Start-PSPester @noSudoPesterParam -Title $title
+
             $noSudoResultsWithExpFeatures += $passThruResult
         }
     }
@@ -654,7 +703,12 @@ function Invoke-LinuxTestsCore
         $sudoPesterParam['ExcludeTag'] = $ExcludeTag
         $sudoPesterParam['Sudo'] = $true
         $sudoPesterParam['OutputFile'] = $testResultsSudo
-        $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam -Title "Pester Sudo - $TagSet"
+
+        $title = "Pester Sudo - $TagSet"
+        if ($TitlePrefix) {
+            $title = "$TitlePrefix - $title"
+        }
+        $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam -Title $title
 
         # Running tests that require sudo, with specified experimental features enabled
         $sudoResultsWithExpFeatures = @()
@@ -676,7 +730,13 @@ function Invoke-LinuxTestsCore
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $sudoPesterParam['Path'] = $testFiles
             }
-            $passThruResult = Start-PSPester @sudoPesterParam -Title "Pester Experimental Sudo - $featureName - $TagSet"
+
+            $title = "Pester Experimental Sudo - $featureName - $TagSet"
+            if ($TitlePrefix) {
+                $title = "$TitlePrefix - $title"
+            }
+            $passThruResult = Start-PSPester @sudoPesterParam -Title $title
+
             $sudoResultsWithExpFeatures += $passThruResult
         }
     }
@@ -749,5 +809,57 @@ function New-LinuxPackage
         Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
         $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
         Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+    }
+}
+
+function Invoke-InitializeContainerStage {
+    param(
+        [string]
+        $ContainerPattern = '.'
+    )
+
+    Write-Verbose "Invoking InitializeContainerStage with ContainerPattern: ${ContainerPattern}" -Verbose
+
+    $fallbackSeed = (get-date).DayOfYear
+    Write-Verbose "Fall back seed: $fallbackSeed" -Verbose
+
+    # For PRs set the seed to the PR number so that the image is always the same
+    $seed = $env:SYSTEM_PULLREQUEST_PULLREQUESTID
+    if(!$seed) {
+      # for non-PRs use the integer identifier of the build as the seed.
+      $seed = $fallbackSeed
+    }
+
+    Write-Verbose "Seed: $seed" -Verbose
+
+    # Get the latest image matrix JSON for preview
+    $matrix = ./PowerShell-Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
+
+    # Chose images that are validated or validating, Linux and can be used in CI.
+    $linuxImages = $matrix.preview |
+      Where-Object {$_.IsLinux -and $_.UseInCi -and $_.DistributionState -match 'Validat.*' -and $_.JobName -match $ContainerPattern -and $_.JobName -notlike "*arm*"} |
+      Select-Object JobName, Taglist |
+      Sort-Object -property JobName
+
+    # Use the selected seed to pick a container
+    $index = Get-Random -Minimum 0 -Maximum $linuxImages.Count -SetSeed $seed
+    $selectedImage = $linuxImages[$index]
+
+    # Filter to the first test-deps compatible tag
+    $tag = $selectedImage.Taglist -split ';' | Where-Object {$_ -match 'preview-\D+'} | Select-Object -First 1
+
+    # Calculate the container name
+    $containerName = "mcr.microsoft.com/powershell/test-deps:$tag"
+
+    Set-BuildVariable -Name containerName -Value $containerName -IsOutput
+    Set-BuildVariable -Name containerBuildName -Value $selectedImage.JobName -IsOutput
+
+    if($env:BUILD_REASON -eq 'PullRequest') {
+      Write-Host "##vso[build.updatebuildnumber]PR-${env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}-$($selectedImage.JobName)-$((get-date).ToString("yyyyMMddhhmmss"))"
+    } else {
+      Write-Host "##vso[build.updatebuildnumber]${env:BUILD_SOURCEBRANCHNAME}-$($selectedImage.JobName)-${env:BUILD_SOURCEVERSION}-$((get-date).ToString("yyyyMMddhhmmss"))"
+
+      # Cannot do this for a PR
+      Write-Host "##vso[build.addbuildtag]$($selectedImage.JobName)"
     }
 }

@@ -1458,7 +1458,7 @@ namespace System.Management.Automation.Host
         /// Provided for clearing regions -- less chatty than passing an array of cells.
         /// </remarks>
         /// <example>
-        ///     <snippet Code="C#">
+        ///     <code>
         ///         using System;
         ///         using System.Management.Automation;
         ///         using System.Management.Automation.Host;
@@ -1474,7 +1474,7 @@ namespace System.Management.Automation.Host
         ///                 }
         ///             }
         ///         }
-        ///     </snippet>
+        ///     </code>
         /// </example>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(int, int, BufferCell)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface.NewBufferCellArray(Size, BufferCell)"/>

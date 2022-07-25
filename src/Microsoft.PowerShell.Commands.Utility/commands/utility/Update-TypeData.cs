@@ -849,8 +849,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else if (sste.FileName != null)
                         {
-                            bool unused;
-                            Context.TypeTable.Update(sste.FileName, sste.FileName, errors, Context.AuthorizationManager, Context.InitialSessionState.Host, out unused);
+                            Context.TypeTable.Update(sste.FileName, sste.FileName, errors, Context.AuthorizationManager, Context.InitialSessionState.Host, out _);
                         }
                         else
                         {

@@ -123,7 +123,7 @@ namespace PSTests.Sequential
     {
         private const string Client = "PredictionTest";
         private const uint Session = 56;
-        private static PredictionClient predClient = new(Client, PredictionClientKind.Terminal);
+        private static readonly PredictionClient predClient = new(Client, PredictionClientKind.Terminal);
 
         [Fact]
         public static void PredictInput()

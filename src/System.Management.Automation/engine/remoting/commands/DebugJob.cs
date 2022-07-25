@@ -100,7 +100,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets a flag that tells PowerShell to automatically perform a BreakAll when the debugger is attached to the remote target.
         /// </summary>
-        [Experimental("Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace", ExperimentAction.Show)]
         [Parameter]
         public SwitchParameter BreakAll { get; set; }
 

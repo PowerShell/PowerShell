@@ -142,6 +142,17 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
         $out[1] | Should -Be $null
         $out[2] | Should -Be 2
     }
+
+    It 'Order is preserved for a hashtable' {
+        $json = '{"a":1,"b":2,"c":3}' | ConvertFrom-Json -AsHashtable
+        ($json | Out-String).Trim() | Should -BeExactly @"
+Name                           Value
+----                           -----
+a                              1
+b                              2
+c                              3
+"@
+    }
 }
 
 Describe 'ConvertFrom-Json -Depth Tests' -tags "Feature" {

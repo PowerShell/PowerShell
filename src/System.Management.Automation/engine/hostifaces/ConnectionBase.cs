@@ -661,7 +661,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// This is queue of all the state change event which have occured for
+        /// This is queue of all the state change event which have occurred for
         /// this runspace. RaiseRunspaceStateEvents raises event for each
         /// item in this queue. We don't raise events from with SetRunspaceState
         /// because SetRunspaceState is often called from with in the a lock.
@@ -670,7 +670,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private Queue<RunspaceEventQueueItem> _runspaceEventQueue = new Queue<RunspaceEventQueueItem>();
 
-        private class RunspaceEventQueueItem
+        private sealed class RunspaceEventQueueItem
         {
             public RunspaceEventQueueItem(RunspaceStateInfo runspaceStateInfo, RunspaceAvailability currentAvailability, RunspaceAvailability newAvailability)
             {

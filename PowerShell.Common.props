@@ -135,16 +135,19 @@
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation.</Copyright>
 
-    <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>9.0</LangVersion>
+    <TargetFramework>net7.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <!-- disable ReadyToRun due to issue: https://github.com/dotnet/runtime/issues/65412
     <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
-    <PublishReadyToRunUseCrossgen2>false</PublishReadyToRunUseCrossgen2>
+    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols-->
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <DisableImplicitNamespaceImports>true</DisableImplicitNamespaceImports>
+    <DisableImplicitNamespaceImports_DotNet>true</DisableImplicitNamespaceImports_DotNet>
 
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>

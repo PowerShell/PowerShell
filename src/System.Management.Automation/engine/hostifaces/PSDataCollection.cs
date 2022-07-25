@@ -1322,12 +1322,9 @@ namespace System.Management.Automation
                 {
                     lock (SyncObject)
                     {
-                        if (_readWaitHandle == null)
-                        {
-                            // Create the handle signaled if there are objects in the buffer
-                            // or the buffer has been closed.
-                            _readWaitHandle = new ManualResetEvent(_data.Count > 0 || !_isOpen);
-                        }
+                        // Create the handle signaled if there are objects in the buffer
+                        // or the buffer has been closed.
+                        _readWaitHandle ??= new ManualResetEvent(_data.Count > 0 || !_isOpen);
                     }
                 }
 
@@ -1522,7 +1519,7 @@ namespace System.Management.Automation
                 {
                     InsertItem(psInstanceId, _data.Count, (T)o);
 
-                    // set raise events if atleast one item is
+                    // set raise events if at least one item is
                     // added.
                     raiseEvents = true;
                 }

@@ -168,7 +168,7 @@ namespace System.Management.Automation
             // The default server settings is to make new commands execute in the calling thread...this saves
             // thread switching time and thread pool pressure on the service.
             // Users can override the server settings only if they are administrators
-            PSThreadOptions serverThreadOptions = configData.ShellThreadOptions.HasValue ? configData.ShellThreadOptions.Value : PSThreadOptions.UseCurrentThread;
+            PSThreadOptions serverThreadOptions = configData.ShellThreadOptions ?? PSThreadOptions.UseCurrentThread;
             if (threadOptions == PSThreadOptions.Default || threadOptions == serverThreadOptions)
             {
                 RunspacePool.ThreadOptions = serverThreadOptions;
@@ -184,7 +184,7 @@ namespace System.Management.Automation
             }
 
             // Set Thread ApartmentState for this RunspacePool
-            ApartmentState serverApartmentState = configData.ShellThreadApartmentState.HasValue ? configData.ShellThreadApartmentState.Value : Runspace.DefaultApartmentState;
+            ApartmentState serverApartmentState = configData.ShellThreadApartmentState ?? Runspace.DefaultApartmentState;
 
             if (apartmentState == ApartmentState.Unknown || apartmentState == serverApartmentState)
             {
@@ -271,10 +271,7 @@ namespace System.Management.Automation
         internal void SendApplicationPrivateDataToClient()
         {
             // Include Debug mode information.
-            if (_applicationPrivateData == null)
-            {
-                _applicationPrivateData = new PSPrimitiveDictionary();
-            }
+            _applicationPrivateData ??= new PSPrimitiveDictionary();
 
             if (_serverRemoteDebugger != null)
             {
@@ -561,7 +558,7 @@ namespace System.Management.Automation
                     Exception lastException = errorList[0] as Exception;
                     if (lastException != null)
                     {
-                        exceptionThrown = (lastException.Message != null) ? lastException.Message : string.Empty;
+                        exceptionThrown = lastException.Message ?? string.Empty;
                     }
                     else
                     {
@@ -1252,7 +1249,7 @@ namespace System.Management.Automation
             BreakpointManagement,
         }
 
-        private class DebuggerCommandArgument
+        private sealed class DebuggerCommandArgument
         {
             public DebugModes? Mode { get; set; }
 
@@ -2004,10 +2001,7 @@ namespace System.Management.Automation
                     StringUtil.Format(DebuggerStrings.CannotProcessDebuggerCommandNotStopped));
             }
 
-            if (_processCommandCompleteEvent == null)
-            {
-                _processCommandCompleteEvent = new ManualResetEventSlim(false);
-            }
+            _processCommandCompleteEvent ??= new ManualResetEventSlim(false);
 
             _threadCommandProcessing = new ThreadCommandProcessing(command, output, _wrappedDebugger.Value, _processCommandCompleteEvent);
             try
@@ -2527,10 +2521,7 @@ namespace System.Management.Automation
                 {
                     // Blocking call for nested debugger execution (Debug-Runspace) stop events.
                     // The root debugger never makes two EnterDebugMode calls without an ExitDebugMode.
-                    if (_nestedDebugStopCompleteEvent == null)
-                    {
-                        _nestedDebugStopCompleteEvent = new ManualResetEventSlim(false);
-                    }
+                    _nestedDebugStopCompleteEvent ??= new ManualResetEventSlim(false);
 
                     _nestedDebugging = true;
                     OnEnterDebugMode(_nestedDebugStopCompleteEvent);

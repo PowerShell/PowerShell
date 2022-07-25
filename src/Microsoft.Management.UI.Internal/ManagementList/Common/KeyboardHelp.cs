@@ -106,7 +106,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Determines if the control key is pressed.
         /// </summary>
-        /// <returns>True if a control is is pressed.</returns>
+        /// <returns>True if a control is pressed.</returns>
         public static bool IsControlPressed()
         {
             if ((Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)

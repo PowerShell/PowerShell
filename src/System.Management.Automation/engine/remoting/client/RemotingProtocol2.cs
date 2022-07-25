@@ -813,7 +813,7 @@ namespace System.Management.Automation.Internal
                     // what thread this callback is made from.  If it was made from a transport
                     // callback event then a deadlock may occur when DisconnectAsync is called on
                     // that same thread.
-                    ThreadPool.QueueUserWorkItem(new WaitCallback(StartDisconnectAsync), RemoteSession);
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(StartDisconnectAsync));
                 }
             }
         }
@@ -821,10 +821,18 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// WaitCallback method to start an asynchronous disconnect.
         /// </summary>
-        /// <param name="remoteSession"></param>
-        private void StartDisconnectAsync(object remoteSession)
+        /// <param name="state"></param>
+        private void StartDisconnectAsync(object state)
         {
-            ((ClientRemoteSession)remoteSession).DisconnectAsync();
+            var remoteSession = RemoteSession;
+            try
+            {
+                remoteSession?.DisconnectAsync();
+            }
+            catch 
+            {
+                // remoteSession may have already been disposed resulting in unexpected exceptions.
+            }
         }
 
         /// <summary>

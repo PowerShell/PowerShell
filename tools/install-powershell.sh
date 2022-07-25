@@ -95,10 +95,6 @@ install(){
                 else
                     DistroBasedOn='redhat'
                 fi
-            elif [ -f /etc/SuSE-release ] ; then
-                DistroBasedOn='suse'
-                PSUEDONAME=$( (tr "\n" ' '| sed s/VERSION.*//) < /etc/SuSE-release )
-                REV=$( (grep 'VERSION' | sed s/.*=\ //) < /etc/SuSE-release )
             elif [ -f /etc/mandrake-release ] ; then
                 DistroBasedOn='mandrake'
                 PSUEDONAME=$( (sed s/.*\(// | sed s/\)//) < /etc/mandrake-release )
@@ -117,6 +113,11 @@ install(){
             if [ -f /etc/UnitedLinux-release ] ; then
                 DIST="${DIST}[$( (tr "\n" ' ' | sed s/VERSION.*//) < /etc/UnitedLinux-release )]"
             fi
+			osname=$(source /etc/os-release; echo $PRETTY_NAME)
+			if [[ $osname = *SUSE* ]]; then
+				DistroBasedOn='suse'
+				REV=$(source /etc/os-release; echo $VERSION_ID)
+			fi			
             OS=$(lowercase $OS)
             DistroBasedOn=$(lowercase $DistroBasedOn)
         fi

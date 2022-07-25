@@ -275,12 +275,12 @@ namespace Microsoft.PowerShell.Commands
         /// The specific time interval (in second) to wait between network pings or service queries.
         /// </summary>
         [Parameter(ParameterSetName = DefaultParameterSet)]
-        [ValidateRange(1, Int16.MaxValue)]
-        public Int16 Delay
+        [ValidateRange(1, short.MaxValue)]
+        public short Delay
         {
             get
             {
-                return (Int16)_delay;
+                return (short)_delay;
             }
 
             set
@@ -522,7 +522,7 @@ $result
             }
         }
 
-        private class ComputerInfo
+        private sealed class ComputerInfo
         {
             internal string LastBootUpTime;
             internal bool RebootComplete;
@@ -1278,6 +1278,7 @@ $result
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "Computer", SupportsShouldProcess = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097054", RemotingCapability = RemotingCapability.SupportedByCommand)]
+    [OutputType(typeof(RenameComputerChangeInfo))]
     public class RenameComputerCommand : PSCmdlet
     {
         #region Private Members
@@ -2230,8 +2231,7 @@ $result
                 bool isIPAddress = false;
                 try
                 {
-                    IPAddress unused;
-                    isIPAddress = IPAddress.TryParse(nameToCheck, out unused);
+                    isIPAddress = IPAddress.TryParse(nameToCheck, out _);
                 }
                 catch (Exception)
                 {

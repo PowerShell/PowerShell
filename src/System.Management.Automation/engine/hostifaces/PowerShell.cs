@@ -762,10 +762,7 @@ namespace System.Management.Automation
 
             // create the client remote powershell for remoting
             // communications
-            if (RemotePowerShell == null)
-            {
-                RemotePowerShell = new ClientRemotePowerShell(this, ((RunspacePool)_rsConnection).RemoteRunspacePoolInternal);
-            }
+            RemotePowerShell ??= new ClientRemotePowerShell(this, ((RunspacePool)_rsConnection).RemoteRunspacePoolInternal);
 
             // If we get here, we don't call 'Invoke' or any of it's friends on 'this', instead we serialize 'this' in PowerShell.ToPSObjectForRemoting.
             // Without the following two steps, we'll be missing the 'ExtraCommands' on the serialized instance of 'this'.
@@ -804,10 +801,7 @@ namespace System.Management.Automation
 
             RedirectShellErrorOutputPipe = redirectShellErrorOutputPipe;
 
-            if (RemotePowerShell == null)
-            {
-                RemotePowerShell = new ClientRemotePowerShell(this, ((RunspacePool)_rsConnection).RemoteRunspacePoolInternal);
-            }
+            RemotePowerShell ??= new ClientRemotePowerShell(this, ((RunspacePool)_rsConnection).RemoteRunspacePoolInternal);
 
             if (!RemotePowerShell.Initialized)
             {
@@ -2236,10 +2230,7 @@ namespace System.Management.Automation
             {
                 if (addToHistory)
                 {
-                    if (settings == null)
-                    {
-                        settings = new PSInvocationSettings();
-                    }
+                    settings ??= new PSInvocationSettings();
 
                     settings.AddToHistory = true;
                 }
@@ -3521,9 +3512,7 @@ namespace System.Management.Automation
                 ActionPreference preference;
                 if (_batchInvocationSettings != null)
                 {
-                    preference = (_batchInvocationSettings.ErrorActionPreference.HasValue) ?
-                        _batchInvocationSettings.ErrorActionPreference.Value
-                        : ActionPreference.Continue;
+                    preference = _batchInvocationSettings.ErrorActionPreference ?? ActionPreference.Continue;
                 }
                 else
                 {
@@ -3546,10 +3535,7 @@ namespace System.Management.Automation
                         break;
                 }
 
-                if (objs == null)
-                {
-                    objs = _batchAsyncResult.Output;
-                }
+                objs ??= _batchAsyncResult.Output;
 
                 DoRemainingBatchCommands(objs);
             }
@@ -4353,7 +4339,7 @@ namespace System.Management.Automation
                     }
                     finally
                     {
-                        // takes care exception occured with invokeAsyncResult
+                        // takes care exception occurred with invokeAsyncResult
                         if (isExceptionOccured && (tempStopAsyncResult != null))
                         {
                             tempStopAsyncResult.Release();
@@ -4404,7 +4390,7 @@ namespace System.Management.Automation
                     }
                     finally
                     {
-                        // takes care exception occured with invokeAsyncResult
+                        // takes care exception occurred with invokeAsyncResult
                         if (isExceptionOccured && (tempStopAsyncResult != null))
                         {
                             tempStopAsyncResult.Release();

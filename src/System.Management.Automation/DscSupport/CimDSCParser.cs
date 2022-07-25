@@ -317,8 +317,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
     /// </summary>
     internal class CimDSCParser
     {
-        private CimMofDeserializer _deserializer;
-        private CimMofDeserializer.OnClassNeeded _onClassNeeded;
+        private readonly CimMofDeserializer _deserializer;
+        private readonly CimMofDeserializer.OnClassNeeded _onClassNeeded;
 
         /// <summary>
         /// </summary>
@@ -529,7 +529,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         private const string reservedProperties = "^(Require|Trigger|Notify|Before|After|Subscribe)$";
 
-        private static PSTraceSource s_tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("DSC", "DSC Class Cache");
 
         // Constants for items in the module qualified name (Module\Version\ClassName)
         private const int IndexModuleName = 0;
@@ -561,10 +561,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             get
             {
-                if (t_classCache == null)
-                {
-                    t_classCache = new Dictionary<string, DscClassCacheEntry>(StringComparer.OrdinalIgnoreCase);
-                }
+                t_classCache ??= new Dictionary<string, DscClassCacheEntry>(StringComparer.OrdinalIgnoreCase);
 
                 return t_classCache;
             }
@@ -580,10 +577,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             get
             {
-                if (t_byClassModuleCache == null)
-                {
-                    t_byClassModuleCache = new Dictionary<string, Tuple<string, Version>>(StringComparer.OrdinalIgnoreCase);
-                }
+                t_byClassModuleCache ??= new Dictionary<string, Tuple<string, Version>>(StringComparer.OrdinalIgnoreCase);
 
                 return t_byClassModuleCache;
             }
@@ -599,10 +593,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             get
             {
-                if (t_byFileClassCache == null)
-                {
-                    t_byFileClassCache = new Dictionary<string, List<Microsoft.Management.Infrastructure.CimClass>>(StringComparer.OrdinalIgnoreCase);
-                }
+                t_byFileClassCache ??= new Dictionary<string, List<Microsoft.Management.Infrastructure.CimClass>>(StringComparer.OrdinalIgnoreCase);
 
                 return t_byFileClassCache;
             }
@@ -618,10 +609,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             get
             {
-                if (t_scriptKeywordFileCache == null)
-                {
-                    t_scriptKeywordFileCache = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                }
+                t_scriptKeywordFileCache ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                 return t_scriptKeywordFileCache;
             }
@@ -738,12 +726,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
                 if (!Directory.Exists(systemResourceRoot))
                 {
-                    configSystemPath = Platform.GetFolderPath(Environment.SpecialFolder.System);
+                    configSystemPath = Environment.GetFolderPath(Environment.SpecialFolder.System);
                     systemResourceRoot = Path.Combine(configSystemPath, "Configuration");
                     inboxModulePath = InboxDscResourceModulePath;
                 }
 
-                var programFilesDirectory = Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                var programFilesDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
                 Debug.Assert(programFilesDirectory != null, "Program Files environment variable does not exist!");
                 var customResourceRoot = Path.Combine(programFilesDirectory, "WindowsPowerShell\\Configuration");
                 Debug.Assert(Directory.Exists(customResourceRoot), "%ProgramFiles%\\WindowsPowerShell\\Configuration Directory does not exist");
@@ -1893,10 +1881,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 if (keywordAst.Keyword.Keyword.Equals("Node"))
                 {
-                    if (errorList == null)
-                    {
-                        errorList = new List<ParseError>();
-                    }
+                    errorList ??= new List<ParseError>();
 
                     errorList.Add(new ParseError(kwAst.Extent,
                                          "ImportDscResourceInsideNode",
@@ -2148,8 +2133,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         {
                             try
                             {
-                                string unused;
-                                foundResources = ImportCimKeywordsFromModule(moduleInfo, resourceToImport, out unused);
+                                foundResources = ImportCimKeywordsFromModule(moduleInfo, resourceToImport, out _);
                             }
                             catch (Exception)
                             {

@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -108,15 +107,10 @@ namespace Microsoft.Management.UI.Internal
                 bool newHighlighted = false;
 
                 ParagraphBuilder.MoveSpanToPosition(ref currentBoldIndex, ref currentBoldSpan, i, this.boldSpans);
-
-                #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
                 newBold = currentBoldSpan == null ? false : currentBoldSpan.Value.Contains(i);
-                #pragma warning restore IDE0075
 
                 ParagraphBuilder.MoveSpanToPosition(ref currentHighlightedIndex, ref currentHighlightedSpan, i, this.highlightedSpans);
-                #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
                 newHighlighted = currentHighlightedSpan == null ? false : currentHighlightedSpan.Value.Contains(i);
-                #pragma warning restore IDE0075
 
                 if (newBold != currentBold || newHighlighted != currentHighlighted)
                 {
@@ -134,7 +128,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Highlights all ocurrences of <paramref name="search"/>.
+        /// Highlights all occurrences of <paramref name="search"/>.
         /// This is called after all calls to AddText have been made.
         /// </summary>
         /// <param name="search">Search string.</param>
@@ -255,7 +249,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         /// <param name="currentSpanIndex">Current index within <paramref name="allSpans"/>.</param>
         /// <param name="currentSpan">Current span within <paramref name="allSpans"/>.</param>
-        /// <param name="caracterPosition">Caracter position. This comes from a position within this.textBuilder.</param>
+        /// <param name="caracterPosition">Character position. This comes from a position within this.textBuilder.</param>
         /// <param name="allSpans">The collection of spans. This is either this.boldSpans or this.highlightedSpans.</param>
         private static void MoveSpanToPosition(ref int currentSpanIndex, ref TextSpan? currentSpan, int caracterPosition, List<TextSpan> allSpans)
         {
@@ -307,13 +301,11 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="propertyName">Property name.</param>
         private void OnNotifyPropertyChanged(string propertyName)
         {
-            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.s
             PropertyChangedEventHandler handler = this.PropertyChanged;
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
-            #pragma warning restore IDE1005
         }
 
         /// <summary>

@@ -4,12 +4,16 @@
 #pragma warning disable 1634, 1691
 #pragma warning disable 56523
 
-using Dbg = System.Management.Automation;
+#if !UNIX
+using Microsoft.Security.Extensions;
+#endif
 using System.IO;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Security;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
+
+using Dbg = System.Management.Automation;
 using DWORD = System.UInt32;
 
 namespace System.Management.Automation
@@ -275,12 +279,12 @@ namespace System.Management.Automation
 
             if (fileContent == null)
             {
-                // First, try to get the signature from the catalog signature APIs.
-                signature = GetSignatureFromCatalog(fileName);
+                // First, try to get the signature from the latest dotNet signing API.
+                signature = GetSignatureFromMSSecurityExtensions(fileName);
             }
 
             // If there is no signature or it is invalid, go by the file content
-            // with the older WinVerifyTrust APIs
+            // with the older WinVerifyTrust APIs.
             if ((signature == null) || (signature.Status != SignatureStatus.Valid))
             {
                 signature = GetSignatureFromWinVerifyTrust(fileName, fileContent);
@@ -289,147 +293,108 @@ namespace System.Management.Automation
             return signature;
         }
 
+        /// <summary>
+        /// Gets the file signature using the dotNet Microsoft.Security.Extensions package.
+        /// This supports both Windows catalog file signatures and embedded file signatures.
+        /// But it is not supported on all Windows platforms/skus, noteably Win7 and nanoserver.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
-        private static Signature GetSignatureFromCatalog(string filename)
+        private static Signature GetSignatureFromMSSecurityExtensions(string filename)
         {
+#if UNIX
+            return null;
+#else
             if (Signature.CatalogApiAvailable.HasValue && !Signature.CatalogApiAvailable.Value)
             {
-                // Signature.CatalogApiAvailable would be set to false the first time it is detected that
-                // WTGetSignatureInfo API does not exist on the platform, or if the API is not functional on the target platform.
-                // Just return from the function instead of revalidating.
                 return null;
             }
-
-            Signature signature = null;
 
             Utils.CheckArgForNullOrEmpty(filename, "fileName");
             SecuritySupport.CheckIfFileExists(filename);
 
-            try
+            Signature signature = null;
+            FileSignatureInfo fileSigInfo;
+            using (FileStream fileStream = File.OpenRead(filename))
             {
-                using (FileStream stream = File.OpenRead(filename))
+                try
                 {
-                    NativeMethods.SIGNATURE_INFO sigInfo = new NativeMethods.SIGNATURE_INFO();
-                    sigInfo.cbSize = (uint)Marshal.SizeOf(sigInfo);
-
-                    IntPtr ppCertContext = IntPtr.Zero;
-                    IntPtr phStateData = IntPtr.Zero;
-
-                    try
-                    {
-                        int hresult = NativeMethods.WTGetSignatureInfo(filename, stream.SafeFileHandle.DangerousGetHandle(),
-                            NativeMethods.SIGNATURE_INFO_FLAGS.SIF_CATALOG_SIGNED |
-                            NativeMethods.SIGNATURE_INFO_FLAGS.SIF_CATALOG_FIRST |
-                            NativeMethods.SIGNATURE_INFO_FLAGS.SIF_AUTHENTICODE_SIGNED |
-                            NativeMethods.SIGNATURE_INFO_FLAGS.SIF_BASE_VERIFICATION |
-                            NativeMethods.SIGNATURE_INFO_FLAGS.SIF_CHECK_OS_BINARY,
-                            ref sigInfo, ref ppCertContext, ref phStateData);
-
-                        if (Utils.Succeeded(hresult))
-                        {
-                            DWORD error = GetErrorFromSignatureState(sigInfo.nSignatureState);
-
-                            X509Certificate2 cert = null;
-
-                            if (ppCertContext != IntPtr.Zero)
-                            {
-                                cert = new X509Certificate2(ppCertContext);
-
-                                // Get the time stamper certificate if available
-                                TryGetProviderSigner(phStateData, out IntPtr pProvSigner, out X509Certificate2 timestamperCert);
-                                if (timestamperCert != null)
-                                {
-                                    signature = new Signature(filename, error, cert, timestamperCert);
-                                }
-                                else
-                                {
-                                    signature = new Signature(filename, error, cert);
-                                }
-
-                                switch (sigInfo.nSignatureType)
-                                {
-                                    case NativeMethods.SIGNATURE_INFO_TYPE.SIT_AUTHENTICODE: signature.SignatureType = SignatureType.Authenticode; break;
-                                    case NativeMethods.SIGNATURE_INFO_TYPE.SIT_CATALOG: signature.SignatureType = SignatureType.Catalog; break;
-                                }
-
-                                if (sigInfo.fOSBinary == 1)
-                                {
-                                    signature.IsOSBinary = true;
-                                }
-                            }
-                            else
-                            {
-                                signature = new Signature(filename, error);
-                            }
-
-                            if (!Signature.CatalogApiAvailable.HasValue)
-                            {
-                                string productFile = Path.Combine(Utils.DefaultPowerShellAppBase, "Modules\\PSDiagnostics\\PSDiagnostics.psm1");
-                                if (signature.Status != SignatureStatus.Valid)
-                                {
-                                    if (string.Equals(filename, productFile, StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        Signature.CatalogApiAvailable = false;
-                                    }
-                                    else
-                                    {
-                                        // ProductFile has to be Catalog signed. Hence validating
-                                        // to see if the Catalog API is functional using the ProductFile.
-                                        Signature productFileSignature = GetSignatureFromCatalog(productFile);
-                                        Signature.CatalogApiAvailable = (productFileSignature != null && productFileSignature.Status == SignatureStatus.Valid);
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // If calling NativeMethods.WTGetSignatureInfo failed (returned a non-zero value), we still want to set Signature.CatalogApiAvailable to false.
-                            Signature.CatalogApiAvailable = false;
-                        }
-                    }
-                    finally
-                    {
-                        if (phStateData != IntPtr.Zero)
-                        {
-                            NativeMethods.FreeWVTStateData(phStateData);
-                        }
-
-                        if (ppCertContext != IntPtr.Zero)
-                        {
-                            NativeMethods.CertFreeCertificateContext(ppCertContext);
-                        }
-                    }
+                    fileSigInfo = FileSignatureInfo.GetFromFileStream(fileStream);
+                    System.Diagnostics.Debug.Assert(fileSigInfo is not null, "Returned FileSignatureInfo should never be null.");
+                }
+                catch (Exception)
+                {
+                    // For any API error, enable fallback to WinVerifyTrust APIs.
+                    Signature.CatalogApiAvailable = false;
+                    return null;
                 }
             }
-            catch (TypeLoadException)
+
+            DWORD error = GetErrorFromSignatureState(fileSigInfo.State);
+
+            if (fileSigInfo.SigningCertificate is null)
             {
-                // If we don't have WTGetSignatureInfo, don't return a Signature.
-                Signature.CatalogApiAvailable = false;
-                return null;
+                signature = new Signature(filename, error);
+            }
+            else
+            {
+                signature = fileSigInfo.TimestampCertificate is null ?
+                    new Signature(filename, error, fileSigInfo.SigningCertificate) :
+                    new Signature(filename, error, fileSigInfo.SigningCertificate, fileSigInfo.TimestampCertificate);
+            }
+
+            switch (fileSigInfo.Kind)
+            {
+                case SignatureKind.None:
+                    signature.SignatureType = SignatureType.None;
+                    break;
+
+                case SignatureKind.Embedded:
+                    signature.SignatureType = SignatureType.Authenticode;
+                    break;
+
+                case SignatureKind.Catalog:
+                    signature.SignatureType = SignatureType.Catalog;
+                    break;
+
+                default:
+                    System.Diagnostics.Debug.Fail("Signature type can only be None, Authenticode or Catalog.");
+                    break;
+            }
+
+            signature.IsOSBinary = fileSigInfo.IsOSBinary;
+
+            if (signature.SignatureType == SignatureType.Catalog && !Signature.CatalogApiAvailable.HasValue)
+            {
+                Signature.CatalogApiAvailable = fileSigInfo.State != SignatureState.Invalid;
             }
 
             return signature;
+#endif
         }
 
-        private static DWORD GetErrorFromSignatureState(NativeMethods.SIGNATURE_STATE state)
+#if !UNIX
+        private static DWORD GetErrorFromSignatureState(SignatureState signatureState)
         {
-            switch (state)
+            switch (signatureState)
             {
-                case NativeMethods.SIGNATURE_STATE.SIGNATURE_STATE_UNSIGNED_MISSING: return Win32Errors.TRUST_E_NOSIGNATURE;
-                case NativeMethods.SIGNATURE_STATE.SIGNATURE_STATE_UNSIGNED_UNSUPPORTED: return Win32Errors.TRUST_E_NOSIGNATURE;
-                case NativeMethods.SIGNATURE_STATE.SIGNATURE_STATE_UNSIGNED_POLICY: return Win32Errors.TRUST_E_NOSIGNATURE;
-                case NativeMethods.SIGNATURE_STATE.SIGNATURE_STATE_INVALID_CORRUPT: return Win32Errors.TRUST_E_BAD_DIGEST;
-                case NativeMethods.SIGNATURE_STATE.SIGNATURE_STATE_INVALID_POLICY: return Win32Errors.CRYPT_E_BAD_MSG;
-                case NativeMethods.SIGNATURE_STATE.SIGNATURE_STATE_VALID: return Win32Errors.NO_ERROR;
-                case NativeMethods.SIGNATURE_STATE.SIGNATURE_STATE_TRUSTED: return Win32Errors.NO_ERROR;
-                case NativeMethods.SIGNATURE_STATE.SIGNATURE_STATE_UNTRUSTED: return Win32Errors.TRUST_E_EXPLICIT_DISTRUST;
+                case SignatureState.Unsigned:
+                    return Win32Errors.TRUST_E_NOSIGNATURE;
 
-                // Should not happen
+                case SignatureState.SignedAndTrusted:
+                    return Win32Errors.NO_ERROR;
+
+                case SignatureState.SignedAndNotTrusted:
+                    return Win32Errors.TRUST_E_EXPLICIT_DISTRUST;
+
+                case SignatureState.Invalid:
+                    return Win32Errors.TRUST_E_BAD_DIGEST;
+
                 default:
-                    System.Diagnostics.Debug.Fail("Should not get here - could not map SIGNATURE_STATE");
+                    System.Diagnostics.Debug.Fail("Should not get here - could not map FileSignatureInfo.State");
                     return Win32Errors.TRUST_E_NOSIGNATURE;
             }
         }
+#endif
 
         private static Signature GetSignatureFromWinVerifyTrust(string fileName, string fileContent)
         {

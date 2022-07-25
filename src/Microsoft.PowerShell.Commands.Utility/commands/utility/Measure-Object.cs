@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
         /// Keys are strings. Keys are compared with OrdinalIgnoreCase.
         /// </summary>
         /// <typeparam name="TValue">Value type.</typeparam>
-        private class MeasureObjectDictionary<TValue> : Dictionary<string, TValue>
+        private sealed class MeasureObjectDictionary<TValue> : Dictionary<string, TValue>
             where TValue : new()
         {
             /// <summary>
@@ -200,7 +200,7 @@ namespace Microsoft.PowerShell.Commands
         /// what mode we're in.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses")]
-        private class Statistics
+        private sealed class Statistics
         {
             // Common properties
             internal int count = 0;
@@ -792,9 +792,9 @@ namespace Microsoft.PowerShell.Commands
         {
             Diagnostics.Assert(Property != null, "no property and no InputObject should have been addressed");
             ErrorRecord errorRecord = new(
-                    PSTraceSource.NewArgumentException("Property"),
+                    PSTraceSource.NewArgumentException(propertyName),
                     errorId,
-                    ErrorCategory.InvalidArgument,
+                    ErrorCategory.ObjectNotFound,
                     null);
             errorRecord.ErrorDetails = new ErrorDetails(
                 this, "MeasureObjectStrings", "PropertyNotFound", propertyName);
@@ -820,9 +820,12 @@ namespace Microsoft.PowerShell.Commands
                 Statistics stat = _statistics[propertyName];
                 if (stat.count == 0 && Property != null)
                 {
-                    // Why are there two different ids for this error?
-                    string errorId = (IsMeasuringGeneric) ? "GenericMeasurePropertyNotFound" : "TextMeasurePropertyNotFound";
-                    WritePropertyNotFoundError(propertyName, errorId);
+                    if (Context.IsStrictVersion(2))
+                    {
+                        string errorId = (IsMeasuringGeneric) ? "GenericMeasurePropertyNotFound" : "TextMeasurePropertyNotFound";
+                        WritePropertyNotFoundError(propertyName, errorId);
+                    }
+                    
                     continue;
                 }
 

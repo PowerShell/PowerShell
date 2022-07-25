@@ -27,4 +27,9 @@ Describe 'Get-CimClass' -Tags @("Feature") {
     It 'can retrieve a class when a method is provided' -Pending:(-not $IsWindows) {
         Get-CimClass -MethodName Reboot | Should -Not -BeNullOrEmpty
     }
+
+    It 'can retrieve class amended qualifiers' -Pending:(-not $IsWindows) {
+        $a = Get-CimClass -Class 'Win32_PrinterConfiguration' -Amended
+        $a.CimClassProperties['Color'].Qualifiers.Item('Values').Value.Count | Should -Be 2
+    }
 }

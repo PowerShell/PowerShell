@@ -116,15 +116,12 @@ namespace Microsoft.PowerShell
                 er = new ErrorRecord(er, ex);
             }
 
-            if (er == null)
-            {
-                er = new ErrorRecord(ex, "ConsoleHostAsyncPipelineFailure", ErrorCategory.NotSpecified, null);
-            }
+            er ??= new ErrorRecord(ex, "ConsoleHostAsyncPipelineFailure", ErrorCategory.NotSpecified, null);
 
             _parent.ErrorSerializer.Serialize(er);
         }
 
-        private class PipelineFinishedWaitHandle
+        private sealed class PipelineFinishedWaitHandle
         {
             internal PipelineFinishedWaitHandle(Pipeline p)
             {
@@ -321,22 +318,6 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(!string.IsNullOrEmpty(command), "command should have a value");
 
-            // Experimental:
-            // Check for implicit remoting commands that can be batched, and execute as batched if able.
-            if (ExperimentalFeature.IsEnabled("PSImplicitRemotingBatching"))
-            {
-                var addOutputter = ((options & ExecutionOptions.AddOutputter) > 0);
-                if (addOutputter &&
-                    !_parent.RunspaceRef.IsRunspaceOverridden &&
-                    _parent.RunspaceRef.Runspace.ExecutionContext.Modules != null &&
-                    _parent.RunspaceRef.Runspace.ExecutionContext.Modules.IsImplicitRemotingModuleLoaded &&
-                    Utils.TryRunAsImplicitBatch(command, _parent.RunspaceRef.Runspace))
-                {
-                    exceptionThrown = null;
-                    return null;
-                }
-            }
-
             Pipeline tempPipeline = CreatePipeline(command, (options & ExecutionOptions.AddToHistory) > 0);
 
             return ExecuteCommandHelper(tempPipeline, out exceptionThrown, options);
@@ -526,9 +507,8 @@ namespace Microsoft.PowerShell
         /// </returns>
         internal bool? ExecuteCommandAndGetResultAsBool(string command)
         {
-            Exception unused = null;
 
-            bool? result = ExecuteCommandAndGetResultAsBool(command, out unused);
+            bool? result = ExecuteCommandAndGetResultAsBool(command, out _);
 
             return result;
         }
