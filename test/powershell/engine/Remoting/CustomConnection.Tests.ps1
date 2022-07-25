@@ -5,7 +5,7 @@ $script:JobId = -1
 
 function Start-PwshProcess
 {
-    $job = Start-Job -ScriptBlock { Write-Output $PID; Start-Sleep -Seconds 300 }
+    $job = Start-Job -ScriptBlock { Write-Output $PID; Start-Sleep -Seconds 300 } -StartIPCListener
     $script:JobId = $job.Id
     $procId = -1
     $count = 0

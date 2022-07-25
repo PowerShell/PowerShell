@@ -27,7 +27,6 @@ Describe "Validate start of console host" -Tag CI {
             'System.Diagnostics.Tracing.dll'
             'System.IO.FileSystem.AccessControl.dll'
             'System.IO.FileSystem.DriveInfo.dll'
-            'System.IO.Pipes.dll'
             'System.Linq.dll'
             'System.Linq.Expressions.dll'
             'System.Management.Automation.dll'
@@ -71,7 +70,6 @@ Describe "Validate start of console host" -Tag CI {
         }
         else {
             $allowedAssemblies += @(
-                'System.Net.Sockets.dll'
                 'System.Reflection.Emit.dll'
             )
         }

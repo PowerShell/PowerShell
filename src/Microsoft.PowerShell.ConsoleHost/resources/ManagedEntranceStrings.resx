@@ -151,9 +151,9 @@
                   [-Interactive] [-MTA] [-NoExit] [-NoLogo] [-NonInteractive] [-NoProfile]
                   [-NoProfileLoadTime] [-OutputFormat {Text | XML}] 
                   [-SettingsFile &lt;filePath&gt;] [-SSHServerMode] [-STA] 
+                  [-StartIPCListener] 
                   [-Version] [-WindowStyle &lt;style&gt;] 
                   [-WorkingDirectory &lt;directoryPath&gt;]
-                  [-StartIPCListener] 
 
        pwsh[.exe] -h | -Help | -? | /?
 
@@ -439,6 +439,12 @@ All parameters are case-insensitive.</value>
     Start PowerShell using a single-threaded apartment. This is the default.
     This switch is only available on Windows.
 
+-StartIPCListener | -startipc
+
+    Start PowerShell with the IPC (inter-process communication) listener
+    running, which can be used with Enter-PSHostProcess to attach to and
+    debug running PowerShell host processes.
+
 -Version | -v
 
     Displays the version of PowerShell. Additional parameters are ignored.
@@ -454,12 +460,6 @@ All parameters are case-insensitive.</value>
     PowerShell file path is supported.
 
     To start PowerShell in your home directory, use: pwsh -WorkingDirectory ~
-
--StartIPCListener | -startipc
-
-    Start PowerShell with the IPC (inter-process communication) listener
-    running, which can be used with Enter-PSHostProcess to attach to and
-    debug running PowerShell host processes.
 
 -Help, -?, /?
 
