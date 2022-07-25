@@ -5116,10 +5116,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            if (basePath == null)
-            {
-                basePath = string.Empty;
-            }
+            basePath ??= string.Empty;
 
             s_tracer.WriteLine("basePath = {0}", basePath);
 
@@ -5308,10 +5305,7 @@ namespace Microsoft.PowerShell.Commands
                 return string.Empty;
             }
 
-            if (basePath == null)
-            {
-                basePath = string.Empty;
-            }
+            basePath ??= string.Empty;
 
             s_tracer.WriteLine("basePath = {0}", basePath);
 
@@ -6248,10 +6242,7 @@ namespace Microsoft.PowerShell.Commands
                                     if (member != null)
                                     {
                                         value = member.Value;
-                                        if (result == null)
-                                        {
-                                            result = new PSObject();
-                                        }
+                                        result ??= new PSObject();
 
                                         result.Properties.Add(new PSNoteProperty(property, value));
                                     }

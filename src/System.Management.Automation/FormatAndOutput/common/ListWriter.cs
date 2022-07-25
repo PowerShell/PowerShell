@@ -177,8 +177,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="lo">LineOutput interface to write to.</param>
         private void WriteProperty(int k, string propertyValue, LineOutput lo)
         {
-            if (propertyValue == null)
-                propertyValue = string.Empty;
+            propertyValue ??= string.Empty;
 
             // make sure we honor embedded newlines
             List<string> lines = StringManipulationHelper.SplitLines(propertyValue);
@@ -194,8 +193,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     prependString = _propertyLabels[k];
                 else
                 {
-                    if (padding == null)
-                        padding = StringUtil.Padding(_propertyLabelsDisplayLength);
+                    padding ??= StringUtil.Padding(_propertyLabelsDisplayLength);
 
                     prependString = padding;
                 }
@@ -213,10 +211,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="lo">LineOutput to write to.</param>
         private void WriteSingleLineHelper(string prependString, string line, LineOutput lo)
         {
-            if (line is null)
-            {
-                line = string.Empty;
-            }
+            line ??= string.Empty;
 
             // compute the width of the field for the value string (in screen cells)
             int fieldCellCount = _columnWidth - _propertyLabelsDisplayLength;

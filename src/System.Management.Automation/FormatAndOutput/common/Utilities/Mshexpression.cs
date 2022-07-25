@@ -326,15 +326,12 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    if (_getValueDynamicSite == null)
-                    {
-                        _getValueDynamicSite =
-                            CallSite<Func<CallSite, object, object>>.Create(
-                                    PSGetMemberBinder.Get(
-                                        _stringValue,
-                                        classScope: (Type)null,
-                                        @static: false));
-                    }
+                    _getValueDynamicSite ??=
+                        CallSite<Func<CallSite, object, object>>.Create(
+                            PSGetMemberBinder.Get(
+                                _stringValue,
+                                classScope: (Type)null,
+                                @static: false));
 
                     result = _getValueDynamicSite.Target.Invoke(_getValueDynamicSite, target);
                 }

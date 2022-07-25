@@ -21,10 +21,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (_plaintextcontent == null)
-                {
-                    _plaintextcontent = ValueStringDecorated.AnsiRegex.Replace(_text, string.Empty);
-                }
+                _plaintextcontent ??= ValueStringDecorated.AnsiRegex.Replace(_text, string.Empty);
 
                 return _plaintextcontent;
             }
@@ -94,10 +91,7 @@ namespace System.Management.Automation.Internal
         {
             get
             {
-                if (_plaintextcontent == null)
-                {
-                    _plaintextcontent = AnsiRegex.Replace(_text, string.Empty);
-                }
+                _plaintextcontent ??= AnsiRegex.Replace(_text, string.Empty);
 
                 return _plaintextcontent;
             }
