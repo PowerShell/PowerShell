@@ -1299,8 +1299,94 @@ foo``u{2195}abc
         $result | Should -Be 6
     }
 
-    It "A here string must have one line (line 3266)" {
-        { ExecuteCommand "@`"`"@" } | Should -Throw -ErrorId "ParseException"
+    It '<Intent>' -TestCases @(
+        @{
+            Intent     = 'Should successfully parse a single line here-string with just one @ on each end'
+            Expected   = "Hello world"
+            TestString = "@'Hello world'@"
+        }
+        @{
+            Intent     = 'Should successfully parse a single line here-string with inner here-string'
+            Expected   = "@'Hello world'@"
+            TestString = "@@'@'Hello world'@'@@"
+        }
+        @{
+            Intent     = 'Should remove indentation from a multi-line herestring with more than one @ on each end'
+            Expected   = "Hello"
+            TestString = @"
+    @@'
+    Hello
+    '@@
+"@
+        }
+        @{
+            Intent     = 'Should only remove as much indentation as the shortest line allows from a multi-line herestring with more than one @ on each end'
+            Expected   = " Hello","World" -join [System.Environment]::NewLine
+            TestString = @"
+    @@'
+     Hello
+    World
+    '@@
+"@
+        }
+        @{
+            Intent     = 'Should ignore completely empty lines when removing indentation from herestring'
+            Expected   = " Hello","","World" -join [System.Environment]::NewLine
+            TestString = @"
+    @@'
+     Hello
+
+    World
+    '@@
+"@
+        }
+    ) -Test {
+        param($Expected, $TestString)
+        ExecuteCommand $TestString | should -BeExactly $Expected
+    }
+
+    It 'Should throw <Intent>' -TestCases @(
+        @{
+            Intent     = 'when there are any characters in front of here string footer with single @'
+            Expected   = "CharacterBeforeHereStringFooter"
+            TestString = @"
+@'
+Hello
+a'@
+"@
+        }
+        @{
+            Intent     = 'when there are whitespace characters in front of here string footer with single @'
+            Expected   = "CharacterBeforeHereStringFooter"
+            TestString = @"
+@'
+Hello
+ '@
+"@
+        }
+        @{
+            Intent     = 'when there are non white-space characters in front of here string footer with multiple @'
+            Expected   = "NonWhitespaceCharacterBeforeHereStringFooter"
+            TestString = @"
+@@'
+Hello
+a'@@
+"@
+        }
+        @{
+            Intent     = 'when there are non white-space characters in header of here string'
+            Expected   = "UnexpectedCharactersAfterHereStringHeader"
+            TestString = @"
+@' Hello
+World
+'@
+"@
+        }
+    ) -Test {
+        param($Expected, $TestString)
+        $ReportedErrors = $null
+        $null = [System.Management.Automation.Language.Parser]::ParseInput($TestString, [ref] $null, [ref] $ReportedErrors)
+        $ReportedErrors.ErrorId | Should -BeExactly $Expected
     }
 
     It "A here string should not throw on '`$herestr=@`"``n'`"'``n`"@'" {
