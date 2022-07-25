@@ -1322,12 +1322,9 @@ namespace System.Management.Automation
                 {
                     lock (SyncObject)
                     {
-                        if (_readWaitHandle == null)
-                        {
-                            // Create the handle signaled if there are objects in the buffer
-                            // or the buffer has been closed.
-                            _readWaitHandle = new ManualResetEvent(_data.Count > 0 || !_isOpen);
-                        }
+                        // Create the handle signaled if there are objects in the buffer
+                        // or the buffer has been closed.
+                        _readWaitHandle ??= new ManualResetEvent(_data.Count > 0 || !_isOpen);
                     }
                 }
 

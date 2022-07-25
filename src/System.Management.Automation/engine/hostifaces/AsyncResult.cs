@@ -85,10 +85,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     lock (SyncObject)
                     {
-                        if (_completedWaitHandle == null)
-                        {
-                            _completedWaitHandle = new ManualResetEvent(IsCompleted);
-                        }
+                        _completedWaitHandle ??= new ManualResetEvent(IsCompleted);
                     }
                 }
 

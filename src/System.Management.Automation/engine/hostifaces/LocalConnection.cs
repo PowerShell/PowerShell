@@ -84,10 +84,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (this.SyncRoot)
                 {
-                    if (_applicationPrivateData == null)
-                    {
-                        _applicationPrivateData = new PSPrimitiveDictionary();
-                    }
+                    _applicationPrivateData ??= new PSPrimitiveDictionary();
                 }
             }
 
@@ -768,10 +765,7 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         internal PipelineThread GetPipelineThread()
         {
-            if (_pipelineThread == null)
-            {
-                _pipelineThread = new PipelineThread(this.ApartmentState);
-            }
+            _pipelineThread ??= new PipelineThread(this.ApartmentState);
 
             return _pipelineThread;
         }
