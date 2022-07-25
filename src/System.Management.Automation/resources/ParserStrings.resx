@@ -1494,4 +1494,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="InvokingCleanBlockNotSupported" xml:space="preserve">
     <value>Directly invoking the 'clean' block of a script block is not supported.</value>
   </data>
+  <data name="MissingQuotationMark" xml:space="preserve">
+    <value>The here string header is missing a single or double quote mark.</value>
+  </data>
 </root>
