@@ -233,7 +233,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $volume = (Get-Volume -DriveLetter $env:SystemDrive[0]).Path
             $items = Get-ChildItem -LiteralPath "${volume}Windows"
             $items[0].Parent | Should -BeExactly "${volume}Windows"
-            $items.Count | Should -Be (Get-ChildItem $env:SystemRoot).Count
+            $items | Should -HaveCount (Get-ChildItem $env:SystemRoot).Count
         }
 
         It 'Works with Windows pipes' -Skip:(!$IsWindows) {
