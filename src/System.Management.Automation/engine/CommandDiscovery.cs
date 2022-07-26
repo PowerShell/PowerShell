@@ -809,10 +809,7 @@ namespace System.Management.Automation
                     }
 
                     // Otherwise, invoke the CommandNotFound handler
-                    if (result == null)
-                    {
-                        result = InvokeCommandNotFoundHandler(commandName, context, originalCommandName, commandOrigin);
-                    }
+                    result ??= InvokeCommandNotFoundHandler(commandName, context, originalCommandName, commandOrigin);
                 } while (false);
             }
             else

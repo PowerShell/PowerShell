@@ -333,10 +333,7 @@ namespace System.Management.Automation
                 var commandList = keyValuePair.Value as List<object>;
                 if (commandList != null)
                 {
-                    if (endResults == null)
-                    {
-                        endResults = new List<CompletionResult>();
-                    }
+                    endResults ??= new List<CompletionResult>();
 
                     // The first command might be an un-prefixed commandInfo that we get by importing a module with the -Prefix parameter,
                     // in that case, we should add the module name qualification because if the module is not in the module path, calling
@@ -495,8 +492,7 @@ namespace System.Management.Automation
             DynamicKeywordStatementAst keywordAst = null;
             for (int i = context.RelatedAsts.Count - 1; i >= 0; i--)
             {
-                if (keywordAst == null)
-                    keywordAst = context.RelatedAsts[i] as DynamicKeywordStatementAst;
+                keywordAst ??= context.RelatedAsts[i] as DynamicKeywordStatementAst;
                 parameterAst = (context.RelatedAsts[i] as CommandParameterAst);
                 if (parameterAst != null) break;
             }
@@ -1624,8 +1620,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            if (positionalParam == null)
-                                positionalParam = param;
+                            positionalParam ??= param;
                         }
                     }
                     else
@@ -5762,9 +5757,9 @@ namespace System.Management.Automation
                 // a MemberExpressionAst '$xml.$xml', whose parent is still a MemberExpressionAst '$xml.$xml.Save'.
                 // But here we DO NOT want to re-assign 'targetExpr' to be '$xml.$xml'. 'targetExpr' in this case
                 // should be '$xml'.
-                else if (targetExpr is null)
+                else
                 {
-                    targetExpr = parentAsMemberExpression.Expression;
+                    targetExpr ??= parentAsMemberExpression.Expression;
                 }
             }
             else if (lastAst.Parent is BinaryExpressionAst binaryExpression && context.TokenAtCursor.Kind.Equals(TokenKind.Multiply))
