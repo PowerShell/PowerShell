@@ -948,9 +948,9 @@ namespace Microsoft.PowerShell.Commands
             // wildcards for exported commands that weren't specified on the command line.
             if (_rootModule != null || _nestedModules != null || _requiredModules != null)
             {
-                _exportedFunctions ??= new string[] { "*" };
                 _exportedAliases ??= new string[] { "*" };
                 _exportedCmdlets ??= new string[] { "*" };
+                _exportedFunctions ??= new string[] { "*" };
             }
 
             ValidateUriParameterValue(ProjectUri, "ProjectUri");

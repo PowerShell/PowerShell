@@ -2565,10 +2565,10 @@ namespace Microsoft.PowerShell.Commands
                 // without ModuleToProcess a manifest will export everything by default
                 // (otherwise we want to honour exports from ModuleToProcess)
                 exportedFunctions ??= MatchAll;
-                exportedCmdlets ??= MatchAll;
-                exportedVariables ??= MatchAll;
                 exportedAliases ??= MatchAll;
+                exportedCmdlets ??= MatchAll;
                 exportedDscResources ??= MatchAll;
+                exportedVariables ??= MatchAll;
             }
 
             manifestInfo.Description = description;

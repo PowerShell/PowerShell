@@ -5756,7 +5756,10 @@ namespace System.Management.Automation
                 // a MemberExpressionAst '$xml.$xml', whose parent is still a MemberExpressionAst '$xml.$xml.Save'.
                 // But here we DO NOT want to re-assign 'targetExpr' to be '$xml.$xml'. 'targetExpr' in this case
                 // should be '$xml'.
-                else targetExpr ??= parentAsMemberExpression.Expression;
+                else
+                {
+                    targetExpr ??= parentAsMemberExpression.Expression;
+                }
             }
             else if (lastAst.Parent is BinaryExpressionAst binaryExpression && context.TokenAtCursor.Kind.Equals(TokenKind.Multiply))
             {
