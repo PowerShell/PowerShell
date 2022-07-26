@@ -104,10 +104,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="certificate">The certificate to be added.</param>
         internal void AddCertificate(X509Certificate certificate)
         {
-            if (Certificates == null)
-            {
-                Certificates = new X509CertificateCollection();
-            }
+            Certificates ??= new X509CertificateCollection();
 
             Certificates.Add(certificate);
         }

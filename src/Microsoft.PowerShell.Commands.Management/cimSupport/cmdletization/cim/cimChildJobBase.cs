@@ -1053,10 +1053,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             if (this.JobContext.ShowComputerName)
             {
-                if (pso == null)
-                {
-                    pso = PSObject.AsPSObject(outputObject);
-                }
+                pso ??= PSObject.AsPSObject(outputObject);
 
                 AddShowComputerNameMarker(pso);
                 if (cimInstance == null)

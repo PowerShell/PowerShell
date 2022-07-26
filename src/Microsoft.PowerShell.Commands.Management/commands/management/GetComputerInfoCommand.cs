@@ -1130,11 +1130,8 @@ namespace Microsoft.PowerShell.Commands
                         culture = CultureInfo.GetCultureInfo((int)localeNum);
                     }
 
-                    if (culture == null)
-                    {
-                        // If TryParse failed we'll try using the original string as culture name
-                        culture = CultureInfo.GetCultureInfo(locale);
-                    }
+                    // If TryParse failed we'll try using the original string as culture name
+                    culture ??= CultureInfo.GetCultureInfo(locale);
                 }
                 catch (Exception)
                 {

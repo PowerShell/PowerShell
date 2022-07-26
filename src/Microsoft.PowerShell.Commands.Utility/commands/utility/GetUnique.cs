@@ -72,10 +72,7 @@ namespace Microsoft.PowerShell.Commands
             else if (AsString)
             {
                 string inputString = InputObject.ToString();
-                if (_lastObjectAsString == null)
-                {
-                    _lastObjectAsString = _lastObject.ToString();
-                }
+                _lastObjectAsString ??= _lastObject.ToString();
 
                 if (string.Equals(
                     inputString,
@@ -91,13 +88,10 @@ namespace Microsoft.PowerShell.Commands
             }
             else // compare as objects
             {
-                if (_comparer == null)
-                {
-                    _comparer = new ObjectCommandComparer(
-                        true, // ascending (doesn't matter)
-                        CultureInfo.CurrentCulture,
-                        true); // case-sensitive
-                }
+                _comparer ??= new ObjectCommandComparer(
+                    true, // ascending (doesn't matter)
+                    CultureInfo.CurrentCulture,
+                    true); // case-sensitive
 
                 isUnique = (_comparer.Compare(InputObject, _lastObject) != 0);
             }
