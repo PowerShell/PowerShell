@@ -137,10 +137,7 @@ namespace System.Management.Automation.ComInterop
             if (isByRef)
             {
                 // Null just means that null was supplied.
-                if (marshalType == null)
-                {
-                    marshalType = mo.Expression.Type;
-                }
+                marshalType ??= mo.Expression.Type;
                 marshalType = marshalType.MakeByRefType();
             }
             return marshalType;

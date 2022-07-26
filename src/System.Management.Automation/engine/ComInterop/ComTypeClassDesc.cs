@@ -17,10 +17,7 @@ namespace System.Management.Automation.ComInterop
 
         public object CreateInstance()
         {
-            if (_typeObj == null)
-            {
-                _typeObj = Type.GetTypeFromCLSID(Guid);
-            }
+            _typeObj ??= Type.GetTypeFromCLSID(Guid);
             return Activator.CreateInstance(Type.GetTypeFromCLSID(Guid));
         }
 
