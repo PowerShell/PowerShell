@@ -5,6 +5,9 @@ on:
       - 'release/**'
 
 name: Check links for modified files
+permissions:
+  contents: read
+
 jobs:
   markdown-link-check:
     runs-on: ubuntu-latest

@@ -5,8 +5,14 @@ on:
     - cron: '*/15 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   reminder:
+    permissions:
+      issues: write  # for agrc/reminder-action to set reminders on issues
+      pull-requests: write  # for agrc/reminder-action to set reminders on PRs
     runs-on: ubuntu-latest
 
     steps:

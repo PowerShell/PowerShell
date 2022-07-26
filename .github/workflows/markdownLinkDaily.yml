@@ -9,6 +9,9 @@ on:
   # At 13:00 UTC every day.
   - cron:  '0 13 * * *'
 
+permissions:
+  contents: read
+
 jobs:
   markdown-link-check:
     runs-on: ubuntu-latest
