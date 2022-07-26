@@ -15,7 +15,6 @@ Describe "Validate start of console host" -Tag CI {
             'pwsh.dll'
             'System.Collections.Concurrent.dll'
             'System.Collections.dll'
-            'System.Collections.NonGeneric.dll'
             'System.Collections.Specialized.dll'
             'System.ComponentModel.dll'
             'System.ComponentModel.Primitives.dll'
