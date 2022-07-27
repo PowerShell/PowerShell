@@ -53,22 +53,12 @@ namespace System.Management.Automation
         /// </summary>
         internal void ResetManagers()
         {
-            if (_debugger != null)
-            {
-                _debugger.ResetDebugger();
-            }
+            _debugger?.ResetDebugger();
 
-            if (Events != null)
-            {
-                Events.Dispose();
-            }
-
+            Events?.Dispose();
             Events = new PSLocalEventManager(this);
-            if (this.transactionManager != null)
-            {
-                this.transactionManager.Dispose();
-            }
 
+            this.transactionManager?.Dispose();
             this.transactionManager = new PSTransactionManager();
         }
         /// <summary>
@@ -1155,22 +1145,12 @@ namespace System.Management.Automation
         {
             EngineSessionState.RunspaceClosingNotification();
 
-            if (_debugger != null)
-            {
-                _debugger.Dispose();
-            }
+            _debugger?.Dispose();
 
-            if (Events != null)
-            {
-                Events.Dispose();
-            }
-
+            Events?.Dispose();
             Events = null;
-            if (this.transactionManager != null)
-            {
-                this.transactionManager.Dispose();
-            }
 
+            this.transactionManager?.Dispose();
             this.transactionManager = null;
         }
 

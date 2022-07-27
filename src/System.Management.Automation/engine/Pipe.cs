@@ -603,11 +603,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Removes all the objects from the Pipe.
         /// </summary>
-        internal void Clear()
-        {
-            if (ObjectQueue != null)
-                ObjectQueue.Clear();
-        }
+        internal void Clear() => ObjectQueue?.Clear();
 
         /// <summary>
         /// Returns the currently queued items in the pipe.  Note that this will
