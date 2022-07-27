@@ -496,13 +496,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Signals the running task to stop.
         /// </summary>
-        public void SignalStop()
-        {
-            if (_powershell != null)
-            {
-                _powershell.BeginStop(null, null);
-            }
-        }
+        public void SignalStop() => _powershell?.BeginStop(null, null);
 
         #endregion
     }
