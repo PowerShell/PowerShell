@@ -1102,13 +1102,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Closes the named pipe.
         /// </summary>
-        public void Close()
-        {
-            if (_clientPipeStream != null)
-            {
-                _clientPipeStream.Dispose();
-            }
-        }
+        public void Close() => _clientPipeStream?.Dispose();
 
         /// <summary>
         /// Abort connection attempt.
