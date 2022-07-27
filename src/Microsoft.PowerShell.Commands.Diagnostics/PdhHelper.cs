@@ -270,17 +270,17 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         [StructLayout(LayoutKind.Sequential)]
         private unsafe struct PDH_COUNTER_INFO
         {
-            public uint dwLength;
-            public uint dwType;
+            public uint Length;
+            public uint Type;
             public uint CVersion;
             public uint CStatus;
-            public int lScale;
-            public int lDefaultScale;
-            public ulong dwUserData;
-            public ulong dwQueryUserData;
-            public ushort* szFullPath;
+            public int Scale;
+            public int DefaultScale;
+            public ulong UserData;
+            public ulong QueryUserData;
+            public ushort* FullPath;
             public _Anonymous_e__Union Anonymous;
-            public ushort* szExplainText;
+            public ushort* ExplainText;
             public fixed uint DataBuffer[1];
 
             [StructLayout(LayoutKind.Explicit)]
@@ -298,32 +298,32 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 [StructLayout(LayoutKind.Sequential)]
                 internal struct PDH_DATA_ITEM_PATH_ELEMENTS_blittable
                 {
-                    public ushort* szMachineName;
+                    public ushort* MachineName;
                     public Guid ObjectGUID;
-                    public uint dwItemId;
-                    public ushort* szInstanceName;
+                    public uint ItemId;
+                    public ushort* InstanceName;
                 }
 
                 [StructLayout(LayoutKind.Sequential)]
                 internal struct PDH_COUNTER_PATH_ELEMENTS_blittable
                 {
-                    public ushort* szMachineName;
-                    public ushort* szObjectName;
-                    public ushort* szInstanceName;
-                    public ushort* szParentInstance;
-                    public uint dwInstanceIndex;
-                    public ushort* szCounterName;
+                    public ushort* MachineName;
+                    public ushort* ObjectName;
+                    public ushort* InstanceName;
+                    public ushort* ParentInstance;
+                    public uint InstanceIndex;
+                    public ushort* CounterName;
                 }
 
                 [StructLayout(LayoutKind.Sequential)]
                 internal struct _Anonymous_e__Struct
                 {
-                    public ushort* szMachineName;
-                    public ushort* szObjectName;
-                    public ushort* szInstanceName;
-                    public ushort* szParentInstance;
-                    public uint dwInstanceIndex;
-                    public ushort* szCounterName;
+                    public ushort* MachineName;
+                    public ushort* ObjectName;
+                    public ushort* InstanceName;
+                    public ushort* ParentInstance;
+                    public uint InstanceIndex;
+                    public ushort* CounterName;
                 }
             }
         }
@@ -513,8 +513,8 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 if (res == PdhResults.PDH_CSTATUS_VALID_DATA && bufCounterInfo != IntPtr.Zero)
                 {
                     PDH_COUNTER_INFO pdhCounterInfo = (PDH_COUNTER_INFO)Marshal.PtrToStructure(bufCounterInfo, typeof(PDH_COUNTER_INFO));
-                    counterType = pdhCounterInfo.dwType;
-                    defaultScale = (uint)pdhCounterInfo.lDefaultScale;
+                    counterType = pdhCounterInfo.Type;
+                    defaultScale = (uint)pdhCounterInfo.DefaultScale;
                 }
             }
             finally
