@@ -1312,18 +1312,26 @@ namespace System.Management.Automation
             return resultType;
         }
 
-        internal List<T> FilterElements<T>(IEnumerable<T> elements)
+        /// <summary>
+        /// Returns a list containing only the elements that passed the attribute's validation.
+        /// </summary>
+        /// <param name="elementsToValidate">The objects to validate.</param>
+        internal IList<T> GetValidatedElements<T>(IList<T> elementsToValidate)
         {
-            var result = new List<T>();
-            foreach (var value in elements)
+            var result = new List<T>(elementsToValidate.Count);
+            foreach (var el in elementsToValidate)
             {
                 try
                 {
-                    ValidateElement(value);
-                    result.Add(value);
+                    ValidateElement(el);
+                    result.Add(el);
                 }
-                catch { }
+                catch (ValidationMetadataException)
+                {
+                    // Element was not in range - drop
+                }
             }
+
             return result;
         }
     }
