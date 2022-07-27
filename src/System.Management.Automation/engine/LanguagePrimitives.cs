@@ -2085,6 +2085,13 @@ namespace System.Management.Automation
                 return string.Join(CultureInfo.CurrentUICulture.TextInfo.ListSeparator, enumHashEntry.names);
             }
 
+            /// <summary>
+            /// Returns all values for the provided enum type.
+            /// </summary>
+            /// <param name="enumType">The enum type to retrieve values from.</param>
+            internal static Array GetEnumValues(Type enumType)
+                => EnumSingleTypeConverter.GetEnumHashEntry(enumType).values;
+
             public override object ConvertFrom(object sourceValue, Type destinationType, IFormatProvider formatProvider, bool ignoreCase)
             {
                 return EnumSingleTypeConverter.BaseConvertFrom(sourceValue, destinationType, formatProvider, ignoreCase, false);
