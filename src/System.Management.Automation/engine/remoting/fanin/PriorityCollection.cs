@@ -684,10 +684,7 @@ namespace System.Management.Automation.Remoting
         private void ResetReceiveData()
         {
             // reset resources used to store incoming data (for a single object)
-            if (_dataToProcessStream != null)
-            {
-                _dataToProcessStream.Dispose();
-            }
+            _dataToProcessStream?.Dispose();
 
             _currentObjectId = 0;
             _currentFrgId = 0;
