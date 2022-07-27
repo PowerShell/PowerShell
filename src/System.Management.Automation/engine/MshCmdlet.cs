@@ -817,7 +817,7 @@ namespace System.Management.Automation
             IList input,
             params object[] args)
         {
-            _cmdlet.ThrowIfStopping();
+            _cmdlet?.ThrowIfStopping();
 
             Cmdlet cmdletToUse = null;
             ScriptBlock.ErrorHandlingBehavior errorHandlingBehavior = ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe;
