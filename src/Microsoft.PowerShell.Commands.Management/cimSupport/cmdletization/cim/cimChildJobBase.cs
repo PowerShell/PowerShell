@@ -315,10 +315,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 this.ExceptionSafeWrapper(delegate
                 {
                     IObservable<T> observable = this.GetCimOperation();
-                    if (observable != null)
-                    {
-                        observable.Subscribe(this);
-                    }
+                    observable?.Subscribe(this);
                 });
             });
         }
@@ -522,10 +519,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             CimCustomOptionsDictionary jobSpecificCustomOptions = this.GetJobSpecificCustomOptions();
-            if (jobSpecificCustomOptions != null)
-            {
-                jobSpecificCustomOptions.Apply(operationOptions, CimSensitiveValueConverter);
-            }
+            jobSpecificCustomOptions?.Apply(operationOptions, CimSensitiveValueConverter);
 
             return operationOptions;
         }
