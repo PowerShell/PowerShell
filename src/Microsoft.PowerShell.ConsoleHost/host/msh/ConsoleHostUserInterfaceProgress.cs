@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell
         void
         PreWrite()
         {
-            _progPane.Hide();
+            _progPane?.Hide();
         }
 
         private
