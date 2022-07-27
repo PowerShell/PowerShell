@@ -1226,10 +1226,7 @@ namespace System.Management.Automation.Language
 
         private T SaveToken<T>(T token) where T : Token
         {
-            if (TokenList != null)
-            {
-                TokenList.Add(token);
-            }
+            TokenList?.Add(token);
 
             // Keep track of the first and last token even if we're not saving tokens
             // for the special variables $$ and $^.

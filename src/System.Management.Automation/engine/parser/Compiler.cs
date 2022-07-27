@@ -6965,10 +6965,7 @@ namespace System.Management.Automation.Language
             compiler.PopLabelBlock(LabelScopeKind.Statement);
 
             // If enterLoop is null, we will never JIT compile the loop.
-            if (enterLoop != null)
-            {
-                enterLoop.FinishLoop(compiler.Instructions.Count);
-            }
+            enterLoop?.FinishLoop(compiler.Instructions.Count);
         }
     }
 
