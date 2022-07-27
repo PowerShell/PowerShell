@@ -706,13 +706,7 @@ namespace System.Management.Automation.Remoting
         }
 
         // pass on application private data when session is connected from new client
-        internal void HandlePostConnect()
-        {
-            if (_runspacePoolDriver != null)
-            {
-                _runspacePoolDriver.SendApplicationPrivateDataToClient();
-            }
-        }
+        internal void HandlePostConnect() => _runspacePoolDriver?.SendApplicationPrivateDataToClient();
 
         /// <summary>
         /// </summary>
@@ -945,10 +939,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="eventArgs"></param>
         private void HandleSessionDSHandlerClosing(object sender, EventArgs eventArgs)
         {
-            if (_runspacePoolDriver != null)
-            {
-                _runspacePoolDriver.Close();
-            }
+            _runspacePoolDriver?.Close();
 
             // dispose the session configuration object..this will let them
             // clean their resources.
