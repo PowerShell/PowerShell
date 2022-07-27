@@ -1770,13 +1770,13 @@ namespace System.Management.Automation
             {
                 RemoveLastNullCompletionResult(result);
 
-                var enumValues = parameterType.GetEnumValues().Cast<Enum>().ToList();
+                IList<Enum> enumValues = LanguagePrimitives.EnumSingleTypeConverter.GetEnumValues(parameterType).Cast<Enum>().ToList();
                 // Exclude values not accepted by ValidateRange-attributes
                 foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
                 {
                     if (att is ValidateRangeAttribute rangeAtt)
                     {
-                        enumValues = rangeAtt.FilterElements(enumValues);
+                        enumValues = rangeAtt.GetValidatedElements(enumValues);
                     }
                 }
 
@@ -1786,18 +1786,19 @@ namespace System.Management.Automation
                 var pattern = WildcardPattern.Get(wordToComplete + "*", WildcardOptions.IgnoreCase);
                 var enumList = new List<string>();
 
-                foreach (string value in enumValues.ConvertAll(v => v.ToString()))
+                foreach (Enum value in enumValues)
                 {
-                    if (wordToComplete.Equals(value, StringComparison.OrdinalIgnoreCase))
+                    string name = value.ToString();
+                    if (wordToComplete.Equals(name, StringComparison.OrdinalIgnoreCase))
                     {
-                        string completionText = quote == string.Empty ? value : quote + value + quote;
-                        fullMatch = new CompletionResult(completionText, value, CompletionResultType.ParameterValue, value);
+                        string completionText = quote == string.Empty ? name : quote + name + quote;
+                        fullMatch = new CompletionResult(completionText, name, CompletionResultType.ParameterValue, name);
                         continue;
                     }
 
-                    if (pattern.IsMatch(value))
+                    if (pattern.IsMatch(name))
                     {
-                        enumList.Add(value);
+                        enumList.Add(name);
                     }
                 }
 
