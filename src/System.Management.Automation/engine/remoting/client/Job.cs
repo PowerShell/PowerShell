@@ -4119,7 +4119,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static void RestoreRemoteOutput(Pipeline runningCmd) => runningCmd.ResumeIncomingData();
+        private static void RestoreRemoteOutput(Pipeline runningCmd) => runningCmd?.ResumeIncomingData();
 
         private void HandleBreakpointUpdated(object sender, BreakpointUpdatedEventArgs e)
         {

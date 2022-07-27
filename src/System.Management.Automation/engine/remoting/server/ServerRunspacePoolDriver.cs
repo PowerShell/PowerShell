@@ -480,7 +480,7 @@ namespace System.Management.Automation
             }
         }
 
-        private void DisposeRemoteDebugger() => _serverRemoteDebugger.Dispose();
+        private void DisposeRemoteDebugger() => _serverRemoteDebugger?.Dispose();
 
         /// <summary>
         /// Invokes a script.
