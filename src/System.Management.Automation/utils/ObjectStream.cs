@@ -1498,10 +1498,18 @@ namespace System.Management.Automation.Internal
                 _readClosedHandle.Dispose();
                 _readWaitHandle?.Dispose();
                 _writeWaitHandle?.Dispose();
-                _reader?.Close();
-                _reader?.WaitHandle.Dispose();
-                _writer?.Close();
-                _writer?.WaitHandle.Dispose();
+
+                if (_reader != null)
+                {
+                    _reader.Close();
+                    _reader.WaitHandle.Dispose();
+                }
+
+                if (_writer != null)
+                {
+                    _writer.Close();
+                    _writer.WaitHandle.Dispose();
+                }
             }
         }
 
