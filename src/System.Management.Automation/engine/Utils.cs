@@ -1613,6 +1613,10 @@ namespace System.Management.Automation.Internal
         internal static bool OneDriveTestRecurseOn;
         internal static string OneDriveTestSymlinkName = "link-Beta";
 
+        // Update-Help
+        internal static CultureInfo UpdateHelpCurrentUICulture;
+        internal static bool UpdateHelpThrowHelpCultureNotSupported;
+
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
         {

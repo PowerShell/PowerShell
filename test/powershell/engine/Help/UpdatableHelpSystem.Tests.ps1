@@ -434,6 +434,23 @@ Describe "Validate Update-Help -SourcePath for all PowerShell modules for user s
     RunUpdateHelpTests -Tag "Feature" -useSourcePath -Scope 'CurrentUser'
 }
 
+Describe "Validate 'Update-Help' without arguments on non-US systems" -Tags @('Feature') {
+    BeforeAll {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('UpdateHelpCurrentUICulture', [System.Globalization.CultureInfo] 'en-GB')
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('UpdateHelpThrowHelpCultureNotSupported', $true)
+    }
+    AfterAll {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('UpdateHelpCurrentUICulture', $null)
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('UpdateHelpThrowHelpCultureNotSupported', $false)
+    }
+
+    It 'Fails if downloaded culture does not match implicit one' {
+        $ErrorVariable = $null
+        Update-Help -ErrorVariable ErrorVariable -ErrorAction SilentlyContinue
+        $ErrorVariable | Should -Not -BeNullOrEmpty
+    }
+}
+
 Describe "Validate 'Save-Help -DestinationPath for one PowerShell modules." -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference

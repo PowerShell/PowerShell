@@ -214,6 +214,15 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if the module has been processed, false if not.</returns>
         internal override bool ProcessModuleWithCulture(UpdatableHelpModuleInfo module, string culture)
         {
+            // Simulate culture not found
+            if (InternalTestHooks.UpdateHelpThrowHelpCultureNotSupported) {
+                // TODO: unify with Base.IsUpdateNecessary to ensure exact same exception thrown
+                throw new UpdatableHelpSystemException("HelpCultureNotSupported",
+                    StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupported,
+                    InternalTestHooks.UpdateHelpCurrentUICulture, "test-TEST"),
+                    ErrorCategory.InvalidOperation, null, null);
+            }
+
             UpdatableHelpInfo currentHelpInfo = null;
             UpdatableHelpInfo newHelpInfo = null;
             string helpInfoUri = null;
