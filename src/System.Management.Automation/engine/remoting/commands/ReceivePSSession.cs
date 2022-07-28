@@ -404,15 +404,8 @@ namespace Microsoft.PowerShell.Commands
                 tmpJob = _job;
             }
 
-            if (tmpPipeline != null)
-            {
-                tmpPipeline.StopAsync();
-            }
-
-            if (tmpJob != null)
-            {
-                tmpJob.StopJob();
-            }
+            tmpPipeline?.StopAsync();
+            tmpJob?.StopJob();
         }
 
         #endregion
@@ -818,19 +811,13 @@ namespace Microsoft.PowerShell.Commands
 
                 remoteRunspace.Disconnect();
 
-                if (stopPipelineReceive != null)
+                try
                 {
-                    try
-                    {
-                        stopPipelineReceive.Set();
-                    }
-                    catch (ObjectDisposedException) { }
+                    stopPipelineReceive?.Set();
                 }
+                catch (ObjectDisposedException) { }
 
-                if (job != null)
-                {
-                    job.StopJob();
-                }
+                job?.StopJob();
             }
         }
 
@@ -876,10 +863,7 @@ namespace Microsoft.PowerShell.Commands
 
                         foreach (var result in childJob.ReadAll())
                         {
-                            if (result != null)
-                            {
-                                result.WriteStreamObject(this);
-                            }
+                            result?.WriteStreamObject(this);
                         }
 
                         if (index == 0)
