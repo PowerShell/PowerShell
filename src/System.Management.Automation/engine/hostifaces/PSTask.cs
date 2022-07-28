@@ -1536,12 +1536,9 @@ namespace System.Management.Automation.PSTasks
         {
             get
             {
-                if (_jobDebuggerWrapper == null)
-                {
-                    _jobDebuggerWrapper = new PSTaskChildDebugger(
-                        _task.Debugger,
-                        this.Name);
-                }
+                _jobDebuggerWrapper ??= new PSTaskChildDebugger(
+                    _task.Debugger,
+                    this.Name);
 
                 return _jobDebuggerWrapper;
             }

@@ -1242,10 +1242,7 @@ namespace System.Management.Automation.Language
                     // Don't remember these tokens, they aren't useful in $$ and $^.
                     break;
                 default:
-                    if (FirstToken == null)
-                    {
-                        FirstToken = token;
-                    }
+                    FirstToken ??= token;
 
                     LastToken = token;
                     break;
@@ -1815,8 +1812,7 @@ namespace System.Management.Automation.Language
             }
             else if (matchedRequires && _nestedTokensAdjustment == 0)
             {
-                if (RequiresTokens == null)
-                    RequiresTokens = new List<Token>();
+                RequiresTokens ??= new List<Token>();
                 RequiresTokens.Add(token);
             }
         }
@@ -1953,10 +1949,7 @@ namespace System.Management.Automation.Language
                             PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
                         {
                             snapinSpecified = true;
-                            if (requiredSnapins == null)
-                            {
-                                requiredSnapins = new List<PSSnapInSpecification>();
-                            }
+                            requiredSnapins ??= new List<PSSnapInSpecification>();
 
                             break;
                         }
@@ -2222,8 +2215,7 @@ namespace System.Management.Automation.Language
                         return;
                     }
 
-                    if (requiredModules == null)
-                        requiredModules = new List<ModuleSpecification>();
+                    requiredModules ??= new List<ModuleSpecification>();
                     requiredModules.Add(moduleSpecification);
                 }
             }
@@ -2246,8 +2238,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                if (requiredAssemblies == null)
-                    requiredAssemblies = new List<string>();
+                requiredAssemblies ??= new List<string>();
 
                 if (!requiredAssemblies.Contains((string)arg))
                 {
@@ -2269,8 +2260,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                if (requiredEditions == null)
-                    requiredEditions = new List<string>();
+                requiredEditions ??= new List<string>();
 
                 var edition = (string)arg;
                 if (!Utils.IsValidPSEditionValue(edition))

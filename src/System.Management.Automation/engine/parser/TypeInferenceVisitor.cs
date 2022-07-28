@@ -1840,82 +1840,101 @@ namespace System.Management.Automation
                 (SpecialVariables.IsUnderbar(astVariablePath.UserPath)
                  || astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.PSItem)))
             {
-                // $_ is special, see if we're used in a script block in some pipeline.
-                while (parent != null)
+                // The automatic variable $_ is assigned a value in scriptblocks, Switch loops and Catch/Trap statements
+                // This loop will find whichever Ast that determines the value of $_
+                // The value in scriptblocks is determined by the parents of that scriptblock, the only interesting scenarios are:
+                // 1: MemberInvocation like: $Collection.Where({$_})
+                // 2: Command pipelines like: dir | where {$_}
+                // The value in a Switch loop is whichever item is in the condition part of the statement.
+                // The value in Catch/Trap statements is always an error record.
+                bool hasSeenScriptBlock = false;
+                while (parent is not null)
                 {
-                    if (parent is ScriptBlockExpressionAst || parent is CatchClauseAst)
+                    if (parent is CatchClauseAst or TrapStatementAst)
                     {
                         break;
+                    }
+                    else if (parent is SwitchStatementAst switchStatement)
+                    {
+                        parent = switchStatement.Condition;
+                        break;
+                    }
+                    else if (parent is ErrorStatementAst switchErrorStatement && switchErrorStatement.Kind?.Kind == TokenKind.Switch)
+                    {
+                        if (switchErrorStatement.Conditions?.Count > 0)
+                        {
+                            parent = switchErrorStatement.Conditions[0];
+                        }
+                        break;
+                    }
+                    else if (parent is ScriptBlockExpressionAst)
+                    {
+                        hasSeenScriptBlock = true;
+                    }
+                    else if (hasSeenScriptBlock)
+                    {
+                        if (parent is InvokeMemberExpressionAst invokeMember)
+                        {
+                            parent = invokeMember.Expression;
+                            break;
+                        }
+                        else if (parent is CommandAst cmdAst && cmdAst.Parent is PipelineAst pipeline && pipeline.PipelineElements.Count > 1)
+                        {
+                            // We've found a pipeline with multiple commands, now we need to determine what command came before the command with the scriptblock:
+                            // eg Get-Partition in this example: Get-Disk | Get-Partition | Where {$_}
+                            var indexOfPreviousCommand = pipeline.PipelineElements.IndexOf(cmdAst) - 1;
+                            if (indexOfPreviousCommand >= 0)
+                            {
+                                parent = pipeline.PipelineElements[indexOfPreviousCommand];
+                                break;
+                            }
+                        }
                     }
 
                     parent = parent.Parent;
                 }
 
-                if (parent != null)
+                if (parent is CatchClauseAst catchBlock)
                 {
-                    if (parent.Parent is CommandExpressionAst && parent.Parent.Parent is PipelineAst)
+                    if (catchBlock.CatchTypes.Count > 0)
                     {
-                        // Script block in a hash table, could be something like:
-                        //     dir | ft @{ Expression = { $_ } }
-
-                        if (parent.Parent.Parent.Parent is HashtableAst)
+                        foreach (TypeConstraintAst catchType in catchBlock.CatchTypes)
                         {
-                            parent = parent.Parent.Parent.Parent;
-                        }
-                        else if (parent.Parent.Parent.Parent is ArrayLiteralAst && parent.Parent.Parent.Parent.Parent is HashtableAst)
-                        {
-                            parent = parent.Parent.Parent.Parent.Parent;
-                        }
-                    }
-
-                    if (parent.Parent is CommandParameterAst)
-                    {
-                        parent = parent.Parent;
-                    }
-
-                    if (parent is CatchClauseAst catchBlock)
-                    {
-                        if (catchBlock.CatchTypes.Count > 0)
-                        {
-                            foreach (TypeConstraintAst catchType in catchBlock.CatchTypes)
+                            Type exceptionType = catchType.TypeName.GetReflectionType();
+                            if (typeof(Exception).IsAssignableFrom(exceptionType))
                             {
-                                Type exceptionType = catchType.TypeName.GetReflectionType();
-                                if (exceptionType != null && typeof(Exception).IsAssignableFrom(exceptionType))
-                                {
-                                    inferredTypes.Add(new PSTypeName(typeof(ErrorRecord<>).MakeGenericType(exceptionType)));
-                                }
+                                inferredTypes.Add(new PSTypeName(typeof(ErrorRecord<>).MakeGenericType(exceptionType)));
                             }
                         }
-                        else
-                        {
-                            inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
-                        }
-
-                        return;
                     }
 
-                    if (parent.Parent is CommandAst commandAst)
+                    // Either no type constraint was specified, or all the specified catch types were unavailable but we still know it's an error record.
+                    if (inferredTypes.Count == 0)
                     {
-                        // We found a command, see if there is a previous command in the pipeline.
-                        PipelineAst pipelineAst = (PipelineAst)commandAst.Parent;
-                        var previousCommandIndex = pipelineAst.PipelineElements.IndexOf(commandAst) - 1;
-                        if (previousCommandIndex < 0)
-                        {
-                            return;
-                        }
-
-                        AddInferredTypesForDollarUnderbar(pipelineAst.PipelineElements[0], inferredTypes);
-
-                        return;
-                    }
-
-                    if (parent.Parent is InvokeMemberExpressionAst memberExpression)
-                    {
-                        AddInferredTypesForDollarUnderbar(memberExpression.Expression, inferredTypes);
-                        
-                        return;
+                        inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
                     }
                 }
+                else if (parent is TrapStatementAst trap)
+                {
+                    if (trap.TrapType is not null)
+                    {
+                        Type exceptionType = trap.TrapType.TypeName.GetReflectionType();
+                        if (typeof(Exception).IsAssignableFrom(exceptionType))
+                        {
+                            inferredTypes.Add(new PSTypeName(typeof(ErrorRecord<>).MakeGenericType(exceptionType)));
+                        }
+                    }
+                    if (inferredTypes.Count == 0)
+                    {
+                        inferredTypes.Add(new PSTypeName(typeof(ErrorRecord)));
+                    }
+                }
+                else if (parent is not null)
+                {
+                    AddInferredTypesForDollarUnderbar(parent, inferredTypes);
+                }
+
+                return;
             }
 
             // For certain variables, we always know their type, well at least we can assume we know.
@@ -2072,7 +2091,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    if (typeof(IEnumerable).IsAssignableFrom(result.Type))
+                    if (result.Type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(result.Type))
                     {
                         // We can't deduce much from IEnumerable, but we can if it's generic.
                         var enumerableInterfaces = result.Type.GetInterfaces();
@@ -2443,9 +2462,10 @@ namespace System.Management.Automation
             foreach (var m in type.GetMethods(BindingFlags.Public | BindingFlags.Instance))
             {
                 var name = m.Name;
+                // Equals without string allocation
                 if (name.Length == propertyName.Length + 4
                     && name.StartsWith("get_")
-                    && propertyName.IndexOf(name, 4, StringComparison.Ordinal) == 4)
+                    && name.IndexOf(propertyName, 4, StringComparison.Ordinal) == 4)
                 {
                     res.Add(m);
                 }

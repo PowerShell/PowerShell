@@ -2258,10 +2258,7 @@ namespace System.Management.Automation
 
             if (!_useReflection)
             {
-                if (_methodInvoker == null)
-                {
-                    _methodInvoker = GetMethodInvoker(methodInfo);
-                }
+                _methodInvoker ??= GetMethodInvoker(methodInfo);
 
                 if (_methodInvoker != null)
                 {
@@ -3047,10 +3044,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    if (_isHidden == null)
-                    {
-                        _isHidden = member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
-                    }
+                    _isHidden ??= member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
 
                     return _isHidden.Value;
                 }

@@ -271,10 +271,7 @@ namespace System.Management.Automation
         internal void SendApplicationPrivateDataToClient()
         {
             // Include Debug mode information.
-            if (_applicationPrivateData == null)
-            {
-                _applicationPrivateData = new PSPrimitiveDictionary();
-            }
+            _applicationPrivateData ??= new PSPrimitiveDictionary();
 
             if (_serverRemoteDebugger != null)
             {
@@ -2004,10 +2001,7 @@ namespace System.Management.Automation
                     StringUtil.Format(DebuggerStrings.CannotProcessDebuggerCommandNotStopped));
             }
 
-            if (_processCommandCompleteEvent == null)
-            {
-                _processCommandCompleteEvent = new ManualResetEventSlim(false);
-            }
+            _processCommandCompleteEvent ??= new ManualResetEventSlim(false);
 
             _threadCommandProcessing = new ThreadCommandProcessing(command, output, _wrappedDebugger.Value, _processCommandCompleteEvent);
             try
@@ -2527,10 +2521,7 @@ namespace System.Management.Automation
                 {
                     // Blocking call for nested debugger execution (Debug-Runspace) stop events.
                     // The root debugger never makes two EnterDebugMode calls without an ExitDebugMode.
-                    if (_nestedDebugStopCompleteEvent == null)
-                    {
-                        _nestedDebugStopCompleteEvent = new ManualResetEventSlim(false);
-                    }
+                    _nestedDebugStopCompleteEvent ??= new ManualResetEventSlim(false);
 
                     _nestedDebugging = true;
                     OnEnterDebugMode(_nestedDebugStopCompleteEvent);

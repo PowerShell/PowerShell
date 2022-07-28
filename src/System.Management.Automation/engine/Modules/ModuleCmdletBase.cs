@@ -2564,30 +2564,11 @@ namespace Microsoft.PowerShell.Commands
 
                 // without ModuleToProcess a manifest will export everything by default
                 // (otherwise we want to honour exports from ModuleToProcess)
-                if (exportedFunctions == null)
-                {
-                    exportedFunctions = MatchAll;
-                }
-
-                if (exportedCmdlets == null)
-                {
-                    exportedCmdlets = MatchAll;
-                }
-
-                if (exportedVariables == null)
-                {
-                    exportedVariables = MatchAll;
-                }
-
-                if (exportedAliases == null)
-                {
-                    exportedAliases = MatchAll;
-                }
-
-                if (exportedDscResources == null)
-                {
-                    exportedDscResources = MatchAll;
-                }
+                exportedAliases ??= MatchAll;
+                exportedCmdlets ??= MatchAll;
+                exportedDscResources ??= MatchAll;
+                exportedFunctions ??= MatchAll;
+                exportedVariables ??= MatchAll;
             }
 
             manifestInfo.Description = description;
@@ -3218,16 +3199,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (newManifestInfo.RootModule == null)
-                {
-                    newManifestInfo.RootModule = manifestInfo.RootModule;
-                }
+                newManifestInfo.RootModule ??= manifestInfo.RootModule;
                 // If may be the case that a script has already set the PrivateData field in the module
                 // info object, in which case we won't overwrite it.
-                if (newManifestInfo.PrivateData == null)
-                {
-                    newManifestInfo.PrivateData = manifestInfo.PrivateData;
-                }
+                newManifestInfo.PrivateData ??= manifestInfo.PrivateData;
 
                 // Assign the PowerShellGet related properties from the module manifest
                 foreach (var tag in manifestInfo.Tags)
@@ -3352,10 +3327,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                if (newManifestInfo.RootModuleForManifest == null)
-                {
-                    newManifestInfo.RootModuleForManifest = manifestInfo.RootModuleForManifest;
-                }
+                newManifestInfo.RootModuleForManifest ??= manifestInfo.RootModuleForManifest;
 
                 if (newManifestInfo.DeclaredCmdletExports == null || newManifestInfo.DeclaredCmdletExports.Count == 0)
                 {
@@ -6591,10 +6563,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 string binaryPath = fileName;
                 modulePath = fileName;
-                if (binaryPath == null)
-                {
-                    binaryPath = System.IO.Path.Combine(moduleBase, moduleName);
-                }
+                binaryPath ??= System.IO.Path.Combine(moduleBase, moduleName);
 
                 BinaryAnalysisResult analysisResult = GetCmdletsFromBinaryModuleImplementation(binaryPath, manifestProcessingFlags, out assemblyVersion);
                 detectedCmdlets = analysisResult.DetectedCmdlets;

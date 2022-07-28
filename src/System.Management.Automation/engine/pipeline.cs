@@ -1021,10 +1021,7 @@ namespace System.Management.Automation.Internal
             ValidateCommandProcessorNotNull(firstcommandProcessor, PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
 
             // Set the execution scope using the current scope
-            if (_executionScope == null)
-            {
-                _executionScope = firstcommandProcessor.Context.EngineSessionState.CurrentScope;
-            }
+            _executionScope ??= firstcommandProcessor.Context.EngineSessionState.CurrentScope;
 
             // add ExternalSuccessOutput to the last command
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];

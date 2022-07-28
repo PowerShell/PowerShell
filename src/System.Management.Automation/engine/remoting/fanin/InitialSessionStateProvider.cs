@@ -286,15 +286,9 @@ namespace System.Management.Automation.Remoting
             }
 
             // assign defaults after parsing the xml content.
-            if (result.MaxReceivedObjectSizeMB == null)
-            {
-                result.MaxReceivedObjectSizeMB = BaseTransportManager.MaximumReceivedObjectSize;
-            }
+            result.MaxReceivedObjectSizeMB ??= BaseTransportManager.MaximumReceivedObjectSize;
 
-            if (result.MaxReceivedCommandSizeMB == null)
-            {
-                result.MaxReceivedCommandSizeMB = BaseTransportManager.MaximumReceivedDataSize;
-            }
+            result.MaxReceivedCommandSizeMB ??= BaseTransportManager.MaximumReceivedDataSize;
 
             return result;
         }
@@ -1740,10 +1734,7 @@ namespace System.Management.Automation.Remoting
             bool validateFile = false)
         {
             _configFile = configFile;
-            if (roleVerifier == null)
-            {
-                roleVerifier = static (role) => false;
-            }
+            roleVerifier ??= static (role) => false;
 
             Runspace backupRunspace = Runspace.DefaultRunspace;
 

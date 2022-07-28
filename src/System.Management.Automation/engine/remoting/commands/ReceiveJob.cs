@@ -1065,10 +1065,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lock (_syncObject)
                     {
-                        if (_outputProcessingNotification == null)
-                        {
-                            _outputProcessingNotification = new OutputProcessingState();
-                        }
+                        _outputProcessingNotification ??= new OutputProcessingState();
                     }
                 }
 

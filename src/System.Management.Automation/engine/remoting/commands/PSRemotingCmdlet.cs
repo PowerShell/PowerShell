@@ -4233,10 +4233,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lock (s_SyncObject)
                     {
-                        if (s_TypeTable == null)
-                        {
-                            s_TypeTable = TypeTable.LoadDefaultTypeFiles();
-                        }
+                        s_TypeTable ??= TypeTable.LoadDefaultTypeFiles();
                     }
                 }
 

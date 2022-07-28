@@ -233,10 +233,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         ci.propertyName = (string)key;
                 }
 
-                if (ci.propertyName == null)
-                {
-                    ci.propertyName = this.activeAssociationList[k].ResolvedExpression.ToString();
-                }
+                ci.propertyName ??= this.activeAssociationList[k].ResolvedExpression.ToString();
 
                 // set the width of the table
                 if (a.OriginatingParameter != null)
@@ -391,10 +388,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            if (matchingRowDefinition == null)
-            {
-                matchingRowDefinition = match.BestMatch as TableRowDefinition;
-            }
+            matchingRowDefinition ??= match.BestMatch as TableRowDefinition;
 
             if (matchingRowDefinition == null)
             {
@@ -412,10 +406,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                     }
 
-                    if (matchingRowDefinition == null)
-                    {
-                        matchingRowDefinition = match.BestMatch as TableRowDefinition;
-                    }
+                    matchingRowDefinition ??= match.BestMatch as TableRowDefinition;
                 }
             }
 

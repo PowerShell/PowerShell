@@ -2996,10 +2996,7 @@ namespace Microsoft.PowerShell.Commands
 
             // If properties were not specified, get all the values
 
-            if (propertyNames == null)
-            {
-                propertyNames = new Collection<string>();
-            }
+            propertyNames ??= new Collection<string>();
 
             if (propertyNames.Count == 0 && getAll)
             {

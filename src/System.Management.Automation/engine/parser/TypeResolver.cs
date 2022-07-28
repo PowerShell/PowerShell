@@ -370,10 +370,7 @@ namespace System.Management.Automation.Language
                 return typeName._typeDefinitionAst.Type;
             }
 
-            if (context == null)
-            {
-                context = LocalPipeline.GetExecutionContextFromTLS();
-            }
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
 
             // Use the explicitly passed-in assembly list when it's specified by the caller.
             // Otherwise, retrieve all currently loaded assemblies.
@@ -582,10 +579,7 @@ namespace System.Management.Automation.Language
 
         internal static TypeResolutionState GetDefaultUsingState(ExecutionContext context)
         {
-            if (context == null)
-            {
-                context = LocalPipeline.GetExecutionContextFromTLS();
-            }
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
 
             if (context != null)
             {

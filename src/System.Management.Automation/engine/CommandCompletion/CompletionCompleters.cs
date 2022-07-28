@@ -333,10 +333,7 @@ namespace System.Management.Automation
                 var commandList = keyValuePair.Value as List<object>;
                 if (commandList != null)
                 {
-                    if (endResults == null)
-                    {
-                        endResults = new List<CompletionResult>();
-                    }
+                    endResults ??= new List<CompletionResult>();
 
                     // The first command might be an un-prefixed commandInfo that we get by importing a module with the -Prefix parameter,
                     // in that case, we should add the module name qualification because if the module is not in the module path, calling
@@ -495,8 +492,7 @@ namespace System.Management.Automation
             DynamicKeywordStatementAst keywordAst = null;
             for (int i = context.RelatedAsts.Count - 1; i >= 0; i--)
             {
-                if (keywordAst == null)
-                    keywordAst = context.RelatedAsts[i] as DynamicKeywordStatementAst;
+                keywordAst ??= context.RelatedAsts[i] as DynamicKeywordStatementAst;
                 parameterAst = (context.RelatedAsts[i] as CommandParameterAst);
                 if (parameterAst != null) break;
             }
@@ -1640,13 +1636,14 @@ namespace System.Management.Automation
                     {
                         ProcessParameter(commandName, commandAst, context, result, bestMatchParam, boundArguments);
                         isProcessedAsPositional = result.Count > 0;
+                        else
+                        {
+                            positionalParam ??= param;
+                        }
                     }
                     else
                     {
-                        if (positionalParam == null)
-                        {
-                            positionalParam = bestMatchParam;
-                        }
+                        positionalParam ??= bestMatchParam;
                     }
                 }
                 else
@@ -4805,6 +4802,7 @@ namespace System.Management.Automation
             var lastAst = context.RelatedAsts?.Last();
             var variableAst = lastAst as VariableExpressionAst;
             var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
+            bool tokenAtCursorUsedBraces = context.TokenAtCursor is not null && context.TokenAtCursor.Text.StartsWith("${");
 
             // Look for variables in the input (e.g. parameters, etc.) before checking session state - these
             // variables might not exist in session state yet.
@@ -4950,7 +4948,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        var completedName = (name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                        var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                 ? prefix + provider + name
                                                 : prefix + "{" + provider + name + "}";
                         AddUniqueVariable(hashedResults, results, completedName, name, tooltip);
@@ -4973,7 +4971,7 @@ namespace System.Management.Automation
                         if (!string.IsNullOrEmpty(name))
                         {
                             name = "env:" + name;
-                            var completedName = (name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                            var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                     ? prefix + name
                                                     : prefix + "{" + name + "}";
                             AddUniqueVariable(hashedResults, results, completedName, name, "[string]" + name);
@@ -4988,7 +4986,7 @@ namespace System.Management.Automation
             {
                 if (wildcardPattern.IsMatch(specialVariable))
                 {
-                    var completedName = (specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                    var completedName = (!tokenAtCursorUsedBraces && specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                             ? prefix + specialVariable
                                             : prefix + "{" + specialVariable + "}";
 
@@ -5014,7 +5012,7 @@ namespace System.Management.Automation
                             var name = driveInfo.Name;
                             if (name != null && !string.IsNullOrWhiteSpace(name) && name.Length > 1)
                             {
-                                var completedName = (name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                                var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                         ? prefix + name + ":"
                                                         : prefix + "{" + name + ":}";
 
@@ -5030,7 +5028,7 @@ namespace System.Management.Automation
                 {
                     if (scopePattern.IsMatch(scope))
                     {
-                        var completedName = (scope.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                        var completedName = (!tokenAtCursorUsedBraces && scope.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                 ? prefix + scope
                                                 : prefix + "{" + scope + "}";
                         AddUniqueVariable(hashedResults, results, completedName, scope, scope);
@@ -5777,9 +5775,9 @@ namespace System.Management.Automation
                 // a MemberExpressionAst '$xml.$xml', whose parent is still a MemberExpressionAst '$xml.$xml.Save'.
                 // But here we DO NOT want to re-assign 'targetExpr' to be '$xml.$xml'. 'targetExpr' in this case
                 // should be '$xml'.
-                else if (targetExpr is null)
+                else
                 {
-                    targetExpr = parentAsMemberExpression.Expression;
+                    targetExpr ??= parentAsMemberExpression.Expression;
                 }
             }
             else if (lastAst.Parent is BinaryExpressionAst binaryExpression && context.TokenAtCursor.Kind.Equals(TokenKind.Multiply))

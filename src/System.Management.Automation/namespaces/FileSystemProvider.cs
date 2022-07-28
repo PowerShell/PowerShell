@@ -132,20 +132,21 @@ namespace Microsoft.PowerShell.Commands
                     itemsToSkip = 4;
                 }
 
-                foreach (string item in path.Split(StringLiterals.DefaultPathSeparator))
+                var items = path.Split(StringLiterals.DefaultPathSeparator);
+                for (int i = 0; i < items.Length; i++)
                 {
                     if (itemsToSkip-- > 0)
                     {
                         // This handles the UNC server and share and 8.3 short path syntax
-                        exactPath += item + StringLiterals.DefaultPathSeparator;
+                        exactPath += items[i] + StringLiterals.DefaultPathSeparator;
                         continue;
                     }
                     else if (string.IsNullOrEmpty(exactPath))
                     {
                         // This handles the drive letter or / root path start
-                        exactPath = item + StringLiterals.DefaultPathSeparator;
+                        exactPath = items[i] + StringLiterals.DefaultPathSeparator;
                     }
-                    else if (string.IsNullOrEmpty(item))
+                    else if (string.IsNullOrEmpty(items[i]) && i == items.Length - 1)
                     {
                         // This handles the trailing slash case
                         if (!exactPath.EndsWith(StringLiterals.DefaultPathSeparator))
@@ -155,17 +156,17 @@ namespace Microsoft.PowerShell.Commands
 
                         break;
                     }
-                    else if (item.Contains('~'))
+                    else if (items[i].Contains('~'))
                     {
                         // This handles short path names
-                        exactPath += StringLiterals.DefaultPathSeparator + item;
+                        exactPath += StringLiterals.DefaultPathSeparator + items[i];
                     }
                     else
                     {
                         // Use GetFileSystemEntries to get the correct casing of this element
                         try
                         {
-                            var entries = Directory.GetFileSystemEntries(exactPath, item);
+                            var entries = Directory.GetFileSystemEntries(exactPath, items[i]);
                             if (entries.Length > 0)
                             {
                                 exactPath = entries[0];
@@ -5116,10 +5117,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            if (basePath == null)
-            {
-                basePath = string.Empty;
-            }
+            basePath ??= string.Empty;
 
             s_tracer.WriteLine("basePath = {0}", basePath);
 
@@ -5308,10 +5306,7 @@ namespace Microsoft.PowerShell.Commands
                 return string.Empty;
             }
 
-            if (basePath == null)
-            {
-                basePath = string.Empty;
-            }
+            basePath ??= string.Empty;
 
             s_tracer.WriteLine("basePath = {0}", basePath);
 
@@ -6248,10 +6243,7 @@ namespace Microsoft.PowerShell.Commands
                                     if (member != null)
                                     {
                                         value = member.Value;
-                                        if (result == null)
-                                        {
-                                            result = new PSObject();
-                                        }
+                                        result ??= new PSObject();
 
                                         result.Properties.Add(new PSNoteProperty(property, value));
                                     }
@@ -7266,7 +7258,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                if (Utils.PathIsUnc(path))
+                if (Utils.PathIsUnc(path, networkOnly : true))
                 {
                     return true;
                 }

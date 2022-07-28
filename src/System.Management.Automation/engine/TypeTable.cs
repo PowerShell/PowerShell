@@ -771,10 +771,7 @@ namespace System.Management.Automation.Runspaces
             }
 
             // Somewhat pointlessly (backcompat), we allow a missing Member node
-            if (members == null)
-            {
-                members = new Collection<TypeMemberData>();
-            }
+            members ??= new Collection<TypeMemberData>();
 
             if (_context.errors.Count != errorCount)
             {
@@ -841,10 +838,7 @@ namespace System.Management.Automation.Runspaces
                                     {
                                         if ((object)_reader.LocalName == (object)_idName)
                                         {
-                                            if (referencedProperties == null)
-                                            {
-                                                referencedProperties = new List<string>(8);
-                                            }
+                                            referencedProperties ??= new List<string>(8);
 
                                             referencedProperties.Add(ReadElementString(_idName));
                                         }
@@ -3724,10 +3718,7 @@ namespace System.Management.Automation.Runspaces
 
             if (hasStandardMembers)
             {
-                if (typeMembers == null)
-                {
-                    typeMembers = _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
-                }
+                typeMembers ??= _extendedMembers.GetOrAdd(typeName, GetValueFactoryBasedOnInitCapacity(capacity: 1));
 
                 ProcessStandardMembers(errors, typeName, typeData.StandardMembers, propertySets, typeMembers, typeData.IsOverride);
             }

@@ -270,8 +270,7 @@ namespace System.Management.Automation
 
             // If this generated an exception (but we didn't have one from the non-dynamic
             // parameters, report on this one.
-            if (reportedBindingException == null)
-                reportedBindingException = currentBindingException;
+            reportedBindingException ??= currentBindingException;
 
             // If the cmdlet implements a ValueFromRemainingArguments parameter (VarArgs)
             // bind the unbound arguments to that parameter.
@@ -1452,8 +1451,7 @@ namespace System.Management.Automation
 
                     BoundObsoleteParameterNames.Add(parameter.Parameter.Name);
 
-                    if (ObsoleteParameterWarningList == null)
-                        ObsoleteParameterWarningList = new List<WarningRecord>();
+                    ObsoleteParameterWarningList ??= new List<WarningRecord>();
 
                     ObsoleteParameterWarningList.Add(warningRecord);
                 }
