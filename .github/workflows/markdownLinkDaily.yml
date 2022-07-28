@@ -12,6 +12,7 @@ on:
 jobs:
   markdown-link-check:
     runs-on: ubuntu-latest
+    if: github.repository == 'PowerShell/PowerShell'
     steps:
     - name: Checkout
       uses: actions/checkout@master
