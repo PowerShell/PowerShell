@@ -1590,13 +1590,19 @@ namespace System.Management.Automation
                                               (defaultParameterSetFlag & validParameterSetFlags) != 0;
             MergedCompiledCommandParameter positionalParam = null;
 
+            MergedCompiledCommandParameter bestMatchParam = null;
+            ParameterSetSpecificMetadata bestMatchSet = null;
+            // Finds the parameter with the position closest to the specified position
             foreach (MergedCompiledCommandParameter param in parameters)
             {
                 bool isInParameterSet = (param.Parameter.ParameterSetFlags & validParameterSetFlags) != 0 || param.Parameter.IsInAllSets;
                 if (!isInParameterSet)
+                {
                     continue;
+                }
 
                 var parameterSetDataCollection = param.Parameter.GetMatchingParameterSetData(validParameterSetFlags);
+
                 foreach (ParameterSetSpecificMetadata parameterSetData in parameterSetDataCollection)
                 {
                     // in the first pass, we skip the remaining argument ones
@@ -1608,36 +1614,46 @@ namespace System.Management.Automation
                     // Check the position
                     int positionInParameterSet = parameterSetData.Position;
 
-                    if (positionInParameterSet == int.MinValue || positionInParameterSet != position)
+                    if (positionInParameterSet < position)
                     {
-                        // The parameter is not positional, or its position is not what we want
+                        // The parameter is not positional, or its position is lower than what we want
                         continue;
                     }
 
-                    if (isDefaultParameterSetValid)
+                    if (bestMatchSet is null || bestMatchSet.Position > positionInParameterSet)
                     {
-                        if (parameterSetData.ParameterSetFlag == defaultParameterSetFlag)
+                        bestMatchParam = param;
+                        bestMatchSet = parameterSetData;
+                        if (positionInParameterSet == position)
                         {
-                            ProcessParameter(commandName, commandAst, context, result, param, boundArguments);
-                            isProcessedAsPositional = result.Count > 0;
                             break;
                         }
-                        else
-                        {
-                            if (positionalParam == null)
-                                positionalParam = param;
-                        }
+                    }
+                }
+            }
+
+            if (bestMatchParam is not null)
+            {
+                if (isDefaultParameterSetValid)
+                {
+                    if (bestMatchSet.ParameterSetFlag == defaultParameterSetFlag)
+                    {
+                        ProcessParameter(commandName, commandAst, context, result, bestMatchParam, boundArguments);
+                        isProcessedAsPositional = result.Count > 0;
                     }
                     else
                     {
-                        isProcessedAsPositional = true;
-                        ProcessParameter(commandName, commandAst, context, result, param, boundArguments);
-                        break;
+                        if (positionalParam == null)
+                        {
+                            positionalParam = bestMatchParam;
+                        }
                     }
                 }
-
-                if (isProcessedAsPositional)
-                    break;
+                else
+                {
+                    isProcessedAsPositional = true;
+                    ProcessParameter(commandName, commandAst, context, result, bestMatchParam, boundArguments);
+                }
             }
 
             if (!isProcessedAsPositional && positionalParam != null)

@@ -753,6 +753,27 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches.CompletionText | Should -Contain "-Path"
     }
 
+    it 'Should find the closest positional parameter match' {
+        $TestString = @'
+function Verb-Noun
+{
+    Param
+    (
+        [Parameter(Position = 0)]
+        [string]
+        $Param1,
+        [Parameter(Position = 1)]
+        [System.Management.Automation.ActionPreference]
+        $Param2
+    )
+}
+Verb-Noun -Param1 Hello ^
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches[0].CompletionText | Should -Be "Break"
+    }
+
     Context "Script name completion" {
         BeforeAll {
             Setup -f 'install-powershell.ps1' -Content ""
