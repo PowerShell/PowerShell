@@ -1931,7 +1931,7 @@ namespace System.Management.Automation
                 }
                 else if (parent is not null)
                 {
-                    AddInferredTypesForDollarUnderbar(parent, inferredTypes);
+                    inferredTypes.AddRange(GetInferredEnumeratedTypes(InferTypes(parent)));
                 }
 
                 return;
@@ -2072,42 +2072,6 @@ namespace System.Management.Automation
             if (_context.TryGetRepresentativeTypeNameFromExpressionSafeEval(variableExpressionAst, out var evalTypeName))
             {
                 inferredTypes.Add(evalTypeName);
-            }
-        }
-
-        private void AddInferredTypesForDollarUnderbar(Ast parentExpression, List<PSTypeName> results)
-        {
-            foreach (var result in InferTypes(parentExpression))
-            {
-                if (result.Type != null)
-                {
-                    // Assume (because we're looking at $_ and we're inside a script block that is an
-                    // argument to some command) that the type we're getting is actually unrolled.
-                    // This might not be right in all cases, but with our simple analysis, it's
-                    // right more often than it's wrong.
-                    if (result.Type.IsArray)
-                    {
-                        results.Add(new PSTypeName(result.Type.GetElementType()));
-                        continue;
-                    }
-
-                    if (result.Type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(result.Type))
-                    {
-                        // We can't deduce much from IEnumerable, but we can if it's generic.
-                        var enumerableInterfaces = result.Type.GetInterfaces();
-                        foreach (var t in enumerableInterfaces)
-                        {
-                            if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                            {
-                                results.Add(new PSTypeName(t.GetGenericArguments()[0]));
-                            }
-                        }
-
-                        continue;
-                    }
-                }
-
-                results.Add(result);
             }
         }
 
@@ -2363,7 +2327,7 @@ namespace System.Management.Automation
         /// The potentially enumerable types to infer enumerated type from.
         /// </param>
         /// <returns>The enumerated item types.</returns>
-        private static IEnumerable<PSTypeName> GetInferredEnumeratedTypes(IEnumerable<PSTypeName> enumerableTypes)
+        internal static IEnumerable<PSTypeName> GetInferredEnumeratedTypes(IEnumerable<PSTypeName> enumerableTypes)
         {
             foreach (PSTypeName maybeEnumerableType in enumerableTypes)
             {
