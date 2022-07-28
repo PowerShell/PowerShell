@@ -2847,10 +2847,12 @@ namespace System.Management.Automation.Runspaces
                 securityAttributes);
 
             int lastError = Marshal.GetLastWin32Error();
+#pragma warning disable IDE0031
             if (securityDescHandle != null)
             {
                 securityDescHandle.Value.Free();
             }
+#pragma warning restore IDE0031
 
             if (pipeHandle.IsInvalid)
             {
