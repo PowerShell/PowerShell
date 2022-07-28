@@ -1636,10 +1636,6 @@ namespace System.Management.Automation
                     {
                         ProcessParameter(commandName, commandAst, context, result, bestMatchParam, boundArguments);
                         isProcessedAsPositional = result.Count > 0;
-                        else
-                        {
-                            positionalParam ??= param;
-                        }
                     }
                     else
                     {
