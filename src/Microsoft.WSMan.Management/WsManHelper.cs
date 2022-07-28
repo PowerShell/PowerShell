@@ -370,10 +370,7 @@ namespace Microsoft.WSMan.Management
             }
             finally
             {
-                // _sr?.Close();
                 _sr?.Dispose();
-
-                // _fs?.Close();
                 _fs?.Dispose();
             }
 
