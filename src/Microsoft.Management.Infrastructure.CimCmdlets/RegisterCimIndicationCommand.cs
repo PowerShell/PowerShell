@@ -227,10 +227,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     break;
             }
 
-            if (watcher != null)
-            {
-                watcher.SetCmdlet(this);
-            }
+            watcher?.SetCmdlet(this);
 
             return watcher;
         }
@@ -275,10 +272,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx();
 
             CimIndicationWatcher watcher = sender as CimIndicationWatcher;
-            if (watcher != null)
-            {
-                watcher.Stop();
-            }
+            watcher?.Stop();
         }
 
         #region private members
