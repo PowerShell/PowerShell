@@ -574,14 +574,14 @@ ConstructorTestClass(int i, bool b)
     It 'Should complete method name without starting parenthesis in foreach-object' {
         $TestString = '1..10 | ForEach-Object gettype'
         $res = TabExpansion2 -inputScript $TestString
-        $res.CompletionMatches[0].CompletionText | Should -BeExactly GetType
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'GetType'
     }
 
     It 'Should enumerate types when completing member names for Select-Object' {
         $TestString = '"Hello","World" | select-object '
         $res = TabExpansion2 -inputScript $TestString
         $res | Should -HaveCount 1
-        $res.CompletionMatches[0].CompletionText | Should -BeExactly Length
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Length'
     }
 
     Context "Format cmdlet's View paramter completion" {
