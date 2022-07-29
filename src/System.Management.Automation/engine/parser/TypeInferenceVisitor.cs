@@ -1288,7 +1288,7 @@ namespace System.Management.Automation
 
                 if (i > 0)
                 {
-                    inferredTypes.AddRange(InferTypes(parentPipeline.PipelineElements[i - 1]));
+                    inferredTypes.AddRange(GetInferredEnumeratedTypes(InferTypes(parentPipeline.PipelineElements[i - 1])));
                 }
             }
         }

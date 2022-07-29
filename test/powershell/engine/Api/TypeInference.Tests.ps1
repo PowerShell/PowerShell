@@ -1342,6 +1342,12 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should -Be 1
         $res.Name | Should -Be 'System.Security.AccessControl.AuthorizationRule'
     }
+
+    It 'Enumerates the inferred type after *-Object commands' {
+        $res = [AstTypeInference]::InferTypeOf( { (([System.Management.Automation.Language.Ast]$null).FindAll() | Select-Object -First 1) }.Ast)
+        $res.Count | Should -Be 1
+        $res.Name | Should -Be 'System.Management.Automation.Language.Ast'
+    }
 }
 
 Describe "AstTypeInference tests" -Tags CI {
