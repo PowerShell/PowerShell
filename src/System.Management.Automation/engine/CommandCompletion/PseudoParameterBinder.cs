@@ -1222,10 +1222,7 @@ namespace System.Management.Automation.Language
                     var parameter = _commandElements[commandIndex] as CommandParameterAst;
                     if (parameter != null)
                     {
-                        if (argumentsToGetDynamicParameters != null)
-                        {
-                            argumentsToGetDynamicParameters.Add(parameter.Extent.Text);
-                        }
+                        argumentsToGetDynamicParameters?.Add(parameter.Extent.Text);
 
                         AstPair parameterArg = parameter.Argument != null
                             ? new AstPair(parameter)

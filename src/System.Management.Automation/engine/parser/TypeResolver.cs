@@ -927,10 +927,7 @@ namespace System.Management.Automation
         public static bool Remove(string typeName)
         {
             userTypeAccelerators.Remove(typeName);
-            if (s_allTypeAccelerators != null)
-            {
-                s_allTypeAccelerators.Remove(typeName);
-            }
+            s_allTypeAccelerators?.Remove(typeName);
 
             return true;
         }

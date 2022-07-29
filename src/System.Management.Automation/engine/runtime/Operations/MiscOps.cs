@@ -426,10 +426,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (context.Events != null)
-                {
-                    context.Events.ProcessPendingActions();
-                }
+                context.Events?.ProcessPendingActions();
 
                 if (input == AutomationNull.Value && !ignoreInput)
                 {
@@ -519,10 +516,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (context.Events != null)
-                {
-                    context.Events.ProcessPendingActions();
-                }
+                context.Events?.ProcessPendingActions();
 
                 CommandProcessorBase commandProcessor = null;
 
@@ -841,10 +835,7 @@ namespace System.Management.Automation
 
         internal static void CheckForInterrupts(ExecutionContext context)
         {
-            if (context.Events != null)
-            {
-                context.Events.ProcessPendingActions();
-            }
+            context.Events?.ProcessPendingActions();
 
             if (context.CurrentPipelineStopping)
             {
@@ -1065,10 +1056,7 @@ namespace System.Management.Automation
                     // Normally, context.CurrentCommandProcessor will not be null. But in legacy DRTs from ParserTest.cs,
                     // a scriptblock may be invoked through 'DoInvokeReturnAsIs' using .NET reflection. In that case,
                     // context.CurrentCommandProcessor will be null. We don't try passing along variable lists in such case.
-                    if (context.CurrentCommandProcessor != null)
-                    {
-                        context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
-                    }
+                    context.CurrentCommandProcessor?.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
                     commandProcessor.CommandRuntime.ErrorOutputPipe = pipe;
@@ -1079,10 +1067,7 @@ namespace System.Management.Automation
                     break;
                 case RedirectionStream.Output:
                     // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
-                    if (context.CurrentCommandProcessor != null)
-                    {
-                        context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
-                    }
+                    context.CurrentCommandProcessor?.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
                     break;
@@ -1214,11 +1199,8 @@ namespace System.Management.Automation
                 throw;
             }
 
-            if (parentPipelineProcessor != null)
-            {
-                // I think this is only necessary for calling Dispose on the commands in the redirection pipe.
-                parentPipelineProcessor.AddRedirectionPipe(PipelineProcessor);
-            }
+            // I think this is only necessary for calling Dispose on the commands in the redirection pipe.
+            parentPipelineProcessor?.AddRedirectionPipe(PipelineProcessor);
 
             return new Pipe(context, PipelineProcessor);
         }
@@ -1234,10 +1216,7 @@ namespace System.Management.Automation
         internal void CallDoCompleteForExpression()
         {
             // The pipe returned from 'GetRedirectionPipe' could be a NullPipe
-            if (PipelineProcessor != null)
-            {
-                PipelineProcessor.DoComplete();
-            }
+            PipelineProcessor?.DoComplete();
         }
 
         private bool _disposed;
@@ -1255,10 +1234,7 @@ namespace System.Management.Automation
 
             if (disposing)
             {
-                if (PipelineProcessor != null)
-                {
-                    PipelineProcessor.Dispose();
-                }
+                PipelineProcessor?.Dispose();
             }
 
             _disposed = true;
@@ -1754,10 +1730,7 @@ namespace System.Management.Automation
                     ErrorRecord err = rte.ErrorRecord;
                     // CurrentCommandProcessor is normally not null, but it is null
                     // when executing some unit tests through reflection.
-                    if (context.CurrentCommandProcessor != null)
-                    {
-                        context.CurrentCommandProcessor.ForgetScriptException();
-                    }
+                    context.CurrentCommandProcessor?.ForgetScriptException();
 
                     try
                     {
@@ -1951,10 +1924,7 @@ namespace System.Management.Automation
 
             if (rte is not PipelineStoppedException)
             {
-                if (outputPipe != null)
-                {
-                    outputPipe.AppendVariableList(VariableStreamKind.Error, errRec);
-                }
+                outputPipe?.AppendVariableList(VariableStreamKind.Error, errRec);
 
                 context.AppendDollarError(errRec);
             }
@@ -3530,10 +3500,7 @@ namespace System.Management.Automation
                 if (dispose)
                 {
                     var disposable = enumerator as IDisposable;
-                    if (disposable != null)
-                    {
-                        disposable.Dispose();
-                    }
+                    disposable?.Dispose();
                 }
             }
         }

@@ -2395,10 +2395,7 @@ namespace System.Management.Automation
             if (e == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(e));
 
-            if (PipelineProcessor != null)
-            {
-                PipelineProcessor.RecordFailure(e, _thisCommand);
-            }
+            PipelineProcessor?.RecordFailure(e, _thisCommand);
 
             // 1021203-2005/05/09-JonN
             // HaltCommandException will cause the command

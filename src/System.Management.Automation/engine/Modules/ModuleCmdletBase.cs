@@ -5013,17 +5013,14 @@ namespace Microsoft.PowerShell.Commands
                 if (Context.Modules.ModuleTable.ContainsKey(module.Path))
                 {
                     // We should try to run OnRemove as the very first thing
-                    if (module.OnRemove != null)
-                    {
-                        module.OnRemove.InvokeUsingCmdlet(
-                            contextCmdlet: this,
-                            useLocalScope: true,
-                            errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
-                            dollarUnder: AutomationNull.Value,
-                            input: AutomationNull.Value,
-                            scriptThis: AutomationNull.Value,
-                            args: new object[] { module });
-                    }
+                    module.OnRemove?.InvokeUsingCmdlet(
+                        contextCmdlet: this,
+                        useLocalScope: true,
+                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToCurrentErrorPipe,
+                        dollarUnder: AutomationNull.Value,
+                        input: AutomationNull.Value,
+                        scriptThis: AutomationNull.Value,
+                        args: new object[] { module });
 
                     if (module.ImplementingAssembly != null && !module.ImplementingAssembly.IsDynamic)
                     {
@@ -6893,10 +6890,7 @@ namespace Microsoft.PowerShell.Commands
                 targetSessionState.ModuleTableKeys.Add(moduleTableKey);
             }
 
-            if (targetSessionState.Module != null)
-            {
-                targetSessionState.Module.AddNestedModule(module);
-            }
+            targetSessionState.Module?.AddNestedModule(module);
         }
 
         /// <summary>
