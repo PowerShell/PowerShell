@@ -504,7 +504,7 @@ switch ($x)
 
     It 'ForEach-Object member completion results should include methods' {
         $res = TabExpansion2 -inputScript '1..10 | ForEach-Object -MemberName '
-        $res.CompletionMatches.CompletionText | Should -Contain "GetType("
+        $res.CompletionMatches.CompletionText | Should -Contain "GetType"
     }
 
     It 'Should not complete void instance members' {
@@ -569,12 +569,6 @@ ConstructorTestClass(int i, bool b)
         }
         $res = TabExpansion2 -inputScript $Script
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Directory'
-    }
-
-    It 'Should complete method name without starting parenthesis in foreach-object' {
-        $TestString = '1..10 | ForEach-Object gettype'
-        $res = TabExpansion2 -inputScript $TestString
-        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'GetType'
     }
 
     It 'Should enumerate types when completing member names for Select-Object' {
