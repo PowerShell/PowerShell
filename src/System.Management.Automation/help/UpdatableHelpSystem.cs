@@ -293,6 +293,7 @@ namespace System.Management.Automation.Help
         internal IEnumerable<string> GetCurrentUICulture()
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
+
             while (culture != null)
             {
                 if (string.IsNullOrEmpty(culture.Name))
