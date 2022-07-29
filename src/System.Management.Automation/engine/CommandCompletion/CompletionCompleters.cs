@@ -1770,7 +1770,7 @@ namespace System.Management.Automation
             {
                 RemoveLastNullCompletionResult(result);
 
-                IList<Enum> enumValues = LanguagePrimitives.EnumSingleTypeConverter.GetEnumValues(parameterType).Cast<Enum>().ToList();
+                IEnumerable enumValues = LanguagePrimitives.EnumSingleTypeConverter.GetEnumValues(parameterType);
                 // Exclude values not accepted by ValidateRange-attributes
                 foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
                 {
