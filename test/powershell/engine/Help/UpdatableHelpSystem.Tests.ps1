@@ -434,20 +434,26 @@ Describe "Validate Update-Help -SourcePath for all PowerShell modules for user s
     RunUpdateHelpTests -Tag "Feature" -useSourcePath -Scope 'CurrentUser'
 }
 
-Describe "Validate 'Update-Help' without arguments on non-US systems" -Tags @('Feature') {
+Describe "Validate 'Update-Help' shows 'HelpCultureNotSupported' when thrown" -Tags @('Feature') {
     BeforeAll {
-        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('UpdateHelpCurrentUICulture', [System.Globalization.CultureInfo] 'en-GB')
-        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('UpdateHelpThrowHelpCultureNotSupported', $true)
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ThrowHelpCultureNotSupported', $true)
     }
     AfterAll {
-        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('UpdateHelpCurrentUICulture', $null)
-        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('UpdateHelpThrowHelpCultureNotSupported', $false)
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ThrowHelpCultureNotSupported', $false)
     }
 
-    It 'Fails if downloaded culture does not match implicit one' {
+    It 'Shows error if help culture does not match: <name>' -TestCases @(
+        @{ 'name' = 'implicit culture'; 'culture' = $null }
+        @{ 'name' = 'explicit culture'; 'culture' = 'en-GB' }
+    ) {
+        param ($name, $culture)
+        # Cannot pass null, have to splat to skip argument entirely
+        $cultureArg = $culture ? @{ 'UICulture' = $culture } : @{}
+        $cultureUsed = $culture ?? (Get-Culture)
+
         $ErrorVariable = $null
-        Update-Help -ErrorVariable ErrorVariable -ErrorAction SilentlyContinue
-        $ErrorVariable | Should -Not -BeNullOrEmpty
+        Update-Help @cultureArg -ErrorVariable ErrorVariable -ErrorAction SilentlyContinue
+        $ErrorVariable | Should -Match "No UI culture was found that matches the following pattern: ${cultureUsed}"
     }
 }
 

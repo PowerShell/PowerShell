@@ -215,11 +215,11 @@ namespace Microsoft.PowerShell.Commands
         internal override bool ProcessModuleWithCulture(UpdatableHelpModuleInfo module, string culture)
         {
             // Simulate culture not found
-            if (InternalTestHooks.UpdateHelpThrowHelpCultureNotSupported) {
+            if (InternalTestHooks.ThrowHelpCultureNotSupported)
+            {
                 // TODO: unify with Base.IsUpdateNecessary to ensure exact same exception thrown
                 throw new UpdatableHelpSystemException("HelpCultureNotSupported",
-                    StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupported,
-                    InternalTestHooks.UpdateHelpCurrentUICulture, "test-TEST"),
+                    StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupported, culture, "en-US"),
                     ErrorCategory.InvalidOperation, null, null);
             }
 

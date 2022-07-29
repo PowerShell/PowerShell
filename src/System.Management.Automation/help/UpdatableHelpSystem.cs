@@ -293,12 +293,6 @@ namespace System.Management.Automation.Help
         internal IEnumerable<string> GetCurrentUICulture()
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
-
-            // Allow mocking implicit culture in tests
-            if (InternalTestHooks.UpdateHelpCurrentUICulture != null) {
-                culture = InternalTestHooks.UpdateHelpCurrentUICulture;
-            }
-
             while (culture != null)
             {
                 if (string.IsNullOrEmpty(culture.Name))
