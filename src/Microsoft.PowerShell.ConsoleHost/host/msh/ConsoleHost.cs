@@ -277,6 +277,7 @@ namespace Microsoft.PowerShell
             }
             finally
             {
+#pragma warning disable IDE0031
                 if (s_theConsoleHost != null)
                 {
 #if LEGACYTELEMETRY
@@ -292,6 +293,7 @@ namespace Microsoft.PowerShell
 #endif
                     s_theConsoleHost.Dispose();
                 }
+#pragma warning restore IDE0031
             }
 
             unchecked

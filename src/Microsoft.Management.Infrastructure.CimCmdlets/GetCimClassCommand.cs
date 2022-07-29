@@ -202,10 +202,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimGetCimClass cimGetCimClass = this.GetOperationAgent();
-            if (cimGetCimClass != null)
-            {
-                cimGetCimClass.ProcessRemainActions(this.CmdletOperation);
-            }
+            cimGetCimClass?.ProcessRemainActions(this.CmdletOperation);
         }
 
         #endregion

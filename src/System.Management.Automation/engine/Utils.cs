@@ -574,10 +574,7 @@ namespace System.Management.Automation
             catch (ObjectDisposedException) { }
             finally
             {
-                if (winPEKey != null)
-                {
-                    winPEKey.Dispose();
-                }
+                winPEKey?.Dispose();
             }
 #endif
             return false;
