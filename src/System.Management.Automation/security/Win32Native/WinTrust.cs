@@ -196,7 +196,10 @@ internal static class WinTrustMethods
         public IntPtr pbMemSignedMsg;
     }
 
-    [DllImport(WinTrustDll, CharSet = CharSet.Unicode, EntryPoint = "CryptCATAdminAcquireContext2",
+    [DllImport(
+        WinTrustDll,
+        CharSet = CharSet.Unicode,
+        EntryPoint = "CryptCATAdminAcquireContext2",
         SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool NativeCryptCATAdminAcquireContext2(
@@ -217,7 +220,10 @@ internal static class WinTrustMethods
         return adminHandle;
     }
 
-    [DllImport(WinTrustDll, CharSet = CharSet.Unicode, EntryPoint = "CryptCATAdminCalcHashFromFileHandle2",
+    [DllImport(
+        WinTrustDll,
+        CharSet = CharSet.Unicode,
+        EntryPoint = "CryptCATAdminCalcHashFromFileHandle2",
         SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern unsafe bool NativeCryptCATAdminCalcHashFromFileHandle2(
@@ -429,6 +435,6 @@ internal static class WinTrustMethods
     internal delegate void CryptCATCDFParseErrorCallBack(
         uint dwErrorArea,
         uint dwLocalArea,
-        [MarshalAs(UnmanagedType.LPWStr)]string pwszLine
+        [MarshalAs(UnmanagedType.LPWStr)] string pwszLine
     );
 }

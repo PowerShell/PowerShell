@@ -54,7 +54,7 @@ namespace System.Management.Automation
     internal static class SignatureHelper
     {
         private static Guid WINTRUST_ACTION_GENERIC_VERIFY_V2 = new Guid("00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
- 
+
         /// <summary>
         /// Tracer for SignatureHelper.
         /// </summary>
@@ -462,7 +462,7 @@ namespace System.Management.Automation
                 fixed (char* fileNamePtr = fileName)
                 fixed (byte* contentPtr = contentBytes)
                 {
-                    if (fileContent == null)    
+                    if (fileContent == null)
                     {
                         WinTrustMethods.WINTRUST_FILE_INFO wfi = new()
                         {
@@ -510,6 +510,8 @@ namespace System.Management.Automation
             }
             catch (Win32Exception)
             {
+                // We don't care about the Win32 error code here, so return
+                // null on a failure and let the caller handle it.
                 return null;
             }
         }
@@ -570,7 +572,11 @@ namespace System.Management.Automation
             {
                 IntPtr pProvData = WinTrustMethods.WTHelperProvDataFromStateData(wvtStateData);
 
-                pProvSigner = WinTrustMethods.WTHelperGetProvSignerFromChain(pProvData, 0, false, 0);
+                pProvSigner = WinTrustMethods.WTHelperGetProvSignerFromChain(
+                    pProvData,
+                    signerIdx: 0,
+                    counterSigner: false,
+                    counterSignerIdx: 0);
 
                 NativeMethods.CRYPT_PROVIDER_SGNR provSigner =
                     Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_SGNR>(pProvSigner);

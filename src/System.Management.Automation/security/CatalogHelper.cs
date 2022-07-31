@@ -288,7 +288,8 @@ namespace System.Management.Automation
                 string fileName = string.Empty;
                 do
                 {
-                    memberFile = WinTrustMethods.CryptCATCDFEnumMembersByCDFTagEx(resultCDF, memberFile, ParseErrorCallback, ref memberInfo, true, IntPtr.Zero);
+                    memberFile = WinTrustMethods.CryptCATCDFEnumMembersByCDFTagEx(resultCDF, memberFile, ParseErrorCallback, ref memberInfo,
+                        fContinueOnError: true, pvReserved: IntPtr.Zero);
                     fileName = Marshal.PtrToStringUni(memberFile);
 
                     if (!string.IsNullOrEmpty(fileName))
@@ -413,7 +414,9 @@ namespace System.Management.Automation
                     ErrorCategory.InvalidOperation,
                     null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
-                return hashValue;  // Satisfy using check below
+
+                // The method returns an empty string on a failure.
+                return hashValue;
             }
 
             // Open the file that is to be hashed for reading and get its handle
@@ -431,13 +434,15 @@ namespace System.Management.Automation
                     ErrorCategory.InvalidOperation,
                     null);
                 _cmdlet.ThrowTerminatingError(errorRecord);
-                return hashValue;  // Satisfy using check below
+
+                // The method returns an empty string on a failure.
+                return hashValue;
             }
-            
+
             using (catAdmin)
             using (fileStream)
             {
-                byte[] hashBytes;
+                byte[] hashBytes = Array.Empty<byte>();
                 try
                 {
                     hashBytes = WinTrustMethods.CryptCATAdminCalcHashFromFileHandle2(catAdmin, fileStream.SafeFileHandle);
@@ -450,7 +455,6 @@ namespace System.Management.Automation
                         ErrorCategory.InvalidOperation,
                         null);
                     _cmdlet.ThrowTerminatingError(errorRecord);
-                    return hashValue;  // Satisfy using check below
                 }
 
                 hashValue = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
@@ -782,10 +786,14 @@ namespace System.Management.Automation
         {
             switch (dwErrorArea)
             {
-                case NativeConstants.CRYPTCAT_E_AREA_HEADER: break;
-                case NativeConstants.CRYPTCAT_E_AREA_MEMBER: break;
-                case NativeConstants.CRYPTCAT_E_AREA_ATTRIBUTE: break;
-                default: break;
+                case NativeConstants.CRYPTCAT_E_AREA_HEADER:
+                    break;
+                case NativeConstants.CRYPTCAT_E_AREA_MEMBER:
+                    break;
+                case NativeConstants.CRYPTCAT_E_AREA_ATTRIBUTE:
+                    break;
+                default:
+                    break;
             }
 
             switch (dwLocalError)
@@ -808,18 +816,24 @@ namespace System.Management.Automation
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }
-                case NativeConstants.CRYPTCAT_E_CDF_BAD_GUID_CONV: break;
-                case NativeConstants.CRYPTCAT_E_CDF_ATTR_TYPECOMBO: break;
-                case NativeConstants.CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES: break;
-                case NativeConstants.CRYPTCAT_E_CDF_UNSUPPORTED: break;
+                case NativeConstants.CRYPTCAT_E_CDF_BAD_GUID_CONV:
+                    break;
+                case NativeConstants.CRYPTCAT_E_CDF_ATTR_TYPECOMBO:
+                    break;
+                case NativeConstants.CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES:
+                    break;
+                case NativeConstants.CRYPTCAT_E_CDF_UNSUPPORTED:
+                    break;
                 case NativeConstants.CRYPTCAT_E_CDF_DUPLICATE:
                     {
                         ErrorRecord errorRecord = new ErrorRecord(new InvalidOperationException(StringUtil.Format(CatalogStrings.FoundDuplicateFileMemberInCatalog, pwszLine)), "FoundDuplicateFileMemberInCatalog", ErrorCategory.InvalidOperation, null);
                         _cmdlet.ThrowTerminatingError(errorRecord);
                         break;
                     }
-                case NativeConstants.CRYPTCAT_E_CDF_TAGNOTFOUND: break;
-                default: break;
+                case NativeConstants.CRYPTCAT_E_CDF_TAGNOTFOUND:
+                    break;
+                default:
+                    break;
             }
         }
     }
