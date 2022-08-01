@@ -189,10 +189,7 @@ namespace Microsoft.PowerShell
                 if ((s_cpp.ServerMode && s_cpp.NamedPipeServerMode) || (s_cpp.ServerMode && s_cpp.SocketServerMode) || (s_cpp.NamedPipeServerMode && s_cpp.SocketServerMode))
                 {
                     s_tracer.TraceError("Conflicting server mode parameters, parameters must be used exclusively.");
-                    if (s_theConsoleHost != null)
-                    {
-                        s_theConsoleHost.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
-                    }
+                    s_theConsoleHost?.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
 
                     return ExitCodeBadCommandLineParameter;
                 }
@@ -501,10 +498,7 @@ namespace Microsoft.PowerShell
                     if (runspaceRef != null)
                     {
                         var runspace = runspaceRef.Runspace;
-                        if (runspace != null)
-                        {
-                            runspace.Close();
-                        }
+                        runspace?.Close();
                     }
                 }
             }
@@ -1266,15 +1260,8 @@ namespace Microsoft.PowerShell
                         StopTranscribing();
                     }
 
-                    if (_outputSerializer != null)
-                    {
-                        _outputSerializer.End();
-                    }
-
-                    if (_errorSerializer != null)
-                    {
-                        _errorSerializer.End();
-                    }
+                    _outputSerializer?.End();
+                    _errorSerializer?.End();
 
                     if (_runspaceRef != null)
                     {
@@ -2233,10 +2220,7 @@ namespace Microsoft.PowerShell
                     // For remote debugging block data coming from the main (not-nested)
                     // running command.
                     baseLoop = InputLoop.GetNonNestedLoop();
-                    if (baseLoop != null)
-                    {
-                        baseLoop.BlockCommandOutput();
-                    }
+                    baseLoop?.BlockCommandOutput();
                 }
 
                 //
@@ -2281,10 +2265,7 @@ namespace Microsoft.PowerShell
             finally
             {
                 _debuggerStopEventArgs = null;
-                if (baseLoop != null)
-                {
-                    baseLoop.ResumeCommandOutput();
-                }
+                baseLoop?.ResumeCommandOutput();
             }
         }
 
@@ -2670,10 +2651,7 @@ namespace Microsoft.PowerShell
                                 bht = _parent._breakHandlerThread;
                             }
 
-                            if (bht != null)
-                            {
-                                bht.Join();
-                            }
+                            bht?.Join();
 
                             // Once the pipeline has been executed, we toss any outstanding progress data and
                             // take down the display.
