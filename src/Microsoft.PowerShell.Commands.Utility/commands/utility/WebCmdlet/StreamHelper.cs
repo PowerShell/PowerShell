@@ -454,11 +454,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal static byte[] EncodeToBytes(string str, Encoding encoding)
         {
-            if (encoding == null)
-            {
-                // just use the default encoding if one wasn't provided
-                encoding = ContentHelper.GetDefaultEncoding();
-            }
+            // just use the default encoding if one wasn't provided
+            encoding ??= ContentHelper.GetDefaultEncoding();
 
             return encoding.GetBytes(str);
         }

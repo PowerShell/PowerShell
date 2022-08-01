@@ -258,10 +258,7 @@ namespace Microsoft.PowerShell
             //
             using (Aes aes = Aes.Create())
             {
-                if (iv is null)
-                {
-                    iv = aes.IV;
-                }
+                iv ??= aes.IV;
 
                 //
                 // get clear text data from the input SecureString

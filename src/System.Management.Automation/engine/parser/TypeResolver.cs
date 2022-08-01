@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 #if !UNIX
 using System.DirectoryServices;
 #endif
@@ -370,10 +371,7 @@ namespace System.Management.Automation.Language
                 return typeName._typeDefinitionAst.Type;
             }
 
-            if (context == null)
-            {
-                context = LocalPipeline.GetExecutionContextFromTLS();
-            }
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
 
             // Use the explicitly passed-in assembly list when it's specified by the caller.
             // Otherwise, retrieve all currently loaded assemblies.
@@ -664,10 +662,7 @@ namespace System.Management.Automation.Language
 
         internal static TypeResolutionState GetDefaultUsingState(ExecutionContext context)
         {
-            if (context == null)
-            {
-                context = LocalPipeline.GetExecutionContextFromTLS();
-            }
+            context ??= LocalPipeline.GetExecutionContextFromTLS();
 
             if (context != null)
             {
@@ -887,6 +882,7 @@ namespace System.Management.Automation
                     { typeof(OutputTypeAttribute),                         new[] { "OutputType" } },
                     { typeof(object[]),                                    null },
                     { typeof(ObjectSecurity),                              new[] { "ObjectSecurity" } },
+                    { typeof(OrderedDictionary),                           new[] { "ordered" } },
                     { typeof(ParameterAttribute),                          new[] { "Parameter" } },
                     { typeof(PhysicalAddress),                             new[] { "PhysicalAddress" } },
                     { typeof(PSCredential),                                new[] { "pscredential" } },
@@ -1061,10 +1057,7 @@ namespace System.Management.Automation
         public static bool Remove(string typeName)
         {
             userTypeAccelerators.Remove(typeName);
-            if (s_allTypeAccelerators != null)
-            {
-                s_allTypeAccelerators.Remove(typeName);
-            }
+            s_allTypeAccelerators?.Remove(typeName);
 
             return true;
         }

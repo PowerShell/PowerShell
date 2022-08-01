@@ -232,6 +232,9 @@ namespace System.Management.Automation
         ///                     |
         ///                     |--- 'osx-x64' subfolder
         ///                     |       |--- native.dylib
+        ///                     |
+        ///                     |--- 'osx-arm64' subfolder
+        ///                     |       |--- native.dylib
         /// </summary>
         internal static IntPtr NativeDllHandler(Assembly assembly, string libraryName)
         {
@@ -540,19 +543,19 @@ namespace System.Management.Automation
             ext = string.Empty;
             var processArch = RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (Platform.IsWindows)
             {
                 folderName = "win-" + processArch;
                 ext = ".dll";
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            else if (Platform.IsLinux)
             {
                 folderName = "linux-" + processArch;
                 ext = ".so";
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            else if (Platform.IsMacOS)
             {
-                folderName = "osx-x64";
+                folderName = "osx-" + processArch;
                 ext = ".dylib";
             }
 

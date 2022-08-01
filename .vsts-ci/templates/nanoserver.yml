@@ -1,5 +1,5 @@
 parameters:
-  vmImage: 'windows-2019'
+  vmImage: 'windows-latest'
   jobName: 'Nanoserver_Tests'
   continueOnError: false
 

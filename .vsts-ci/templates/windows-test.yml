@@ -1,5 +1,5 @@
 parameters:
-  pool: 'Hosted VS2017'
+  pool: 'windows-2019'
   parentJobs: []
   purpose: ''
   tagSet: 'CI'
@@ -9,7 +9,7 @@ jobs:
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
-    name: ${{ parameters.pool }}
+    vmImage: ${{ parameters.pool }}
 
   displayName: Windows Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 

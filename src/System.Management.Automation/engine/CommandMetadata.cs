@@ -864,6 +864,15 @@ dynamicparam
 ", GetDynamicParamBlock());
             }
 
+            string cleanBlock = string.Empty;
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSCleanBlockFeatureName))
+            {
+                cleanBlock = string.Format(CultureInfo.InvariantCulture, @"
+clean
+{{{0}}}
+", GetCleanBlock());
+            }
+
             string result = string.Format(CultureInfo.InvariantCulture, @"{0}
 param({1})
 
@@ -875,9 +884,7 @@ process
 
 end
 {{{5}}}
-
-clean
-{{{6}}}
+{6}
 <#
 {7}
 #>
@@ -888,7 +895,7 @@ clean
                 GetBeginBlock(),
                 GetProcessBlock(),
                 GetEndBlock(),
-                GetCleanBlock(),
+                cleanBlock,
                 CodeGeneration.EscapeBlockCommentContent(helpComment));
 
             return result;
@@ -1128,7 +1135,9 @@ clean
             //  1. the 'Clean' block doesn't propagate up any exception (terminating error);
             //  2. only one expression in the script, so nothing else needs to be stopped when invoking the method fails.
             return @"
-    $steppablePipeline.Clean()
+    if ($null -ne $steppablePipeline) {
+        $steppablePipeline.Clean()
+    }
 ";
         }
 

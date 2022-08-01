@@ -352,10 +352,7 @@ namespace System.Management.Automation
             // Make sure we have a session state instance for this command.
             // If one hasn't been explicitly set, then use the session state
             // available on the engine execution context...
-            if (CommandSessionState == null)
-            {
-                CommandSessionState = Context.EngineSessionState;
-            }
+            CommandSessionState ??= Context.EngineSessionState;
 
             // Store off the current scope
             _previousScope = CommandSessionState.CurrentScope;

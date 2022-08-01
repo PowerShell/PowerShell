@@ -25,9 +25,10 @@ stages:
     displayName: Name the build
     condition: succeeded()
 
-    pool: PowerShell1ES
+    pool:
+      name: PowerShell1ES
       demands:
-      - ImageOverride -equals MMS2019TLS
+      - ImageOverride -equals PSMMS2019-Secure
 
     steps:
     - checkout: self

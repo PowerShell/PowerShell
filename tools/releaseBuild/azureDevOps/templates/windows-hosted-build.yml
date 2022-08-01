@@ -16,7 +16,7 @@ jobs:
   pool:
     name: PowerShell1ES
     demands:
-    - ImageOverride -equals MMS2019TLS
+    - ImageOverride -equals PSMMS2019-Secure
   variables:
     - name: runCodesignValidationInjection
       value: false
@@ -78,3 +78,5 @@ jobs:
     inputs:
       sourceScanPath: '$(PowerShellRoot)\tools'
       snapshotForceEnabled: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

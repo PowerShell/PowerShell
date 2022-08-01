@@ -322,10 +322,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 finally
                 {
-                    if (helpInfoDrive != null)
-                    {
-                        helpInfoDrive.Dispose();
-                    }
+                    helpInfoDrive?.Dispose();
                 }
             }
             else

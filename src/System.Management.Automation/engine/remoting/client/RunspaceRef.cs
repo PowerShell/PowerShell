@@ -208,12 +208,9 @@ namespace System.Management.Automation.Remoting
             }
 
             // If that didn't work out fall-back to the traditional approach.
-            if (pipeline == null)
-            {
-                pipeline = useNestedPipelines ?
-                    _runspaceRef.Value.CreateNestedPipeline(line, addToHistory) :
-                    _runspaceRef.Value.CreatePipeline(line, addToHistory);
-            }
+            pipeline ??= useNestedPipelines ?
+                _runspaceRef.Value.CreateNestedPipeline(line, addToHistory) :
+                _runspaceRef.Value.CreatePipeline(line, addToHistory);
 
             // Add robust connection callback if this is a pushed runspace.
             RemotePipeline remotePipeline = pipeline as RemotePipeline;

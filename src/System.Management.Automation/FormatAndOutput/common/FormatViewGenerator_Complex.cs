@@ -283,10 +283,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         // Since it is a leaf node we just consider it an empty string and go
                         // on with formatting
-                        if (val == null)
-                        {
-                            val = string.Empty;
-                        }
+                        val ??= string.Empty;
 
                         FieldFormattingDirective fieldFormattingDirective = null;
                         StringFormatError formatErrorObject = null;

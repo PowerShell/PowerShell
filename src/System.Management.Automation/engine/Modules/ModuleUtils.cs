@@ -121,7 +121,7 @@ namespace System.Management.Automation.Internal
 #if UNIX
             return true;
 #else
-            if (!ModuleUtils.IsOnSystem32ModulePath(moduleManifestPath))
+            if (!IsOnSystem32ModulePath(moduleManifestPath))
             {
                 return true;
             }

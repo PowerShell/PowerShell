@@ -19,6 +19,8 @@ variables:
     value: none
   - name: skipComponentGovernanceDetection
     value: true
+  - name: BUILDSECMON_OPT_IN
+    value: true
 
 stages:
 - stage: MSIXBundle
@@ -120,9 +122,7 @@ stages:
     displayName: Validate Package BOM
     pool:
       # testing
-      vmImage: windows-latest
-    variables:
-    - group: 'Azure Blob variable group'
+      vmImage: ubuntu-latest
     steps:
       - template: templates/release-ValidatePackageBOM.yml
 
@@ -177,9 +177,10 @@ stages:
   - deployment: AzureBlobPublic
     displayName: Make Azure Blob Public
 
-    pool: PowerShell1ES
+    pool:
+      name: PowerShell1ES
       demands:
-      - ImageOverride -equals MMS2019TLS
+      - ImageOverride -equals PSMMS2019-Secure
 
     variables:
     - group: 'Staging_ACR'
@@ -193,9 +194,10 @@ stages:
   - job: GitHubDraft
     displayName: Create GitHub Draft release
 
-    pool: PowerShell1ES
+    pool:
+      name: PowerShell1ES
       demands:
-      - ImageOverride -equals MMS2019TLS
+      - ImageOverride -equals PSMMS2019-Secure
 
     variables:
     - group: 'Azure Blob variable group'
@@ -229,18 +231,20 @@ stages:
   jobs:
   - job: PublishNuget
 
-    pool: PowerShell1ES
+    pool:
+      name: PowerShell1ES
       demands:
-      - ImageOverride -equals MMS2019TLS
+      - ImageOverride -equals PSMMS2019-Secure
 
     steps:
     - template: templates/release-ReleaseToNuGet.yml
 
   - job: PublishPkgsMsftCom
 
-    pool: PowerShell1ES
+    pool:
+      name: PowerShell1ES
       demands:
-      - ImageOverride -equals MMSUbuntu20.04TLS
+      - ImageOverride -equals PSMMSUbuntu20.04-Secure
 
     variables:
     - group: 'AzDevOpsArtifacts'
@@ -335,9 +339,10 @@ stages:
   - deployment: UploadJson
     displayName: Upload BuildInfoJson
 
-    pool: PowerShell1ES
+    pool:
+      name: PowerShell1ES
       demands:
-      - ImageOverride -equals MMS2019TLS
+      - ImageOverride -equals PSMMS2019-Secure
 
     variables:
     - group: 'Azure Blob variable group'

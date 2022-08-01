@@ -14,11 +14,17 @@ steps:
     Write-Host "##vso[build.updatebuildnumber]$name"
   displayName: Set Release Name
 
-- pwsh: |
-    $azcopy = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+- task: DownloadPipelineArtifact@2
+  inputs:
+    source: specific
+    project: PowerShellCore
+    pipeline: '696'
+    preferTriggeringPipeline: true
+    runVersion: latestFromBranch
+    runBranch: '$(Build.SourceBranch)'
+    artifact: finalResults
+    path: $(System.ArtifactsDirectory)
 
-    & $azcopy /Source:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) /Dest:$(System.ArtifactsDirectory) /S /SourceKey:$(StorageAccountKey)
-  displayName: Download Azure Artifacts
 
 - pwsh: |
     Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name

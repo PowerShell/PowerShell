@@ -10,7 +10,7 @@ jobs:
   pool:
     name: PowerShell1ES
     demands:
-    - ImageOverride -equals MMSUbuntu20.04TLS
+    - ImageOverride -equals PSMMSUbuntu20.04-Secure
   dependsOn: ${{ parameters.parentJob }}
   variables:
     - name: runCodesignValidationInjection
@@ -61,12 +61,16 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
 
-  - powershell: |
+  - pwsh: |
+      try {
+        Import-Module "$env:POWERSHELLROOT/build.psm1"
+        Import-Module "$env:POWERSHELLROOT/tools/packaging"
 
-      Import-Module "$env:POWERSHELLROOT/build.psm1"
-      Import-Module "$env:POWERSHELLROOT/tools/packaging"
-
-      Invoke-AzDevOpsLinuxPackageBuild -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+        Invoke-AzDevOpsLinuxPackageBuild -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+      } catch {
+        Get-Error
+        throw
+      }
     displayName: 'Build'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
@@ -79,6 +83,16 @@ jobs:
       PackageName: PowerShell Linux
       PackageVersion: $(Version)
       sourceScanPath: '$(PowerShellRoot)/tools'
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - template: Sbom.yml@ComplianceRepo
+      parameters:
+        BuildDropPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+        Build_Repository_Uri: $(Github_Build_Repository_Uri)
+        displayName: Mariner SBOM
+        PackageName: PowerShell Linux Framework Dependent
+        PackageVersion: $(Version)
+        sourceScanPath: '$(PowerShellRoot)/tools'
 
   - ${{ if eq(variables.build,'deb') }} :
     - template: Sbom.yml@ComplianceRepo
@@ -111,20 +125,25 @@ jobs:
         sourceScanPath: '$(PowerShellRoot)/tools'
 
   - powershell: |
-      Import-Module "$env:POWERSHELLROOT/build.psm1"
-      Import-Module "$env:POWERSHELLROOT/tools/packaging"
+      try {
+        Import-Module "$env:POWERSHELLROOT/build.psm1"
+        Import-Module "$env:POWERSHELLROOT/tools/packaging"
 
-      $metadata = Get-Content "$env:POWERSHELLROOT/tools/metadata.json" -Raw | ConvertFrom-Json
+        $metadata = Get-Content "$env:POWERSHELLROOT/tools/metadata.json" -Raw | ConvertFrom-Json
 
-      # LTSRelease.Package indicates that the release should be packaged as an LTS
-      $LTS = $metadata.LTSRelease.Package
-      Write-Verbose -Verbose -Message "LTS is set to: $LTS"
+        # LTSRelease.Package indicates that the release should be packaged as an LTS
+        $LTS = $metadata.LTSRelease.Package
+        Write-Verbose -Verbose -Message "LTS is set to: $LTS"
 
-      Invoke-AzDevOpsLinuxPackageCreation -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+        Invoke-AzDevOpsLinuxPackageCreation -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
 
-      if ($LTS) {
-          Write-Verbose -Verbose "Packaging LTS"
-          Invoke-AzDevOpsLinuxPackageCreation -LTS  -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+        if ($LTS) {
+            Write-Verbose -Verbose "Packaging LTS"
+            Invoke-AzDevOpsLinuxPackageCreation -LTS  -ReleaseTag '$(ReleaseTagVar)' -BuildType '$(build)'
+        }
+      } catch {
+        Get-Error
+        throw
       }
     displayName: 'Package'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
@@ -144,6 +163,8 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
 
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml
+
 - job: upload_${{ parameters.buildName }}
   displayName: ${{ parameters.uploadDisplayName }} ${{ parameters.buildName }}
   dependsOn: build_${{ parameters.buildName }}
@@ -151,7 +172,7 @@ jobs:
   pool:
     name: PowerShell1ES
     demands:
-    - ImageOverride -equals MMS2019TLS
+    - ImageOverride -equals PSMMS2019-Secure
   variables:
     - name: buildName
       value: ${{ parameters.buildName }}
@@ -244,10 +265,26 @@ jobs:
           signOutputPath: $(Build.StagingDirectory)\signedPackages
           certificateId: "CP-450779-Pgp"
           pattern: |
-            **\*.rpm
+            **\*.rh.*.rpm
           useMinimatch: true
           shouldSign: $(SHOULD_SIGN)
-          displayName: Sign RPM
+          displayName: Sign RedHat RPM
+          OutputMode: AlwaysCopy
+
+  - ${{ if eq(variables['buildName'], 'RPM') }}:
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+          # Sign in-place, previous task copied the files to this folder
+          buildOutputPath: $(Build.StagingDirectory)\signedPackages
+          signOutputPath: $(Build.StagingDirectory)\signedPackages
+          certificateId: "CP-459159-Pgp"
+          pattern: |
+            **\*.cm.*.rpm
+            **\*.cm?.*.rpm
+          useMinimatch: true
+          shouldSign: $(SHOULD_SIGN)
+          displayName: Sign Mariner RPM
+          OutputMode: NeverCopy
 
   # requires windows
   - ${{ if ne(variables['buildName'], 'RPM') }}:
@@ -311,3 +348,5 @@ jobs:
     parameters:
       artifactPath: '$(Build.StagingDirectory)\signedPackages\release'
       condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

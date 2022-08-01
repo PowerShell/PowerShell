@@ -125,7 +125,7 @@ open {0}
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <installer-gui-script minSpecVersion="1">
     <title>{0}</title>
-    <options hostArchitectures="x86_64"/>
+    <options hostArchitectures="{5}"/>
     <options customize="never" rootVolumeOnly="true"/>
     <background file="macDialog.png" scaling="tofit" alignment="bottomleft"/>
     <allowed-os-versions>
@@ -166,7 +166,7 @@ open {0}
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework="net6.0"></group>
+            <group targetFramework="net7.0"></group>
         </dependencies>
     </metadata>
 </package>

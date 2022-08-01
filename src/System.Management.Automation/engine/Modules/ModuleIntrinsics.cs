@@ -141,10 +141,7 @@ namespace System.Management.Automation
             // script scope for the ss.
 
             // Allocate the session state instance for this module.
-            if (ss == null)
-            {
-                ss = new SessionState(_context, true, true);
-            }
+            ss ??= new SessionState(_context, true, true);
 
             // Now set up the module's session state to be the current session state
             SessionStateInternal oldSessionState = _context.EngineSessionState;
@@ -270,7 +267,7 @@ namespace System.Management.Automation
 
         internal List<PSModuleInfo> GetExactMatchModules(string moduleName, bool all, bool exactMatch)
         {
-            if (moduleName == null) { moduleName = string.Empty; }
+            moduleName ??= string.Empty;
 
             return GetModuleCore(new string[] { moduleName }, all, exactMatch);
         }
@@ -287,10 +284,7 @@ namespace System.Management.Automation
             }
             else
             {
-                if (patterns == null)
-                {
-                    patterns = new string[] { "*" };
-                }
+                patterns ??= new string[] { "*" };
 
                 foreach (string pattern in patterns)
                 {
@@ -721,7 +715,7 @@ namespace System.Management.Automation
             string moduleDirPath = Path.GetDirectoryName(modulePath);
 
             // The module itself may be in a versioned directory (case 3)
-            if (Version.TryParse(Path.GetFileName(moduleDirPath), out Version unused))
+            if (Version.TryParse(Path.GetFileName(moduleDirPath), out _))
             {
                 moduleDirPath = Path.GetDirectoryName(moduleDirPath);
             }
@@ -885,25 +879,35 @@ namespace System.Management.Automation
         }
 
         // The extensions of all of the files that can be processed with Import-Module, put the ni.dll in front of .dll to have higher priority to be loaded.
-        internal static readonly string[] PSModuleProcessableExtensions = new string[] {
-                            StringLiterals.PowerShellDataFileExtension,
-                            StringLiterals.PowerShellScriptFileExtension,
-                            StringLiterals.PowerShellModuleFileExtension,
-                            StringLiterals.PowerShellCmdletizationFileExtension,
-                            StringLiterals.PowerShellNgenAssemblyExtension,
-                            StringLiterals.PowerShellILAssemblyExtension,
-                            StringLiterals.PowerShellILExecutableExtension,
-                        };
+        internal static readonly string[] PSModuleProcessableExtensions = new string[]
+        {
+            StringLiterals.PowerShellDataFileExtension,
+            StringLiterals.PowerShellScriptFileExtension,
+            StringLiterals.PowerShellModuleFileExtension,
+            StringLiterals.PowerShellCmdletizationFileExtension,
+            StringLiterals.PowerShellNgenAssemblyExtension,
+            StringLiterals.PowerShellILAssemblyExtension,
+            StringLiterals.PowerShellILExecutableExtension,
+        };
 
         // A list of the extensions to check for implicit module loading and discovery, put the ni.dll in front of .dll to have higher priority to be loaded.
-        internal static readonly string[] PSModuleExtensions = new string[] {
-                            StringLiterals.PowerShellDataFileExtension,
-                            StringLiterals.PowerShellModuleFileExtension,
-                            StringLiterals.PowerShellCmdletizationFileExtension,
-                            StringLiterals.PowerShellNgenAssemblyExtension,
-                            StringLiterals.PowerShellILAssemblyExtension,
-                            StringLiterals.PowerShellILExecutableExtension,
-                        };
+        internal static readonly string[] PSModuleExtensions = new string[]
+        {
+            StringLiterals.PowerShellDataFileExtension,
+            StringLiterals.PowerShellModuleFileExtension,
+            StringLiterals.PowerShellCmdletizationFileExtension,
+            StringLiterals.PowerShellNgenAssemblyExtension,
+            StringLiterals.PowerShellILAssemblyExtension,
+            StringLiterals.PowerShellILExecutableExtension,
+        };
+
+        // A list of the extensions to check for required assemblies.
+        internal static readonly string[] ProcessableAssemblyExtensions = new string[]
+        {
+            StringLiterals.PowerShellNgenAssemblyExtension,
+            StringLiterals.PowerShellILAssemblyExtension,
+            StringLiterals.PowerShellILExecutableExtension
+        };
 
         /// <summary>
         /// Returns true if the extension is one of the module extensions...
@@ -915,7 +919,9 @@ namespace System.Management.Automation
             foreach (string ext in PSModuleProcessableExtensions)
             {
                 if (extension.Equals(ext, StringComparison.OrdinalIgnoreCase))
+                {
                     return true;
+                }
             }
 
             return false;
@@ -958,7 +964,8 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.USER_MODULES);
 #else
-            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Utils.ModuleDirectory);
+            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            return string.IsNullOrEmpty(myDocumentsPath) ? null : Path.Combine(myDocumentsPath, Utils.ModuleDirectory);
 #endif
         }
 
@@ -976,20 +983,17 @@ namespace System.Management.Automation
             try
             {
                 string psHome = Utils.DefaultPowerShellAppBase;
-                if (!string.IsNullOrEmpty(psHome))
-                {
-                    // Win8: 584267 Powershell Modules are listed twice in x86, and cannot be removed
-                    // This happens because ModuleTable uses Path as the key and CBS installer
-                    // expands the path to include "SysWOW64" (for
-                    // HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\PowerShell\3\PowerShellEngine ApplicationBase).
-                    // Because of this, the module that is getting loaded during startup (through LocalRunspace)
-                    // is using "SysWow64" in the key. Later, when Import-Module is called, it loads the
-                    // module using ""System32" in the key.
 #if !UNIX
-                    psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
+                // Win8: 584267 Powershell Modules are listed twice in x86, and cannot be removed.
+                // This happens because 'ModuleTable' uses Path as the key and x86 WinPS has "SysWOW64" in its $PSHOME.
+                // Because of this, the module that is getting loaded during startup (through LocalRunspace) is using
+                // "SysWow64" in the key. Later, when 'Import-Module' is called, it loads the module using ""System32"
+                // in the key.
+                // For the cross-platform PowerShell, a user can choose to install it under "C:\Windows\SysWOW64", and
+                // thus it may have the same problem as described above. So we keep this line of code.
+                psHome = psHome.ToLowerInvariant().Replace(@"\syswow64\", @"\system32\");
 #endif
-                    Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
-                }
+                Interlocked.CompareExchange(ref s_psHomeModulePath, Path.Combine(psHome, "Modules"), null);
             }
             catch (System.Security.SecurityException)
             {
@@ -1180,7 +1184,15 @@ namespace System.Management.Automation
                     currentProcessModulePath = hkcuUserModulePath; // = EVT.User
                 }
 
-                currentProcessModulePath += Path.PathSeparator;
+                if (string.IsNullOrEmpty(currentProcessModulePath))
+                {
+                    currentProcessModulePath ??= string.Empty;
+                }
+                else
+                {
+                    currentProcessModulePath += Path.PathSeparator;
+                }
+
                 if (string.IsNullOrEmpty(hklmMachineModulePath)) // EVT.Machine does Not exist
                 {
                     currentProcessModulePath += CombineSystemModulePaths(); // += (SharedModulePath + $PSHome\Modules)
@@ -1201,11 +1213,23 @@ namespace System.Management.Automation
                 // personalModulePath
                 // sharedModulePath
                 // systemModulePath
-                currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, 0);
-                int insertIndex = PathContainsSubstring(currentProcessModulePath, personalModulePathToUse) + personalModulePathToUse.Length + 1;
-                currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
-                insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath) + sharedModulePath.Length + 1;
-                currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
+                int insertIndex = 0;
+                if (!string.IsNullOrEmpty(personalModulePathToUse))
+                {
+                    currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePathToUse, insertIndex);
+                    insertIndex = PathContainsSubstring(currentProcessModulePath, personalModulePathToUse) + personalModulePathToUse.Length + 1;
+                }
+
+                if (!string.IsNullOrEmpty(sharedModulePath))
+                {
+                    currentProcessModulePath = AddToPath(currentProcessModulePath, sharedModulePath, insertIndex);
+                    insertIndex = PathContainsSubstring(currentProcessModulePath, sharedModulePath) + sharedModulePath.Length + 1;
+                }
+
+                if (!string.IsNullOrEmpty(systemModulePathToUse))
+                {
+                    currentProcessModulePath = AddToPath(currentProcessModulePath, systemModulePathToUse, insertIndex);
+                }
             }
 
             return currentProcessModulePath;

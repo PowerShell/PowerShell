@@ -27,6 +27,7 @@ namespace System.Management.Automation
         internal const string PSCleanBlockFeatureName = "PSCleanBlock";
         internal const string PSAMSIMethodInvocationLogging = "PSAMSIMethodInvocationLogging";
         internal const string PSExecFeatureName = "PSExec";
+        internal const string PSStrictModeAssignment = "PSStrictModeAssignment";
 
         #endregion
 
@@ -113,9 +114,6 @@ namespace System.Management.Automation
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
                 new ExperimentalFeature(
-                    name: "PSNativePSPathResolution",
-                    description: "Convert PSPath to filesystem path, if possible, for native commands"),
-                new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
                 new ExperimentalFeature(
@@ -142,6 +140,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSExecFeatureName,
                     description: "Add 'exec' built-in command on Linux and macOS"),
+                new ExperimentalFeature(
+                    name: PSStrictModeAssignment,
+                    description: "Add support of setting Strict-Mode with Invoke-Command"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

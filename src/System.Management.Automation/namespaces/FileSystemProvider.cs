@@ -37,6 +37,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(FileSecurity), ProviderCmdlet = ProviderCmdlet.SetAcl)]
     [OutputType(typeof(string), typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.ResolvePath)]
     [OutputType(typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.PushLocation)]
+    [OutputType(typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.PopLocation)]
     [OutputType(typeof(byte), typeof(string), ProviderCmdlet = ProviderCmdlet.GetContent)]
     [OutputType(typeof(FileInfo), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetChildItem)]
@@ -131,20 +132,21 @@ namespace Microsoft.PowerShell.Commands
                     itemsToSkip = 4;
                 }
 
-                foreach (string item in path.Split(StringLiterals.DefaultPathSeparator))
+                var items = path.Split(StringLiterals.DefaultPathSeparator);
+                for (int i = 0; i < items.Length; i++)
                 {
                     if (itemsToSkip-- > 0)
                     {
                         // This handles the UNC server and share and 8.3 short path syntax
-                        exactPath += item + StringLiterals.DefaultPathSeparator;
+                        exactPath += items[i] + StringLiterals.DefaultPathSeparator;
                         continue;
                     }
                     else if (string.IsNullOrEmpty(exactPath))
                     {
                         // This handles the drive letter or / root path start
-                        exactPath = item + StringLiterals.DefaultPathSeparator;
+                        exactPath = items[i] + StringLiterals.DefaultPathSeparator;
                     }
-                    else if (string.IsNullOrEmpty(item))
+                    else if (string.IsNullOrEmpty(items[i]) && i == items.Length - 1)
                     {
                         // This handles the trailing slash case
                         if (!exactPath.EndsWith(StringLiterals.DefaultPathSeparator))
@@ -154,17 +156,17 @@ namespace Microsoft.PowerShell.Commands
 
                         break;
                     }
-                    else if (item.Contains('~'))
+                    else if (items[i].Contains('~'))
                     {
                         // This handles short path names
-                        exactPath += StringLiterals.DefaultPathSeparator + item;
+                        exactPath += StringLiterals.DefaultPathSeparator + items[i];
                     }
                     else
                     {
                         // Use GetFileSystemEntries to get the correct casing of this element
                         try
                         {
-                            var entries = Directory.GetFileSystemEntries(exactPath, item);
+                            var entries = Directory.GetFileSystemEntries(exactPath, items[i]);
                             if (entries.Length > 0)
                             {
                                 exactPath = entries[0];
@@ -469,9 +471,7 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
             // The placeholder mode management APIs Rtl(Set|Query)(Process|Thread)PlaceholderCompatibilityMode
             // are only supported starting with Windows 10 version 1803 (build 17134)
-            Version minBuildForPlaceHolderAPIs = new Version(10, 0, 17134, 0);
-
-            if (Environment.OSVersion.Version >= minBuildForPlaceHolderAPIs)
+            if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 17134, 0))
             {
                 // let's be safe, don't change the PlaceHolderCompatibilityMode if the current one is not what we expect
                 if (NativeMethods.RtlQueryProcessPlaceholderCompatibilityMode() == NativeMethods.PHCM_DISGUISE_PLACEHOLDER)
@@ -1374,12 +1374,17 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
             FileInfo result = new FileInfo(path);
 
-            // FileInfo.Exists is always false for a directory path, so we check the attribute for existence.
             var attributes = result.Attributes;
-            if ((int)attributes == -1) { /* Path doesn't exist. */ return null; }
-
             bool hidden = attributes.HasFlag(FileAttributes.Hidden);
             isContainer = attributes.HasFlag(FileAttributes.Directory);
+
+            // FileInfo allows for a file path to end in a trailing slash, but the resulting object
+            // is incomplete.  A trailing slash should indicate a directory.  So if the path ends in a
+            // trailing slash and is not a directory, return null
+            if (!isContainer && path.EndsWith(Path.DirectorySeparatorChar))
+            {
+                return null;
+            }
 
             FlagsExpression<FileAttributes> evaluator = null;
             FlagsExpression<FileAttributes> switchEvaluator = null;
@@ -2724,8 +2729,7 @@ namespace Microsoft.PowerShell.Commands
             // The new AllowUnprivilegedCreate is only available on Win10 build 14972 or newer
             var flags = isDirectory ? NativeMethods.SymbolicLinkFlags.Directory : NativeMethods.SymbolicLinkFlags.File;
 
-            Version minBuildOfDeveloperMode = new Version(10, 0, 14972, 0);
-            if (Environment.OSVersion.Version >= minBuildOfDeveloperMode)
+            if (OperatingSystem.IsWindowsVersionAtLeast(10, 0, 14972, 0))
             {
                 flags |= NativeMethods.SymbolicLinkFlags.AllowUnprivilegedCreate;
             }
@@ -4516,10 +4520,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (wStream != null)
-                {
-                    wStream.Dispose();
-                }
+                wStream?.Dispose();
 
                 // If copying the file from the remote session failed, then remove it.
                 if (errorWhileCopyRemoteFile && File.Exists(destinationFile.FullName))
@@ -4799,10 +4800,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (fStream != null)
-                {
-                    fStream.Dispose();
-                }
+                fStream?.Dispose();
             }
 
             return success;
@@ -5113,10 +5111,7 @@ namespace Microsoft.PowerShell.Commands
                 throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
-            if (basePath == null)
-            {
-                basePath = string.Empty;
-            }
+            basePath ??= string.Empty;
 
             s_tracer.WriteLine("basePath = {0}", basePath);
 
@@ -5305,10 +5300,7 @@ namespace Microsoft.PowerShell.Commands
                 return string.Empty;
             }
 
-            if (basePath == null)
-            {
-                basePath = string.Empty;
-            }
+            basePath ??= string.Empty;
 
             s_tracer.WriteLine("basePath = {0}", basePath);
 
@@ -6245,10 +6237,7 @@ namespace Microsoft.PowerShell.Commands
                                     if (member != null)
                                     {
                                         value = member.Value;
-                                        if (result == null)
-                                        {
-                                            result = new PSObject();
-                                        }
+                                        result ??= new PSObject();
 
                                         result.Properties.Add(new PSNoteProperty(property, value));
                                     }
@@ -7263,7 +7252,7 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
-                if (Utils.PathIsUnc(path))
+                if (Utils.PathIsUnc(path, networkOnly : true))
                 {
                     return true;
                 }
@@ -8076,23 +8065,10 @@ namespace Microsoft.PowerShell.Commands
             private static extern bool FindClose(IntPtr handle);
         }
 
-        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileExW", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern SafeFindHandle FindFirstFileEx(string lpFileName, FINDEX_INFO_LEVELS fInfoLevelId, ref WIN32_FIND_DATA lpFindFileData, FINDEX_SEARCH_OPS fSearchOp, IntPtr lpSearchFilter, int dwAdditionalFlags);
-
-        internal enum FINDEX_INFO_LEVELS : uint
-        {
-            FindExInfoStandard = 0x0u,
-            FindExInfoBasic = 0x1u,
-            FindExInfoMaxInfoLevel = 0x2u,
-        }
-
-        internal enum FINDEX_SEARCH_OPS : uint
-        {
-            FindExSearchNameMatch = 0x0u,
-            FindExSearchLimitToDirectories = 0x1u,
-            FindExSearchLimitToDevices = 0x2u,
-            FindExSearchMaxSearchOp = 0x3u,
-        }
+        // We use 'FindFirstFileW' instead of 'FindFirstFileExW' because the latter doesn't work correctly with Unicode file names on FAT32.
+        // See https://github.com/PowerShell/PowerShell/issues/16804
+        [DllImport(PinvokeDllNames.FindFirstFileDllName, EntryPoint = "FindFirstFileW", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern SafeFindHandle FindFirstFile(string lpFileName, ref WIN32_FIND_DATA lpFindFileData);
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal unsafe struct WIN32_FIND_DATA
@@ -8126,6 +8102,22 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 return fileSysInfo.LinkTarget;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Gets the target for a given file or directory, resolving symbolic links.
+        /// </summary>
+        /// <param name="instance">The FileInfo or DirectoryInfo type.</param>
+        /// <returns>The file path the instance points to.</returns>
+        public static string ResolvedTarget(PSObject instance)
+        {
+            if (instance.BaseObject is FileSystemInfo fileSysInfo)
+            {
+                FileSystemInfo linkTarget = fileSysInfo.ResolveLinkTarget(true);
+                return linkTarget is null ? fileSysInfo.FullName : linkTarget.FullName;
             }
 
             return null;
@@ -8265,7 +8257,7 @@ namespace Microsoft.PowerShell.Commands
                 fullPath = PathUtils.EnsureExtendedPrefix(fullPath);
             }
 
-            using (SafeFindHandle handle = FindFirstFileEx(fullPath, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
+            using (SafeFindHandle handle = FindFirstFile(fullPath, ref data))
             {
                 if (handle.IsInvalid)
                 {
@@ -9154,7 +9146,7 @@ namespace System.Management.Automation.Internal
 
         # Return a hash table in the following format:
         #      DirectoryPath is the directory to be created.
-        #      PathExists is a bool to to keep track of whether the directory already exist.
+        #      PathExists is a bool to keep track of whether the directory already exist.
         #
         # 1) If DirectoryPath already exists:
         #     a) If -Force is specified, force create the directory. Set DirectoryPath to the created directory path.

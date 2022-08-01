@@ -10,7 +10,7 @@ jobs:
   pool:
     name: PowerShell1ES
     demands:
-    - ImageOverride -equals MMS2019TLS
+    - ImageOverride -equals PSMMS2019-Secure
 
   timeoutInMinutes: 90
 
@@ -51,10 +51,11 @@ jobs:
       Write-Host "##$vstsCommandString"
     displayName: 'Find SDK version from global.json'
 
-  - task: UseDotNet@2
-    displayName: 'Use .NET Core SDK from global.json'
-    inputs:
-      useGlobalJson: true
+  - pwsh: |
+      Import-Module "$env:REPOROOT/build.psm1" -Force
+      # We just need .NET but we fixed this in an urgent situation.
+      Start-PSBootStrap -Verbose
+    displayName: Bootstrap
 
   - task: DownloadBuildArtifacts@0
     displayName: 'Download PowerShell build artifacts - finalResults'
@@ -118,12 +119,14 @@ jobs:
   - task: NuGetToolInstaller@1
     displayName: 'Install NuGet.exe'
 
-  - pwsh: |
-      Import-Module $env:REPOROOT\build.psm1
-      Import-Module $env:REPOROOT\tools\packaging
-      Find-Dotnet
-      New-ILNugetPackage -PackagePath "$(PackagePath)" -PackageVersion "$(Version)" -WinFxdBinPath '$(winFxdPath)' -LinuxFxdBinPath '$(linuxFxdPath)' -GenAPIToolPath "$(GenAPIToolPath)"
-    displayName: 'Create Nuget Package Folders'
+  # Create nuget packages along with SBOM manifests.
+  - template: nuget-pkg-sbom.yml
+    parameters:
+      PackageVersion: $(Version)
+      PackagePath: $(PackagePath)
+      WinFxdPath: $(winFxdPath)
+      LinuxFxdPath: $(linuxFxdPath)
+      GenAPIToolPath: $(GenAPIToolPath)
 
   - pwsh: |
       Get-ChildItem $(linuxFxdPath)
@@ -131,16 +134,14 @@ jobs:
       Get-ChildItem $(winFxdWinDesktopPath)
     displayName: Capture fxd folders
 
-  - pwsh: |
-      Import-Module $env:REPOROOT\build.psm1
-      Import-Module $env:REPOROOT\tools\packaging
-      Find-Dotnet
-      # Create unified package first
-      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
-
-      # Create packages for dotnet sdk
-      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
-    displayName: 'Create Global tool packages'
+  # Create Global Tool packages along with SBOM manifests
+  - template: global-tool-pkg-sbom.yml
+    parameters:
+      PackageVersion: $(Version)
+      LinuxBinPath: $(linuxFxdPath)
+      WindowsBinPath: $(winFxdPath)
+      WindowsDesktopBinPath: $(winFxdWinDesktopPath)
+      DestinationPath: $(PackagePath)\globaltool
 
   - pwsh: |
       Get-ChildItem "$(PackagePath)" -Recurse
@@ -204,7 +205,7 @@ jobs:
       $packagePathList = Get-ChildItem $packagePath -Recurse | Select-Object -ExpandProperty FullName | Out-String
       Write-Verbose -Verbose $packagePathList
 
-      $checksums = Get-ChildItem -Path $packagePath |
+      $checksums = Get-ChildItem -Path $packagePath -Exclude "SHA512SUMS" |
           ForEach-Object {
               Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
               $packageName = $_.Name
@@ -221,8 +222,35 @@ jobs:
       Write-Verbose -Verbose -Message $fileContent
 
       Copy-Item -Path "$packagePath\SHA512SUMS" -Destination '$(System.ArtifactsDirectory)\signed\' -verbose
+    displayName: Generate checksum file for packages
+
+  - pwsh: |
+      $packagePath = (Join-Path $(System.ArtifactsDirectory) checksum_gbltool)
+      New-Item $packagePath -ItemType Directory -Force > $null
+      $srcPaths = @("$(System.ArtifactsDirectory)\signed\globaltool")
+      $packages  = Get-ChildItem -Path $srcPaths -Include *.nupkg -Recurse
+      $packages | ForEach-Object { Copy-Item $_.FullName -Destination $packagePath -Verbose }
+
+      $packagePathList = Get-ChildItem $packagePath -Recurse | Select-Object -ExpandProperty FullName | Out-String
+      Write-Verbose -Verbose $packagePathList
+
+      $checksums = Get-ChildItem -Path $packagePath -Exclude "SHA512SUMS" |
+          ForEach-Object {
+              Write-Verbose -Verbose "Generating checksum file for $($_.FullName)"
+              $packageName = $_.Name
+              $hash = (Get-FileHash -Path $_.FullName -Algorithm SHA512).Hash.ToLower()
+
+              # the '*' before the packagename signifies it is a binary
+              "$hash *$packageName"
+          }
+
+      $checksums | Out-File -FilePath "$packagePath\SHA512SUMS" -Force
+
+      $fileContent = Get-Content -Path "$packagePath\SHA512SUMS" -Raw | Out-String
+      Write-Verbose -Verbose -Message $fileContent
+
       Copy-Item -Path "$packagePath\SHA512SUMS" -Destination '$(System.ArtifactsDirectory)\signed\globaltool\' -verbose
-    displayName: Generate checksum file
+    displayName: Generate checksum for global tools
 
   - template: upload-final-results.yml
     parameters:
@@ -253,4 +281,4 @@ jobs:
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
     inputs:
-      sourceScanPath: '$(repoRoot)\tools'
+      sourceScanPath: '$(PackagePath)'

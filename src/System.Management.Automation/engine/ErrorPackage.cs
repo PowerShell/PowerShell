@@ -1026,10 +1026,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(exception));
             }
 
-            if (errorId == null)
-            {
-                errorId = string.Empty;
-            }
+            errorId ??= string.Empty;
 
             // targetObject may be null
             _error = exception;

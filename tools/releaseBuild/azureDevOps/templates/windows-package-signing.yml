@@ -10,7 +10,7 @@ jobs:
   pool:
     name: PowerShell1ES
     demands:
-    - ImageOverride -equals MMS2019TLS
+    - ImageOverride -equals PSMMS2019-Secure
   variables:
     - name: DOTNET_SKIP_FIRST_TIME_EXPERIENCE
       value: 1
@@ -134,3 +134,5 @@ jobs:
     inputs:
       sourceScanPath: '$(repoRoot)\tools'
       snapshotForceEnabled: true
+
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

@@ -248,6 +248,7 @@ namespace System.Management.Automation
             "cmd",
             "cscript",
             "wscript",
+            "find",
         };
 
         #region ctor/native command properties
@@ -545,15 +546,14 @@ namespace System.Management.Automation
             Exception exceptionToRethrow = null;
             try
             {
-                // If this process is being run standalone, tell the host, which might want
-                // to save off the window title or other such state as might be tweaked by
-                // the native process
+                // Before start the executable, tell the host, which might want to save off the
+                // window title or other such state as might be tweaked by the native process.
+                Command.Context.EngineHostInterface.NotifyBeginApplication();
+                _hasNotifiedBeginApplication = true;
+
                 if (_runStandAlone)
                 {
-                    this.Command.Context.EngineHostInterface.NotifyBeginApplication();
-                    _hasNotifiedBeginApplication = true;
-
-                    // Also, store the Raw UI coordinates so that we can scrape the screen after
+                    // Store the Raw UI coordinates so that we can scrape the screen after
                     // if we are transcribing.
                     if (_isTranscribing && (s_supportScreenScrape == true))
                     {
@@ -1166,28 +1166,25 @@ namespace System.Management.Automation
             // We need to call 'NotifyEndApplication' as appropriate during cleanup
             if (_hasNotifiedBeginApplication)
             {
-                this.Command.Context.EngineHostInterface.NotifyEndApplication();
+                Command.Context.EngineHostInterface.NotifyEndApplication();
             }
 
             try
             {
-                if (_nativeProcess != null)
-                {
-                    // on Unix, we need to kill the process to ensure it terminates as Dispose() merely
-                    // closes the redirected streams and the processs does not exit on macOS.  However,
-                    // on Windows, a winexe like notepad should continue running so we don't want to kill it.
+                // on Unix, we need to kill the process to ensure it terminates as Dispose() merely
+                // closes the redirected streams and the processs does not exit on macOS.  However,
+                // on Windows, a winexe like notepad should continue running so we don't want to kill it.
 #if UNIX
-                    try
-                    {
-                        _nativeProcess.Kill();
-                    }
-                    catch
-                    {
-                        // Ignore all exception since it is cleanup.
-                    }
-#endif
-                    _nativeProcess.Dispose();
+                try
+                {
+                    _nativeProcess?.Kill();
                 }
+                catch
+                {
+                    // Ignore all exception since it is cleanup.
+                }
+#endif
+                _nativeProcess?.Dispose();
             }
             catch (Exception)
             {
@@ -1278,7 +1275,7 @@ namespace System.Management.Automation
         /// <param name="redirectOutput">A boolean that indicates that, when true, output from the process is redirected to a stream, and otherwise is sent to stdout.</param>
         /// <param name="redirectError">A boolean that indicates that, when true, error output from the process is redirected to a stream, and otherwise is sent to stderr.</param>
         /// <param name="redirectInput">A boolean that indicates that, when true, input to the process is taken from a stream, and otherwise is taken from stdin.</param>
-        /// <param name="soloCommand">A boolean that indicates, when true, that the command to be executed is not part of a pipeline, and otherwise indicates that is is.</param>
+        /// <param name="soloCommand">A boolean that indicates, when true, that the command to be executed is not part of a pipeline, and otherwise indicates that it is.</param>
         /// <returns>A ProcessStartInfo object which is the base of the native invocation.</returns>
         private ProcessStartInfo GetProcessStartInfo(
             bool redirectOutput,
@@ -2126,10 +2123,7 @@ namespace System.Management.Automation
         {
             if (_inputFormat == NativeCommandIOFormat.Xml)
             {
-                if (_xmlSerializer != null)
-                {
-                    _xmlSerializer.Done();
-                }
+                _xmlSerializer?.Done();
             }
             else // Text
             {

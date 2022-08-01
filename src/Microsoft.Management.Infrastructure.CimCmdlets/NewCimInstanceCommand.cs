@@ -377,10 +377,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimNewCimInstance cimNewCimInstance = this.GetOperationAgent();
-            if (cimNewCimInstance != null)
-            {
-                cimNewCimInstance.ProcessRemainActions(this.CmdletOperation);
-            }
+            cimNewCimInstance?.ProcessRemainActions(this.CmdletOperation);
         }
 
         #endregion

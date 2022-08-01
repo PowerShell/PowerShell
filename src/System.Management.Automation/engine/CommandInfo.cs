@@ -467,11 +467,8 @@ namespace System.Management.Automation
                         processInCurrentThread: true,
                         waitForCompletionInCurrentThread: true);
 
-                    if (eventArgs.Exception != null)
-                    {
-                        // An exception happened on a different thread, rethrow it here on the correct thread.
-                        eventArgs.Exception.Throw();
-                    }
+                    // An exception happened on a different thread, rethrow it here on the correct thread.
+                    eventArgs.Exception?.Throw();
 
                     return eventArgs.Result;
                 }

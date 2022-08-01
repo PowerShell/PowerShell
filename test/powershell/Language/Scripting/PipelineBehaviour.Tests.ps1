@@ -478,6 +478,19 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             ## Dispose the steppable pipeline.
             $step.Dispose()
         }
+
+        It "Clean block runs fine in a proxy function when a dynamic parameter fails to bind" {
+            $function:TestProxyGci = [scriptblock]::Create(
+                [Management.Automation.ProxyCommand]::Create(
+                (Get-Command Get-ChildItem)))
+
+            ## The proxy function 'TestProxyGci' contains the 'dynamicparam' block, which will
+            ## run during parameter binding. However, the parameter binding failed, and thus
+            ## the 'begin', 'process', and 'end' blocks will not run, so '$steppablePipeline'
+            ## in the proxy function is null (never created). The 'clean' block will run anyway,
+            ## but it should skip calling '$steppablePipeline.Clean()' in this case. 
+            { TestProxyGci -Attributes } | Should -Throw -ErrorId 'MissingArgument,TestProxyGci'
+        }
     }
 
     Context "'exit' statement in command" {
@@ -587,5 +600,26 @@ Describe 'Function Pipeline Behaviour' -Tag 'CI' {
             $pwsh.Streams.Information[0].MessageData | Should -BeExactly "CLEAN"
         }
         #>
+    }
+}
+
+Describe 'Other Pipeline Behaviour' -Tag 'CI' {
+    It "Array with 'Automation.Null' elements can be piped to pipeline" {
+        $automationNull = & {}
+
+        ## 'Automation.Null' elements will not be sent to the pipeline (skipped).
+        1, $automationNull, 2, $automationNull, 3, 4, 5 | ForEach-Object { $_ } | Should -Be (1..5)
+        $array = 1, $automationNull, 2, $automationNull, 3, 4, 5
+        $array.Count | Should -Be 7
+        $array | ForEach-Object { $_ } | Should -Be (1..5)
+    }
+
+    It "Automation.Null is not written to pipeline in a function" {
+        $automationNull = & {}
+
+        function MyTest { 1, $automationNull, 2, $automationNull, 3, 4, 5 }
+        $result = MyTest
+        $result.Count | Should -Be 5
+        MyTest | Should -Be (1..5)
     }
 }

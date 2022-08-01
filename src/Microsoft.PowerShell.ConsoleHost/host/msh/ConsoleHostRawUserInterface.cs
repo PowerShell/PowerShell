@@ -85,9 +85,8 @@ namespace Microsoft.PowerShell
                 GetBufferInfo(out bufferInfo);
 
                 ConsoleColor foreground;
-                ConsoleColor unused;
 
-                ConsoleControl.WORDToColor(bufferInfo.Attributes, out foreground, out unused);
+                ConsoleControl.WORDToColor(bufferInfo.Attributes, out foreground, out _);
                 return foreground;
             }
 
@@ -135,9 +134,8 @@ namespace Microsoft.PowerShell
                 GetBufferInfo(out bufferInfo);
 
                 ConsoleColor background;
-                ConsoleColor unused;
 
-                ConsoleControl.WORDToColor(bufferInfo.Attributes, out unused, out background);
+                ConsoleControl.WORDToColor(bufferInfo.Attributes, out _, out background);
                 return background;
             }
 

@@ -80,10 +80,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = Array.Empty<string>();
-                }
+                value ??= Array.Empty<string>();
 
                 _verbs = value;
                 _verbPatterns = null;
@@ -106,10 +103,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = Array.Empty<string>();
-                }
+                value ??= Array.Empty<string>();
 
                 _nouns = value;
                 _nounPatterns = null;
@@ -132,10 +126,7 @@ namespace Microsoft.PowerShell.Commands
 
             set
             {
-                if (value == null)
-                {
-                    value = Array.Empty<string>();
-                }
+                value ??= Array.Empty<string>();
 
                 _modules = value;
                 _modulePatterns = null;
@@ -400,10 +391,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Initialize the module patterns
-            if (_modulePatterns == null)
-            {
-                _modulePatterns = SessionStateUtilities.CreateWildcardsFromStrings(Module, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
-            }
+            _modulePatterns ??= SessionStateUtilities.CreateWildcardsFromStrings(Module, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
             switch (ParameterSetName)
             {
@@ -686,15 +674,9 @@ namespace Microsoft.PowerShell.Commands
 
             do // false loop
             {
-                if (_verbPatterns == null)
-                {
-                    _verbPatterns = SessionStateUtilities.CreateWildcardsFromStrings(Verb, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
-                }
+                _verbPatterns ??= SessionStateUtilities.CreateWildcardsFromStrings(Verb, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
-                if (_nounPatterns == null)
-                {
-                    _nounPatterns = SessionStateUtilities.CreateWildcardsFromStrings(Noun, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
-                }
+                _nounPatterns ??= SessionStateUtilities.CreateWildcardsFromStrings(Noun, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
 
                 if (!string.IsNullOrEmpty(command.ModuleName))
                 {
@@ -1154,10 +1136,7 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            if (_matchedParameterNames == null)
-            {
-                _matchedParameterNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            }
+            _matchedParameterNames ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             IEnumerable<ParameterMetadata> commandParameters = null;
             try

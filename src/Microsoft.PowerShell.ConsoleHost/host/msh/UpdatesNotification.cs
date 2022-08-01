@@ -126,6 +126,7 @@ namespace Microsoft.PowerShell
 
                 string notificationMsg = string.Format(CultureInfo.CurrentCulture, notificationMsgTemplate, releaseTag, notificationColor, resetColor, line2Padding, line3Padding);
 
+                hostUI.WriteLine();
                 hostUI.WriteLine(notificationMsg);
             }
         }
