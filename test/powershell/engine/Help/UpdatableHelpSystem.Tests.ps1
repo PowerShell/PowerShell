@@ -444,7 +444,8 @@ Describe "Validate 'Update-Help' shows 'HelpCultureNotSupported' when thrown" -T
 
     It 'Shows error if help culture does not match: <name>' -TestCases @(
         @{ 'name' = 'implicit culture'; 'culture' = $null }
-        @{ 'name' = 'explicit culture'; 'culture' = 'en-GB' }
+        @{ 'name' = 'explicit culture en-GB'; 'culture' = 'en-GB' }
+        @{ 'name' = 'explicit culture de-DE'; 'culture' = 'de-DE' }
     ) {
         param ($name, $culture)
         # Cannot pass null, have to splat to skip argument entirely
@@ -452,8 +453,12 @@ Describe "Validate 'Update-Help' shows 'HelpCultureNotSupported' when thrown" -T
         $cultureUsed = $culture ?? (Get-Culture)
 
         $ErrorVariable = $null
-        Update-Help @cultureArg -ErrorVariable ErrorVariable -ErrorAction SilentlyContinue
+        $VerboseOutput = New-TemporaryFile
+        Update-Help @cultureArg -ErrorVariable ErrorVariable -ErrorAction SilentlyContinue -Verbose 4>$VerboseOutput
         $ErrorVariable | Should -Match "No UI culture was found that matches the following pattern: ${cultureUsed}"
+        if (-not $culture) {
+            Get-Content -Raw $VerboseOutput | Should -Match 'Postponing error and trying fallback cultures'
+        }
     }
 }
 

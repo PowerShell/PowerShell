@@ -217,7 +217,6 @@ namespace Microsoft.PowerShell.Commands
             // Simulate culture not found
             if (InternalTestHooks.ThrowHelpCultureNotSupported)
             {
-                // TODO: unify with Base.IsUpdateNecessary to ensure exact same exception thrown
                 throw new UpdatableHelpSystemException("HelpCultureNotSupported",
                     StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupported, culture, "en-US"),
                     ErrorCategory.InvalidOperation, null, null);

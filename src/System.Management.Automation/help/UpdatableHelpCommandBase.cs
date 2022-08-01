@@ -562,7 +562,7 @@ namespace Microsoft.PowerShell.Commands
                         else
                         {
                             // Hold first exception, it will be displayed if fallback chain fails
-                            WriteVerbose(e.FullyQualifiedErrorId); // TODO: better message
+                            WriteVerbose(StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupportedFallback, e.Message));
                             implicitCultureNotSupported ??= e;
                         }
                     }
