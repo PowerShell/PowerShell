@@ -371,8 +371,14 @@ namespace System.Management.Automation
                 {
                     if (string.IsNullOrEmpty(_gacPath64))
                     {
-                        // cache value of '_gacPath64' folder in member variable.
-                        _gacPath64 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_64";
+                        if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+                        {
+                            _gacPath64 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_Arm64";
+                        }
+                        else
+                        {
+                            _gacPath64 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_64";
+                        }
                     }
 
                     gacBitnessAwarePath = _gacPath64;
