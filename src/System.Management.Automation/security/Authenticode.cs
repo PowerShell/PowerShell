@@ -109,11 +109,12 @@ namespace System.Management.Automation
             Utils.CheckArgForNullOrEmpty(fileName, "fileName");
             Utils.CheckArgForNull(certificate, "certificate");
 
-            // If given, TimeStamp server URLs must begin with http://
+            // If given, TimeStamp server URLs must begin with http:// or https://
             if (!string.IsNullOrEmpty(timeStampServerUrl))
             {
-                if ((timeStampServerUrl.Length <= 7) ||
-                    (timeStampServerUrl.IndexOf("http://", StringComparison.OrdinalIgnoreCase) != 0))
+                if ((timeStampServerUrl.Length <= 7) || (
+                    (timeStampServerUrl.IndexOf("http://", StringComparison.OrdinalIgnoreCase) != 0) && 
+                    (timeStampServerUrl.IndexOf("https://", StringComparison.OrdinalIgnoreCase) != 0)))
                 {
                     throw PSTraceSource.NewArgumentException(
                         nameof(certificate),

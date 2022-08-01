@@ -142,7 +142,7 @@
     <value>Cannot sign code. The specified certificate is not suitable for code signing.</value>
   </data>
   <data name="TimeStampUrlRequired" xml:space="preserve">
-    <value>Cannot sign code. The TimeStamp server URL must be fully qualified, and in the format http://&lt;server url&gt;.</value>
+    <value>Cannot sign code. The TimeStamp server URL must be fully qualified, and in the format http://&lt;server url&gt; or https://&lt;server url&gt;.</value>
   </data>
   <data name="InvalidHashAlgorithm" xml:space="preserve">
     <value>Cannot sign code. The hash algorithm is not supported.</value>
