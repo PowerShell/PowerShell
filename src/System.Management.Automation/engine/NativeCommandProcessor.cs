@@ -1378,8 +1378,8 @@ namespace System.Management.Automation
             string rawPath =
                 context.EngineSessionState.GetNamespaceCurrentLocation(
                     context.ProviderNames.FileSystem).ProviderPath;
-            
-            // only set this if the working directory still exists
+
+            // Only set this if the PowerShell's current working directory still exists.
             if (Directory.Exists(rawPath))
             {
                 startInfo.WorkingDirectory = WildcardPattern.Unescape(rawPath);
