@@ -52,7 +52,12 @@ Describe 'native commands with pipeline' -tags 'Feature' {
         (Get-Process 'yes' -ErrorAction Ignore).Count | Should -Be $yes
     }
 
-    It 'native command should still execute if the current working directory no longer exists' -Skip:($IsWindows) {
+    It 'native command should still execute if the current working directory no longer exists with command: <command>' -Skip:($IsWindows) -TestCases @(
+        @{ command = 'ps' }
+        @{ command = 'start-process ps -nonewwindow'}
+    ){
+        param($command)
+
         $wd = New-Item testdrive:/tmp -ItemType directory
         $lock = New-Item testdrive:/lock -ItemType file
         $script = @"
@@ -61,7 +66,7 @@ Describe 'native commands with pipeline' -tags 'Feature' {
             }
 
             try {
-                `$out = ps
+                `$out = $command
             }
             catch {
                 `$null = Set-Content -Path "$testdrive/error" -Value (`$_ | Out-String)
