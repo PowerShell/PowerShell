@@ -3992,10 +3992,10 @@ namespace System.Management.Automation
         private static void NativeCompletionMemberValue(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, string propertyName)
         {
             string wordToComplete = context.WordToComplete.Trim('"', '\'');
-            IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
-            if (prevType is not null)
+            IEnumerable<PSTypeName> prevTypes = GetInferenceTypes(context, commandAst);
+            if (prevTypes is not null)
             {
-                foreach (var type in prevType)
+                foreach (var type in prevTypes)
                 {
                     if (type.Type is null)
                     {
@@ -4012,6 +4012,7 @@ namespace System.Management.Automation
                                 result.Add(new CompletionResult(value, value, CompletionResultType.ParameterValue, value));
                             }
                         }
+
                         break;
                     }
                 }
@@ -5970,9 +5971,11 @@ namespace System.Management.Automation
                             result.Add(new CompletionResult($"'{name}'", name, CompletionResultType.ParameterValue, name));
                         }
                     }
+
                     break;
                 }
             }
+
             return result;
         }
 
