@@ -1448,10 +1448,7 @@ namespace System.Management.Automation
                 {
                     lock (syncObject)
                     {
-                        if (_finished != null)
-                        {
-                            _finished.Set();
-                        }
+                        _finished?.Set();
                     }
                 }
 #pragma warning restore 56500
@@ -4074,10 +4071,7 @@ namespace System.Management.Automation
         internal void CheckStateAndRaiseStopEvent()
         {
             RemoteDebugger remoteDebugger = _wrappedDebugger as RemoteDebugger;
-            if (remoteDebugger != null)
-            {
-                remoteDebugger.CheckStateAndRaiseStopEvent();
-            }
+            remoteDebugger?.CheckStateAndRaiseStopEvent();
         }
 
         /// <summary>
@@ -4125,13 +4119,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        private static void RestoreRemoteOutput(Pipeline runningCmd)
-        {
-            if (runningCmd != null)
-            {
-                runningCmd.ResumeIncomingData();
-            }
-        }
+        private static void RestoreRemoteOutput(Pipeline runningCmd) => runningCmd?.ResumeIncomingData();
 
         private void HandleBreakpointUpdated(object sender, BreakpointUpdatedEventArgs e)
         {

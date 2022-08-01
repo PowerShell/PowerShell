@@ -895,13 +895,11 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // this is for a command
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (cmdTM != null)
-                {
-                    // not throwing the exception in null case as the command might have already
-                    // closed. The RS data structure handler does not wait for the close ack before
-                    // it clears the command transport manager..so this might happen.
-                    cmdTM.OnRemoteCmdDataReceived(rawData, streamTemp);
-                }
+
+                // not throwing the exception in null case as the command might have already
+                // closed. The RS data structure handler does not wait for the close ack before
+                // it clears the command transport manager..so this might happen.
+                cmdTM?.OnRemoteCmdDataReceived(rawData, streamTemp);
             }
         }
 
@@ -916,13 +914,11 @@ namespace System.Management.Automation.Remoting.Client
             {
                 // this is for a command
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (cmdTM != null)
-                {
-                    // not throwing the exception in null case as the command might have already
-                    // closed. The RS data structure handler does not wait for the close ack before
-                    // it clears the command transport manager..so this might happen.
-                    cmdTM.OnRemoteCmdSendCompleted();
-                }
+
+                // not throwing the exception in null case as the command might have already
+                // closed. The RS data structure handler does not wait for the close ack before
+                // it clears the command transport manager..so this might happen.
+                cmdTM?.OnRemoteCmdSendCompleted();
             }
         }
 
@@ -968,10 +964,7 @@ namespace System.Management.Automation.Remoting.Client
             else
             {
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (cmdTM != null)
-                {
-                    cmdTM.OnRemoteCmdSignalCompleted();
-                }
+                cmdTM?.OnRemoteCmdSignalCompleted();
             }
         }
 
@@ -1001,12 +994,10 @@ namespace System.Management.Automation.Remoting.Client
                 _tracer.WriteMessage("OutOfProcessClientSessionTransportManager.OnCloseAckReceived, in progress command count should be greater than zero: " + commandCount + ", RunSpacePool Id : " + this.RunspacePoolInstanceId + ", psGuid : " + psGuid.ToString());
 
                 OutOfProcessClientCommandTransportManager cmdTM = GetCommandTransportManager(psGuid);
-                if (cmdTM != null)
-                {
-                    // this might legitimately happen if cmd is already closed before we get an
-                    // ACK back from server.
-                    cmdTM.OnCloseCmdCompleted();
-                }
+
+                // this might legitimately happen if cmd is already closed before we get an
+                // ACK back from server.
+                cmdTM?.OnCloseCmdCompleted();
             }
         }
 
@@ -1414,10 +1405,7 @@ namespace System.Management.Automation.Remoting.Client
 
             if (isDisposing)
             {
-                if (_client != null)
-                {
-                    _client.Dispose();
-                }
+                _client?.Dispose();
             }
         }
 
@@ -2055,10 +2043,7 @@ namespace System.Management.Automation.Remoting.Client
 
             if (isDisposing)
             {
-                if (_clientPipe != null)
-                {
-                    _clientPipe.Dispose();
-                }
+                _clientPipe?.Dispose();
             }
         }
 
@@ -2190,13 +2175,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Aborts an existing connection attempt.
         /// </summary>
-        public void AbortConnect()
-        {
-            if (_clientPipe != null)
-            {
-                _clientPipe.AbortConnect();
-            }
-        }
+        public void AbortConnect() => _clientPipe?.AbortConnect();
 
         #endregion
     }
