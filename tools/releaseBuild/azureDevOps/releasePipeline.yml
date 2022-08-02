@@ -12,6 +12,13 @@ resources:
       branches:
       - release/*
 
+  repositories:
+  - repository: Internal-PowerShellTeam-Tools
+    type: github
+    endpoint: InternalPSTools
+    name: PowerShell/Internal-PowerShellTeam-Tools
+    ref: master
+
 variables:
   - name: runCodesignValidationInjection
     value : false
@@ -21,6 +28,7 @@ variables:
     value: true
   - name: BUILDSECMON_OPT_IN
     value: true
+  - group: ReleaseAutomationAccess
 
 stages:
 - stage: MSIXBundle
@@ -157,10 +165,17 @@ stages:
   displayName: Release Automation
   dependsOn: []
   jobs:
-  - deployment: ReleaseAutomationKickOff
-    displayName: Kick off release ReleaseAutomation
-    pool: server
-    environment: PSReleaseAutomationKickOff
+  - checkout: Internal-PowerShellTeam-Tools
+  - pwsh: |
+      Import-Module $(Agent.BuildDirectory)\Internal-PowerShellTeam-Tools\ReleaseTools\AzDO -Force
+      Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
+      Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName Release-Automation
+      $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 10
+      Write-Verbose -Verbose "Kicked off release automation: $($buildInvocationInfo.WebUrl)"
+      $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -TimeoutInMinutes 300
+      if ($status.result -ne 'Succeeded') {
+        Write-Verbose "There are errors in release automation tests. Please triage failures."
+      }
 
   - template: templates/release/approvalJob.yml
     parameters:
