@@ -374,6 +374,8 @@ namespace System.Management.Automation
                        var gacName = RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ? "GAC_Arm64" : "GAC_64";
                         _gacPath64 = Path.Join(_winDir, "Microsoft.NET", "assembly", gacName);
                     }
+
+                    gacBitnessAwarePath = _gacPath64;
                 }
                 else
                 {
@@ -381,9 +383,10 @@ namespace System.Management.Automation
                     {
                         _gacPath32 = Path.Join(_winDir, "Microsoft.NET", "assembly", "GAC_32");
                     }
+
+                    gacBitnessAwarePath = _gacPath32;
                 }
 
-                gacBitnessAwarePath = _gacPath64;
                 assemblyFound = FindInGac(gacBitnessAwarePath, assemblyName, out assemblyFilePath);
             }
 
