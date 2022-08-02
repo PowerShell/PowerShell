@@ -861,33 +861,29 @@ function New-PSOptions {
     Write-Verbose "Using framework '$Framework'"
 
     if (-not $Runtime) {
-        if ($environment.IsLinux) {
-            $Runtime = "linux-x64"
-        } elseif ($environment.IsMacOS) {
-            if ($PSVersionTable.OS.Contains('ARM64')) {
-                $Runtime = "osx-arm64"
+        function Get-FirstMatch($String, $Pattern) {
+            $Matches = @($String | Select-String $Pattern)
+            if (-not $Matches) {
+                throw "Cannot match pattern: '${Pattern}'"
             }
-            else {
-                $Runtime = "osx-x64"
-            }
-        } else {
-            $RID = dotnet --info | ForEach-Object {
-                if ($_ -match "RID") {
-                    $_ -split "\s+" | Select-Object -Last 1
-                }
-            }
+            $Matches[0].Matches.Groups[1].Value
+        }
+
+        try {
+            $Info = dotnet --info
 
             # We plan to release packages targeting win7-x64 and win7-x86 RIDs,
             # which supports all supported windows platforms.
             # So we, will change the RID to win7-<arch>
-            $Runtime = $RID -replace "win\d+", "win7"
+            $Platform = Get-FirstMatch $Info '^\s*OS Platform:\s+(\w+)$' -replace 'windows', 'win7'
+            $Architecture = Get-FirstMatch $Info '^\s*Architecture:\s+(\w+)$'
+            $Runtime = "${Platform}-${Architecture}".ToLower()
+        } catch {
+            Write-Error $_
+            Throw "Could not determine Runtime Identifier, please update dotnet"
         }
 
-        if (-not $Runtime) {
-            Throw "Could not determine Runtime Identifier, please update dotnet"
-        } else {
-            Write-Verbose "Using runtime '$Runtime'"
-        }
+        Write-Verbose "Using runtime '$Runtime'"
     }
 
     $PowerShellDir = if ($Runtime -like 'win*' -or ($Runtime -like 'fxdependent*' -and $environment.IsWindows)) {
