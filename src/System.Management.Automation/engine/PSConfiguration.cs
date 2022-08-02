@@ -407,10 +407,7 @@ namespace System.Management.Automation.Configuration
                             configScopeData = JsonNode.Parse(jsonString) as JsonObject;
                         }
 
-                        if (configScopeData is null)
-                        {
-                            configScopeData = _emptyConfig;
-                        }
+                        configScopeData ??= _emptyConfig;
                     }
                     catch (Exception exc)
                     {
@@ -507,10 +504,7 @@ namespace System.Management.Automation.Configuration
                     configScopeData = configScopeData = JsonNode.Parse(jsonString) as JsonObject;
                 }
 
-                if (configScopeData is null)
-                {
-                    configScopeData = new JsonObject();
-                }
+                configScopeData ??= new JsonObject();
 
                 configScopeData[key] = JsonValue.Create<T>(value);
 
