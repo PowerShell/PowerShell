@@ -2268,7 +2268,7 @@ function Start-DevPowerShell {
 
         # splatting for the win
         $startProcessArgs = @{
-            FilePath = "$BinDir\pwsh"
+            FilePath = Join-Path $BinDir 'pwsh'
         }
 
         if ($ArgumentList) {
