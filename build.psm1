@@ -862,11 +862,11 @@ function New-PSOptions {
 
     if (-not $Runtime) {
         function Get-FirstMatch($String, $Pattern) {
-            $Matches = @($String | Select-String $Pattern)
-            if (-not $Matches) {
+            $Selection = @($String | Select-String $Pattern)
+            if (-not $Selection) {
                 throw "Cannot match pattern: '${Pattern}'"
             }
-            $Matches[0].Matches.Groups[1].Value
+            $Selection[0].Matches.Groups[1].Value
         }
 
         try {
