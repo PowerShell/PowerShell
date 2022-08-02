@@ -74,8 +74,7 @@ Describe "Type and namespace token tokenization" -Tags "CI" {
         @{
             TestString = 'using namespace x = y'
             InterestingTokens = @(
-                @{Index = 2; Text = "X"; Kind = "Identifier"; Flags = "TypeName"}
-                @{Index = 4; Text = "Y"; Kind = "Identifier"; Flags = "TypeName"}
+                @{Index = 4; Text = "Y"; Kind = "Identifier"; Flags = "None"}
             )
         }
         @{
@@ -88,12 +87,6 @@ Describe "Type and namespace token tokenization" -Tags "CI" {
             TestString = 'using type =' #Do not mark invalid tokens as a typename
             InterestingTokens = @(
                 @{Index = 2; Text = "="; Kind = "Generic"; Flags = "AssignmentOperator"}
-            )
-        }
-        @{
-            TestString = 'using namespace x' #Do not mark it as typename if not using alias syntax
-            InterestingTokens = @(
-                @{Index = 2; Text = "X"; Kind = "Identifier"; Flags = "None"}
             )
         }
         @{

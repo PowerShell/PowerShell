@@ -4981,6 +4981,7 @@ namespace System.Management.Automation.Language
                 {
                     itemToken.TokenFlags = TokenFlags.TypeName;
                 }
+
                 // We don't allow namespaces in type aliases
                 if (itemAst.Extent.Text.Contains('.'))
                 {
@@ -5008,23 +5009,17 @@ namespace System.Management.Automation.Language
                 {
                     SkipToken();
                     // We don't allow subnamespaces in namespace aliases
-                    if (kind == UsingStatementKind.Namespace)
+                    if (kind == UsingStatementKind.Namespace && itemAst.Extent.Text.Contains('.'))
                     {
-                        if (itemToken.Kind == TokenKind.Identifier && itemToken.TokenFlags == TokenFlags.None)
-                        {
-                            itemToken.TokenFlags = TokenFlags.TypeName;
-                        }
-                        if (itemAst.Extent.Text.Contains('.'))
-                        {
-                            ReportError(itemAst.Extent, nameof(ParserStrings.NamespaceAliasContainsNamespace), ParserStrings.NamespaceAliasContainsNamespace);
-                            return new ErrorStatementAst(ExtentOf(usingToken, itemAst.Extent));
-                        }
+                        ReportError(itemAst.Extent, nameof(ParserStrings.NamespaceAliasContainsNamespace), ParserStrings.NamespaceAliasContainsNamespace);
+                        return new ErrorStatementAst(ExtentOf(usingToken, itemAst.Extent));
                     }
+
                     Ast aliasAst;
                     Token aliasToken;
                     if (kind is UsingStatementKind.Type or UsingStatementKind.Namespace)
                     {
-                        // prevents bypassing the type whitelist by overriding an allowed type accelerator with a blocked type
+                        // prevents bypassing the type whitelist by overriding an allowed type accelerator with a blocked type like:
                         // using type string = System.Collections.Generic.List[string]; [string]
                         if (Runspace.DefaultRunspace?.ExecutionContext?.LanguageMode == PSLanguageMode.ConstrainedLanguage)
                         {
@@ -5034,6 +5029,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.TypeAndNamespaceAliasNotAllowedInConstrainedLanguage);
                             return new ErrorStatementAst(errorExtent);
                         }
+
                         var oldMode = _tokenizer.Mode;
                         SetTokenizerMode(TokenizerMode.TypeName);
                         aliasToken = PeekToken();
@@ -5065,12 +5061,19 @@ namespace System.Management.Automation.Language
                             return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
                         }
 
-                        var aliasTypeName = TypeNameRule(allowAssemblyQualifiedNames: false, out _);
+                        var aliasTypeName = TypeNameRule(allowAssemblyQualifiedNames: true, out aliasToken);
 
-                        if (kind == UsingStatementKind.Namespace && (aliasTypeName.IsGeneric || aliasTypeName.IsArray))
+                        if (kind == UsingStatementKind.Namespace)
                         {
-                            ReportError(aliasTypeName.Extent, nameof(ParserStrings.NamespaceExpected), ParserStrings.NamespaceExpected);
-                            return new ErrorStatementAst(ExtentOf(usingToken, aliasTypeName.Extent));
+                            if (aliasTypeName.IsGeneric || aliasTypeName.IsArray || aliasTypeName.AssemblyName is not null)
+                            {
+                                ReportError(aliasTypeName.Extent, nameof(ParserStrings.NamespaceExpected), ParserStrings.NamespaceExpected);
+                                return new ErrorStatementAst(ExtentOf(usingToken, aliasTypeName.Extent));
+                            }
+                            else
+                            {
+                                aliasToken.TokenFlags = TokenFlags.None;
+                            }
                         }
 
                         // TypeNameRule inserts ":ErrorTypeName:" when generics are missing a type
@@ -5092,6 +5095,7 @@ namespace System.Management.Automation.Language
                                 ParserStrings.MissingNamespaceAlias);
                             return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
                         }
+
                         if (aliasToken.Kind == TokenKind.Comma)
                         {
                             UngetToken(aliasToken);

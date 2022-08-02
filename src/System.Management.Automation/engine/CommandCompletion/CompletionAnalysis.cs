@@ -1073,7 +1073,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (previousTokenIndex > 0 && _tokens[previousTokenIndex].Kind != TokenKind.Type)
+                    if (previousTokenIndex >= 0 && _tokens[previousTokenIndex].Kind != TokenKind.Type)
                     {
                         typeNameToComplete = new TypeName(tokenAtCursor.Extent, tokenAtCursor.Text);
                     }
