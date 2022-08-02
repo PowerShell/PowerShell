@@ -880,6 +880,8 @@ function New-PSOptions {
             # So we, will change the RID to win7-<arch>
             $WindowsPlatform = $Architecture[0] -eq 'x' ? 'win7' : 'win'
             $Platform = $Platform -replace 'windows', $WindowsPlatform
+            # OSX historically reports as 'darwin'
+            $Platform = $Platform -replace 'darwin', 'osx'
 
             $Runtime = "${Platform}-${Architecture}".ToLower()
         } catch {
