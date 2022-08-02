@@ -365,29 +365,25 @@ namespace System.Management.Automation
 
             if (!assemblyFound)
             {
-                string gacBitnessAwarePath = null;
+                string gacBitnessAwarePath;
 
                 if (Environment.Is64BitProcess)
                 {
                     if (string.IsNullOrEmpty(_gacPath64))
                     {
                        var gacName = RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ? "GAC_Arm64" : "GAC_64";
-                        _gacPath64 = string.Create(CultureInfo.InvariantCulture, $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}{gacName}");
+                        _gacPath64 = Path.Join(_winDir, "Microsoft.NET", "assembly", gacName);
                     }
-
-                    gacBitnessAwarePath = _gacPath64;
                 }
                 else
                 {
                     if (string.IsNullOrEmpty(_gacPath32))
                     {
-                        // cache value of '_gacPath32' folder in member variable.
-                        _gacPath32 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_32";
+                        _gacPath32 = Path.Join(_winDir, "Microsoft.NET", "assembly", "GAC_32");
                     }
-
-                    gacBitnessAwarePath = _gacPath32;
                 }
 
+                gacBitnessAwarePath = _gacPath64;
                 assemblyFound = FindInGac(gacBitnessAwarePath, assemblyName, out assemblyFilePath);
             }
 
