@@ -372,7 +372,7 @@ namespace System.Management.Automation
                     if (string.IsNullOrEmpty(_gacPath64))
                     {
                        var gacName = RuntimeInformation.ProcessArchitecture == Architecture.Arm64 ? "GAC_Arm64": "GAC_64";
-                         gacPath64 = string.Create(CultureInfo.InvariantCulture, $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}{gacName}");
+                         _gacPath64 = string.Create(CultureInfo.InvariantCulture, $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}{gacName}");
                     }
 
                     gacBitnessAwarePath = _gacPath64;
