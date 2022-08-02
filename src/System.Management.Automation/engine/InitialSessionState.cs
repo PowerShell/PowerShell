@@ -45,7 +45,7 @@ namespace System.Management.Automation.Runspaces
             // We shouldn't create too many tasks.
             Task.Run(() =>
             {
-                var jsonDocument = System.Text.Json.Nodes.JsonObject.Parse("{\"test\":  \"test\"}");
+                var jsonDocument = System.Text.Json.Nodes.JsonObject.Parse("1");
             });
 #if !UNIX
             // Amsi initialize can be a little slow

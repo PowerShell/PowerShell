@@ -501,7 +501,7 @@ namespace System.Management.Automation.Configuration
                 JsonObject? configScopeData = null;
                 if (!string.IsNullOrEmpty(jsonString))
                 {
-                    configScopeData = configScopeData = JsonNode.Parse(jsonString) as JsonObject;
+                    configScopeData = JsonNode.Parse(jsonString) as JsonObject;
                 }
 
                 configScopeData ??= new JsonObject();
