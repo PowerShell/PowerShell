@@ -871,12 +871,16 @@ function New-PSOptions {
 
         try {
             $Info = dotnet --info
+            Write-Verbose "dotnet --info:`n${Info}"
 
+            $Architecture = Get-FirstMatch $Info '^\s*Architecture:\s+(\w+)$'
+            $Platform = Get-FirstMatch $Info '^\s*OS Platform:\s+(\w+)$'
             # We plan to release packages targeting win7-x64 and win7-x86 RIDs,
             # which supports all supported windows platforms.
             # So we, will change the RID to win7-<arch>
-            $Platform = Get-FirstMatch $Info '^\s*OS Platform:\s+(\w+)$' -replace 'windows', 'win7'
-            $Architecture = Get-FirstMatch $Info '^\s*Architecture:\s+(\w+)$'
+            $WindowsPlatform = $Architecture[0] -eq 'x' ? 'win7' : 'win'
+            $Platform = $Platform -replace 'windows', $WindowsPlatform
+
             $Runtime = "${Platform}-${Architecture}".ToLower()
         } catch {
             Write-Error $_
