@@ -1051,6 +1051,7 @@ namespace System.Management.Automation
                     {
                         if (typeConstraintAst.Parent is UsingStatementAst usingStatement && usingStatement.UsingStatementKind == UsingStatementKind.Namespace)
                         {
+                            completionContext.WordToComplete ??= string.Empty;
                             result = CompletionCompleters.CompleteNamespace(completionContext);
                         }
                         else
@@ -1062,7 +1063,20 @@ namespace System.Management.Automation
                 
                 if (typeNameToComplete is null && tokenAtCursor?.TokenFlags.HasFlag(TokenFlags.TypeName) == true)
                 {
-                    typeNameToComplete = new TypeName(tokenAtCursor.Extent, tokenAtCursor.Text);
+                    int previousTokenIndex = -1;
+                    for (int i = 0; i < _tokens.Length; i++)
+                    {
+                        if (_tokens[i].Extent.StartOffset == tokenAtCursor.Extent.StartOffset)
+                        {
+                            previousTokenIndex = i - 1;
+                            break;
+                        }
+                    }
+
+                    if (previousTokenIndex > 0 && _tokens[previousTokenIndex].Kind != TokenKind.Type)
+                    {
+                        typeNameToComplete = new TypeName(tokenAtCursor.Extent, tokenAtCursor.Text);
+                    }
                 }
 
                 if (typeNameToComplete != null)

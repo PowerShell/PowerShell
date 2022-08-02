@@ -2246,7 +2246,7 @@ function MyFunction ($param1, $param2)
                 ScriptText = 'using type MyCustomType = [System.Collections.Generic.Dictionary[strin'
             }
             @{
-                Expected = 'int16'
+                Expected = 'System.Int128'
                 ScriptText = 'using type MyCustomType = [System.Collections.Generic.Dictionary[string,int'
             }
             @{
