@@ -12,6 +12,13 @@ resources:
       branches:
       - release/*
 
+  repositories:
+  - repository: Internal-PowerShellTeam-Tools
+    type: git
+    trigger: none
+    name: Internal-PowerShellTeam-Tools
+    ref: master
+
 variables:
   - name: runCodesignValidationInjection
     value : false
@@ -274,7 +281,6 @@ stages:
     displayName: Push Git Tag
     pool : server
     environment: PSReleasePushTag
-    dependsOn: UpdateChangeLog
 
   - deployment: MakeDraftPublic
     displayName: Make GitHub Draft public
