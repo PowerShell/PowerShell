@@ -1771,6 +1771,7 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 IEnumerable enumValues = LanguagePrimitives.EnumSingleTypeConverter.GetEnumValues(parameterType);
+
                 // Exclude values not accepted by ValidateRange-attributes
                 foreach (ValidateArgumentsAttribute att in parameter.Parameter.ValidationAttributes)
                 {

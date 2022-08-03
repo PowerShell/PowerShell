@@ -1329,6 +1329,7 @@ namespace System.Management.Automation
                     // Element was not in range - drop
                     continue;
                 }
+
                 yield return el;
             }
         }
