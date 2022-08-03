@@ -346,9 +346,6 @@ namespace System.Management.Automation
                 return false;
             }
 
-            bool assemblyFound = false;
-            char dirSeparator = IO.Path.DirectorySeparatorChar;
-
             if (string.IsNullOrEmpty(_winDir))
             {
                 // cache value of '_winDir' folder in member variable.
@@ -358,10 +355,10 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(_gacPathMSIL))
             {
                 // cache value of '_gacPathMSIL' folder in member variable.
-                _gacPathMSIL = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_MSIL";
+                _gacPathMSIL = Path.Join(_winDir, "Microsoft.NET", "assembly", "GAC_MSIL");
             }
 
-            assemblyFound = FindInGac(_gacPathMSIL, assemblyName, out assemblyFilePath);
+            bool assemblyFound = FindInGac(_gacPathMSIL, assemblyName, out assemblyFilePath);
 
             if (!assemblyFound)
             {
@@ -399,8 +396,7 @@ namespace System.Management.Automation
             bool assemblyFound = false;
             assemblyPath = null;
 
-            char dirSeparator = IO.Path.DirectorySeparatorChar;
-            string tempAssemblyDirPath = $"{gacRoot}{dirSeparator}{assemblyName.Name}";
+            string tempAssemblyDirPath = Path.Join(gacRoot, assemblyName.Name);
 
             if (Directory.Exists(tempAssemblyDirPath))
             {
