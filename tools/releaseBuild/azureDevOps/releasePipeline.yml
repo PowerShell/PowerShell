@@ -12,13 +12,6 @@ resources:
       branches:
       - release/*
 
-  repositories:
-  - repository: Internal-PowerShellTeam-Tools
-    type: github
-    endpoint: InternalPSTools
-    name: PowerShell/Internal-PowerShellTeam-Tools
-    ref: master
-
 variables:
   - name: runCodesignValidationInjection
     value : false
