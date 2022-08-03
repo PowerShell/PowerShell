@@ -872,10 +872,8 @@ function New-PSOptions {
 
         switch ($Platform) {
             'Windows' {
-                # We plan to release packages targeting win7-x64 and win7-x86 RIDs,
-                # which supports all supported windows platforms.
-                # So we, will change the RID to win7-<arch>
-                # CI runs with PowerShell 5.0, which does not support ?:
+                # For x86 and x64 architectures, we use win7-x64 and win7-x86 RIDs.
+                # For arm and arm64 architectures, we use win-arm and win-arm64 RIDs.
                 $Platform = if ($Architecture[0] -eq 'x') { 'win7' } else { 'win' }
                 $Runtime = "${Platform}-${Architecture}"
             }
