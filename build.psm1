@@ -891,9 +891,9 @@ function New-PSOptions {
 
         if (-not $Runtime) {
             Throw "Could not determine Runtime Identifier, please update dotnet"
+        } else {
+            Write-Verbose "Using runtime '$Runtime'"
         }
-
-        Write-Verbose "Using runtime '$Runtime'"
     }
 
     $PowerShellDir = if ($Runtime -like 'win*' -or ($Runtime -like 'fxdependent*' -and $environment.IsWindows)) {
