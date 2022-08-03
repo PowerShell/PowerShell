@@ -8,6 +8,7 @@ param(
 
 . "$PSScriptRoot\tools\buildCommon\startNativeExecution.ps1"
 
+# CI runs with PowerShell 5.0, so don't use features like ?: && ||
 Set-StrictMode -Version 3.0
 
 # On Unix paths is separated by colon
@@ -861,31 +862,34 @@ function New-PSOptions {
     Write-Verbose "Using framework '$Framework'"
 
     if (-not $Runtime) {
-        function Get-FirstMatch($String, $Pattern) {
-            $Selection = @($String | Select-String $Pattern)
-            if (-not $Selection) {
-                throw "Cannot match pattern: '${Pattern}'"
+        $Info = dotnet --info
+        Write-Verbose "dotnet --info:`n${Info}"
+
+        $Platform, $Architecture = $info |
+            Select-String '^\s*OS Platform:\s+(\w+)$', '^\s*Architecture:\s+(\w+)$' |
+            Select-Object -First 2 |
+            ForEach-Object { $_.Matches.Groups[1].Value }
+
+        switch ($Platform) {
+            'Windows' {
+                # We plan to release packages targeting win7-x64 and win7-x86 RIDs,
+                # which supports all supported windows platforms.
+                # So we, will change the RID to win7-<arch>
+                # CI runs with PowerShell 5.0, which does not support ?:
+                $Platform = if ($Architecture[0] -eq 'x') { 'win7' } else { 'win' }
+                $Runtime = "${Platform}-${Architecture}"
             }
-            $Selection[0].Matches.Groups[1].Value
+
+            'Linux' {
+                $Runtime = "linux-${Architecture}"
+            }
+
+            'Darwin' {
+                $Runtime = "osx-${Architecture}"
+            }
         }
 
-        try {
-            $Info = dotnet --info
-            Write-Verbose "dotnet --info:`n${Info}"
-
-            $Architecture = Get-FirstMatch $Info '^\s*Architecture:\s+(\w+)$'
-            $Platform = Get-FirstMatch $Info '^\s*OS Platform:\s+(\w+)$'
-            # We plan to release packages targeting win7-x64 and win7-x86 RIDs,
-            # which supports all supported windows platforms.
-            # So we, will change the RID to win7-<arch>
-            $WindowsPlatform = $Architecture[0] -eq 'x' ? 'win7' : 'win'
-            $Platform = $Platform -replace 'windows', $WindowsPlatform
-            # OSX historically reports as 'darwin'
-            $Platform = $Platform -replace 'darwin', 'osx'
-
-            $Runtime = "${Platform}-${Architecture}".ToLower()
-        } catch {
-            Write-Error $_
+        if (-not $Runtime) {
             Throw "Could not determine Runtime Identifier, please update dotnet"
         }
 
