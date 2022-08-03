@@ -165,25 +165,62 @@ stages:
   displayName: Release Automation
   dependsOn: []
   jobs:
-  - checkout: Internal-PowerShellTeam-Tools
-  - pwsh: |
-      Import-Module $(Agent.BuildDirectory)\Internal-PowerShellTeam-Tools\ReleaseTools\AzDO -Force
-      Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
-      Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName Release-Automation
-      $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 10
-      Write-Verbose -Verbose "Kicked off release automation: $($buildInvocationInfo.WebUrl)"
-      $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -TimeoutInMinutes 300
-      if ($status.result -ne 'Succeeded') {
-        Write-Verbose "There are errors in release automation tests. Please triage failures."
-      }
+  - job: KickOffRA
+    displayName: Kickoff Release Automation
+    steps:
+    - checkout: Internal-PowerShellTeam-Tools
+    - task: DownloadPipelineArtifact@2
+        inputs:
+          source: specific
+          project: PowerShellCore
+          pipeline: '696'
+          preferTriggeringPipeline: true
+          runVersion: latestFromBranch
+          runBranch: '$(Build.SourceBranch)'
+          artifact: metadata
+          path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+
+    - pwsh: |
+        Import-Module $(Agent.BuildDirectory)\Internal-PowerShellTeam-Tools\ReleaseTools\AzDO -Force
+        Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
+        Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName Release-Automation
+        $packageBuildID = $(resources.pipeline.releasePipeline.runID)
+        $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
+        $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 10 -BuildArguments @{ POWERSHELL_PACKAGE_BUILD_BUILDID = $packageBuildID } -Tag $metadata.ReleaseVersion, 'InProgress'
+        Write-Verbose -Verbose "Kicked off release automation: $($buildInvocationInfo.WebUrl)"
+        $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -TimeoutInMinutes 300
+        if ($status.result -ne 'Succeeded') {
+          Write-Verbose "There are errors in release automation tests. Please triage failures."
+        }
 
   - template: templates/release/approvalJob.yml
     parameters:
       displayName: Triage Release Automation Results
-      jobName: TriageReleaseAutomation
-      dependsOnJob: ReleaseAutomationKickOff
+      jobName: TriageRA
+      dependsOnJob: KickOffRA
       instructions: |
         Validate all the test failures and continue when signed off
+
+  - job: MarkRASignOff
+    displayName: Mark release automation signoff
+    steps:
+    - checkout: Internal-PowerShellTeam-Tools
+    - task: DownloadPipelineArtifact@2
+        inputs:
+          source: specific
+          project: PowerShellCore
+          pipeline: '696'
+          preferTriggeringPipeline: true
+          runVersion: latestFromBranch
+          runBranch: '$(Build.SourceBranch)'
+          artifact: metadata
+          path: '$(Pipeline.Workspace)/releasePipeline/metadata'
+
+    - pwsh: |
+        $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
+        $azDOBuild = Get-AzDOBuild -buildDefinitionId 10 -MaximumResult 100  | Where-Object { $_.tags -contains $metadata.ReleaseVersion }
+        $azDoBuild | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -Id $azDOBuild.Id -tag 'SignedOff'
+      displayName: Signoff Release-Automation run
 
 - stage: GitHubDraftRelease
   displayName: Create GitHub draft release
