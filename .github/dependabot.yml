@@ -56,3 +56,5 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    labels:
+      - "CL-BuildPackaging"
