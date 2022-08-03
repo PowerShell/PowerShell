@@ -338,5 +338,14 @@ Describe "Remoting loopback tests" -Tags @('CI', 'RequireAdminOnWindows') {
             $session | Remove-PSSession -ErrorAction Ignore
         }
     }
-}
 
+    It 'Language Mode is FullLanguage by default' {
+        $session = New-RemoteSession -ConfigurationName $endPoint
+        try {
+            $result = Invoke-Command -Session $session -ScriptBlock { $ExecutionContext.SessionState.LanguageMode }
+            $result | Should -Be ([System.Management.Automation.PSLanguageMode]::FullLanguage)
+        } finally {
+            $session | Remove-PSSession -ErrorAction Ignore
+        }
+    }
+}
