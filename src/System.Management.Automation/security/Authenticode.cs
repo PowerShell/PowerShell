@@ -460,7 +460,6 @@ namespace System.Management.Automation
             unsafe
             {
                 fixed (char* fileNamePtr = fileName)
-                fixed (byte* contentPtr = contentBytes)
                 {
                     if (fileContent == null)
                     {
@@ -476,7 +475,8 @@ namespace System.Management.Automation
                             ref WINTRUST_ACTION_GENERIC_VERIFY_V2,
                             ref wtData);
                     }
-                    else
+
+                    fixed (byte* contentPtr = contentBytes)
                     {
                         Guid pwshSIP = new("603BCC1F-4B59-4E08-B724-D2C6297EF351");
                         WinTrustMethods.WINTRUST_BLOB_INFO wbi = new()
