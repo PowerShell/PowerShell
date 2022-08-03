@@ -45,5 +45,37 @@ steps:
 
 - pwsh: |
     Import-module '$(Pipeline.Workspace)/tools/Scripts/GitHubRelease.psm1'
-    Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description '<-- Update Me -->' -User PowerShell -Repository PowerShell  -PackageFolder $(System.ArtifactsDirectory) -Token $(GitHubReleasePat)
+    $releaseVersion = '$(ReleaseTag)' -replace '^v',''
+    $semanticVersion = [System.Management.Automation.SemanticVersion]$releaseVersion
+
+    $isPreview = $semanticVersion.PreReleaseLabel -ne $null
+
+    $fileName = if ($isPreview) {
+      "preview.md"
+    }
+    else {
+      $semanticVersion.Major + "." + $semanticVersion.Minor + ".md"
+    }
+
+    $filePath = $env:BUILD_SOURCESDIRECTORY/CHANGELOG/$fileName
+    Write-Verbose -Verbose "Selected Log file: $filePath"
+
+    if (-not (Test-Path $filePath)) {
+      throw "$filePath not found"
+    }
+
+    $changelog = Get-Content -Raw -Path $filePath
+
+    $startPattern = "^## \[" + ([regex]::Escape($releaseVersion)) + "\]"
+    $endPattern = "^## \[{0}\.{1}\.{2}*" -f $semanticVersion.Major, $semanticVersion.Minor, $semanticVersion.Patch
+
+    $clContent = $changelog | ForEach-Object {
+        if ($_ -match $startPattern) { $outputLine = $true }
+        elseif ($_ -match $endPattern) { $outputLine = $false }
+        if ($outputLine) { $_}
+      }
+
+    Write-Verbose -Verbose "Selected content: `n$clContent"
+
+    Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder $(System.ArtifactsDirectory) -Token $(GitHubReleasePat)
   displayName: Publish Release Draft
