@@ -114,7 +114,6 @@ dotnet_style_prefer_conditional_expression_over_return = true:silent
 dotnet_style_prefer_conditional_expression_over_assignment = true:silent
 dotnet_style_prefer_auto_properties = true:suggestion
 csharp_prefer_simple_default_expression = true:suggestion
-dotnet_diagnostic.IDE0031.severity = none
 
 dotnet_code_quality_unused_parameters = non_public:suggestion
 

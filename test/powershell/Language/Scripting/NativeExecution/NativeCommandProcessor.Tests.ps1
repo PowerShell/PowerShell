@@ -51,6 +51,54 @@ Describe 'native commands with pipeline' -tags 'Feature' {
         Start-Sleep -Milliseconds 500
         (Get-Process 'yes' -ErrorAction Ignore).Count | Should -Be $yes
     }
+
+    It 'native command should still execute if the current working directory no longer exists with command: <command>' -Skip:($IsWindows) -TestCases @(
+        @{ command = 'ps' }
+        @{ command = 'start-process ps -nonewwindow'}
+    ){
+        param($command)
+
+        $wd = New-Item testdrive:/tmp -ItemType directory
+        $lock = New-Item testdrive:/lock -ItemType file
+        $script = @"
+            while (`$null -ne (Get-Item "$lock" -ErrorAction Ignore)) {
+                Start-Sleep -Seconds 1
+            }
+
+            try {
+                `$out = $command
+            }
+            catch {
+                `$null = Set-Content -Path "$testdrive/error" -Value (`$_ | Out-String)
+            }
+
+            `$null = Set-Content -Path "$testdrive/out" -Value `$out
+"@
+
+        $pwsh = Start-Process -FilePath "${PSHOME}/pwsh" -WorkingDirectory $wd -ArgumentList @('-noprofile','-command',$script)
+
+        Remove-Item -Path $wd -Force
+        Remove-Item $lock
+        $start = Get-Date
+
+        try {
+            while ($null -eq (Get-Item "$testdrive/error" -ErrorAction Ignore) -and $null -eq (Get-Item "$testdrive/out" -ErrorAction Ignore)) {
+                if (((Get-Date) - $start).TotalSeconds -gt 60) {
+                    throw "Timeout"
+                }
+
+                Start-Sleep -Seconds 1
+            }
+        }
+        finally {
+            $pwsh | Stop-Process -Force -ErrorAction Ignore
+        }
+
+        $err = Get-Item -Path "$testdrive/error" -ErrorAction Ignore
+        $err | Should -BeNullOrEmpty -Because $err
+        $out = Get-Item -Path "$testdrive/out" -ErrorAction Ignore
+        $out | Should -Not -BeNullOrEmpty
+    }
 }
 
 Describe "Native Command Processor" -tags "Feature" {

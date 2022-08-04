@@ -1908,8 +1908,12 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                // Working Directory not specified -> Assign Current Path.
-                startInfo.WorkingDirectory = PathUtils.ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path, this, isLiteralPath: true);
+                // Working Directory not specified -> Assign Current Path, but only if it still exists
+                var currentDirectory = PathUtils.ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path, this, isLiteralPath: true);
+                if (Directory.Exists(currentDirectory))
+                {
+                    startInfo.WorkingDirectory = currentDirectory;
+                }
             }
 
             if (this.ParameterSetName.Equals("Default"))

@@ -137,6 +137,7 @@
 
     <TargetFramework>net7.0</TargetFramework>
     <LangVersion>10.0</LangVersion>
+
     <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
     <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
 

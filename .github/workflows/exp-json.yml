@@ -29,7 +29,7 @@ jobs:
     name: Update experimental features json
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: '0'
       - name: Create experimental features file
@@ -66,7 +66,7 @@ jobs:
           $expFeaturesJson | Out-File $newFileName -Force
 
       - name: Upload experimental features windows
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: experimentalJson
           path: experimental-feature-*-new.json
@@ -77,11 +77,11 @@ jobs:
     needs: create-expjson
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: '0'
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: experimentalJson
       - name: Compare json files
@@ -133,7 +133,7 @@ jobs:
           Set-GWVariable -Name CREATE_EXP_JSON_PR -Value $createPR
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         id: cpr
         if: env.CREATE_EXP_JSON_PR == 'true'
         with:
