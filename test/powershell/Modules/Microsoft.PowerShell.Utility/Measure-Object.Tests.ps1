@@ -64,10 +64,13 @@ Describe "Measure-Object" -Tags "CI" {
     }
 
     It "Should be able to count using the Property switch" {
-        $expected = $(Get-ChildItem $TestDrive).Length
-        $actual   = $(Get-ChildItem $TestDrive | Measure-Object -Property Length).Count
+        $items = @(
+            [pscustomobject]@{ X = 'a'; Y = 'b' }
+            [pscustomobject]@{ X = 'c' }
+            [pscustomobject]@{ X = 'e'; Y = 'f' }
+        )
 
-        $actual | Should -Be $expected
+        ($items | Measure-Object -Property Y).Count | Should -Be 2
     }
 
     It "Should be able to use wildcards for the Property argument" {
@@ -183,6 +186,26 @@ Describe "Measure-Object" -Tags "CI" {
             $result.Minimum  | Should -Be 1
             $result.Maximum  | Should -Be 10
             ($result.StandardDeviation).ToString()  | Should -Be '3.0276503540974917'
+        }
+    }
+
+    Context "Empty folder tests" {
+        BeforeAll {
+            $repoPath = Join-Path -Path $TESTDRIVE -ChildPath "my_folder"
+            $testEmptyFolder = New-Item $repoPath -ItemType "directory"
+            $propertyName = "Length"
+        }
+
+        AfterAll {
+            Set-StrictMode -off
+        }
+
+        It "Should not throw an invalid property error when not in StrictMode" {
+            { Set-StrictMode -off; Get-Item $testEmptyFolder | Measure-Object $propertyName -ErrorAction Stop -sum } | Should -Not -Throw
+        }
+
+        It "Should throw an invalid property error when in StrictMode" {
+            { Set-StrictMode -version 3.0; Get-Item $testEmptyFolder | Measure-Object $propertyName -ErrorAction Stop -sum } | Should -Throw -ErrorId 'GenericMeasurePropertyNotFound,Microsoft.PowerShell.Commands.MeasureObjectCommand'
         }
     }
 

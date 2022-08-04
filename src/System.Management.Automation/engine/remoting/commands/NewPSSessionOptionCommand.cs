@@ -136,8 +136,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _openTimeout.HasValue ? _openTimeout.Value :
-                    RunspaceConnectionInfo.DefaultOpenTimeout;
+                return _openTimeout ?? RunspaceConnectionInfo.DefaultOpenTimeout;
             }
 
             set
@@ -164,8 +163,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _cancelTimeout.HasValue ? _cancelTimeout.Value :
-                    BaseTransportManager.ClientCloseTimeoutMs;
+                return _cancelTimeout ?? BaseTransportManager.ClientCloseTimeoutMs;
             }
 
             set
@@ -189,8 +187,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return _idleTimeout.HasValue ? _idleTimeout.Value
-                    : RunspaceConnectionInfo.DefaultIdleTimeout;
+                return _idleTimeout ?? RunspaceConnectionInfo.DefaultIdleTimeout;
             }
 
             set
@@ -299,8 +296,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (_operationtimeout.HasValue ? _operationtimeout.Value :
-                    BaseTransportManager.ClientDefaultOperationTimeoutMs);
+                return _operationtimeout ?? BaseTransportManager.ClientDefaultOperationTimeoutMs;
             }
 
             set

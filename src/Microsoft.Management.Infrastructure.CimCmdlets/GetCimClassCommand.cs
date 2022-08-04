@@ -44,6 +44,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region parameters
 
         /// <summary>
+        /// Gets or sets flag to retrieve a localized data for WMI class.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Amended { get; set; }
+
+        /// <summary>
         /// <para>
         /// The following is the definition of the input parameter "ClassName".
         /// </para>
@@ -79,7 +85,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(AliasOT)]
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public UInt32 OperationTimeoutSec { get; set; }
+        public uint OperationTimeoutSec { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Session".
@@ -196,10 +202,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimGetCimClass cimGetCimClass = this.GetOperationAgent();
-            if (cimGetCimClass != null)
-            {
-                cimGetCimClass.ProcessRemainActions(this.CmdletOperation);
-            }
+            cimGetCimClass?.ProcessRemainActions(this.CmdletOperation);
         }
 
         #endregion

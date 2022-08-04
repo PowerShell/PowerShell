@@ -19,8 +19,9 @@ Today, DSC is integrated into the PowerShell language, and we need to manage it 
 
 * @TravisEz13
 * @theJasonHelmick
-* @joeyaiello
 * @anmenaga
+* @gaelcolas
+* @michaeltlombardi
 
 ## Developer Experience
 
@@ -34,7 +35,8 @@ Special consideration should be given to topics like **backwards compatibility**
 
 * @JamesWTruher (PS Standard, module authoring)
 * @adityapatwardhan (SDK)
-* @rjmholt (hosting, WinPS compatibility)
+* @michaeltlombardi
+* @SeeminglyScience
 
 ## Engine
 
@@ -58,9 +60,13 @@ However, it's expected that many issues will require input from both WGs.
 
 ### Members
 
-* @daxian-dbw
-* @rjmholt
 * @BrucePay
+* @daxian-dbw
+* @JamesWTruher
+* @rkeithhill
+* @vexx32
+* @SeeminglyScience
+* @IISResetMe
 
 ## Interactive UX
 
@@ -80,6 +86,8 @@ These topics include (but are not limited to):
 * @daxian-dbw (PSReadline / IntelliSense)
 * @adityapatwardhan (Markdown / help system)
 * @JamesWTruher (cmdlet design)
+* @SeeminglyScience
+* @kilasuit
 
 ## Language
 
@@ -92,9 +100,9 @@ particularly given the long-lasting effects of language decisions.
 ### Members
 
 * @JamesWTruher
-* @rjmholt
 * @daxian-dbw
 * @BrucePay
+* @SeeminglyScience
 
 ## Remoting
 
@@ -106,16 +114,17 @@ Given the commonality of serialization boundaries, the Remoting WG should also f
 
 ### Members
 
-* @PaulHigin
-* @SteveL-MSFT
-* @TravisEz13
 * @anmenaga
+* @jborean93
+* @PaulHigin
+* @TravisEz13
 
-## Modules
+## Cmdlets and Modules
 
-For those core/inbox modules whose source code lives within the `PowerShell/PowerShell` repository,
-we may have some set of WGs responsible for their cmdlet design guidelines and enforcement,
-as well as to manage the proposal of new cmdlets or breaking changes.
+The Cmdlet WG should focus on core/inbox modules whose source code lives within the
+`PowerShell/PowerShell` repository,
+including the proposal of new cmdlets and parameters, improvements and bug fixes to existing
+cmdlets/parameters, and breaking changes.
 
 However, some modules that ship as part of the PowerShell package are managed in other source repositories.
 These modules are owned by the maintainers of those individual repositories.
@@ -130,18 +139,13 @@ These modules include:
 * [`PSReadLine`](https://github.com/PowerShell/PSReadLine)
 * [`ThreadJob`](https://github.com/PowerShell/Modules/tree/master/Modules/Microsoft.PowerShell.ThreadJob)
 
-Until it is determined how best to handle the remainder of modules that ship as part of PowerShell,
-the following modules will be owned by the Committee and Maintainers:
+### Members
 
-* CimCmdlets
-* Microsoft.PowerShell.Diagnostics
-* Microsoft.PowerShell.Host
-* Microsoft.PowerShell.Management
-* Microsoft.PowerShell.Security
-* Microsoft.PowerShell.Utility
-* Microsoft.WSMan.Management
-* PSDiagnostics
-* Web/JSON Cmdlets
+* PowerShell Committee as interim members
+* @jdhitsolutions
+* @TobiasPSP
+* @doctordns
+* @jhoneill
 
 ## Security
 

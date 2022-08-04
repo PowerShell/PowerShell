@@ -526,7 +526,7 @@ Describe 'method conversion' -Tags 'CI' {
 }
 
 Describe 'float/double precision when converting to string' -Tags "CI" {
-    It "<SourceType>-to-[string] conversion in PowerShell should use the precision specifier <Format>" -TestCases @(
+    It "<SourceType>-to-[string] conversion in PowerShell should use the precision specifier <Format> (<ToStringResult>)" -TestCases @(
         @{ SourceType = [double]; Format = "G15"; ValueScript = { 1.1 * 3 }; StringConversionResult = "3.3"; ToStringResult = "3.3000000000000003" }
         @{ SourceType = [double]; Format = "G15"; ValueScript = { 1.1 * 6 }; StringConversionResult = "6.6"; ToStringResult = "6.6000000000000005" }
         @{ SourceType = [double]; Format = "G15"; ValueScript = { [System.Math]::E }; StringConversionResult = [System.Math]::E.ToString("G15"); ToStringResult = [System.Math]::E.ToString() }

@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell
         /// Constructs an instance from a ProgressRecord.
         /// </summary>
         internal
-        ProgressNode(Int64 sourceId, ProgressRecord record)
+        ProgressNode(long sourceId, ProgressRecord record)
             : base(record.ActivityId, record.Activity, record.StatusDescription)
         {
             Dbg.Assert(record.RecordType == ProgressRecordType.Processing, "should only create node for Processing records");
@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell
 
         internal static bool IsMinimalProgressRenderingEnabled()
         {
-            return ExperimentalFeature.IsEnabled(ExperimentalFeature.PSAnsiProgressFeatureName) && PSStyle.Instance.Progress.View == ProgressView.Minimal;
+            return PSStyle.Instance.Progress.View == ProgressView.Minimal;
         }
 
         /// <summary>
@@ -408,7 +408,7 @@ namespace Microsoft.PowerShell
             int maxStatusLength = barWidth - secRemainLength - 1;
             if (maxStatusLength > 0 && StatusDescription.Length > barWidth - secRemainLength)
             {
-                sb.Append(StatusDescription.Substring(0, barWidth - secRemainLength - 1));
+                sb.Append(StatusDescription.AsSpan(0, barWidth - secRemainLength - 1));
                 sb.Append(PSObjectHelper.Ellipsis);
             }
             else
@@ -485,7 +485,7 @@ namespace Microsoft.PowerShell
         /// Identifies the source of the progress record.
         /// </summary>
         internal
-        Int64
+        long
         SourceId;
 
         /// <summary>

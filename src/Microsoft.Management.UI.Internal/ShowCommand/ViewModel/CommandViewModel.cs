@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Determins whether current command name and a specifed ParameterSetName have same name.
+        /// Determines whether current command name and a specified ParameterSetName have same name.
         /// </summary>
         /// <param name="name">The name of ShareParameterSet.</param>
         /// <returns>Return true is ShareParameterSet. Else return false.</returns>

@@ -1628,10 +1628,7 @@ namespace System.Management.Automation
 
         internal void AddType(string name, Type type)
         {
-            if (TypeTable == null)
-            {
-                TypeTable = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-            }
+            TypeTable ??= new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 
             TypeTable[name] = type;
         }

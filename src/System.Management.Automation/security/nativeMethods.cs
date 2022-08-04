@@ -1088,36 +1088,38 @@ namespace System.Management.Automation.Security
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPT_PROVIDER_CERT
         {
+#pragma warning disable IDE0044
             private DWORD _cbStruct;
+#pragma warning restore IDE0044
             internal IntPtr pCert; // PCCERT_CONTEXT
-            private BOOL _fCommercial;
-            private BOOL _fTrustedRoot;
-            private BOOL _fSelfSigned;
-            private BOOL _fTestCert;
-            private DWORD _dwRevokedReason;
-            private DWORD _dwConfidence;
-            private DWORD _dwError;
-            private IntPtr _pTrustListContext; // CTL_CONTEXT*
-            private BOOL _fTrustListSignerCert;
-            private IntPtr _pCtlContext; // PCCTL_CONTEXT
-            private DWORD _dwCtlError;
-            private BOOL _fIsCyclic;
-            private IntPtr _pChainElement; // PCERT_CHAIN_ELEMENT
+            private readonly BOOL _fCommercial;
+            private readonly BOOL _fTrustedRoot;
+            private readonly BOOL _fSelfSigned;
+            private readonly BOOL _fTestCert;
+            private readonly DWORD _dwRevokedReason;
+            private readonly DWORD _dwConfidence;
+            private readonly DWORD _dwError;
+            private readonly IntPtr _pTrustListContext; // CTL_CONTEXT*
+            private readonly BOOL _fTrustListSignerCert;
+            private readonly IntPtr _pCtlContext; // PCCTL_CONTEXT
+            private readonly DWORD _dwCtlError;
+            private readonly BOOL _fIsCyclic;
+            private readonly IntPtr _pChainElement; // PCERT_CHAIN_ELEMENT
         }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPT_PROVIDER_SGNR
         {
-            private DWORD _cbStruct;
+            private readonly DWORD _cbStruct;
             private FILETIME _sftVerifyAsOf;
-            private DWORD _csCertChain;
-            private IntPtr _pasCertChain; // CRYPT_PROVIDER_CERT*
-            private DWORD _dwSignerType;
-            private IntPtr _psSigner; // CMSG_SIGNER_INFO*
-            private DWORD _dwError;
+            private readonly DWORD _csCertChain;
+            private readonly IntPtr _pasCertChain; // CRYPT_PROVIDER_CERT*
+            private readonly DWORD _dwSignerType;
+            private readonly IntPtr _psSigner; // CMSG_SIGNER_INFO*
+            private readonly DWORD _dwError;
             internal DWORD csCounterSigners;
             internal IntPtr pasCounterSigners; // CRYPT_PROVIDER_SGNR*
-            private IntPtr _pChainContext; // PCCERT_CHAIN_CONTEXT
+            private readonly IntPtr _pChainContext; // PCCERT_CHAIN_CONTEXT
         }
 
         [DllImport("wintrust.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -1142,62 +1144,6 @@ namespace System.Management.Automation.Security
                 IntPtr pSgnr, // CRYPT_PROVIDER_SGNR*
                 DWORD idxCert
             );
-
-        /// Return Type: HRESULT->LONG->int
-        ///pszFile: PCWSTR->WCHAR*
-        ///hFile: HANDLE->void*
-        ///sigInfoFlags: SIGNATURE_INFO_FLAGS->Anonymous_5157c654_2076_48e7_9241_84ac648615e9
-        ///psiginfo: SIGNATURE_INFO*
-        ///ppCertContext: void**
-        ///phWVTStateData: HANDLE*
-        [DllImportAttribute("wintrust.dll", EntryPoint = "WTGetSignatureInfo", CallingConvention = CallingConvention.StdCall)]
-        internal static extern int WTGetSignatureInfo([InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string pszFile, [InAttribute()] System.IntPtr hFile, SIGNATURE_INFO_FLAGS sigInfoFlags, ref SIGNATURE_INFO psiginfo, ref System.IntPtr ppCertContext, ref System.IntPtr phWVTStateData);
-
-        internal static void FreeWVTStateData(System.IntPtr phWVTStateData)
-        {
-            WINTRUST_DATA wtd = new WINTRUST_DATA();
-            DWORD dwResult = Win32Errors.E_FAIL;
-            IntPtr WINTRUST_ACTION_GENERIC_VERIFY_V2 = IntPtr.Zero;
-            IntPtr wtdBuffer = IntPtr.Zero;
-
-            Guid actionVerify =
-                new Guid("00AAC56B-CD44-11d0-8CC2-00C04FC295EE");
-
-            try
-            {
-                WINTRUST_ACTION_GENERIC_VERIFY_V2 =
-                    Marshal.AllocCoTaskMem(Marshal.SizeOf(actionVerify));
-                Marshal.StructureToPtr(actionVerify,
-                                       WINTRUST_ACTION_GENERIC_VERIFY_V2,
-                                       false);
-
-                wtd.cbStruct = (DWORD)Marshal.SizeOf(wtd);
-                wtd.dwUIChoice = (DWORD)WintrustUIChoice.WTD_UI_NONE;
-                wtd.fdwRevocationChecks = 0;
-                wtd.dwUnionChoice = (DWORD)WintrustUnionChoice.WTD_CHOICE_BLOB;
-                wtd.dwStateAction = (DWORD)WintrustAction.WTD_STATEACTION_CLOSE;
-                wtd.hWVTStateData = phWVTStateData;
-
-                wtdBuffer = Marshal.AllocCoTaskMem(Marshal.SizeOf(wtd));
-                Marshal.StructureToPtr(wtd, wtdBuffer, false);
-
-                // The GetLastWin32Error of this is checked, but PreSharp doesn't seem to be
-                // able to see that.
-#pragma warning disable 56523
-                dwResult = WinVerifyTrust(
-                    IntPtr.Zero,
-                    WINTRUST_ACTION_GENERIC_VERIFY_V2,
-                    wtdBuffer);
-#pragma warning restore 56523
-            }
-            finally
-            {
-                Marshal.DestroyStructure<WINTRUST_DATA>(wtdBuffer);
-                Marshal.FreeCoTaskMem(wtdBuffer);
-                Marshal.DestroyStructure<Guid>(WINTRUST_ACTION_GENERIC_VERIFY_V2);
-                Marshal.FreeCoTaskMem(WINTRUST_ACTION_GENERIC_VERIFY_V2);
-            }
-        }
 
         //
         // stuff required for getting cert extensions
@@ -1993,33 +1939,33 @@ namespace System.Management.Automation.Security
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTCATATTRIBUTE
         {
-            private DWORD _cbStruct;
+            private readonly DWORD _cbStruct;
 
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszReferenceTag;
 
-            private DWORD _dwAttrTypeAndAction;
+            private readonly DWORD _dwAttrTypeAndAction;
             internal DWORD cbValue;
             internal System.IntPtr pbValue;
-            private DWORD _dwReserved;
+            private readonly DWORD _dwReserved;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct CRYPTCATSTORE
         {
-            private DWORD _cbStruct;
+            private readonly DWORD _cbStruct;
             internal DWORD dwPublicVersion;
 
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszP7File;
 
-            private IntPtr _hProv;
-            private DWORD _dwEncodingType;
-            private DWORD _fdwStoreFlags;
-            private IntPtr _hReserved;
-            private IntPtr _hAttrs;
-            private IntPtr _hCryptMsg;
-            private IntPtr _hSorted;
+            private readonly IntPtr _hProv;
+            private readonly DWORD _dwEncodingType;
+            private readonly DWORD _fdwStoreFlags;
+            private readonly IntPtr _hReserved;
+            private readonly IntPtr _hAttrs;
+            private readonly IntPtr _hCryptMsg;
+            private readonly IntPtr _hSorted;
         }
 
         [DllImport("wintrust.dll", CharSet = CharSet.Unicode)]

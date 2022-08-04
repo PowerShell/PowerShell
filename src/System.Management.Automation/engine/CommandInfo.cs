@@ -467,11 +467,8 @@ namespace System.Management.Automation
                         processInCurrentThread: true,
                         waitForCompletionInCurrentThread: true);
 
-                    if (eventArgs.Exception != null)
-                    {
-                        // An exception happened on a different thread, rethrow it here on the correct thread.
-                        eventArgs.Exception.Throw();
-                    }
+                    // An exception happened on a different thread, rethrow it here on the correct thread.
+                    eventArgs.Exception?.Throw();
 
                     return eventArgs.Result;
                 }
@@ -481,7 +478,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        private class GetMergedCommandParameterMetadataSafelyEventArgs : EventArgs
+        private sealed class GetMergedCommandParameterMetadataSafelyEventArgs : EventArgs
         {
             public MergedCommandParameterMetadata Result;
             public ExceptionDispatchInfo Exception;
@@ -529,7 +526,7 @@ namespace System.Management.Automation
                 processor = scriptCommand != null
                     ? new CommandProcessor(scriptCommand, _context, useLocalScope: true, fromScriptFile: false,
                         sessionState: scriptCommand.ScriptBlock.SessionStateInternal ?? Context.EngineSessionState)
-                    : new CommandProcessor((CmdletInfo)this, _context) { UseLocalScope = true };
+                    : new CommandProcessor((CmdletInfo)this, _context);
 
                 ParameterBinderController.AddArgumentsToCommandProcessor(processor, Arguments);
                 CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
@@ -928,7 +925,7 @@ namespace System.Management.Automation
     /// but can be used where a real type might not be available, in which case the name of the type can be used.
     /// The type encodes the members of dynamic objects in the type name.
     /// </summary>
-    internal class PSSyntheticTypeName : PSTypeName
+    internal sealed class PSSyntheticTypeName : PSTypeName
     {
         internal static PSSyntheticTypeName Create(string typename, IList<PSMemberNameAndType> membersTypes) => Create(new PSTypeName(typename), membersTypes);
 

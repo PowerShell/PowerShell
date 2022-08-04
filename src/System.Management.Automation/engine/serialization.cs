@@ -83,10 +83,8 @@ namespace System.Management.Automation
     /// <summary>
     /// This class provides public functionality for serializing a PSObject.
     /// </summary>
-    public class PSSerializer
+    public static class PSSerializer
     {
-        internal PSSerializer() { }
-
         /// <summary>
         /// Serializes an object into PowerShell CliXml.
         /// </summary>
@@ -5693,7 +5691,7 @@ namespace System.Management.Automation
     /// <typeparam name="T">type of dictionary values</typeparam>
     internal class WeakReferenceDictionary<T> : IDictionary<object, T>
     {
-        private class WeakReferenceEqualityComparer : IEqualityComparer<WeakReference>
+        private sealed class WeakReferenceEqualityComparer : IEqualityComparer<WeakReference>
         {
             public bool Equals(WeakReference x, WeakReference y)
             {
@@ -7268,7 +7266,6 @@ namespace Microsoft.PowerShell
 
             PSSenderInfo senderInfo = new PSSenderInfo(psPrincipal, GetPropertyValue<string>(pso, "ConnectionString"));
 
-            senderInfo.ClientTimeZone = TimeZoneInfo.Local;
             senderInfo.ApplicationArguments = GetPropertyValue<PSPrimitiveDictionary>(pso, "ApplicationArguments");
 
             return senderInfo;

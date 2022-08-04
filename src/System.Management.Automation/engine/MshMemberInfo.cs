@@ -1909,9 +1909,18 @@ namespace System.Management.Automation
         internal PSMethodInvocationConstraints(
             Type methodTargetType,
             Type[] parameterTypes)
+            : this(methodTargetType, parameterTypes, genericTypeParameters: null)
         {
-            this.MethodTargetType = methodTargetType;
-            _parameterTypes = parameterTypes;
+        }
+
+        internal PSMethodInvocationConstraints(
+            Type methodTargetType,
+            Type[] parameterTypes,
+            object[] genericTypeParameters)
+        {
+            MethodTargetType = methodTargetType;
+            ParameterTypes = parameterTypes;
+            GenericTypeParameters = genericTypeParameters;
         }
 
         /// <remarks>
@@ -1922,9 +1931,12 @@ namespace System.Management.Automation
         /// <remarks>
         /// If <see langword="null"/> then there are no constraints
         /// </remarks>
-        public IEnumerable<Type> ParameterTypes => _parameterTypes;
+        public Type[] ParameterTypes { get; }
 
-        private readonly Type[] _parameterTypes;
+        /// <summary>
+        /// Gets the generic type parameters for the method invocation.
+        /// </summary>
+        public object[] GenericTypeParameters { get; }
 
         internal static bool EqualsForCollection<T>(ICollection<T> xs, ICollection<T> ys)
         {
@@ -1946,8 +1958,6 @@ namespace System.Management.Automation
             return xs.SequenceEqual(ys);
         }
 
-        // TODO: IEnumerable<Type> genericTypeParameters { get; private set; }
-
         public bool Equals(PSMethodInvocationConstraints other)
         {
             if (other is null)
@@ -1965,7 +1975,12 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (!EqualsForCollection(_parameterTypes, other._parameterTypes))
+            if (!EqualsForCollection(ParameterTypes, other.ParameterTypes))
+            {
+                return false;
+            }
+
+            if (!EqualsForCollection(GenericTypeParameters, other.GenericTypeParameters))
             {
                 return false;
             }
@@ -1994,36 +2009,53 @@ namespace System.Management.Automation
         }
 
         public override int GetHashCode()
-        {
-            // algorithm based on https://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
-            unchecked
-            {
-                int result = 61;
-
-                result = result * 397 + (MethodTargetType != null ? MethodTargetType.GetHashCode() : 0);
-                result = result * 397 + ParameterTypes.SequenceGetHashCode();
-
-                return result;
-            }
-        }
+            => HashCode.Combine(MethodTargetType, ParameterTypes, GenericTypeParameters);
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             string separator = string.Empty;
-            if (MethodTargetType != null)
+            if (MethodTargetType is not null)
             {
                 sb.Append("this: ");
                 sb.Append(ToStringCodeMethods.Type(MethodTargetType, dropNamespaces: true));
                 separator = " ";
             }
 
-            if (_parameterTypes != null)
+            if (GenericTypeParameters is not null)
+            {
+                sb.Append(separator);
+                sb.Append("genericTypeParams: ");
+
+                separator = string.Empty;
+                foreach (object parameter in GenericTypeParameters)
+                {
+                    sb.Append(separator);
+
+                    switch (parameter)
+                    {
+                        case Type paramType:
+                            sb.Append(ToStringCodeMethods.Type(paramType, dropNamespaces: true));
+                            break;
+                        case ITypeName paramTypeName:
+                            sb.Append(paramTypeName.ToString());
+                            break;
+                        default:
+                            throw new ArgumentException("Unexpected value");
+                    }
+
+                    separator = ", ";
+                }
+
+                separator = " ";
+            }
+
+            if (ParameterTypes is not null)
             {
                 sb.Append(separator);
                 sb.Append("args: ");
                 separator = string.Empty;
-                foreach (var p in _parameterTypes)
+                foreach (var p in ParameterTypes)
                 {
                     sb.Append(separator);
                     sb.Append(ToStringCodeMethods.Type(p, dropNamespaces: true));
@@ -2244,10 +2276,7 @@ namespace System.Management.Automation
                 newArguments[i + 1] = arguments[i];
             }
 
-            if (_codeReferenceMethodInformation == null)
-            {
-                _codeReferenceMethodInformation = DotNetAdapter.GetMethodInformationArray(new[] { CodeReference });
-            }
+            _codeReferenceMethodInformation ??= DotNetAdapter.GetMethodInformationArray(new[] { CodeReference });
 
             Adapter.GetBestMethodAndArguments(CodeReference.Name, _codeReferenceMethodInformation, newArguments, out object[] convertedArguments);
 
@@ -2600,10 +2629,7 @@ namespace System.Management.Automation
                 return new PSMethod(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
             }
 
-            if (method.PSMethodCtor == null)
-            {
-                method.PSMethodCtor = CreatePSMethodConstructor(method.methodInformationStructures);
-            }
+            method.PSMethodCtor ??= CreatePSMethodConstructor(method.methodInformationStructures);
 
             return method.PSMethodCtor.Invoke(name, dotNetInstanceAdapter, baseObject, method, isSpecial, isHidden);
         }
@@ -2659,7 +2685,7 @@ namespace System.Management.Automation
 
                 return DelegateHelpers.MakeDelegate(methodTypes);
             }
-            catch (TypeLoadException)
+            catch (Exception)
             {
                 return typeof(Func<PSNonBindableType>);
             }
@@ -5035,7 +5061,7 @@ namespace System.Management.Automation
             private readonly PSMemberInfoInternalCollection<T> _allMembers;
 
             /// <summary>
-            /// Constructs this instance to enumerate over members.
+            /// Initializes a new instance of the <see cref="Enumerator"/> class to enumerate over members.
             /// </summary>
             /// <param name="integratingCollection">Members we are enumerating.</param>
             internal Enumerator(PSMemberInfoIntegratingCollection<T> integratingCollection)
@@ -5063,8 +5089,8 @@ namespace System.Management.Automation
             /// Moves to the next element in the enumeration.
             /// </summary>
             /// <returns>
-            /// false if there are no more elements to enumerate
-            /// true otherwise
+            /// If there are no more elements to enumerate, returns false.
+            /// Returns true otherwise.
             /// </returns>
             public bool MoveNext()
             {
@@ -5093,7 +5119,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Current PSMemberInfo in the enumeration.
+            /// Gets the current PSMemberInfo in the enumeration.
             /// </summary>
             /// <exception cref="ArgumentException">For invalid arguments.</exception>
             T IEnumerator<T>.Current

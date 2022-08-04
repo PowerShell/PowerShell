@@ -234,4 +234,10 @@
   <data name="ExportConsoleCannotDeleteFile" xml:space="preserve">
     <value>The Save operation failed. Cannot remove the file {0}.</value>
   </data>
+  <data name="ConfigurationFileDoesNotExist" xml:space="preserve">
+    <value>The provided configuration file '{0}' does not exist.</value>
+  </data>
+  <data name="NotConfigurationFile" xml:space="preserve">
+    <value>The provided configuration file '{0}' must have a .pssc file extension.</value>
+  </data>
 </root>

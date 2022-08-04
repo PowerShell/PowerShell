@@ -100,7 +100,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets a flag that tells PowerShell to automatically perform a BreakAll when the debugger is attached to the remote target.
         /// </summary>
-        [Experimental("Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace", ExperimentAction.Show)]
         [Parameter]
         public SwitchParameter BreakAll { get; set; }
 
@@ -204,10 +203,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Unblock the data collection.
             PSDataCollection<PSStreamObject> debugCollection = _debugCollection;
-            if (debugCollection != null)
-            {
-                debugCollection.Complete();
-            }
+            debugCollection?.Complete();
         }
 
         #endregion
@@ -261,10 +257,7 @@ namespace Microsoft.PowerShell.Commands
                 // or this command is cancelled.
                 foreach (var streamItem in _debugCollection)
                 {
-                    if (streamItem != null)
-                    {
-                        streamItem.WriteStreamObject(this);
-                    }
+                    streamItem?.WriteStreamObject(this);
                 }
             }
             catch (Exception)

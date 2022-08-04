@@ -296,6 +296,9 @@ Possible matches are</value>
   <data name="CannotIndexWithByRefLikeReturnType" xml:space="preserve">
     <value>Unable to index into an object of type "{0}" with the ByRef-like return type "{1}". ByRef-like types are not supported in PowerShell.</value>
   </data>
+  <data name="ArrayHasTooManyDimensions" xml:space="preserve">
+    <value>The array has too many dimensions: {0}. The number of dimensions for an array must be less than or equal to 32.</value>
+  </data>
   <data name="ArrayAssignmentFailed" xml:space="preserve">
     <value>Array assignment to [{0}] failed: {1}.</value>
   </data>
@@ -497,7 +500,7 @@ The correct form is: foreach ($a in $b) {...}</value>
     <value>Script command clause '{0}' has already been defined.</value>
   </data>
   <data name="MissingNamedBlocks" xml:space="preserve">
-    <value>unexpected token '{0}', expected 'begin', 'process', 'end', or 'dynamicparam'.</value>
+    <value>unexpected token '{0}', expected 'begin', 'process', 'end', 'clean', or 'dynamicparam'.</value>
   </data>
   <data name="MissingEndCurlyBrace" xml:space="preserve">
     <value>Missing closing '}' in statement block or type definition.</value>
@@ -1126,6 +1129,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="ForEachTypeConversionFailed" xml:space="preserve">
     <value>Unable to convert input to the target type [{0}] passed to the ForEach() operator. Please check the specified type and try running your script again.</value>
   </data>
+  <data name="ForEachNotSupportCleanBlock" xml:space="preserve">
+    <value>Script block with a 'clean' block is not supported by the 'ForEach' method.</value>
+  </data>
   <data name="NumberToReturnMustBeGreaterThanZero" xml:space="preserve">
     <value>The 'numberToReturn' value provided to the third argument of the Where() operator must be greater than zero. Please correct the argument's value and try running your script again.</value>
   </data>
@@ -1461,27 +1467,6 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="ParserError" xml:space="preserve">
     <value>{0}</value>
   </data>
-  <data name="ImplicitRemotingPipelineBatchingNotSupported" xml:space="preserve">
-    <value>Command pipeline not supported for implicit remoting batching.</value>
-  </data>
-  <data name="ImplicitRemotingPipelineBatchingNotASimplePipeline" xml:space="preserve">
-    <value>Command is not a simple pipeline and cannot be batched.</value>
-  </data>
-  <data name="ImplicitRemotingPipelineBatchingNotImplicitCommand" xml:space="preserve">
-    <value>The pipeline command '{0}' is not an implicit remoting command or an approved batching command.</value>
-  </data>
-  <data name="ImplicitRemotingPipelineBatchingWrongSession" xml:space="preserve">
-    <value>The pipeline command '{0}' is for a different remote session and cannot be batched.</value>
-  </data>
-  <data name="ImplicitRemotingPipelineBatchingNoPSSession" xml:space="preserve">
-    <value>The implicit remoting PSSession for batching could not be retrieved.</value>
-  </data>
-  <data name="ImplicitRemotingPipelineBatchingException" xml:space="preserve">
-    <value>Exception while checking the command for implicit remoting batching: {0}</value>
-  </data>
-  <data name="ImplicitRemotingPipelineBatchingSuccess" xml:space="preserve">
-    <value>Implicit remoting command pipeline has been batched for execution on remote target.</value>
-  </data>
   <data name="ScriptHasAdminBlockedContent" xml:space="preserve">
     <value>This script contains content that has been flagged as suspicious through a policy setting and has been blocked with error code {0}. Contact your administrator for more information.</value>
   </data>
@@ -1499,5 +1484,8 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="BackgroundOperatorInPipelineChain" xml:space="preserve">
     <value>Background operators can only be used at the end of a pipeline chain.</value>
+  </data>
+  <data name="InvokingCleanBlockNotSupported" xml:space="preserve">
+    <value>Directly invoking the 'clean' block of a script block is not supported.</value>
   </data>
 </root>

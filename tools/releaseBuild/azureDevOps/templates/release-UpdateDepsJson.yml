@@ -1,8 +1,12 @@
 jobs:
 - job: UpdateDepsFiles
   displayName: Update deps files
+
   pool:
-    vmImage: windows-latest
+    name: PowerShell1ES
+    demands:
+    - ImageOverride -equals PSMMS2019-Secure
+
   variables:
   - group: 'Azure Blob variable group'
   steps:
@@ -45,7 +49,8 @@ jobs:
     displayName: Determine container name
 
   - pwsh: |
-      $zipFile = (Get-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/PowerShell*-win-x64.zip")
+      $zipFile = Get-Item "$ENV:PIPELINE_WORKSPACE/releasePipeline/finalResults/PowerShell*-win-x64.zip" -Exclude *-symbols-*
+      Write-Verbose -Verbose "zipFile: $zipFile"
       Expand-Archive -Path $zipFile -Destination "$ENV:PIPELINE_WORKSPACE/expanded"
 
       $pwshDepsFile = Get-Item "$ENV:PIPELINE_WORKSPACE/expanded/pwsh.deps.json"
@@ -54,7 +59,7 @@ jobs:
       Write-Host "##$vstsCommand"
     displayName: Determine file to upload
 
-  - task: AzureFileCopy@2
+  - task: AzureFileCopy@4
     displayName: 'AzureBlob pwsh.deps.json file Copy'
     inputs:
       SourcePath: '$(FileToUpload)'

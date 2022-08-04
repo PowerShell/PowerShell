@@ -98,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private class DuplicateMemberHashSet : HashSet<string>
+        private sealed class DuplicateMemberHashSet : HashSet<string>
         {
             public DuplicateMemberHashSet(int capacity)
                 : base(capacity, StringComparer.OrdinalIgnoreCase)
@@ -160,22 +160,6 @@ namespace Microsoft.PowerShell.Commands
             error = null;
             try
             {
-                // JsonConvert.DeserializeObject does not throw an exception when an invalid Json array is passed.
-                // This issue is being tracked by https://github.com/JamesNK/Newtonsoft.Json/issues/1930.
-                // To work around this, we need to identify when input is a Json array, and then try to parse it via JArray.Parse().
-
-                // If input starts with '[' (ignoring white spaces).
-                if (Regex.Match(input, @"^\s*\[").Success)
-                {
-                    // JArray.Parse() will throw a JsonException if the array is invalid.
-                    // This will be caught by the catch block below, and then throw an
-                    // ArgumentException - this is done to have same behavior as the JavaScriptSerializer.
-                    JArray.Parse(input);
-
-                    // Please note that if the Json array is valid, we don't do anything,
-                    // we just continue the deserialization.
-                }
-
                 var obj = JsonConvert.DeserializeObject(
                     input,
                     new JsonSerializerSettings
@@ -344,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
         private static Hashtable PopulateHashTableFromJDictionary(JObject entries, out ErrorRecord error)
         {
             error = null;
-            Hashtable result = new(entries.Count);
+            OrderedHashtable result = new(entries.Count);
             foreach (var entry in entries)
             {
                 // Case sensitive duplicates should normally not occur since JsonConvert.DeserializeObject
@@ -551,7 +535,7 @@ namespace Microsoft.PowerShell.Commands
                     // Win8:378368 Enums based on System.Int64 or System.UInt64 are not JSON-serializable
                     // because JavaScript does not support the necessary precision.
                     Type enumUnderlyingType = Enum.GetUnderlyingType(obj.GetType());
-                    if (enumUnderlyingType.Equals(typeof(Int64)) || enumUnderlyingType.Equals(typeof(UInt64)))
+                    if (enumUnderlyingType.Equals(typeof(long)) || enumUnderlyingType.Equals(typeof(ulong)))
                     {
                         rv = obj.ToString();
                     }
@@ -678,6 +662,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="context">The context for the operation.</param>
         private static void AppendPsProperties(PSObject psObj, IDictionary receiver, int depth, bool isCustomObject, in ConvertToJsonContext context)
         {
+            // if the psObj is a DateTime or String type, we don't serialize any extended or adapted properties
+            if (psObj.BaseObject is string || psObj.BaseObject is DateTime)
+            {
+                return;
+            }
+
             // serialize only Extended and Adapted properties..
             PSMemberInfoCollection<PSPropertyInfo> srcPropertiesToSearch =
                 new PSMemberInfoIntegratingCollection<PSPropertyInfo>(psObj,

@@ -356,7 +356,7 @@ namespace System.Management.Automation.Language
      * except in the case of handling the unary operator
      * ExecutionContext is provided to ensure we can resolve variables
      */
-    internal class GetSafeValueVisitor : ICustomAstVisitor2
+    internal sealed class GetSafeValueVisitor : ICustomAstVisitor2
     {
         internal enum SafeValueContext
         {
@@ -548,10 +548,7 @@ namespace System.Management.Automation.Language
                 ofs = t_context.SessionState.PSVariable.GetValue("OFS") as string;
             }
 
-            if (ofs == null)
-            {
-                ofs = " ";
-            }
+            ofs ??= " ";
 
             for (int offset = 0; offset < safeValues.Length; offset++)
             {

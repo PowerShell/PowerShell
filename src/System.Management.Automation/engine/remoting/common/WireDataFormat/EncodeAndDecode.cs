@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
@@ -73,7 +74,7 @@ namespace System.Management.Automation
     /// </summary>
     internal static class RemotingConstants
     {
-        internal static readonly Version HostVersion = new Version(1, 0, 0, 0);
+        internal static readonly Version HostVersion = PSVersionInfo.PSVersion;
 
         internal static readonly Version ProtocolVersionWin7RC = new Version(2, 0);
         internal static readonly Version ProtocolVersionWin7RTM = new Version(2, 1);
@@ -1600,8 +1601,6 @@ namespace System.Management.Automation
                 Guid runspacePoolId)
         {
             PSObject temp = GenerateSessionCapability(capability);
-            temp.Properties.Add(
-                new PSNoteProperty(RemoteDataNameStrings.TimeZone, RemoteSessionCapability.GetCurrentTimeZoneInByteFormat()));
             return RemoteDataObject.CreateFrom(capability.RemotingDestination,
                 RemotingDataType.SessionCapability, runspacePoolId, Guid.Empty, temp);
         }
@@ -2371,24 +2370,6 @@ namespace System.Management.Automation
             RemoteSessionCapability result = new RemoteSessionCapability(
                 RemotingDestination.InvalidDestination,
                 protocolVersion, psVersion, serializationVersion);
-
-            if (dataAsPSObject.Properties[RemoteDataNameStrings.TimeZone] != null)
-            {
-                // Binary deserialization of timezone info via BinaryFormatter is unsafe,
-                // so don't deserialize any untrusted client data using this API.
-                //
-                // In addition, the binary data being sent by the client doesn't represent
-                // the client's current TimeZone unless they somehow accessed the
-                // StandardName and DaylightName. These properties are initialized lazily
-                // by the .NET Framework, and would be populated by the server with local
-                // values anyways.
-                //
-                // So just return the CurrentTimeZone.
-
-#if !CORECLR // TimeZone Not In CoreCLR
-                result.TimeZone = TimeZone.CurrentTimeZone;
-#endif
-            }
 
             return result;
         }

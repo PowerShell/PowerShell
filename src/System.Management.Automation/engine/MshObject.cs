@@ -674,13 +674,10 @@ namespace System.Management.Automation
                 {
                     lock (_lockObject)
                     {
-                        if (_instanceMembers == null)
-                        {
-                            _instanceMembers =
-                                s_instanceMembersResurrectionTable.GetValue(
-                                    GetKeyForResurrectionTables(this),
-                                    _ => new PSMemberInfoInternalCollection<PSMemberInfo>());
-                        }
+                        _instanceMembers ??=
+                            s_instanceMembersResurrectionTable.GetValue(
+                                GetKeyForResurrectionTables(this),
+                                _ => new PSMemberInfoInternalCollection<PSMemberInfo>());
                     }
                 }
 
@@ -721,10 +718,7 @@ namespace System.Management.Automation
                 {
                     lock (_lockObject)
                     {
-                        if (_adapterSet == null)
-                        {
-                            _adapterSet = GetMappedAdapter(_immediateBaseObject, GetTypeTable());
-                        }
+                        _adapterSet ??= GetMappedAdapter(_immediateBaseObject, GetTypeTable());
                     }
                 }
 
@@ -743,10 +737,7 @@ namespace System.Management.Automation
                 {
                     lock (_lockObject)
                     {
-                        if (_members == null)
-                        {
-                            _members = new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_memberCollection);
-                        }
+                        _members ??= new PSMemberInfoIntegratingCollection<PSMemberInfo>(this, s_memberCollection);
                     }
                 }
 
@@ -765,10 +756,7 @@ namespace System.Management.Automation
                 {
                     lock (_lockObject)
                     {
-                        if (_properties == null)
-                        {
-                            _properties = new PSMemberInfoIntegratingCollection<PSPropertyInfo>(this, s_propertyCollection);
-                        }
+                        _properties ??= new PSMemberInfoIntegratingCollection<PSPropertyInfo>(this, s_propertyCollection);
                     }
                 }
 
@@ -787,10 +775,7 @@ namespace System.Management.Automation
                 {
                     lock (_lockObject)
                     {
-                        if (_methods == null)
-                        {
-                            _methods = new PSMemberInfoIntegratingCollection<PSMethodInfo>(this, s_methodCollection);
-                        }
+                        _methods ??= new PSMemberInfoIntegratingCollection<PSMethodInfo>(this, s_methodCollection);
                     }
                 }
 

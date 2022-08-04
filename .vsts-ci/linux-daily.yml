@@ -18,17 +18,9 @@ pr:
   branches:
     include:
     - master
-    - release*
-    - feature*
   paths:
     include:
-    - '*'
-    exclude:
-    - tools/releaseBuild/*
-    - tools/releaseBuild/azureDevOps/templates/*
-    - /.vsts-ci/misc-analysis.yml
-    - /.github/ISSUE_TEMPLATE/*
-    - /.dependabot/config.yml
+    - .vsts-ci/linux-daily.yml
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -47,7 +39,7 @@ stages:
   jobs:
   - template: templates/ci-build.yml
     parameters:
-      pool: ubuntu-16.04
+      pool: ubuntu-20.04
       jobName: linux_build
       displayName: linux Build
 
@@ -55,8 +47,9 @@ stages:
   displayName: Test for Linux
   jobs:
   - job: linux_test
+    timeoutInMinutes: 90
     pool:
-      vmImage: ubuntu-16.04
+      vmImage: ubuntu-20.04
     displayName: Linux Test
 
     steps:
@@ -149,7 +142,7 @@ stages:
   - job: CodeCovTestPackage
     displayName: CodeCoverage and Test Packages
     pool:
-      vmImage: ubuntu-16.04
+      vmImage: ubuntu-20.04
     steps:
     - pwsh: |
         Import-Module .\tools\ci.psm1

@@ -217,8 +217,6 @@ namespace Microsoft.PowerShell
         /// <returns>A string (see summary).</returns>
         internal static EncryptionResult Encrypt(SecureString input, SecureString key)
         {
-            EncryptionResult output = null;
-
             //
             // get clear text key from the SecureString key
             //
@@ -227,14 +225,14 @@ namespace Microsoft.PowerShell
             //
             // encrypt the data
             //
-            output = Encrypt(input, keyBlob);
-
-            //
-            // clear the clear text key
-            //
-            Array.Clear(keyBlob, 0, keyBlob.Length);
-
-            return output;
+            try
+            {
+                return Encrypt(input, keyBlob);
+            }
+            finally
+            {
+                Array.Clear(keyBlob);
+            }
         }
 
         /// <summary>
@@ -254,48 +252,43 @@ namespace Microsoft.PowerShell
             Utils.CheckSecureStringArg(input, "input");
             Utils.CheckKeyArg(key, "key");
 
-            byte[] encryptedData = null;
-            MemoryStream ms = null;
-            ICryptoTransform encryptor = null;
-            CryptoStream cs = null;
-
             //
             // prepare the crypto stuff. Initialization Vector is
             // randomized by default.
             //
-            Aes aes = Aes.Create();
-            if (iv == null)
-                iv = aes.IV;
-
-            encryptor = aes.CreateEncryptor(key, iv);
-            ms = new MemoryStream();
-
-            using (cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+            using (Aes aes = Aes.Create())
             {
+                iv ??= aes.IV;
+
                 //
                 // get clear text data from the input SecureString
                 //
                 byte[] data = GetData(input);
+                try
+                {
+                    using (ICryptoTransform encryptor = aes.CreateEncryptor(key, iv))
+                    using (var sourceStream = new MemoryStream(data))
+                    using (var encryptedStream = new MemoryStream())
+                    {
+                        //
+                        // encrypt it
+                        //
+                        using (var cryptoStream = new CryptoStream(encryptedStream, encryptor, CryptoStreamMode.Write))
+                        {
+                            sourceStream.CopyTo(cryptoStream);
+                        }
 
-                //
-                // encrypt it
-                //
-                cs.Write(data, 0, data.Length);
-                cs.FlushFinalBlock();
-
-                //
-                // clear the clear text data array
-                //
-                Array.Clear(data, 0, data.Length);
-
-                //
-                // convert the encrypted blob to a string
-                //
-                encryptedData = ms.ToArray();
-
-                EncryptionResult output = new EncryptionResult(ByteArrayToString(encryptedData), Convert.ToBase64String(iv));
-
-                return output;
+                        //
+                        // return encrypted data
+                        //
+                        byte[] encryptedData = encryptedStream.ToArray();
+                        return new EncryptionResult(ByteArrayToString(encryptedData), Convert.ToBase64String(iv));
+                    }
+                }
+                finally
+                {
+                    Array.Clear(data, 0, data.Length);
+                }
             }
         }
 
@@ -311,8 +304,6 @@ namespace Microsoft.PowerShell
         /// <returns>SecureString .</returns>
         internal static SecureString Decrypt(string input, SecureString key, byte[] IV)
         {
-            SecureString output = null;
-
             //
             // get clear text key from the SecureString key
             //
@@ -321,14 +312,14 @@ namespace Microsoft.PowerShell
             //
             // decrypt the data
             //
-            output = Decrypt(input, keyBlob, IV);
-
-            //
-            // clear the clear text key
-            //
-            Array.Clear(keyBlob, 0, keyBlob.Length);
-
-            return output;
+            try
+            {
+                return Decrypt(input, keyBlob, IV);
+            }
+            finally
+            {
+                Array.Clear(keyBlob);
+            }
         }
 
         /// <summary>
@@ -346,44 +337,33 @@ namespace Microsoft.PowerShell
             Utils.CheckArgForNullOrEmpty(input, "input");
             Utils.CheckKeyArg(key, "key");
 
-            byte[] decryptedData = null;
-            byte[] encryptedData = null;
-            SecureString s = null;
-
             //
             // prepare the crypto stuff
             //
-            Aes aes = Aes.Create();
-            encryptedData = ByteArrayFromString(input);
-
-            var decryptor = aes.CreateDecryptor(key, IV ?? aes.IV);
-
-            MemoryStream ms = new MemoryStream(encryptedData);
-
-            using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+            using (var aes = Aes.Create())
             {
-                byte[] tempDecryptedData = new byte[encryptedData.Length];
-
-                int numBytesRead = 0;
-
-                //
-                // decrypt the data
-                //
-                numBytesRead = cs.Read(tempDecryptedData, 0,
-                                       tempDecryptedData.Length);
-
-                decryptedData = new byte[numBytesRead];
-
-                for (int i = 0; i < numBytesRead; i++)
+                using (ICryptoTransform decryptor = aes.CreateDecryptor(key, IV ?? aes.IV))
+                using (var encryptedStream = new MemoryStream(ByteArrayFromString(input)))
+                using (var targetStream = new MemoryStream())
                 {
-                    decryptedData[i] = tempDecryptedData[i];
+                    //
+                    // decrypt the data and return as SecureString
+                    //
+                    using (var sourceStream = new CryptoStream(encryptedStream, decryptor, CryptoStreamMode.Read))
+                    {
+                        sourceStream.CopyTo(targetStream);
+                    }
+
+                    byte[] decryptedData = targetStream.ToArray();
+                    try
+                    {
+                        return New(decryptedData);
+                    }
+                    finally
+                    {
+                        Array.Clear(decryptedData);
+                    }
                 }
-
-                s = New(decryptedData);
-                Array.Clear(decryptedData, 0, decryptedData.Length);
-                Array.Clear(tempDecryptedData, 0, tempDecryptedData.Length);
-
-                return s;
             }
         }
 

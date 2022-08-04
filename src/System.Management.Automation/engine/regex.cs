@@ -1001,7 +1001,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class PatternPositionsVisitor : IDisposable
+        private sealed class PatternPositionsVisitor : IDisposable
         {
             private readonly int _lengthOfPattern;
 
@@ -1122,7 +1122,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class LiteralCharacterElement : QuestionMarkElement
+        private sealed class LiteralCharacterElement : QuestionMarkElement
         {
             private readonly char _literalCharacter;
 
@@ -1148,7 +1148,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class BracketExpressionElement : QuestionMarkElement
+        private sealed class BracketExpressionElement : QuestionMarkElement
         {
             private readonly Regex _regex;
 
@@ -1173,7 +1173,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class AsterixElement : PatternElement
+        private sealed class AsterixElement : PatternElement
         {
             public override void ProcessStringCharacter(
                             char currentStringCharacter,
@@ -1197,7 +1197,7 @@ namespace System.Management.Automation
             }
         }
 
-        private class MyWildcardPatternParser : WildcardPatternParser
+        private sealed class MyWildcardPatternParser : WildcardPatternParser
         {
             private readonly List<PatternElement> _patternElements = new List<PatternElement>();
             private CharacterNormalizer _characterNormalizer;

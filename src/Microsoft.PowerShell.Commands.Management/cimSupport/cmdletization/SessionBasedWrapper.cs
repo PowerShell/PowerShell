@@ -82,12 +82,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
             set
             {
-                if (value == null)
-                {
-                    throw new ArgumentNullException("value");
-                }
-
-                _session = value;
+                _session = value ?? throw new ArgumentNullException(nameof(value));
                 _sessionWasSpecified = true;
             }
         }
@@ -688,10 +683,7 @@ namespace Microsoft.PowerShell.Cmdletization
         public override void StopProcessing()
         {
             Job jobToStop = _parentJob;
-            if (jobToStop != null)
-            {
-                jobToStop.StopJob();
-            }
+            jobToStop?.StopJob();
 
             base.StopProcessing();
         }

@@ -1,25 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "UnixFileSystem additions" -Tag "CI" {
-    # if PSUnixFileStat is converted from an experimental feature, these tests will need to be changed
-    BeforeAll {
-        $experimentalFeatureName = "PSUnixFileStat"
-        $skipTest = -not $EnabledExperimentalFeatures.Contains($experimentalFeatureName)
-        $PSDefaultParameterValues.Add('It:Skip', $skipTest)
-    }
-    AfterAll {
-        $PSDefaultParameterValues.Remove('It:Skip')
-    }
     Context "Basic Validation" {
+        BeforeAll {
+            $PSDefaultParameterValues.Add('It:Skip', $IsWindows)
+        }
 
-        It "Should be an experimental feature on non-Windows systems" {
-            $feature = Get-ExperimentalFeature -Name $experimentalFeatureName
-            if ( $IsWindows ) {
-                $feature | Should -BeNullOrEmpty
-            }
-            else {
-                $feature.Name | Should -Be $experimentalFeatureName
-            }
+        AfterAll {
+            $PSDefaultParameterValues.Remove('It:Skip')
         }
 
         It "Should include a UnixStat property" {
@@ -36,9 +24,7 @@ Describe "UnixFileSystem additions" -Tag "CI" {
 
     Context "Validation of additional properties on file system objects" {
         BeforeAll {
-            if ( $IsWindows ) {
-                return
-            }
+            $PSDefaultParameterValues.Add('It:Skip', $IsWindows)
 
             $testDir  = "${TestDrive}/TestDir"
             $testFile = "${testDir}/TestFile"
@@ -53,6 +39,10 @@ Describe "UnixFileSystem additions" -Tag "CI" {
                         @{ Mode = '777';  Perm = '-rwxrwxrwx'; Item = "${testFile}" },
                         @{ Mode = '4777'; Perm = '-rwsrwxrwx'; Item = "${testFile}" },
                         @{ Mode = '1777'; Perm = 'drwxrwxrwt'; Item = "${testDir}"  }
+        }
+
+        AfterAll {
+            $PSDefaultParameterValues.Remove('It:Skip')
         }
 
         BeforeEach {
@@ -87,7 +77,8 @@ Describe "UnixFileSystem additions" -Tag "CI" {
 
     Context "Other properties of UnixStat object" {
         BeforeAll {
-            if ( $IsWindows ) {
+            $PSDefaultParameterValues.Add('It:Skip', $IsWindows)
+            if ($IsWindows) {
                 return
             }
 
@@ -113,6 +104,10 @@ Describe "UnixFileSystem additions" -Tag "CI" {
                 @{ Expected = $expectedDirInode; Observed = $Dir.UnixStat.Inode; Title = "DirInode" },
                 @{ Expected = $expectedDirLinkCount; Observed = $Dir.UnixStat.HardlinkCount; Title = "DirHardlinkCount" },
                 @{ Expected = $expectedDirSize; Observed = $Dir.UnixStat.Size; Title = "DirSize" }
+        }
+
+        AfterAll {
+            $PSDefaultParameterValues.Remove('It:Skip')
         }
 
         It "Should have correct values in UnixStat property for '<Title>'" -TestCases $testCases {

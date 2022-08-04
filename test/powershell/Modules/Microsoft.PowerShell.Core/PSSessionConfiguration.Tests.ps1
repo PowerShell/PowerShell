@@ -491,13 +491,9 @@ namespace PowershellTestConfigNamespace
                     $Result.Session.UseSharedProcess | Should -Be $UseSharedProcess
                 }
 
-                It "Validate Register-PSSessionConfiguration -PSVersion" {
+                It "Verifies that Register-PSSessionConfiguration -PSVersion parameter is not supported" {
 
-                    Register-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1
-                    $Session = Get-PSSessionConfiguration -Name $TestSessionConfigName
-
-                    $Session.Name | Should -Be $TestSessionConfigName
-                    $Session.PSVersion | Should -BeExactly 5.1
+                    { Register-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1 } | Should -Throw -ErrorId 'ParameterBindingFailed,Microsoft.PowerShell.Commands.RegisterPSSessionConfigurationCommand'
                 }
 
                 It "Validate Register-PSSessionConfiguration -startupscript parameter" -Pending {
@@ -567,13 +563,9 @@ namespace PowershellTestConfigNamespace
                     $Result.Session.UseSharedProcess | Should -Be $UseSharedProcess
                 }
 
-                It "Validate Set-PSSessionConfiguration -PSVersion" {
+                It "Verifies that Set-PSSessionConfiguration -PSVersion parameter is not supported" {
 
-                    Set-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1
-                    $Session = (Get-PSSessionConfiguration -Name $TestSessionConfigName)
-
-                    $Session.Name | Should -Be $TestSessionConfigName
-                    $Session.PSVersion | Should -BeExactly 5.1
+                    { Set-PSSessionConfiguration -Name $TestSessionConfigName -PSVersion 5.1 } | Should -Throw -ErrorId 'ParameterBindingFailed,Microsoft.PowerShell.Commands.SetPSSessionConfigurationCommand'
                 }
 
                 It "Validate Set-PSSessionConfiguration -startupscript parameter" -Pending {

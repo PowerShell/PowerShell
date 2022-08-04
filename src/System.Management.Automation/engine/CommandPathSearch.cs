@@ -110,7 +110,17 @@ namespace System.Management.Automation
                 sessionState.CurrentDrive.Provider.NameEquals(fileSystemProviderName) &&
                 sessionState.IsProviderLoaded(fileSystemProviderName);
 
-            string environmentCurrentDirectory = Directory.GetCurrentDirectory();
+            string? environmentCurrentDirectory = null;
+            
+            try
+            {
+                environmentCurrentDirectory = Directory.GetCurrentDirectory();
+            }
+            catch (FileNotFoundException)
+            {
+                // This can happen if the current working directory is deleted by another process on non-Windows
+                // In this case, we'll just ignore it and continue on with the current directory as null
+            }
 
             LocationGlobber pathResolver = _context.LocationGlobber;
 
@@ -346,9 +356,12 @@ namespace System.Management.Automation
         /// </summary>
         public void Reset()
         {
+            _lookupPathsEnumerator.Dispose();
             _lookupPathsEnumerator = _lookupPaths.GetEnumerator();
+            _patternEnumerator.Dispose();
             _patternEnumerator = _patterns.GetEnumerator();
             _currentDirectoryResults = Array.Empty<string>();
+            _currentDirectoryResultsEnumerator.Dispose();
             _currentDirectoryResultsEnumerator = _currentDirectoryResults.GetEnumerator();
             _justReset = true;
         }
@@ -490,8 +503,7 @@ namespace System.Management.Automation
                         if (name.Equals(baseNames[i], StringComparison.OrdinalIgnoreCase)
                             || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(name)))
                         {
-                            if (result == null)
-                                result = new Collection<string>();
+                            result ??= new Collection<string>();
                             result.Add(fileNames[i]);
                             break;
                         }
@@ -517,8 +529,7 @@ namespace System.Management.Automation
                     if (fileName.EndsWith(allowedExt, StringComparison.OrdinalIgnoreCase)
                         || (!Platform.IsWindows && Platform.NonWindowsIsExecutable(fileName)))
                     {
-                        if (result == null)
-                            result = new Collection<string>();
+                        result ??= new Collection<string>();
                         result.Add(fileName);
                     }
                 }

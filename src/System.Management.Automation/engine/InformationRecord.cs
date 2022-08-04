@@ -96,15 +96,13 @@ namespace System.Management.Automation
         {
             get
             {
-                if (this._user == null)
-                {
-                    // domain\user on Windows, just user on Unix
+                // domain\user on Windows, just user on Unix
+                this._user ??=
 #if UNIX
-                    this._user = Environment.UserName;
+                    Environment.UserName;
 #else
-                    this._user = Environment.UserDomainName + "\\" + Environment.UserName;
+                    Environment.UserDomainName + "\\" + Environment.UserName;
 #endif
-                }
 
                 return _user;
             }

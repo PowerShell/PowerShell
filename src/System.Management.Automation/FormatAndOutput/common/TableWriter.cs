@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Text;
 
@@ -16,7 +17,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Information about each column boundaries.
         /// </summary>
-        private class ColumnInfo
+        private sealed class ColumnInfo
         {
             internal int startCol = 0;
             internal int width = 0;
@@ -25,7 +26,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Class containing information about the tabular layout.
         /// </summary>
-        private class ScreenInfo
+        private sealed class ScreenInfo
         {
             internal int screenColumns = 0;
             internal int screenRows = 0;
@@ -40,9 +41,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private ScreenInfo _si;
-
-        private const char ESC = '\u001b';
-        private const string ResetConsoleVt100Code = "\u001b[m";
 
         private List<string> _header;
 
@@ -153,9 +151,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else if (_header != null)
             {
+                string style = PSStyle.Instance.Formatting.TableHeader;
+                string reset = PSStyle.Instance.Reset;
+
                 foreach (string line in _header)
                 {
-                    lo.WriteLine(line);
+                    lo.WriteLine(style == string.Empty ? line : style + line + reset);
                 }
 
                 return _header.Count;
@@ -164,7 +165,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _header = new List<string>();
 
             // generate the row with the header labels
-            GenerateRow(values, lo, true, null, lo.DisplayCells, _header);
+            GenerateRow(values, lo, true, null, lo.DisplayCells, _header, isHeader: true);
 
             // generate an array of "--" as header markers below
             // the column header labels
@@ -191,14 +192,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 breakLine[k] = StringUtil.DashPadding(count);
             }
 
-            GenerateRow(breakLine, lo, false, null, lo.DisplayCells, _header);
+            GenerateRow(breakLine, lo, false, null, lo.DisplayCells, _header, isHeader: true);
             return _header.Count;
         }
 
-        internal void GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc, List<string> generatedRows)
+        internal void GenerateRow(string[] values, LineOutput lo, bool multiLine, ReadOnlySpan<int> alignment, DisplayCells dc, List<string> generatedRows, bool isHeader = false)
         {
             if (_disabled)
+            {
                 return;
+            }
 
             // build the current row alignment settings
             int cols = _si.columnInfo.Length;
@@ -216,25 +219,46 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 for (int i = 0; i < currentAlignment.Length; i++)
                 {
                     if (alignment[i] == TextAlignment.Undefined)
+                    {
                         currentAlignment[i] = _si.columnInfo[i].alignment;
+                    }
                     else
+                    {
                         currentAlignment[i] = alignment[i];
+                    }
                 }
             }
+
+            string style = PSStyle.Instance.Formatting.TableHeader;
+            string reset = PSStyle.Instance.Reset;
 
             if (multiLine)
             {
                 foreach (string line in GenerateTableRow(values, currentAlignment, lo.DisplayCells))
                 {
                     generatedRows?.Add(line);
-                    lo.WriteLine(line);
+                    if (isHeader)
+                    {
+                        lo.WriteLine(style == string.Empty ? line : style + line + reset);
+                    }
+                    else
+                    {
+                        lo.WriteLine(line);
+                    }
                 }
             }
             else
             {
                 string line = GenerateRow(values, currentAlignment, dc);
                 generatedRows?.Add(line);
-                lo.WriteLine(line);
+                if (isHeader)
+                {
+                    lo.WriteLine(style == string.Empty ? line : style + line + reset);
+                }
+                else
+                {
+                    lo.WriteLine(line);
+                }
             }
         }
 
@@ -437,11 +461,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     }
                 }
 
-                sb.Append(GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding));
-                if (values[k].Contains(ESC))
+                string rowField = GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding);
+                sb.Append(rowField);
+
+                if (rowField is not null && rowField.Contains(ValueStringDecorated.ESC) && !rowField.AsSpan().TrimEnd().EndsWith(PSStyle.Instance.Reset))
                 {
                     // Reset the console output if the content of this column contains ESC
-                    sb.Append(ResetConsoleVt100Code);
+                    sb.Append(PSStyle.Instance.Reset);
                 }
             }
 
@@ -452,14 +478,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // make sure the string does not have any embedded <CR> in it
             string s = StringManipulationHelper.TruncateAtNewLine(val);
-
-            string currentValue = s;
-            int currentValueDisplayLength = dc.Length(currentValue);
+            int currentValueDisplayLength = dc.Length(s);
 
             if (currentValueDisplayLength < width)
             {
                 // the string is shorter than the width of the column
-                // need to pad with with blanks to reach the desired width
+                // need to pad with blanks to reach the desired width
                 int padCount = width - currentValueDisplayLength;
                 switch (alignment)
                 {
@@ -511,18 +535,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         case TextAlignment.Right:
                             {
                                 // get from "abcdef" to "...f"
-                                int tailCount = dc.GetTailSplitLength(s, truncationDisplayLength);
-                                s = s.Substring(s.Length - tailCount);
-                                s = PSObjectHelper.Ellipsis + s;
-                            }
-
-                            break;
-
-                        case TextAlignment.Center:
-                            {
-                                // get from "abcdef" to "a..."
-                                s = s.Substring(0, dc.GetHeadSplitLength(s, truncationDisplayLength));
-                                s += PSObjectHelper.Ellipsis;
+                                s = s.VtSubstring(
+                                    startOffset: dc.TruncateHead(s, truncationDisplayLength),
+                                    prependStr: PSObjectHelper.EllipsisStr,
+                                    appendStr: null);
                             }
 
                             break;
@@ -531,8 +547,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             {
                                 // left align is the default
                                 // get from "abcdef" to "a..."
-                                s = s.Substring(0, dc.GetHeadSplitLength(s, truncationDisplayLength));
-                                s += PSObjectHelper.Ellipsis;
+                                s = s.VtSubstring(
+                                    startOffset: 0,
+                                    length: dc.TruncateTail(s, truncationDisplayLength),
+                                    prependStr: null,
+                                    appendStr: PSObjectHelper.EllipsisStr);
                             }
 
                             break;
@@ -541,23 +560,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else
                 {
                     // not enough space for the ellipsis, just truncate at the width
-                    int len = width;
-
                     switch (alignment)
                     {
                         case TextAlignment.Right:
                             {
                                 // get from "abcdef" to "f"
-                                int tailCount = dc.GetTailSplitLength(s, len);
-                                s = s.Substring(s.Length - tailCount, tailCount);
-                            }
-
-                            break;
-
-                        case TextAlignment.Center:
-                            {
-                                // get from "abcdef" to "a"
-                                s = s.Substring(0, dc.GetHeadSplitLength(s, len));
+                                s = s.VtSubstring(startOffset: dc.TruncateHead(s, width));
                             }
 
                             break;
@@ -566,7 +574,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             {
                                 // left align is the default
                                 // get from "abcdef" to "a"
-                                s = s.Substring(0, dc.GetHeadSplitLength(s, len));
+                                s = s.VtSubstring(startOffset: 0, length: dc.TruncateTail(s, width));
                             }
 
                             break;

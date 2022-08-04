@@ -16,7 +16,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the runspace where the breakpoints will be used.
         /// </summary>
-        [Experimental("Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace", ExperimentAction.Show)]
         [Parameter]
         [ValidateNotNull]
         [Runspace]
@@ -31,10 +30,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (Runspace == null)
-            {
-                Runspace = Context.CurrentRunspace;
-            }
+            Runspace ??= Context.CurrentRunspace;
         }
 
         #endregion overrides

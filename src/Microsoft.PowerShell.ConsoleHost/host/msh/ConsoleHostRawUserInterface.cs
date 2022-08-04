@@ -85,9 +85,8 @@ namespace Microsoft.PowerShell
                 GetBufferInfo(out bufferInfo);
 
                 ConsoleColor foreground;
-                ConsoleColor unused;
 
-                ConsoleControl.WORDToColor(bufferInfo.Attributes, out foreground, out unused);
+                ConsoleControl.WORDToColor(bufferInfo.Attributes, out foreground, out _);
                 return foreground;
             }
 
@@ -135,9 +134,8 @@ namespace Microsoft.PowerShell
                 GetBufferInfo(out bufferInfo);
 
                 ConsoleColor background;
-                ConsoleColor unused;
 
-                ConsoleControl.WORDToColor(bufferInfo.Attributes, out unused, out background);
+                ConsoleControl.WORDToColor(bufferInfo.Attributes, out _, out background);
                 return background;
             }
 
@@ -457,7 +455,7 @@ namespace Microsoft.PowerShell
                 }
 
                 // if the new size will extend past the edge of screen buffer, then move the window position to try to
-                // accomodate that.
+                // accommodate that.
 
                 ConsoleControl.SMALL_RECT r = bufferInfo.WindowRect;
 

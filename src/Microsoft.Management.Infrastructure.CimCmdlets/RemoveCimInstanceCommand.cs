@@ -154,7 +154,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(AliasOT)]
         [Parameter]
-        public UInt32 OperationTimeoutSec { get; set; }
+        public uint OperationTimeoutSec { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
@@ -276,10 +276,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimRemoveCimInstance cimRemoveInstance = this.GetOperationAgent();
-            if (cimRemoveInstance != null)
-            {
-                cimRemoveInstance.ProcessRemainActions(this.CmdletOperation);
-            }
+            cimRemoveInstance?.ProcessRemainActions(this.CmdletOperation);
         }
 
         #endregion

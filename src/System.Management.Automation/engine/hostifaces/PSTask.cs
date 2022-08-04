@@ -68,6 +68,7 @@ namespace System.Management.Automation.PSTasks
             _powershell.Streams.Warning.DataAdded += (sender, args) => HandleWarningData();
             _powershell.Streams.Verbose.DataAdded += (sender, args) => HandleVerboseData();
             _powershell.Streams.Debug.DataAdded += (sender, args) => HandleDebugData();
+            _powershell.Streams.Progress.DataAdded += (sender, args) => HandleProgressData();
             _powershell.Streams.Information.DataAdded += (sender, args) => HandleInformationData();
 
             // State change handler
@@ -129,6 +130,15 @@ namespace System.Management.Automation.PSTasks
             {
                 _dataStreamWriter.Add(
                     new PSStreamObject(PSStreamObjectType.Information, item));
+            }
+        }
+
+        private void HandleProgressData()
+        {
+            foreach (var item in _powershell.Streams.Progress.ReadAll())
+            {
+                _dataStreamWriter.Add(
+                    new PSStreamObject(PSStreamObjectType.Progress, item));
             }
         }
 
@@ -486,13 +496,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Signals the running task to stop.
         /// </summary>
-        public void SignalStop()
-        {
-            if (_powershell != null)
-            {
-                _powershell.BeginStop(null, null);
-            }
-        }
+        public void SignalStop() => _powershell?.BeginStop(null, null);
 
         #endregion
     }
@@ -1526,12 +1530,9 @@ namespace System.Management.Automation.PSTasks
         {
             get
             {
-                if (_jobDebuggerWrapper == null)
-                {
-                    _jobDebuggerWrapper = new PSTaskChildDebugger(
-                        _task.Debugger,
-                        this.Name);
-                }
+                _jobDebuggerWrapper ??= new PSTaskChildDebugger(
+                    _task.Debugger,
+                    this.Name);
 
                 return _jobDebuggerWrapper;
             }

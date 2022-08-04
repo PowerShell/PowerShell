@@ -2320,13 +2320,8 @@ else
 
             set
             {
-                RemotingCommandUtil.CheckPSVersion(value);
-
-                // Check if specified version of PowerShell is installed
-                RemotingCommandUtil.CheckIfPowerShellVersionIsInstalled(value);
-
-                psVersion = value;
-                isPSVersionSpecified = true;
+                // PowerShell 7 remoting endpoints do not support PSVersion.
+                throw new PSNotSupportedException(RemotingErrorIdStrings.PowerShellVersionNotSupported);
             }
         }
 

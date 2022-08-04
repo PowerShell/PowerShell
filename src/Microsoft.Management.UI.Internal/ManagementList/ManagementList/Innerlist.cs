@@ -8,7 +8,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 using System.Windows;
@@ -297,7 +296,7 @@ namespace Microsoft.Management.UI.Internal
 
             this.itemsSourceIsEmpty = this.ItemsSource != null && this.ItemsSource.GetEnumerator().MoveNext() == false;
 
-            // A view can be created if there is data to auto-generate columns, or columns are added programatically \\
+            // A view can be created if there is data to auto-generate columns, or columns are added programmatically \\
             bool canCreateView = (this.ItemsSource != null) &&
                 (this.itemsSourceIsEmpty == false || this.AutoGenerateColumns == false);
 
@@ -402,14 +401,12 @@ namespace Microsoft.Management.UI.Internal
         /// <returns>The exception to be thrown when using Items.</returns>
         private static NotSupportedException GetItemsException()
         {
-            #pragma warning disable IDE1005 // IDE1005: Delegate invocation can be simplified.
             return new NotSupportedException(
                 string.Format(
                     CultureInfo.InvariantCulture,
                     InvariantResources.NotSupportAddingToItems,
                     nameof(InnerList),
                     ItemsControl.ItemsSourceProperty.Name));
-            #pragma warning restore IDE1005s
         }
         #endregion static private methods
 
@@ -608,7 +605,6 @@ namespace Microsoft.Management.UI.Internal
             return entryText.ToString();
         }
 
-        [SuppressMessage("Performance", "CA1822: Mark members as static", Justification = "Potential breaking change")]
         private void SetClipboardWithSelectedItemsText(string text)
         {
             if (string.IsNullOrEmpty(text))

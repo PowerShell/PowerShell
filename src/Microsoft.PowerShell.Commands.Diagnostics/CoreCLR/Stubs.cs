@@ -245,7 +245,7 @@ namespace System.Diagnostics
         /// A difference counter that shows the change in the measured attribute
         /// between the two most recent sample intervals. It is the same as the
         /// CounterDelta32 counter type except that is uses larger fields to
-        /// accomodate larger values.</summary>
+        /// accommodate larger values.</summary>
         CounterDelta64 = 4195584
     }
 }

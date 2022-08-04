@@ -50,10 +50,7 @@ namespace Microsoft.PowerShell.Cmdletization
                         delegate
                         {
                             var disposable = this as IDisposable;
-                            if (disposable != null)
-                            {
-                                disposable.Dispose();
-                            }
+                            disposable?.Dispose();
                         };
             }
         }
