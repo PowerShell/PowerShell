@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Extract backport target branch
-      uses: actions/github-script@v3
+      uses: actions/github-script@v6
       id: target-branch-extractor
       with:
         result-encoding: string
@@ -28,7 +28,7 @@ jobs:
 
           return target_branch[1];
     - name: Post backport started comment to pull request
-      uses: actions/github-script@v3
+      uses: actions/github-script@v6
       with:
         script: |
           const backport_start_body = `Started backporting to ${{ steps.target-branch-extractor.outputs.result }}: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
