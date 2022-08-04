@@ -2780,7 +2780,7 @@ function New-NugetContentPackage
 
     Start-PSBootstrap
     Write-Verbose -Verbose "Starting dotnet --info"
-    dotnet --info
+    dotnet --info | Out-String | Write-Verbose -Verbose
     Write-Verbose -Verbose "Ending dotnet --info"
 
     $projectFolder = Join-Path $PSScriptRoot 'projects/nuget'
