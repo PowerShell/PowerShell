@@ -2779,7 +2779,9 @@ function New-NugetContentPackage
     }
 
     Find-Dotnet
-    Start-NativeExecution -sb { dotnet --info }
+    Write-Verbose -Verbose "Starting dotnet --info"
+    dotnet --info
+    Write-Verbose -Verbose "Ending dotnet --info"
 
     $projectFolder = Join-Path $PSScriptRoot 'projects/nuget'
 
