@@ -1840,13 +1840,12 @@ function Install-Dotnet {
         $installScript = "dotnet-install.ps1"
         Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
         if (-not $environment.IsCoreCLR) {
-            $installArgs = @{
-                Quality = $Quality
-            }
+            $installArgs = @{}
 
             if ($Version) {
                 $installArgs += @{ Version = $Version }
             } elseif ($Channel) {
+                $installArgs += @{ Quality = $Quality }
                 $installArgs += @{ Channel = $Channel }
             }
 
