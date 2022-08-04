@@ -2374,14 +2374,14 @@ function script:Write-Log
     )
     if ($isError)
     {
-        Write-Host -Foreground Red $message
+        Write-Host -Foreground Red "ERROR: $message"
+        #reset colors for older package to at return to default after error message on a compilation error
+        [console]::ResetColor()
     }
     else
     {
-        Write-Host -Foreground Green $message
+        Write-Verbose -Verbose $message
     }
-    #reset colors for older package to at return to default after error message on a compilation error
-    [console]::ResetColor()
 }
 function script:precheck([string]$command, [string]$missedMessage) {
     $c = Get-Command $command -ErrorAction Ignore
