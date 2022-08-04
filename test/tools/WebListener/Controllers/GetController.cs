@@ -1,13 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.Extensions;
 using mvc.Models;
@@ -32,12 +28,13 @@ namespace mvc.Controllers
 
             Hashtable output = new Hashtable
             {
-                {"args", args},
-                {"headers", headers},
-                {"origin", Request.HttpContext.Connection.RemoteIpAddress.ToString()},
-                {"url", UriHelper.GetDisplayUrl(Request)},
-                {"query", Request.QueryString.ToUriComponent()},
-                {"method", Request.Method}
+                { "args", args },
+                { "headers", headers },
+                { "origin", Request.HttpContext.Connection.RemoteIpAddress.ToString() },
+                { "url", UriHelper.GetDisplayUrl(Request) },
+                { "query", Request.QueryString.ToUriComponent() },
+                { "method", Request.Method },
+                { "protocol", Request.Protocol }
             };
 
             if (Request.HasFormContentType)

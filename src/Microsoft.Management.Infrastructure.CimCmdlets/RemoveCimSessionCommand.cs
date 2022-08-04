@@ -108,7 +108,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = SessionIdSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public UInt32[] Id
+        public uint[] Id
         {
             get
             {
@@ -122,7 +122,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
         }
 
-        private UInt32[] id;
+        private uint[] id;
 
         /// <summary>
         /// The following is the definition of the input parameter "InstanceId".

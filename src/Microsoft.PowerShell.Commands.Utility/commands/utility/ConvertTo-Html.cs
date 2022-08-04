@@ -19,6 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Html", DefaultParameterSetName = "Page",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096595", RemotingCapability = RemotingCapability.None)]
+    [OutputType(typeof(string))]
     public sealed
     class ConvertToHtmlCommand : PSCmdlet
     {
@@ -343,10 +344,7 @@ namespace Microsoft.PowerShell.Commands
             TerminatingErrorContext invocationContext = new(this);
             ParameterProcessor processor =
                 new(new ConvertHTMLExpressionParameterDefinition());
-            if (properties == null)
-            {
-                properties = new object[] { "*" };
-            }
+            properties ??= new object[] { "*" };
 
             return processor.ProcessParameters(properties, invocationContext);
         }

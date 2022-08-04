@@ -370,7 +370,7 @@ namespace System.Management.Automation.Internal
     /// A reverse compatible implementation of session key exchange. This supports the CAPI
     /// keyblob formats but uses dotnet std abstract AES and RSA classes for all crypto operations.
     /// </summary>
-    internal class PSRSACryptoServiceProvider : IDisposable
+    internal sealed class PSRSACryptoServiceProvider : IDisposable
     {
         #region Private Members
 
@@ -612,19 +612,12 @@ namespace System.Management.Automation.Internal
             System.GC.SuppressFinalize(this);
         }
 
-        protected void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing)
             {
-                if (_rsa != null)
-                {
-                    _rsa.Dispose();
-                }
-
-                if (_aes != null)
-                {
-                    _aes.Dispose();
-                }
+                _rsa?.Dispose();
+                _aes?.Dispose();
             }
         }
 
@@ -635,7 +628,7 @@ namespace System.Management.Automation.Internal
     /// Helper for exchanging keys and encrypting/decrypting
     /// secure strings for serialization in remoting.
     /// </summary>
-    internal abstract class PSRemotingCryptoHelper : IDisposable
+    public abstract class PSRemotingCryptoHelper : IDisposable
     {
         #region Protected Members
 
@@ -645,7 +638,7 @@ namespace System.Management.Automation.Internal
         /// it and performing symmetric key operations using the
         /// session key.
         /// </summary>
-        protected PSRSACryptoServiceProvider _rsaCryptoProvider;
+        internal PSRSACryptoServiceProvider _rsaCryptoProvider;
 
         /// <summary>
         /// Key exchange has been completed and both keys
@@ -851,11 +844,7 @@ namespace System.Management.Automation.Internal
         {
             if (disposing)
             {
-                if (_rsaCryptoProvider != null)
-                {
-                    _rsaCryptoProvider.Dispose();
-                }
-
+                _rsaCryptoProvider?.Dispose();
                 _rsaCryptoProvider = null;
 
                 _keyExchangeCompleted.Dispose();

@@ -97,7 +97,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             List<CimSessionProxy> proxys = new();
             string nameSpace = ConstValue.GetNamespace(cmdlet.Namespace);
-            string className = (cmdlet.ClassName == null) ? @"*" : cmdlet.ClassName;
+            string className = cmdlet.ClassName ?? @"*";
             CimGetCimClassContext context = new(
                 cmdlet.ClassName,
                 cmdlet.MethodName,
@@ -165,6 +165,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             GetCimClassCommand cmdlet)
         {
             proxy.OperationTimeout = cmdlet.OperationTimeoutSec;
+            proxy.Amended = cmdlet.Amended;
         }
 
         /// <summary>

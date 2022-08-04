@@ -223,7 +223,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         [Alias(AliasOT)]
         [Parameter]
-        public UInt32 OperationTimeoutSec { get; set; }
+        public uint OperationTimeoutSec { get; set; }
 
         /// <summary>
         /// <para>
@@ -377,10 +377,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void EndProcessing()
         {
             CimNewCimInstance cimNewCimInstance = this.GetOperationAgent();
-            if (cimNewCimInstance != null)
-            {
-                cimNewCimInstance.ProcessRemainActions(this.CmdletOperation);
-            }
+            cimNewCimInstance?.ProcessRemainActions(this.CmdletOperation);
         }
 
         #endregion

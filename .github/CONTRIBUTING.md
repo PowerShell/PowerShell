@@ -85,7 +85,9 @@ To run the spellchecker, follow these steps:
 * install [Node.js](https://nodejs.org/en/) (v10 or up)
 * install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
   `npm install -g markdown-spellcheck` (v0.11.0 or up)
-* run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms --en-us`
+* run `mdspell "**/*.md" "!**/dotnet-tools/**/*.md" --ignore-numbers --ignore-acronyms --en-us`.
+    - The folder `dotnet-tools` is excluded because files in that folder are copied from the `dotnet/performance` repository
+      and will need to be synchronized from time to time.
 * if the `.spelling` file is updated, commit and push it
 
 #### Checking links in documentation

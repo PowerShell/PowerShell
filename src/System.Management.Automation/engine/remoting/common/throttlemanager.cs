@@ -532,10 +532,7 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
-            if (operation != null)
-            {
-                operation.StartOperation();
-            }
+            operation?.StartOperation();
         }
 
         /// <summary>

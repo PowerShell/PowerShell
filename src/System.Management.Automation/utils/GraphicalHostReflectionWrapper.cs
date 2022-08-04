@@ -18,7 +18,7 @@ namespace System.Management.Automation.Internal
     ///    2) show-command window implementation (the actual cmdlet is in Microsoft.PowerShell.Commands.Utility.dll)
     ///    3) the help window used in the System.Management.Automation.dll's get-help cmdlet when -ShowWindow is specified.
     /// </summary>
-    internal class GraphicalHostReflectionWrapper
+    internal sealed class GraphicalHostReflectionWrapper
     {
         /// <summary>
         /// Initialized in GetGraphicalHostReflectionWrapper with the Microsoft.PowerShell.GraphicalHost.dll assembly.

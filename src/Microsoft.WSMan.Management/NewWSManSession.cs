@@ -26,6 +26,7 @@ namespace Microsoft.WSMan.Management
     /// Connect-WSMan.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "WSManSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096845")]
+    [OutputType(typeof(SessionOption))]
     public class NewWSManSessionOptionCommand : PSCmdlet
     {
         /// <summary>
@@ -170,8 +171,8 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter]
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "SPN")]
-        [ValidateRange(0, Int32.MaxValue)]
-        public Int32 SPNPort
+        [ValidateRange(0, int.MaxValue)]
+        public int SPNPort
         {
             get
             {
@@ -184,7 +185,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private Int32 spnport;
+        private int spnport;
 
         /// <summary>
         /// The following is the definition of the input parameter "Timeout".
@@ -192,8 +193,8 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         [Parameter]
         [Alias("OperationTimeoutMSec")]
-        [ValidateRange(0, Int32.MaxValue)]
-        public Int32 OperationTimeout
+        [ValidateRange(0, int.MaxValue)]
+        public int OperationTimeout
         {
             get
             {
@@ -206,7 +207,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        private Int32 operationtimeout;
+        private int operationtimeout;
 
         /// <summary>
         /// The following is the definition of the input parameter "UnEncrypted".

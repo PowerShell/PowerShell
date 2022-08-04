@@ -8,7 +8,6 @@ using System.Threading;
 #if !UNIX
 using System.Security.Principal;
 #endif
-using Microsoft.Win32.SafeHandles;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -73,14 +72,6 @@ namespace System.Management.Automation.Remoting.Server
         {
             try
             {
-#if !CORECLR
-                // CurrentUICulture is not available in Thread Class in CSS
-                // WinBlue: 621775. Thread culture is not properly set
-                // for local background jobs causing experience differences
-                // between local console and local background jobs.
-                Thread.CurrentThread.CurrentUICulture = Microsoft.PowerShell.NativeCultureResolver.UICulture;
-                Thread.CurrentThread.CurrentCulture = Microsoft.PowerShell.NativeCultureResolver.Culture;
-#endif
                 string data = state as string;
                 OutOfProcessUtils.ProcessData(data, callbacks);
             }
@@ -209,10 +200,7 @@ namespace System.Management.Automation.Remoting.Server
                     }
 
                     // dont throw if there is no cmdTM as it might have legitimately closed
-                    if (cmdTM != null)
-                    {
-                        cmdTM.Close(null);
-                    }
+                    cmdTM?.Close(null);
                 }
                 finally
                 {
@@ -253,12 +241,9 @@ namespace System.Management.Automation.Remoting.Server
                 {
                     tracer.WriteMessage("OnClosePacketReceived, in progress commands count should be zero : " + _inProgressCommandsCount + ", psGuid : " + psGuid.ToString());
 
-                    if (sessionTM != null)
-                    {
-                        // it appears that when closing PowerShell ISE, therefore closing OutOfProcServerMediator, there are 2 Close command requests
-                        // changing PSRP/IPC at this point is too risky, therefore protecting about this duplication
-                        sessionTM.Close(null);
-                    }
+                    // it appears that when closing PowerShell ISE, therefore closing OutOfProcServerMediator, there are 2 Close command requests
+                    // changing PSRP/IPC at this point is too risky, therefore protecting about this duplication
+                    sessionTM?.Close(null);
 
                     tracer.WriteMessage("END calling close on session transport manager");
                     sessionTM = null;
@@ -277,10 +262,7 @@ namespace System.Management.Automation.Remoting.Server
                 }
 
                 // dont throw if there is no cmdTM as it might have legitimately closed
-                if (cmdTM != null)
-                {
-                    cmdTM.Close(null);
-                }
+                cmdTM?.Close(null);
 
                 lock (_syncObject)
                 {
@@ -307,7 +289,11 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Methods
 
-        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(string configurationName, PSRemotingCryptoHelperServer cryptoHelper, string workingDirectory)
+        protected OutOfProcessServerSessionTransportManager CreateSessionTransportManager(
+            string configurationName,
+            string configurationFile,
+            PSRemotingCryptoHelperServer cryptoHelper,
+            string workingDirectory)
         {
             PSSenderInfo senderInfo;
 #if !UNIX
@@ -323,23 +309,38 @@ namespace System.Management.Automation.Remoting.Server
             senderInfo = new PSSenderInfo(userPrincipal, "http://localhost");
 #endif
 
-            OutOfProcessServerSessionTransportManager tm = new OutOfProcessServerSessionTransportManager(originalStdOut, originalStdErr, cryptoHelper);
+            var tm = new OutOfProcessServerSessionTransportManager(
+                originalStdOut,
+                originalStdErr,
+                cryptoHelper);
 
             ServerRemoteSession.CreateServerRemoteSession(
-                senderInfo,
-                _initialCommand,
-                tm,
-                configurationName,
-                workingDirectory);
+                senderInfo: senderInfo,
+                configurationProviderId: "Microsoft.PowerShell",
+                initializationParameters: string.Empty,
+                transportManager: tm,
+                initialCommand: _initialCommand,
+                configurationName: configurationName,
+                configurationFile: configurationFile,
+                initialLocation: workingDirectory);
 
             return tm;
         }
 
-        protected void Start(string initialCommand, PSRemotingCryptoHelperServer cryptoHelper, string workingDirectory = null, string configurationName = null)
+        protected void Start(
+            string initialCommand,
+            PSRemotingCryptoHelperServer cryptoHelper,
+            string workingDirectory,
+            string configurationName,
+            string configurationFile)
         {
             _initialCommand = initialCommand;
 
-            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
+            sessionTM = CreateSessionTransportManager(
+                configurationName: configurationName,
+                configurationFile: configurationFile,
+                cryptoHelper: cryptoHelper,
+                workingDirectory: workingDirectory);
 
             try
             {
@@ -348,10 +349,11 @@ namespace System.Management.Automation.Remoting.Server
                     string data = originalStdIn.ReadLine();
                     lock (_syncObject)
                     {
-                        if (sessionTM == null)
-                        {
-                            sessionTM = CreateSessionTransportManager(configurationName, cryptoHelper, workingDirectory);
-                        }
+                        sessionTM ??= CreateSessionTransportManager(
+                            configurationName: configurationName,
+                            configurationFile: configurationFile,
+                            cryptoHelper: cryptoHelper,
+                            workingDirectory: workingDirectory);
                     }
 
                     if (string.IsNullOrEmpty(data))
@@ -417,35 +419,13 @@ namespace System.Management.Automation.Remoting.Server
         }
 
         #endregion
-
-        #region Static Methods
-
-        internal static void AppDomainUnhandledException(object sender, UnhandledExceptionEventArgs args)
-        {
-            // args can never be null.
-            Exception exception = (Exception)args.ExceptionObject;
-            // log the exception to crimson event logs
-            PSEtwLog.LogOperationalError(PSEventId.AppDomainUnhandledException,
-                PSOpcode.Close, PSTask.None,
-                PSKeyword.UseAlwaysOperational,
-                exception.GetType().ToString(), exception.Message,
-                exception.StackTrace);
-
-            PSEtwLog.LogAnalyticError(PSEventId.AppDomainUnhandledException_Analytic,
-                    PSOpcode.Close, PSTask.None,
-                    PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                    exception.GetType().ToString(), exception.Message,
-                    exception.StackTrace);
-        }
-
-        #endregion
     }
 
-    internal sealed class OutOfProcessMediator : OutOfProcessMediatorBase
+    internal sealed class StdIOProcessMediator : OutOfProcessMediatorBase
     {
         #region Private Data
 
-        private static OutOfProcessMediator s_singletonInstance;
+        private static StdIOProcessMediator s_singletonInstance;
 
         #endregion
 
@@ -453,10 +433,11 @@ namespace System.Management.Automation.Remoting.Server
 
         /// <summary>
         /// The mediator will take actions from the StdIn stream and responds to them.
-        /// It will replace StdIn,StdOut and StdErr stream with TextWriter.Null's. This is
+        /// It will replace StdIn,StdOut and StdErr stream with TextWriter.Null. This is
         /// to make sure these streams are totally used by our Mediator.
         /// </summary>
-        private OutOfProcessMediator() : base(true)
+        /// <param name="combineErrOutStream">Redirects remoting errors to the Out stream.</param>
+        private StdIOProcessMediator(bool combineErrOutStream) : base(exitProcessOnError: true)
         {
             // Create input stream reader from Console standard input stream.
             // We don't use the provided Console.In TextReader because it can have
@@ -466,18 +447,22 @@ namespace System.Management.Automation.Remoting.Server
             // stream BOM as needed.
             originalStdIn = new StreamReader(Console.OpenStandardInput(), true);
 
-            // replacing StdIn with Null so that no other app messes with the
-            // original stream.
-            Console.SetIn(TextReader.Null);
-
-            // replacing StdOut with Null so that no other app messes with the
-            // original stream
+            // Remoting errors can optionally be written to stdErr or stdOut with
+            // special formatting.
             originalStdOut = new OutOfProcessTextWriter(Console.Out);
-            Console.SetOut(TextWriter.Null);
+            if (combineErrOutStream)
+            {
+                originalStdErr = new FormattedErrorTextWriter(Console.Out);
+            }
+            else
+            {
+                originalStdErr = new OutOfProcessTextWriter(Console.Error);
+            }
 
-            // replacing StdErr with Null so that no other app messes with the
-            // original stream
-            originalStdErr = new OutOfProcessTextWriter(Console.Error);
+            // Replacing StdIn, StdOut, StdErr with Null so that no other app messes with the
+            // original streams.
+            Console.SetIn(TextReader.Null);
+            Console.SetOut(TextWriter.Null);
             Console.SetError(TextWriter.Null);
         }
 
@@ -490,7 +475,15 @@ namespace System.Management.Automation.Remoting.Server
         /// </summary>
         /// <param name="initialCommand">Specifies the initialization script.</param>
         /// <param name="workingDirectory">Specifies the initial working directory. The working directory is set before the initial command.</param>
-        internal static void Run(string initialCommand, string workingDirectory)
+        /// <param name="configurationName">Specifies an optional configuration name that configures the endpoint session.</param>
+        /// <param name="configurationFile">Specifies an optional path to a configuration (.pssc) file for the session.</param>
+        /// <param name="combineErrOutStream">Specifies the option to write remoting errors to stdOut stream, with special formatting.</param>
+        internal static void Run(
+            string initialCommand,
+            string workingDirectory,
+            string configurationName,
+            string configurationFile,
+            bool combineErrOutStream)
         {
             lock (SyncObject)
             {
@@ -500,64 +493,15 @@ namespace System.Management.Automation.Remoting.Server
                     return;
                 }
 
-                s_singletonInstance = new OutOfProcessMediator();
+                s_singletonInstance = new StdIOProcessMediator(combineErrOutStream);
             }
 
-#if !CORECLR // AppDomain is not available in CoreCLR
-            // Setup unhandled exception to log events
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
-#endif
-            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer(), workingDirectory);
-        }
-
-        #endregion
-    }
-
-    internal sealed class SSHProcessMediator : OutOfProcessMediatorBase
-    {
-        #region Private Data
-
-        private static SSHProcessMediator s_singletonInstance;
-
-        #endregion
-
-        #region Constructors
-
-        private SSHProcessMediator() : base(true)
-        {
-            originalStdIn = new StreamReader(Console.OpenStandardInput(), true);
-            originalStdOut = new OutOfProcessTextWriter(
-                new StreamWriter(Console.OpenStandardOutput()));
-            originalStdErr = new OutOfProcessTextWriter(
-                new StreamWriter(Console.OpenStandardError()));
-
-            // Disable console from writing to the PSRP streams.
-            Console.SetIn(TextReader.Null);
-            Console.SetOut(TextWriter.Null);
-            Console.SetError(TextWriter.Null);
-        }
-
-        #endregion
-
-        #region Static Methods
-
-        /// <summary>
-        /// </summary>
-        /// <param name="initialCommand"></param>
-        internal static void Run(string initialCommand)
-        {
-            lock (SyncObject)
-            {
-                if (s_singletonInstance != null)
-                {
-                    Dbg.Assert(false, "Run should not be called multiple times");
-                    return;
-                }
-
-                s_singletonInstance = new SSHProcessMediator();
-            }
-
-            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer());
+            s_singletonInstance.Start(
+                initialCommand: initialCommand,
+                cryptoHelper: new PSRemotingCryptoHelperServer(),
+                workingDirectory: workingDirectory,
+                configurationName: configurationName,
+                configurationFile: configurationFile);
         }
 
         #endregion
@@ -599,7 +543,7 @@ namespace System.Management.Automation.Remoting.Server
             // Create transport reader/writers from named pipe.
             originalStdIn = namedPipeServer.TextReader;
             originalStdOut = new OutOfProcessTextWriter(namedPipeServer.TextWriter);
-            originalStdErr = new NamedPipeErrorTextWriter(namedPipeServer.TextWriter);
+            originalStdErr = new FormattedErrorTextWriter(namedPipeServer.TextWriter);
 
 #if !UNIX
             // Flow impersonation as needed.
@@ -626,36 +570,22 @@ namespace System.Management.Automation.Remoting.Server
                 s_singletonInstance = new NamedPipeProcessMediator(namedPipeServer);
             }
 
-#if !CORECLR
-            // AppDomain is not available in CoreCLR
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
-#endif
-            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer(), namedPipeServer.ConfigurationName);
+            s_singletonInstance.Start(
+                initialCommand: initialCommand,
+                cryptoHelper: new PSRemotingCryptoHelperServer(),
+                workingDirectory: null,
+                configurationName: namedPipeServer.ConfigurationName,
+                configurationFile: null);
         }
 
         #endregion
     }
 
-    internal sealed class NamedPipeErrorTextWriter : OutOfProcessTextWriter
+    internal sealed class FormattedErrorTextWriter : OutOfProcessTextWriter
     {
-        #region Private Members
-
-        private const string _errorPrepend = "__NamedPipeError__:";
-
-        #endregion
-
-        #region Properties
-
-        internal static string ErrorPrepend
-        {
-            get { return _errorPrepend; }
-        }
-
-        #endregion
-
         #region Constructors
 
-        internal NamedPipeErrorTextWriter(
+        internal FormattedErrorTextWriter(
             TextWriter textWriter) : base(textWriter)
         { }
 
@@ -663,9 +593,11 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Base class overrides
 
-        internal override void WriteLine(string data)
+        // Write error data to stream with 'ErrorPrefix' prefix that will
+        // be interpreted by the client.
+        public override void WriteLine(string data)
         {
-            string dataToWrite = (data != null) ? _errorPrepend + data : null;
+            string dataToWrite = (data != null) ? ErrorPrefix + data : null;
             base.WriteLine(dataToWrite);
         }
 
@@ -716,12 +648,12 @@ namespace System.Management.Automation.Remoting.Server
                 s_instance = new HyperVSocketMediator();
             }
 
-#if !CORECLR
-            // AppDomain is not available in CoreCLR
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
-#endif
-
-            s_instance.Start(initialCommand, new PSRemotingCryptoHelperServer(), configurationName);
+            s_instance.Start(
+                initialCommand: initialCommand,
+                cryptoHelper: new PSRemotingCryptoHelperServer(),
+                workingDirectory: null,
+                configurationName: configurationName,
+                configurationFile: null);
         }
 
         #endregion
@@ -755,7 +687,7 @@ namespace System.Management.Automation.Remoting.Server
 
         #region Base class overrides
 
-        internal override void WriteLine(string data)
+        public override void WriteLine(string data)
         {
             string dataToWrite = (data != null) ? _errorPrepend + data : null;
             base.WriteLine(dataToWrite);

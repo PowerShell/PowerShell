@@ -356,15 +356,9 @@ namespace System.Management.Automation
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (synopsis == null)
-            {
-                synopsis = string.Empty;
-            }
+            synopsis ??= string.Empty;
 
-            if (detailedDescription == null)
-            {
-                detailedDescription = string.Empty;
-            }
+            detailedDescription ??= string.Empty;
 
             return pattern.IsMatch(synopsis) || pattern.IsMatch(detailedDescription);
         }
@@ -462,7 +456,7 @@ namespace System.Management.Automation
                     return string.Empty;
                 }
 
-                // I think every cmdlet description should atleast have 400 characters...
+                // I think every cmdlet description should at least have 400 characters...
                 // so starting with this assumption..I did an average of all the cmdlet
                 // help content available at the time of writing this code and came up
                 // with this number.

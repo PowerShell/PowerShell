@@ -35,9 +35,7 @@ namespace Microsoft.Management.UI.Internal
         {
             get
             {
-                #pragma warning disable IDE0075 // IDE0075: Conditional expression can be simplified
                 return (this.renameButton != null) ? this.renameButton.IsChecked.Value : false;
-                #pragma warning restore IDE0075
             }
         }
 
@@ -155,7 +153,7 @@ namespace Microsoft.Management.UI.Internal
         private void ChangeFromEditToDisplayMode()
         {
             // NOTE : This is to resolve a race condition where clicking
-            // on the rename button causes the the edit box to change and
+            // on the rename button causes the edit box to change and
             // then have re-toggle.
             DependencyObject d = Mouse.DirectlyOver as DependencyObject;
             if (d == null || !(this.renameButton.IsAncestorOf(d) && Mouse.LeftButton == MouseButtonState.Pressed))

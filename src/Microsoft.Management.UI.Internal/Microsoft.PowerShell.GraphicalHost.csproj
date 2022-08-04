@@ -8,6 +8,7 @@
     <UseWPF>True</UseWPF>
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
     <TargetPlatformVersion>7.0</TargetPlatformVersion>
+    <RunAnalyzers>false</RunAnalyzers>
   </PropertyGroup>
 
   <PropertyGroup>

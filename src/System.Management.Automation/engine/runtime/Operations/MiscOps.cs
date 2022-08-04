@@ -426,10 +426,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (context.Events != null)
-                {
-                    context.Events.ProcessPendingActions();
-                }
+                context.Events?.ProcessPendingActions();
 
                 if (input == AutomationNull.Value && !ignoreInput)
                 {
@@ -519,10 +516,7 @@ namespace System.Management.Automation
 
             try
             {
-                if (context.Events != null)
-                {
-                    context.Events.ProcessPendingActions();
-                }
+                context.Events?.ProcessPendingActions();
 
                 CommandProcessorBase commandProcessor = null;
 
@@ -531,12 +525,8 @@ namespace System.Management.Automation
                 var pipelineOffset = pipelineAst.Extent.StartOffset;
                 var variables = pipelineAst.FindAll(static x => x is VariableExpressionAst, true);
 
-                // Used to make sure that the job runs in the current directory
-                const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location -LiteralPath $using:pwd ; ";
-
-                // Minimize allocations by initializing the stringbuilder to the size of the source string + prefix + space for ${using:} * 2
-                System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(cmdPrefix.Length + scriptblockBodyString.Length + 18);
-                updatedScriptblock.Append(cmdPrefix);
+                // Minimize allocations by initializing the stringbuilder to the size of the source string + space for ${using:} * 2
+                System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(scriptblockBodyString.Length + 18);
                 int position = 0;
 
                 // Prefix variables in the scriptblock with $using:
@@ -568,14 +558,25 @@ namespace System.Management.Automation
                 var sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
                 commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
-                var parameter = CommandParameterInternal.CreateParameterWithArgument(
+
+                var workingDirectoryParameter = CommandParameterInternal.CreateParameterWithArgument(
                     parameterAst: pipelineAst,
-                    "ScriptBlock",
-                    null,
+                    parameterName: "WorkingDirectory",
+                    parameterText: null,
                     argumentAst: pipelineAst,
-                    sb,
-                    false);
-                commandProcessor.AddParameter(parameter);
+                    value: context.SessionState.Path.CurrentLocation.Path,
+                    spaceAfterParameter: false);
+
+                var scriptBlockParameter = CommandParameterInternal.CreateParameterWithArgument(
+                    parameterAst: pipelineAst,
+                    parameterName: "ScriptBlock",
+                    parameterText: null,
+                    argumentAst: pipelineAst,
+                    value: sb,
+                    spaceAfterParameter: false);
+
+                commandProcessor.AddParameter(workingDirectoryParameter);
+                commandProcessor.AddParameter(scriptBlockParameter);
                 pipelineProcessor.Add(commandProcessor);
                 pipelineProcessor.LinkPipelineSuccessOutput(outputPipe ?? new Pipe(new List<object>()));
 
@@ -834,10 +835,7 @@ namespace System.Management.Automation
 
         internal static void CheckForInterrupts(ExecutionContext context)
         {
-            if (context.Events != null)
-            {
-                context.Events.ProcessPendingActions();
-            }
+            context.Events?.ProcessPendingActions();
 
             if (context.CurrentPipelineStopping)
             {
@@ -1058,10 +1056,7 @@ namespace System.Management.Automation
                     // Normally, context.CurrentCommandProcessor will not be null. But in legacy DRTs from ParserTest.cs,
                     // a scriptblock may be invoked through 'DoInvokeReturnAsIs' using .NET reflection. In that case,
                     // context.CurrentCommandProcessor will be null. We don't try passing along variable lists in such case.
-                    if (context.CurrentCommandProcessor != null)
-                    {
-                        context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
-                    }
+                    context.CurrentCommandProcessor?.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
                     commandProcessor.CommandRuntime.ErrorOutputPipe = pipe;
@@ -1072,10 +1067,7 @@ namespace System.Management.Automation
                     break;
                 case RedirectionStream.Output:
                     // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
-                    if (context.CurrentCommandProcessor != null)
-                    {
-                        context.CurrentCommandProcessor.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
-                    }
+                    context.CurrentCommandProcessor?.CommandRuntime.OutputPipe.SetVariableListForTemporaryPipe(pipe);
 
                     commandProcessor.CommandRuntime.OutputPipe = pipe;
                     break;
@@ -1207,11 +1199,8 @@ namespace System.Management.Automation
                 throw;
             }
 
-            if (parentPipelineProcessor != null)
-            {
-                // I think this is only necessary for calling Dispose on the commands in the redirection pipe.
-                parentPipelineProcessor.AddRedirectionPipe(PipelineProcessor);
-            }
+            // I think this is only necessary for calling Dispose on the commands in the redirection pipe.
+            parentPipelineProcessor?.AddRedirectionPipe(PipelineProcessor);
 
             return new Pipe(context, PipelineProcessor);
         }
@@ -1227,10 +1216,7 @@ namespace System.Management.Automation
         internal void CallDoCompleteForExpression()
         {
             // The pipe returned from 'GetRedirectionPipe' could be a NullPipe
-            if (PipelineProcessor != null)
-            {
-                PipelineProcessor.DoComplete();
-            }
+            PipelineProcessor?.DoComplete();
         }
 
         private bool _disposed;
@@ -1248,10 +1234,7 @@ namespace System.Management.Automation
 
             if (disposing)
             {
-                if (PipelineProcessor != null)
-                {
-                    PipelineProcessor.Dispose();
-                }
+                PipelineProcessor?.Dispose();
             }
 
             _disposed = true;
@@ -1311,6 +1294,17 @@ namespace System.Management.Automation
             var result = (_scriptBlock ??= new ScriptBlock(_ast, isFilter)).Clone();
             result.SessionStateInternal = context.EngineSessionState;
             return result;
+        }
+    }
+
+    internal static class ByRefOps
+    {
+        /// <summary>
+        /// There is no way to directly work with ByRef type in the expression tree, so we turn to reflection in this case.
+        /// </summary>
+        internal static object GetByRefPropertyValue(object target, PropertyInfo property)
+        {
+            return property.GetValue(target);
         }
     }
 
@@ -1379,7 +1373,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Represent a handler search result.
         /// </summary>
-        private class HandlerSearchResult
+        private sealed class HandlerSearchResult
         {
             internal HandlerSearchResult()
             {
@@ -1578,23 +1572,33 @@ namespace System.Management.Automation
 
         internal static bool SuspendStoppingPipeline(ExecutionContext context)
         {
-            LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            if (lpl != null)
+            var localPipeline = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
+            return SuspendStoppingPipelineImpl(localPipeline);
+        }
+
+        internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
+        {
+            var localPipeline = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
+            RestoreStoppingPipelineImpl(localPipeline, oldIsStopping);
+        }
+
+        internal static bool SuspendStoppingPipelineImpl(LocalPipeline localPipeline)
+        {
+            if (localPipeline is not null)
             {
-                bool oldIsStopping = lpl.Stopper.IsStopping;
-                lpl.Stopper.IsStopping = false;
+                bool oldIsStopping = localPipeline.Stopper.IsStopping;
+                localPipeline.Stopper.IsStopping = false;
                 return oldIsStopping;
             }
 
             return false;
         }
 
-        internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
+        internal static void RestoreStoppingPipelineImpl(LocalPipeline localPipeline, bool oldIsStopping)
         {
-            LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            if (lpl != null)
+            if (localPipeline is not null)
             {
-                lpl.Stopper.IsStopping = oldIsStopping;
+                localPipeline.Stopper.IsStopping = oldIsStopping;
             }
         }
 
@@ -1726,10 +1730,7 @@ namespace System.Management.Automation
                     ErrorRecord err = rte.ErrorRecord;
                     // CurrentCommandProcessor is normally not null, but it is null
                     // when executing some unit tests through reflection.
-                    if (context.CurrentCommandProcessor != null)
-                    {
-                        context.CurrentCommandProcessor.ForgetScriptException();
-                    }
+                    context.CurrentCommandProcessor?.ForgetScriptException();
 
                     try
                     {
@@ -1923,10 +1924,7 @@ namespace System.Management.Automation
 
             if (rte is not PipelineStoppedException)
             {
-                if (outputPipe != null)
-                {
-                    outputPipe.AppendVariableList(VariableStreamKind.Error, errRec);
-                }
+                outputPipe?.AppendVariableList(VariableStreamKind.Error, errRec);
 
                 context.AppendDollarError(errRec);
             }
@@ -2855,6 +2853,11 @@ namespace System.Management.Automation
             ScriptBlock sb = expression as ScriptBlock;
             if (sb != null)
             {
+                if (sb.HasCleanBlock)
+                {
+                    throw new PSNotSupportedException(ParserStrings.ForEachNotSupportCleanBlock);
+                }
+
                 Pipe outputPipe = new Pipe(result);
                 if (sb.HasBeginBlock)
                 {
@@ -3497,10 +3500,7 @@ namespace System.Management.Automation
                 if (dispose)
                 {
                     var disposable = enumerator as IDisposable;
-                    if (disposable != null)
-                    {
-                        disposable.Dispose();
-                    }
+                    disposable?.Dispose();
                 }
             }
         }
@@ -3529,6 +3529,71 @@ namespace System.Management.Automation
             }
 
             return result;
+        }
+    }
+
+    internal static class MemberInvocationLoggingOps
+    {
+        private static readonly Lazy<bool> DumpLogAMSIContent = new Lazy<bool>(
+            () => {
+                object result = Environment.GetEnvironmentVariable("__PSDumpAMSILogContent");
+                if (result != null && LanguagePrimitives.TryConvertTo(result, out int value))
+                {
+                    return value == 1;
+                }
+                return false;
+            }
+        );
+
+        internal static void LogMemberInvocation(string targetName, string name, object[] args)
+        {
+            try
+            {
+                var contentName = "PowerShellMemberInvocation";
+                var argsBuilder = new Text.StringBuilder();
+
+                for (int i = 0; i < args.Length; i++)
+                {
+                    string value = args[i] is null ? "null" : args[i].ToString();
+
+                    if (i > 0)
+                    {
+                        argsBuilder.Append(", ");
+                    }
+
+                    argsBuilder.Append($"<{value}>");
+                }
+
+                string content = $"<{targetName}>.{name}({argsBuilder})";
+
+                if (DumpLogAMSIContent.Value)
+                {
+                    Console.WriteLine("\n=== Amsi notification report content ===");
+                    Console.WriteLine(content);
+                }
+
+                var success = AmsiUtils.ReportContent(
+                    name: contentName,
+                    content: content);
+
+                if (DumpLogAMSIContent.Value)
+                {
+                    Console.WriteLine($"=== Amsi notification report success: {success} ===");
+                }
+            }
+            catch (PSSecurityException)
+            {
+                // ReportContent() will throw PSSecurityException if AMSI detects malware, which 
+                // must be propagated.
+                throw;
+            }
+            catch (Exception ex)
+            {
+                if (DumpLogAMSIContent.Value)
+                {
+                    Console.WriteLine($"!!! Amsi notification report exception: {ex} !!!");
+                }
+            }
         }
     }
 }

@@ -17,6 +17,10 @@ variables:
     value : false
   - name: NugetSecurityAnalysisWarningLevel
     value: none
+  - name: skipComponentGovernanceDetection
+    value: true
+  - name: BUILDSECMON_OPT_IN
+    value: true
 
 stages:
 - stage: MSIXBundle
@@ -76,17 +80,51 @@ stages:
       globalToolExeName: 'pwsh'
       globalToolPackageName: 'PowerShell.Linux.x64'
 
-- stage: ValidatePkgNames
+- stage: ValidateFxdPackage
+  displayName: Validate Fxd Package
   dependsOn: []
-  displayName: Package Names validation
+  jobs:
+  - template: templates/release-ValidateFxdPackage.yml
+    parameters:
+      jobName: WinFxdPackage
+      displayName: Fxd Package Test Win
+      imageName: windows-latest
+      packageNamePattern: '**/*win-fxdependent.zip'
+
+  - template: templates/release-ValidateFxdPackage.yml
+    parameters:
+      jobName: FxdPackageWindDesktop
+      displayName: Fxd Package Test WinDesktop
+      imageName: windows-latest
+      packageNamePattern: '**/*win-fxdependentWinDesktop.zip'
+
+  - template: templates/release-ValidateFxdPackage.yml
+    parameters:
+      jobName: FxdPackageLinux
+      displayName: Fxd Package Test Linux
+      imageName: ubuntu-latest
+      packageNamePattern: '**/*fxdependent.tar.gz'
+
+- stage: StaticPkgValidation
+  dependsOn: []
+  displayName: Static package validation
   jobs:
   - job: ValidatePkgNames
+    displayName: Validate Package Names
     pool:
+      # testing
       vmImage: windows-latest
     variables:
     - group: 'Azure Blob variable group'
     steps:
       - template: templates/release-ValidatePackageNames.yml
+  - job: ValidatePkgBOM
+    displayName: Validate Package BOM
+    pool:
+      # testing
+      vmImage: ubuntu-latest
+    steps:
+      - template: templates/release-ValidatePackageBOM.yml
 
 - stage: StartDocker
   dependsOn: []
@@ -127,17 +165,23 @@ stages:
   - MSIXBundle
   - ValidateSDK
   - PRCreation
-  - ValidatePkgNames
+  - StaticPkgValidation
   - StartDocker
   - ManualValidation
   - ReleaseAutomation
+  - ValidateFxdPackage
+  - ValidateGlobalTool
 
 # The environment here is used for approval.
   jobs:
   - deployment: AzureBlobPublic
     displayName: Make Azure Blob Public
+
     pool:
-      vmImage: windows-latest
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
     variables:
     - group: 'Staging_ACR'
     environment: PSReleaseAzureBlobPublic
@@ -149,8 +193,12 @@ stages:
 
   - job: GitHubDraft
     displayName: Create GitHub Draft release
+
     pool:
-      vmImage: windows-latest
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
     variables:
     - group: 'Azure Blob variable group'
     - group: 'AzDevOpsArtifacts'
@@ -182,14 +230,22 @@ stages:
   dependsOn: GitHubManualTasks
   jobs:
   - job: PublishNuget
+
     pool:
-      vmImage: windows-latest
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
     steps:
     - template: templates/release-ReleaseToNuGet.yml
 
   - job: PublishPkgsMsftCom
+
     pool:
-      vmImage: ubuntu-latest
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMSUbuntu20.04-Secure
+
     variables:
     - group: 'AzDevOpsArtifacts'
     - group: 'packages.microsoft.com'
@@ -220,11 +276,34 @@ stages:
   dependsOn:
     - PublishPackages
     - ChangesToMaster
+  variables:
+    # adds newPwshOrgName (exists in new and old org)
+    - group: PowerShellRelease
   jobs:
-  - deployment: ReleaseSnap
-    displayName: Release Snap
-    pool: server
-    environment: PSReleaseSnapRelease
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Start the release build
+      jobName: SnapStart
+      instructions: |
+        Start the snap pipeline at: https://dev.azure.com/$(newPwshOrgName)/PowerShell/_build?definitionId=49&_a=summary
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Approve the release
+      jobName: SnapEnd
+      instructions: |
+        Once the build is finished, approve the release of all channels.
+
+- stage: ReleaseToMU
+  displayName: Release to MU
+  dependsOn:
+    - PublishPackages
+    - ChangesToMaster
+  jobs:
+  - template: templates/release/approvalJob.yml
+    parameters:
+      displayName: Release to MU
+      instructions: |
+        Notify the PM team to start the process of releasing to MU.
 
 - stage: UpdateDotnetDocker
   dependsOn: GitHubManualTasks
@@ -257,13 +336,22 @@ stages:
   dependsOn: GitHubManualTasks
   displayName: Upload BuildInfoJson
   jobs:
-  - job: UploadJson
+  - deployment: UploadJson
+    displayName: Upload BuildInfoJson
+
     pool:
-      vmImage: windows-latest
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
     variables:
     - group: 'Azure Blob variable group'
-    steps:
-    - template: templates/release-BuildJson.yml
+    environment: PSReleaseBuildInfoJson
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - template: templates/release-BuildJson.yml
 
 - stage: ReleaseVPack
   dependsOn: GitHubManualTasks

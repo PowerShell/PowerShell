@@ -9,7 +9,7 @@ namespace System.Management.Automation
     /// Class HelpFileHelpInfo keeps track of help information to be returned by
     /// command help provider.
     /// </summary>
-    internal class HelpFileHelpInfo : HelpInfo
+    internal sealed class HelpFileHelpInfo : HelpInfo
     {
         /// <summary>
         /// Constructor for HelpFileHelpInfo.

@@ -275,13 +275,13 @@ namespace Microsoft.PowerShell
             /// The absolute position of the mouse, or the amount of motion since the last mouse event was generated, depending on the value of the dwFlags member.
             /// Absolute data is specified as the x coordinate of the mouse; relative data is specified as the number of pixels moved.
             /// </summary>
-            internal Int32 X;
+            internal int X;
 
             /// <summary>
             /// The absolute position of the mouse, or the amount of motion since the last mouse event was generated, depending on the value of the dwFlags member.
             /// Absolute data is specified as the y coordinate of the mouse; relative data is specified as the number of pixels moved.
             /// </summary>
-            internal Int32 Y;
+            internal int Y;
 
             /// <summary>
             /// If dwFlags contains MOUSEEVENTF_WHEEL, then mouseData specifies the amount of wheel movement. A positive value indicates that the wheel was rotated forward, away from the user;
@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell
         /// <returns>True if it was successful.</returns>
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
+        internal static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
         internal static void SetConsoleMode(ProcessWindowStyle style)
         {
@@ -1732,10 +1732,7 @@ namespace Microsoft.PowerShell
                 if (origin.X + (contentsRegion.Right - contentsRegion.Left) + 1 < bufferInfo.BufferSize.X &&
                     ShouldCheck(contentsRegion.Right, contents, contentsRegion))
                 {
-                    if (cellArray == null)
-                    {
-                        cellArray = new BufferCell[cellArrayRegion.Bottom + 1, 2];
-                    }
+                    cellArray ??= new BufferCell[cellArrayRegion.Bottom + 1, 2];
 
                     checkOrigin = new Coordinates(origin.X +
                         (contentsRegion.Right - contentsRegion.Left), origin.Y);
@@ -2270,14 +2267,13 @@ namespace Microsoft.PowerShell
             c.X = (short)origin.X;
             c.Y = (short)origin.Y;
 
-            DWORD unused = 0;
             bool result =
                 NativeMethods.FillConsoleOutputCharacter(
                     consoleHandle.DangerousGetHandle(),
                     character,
                     (DWORD)numberToWrite,
                     c,
-                    out unused);
+                    out _);
             if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
@@ -2324,14 +2320,13 @@ namespace Microsoft.PowerShell
             c.X = (short)origin.X;
             c.Y = (short)origin.Y;
 
-            DWORD unused = 0;
             bool result =
                 NativeMethods.FillConsoleOutputAttribute(
                     consoleHandle.DangerousGetHandle(),
                     attribute,
                     (DWORD)numberToWrite,
                     c,
-                    out unused);
+                    out _);
 
             if (!result)
             {
@@ -2494,6 +2489,8 @@ namespace Microsoft.PowerShell
             return consoleTitle.ToString();
         }
 
+        private static bool s_dontsetConsoleWindowTitle;
+
         /// <summary>
         /// Wraps Win32 SetConsoleTitle.
         /// </summary>
@@ -2505,11 +2502,26 @@ namespace Microsoft.PowerShell
         /// </exception>
         internal static void SetConsoleWindowTitle(string consoleTitle)
         {
+            if (s_dontsetConsoleWindowTitle)
+            {
+                return;
+            }
+
             bool result = NativeMethods.SetConsoleTitle(consoleTitle);
 
             if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
+
+                // ERROR_GEN_FAILURE is returned if this api can't be used with the terminal
+                if (err == 0x1f)
+                {
+                    tracer.WriteLine("Call to SetConsoleTitle failed: {0}", err);
+                    s_dontsetConsoleWindowTitle = true;
+
+                    // We ignore this specific error as the console can still continue to operate
+                    return;
+                }
 
                 HostException e = CreateHostException(err, "SetConsoleWindowTitle",
                     ErrorCategory.ResourceUnavailable, ConsoleControlStrings.SetConsoleWindowTitleExceptionTemplate);
@@ -3175,7 +3187,7 @@ namespace Microsoft.PowerShell
             );
 
             [DllImport(PinvokeDllNames.SendInputDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-            internal static extern UInt32 SendInput(UInt32 inputNumbers, INPUT[] inputs, Int32 sizeOfInput);
+            internal static extern UInt32 SendInput(UInt32 inputNumbers, INPUT[] inputs, int sizeOfInput);
 
             // There is no GetCurrentConsoleFontEx on Core
             [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]

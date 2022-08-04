@@ -13,7 +13,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// Executes methods on the client.
     /// </summary>
-    internal class ClientMethodExecutor
+    internal sealed class ClientMethodExecutor
     {
         /// <summary>
         /// Transport manager.
@@ -159,10 +159,7 @@ namespace System.Management.Automation.Remoting
                 {
                     try
                     {
-                        if (_clientHost.UI != null)
-                        {
-                            _clientHost.UI.WriteErrorLine(errorRecord.ToString());
-                        }
+                        _clientHost.UI?.WriteErrorLine(errorRecord.ToString());
                     }
                     catch (Exception)
                     {
