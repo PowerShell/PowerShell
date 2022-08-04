@@ -2778,6 +2778,9 @@ function New-NugetContentPackage
         New-StagingFolder -StagingPath $contentFolder -PackageSourcePath $PackageSourcePath
     }
 
+    Find-Dotnet
+    Start-NativeExecution -sb { dotnet --info }
+
     $projectFolder = Join-Path $PSScriptRoot 'projects/nuget'
 
     $arguments = @('pack')
