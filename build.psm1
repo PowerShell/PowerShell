@@ -1873,7 +1873,7 @@ function Install-Dotnet {
             $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
 
             if ($Version) {
-                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version, '-Quality', $Quality)
+                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version)
             }
             elseif ($Channel) {
                 $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Channel', $Channel, '-Quality', $Quality)
