@@ -862,10 +862,7 @@ function New-PSOptions {
     Write-Verbose "Using framework '$Framework'"
 
     if (-not $Runtime) {
-        $Info = dotnet --info
-        Write-Verbose "dotnet --info:`n${Info}"
-
-        $Platform, $Architecture = $info |
+        $Platform, $Architecture = dotnet --info |
             Select-String '^\s*OS Platform:\s+(\w+)$', '^\s*Architecture:\s+(\w+)$' |
             Select-Object -First 2 |
             ForEach-Object { $_.Matches.Groups[1].Value }
