@@ -80,20 +80,14 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
             }
         }
 
-        function TestFunc2([switch]$p) {
-            ## The results from the sub-expression and IF statement need to be preserved and
-            ## flushed to the outer pipeline.
-            if ($p) {
-                $("1";return "2")
-            } else {
-                if ($true) { "one"; return "two" }
-            }
+        function TestFunc2 {
+            ## The results from the sub-expression need to be preserved and flushed to the outer pipeline.
+            $("1";return "2")
         }
 
         TestFunc1 | Should -Be $null
         TestFunc1 -p | Should -Be $null
 
-        TestFunc2 | Should -Be @("one", "two")
-        TestFunc2 -p | Should -Be @("1", "2")
+        TestFunc2 | Should -Be @("1", "2")
     }
 }
