@@ -1840,13 +1840,12 @@ function Install-Dotnet {
         $installScript = "dotnet-install.ps1"
         Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
         if (-not $environment.IsCoreCLR) {
-            $installArgs = @{
-                Quality = $Quality
-            }
+            $installArgs = @{}
 
             if ($Version) {
                 $installArgs += @{ Version = $Version }
             } elseif ($Channel) {
+                $installArgs += @{ Quality = $Quality }
                 $installArgs += @{ Channel = $Channel }
             }
 
@@ -1874,7 +1873,7 @@ function Install-Dotnet {
             $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
 
             if ($Version) {
-                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version, '-Quality', $Quality)
+                $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Version', $Version)
             }
             elseif ($Channel) {
                 $psArgs = @('-NoLogo', '-NoProfile', '-File', $fullDotnetInstallPath, '-Channel', $Channel, '-Quality', $Quality)
@@ -2375,14 +2374,14 @@ function script:Write-Log
     )
     if ($isError)
     {
-        Write-Host -Foreground Red $message
+        Write-Host -Foreground Red "ERROR: $message"
+        #reset colors for older package to at return to default after error message on a compilation error
+        [console]::ResetColor()
     }
     else
     {
-        Write-Host -Foreground Green $message
+        Write-Verbose -Verbose $message
     }
-    #reset colors for older package to at return to default after error message on a compilation error
-    [console]::ResetColor()
 }
 function script:precheck([string]$command, [string]$missedMessage) {
     $c = Get-Command $command -ErrorAction Ignore
