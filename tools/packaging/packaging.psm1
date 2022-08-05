@@ -2778,7 +2778,7 @@ function New-NugetContentPackage
         New-StagingFolder -StagingPath $contentFolder -PackageSourcePath $PackageSourcePath
     }
 
-    Start-PSBootstrap
+    Start-PSBootstrap | Out-String | Write-Verbose -Verbose
     Write-Verbose -Verbose "Starting dotnet --info"
     dotnet --info | Out-String | Write-Verbose -Verbose
     Write-Verbose -Verbose "Ending dotnet --info"
