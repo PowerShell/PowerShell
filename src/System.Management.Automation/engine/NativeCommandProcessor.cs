@@ -337,6 +337,10 @@ namespace System.Management.Automation
             }
         }
 
+        internal NativeCommandProcessor DownStreamNativeCommand { get; set; }
+
+        internal bool UpstreamIsNativeCommand { get; set; }
+
         #endregion ctor/native command properties
 
         #region parameter binder
@@ -351,6 +355,10 @@ namespace System.Management.Automation
         /// Parameter binder used by this command processor.
         /// </summary>
         private NativeCommandParameterBinderController _nativeParameterBinderController;
+
+        internal BytePipe CreateBytePipe() => new ProcessBytePipe(_nativeProcess);
+
+        internal BytePipe StdOutDestination { get; set; }
 
         /// <summary>
         /// Gets a new instance of a ParameterBinderController using a NativeCommandParameterBinder.
@@ -403,7 +411,14 @@ namespace System.Management.Automation
         /// </summary>
         internal override void Prepare(IDictionary psDefaultParameterValues)
         {
+            if (_isPreparedCalled)
+            {
+                return;
+            }
+
             _isPreparedCalled = true;
+
+            DownStreamNativeCommand?.Prepare(psDefaultParameterValues);
 
             // Check if the application is minishell
             _isMiniShell = IsMiniShell();
@@ -434,9 +449,14 @@ namespace System.Management.Automation
         {
             try
             {
-                while (Read())
+                // If upstream is a native command it'll be writing directly to our stdin stream
+                // so we can skip reading here.
+                if (!UpstreamIsNativeCommand)
                 {
-                    _inputWriter.Add(Command.CurrentPipelineObject);
+                    while (Read())
+                    {
+                        _inputWriter.Add(Command.CurrentPipelineObject);
+                    }
                 }
 
                 ConsumeAvailableNativeProcessOutput(blocking: false);
@@ -682,7 +702,7 @@ namespace System.Management.Automation
 
                         lock (_sync)
                         {
-                            if (!_stopped)
+                            if (!_stopped && !UpstreamIsNativeCommand)
                             {
                                 _inputWriter.Start(_nativeProcess, inputFormat);
                             }
@@ -731,6 +751,8 @@ namespace System.Management.Automation
             }
         }
 
+        private AsyncByteStreamDrainer _stdOutByteDrainer;
+
         private void InitOutputQueue()
         {
             // if output is redirected, start reading output of process in queue.
@@ -740,9 +762,23 @@ namespace System.Management.Automation
                 {
                     if (!_stopped)
                     {
+                        if (CommandRuntime.ErrorMergeTo is MshCommandRuntime.MergeDataStream.Output)
+                        {
+                            StdOutDestination = null;
+                            if (DownStreamNativeCommand is not null)
+                            {
+                                DownStreamNativeCommand.UpstreamIsNativeCommand = false;
+                                DownStreamNativeCommand = null;
+                            }
+                        }
+
                         _nativeProcessOutputQueue = new BlockingCollection<ProcessOutputObject>();
                         // we don't assign the handler to anything, because it's used only for objects marshaling
-                        new ProcessOutputHandler(_nativeProcess, _nativeProcessOutputQueue);
+                        _ = new ProcessOutputHandler(
+                            _nativeProcess,
+                            _nativeProcessOutputQueue,
+                            StdOutDestination ?? DownStreamNativeCommand?.CreateBytePipe(),
+                            out _stdOutByteDrainer);
                     }
                 }
             }
@@ -752,6 +788,12 @@ namespace System.Management.Automation
         {
             if (blocking)
             {
+                if (_stdOutByteDrainer is not null)
+                {
+                    _stdOutByteDrainer.EOF.GetAwaiter().GetResult();
+                    return null;
+                }
+
                 // If adding was completed and collection is empty (IsCompleted == true)
                 // there is no need to do a blocking Take(), we should just return.
                 if (!_nativeProcessOutputQueue.IsCompleted)
@@ -775,6 +817,11 @@ namespace System.Management.Automation
             }
             else
             {
+                if (_stdOutByteDrainer is not null)
+                {
+                    return null;
+                }
+
                 ProcessOutputObject record = null;
                 _nativeProcessOutputQueue.TryTake(out record);
                 return record;
@@ -813,7 +860,10 @@ namespace System.Management.Automation
                 if (!_isRunningInBackground)
                 {
                     // Wait for input writer to finish.
-                    _inputWriter.Done();
+                    if (!UpstreamIsNativeCommand)
+                    {
+                        _inputWriter.Done();
+                    }
 
                     // read all the available output in the blocking way
                     ConsumeAvailableNativeProcessOutput(blocking: true);
@@ -1149,8 +1199,12 @@ namespace System.Management.Automation
                 if (!_runStandAlone)
                 {
                     // Stop input writer
-                    _inputWriter.Stop();
+                    if (!UpstreamIsNativeCommand)
+                    {
+                        _inputWriter.Stop();
+                    }
 
+                    _stdOutByteDrainer?.Dispose();
                     KillProcess(_nativeProcess);
                 }
             }
@@ -1438,7 +1492,7 @@ namespace System.Management.Automation
         /// <param name="redirectInput"></param>
         private void CalculateIORedirection(bool isWindowsApplication, out bool redirectOutput, out bool redirectError, out bool redirectInput)
         {
-            redirectInput = this.Command.MyInvocation.ExpectingInput;
+            redirectInput = this.Command.MyInvocation.ExpectingInput || UpstreamIsNativeCommand;
             redirectOutput = true;
             redirectError = true;
 
@@ -1461,7 +1515,7 @@ namespace System.Management.Automation
                 //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
                 // we should not count it as a redirection.
-                if (IsDownstreamOutDefault(this.commandRuntime.OutputPipe))
+                if (StdOutDestination is null && IsDownstreamOutDefault(this.commandRuntime.OutputPipe))
                 {
                     redirectOutput = false;
                 }
@@ -1714,7 +1768,18 @@ namespace System.Management.Automation
         private bool _isXmlCliError;
         private readonly string _processFileName;
 
+        private readonly AsyncByteStreamDrainer _stdOutDrainer;
+
         public ProcessOutputHandler(Process process, BlockingCollection<ProcessOutputObject> queue)
+            : this(process, queue, null, out _)
+        {
+        }
+
+        public ProcessOutputHandler(
+            Process process,
+            BlockingCollection<ProcessOutputObject> queue,
+            BytePipe stdOutDestination,
+            out AsyncByteStreamDrainer stdOutDrainer)
         {
             Debug.Assert(process.StartInfo.RedirectStandardOutput || process.StartInfo.RedirectStandardError, "Caller should redirect at least one stream");
             _refCount = 0;
@@ -1727,22 +1792,34 @@ namespace System.Management.Automation
 
             if (process.StartInfo.RedirectStandardError) { _refCount++; }
 
+            stdOutDrainer = null;
+
             // once we have _refCount, we can start processing
             if (process.StartInfo.RedirectStandardOutput)
             {
-                _isFirstOutput = true;
-                _isXmlCliOutput = false;
-                process.OutputDataReceived += OutputHandler;
-                process.BeginOutputReadLine();
+                if (stdOutDestination is null)
+                {
+                    _isFirstOutput = true;
+                    _isXmlCliOutput = false;
+                    process.OutputDataReceived += OutputHandler;
+                    process.BeginOutputReadLine();
+                }
+                else
+                {
+                    stdOutDrainer = _stdOutDrainer = stdOutDestination.Bind(new StdOutStreamSource(process));
+                    stdOutDrainer.BeginReadChucks();
+                }
             }
 
-            if (process.StartInfo.RedirectStandardError)
+            if (!process.StartInfo.RedirectStandardError)
             {
-                _isFirstError = true;
-                _isXmlCliError = false;
-                process.ErrorDataReceived += ErrorHandler;
-                process.BeginErrorReadLine();
+                return;
             }
+
+            _isFirstError = true;
+            _isXmlCliError = false;
+            process.ErrorDataReceived += ErrorHandler;
+            process.BeginErrorReadLine();
         }
 
         private void decrementRefCount()
@@ -1981,14 +2058,31 @@ namespace System.Management.Automation
                 return;
             }
 
-            if (_inputFormat == NativeCommandIOFormat.Text)
-            {
-                AddTextInput(input);
-            }
-            else // Xml
+            if (_inputFormat is not NativeCommandIOFormat.Text)
             {
                 AddXmlInput(input);
+                return;
             }
+
+            object baseObjInput = input;
+            if (input is PSObject pso)
+            {
+                baseObjInput = pso.BaseObject;
+            }
+
+            if (baseObjInput is byte[] bytes)
+            {
+                _streamWriter.BaseStream.Write(bytes, 0, bytes.Length);
+                return;
+            }
+
+            if (baseObjInput is byte b)
+            {
+                _streamWriter.BaseStream.WriteByte(b);
+                return;
+            }
+
+            AddTextInput(input);
         }
 
         private void AddTextInput(object input)

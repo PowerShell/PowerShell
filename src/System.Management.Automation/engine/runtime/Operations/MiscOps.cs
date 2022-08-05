@@ -30,7 +30,8 @@ namespace System.Management.Automation
                                                        CommandParameterInternal[] commandElements,
                                                        CommandBaseAst commandBaseAst,
                                                        CommandRedirection[] redirections,
-                                                       ExecutionContext context)
+                                                       ExecutionContext context,
+                                                       bool lastCommandWasNative)
         {
             var commandAst = commandBaseAst as CommandAst;
             var invocationToken = commandAst != null ? commandAst.InvocationOperator : TokenKind.Unknown;
@@ -160,7 +161,13 @@ namespace System.Management.Automation
             commandProcessor.UseLocalScope = !dotSource &&
                                              (cmd is ScriptCommand || cmd is PSScriptCmdlet);
 
-            bool isNativeCommand = commandProcessor is NativeCommandProcessor;
+            bool isNativeCommand = false;
+            if (commandProcessor is NativeCommandProcessor nativeCommandProcessor)
+            {
+                isNativeCommand = true;
+                nativeCommandProcessor.UpstreamIsNativeCommand = lastCommandWasNative;
+            }
+
             for (int i = commandIndex + 1; i < commandElements.Length; ++i)
             {
                 var cpi = commandElements[i];
@@ -207,9 +214,20 @@ namespace System.Management.Automation
             bool redirectedInformation = false;
             if (redirections != null)
             {
+                foreach (var redirection in redirections) {
+                    if (redirection is MergingRedirection)
+                    {
+                        redirection.Bind(pipe, commandProcessor, context);
+                    }
+                }
+
                 foreach (var redirection in redirections)
                 {
-                    redirection.Bind(pipe, commandProcessor, context);
+                    if (redirection is not MergingRedirection)
+                    {
+                        redirection.Bind(pipe, commandProcessor, context);
+                    }
+
                     switch (redirection.FromStream)
                     {
                         case RedirectionStream.Error:
@@ -443,12 +461,28 @@ namespace System.Management.Automation
 
                 CommandProcessorBase commandProcessor = null;
                 CommandRedirection[] commandRedirection = null;
+                bool lastCommandWasNative = false;
+                NativeCommandProcessor lastNativeCommand = null;
 
                 for (int i = 0; i < pipeElements.Length; i++)
                 {
                     commandRedirection = commandRedirections?[i];
                     commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
-                                                  commandRedirection, context);
+                                                  commandRedirection, context, lastCommandWasNative);
+
+                    if (commandProcessor is NativeCommandProcessor nativeCommand)
+                    {
+                        if (lastCommandWasNative)
+                        {
+                            lastNativeCommand.DownStreamNativeCommand = nativeCommand;
+                        }
+
+                        lastCommandWasNative = true;
+                        lastNativeCommand = nativeCommand;
+                        continue;
+                    }
+
+                    lastCommandWasNative = false;
                 }
 
                 var cmdletInfo = commandProcessor?.CommandInfo as CmdletInfo;
@@ -723,7 +757,7 @@ namespace System.Management.Automation
 
             foreach (var commandTuple in commandTuples)
             {
-                var commandProcessor = AddCommand(pipelineProcessor, commandTuple.Item2.ToArray(), commandTuple.Item1, commandTuple.Item3.ToArray(), context);
+                var commandProcessor = AddCommand(pipelineProcessor, commandTuple.Item2.ToArray(), commandTuple.Item1, commandTuple.Item3.ToArray(), context, false);
                 commandProcessor.Command.CommandOriginInternal = commandOrigin;
                 commandProcessor.CommandScope.ScopeOrigin = commandOrigin;
                 commandProcessor.Command.MyInvocation.CommandOrigin = commandOrigin;
@@ -1047,6 +1081,15 @@ namespace System.Management.Automation
         //    dir > out
         internal override void Bind(PipelineProcessor pipelineProcessor, CommandProcessorBase commandProcessor, ExecutionContext context)
         {
+            if (commandProcessor is NativeCommandProcessor nativeCommand
+                && nativeCommand.CommandRuntime.ErrorMergeTo is not MshCommandRuntime.MergeDataStream.Output
+                && FromStream is RedirectionStream.Output
+                && !string.IsNullOrWhiteSpace(File))
+            {
+                nativeCommand.StdOutDestination = FileBytePipe.Create(File, Appending);
+                return;
+            }
+
             Pipe pipe = GetRedirectionPipe(context, pipelineProcessor);
 
             switch (FromStream)
@@ -3583,7 +3626,7 @@ namespace System.Management.Automation
             }
             catch (PSSecurityException)
             {
-                // ReportContent() will throw PSSecurityException if AMSI detects malware, which 
+                // ReportContent() will throw PSSecurityException if AMSI detects malware, which
                 // must be propagated.
                 throw;
             }
