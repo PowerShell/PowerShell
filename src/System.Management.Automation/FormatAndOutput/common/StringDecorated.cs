@@ -101,8 +101,14 @@ namespace System.Management.Automation.Internal
             }
         }
 
+        // graphics/color mode ESC[1;2;...m
+        private const string GraphicsRegex = @"(\x1b\[\d+(;\d+)*m)";
+
+        // CSI escape sequences
+        private const string CsiRegex = @"(\x1b\[\?\d+[hl])";
+
         // replace regex with .NET 6 API once available
-        internal static readonly Regex AnsiRegex = new Regex(@"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])", RegexOptions.Compiled);
+        internal static readonly Regex AnsiRegex = new Regex($"{GraphicsRegex}|{CsiRegex}", RegexOptions.Compiled);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ValueStringDecorated"/> struct.
