@@ -3988,6 +3988,63 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Utilitily class for ReadDictionary(), supporting ordered or non-ordered Dictionaty methods.
+        /// </summary>
+        private class PSDictionary
+        {
+            private IDictionary dict;
+            private readonly bool _isOrdered;
+            private int _keyClashFoundIteration = 0;
+
+            public PSDictionary(bool isOrdered) {
+                _isOrdered = isOrdered;
+
+                // By default use a non cases-sensitive comparer
+                if (_isOrdered) {
+                    dict = new OrderedDictionary(StringComparer.CurrentCultureIgnoreCase);
+                } else {
+                    dict = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
+                }
+            }
+
+            public object DictionaryObject { get { return dict; } }
+
+            public void Add(object key, object value) {
+                // On the first collision, copy the hash table to one that uses the `key` object's default comparer.
+                if (_keyClashFoundIteration == 0 && dict.Contains(key))
+                {
+                    _keyClashFoundIteration++;
+                    IDictionary newDict = _isOrdered ? new OrderedDictionary(dict.Count) : new Hashtable(dict.Count);
+
+                    foreach (DictionaryEntry entry in dict) {
+                        newDict.Add(entry.Key, entry.Value);
+                    }
+
+                    dict = newDict;
+                }
+
+                // win8: 389060. If there are still collisions even with case-sensitive default comparer,
+                // use an IEqualityComparer that does object ref equality.
+                if (_keyClashFoundIteration == 1 && dict.Contains(key))
+                {
+                    _keyClashFoundIteration++;
+                    IEqualityComparer equalityComparer = new ReferenceEqualityComparer();
+                    IDictionary newDict = _isOrdered ?
+                                            new OrderedDictionary(dict.Count, equalityComparer) :
+                                            new Hashtable(dict.Count, equalityComparer);
+
+                    foreach (DictionaryEntry entry in dict) {
+                        newDict.Add(entry.Key, entry.Value);
+                    }
+
+                    dict = newDict;
+                }
+
+                dict.Add(key, value);
+            }
+        }
+
+        /// <summary>
         /// Deserialize Dictionary.
         /// </summary>
         /// <returns></returns>
@@ -3998,14 +4055,13 @@ namespace System.Management.Automation
             // We assume the hash table is a PowerShell hash table and hence uses
             // a case insensitive string comparer.  If we discover a key collision,
             // we'll revert back to the default comparer.
-            Hashtable table = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
-            OrderedDictionary orderedDictionary = new OrderedDictionary(StringComparer.CurrentCultureIgnoreCase);
-
-            // Find whether original directory was ordered or not
+            
+            // Find whether original directory was ordered
             bool isOrdered = InternalTypeNames.Count > 0 &&
-                (Deserializer.MaskDeserializationPrefix(InternalTypeNames[0]) == orderedDictionary.GetType().FullName);
+                (Deserializer.MaskDeserializationPrefix(InternalTypeNames[0]) == typeof(OrderedDictionary).FullName);
 
-            int keyClashFoundIteration = 0;
+            PSDictionary dictionary = new PSDictionary(isOrdered);
+
             if (ReadStartElementAndHandleEmpty(SerializationStrings.DictionaryTag))
             {
                 while (_reader.NodeType == XmlNodeType.Element)
@@ -4044,78 +4100,10 @@ namespace System.Management.Automation
 
                     object value = ReadOneObject();
 
-                    if (isOrdered)
-                    {
-                        // On the first collision, copy the hash table to one that uses the default comparer.
-                        if (keyClashFoundIteration == 0 && orderedDictionary.Contains(key))
-                        {
-                            keyClashFoundIteration++;
-                            OrderedDictionary newOrderedTable = new OrderedDictionary(orderedDictionary.Count);
-                            foreach (DictionaryEntry entry in orderedDictionary)
-                            {
-                                orderedDictionary.Add(entry.Key, entry.Value);
-                            }
-
-                            orderedDictionary = newOrderedTable;
-                        }
-
-                        // win8: 389060. If there are still collisions even with case-sensitive default comparer,
-                        // use an IEqualityComparer that does object ref equality.
-                        if (keyClashFoundIteration == 1 && orderedDictionary.Contains(key))
-                        {
-                            keyClashFoundIteration++;
-                            IEqualityComparer equalityComparer = new ReferenceEqualityComparer();
-                            OrderedDictionary newOrderedTable = new OrderedDictionary(orderedDictionary.Count, equalityComparer);
-                            foreach (DictionaryEntry entry in orderedDictionary)
-                            {
-                                newOrderedTable.Add(entry.Key, entry.Value);
-                            }
-
-                            orderedDictionary = newOrderedTable;
-                        }
-                    }
-                    else    // !isOrdered
-                    {
-                        // On the first collision, copy the hash table to one that uses the default comparer.
-                        if (keyClashFoundIteration == 0 && table.ContainsKey(key))
-                        {
-                            keyClashFoundIteration++;
-                            Hashtable newHashTable = new Hashtable(table.Count);
-                            foreach (DictionaryEntry entry in table)
-                            {
-                                newHashTable.Add(entry.Key, entry.Value);
-                            }
-
-                            table = newHashTable;
-                        }
-
-                        // win8: 389060. If there are still collisions even with case-sensitive default comparer,
-                        // use an IEqualityComparer that does object ref equality.
-                        if (keyClashFoundIteration == 1 && table.ContainsKey(key))
-                        {
-                            keyClashFoundIteration++;
-                            IEqualityComparer equalityComparer = new ReferenceEqualityComparer();
-                            Hashtable newHashTable = new Hashtable(table.Count, equalityComparer);
-                            foreach (DictionaryEntry entry in table)
-                            {
-                                newHashTable.Add(entry.Key, entry.Value);
-                            }
-
-                            table = newHashTable;
-                        }
-                    }
-
                     try
                     {
                         // Add entry to hashtable
-                        if (isOrdered)
-                        {
-                            orderedDictionary.Add(key, value);
-                        }
-                        else
-                        {
-                            table.Add(key, value);
-                        }
+                        dictionary.Add(key, value);
                     }
                     catch (ArgumentException e)
                     {
@@ -4128,14 +4116,7 @@ namespace System.Management.Automation
                 ReadEndElement();
             }
 
-            if (isOrdered)
-            {
-                return orderedDictionary;
-            }
-            else
-            {
-                return table;
-            }
+            return dictionary.DictionaryObject;
         }
 
         #endregion known containers
