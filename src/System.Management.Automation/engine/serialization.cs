@@ -3999,7 +3999,7 @@ namespace System.Management.Automation
             public PSDictionary(bool isOrdered) {
                 _isOrdered = isOrdered;
 
-                // By default use a non cases-sensitive comparer
+                // By default use a non case-sensitive comparer
                 if (_isOrdered) {
                     dict = new OrderedDictionary(StringComparer.CurrentCultureIgnoreCase);
                 } else {
