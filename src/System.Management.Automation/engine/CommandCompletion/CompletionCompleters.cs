@@ -5988,19 +5988,49 @@ namespace System.Management.Automation
             }
         }
 
-        internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic, HashSet<string> excludedMembers = null)
+        internal static void CompleteMemberByInferredType(
+            TypeInferenceContext context,
+            IEnumerable<PSTypeName> inferredTypes,
+            List<CompletionResult> results,
+            string memberName,
+            Func<object, bool> filter,
+            bool isStatic,
+            HashSet<string> excludedMembers = null,
+            bool ignoreTypesWithoutDefaultConstructor = false)
         {
             bool extensionMethodsAdded = false;
             HashSet<string> typeNameUsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             WildcardPattern memberNamePattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
             foreach (var psTypeName in inferredTypes)
             {
-                if (typeNameUsed.Contains(psTypeName.Name))
+                if (!typeNameUsed.Add(psTypeName.Name)
+                    || (ignoreTypesWithoutDefaultConstructor && psTypeName.Type is not null && psTypeName.Type.GetConstructor(Type.EmptyTypes) is null))
                 {
                     continue;
                 }
 
-                typeNameUsed.Add(psTypeName.Name);
+                if (ignoreTypesWithoutDefaultConstructor && psTypeName.TypeDefinitionAst is not null)
+                {
+                    bool foundConstructor = false;
+                    bool foundDefaultConstructor = false;
+                    foreach (var member in psTypeName.TypeDefinitionAst.Members)
+                    {
+                        if (member is FunctionMemberAst methodDefinition && methodDefinition.IsConstructor)
+                        {
+                            foundConstructor = true;
+                            if (methodDefinition.Parameters.Count == 0)
+                            {
+                                foundDefaultConstructor = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (foundConstructor && !foundDefaultConstructor)
+                    {
+                        continue;
+                    }
+                }
+
                 var members = context.GetMembersByInferredType(psTypeName, isStatic, filter);
                 foreach (var member in members)
                 {
@@ -6141,6 +6171,12 @@ namespace System.Management.Automation
             if (psPropertyInfo != null)
             {
                 return psPropertyInfo.IsSettable;
+            }
+
+            if (member is PropertyMemberAst)
+            {
+                // Properties in PowerShell classes are always writeable
+                return true;
             }
 
             return false;
@@ -7014,135 +7050,204 @@ namespace System.Management.Automation
             return results;
         }
 
+        private static PSTypeName GetNestedHashtableKeyType(TypeInferenceContext typeContext, PSTypeName parentType, IList<string> nestedKeys)
+        {
+            var currentType = parentType;
+            // The nestedKeys list should have the outer most key as the last element, and the inner most key as the first element
+            // If we fail to resolve the type of any key we return null
+            for (int i = nestedKeys.Count - 1; i >= 0; i--)
+            {
+                if (currentType is null)
+                {
+                    return null;
+                }
+
+                var typeMembers = typeContext.GetMembersByInferredType(currentType, false, null);
+                currentType = null;
+                foreach (var member in typeMembers)
+                {
+                    if (member is PropertyInfo propertyInfo)
+                    {
+                        if (propertyInfo.Name.Equals(nestedKeys[i], StringComparison.OrdinalIgnoreCase))
+                        {
+                            currentType = new PSTypeName(propertyInfo.PropertyType);
+                            break;
+                        }
+                    }
+                    else if (member is PropertyMemberAst memberAst && memberAst.Name.Equals(nestedKeys[i], StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (memberAst.PropertyType is null)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            currentType = new PSTypeName(memberAst.PropertyType.TypeName);
+                        }
+                        break;
+                    }
+                }
+            }
+
+            return currentType;
+        }
+
         internal static List<CompletionResult> CompleteHashtableKey(CompletionContext completionContext, HashtableAst hashtableAst)
         {
+            Ast previousAst = hashtableAst;
+            Ast parentAst = hashtableAst.Parent;
+            string parameterName = null;
+            var nestedHashtableKeys = new List<string>();
+
+            // This loop determines if it's a nested hashtable and what the outermost hashtable is used for (Dynamic keyword, command argument, etc.)
+            while (parentAst is not null)
+            {
+                if (parentAst is HashtableAst parentTable)
+                {
+                    foreach (var pair in parentTable.KeyValuePairs)
+                    {
+                        if (pair.Item2 == previousAst)
+                        {
+                            // Try to get the value of the hashtable key in the nested hashtable.
+                            // If we fail to get the value then return early because we can't generate any useful completions
+                            object value;
+                            if (SafeExprEvaluator.TrySafeEval(pair.Item1, completionContext.ExecutionContext, out value))
+                            {
+                                var stringValue = value as string;
+                                if (stringValue is null)
+                                {
+                                    return null;
+                                }
+                                nestedHashtableKeys.Add(stringValue);
+                                break;
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        }
+                    }
+                }
+
+                if (parentAst is DynamicKeywordStatementAst dynamicKeyword)
+                {
+                    return CompleteHashtableKeyForDynamicKeyword(completionContext, dynamicKeyword, hashtableAst);
+                }
+
+                if (parentAst is CommandParameterAst cmdParam && cmdParam.Parent is CommandAst)
+                {
+                    parameterName = cmdParam.ParameterName;
+                    parentAst = cmdParam.Parent;
+                    break;
+                }
+
+                if (parentAst is AssignmentStatementAst assignment)
+                {
+                    if (assignment.Left is MemberExpressionAst or ConvertExpressionAst)
+                    {
+                        parentAst = assignment.Left;
+                    }
+                    break;
+                }
+
+                if (parentAst is CommandAst or ConvertExpressionAst)
+                {
+                    break;
+                }
+
+                previousAst = parentAst;
+                parentAst = parentAst.Parent;
+            }
+
+            if (parentAst is null)
+            {
+                return null;
+            }
+
+            bool hashtableIsNested = nestedHashtableKeys.Count > 0;
             int cursorOffset = completionContext.CursorPosition.Offset;
             string wordToComplete = completionContext.WordToComplete;
             var excludedKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            // Filters out keys that have already been defined in the hashtable, except the one the cursor is at
             foreach (var keyPair in hashtableAst.KeyValuePairs)
             {
-                // Exclude all existing keys, except the key the cursor is currently at
                 if (!(cursorOffset >= keyPair.Item1.Extent.StartOffset && cursorOffset <= keyPair.Item1.Extent.EndOffset))
                 {
                     excludedKeys.Add(keyPair.Item1.Extent.Text);
                 }
             }
 
-            ConvertExpressionAst convertExpression = hashtableAst.Parent as ConvertExpressionAst;
-            if (convertExpression is null
-                && hashtableAst.Parent is CommandExpressionAst
-                && hashtableAst.Parent.Parent is AssignmentStatementAst assignStatement)
+            if (parentAst is MemberExpressionAst or ConvertExpressionAst)
             {
-                convertExpression = assignStatement.Left as ConvertExpressionAst;
-            }
+                IEnumerable<PSTypeName> inferredTypes;
+                if (hashtableIsNested)
+                {
+                    var nestedType = GetNestedHashtableKeyType(
+                        completionContext.TypeInferenceContext,
+                        AstTypeInference.InferTypeOf(parentAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval)[0],
+                        nestedHashtableKeys);
+                    if (nestedType is null)
+                    {
+                        return null;
+                    }
+                    inferredTypes = new PSTypeName[]{nestedType};
+                }
+                else
+                {
+                    inferredTypes = AstTypeInference.InferTypeOf(parentAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+                }
 
-            if (convertExpression is not null)
-            {
                 var result = new List<CompletionResult>();
                 CompleteMemberByInferredType(
-                    completionContext.TypeInferenceContext, AstTypeInference.InferTypeOf(convertExpression, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval),
-                    result, wordToComplete + "*", IsWriteablePropertyMember, isStatic: false, excludedKeys);
+                    completionContext.TypeInferenceContext,
+                    inferredTypes,
+                    result,
+                    wordToComplete + "*",
+                    IsWriteablePropertyMember,
+                    isStatic: false,
+                    excludedKeys,
+                    ignoreTypesWithoutDefaultConstructor: true);
                 return result;
             }
 
-            // hashtable arguments sometimes have expected keys.  Examples:
-            //   new-object System.Drawing.Point -prop @{ X=1; Y=1 }
-            //   dir | sort-object -prop @{Expression=...   ; Ascending=... }
-            // format-table -Property
-            //     Expression
-            //     FormatString
-            //     Label
-            //     Width
-            //     Alignment
-            // format-list -Property
-            //     Expression
-            //     FormatString
-            //     Label
-            // format-custom -Property
-            //     Expression
-            //     Depth
-            // format-* -GroupBy
-            //     Expression
-            //     FormatString
-            //     Label
-            //
-
-            // Find out if we are in a command argument.  Consider the following possibilities:
-            //     cmd @{}
-            //     cmd -foo @{}
-            //     cmd -foo:@{}
-            //     cmd @{},@{}
-            //     cmd -foo @{},@{}
-            //     cmd -foo:@{},@{}
-
-            var ast = hashtableAst.Parent;
-
-            // Handle completion for hashtable within DynamicKeyword statement
-            var dynamicKeywordStatementAst = ast as DynamicKeywordStatementAst;
-            if (dynamicKeywordStatementAst != null)
-            {
-                return CompleteHashtableKeyForDynamicKeyword(completionContext, dynamicKeywordStatementAst, hashtableAst);
-            }
-
-            if (ast is ArrayLiteralAst)
-            {
-                ast = ast.Parent;
-            }
-
-            if (ast is CommandParameterAst)
-            {
-                ast = ast.Parent;
-            }
-
-            var commandAst = ast as CommandAst;
-            if (commandAst != null)
+            if (parentAst is CommandAst commandAst)
             {
                 var binding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, bindingType: PseudoParameterBinder.BindingType.ArgumentCompletion);
-                if (binding == null)
+                if (binding is null)
                 {
                     return null;
                 }
 
-                string parameterName = null;
-                foreach (var boundArg in binding.BoundArguments)
+                if (parameterName is null)
                 {
-                    var astPair = boundArg.Value as AstPair;
-                    if (astPair != null)
+                    foreach (var boundArg in binding.BoundArguments)
                     {
-                        if (astPair.Argument == hashtableAst)
+                        if (boundArg.Value is AstPair pair && pair.Argument == previousAst)
                         {
                             parameterName = boundArg.Key;
-                            break;
                         }
-
-                        continue;
-                    }
-
-                    var astArrayPair = boundArg.Value as AstArrayPair;
-                    if (astArrayPair != null)
-                    {
-                        if (astArrayPair.Argument.Contains(hashtableAst))
+                        else if (boundArg.Value is AstArrayPair arrayPair && arrayPair.Argument.Contains(previousAst))
                         {
                             parameterName = boundArg.Key;
-                            break;
                         }
-
-                        continue;
                     }
                 }
 
-                if (parameterName != null)
+                if (parameterName is not null)
                 {
                     List<CompletionResult> results;
                     if (parameterName.Equals("GroupBy", StringComparison.OrdinalIgnoreCase))
                     {
-                        switch (binding.CommandName)
+                        if (!hashtableIsNested)
                         {
-                            case "Format-Table":
-                            case "Format-List":
-                            case "Format-Wide":
-                            case "Format-Custom":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label");
+                            switch (binding.CommandName)
+                            {
+                                case "Format-Table":
+                                case "Format-List":
+                                case "Format-Wide":
+                                case "Format-Custom":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label");
+                            }
                         }
 
                         return null;
@@ -7150,41 +7255,44 @@ namespace System.Management.Automation
 
                     if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
                     {
-                        switch (binding.CommandName)
+                        if (!hashtableIsNested)
                         {
-                            case "New-Object":
-                                var inferredType = AstTypeInference.InferTypeOf(commandAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
-                                results = new List<CompletionResult>();
-                                CompleteMemberByInferredType(
-                                    completionContext.TypeInferenceContext, inferredType,
-                                    results, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false, excludedKeys);
-                                return results;
-                            case "Select-Object":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Name", "Expression");
-                            case "Sort-Object":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Ascending", "Descending");
-                            case "Group-Object":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression");
-                            case "Format-Table":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label", "Width", "Alignment");
-                            case "Format-List":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label");
-                            case "Format-Wide":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString");
-                            case "Format-Custom":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Depth");
-                            case "Set-CimInstance":
-                            case "New-CimInstance":
-                                results = new List<CompletionResult>();
-                                NativeCompletionCimCommands(parameterName, binding.BoundArguments, results, commandAst, completionContext, excludedKeys, binding.CommandName);
-                                // this method adds a null CompletionResult to the list but we don't want that here.
-                                if (results.Count > 1)
-                                {
-                                    results.RemoveAt(results.Count - 1);
+                            switch (binding.CommandName)
+                            {
+                                case "New-Object":
+                                    var inferredType = AstTypeInference.InferTypeOf(commandAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+                                    results = new List<CompletionResult>();
+                                    CompleteMemberByInferredType(
+                                        completionContext.TypeInferenceContext, inferredType,
+                                        results, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false, excludedKeys);
                                     return results;
-                                }
-
-                                return null;
+                                case "Select-Object":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Name", "Expression");
+                                case "Sort-Object":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Ascending", "Descending");
+                                case "Group-Object":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression");
+                                case "Format-Table":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label", "Width", "Alignment");
+                                case "Format-List":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString", "Label");
+                                case "Format-Wide":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "FormatString");
+                                case "Format-Custom":
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "Expression", "Depth");
+                                case "Set-CimInstance":
+                                case "New-CimInstance":
+                                    results = new List<CompletionResult>();
+                                    NativeCompletionCimCommands(parameterName, binding.BoundArguments, results, commandAst, completionContext, excludedKeys, binding.CommandName);
+                                    // this method adds a null CompletionResult to the list but we don't want that here.
+                                    if (results.Count > 1)
+                                    {
+                                        results.RemoveAt(results.Count - 1);
+                                        return results;
+                                    }
+                                    return null;
+                            }
+                            return null;
                         }
                     }
 
@@ -7193,43 +7301,73 @@ namespace System.Management.Automation
                         switch (binding.CommandName)
                         {
                             case "Get-WinEvent":
-                                return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "LogName", "ProviderName", "Path", "Keywords", "ID", "Level",
+                                if (nestedHashtableKeys.Count == 1 && nestedHashtableKeys[0].Equals("SuppressHashFilter", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "LogName", "ProviderName", "Path", "Keywords", "ID", "Level",
+                                    "StartTime", "EndTime", "UserID", "Data");
+                                }
+                                else if (!hashtableIsNested)
+                                {
+                                    return GetSpecialHashTableKeyMembers(excludedKeys, wordToComplete, "LogName", "ProviderName", "Path", "Keywords", "ID", "Level",
                                     "StartTime", "EndTime", "UserID", "Data", "SuppressHashFilter");
+                                }
+                                return null;
                         }
                     }
 
                     if (parameterName.Equals("Arguments", StringComparison.OrdinalIgnoreCase))
                     {
-                        switch (binding.CommandName)
+                        if (!hashtableIsNested)
                         {
-                            case "Invoke-CimMethod":
-                                results = new List<CompletionResult>();
-                                NativeCompletionCimCommands(parameterName, binding.BoundArguments, results, commandAst, completionContext, excludedKeys, binding.CommandName);
-                                // this method adds a null CompletionResult to the list but we don't want that here.
-                                if (results.Count > 1)
-                                {
-                                    results.RemoveAt(results.Count - 1);
-                                    return results;
-                                }
-
-                                return null;
+                            switch (binding.CommandName)
+                            {
+                                case "Invoke-CimMethod":
+                                    results = new List<CompletionResult>();
+                                    NativeCompletionCimCommands(parameterName, binding.BoundArguments, results, commandAst, completionContext, excludedKeys, binding.CommandName);
+                                    // this method adds a null CompletionResult to the list but we don't want that here.
+                                    if (results.Count > 1)
+                                    {
+                                        results.RemoveAt(results.Count - 1);
+                                        return results;
+                                    }
+                                    return null;
+                            }
                         }
+                        return null;
+                    }
+
+                    PSTypeName[] inferredTypes;
+                    if (hashtableIsNested)
+                    {
+                        var nestedType = GetNestedHashtableKeyType(
+                            completionContext.TypeInferenceContext,
+                            new PSTypeName(binding.BoundParameters[parameterName].Parameter.Type),
+                            nestedHashtableKeys);
+                        if (nestedType is null)
+                        {
+                            return null;
+                        }
+                        inferredTypes = new PSTypeName[] { nestedType };
+                    }
+                    else
+                    {
+                        inferredTypes = new PSTypeName[] { new PSTypeName(binding.BoundParameters[parameterName].Parameter.Type) };
                     }
 
                     results = new List<CompletionResult>();
                     CompleteMemberByInferredType(
                         completionContext.TypeInferenceContext,
-                        new PSTypeName[] { new PSTypeName(binding.BoundParameters[parameterName].Parameter.Type) },
+                        inferredTypes,
                         results,
                         $"{wordToComplete}*",
                         IsWriteablePropertyMember,
                         isStatic: false,
-                        excludedKeys);
+                        excludedKeys,
+                        ignoreTypesWithoutDefaultConstructor: true);
                     return results;
                 }
             }
-
-            if (ast.Parent is AssignmentStatementAst assignment && assignment.Left is VariableExpressionAst assignmentVar)
+            else if (!hashtableIsNested && parentAst is AssignmentStatementAst assignment && assignment.Left is VariableExpressionAst assignmentVar)
             {
                 var firstSplatUse = completionContext.RelatedAsts[0].Find(
                     currentAst =>
