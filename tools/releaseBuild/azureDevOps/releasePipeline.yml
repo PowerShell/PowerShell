@@ -167,6 +167,12 @@ stages:
   jobs:
   - job: KickOffRA
     displayName: Kickoff Release Automation
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
     steps:
     - checkout: Internal-PowerShellTeam-Tools
     - task: DownloadPipelineArtifact@2
@@ -181,7 +187,8 @@ stages:
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
 
     - pwsh: |
-        Import-Module $(Agent.BuildDirectory)\Internal-PowerShellTeam-Tools\ReleaseTools\AzDO -Force
+        Get-ChildItem -Path $(Agent.BuildDirectory)
+        Import-Module $(Agent.BuildDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName Release-Automation
         $packageBuildID = $(resources.pipeline.releasePipeline.runID)
@@ -203,6 +210,12 @@ stages:
 
   - job: MarkRASignOff
     displayName: Mark release automation signoff
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
     steps:
     - checkout: Internal-PowerShellTeam-Tools
     - task: DownloadPipelineArtifact@2
@@ -217,7 +230,7 @@ stages:
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
 
     - pwsh: |
-        Import-Module $(Agent.BuildDirectory)\Internal-PowerShellTeam-Tools\ReleaseTools\AzDO -Force
+        Import-Module $(Agent.BuildDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName Release-Automation
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
@@ -347,6 +360,12 @@ stages:
   jobs:
   - job: KickoffSnap
     displayName: Kickoff Snap build
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
     steps:
     - checkout: Internal-PowerShellTeam-Tools
     - task: DownloadPipelineArtifact@2
@@ -360,7 +379,7 @@ stages:
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
     - pwsh: |
-        Import-Module $(Agent.BuildDirectory)\Internal-PowerShellTeam-Tools\ReleaseTools\AzDO -Force
+        Import-Module $(Agent.BuildDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName PowerShell
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
@@ -382,6 +401,12 @@ stages:
   - job: MarkSnapSignOff
     displayName: Mark release automation signoff
     dependsOn: SnapEnd
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
     steps:
     - checkout: Internal-PowerShellTeam-Tools
     - task: DownloadPipelineArtifact@2
@@ -395,7 +420,7 @@ stages:
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
     - pwsh: |
-        Import-Module $(Agent.BuildDirectory)\Internal-PowerShellTeam-Tools\ReleaseTools\AzDO -Force
+        Import-Module $(Agent.BuildDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName PowerShell
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
@@ -479,6 +504,12 @@ stages:
   jobs:
   - job: KickoffvPack
     displayName: Kickoff vPack build
+
+    pool:
+      name: PowerShell1ES
+      demands:
+      - ImageOverride -equals PSMMS2019-Secure
+
     steps:
     - checkout: Internal-PowerShellTeam-Tools
     - task: DownloadPipelineArtifact@2
@@ -493,7 +524,7 @@ stages:
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
 
     - pwsh: |
-        Import-Module $(Agent.BuildDirectory)\Internal-PowerShellTeam-Tools\ReleaseTools\AzDO -Force
+        Import-Module $(Agent.BuildDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoAuthToken -Token $(MSCODEHUBPAT)
         Set-AzDoProjectInfo -ProjectOwner mscodehub -ProjectName PowerShellCore
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
