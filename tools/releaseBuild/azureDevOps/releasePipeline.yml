@@ -236,7 +236,7 @@ stages:
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName Release-Automation
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
         $azDOBuild = Get-AzDOBuild -buildDefinitionId 10 -MaximumResult 100  | Where-Object { $_.tags -contains $metadata.ReleaseVersion }
-        $azDoBuild | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -Id $azDOBuild.Id -tag 'SignedOff'
+        $azDoBuild | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -tag 'SignedOff'
       displayName: Signoff Release-Automation run
 
 - stage: GitHubDraftRelease
@@ -426,7 +426,7 @@ stages:
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName PowerShell
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
         $azDOBuild = Get-AzDOBuild -buildDefinitionId 49 -MaximumResult 100  | Where-Object { $_.tags -contains $metadata.ReleaseVersion }
-        $azDoBuild | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -Id $azDOBuild.Id -tag 'SignedOff'
+        $azDoBuild | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -tag 'SignedOff'
       displayName: Signoff Release-Automation run
 
 - stage: ReleaseToMU
@@ -541,7 +541,7 @@ stages:
             throw "There are errors in snap build!!"
           }
           else {
-            $buildInvocationInfo | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -Id $azDOBuild.Id -tag 'SignedOff'
+            $buildInvocationInfo | Remove-AzDOBuildTag -tag 'InProgress' -Pass | Add-AzDOBuildTag -tag 'SignedOff'
           }
         }
         else {
