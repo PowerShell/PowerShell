@@ -195,7 +195,7 @@ stages:
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
         $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 10 -BuildArguments @{ POWERSHELL_PACKAGE_BUILD_BUILDID = $packageBuildID } -Tag $metadata.ReleaseVersion, 'InProgress' -PassThru
         Write-Verbose -Verbose "Kicked off release automation:`n$($buildInvocationInfo | Out-String)"
-        $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed
+        $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -timeoutMinutes 240
         if ($status.result -ne 'Succeeded') {
           Write-Verbose "There are errors in release automation tests. Please triage failures."
         }
@@ -386,7 +386,7 @@ stages:
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
         $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 49 -Tag $metadata.ReleaseVersion, 'InProgress' -PassThru
         Write-Verbose -Verbose "Kicked off snap build: $($buildInvocationInfo.WebUrl)"
-        $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed
+        $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -timeoutMinutes 60
         if ($status.result -ne 'Succeeded') {
           throw "There are errors in snap build!!"
         }
@@ -536,7 +536,7 @@ stages:
         if (-not $isPreview) {
           $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 1238 -Tag $metadata.ReleaseVersion, 'InProgress' -PassThru
           Write-Verbose -Verbose "Kicked off vPack build: $($buildInvocationInfo.WebUrl)"
-          $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed
+          $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -timeoutMinutes 60
           if ($status.result -ne 'Succeeded') {
             throw "There are errors in snap build!!"
           }
