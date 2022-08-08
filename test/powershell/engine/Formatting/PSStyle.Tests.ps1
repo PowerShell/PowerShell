@@ -237,4 +237,75 @@ Describe 'Tests for $PSStyle automatic variable' {
             $PSStyle.Progress.MaxWidth = $maxWidth
         }
     }
+
+    It "String intput to Out-String should be intact with OutputRendering='<OutputRendering>'" -TestCases @(
+        @{ OutputRendering = 'Ansi'; ContainsAnsi = $true }
+        @{ OutputRendering = 'Host'; ContainsAnsi = $false }
+        @{ OutputRendering = 'PlainText'; ContainsAnsi = $false }
+    ) {
+        param($OutputRendering, $ContainsAnsi)
+
+        $oldRender = $PSStyle.OutputRendering
+        $testStr = "`e[31mABC`e[0m"
+
+        try {
+            $PSStyle.OutputRendering = $OutputRendering
+            ## For input that actually goes through formatting, Out-String should remove VT sequences
+            ## from the formatting output based on the output rendering option that is in effect.
+            (Get-Verb -Verb Get | Out-String).Contains("`e[") | Should -Be $ContainsAnsi
+            ## For string input, since no formatting is applied, Out-String should keep the string intact.
+            ($testStr | Out-String).Trim() | Should -BeExactly $testStr
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+        }
+    }
+
+    It "String input to Out-File should be intact with OutputRendering='<OutputRendering>'" -TestCases @(
+        @{ OutputRendering = 'Ansi'; }
+        @{ OutputRendering = 'Host'; }
+        @{ OutputRendering = 'PlainText'; }
+    ) {
+        param($OutputRendering)
+
+        $oldRender = $PSStyle.OutputRendering
+        $content = "Read-Host -Prompt '`e[33mEnter your device code`e[0m'"
+        Set-Content -Path $TestDrive\test.ps1 -Value $content -Encoding utf8NoBOM
+
+        try {
+            $PSStyle.OutputRendering = $OutputRendering
+            Get-Content $TestDrive\test.ps1 > $TestDrive\copy.ps1
+            (Get-Content $TestDrive\copy.ps1 -Raw).Trim() | Should -BeExactly $content
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+            Remove-Item $TestDrive\test.ps1 -Force
+            Remove-Item $TestDrive\copy.ps1 -Force
+        }
+    }
+
+    It "Comment based help works with `$PSStyle when OutputRendering='<OutputRendering>'" -TestCases @(
+        @{ OutputRendering = 'Ansi'; ContainsAnsi = $true }
+        @{ OutputRendering = 'Host'; ContainsAnsi = $false }
+        @{ OutputRendering = 'PlainText'; ContainsAnsi = $false }
+    ) {
+        param($OutputRendering, $ContainsAnsi)
+
+        $oldRender = $PSStyle.OutputRendering
+
+        function Test-PSStyle {
+            <#
+            .Description
+            Get-Function [31mdisplays[0m the name and syntax of all functions in the session.
+            #>
+        }
+
+        try {
+            $PSStyle.OutputRendering = $OutputRendering
+            (Get-Help Test-PSStyle | Out-String).Contains("`e[31mdisplays`e[0m") | Should -Be $ContainsAnsi
+        }
+        finally {
+            $PSStyle.OutputRendering = $oldRender
+        }
+    }
 }
