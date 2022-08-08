@@ -2280,7 +2280,7 @@ namespace System.Management.Automation.Language
                 case CaptureAstContext.AssignmentWithResultPreservation:
                     result = Expression.Call(CachedReflectionInfo.PipelineOps_PipelineResult, resultList);
 
-                    // PipelineResult might get skipped in some circumstances due to a FlowControlException thrown out, in which case
+                    // PipelineResult might get skipped in some circumstances due to an early return or a FlowControlException thrown out, in which case
                     // we write to the oldPipe. This can happen in cases like:
                     //     $(1;2;return 3)
                     finallyExprs.Add(Expression.Call(CachedReflectionInfo.PipelineOps_FlushPipe, oldPipe, resultList));
