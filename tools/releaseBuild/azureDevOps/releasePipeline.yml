@@ -187,8 +187,8 @@ stages:
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
 
     - pwsh: |
-        Get-ChildItem -Path $(Agent.BuildDirectory)
-        Import-Module $(Agent.BuildDirectory)\ReleaseTools\AzDO -Force
+        Get-ChildItem -Path $(Build.SourcesDirectory)
+        Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName Release-Automation
         $packageBuildID = $(resources.pipeline.releasePipeline.runID)
@@ -230,7 +230,7 @@ stages:
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
 
     - pwsh: |
-        Import-Module $(Agent.BuildDirectory)\ReleaseTools\AzDO -Force
+        Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName Release-Automation
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
@@ -379,7 +379,7 @@ stages:
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
     - pwsh: |
-        Import-Module $(Agent.BuildDirectory)\ReleaseTools\AzDO -Force
+        Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName PowerShell
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
@@ -420,7 +420,7 @@ stages:
         artifact: metadata
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
     - pwsh: |
-        Import-Module $(Agent.BuildDirectory)\ReleaseTools\AzDO -Force
+        Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoAuthToken -Token $(RELEASEAUTOMATIONPAT)
         Set-AzDoProjectInfo -ProjectOwner PowerShell-Rel -ProjectName PowerShell
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
@@ -524,7 +524,7 @@ stages:
         path: '$(Pipeline.Workspace)/releasePipeline/metadata'
 
     - pwsh: |
-        Import-Module $(Agent.BuildDirectory)\ReleaseTools\AzDO -Force
+        Import-Module $(Build.SourcesDirectory)\ReleaseTools\AzDO -Force
         Set-AzDoAuthToken -Token $(MSCODEHUBPAT)
         Set-AzDoProjectInfo -ProjectOwner mscodehub -ProjectName PowerShellCore
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
