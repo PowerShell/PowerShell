@@ -66,17 +66,17 @@ steps:
       "preview.md"
     }
     else {
-      $semanticVersion.Major.ToString() + "." + $semanticVersion.Minor.ToString() + ".md"
+      $semanticVersion.Major + "." + $semanticVersion.Minor + ".md"
     }
 
-    $filePath = "$env:BUILD_SOURCESDIRECTORY/CHANGELOG/$fileName"
+    $filePath = $env:BUILD_SOURCESDIRECTORY/CHANGELOG/$fileName
     Write-Verbose -Verbose "Selected Log file: $filePath"
 
     if (-not (Test-Path $filePath)) {
       throw "$filePath not found"
     }
 
-    $changelog = Get-Content -Path $filePath
+    $changelog = Get-Content -Raw -Path $filePath
 
     $startPattern = "^## \[" + ([regex]::Escape($releaseVersion)) + "\]"
     $endPattern = "^## \[{0}\.{1}\.{2}*" -f $semanticVersion.Major, $semanticVersion.Minor, $semanticVersion.Patch
@@ -85,9 +85,9 @@ steps:
         if ($_ -match $startPattern) { $outputLine = $true }
         elseif ($_ -match $endPattern) { $outputLine = $false }
         if ($outputLine) { $_}
-      } | Out-String
+      }
 
     Write-Verbose -Verbose "Selected content: `n$clContent"
 
-    Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder $(PackagesRoot) -Token $(GitHubReleasePat)
+    Publish-ReleaseDraft -Tag '$(ReleaseTag)' -Name '$(ReleaseTag) Release of PowerShell' -Description $clContent -User PowerShell -Repository PowerShell  -PackageFolder $(System.ArtifactsDirectory) -Token $(GitHubReleasePat)
   displayName: Publish Release Draft
