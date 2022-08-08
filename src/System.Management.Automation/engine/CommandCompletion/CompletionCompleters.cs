@@ -5901,7 +5901,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Complete members against extension methods 'Where' and 'ForEach'
         /// </summary>
-        private static void CompleteExtensionMethods(string memberName, List<CompletionResult> results, bool addMethodparenthesis = true)
+        private static void CompleteExtensionMethods(string memberName, List<CompletionResult> results, bool addMethodParenthesis = true)
         {
             var pattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
             CompleteExtensionMethods(pattern, results, addMethodparenthesis);
@@ -5910,7 +5910,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Complete members against extension methods 'Where' and 'ForEach' based on the given pattern.
         /// </summary>
-        private static void CompleteExtensionMethods(WildcardPattern pattern, List<CompletionResult> results, bool addMethodparenthesis)
+        private static void CompleteExtensionMethods(WildcardPattern pattern, List<CompletionResult> results, bool addMethodParenthesis)
         {
             foreach (var member in s_extensionMethods)
             {
@@ -6046,7 +6046,7 @@ namespace System.Management.Automation
             Func<object, bool> filter,
             bool isStatic,
             HashSet<string> excludedMembers = null, 
-            bool addMethodparenthesis = true)
+            bool addMethodParenthesis = true)
         {
             bool extensionMethodsAdded = false;
             HashSet<string> typeNameUsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -6088,7 +6088,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results, HashSet<string> excludedMembers, bool addMethodparenthesis)
+        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results, HashSet<string> excludedMembers, bool addMethodParenthesis)
         {
             string memberName = null;
             bool isMethod = false;
