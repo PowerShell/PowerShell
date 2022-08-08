@@ -195,7 +195,7 @@ stages:
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
         $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 10 -BuildArguments @{ POWERSHELL_PACKAGE_BUILD_BUILDID = $packageBuildID } -Tag $metadata.ReleaseVersion, 'InProgress'
         Write-Verbose -Verbose "Kicked off release automation: $($buildInvocationInfo.WebUrl)"
-        $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -TimeoutInMinutes 300
+        $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed
         if ($status.result -ne 'Succeeded') {
           Write-Verbose "There are errors in release automation tests. Please triage failures."
         }
@@ -210,6 +210,7 @@ stages:
 
   - job: MarkRASignOff
     displayName: Mark release automation signoff
+    dependsOn: TriageRA
 
     pool:
       name: PowerShell1ES
@@ -385,7 +386,7 @@ stages:
         $metadata = Get-Content -Raw -Path '$(Pipeline.Workspace)/releasePipeline/metadata/release.json' | ConvertFrom-Json
         $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 49 -Tag $metadata.ReleaseVersion, 'InProgress'
         Write-Verbose -Verbose "Kicked off snap build: $($buildInvocationInfo.WebUrl)"
-        $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -TimeoutInMinutes 60
+        $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed
         if ($status.result -ne 'Succeeded') {
           throw "There are errors in snap build!!"
         }
@@ -535,7 +536,7 @@ stages:
         if (-not $isPreview) {
           $buildInvocationInfo = Start-AzDOBuild -BuildDefinitionId 1238 -Tag $metadata.ReleaseVersion, 'InProgress'
           Write-Verbose -Verbose "Kicked off vPack build: $($buildInvocationInfo.WebUrl)"
-          $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed -TimeoutInMinutes 60
+          $status = $buildInvocationInfo | Wait-AzDOBuildStatus -Status Completed
           if ($status.result -ne 'Succeeded') {
             throw "There are errors in snap build!!"
           }
