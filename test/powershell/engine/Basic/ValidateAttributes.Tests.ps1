@@ -411,6 +411,21 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
             { NotNullOrWhiteSpaceFunc -Value @{} } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
         }
 
+        It "'ValidateNotNull' should throw on a scalar null value" {
+            { NotNullFunc -Value $null } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullFunc"
+        }
+
+        It "'ValidateNotNullOrEmpty' should throw on a scalar null value and scalar empty string" {
+            { NotNullOrEmptyFunc -Value $null } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+            { NotNullOrEmptyFunc -Value "" } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrEmptyFunc"
+        }
+
+        It "'ValidateNotNullOrWhiteSpace' should throw on a scalar null value, scalar empty string and scalar white-space string" {
+            { NotNullOrWhiteSpaceFunc -Value $null } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value "" } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+            { NotNullOrWhiteSpaceFunc -Value " " } | Should -Throw -ErrorId "ParameterArgumentValidationError,NotNullOrWhiteSpaceFunc"
+        }
+
         It "Mandatory parameter should throw on empty collection" {
             { MandatoryFunc -ByteArray ([byte[]]@()) } | Should -Throw -ErrorId "ParameterArgumentValidationErrorEmptyArrayNotAllowed,MandatoryFunc"
             { MandatoryFunc -ByteList ([System.Collections.Generic.List[byte]]@()) } | Should -Throw -ErrorId "ParameterArgumentValidationErrorEmptyCollectionNotAllowed,MandatoryFunc"

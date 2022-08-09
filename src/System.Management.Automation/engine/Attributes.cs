@@ -2072,23 +2072,23 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Validates that the parameters's argument is not null, is not an empty string, is not a
-    /// string that consists only of white-space characters, and is not an empty collection.
+    /// Validates that the parameters's argument is not null, is not an empty string or a
+    /// string with white-space characters only, and is not an empty collection.
     /// </summary>
-    public abstract class ValidateNotNullOr : NullValidationAttributeBase
+    public abstract class ValidateNotNullOrAttributeBase : NullValidationAttributeBase
     {
         /// <summary>
         /// Used to check the type of string validation to perform.
         /// </summary>
-        protected readonly bool _whiteSpace;
+        protected readonly bool _checkWhiteSpace;
 
         /// <summary>
-        /// Validates that the parameters's argument is not null, is not an empty string, is not a
-        /// string that consists only of white-space characters, and is not an empty collection.
+        /// Validates that the parameters's argument is not null, is not an empty string or a
+        /// string with white-space characters only, and is not an empty collection.
         /// </summary>
-        protected ValidateNotNullOr(bool whiteSpace)
+        protected ValidateNotNullOrAttributeBase(bool checkWhiteSpace)
         {
-            _whiteSpace = whiteSpace;
+            _checkWhiteSpace = checkWhiteSpace;
         }
 
         /// <summary>
@@ -2115,7 +2115,7 @@ namespace System.Management.Automation
             }
             else if (arguments is string str)
             {
-                if (_whiteSpace)
+                if (_checkWhiteSpace)
                 {
                     if (string.IsNullOrWhiteSpace(str))
                     {
@@ -2125,15 +2125,12 @@ namespace System.Management.Automation
                             Metadata.ValidateNotNullOrWhiteSpaceFailure);
                     }
                 }
-                else
+                else if (string.IsNullOrEmpty(str))
                 {
-                    if (string.IsNullOrEmpty(str))
-                    {
-                        throw new ValidationMetadataException(
-                            "ArgumentIsEmpty",
-                            null,
-                            Metadata.ValidateNotNullOrEmptyFailure);
-                    }
+                    throw new ValidationMetadataException(
+                        "ArgumentIsEmpty",
+                        null,
+                        Metadata.ValidateNotNullOrEmptyFailure);
                 }
             }
             else if (IsArgumentCollection(arguments.GetType(), out bool isElementValueType))
@@ -2159,7 +2156,7 @@ namespace System.Management.Automation
 
                         if (element is string elementAsString)
                         {
-                            if (_whiteSpace)
+                            if (_checkWhiteSpace)
                             {
                                 if (string.IsNullOrWhiteSpace(elementAsString))
                                 {
@@ -2169,15 +2166,12 @@ namespace System.Management.Automation
                                         Metadata.ValidateNotNullOrWhiteSpaceCollectionFailure);
                                 }
                             }
-                            else
+                            else if (string.IsNullOrEmpty(elementAsString))
                             {
-                                if (string.IsNullOrEmpty(elementAsString))
-                                {
-                                    throw new ValidationMetadataException(
-                                        "ArgumentCollectionContainsEmpty",
-                                        null,
-                                        Metadata.ValidateNotNullOrEmptyCollectionFailure);
-                                }
+                                throw new ValidationMetadataException(
+                                    "ArgumentCollectionContainsEmpty",
+                                    null,
+                                    Metadata.ValidateNotNullOrEmptyCollectionFailure);
                             }
                         }
                     } while (enumerator.MoveNext());
@@ -2209,14 +2203,14 @@ namespace System.Management.Automation
     /// not an empty collection. If argument is a collection, each argument is verified.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class ValidateNotNullOrEmptyAttribute : ValidateNotNullOr
+    public sealed class ValidateNotNullOrEmptyAttribute : ValidateNotNullOrAttributeBase
     {
         /// <summary>
         /// Validates that the parameters's argument is not null, is not an empty string, and is
         /// not an empty collection. If argument is a collection, each argument is verified.
         /// </summary>
         public ValidateNotNullOrEmptyAttribute()
-            : base(false)
+            : base(checkWhiteSpace: false)
         {
         }
     }
@@ -2227,7 +2221,7 @@ namespace System.Management.Automation
     /// each argument is verified.
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class ValidateNotNullOrWhiteSpaceAttribute : ValidateNotNullOr
+    public sealed class ValidateNotNullOrWhiteSpaceAttribute : ValidateNotNullOrAttributeBase
     {
         /// <summary>
         /// Validates that the parameters's argument is not null, is not an empty string, is not a string that
@@ -2235,7 +2229,7 @@ namespace System.Management.Automation
         /// each argument is verified.
         /// </summary>
         public ValidateNotNullOrWhiteSpaceAttribute()
-            : base(true)
+            : base(checkWhiteSpace: true)
         {
         }
     }
