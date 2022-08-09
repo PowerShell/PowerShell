@@ -504,7 +504,7 @@ switch ($x)
 
     It 'ForEach-Object member completion results should include methods' {
         $res = TabExpansion2 -inputScript '1..10 | ForEach-Object -MemberName '
-        $res.CompletionMatches.CompletionText | Should -Contain "GetType("
+        $res.CompletionMatches.CompletionText | Should -Contain "GetType"
     }
 
     It 'Should not complete void instance members' {
@@ -569,6 +569,13 @@ ConstructorTestClass(int i, bool b)
         }
         $res = TabExpansion2 -inputScript $Script
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Directory'
+    }
+
+    It 'Should enumerate types when completing member names for Select-Object' {
+        $TestString = '"Hello","World" | select-object '
+        $res = TabExpansion2 -inputScript $TestString
+        $res | Should -HaveCount 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Length'
     }
 
     Context "Format cmdlet's View paramter completion" {
