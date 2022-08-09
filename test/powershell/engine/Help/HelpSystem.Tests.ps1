@@ -30,7 +30,8 @@ function UpdateHelpFromLocalContentPath {
         throw "Unable to find help content at '$helpContentPath'"
     }
 
-    Update-Help -Module $ModuleName -SourcePath $helpContentPath -Force -ErrorAction Stop -Scope $Scope
+    # Test files are 'en-US', set explicit culture so test does not help on non-US systems
+    Update-Help -Module $ModuleName -SourcePath $helpContentPath -UICulture 'en-US' -Force -ErrorAction Stop -Scope $Scope
 }
 
 function GetCurrentUserHelpRoot {
