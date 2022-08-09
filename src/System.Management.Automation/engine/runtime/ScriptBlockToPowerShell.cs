@@ -230,10 +230,7 @@ namespace System.Management.Automation
         {
             ExecutionContext.CheckStackDepth();
 
-            if (args == null)
-            {
-                args = Array.Empty<object>();
-            }
+            args ??= Array.Empty<object>();
 
             // Perform validations on the ScriptBlock.  GetSimplePipeline can allow for more than one
             // pipeline if the first parameter is true, but Invoke-Command doesn't yet support multiple

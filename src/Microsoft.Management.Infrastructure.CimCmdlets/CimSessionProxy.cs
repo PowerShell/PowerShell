@@ -686,9 +686,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 this.OperationOptions = new CimOperationOptions(operOptions);
             }
-            else if (this.OperationOptions == null)
+            else
             {
-                this.OperationOptions = new CimOperationOptions();
+                this.OperationOptions ??= new CimOperationOptions();
             }
 
             this.EnableMethodResultStreaming = true;

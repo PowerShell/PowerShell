@@ -93,8 +93,7 @@ namespace System.Management.Automation
                 {
                     lock (_syncobject)
                     {
-                        if (_parameters == null)
-                            _parameters = new List<CommandParameterCollection>();
+                        _parameters ??= new List<CommandParameterCollection>();
                     }
                 }
 
@@ -2022,11 +2021,8 @@ namespace System.Management.Automation
                     job.Dispose();
                 }
 
-                if (_jobRunning != null)
-                    _jobRunning.Dispose();
-
-                if (_jobSuspendedOrAborted != null)
-                    _jobSuspendedOrAborted.Dispose();
+                _jobRunning?.Dispose();
+                _jobSuspendedOrAborted?.Dispose();
             }
             finally
             {

@@ -183,10 +183,7 @@ namespace System.Management.Automation
         {
             var astContext = ExtractAstContext(_ast, _tokens, _cursorPosition);
 
-            if (typeInferenceContext.CurrentTypeDefinitionAst == null)
-            {
-                typeInferenceContext.CurrentTypeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(astContext.RelatedAsts.Last());
-            }
+            typeInferenceContext.CurrentTypeDefinitionAst ??= Ast.GetAncestorTypeDefinitionAst(astContext.RelatedAsts.Last());
 
             ExecutionContext executionContext = typeInferenceContext.ExecutionContext;
 
@@ -424,7 +421,7 @@ namespace System.Management.Automation
                     case TokenKind.Generic:
                     case TokenKind.MinusMinus: // for native commands '--'
                     case TokenKind.Identifier:
-                        if (tokenAtCursor.TokenFlags != TokenFlags.TypeName)
+                        if (!tokenAtCursor.TokenFlags.HasFlag(TokenFlags.TypeName))
                         {
                             result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
                         }
@@ -502,6 +499,12 @@ namespace System.Management.Automation
                             {
                                 return completions;
                             }
+                        }
+                        else if (lastAst.Parent is IndexExpressionAst indexExpressionAst)
+                        {
+                            // Handles quoted string inside index expression like: $PSVersionTable["<Tab>"]
+                            completionContext.WordToComplete = (tokenAtCursor as StringToken).Value;
+                            return CompletionCompleters.CompleteIndexExpression(completionContext, indexExpressionAst.Target);
                         }
 
                         result = GetResultForString(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
@@ -748,6 +751,19 @@ namespace System.Management.Automation
                         result = CompletionCompleters.CompleteOperator(tokenAtCursor.Text);
                         break;
 
+                    case TokenKind.LBracket:
+                        if (lastAst.Parent is IndexExpressionAst indexExpression)
+                        {
+                            // Handles index expression with cursor right after lbracket like: $PSVersionTable[<Tab>]
+                            completionContext.WordToComplete = string.Empty;
+                            result = CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
+                            if (result.Count > 0)
+                            {
+                                replacementIndex++;
+                                replacementLength--;
+                            }
+                        }
+                        break;
                     default:
                         if ((tokenAtCursor.TokenFlags & TokenFlags.Keyword) != 0)
                         {
@@ -897,6 +913,14 @@ namespace System.Management.Automation
                                     }
 
                                     break;
+                                case TokenKind.LBracket:
+                                    if (lastAst.Parent is IndexExpressionAst indexExpression)
+                                    {
+                                        // Handles index expression where cursor is on a new line after the lbracket like: $PSVersionTable[\n<Tab>]
+                                        completionContext.WordToComplete = string.Empty;
+                                        result = CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
+                                    }
+                                    break;
                                 default:
                                     break;
                             }
@@ -967,6 +991,14 @@ namespace System.Management.Automation
                                         return result;
                                     }
                                     break;
+                                case TokenKind.LBracket:
+                                    if (lastAst.Parent is IndexExpressionAst indexExpression)
+                                    {
+                                        // Handles index expression with whitespace between lbracket and cursor like: $PSVersionTable[ <Tab>]
+                                        completionContext.WordToComplete = string.Empty;
+                                        result = CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
+                                    }
+                                    break;
                                 default:
                                     break;
                             }
@@ -1021,7 +1053,7 @@ namespace System.Management.Automation
                     }
                 }
                 
-                if (typeNameToComplete is null && tokenAtCursor?.TokenFlags == TokenFlags.TypeName)
+                if (typeNameToComplete is null && tokenAtCursor?.TokenFlags.HasFlag(TokenFlags.TypeName) == true)
                 {
                     typeNameToComplete = new TypeName(tokenAtCursor.Extent, tokenAtCursor.Text);
                 }
@@ -1859,10 +1891,7 @@ namespace System.Management.Automation
                         usageString = Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache.GetDSCResourceUsageString(keyword);
                     }
 
-                    if (results == null)
-                    {
-                        results = new List<CompletionResult>();
-                    }
+                    results ??= new List<CompletionResult>();
 
                     results.Add(new CompletionResult(
                         keyword.Keyword,
@@ -1875,7 +1904,7 @@ namespace System.Management.Automation
             return results;
         }
 
-        private List<CompletionResult> GetResultForIdentifier(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength, bool isQuotedString)
+        private static List<CompletionResult> GetResultForIdentifier(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength, bool isQuotedString)
         {
             var tokenAtCursor = completionContext.TokenAtCursor;
             var lastAst = completionContext.RelatedAsts.Last();
@@ -1957,61 +1986,65 @@ namespace System.Management.Automation
                 // Handle completion for a path with variable, such as: $PSHOME\ty<tab>
                 if (completionContext.RelatedAsts.Count > 0 && completionContext.RelatedAsts[0] is ScriptBlockAst)
                 {
-                    Ast cursorAst = null;
-                    var cursorPosition = (InternalScriptPosition)_cursorPosition;
-                    int offsetBeforeCmdName = cursorPosition.Offset - tokenAtCursorText.Length;
-                    if (offsetBeforeCmdName >= 0)
-                    {
-                        var cursorBeforeCmdName = cursorPosition.CloneWithNewOffset(offsetBeforeCmdName);
-                        var scriptBlockAst = (ScriptBlockAst)completionContext.RelatedAsts[0];
-                        cursorAst = GetLastAstAtCursor(scriptBlockAst, cursorBeforeCmdName);
-                    }
+                    Ast cursorAst = completionContext.RelatedAsts[0].FindAll(ast => ast.Extent.EndOffset <= tokenAtCursor.Extent.StartOffset, true).LastOrDefault();
 
-                    if (cursorAst != null &&
-                        cursorAst.Extent.EndLineNumber == tokenAtCursor.Extent.StartLineNumber &&
-                        cursorAst.Extent.EndColumnNumber == tokenAtCursor.Extent.StartColumnNumber)
+                    if (cursorAst is not null)
                     {
-                        if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
+                        if (cursorAst.Extent.EndOffset == tokenAtCursor.Extent.StartOffset)
                         {
-                            string wordToComplete =
-                                CompletionCompleters.ConcatenateStringPathArguments(cursorAst as CommandElementAst, tokenAtCursorText, completionContext);
-                            if (wordToComplete != null)
+                            if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
                             {
-                                completionContext.WordToComplete = wordToComplete;
-                                result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
-                                if (result.Count > 0)
+                                string wordToComplete =
+                                    CompletionCompleters.ConcatenateStringPathArguments(cursorAst as CommandElementAst, tokenAtCursorText, completionContext);
+                                if (wordToComplete != null)
                                 {
+                                    completionContext.WordToComplete = wordToComplete;
+                                    result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
+                                    if (result.Count > 0)
+                                    {
+                                        replacementIndex = cursorAst.Extent.StartScriptPosition.Offset;
+                                        replacementLength += cursorAst.Extent.Text.Length;
+                                    }
+
+                                    return result;
+                                }
+                                else
+                                {
+                                    var variableAst = cursorAst as VariableExpressionAst;
+                                    string fullPath = variableAst != null
+                                        ? CompletionCompleters.CombineVariableWithPartialPath(
+                                            variableAst: variableAst,
+                                            extraText: tokenAtCursorText,
+                                            executionContext: completionContext.ExecutionContext)
+                                        : null;
+
+                                    if (fullPath == null) { return result; }
+
+                                    // Continue trying the filename/commandname completion for scenarios like this: $aa\d<tab>
+                                    completionContext.WordToComplete = fullPath;
                                     replacementIndex = cursorAst.Extent.StartScriptPosition.Offset;
                                     replacementLength += cursorAst.Extent.Text.Length;
-                                }
 
+                                    completionContext.ReplacementIndex = replacementIndex;
+                                    completionContext.ReplacementLength = replacementLength;
+                                }
+                            }
+                            // Continue trying the filename/commandname completion for scenarios like this: $aa[get-<tab>
+                            else if (cursorAst is not ErrorExpressionAst || cursorAst.Parent is not IndexExpressionAst)
+                            {
                                 return result;
                             }
-                            else
-                            {
-                                var variableAst = cursorAst as VariableExpressionAst;
-                                string fullPath = variableAst != null
-                                    ? CompletionCompleters.CombineVariableWithPartialPath(
-                                        variableAst: variableAst,
-                                        extraText: tokenAtCursorText,
-                                        executionContext: completionContext.ExecutionContext)
-                                    : null;
-
-                                if (fullPath == null) { return result; }
-
-                                // Continue trying the filename/commandname completion for scenarios like this: $aa\d<tab>
-                                completionContext.WordToComplete = fullPath;
-                                replacementIndex = cursorAst.Extent.StartScriptPosition.Offset;
-                                replacementLength += cursorAst.Extent.Text.Length;
-
-                                completionContext.ReplacementIndex = replacementIndex;
-                                completionContext.ReplacementLength = replacementLength;
-                            }
                         }
-                        // Continue trying the filename/commandname completion for scenarios like this: $aa[get-<tab>
-                        else if (cursorAst is not ErrorExpressionAst || cursorAst.Parent is not IndexExpressionAst)
+
+                        if (cursorAst.Parent is IndexExpressionAst indexExpression && indexExpression.Index is ErrorExpressionAst)
                         {
-                            return result;
+                            if (completionContext.WordToComplete.EndsWith(']'))
+                            {
+                                completionContext.WordToComplete = completionContext.WordToComplete.Remove(completionContext.WordToComplete.Length - 1);
+                            }
+
+                            // Handles index expression with unquoted word like: $PSVersionTable[psver<Tab>]
+                            return CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
                         }
                     }
                 }

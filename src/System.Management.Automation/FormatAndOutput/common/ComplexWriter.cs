@@ -239,10 +239,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             public void Dispose()
             {
-                if (_mgr != null)
-                {
-                    _mgr.RemoveStackFrame();
-                }
+                _mgr?.RemoveStackFrame();
             }
 
             private readonly IndentationManager _mgr;

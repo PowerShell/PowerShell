@@ -1203,6 +1203,11 @@ manifest.spdx.json
 buildinfo
 SKUs
 vmImage
+InternalCommands.cs
+CommonCommandParameters.cs
+preview.6.22352.1
+v2.2.6
+ResultsComparer
  - CHANGELOG.md
 aavdberg
 asrosent
@@ -1550,3 +1555,5 @@ vmImage
 ci.psm1
 jcotton42
 centos-7
+ - ADOPTERS.md
+MicrosoftPowerBIMgmt

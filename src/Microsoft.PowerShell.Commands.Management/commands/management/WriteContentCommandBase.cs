@@ -95,10 +95,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Initialize the content
 
-            if (_content == null)
-            {
-                _content = Array.Empty<object>();
-            }
+            _content ??= Array.Empty<object>();
 
             if (_pipingPaths)
             {

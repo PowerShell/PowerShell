@@ -496,13 +496,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Signals the running task to stop.
         /// </summary>
-        public void SignalStop()
-        {
-            if (_powershell != null)
-            {
-                _powershell.BeginStop(null, null);
-            }
-        }
+        public void SignalStop() => _powershell?.BeginStop(null, null);
 
         #endregion
     }
@@ -1536,12 +1530,9 @@ namespace System.Management.Automation.PSTasks
         {
             get
             {
-                if (_jobDebuggerWrapper == null)
-                {
-                    _jobDebuggerWrapper = new PSTaskChildDebugger(
-                        _task.Debugger,
-                        this.Name);
-                }
+                _jobDebuggerWrapper ??= new PSTaskChildDebugger(
+                    _task.Debugger,
+                    this.Name);
 
                 return _jobDebuggerWrapper;
             }

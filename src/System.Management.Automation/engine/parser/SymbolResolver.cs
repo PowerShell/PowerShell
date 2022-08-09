@@ -111,11 +111,8 @@ namespace System.Management.Automation.Language
             TypeLookupResult result;
             if (_typeTable.TryGetValue(typeDefinitionAst.Name, out result))
             {
-                if (result.ExternalNamespaces != null)
-                {
-                    // override external type by the type defined in the current namespace
-                    result.ExternalNamespaces.Add(moduleInfo.Name);
-                }
+                // override external type by the type defined in the current namespace
+                result.ExternalNamespaces?.Add(moduleInfo.Name);
             }
             else
             {

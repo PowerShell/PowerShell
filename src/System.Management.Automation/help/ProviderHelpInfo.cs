@@ -167,15 +167,9 @@ namespace System.Management.Automation
             string synopsis = Synopsis;
             string detailedDescription = DetailedDescription;
 
-            if (synopsis == null)
-            {
-                synopsis = string.Empty;
-            }
+            synopsis ??= string.Empty;
 
-            if (detailedDescription == null)
-            {
-                detailedDescription = string.Empty;
-            }
+            detailedDescription ??= string.Empty;
 
             return pattern.IsMatch(synopsis) || pattern.IsMatch(detailedDescription);
         }

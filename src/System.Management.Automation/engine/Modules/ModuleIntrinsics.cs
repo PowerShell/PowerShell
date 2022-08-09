@@ -141,10 +141,7 @@ namespace System.Management.Automation
             // script scope for the ss.
 
             // Allocate the session state instance for this module.
-            if (ss == null)
-            {
-                ss = new SessionState(_context, true, true);
-            }
+            ss ??= new SessionState(_context, true, true);
 
             // Now set up the module's session state to be the current session state
             SessionStateInternal oldSessionState = _context.EngineSessionState;
@@ -270,7 +267,7 @@ namespace System.Management.Automation
 
         internal List<PSModuleInfo> GetExactMatchModules(string moduleName, bool all, bool exactMatch)
         {
-            if (moduleName == null) { moduleName = string.Empty; }
+            moduleName ??= string.Empty;
 
             return GetModuleCore(new string[] { moduleName }, all, exactMatch);
         }
@@ -287,10 +284,7 @@ namespace System.Management.Automation
             }
             else
             {
-                if (patterns == null)
-                {
-                    patterns = new string[] { "*" };
-                }
+                patterns ??= new string[] { "*" };
 
                 foreach (string pattern in patterns)
                 {
@@ -1192,10 +1186,7 @@ namespace System.Management.Automation
 
                 if (string.IsNullOrEmpty(currentProcessModulePath))
                 {
-                    if (currentProcessModulePath is null)
-                    {
-                        currentProcessModulePath = string.Empty;
-                    }
+                    currentProcessModulePath ??= string.Empty;
                 }
                 else
                 {

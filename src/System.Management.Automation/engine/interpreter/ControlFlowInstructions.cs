@@ -157,10 +157,7 @@ namespace System.Management.Automation.Interpreter
         {
             get
             {
-                if (s_caches == null)
-                {
-                    s_caches = new Instruction[2][][] { new Instruction[2][], new Instruction[2][] };
-                }
+                s_caches ??= new Instruction[2][][] { new Instruction[2][], new Instruction[2][] };
 
                 return s_caches[ConsumedStack][ProducedStack] ?? (s_caches[ConsumedStack][ProducedStack] = new Instruction[CacheSize]);
             }

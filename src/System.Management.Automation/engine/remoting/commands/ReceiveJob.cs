@@ -823,10 +823,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (v == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
-                    {
-                        mshCommandRuntime.WriteVerbose(v, true);
-                    }
+                    mshCommandRuntime?.WriteVerbose(v, true);
                 }
 
                 Collection<DebugRecord> debugRecords = ReadAll(job.Debug);
@@ -835,10 +832,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (d == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
-                    {
-                        mshCommandRuntime.WriteDebug(d, true);
-                    }
+                    mshCommandRuntime?.WriteDebug(d, true);
                 }
 
                 Collection<WarningRecord> warningRecords = ReadAll(job.Warning);
@@ -847,10 +841,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (w == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
-                    {
-                        mshCommandRuntime.WriteWarning(w, true);
-                    }
+                    mshCommandRuntime?.WriteWarning(w, true);
                 }
 
                 Collection<ProgressRecord> progressRecords = ReadAll(job.Progress);
@@ -859,10 +850,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (p == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
-                    {
-                        mshCommandRuntime.WriteProgress(p, true);
-                    }
+                    mshCommandRuntime?.WriteProgress(p, true);
                 }
 
                 Collection<InformationRecord> informationRecords = ReadAll(job.Information);
@@ -871,10 +859,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (p == null) continue;
                     MshCommandRuntime mshCommandRuntime = CommandRuntime as MshCommandRuntime;
-                    if (mshCommandRuntime != null)
-                    {
-                        mshCommandRuntime.WriteInformation(p, true);
-                    }
+                    mshCommandRuntime?.WriteInformation(p, true);
                 }
             }
 
@@ -1065,10 +1050,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lock (_syncObject)
                     {
-                        if (_outputProcessingNotification == null)
-                        {
-                            _outputProcessingNotification = new OutputProcessingState();
-                        }
+                        _outputProcessingNotification ??= new OutputProcessingState();
                     }
                 }
 

@@ -200,10 +200,7 @@ namespace System.Management.Automation.Remoting.Server
                     }
 
                     // dont throw if there is no cmdTM as it might have legitimately closed
-                    if (cmdTM != null)
-                    {
-                        cmdTM.Close(null);
-                    }
+                    cmdTM?.Close(null);
                 }
                 finally
                 {
@@ -244,12 +241,9 @@ namespace System.Management.Automation.Remoting.Server
                 {
                     tracer.WriteMessage("OnClosePacketReceived, in progress commands count should be zero : " + _inProgressCommandsCount + ", psGuid : " + psGuid.ToString());
 
-                    if (sessionTM != null)
-                    {
-                        // it appears that when closing PowerShell ISE, therefore closing OutOfProcServerMediator, there are 2 Close command requests
-                        // changing PSRP/IPC at this point is too risky, therefore protecting about this duplication
-                        sessionTM.Close(null);
-                    }
+                    // it appears that when closing PowerShell ISE, therefore closing OutOfProcServerMediator, there are 2 Close command requests
+                    // changing PSRP/IPC at this point is too risky, therefore protecting about this duplication
+                    sessionTM?.Close(null);
 
                     tracer.WriteMessage("END calling close on session transport manager");
                     sessionTM = null;
@@ -268,10 +262,7 @@ namespace System.Management.Automation.Remoting.Server
                 }
 
                 // dont throw if there is no cmdTM as it might have legitimately closed
-                if (cmdTM != null)
-                {
-                    cmdTM.Close(null);
-                }
+                cmdTM?.Close(null);
 
                 lock (_syncObject)
                 {
@@ -358,14 +349,11 @@ namespace System.Management.Automation.Remoting.Server
                     string data = originalStdIn.ReadLine();
                     lock (_syncObject)
                     {
-                        if (sessionTM == null)
-                        {
-                            sessionTM = CreateSessionTransportManager(
-                                configurationName: configurationName,
-                                configurationFile: configurationFile,
-                                cryptoHelper: cryptoHelper,
-                                workingDirectory: workingDirectory);
-                        }
+                        sessionTM ??= CreateSessionTransportManager(
+                            configurationName: configurationName,
+                            configurationFile: configurationFile,
+                            cryptoHelper: cryptoHelper,
+                            workingDirectory: workingDirectory);
                     }
 
                     if (string.IsNullOrEmpty(data))

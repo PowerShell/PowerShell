@@ -333,10 +333,7 @@ namespace System.Management.Automation
                 var commandList = keyValuePair.Value as List<object>;
                 if (commandList != null)
                 {
-                    if (endResults == null)
-                    {
-                        endResults = new List<CompletionResult>();
-                    }
+                    endResults ??= new List<CompletionResult>();
 
                     // The first command might be an un-prefixed commandInfo that we get by importing a module with the -Prefix parameter,
                     // in that case, we should add the module name qualification because if the module is not in the module path, calling
@@ -495,8 +492,7 @@ namespace System.Management.Automation
             DynamicKeywordStatementAst keywordAst = null;
             for (int i = context.RelatedAsts.Count - 1; i >= 0; i--)
             {
-                if (keywordAst == null)
-                    keywordAst = context.RelatedAsts[i] as DynamicKeywordStatementAst;
+                keywordAst ??= context.RelatedAsts[i] as DynamicKeywordStatementAst;
                 parameterAst = (context.RelatedAsts[i] as CommandParameterAst);
                 if (parameterAst != null) break;
             }
@@ -533,6 +529,7 @@ namespace System.Management.Automation
                 return result;
             }
 
+            bool bindPositionalParameters = true;
             if (parameterAst != null)
             {
                 // Parent must be a command
@@ -551,10 +548,24 @@ namespace System.Management.Automation
                 // Parent must be a command
                 commandAst = (CommandAst)dashAst.Parent;
                 partialName = string.Empty;
+
+                // If the user tries to tab complete a new parameter in front of a positional argument like: dir -<Tab> C:\
+                // the user may want to add the parameter name so we don't want to bind positional arguments
+                if (commandAst is not null)
+                {
+                    foreach (var element in commandAst.CommandElements)
+                    {
+                        if (element.Extent.StartOffset > context.TokenAtCursor.Extent.StartOffset)
+                        {
+                            bindPositionalParameters = element is CommandParameterAst;
+                            break;
+                        }
+                    }
+                }
             }
 
             PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
-                                                .DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion);
+                                                .DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion, bindPositionalParameters);
             // The command cannot be found or it's not a cmdlet, not a script cmdlet, not a function.
             // Try completing as if it the parameter is a command argument for native command completion.
             if (pseudoBinding == null)
@@ -1609,8 +1620,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            if (positionalParam == null)
-                                positionalParam = param;
+                            positionalParam ??= param;
                         }
                     }
                     else
@@ -3953,7 +3963,7 @@ namespace System.Management.Automation
 
         private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, AstParameterArgumentPair parameterInfo, bool propertiesOnly = true)
         {
-            IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
+            IEnumerable<PSTypeName> prevType = TypeInferenceVisitor.GetInferredEnumeratedTypes(GetInferenceTypes(context, commandAst));
             if (prevType is not null)
             {
                 HashSet<string> excludedMembers = null;
@@ -3963,7 +3973,7 @@ namespace System.Management.Automation
                 }
 
                 Func<object, bool> filter = propertiesOnly ? IsPropertyMember : null;
-                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter, isStatic: false, excludedMembers);
+                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter, isStatic: false, excludedMembers, addMethodParenthesis: false);
             }
 
             result.Add(CompletionResult.Null);
@@ -4774,6 +4784,7 @@ namespace System.Management.Automation
             var lastAst = context.RelatedAsts?.Last();
             var variableAst = lastAst as VariableExpressionAst;
             var prefix = variableAst != null && variableAst.Splatted ? "@" : "$";
+            bool tokenAtCursorUsedBraces = context.TokenAtCursor is not null && context.TokenAtCursor.Text.StartsWith("${");
 
             // Look for variables in the input (e.g. parameters, etc.) before checking session state - these
             // variables might not exist in session state yet.
@@ -4919,7 +4930,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        var completedName = (name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                        var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                 ? prefix + provider + name
                                                 : prefix + "{" + provider + name + "}";
                         AddUniqueVariable(hashedResults, results, completedName, name, tooltip);
@@ -4942,7 +4953,7 @@ namespace System.Management.Automation
                         if (!string.IsNullOrEmpty(name))
                         {
                             name = "env:" + name;
-                            var completedName = (name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                            var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                     ? prefix + name
                                                     : prefix + "{" + name + "}";
                             AddUniqueVariable(hashedResults, results, completedName, name, "[string]" + name);
@@ -4957,7 +4968,7 @@ namespace System.Management.Automation
             {
                 if (wildcardPattern.IsMatch(specialVariable))
                 {
-                    var completedName = (specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                    var completedName = (!tokenAtCursorUsedBraces && specialVariable.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                             ? prefix + specialVariable
                                             : prefix + "{" + specialVariable + "}";
 
@@ -4983,7 +4994,7 @@ namespace System.Management.Automation
                             var name = driveInfo.Name;
                             if (name != null && !string.IsNullOrWhiteSpace(name) && name.Length > 1)
                             {
-                                var completedName = (name.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                                var completedName = (!tokenAtCursorUsedBraces && name.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                         ? prefix + name + ":"
                                                         : prefix + "{" + name + ":}";
 
@@ -4999,7 +5010,7 @@ namespace System.Management.Automation
                 {
                     if (scopePattern.IsMatch(scope))
                     {
-                        var completedName = (scope.IndexOfAny(s_charactersRequiringQuotes) == -1)
+                        var completedName = (!tokenAtCursorUsedBraces && scope.IndexOfAny(s_charactersRequiringQuotes) == -1)
                                                 ? prefix + scope
                                                 : prefix + "{" + scope + "}";
                         AddUniqueVariable(hashedResults, results, completedName, scope, scope);
@@ -5746,9 +5757,9 @@ namespace System.Management.Automation
                 // a MemberExpressionAst '$xml.$xml', whose parent is still a MemberExpressionAst '$xml.$xml.Save'.
                 // But here we DO NOT want to re-assign 'targetExpr' to be '$xml.$xml'. 'targetExpr' in this case
                 // should be '$xml'.
-                else if (targetExpr is null)
+                else
                 {
-                    targetExpr = parentAsMemberExpression.Expression;
+                    targetExpr ??= parentAsMemberExpression.Expression;
                 }
             }
             else if (lastAst.Parent is BinaryExpressionAst binaryExpression && context.TokenAtCursor.Kind.Equals(TokenKind.Multiply))
@@ -5890,22 +5901,25 @@ namespace System.Management.Automation
         /// <summary>
         /// Complete members against extension methods 'Where' and 'ForEach'
         /// </summary>
-        private static void CompleteExtensionMethods(string memberName, List<CompletionResult> results)
+        private static void CompleteExtensionMethods(string memberName, List<CompletionResult> results, bool addMethodParenthesis = true)
         {
             var pattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
-            CompleteExtensionMethods(pattern, results);
+            CompleteExtensionMethods(pattern, results, addMethodParenthesis);
         }
 
         /// <summary>
         /// Complete members against extension methods 'Where' and 'ForEach' based on the given pattern.
         /// </summary>
-        private static void CompleteExtensionMethods(WildcardPattern pattern, List<CompletionResult> results)
+        private static void CompleteExtensionMethods(WildcardPattern pattern, List<CompletionResult> results, bool addMethodParenthesis)
         {
-            results.AddRange(from member in s_extensionMethods
-                             where pattern.IsMatch(member.Item1)
-                             select
-                                 new CompletionResult(member.Item1 + "(", member.Item1,
-                                                      CompletionResultType.Method, member.Item2));
+            foreach (var member in s_extensionMethods)
+            {
+                if (pattern.IsMatch(member.Item1))
+                {
+                    string completionText = addMethodParenthesis ? $"{member.Item1}(" : member.Item1;
+                    results.Add(new CompletionResult(completionText, member.Item1, CompletionResultType.Method, member.Item2));
+                }
+            }
         }
 
         /// <summary>
@@ -5933,6 +5947,42 @@ namespace System.Management.Automation
         private static bool IsInDscContext(ExpressionAst expression)
         {
             return Ast.GetAncestorAst<ConfigurationDefinitionAst>(expression) != null;
+        }
+
+        internal static List<CompletionResult> CompleteIndexExpression(CompletionContext context, ExpressionAst indexTarget)
+        {
+            var result = new List<CompletionResult>();
+            object value;
+            if (SafeExprEvaluator.TrySafeEval(indexTarget, context.ExecutionContext, out value)
+                && value is not null
+                && PSObject.Base(value) is IDictionary dictionary)
+            {
+                foreach (var key in dictionary.Keys)
+                {
+                    if (key is string keyAsString && keyAsString.StartsWith(context.WordToComplete, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(new CompletionResult($"'{keyAsString}'", keyAsString, CompletionResultType.Property, keyAsString));
+                    }
+                }
+            }
+            else
+            {
+                var inferredTypes = AstTypeInference.InferTypeOf(indexTarget, context.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+                foreach (var type in inferredTypes)
+                {
+                    if (type is PSSyntheticTypeName synthetic)
+                    {
+                        foreach (var member in synthetic.Members)
+                        {
+                            if (member.Name.StartsWith(context.WordToComplete, StringComparison.OrdinalIgnoreCase))
+                            {
+                                result.Add(new CompletionResult($"'{member.Name}'", member.Name, CompletionResultType.Property, member.Name));
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
         }
 
         private static void CompleteFormatViewByInferredType(CompletionContext context, string[] inferredTypeNames, List<CompletionResult> results, string commandName)
@@ -5996,6 +6046,7 @@ namespace System.Management.Automation
             Func<object, bool> filter,
             bool isStatic,
             HashSet<string> excludedMembers = null,
+            bool addMethodParenthesis = true,
             bool ignoreTypesWithoutDefaultConstructor = false)
         {
             bool extensionMethodsAdded = false;
@@ -6034,7 +6085,7 @@ namespace System.Management.Automation
                 var members = context.GetMembersByInferredType(psTypeName, isStatic, filter);
                 foreach (var member in members)
                 {
-                    AddInferredMember(member, memberNamePattern, results, excludedMembers);
+                    AddInferredMember(member, memberNamePattern, results, excludedMembers, addMethodParenthesis);
                 }
 
                 // Check if we need to complete against the extension methods 'Where' and 'ForEach'
@@ -6042,7 +6093,7 @@ namespace System.Management.Automation
                 {
                     // Complete extension methods 'Where' and 'ForEach' for Enumerable types
                     extensionMethodsAdded = true;
-                    CompleteExtensionMethods(memberNamePattern, results);
+                    CompleteExtensionMethods(memberNamePattern, results, addMethodParenthesis);
                 }
             }
 
@@ -6060,7 +6111,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results, HashSet<string> excludedMembers)
+        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results, HashSet<string> excludedMembers, bool addMethodParenthesis)
         {
             string memberName = null;
             bool isMethod = false;
@@ -6131,7 +6182,19 @@ namespace System.Management.Automation
             }
 
             var completionResultType = isMethod ? CompletionResultType.Method : CompletionResultType.Property;
-            var completionText = isMethod ? memberName + "(" : memberName;
+            string completionText;
+            if (isMethod && addMethodParenthesis)
+            {
+                completionText = $"{memberName}(";
+            }
+            else if (memberName.IndexOfAny(s_charactersRequiringQuotes) != -1)
+            {
+                completionText = $"'{memberName}'";
+            }
+            else
+            {
+                completionText = memberName;
+            }
 
             results.Add(new CompletionResult(completionText, memberName, completionResultType, getToolTip()));
         }

@@ -1732,10 +1732,7 @@ namespace Microsoft.PowerShell
                 if (origin.X + (contentsRegion.Right - contentsRegion.Left) + 1 < bufferInfo.BufferSize.X &&
                     ShouldCheck(contentsRegion.Right, contents, contentsRegion))
                 {
-                    if (cellArray == null)
-                    {
-                        cellArray = new BufferCell[cellArrayRegion.Bottom + 1, 2];
-                    }
+                    cellArray ??= new BufferCell[cellArrayRegion.Bottom + 1, 2];
 
                     checkOrigin = new Coordinates(origin.X +
                         (contentsRegion.Right - contentsRegion.Left), origin.Y);

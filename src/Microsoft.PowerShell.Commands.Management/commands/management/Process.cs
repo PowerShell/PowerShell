@@ -938,10 +938,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (System.Threading.Interlocked.Decrement(ref _numberOfProcessesToWaitFor) == 0)
             {
-                if (_waitHandle != null)
-                {
-                    _waitHandle.Set();
-                }
+                _waitHandle?.Set();
             }
         }
 
@@ -1040,13 +1037,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// StopProcessing.
         /// </summary>
-        protected override void StopProcessing()
-        {
-            if (_waitHandle != null)
-            {
-                _waitHandle.Set();
-            }
-        }
+        protected override void StopProcessing() => _waitHandle?.Set();
+
         #endregion Overrides
 
     }
@@ -1916,8 +1908,12 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                // Working Directory not specified -> Assign Current Path.
-                startInfo.WorkingDirectory = PathUtils.ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path, this, isLiteralPath: true);
+                // Working Directory not specified -> Assign Current Path, but only if it still exists
+                var currentDirectory = PathUtils.ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path, this, isLiteralPath: true);
+                if (Directory.Exists(currentDirectory))
+                {
+                    startInfo.WorkingDirectory = currentDirectory;
+                }
             }
 
             if (this.ParameterSetName.Equals("Default"))
@@ -2079,13 +2075,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implements ^c, after creating a process.
         /// </summary>
-        protected override void StopProcessing()
-        {
-            if (_waithandle != null)
-            {
-                _waithandle.Set();
-            }
-        }
+        protected override void StopProcessing() => _waithandle?.Set();
 
         #endregion
 
@@ -2116,13 +2106,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// When Process exits the wait handle is set.
         /// </summary>
-        private void myProcess_Exited(object sender, System.EventArgs e)
-        {
-            if (_waithandle != null)
-            {
-                _waithandle.Set();
-            }
-        }
+        private void myProcess_Exited(object sender, System.EventArgs e) => _waithandle?.Set();
 
         private string ResolveFilePath(string path)
         {
@@ -2221,15 +2205,8 @@ namespace Microsoft.PowerShell.Commands
         {
             Thread.Sleep(1000);
 
-            if (_outputWriter != null)
-            {
-                _outputWriter.Dispose();
-            }
-
-            if (_errorWriter != null)
-            {
-                _errorWriter.Dispose();
-            }
+            _outputWriter?.Dispose();
+            _errorWriter?.Dispose();
         }
 
         private void SetupInputOutputRedirection(Process p)

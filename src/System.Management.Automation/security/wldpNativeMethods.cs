@@ -77,10 +77,7 @@ namespace System.Management.Automation.Security
             {
                 lock (s_systemLockdownPolicyLock)
                 {
-                    if (s_systemLockdownPolicy == null)
-                    {
-                        s_systemLockdownPolicy = GetLockdownPolicy(path: null, handle: null);
-                    }
+                    s_systemLockdownPolicy ??= GetLockdownPolicy(path: null, handle: null);
                 }
             }
             else if (s_allowDebugOverridePolicy)
