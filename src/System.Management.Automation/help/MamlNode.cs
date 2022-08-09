@@ -209,7 +209,7 @@ namespace System.Management.Automation
             {
                 mshObject = new PSObject(GetInsidePSObject(xmlNode));
                 // Add typeNames to this MSHObject and create views so that
-                // the ouput is readable. This is done only for complex nodes.
+                // the output is readable. This is done only for complex nodes.
                 mshObject.TypeNames.Clear();
 
                 if (xmlNode.Attributes["type"] != null)

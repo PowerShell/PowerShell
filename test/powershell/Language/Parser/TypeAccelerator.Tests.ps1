@@ -404,7 +404,11 @@ Describe "Type accelerators" -Tags "CI" {
                 }
                 @{
                     Accelerator = 'pspropertyexpression'
-                    Type = [Microsoft.PowerShell.Commands.PSPropertyExpression]
+                    Type        = [Microsoft.PowerShell.Commands.PSPropertyExpression]
+                }
+                @{
+                    Accelerator = 'ordered'
+                    Type        = [System.Collections.Specialized.OrderedDictionary]
                 }
             )
 

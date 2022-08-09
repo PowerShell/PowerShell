@@ -71,7 +71,13 @@ namespace Microsoft.PowerShell.Commands
             if (ShouldProcess(dateToUse.ToString()))
             {
 #if UNIX
-                if (!Platform.NonWindowsSetDate(dateToUse))
+                // We are not validating the native call here.
+                // We just want to be sure that we're using the value the user provided us.
+                if (Dbg.Internal.InternalTestHooks.SetDate)
+                {
+                    WriteObject(dateToUse);
+                }
+                else if (!Platform.NonWindowsSetDate(dateToUse))
                 {
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
@@ -86,16 +92,23 @@ namespace Microsoft.PowerShell.Commands
                 systemTime.Second = (ushort)dateToUse.Second;
                 systemTime.Milliseconds = (ushort)dateToUse.Millisecond;
 #pragma warning disable 56523
-                if (!NativeMethods.SetLocalTime(ref systemTime))
+                if (Dbg.Internal.InternalTestHooks.SetDate)
                 {
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                    WriteObject(systemTime);
                 }
-
-                // MSDN says to call this twice to account for changes
-                // between DST
-                if (!NativeMethods.SetLocalTime(ref systemTime))
+                else
                 {
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                    if (!NativeMethods.SetLocalTime(ref systemTime))
+                    {
+                        throw new Win32Exception(Marshal.GetLastWin32Error());
+                    }
+
+                    // MSDN says to call this twice to account for changes
+                    // between DST
+                    if (!NativeMethods.SetLocalTime(ref systemTime))
+                    {
+                        throw new Win32Exception(Marshal.GetLastWin32Error());
+                    }
                 }
 #pragma warning restore 56523
 #endif
@@ -106,7 +119,11 @@ namespace Microsoft.PowerShell.Commands
             PSNoteProperty note = new("DisplayHint", DisplayHint);
             outputObj.Properties.Add(note);
 
-            WriteObject(outputObj);
+            // If we've turned on the SetDate test hook, don't emit the output object here because we emitted it earlier.
+            if (!Dbg.Internal.InternalTestHooks.SetDate)
+            {
+                WriteObject(outputObj);
+            }
         }
 
         #endregion

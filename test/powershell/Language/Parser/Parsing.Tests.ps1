@@ -644,3 +644,23 @@ Describe "Parsing array that has too many dimensions" -Tag CI {
         }
     }
 }
+
+Describe "Parsing using statement with alias and linebreak and comma" -Tag CI {
+    It "ParseError for '<Script>'" -TestCases @(
+        @{ Script = "using namespace x =`n"; ErrorId = @('MissingNamespaceAlias'); StartOffset = @(19); EndOffset = @(19) }
+        @{ Script = "using namespace x = `n"; ErrorId = @('MissingNamespaceAlias'); StartOffset = @(19); EndOffset = @(19) }
+        @{ Script = "using namespace x = ;"; ErrorId = @('MissingNamespaceAlias'); StartOffset = @(19); EndOffset = @(19) }
+        @{ Script = "using namespace x = ,"; ErrorId = @('UnexpectedUnaryOperator'); StartOffset = @(20); EndOffset = @(21) }
+        @{ Script = "using namespace x = &"; ErrorId = @('InvalidValueForUsingItemName','MissingExpression'); StartOffset = @(20, 20); EndOffset = @(21, 21) }
+    ) {
+        param($Script, $ErrorId, $StartOffset, $EndOffset)
+
+        $errs = Get-ParseResults -src $Script
+        $errs.Count | Should -Be $ErrorId.Count
+        for ($i = 0; $i -lt $errs.Count; $i++) {
+            $errs[$i].ErrorId | Should -BeExactly $ErrorId[$i]
+            $errs[$i].Extent.StartScriptPosition.Offset | Should -Be $StartOffset[$i]
+            $errs[$i].Extent.EndScriptPosition.Offset | Should -Be $EndOffset[$i]
+        }
+    }
+}

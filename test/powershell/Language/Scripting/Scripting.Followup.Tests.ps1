@@ -35,4 +35,37 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
         ([bool]$var = 42).GetType().FullName | Should -Be "System.Boolean"
         . { ([bool]$var = 42).GetType().FullName } | Should -Be "System.Boolean"
     }
+
+    It "Setting property using 'ForEach' method should work on a scalar object" {
+        $obj = [pscustomobject] @{ p = 1 }
+        $obj.ForEach('p', 32) | Should -BeNullOrEmpty
+        $obj.p | Should -Be 32
+    }
+
+    It "Test the special type name 'ordered'" {
+        class ordered {
+            [hashtable] $Member
+            ordered([hashtable] $hash) {
+                $this.Member = $hash
+            }
+        }
+
+        ## `<expr> -as\-is [ordered]` resolves 'ordered' as a normal type name.
+        $hash = @{ key = 2 }
+        $result = $hash -as [ordered]
+        $result.GetType().FullName | Should -BeExactly ([ordered].FullName)
+        $result -is [ordered] | Should -BeTrue
+        $result.Member['key'] | Should -Be 2
+        $result.Member.Count | Should -Be 1
+
+        ## `[ordered]$hash` causes parsing error.
+        $err = $null
+        $null = [System.Management.Automation.Language.Parser]::ParseInput('[ordered]$hash', [ref]$null, [ref]$err)
+        $err.Count | Should -Be 1
+        $err[0].ErrorId | Should -BeExactly 'OrderedAttributeOnlyOnHashLiteralNode'
+
+        ## `[ordered]@{ key = 1 }` creates 'OrderedDictionary'
+        $result = [ordered]@{ key = 1 }
+        $result | Should -BeOfType 'System.Collections.Specialized.OrderedDictionary'
+    }
 }

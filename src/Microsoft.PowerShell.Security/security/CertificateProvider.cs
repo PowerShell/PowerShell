@@ -2546,10 +2546,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (s_storeCache == null)
-            {
-                s_storeCache = new X509NativeStore(storeLocation, storeName);
-            }
+            s_storeCache ??= new X509NativeStore(storeLocation, storeName);
 
             return s_storeCache;
         }

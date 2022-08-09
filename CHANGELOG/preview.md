@@ -1,5 +1,309 @@
 # Current preview release
 
+## [7.3.0-preview.6] - 2022-07-18
+
+### General Cmdlet Updates and Fixes
+
+- Fix `Export-PSSession` to not throw error when a rooted path is specified for `-OutputModule` (#17671)
+- Change `ConvertFrom-Json -AsHashtable` to use ordered hashtable (#17405)
+- Remove potential ANSI escape sequences in strings before using in `Out-GridView` (#17664)
+- Add the `-Milliseconds` parameter to `New-TimeSpan` (#17621) (Thanks @NoMoreFood!)
+- Update `Set-AuthenticodeSignature` to use `SHA256` as the default (#17560) (Thanks @jborean93!)
+- Fix tab completion regression when completing `ValidateSet` values (#17628) (Thanks @MartinGC94!)
+- Show optional parameters as such when displaying method definition and overloads (#13799) (Thanks @eugenesmlv!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@sethvs, @MartinGC94, @eltociear</p>
+
+</summary>
+
+<ul>
+<li>Fix comment in InternalCommands.cs (#17669) (Thanks @sethvs!)</li>
+<li>Use discards for unused variables (#17620) (Thanks @MartinGC94!)</li>
+<li>Fix typo in CommonCommandParameters.cs (#17524) (Thanks @eltociear!)</li>
+</ul>
+
+</details>
+
+### Tests
+
+- Fix SDK tests for release build (#17678)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@tamasvajk</p>
+
+</summary>
+
+<ul>
+<li>Create test artifacts for Windows ARM64 (#17675)</li>
+<li>Update to the latest NOTICES file (#17607)</li>
+<li>Update .NET SDK version from <code>7.0.100-preview.5.22307.18</code> to <code>7.0.100-preview.6.22352.1</code> (#17634)</li>
+<li>Set the compound assignment preference to false (#17632)</li>
+<li>Update DotnetMetadata.json to start consuming .NET 7 Preview 6 builds (#17630)</li>
+<li>Install .NET 3.1 as it is required by the vPack task (#17600)</li>
+<li>Update to use PSReadLine <code>v2.2.6</code> (#17595)</li>
+<li>Fix <code>build.psm1</code> to not specify both version and quality for <code>dotnet-install</code> (#17589) (Thanks @tamasvajk!)</li>
+<li>Bump Newtonsoft.Json in /test/perf/dotnet-tools/Reporting (#17592)</li>
+<li>Bump Newtonsoft.Json in /test/perf/dotnet-tools/ResultsComparer (#17566)</li>
+<li>Disable RPM SBOM test. (#17532)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Remove `katacoda.com` from doc as it now returns 404 (#17625)
+- Update change log for `v7.2.5` and `v7.3.0-preview.5` (#17565)
+- Update `README.md` and `metadata.json` for upcoming releases (#17526)
+
+[7.3.0-preview.6]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.5...v7.3.0-preview.6
+
+## [7.3.0-preview.5] - 2022-06-21
+
+### Engine Updates and Fixes
+
+- Improve type inference and completions (#16963) (Thanks @MartinGC94!)
+- Make `Out-String` and `Out-File` keep string input unchanged (#17455)
+- Make `AnsiRegex` able to capture Hyperlink ANSI sequences (#17442)
+- Add the `-ConfigurationFile` command line parameter to `pwsh` to support local session configuration (#17447)
+- Fix native library loading for `osx-arm64` (#17365) (Thanks @awakecoding!)
+- Fix formatting to act appropriately when the style of table header or list label is empty string (#17463)
+
+### General Cmdlet Updates and Fixes
+
+- Fix various completion issues inside the `param` block (#17489) (Thanks @MartinGC94!)
+- Add Amended switch to `Get-CimClass` cmdlet (#17477) (Thanks @iSazonov!)
+- Improve completion on operators (#17486) (Thanks @MartinGC94!)
+- Improve array element completion for command arguments (#17078) (Thanks @matt9ucci!)
+- Use AST extent for `PSScriptRoot` path completion (#17376)
+- Add type inference support for generic methods with type parameters (#16951) (Thanks @MartinGC94!)
+- Write out OSC indicator only if the `stdout` is not redirected (#17419)
+- Remove the assert and use a relatively larger capacity to cover possible increase of .NET reference assemblies (#17423)
+- Increase reference assembly count to 161 (#17420)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@Yulv-git, @eltociear</p>
+
+</summary>
+
+<ul>
+<li>Fix some typos in source code (#17481) (Thanks @Yulv-git!)</li>
+<li>Fix typo in `AsyncResult.cs` (#17396) (Thanks @eltociear!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Update script to pin to .NET 7 preview 5 version (#17448)
+- Start-PSPester: argument completer for `-Path` (#17334) (Thanks @powercode!)
+- Add reminder workflows (#17387)
+- Move to configuring the fabric bot via JSON (#17411)
+- Update Documentation Issue Template URL (#17410) (Thanks @michaeltlombardi!)
+- Update script to automatically take new preview pre-release builds (#17375)
+
+### Tests
+
+- Make Assembly Load Native test work on a FX Dependent Linux Install (#17380)
+- Update `Get-Error` test to not depend on DNS APIs (#17471)
+
+### Build and Packaging Improvements
+
+<details>
+
+<ul>
+<li>Update .NET SDK version from <code>7.0.100-preview.4.22252.9</code> to <code>7.0.100-preview.5.22307.18</code> (#17402)</li>
+<li>Downgrade the <code>Microsoft.CodeAnalysis.NetAnalyzers</code> package to <code>7.0.0-preview1.22217.1</code> (#17515)</li>
+<li>Rename mariner package to cm (#17505)</li>
+<li>Bump Microsoft.CodeAnalysis.NetAnalyzers (#17476)</li>
+<li>Bump <code>NJsonSchema</code> from 10.7.1 to 10.7.2 (#17475)</li>
+<li>Publish preview versions of mariner to preview repo (#17451)</li>
+<li>Update to the latest NOTICES file (#17421)</li>
+<li>Do not publish package for Mariner 1.0 (#17415)</li>
+<li>Add <code>AppX</code> capabilities in MSIX manifest so that PS7 can call the <code>AppX</code> APIs (#17416)</li>
+<li>Update to the latest NOTICES file (#17401)</li>
+<li>Fix mariner mappings (#17413)</li>
+<li>Update the cgmanifest (#17393)</li>
+<li>Bump `NJsonSchema` from `10.7.0` to `10.7.1` (#17381)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update to the latest NOTICES file (#17493) (Thanks @github-actions[bot]!)
+- Update the cgmanifest (#17478) (Thanks @github-actions[bot]!)
+- Correct spelling in Comments and tests (#17480) (Thanks @Yulv-git!)
+- Fix spelling errors introduced in changelog (#17414)
+- Update change log for v7.3.0-preview.4 release (#17412)
+- Update readme and metadata for 7.3.0-preview.4 release (#17378)
+
+[7.3.0-preview.5]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.4...v7.3.0-preview.5
+
+## [7.3.0-preview.4] - 2022-05-23
+
+### Engine Updates and Fixes
+
+<ul>
+<li>Remove the use of <code>BinaryFormatter</code> in PSRP serialization (#17133) (Thanks @jborean93!)</li>
+<li>Update telemetry collection removing unused data and adding some new data (#17304)</li>
+<li>Fix the word wrapping in formatting to handle escape sequences properly (#17316)</li>
+<li>Fix the error message in Hashtable-to-object conversion (#17329)</li>
+<li>Add support for new WDAC API (#17247)</li>
+<li>On Windows, reset cursor visibility back to previous state when rendering progress (#16782)</li>
+<li>Fix the list view to not leak VT decorations (#17262)</li>
+<li>Fix formatting truncation to handle strings with VT sequences (#17251)</li>
+<li>Fix line breakpoints for <code>return</code> statements without a value (#17179)</li>
+<li>Fix for partial PowerShell module search paths, that can be resolved to CWD locations (#17231) (Internal 20126)</li>
+<li>Change logic in the testing helper module for determining whether <code>PSHOME</code> is writable (#17218)</li>
+<li>Make a variable assignment in a <code>ParenExpression</code> to return the variable value (#17174)</li>
+<li>Use new Windows signature APIs from <code>Microsoft.Security.Extensions</code> package (#17159)</li>
+<li>Do not include node names when sending telemetry. (#16981)</li>
+<li>Support forward slashes in network share (UNC path) completion (#17111) (#17117) (Thanks @sba923!)</li>
+<li>Do not generate clean block in proxy function when the feature is disabled (#17112)</li>
+<li>Ignore failure attempting to set console window title (#16948)</li>
+<li>Update regex used to remove ANSI escape sequences to be more specific to decoration and CSI sequences (#16811)</li>
+<li>Improve member auto completion (#16504) (Thanks @MartinGC94!)</li>
+<li>Prioritize <code>ValidateSet</code> completions over Enums for parameters (#15257) (Thanks @MartinGC94!)</li>
+<li>Add Custom Remote Connections Feature (#17011)</li>
+</ul>
+
+### General Cmdlet Updates and Fixes
+
+<ul>
+<li>Add check for <code>ScriptBlock</code> wrapped in <code>PSObject</code> to <code>$using</code> used in <code>ForEach-Object -Parallel</code> (#17234) (Thanks @ryneandal!)</li>
+<li>Fix <code>ForEach</code> method to set property on a scalar object (#17213)</li>
+<li>Fix <code>Sort-Object -Stable -Unique</code> to actually do stable sorting (#17189) (Thanks @m1k0net!)</li>
+<li>Add <code>OutputType</code> attribute to various commands (#16962) (Thanks @MartinGC94!)</li>
+<li>Make <code>Stop-Service</code> only request needed privileges when not setting SDDL. (#16663) (Thanks @kvprasoon!)</li>
+</ul>
+
+### Code Cleanup
+
+<ul>
+<li>Remove <code>EventLogLogProvider</code> and its related legacy code (#17027)</li>
+<li>Fix typos in names of method (#17003) (Thanks @al-cheb!)</li>
+<li>SemanticChecks: Avoid repeated type resolution of <code>[ordered]</code> (#17328) (Thanks IISResetMe!)</li>
+<li>Redo the change that was reverted by #15853 (#17357)</li>
+<li>Correct spelling of <code>pseudo</code> in <code>Compiler.cs</code> (#17285) (Thanks @eltociear!)</li>
+<li>Make<code>NameObscurerTelemetryInitializer</code> internal (#17214)</li>
+<li>Make <code>NameObscurerTelemetryInitializer</code> internal (#17167)</li>
+<li>Correct Typo in the resource string <code>PathResolvedToMultiple</code> (#17098) (Thanks @charltonstanley!)</li>
+<li>Fix typo in <code>ComRuntimeHelpers.cs</code> (#17104) (Thanks @eltociear!)</li>
+</ul>
+
+### Documentation and Help Content
+
+<ul>
+<li>Update link to PowerShell remoting in depth video (#17166)</li>
+</ul>
+
+### Tests
+
+<ul>
+<li>Add <code>-because</code> to the failing test to aid in debugging (#17030)</li>
+<li>Simplify Enum generator for the <code>-bnot</code> operator test (#17014)</li>
+<li>Improve unique naming for tests (#17043)</li>
+<li>Use a random string for the missing help topic to improve the chances that the help topic really won't be found. (#17042)</li>
+</ul>
+
+### Build and Packaging Improvements
+
+<ul>
+<li>Update <code>README.md</code> and <code>metadata.json</code> for v7.3.0-preview.3 release (#17029)</li>
+<li>Do not pull dotnet updates from internal feed (#17007)</li>
+<li>Simplify <code>Get-WSManSupport</code> based on current .NET Distro Support (#17356)</li>
+<li>Update to the latest NOTICES file (#17372, #17332, #17311, #17275)</li>
+<li>Run on every PR and let the action skip (#17366)</li>
+<li>Make sure verbose message is not null (#17363)</li>
+<li>Release changelogs (#17364)</li>
+<li>Update build versions (#17318)</li>
+<li>Add Daily Link Check GitHub Workflow (#17351)</li>
+<li>Update the cgmanifest (#17361, #17344, #17324, #17302, #17268)</li>
+<li>Bump <code>NJsonSchema</code> from <code>10.6.10</code> to <code>10.7.0</code> (#17350)</li>
+<li>Disable broken macOS CI job, which is unused (#17221)</li>
+<li>Have rebase workflow Post a message when it starts (#17341)</li>
+<li>Update <code>DotnetRuntimeMetadata.json</code> for .NET 7 Preview 4 (#17336)</li>
+<li>Update Ubuntu 22 to be detected as not supported WSMan (#17338)</li>
+<li>Bump xunit.runner.visualstudio from 2.4.3 to 2.4.5 (#17274)</li>
+<li>Make sure we execute tests on LTS package for older LTS releases (#17326)</li>
+<li>Bump Microsoft.NET.Test.Sdk from 17.1.0 to 17.2.0 (#17320)</li>
+<li>Add fedora to the OS's that can't run WSMan (#17325)</li>
+<li>Add sles15 support to <code>install-powershell.sh</code> (#16984)</li>
+<li>Start rotating through all images (#17315)</li>
+<li>Update .NET SDK version from <code>7.0.100-preview.2.22153.17</code> to <code>7.0.100-preview.4.22252.9</code> (#17061)</li>
+<li>Disable release security analysis for SSH CI (#17303)</li>
+<li>Add a finalize template which causes jobs with issues to fail (#17314)</li>
+<li>Add mapping for ubuntu22.04 jammy (#17317)</li>
+<li>Enable more tests to be run in a container. (#17294)</li>
+<li>Fix <code>build.psm1</code> to find the required .NET SDK version when a higher version is installed (#17299)</li>
+<li>Improve how Linux container CI builds are identified (#17295)</li>
+<li>Only inject NuGet security analysis if we are using secure <code>nuget.config</code> (#17293)</li>
+<li>Reduce unneeded verbose message from <code>build.psm1</code> (#17291)</li>
+<li>Switch to using GitHub action to verify markdown links for PRs (#17281)</li>
+<li>Put Secure supply chain analysis at correct place (#17273)</li>
+<li>Fix build id variable name when selecting CI container (#17279)</li>
+<li>Add rotation between the two mariner images (#17277)</li>
+<li>Update to use <code>mcr.microsoft.com</code> (#17272)</li>
+<li>Update engine working group members (#17271)</li>
+<li>Bump PSReadLine from 2.2.2 to 2.2.5 in /src/Modules (#17252)</li>
+<li>Update timeout for daily (#17263)</li>
+<li>Bump NJsonSchema from 10.6.9 to 10.6.10 (#16902)</li>
+<li>Update the <code>cgmanifest</code> (#17260)</li>
+<li>Fix Generate checksum file for packages build failure - v7.1.7 (#17219) (Internal 20274)</li>
+<li>Move <code>cgmanifest</code> generation to daily (#17258)</li>
+<li>Bump Microsoft.CodeAnalysis.NetAnalyzers (#17245)</li>
+<li>Update to the latest notice file (#17238)</li>
+<li>Add container to Linux CI (#17233)</li>
+<li>Mark <code>Microsoft.Management.Infrastructure.Runtime.Win</code> as a developer dependency to hide in notice file (#17230)</li>
+<li>Fixing dotnet SDK version parsing in <code>build.psm1</code> (#17198) (Thanks @powercode!)</li>
+<li>Fixed package names verification to support multi-digit versions (#17220)</li>
+<li>Bump Microsoft.CodeAnalysis.CSharp from 4.2.0-1.final to 4.2.0-4.final (#17210)</li>
+<li>Add backport action (#17212)</li>
+<li>Updated change logs for v7.0.9 / v7.0.10 / v7.1.6 / v7.1.7 / v7.2.2 / v7.2.3  (#17207)</li>
+<li>Updated metadata.json and README.md for v7.2.3 and v7.0.10 (#17158)</li>
+<li>Update package fallback list for ubuntu (from those updated for ubuntu 22.04) (deb) (#17180)</li>
+<li>Update <code>wix</code> to include security extensions package (#17171)</li>
+<li>Update rebase.yml (#17170)</li>
+<li>Adds sha256 digests to RPM packages (#16896) (Thanks @ngharo!)</li>
+<li>Make mariner packages Framework dependent (#17151)</li>
+<li>Update to the latest notice file (#17169)</li>
+<li>Update to the latest notice file (#17146)</li>
+<li>Replace <code>.</code> in notices container name (#17154)</li>
+<li>Allow multiple installations of dotnet. (#17141)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.NetAnalyzers</code> (#17105)</li>
+<li>Update to the latest notice file (#16437)</li>
+<li>Skip failing scriptblock tests (#17093)</li>
+<li>Update dotnet-install script download link (#17086)</li>
+<li>Fix the version of the <code>Microsoft.CodeAnalysis.NetAnalyzers</code> package (#17075)</li>
+<li>Update <code>dotnetmetadata.json</code> to accept .NET 7 preview 3 builds (#17063)</li>
+<li>Re-enable <code>PowerShellGet</code> tests targeting PowerShell gallery (#17062)</li>
+<li>Add mariner 1.0 amd64 package (#17057)</li>
+<li>Create checksum file for global tools (#17056)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.NetAnalyzers</code> (#17065)</li>
+<li>Use new cask format (#17064)</li>
+</ul>
+
+[7.3.0-preview.4]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.3...v7.3.0-preview.4
+
 ## [7.3.0-preview.3] - 2022-03-21
 
 ### Engine Updates and Fixes

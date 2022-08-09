@@ -249,13 +249,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Ensures that the sub-pipeline we created gets stopped as well.
         /// </summary>
-        protected override void StopProcessing()
-        {
-            if (_pipeline != null)
-            {
-                _pipeline.Stop();
-            }
-        }
+        protected override void StopProcessing() => _pipeline?.Stop();
 
         #endregion Cmdlet code
 

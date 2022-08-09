@@ -561,10 +561,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             get
             {
-                if (t_classCache == null)
-                {
-                    t_classCache = new Dictionary<string, DscClassCacheEntry>(StringComparer.OrdinalIgnoreCase);
-                }
+                t_classCache ??= new Dictionary<string, DscClassCacheEntry>(StringComparer.OrdinalIgnoreCase);
 
                 return t_classCache;
             }
@@ -580,10 +577,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             get
             {
-                if (t_byClassModuleCache == null)
-                {
-                    t_byClassModuleCache = new Dictionary<string, Tuple<string, Version>>(StringComparer.OrdinalIgnoreCase);
-                }
+                t_byClassModuleCache ??= new Dictionary<string, Tuple<string, Version>>(StringComparer.OrdinalIgnoreCase);
 
                 return t_byClassModuleCache;
             }
@@ -599,10 +593,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             get
             {
-                if (t_byFileClassCache == null)
-                {
-                    t_byFileClassCache = new Dictionary<string, List<Microsoft.Management.Infrastructure.CimClass>>(StringComparer.OrdinalIgnoreCase);
-                }
+                t_byFileClassCache ??= new Dictionary<string, List<Microsoft.Management.Infrastructure.CimClass>>(StringComparer.OrdinalIgnoreCase);
 
                 return t_byFileClassCache;
             }
@@ -618,10 +609,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             get
             {
-                if (t_scriptKeywordFileCache == null)
-                {
-                    t_scriptKeywordFileCache = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                }
+                t_scriptKeywordFileCache ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                 return t_scriptKeywordFileCache;
             }
@@ -982,10 +970,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 // Ignore modules with invalid schemas.
                 s_tracer.WriteLine("DSC ClassCache: Error importing file '{0}', with error '{1}'.  Skipping file.", path, e);
-                if (errors != null)
-                {
-                    errors.Add(e);
-                }
+                errors?.Add(e);
             }
 
             if (classes != null)
@@ -1012,10 +997,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 ParserStrings.DuplicateCimClassDefinition, className, path, files);
 
                             e.SetErrorId("DuplicateCimClassDefinition");
-                            if (errors != null)
-                            {
-                                errors.Add(e);
-                            }
+                            errors?.Add(e);
                         }
                     }
 
@@ -1893,10 +1875,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 if (keywordAst.Keyword.Keyword.Equals("Node"))
                 {
-                    if (errorList == null)
-                    {
-                        errorList = new List<ParseError>();
-                    }
+                    errorList ??= new List<ParseError>();
 
                     errorList.Add(new ParseError(kwAst.Extent,
                                          "ImportDscResourceInsideNode",
@@ -2148,8 +2127,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         {
                             try
                             {
-                                string unused;
-                                foundResources = ImportCimKeywordsFromModule(moduleInfo, resourceToImport, out unused);
+                                foundResources = ImportCimKeywordsFromModule(moduleInfo, resourceToImport, out _);
                             }
                             catch (Exception)
                             {

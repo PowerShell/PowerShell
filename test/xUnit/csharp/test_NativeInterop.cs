@@ -17,7 +17,7 @@ namespace PSTests.Sequential
 {
     public static class NativeInterop
     {
-        [Fact(Skip = "Have to skip this test due to https://github.com/dotnet/runtime/issues/66785")]
+        [Fact]
         public static void TestLoadNativeInMemoryAssembly()
         {
             string tempDir = Path.Combine(Path.GetTempPath(), "TestLoadNativeInMemoryAssembly");

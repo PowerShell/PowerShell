@@ -949,8 +949,9 @@ namespace System.Management.Automation.Language
         /// <param name="pipeArgumentType">Indicate the type of the piped-in argument.</param>
         /// <param name="paramAstAtCursor">The CommandParameterAst the cursor is pointing at.</param>
         /// <param name="bindingType">Indicates whether pseudo binding is for argument binding, argument completion, or parameter completion.</param>
+        /// <param name="bindPositional">Indicates if the pseudo binding should bind positional parameters</param>
         /// <returns>PseudoBindingInfo.</returns>
-        internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType)
+        internal PseudoBindingInfo DoPseudoParameterBinding(CommandAst command, Type pipeArgumentType, CommandParameterAst paramAstAtCursor, BindingType bindingType, bool bindPositional = true)
         {
             if (command == null)
             {
@@ -1008,12 +1009,15 @@ namespace System.Management.Automation.Language
                 unboundArguments = BindNamedParameters();
                 _bindingEffective = _currentParameterSetFlag != 0;
 
-                // positional binding
-                unboundArguments = BindPositionalParameter(
-                    unboundArguments,
-                    _currentParameterSetFlag,
-                    _defaultParameterSetFlag,
-                    bindingType);
+                if (bindPositional)
+                {
+                    // positional binding
+                    unboundArguments = BindPositionalParameter(
+                        unboundArguments,
+                        _currentParameterSetFlag,
+                        _defaultParameterSetFlag,
+                        bindingType);
+                }
 
                 // VFRA/pipeline binding if the given command is a binary cmdlet or a script cmdlet
                 if (!_function)
@@ -1218,10 +1222,7 @@ namespace System.Management.Automation.Language
                     var parameter = _commandElements[commandIndex] as CommandParameterAst;
                     if (parameter != null)
                     {
-                        if (argumentsToGetDynamicParameters != null)
-                        {
-                            argumentsToGetDynamicParameters.Add(parameter.Extent.Text);
-                        }
+                        argumentsToGetDynamicParameters?.Add(parameter.Extent.Text);
 
                         AstPair parameterArg = parameter.Argument != null
                             ? new AstPair(parameter)
@@ -1231,21 +1232,32 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        var dash = _commandElements[commandIndex] as StringConstantExpressionAst;
-                        if (dash != null && dash.Value.Trim().Equals("-", StringComparison.OrdinalIgnoreCase))
+                        object valueToAdd;
+                        ExpressionAst expressionToAdd;
+                        if (_commandElements[commandIndex] is ConstantExpressionAst constant)
                         {
-                            // "-" is represented by StringConstantExpressionAst. Most likely the user type a tab here,
-                            // and we don't want it be treated as an argument
+                            if (constant.Extent.Text.Equals("-", StringComparison.Ordinal))
+                            {
+                                // A value of "-" is most likely the user trying to tab here,
+                                // and we don't want it be treated as an argument
+                                continue;
+                            }
+
+                            valueToAdd = constant.Value;
+                            expressionToAdd = constant;
+                        }
+                        else if (_commandElements[commandIndex] is ExpressionAst expression)
+                        {
+                            valueToAdd = expression.Extent.Text;
+                            expressionToAdd = expression;
+                        }
+                        else
+                        {
                             continue;
                         }
 
-                        var expressionArgument = _commandElements[commandIndex] as ExpressionAst;
-                        if (expressionArgument != null)
-                        {
-                            argumentsToGetDynamicParameters?.Add(expressionArgument.Extent.Text);
-
-                            _arguments.Add(new AstPair(null, expressionArgument));
-                        }
+                        argumentsToGetDynamicParameters?.Add(valueToAdd);
+                        _arguments.Add(new AstPair(null, expressionToAdd));
                     }
                 }
             }

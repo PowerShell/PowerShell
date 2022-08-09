@@ -65,7 +65,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.Common",
-          "Version": "4.1.0"
+          "Version": "4.2.0"
         }
       },
       "DevelopmentDependency": false
@@ -75,7 +75,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "Microsoft.CodeAnalysis.CSharp",
-          "Version": "4.1.0"
+          "Version": "4.2.0"
         }
       },
       "DevelopmentDependency": false
@@ -128,7 +128,7 @@
           "Version": "2.0.0"
         }
       },
-      "DevelopmentDependency": false
+      "DevelopmentDependency": true
     },
     {
       "Component": {
@@ -265,7 +265,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "NJsonSchema",
-          "Version": "10.6.9"
+          "Version": "10.7.2"
         }
       },
       "DevelopmentDependency": false
@@ -695,7 +695,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "StyleCop.Analyzers.Unstable",
-          "Version": "1.2.0.406"
+          "Version": "1.2.0.435"
         }
       },
       "DevelopmentDependency": true
@@ -1215,7 +1215,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Security.Cryptography.Pkcs",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -1415,7 +1415,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Web.Services.Description",
-          "Version": "4.9.0-rc2.21473.1"
+          "Version": "4.9.0"
         }
       },
       "DevelopmentDependency": false

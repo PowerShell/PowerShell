@@ -118,25 +118,13 @@ namespace System.Management.Automation
                 version = new Version("0.0");
             }
 
-            if (types == null)
-            {
-                types = new Collection<string>();
-            }
+            types ??= new Collection<string>();
 
-            if (formats == null)
-            {
-                formats = new Collection<string>();
-            }
+            formats ??= new Collection<string>();
 
-            if (descriptionFallback == null)
-            {
-                descriptionFallback = string.Empty;
-            }
+            descriptionFallback ??= string.Empty;
 
-            if (vendorFallback == null)
-            {
-                vendorFallback = string.Empty;
-            }
+            vendorFallback ??= string.Empty;
 
             Name = name;
             IsDefault = isDefault;
@@ -1296,7 +1284,9 @@ namespace System.Management.Automation
                 {
                     lock (s_syncObject)
                     {
+#pragma warning disable IDE0074 // Disabling the rule because it can't be applied on non Unix
                         if (s_defaultMshSnapins == null)
+#pragma warning restore IDE0074
                         {
                             s_defaultMshSnapins = new List<DefaultPSSnapInInformation>()
                             {

@@ -569,10 +569,7 @@ namespace Microsoft.PowerShell.Commands
 
             internal override void StopOperation()
             {
-                if (_queryRunspaces != null)
-                {
-                    _queryRunspaces.StopAllOperations();
-                }
+                _queryRunspaces?.StopAllOperations();
 
                 _session.Runspace.StateChanged -= StateCallBackHandler;
                 SendStopComplete();

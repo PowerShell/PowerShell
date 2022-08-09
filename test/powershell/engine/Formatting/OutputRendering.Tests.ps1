@@ -39,7 +39,7 @@ Describe 'OutputRendering tests' {
         param($outputRendering, $ansi)
 
         $PSStyle.OutputRendering = $outputRendering
-        $out = "$($PSStyle.Foreground.Green)hello" | Out-String
+        $out = [pscustomobject] @{ key = "$($PSStyle.Foreground.Green)hello" } | Out-String
 
         if ($ansi) {
             $out | Should -BeLike "*`e*" -Because ($out | Format-Hex | Out-String)

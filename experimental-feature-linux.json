@@ -7,7 +7,6 @@
   "PSLoadAssemblyFromNativeCode",
   "PSNativeCommandArgumentPassing",
   "PSNativeCommandErrorActionPreference",
-  "PSNativePSPathResolution",
   "PSRemotingSSHTransportErrorHandling",
   "PSStrictModeAssignment",
   "PSSubsystemPluginModel"

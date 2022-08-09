@@ -945,8 +945,7 @@ namespace System.Management.Automation
             if (!OutVariable.StartsWith('+') &&
                 string.Equals("Out-Default", _commandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
-                if (_state == null)
-                    _state = new SessionState(Context.EngineSessionState);
+                _state ??= new SessionState(Context.EngineSessionState);
 
                 IList oldValue = null;
                 oldValue = PSObject.Base(_state.PSVariable.GetValue(this.OutVariable)) as IList;
@@ -978,8 +977,7 @@ namespace System.Management.Automation
 
             EnsureVariableParameterAllowed();
 
-            if (_state == null)
-                _state = new SessionState(Context.EngineSessionState);
+            _state ??= new SessionState(Context.EngineSessionState);
 
             // Create the pipeline variable
             _pipelineVarReference = new PSVariable(PipelineVariable);
@@ -2397,10 +2395,7 @@ namespace System.Management.Automation
             if (e == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(e));
 
-            if (PipelineProcessor != null)
-            {
-                PipelineProcessor.RecordFailure(e, _thisCommand);
-            }
+            PipelineProcessor?.RecordFailure(e, _thisCommand);
 
             // 1021203-2005/05/09-JonN
             // HaltCommandException will cause the command
@@ -2562,8 +2557,7 @@ namespace System.Management.Automation
 
             EnsureVariableParameterAllowed();
 
-            if (_state == null)
-                _state = new SessionState(Context.EngineSessionState);
+            _state ??= new SessionState(Context.EngineSessionState);
 
             if (variableName.StartsWith('+'))
             {
