@@ -3973,7 +3973,7 @@ namespace System.Management.Automation
                 }
 
                 Func<object, bool> filter = propertiesOnly ? IsPropertyMember : null;
-                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter, isStatic: false, excludedMembers, addMethodparenthesis: false);
+                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter, isStatic: false, excludedMembers, addMethodParenthesis: false);
             }
 
             result.Add(CompletionResult.Null);
@@ -5904,7 +5904,7 @@ namespace System.Management.Automation
         private static void CompleteExtensionMethods(string memberName, List<CompletionResult> results, bool addMethodParenthesis = true)
         {
             var pattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
-            CompleteExtensionMethods(pattern, results, addMethodparenthesis);
+            CompleteExtensionMethods(pattern, results, addMethodParenthesis);
         }
 
         /// <summary>
@@ -5916,7 +5916,7 @@ namespace System.Management.Automation
             {
                 if (pattern.IsMatch(member.Item1))
                 {
-                    string completionText = addMethodparenthesis ? $"{member.Item1}(" : member.Item1;
+                    string completionText = addMethodParenthesis ? $"{member.Item1}(" : member.Item1;
                     results.Add(new CompletionResult(completionText, member.Item1, CompletionResultType.Method, member.Item2));
                 }
             }
@@ -6062,7 +6062,7 @@ namespace System.Management.Automation
                 var members = context.GetMembersByInferredType(psTypeName, isStatic, filter);
                 foreach (var member in members)
                 {
-                    AddInferredMember(member, memberNamePattern, results, excludedMembers, addMethodparenthesis);
+                    AddInferredMember(member, memberNamePattern, results, excludedMembers, addMethodParenthesis);
                 }
 
                 // Check if we need to complete against the extension methods 'Where' and 'ForEach'
@@ -6070,7 +6070,7 @@ namespace System.Management.Automation
                 {
                     // Complete extension methods 'Where' and 'ForEach' for Enumerable types
                     extensionMethodsAdded = true;
-                    CompleteExtensionMethods(memberNamePattern, results, addMethodparenthesis);
+                    CompleteExtensionMethods(memberNamePattern, results, addMethodParenthesis);
                 }
             }
 
@@ -6160,7 +6160,7 @@ namespace System.Management.Automation
 
             var completionResultType = isMethod ? CompletionResultType.Method : CompletionResultType.Property;
             string completionText;
-            if (isMethod && addMethodparenthesis)
+            if (isMethod && addMethodParenthesis)
             {
                 completionText = $"{memberName}(";
             }
