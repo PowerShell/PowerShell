@@ -346,7 +346,7 @@ A script block used to calculate the value of the new property.</value>
 Define how the values are displayed in a column.
 Valid values are 'left', 'center', or 'right'.</value>
   </data>
-  <data name="FormatstringHashtableKeyDescription" xml:space="preserve">
+  <data name="FormatStringHashtableKeyDescription" xml:space="preserve">
     <value>[string]
 Specifies a format string that defines how the value is formatted for output.</value>
   </data>
