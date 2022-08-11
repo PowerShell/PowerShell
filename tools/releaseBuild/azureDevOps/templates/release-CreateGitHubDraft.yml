@@ -73,7 +73,7 @@ steps:
         if ($_ -match $startPattern) { $outputLine = $true }
         elseif ($_ -match $endPattern) { $outputLine = $false }
         if ($outputLine) { $_}
-      }
+      } | Out-String
 
     Write-Verbose -Verbose "Selected content: `n$clContent"
 
