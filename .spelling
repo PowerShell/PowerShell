@@ -18,6 +18,7 @@ about_
 about_debuggers
 about_jobs
 about_Telemetry
+about_PSDesiredStateConfiguration
 acl
 adamdriscoll
 add-localgroupmember
@@ -71,6 +72,7 @@ authenticode
 authenticodesignature
 azdevops
 AzFileCopy
+AzureFileCopy
 azurerm.netcore.preview
 azurerm.profile.netcore.preview
 azurerm.resources.netcore.preview
@@ -373,6 +375,7 @@ github
 githug
 gitter
 glachancecmaisonneuve
+global.json
 globbing
 GoogleTest
 GUIs
@@ -508,6 +511,7 @@ maertendmsft
 mahawar
 Markdig.Signed
 markdown.yml
+manifest.spdx.json
 markekraus
 marktiedemann
 Marusyk
@@ -515,6 +519,7 @@ MarvTheRobot
 mattifestation
 matt9ucci
 mcbobke
+mcr.microsoft.com
 md
 meir017
 memberresolution
@@ -744,6 +749,7 @@ PSGalleryModules
 psm1
 psobject
 psobjects
+psoptions.json
 psproxyjobs
 psreadline
 psrp.windows
@@ -942,6 +948,7 @@ TargetFramework
 test-modulemanifest
 test-pssessionconfigurationfile
 test-scriptfileinfo
+tar.gz
 test.ps1
 test.txt.
 Tests.ps1
