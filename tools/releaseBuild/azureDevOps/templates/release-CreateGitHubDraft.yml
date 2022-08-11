@@ -64,7 +64,7 @@ steps:
       throw "$filePath not found"
     }
 
-    $changelog = Get-Content -Raw -Path $filePath
+    $changelog = Get-Content -Path $filePath
 
     $startPattern = "^## \[" + ([regex]::Escape($releaseVersion)) + "\]"
     $endPattern = "^## \[{0}\.{1}\.{2}*" -f $semanticVersion.Major, $semanticVersion.Minor, $semanticVersion.Patch
