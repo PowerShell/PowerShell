@@ -7253,11 +7253,13 @@ namespace System.Management.Automation
                     {
                         return null;
                     }
-                    inferredTypes = new PSTypeName[]{nestedType};
+
+                    inferredTypes = TypeInferenceVisitor.GetInferredEnumeratedTypes(new PSTypeName[] { nestedType });
                 }
                 else
                 {
-                    inferredTypes = AstTypeInference.InferTypeOf(parentAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval);
+                    inferredTypes = TypeInferenceVisitor.GetInferredEnumeratedTypes(
+                        AstTypeInference.InferTypeOf(parentAst, completionContext.TypeInferenceContext, TypeInferenceRuntimePermissions.AllowSafeEval));
                 }
 
                 var result = new List<CompletionResult>();
@@ -7399,7 +7401,7 @@ namespace System.Management.Automation
                         return null;
                     }
 
-                    PSTypeName[] inferredTypes;
+                    IEnumerable<PSTypeName> inferredTypes;
                     if (hashtableIsNested)
                     {
                         var nestedType = GetNestedHashtableKeyType(
@@ -7410,11 +7412,11 @@ namespace System.Management.Automation
                         {
                             return null;
                         }
-                        inferredTypes = new PSTypeName[] { nestedType };
+                        inferredTypes = TypeInferenceVisitor.GetInferredEnumeratedTypes(new PSTypeName[] { nestedType });
                     }
                     else
                     {
-                        inferredTypes = new PSTypeName[] { new PSTypeName(binding.BoundParameters[parameterName].Parameter.Type) };
+                        inferredTypes = TypeInferenceVisitor.GetInferredEnumeratedTypes(new PSTypeName[] { new PSTypeName(binding.BoundParameters[parameterName].Parameter.Type) });
                     }
 
                     results = new List<CompletionResult>();

@@ -271,21 +271,28 @@ switch ($x)
 
     context TypeConstructionWithHashtable {
         BeforeAll {
-            class X {
+            class RandomTestType {
                 $A
                 $B
                 $C
             }
-            function xClassTestCompletion([x]$Param1){}
+            function RandomTestTypeClassTestCompletion([RandomTestType]$Param1){}
+            Class LevelOneClass {
+                [LevelTwoClass] $Property1
+            }
+            class LevelTwoClass {
+                [string] $Property2
+            }
+            function LevelOneClassTestCompletion([LevelOneClass[]]$Param1){}
         }
         It 'Should complete New-Object hashtable' {
-            $res = TabExpansion2 -inputScript 'New-Object -TypeName X -Property @{ ' -cursorColumn 'New-Object -TypeName X -Property @{ '.Length
+            $res = TabExpansion2 -inputScript 'New-Object -TypeName RandomTestType -Property @{ '
             $res.CompletionMatches | Should -HaveCount 3
             $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
         }
 
         It 'Complete hashtable key without duplicate keys' {
-            $TestString = '[x]@{A="";^}'
+            $TestString = '[RandomTestType]@{A="";^}'
             $CursorIndex = $TestString.IndexOf('^')
             $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
             $res.CompletionMatches | Should -HaveCount 2
@@ -294,7 +301,7 @@ switch ($x)
 
         It 'Complete hashtable key on empty line after key/value pair' {
             $TestString = @'
-[x]@{
+[RandomTestType]@{
     B=""
     ^
 }
@@ -306,15 +313,35 @@ switch ($x)
         }
 
         It 'Should complete class properties for typed variable declaration with hashtable' {
-            $res = TabExpansion2 -inputScript '[X]$TestVar = @{'
+            $res = TabExpansion2 -inputScript '[RandomTestType]$TestVar = @{'
             $res.CompletionMatches | Should -HaveCount 3
             $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
         }
 
         It 'Should complete class properties for typed command parameter with hashtable input' {
-            $res = TabExpansion2 -inputScript 'xClassTestCompletion -Param1 @{'
+            $res = TabExpansion2 -inputScript 'RandomTestTypeClassTestCompletion -Param1 @{'
             $res.CompletionMatches | Should -HaveCount 3
             $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'A B C'
+        }
+
+        It 'Should complete class properties for nested hashtable' {
+            $res = TabExpansion2 -inputScript '[LevelOneClass]@{Property1=@{'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Property2'
+        }
+
+        It 'Should complete class properties for underlying type in array parameter' {
+            $res = TabExpansion2 -inputScript 'LevelOneClassTestCompletion @{'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Property1'
+        }
+
+        It 'Should complete class properties for new class assignment to property' {
+            $res = TabExpansion2 -inputScript '$Var=[LevelOneClass]::new();$Var.Property1=@{'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Property2'
+        }
+
+        It 'Should not complete class properties from class with constructor that takes arguments' {
+            $res = TabExpansion2 -inputScript 'class ClassWithCustomConstructor {ClassWithCustomConstructor ($Param){}$A};[ClassWithCustomConstructor]@{'
+            $res.CompletionMatches[0].CompletionText | Should -BeNullOrEmpty
         }
     }
 
@@ -324,6 +351,18 @@ switch ($x)
         $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
         $res.CompletionMatches | Should -HaveCount 11
         $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'LogName ProviderName Path Keywords ID Level StartTime EndTime UserID Data SuppressHashFilter'
+    }
+
+    It 'Complete hashtable keys for Get-WinEvent SuppressHashFilter' -Skip:(!$IsWindows) {
+        $TestString = 'Get-WinEvent -FilterHashtable @{SuppressHashFilter=@{'
+        $res = TabExpansion2 -inputScript $TestString
+        $res.CompletionMatches | Should -HaveCount 10
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'LogName ProviderName Path Keywords ID Level StartTime EndTime UserID Data'
+    }
+
+    It 'Complete hashtable keys for hashtable in array of arguments' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem | Format-Table -Property Attributes,@{'
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly 'Expression FormatString Label Width Alignment'
     }
 
     It 'Complete hashtable keys for a hashtable used for splatting' {
