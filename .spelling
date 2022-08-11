@@ -13,6 +13,7 @@
 about_
 about_debuggers
 about_jobs
+about_PSDesiredStateConfiguration
 acl
 add-localgroupmember
 add-ons
@@ -52,6 +53,7 @@ asp.net
 assemblyloadcontext
 authenticodesignature
 azdevops
+AzureFileCopy
 azurerm.netcore.preview
 azurerm.profile.netcore.preview
 azurerm.resources.netcore.preview
@@ -287,6 +289,7 @@ github
 githug
 gitter
 glachancecmaisonneuve
+global.json
 globbing
 GoogleTest
 gzip
@@ -388,9 +391,11 @@ macos
 macports
 maertendmsft
 mahawar
+manifest.spdx.json
 markekraus
 marktiedemann
 mcbobke
+mcr.microsoft.com
 md
 meir017
 memberresolution
@@ -556,6 +561,7 @@ psgallery
 psm1
 psobject
 psobjects
+psoptions.json
 psproxyjobs
 psreadline
 psrp.windows
@@ -704,6 +710,7 @@ systemd
 tabcompletion
 tadas
 tandasat
+tar.gz
 test.ps1
 test.txt.
 test1.txt
