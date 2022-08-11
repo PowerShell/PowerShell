@@ -1588,6 +1588,7 @@ namespace System.Management.Automation
 
             MergedCompiledCommandParameter bestMatchParam = null;
             ParameterSetSpecificMetadata bestMatchSet = null;
+
             // Finds the parameter with the position closest to the specified position
             foreach (MergedCompiledCommandParameter param in parameters)
             {
