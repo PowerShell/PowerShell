@@ -174,15 +174,13 @@ Describe "Tests for parameter binding" -Tags "CI" {
         $scriptblock = {
             param($numSets=1)
             $parameters = (1..($numSets) | ForEach-Object { "[Parameter(parametersetname='set$_')]`$a$_" }) -join ', '
-            $body = "param($parameters) 'worked'"
+            $body = "param($parameters) 'working'"
             $sb = [scriptblock]::Create($body)
             & $sb -a1 123
         }
 
-        { & $scriptblock -numSets 32 } | Should -Not -Throw
-        & $scriptblock -numSets 32 | Should -Be 'worked'
+        & $scriptblock -numSets 32 | Should -Be 'working'
         { & $scriptblock -numSets 33 } | Should -Throw -ErrorId 'ParsingTooManyParameterSets'
-        { & $scriptblock -numSets 34 } | Should -Throw -ErrorId 'ParsingTooManyParameterSets'
     }
 
     It 'Default parameter set with value from remaining arguments case 1' {
