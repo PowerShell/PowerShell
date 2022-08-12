@@ -96,7 +96,7 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0-preview.7/PowerShell-7.3.0-preview.7-win-x64.msi
 [pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0-preview.7/PowerShell-7.3.0-preview.7-win-x86.msi
 [pv-deb]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0-preview.7/powershell-preview_7.3.0-preview.7-1.deb_amd64.deb
-[pv-rpm]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0-preview.7/powershell-preview-7.3.0_preview.6-1.rh.x86_64.rpm
+[pv-rpm]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0-preview.7/powershell-preview-7.3.0_preview.7-1.rh.x86_64.rpm
 [pv-macos]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0-preview.7/powershell-7.3.0-preview.7-osx-x64.pkg
 [pv-macos-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0-preview.7/powershell-7.3.0-preview.7-osx-arm64.pkg
 [pv-winarm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.3.0-preview.7/PowerShell-7.3.0-preview.7-win-arm64.zip
