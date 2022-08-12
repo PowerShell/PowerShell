@@ -6055,7 +6055,7 @@ namespace System.Management.Automation
             foreach (var psTypeName in inferredTypes)
             {
                 if (!typeNameUsed.Add(psTypeName.Name)
-                    || (ignoreTypesWithoutDefaultConstructor && psTypeName.Type is not null && psTypeName.Type.GetConstructor(Type.EmptyTypes) is null))
+                    || (ignoreTypesWithoutDefaultConstructor && psTypeName.Type is not null && psTypeName.Type.GetConstructor(Type.EmptyTypes) is null && !psTypeName.Type.IsInterface))
                 {
                     continue;
                 }

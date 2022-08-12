@@ -284,6 +284,8 @@ switch ($x)
                 [string] $Property2
             }
             function LevelOneClassTestCompletion([LevelOneClass[]]$Param1){}
+            Add-Type -TypeDefinition 'public interface IRandomInterfaceTest{string DemoProperty { get; set; }}'
+            function functionWithInterfaceParam ([IRandomInterfaceTest]$Param1){}
         }
         It 'Should complete New-Object hashtable' {
             $res = TabExpansion2 -inputScript 'New-Object -TypeName RandomTestType -Property @{ '
@@ -342,6 +344,11 @@ switch ($x)
         It 'Should not complete class properties from class with constructor that takes arguments' {
             $res = TabExpansion2 -inputScript 'class ClassWithCustomConstructor {ClassWithCustomConstructor ($Param){}$A};[ClassWithCustomConstructor]@{'
             $res.CompletionMatches[0].CompletionText | Should -BeNullOrEmpty
+        }
+
+        It 'Should complete class properties for function with an interface type' {
+            $res = TabExpansion2 -inputScript 'functionWithInterfaceParam -Param1 @{'
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'DemoProperty'
         }
     }
 
