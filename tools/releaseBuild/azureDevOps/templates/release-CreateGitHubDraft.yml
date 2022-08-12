@@ -57,14 +57,14 @@ steps:
       $semanticVersion.Major + "." + $semanticVersion.Minor + ".md"
     }
 
-    $filePath = $env:BUILD_SOURCESDIRECTORY/CHANGELOG/$fileName
+    $filePath = "$env:BUILD_SOURCESDIRECTORY/CHANGELOG/$fileName"
     Write-Verbose -Verbose "Selected Log file: $filePath"
 
     if (-not (Test-Path $filePath)) {
       throw "$filePath not found"
     }
 
-    $changelog = Get-Content -Raw -Path $filePath
+    $changelog = Get-Content -Path $filePath
 
     $startPattern = "^## \[" + ([regex]::Escape($releaseVersion)) + "\]"
     $endPattern = "^## \[{0}\.{1}\.{2}*" -f $semanticVersion.Major, $semanticVersion.Minor, $semanticVersion.Patch
@@ -73,7 +73,7 @@ steps:
         if ($_ -match $startPattern) { $outputLine = $true }
         elseif ($_ -match $endPattern) { $outputLine = $false }
         if ($outputLine) { $_}
-      }
+      } | Out-String
 
     Write-Verbose -Verbose "Selected content: `n$clContent"
 
