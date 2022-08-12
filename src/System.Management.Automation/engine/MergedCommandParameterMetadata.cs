@@ -228,7 +228,7 @@ namespace System.Management.Automation
                 // A parameter set name should only be added once
                 if (index == -1)
                 {
-                    if (_nextAvailableParameterSetIndex == uint.MaxValue)
+                    if (_nextAvailableParameterSetIndex == 32)
                     {
                         // Don't let the parameter set index overflow
                         ParsingMetadataException parsingException =
