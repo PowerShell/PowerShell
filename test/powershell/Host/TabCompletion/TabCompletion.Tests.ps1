@@ -2237,6 +2237,7 @@ function MyFunction ($param1, $param2)
             $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
         }
     }
+    
     Context "Using statement related tests" {
         It 'Should complete <ScriptText>' -TestCases @(
             #@{
@@ -2271,6 +2272,14 @@ function MyFunction ($param1, $param2)
             param ([string[]]$Expected, $ScriptText)
             (TabExpansion2 -inputScript $ScriptText -cursorColumn $ScriptText.Length).CompletionMatches.CompletionText | Select-Object -First $expected.Count | Should -Be $Expected
         }
+    }
+    
+    it 'Should only complete attribute types when completing an attribute' {
+        $TestString = '[Parameter^(]'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches | Should -HaveCount 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "Parameter"
     }
 }
 

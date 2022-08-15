@@ -6313,7 +6313,8 @@ namespace System.Management.Automation
                 CompletionInfo[typeInfo.FullName] = new TypeCompletionInfo()
                 {
                     ListItemText = typeInfo.ListItemText,
-                    Tooltip = typeInfo.ToolTip
+                    Tooltip = typeInfo.ToolTip,
+                    IsAttribute = typeInfo.IsAttribute
                 };
 
                 if (string.IsNullOrEmpty(typeInfo.Namespace))
@@ -6381,6 +6382,7 @@ namespace System.Management.Automation
         {
             internal string ListItemText;
             internal string Tooltip;
+            internal bool IsAttribute;
         }
 
         private sealed class TypeAcceleratorCompletionInfo
@@ -6388,6 +6390,7 @@ namespace System.Management.Automation
             internal string ListItemText;
             internal string Tooltip;
             internal string FullName;
+            internal bool IsAttribute;
         }
 
         private sealed class TypeInfoForCompletion
@@ -6397,6 +6400,7 @@ namespace System.Management.Automation
             internal string Namespace;
             internal string ToolTip;
             internal string ListItemText;
+            internal bool IsAttribute;
         }
 
         private sealed class UsingInfo
@@ -6438,7 +6442,8 @@ namespace System.Management.Automation
                 {
                     ListItemText = AcceleratorType.Name,
                     Tooltip = toolTip,
-                    FullName = AcceleratorType.FullName
+                    FullName = AcceleratorType.FullName,
+                    IsAttribute = typeof(Attribute).IsAssignableFrom(AcceleratorType)
                 });
             }
 
@@ -6510,6 +6515,7 @@ namespace System.Management.Automation
             string fullName;
             string toolTip;
             string listItemText;
+
             if (type.IsGenericType)
             {
 
@@ -6545,7 +6551,8 @@ namespace System.Management.Automation
                 FullName = fullName,
                 ToolTip = toolTip,
                 ListItemText = listItemText,
-                Namespace = type.Namespace
+                Namespace = type.Namespace,
+                IsAttribute = typeof(Attribute).IsAssignableFrom(type)
             };
         }
 
@@ -6588,7 +6595,8 @@ namespace System.Management.Automation
                     ListItemText = $"{shortName}<>",
                     Namespace = ns,
                     ShortName = shortName,
-                    ToolTip = toolTip
+                    ToolTip = toolTip,
+                    IsAttribute = shortName.EndsWith("Attribute")
                 };
             }
             else
@@ -6600,7 +6608,8 @@ namespace System.Management.Automation
                     ListItemText = shortName,
                     Namespace = ns,
                     ShortName = shortName,
-                    ToolTip = fullTypeName
+                    ToolTip = fullTypeName,
+                    IsAttribute = shortName.EndsWith("Attribute")
                 };
             }
         }
@@ -6811,7 +6820,7 @@ namespace System.Management.Automation
             return CompleteType(new CompletionContext { WordToComplete = typeName, Helper = helper, ExecutionContext = executionContext });
         }
 
-        internal static List<CompletionResult> CompleteType(CompletionContext context, string prefix = "", string suffix = "")
+        internal static List<CompletionResult> CompleteType(CompletionContext context, string prefix = "", string suffix = "", bool attributeOnly = false)
         {
             var results = new List<CompletionResult>();
             var typeCache = s_typeCache ?? InitializeTypeCache();
@@ -6823,6 +6832,13 @@ namespace System.Management.Automation
             foreach (var typeDefinition in usingInfo.InternalTypes)
             {
                 _ = usedTypeNames.Add(typeDefinition.Name);
+
+                if (attributeOnly && ((typeDefinition.Type is not null && !typeof(Attribute).IsAssignableFrom(typeDefinition.Type))
+                    || (typeDefinition.Type is null && !typeDefinition.Name.EndsWith("Attribute"))))
+                {
+                    continue;
+                }
+
                 if (typeDefinition.Name.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
                 {
                     AddTypeDefinitionToResults(results, typeDefinition, string.Create(CultureInfo.InvariantCulture, $"{prefix}{typeDefinition.Name}{suffix}"));
@@ -6836,6 +6852,12 @@ namespace System.Management.Automation
                     var moduleQualifiedTypeName = string.Create(CultureInfo.InvariantCulture, $"{module}.{typeDefinition.Name}");
                     var shortTypeNameWasAdded = usedTypeNames.Add(typeDefinition.Name);
                     _ = usedTypeNames.Add(moduleQualifiedTypeName);
+
+                    if (attributeOnly && ((typeDefinition.Type is not null && !typeof(Attribute).IsAssignableFrom(typeDefinition.Type))
+                        || (typeDefinition.Type is null && !typeDefinition.Name.EndsWith("Attribute"))))
+                    {
+                        continue;
+                    }
 
                     if (wordToComplete.StartsWith(typeDefinition.Name, StringComparison.OrdinalIgnoreCase)
                         || wordToComplete.StartsWith(module, StringComparison.OrdinalIgnoreCase))
@@ -6863,6 +6885,11 @@ namespace System.Management.Automation
                 if (usedTypeNames.Add(typeAccelerator) && typeAccelerator.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
                 {
                     var completionInfo = typeCache.TypeAcceleratorMap[typeAccelerator];
+                    if (attributeOnly && !completionInfo.IsAttribute)
+                    {
+                        continue;
+                    }
+
                     results.Add(new CompletionResult(
                         string.Create(CultureInfo.InvariantCulture, $"{prefix}{typeAccelerator}{suffix}"),
                         completionInfo.ListItemText,
@@ -6907,6 +6934,11 @@ namespace System.Management.Automation
                                 continue;
                             }
                             var completionInfo = typeCache.CompletionInfo[fullName];
+                            if (attributeOnly && !completionInfo.IsAttribute)
+                            {
+                                continue;
+                            }
+
                             results.Add(new CompletionResult(
                                 string.Create(CultureInfo.InvariantCulture, $"{prefix}{shortNameTable[fullName]}{suffix}"),
                                 completionInfo.ListItemText,
@@ -6966,6 +6998,11 @@ namespace System.Management.Automation
                         {
                             var fullTypeName = string.Create(CultureInfo.InvariantCulture, $"{ns}.{shortTypeName}");
                             var completionInfo = typeCache.CompletionInfo[fullTypeName];
+                            if (attributeOnly && !completionInfo.IsAttribute)
+                            {
+                                continue;
+                            }
+
                             indexChar = char.ToUpper(shortTypeName[0]);
 
                             var shortNameTable = GetShortestNonConflictingTypeName(typeCache.TypeNameMap[indexChar][shortTypeName], usingInfo, usedTypeNames, fullTypeName);
@@ -7002,12 +7039,12 @@ namespace System.Management.Automation
                 {
                     foreach (var shortTypeName in map.Keys)
                     {
-                        if (typeNamePrefix is not null)
-                        {
-                            fullNameFilter = string.Create(CultureInfo.InvariantCulture, $"{typeNamePrefix}{shortTypeName}");
-                        }
                         if (shortTypeName.StartsWith(partialTypeName, StringComparison.OrdinalIgnoreCase))
                         {
+                            if (typeNamePrefix is not null)
+                            {
+                                fullNameFilter = string.Create(CultureInfo.InvariantCulture, $"{typeNamePrefix}{shortTypeName}");
+                            }
                             var shortNameTable = GetShortestNonConflictingTypeName(map[shortTypeName], usingInfo, usedTypeNames);
                             foreach (var fullName in shortNameTable.Keys)
                             {
@@ -7018,6 +7055,11 @@ namespace System.Management.Automation
                                 if (fullNameFilter is null || fullName.EndsWith(fullNameFilter, StringComparison.OrdinalIgnoreCase))
                                 {
                                     var completionInfo = typeCache.CompletionInfo[fullName];
+                                    if (attributeOnly && !completionInfo.IsAttribute)
+                                    {
+                                        continue;
+                                    }
+
                                     results.Add(new CompletionResult(
                                         string.Create(CultureInfo.InvariantCulture, $"{prefix}{shortNameTable[fullName]}{suffix}"),
                                         completionInfo.ListItemText,
