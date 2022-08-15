@@ -1469,8 +1469,8 @@ ConstructorTestClass(int i, bool b)
 
         It "Should complete member in attribute argument value" {
             $inputStr = '[ValidateRange(1,[int]::Maxva^)]$a'
-            $CursorIndex = $TestString.IndexOf('^')
-            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+            $CursorIndex = $inputStr.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $inputStr.Remove($CursorIndex, 1)
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly "MaxValue"
         }
