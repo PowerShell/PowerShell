@@ -63,14 +63,14 @@ namespace Microsoft.PowerShell.Commands
         Default = 0,
 
         /// <summary>
-        /// Specifies the TLS 1.0 security protocol. The TLS protocol is defined in IETF RFC 2246.
+        /// Specifies the TLS 1.0 is obsolete. Using this value now defaults to TLS 1.2.
         /// </summary>
-        Tls = SslProtocols.Tls,
+        Tls = SslProtocols.Tls12,
 
         /// <summary>
-        /// Specifies the TLS 1.1 security protocol. The TLS protocol is defined in IETF RFC 4346.
+        /// Specifies the TLS 1.1 is obsolete. Using this value now defaults to TLS 1.2.
         /// </summary>
-        Tls11 = SslProtocols.Tls11,
+        Tls11 = SslProtocols.Tls12,
 
         /// <summary>
         /// Specifies the TLS 1.2 security protocol. The TLS protocol is defined in IETF RFC 5246.
@@ -583,10 +583,7 @@ namespace Microsoft.PowerShell.Commands
         internal virtual void PrepareSession()
         {
             // make sure we have a valid WebRequestSession object to work with
-            if (WebSession == null)
-            {
-                WebSession = new WebRequestSession();
-            }
+            WebSession ??= new WebRequestSession();
 
             if (SessionVariable != null)
             {
@@ -1438,7 +1435,6 @@ namespace Microsoft.PowerShell.Commands
                             WebCmdletStrings.WebMethodInvocationVerboseMsg,
                             requestWithoutRange.Version,
                             requestWithoutRange.Method,
-                            requestWithoutRange.RequestUri,
                             requestContentLength);
                         WriteVerbose(reqVerboseMsg);
 
@@ -1534,7 +1530,6 @@ namespace Microsoft.PowerShell.Commands
                                     WebCmdletStrings.WebMethodInvocationVerboseMsg,
                                     request.Version,
                                     request.Method,
-                                    request.RequestUri,
                                     requestContentLength);
 
                                 WriteVerbose(reqVerboseMsg);
@@ -1583,10 +1578,7 @@ namespace Microsoft.PowerShell.Commands
                                     }
                                     finally
                                     {
-                                        if (reader != null)
-                                        {
-                                            reader.Dispose();
-                                        }
+                                        reader?.Dispose();
                                     }
 
                                     if (!string.IsNullOrEmpty(detailMsg))
@@ -1662,13 +1654,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implementing ^C, after start the BeginGetResponse.
         /// </summary>
-        protected override void StopProcessing()
-        {
-            if (_cancelToken != null)
-            {
-                _cancelToken.Cancel();
-            }
-        }
+        protected override void StopProcessing() => _cancelToken?.Cancel();
 
         #endregion Overrides
 

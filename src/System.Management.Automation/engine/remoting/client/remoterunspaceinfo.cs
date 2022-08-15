@@ -44,6 +44,7 @@ namespace System.Management.Automation.Runspaces
         #region Private Members
 
         private RemoteRunspace _remoteRunspace;
+        private string _transportName;
 
         /// <summary>
         /// Static variable which is incremented to generate id.
@@ -302,7 +303,8 @@ namespace System.Management.Automation.Runspaces
                     break;
 
                 default:
-                    Dbg.Assert(false, "Invalid Runspace");
+                    // Default for custom connection and transports.
+                    ComputerType = TargetMachineType.RemoteMachine;
                     break;
             }
         }
@@ -338,7 +340,7 @@ namespace System.Management.Automation.Runspaces
                     return "VMBus";
 
                 default:
-                    return "Unknown";
+                    return string.IsNullOrEmpty(_transportName) ? "Custom" : _transportName;
             }
         }
 
@@ -358,6 +360,34 @@ namespace System.Management.Automation.Runspaces
         #endregion Private Methods
 
         #region Static Methods
+
+        /// <summary>
+        /// Creates a PSSession object from the provided remote runspace object.
+        /// If psCmdlet argument is non-null, then the new PSSession object is added to the
+        /// session runspace repository (Get-PSSession).
+        /// </summary>
+        /// <param name="runspace">Runspace for the new PSSession.</param>
+        /// <param name="transportName">Optional transport name.</param>
+        /// <param name="psCmdlet">Optional cmdlet associated with the PSSession creation.</param>
+        public static PSSession Create(
+            Runspace runspace,
+            string transportName,
+            PSCmdlet psCmdlet)
+        {
+            if (!(runspace is RemoteRunspace remoteRunspace))
+            {
+                throw new PSArgumentException(RemotingErrorIdStrings.InvalidPSSessionArgument);
+            }
+
+            var psSession = new PSSession(remoteRunspace)
+            {
+                _transportName = transportName
+            };
+
+            psCmdlet?.RunspaceRepository.Add(psSession);
+
+            return psSession;
+        }
 
         /// <summary>
         /// Generates a unique runspace id.

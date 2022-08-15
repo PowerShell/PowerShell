@@ -429,10 +429,7 @@ namespace Microsoft.PowerShell.Commands
                     _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
             }
 
-            if (_helper != null)
-            {
-                _helper.Dispose();
-            }
+            _helper?.Dispose();
         }
 
         private void ReconcilePreexistingPropertyNames()

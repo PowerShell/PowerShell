@@ -453,7 +453,7 @@ namespace System.Management.Automation
         public ModuleType ModuleType { get; private set; } = ModuleType.Script;
 
         /// <summary>
-        /// This this module as being a compiled module...
+        /// This module as being a compiled module...
         /// </summary>
         internal void SetModuleType(ModuleType moduleType) { ModuleType = moduleType; }
 

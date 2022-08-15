@@ -390,13 +390,8 @@ namespace System.Management.Automation
             Filter = context.Filter;
         }
 
-        internal void RemoveStopReferral()
-        {
-            if (_copiedContext != null)
-            {
-                _copiedContext.StopReferrals.Remove(this);
-            }
-        }
+        internal void RemoveStopReferral() => _copiedContext?.StopReferrals.Remove(this);
+
         #endregion Internal properties
 
         #region Public properties
@@ -774,13 +769,7 @@ namespace System.Management.Automation
         /// <param name="text">
         /// The string that needs to be written.
         /// </param>
-        internal void WriteVerbose(string text)
-        {
-            if (_command != null)
-            {
-                _command.WriteVerbose(text);
-            }
-        }
+        internal void WriteVerbose(string text) => _command?.WriteVerbose(text);
 
         /// <summary>
         /// Writes the object to the Warning pipe.
@@ -788,21 +777,9 @@ namespace System.Management.Automation
         /// <param name="text">
         /// The string that needs to be written.
         /// </param>
-        internal void WriteWarning(string text)
-        {
-            if (_command != null)
-            {
-                _command.WriteWarning(text);
-            }
-        }
+        internal void WriteWarning(string text) => _command?.WriteWarning(text);
 
-        internal void WriteProgress(ProgressRecord record)
-        {
-            if (_command != null)
-            {
-                _command.WriteProgress(record);
-            }
-        }
+        internal void WriteProgress(ProgressRecord record) => _command?.WriteProgress(record);
 
         /// <summary>
         /// Writes a debug string.
@@ -810,29 +787,11 @@ namespace System.Management.Automation
         /// <param name="text">
         /// The String that needs to be written.
         /// </param>
-        internal void WriteDebug(string text)
-        {
-            if (_command != null)
-            {
-                _command.WriteDebug(text);
-            }
-        }
+        internal void WriteDebug(string text) => _command?.WriteDebug(text);
 
-        internal void WriteInformation(InformationRecord record)
-        {
-            if (_command != null)
-            {
-                _command.WriteInformation(record);
-            }
-        }
+        internal void WriteInformation(InformationRecord record) => _command?.WriteInformation(record);
 
-        internal void WriteInformation(object messageData, string[] tags)
-        {
-            if (_command != null)
-            {
-                _command.WriteInformation(messageData, tags);
-            }
-        }
+        internal void WriteInformation(object messageData, string[] tags) => _command?.WriteInformation(messageData, tags);
 
         #endregion User feedback mechanisms
 
@@ -1154,14 +1113,10 @@ namespace System.Management.Automation
         {
             Stopping = true;
 
-            if (_providerInstance != null)
-            {
-                // We don't need to catch any of the exceptions here because
-                // we are terminating the pipeline and any exception will
-                // be caught by the engine.
-
-                _providerInstance.StopProcessing();
-            }
+            // We don't need to catch any of the exceptions here because
+            // we are terminating the pipeline and any exception will
+            // be caught by the engine.
+            _providerInstance?.StopProcessing();
 
             // Call the stop referrals if any
 

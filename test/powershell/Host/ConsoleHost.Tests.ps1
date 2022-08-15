@@ -1106,8 +1106,7 @@ Describe 'Pwsh startup and PATH' -Tag CI {
 }
 
 Describe 'Console host name' -Tag CI {
-    It 'Name is pwsh' -Pending {
-        # waiting on https://github.com/dotnet/runtime/issues/33673
+    It 'Name is pwsh' {
         (Get-Process -Id $PID).Name | Should -BeExactly 'pwsh'
     }
 }

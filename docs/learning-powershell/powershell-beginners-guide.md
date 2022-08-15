@@ -330,7 +330,7 @@ For more details, see [Create and Run PowerShell Script Guide][create-run-script
 [ps-module]:https://docs.microsoft.com/powershell/scripting/developer/module/understanding-a-windows-powershell-module
 [create-ps-module]:https://www.business.com/articles/powershell-modules/
 [remoting]:https://channel9.msdn.com/Series/GetStartedPowerShell3/06
-[in-depth]: https://channel9.msdn.com/events/MMS/2012/SV-B406
+[in-depth]: https://docs.microsoft.com/en-us/events/mms-2012/sv-b406
 [remote-mgmt]:https://www.itprotoday.com/powershell/powershell-basics-remote-management
 [remote-commands]:https://docs.microsoft.com/powershell/scripting/learn/remoting/running-remote-commands
 [examples-ps-module]:https://docs.microsoft.com/powershell/scripting/developer/module/how-to-write-a-powershell-script-module

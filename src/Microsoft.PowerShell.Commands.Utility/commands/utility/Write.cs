@@ -312,10 +312,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 Exception e = this.Exception;
                 string msg = Message;
-                if (e == null)
-                {
-                    e = new WriteErrorException(msg);
-                }
+                e ??= new WriteErrorException(msg);
 
                 string errid = ErrorId;
                 if (string.IsNullOrEmpty(errid))
@@ -339,10 +336,7 @@ namespace Microsoft.PowerShell.Commands
             string recact = RecommendedAction;
             if (!string.IsNullOrEmpty(recact))
             {
-                if (errorRecord.ErrorDetails == null)
-                {
-                    errorRecord.ErrorDetails = new ErrorDetails(errorRecord.ToString());
-                }
+                errorRecord.ErrorDetails ??= new ErrorDetails(errorRecord.ToString());
 
                 errorRecord.ErrorDetails.RecommendedAction = recact;
             }

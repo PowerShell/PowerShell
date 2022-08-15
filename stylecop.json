@@ -25,7 +25,7 @@
         },
         "namingRules" : {
             "allowCommonHungarianPrefixes" : true,
-            "allowedHungarianPrefixes" : [ "n", "r", "l", "i", "io", "is", "fs", "lp", "dw", "h", "rs", "ps", "op", "sb", "my" ]
+            "allowedHungarianPrefixes" : [ "n", "r", "l", "i", "io", "is", "fs", "lp", "dw", "h", "rs", "ps", "op", "sb", "my", "vt" ]
         },
         "maintainabilityRules" : {
             "topLevelTypes" : [

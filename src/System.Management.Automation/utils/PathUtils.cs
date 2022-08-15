@@ -7,7 +7,7 @@ using System.IO;
 using System.Management.Automation.Internal;
 using System.Runtime.CompilerServices;
 using System.Text;
-
+using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -357,7 +357,9 @@ namespace System.Management.Automation
             DirectoryInfo directoryInfo = null;
             try
             {
-                string rootedPath = Microsoft.PowerShell.Commands.ModuleCmdletBase.ResolveRootedFilePath(moduleNameOrPath, cmdlet.Context);
+                // Even if 'moduleNameOrPath' is a rooted path, 'ResolveRootedFilePath' may return null when the path doesn't exist yet,
+                // or when it contains wildcards but cannot be resolved to a single path.
+                string rootedPath = ModuleCmdletBase.ResolveRootedFilePath(moduleNameOrPath, cmdlet.Context);
                 if (string.IsNullOrEmpty(rootedPath) && moduleNameOrPath.StartsWith('.'))
                 {
                     PathInfo currentPath = cmdlet.CurrentProviderLocation(cmdlet.Context.ProviderNames.FileSystem);
@@ -366,8 +368,25 @@ namespace System.Management.Automation
 
                 if (string.IsNullOrEmpty(rootedPath))
                 {
-                    string personalModuleRoot = ModuleIntrinsics.GetPersonalModulePath();
-                    rootedPath = Path.Combine(personalModuleRoot, moduleNameOrPath);
+                    if (Path.IsPathRooted(moduleNameOrPath))
+                    {
+                        rootedPath = moduleNameOrPath;
+                    }
+                    else
+                    {
+                        string personalModuleRoot = ModuleIntrinsics.GetPersonalModulePath();
+                        if (string.IsNullOrEmpty(personalModuleRoot))
+                        {
+                            cmdlet.ThrowTerminatingError(
+                                new ErrorRecord(
+                                    new ArgumentException(StringUtil.Format(PathUtilsStrings.ExportPSSession_ErrorModuleNameOrPath, moduleNameOrPath)),
+                                    "ExportPSSession_ErrorModuleNameOrPath",
+                                    ErrorCategory.InvalidArgument,
+                                    cmdlet));
+                        }
+
+                        rootedPath = Path.Combine(personalModuleRoot, moduleNameOrPath);
+                    }
                 }
 
                 directoryInfo = new DirectoryInfo(rootedPath);

@@ -7,8 +7,16 @@ $RepoRoot = (Resolve-Path -Path "$PSScriptRoot/../..").Path
 $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
 $DebianDistributions = @("deb")
-$RedhatDistributions = @("rh")
-$script:netCoreRuntime = 'net6.0'
+$RedhatFullDistributions = @("rh")
+$RedhatFddDistributions = @("cm")
+$RedhatDistributions = @()
+$RedhatDistributions += $RedhatFullDistributions
+$RedhatDistributions += $RedhatFddDistributions
+$AllDistributions = @()
+$AllDistributions += $DebianDistributions
+$AllDistributions += $RedhatDistributions
+$AllDistributions += 'macOs'
+$script:netCoreRuntime = 'net7.0'
 $script:iconFileName = "Powershell_black_64.png"
 $script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
@@ -29,7 +37,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "rpm-fxdependent", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop", "min-size")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -87,6 +95,8 @@ function Start-PSPackage {
             } else {
                 New-PSOptions -Configuration "Release" -Runtime "Linux-ARM64" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
             }
+        } elseif ($Type.Count -eq 1 -and $Type[0] -eq "rpm-fxdependent") {
+            New-PSOptions -Configuration "Release" -Runtime 'fxdependent-linux-x64' -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         } else {
             New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
         }
@@ -520,9 +530,28 @@ function Start-PSPackage {
                     NoSudo = $NoSudo
                     LTS = $LTS
                 }
-                foreach ($Distro in $Script:RedhatDistributions) {
+                foreach ($Distro in $Script:RedhatFullDistributions) {
                     $Arguments["Distribution"] = $Distro
                     if ($PSCmdlet.ShouldProcess("Create RPM Package for $Distro")) {
+                        Write-Verbose -Verbose "Creating RPM Package for $Distro"
+                        New-UnixPackage @Arguments
+                    }
+                }
+            }
+            'rpm-fxdependent' {
+                $Arguments = @{
+                    Type = 'rpm'
+                    PackageSourcePath = $Source
+                    Name = $Name
+                    Version = $Version
+                    Force = $Force
+                    NoSudo = $NoSudo
+                    LTS = $LTS
+                }
+                foreach ($Distro in $Script:RedhatFddDistributions) {
+                    $Arguments["Distribution"] = $Distro
+                    if ($PSCmdlet.ShouldProcess("Create RPM Package for $Distro")) {
+                        Write-Verbose -Verbose "Creating RPM Package for $Distro"
                         New-UnixPackage @Arguments
                     }
                 }
@@ -829,7 +858,7 @@ function New-UnixPackage {
     )
 
     DynamicParam {
-        if ($Type -eq "deb" -or $Type -eq 'rpm') {
+        if ($Type -eq "deb" -or $Type -like 'rpm*') {
             # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
             # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
             $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
@@ -1041,7 +1070,7 @@ function New-UnixPackage {
         # Build package
         try {
             if ($PSCmdlet.ShouldProcess("Create $type package")) {
-                Write-Log "Creating package with fpm..."
+                Write-Log "Creating package with fpm $Arguments..."
                 try {
                     $Output = Start-NativeExecution { fpm $Arguments }
                 }
@@ -1303,7 +1332,8 @@ function Get-FpmArguments
         "-t", $Type,
         "-s", "dir"
     )
-    if ($Distribution -eq 'rh') {
+    if ($Distribution -in $script:RedHatDistributions) {
+        $Arguments += @("--rpm-digest", "sha256")
         $Arguments += @("--rpm-dist", $Distribution)
         $Arguments += @("--rpm-os", "linux")
         $Arguments += @("--license", "MIT")
@@ -1348,13 +1378,29 @@ function Get-FpmArguments
 
 function Get-PackageDependencies
 {
-    param(
-        [String]
-        [ValidateSet('rh','deb','macOS')]
-        $Distribution
-    )
+    [CmdletBinding()]
+    param()
+    DynamicParam {
+        # Add a dynamic parameter '-Distribution' when the specified package type is 'deb'.
+        # The '-Distribution' parameter can be used to indicate which Debian distro this pacakge is targeting.
+        $ParameterAttr = New-Object "System.Management.Automation.ParameterAttribute"
+        $ParameterAttr.Mandatory = $true
+        $ValidateSetAttr = New-Object "System.Management.Automation.ValidateSetAttribute" -ArgumentList $Script:AllDistributions
+        $Attributes = New-Object "System.Collections.ObjectModel.Collection``1[System.Attribute]"
+        $Attributes.Add($ParameterAttr) > $null
+        $Attributes.Add($ValidateSetAttr) > $null
+
+        $Parameter = New-Object "System.Management.Automation.RuntimeDefinedParameter" -ArgumentList ("Distribution", [string], $Attributes)
+        $Dict = New-Object "System.Management.Automation.RuntimeDefinedParameterDictionary"
+        $Dict.Add("Distribution", $Parameter) > $null
+        return $Dict
+    }
 
     End {
+        if ($PSBoundParameters.ContainsKey('Distribution')) {
+            $Distribution = $PSBoundParameters['Distribution']
+        }
+
         # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
         $Dependencies = @()
         if ($Distribution -eq 'deb') {
@@ -1365,7 +1411,7 @@ function Get-PackageDependencies
                 "libstdc++6",
                 "zlib1g",
                 "libicu72|libicu71|libicu70|libicu69|libicu68|libicu67|libicu66|libicu65|libicu63|libicu60|libicu57|libicu55|libicu52",
-                "libssl1.1|libssl1.0.2|libssl1.0.0"
+                "libssl3|libssl1.1|libssl1.0.2|libssl1.0.0"
             )
 
         } elseif ($Distribution -eq 'rh') {
@@ -1373,6 +1419,27 @@ function Get-PackageDependencies
                 "openssl-libs",
                 "libicu"
             )
+        } elseif ($Distribution -eq 'cm') {
+            # Taken from the list here:
+            # https://github.com/dotnet/dotnet-docker/blob/d451d6e9427f58c8508f1297c862663a27eb609f/src/runtime-deps/6.0/cbl-mariner1.0/amd64/Dockerfile#L6
+            $Dependencies = @(
+                "glibc"
+                "libgcc"
+                "krb5"
+                "libstdc++"
+                "zlib"
+                "icu"
+                "openssl-libs"
+            )
+            if($Script:Options.Runtime -like 'fx*') {
+                $Dependencies += @(
+                    "dotnet-runtime-7.0"
+                )
+            }
+        } elseif ($Distribution -eq 'macOS') {
+            # do nothing
+        } else {
+            throw "Unknown distribution $Distribution"
         }
 
         return $Dependencies
@@ -1423,7 +1490,7 @@ function New-AfterScripts
 
     Write-Verbose -Message "AfterScript Distribution: $Distribution" -Verbose
 
-    if ($Distribution -eq 'rh') {
+    if ($Distribution -in $script:RedHatDistributions) {
         $AfterInstallScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $AfterRemoveScript = (Join-Path $env:HOME $([System.IO.Path]::GetRandomFileName()))
         $packagingStrings.RedHatAfterInstallScript -f "$Link", $Destination  | Out-File -FilePath $AfterInstallScript -Encoding ascii
@@ -2181,7 +2248,7 @@ function New-ILNugetPackageFromSource
 }
 
 <#
-  Copy the generated reference assemblies to the 'ref/net6.0' folder properly.
+  Copy the generated reference assemblies to the 'ref/net7.0' folder properly.
   This is a helper function used by 'New-ILNugetPackageSource'.
 #>
 function CopyReferenceAssemblies
@@ -3131,7 +3198,7 @@ function New-MSIPatch
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net6.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net7.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIPackage
 {
@@ -3522,7 +3589,7 @@ function Start-MsiBuild {
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net6.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net7.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIXPackage
 {
@@ -4377,6 +4444,7 @@ ${mainLinuxBuildFolder} = 'pwshLinuxBuild'
 ${minSizeLinuxBuildFolder} = 'pwshLinuxBuildMinSize'
 ${arm32LinuxBuildFolder} = 'pwshLinuxBuildArm32'
 ${arm64LinuxBuildFolder} = 'pwshLinuxBuildArm64'
+${amd64MarinerBuildFolder} = 'pwshMarinerBuildAmd64'
 
 <#
     Used in Azure DevOps Yaml to package all the linux packages for a channel.
@@ -4401,7 +4469,7 @@ function Invoke-AzDevOpsLinuxPackageCreation {
     }
 
     try {
-        Write-Verbose "Packaging '$BuildType'-LTS:$LTS for $ReleaseTag ..." -Verbose
+        Write-Verbose "Packaging '$BuildType'; LTS:$LTS for $ReleaseTag ..." -Verbose
 
         Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${mainLinuxBuildFolder}-meta\psoptions.json"
 
@@ -4442,6 +4510,14 @@ function Invoke-AzDevOpsLinuxPackageCreation {
             ## Note that 'linux-arm64' can only be built on Ubuntu environment.
             Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${arm64LinuxBuildFolder}-meta\psoptions.json"
             Start-PSPackage -Type tar-arm64 @releaseTagParam -LTS:$LTS
+        } elseif ($BuildType -eq 'rpm') {
+            Restore-PSOptions -PSOptionsPath "${env:SYSTEM_ARTIFACTSDIRECTORY}\${amd64MarinerBuildFolder}-meta\psoptions.json"
+
+            Write-Verbose -Verbose "---- rpm-fxdependent ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+
+            Start-PSPackage -Type rpm-fxdependent @releaseTagParam -LTS:$LTS
         }
     }
     catch {
@@ -4483,8 +4559,6 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             }
             'alpine' {
                 $buildParams.Add("Runtime", 'alpine-x64')
-                # We are cross compiling, so we can't generate experimental features
-                $buildParams.Add("SkipExperimentalFeatureGeneration", $true)
             }
         }
 
@@ -4523,6 +4597,23 @@ function Invoke-AzDevOpsLinuxPackageBuild {
             Start-PSBuild -Configuration Release -Restore -Runtime linux-arm64 -PSModuleRestore @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
             # Remove symbol files.
             Remove-Item "${buildFolder}\*.pdb" -Force
+        } elseif ($BuildType -eq 'rpm') {
+            ## Build 'min-size'
+            $options = Get-PSOptions
+            Write-Verbose -Verbose "---- Min-Size ----"
+            Write-Verbose -Verbose "options.Output: $($options.Output)"
+            Write-Verbose -Verbose "options.Top $($options.Top)"
+            $binDir = Join-Path -Path $options.Top -ChildPath 'bin'
+            if (Test-Path -Path $binDir) {
+                Write-Verbose -Verbose "Remove $binDir, to get a clean build for min-size package"
+                Remove-Item -Path $binDir -Recurse -Force
+            }
+
+            $buildParams['Runtime'] = 'fxdependent-linux-x64'
+            $buildFolder = "${env:SYSTEM_ARTIFACTSDIRECTORY}/${amd64MarinerBuildFolder}"
+            Start-PSBuild -Clean @buildParams @releaseTagParam -Output $buildFolder -PSOptionsPath "${buildFolder}-meta/psoptions.json"
+            # Remove symbol files, xml document files.
+            Remove-Item "${buildFolder}\*.pdb", "${buildFolder}\*.xml" -Force
         }
     }
     catch {

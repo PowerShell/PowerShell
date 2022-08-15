@@ -81,7 +81,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     minPoolSz.ToString(CultureInfo.InvariantCulture),
                     maxPoolSz.ToString(CultureInfo.InvariantCulture));
 
-            _connectionInfo = connectionInfo.InternalCopy();
+            _connectionInfo = connectionInfo.Clone();
 
             this.host = host;
             ApplicationArguments = applicationArguments;
@@ -128,7 +128,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (connectionInfo is WSManConnectionInfo)
             {
-                _connectionInfo = connectionInfo.InternalCopy();
+                _connectionInfo = connectionInfo.Clone();
             }
             else
             {
@@ -1826,20 +1826,14 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             // Reset DisconnectedOn/ExpiresOn
             WSManConnectionInfo wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsManConnectionInfo != null)
-            {
-                wsManConnectionInfo.NullDisconnectedExpiresOn();
-            }
+            wsManConnectionInfo?.NullDisconnectedExpiresOn();
         }
 
         private void UpdateDisconnectedExpiresOn()
         {
             // Set DisconnectedOn/ExpiresOn for disconnected session.
             WSManConnectionInfo wsManConnectionInfo = _connectionInfo as WSManConnectionInfo;
-            if (wsManConnectionInfo != null)
-            {
-                wsManConnectionInfo.SetDisconnectedExpiresOnToNow();
-            }
+            wsManConnectionInfo?.SetDisconnectedExpiresOnToNow();
         }
 
         /// <summary>

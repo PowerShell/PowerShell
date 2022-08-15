@@ -29,6 +29,7 @@ namespace Microsoft.WSMan.Management
     /// -SelectorSet {Name=Spooler}
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "WSManInstance", DefaultParameterSetName = "GetInstance", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096627")]
+    [OutputType(typeof(XmlElement))]
     public class GetWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
         #region parameter
@@ -685,6 +686,7 @@ namespace Microsoft.WSMan.Management
     /// -SelectorSet {Name=Spooler}
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096937")]
+    [OutputType(typeof(XmlElement), typeof(string))]
     public class SetWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
         #region Parameters
@@ -1324,6 +1326,7 @@ namespace Microsoft.WSMan.Management
     /// using specified ValueSet or input File.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096933")]
+    [OutputType(typeof(XmlElement))]
     public class NewWSManInstanceCommand : AuthenticatingWSManCommand, IDisposable
     {
         /// <summary>

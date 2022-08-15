@@ -108,3 +108,21 @@ Describe "Interface static members" -Tags "CI" {
         $obj.GetId() | Should -Be 100
     }
 }
+
+Describe "ByRef property" -Tags "CI" {
+
+    It "Get value from ByRef property" {
+        $list = [System.Collections.Generic.LinkedList[int]]::new()
+        $node = $list.AddLast(1)
+
+        ## Get value through language binder.
+        $node.ValueRef | Should -Be 1
+
+        ## Get value through .NET adapter.
+        $property = $node.PSObject.Properties["ValueRef"]
+        $property.IsSettable | Should -BeFalse
+        $property.IsGettable | Should -BeTrue
+        $property.TypeNameOfValue | Should -BeExactly 'System.Int32&'
+        $property.Value | Should -Be 1
+    }
+}

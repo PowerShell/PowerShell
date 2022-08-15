@@ -96,7 +96,10 @@ namespace Microsoft.PowerShell
 
                 ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
 
-                exitCode = ConsoleHost.Start(banner, ManagedEntranceStrings.UsageHelp);
+                exitCode = ConsoleHost.Start(
+                    bannerText: banner,
+                    helpText: ManagedEntranceStrings.UsageHelp,
+                    issProvidedExternally: false);
             }
             catch (HostException e)
             {

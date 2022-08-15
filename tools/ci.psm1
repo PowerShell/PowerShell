@@ -16,7 +16,8 @@ if(Test-Path $dotNetPath)
 }
 
 # import build into the global scope so it can be used by packaging
-Import-Module (Join-Path $repoRoot 'build.psm1') -Verbose -Scope Global
+# argumentList $true says ignore tha we may not be able to build
+Import-Module (Join-Path $repoRoot 'build.psm1') -Verbose -Scope Global -ArgumentList $true
 Import-Module (Join-Path $repoRoot 'tools\packaging') -Verbose -Scope Global
 
 # import the windows specific functcion only in Windows PowerShell or on Windows
@@ -48,21 +49,26 @@ Function Set-BuildVariable
 
         [Parameter(Mandatory=$true)]
         [string]
-        $Value
+        $Value,
+
+        [switch]
+        $IsOutput
     )
 
-    if($env:TF_BUILD)
-    {
+    $IsOutputString = if ($IsOutput) { 'true' } else { 'false' }
+    $command = "vso[task.setvariable variable=$Name;isOutput=$IsOutputString]$Value"
+
+    # always log command to make local debugging easier
+    Write-Verbose -Message "sending command: $command" -Verbose
+
+    if ($env:TF_BUILD) {
         # In VSTS
-        Write-Host "##vso[task.setvariable variable=$Name;]$Value"
+        Write-Host "##$command"
         # The variable will not show up until the next task.
-        # Setting in the current session for the same behavior as the CI
-        Set-Item env:/$name -Value $Value
     }
-    else
-    {
-        Set-Item env:/$name -Value $Value
-    }
+
+    # Setting in the current session for the same behavior as the CI and to make it show up in the same task
+    Set-Item env:/$name -Value $Value
 }
 
 # Emulates running all of CI but locally
@@ -213,7 +219,8 @@ function Invoke-CITest
         [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests')]
         [string] $Purpose,
         [ValidateSet('CI', 'Others')]
-        [string] $TagSet
+        [string] $TagSet,
+        [string] $TitlePrefix
     )
 
     # Set locale correctly for Linux CIs
@@ -238,7 +245,7 @@ function Invoke-CITest
 
     if($IsLinux -or $IsMacOS)
     {
-        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet
+        return Invoke-LinuxTestsCore -Purpose $Purpose -ExcludeTag $ExcludeTag -TagSet $TagSet -TitlePrefix $TitlePrefix
     }
 
     # CoreCLR
@@ -265,7 +272,12 @@ function Invoke-CITest
             ExcludeTag = $ExcludeTag + 'RequireAdminOnWindows'
         }
 
-        Start-PSPester @arguments -Title "Pester Unelevated - $TagSet"
+        $title = "Pester Unelevated - $TagSet"
+        if ($TitlePrefix) {
+            $title = "$TitlePrefix - $title"
+        }
+        Start-PSPester @arguments -Title $title
+
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsNonAdminFile
 
@@ -287,7 +299,11 @@ function Invoke-CITest
                 $arguments['Path'] = $testFiles
             }
 
-            Start-PSPester @arguments -Title "Pester Experimental Unelevated - $featureName"
+            $title = "Pester Experimental Unelevated - $featureName"
+            if ($TitlePrefix) {
+                $title = "$TitlePrefix - $title"
+            }
+            Start-PSPester @arguments -Title $title
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
@@ -303,7 +319,11 @@ function Invoke-CITest
             ExcludeTag = $ExcludeTag
         }
 
-        Start-PSPester @arguments -Title "Pester Elevated - $TagSet"
+        $title = "Pester Elevated - $TagSet"
+        if ($TitlePrefix) {
+            $title = "$TitlePrefix - $title"
+        }
+        Start-PSPester @arguments -Title $title
 
         # Fail the build, if tests failed
         Test-PSPesterResults -TestResultsFile $testResultsAdminFile
@@ -328,7 +348,12 @@ function Invoke-CITest
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $arguments['Path'] = $testFiles
             }
-            Start-PSPester @arguments -Title "Pester Experimental Elevated - $featureName"
+
+            $title = "Pester Experimental >levated - $featureName"
+            if ($TitlePrefix) {
+                $title = "$TitlePrefix - $title"
+            }
+            Start-PSPester @arguments -Title $title
 
             # Fail the build, if tests failed
             Test-PSPesterResults -TestResultsFile $expFeatureTestResultFile
@@ -606,7 +631,8 @@ function Invoke-LinuxTestsCore
         [ValidateSet('UnelevatedPesterTests', 'ElevatedPesterTests', 'All')]
         [string] $Purpose = 'All',
         [string[]] $ExcludeTag = @('Slow', 'Feature', 'Scenario'),
-        [string] $TagSet = 'CI'
+        [string] $TagSet = 'CI',
+        [string] $TitlePrefix
     )
 
     $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
@@ -633,7 +659,11 @@ function Invoke-LinuxTestsCore
     # Running tests which do not require sudo.
     if($Purpose -eq 'UnelevatedPesterTests' -or $Purpose -eq 'All')
     {
-        $pesterPassThruNoSudoObject = Start-PSPester @noSudoPesterParam -Title "Pester No Sudo - $TagSet"
+        $title = "Pester No Sudo - $TagSet"
+        if ($TitlePrefix) {
+            $title = "$TitlePrefix - $title"
+        }
+        $pesterPassThruNoSudoObject = Start-PSPester @noSudoPesterParam -Title $title
 
         # Running tests that do not require sudo, with specified experimental features enabled
         $noSudoResultsWithExpFeatures = @()
@@ -654,7 +684,12 @@ function Invoke-LinuxTestsCore
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $noSudoPesterParam['Path'] = $testFiles
             }
-            $passThruResult = Start-PSPester @noSudoPesterParam -Title "Pester Experimental No Sudo - $featureName - $TagSet"
+            $title = "Pester Experimental No Sudo - $featureName - $TagSet"
+            if ($TitlePrefix) {
+                $title = "$TitlePrefix - $title"
+            }
+            $passThruResult = Start-PSPester @noSudoPesterParam -Title $title
+
             $noSudoResultsWithExpFeatures += $passThruResult
         }
     }
@@ -668,7 +703,12 @@ function Invoke-LinuxTestsCore
         $sudoPesterParam['ExcludeTag'] = $ExcludeTag
         $sudoPesterParam['Sudo'] = $true
         $sudoPesterParam['OutputFile'] = $testResultsSudo
-        $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam -Title "Pester Sudo - $TagSet"
+
+        $title = "Pester Sudo - $TagSet"
+        if ($TitlePrefix) {
+            $title = "$TitlePrefix - $title"
+        }
+        $pesterPassThruSudoObject = Start-PSPester @sudoPesterParam -Title $title
 
         # Running tests that require sudo, with specified experimental features enabled
         $sudoResultsWithExpFeatures = @()
@@ -690,7 +730,13 @@ function Invoke-LinuxTestsCore
                 # If a non-empty string or array is specified for the feature name, we only run those test files.
                 $sudoPesterParam['Path'] = $testFiles
             }
-            $passThruResult = Start-PSPester @sudoPesterParam -Title "Pester Experimental Sudo - $featureName - $TagSet"
+
+            $title = "Pester Experimental Sudo - $featureName - $TagSet"
+            if ($TitlePrefix) {
+                $title = "$TitlePrefix - $title"
+            }
+            $passThruResult = Start-PSPester @sudoPesterParam -Title $title
+
             $sudoResultsWithExpFeatures += $passThruResult
         }
     }
@@ -763,5 +809,57 @@ function New-LinuxPackage
         Start-PSBuild -PSModuleRestore -Clean -Runtime linux-arm -Configuration 'Release'
         $armPackage = Start-PSPackage @packageParams -Type tar-arm -SkipReleaseChecks
         Copy-Item $armPackage -Destination "${env:BUILD_ARTIFACTSTAGINGDIRECTORY}" -Force
+    }
+}
+
+function Invoke-InitializeContainerStage {
+    param(
+        [string]
+        $ContainerPattern = '.'
+    )
+
+    Write-Verbose "Invoking InitializeContainerStage with ContainerPattern: ${ContainerPattern}" -Verbose
+
+    $fallbackSeed = (get-date).DayOfYear
+    Write-Verbose "Fall back seed: $fallbackSeed" -Verbose
+
+    # For PRs set the seed to the PR number so that the image is always the same
+    $seed = $env:SYSTEM_PULLREQUEST_PULLREQUESTID
+    if(!$seed) {
+      # for non-PRs use the integer identifier of the build as the seed.
+      $seed = $fallbackSeed
+    }
+
+    Write-Verbose "Seed: $seed" -Verbose
+
+    # Get the latest image matrix JSON for preview
+    $matrix = ./PowerShell-Docker/build.ps1 -GenerateMatrixJson -FullJson -Channel preview | ConvertFrom-Json
+
+    # Chose images that are validated or validating, Linux and can be used in CI.
+    $linuxImages = $matrix.preview |
+      Where-Object {$_.IsLinux -and $_.UseInCi -and $_.DistributionState -match 'Validat.*' -and $_.JobName -match $ContainerPattern -and $_.JobName -notlike "*arm*"} |
+      Select-Object JobName, Taglist |
+      Sort-Object -property JobName
+
+    # Use the selected seed to pick a container
+    $index = Get-Random -Minimum 0 -Maximum $linuxImages.Count -SetSeed $seed
+    $selectedImage = $linuxImages[$index]
+
+    # Filter to the first test-deps compatible tag
+    $tag = $selectedImage.Taglist -split ';' | Where-Object {$_ -match 'preview-\D+'} | Select-Object -First 1
+
+    # Calculate the container name
+    $containerName = "mcr.microsoft.com/powershell/test-deps:$tag"
+
+    Set-BuildVariable -Name containerName -Value $containerName -IsOutput
+    Set-BuildVariable -Name containerBuildName -Value $selectedImage.JobName -IsOutput
+
+    if($env:BUILD_REASON -eq 'PullRequest') {
+      Write-Host "##vso[build.updatebuildnumber]PR-${env:SYSTEM_PULLREQUEST_PULLREQUESTNUMBER}-$($selectedImage.JobName)-$((get-date).ToString("yyyyMMddhhmmss"))"
+    } else {
+      Write-Host "##vso[build.updatebuildnumber]${env:BUILD_SOURCEBRANCHNAME}-$($selectedImage.JobName)-${env:BUILD_SOURCEVERSION}-$((get-date).ToString("yyyyMMddhhmmss"))"
+
+      # Cannot do this for a PR
+      Write-Host "##vso[build.addbuildtag]$($selectedImage.JobName)"
     }
 }

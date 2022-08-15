@@ -572,7 +572,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the rendering mode for output.
         /// </summary>
-        public OutputRendering OutputRendering { get; set; } = OutputRendering.Ansi;
+        public OutputRendering OutputRendering { get; set; } = OutputRendering.Host;
 
         /// <summary>
         /// Gets value to turn off all attributes.
@@ -698,6 +698,11 @@ namespace System.Management.Automation
 
         private static string ValidateNoContent(string text)
         {
+            if (text is null)
+            {
+                throw new ArgumentNullException(nameof(text));
+            }
+
             var decorartedString = new ValueStringDecorated(text);
             if (decorartedString.ContentLength > 0)
             {

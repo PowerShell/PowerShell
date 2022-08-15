@@ -69,7 +69,7 @@ jobs:
     - pwsh: |
         $env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
         Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
-        Start-PSBootstrap -Force
+        Start-PSBootstrap
 
         $toolPath = New-Item -ItemType Directory "$(System.DefaultWorkingDirectory)/toolPath" | Select-Object -ExpandProperty FullName
 
@@ -94,13 +94,24 @@ jobs:
 
     - pwsh: |
         Import-Module "$(Build.SourcesDirectory)/build.psm1" -Force
-        Start-PSBootstrap -Force
+        Start-PSBootstrap
 
         $exeName = if ($IsWindows) { "pwsh.exe" } else { "pwsh" }
 
         $toolPath = "$(System.DefaultWorkingDirectory)/toolPath/${{ parameters.globalToolExeName }}"
 
-        $env:DOTNET_ROOT = if ($IsWindows) { "$env:LOCALAPPDATA\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
+        $source = (get-command -Type Application -Name dotnet | Select-Object -First 1 -ExpandProperty source)
+        $target = (Get-ChildItem $source).target
+
+        # If we find a symbolic link for dotnet, then we need to split the filename off the target.
+        if ($target) {
+          Write-Verbose -Verbose "Splitting target: $target"
+          $target = Split-Path $target
+        }
+
+        Write-Verbose -Verbose "target is set as $target"
+
+        $env:DOTNET_ROOT = (resolve-path -Path (Join-Path (split-path $source) $target)).ProviderPath
 
         Write-Verbose -Verbose "DOTNET_ROOT: $env:DOTNET_ROOT"
         Get-ChildItem $env:DOTNET_ROOT

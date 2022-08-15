@@ -2089,9 +2089,7 @@ namespace System.Management.Automation.Language
 
         internal static object CopyInstanceMembersOfValueType<T>(T t, object boxedT) where T : struct
         {
-            PSMemberInfoInternalCollection<PSMemberInfo> unused1;
-            ConsolidatedString unused2;
-            if (PSObject.HasInstanceMembers(boxedT, out unused1) || PSObject.HasInstanceTypeName(boxedT, out unused2))
+            if (PSObject.HasInstanceMembers(boxedT, out _) || PSObject.HasInstanceTypeName(boxedT, out _))
             {
                 var psobj = PSObject.AsPSObject(boxedT);
                 return PSObject.Base(psobj.Copy());
@@ -5277,7 +5275,17 @@ namespace System.Management.Automation.Language
                                     return GenerateGetPropertyException(restrictions).WriteToDebugLog(this);
                                 }
 
-                                expr = Expression.Property(targetExpr, propertyAccessor);
+                                if (propertyAccessor.PropertyType.IsByRef)
+                                {
+                                    expr = Expression.Call(
+                                        CachedReflectionInfo.ByRefOps_GetByRefPropertyValue,
+                                        targetExpr,
+                                        Expression.Constant(propertyAccessor));
+                                }
+                                else
+                                {
+                                    expr = Expression.Property(targetExpr, propertyAccessor);
+                                }
                             }
                             else
                             {
@@ -5335,13 +5343,9 @@ namespace System.Management.Automation.Language
                 if (!isGeneric || genericTypeArg != null)
                 {
                     var temp = Expression.Variable(typeof(object));
-                    if (expr == null)
-                    {
-                        // If expr is not null, it's the fallback when no member exists.  If it is null,
-                        // the fallback is the result from PropertyDoesntExist.
-
-                        expr = (errorSuggestion ?? PropertyDoesntExist(target, restrictions)).Expression;
-                    }
+                    // If expr is not null, it's the fallback when no member exists.  If it is null,
+                    // the fallback is the result from PropertyDoesntExist.
+                    expr ??= (errorSuggestion ?? PropertyDoesntExist(target, restrictions)).Expression;
 
                     var method = isGeneric
                         ? CachedReflectionInfo.PSGetMemberBinder_TryGetGenericDictionaryValue.MakeGenericMethod(genericTypeArg)
@@ -5613,8 +5617,7 @@ namespace System.Management.Automation.Language
 
             canOptimize = false;
 
-            PSMemberInfo unused;
-            Diagnostics.Assert(!TryGetInstanceMember(target.Value, Name, out unused),
+            Diagnostics.Assert(!TryGetInstanceMember(target.Value, Name, out _),
                                 "shouldn't get here if there is an instance member");
 
             PSMemberInfo memberInfo = null;
@@ -5675,19 +5678,13 @@ namespace System.Management.Automation.Language
             restrictions = versionRestriction;
 
             // When returning aliasRestrictions always include the version restriction
-            if (aliasRestrictions != null)
-            {
-                aliasRestrictions.Add(versionRestriction);
-            }
+            aliasRestrictions?.Add(versionRestriction);
 
             var alias = memberInfo as PSAliasProperty;
             if (alias != null)
             {
                 aliasConversionType = alias.ConversionType;
-                if (aliasRestrictions == null)
-                {
-                    aliasRestrictions = new List<BindingRestrictions>();
-                }
+                aliasRestrictions ??= new List<BindingRestrictions>();
 
                 memberInfo = ResolveAlias(alias, target, aliases, aliasRestrictions);
                 if (memberInfo == null)
@@ -5738,10 +5735,7 @@ namespace System.Management.Automation.Language
                                 var methodInfo = member as MethodInfo;
                                 if (methodInfo != null && (methodInfo.IsPublic || methodInfo.IsFamily))
                                 {
-                                    if (candidateMethods == null)
-                                    {
-                                        candidateMethods = new List<MethodBase>();
-                                    }
+                                    candidateMethods ??= new List<MethodBase>();
 
                                     candidateMethods.Add(methodInfo);
                                 }
@@ -5834,10 +5828,7 @@ namespace System.Management.Automation.Language
             }
 
             var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
-            if (memberInfo == null)
-            {
-                memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
-            }
+            memberInfo ??= adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
 
             if (memberInfo == null && adapterSet.DotNetAdapter != null)
             {
@@ -6438,10 +6429,7 @@ namespace System.Management.Automation.Language
                 }
 
                 var adapterSet = PSObject.GetMappedAdapter(obj, context?.TypeTable);
-                if (memberInfo == null)
-                {
-                    memberInfo = adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
-                }
+                memberInfo ??= adapterSet.OriginalAdapter.BaseGetMember<PSMemberInfo>(obj, member);
 
                 if (memberInfo == null && adapterSet.DotNetAdapter != null)
                 {
@@ -7253,14 +7241,11 @@ namespace System.Management.Automation.Language
         private static DynamicMetaObject GetTargetAsEnumerable(DynamicMetaObject target)
         {
             var enumerableTarget = PSEnumerableBinder.IsEnumerable(target);
-            if (enumerableTarget == null)
-            {
-                // Wrap the target in an array.
-                enumerableTarget = PSEnumerableBinder.IsEnumerable(
-                    new DynamicMetaObject(
-                        Expression.NewArrayInit(typeof(object), target.Expression.Cast(typeof(object))),
-                        target.GetSimpleTypeRestriction()));
-            }
+            // If null wrap the target in an array.
+            enumerableTarget ??= PSEnumerableBinder.IsEnumerable(
+                new DynamicMetaObject(
+                    Expression.NewArrayInit(typeof(object), target.Expression.Cast(typeof(object))),
+                    target.GetSimpleTypeRestriction()));
 
             return enumerableTarget;
         }
@@ -7444,7 +7429,20 @@ namespace System.Management.Automation.Language
             if (string.Equals(methodName, "Foreach", StringComparison.OrdinalIgnoreCase))
             {
                 var enumerator = (new object[] { obj }).GetEnumerator();
-                return EnumerableOps.ForEach(enumerator, args[0], Array.Empty<object>());
+                object[] argsToPass;
+
+                if (args.Length > 1)
+                {
+                    int length = args.Length - 1;
+                    argsToPass = new object[length];
+                    Array.Copy(args, sourceIndex: 1, argsToPass, destinationIndex: 0, length: length);
+                }
+                else
+                {
+                    argsToPass = Array.Empty<object>();
+                }
+
+                return EnumerableOps.ForEach(enumerator, args[0], argsToPass);
             }
 
             throw InterpreterError.NewInterpreterException(methodName, typeof(RuntimeException), null,

@@ -1960,11 +1960,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Adds forwarded events to the local queue.
         /// </summary>
-        internal void OnRunspacePSEventReceived(object sender, PSEventArgs e)
-        {
-            if (this.Events != null)
-                this.Events.AddForwardedEvent(e);
-        }
+        internal void OnRunspacePSEventReceived(object sender, PSEventArgs e) => this.Events?.AddForwardedEvent(e);
 
         #endregion Private Methods
 
@@ -3481,10 +3477,7 @@ namespace Microsoft.PowerShell.Commands
                     OperationState.StopComplete;
             operationStateEventArgs.BaseEvent = baseEventArgs;
 
-            if (OperationComplete != null)
-            {
-                OperationComplete.SafeInvoke(this, operationStateEventArgs);
-            }
+            OperationComplete?.SafeInvoke(this, operationStateEventArgs);
         }
     }
 
@@ -3679,11 +3672,7 @@ namespace Microsoft.PowerShell.Commands
                 case PipelineState.Completed:
                 case PipelineState.Stopped:
                 case PipelineState.Failed:
-                    if (RemoteRunspace != null)
-                    {
-                        RemoteRunspace.CloseAsync();
-                    }
-
+                    RemoteRunspace?.CloseAsync();
                     break;
             }
         }
@@ -4233,10 +4222,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lock (s_SyncObject)
                     {
-                        if (s_TypeTable == null)
-                        {
-                            s_TypeTable = TypeTable.LoadDefaultTypeFiles();
-                        }
+                        s_TypeTable ??= TypeTable.LoadDefaultTypeFiles();
                     }
                 }
 

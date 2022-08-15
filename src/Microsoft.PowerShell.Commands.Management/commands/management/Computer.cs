@@ -393,17 +393,10 @@ $result
         {
             if (disposing)
             {
-                if (_timer != null)
-                {
-                    _timer.Dispose();
-                }
-
+                _timer?.Dispose();
                 _waitHandler.Dispose();
                 _cancel.Dispose();
-                if (_powershell != null)
-                {
-                    _powershell.Dispose();
-                }
+                _powershell?.Dispose();
             }
         }
 
@@ -1098,10 +1091,7 @@ $result
             _cancel.Cancel();
             _waitHandler.Set();
 
-            if (_timer != null)
-            {
-                _timer.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
-            }
+            _timer?.Change(System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
 
             if (_powershell != null)
             {
@@ -1278,6 +1268,7 @@ $result
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "Computer", SupportsShouldProcess = true,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097054", RemotingCapability = RemotingCapability.SupportedByCommand)]
+    [OutputType(typeof(RenameComputerChangeInfo))]
     public class RenameComputerCommand : PSCmdlet
     {
         #region Private Members
@@ -2230,8 +2221,7 @@ $result
                 bool isIPAddress = false;
                 try
                 {
-                    IPAddress unused;
-                    isIPAddress = IPAddress.TryParse(nameToCheck, out unused);
+                    isIPAddress = IPAddress.TryParse(nameToCheck, out _);
                 }
                 catch (Exception)
                 {

@@ -1471,7 +1471,7 @@ namespace Microsoft.PowerShell.Commands
                 );
             } while (false);
 
-            // If we are here, an error has occured.
+            // If we are here, an error has occurred.
             Exception ex =
                 new InvalidDataException
                 (
