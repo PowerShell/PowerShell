@@ -289,16 +289,14 @@ namespace Microsoft.PowerShell.Commands
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
                 WebCmdletStrings.WriteRequestProgressStatus);
+
             try
             {
-                do
+                while (!copyTask.Wait(1000, cancellationToken))
                 {
                     record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestProgressStatus, output.Position);
                     cmdlet.WriteProgress(record);
-
-                    copyTask.Wait(1000, cancellationToken);
                 }
-                while (!copyTask.IsCompleted && !cancellationToken.IsCancellationRequested);
 
                 if (copyTask.IsCompleted)
                 {
@@ -307,6 +305,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             catch (OperationCanceledException)
+            {
+            }
+            catch (AggregateException)
             {
             }
         }
