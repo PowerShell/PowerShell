@@ -1334,7 +1334,7 @@ namespace System.Management.Automation.Runspaces
                                         }
 
                                         if ($ErrorView -eq 'ConciseView') {
-                                            return $posmsg
+                                            return $posmsg + $PSStyle.Reset
                                         }
 
                                         $indent = 4
@@ -1363,8 +1363,10 @@ namespace System.Management.Automation.Runspaces
                                             $posmsg += $newline + $indentString
                                         }
 
+                                        $posmsg += $PSStyle.Reset
+
                                         if ($ErrorView -eq 'CategoryView') {
-                                            $err.CategoryInfo.GetMessage()
+                                            $err.CategoryInfo.GetMessage() + $PSStyle.Reset
                                         }
                                         elseif (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
                                             $err.Exception.Message + $posmsg
