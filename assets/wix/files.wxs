@@ -3150,6 +3150,9 @@
       <Component Id="cmp0721DF55B34849B78C98AE00D863CBFF">
         <File Id="fil72E7B79A9B10498CBE884076BC863617" KeyPath="yes" Source="$(var.ProductSourcePath)\clrgc.dll" />
       </Component>
+      <Component Id="cmp42A739F2AAC24D729DDBCAA096B8C55A">
+        <File Id="fil48314E2AC49B4E208C5667CEC50CA78C" KeyPath="yes" Source="$(var.ProductSourcePath)\RegisterMicrosoftUpdate.ps1" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -4162,6 +4165,7 @@
       <ComponentRef Id="cmpD182C2F62588471F82252B0038C75327" />
       <ComponentRef Id="cmpF3EB02BB62A34F509B22CC370C430A20" />
       <ComponentRef Id="cmp16FC1857F01A4E388616BA7AA8CC5F73" />
+      <ComponentRef Id="cmp42A739F2AAC24D729DDBCAA096B8C55A" />
     </ComponentGroup>
   </Fragment>
 </Wix>
