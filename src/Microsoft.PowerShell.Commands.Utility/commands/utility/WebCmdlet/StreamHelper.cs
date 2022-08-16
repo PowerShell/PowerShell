@@ -307,9 +307,6 @@ namespace Microsoft.PowerShell.Commands
             catch (OperationCanceledException)
             {
             }
-            catch (AggregateException)
-            {
-            }
         }
 
         /// <summary>
