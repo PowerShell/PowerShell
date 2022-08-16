@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 # Set a 5 minute timeout
 $timeOut = (Get-Date).AddSeconds(300)
 # create a file path to get the result
