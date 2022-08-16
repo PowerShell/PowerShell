@@ -36,6 +36,7 @@ $Script:powershell_team = @(
     "Travis Plunk"
     "dependabot-preview[bot]"
     "dependabot[bot]"
+    "github-actions[bot]"
     "Anam Navied"
     "Andrew Schwartzmeyer"
     "Jason Helmick"
