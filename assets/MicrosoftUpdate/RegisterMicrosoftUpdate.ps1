@@ -5,7 +5,7 @@
 $timeOut = (Get-Date).AddSeconds(300)
 # create a file path to get the result
 $output = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath "RegisterMuOutput.txt"
-# start the process to register MU and write the result to
+# start the process to register MU and write the result to a temporary file
 $process = Start-Process -PassThru -FilePath pwsh.exe -NoNewWindow -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', "`$null = (New-Object -ComObject Microsoft.Update.ServiceManager).AddService2('7971f918-a847-4430-9279-4a52d1efe18d', 7, '').IsPendingRegistrationWithAu > $output"
 function Get-IsFailed {
     $result = $true
