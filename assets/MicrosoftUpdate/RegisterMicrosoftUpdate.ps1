@@ -1,37 +1,68 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# Set a 5 minute timeout
-$timeOut = (Get-Date).AddSeconds(300)
-# create a file path to get the result
-$output = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath "RegisterMuOutput.txt"
-# start the process to register MU and write the result to a temporary file
-$process = Start-Process -PassThru -FilePath pwsh.exe -NoNewWindow -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', "`$null = (New-Object -ComObject Microsoft.Update.ServiceManager).AddService2('7971f918-a847-4430-9279-4a52d1efe18d', 7, '').IsPendingRegistrationWithAu > $output"
-function Get-IsFailed {
-    $result = $true
-    # Output is false or null if it fails
-    $outputText = Get-Content $output
-    Write-Verbose -Verbose "output: $outputText"
-    $null = [bool]::TryParse($outputText, [ref]$result)
-    return $result
+param(
+    [ValidateSet('Registration', 'Sleep', 'Fail')]
+    $Scenario = 'Registration'
+)
+
+$sleep = 300
+switch ($Scenario) {
+    'Sleep' {
+        $sleep = 10
+        $jobScript = { Start-Sleep -Seconds 600 }
+    }
+    'Fail' {
+        $jobScript = { throw "This job script should fail" }
+    }
+    default {
+        $jobScript = {
+            # This registers Microsoft Update via a predifened GUID with the Windows Update Agent.
+            # https://docs.microsoft.com/en-us/windows/win32/wua_sdk/opt-in-to-microsoft-update
+
+            $serviceManager = (New-Object -ComObject Microsoft.Update.ServiceManager)
+            $isRegistered = $serviceManager.QueryServiceRegistration('7971f918-a847-4430-9279-4a52d1efe18d').Service.IsRegisteredWithAu
+
+            if (!$isRegistered) {
+                Write-Verbose -Verbose "Opting into Microsoft Update as the Autmatic Update Service"
+                # 7 is the combination of asfAllowPendingRegistration, asfAllowOnlineRegistration, asfRegisterServiceWithAU
+                # AU means Automatic Updates
+                $null = $serviceManager.AddService2('7971f918-a847-4430-9279-4a52d1efe18d', 7, '').IsPendingRegistrationWithAu
+            }
+            else {
+                Write-Verbose -Verbose "Microsoft Update is already registered for Automatic Updates"
+            }
+
+            $isRegistered = $serviceManager.QueryServiceRegistration('7971f918-a847-4430-9279-4a52d1efe18d').Service.IsRegisteredWithAu
+
+            # Return if it was successful, which is the opposite of Pending.
+            return $isRegistered
+        }
+    }
 }
 
-# Wait for the process to exit or the timeout to pass
-while (!$process.HasExited -and $timeOut -gt (Get-Date)) {
-    Write-Verbose -Verbose "$($timeout.Subtract((Get-Date)).TotalMinutes) minutes left"
-    Start-Sleep -Seconds 5
-}
+Write-Verbose "Running job script: $jobScript" -Verbose
+$job = Start-ThreadJob -ScriptBlock $jobScript
 
-# If the process hasn't exited, exit with the timeout exit code
-if (! $process.HasExited) {
-    Write-Verbose -Verbose "scripted timedout, exiting with code 258"
-    exit 258
-}
-elseif (Get-IsFailed) {
-    Write-Verbose -Verbose "script failed"
-    exit 1
+Write-Verbose "Waiting on Job for $sleep seconds" -Verbose
+$null = Wait-Job -Job $job -Timeout $sleep
+
+if ($job.State -ne 'Running') {
+    Write-Verbose "Job finished.  State: $($job.State)" -Verbose
+    $result = Receive-Job -Job $job -Verbose
+    Write-Verbose "Result: $result" -Verbose
+    if ($result) {
+        Write-Verbose "Registration succeeded" -Verbose
+        exit 0
+    }
+    else {
+        Write-Verbose "Registration failed" -Verbose
+        exit 1
+    }
 }
 else {
-    Write-Verbose -Verbose "script passed"
-    exit 0
+    Write-Verbose "Job timed out" -Verbose
+    Write-Verbose "Stopping Job.  State: $($job.State)" -Verbose
+    Stop-Job -Job $job
+    exit 258
 }
