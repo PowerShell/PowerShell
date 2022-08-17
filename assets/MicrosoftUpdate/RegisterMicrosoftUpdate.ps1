@@ -27,7 +27,7 @@ switch ($TestHook) {
                 Write-Verbose -Verbose "Opting into Microsoft Update as the Autmatic Update Service"
                 # 7 is the combination of asfAllowPendingRegistration, asfAllowOnlineRegistration, asfRegisterServiceWithAU
                 # AU means Automatic Updates
-                $null = $serviceManager.AddService2('7971f918-a847-4430-9279-4a52d1efe18d', 7, '').IsPendingRegistrationWithAu
+                $null = $serviceManager.AddService2('7971f918-a847-4430-9279-4a52d1efe18d', 7, '')
             }
             else {
                 Write-Verbose -Verbose "Microsoft Update is already registered for Automatic Updates"
