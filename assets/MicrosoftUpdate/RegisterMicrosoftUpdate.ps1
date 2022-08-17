@@ -21,7 +21,7 @@ if (! $process.HasExited) {
     Write-Verbose -Verbose "scripted timedout, exiting with code 258"
     exit 258
 } elseif (!$result) {
-    Write-Verbose -Verbose "scripted failed"
+    Write-Verbose -Verbose "script failed"
     exit 1
 } else {
     Write-Verbose -Verbose "scripted passed"
