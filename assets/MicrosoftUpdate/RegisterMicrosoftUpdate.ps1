@@ -2,14 +2,14 @@
 # Licensed under the MIT License.
 
 param(
-    [ValidateSet('Registration', 'Sleep', 'Fail')]
-    $Scenario = 'Registration'
+    [ValidateSet('Hang', 'Fail')]
+    $TestHook
 )
 
-$sleep = 300
-switch ($Scenario) {
-    'Sleep' {
-        $sleep = 10
+$waitTimeoutSeconds = 300
+switch ($TestHook) {
+    'Hang' {
+        $waitTimeoutSeconds = 10
         $jobScript = { Start-Sleep -Seconds 600 }
     }
     'Fail' {
@@ -44,8 +44,8 @@ switch ($Scenario) {
 Write-Verbose "Running job script: $jobScript" -Verbose
 $job = Start-ThreadJob -ScriptBlock $jobScript
 
-Write-Verbose "Waiting on Job for $sleep seconds" -Verbose
-$null = Wait-Job -Job $job -Timeout $sleep
+Write-Verbose "Waiting on Job for $waitTimeoutSeconds seconds" -Verbose
+$null = Wait-Job -Job $job -Timeout $waitTimeoutSeconds
 
 if ($job.State -ne 'Running') {
     Write-Verbose "Job finished.  State: $($job.State)" -Verbose
@@ -57,6 +57,7 @@ if ($job.State -ne 'Running') {
     }
     else {
         Write-Verbose "Registration failed" -Verbose
+        # at the time this was written, the MSI is ignoring the exit code
         exit 1
     }
 }
@@ -64,5 +65,6 @@ else {
     Write-Verbose "Job timed out" -Verbose
     Write-Verbose "Stopping Job.  State: $($job.State)" -Verbose
     Stop-Job -Job $job
+    # at the time this was written, the MSI is ignoring the exit code
     exit 258
 }
