@@ -24,7 +24,7 @@ if (! $process.HasExited) {
     Write-Verbose -Verbose "script failed"
     exit 1
 } else {
-    Write-Verbose -Verbose "scripted passed"
+    Write-Verbose -Verbose "script passed"
     exit 0
 }
     
