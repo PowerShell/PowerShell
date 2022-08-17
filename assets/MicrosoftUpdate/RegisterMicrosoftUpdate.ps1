@@ -5,10 +5,16 @@
 $timeOut = (Get-Date).AddSeconds(300)
 # create a file path to get the result
 $output = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath "RegisterMuOutput.txt"
-# start the process to register MU and write the result to 
+# start the process to register MU and write the result to
 $process = Start-Process -PassThru -FilePath pwsh.exe -NoNewWindow -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-Command', "`$null = (New-Object -ComObject Microsoft.Update.ServiceManager).AddService2('7971f918-a847-4430-9279-4a52d1efe18d', 7, '').IsPendingRegistrationWithAu > $output"
-$result = $false
-$null = [bool]::TryParse((Get-Content $output),[ref]$result)
+function Get-IsFailed {
+    $result = $true
+    # Output is false or null if it fails
+    $outputText = Get-Content $output
+    Write-Verbose -Verbose "output: $outputText"
+    $null = [bool]::TryParse($outputText, [ref]$result)
+    return $result
+}
 
 # Wait for the process to exit or the timeout to pass
 while (!$process.HasExited -and $timeOut -gt (Get-Date)) {
@@ -20,11 +26,12 @@ while (!$process.HasExited -and $timeOut -gt (Get-Date)) {
 if (! $process.HasExited) {
     Write-Verbose -Verbose "scripted timedout, exiting with code 258"
     exit 258
-} elseif (!$result) {
+}
+elseif (Get-IsFailed) {
     Write-Verbose -Verbose "script failed"
     exit 1
-} else {
+}
+else {
     Write-Verbose -Verbose "script passed"
     exit 0
 }
-    
