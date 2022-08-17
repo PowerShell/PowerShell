@@ -35,6 +35,7 @@
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Host\Microsoft.PowerShell.Host.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Host\Microsoft.PowerShell.Host.psd1" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Management\Microsoft.PowerShell.Management.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Management\Microsoft.PowerShell.Management.psd1" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1" />
+    <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Security\Security.types.ps1xml" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Security\Security.types.ps1xml" />
     <file src="__INPATHROOT__\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1" />
     <file src="__INPATHROOT__\Modules\Microsoft.WSMan.Management\Microsoft.WSMan.Management.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\Microsoft.WSMan.Management\Microsoft.WSMan.Management.psd1" />
     <file src="__INPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psd1" signType="AuthenticodeFormer" dest="__OUTPATHROOT__\Modules\PSDiagnostics\PSDiagnostics.psd1" />
