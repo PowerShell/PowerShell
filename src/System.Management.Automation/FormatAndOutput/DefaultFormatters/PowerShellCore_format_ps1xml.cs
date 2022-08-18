@@ -1065,6 +1065,7 @@ namespace System.Management.Automation.Runspaces
                         .AddScriptBlockExpressionBinding(@"
                                     Set-StrictMode -Off
                                     $newline = [Environment]::Newline
+                                    $reset = $Host.UI.SupportsVirtualTerminal ? $PSStyle.Reset : ''
 
                                     function Get-ConciseViewPositionMessage {
 
@@ -1334,7 +1335,7 @@ namespace System.Management.Automation.Runspaces
                                         }
 
                                         if ($ErrorView -eq 'ConciseView') {
-                                            return $posmsg + $PSStyle.Reset
+                                            return $posmsg + $reset
                                         }
 
                                         $indent = 4
@@ -1363,10 +1364,10 @@ namespace System.Management.Automation.Runspaces
                                             $posmsg += $newline + $indentString
                                         }
 
-                                        $posmsg += $PSStyle.Reset
+                                        $posmsg += $reset
 
                                         if ($ErrorView -eq 'CategoryView') {
-                                            $err.CategoryInfo.GetMessage() + $PSStyle.Reset
+                                            $err.CategoryInfo.GetMessage() + $reset
                                         }
                                         elseif (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
                                             $err.Exception.Message + $posmsg
