@@ -307,7 +307,7 @@ namespace Microsoft.PowerShell.Commands
             catch (OperationCanceledException)
             {
             }
-            catch (AggregateException)
+            catch (AggregateException ae)
             {
                 ae.Handle((x) =>
                 {
