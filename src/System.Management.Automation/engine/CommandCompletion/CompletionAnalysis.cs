@@ -1049,15 +1049,7 @@ namespace System.Management.Automation
                     var typeConstraintAst = completionContext.RelatedAsts.OfType<TypeConstraintAst>().FirstOrDefault();
                     if (typeConstraintAst != null)
                     {
-                        if (typeConstraintAst.Parent is UsingStatementAst usingStatement && usingStatement.UsingStatementKind == UsingStatementKind.Namespace)
-                        {
-                            completionContext.WordToComplete ??= string.Empty;
-                            result = CompletionCompleters.CompleteNamespace(completionContext);
-                        }
-                        else
-                        {
-                            typeNameToComplete = FindTypeNameToComplete(typeConstraintAst.TypeName, _cursorPosition);
-                        }
+                        typeNameToComplete = FindTypeNameToComplete(typeConstraintAst.TypeName, _cursorPosition);
                     }
                 }
                 
