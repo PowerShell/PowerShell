@@ -7213,7 +7213,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                if (parentAst is CommandAst or ConvertExpressionAst)
+                if (parentAst is CommandAst or ConvertExpressionAst or UsingStatementAst)
                 {
                     break;
                 }
@@ -7238,6 +7238,29 @@ namespace System.Management.Automation
                 {
                     excludedKeys.Add(keyPair.Item1.Extent.Text);
                 }
+            }
+
+            if (parentAst is UsingStatementAst usingStatement)
+            {
+                if (hashtableIsNested || usingStatement.UsingStatementKind != UsingStatementKind.Module)
+                {
+                    return null;
+                }
+
+                var result = new List<CompletionResult>();
+                foreach (var key in s_requiresModuleSpecKeys.Keys)
+                {
+                    if (excludedKeys.Contains(key)
+                        || (wordToComplete is not null && !key.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
+                        || (key.Equals("RequiredVersion") && (excludedKeys.Contains("ModuleVersion") || excludedKeys.Contains("MaximumVersion")))
+                        || ((key.Equals("ModuleVersion") || key.Equals("MaximumVersion")) && excludedKeys.Contains("RequiredVersion")))
+                    {
+                        continue;
+                    }
+                    result.Add(new CompletionResult(key, key, CompletionResultType.Property, s_requiresModuleSpecKeys[key]));
+                }
+
+                return result;
             }
 
             if (parentAst is MemberExpressionAst or ConvertExpressionAst)

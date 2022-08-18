@@ -2292,6 +2292,11 @@ function MyFunction ($param1, $param2)
             $res.CompletionMatches.CompletionText | Should -BeExactly $Expected
         }
     }
+
+    It 'Should complete module specification keys in using module statement' {
+        $res = TabExpansion2 -inputScript 'using module @{'
+        $res.CompletionMatches.CompletionText -join ' ' | Should -BeExactly "GUID MaximumVersion ModuleName ModuleVersion RequiredVersion"
+    }
 }
 
 Describe "Tab completion tests with remote Runspace" -Tags Feature,RequireAdminOnWindows {
