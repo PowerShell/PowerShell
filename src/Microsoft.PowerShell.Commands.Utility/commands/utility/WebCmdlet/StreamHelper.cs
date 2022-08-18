@@ -307,14 +307,6 @@ namespace Microsoft.PowerShell.Commands
             catch (OperationCanceledException)
             {
             }
-            catch (AggregateException ae)
-            {
-                // we should remove this suppression in next release, which would fix partial file downloads without proper error handling.
-                ae.Handle((x) =>
-                {
-                    return true;
-                });
-            }
         }
 
         /// <summary>
