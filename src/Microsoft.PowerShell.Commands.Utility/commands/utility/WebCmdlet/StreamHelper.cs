@@ -309,6 +309,11 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (AggregateException)
             {
+                ae.Handle((x) =>
+                {
+                    return true;  // Let all wrapped exceptions throw and be handled in calling layers
+                });
+            }
             }
         }
 
