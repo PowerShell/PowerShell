@@ -314,7 +314,6 @@ namespace Microsoft.PowerShell.Commands
                     return true;  // Let all wrapped exceptions throw and be handled in calling layers
                 });
             }
-            }
         }
 
         /// <summary>
