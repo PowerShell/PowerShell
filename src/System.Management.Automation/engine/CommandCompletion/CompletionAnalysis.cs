@@ -1983,7 +1983,7 @@ namespace System.Management.Automation
                                     result.AddRange(moduleResults);
                                 return result;
                             case UsingStatementKind.Namespace:
-                                if (usingState.Alias is null)
+                                if (usingState.Alias is null || usingState.Name != lastAst)
                                 {
                                     result = CompletionCompleters.CompleteNamespace(completionContext);
                                 }

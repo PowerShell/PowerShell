@@ -2242,7 +2242,7 @@ namespace System.Management.Automation
                 {
                     if (usingStmt.Alias is not null)
                     {
-                        usingNamespaceAliases.Add(usingStmt.Name.Value, usingStmt.Alias.Extent.Text);
+                        usingNamespaceAliases.Add(usingStmt.Name.Value, ((StringConstantExpressionAst)usingStmt.Alias).Value);
                     }
                     else
                     {

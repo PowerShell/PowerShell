@@ -46,11 +46,10 @@ Describe "Type and namespace parsing errors" -Tags "CI" {
         @{ExpectedErrors = 'MissingTypeAlias';TestString = 'using type x = ;'}
         @{ExpectedErrors = 'MissingNamespaceAlias';TestString = 'using namespace x ='}
         @{ExpectedErrors = 'MissingTypeAlias';TestString = "using type x = `n"}
-        @{ExpectedErrors = 'NamespaceExpected';TestString = 'using namespace x = $SomeVar'}
+        @{ExpectedErrors = 'InvalidValueForUsingItemName';TestString = 'using namespace x = $SomeVar'}
         @{ExpectedErrors = 'TypeNameExpected';TestString = 'using type x = [SomeType]'}
         @{ExpectedErrors = 'MissingTypename','EndSquareBracketExpectedAtEndOfAttribute';TestString = 'using type x = SomeGenericType[Arg1,'}
-        @{ExpectedErrors = 'NamespaceExpected';TestString = 'using namespace x = SomeGenericType[Arg1]'}
-        @{ExpectedErrors = 'NamespaceExpected';TestString = 'using namespace x = SomeArrayType[,]'}
+        @{ExpectedErrors = 'InvalidValueForUsingItemName';TestString = 'using namespace x = SomeArrayType[,]'}
     ) -Test {
         param([string[]]$ExpectedError, $TestString)
         $ParsedTokens = $null

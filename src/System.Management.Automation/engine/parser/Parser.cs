@@ -5017,7 +5017,7 @@ namespace System.Management.Automation.Language
 
                     Ast aliasAst;
                     Token aliasToken;
-                    if (kind is UsingStatementKind.Type or UsingStatementKind.Namespace)
+                    if (kind is UsingStatementKind.Type)
                     {
                         // prevents bypassing the type whitelist by overriding an allowed type accelerator with a blocked type like:
                         // using type string = System.Collections.Generic.List[string]; [string]
@@ -5037,44 +5037,17 @@ namespace System.Management.Automation.Language
 
                         if (aliasToken.Kind is TokenKind.EndOfInput or TokenKind.NewLine or TokenKind.Semi)
                         {
-                            if (kind == UsingStatementKind.Type)
-                            {
-                                ReportIncompleteInput(After(equalsToken), nameof(ParserStrings.MissingTypeAlias), ParserStrings.MissingTypeAlias);
-                            }
-                            else
-                            {
-                                ReportIncompleteInput(After(equalsToken), nameof(ParserStrings.MissingNamespaceAlias), ParserStrings.MissingNamespaceAlias);
-                            }
+                            ReportIncompleteInput(After(equalsToken), nameof(ParserStrings.MissingTypeAlias), ParserStrings.MissingTypeAlias);
                             return new ErrorStatementAst(ExtentOf(usingToken, equalsToken));
                         }
 
                         if (aliasToken.Kind != TokenKind.Identifier && aliasToken.TokenFlags != TokenFlags.TypeName)
                         {
-                            if (kind == UsingStatementKind.Type)
-                            {
-                                ReportError(aliasToken.Extent, nameof(ParserStrings.TypeNameExpected), ParserStrings.TypeNameExpected);
-                            }
-                            else
-                            {
-                                ReportError(aliasToken.Extent, nameof(ParserStrings.NamespaceExpected), ParserStrings.NamespaceExpected);
-                            }
+                            ReportError(aliasToken.Extent, nameof(ParserStrings.TypeNameExpected), ParserStrings.TypeNameExpected);
                             return new ErrorStatementAst(ExtentOf(usingToken, aliasToken));
                         }
 
                         var aliasTypeName = TypeNameRule(allowAssemblyQualifiedNames: true, out aliasToken);
-
-                        if (kind == UsingStatementKind.Namespace)
-                        {
-                            if (aliasTypeName.IsGeneric || aliasTypeName.IsArray || aliasTypeName.AssemblyName is not null)
-                            {
-                                ReportError(aliasTypeName.Extent, nameof(ParserStrings.NamespaceExpected), ParserStrings.NamespaceExpected);
-                                return new ErrorStatementAst(ExtentOf(usingToken, aliasTypeName.Extent));
-                            }
-                            else
-                            {
-                                aliasToken.TokenFlags = TokenFlags.None;
-                            }
-                        }
 
                         // TypeNameRule inserts ":ErrorTypeName:" when generics are missing a type
                         if (aliasTypeName.Name.Contains(":ErrorTypeName:"))
