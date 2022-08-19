@@ -8,7 +8,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Class to help with VT escape sequences.
     /// </summary>
-    public sealed class VTUtility
+    public static class VTUtility
     {
         private static readonly string[] BackgroundColorMap = {
             "\x1b[40m", // Black
