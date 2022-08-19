@@ -315,8 +315,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The matched line with matched text inverted.</returns>
         private string EmphasizeLine()
         {
-            string invertColorsVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Inverse);
-            string resetVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Reset);
+            string invertColorsVT100 = PSStyle.Instance.Reverse;
+            string resetVT100 = PSStyle.Instance.Reset;
 
             char[] chars = new char[(_matchIndexes.Count * (invertColorsVT100.Length + resetVT100.Length)) + Line.Length];
             int lineIndex = 0;
