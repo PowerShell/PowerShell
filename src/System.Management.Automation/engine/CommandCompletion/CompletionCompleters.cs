@@ -6859,8 +6859,8 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    if (wordToComplete.StartsWith(typeDefinition.Name, StringComparison.OrdinalIgnoreCase)
-                        || wordToComplete.StartsWith(module, StringComparison.OrdinalIgnoreCase))
+                    if (typeDefinition.Name.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase)
+                        || module.StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
                     {
                         var completionText = shortTypeNameWasAdded ? typeDefinition.Name : moduleQualifiedTypeName;
                         AddTypeDefinitionToResults(results, typeDefinition, string.Create(CultureInfo.InvariantCulture, $"{prefix}{completionText}{suffix}"));
