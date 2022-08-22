@@ -431,8 +431,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 do
                 {
-                    // check for a charset attribute on the meta element to override the default.
-                    Match match = s_metaexp.Match(content);
+                    // check for a charset attribute on the meta element to override the default
+                    // we only look within the first 1k characters as the meta tag is in the head
+                    // tag which is at the start of the document
+                    Match match = s_metaexp.Match(content.Substring(0, Math.Min(content.Length, 1024)));
                     if (match.Success)
                     {
                         Encoding localEncoding = null;
