@@ -500,6 +500,15 @@ namespace System.Management.Automation
                                 return completions;
                             }
                         }
+                        else if (lastAst.Parent is BinaryExpressionAst binaryExpression)
+                        {
+                            completionContext.WordToComplete = (tokenAtCursor as StringToken).Value;
+                            result = CompletionCompleters.CompleteComparisonOperatorValues(completionContext, binaryExpression.Left);
+                            if (result.Count > 0)
+                            {
+                                return result;
+                            }
+                        }
                         else if (lastAst.Parent is IndexExpressionAst indexExpressionAst)
                         {
                             // Handles quoted string inside index expression like: $PSVersionTable["<Tab>"]
@@ -911,8 +920,27 @@ namespace System.Management.Automation
                                     {
                                         result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                                     }
-
                                     break;
+
+                                case TokenKind.Ieq:
+                                case TokenKind.Ceq:
+                                case TokenKind.Ine:
+                                case TokenKind.Cne:
+                                case TokenKind.Ilike:
+                                case TokenKind.Clike:
+                                case TokenKind.Inotlike:
+                                case TokenKind.Cnotlike:
+                                case TokenKind.Imatch:
+                                case TokenKind.Cmatch:
+                                case TokenKind.Inotmatch:
+                                case TokenKind.Cnotmatch:
+                                    if (lastAst is BinaryExpressionAst binaryExpression)
+                                    {
+                                        completionContext.WordToComplete = string.Empty;
+                                        result = CompletionCompleters.CompleteComparisonOperatorValues(completionContext, binaryExpression.Left);
+                                    }
+                                    break;
+                                    
                                 case TokenKind.LBracket:
                                     if (lastAst.Parent is IndexExpressionAst indexExpression)
                                     {
@@ -921,6 +949,7 @@ namespace System.Management.Automation
                                         result = CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
                                     }
                                     break;
+                                    
                                 default:
                                     break;
                             }
@@ -991,6 +1020,26 @@ namespace System.Management.Automation
                                         return result;
                                     }
                                     break;
+
+                                case TokenKind.Ieq:
+                                case TokenKind.Ceq:
+                                case TokenKind.Ine:
+                                case TokenKind.Cne:
+                                case TokenKind.Ilike:
+                                case TokenKind.Clike:
+                                case TokenKind.Inotlike:
+                                case TokenKind.Cnotlike:
+                                case TokenKind.Imatch:
+                                case TokenKind.Cmatch:
+                                case TokenKind.Inotmatch:
+                                case TokenKind.Cnotmatch:
+                                    if (lastAst is BinaryExpressionAst binaryExpression)
+                                    {
+                                        completionContext.WordToComplete = string.Empty;
+                                        result = CompletionCompleters.CompleteComparisonOperatorValues(completionContext, binaryExpression.Left);
+                                    }
+                                    break;
+
                                 case TokenKind.LBracket:
                                     if (lastAst.Parent is IndexExpressionAst indexExpression)
                                     {
@@ -999,6 +1048,7 @@ namespace System.Management.Automation
                                         result = CompletionCompleters.CompleteIndexExpression(completionContext, indexExpression.Target);
                                     }
                                     break;
+
                                 default:
                                     break;
                             }
