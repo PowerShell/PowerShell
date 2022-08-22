@@ -211,8 +211,7 @@ namespace System.Management.Automation
         internal void SetTargetObject(object targetObject)
         {
             _targetObject = targetObject;
-            if (_errorRecord != null)
-                _errorRecord.SetTargetObject(targetObject);
+            _errorRecord?.SetTargetObject(targetObject);
         }
         #endregion ErrorRecord
 

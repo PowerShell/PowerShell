@@ -385,11 +385,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Adds forwarded events to the local queue.
         /// </summary>
-        private void OnRunspacePSEventReceived(object sender, PSEventArgs e)
-        {
-            if (this.Events != null)
-                this.Events.AddForwardedEvent(e);
-        }
+        private void OnRunspacePSEventReceived(object sender, PSEventArgs e) => this.Events?.AddForwardedEvent(e);
 
         /// <summary>
         /// When the client remote session reports a URI redirection, this method will report the

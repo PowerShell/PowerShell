@@ -2713,17 +2713,12 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception)
             {
-                if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
-
-                if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
-
-                if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
-
-                if (stdOutPipeClient != null) { stdOutPipeClient.Dispose(); }
-
-                if (stdErrPipeServer != null) { stdErrPipeServer.Dispose(); }
-
-                if (stdErrPipeClient != null) { stdErrPipeClient.Dispose(); }
+                stdInPipeServer?.Dispose();
+                stdInPipeClient?.Dispose();
+                stdOutPipeServer?.Dispose();
+                stdOutPipeClient?.Dispose();
+                stdErrPipeServer?.Dispose();
+                stdErrPipeClient?.Dispose();
 
                 throw;
             }
@@ -2789,17 +2784,12 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception)
             {
-                if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
-
-                if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
-
-                if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
-
-                if (stdOutPipeClient != null) { stdOutPipeClient.Dispose(); }
-
-                if (stdErrPipeServer != null) { stdErrPipeServer.Dispose(); }
-
-                if (stdErrPipeClient != null) { stdErrPipeClient.Dispose(); }
+                stdInPipeServer?.Dispose();
+                stdInPipeClient?.Dispose();
+                stdOutPipeServer?.Dispose();
+                stdOutPipeClient?.Dispose();
+                stdErrPipeServer?.Dispose();
+                stdErrPipeClient?.Dispose();
 
                 throw;
             }
@@ -2857,10 +2847,7 @@ namespace System.Management.Automation.Runspaces
                 securityAttributes);
 
             int lastError = Marshal.GetLastWin32Error();
-            if (securityDescHandle != null)
-            {
-                securityDescHandle.Value.Free();
-            }
+            securityDescHandle?.Free();
 
             if (pipeHandle.IsInvalid)
             {

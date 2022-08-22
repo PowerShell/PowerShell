@@ -159,10 +159,7 @@ namespace System.Management.Automation.Remoting
                 {
                     try
                     {
-                        if (_clientHost.UI != null)
-                        {
-                            _clientHost.UI.WriteErrorLine(errorRecord.ToString());
-                        }
+                        _clientHost.UI?.WriteErrorLine(errorRecord.ToString());
                     }
                     catch (Exception)
                     {

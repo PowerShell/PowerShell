@@ -2386,10 +2386,7 @@ namespace System.Management.Automation
             }
 
             PowerShell ps = _psDebuggerCommand;
-            if (ps != null)
-            {
-                ps.BeginStop(null, null);
-            }
+            ps?.BeginStop(null, null);
         }
 
         /// <summary>
@@ -3240,11 +3237,7 @@ namespace System.Management.Automation
                 try
                 {
                     Debugger nestedDebugger = item.NestedDebugger;
-
-                    if (nestedDebugger != null)
-                    {
-                        nestedDebugger.SetDebuggerStepMode(enableStepping);
-                    }
+                    nestedDebugger?.SetDebuggerStepMode(enableStepping);
                 }
                 catch (PSNotImplementedException) { }
             }
@@ -4536,10 +4529,7 @@ namespace System.Management.Automation
                 // If this is a remote server debugger then we want to convert the pending remote
                 // debugger stop to a local debugger stop event for this Debug-Runspace to handle.
                 ServerRemoteDebugger serverRemoteDebugger = this._wrappedDebugger as ServerRemoteDebugger;
-                if (serverRemoteDebugger != null)
-                {
-                    serverRemoteDebugger.ReleaseAndRaiseDebugStopLocal();
-                }
+                serverRemoteDebugger?.ReleaseAndRaiseDebugStopLocal();
             }
         }
 
@@ -4951,10 +4941,7 @@ namespace System.Management.Automation
             else
             {
                 Pipeline pipelineCommand = runningCmd as Pipeline;
-                if (pipelineCommand != null)
-                {
-                    pipelineCommand.ResumeIncomingData();
-                }
+                pipelineCommand?.ResumeIncomingData();
             }
         }
 
@@ -5329,47 +5316,29 @@ namespace System.Management.Automation
 
         private static void WriteLine(string line, PSHost host, IList<PSObject> output)
         {
-            if (host != null)
-            {
-                host.UI.WriteLine(line);
-            }
+            host?.UI.WriteLine(line);
 
-            if (output != null)
-            {
-                output.Add(new PSObject(line));
-            }
+            output?.Add(new PSObject(line));
         }
 
         private static void WriteCR(PSHost host, IList<PSObject> output)
         {
-            if (host != null)
-            {
-                host.UI.WriteLine();
-            }
+            host?.UI.WriteLine();
 
-            if (output != null)
-            {
-                output.Add(new PSObject(Crlf));
-            }
+            output?.Add(new PSObject(Crlf));
         }
 
         private static void WriteErrorLine(string error, PSHost host, IList<PSObject> output)
         {
-            if (host != null)
-            {
-                host.UI.WriteErrorLine(error);
-            }
+            host?.UI.WriteErrorLine(error);
 
-            if (output != null)
-            {
-                output.Add(
-                    new PSObject(
-                        new ErrorRecord(
-                            new RuntimeException(error),
-                            "DebuggerError",
-                            ErrorCategory.InvalidOperation,
-                            null)));
-            }
+            output?.Add(
+                new PSObject(
+                    new ErrorRecord(
+                        new RuntimeException(error),
+                        "DebuggerError",
+                        ErrorCategory.InvalidOperation,
+                        null)));
         }
     }
 

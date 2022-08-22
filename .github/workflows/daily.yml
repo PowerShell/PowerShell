@@ -16,15 +16,21 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
   POWERSHELL_TELEMETRY_OPTOUT: 1
 
+permissions:
+  contents: read
+
 jobs:
   update-dotnet-preview:
+    permissions:
+      contents: write  # for peter-evans/create-pull-request to create branch
+      pull-requests: write  # for peter-evans/create-pull-request to create a PR
     name: Update .NET preview
     timeout-minutes: 15
     runs-on: windows-latest
     if: github.repository == 'PowerShell/PowerShell'
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Sync tags
         run: |
           git fetch --prune --unshallow --tags
@@ -48,7 +54,7 @@ jobs:
           webhook_url: ${{ secrets.PS_BUILD_TEAMS_CHANNEL }}
           overwrite: "{title: `Failure in .github/daily.yml updating .NET build. Look at ${workflow_link}`}"
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         id: cpr
         if: env.CREATE_PR == 'true'
         with:
@@ -57,13 +63,16 @@ jobs:
           base: master
           branch: dotnet_update
   update-tpn:
+    permissions:
+      contents: write  # for peter-evans/create-pull-request to create branch
+      pull-requests: write  # for peter-evans/create-pull-request to create a PR
     name: Update Notices File
     timeout-minutes: 15
     runs-on: windows-latest
     if: github.repository == 'PowerShell/PowerShell'
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Update Notices file
         run: |
           Invoke-WebRequest -Uri https://aka.ms/pwsh-daily-tpn -OutFile ./ThirdPartyNotices.txt
@@ -84,7 +93,7 @@ jobs:
           }
           exit 0
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         id: cprtpn
         if: env.CREATE_PR == 'true'
         with:
@@ -97,6 +106,9 @@ jobs:
           draft: false
           branch: update-cgmanifest
   update-cgmanifest:
+    permissions:
+      contents: write  # for peter-evans/create-pull-request to create branch
+      pull-requests: write  # for peter-evans/create-pull-request to create a PR
     name: Update cgmanifest
     timeout-minutes: 15
     runs-on: windows-latest
@@ -105,7 +117,7 @@ jobs:
       CGMANIFEST_PATH: ''
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Sync tags
         run: |
           git fetch --prune --unshallow --tags
@@ -122,13 +134,13 @@ jobs:
           Find-Dotnet
           ./tools/findMissingNotices.ps1 -Fix
       - name: Upload cgmanifest
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: always() && env.CGMANIFEST_PATH != ''
         with:
           name: cgmanifest
           path: ${{ env.CGMANIFEST_PATH }}
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v4
         id: cprcgmanifest
         if: env.CGMANIFEST_PATH != ''
         with:

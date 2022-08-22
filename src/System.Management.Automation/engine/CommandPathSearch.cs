@@ -110,7 +110,17 @@ namespace System.Management.Automation
                 sessionState.CurrentDrive.Provider.NameEquals(fileSystemProviderName) &&
                 sessionState.IsProviderLoaded(fileSystemProviderName);
 
-            string environmentCurrentDirectory = Directory.GetCurrentDirectory();
+            string? environmentCurrentDirectory = null;
+            
+            try
+            {
+                environmentCurrentDirectory = Directory.GetCurrentDirectory();
+            }
+            catch (FileNotFoundException)
+            {
+                // This can happen if the current working directory is deleted by another process on non-Windows
+                // In this case, we'll just ignore it and continue on with the current directory as null
+            }
 
             LocationGlobber pathResolver = _context.LocationGlobber;
 

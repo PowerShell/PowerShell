@@ -1035,10 +1035,7 @@ namespace System.Management.Automation
                     processInCurrentThread: true,
                     waitForCompletionInCurrentThread: true);
 
-                if (scriptBlockInvocationEventArgs.Exception != null)
-                {
-                    scriptBlockInvocationEventArgs.Exception.Throw();
-                }
+                scriptBlockInvocationEventArgs.Exception?.Throw();
             }
         }
 

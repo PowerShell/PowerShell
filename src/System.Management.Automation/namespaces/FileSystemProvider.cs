@@ -4520,10 +4520,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (wStream != null)
-                {
-                    wStream.Dispose();
-                }
+                wStream?.Dispose();
 
                 // If copying the file from the remote session failed, then remove it.
                 if (errorWhileCopyRemoteFile && File.Exists(destinationFile.FullName))
@@ -4803,10 +4800,7 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (fStream != null)
-                {
-                    fStream.Dispose();
-                }
+                fStream?.Dispose();
             }
 
             return success;

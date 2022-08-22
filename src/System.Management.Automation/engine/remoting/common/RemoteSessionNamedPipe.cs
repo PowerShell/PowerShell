@@ -504,10 +504,7 @@ namespace System.Management.Automation.Remoting
                 securityAttributes);
 
             int lastError = Marshal.GetLastWin32Error();
-            if (securityDescHandle != null)
-            {
-                securityDescHandle.Value.Free();
-            }
+            securityDescHandle?.Free();
 
             if (pipeHandle.IsInvalid)
             {
@@ -1102,13 +1099,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Closes the named pipe.
         /// </summary>
-        public void Close()
-        {
-            if (_clientPipeStream != null)
-            {
-                _clientPipeStream.Dispose();
-            }
-        }
+        public void Close() => _clientPipeStream?.Dispose();
 
         /// <summary>
         /// Abort connection attempt.

@@ -306,6 +306,10 @@
   <data name="HelpCultureNotSupported" xml:space="preserve">
     <value>The specified culture is not supported: {0}. Specify a culture from the following list: {{{1}}}.</value>
   </data>
+  <data name="HelpCultureNotSupportedFallback" xml:space="preserve">
+    <value>Postponing error and trying fallback cultures, will show as error if none of fallbacks are supported:
+{0}</value>
+  </data>
   <data name="ModuleBaseMustExist" xml:space="preserve">
     <value>The ModuleBase directory cannot be found. Verify the directory and try again.</value>
   </data>

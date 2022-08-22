@@ -528,10 +528,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             this.moreActionEvent.Dispose();
-            if (this.ackedEvent != null)
-            {
-                this.ackedEvent.Dispose();
-            }
+            this.ackedEvent?.Dispose();
 
             DebugHelper.WriteLog("Cleanup complete.", 2);
         }

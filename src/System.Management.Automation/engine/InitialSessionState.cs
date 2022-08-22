@@ -3851,13 +3851,6 @@ namespace System.Management.Automation.Runspaces
             assemblyEntry.SetPSSnapIn(psSnapInInfo);
             Assemblies.Add(assemblyEntry);
 
-            // entry from types.ps1xml references a type (Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase) in this assembly
-            if (psSnapInInfo.Name.Equals(CoreSnapin, StringComparison.OrdinalIgnoreCase))
-            {
-                assemblyEntry = new SessionStateAssemblyEntry("Microsoft.PowerShell.Security", null);
-                this.Assemblies.Add(assemblyEntry);
-            }
-
             if (cmdlets != null)
             {
                 foreach (SessionStateCmdletEntry cmdlet in cmdlets.Values)

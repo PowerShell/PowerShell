@@ -3080,10 +3080,7 @@ namespace System.Management.Automation.Language
                 }
                 finally
                 {
-                    if (p != null)
-                    {
-                        p.Dispose();
-                    }
+                    p?.Dispose();
 
                     //
                     // Put the parser back...

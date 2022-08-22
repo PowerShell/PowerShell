@@ -18,6 +18,7 @@ about_
 about_debuggers
 about_jobs
 about_Telemetry
+about_PSDesiredStateConfiguration
 acl
 adamdriscoll
 add-localgroupmember
@@ -49,6 +50,7 @@ alpha.9
 alternatestream
 alvarodelvalle
 amd64
+ananya26-vishnoi
 andschwa
 anmenaga
 api
@@ -57,7 +59,7 @@ APIScan
 appimage
 applocker
 appveyor
-AppX
+appx
 args
 argumentlist
 arm32
@@ -70,6 +72,7 @@ authenticode
 authenticodesignature
 azdevops
 AzFileCopy
+AzureFileCopy
 azurerm.netcore.preview
 azurerm.profile.netcore.preview
 azurerm.resources.netcore.preview
@@ -110,6 +113,7 @@ catchable
 cdxml
 celsius
 CentOS
+codeql-action
 cgmanifest
 CGManifest
 changelog
@@ -124,6 +128,7 @@ checkbox
 checksum
 chibi
 childitem
+ChuckieChen945
 ChrisLGardner
 cimsession
 cimsupport
@@ -232,6 +237,7 @@ displaydataquery
 Distribution_Request.md
 distro
 distros
+dkaszews
 dll
 dlls
 dlwyatt
@@ -294,6 +300,7 @@ fbehrens
 felixfbecker
 ffeldhaus
 ffi
+fflaten
 filecatalog
 filename
 filesystem
@@ -368,6 +375,7 @@ github
 githug
 gitter
 glachancecmaisonneuve
+global.json
 globbing
 GoogleTest
 GUIs
@@ -387,6 +395,7 @@ Higinbotham
 himura2la
 hololens
 homebrew
+hostifaces
 hostname
 hotfix
 httpbin.org
@@ -502,12 +511,15 @@ maertendmsft
 mahawar
 Markdig.Signed
 markdown.yml
+manifest.spdx.json
 markekraus
 marktiedemann
 Marusyk
 MarvTheRobot
+mattifestation
 matt9ucci
 mcbobke
+mcr.microsoft.com
 md
 meir017
 memberresolution
@@ -522,11 +534,13 @@ Microsoft.ApplicationInsights
 Microsoft.CodeAnalysis.CSharp
 Microsoft.CodeAnalysis.NetAnalyzers
 microsoft.com
+Microsoft.Management
 microsoft.management.infrastructure.cimcmdlets
 microsoft.management.infrastructure.native
 Microsoft.Management.Infrastructure.Runtime.Win
 microsoft.net.test.sdk
 microsoft.powershell.archive
+Microsoft.PowerShell.Commands
 microsoft.powershell.commands.diagnostics
 microsoft.powershell.commands.management
 microsoft.powershell.commands.utility
@@ -542,6 +556,7 @@ microsoft.powershell.psreadline
 microsoft.powershell.security
 microsoft.powershell.utility
 Microsoft.Security.Extensions
+Microsoft.WSMan
 microsoft.wsman.management
 microsoft.wsman.runtime
 mikeTWC1984
@@ -549,7 +564,9 @@ mirichmo
 mjanko5
 mkdir
 mklement0
+ModuleCmdletBase.cs
 MohiTheFish
+Molkree
 move-itemproperty
 ms-psrp
 msbuild
@@ -639,6 +656,7 @@ parameterbindercontroller
 parameterbinding
 ParenExpression
 ParseError.ToString
+Path.Join
 pathresolution
 PathResolvedToMultiple
 patochun
@@ -649,6 +667,7 @@ payette
 perf
 perfview
 perfview.exe
+peter-evans
 petseral
 plaintext
 pluggable
@@ -677,6 +696,7 @@ pre-build
 pre-compiled
 pre-generated
 pre-installed
+pre-parse
 pre-release
 pre-releases
 pre-requisites
@@ -703,6 +723,7 @@ preview.7.20358.6
 preview.7.20364.3
 preview.7.20366.2
 preview.7.20366.15
+preview.7.22377.5
 preview.4.20258.7
 preview.4.20229.10
 preview.4.22252.9
@@ -728,6 +749,7 @@ PSGalleryModules
 psm1
 psobject
 psobjects
+psoptions.json
 psproxyjobs
 psreadline
 psrp.windows
@@ -821,6 +843,7 @@ runspaceinit
 runspaces
 runtime
 runtimes
+Ryan-Hutchison-USAF
 SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation
 Saancreed
 sample-dotnet1
@@ -914,6 +937,7 @@ System.IO.Packaging
 System.InvalidOperationException
 system.manage
 system.management.automation
+System.Management.Automation.utils
 systemd
 SytzeAndr
 tabcompletion
@@ -924,6 +948,7 @@ TargetFramework
 test-modulemanifest
 test-pssessionconfigurationfile
 test-scriptfileinfo
+tar.gz
 test.ps1
 test.txt.
 Tests.ps1
@@ -1029,9 +1054,11 @@ v7.2.2
 v7.3.0
 validatenotnullorempty
 ValidateSet
+varunsh-coder
 versioned
 versioning
 vexx32
+Virtualization
 visualstudio
 vmsilvamolina
 vorobev
@@ -1203,6 +1230,11 @@ manifest.spdx.json
 buildinfo
 SKUs
 vmImage
+InternalCommands.cs
+CommonCommandParameters.cs
+preview.6.22352.1
+v2.2.6
+ResultsComparer
  - CHANGELOG.md
 aavdberg
 asrosent

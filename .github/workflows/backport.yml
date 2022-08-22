@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
     - name: Extract backport target branch
-      uses: actions/github-script@v3
+      uses: actions/github-script@v6
       id: target-branch-extractor
       with:
         result-encoding: string
@@ -28,10 +28,15 @@ jobs:
 
           return target_branch[1];
     - name: Post backport started comment to pull request
-      uses: actions/github-script@v3
+      uses: actions/github-script@v6
+      continue-on-error: true
       with:
         script: |
           const backport_start_body = `Started backporting to ${{ steps.target-branch-extractor.outputs.result }}: https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+          console.log(`issue_number: ${context.issue.number}`);
+          console.log(`owner: ${context.repo.owner}`);
+          console.log(`repo: ${context.repo.repo}`);
+          console.log(`body: ${backport_start_body}`);
           await github.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
@@ -39,7 +44,7 @@ jobs:
             body: backport_start_body
           });
     - name: Checkout repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         fetch-depth: 0
     - name: Run backport

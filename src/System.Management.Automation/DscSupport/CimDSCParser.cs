@@ -970,10 +970,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 // Ignore modules with invalid schemas.
                 s_tracer.WriteLine("DSC ClassCache: Error importing file '{0}', with error '{1}'.  Skipping file.", path, e);
-                if (errors != null)
-                {
-                    errors.Add(e);
-                }
+                errors?.Add(e);
             }
 
             if (classes != null)
@@ -1000,10 +997,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                                 ParserStrings.DuplicateCimClassDefinition, className, path, files);
 
                             e.SetErrorId("DuplicateCimClassDefinition");
-                            if (errors != null)
-                            {
-                                errors.Add(e);
-                            }
+                            errors?.Add(e);
                         }
                     }
 

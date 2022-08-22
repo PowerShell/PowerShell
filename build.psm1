@@ -8,6 +8,7 @@ param(
 
 . "$PSScriptRoot\tools\buildCommon\startNativeExecution.ps1"
 
+# CI runs with PowerShell 5.0, so don't use features like ?: && ||
 Set-StrictMode -Version 3.0
 
 # On Unix paths is separated by colon
@@ -861,26 +862,26 @@ function New-PSOptions {
     Write-Verbose "Using framework '$Framework'"
 
     if (-not $Runtime) {
-        if ($environment.IsLinux) {
-            $Runtime = "linux-x64"
-        } elseif ($environment.IsMacOS) {
-            if ($PSVersionTable.OS.Contains('ARM64')) {
-                $Runtime = "osx-arm64"
-            }
-            else {
-                $Runtime = "osx-x64"
-            }
-        } else {
-            $RID = dotnet --info | ForEach-Object {
-                if ($_ -match "RID") {
-                    $_ -split "\s+" | Select-Object -Last 1
-                }
+        $Platform, $Architecture = dotnet --info |
+            Select-String '^\s*OS Platform:\s+(\w+)$', '^\s*Architecture:\s+(\w+)$' |
+            Select-Object -First 2 |
+            ForEach-Object { $_.Matches.Groups[1].Value }
+
+        switch ($Platform) {
+            'Windows' {
+                # For x86 and x64 architectures, we use win7-x64 and win7-x86 RIDs.
+                # For arm and arm64 architectures, we use win-arm and win-arm64 RIDs.
+                $Platform = if ($Architecture[0] -eq 'x') { 'win7' } else { 'win' }
+                $Runtime = "${Platform}-${Architecture}"
             }
 
-            # We plan to release packages targeting win7-x64 and win7-x86 RIDs,
-            # which supports all supported windows platforms.
-            # So we, will change the RID to win7-<arch>
-            $Runtime = $RID -replace "win\d+", "win7"
+            'Linux' {
+                $Runtime = "linux-${Architecture}"
+            }
+
+            'Darwin' {
+                $Runtime = "osx-${Architecture}"
+            }
         }
 
         if (-not $Runtime) {
@@ -2272,7 +2273,7 @@ function Start-DevPowerShell {
 
         # splatting for the win
         $startProcessArgs = @{
-            FilePath = "$BinDir\pwsh"
+            FilePath = Join-Path $BinDir 'pwsh'
         }
 
         if ($ArgumentList) {

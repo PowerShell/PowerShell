@@ -5678,10 +5678,7 @@ namespace System.Management.Automation.Language
             restrictions = versionRestriction;
 
             // When returning aliasRestrictions always include the version restriction
-            if (aliasRestrictions != null)
-            {
-                aliasRestrictions.Add(versionRestriction);
-            }
+            aliasRestrictions?.Add(versionRestriction);
 
             var alias = memberInfo as PSAliasProperty;
             if (alias != null)

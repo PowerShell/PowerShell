@@ -1171,23 +1171,20 @@ namespace System.Management.Automation
 
             try
             {
-                if (_nativeProcess != null)
-                {
-                    // on Unix, we need to kill the process to ensure it terminates as Dispose() merely
-                    // closes the redirected streams and the processs does not exit on macOS.  However,
-                    // on Windows, a winexe like notepad should continue running so we don't want to kill it.
+                // on Unix, we need to kill the process to ensure it terminates as Dispose() merely
+                // closes the redirected streams and the processs does not exit on macOS.  However,
+                // on Windows, a winexe like notepad should continue running so we don't want to kill it.
 #if UNIX
-                    try
-                    {
-                        _nativeProcess.Kill();
-                    }
-                    catch
-                    {
-                        // Ignore all exception since it is cleanup.
-                    }
-#endif
-                    _nativeProcess.Dispose();
+                try
+                {
+                    _nativeProcess?.Kill();
                 }
+                catch
+                {
+                    // Ignore all exception since it is cleanup.
+                }
+#endif
+                _nativeProcess?.Dispose();
             }
             catch (Exception)
             {
@@ -1381,7 +1378,12 @@ namespace System.Management.Automation
             string rawPath =
                 context.EngineSessionState.GetNamespaceCurrentLocation(
                     context.ProviderNames.FileSystem).ProviderPath;
-            startInfo.WorkingDirectory = WildcardPattern.Unescape(rawPath);
+
+            // Only set this if the PowerShell's current working directory still exists.
+            if (Directory.Exists(rawPath))
+            {
+                startInfo.WorkingDirectory = WildcardPattern.Unescape(rawPath);
+            }
 
             return startInfo;
         }
@@ -2126,10 +2128,7 @@ namespace System.Management.Automation
         {
             if (_inputFormat == NativeCommandIOFormat.Xml)
             {
-                if (_xmlSerializer != null)
-                {
-                    _xmlSerializer.Done();
-                }
+                _xmlSerializer?.Done();
             }
             else // Text
             {

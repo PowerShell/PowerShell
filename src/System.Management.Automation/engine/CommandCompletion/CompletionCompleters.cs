@@ -3978,7 +3978,7 @@ namespace System.Management.Automation
 
         private static void NativeCompletionMemberName(CompletionContext context, List<CompletionResult> result, CommandAst commandAst, AstParameterArgumentPair parameterInfo, bool propertiesOnly = true)
         {
-            IEnumerable<PSTypeName> prevType = GetInferenceTypes(context, commandAst);
+            IEnumerable<PSTypeName> prevType = TypeInferenceVisitor.GetInferredEnumeratedTypes(GetInferenceTypes(context, commandAst));
             if (prevType is not null)
             {
                 HashSet<string> excludedMembers = null;
@@ -3988,7 +3988,7 @@ namespace System.Management.Automation
                 }
 
                 Func<object, bool> filter = propertiesOnly ? IsPropertyMember : null;
-                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter, isStatic: false, excludedMembers);
+                CompleteMemberByInferredType(context.TypeInferenceContext, prevType, result, context.WordToComplete + "*", filter, isStatic: false, excludedMembers, addMethodParenthesis: false);
             }
 
             result.Add(CompletionResult.Null);
@@ -5916,22 +5916,25 @@ namespace System.Management.Automation
         /// <summary>
         /// Complete members against extension methods 'Where' and 'ForEach'
         /// </summary>
-        private static void CompleteExtensionMethods(string memberName, List<CompletionResult> results)
+        private static void CompleteExtensionMethods(string memberName, List<CompletionResult> results, bool addMethodParenthesis = true)
         {
             var pattern = WildcardPattern.Get(memberName, WildcardOptions.IgnoreCase);
-            CompleteExtensionMethods(pattern, results);
+            CompleteExtensionMethods(pattern, results, addMethodParenthesis);
         }
 
         /// <summary>
         /// Complete members against extension methods 'Where' and 'ForEach' based on the given pattern.
         /// </summary>
-        private static void CompleteExtensionMethods(WildcardPattern pattern, List<CompletionResult> results)
+        private static void CompleteExtensionMethods(WildcardPattern pattern, List<CompletionResult> results, bool addMethodParenthesis)
         {
-            results.AddRange(from member in s_extensionMethods
-                             where pattern.IsMatch(member.Item1)
-                             select
-                                 new CompletionResult(member.Item1 + "(", member.Item1,
-                                                      CompletionResultType.Method, member.Item2));
+            foreach (var member in s_extensionMethods)
+            {
+                if (pattern.IsMatch(member.Item1))
+                {
+                    string completionText = addMethodParenthesis ? $"{member.Item1}(" : member.Item1;
+                    results.Add(new CompletionResult(completionText, member.Item1, CompletionResultType.Method, member.Item2));
+                }
+            }
         }
 
         /// <summary>
@@ -6050,7 +6053,15 @@ namespace System.Management.Automation
             }
         }
 
-        internal static void CompleteMemberByInferredType(TypeInferenceContext context, IEnumerable<PSTypeName> inferredTypes, List<CompletionResult> results, string memberName, Func<object, bool> filter, bool isStatic, HashSet<string> excludedMembers = null)
+        internal static void CompleteMemberByInferredType(
+            TypeInferenceContext context,
+            IEnumerable<PSTypeName> inferredTypes,
+            List<CompletionResult> results,
+            string memberName,
+            Func<object, bool> filter,
+            bool isStatic,
+            HashSet<string> excludedMembers = null, 
+            bool addMethodParenthesis = true)
         {
             bool extensionMethodsAdded = false;
             HashSet<string> typeNameUsed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -6066,7 +6077,7 @@ namespace System.Management.Automation
                 var members = context.GetMembersByInferredType(psTypeName, isStatic, filter);
                 foreach (var member in members)
                 {
-                    AddInferredMember(member, memberNamePattern, results, excludedMembers);
+                    AddInferredMember(member, memberNamePattern, results, excludedMembers, addMethodParenthesis);
                 }
 
                 // Check if we need to complete against the extension methods 'Where' and 'ForEach'
@@ -6074,7 +6085,7 @@ namespace System.Management.Automation
                 {
                     // Complete extension methods 'Where' and 'ForEach' for Enumerable types
                     extensionMethodsAdded = true;
-                    CompleteExtensionMethods(memberNamePattern, results);
+                    CompleteExtensionMethods(memberNamePattern, results, addMethodParenthesis);
                 }
             }
 
@@ -6092,7 +6103,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results, HashSet<string> excludedMembers)
+        private static void AddInferredMember(object member, WildcardPattern memberNamePattern, List<CompletionResult> results, HashSet<string> excludedMembers, bool addMethodParenthesis)
         {
             string memberName = null;
             bool isMethod = false;
@@ -6164,7 +6175,7 @@ namespace System.Management.Automation
 
             var completionResultType = isMethod ? CompletionResultType.Method : CompletionResultType.Property;
             string completionText;
-            if (isMethod)
+            if (isMethod && addMethodParenthesis)
             {
                 completionText = $"{memberName}(";
             }

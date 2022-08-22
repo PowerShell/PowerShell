@@ -1578,10 +1578,7 @@ namespace Microsoft.PowerShell.Commands
                                     }
                                     finally
                                     {
-                                        if (reader != null)
-                                        {
-                                            reader.Dispose();
-                                        }
+                                        reader?.Dispose();
                                     }
 
                                     if (!string.IsNullOrEmpty(detailMsg))
@@ -1657,13 +1654,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Implementing ^C, after start the BeginGetResponse.
         /// </summary>
-        protected override void StopProcessing()
-        {
-            if (_cancelToken != null)
-            {
-                _cancelToken.Cancel();
-            }
-        }
+        protected override void StopProcessing() => _cancelToken?.Cancel();
 
         #endregion Overrides
 

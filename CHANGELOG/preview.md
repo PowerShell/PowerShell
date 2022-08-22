@@ -1,5 +1,191 @@
 # Current preview release
 
+## [7.3.0-preview.7] - 2022-08-09
+
+### Breaking Changes
+
+- Move the type data definition of `System.Security.AccessControl.ObjectSecurity` to the `Microsoft.PowerShell.Security` module (#16355) (Thanks @iSazonov!)
+
+### Engine Updates and Fixes
+
+- Enable searching for assemblies in `GAC_Arm64` on Windows (#17816)
+- Fix parser exception in using statements with empty aliases (#16745) (Thanks @MartinGC94!)
+- Do not always collapse space between parameter and value for native arguments. (#17708)
+- Remove `PSNativePSPathResolution` experimental feature (#17670)
+
+### General Cmdlet Updates and Fixes
+
+- Fix for deserializing imported ordered dictionary (#15545) (Thanks @davidBar-On!)
+- Make generated implicit remoting modules backwards compatible with PowerShell 5.1 (#17227) (Thanks @Tadas!)
+- Re-enable IDE0031: Use Null propagation (#17811) (Thanks @fflaten!)
+- Allow commands to still be executed even if the current working directory no longer exists (#17579)
+- Stop referencing `Microsoft.PowerShell.Security` when the core snapin is used (#17771)
+- Add support for HTTPS with `Set-AuthenticodeSignature -TimeStampServer` (#16134) (Thanks @Ryan-Hutchison-USAF!)
+- Add type accelerator `ordered` for `OrderedDictionary` (#17804) (Thanks @fflaten!)
+- Fix the definition of the `PDH_COUNTER_INFO` struct (#17779)
+- Adding Virtualization Based Security feature names to Get-ComputerInfo (#16415) (Thanks @mattifestation!)
+- Fix `FileSystemProvider` to work with volume and pipe paths (#15873)
+- Remove pre-parse for array-based JSON (#15684) (Thanks @strawgate!)
+- Improve type inference for `$_` (#17716) (Thanks @MartinGC94!)
+- Prevent braces from being removed when completing variables (#17751) (Thanks @MartinGC94!)
+- Fix type inference for `ICollection` (#17752) (Thanks @MartinGC94!)
+- Fix `Test-Json` not handling non-object types at root (#17741) (Thanks @dkaszews!)
+- Change `Get-ChildItem` to treat trailing slash in path as indicating a directory when used with `-Recurse` (#17704)
+- Add `find.exe` to legacy argument binding behavior for Windows (#17715)
+- Add completion for index expressions for dictionaries (#17619) (Thanks @MartinGC94!)
+- Fix enum-ranges for `ValidateRange` in proxy commands (#17572) (Thanks @fflaten!)
+- Fix type completion for attribute tokens (#17484) (Thanks @MartinGC94!)
+- Add `-noprofileloadtime` switch to `pwsh` (#17535) (Thanks @rkeithhill!)
+- Fix legacy `ErrorView` types to use `$host.PrivateData` colors (#17705)
+- Improve dynamic parameter tab completion (#17661) (Thanks @MartinGC94!)
+- Avoid binding positional parameters when completing parameter in front of value (#17693) (Thanks @MartinGC94!)
+- Render decimal numbers in a table using current culture (#17650)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@fflaten, @Molkree, @eltociear</p>
+
+</summary>
+
+<ul>
+<li>Fix other path constructions using <code>Path.Join</code> (#17825)</li>
+<li>Use null propagation (#17787)(#17789)(#17790)(#17791)(#17792)(#17795) (Thanks @fflaten!)</li>
+<li>Re-enable compound assignment preference (#17784) (Thanks @Molkree!)</li>
+<li>Use null-coalescing assignment (#17719)(#17720)(#17721)(#17722)(#17723)(#17724)(#17725)(#17726)(#17727)(#17728)(#17729) (Thanks @Molkree!)</li>
+<li>Disable the warning <code>IDE0031</code> to take .NET 7 Preview 7 (#17770)</li>
+<li>Fix typo in <ode>ModuleCmdletBase.cs</code> (#17714) (Thanks @eltociear!)</li>
+</ul>
+
+</details>
+
+### Tests
+
+- Re-enable tests because the corresponding dotnet issues were fixed (#17839)
+- Add test for `LanguageMode` using remoting (#17803) (Thanks @fflaten!)
+- Fix test perf by stopping ongoing `write-progress` (#17749) (Thanks @fflaten!)
+- Re-enable the test `TestLoadNativeInMemoryAssembly` (#17738)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@varunsh-coder, @dkaszews, @Molkree, @ChuckieChen945</p>
+
+</summary>
+
+<ul>
+<li>Update release pipeline to use Approvals and automate some manual tasks (#17837)</li>
+<li>Add GitHub token permissions for workflows (#17781) (Thanks @varunsh-coder!)</li>
+<li>Bump actions/github-script from 3 to 6 (#17842)</li>
+<li>Bump cirrus-actions/rebase from 1.6 to 1.7 (#17843)</li>
+<li>Remove unneeded verbose message in build (#17840)</li>
+<li>Detect default runtime using dotnet --info in build.psm1 (#17818) (Thanks @dkaszews!)</li>
+<li>Bump <code>actions/checkout</code> from 2 to 3 (#17828)</li>
+<li>Bump <code>actions/download-artifact</code> from 2 to 3 (#17829)</li>
+<li>Bump <code>github/codeql-action</code> from 1 to 2 (#17830)</li>
+<li>Bump <code>peter-evans/create-pull-request</code> from 3 to 4 (#17831)</li>
+<li>Bump <code>actions/upload-artifact</code> from 2 to 3 (#17832)</li>
+<li>Enable Dependabot for GitHub Actions (#17775) (Thanks @Molkree!)</li>
+<li>Update .NET SDK version from <code>7.0.100-preview.6.22352.1</code> to <code>7.0.100-preview.7.22377.5</code> (#17776)</li>
+<li>Fix a bug in <code>install-powershell.ps1</code> (#17794) (Thanks @ChuckieChen945!)</li>
+<li>Bump xunit from 2.4.1 to 2.4.2 (#17817)</li>
+<li>Update how to update homebrew (#17798)</li>
+<li>Don't run link check on forks (#17797)</li>
+<li>Update dotnetmetadata.json to start consuming .NET 7 preview 7 builds (#17736)</li>
+<li>Bump PackageManagement from 1.4.7 to 1.4.8.1 (#17709)</li>
+<li>Exclude ARM images from running in CI (#17713)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update the comment about why R2R is disabled (#17850)
+- Update changelog and `.spelling` for `7.3.0-preview.6` release (#17835)
+- Updated `ADOPTERS.md` for Power BI (#17766)
+- Update README.md with the current Fedora version (#15717) (Thanks @ananya26-vishnoi!)
+- Update `README` and `metadata.json` for next release (#17676) (Thanks @SeeminglyScience!)
+
+[7.3.0-preview.7]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.6...v7.3.0-preview.7
+
+## [7.3.0-preview.6] - 2022-07-18
+
+### General Cmdlet Updates and Fixes
+
+- Fix `Export-PSSession` to not throw error when a rooted path is specified for `-OutputModule` (#17671)
+- Change `ConvertFrom-Json -AsHashtable` to use ordered hashtable (#17405)
+- Remove potential ANSI escape sequences in strings before using in `Out-GridView` (#17664)
+- Add the `-Milliseconds` parameter to `New-TimeSpan` (#17621) (Thanks @NoMoreFood!)
+- Update `Set-AuthenticodeSignature` to use `SHA256` as the default (#17560) (Thanks @jborean93!)
+- Fix tab completion regression when completing `ValidateSet` values (#17628) (Thanks @MartinGC94!)
+- Show optional parameters as such when displaying method definition and overloads (#13799) (Thanks @eugenesmlv!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@sethvs, @MartinGC94, @eltociear</p>
+
+</summary>
+
+<ul>
+<li>Fix comment in InternalCommands.cs (#17669) (Thanks @sethvs!)</li>
+<li>Use discards for unused variables (#17620) (Thanks @MartinGC94!)</li>
+<li>Fix typo in CommonCommandParameters.cs (#17524) (Thanks @eltociear!)</li>
+</ul>
+
+</details>
+
+### Tests
+
+- Fix SDK tests for release build (#17678)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@tamasvajk</p>
+
+</summary>
+
+<ul>
+<li>Create test artifacts for Windows ARM64 (#17675)</li>
+<li>Update to the latest NOTICES file (#17607)</li>
+<li>Update .NET SDK version from <code>7.0.100-preview.5.22307.18</code> to <code>7.0.100-preview.6.22352.1</code> (#17634)</li>
+<li>Set the compound assignment preference to false (#17632)</li>
+<li>Update DotnetMetadata.json to start consuming .NET 7 Preview 6 builds (#17630)</li>
+<li>Install .NET 3.1 as it is required by the vPack task (#17600)</li>
+<li>Update to use PSReadLine <code>v2.2.6</code> (#17595)</li>
+<li>Fix <code>build.psm1</code> to not specify both version and quality for <code>dotnet-install</code> (#17589) (Thanks @tamasvajk!)</li>
+<li>Bump Newtonsoft.Json in /test/perf/dotnet-tools/Reporting (#17592)</li>
+<li>Bump Newtonsoft.Json in /test/perf/dotnet-tools/ResultsComparer (#17566)</li>
+<li>Disable RPM SBOM test. (#17532)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Remove `katacoda.com` from doc as it now returns 404 (#17625)
+- Update change log for `v7.2.5` and `v7.3.0-preview.5` (#17565)
+- Update `README.md` and `metadata.json` for upcoming releases (#17526)
+
+[7.3.0-preview.6]: https://github.com/PowerShell/PowerShell/compare/v7.3.0-preview.5...v7.3.0-preview.6
+
 ## [7.3.0-preview.5] - 2022-06-21
 
 ### Engine Updates and Fixes
