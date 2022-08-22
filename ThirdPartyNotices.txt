@@ -141,10 +141,9 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 ---------------------------------------------------------
 
-Microsoft.ApplicationInsights 2.20.0 - MIT
+Microsoft.ApplicationInsights 2.21.0 - MIT
 
 
-(c) Microsoft Corporation.
 
 MIT License
 
