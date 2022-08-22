@@ -2,114 +2,84 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Collections.Generic;
 
 namespace System.Management.Automation
 {
     /// <summary>
     /// Class to help with VT escape sequences.
     /// </summary>
-    public static class VTUtility
+    [Obsolete("This class is deprecated. Use 'System.Management.Automation.PSStyle' instead.", error: true)]
+    public sealed class VTUtility
     {
-        private static readonly string[] BackgroundColorMap =
-            {
-                "\x1b[40m", // Black
-                "\x1b[44m", // DarkBlue
-                "\x1b[42m", // DarkGreen
-                "\x1b[46m", // DarkCyan
-                "\x1b[41m", // DarkRed
-                "\x1b[45m", // DarkMagenta
-                "\x1b[43m", // DarkYellow
-                "\x1b[47m", // Gray
-                "\x1b[100m", // DarkGray
-                "\x1b[104m", // Blue
-                "\x1b[102m", // Green
-                "\x1b[106m", // Cyan
-                "\x1b[101m", // Red
-                "\x1b[105m", // Magenta
-                "\x1b[103m", // Yellow
-                "\x1b[107m", // White
-            };
+        /// <summary>
+        /// Available VT escape codes other than colors.
+        /// </summary>
+        public enum VT
+        {
+            /// <summary>Reset the text style.</summary>
+            Reset,
 
-        private static readonly string[] ForegroundColorMap =
-            {
-                "\x1b[30m", // Black
-                "\x1b[34m", // DarkBlue
-                "\x1b[32m", // DarkGreen
-                "\x1b[36m", // DarkCyan
-                "\x1b[31m", // DarkRed
-                "\x1b[35m", // DarkMagenta
-                "\x1b[33m", // DarkYellow
-                "\x1b[37m", // Gray
-                "\x1b[90m", // DarkGray
-                "\x1b[94m", // Blue
-                "\x1b[92m", // Green
-                "\x1b[96m", // Cyan
-                "\x1b[91m", // Red
-                "\x1b[95m", // Magenta
-                "\x1b[93m", // Yellow
-                "\x1b[97m", // White
-            };
+            /// <summary>Invert the foreground and background colors.</summary>
+            Inverse
+        }
+
+        private static readonly Dictionary<ConsoleColor, string> ForegroundColorMap = new Dictionary<ConsoleColor, string>
+        {
+            { ConsoleColor.Black, "\x1b[30m" },
+            { ConsoleColor.Gray, "\x1b[37m" },
+            { ConsoleColor.Red, "\x1b[91m" },
+            { ConsoleColor.Green, "\x1b[92m" },
+            { ConsoleColor.Yellow, "\x1b[93m" },
+            { ConsoleColor.Blue, "\x1b[94m" },
+            { ConsoleColor.Magenta, "\x1b[95m" },
+            { ConsoleColor.Cyan, "\x1b[96m" },
+            { ConsoleColor.White, "\x1b[97m" },
+            { ConsoleColor.DarkRed, "\x1b[31m" },
+            { ConsoleColor.DarkGreen, "\x1b[32m" },
+            { ConsoleColor.DarkYellow, "\x1b[33m" },
+            { ConsoleColor.DarkBlue, "\x1b[34m" },
+            { ConsoleColor.DarkMagenta, "\x1b[35m" },
+            { ConsoleColor.DarkCyan, "\x1b[36m" },
+            { ConsoleColor.DarkGray, "\x1b[90m" },
+        };
+
+        private static readonly Dictionary<VT, string> VTCodes = new Dictionary<VT, string>
+        {
+            { VT.Reset, "\x1b[0m" },
+            { VT.Inverse, "\x1b[7m" }
+        };
 
         /// <summary>
         /// Return the VT escape sequence for a ConsoleColor.
         /// </summary>
-        /// <param name="color">The <see cref="ConsoleColor"/> to be mapped from.</param>
-        /// <param name="isBackground">Whether or not it's a background color.</param>
-        /// <returns>The VT escape sequence representing the color. Or, an empty string if the passed-in color is invalid.</returns>
-        internal static string MapColorToEscapeSequence(ConsoleColor color, bool isBackground)
+        /// <param name="color">
+        /// The ConsoleColor to return the equivalent VT escape sequence.
+        /// </param>
+        /// <returns>
+        /// The requested VT escape sequence.
+        /// </returns>
+        public static string GetEscapeSequence(ConsoleColor color)
         {
-            int index = (int)color;
-            if (index < 0 || index >= ForegroundColorMap.Length)
-            {
-                // Return empty string if the passed-in console color is out of bound.
-                return string.Empty;
-            }
-
-            return (isBackground ? BackgroundColorMap : ForegroundColorMap)[index];
+            string value = string.Empty;
+            ForegroundColorMap.TryGetValue(color, out value);
+            return value;
         }
 
         /// <summary>
-        /// Return the VT escape sequence for a foreground color.
+        /// Return the VT escape sequence for a supported VT enum value.
         /// </summary>
-        /// <param name="foregroundColor">The foreground color to be mapped from.</param>
-        /// <returns>The VT escape sequence representing the foreground color. Or, an empty string if the passed-in color is invalid.</returns>
-        public static string MapForegroundColorToEscapeSequence(ConsoleColor foregroundColor)
-            => MapColorToEscapeSequence(foregroundColor, isBackground: false);
-
-        /// <summary>
-        /// Return the VT escape sequence for a background color.
-        /// </summary>
-        /// <param name="backgroundColor">The background color to be mapped from.</param>
-        /// <returns>The VT escape sequence representing the background color. Or, an empty string if the passed-in color is invalid.</returns>
-        public static string MapBackgroundColorToEscapeSequence(ConsoleColor backgroundColor)
-            => MapColorToEscapeSequence(backgroundColor, isBackground: true);
-
-        /// <summary>
-        /// Return the VT escape sequence for a pair of foreground and background colors.
-        /// </summary>
-        /// <param name="foregroundColor">The foreground color of the color pair.</param>
-        /// <param name="backgroundColor">The background color of the color pair.</param>
-        /// <returns>The VT escape sequence representing the foreground and background color pair. Or, an empty string if either of the passed-in colors is invalid.</returns>
-        public static string MapColorPairToEscapeSequence(ConsoleColor foregroundColor, ConsoleColor backgroundColor)
+        /// <param name="vt">
+        /// The VT code to return the VT escape sequence.
+        /// </param>
+        /// <returns>
+        /// The requested VT escape sequence.
+        /// </returns>
+        public static string GetEscapeSequence(VT vt)
         {
-            int foreIndex = (int)foregroundColor;
-            int backIndex = (int)backgroundColor;
-
-            if (foreIndex < 0 || backIndex < 0 ||
-                foreIndex >= ForegroundColorMap.Length ||
-                backIndex >= ForegroundColorMap.Length)
-            {
-                // Return empty string if either of the passed-in console colors is out of bound.
-                return string.Empty;
-            }
-
-            string foreground = ForegroundColorMap[foreIndex];
-            string background = BackgroundColorMap[backIndex];
-
-            return string.Concat(
-                foreground.AsSpan(start: 0, length: foreground.Length - 1),
-                ";".AsSpan(),
-                background.AsSpan(start: 2));
+            string value = string.Empty;
+            VTCodes.TryGetValue(vt, out value);
+            return value;
         }
     }
 }

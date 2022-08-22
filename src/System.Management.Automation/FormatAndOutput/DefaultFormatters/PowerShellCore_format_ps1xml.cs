@@ -824,7 +824,7 @@ namespace System.Management.Automation.Runspaces
                                     return ''
                                 }
 
-                                return [System.Management.Automation.VTUtility]::MapForegroundColorToEscapeSequence($color)
+                                return [System.Management.Automation.PSStyle]::MapForegroundColorToEscapeSequence($color)
                             }
 
                             function Show-ErrorRecord($obj, [int]$indent = 0, [int]$depth = 1) {
@@ -1076,7 +1076,7 @@ namespace System.Management.Automation.Runspaces
                                                 return ''
                                             }
 
-                                            return [System.Management.Automation.VTUtility]::MapForegroundColorToEscapeSequence($color)
+                                            return [System.Management.Automation.PSStyle]::MapForegroundColorToEscapeSequence($color)
                                         }
 
                                         # returns a string cut to last whitespace
