@@ -155,6 +155,16 @@ namespace System.Management.Automation
 
                 return FromRgb(red, green, blue);
             }
+
+            /// <summary>
+            /// Return the VT escape sequence for a foreground color.
+            /// </summary>
+            /// <param name="color">The foreground color to be mapped from.</param>
+            /// <returns>The VT escape sequence representing the foreground color.</returns>
+            public string FromConsoleColor(ConsoleColor color)
+            {
+                return MapForegroundColorToEscapeSequence(color);
+            }
         }
 
         /// <summary>
@@ -269,6 +279,16 @@ namespace System.Management.Automation
                 red = (byte)(rgb & 0xFF);
 
                 return FromRgb(red, green, blue);
+            }
+
+            /// <summary>
+            /// Return the VT escape sequence for a background color.
+            /// </summary>
+            /// <param name="color">The background color to be mapped from.</param>
+            /// <returns>The VT escape sequence representing the background color.</returns>
+            public string FromConsoleColor(ConsoleColor color)
+            {
+                return MapBackgroundColorToEscapeSequence(color);
             }
         }
 
@@ -774,7 +794,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="color">The <see cref="ConsoleColor"/> to be mapped from.</param>
         /// <param name="isBackground">Whether or not it's a background color.</param>
-        /// <returns>The VT escape sequence representing the color. Or, an empty string if the passed-in color is invalid.</returns>
+        /// <returns>The VT escape sequence representing the color.</returns>
         internal static string MapColorToEscapeSequence(ConsoleColor color, bool isBackground)
         {
             int index = (int)color;
@@ -790,7 +810,7 @@ namespace System.Management.Automation
         /// Return the VT escape sequence for a foreground color.
         /// </summary>
         /// <param name="foregroundColor">The foreground color to be mapped from.</param>
-        /// <returns>The VT escape sequence representing the foreground color. Or, an empty string if the passed-in color is invalid.</returns>
+        /// <returns>The VT escape sequence representing the foreground color.</returns>
         public static string MapForegroundColorToEscapeSequence(ConsoleColor foregroundColor)
             => MapColorToEscapeSequence(foregroundColor, isBackground: false);
 
@@ -798,7 +818,7 @@ namespace System.Management.Automation
         /// Return the VT escape sequence for a background color.
         /// </summary>
         /// <param name="backgroundColor">The background color to be mapped from.</param>
-        /// <returns>The VT escape sequence representing the background color. Or, an empty string if the passed-in color is invalid.</returns>
+        /// <returns>The VT escape sequence representing the background color.</returns>
         public static string MapBackgroundColorToEscapeSequence(ConsoleColor backgroundColor)
             => MapColorToEscapeSequence(backgroundColor, isBackground: true);
 
@@ -807,7 +827,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="foregroundColor">The foreground color of the color pair.</param>
         /// <param name="backgroundColor">The background color of the color pair.</param>
-        /// <returns>The VT escape sequence representing the foreground and background color pair. Or, an empty string if either of the passed-in colors is invalid.</returns>
+        /// <returns>The VT escape sequence representing the foreground and background color pair.</returns>
         public static string MapColorPairToEscapeSequence(ConsoleColor foregroundColor, ConsoleColor backgroundColor)
         {
             int foreIndex = (int)foregroundColor;
