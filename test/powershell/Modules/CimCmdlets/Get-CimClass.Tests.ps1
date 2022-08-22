@@ -29,7 +29,7 @@ Describe 'Get-CimClass' -Tags @("Feature") {
     }
 
     It 'can retrieve class amended qualifiers' -Pending:(-not $IsWindows) {
-        $a = Get-CimClass -Class 'Win32_PrinterConfiguration' -Amended
-        $a.CimClassProperties['Color'].Qualifiers.Item('Values').Value.Count | Should -Be 2
+        $a = Get-CimClass -Class 'Win32_LogicalDisk' -Amended
+        $a.CimClassProperties['DriveType'].Qualifiers.Item('Values').Value.Count | Should -Be 7
     }
 }
