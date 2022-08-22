@@ -1613,7 +1613,7 @@ namespace System.Management.Automation
 
                     if (positionInParameterSet < position)
                     {
-                        // The parameter is not positional, or its position is lower than what we want
+                        // The parameter is not positional (position == int.MinValue), or its position is lower than what we want.
                         continue;
                     }
 
