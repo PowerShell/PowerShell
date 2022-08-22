@@ -1972,7 +1972,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-            if (completionContext.TokenAtCursor.TokenFlags == TokenFlags.MemberName)
+            if (completionContext.TokenAtCursor.TokenFlags == TokenFlags.MemberName && (lastAst is NamedAttributeArgumentAst || lastAst.Parent is NamedAttributeArgumentAst))
             {
                 result = GetResultForAttributeArgument(completionContext, ref replacementIndex, ref replacementLength);
                 if (result is not null)
