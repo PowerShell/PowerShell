@@ -914,21 +914,25 @@ namespace Microsoft.PowerShell
                 else if (MatchSwitch(switchKey, "socketservermode", "so"))
                 {
                     _socketServerMode = true;
+                    _showBanner = false;
                     ParametersUsed |= ParameterBitmap.SocketServerMode;
                 }
                 else if (MatchSwitch(switchKey, "servermode", "s"))
                 {
                     _serverMode = true;
+                    _showBanner = false;
                     ParametersUsed |= ParameterBitmap.ServerMode;
                 }
                 else if (MatchSwitch(switchKey, "namedpipeservermode", "nam"))
                 {
                     _namedPipeServerMode = true;
+                    _showBanner = false;
                     ParametersUsed |= ParameterBitmap.NamedPipeServerMode;
                 }
                 else if (MatchSwitch(switchKey, "sshservermode", "sshs"))
                 {
                     _sshServerMode = true;
+                    _showBanner = false;
                     ParametersUsed |= ParameterBitmap.SSHServerMode;
                 }
                 else if (MatchSwitch(switchKey, "noprofileloadtime", "noprofileloadtime"))
