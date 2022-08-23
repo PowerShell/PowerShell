@@ -393,9 +393,10 @@ All parameters are case-insensitive.</value>
 
 -NonInteractive | -noni
 
-    Does not present an interactive prompt to the user. Any attempts to use
-    interactive features, like Read-Host or confirmation prompts, result in
-    statement-terminating errors.
+    This switch is used to create sessions that shouldn't require user input.
+    This is useful for scripts that run in scheduled tasks or CI/CD pipelines.
+    Any attempts to use interactive features, like 'Read-Host' or confirmation
+    prompts, result in statement terminating errors rather than hanging.
 
 -NoProfile | -nop
 
