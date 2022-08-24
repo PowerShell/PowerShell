@@ -590,7 +590,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         @{ DataEncoding = "gzip" }
         @{ DataEncoding = "deflate" }
     ) {
-        param($dataEncoding, $expected)
+        param($dataEncoding)
         $uri = Get-WebListenerUrl -Test 'Compression' -TestValue $dataEncoding
         $command = "Invoke-WebRequest -Uri '$uri'"
 
@@ -2249,7 +2249,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         @{ DataEncoding = "gzip" }
         @{ DataEncoding = "deflate" }
     ) {
-        param($dataEncoding, $expected)
+        param($dataEncoding)
         $uri = Get-WebListenerUrl -Test 'Compression' -TestValue $dataEncoding
         $result = Invoke-RestMethod -Uri $uri
 
