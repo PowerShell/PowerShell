@@ -816,9 +816,7 @@ namespace System.Management.Automation.Runspaces
                                     $errorColor = $psstyle.Formatting.Error
                                 }
 
-                                $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
-                                    [System.Management.Automation.VTUtility+VT]::Reset
-                                )
+                                $resetColor = $PSStyle.Reset
                             }
 
                             function Get-VT100Color([ConsoleColor] $color) {
@@ -826,7 +824,7 @@ namespace System.Management.Automation.Runspaces
                                     return ''
                                 }
 
-                                return [System.Management.Automation.VTUtility]::GetEscapeSequence($color)
+                                return [System.Management.Automation.PSStyle]::MapForegroundColorToEscapeSequence($color)
                             }
 
                             function Show-ErrorRecord($obj, [int]$indent = 0, [int]$depth = 1) {
@@ -1070,9 +1068,7 @@ namespace System.Management.Automation.Runspaces
 
                                         $resetColor = ''
                                         if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
-                                            $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
-                                                [System.Management.Automation.VTUtility+VT]::Reset
-                                            )
+                                            $resetColor = $PSStyle.Reset
                                         }
 
                                         function Get-VT100Color([ConsoleColor] $color) {
@@ -1080,21 +1076,7 @@ namespace System.Management.Automation.Runspaces
                                                 return ''
                                             }
 
-                                            return [System.Management.Automation.VTUtility]::GetEscapeSequence($color)
-                                        }
-
-                                        # return length of string sans VT100 codes
-                                        function Get-RawStringLength($string) {
-                                            $vtCodes = ""`e[0m"", ""`e[2;30m"", ""`e[2;31m"", ""`e[2;32m"", ""`e[2;33m"", ""`e[2;34m"",
-                                                ""`e[2;35m"", ""`e[2;36m"", ""`e[2;37m"", ""`e[1;30m"", ""`e[1;31m"", ""`e[1;32m"",
-                                                ""`e[1;33m"", ""`e[1;34m"", ""`e[1;35m"", ""`e[1;36m"", ""`e[1;37m""
-
-                                            $newString = $string
-                                            foreach ($vtCode in $vtCodes) {
-                                                $newString = $newString.Replace($vtCode, '')
-                                            }
-
-                                            return $newString.Length
+                                            return [System.Management.Automation.PSStyle]::MapForegroundColorToEscapeSequence($color)
                                         }
 
                                         # returns a string cut to last whitespace
@@ -1217,7 +1199,7 @@ namespace System.Management.Automation.Runspaces
 
                                         # if rendering line information, break up the message if it's wider than the console
                                         if ($myinv -and $myinv.ScriptName -or $err.CategoryInfo.Category -eq 'ParserError') {
-                                            $prefixLength = Get-RawStringLength -string $prefix
+                                            $prefixLength = [System.Management.Automation.Internal.StringDecorated]::new($prefix).ContentLength
                                             $prefixVtLength = $prefix.Length - $prefixLength
 
                                             # replace newlines in message so it lines up correct
