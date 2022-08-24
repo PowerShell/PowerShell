@@ -599,7 +599,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         # Validate response content
         # If Content is compressed we cannot read it as JSON.
-        $jsonContent = { $result.Output.Content | ConvertFrom-Json } | Should -Not -Throw -PassThru
+        $jsonContent = $result.Output.Content | ConvertFrom-Json
         $jsonContent.Headers.Host | Should -BeExactly $uri.Authority
     }
 
@@ -2255,7 +2255,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         # Validate response content
         # If Content is compressed we cannot read it as JSON.
-        { $result.Content | ConvertFrom-Json } | Should -Not -Throw
         $result.Headers.Host | Should -BeExactly $uri.Authority
     }
 
