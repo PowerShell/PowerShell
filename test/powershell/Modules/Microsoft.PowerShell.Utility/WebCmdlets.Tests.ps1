@@ -587,10 +587,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity")
     # Note: These are the supported options, but we do not have a web service to test them all.
     It "Invoke-WebRequest supports request that returns <DataEncoding>-encoded data." -TestCases @(
-        @{ DataEncoding = "gzip"}
-        @{ DataEncoding = "deflate"}
+        @{ DataEncoding = "gzip"; Expected = "gzipped" }
+        @{ DataEncoding = "deflate"; Expected = "deflated" }
     ) {
-        param($dataEncoding)
+        param($dataEncoding, $expected)
         $uri = Get-WebListenerUrl -Test 'Compression' -TestValue $dataEncoding
         $command = "Invoke-WebRequest -Uri '$uri'"
 
@@ -598,8 +598,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         ValidateResponse -response $result
 
         # Validate response content
-        $result.Output.Headers.'Content-Encoding'[0] | Should -BeExactly $dataEncoding
         $jsonContent = $result.Output.Content | ConvertFrom-Json
+        $jsonContent.Content.$expected | Should -BeTrue
         $jsonContent.Headers.Host | Should -BeExactly $uri.Authority
     }
 
@@ -2246,15 +2246,15 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity")
     # Note: These are the supported options, but we do not have a web service to test them all.
     It "Invoke-RestMethod supports request that returns <DataEncoding>-encoded data." -TestCases @(
-        @{ DataEncoding = "gzip"}
-        @{ DataEncoding = "deflate"}
+        @{ DataEncoding = "gzip"; Expected = "gzipped" }
+        @{ DataEncoding = "deflate"; Expected = "deflated" }
     ) {
-        param($dataEncoding)
+        param($dataEncoding, $expected)
         $uri = Get-WebListenerUrl -Test 'Compression' -TestValue $dataEncoding
-        $result = Invoke-RestMethod -Uri $uri -ResponseHeadersVariable 'headers'
+        $result = Invoke-RestMethod -Uri $uri
 
         # Validate response content
-        $headers.'Content-Encoding'[0] | Should -BeExactly $dataEncoding
+        $result.$expected | Should -BeTrue
         $result.Headers.Host | Should -BeExactly $uri.Authority
     }
 
