@@ -576,6 +576,7 @@ namespace System.Management.Automation
                             {
                                 valueType = new PSTypeName(value.GetType());
                             }
+
                             properties.Add(new PSMemberNameAndType(name, valueType, value));
                         }
                         else
