@@ -290,9 +290,8 @@ namespace System.Management.Automation
                             string text = arg;
 
                             // handle a scriptblock here
-                            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeScriptBlockArgumentFeatureName) && parameter.ArgumentValue is ScriptBlock)
+                            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeScriptBlockArgumentFeatureName) && parameter.ArgumentValue is ScriptBlock sb)
                             {
-                                ScriptBlock sb = (ScriptBlock)parameter.ArgumentValue;
                                 text = sb.Ast.Extent.Text;
                             }
 
@@ -429,9 +428,8 @@ namespace System.Management.Automation
 
             if (!argExpanded)
             {
-                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeScriptBlockArgumentFeatureName) && parameter.ArgumentValue is ScriptBlock)
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeScriptBlockArgumentFeatureName) && parameter.ArgumentValue is ScriptBlock sb)
                 {
-                    ScriptBlock sb = (ScriptBlock)parameter.ArgumentValue;
                     _arguments.Append(sb.Ast.Extent.Text);
                     AddToArgumentList(parameter, sb.Ast.Extent.Text);
                 }

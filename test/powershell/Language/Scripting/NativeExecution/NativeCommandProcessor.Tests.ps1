@@ -350,27 +350,49 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
 
 Describe "Scriptblock passed as arguments to native executables" -tag @("CI") {
     BeforeAll {
-        $skipTest = $true
-        if (Get-Command PowerShell) {
-            $skipTest = $false
+        $skipTest = $false
+        if (-not (Get-Command PowerShell)) {
+            $skipTest = $true
+            $reason = "PowerShell is not installed"
         }
 
-        [bool]$scriptblockpassingFeature = (Get-ExperimentalFeature PSNativeScriptBlockArgument).Enabled
+        if (-not (Get-ExperimentalFeature PSNativeScriptBlockArgument).Enabled) {
+            $skipTest = $true
+            $reason = "Experimental feature PSNativeScriptBlockArgument is not enabled"
+        }
+
+        $pwsh = Join-Path -Path $PSHOME -ChildPath pwsh
     }
 
     # current behavior hasn't changed for PowerShell
     Context "Scriptblocks are encoded when calling PowerShell or pwsh" {
-        It  "A direct call to 'pwsh -command {get-date}' is encoded correctly" {
+        It  "A direct call to the pwsh symlink with 'pwsh -command {get-date}' is encoded correctly" {
+            if ($skipTest) {
+                Set-ItResult -skipped -Because $reason
+            }
             pwsh -command {get-date} | Should -BeOfType DateTime
         }
 
-        It "A direct call to 'powershell -command {get-date}' is encoded correctly" -skip:$skipTest{
+        It  "A direct call to 'pwsh -command {get-date}' is encoded correctly" {
+            if ($skipTest) {
+                Set-ItResult -skipped -Because $reason
+            }
+            & $pwsh -command {get-date} | Should -BeOfType DateTime
+        }
+
+        It "A direct call to 'powershell -command {get-date}' is encoded correctly" {
+            if ($skipTest) {
+                Set-ItResult -skipped -Because $reason
+            }
             powershell -command {get-date} | Should -BeOfType DateTime
         }
     }
 
     Context "ScriptBlocks are not encoded when calling applications other than PowerShell or pwsh" {
-        It "scriptblock will be passed as is." -skip:$scriptblockpassingFeature {
+        It "scriptblock will be passed as is." {
+            if ($skipTest) {
+                Set-ItResult -skipped -Because $reason
+            }
             $result = testexe -echoargs a b {get-date}
             $result.Count | Should -Be 3
             $result[0] | Should -BeExactly 'Arg 0 is <a>'
@@ -378,7 +400,10 @@ Describe "Scriptblock passed as arguments to native executables" -tag @("CI") {
             $result[2] | Should -BeExactly 'Arg 2 is <{get-date}>'
         }
 
-        It "a script block with a space will be passed as is" -skip:$scriptblockpassingFeature {
+        It "a script block with a space will be passed as is" {
+            if ($skipTest) {
+                Set-ItResult -skipped -Because $reason
+            }
             $result = testexe -echoargs a b { get-date }
             $result.Count | Should -Be 3
             $result[0] | Should -BeExactly 'Arg 0 is <a>'
@@ -386,21 +411,30 @@ Describe "Scriptblock passed as arguments to native executables" -tag @("CI") {
             $result[2] | Should -BeExactly 'Arg 2 is <{ get-date }>'
         }
 
-        It "multiple scriptblocks will be passed as is." -skip:$scriptblockpassingFeature {
+        It "multiple scriptblocks will be passed as is." {
+            if ($skipTest) {
+                Set-ItResult -skipped -Because $reason
+            }
             $result = testexe -echoargs {get-location} {get-date}
             $result.Count | Should -Be 2
             $result[0] | Should -BeExactly 'Arg 0 is <{get-location}>'
             $result[1] | Should -BeExactly 'Arg 1 is <{get-date}>'
         }
 
-        It "multiple scriptblocks with spaces will be passed as is." -skip:$scriptblockpassingFeature {
+        It "multiple scriptblocks with spaces will be passed as is." {
+            if ($skipTest) {
+                Set-ItResult -skipped -Because $reason
+            }
             $result = testexe -echoargs { get-location } { get-psdrive; get-date }
             $result.Count | Should -Be 2
             $result[0] | Should -BeExactly 'Arg 0 is <{ get-location }>'
             $result[1] | Should -BeExactly 'Arg 1 is <{ get-psdrive; get-date }>'
         }
 
-        It "scriptblock as a variable will be used as is." -skip:$scriptblockpassingFeature {
+        It "scriptblock as a variable will be used as is." {
+            if ($skipTest) {
+                Set-ItResult -skipped -Because $reason
+            }
             $sb = {get-date}
             $result = testexe -echoargs a b $sb
             $result.Count | Should -Be 3
@@ -408,7 +442,5 @@ Describe "Scriptblock passed as arguments to native executables" -tag @("CI") {
             $result[1] | Should -BeExactly 'Arg 1 is <b>'
             $result[2] | Should -BeExactly 'Arg 2 is <{get-date}>'
         }
-
     }
-
 }

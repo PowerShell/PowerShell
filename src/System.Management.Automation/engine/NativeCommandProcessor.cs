@@ -243,7 +243,7 @@ namespace System.Management.Automation
 
         // This is the list of PowerShell names.
         // It's used by the MiniShell to determine if a command is a PowerShell.
-        private static readonly IReadOnlySet<string>s_powerShellExecutableNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        private static readonly IReadOnlySet<string> s_powerShellExecutableNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "powershell.exe",
             "pwsh",
@@ -1645,7 +1645,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if native command is powershell or pwsh and the experimental feature is enabled.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A bool indicating whether the native application is a powershell or variant.</returns>
         private bool CheckNativeAppIsNotPowerShell()
         {
             if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeScriptBlockArgumentFeatureName))
@@ -1657,8 +1657,10 @@ namespace System.Management.Automation
             // This will still miss the case where the command is a hard-link to pwsh.
             PSObject possibleLink = new PSObject(new FileInfo(Command.CommandInfo.Source));
             string resolvedPath = Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods.ResolvedTarget(possibleLink);
+
             // get the name of the executable without the extension, this 
             string appName = System.IO.Path.GetFileName(resolvedPath);
+
             // This can be expanded to support other native commands which can handle an encoded scriptblock argument.
             if (s_powerShellExecutableNames.Contains(appName))
             {
