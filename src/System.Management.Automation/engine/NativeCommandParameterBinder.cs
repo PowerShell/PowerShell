@@ -287,12 +287,21 @@ namespace System.Management.Automation
                         if (NeedQuotes(arg))
                         {
                             _arguments.Append('"');
-                            AddToArgumentList(parameter, arg);
+                            string text = arg;
+
+                            // handle a scriptblock here
+                            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeScriptBlockArgumentFeatureName) && parameter.ArgumentValue is ScriptBlock)
+                            {
+                                ScriptBlock sb = (ScriptBlock)parameter.ArgumentValue;
+                                text = sb.Ast.Extent.Text;
+                            }
+
+                            AddToArgumentList(parameter, text);
 
                             // need to escape all trailing backslashes so the native command receives it correctly
                             // according to http://www.daviddeley.com/autohotkey/parameters/parameters.htm#WINCRULESDOC
-                            _arguments.Append(arg);
-                            for (int i = arg.Length - 1; i >= 0 && arg[i] == '\\'; i--)
+                            _arguments.Append(text);
+                            for (int i = text.Length - 1; i >= 0 && text[i] == '\\'; i--)
                             {
                                 _arguments.Append('\\');
                             }
@@ -420,8 +429,17 @@ namespace System.Management.Automation
 
             if (!argExpanded)
             {
-                _arguments.Append(arg);
-                AddToArgumentList(parameter, arg);
+                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeScriptBlockArgumentFeatureName) && parameter.ArgumentValue is ScriptBlock)
+                {
+                    ScriptBlock sb = (ScriptBlock)parameter.ArgumentValue;
+                    _arguments.Append(sb.Ast.Extent.Text);
+                    AddToArgumentList(parameter, sb.Ast.Extent.Text);
+                }
+                else
+                {
+                    _arguments.Append(arg);
+                    AddToArgumentList(parameter, arg);
+                }
             }
         }
 

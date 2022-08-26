@@ -26,6 +26,7 @@ namespace System.Management.Automation
         internal const string PSCustomTableHeaderLabelDecoration = "PSCustomTableHeaderLabelDecoration";
         internal const string PSFeedbackProvider = "PSFeedbackProvider";
         internal const string PSCommandWithArgs = "PSCommandWithArgs";
+        internal const string PSNativeScriptBlockArgumentFeatureName = "PSNativeScriptBlockArgument";
 
         #endregion
 
@@ -132,6 +133,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSCommandWithArgs,
                     description: "Enable `-CommandWithArgs` parameter for pwsh"),
+                new ExperimentalFeature(
+                    name: PSNativeScriptBlockArgumentFeatureName,
+                    description: "Add support of passing ScriptBlock arguments unchanged to native commands"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

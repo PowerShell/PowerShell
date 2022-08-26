@@ -347,3 +347,68 @@ Describe "Run native command from a mounted FAT-format VHD" -tags @("Feature", "
         $result | Should -BeExactly $expected
     }
 }
+
+Describe "Scriptblock passed as arguments to native executables" -tag @("CI") {
+    BeforeAll {
+        $skipTest = $true
+        if (Get-Command PowerShell) {
+            $skipTest = $false
+        }
+
+        [bool]$scriptblockpassingFeature = (Get-ExperimentalFeature PSNativeScriptBlockArgument).Enabled
+    }
+
+    # current behavior hasn't changed for PowerShell
+    Context "Scriptblocks are encoded when calling PowerShell or pwsh" {
+        It  "A direct call to 'pwsh -command {get-date}' is encoded correctly" {
+            pwsh -command {get-date} | Should -BeOfType DateTime
+        }
+
+        It "A direct call to 'powershell -command {get-date}' is encoded correctly" -skip:$skipTest{
+            powershell -command {get-date} | Should -BeOfType DateTime
+        }
+    }
+
+    Context "ScriptBlocks are not encoded when calling applications other than PowerShell or pwsh" {
+        It "scriptblock will be passed as is." -skip:$scriptblockpassingFeature {
+            $result = testexe -echoargs a b {get-date}
+            $result.Count | Should -Be 3
+            $result[0] | Should -BeExactly 'Arg 0 is <a>'
+            $result[1] | Should -BeExactly 'Arg 1 is <b>'
+            $result[2] | Should -BeExactly 'Arg 2 is <{get-date}>'
+        }
+
+        It "a script block with a space will be passed as is" -skip:$scriptblockpassingFeature {
+            $result = testexe -echoargs a b { get-date }
+            $result.Count | Should -Be 3
+            $result[0] | Should -BeExactly 'Arg 0 is <a>'
+            $result[1] | Should -BeExactly 'Arg 1 is <b>'
+            $result[2] | Should -BeExactly 'Arg 2 is <{ get-date }>'
+        }
+
+        It "multiple scriptblocks will be passed as is." -skip:$scriptblockpassingFeature {
+            $result = testexe -echoargs {get-location} {get-date}
+            $result.Count | Should -Be 2
+            $result[0] | Should -BeExactly 'Arg 0 is <{get-location}>'
+            $result[1] | Should -BeExactly 'Arg 1 is <{get-date}>'
+        }
+
+        It "multiple scriptblocks with spaces will be passed as is." -skip:$scriptblockpassingFeature {
+            $result = testexe -echoargs { get-location } { get-psdrive; get-date }
+            $result.Count | Should -Be 2
+            $result[0] | Should -BeExactly 'Arg 0 is <{ get-location }>'
+            $result[1] | Should -BeExactly 'Arg 1 is <{ get-psdrive; get-date }>'
+        }
+
+        It "scriptblock as a variable will be used as is." -skip:$scriptblockpassingFeature {
+            $sb = {get-date}
+            $result = testexe -echoargs a b $sb
+            $result.Count | Should -Be 3
+            $result[0] | Should -BeExactly 'Arg 0 is <a>'
+            $result[1] | Should -BeExactly 'Arg 1 is <b>'
+            $result[2] | Should -BeExactly 'Arg 2 is <{get-date}>'
+        }
+
+    }
+
+}

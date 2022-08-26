@@ -241,6 +241,15 @@ namespace System.Management.Automation
             ".vbs",
         };
 
+        // This is the list of PowerShell names.
+        // It's used by the MiniShell to determine if a command is a PowerShell.
+        private static readonly IReadOnlySet<string>s_powerShellExecutableNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "powershell.exe",
+            "pwsh",
+            "pwsh.exe",
+        };
+
         // The following native commands have non-standard behavior with regard to argument passing,
         // so we use Legacy argument parsing for them when PSNativeCommandArgumentPassing is set to Windows.
         private static readonly IReadOnlySet<string> s_legacyCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -1606,10 +1615,18 @@ namespace System.Management.Automation
         /// <returns></returns>
         /// <remarks>
         /// If any of the argument supplied to native command is script block,
-        /// we assume it is minishell.
+        /// we assume it is minishell if the executable name is PowerShell or pwsh.
         /// </remarks>
         private bool IsMiniShell()
         {
+            // If the application is not PowerShell or pwsh,
+            // don't bother checking for ScriptBlocks.
+            // The check for the experimental feature occurs in this call.
+            if (CheckNativeAppIsNotPowerShell())
+            {
+                return false;
+            }
+
             for (int i = 0; i < arguments.Count; i++)
             {
                 CommandParameterInternal arg = arguments[i];
@@ -1623,6 +1640,32 @@ namespace System.Management.Automation
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Returns true if native command is powershell or pwsh and the experimental feature is enabled.
+        /// </summary>
+        /// <returns></returns>
+        private bool CheckNativeAppIsNotPowerShell()
+        {
+            if (!ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeScriptBlockArgumentFeatureName))
+            {
+                return false;
+            }
+
+            // We have to check if the command is pwsh or powershell.
+            // This will still miss the case where the command is a hard-link to pwsh.
+            PSObject possibleLink = new PSObject(new FileInfo(Command.CommandInfo.Source));
+            string resolvedPath = Microsoft.PowerShell.Commands.InternalSymbolicLinkLinkCodeMethods.ResolvedTarget(possibleLink);
+            // get the name of the executable without the extension, this 
+            string appName = System.IO.Path.GetFileName(resolvedPath);
+            // This can be expanded to support other native commands which can handle an encoded scriptblock argument.
+            if (s_powerShellExecutableNames.Contains(appName))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         #endregion Minishell Interop
