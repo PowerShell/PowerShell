@@ -6,4 +6,5 @@
   "PSSubsystemPluginModel",
   "PSModuleAutoLoadSkipOfflineFiles",
   "PSFeedbackProvider"
+  "PSNativeScriptBlockArgument"
 ]
