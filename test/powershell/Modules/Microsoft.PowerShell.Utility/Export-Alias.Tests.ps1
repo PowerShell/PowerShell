@@ -120,7 +120,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 		}
 		else
 		{
-			chmod u+rw $fulltestpath
+			chmod a+rw $fulltestpath
 		}
 
     }
