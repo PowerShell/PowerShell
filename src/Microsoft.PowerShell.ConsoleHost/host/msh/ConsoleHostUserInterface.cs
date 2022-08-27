@@ -576,6 +576,7 @@ namespace Microsoft.PowerShell
 
         #region WriteToConsole
 
+        // TODO: dkaszews: transcribeResult = true
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void WriteToConsole(char c, bool transcribeResult)
         {

@@ -66,12 +66,13 @@ namespace Microsoft.PowerShell
                     // Should be a skin lookup
 
                     WriteLineToConsole();
-                    WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
+                    WriteLineToConsole(WrapToCurrentWindowWidth(caption), transcribeResult: true); // TODO: dkaszews: $PSStyle.Prompt.Caption
+                    // WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption)); // TODO: dkaszews: $PSStyle.Prompt.Caption
                 }
 
                 if (!string.IsNullOrEmpty(message))
                 {
-                    WriteLineToConsole(WrapToCurrentWindowWidth(message));
+                    WriteLineToConsole(WrapToCurrentWindowWidth(message)); // TODO: dkaszews: $PSStyle.Prompt.Message
                 }
 
                 int result = defaultChoice;
@@ -207,12 +208,13 @@ namespace Microsoft.PowerShell
                 {
                     // Should be a skin lookup
                     WriteLineToConsole();
-                    WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
+                    WriteLineToConsole(WrapToCurrentWindowWidth(caption), transcribeResult: true); // TODO: dkaszews: $PSStyle.Prompt.Caption
+                    // WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption)); // TODO: dkaszews: $PSStyle.Prompt.Caption
                 }
                 // write message
                 if (!string.IsNullOrEmpty(message))
                 {
-                    WriteLineToConsole(WrapToCurrentWindowWidth(message));
+                    WriteLineToConsole(WrapToCurrentWindowWidth(message)); // TODO: dkaszews: $PSStyle.Prompt.Message
                 }
 
                 string[,] hotkeysAndPlainLabels = null;
@@ -230,7 +232,8 @@ namespace Microsoft.PowerShell
                 {
                     // write the current prompt
                     string choiceMsg = StringUtil.Format(ConsoleHostUserInterfaceStrings.ChoiceMessage, choicesSelected);
-                    WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(choiceMsg));
+                    WriteToConsole(WrapToCurrentWindowWidth(choiceMsg), transcribeResult: true);
+                    // WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(choiceMsg)); // TODO: dkaszews: $PSStyle.Prompt.ChoiceMessage?
 
                     ReadLineResult rlResult;
                     string response = ReadChoiceResponse(out rlResult);
@@ -294,18 +297,17 @@ namespace Microsoft.PowerShell
 
             ConsoleColor fg = RawUI.ForegroundColor;
             ConsoleColor bg = RawUI.BackgroundColor;
-            int lineLenMax = RawUI.WindowSize.Width - 1;
             int lineLen = 0;
 
             const string choiceTemplate = "[{0}] {1}  ";
 
             for (int i = 0; i < hotkeysAndPlainLabels.GetLength(1); ++i)
             {
-                ConsoleColor cfg = PromptColor;
+                ConsoleColor cfg = PromptColor; // TODO: dkaszews: $PSStyle.Prompt.Choice
                 if (defaultChoiceKeys.ContainsKey(i))
                 {
                     // Should be a skin lookup
-                    cfg = DefaultPromptColor;
+                    cfg = DefaultPromptColor; // TODO: dkaszews: $PSStyle.Prompt.ChoiceDefault
                 }
 
                 string choice =
@@ -314,7 +316,7 @@ namespace Microsoft.PowerShell
                         choiceTemplate,
                         hotkeysAndPlainLabels[0, i],
                         hotkeysAndPlainLabels[1, i]);
-                WriteChoiceHelper(choice, cfg, bg, ref lineLen, lineLenMax);
+                WriteChoiceHelper(choice, cfg, bg, ref lineLen); // TODO: dkaszews: Add color here and just print
                 if (shouldEmulateForMultipleChoiceSelection)
                 {
                     WriteLineToConsole();
@@ -323,10 +325,9 @@ namespace Microsoft.PowerShell
 
             WriteChoiceHelper(
                 ConsoleHostUserInterfaceStrings.PromptForChoiceHelp,
-                fg,
+                fg, // TODO: dkaszews: $PSStyle.Prompt.ChoiceHelp
                 bg,
-                ref lineLen,
-                lineLenMax);
+                ref lineLen);
             if (shouldEmulateForMultipleChoiceSelection)
             {
                 WriteLineToConsole();
@@ -367,17 +368,20 @@ namespace Microsoft.PowerShell
             }
 
             WriteChoiceHelper(defaultPrompt,
-                fg,
+                fg, // TODO: dkaszews: $PSStyle.Prompt.Help
                 bg,
-                ref lineLen,
-                lineLenMax);
+                ref lineLen);
         }
 
-        private void WriteChoiceHelper(string text, ConsoleColor fg, ConsoleColor bg, ref int lineLen, int lineLenMax)
+        // TODO: accept an ANSI color escape sequence instead
+        private void WriteChoiceHelper(string text, ConsoleColor fg, ConsoleColor bg, ref int lineLen)
         {
+            int lineLenMax = RawUI.WindowSize.Width - 1;
+            // TODO: does this skip ANSI escapes?
             int textLen = RawUI.LengthInBufferCells(text);
             bool trimEnd = false;
 
+            // TODO: dkaszews: What is this really used for? Breaking lines nicely?
             if (lineLen + textLen > lineLenMax)
             {
                 WriteLineToConsole();
@@ -389,7 +393,8 @@ namespace Microsoft.PowerShell
                 lineLen += textLen;
             }
 
-            WriteToConsole(fg, bg, trimEnd ? text.TrimEnd(null) : text);
+            // WriteToConsole(fg, bg, trimEnd ? text.TrimEnd(null) : text);
+            WriteToConsole(trimEnd ? text.TrimEnd(null) : text, transcribeResult: true, newLine: false);
         }
 
         private string ReadChoiceResponse(out ReadLineResult result)
