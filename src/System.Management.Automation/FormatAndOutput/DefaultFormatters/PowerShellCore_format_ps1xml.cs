@@ -287,6 +287,10 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.PSStyle+BackgroundColor",
                 ViewsOf_System_Management_Automation_PSStyleBackgroundColor());
+
+            yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.PSStyle+PromptFormatting",
+                ViewsOf_System_Management_Automation_PSStylePromptFormat());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_RuntimeType()
@@ -2185,6 +2189,22 @@ namespace System.Management.Automation.Runspaces
 
                             $sb.ToString()",
                             label: "Extension")
+                    .EndEntry()
+                .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStylePromptFormat()
+        {
+            // TODO: dkaszews: common method for printing ANSI, applicable to most file
+            yield return new FormatViewDefinition("System.Management.Automation.PSStyle+PromptFormat",
+                ListControl.Create()
+                    .StartEntry()
+                        .AddItemScriptBlock(@"""$($_.Caption)$($_.Caption.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Caption")
+                        .AddItemScriptBlock(@"""$($_.Message)$($_.Message.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Message")
+                        .AddItemScriptBlock(@"""$($_.Help)$($_.Help.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Help")
+                        .AddItemScriptBlock(@"""$($_.ChoiceDefault)$($_.ChoiceDefault.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "ChoiceDefault")
+                        .AddItemScriptBlock(@"""$($_.ChoiceOther)$($_.ChoiceOther.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "ChoiceOther")
+                        .AddItemScriptBlock(@"""$($_.ChoiceHelp)$($_.ChoiceHelp.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "ChoiceHelp")
                     .EndEntry()
                 .EndList());
         }

@@ -61,19 +61,7 @@ namespace Microsoft.PowerShell
 
             lock (_instanceLock)
             {
-                if (!string.IsNullOrEmpty(caption))
-                {
-                    // Should be a skin lookup
-
-                    WriteLineToConsole();
-                    WriteLineToConsole(WrapToCurrentWindowWidth(caption), transcribeResult: true); // TODO: dkaszews: $PSStyle.Prompt.Caption
-                    // WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption)); // TODO: dkaszews: $PSStyle.Prompt.Caption
-                }
-
-                if (!string.IsNullOrEmpty(message))
-                {
-                    WriteLineToConsole(WrapToCurrentWindowWidth(message)); // TODO: dkaszews: $PSStyle.Prompt.Message
-                }
+                WriteCaptionAndMessage(caption, message);
 
                 int result = defaultChoice;
 
@@ -303,11 +291,10 @@ namespace Microsoft.PowerShell
 
             for (int i = 0; i < hotkeysAndPlainLabels.GetLength(1); ++i)
             {
-                ConsoleColor cfg = PromptColor; // TODO: dkaszews: $PSStyle.Prompt.Choice
+                // TODO: dkaszews: $PSStyle.Prompt.Choice
                 if (defaultChoiceKeys.ContainsKey(i))
                 {
-                    // Should be a skin lookup
-                    cfg = DefaultPromptColor; // TODO: dkaszews: $PSStyle.Prompt.ChoiceDefault
+                    // TODO: dkaszews: $PSStyle.Prompt.ChoiceDefault
                 }
 
                 string choice =
@@ -316,18 +303,17 @@ namespace Microsoft.PowerShell
                         choiceTemplate,
                         hotkeysAndPlainLabels[0, i],
                         hotkeysAndPlainLabels[1, i]);
-                WriteChoiceHelper(choice, cfg, bg, ref lineLen); // TODO: dkaszews: Add color here and just print
+                // TODO: dkaszews: Add color here and just print
+                WriteChoiceHelper(choice, ref lineLen);
+
                 if (shouldEmulateForMultipleChoiceSelection)
                 {
                     WriteLineToConsole();
                 }
             }
 
-            WriteChoiceHelper(
-                ConsoleHostUserInterfaceStrings.PromptForChoiceHelp,
-                fg, // TODO: dkaszews: $PSStyle.Prompt.ChoiceHelp
-                bg,
-                ref lineLen);
+            // TODO: dkaszews: $PSStyle.Prompt.ChoiceHelp
+            WriteChoiceHelper(ConsoleHostUserInterfaceStrings.PromptForChoiceHelp, ref lineLen);
             if (shouldEmulateForMultipleChoiceSelection)
             {
                 WriteLineToConsole();
@@ -367,17 +353,35 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            WriteChoiceHelper(defaultPrompt,
-                fg, // TODO: dkaszews: $PSStyle.Prompt.Help
-                bg,
-                ref lineLen);
+            // TODO: dkaszews: $PSStyle.Prompt.Help
+            WriteChoiceHelper(defaultPrompt, ref lineLen);
         }
 
-        // TODO: accept an ANSI color escape sequence instead
-        private void WriteChoiceHelper(string text, ConsoleColor fg, ConsoleColor bg, ref int lineLen)
+        private void WriteCaptionAndMessage(string caption, string message)
+        {
+            // TODO: dkaszews: WrapToCurrentWindowWidth needed to wrap at word boundary, maybe add flag to Write(Line)ToConsole?
+            // TODO: dkaszews: How will WrapToCurrentWindowWidth handle background colors set?
+            if (!string.IsNullOrEmpty(caption))
+            {
+                WriteLineToConsole();
+                WriteToConsole(PSStyle.Instance.Prompt.Caption, transcribeResult: false);
+                WriteToConsole(WrapToCurrentWindowWidth(caption), transcribeResult: true);
+                WriteLineToConsole(PSStyle.Instance.Reset, transcribeResult: false);
+            }
+
+            if (!string.IsNullOrEmpty(message))
+            {
+                WriteToConsole(PSStyle.Instance.Prompt.Message, transcribeResult: false);
+                WriteToConsole(WrapToCurrentWindowWidth(message), transcribeResult: true);
+                WriteLineToConsole(PSStyle.Instance.Reset, transcribeResult: false);
+            }
+        }
+
+        // TODO: dkaszews: accept an ANSI color escape sequence instead
+        // TODO: dkaszews: remove this method, replace with 'joinWrap' instead
+        private void WriteChoiceHelper(string text, ref int lineLen)
         {
             int lineLenMax = RawUI.WindowSize.Width - 1;
-            // TODO: does this skip ANSI escapes?
             int textLen = RawUI.LengthInBufferCells(text);
             bool trimEnd = false;
 
@@ -433,40 +437,6 @@ namespace Microsoft.PowerShell
                 WriteLineToConsole(
                     WrapToCurrentWindowWidth(
                         string.Format(CultureInfo.InvariantCulture, "{0} - {1}", s, choices[i].HelpMessage)));
-            }
-        }
-
-        /// <summary>
-        /// Guarantee a contrasting color for the prompt...
-        /// </summary>
-        private ConsoleColor PromptColor
-        {
-            get
-            {
-                switch (RawUI.BackgroundColor)
-                {
-                    case ConsoleColor.White: return ConsoleColor.Black;
-                    case ConsoleColor.Cyan: return ConsoleColor.Black;
-                    case ConsoleColor.DarkYellow: return ConsoleColor.Black;
-                    case ConsoleColor.Yellow: return ConsoleColor.Black;
-                    case ConsoleColor.Gray: return ConsoleColor.Black;
-                    case ConsoleColor.Green: return ConsoleColor.Black;
-                    default: return ConsoleColor.White;
-                }
-            }
-        }
-        /// <summary>
-        /// Guarantee a contrasting color for the default prompt that is slightly
-        /// different from the other prompt elements.
-        /// </summary>
-        private ConsoleColor DefaultPromptColor
-        {
-            get
-            {
-                if (PromptColor == ConsoleColor.White)
-                    return ConsoleColor.Yellow;
-                else
-                    return ConsoleColor.Blue;
             }
         }
     }

@@ -113,21 +113,11 @@ namespace Microsoft.PowerShell
 
                 bool cancelInput = false;
 
-                if (!string.IsNullOrEmpty(caption))
-                {
-                    // Should be a skin lookup
-
-                    WriteLineToConsole();
-                    WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
-                }
-
-                if (!string.IsNullOrEmpty(message))
-                {
-                    WriteLineToConsole(WrapToCurrentWindowWidth(message));
-                }
+                WriteCaptionAndMessage(caption, message);
 
                 if (AtLeastOneHelpMessageIsPresent(descriptions))
                 {
+                    // TODO: dkaszews: $PSStyle.Prompt.Help
                     WriteLineToConsole(WrapToCurrentWindowWidth(ConsoleHostUserInterfaceStrings.PromptHelp));
                 }
 

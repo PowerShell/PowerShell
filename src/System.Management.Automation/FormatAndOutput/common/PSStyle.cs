@@ -570,6 +570,73 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// TODO: dkaszews: provide summaries
+        /// </summary>
+        public sealed class PromptFormatting
+        {
+            // TODO: dkaszews: why not use PSStyle.Foreground ?
+            private string _caption = "\x1b[33;1m";
+
+            /// <summary>
+            /// TODO: dkaszews: provide summaries
+            /// </summary>
+            public string Caption {
+                get => _caption;
+                set => _caption = ValidateNoContent(value);
+            }
+
+            private string _message = "\x1b[0m";
+
+            /// <summary>
+            /// TODO: dkaszews: provide summaries
+            /// </summary>
+            public string Message {
+                get => _message;
+                set => _message = ValidateNoContent(value);
+            }
+
+            private string _help = "\x1b[0m";
+
+            /// <summary>
+            /// TODO: dkaszews: provide summaries
+            /// </summary>
+            public string Help {
+                get => _help;
+                set => _help = ValidateNoContent(value);
+            }
+
+            private string _choiceDefault = "\x1b[97;44m";
+
+            /// <summary>
+            /// TODO: dkaszews: provide summaries
+            /// </summary>
+            public string ChoiceDefault {
+                get => _choiceDefault;
+                set => _choiceDefault = ValidateNoContent(value);
+            }
+
+            private string _choiceOther = "\x1b[34m";
+
+            /// <summary>
+            /// TODO: dkaszews: provide summaries
+            /// </summary>
+            public string ChoiceOther {
+                get => _choiceOther;
+                set => _choiceOther = ValidateNoContent(value);
+            }
+
+            private string _choiceHelp = "\x1b[0m";
+
+            /// <summary>
+            /// TODO: dkaszews: provide summaries
+            /// </summary>
+            public string ChoiceHelp {
+                get => _choiceHelp;
+                set => _choiceHelp = ValidateNoContent(value);
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the rendering mode for output.
         /// </summary>
         public OutputRendering OutputRendering { get; set; } = OutputRendering.Host;
@@ -685,6 +752,11 @@ namespace System.Management.Automation
         /// </summary>
         public FileInfoFormatting FileInfo { get; }
 
+        /// <summary>
+        /// Gets Prompt colors.
+        /// </summary>
+        public PromptFormatting Prompt { get; }
+
         private static readonly PSStyle s_psstyle = new PSStyle();
 
         private PSStyle()
@@ -694,6 +766,7 @@ namespace System.Management.Automation
             Foreground = new ForegroundColor();
             Background = new BackgroundColor();
             FileInfo = new FileInfoFormatting();
+            Prompt = new PromptFormatting();
         }
 
         private static string ValidateNoContent(string text)
