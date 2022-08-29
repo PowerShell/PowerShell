@@ -811,31 +811,18 @@ namespace System.Management.Automation.Runspaces
                             $ellipsis = ""`u{2026}""
                             $resetColor = ''
                             $errorColor = ''
+                            $accentColor = ''
+
                             if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
-                                if ($null -ne $psstyle) {
-                                    $errorColor = $psstyle.Formatting.Error
-                                }
-
                                 $resetColor = $PSStyle.Reset
-                            }
-
-                            function Get-VT100Color([ConsoleColor] $color) {
-                                if (!$Host.UI.SupportsVirtualTerminal -or !([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
-                                    return ''
-                                }
-
-                                return [System.Management.Automation.PSStyle]::MapForegroundColorToEscapeSequence($color)
+                                $errorColor = $psstyle.Formatting.Error
+                                $accentColor = $PSStyle.Formatting.FormatAccent
                             }
 
                             function Show-ErrorRecord($obj, [int]$indent = 0, [int]$depth = 1) {
                                 $newline = [Environment]::Newline
                                 $output = [System.Text.StringBuilder]::new()
                                 $prefix = ' ' * $indent
-                                $accentColor = ''
-
-                                if ($null -ne $Host.PrivateData) {
-                                    $accentColor = Get-VT100Color ($Host.PrivateData.FormatAccentColor ?? $Host.PrivateData.ErrorForegroundColor)
-                                }
 
                                 $expandTypes = @(
                                     'Microsoft.Rest.HttpRequestMessageWrapper'
@@ -1064,20 +1051,17 @@ namespace System.Management.Automation.Runspaces
                                     Set-StrictMode -Off
                                     $newline = [Environment]::Newline
 
+                                    $resetColor = ''
+                                    $errorColor = ''
+                                    $accentColor = ''
+
+                                    if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
+                                        $resetColor = $PSStyle.Reset
+                                        $errorColor = $PSStyle.Formatting.Error
+                                        $accentColor = $PSStyle.Formatting.ErrorAccent ?? $errorColor
+                                    }
+
                                     function Get-ConciseViewPositionMessage {
-
-                                        $resetColor = ''
-                                        if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
-                                            $resetColor = $PSStyle.Reset
-                                        }
-
-                                        function Get-VT100Color([ConsoleColor] $color) {
-                                            if (!$Host.UI.SupportsVirtualTerminal -or !([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
-                                                return ''
-                                            }
-
-                                            return [System.Management.Automation.PSStyle]::MapForegroundColorToEscapeSequence($color)
-                                        }
 
                                         # returns a string cut to last whitespace
                                         function Get-TruncatedString($string, [int]$length) {
@@ -1087,14 +1071,6 @@ namespace System.Management.Automation.Runspaces
                                             }
 
                                             return ($string.Substring(0,$length) -split '\s',-2)[0]
-                                        }
-
-                                        $errorColor = ''
-                                        $accentColor = ''
-
-                                        if ($null -ne $Host.PrivateData) {
-                                            $errorColor = Get-VT100Color $Host.PrivateData.ErrorForegroundColor
-                                            $accentColor = Get-VT100Color ($Host.PrivateData.ErrorAccentColor ?? $errorColor)
                                         }
 
                                         $posmsg = ''
@@ -1278,82 +1254,77 @@ namespace System.Management.Automation.Runspaces
                                         $myinv = $err.InvocationInfo
                                     }
 
-                                    if ($ErrorView -ne 'ConciseView' -and $null -ne $host.PrivateData) {
-                                        if ($null -ne $host.PrivateData.ErrorForegroundColor) {
-                                            [Console]::ForegroundColor = $host.PrivateData.ErrorForegroundColor
-                                        }
-
-                                        if ($null -ne $host.PrivateData.ErrorBackgroundColor) {
-                                            [Console]::BackgroundColor = $host.PrivateData.ErrorBackgroundColor
-                                        }
+                                    if ($err.FullyQualifiedErrorId -eq 'NativeCommandErrorMessage' -or $err.FullyQualifiedErrorId -eq 'NativeCommandError') {
+                                        return ""${errorColor}$($err.Exception.Message)${resetcolor}""
                                     }
 
-                                    if ($err.FullyQualifiedErrorId -eq 'NativeCommandErrorMessage' -or $err.FullyQualifiedErrorId -eq 'NativeCommandError') {
-                                        $err.Exception.Message
+                                    $myinv = $err.InvocationInfo
+                                    if ($ErrorView -eq 'DetailedView') {
+                                        $message = Get-Error | Out-String
+                                        return ""${errorColor}${message}${resetcolor}""
+                                    }
+
+                                    if ($ErrorView -eq 'CategoryView') {
+                                        $message = $err.CategoryInfo.GetMessage()
+                                        return ""${errorColor}${message}${resetcolor}""
+                                    }
+
+                                    $posmsg = ''
+                                    if ($ErrorView -eq 'ConciseView') {
+                                        $posmsg = Get-ConciseViewPositionMessage
+                                    }
+                                    elseif ($myinv -and ($myinv.MyCommand -or ($err.CategoryInfo.Category -ne 'ParserError'))) {
+                                        $posmsg = $myinv.PositionMessage
+                                    }
+
+                                    if ($posmsg -ne '') {
+                                        $posmsg = $newline + $posmsg
+                                    }
+
+                                    if ($err.PSMessageDetails) {
+                                        $posmsg = ' : ' +  $err.PSMessageDetails + $posmsg
+                                    }
+
+                                    if ($ErrorView -eq 'ConciseView') {
+                                        if ($err.PSMessageDetails) {
+                                            $posmsg = ""${errorColor}${posmsg}""
+                                        }
+                                        return $posmsg
+                                    }
+
+                                    $indent = 4
+
+                                    $errorCategoryMsg = $err.ErrorCategory_Message
+
+                                    if ($null -ne $errorCategoryMsg)
+                                    {
+                                        $indentString = '+ CategoryInfo          : ' + $err.ErrorCategory_Message
                                     }
                                     else
                                     {
-                                        $myinv = $err.InvocationInfo
-                                        if ($ErrorView -eq 'DetailedView') {
-                                            return (Get-Error | Out-String)
-                                        }
-                                        elseif ($ErrorView -eq 'ConciseView') {
-                                            $posmsg = Get-ConciseViewPositionMessage
-                                        }
-                                        elseif ($myinv -and ($myinv.MyCommand -or ($err.CategoryInfo.Category -ne 'ParserError'))) {
-                                            $posmsg = $myinv.PositionMessage
-                                        } else {
-                                            $posmsg = ''
-                                        }
-
-                                        if ($posmsg -ne '')
-                                        {
-                                            $posmsg = $newline + $posmsg
-                                        }
-
-                                        if ($err.PSMessageDetails) {
-                                            $posmsg = ' : ' +  $err.PSMessageDetails + $posmsg
-                                        }
-
-                                        if ($ErrorView -eq 'ConciseView') {
-                                            return $posmsg
-                                        }
-
-                                        $indent = 4
-
-                                        $errorCategoryMsg = $err.ErrorCategory_Message
-
-                                        if ($null -ne $errorCategoryMsg)
-                                        {
-                                            $indentString = '+ CategoryInfo          : ' + $err.ErrorCategory_Message
-                                        }
-                                        else
-                                        {
-                                            $indentString = '+ CategoryInfo          : ' + $err.CategoryInfo
-                                        }
-
-                                        $posmsg += $newline + $indentString
-
-                                        $indentString = ""+ FullyQualifiedErrorId : "" + $err.FullyQualifiedErrorId
-                                        $posmsg += $newline + $indentString
-
-                                        $originInfo = $err.OriginInfo
-
-                                        if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
-                                        {
-                                            $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
-                                            $posmsg += $newline + $indentString
-                                        }
-
-                                        if ($ErrorView -eq 'CategoryView') {
-                                            $err.CategoryInfo.GetMessage()
-                                        }
-                                        elseif (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
-                                            $err.Exception.Message + $posmsg
-                                        } else {
-                                            $err.ErrorDetails.Message + $posmsg
-                                        }
+                                        $indentString = '+ CategoryInfo          : ' + $err.CategoryInfo
                                     }
+
+                                    $posmsg += $newline + $indentString
+
+                                    $indentString = ""+ FullyQualifiedErrorId : "" + $err.FullyQualifiedErrorId
+                                    $posmsg += $newline + $indentString
+
+                                    $originInfo = $err.OriginInfo
+
+                                    if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
+                                    {
+                                        $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
+                                        $posmsg += $newline + $indentString
+                                    }
+
+                                    $finalMsg = if ($err.ErrorDetails.Message) {
+                                        $err.ErrorDetails.Message + $posmsg
+                                    } else {
+                                        $err.Exception.Message + $posmsg
+                                    }
+
+                                    ""${errorColor}${finalMsg}${resetcolor}""
                                 ")
                     .EndEntry()
                 .EndControl());
