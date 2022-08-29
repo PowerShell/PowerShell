@@ -411,6 +411,19 @@ Describe "Scriptblock passed as arguments to native executables" -tag @("CI") {
             $result[2] | Should -BeExactly 'Arg 2 is <{ get-date }>'
         }
 
+        It "a script block with fewer spaces and new line will be passed as is" {
+            if ($skipTest) {
+                Set-ItResult -skipped -Because $reason
+            }
+            $result = testexe -echoargs a b { get-date
+get-location }
+            $result.Count | Should -Be 4
+            $result[0] | Should -BeExactly 'Arg 0 is <a>'
+            $result[1] | Should -BeExactly 'Arg 1 is <b>'
+            $result[2] | Should -BeExactly 'Arg 2 is <{ get-date'
+            $result[3] | Should -BeExactly 'get-location }>'
+        }
+
         It "a script block with a space and new line will be passed as is" {
             if ($skipTest) {
                 Set-ItResult -skipped -Because $reason
