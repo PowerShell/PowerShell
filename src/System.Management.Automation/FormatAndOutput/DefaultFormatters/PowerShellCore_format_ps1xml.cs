@@ -1058,7 +1058,7 @@ namespace System.Management.Automation.Runspaces
                                     if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                         $resetColor = $PSStyle.Reset
                                         $errorColor = $PSStyle.Formatting.Error
-                                        $accentColor = $PSStyle.Formatting.ErrorAccent ?? $errorColor
+                                        $accentColor = $PSStyle.Formatting.ErrorAccent
                                     }
 
                                     function Get-ConciseViewPositionMessage {
