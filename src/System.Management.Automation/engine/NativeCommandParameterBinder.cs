@@ -292,6 +292,7 @@ namespace System.Management.Automation
                             // handle a scriptblock here
                             if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeScriptBlockArgumentFeatureName) && parameter.ArgumentValue is ScriptBlock sb)
                             {
+                                // use the extent for the argument rather than trying to construct an argument.
                                 text = sb.Ast.Extent.Text;
                             }
 
@@ -430,6 +431,8 @@ namespace System.Management.Automation
             {
                 if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeScriptBlockArgumentFeatureName) && parameter.ArgumentValue is ScriptBlock sb)
                 {
+                    // This adds the extent text as a single argument, it is not broken up.
+                    // If the scriptblock is '{ get-date }' then the resulting single argument is '{ get-date }'.
                     _arguments.Append(sb.Ast.Extent.Text);
                     AddToArgumentList(parameter, sb.Ast.Extent.Text);
                 }
