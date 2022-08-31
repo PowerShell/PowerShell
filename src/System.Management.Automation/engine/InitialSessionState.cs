@@ -4484,12 +4484,12 @@ end {
             new SessionStateVariableEntry(SpecialVariables.FirstToken, null, string.Empty),
             new SessionStateVariableEntry(SpecialVariables.StackTrace, null, string.Empty),
 
-            // Variable which controls the output rendering
-            new SessionStateVariableEntry(
-                SpecialVariables.PSStyle,
-                PSStyle.Instance,
-                RunspaceInit.PSStyleDescription,
-                ScopedItemOptions.None),
+                // Variable which controls the output rendering
+                new SessionStateVariableEntry(
+                    SpecialVariables.PSStyle,
+                    PSStyle.Instance,
+                    RunspaceInit.PSStyleDescription,
+                    ScopedItemOptions.Constant),
 
             // Variable which controls the encoding for piping data to a NativeCommand
             new SessionStateVariableEntry(
