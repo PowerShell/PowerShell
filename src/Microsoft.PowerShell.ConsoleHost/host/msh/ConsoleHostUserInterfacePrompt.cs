@@ -117,8 +117,9 @@ namespace Microsoft.PowerShell
 
                 if (AtLeastOneHelpMessageIsPresent(descriptions))
                 {
-                    // TODO: dkaszews: $PSStyle.Prompt.Help
-                    WriteLineToConsole(WrapToCurrentWindowWidth(ConsoleHostUserInterfaceStrings.PromptHelp));
+                    WriteLineToConsole(PSStyle.Instance.Prompt.Help
+                        + WrapToCurrentWindowWidth(ConsoleHostUserInterfaceStrings.PromptHelp)
+                        + PSStyle.Instance.Prompt.Reset);
                 }
 
                 int descIndex = -1;
