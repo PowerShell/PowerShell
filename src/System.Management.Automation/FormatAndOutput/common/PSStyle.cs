@@ -582,15 +582,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// TODO: dkaszews: provide summaries
+        /// Contains formatting styles for user prompts.
         /// </summary>
         public sealed class PromptFormatting
         {
-            // TODO: dkaszews: why not use PSStyle.Foreground ?
+            // TODO: use PSStyle.Foreground
+            // TODO: create a class AnsiEscape with ValidateNoContent in string ctor
             private string _caption = "\x1b[33;1m";
 
             /// <summary>
-            /// TODO: dkaszews: provide summaries
+            /// Gets or sets style for prompt caption.
             /// </summary>
             public string Caption {
                 get => _caption;
@@ -600,7 +601,7 @@ namespace System.Management.Automation
             private string _message = "\x1b[0m";
 
             /// <summary>
-            /// TODO: dkaszews: provide summaries
+            /// Gets or sets style for prompt message.
             /// </summary>
             public string Message {
                 get => _message;
@@ -610,7 +611,7 @@ namespace System.Management.Automation
             private string _help = "\x1b[0m";
 
             /// <summary>
-            /// TODO: dkaszews: provide summaries
+            /// Gets or sets style for any prompt help.
             /// </summary>
             public string Help {
                 get => _help;
@@ -620,7 +621,7 @@ namespace System.Management.Automation
             private string _choiceDefault = "\x1b[97;44m";
 
             /// <summary>
-            /// TODO: dkaszews: provide summaries
+            /// Gets or sets style for choices selected by default.
             /// </summary>
             public string ChoiceDefault {
                 get => _choiceDefault;
@@ -630,7 +631,7 @@ namespace System.Management.Automation
             private string _choiceOther = "\x1b[34m";
 
             /// <summary>
-            /// TODO: dkaszews: provide summaries
+            /// Gets or sets style for choices not selected by default.
             /// </summary>
             public string ChoiceOther {
                 get => _choiceOther;
@@ -640,7 +641,7 @@ namespace System.Management.Automation
             private string _choiceHelp = "\x1b[0m";
 
             /// <summary>
-            /// TODO: dkaszews: provide summaries
+            /// Gets or sets style for choice displaying help.
             /// </summary>
             public string ChoiceHelp {
                 get => _choiceHelp;

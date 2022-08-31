@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell
 
                 prompt = PSStyle.Colorize(prompt, PSStyle.Instance.Prompt.ChoiceOther);
                 message = PSStyle.Colorize(message, PSStyle.Instance.Prompt.Help);
-                WriteLineToConsole( WrapToCurrentWindowWidth(prompt + message));
+                WriteLineToConsole(WrapToCurrentWindowWidth(prompt + message));
             }
         }
     }

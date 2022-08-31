@@ -2195,16 +2195,15 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStylePromptFormat()
         {
-            // TODO: dkaszews: common method for printing ANSI, applicable to most file
             yield return new FormatViewDefinition("System.Management.Automation.PSStyle+PromptFormat",
                 ListControl.Create()
                     .StartEntry()
-                        .AddItemScriptBlock(@"""$($_.Caption)$($_.Caption.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Caption")
-                        .AddItemScriptBlock(@"""$($_.Message)$($_.Message.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Message")
-                        .AddItemScriptBlock(@"""$($_.Help)$($_.Help.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "Help")
-                        .AddItemScriptBlock(@"""$($_.ChoiceDefault)$($_.ChoiceDefault.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "ChoiceDefault")
-                        .AddItemScriptBlock(@"""$($_.ChoiceOther)$($_.ChoiceOther.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "ChoiceOther")
-                        .AddItemScriptBlock(@"""$($_.ChoiceHelp)$($_.ChoiceHelp.Replace(""""`e"""",'`e'))$($PSStyle.Reset)""", label: "ChoiceHelp")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Caption')", label: "Caption")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Message')", label: "Message")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('Help')", label: "Help")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('ChoiceDefault')", label: "ChoiceDefault")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('ChoiceOther')", label: "ChoiceOther")
+                        .AddItemScriptBlock(@"$_.AsEscapeSequence('ChoiceHelp')", label: "ChoiceHelp")
                     .EndEntry()
                 .EndList());
         }
