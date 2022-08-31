@@ -208,8 +208,11 @@ namespace Microsoft.PowerShell
                 {
                     // write the current prompt
                     string choiceMsg = StringUtil.Format(ConsoleHostUserInterfaceStrings.ChoiceMessage, choicesSelected);
-                    WriteToConsole(WrapToCurrentWindowWidth(choiceMsg), transcribeResult: true);
-                    // WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(choiceMsg)); // TODO: dkaszews: $PSStyle.Prompt.ChoiceMessage?
+                    WriteToConsole(
+                        PSStyle.Instance.Prompt.ChoiceOther
+                        + WrapToCurrentWindowWidth(choiceMsg)
+                        + PSStyle.Instance.Reset,
+                        transcribeResult: true);
 
                     ReadLineResult rlResult;
                     string response = ReadChoiceResponse(out rlResult);
@@ -298,6 +301,11 @@ namespace Microsoft.PowerShell
                 + ConsoleHostUserInterfaceStrings.PromptForChoiceHelp
                 + PSStyle.Instance.Reset);
 
+            WriteToConsole(shouldEmulateForMultipleChoiceSelection
+                ? string.Join(Environment.NewLine, prompts)
+                : JoinWrappedToCurrentWindowWidth("  ", prompts),
+                transcribeResult:true);
+
             if (defaultChoiceKeys.Count > 0)
             {
                 string prepend = string.Empty;
@@ -317,7 +325,6 @@ namespace Microsoft.PowerShell
 
                 string defaultChoices = defaultChoicesBuilder.ToString();
 
-                // TODO: dkaszews: rewrite to be more readable?
                 string defaultPrompt = string.Empty;
                 if (defaultChoiceKeys.Count == 1)
                 {
@@ -332,31 +339,48 @@ namespace Microsoft.PowerShell
                         defaultChoices);
                 }
 
-                prompts.Add(PSStyle.Instance.Prompt.Help
-                    + defaultPrompt
-                    + PSStyle.Instance.Reset);
-            }
-
-            if (shouldEmulateForMultipleChoiceSelection)
-            {
-                WriteToConsole(string.Join(Environment.NewLine, prompts), transcribeResult:true);
-            }
-            else
-            {
-                // TODO: dkaszews: JoinWrappedToCurrentWindowWidth
-                WriteToConsole(JoinWrappedToCurrentWindowWidth("  ", prompts), transcribeResult:true);
+                WriteToConsole(PSStyle.Instance.Prompt.Help + defaultPrompt + PSStyle.Instance.Reset,
+                    transcribeResult: true);
             }
         }
 
-        private string JoinWrappedToCurrentWindowWidth(string separator, IEnumerable<string> value)
+        /// <summary>
+        /// Joins lines with separator, breaking into new line if longer than window width
+        /// </summary>
+        private string JoinWrappedToCurrentWindowWidth(string separator, IEnumerable<string> values)
         {
-            // TODO: dkaszews: implement
-            return string.Join("  ", values);
+            // Avoid recalculating every time, as skipping over escapes is nontrivial
+            int lineLength = 0;
+            int maxLength = RawUI.WindowSize.Width;
+
+            var result = new StringBuilder();
+            foreach (var value in values)
+            {
+                int valueLength = RawUI.LengthInBufferCells(value);
+                if (result.Length == 0)
+                {
+                    result.Append(value);
+                    lineLength += valueLength;
+                }
+                else if (lineLength + valueLength + separator.Length < maxLength)
+                {
+                    result.Append(separator);
+                    result.Append(value);
+                    lineLength += valueLength + separator.Length;
+                }
+                else
+                {
+                    result.Append(Environment.NewLine);
+                    result.Append(value);
+                    lineLength = valueLength;
+                }
+            }
+
+            return result.ToString();
         }
 
         private void WriteCaptionAndMessage(string caption, string message)
         {
-            // TODO: dkaszews: WrapToCurrentWindowWidth needed to wrap at word boundary, maybe add flag to Write(Line)ToConsole?
             if (!string.IsNullOrEmpty(caption))
             {
                 WriteLineToConsole();
@@ -393,23 +417,16 @@ namespace Microsoft.PowerShell
 
             for (int i = 0; i < choices.Count; ++i)
             {
-                string s;
-
                 // If there's no hotkey, use the label as the help
+                string prompt = hotkeysAndPlainLabels[0, i].Length > 0
+                    ? ("[" + hotkeysAndPlainLabels[0, i] + "] ")
+                    : (hotkeysAndPlainLabels[1, i] + " - ");
 
-                if (hotkeysAndPlainLabels[0, i].Length > 0)
-                {
-                    s = hotkeysAndPlainLabels[0, i];
-                }
-                else
-                {
-                    s = hotkeysAndPlainLabels[1, i];
-                }
+                string message = choices[i].HelpMessage;
 
-                // TODO: dkaszews: colors
-                WriteLineToConsole(
-                    WrapToCurrentWindowWidth(
-                        string.Format(CultureInfo.InvariantCulture, "{0} - {1}", s, choices[i].HelpMessage)));
+                prompt = PSStyle.Instance.Prompt.ChoiceOther + prompt + PSStyle.Instance.Reset;
+                message = PSStyle.Instance.Prompt.Help + message + PSStyle.Instance.Reset;
+                WriteLineToConsole( WrapToCurrentWindowWidth(prompt + message));
             }
         }
     }
