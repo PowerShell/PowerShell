@@ -43,6 +43,18 @@ namespace System.Management.Automation
     public sealed class PSStyle
     {
         /// <summary>
+        /// Colorizes message by prepending given color escape, then resets if requested
+        /// </summary>
+        public static string Colorize(string message, string colorEscape, bool reset = true)
+        {
+            message = colorEscape + message;
+            if (reset) {
+                message += Instance.Reset;
+            }
+            return message;
+        }
+
+        /// <summary>
         /// Contains foreground colors.
         /// </summary>
         public sealed class ForegroundColor

@@ -117,9 +117,9 @@ namespace Microsoft.PowerShell
 
                 if (AtLeastOneHelpMessageIsPresent(descriptions))
                 {
-                    WriteLineToConsole(PSStyle.Instance.Prompt.Help
-                        + WrapToCurrentWindowWidth(ConsoleHostUserInterfaceStrings.PromptHelp)
-                        + PSStyle.Instance.Prompt.Reset);
+                    WriteLineToConsole(PSStyle.Colorize(
+                        WrapToCurrentWindowWidth(ConsoleHostUserInterfaceStrings.PromptHelp),
+                        PSStyle.Instance.Prompt.Help));
                 }
 
                 int descIndex = -1;

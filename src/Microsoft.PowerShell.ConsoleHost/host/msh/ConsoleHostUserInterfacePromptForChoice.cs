@@ -209,9 +209,7 @@ namespace Microsoft.PowerShell
                     // write the current prompt
                     string choiceMsg = StringUtil.Format(ConsoleHostUserInterfaceStrings.ChoiceMessage, choicesSelected);
                     WriteToConsole(
-                        PSStyle.Instance.Prompt.ChoiceOther
-                        + WrapToCurrentWindowWidth(choiceMsg)
-                        + PSStyle.Instance.Reset,
+                        PSStyle.Colorize(WrapToCurrentWindowWidth(choiceMsg), PSStyle.Instance.Prompt.ChoiceOther),
                         transcribeResult: true);
 
                     ReadLineResult rlResult;
@@ -292,14 +290,11 @@ namespace Microsoft.PowerShell
                     ? PSStyle.Instance.Prompt.ChoiceDefault
                     : PSStyle.Instance.Prompt.ChoiceOther;
 
-                choice = color + choice + PSStyle.Instance.Reset;
-
-                prompts.Add(choice);
+                prompts.Add(PSStyle.Colorize(choice, color));
             }
 
-            prompts.Add(PSStyle.Instance.Prompt.ChoiceHelp
-                + ConsoleHostUserInterfaceStrings.PromptForChoiceHelp
-                + PSStyle.Instance.Reset);
+            prompts.Add(PSStyle.Colorize(ConsoleHostUserInterfaceStrings.PromptForChoiceHelp,
+                PSStyle.Instance.Prompt.ChoiceHelp));
 
             WriteToConsole(shouldEmulateForMultipleChoiceSelection
                 ? string.Join(Environment.NewLine, prompts)
@@ -339,7 +334,7 @@ namespace Microsoft.PowerShell
                         defaultChoices);
                 }
 
-                WriteToConsole(PSStyle.Instance.Prompt.Help + defaultPrompt + PSStyle.Instance.Reset,
+                WriteToConsole(PSStyle.Colorize(defaultPrompt, PSStyle.Instance.Prompt.Help),
                     transcribeResult: true);
             }
         }
@@ -384,16 +379,14 @@ namespace Microsoft.PowerShell
             if (!string.IsNullOrEmpty(caption))
             {
                 WriteLineToConsole();
-                WriteLineToConsole(PSStyle.Instance.Prompt.Caption
-                    + WrapToCurrentWindowWidth(caption)
-                    + PSStyle.Instance.Reset);
+                WriteLineToConsole(PSStyle.Colorize(WrapToCurrentWindowWidth(caption),
+                    PSStyle.Instance.Prompt.Caption));
             }
 
             if (!string.IsNullOrEmpty(message))
             {
-                WriteLineToConsole(PSStyle.Instance.Prompt.Message
-                    + WrapToCurrentWindowWidth(message)
-                    + PSStyle.Instance.Reset);
+                WriteLineToConsole(PSStyle.Colorize(WrapToCurrentWindowWidth(message),
+                    PSStyle.Instance.Prompt.Message));
             }
         }
 
@@ -424,8 +417,8 @@ namespace Microsoft.PowerShell
 
                 string message = choices[i].HelpMessage;
 
-                prompt = PSStyle.Instance.Prompt.ChoiceOther + prompt + PSStyle.Instance.Reset;
-                message = PSStyle.Instance.Prompt.Help + message + PSStyle.Instance.Reset;
+                prompt = PSStyle.Colorize(prompt, PSStyle.Instance.Prompt.ChoiceOther);
+                message = PSStyle.Colorize(message, PSStyle.Instance.Prompt.Help);
                 WriteLineToConsole( WrapToCurrentWindowWidth(prompt + message));
             }
         }
