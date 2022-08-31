@@ -272,12 +272,13 @@ namespace Microsoft.PowerShell
         {
             System.Management.Automation.Diagnostics.Assert(defaultChoiceKeys != null, "defaultChoiceKeys cannot be null.");
 
-            ConsoleColor fg = RawUI.ForegroundColor;
-            ConsoleColor bg = RawUI.BackgroundColor;
-
             var prompts = new List<string>();
             for (int i = 0; i < hotkeysAndPlainLabels.GetLength(1); ++i)
             {
+                var color = defaultChoiceKeys.ContainsKey(i)
+                    ? PSStyle.Instance.Prompt.ChoiceDefault
+                    : PSStyle.Instance.Prompt.ChoiceOther;
+
                 const string choiceTemplate = "[{0}] {1}";
                 string choice =
                     string.Format(
@@ -285,10 +286,6 @@ namespace Microsoft.PowerShell
                         choiceTemplate,
                         hotkeysAndPlainLabels[0, i],
                         hotkeysAndPlainLabels[1, i]);
-
-                var color = defaultChoiceKeys.ContainsKey(i)
-                    ? PSStyle.Instance.Prompt.ChoiceDefault
-                    : PSStyle.Instance.Prompt.ChoiceOther;
 
                 prompts.Add(PSStyle.Colorize(choice, color));
             }
