@@ -276,26 +276,52 @@ namespace Microsoft.PowerShell.Commands
 
         #region Static Methods
 
-        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, CancellationToken cancellationToken)
+        internal static void WriteToStream(Stream input, Stream output, WebRequestPSCmdlet cmdlet, CancellationToken cancellationToken)
         {
             if (cmdlet == null)
             {
                 throw new ArgumentNullException(nameof(cmdlet));
             }
 
-            Task copyTask = input.CopyToAsync(output, cancellationToken);
-
             ProgressRecord record = new(
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
                 WebCmdletStrings.WriteRequestProgressStatus);
 
+            // If the client lost target service on ~1 min due to a lost of network connectivity
+            // the CopyToAsync() task will be never completed and cycle below will be infinite.
+            // Short explaination:
+            // - CopyToAsync() uses ReadAsync() in cycle until ReadAsync() read 0 bytes (it is EOF).
+            // - ReadAsync() read from network Socket.
+            // - If network lost connectivity over 1 min the Socket lost connect to target service
+            //   but OS never close the Socket (tested on Windows).
+            // - Then Socket never return an information, ReadAsync() will be infinitely blocked on the Socket
+            //   and CopyToAsync() task will be never completed.
+            //
+            // Since cancelation token in CopyToAsync() applies to whole CopyToAsync()
+            // and it is not restarted for very internal ReadAsync()
+            // we have to use a workaround to cancel the ReadAsync() which is blocked on Socket longer Timeout.
+            // The workaround is to reset the cancelation timer
+            // while the length of the output file is constantly increasing.
+            long previousLength = 0;
+            var timeout = cmdlet.TimeoutSec == 0 ? Timeout.Infinite : cmdlet.TimeoutSec * 1000;
+            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            cts.CancelAfter(timeout);
+            Task copyTask = input.CopyToAsync(output, cts.Token);
+
             try
             {
-                while (!copyTask.Wait(1000, cancellationToken))
+                while (!copyTask.Wait(1000, cts.Token))
                 {
                     record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestProgressStatus, output.Position);
                     cmdlet.WriteProgress(record);
+
+                    if (previousLength != output.Length)
+                    {
+                        // Reset cancelation timer only if we get an information from network on the interation.
+                        previousLength = output.Length;
+                        cts.CancelAfter(timeout);
+                    }
                 }
 
                 if (copyTask.IsCompleted)
@@ -304,8 +330,12 @@ namespace Microsoft.PowerShell.Commands
                     cmdlet.WriteProgress(record);
                 }
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException exc)
             {
+                // We cannot distinct 'cancel` (user press Ctrl-C) and 'timeout' so we report the exception as-is
+                // to inform users that we did not download and save the whole file and the result is invalid.
+                ErrorRecord er = new(exc, "Operationwascancelled", ErrorCategory.InvalidResult, input);
+                cmdlet.WriteError(er);
             }
         }
 
@@ -317,7 +347,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="filePath">Output file name.</param>
         /// <param name="cmdlet">Current cmdlet (Invoke-WebRequest or Invoke-RestMethod).</param>
         /// <param name="cancellationToken">CancellationToken to track the cmdlet cancellation.</param>
-        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, CancellationToken cancellationToken)
+        internal static void SaveStreamToFile(Stream stream, string filePath, WebRequestPSCmdlet cmdlet, CancellationToken cancellationToken)
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
             FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
