@@ -148,7 +148,7 @@
     <value>"{0}" must be a valid index into "{1}". "{2}" is not a valid index.</value>
   </data>
   <data name="PromptForChoiceHelp" xml:space="preserve">
-    <value>[?] Help </value>
+    <value>[?] Help</value>
   </data>
   <data name="PromptCanceledError" xml:space="preserve">
     <value>The prompt was canceled.</value>
@@ -169,7 +169,7 @@
     <value>(Type !? for Help.)</value>
   </data>
   <data name="DefaultChoicePrompt" xml:space="preserve">
-    <value>(default is "{0}"): </value>
+    <value>(default is "{0}"):</value>
   </data>
   <data name="DefaultChoiceForMultipleChoices" xml:space="preserve">
     <value>(default is "{0}")</value>

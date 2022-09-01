@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell
             }
 
             prompts.Add(PSStyle.Colorize(ConsoleHostUserInterfaceStrings.PromptForChoiceHelp,
-                PSStyle.Instance.Prompt.ChoiceHelp));
+                PSStyle.Instance.Prompt.ChoiceHelp) + " ");
 
             WriteToConsole(shouldEmulateForMultipleChoiceSelection
                 ? string.Join(Environment.NewLine, prompts)
@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell
                 }
 
                 WriteToConsole(
-                    PSStyle.Colorize(defaultPrompt, PSStyle.Instance.Prompt.Help),
+                    PSStyle.Colorize(defaultPrompt, PSStyle.Instance.Prompt.Help) + " ",
                     transcribeResult: true);
             }
         }
