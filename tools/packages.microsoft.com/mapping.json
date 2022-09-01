@@ -16,6 +16,18 @@
           "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.rh.x86_64.rpm"
       },
       {
+          "url": "cbl-mariner-2.0-prod-Microsoft-x86_64",
+          "distribution" : ["bionic"],
+          "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.x86_64.rpm",
+          "channel" : "stable"
+      },
+      {
+          "url": "cbl-mariner-2.0-preview-Microsoft-x86_64",
+          "distribution" : ["bionic"],
+          "PackageFormat" : "PACKAGE_NAME-POWERSHELL_RELEASE-1.cm.x86_64.rpm",
+          "channel" : "preview"
+      },
+      {
           "distribution" : ["stretch"],
           "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
       },
@@ -25,6 +37,10 @@
       },
       {
           "distribution" : ["bionic"],
+          "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
+      },
+      {
+          "distribution" : ["jammy"],
           "PackageFormat" : "PACKAGE_NAME_POWERSHELL_RELEASE-1.deb_amd64.deb"
       },
       {

@@ -412,7 +412,7 @@ namespace System.Management.Automation.Internal
                 return true;
             }
 
-            // WTGetSignatureInfo is used to verify catalog signature.
+            // WTGetSignatureInfo, via Microsoft.Security.Extensions, is used to verify catalog signature.
             // On Win7, catalog API is not available.
             // On OneCore SKUs like NanoServer/IoT, the API has a bug that makes it not able to find the
             // corresponding catalog file for a given product file, so it doesn't work properly.

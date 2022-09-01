@@ -350,9 +350,7 @@ namespace System.Management.Automation
                     pe.Message);
             }
 
-            string unused1;
-            string unused2;
-            var pipeline = ast.GetSimplePipeline(false, out unused1, out unused2);
+            var pipeline = ast.GetSimplePipeline(false, out _, out _);
             if (pipeline != null)
             {
                 var hashtableAst = pipeline.GetPureExpression() as HashtableAst;

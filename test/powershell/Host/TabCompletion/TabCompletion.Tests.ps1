@@ -74,6 +74,141 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'pscustomobject'
     }
 
+    foreach ($Operator in [System.Management.Automation.CompletionCompleters]::CompleteOperator(""))
+    {
+        It "Should complete $($Operator.CompletionText)" {
+            $res = TabExpansion2 -inputScript "'' $($Operator.CompletionText)" -cursorColumn ($Operator.CompletionText.Length + 3)
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $Operator.CompletionText
+        }
+    }
+
+    It 'should complete index expression for <Intent>' -TestCases @(
+        @{
+            Intent = 'Hashtable with no user input'
+            Expected = "'PSVersion'"
+            TestString = '$PSVersionTable[^'
+        }
+        @{
+            Intent = 'Hashtable with partial input'
+            Expected = "'PSVersion'"
+            TestString = '$PSVersionTable[ PSvers^'
+        }
+        @{
+            Intent = 'Hashtable with partial quoted input'
+            Expected = "'PSVersion'"
+            TestString = '$PSVersionTable["PSvers^'
+        }
+        @{
+            Intent = 'Hashtable from Ast'
+            Expected = "'Hello'"
+            TestString = '$Table = @{Hello = "World"};$Table[^'
+        }
+        @{
+            Intent = 'Hashtable with cursor on new line'
+            Expected = "'Hello'"
+            TestString = @'
+$Table = @{Hello = "World"}
+$Table[
+^
+'@
+        }
+    ) -Test {
+        param($Expected, $TestString)
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly $Expected
+    }
+
+    it 'should add quotes when completing hashtable key from Ast with member syntax' -Test {
+        $res = TabExpansion2 -inputScript '$Table = @{"Hello World" = "World"};$Table.'
+        $res.CompletionMatches.CompletionText | Where-Object {$_ -eq "'Hello World'"} | Should -BeExactly "'Hello World'"
+    }
+
+    It '<Intent>' -TestCases @(
+        @{
+            Intent = 'Complete member with space between dot and cursor'
+            Expected = 'value__'
+            TestString = '[System.Management.Automation.ActionPreference]::Break.  ^'
+        }
+        @{
+            Intent = 'Complete member when cursor is in-between existing members and spaces'
+            Expected = 'value__'
+            TestString = '[System.Management.Automation.ActionPreference]::Break. ^ ToString()'
+        }
+        @{
+            Intent = 'Complete static member with space between colons and cursor'
+            Expected = 'Break'
+            TestString = '[System.Management.Automation.ActionPreference]::  ^'
+        }
+        @{
+            Intent = 'Complete static member with new line between colons and cursor'
+            Expected = 'Break'
+            TestString = @'
+[System.Management.Automation.ActionPreference]::
+^
+'@
+        }
+        @{
+            Intent = 'Complete static member with partial input and incomplete input at end of line'
+            Expected = 'Break'
+            TestString = '[System.Management.Automation.ActionPreference]::  Brea^.   value__.'
+        }
+        @{
+            Intent = 'Complete static member with partial input and valid input at end of line'
+            Expected = 'Break'
+            TestString = '[System.Management.Automation.ActionPreference]::  Brea^.   value__'
+        }
+        @{
+            Intent = 'Complete member with new line between colons and cursor'
+            Expected = 'value__'
+            TestString = '[System.Management.Automation.ActionPreference]::Break. ^ ToString()'
+        }
+        @{
+            Intent = 'Complete type with incomplete expression input at end of line'
+            Expected = 'System.Management.Automation.ActionPreference'
+            TestString = '[System.Management.Automation.ActionPreference^]::'
+        }
+        @{
+            Intent = 'Complete member inside switch expression'
+            Expected = 'Length'
+            TestString = @'
+switch ($x)
+{
+    'RandomString'.^
+    {}
+}
+'@
+        }
+        @{
+            Intent = 'Complete member in commandast'
+            Expected = 'Length'
+            TestString = 'ls "".^'
+        }
+        ){
+            param($Expected, $TestString)
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $Expected
+        }
+
+    It 'Should Complete and replace existing member with space in front of cursor and cursor in front of word' {
+        $TestString = '[System.Management.Automation.ActionPreference]:: ^Break'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.ReplacementIndex | Should -BeExactly $CursorIndex
+        $res.ReplacementLength | Should -Be 5
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Break'
+    }
+
+    It 'Complete and replace existing member with colons in front of cursor and cursor in front of word' {
+        $TestString = '[System.Management.Automation.ActionPreference]::^Break'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+        $res.ReplacementIndex | Should -BeExactly $CursorIndex
+        $res.ReplacementLength | Should -Be 5
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Break'
+    }
+
     It 'Should complete namespaces' {
         $res = TabExpansion2 -inputScript 'using namespace Sys' -cursorColumn 'using namespace Sys'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'System'
@@ -223,6 +358,12 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[1].CompletionText | Should -BeExactly '-Functionality'
     }
 
+    It 'Should not remove braces when completing variable with braces' {
+        $Text = '"Hello${psversiont}World"'
+        $res = TabExpansion2 -inputScript $Text -cursorColumn $Text.IndexOf('p')
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '${PSVersionTable}'
+    }
+
     It 'Should work for variable assignment of enum type: <inputStr>' -TestCases @(
         @{ inputStr = '$ErrorActionPreference = '; filter = ''; doubleQuotes = $false }
         @{ inputStr = '$ErrorActionPreference='; filter = ''; doubleQuotes = $false }
@@ -359,6 +500,108 @@ Describe "TabCompletion" -Tags CI {
         }
 
         $actual | Should -BeExactly $expected
+    }
+
+    It 'ForEach-Object member completion results should include methods' {
+        $res = TabExpansion2 -inputScript '1..10 | ForEach-Object -MemberName '
+        $res.CompletionMatches.CompletionText | Should -Contain "GetType"
+    }
+
+    It 'Should not complete void instance members' {
+        $res = TabExpansion2 -inputScript '([void]("")).'
+        $res.CompletionMatches | Should -BeNullOrEmpty
+    }
+
+    It 'Should complete custom constructor from class using the AST' {
+        $res = TabExpansion2 -inputScript 'class ConstructorTestClass{ConstructorTestClass ([string] $s){}};[ConstructorTestClass]::'
+        $res.CompletionMatches | Should -HaveCount 3
+        $completionText = $res.CompletionMatches.CompletionText | Sort-Object
+        $completionText -join ' ' | Should -BeExactly 'Equals( new( ReferenceEquals('
+    }
+
+    It 'Should show multiple constructors in the tooltip' {
+        $res = TabExpansion2 -inputScript 'class ConstructorTestClass{ConstructorTestClass ([string] $s){}ConstructorTestClass ([int] $i){}ConstructorTestClass ([int] $i, [bool]$b){}};[ConstructorTestClass]::new'
+        $res.CompletionMatches | Should -HaveCount 1
+        $completionText = $res.CompletionMatches.ToolTip | Should -BeExactly @'
+ConstructorTestClass(string s)
+ConstructorTestClass(int i)
+ConstructorTestClass(int i, bool b)
+'@
+    }
+
+    It 'Should complete parameter in param block' {
+        $res = TabExpansion2 -inputScript 'Param($Param1=(Get-ChildItem -))' -cursorColumn 30
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Path'
+    }
+
+    It 'Should complete member in param block' {
+        $res = TabExpansion2 -inputScript 'Param($Param1=($PSVersionTable.))' -cursorColumn 31
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Count'
+    }
+
+    It 'Should complete attribute argument in param block' {
+        $res = TabExpansion2 -inputScript 'Param([Parameter()]$Param1)' -cursorColumn 17
+        $names = [Parameter].GetProperties() | Where-Object CanWrite | ForEach-Object Name
+
+        $diffs = Compare-Object -ReferenceObject $res.CompletionMatches.CompletionText -DifferenceObject $names
+        $diffs | Should -BeNullOrEmpty
+    }
+
+    It 'Should complete argument for second parameter' {
+        $res = TabExpansion2 -inputScript 'Get-ChildItem -Path $HOME -ErrorAction '
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly Break
+    }
+
+    It 'Should complete argument with validateset attribute after comma' {
+        $TestString = 'function Test-ValidateSet{Param([ValidateSet("Cat","Dog")]$Param1,$Param2)};Test-ValidateSet -Param1 Dog, -Param2'
+        $res = TabExpansion2 -inputScript $TestString -cursorColumn ($TestString.LastIndexOf(',') + 1)
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly Cat
+    }
+
+    it 'Should complete "Value" parameter value in "Where-Object" for Enum property with no input' {
+        $res = TabExpansion2 -inputScript 'Get-Command | where-Object CommandType -eq '
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly Alias
+    }
+
+    it 'Should complete "Value" parameter value in "Where-Object" for Enum property with partial input' {
+        $res = TabExpansion2 -inputScript 'Get-Command | where-Object CommandType -ne Ali'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly Alias
+    }
+
+    it 'Should complete the right hand side of a comparison operator when left is an Enum with no input' {
+        $res = TabExpansion2 -inputScript 'Get-Command | Where-Object -FilterScript {$_.CommandType -like '
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "'Alias'"
+    }
+
+    it 'Should complete the right hand side of a comparison operator when left is an Enum with partial input' {
+        $TempVar = Get-Command
+        $res = TabExpansion2 -inputScript '$tempVar[0].CommandType -notlike "Ali"'
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "'Alias'"
+    }
+
+    it 'Should complete the right hand side of a comparison operator when left is an Enum when cursor is on a newline' {
+        $res = TabExpansion2 -inputScript "Get-Command | Where-Object -FilterScript {`$_.CommandType -like`n"
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly "'Alias'"
+    }
+
+    it 'Should complete provider dynamic parameters with quoted path' {
+        $Script = if ($IsWindows)
+        {
+            'Get-ChildItem -Path "C:\" -Director'
+        }
+        else
+        {
+            'Get-ChildItem -Path "/" -Director'
+        }
+        $res = TabExpansion2 -inputScript $Script
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Directory'
+    }
+
+    It 'Should enumerate types when completing member names for Select-Object' {
+        $TestString = '"Hello","World" | select-object '
+        $res = TabExpansion2 -inputScript $TestString
+        $res | Should -HaveCount 1
+        $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Length'
     }
 
     Context "Format cmdlet's View paramter completion" {
@@ -540,6 +783,34 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches | Should -HaveCount 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
         $completionText -join ' ' | Should -BeExactly 'blg csv tsv'
+    }
+
+    it 'Should include positionally bound parameters when completing in front of parameter value' {
+        $TestString = 'Get-ChildItem -^ $HOME'
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches.CompletionText | Should -Contain "-Path"
+    }
+
+    it 'Should find the closest positional parameter match' {
+        $TestString = @'
+function Verb-Noun
+{
+    Param
+    (
+        [Parameter(Position = 0)]
+        [string]
+        $Param1,
+        [Parameter(Position = 1)]
+        [System.Management.Automation.ActionPreference]
+        $Param2
+    )
+}
+Verb-Noun -Param1 Hello ^
+'@
+        $CursorIndex = $TestString.IndexOf('^')
+        $res = TabExpansion2 -inputScript $TestString.Remove($CursorIndex, 1) -cursorColumn $CursorIndex
+        $res.CompletionMatches[0].CompletionText | Should -Be "Break"
     }
 
     Context "Script name completion" {
@@ -737,6 +1008,26 @@ Describe "TabCompletion" -Tags CI {
             $expected = ($expected | Sort-Object -CaseSensitive | ForEach-Object { "./$_" }) -join ":"
 
         }
+
+        It "PSScriptRoot path completion when AST extent has file identity" {
+            $scriptText = '"$PSScriptRoot\BugFix.Tests"'
+            $tokens = $null
+            $scriptAst = [System.Management.Automation.Language.Parser]::ParseInput(
+                $scriptText,
+                $PSCommandPath,
+                [ref] $tokens,
+                [ref] $null)
+
+            $cursorPosition = $scriptAst.Extent.StartScriptPosition.
+                GetType().
+                GetMethod('CloneWithNewOffset', [System.Reflection.BindingFlags]'NonPublic, Instance').
+                Invoke($scriptAst.Extent.StartScriptPosition, @($scriptText.Length - 1))
+
+            $res = TabExpansion2 -ast $scriptAst -tokens $tokens -positionOfCursor $cursorPosition
+            $res.CompletionMatches | Should -HaveCount 1
+            $expectedPath = Join-Path $PSScriptRoot -ChildPath BugFix.Tests.ps1
+            $res.CompletionMatches[0].CompletionText | Should -Be "`"$expectedPath`""
+        }
     }
 
     Context "Cmdlet name completion" {
@@ -792,7 +1083,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '[math].G'; expected = 'GenericParameterAttributes'; setup = $null }
                 @{ inputStr = '[Environment+specialfolder]::App'; expected = 'ApplicationData'; setup = $null }
                 @{ inputStr = 'icm {get-pro'; expected = 'Get-Process'; setup = $null }
-                @{ inputStr = 'write-ouput (get-pro'; expected = 'Get-Process'; setup = $null }
+                @{ inputStr = 'write-output (get-pro'; expected = 'Get-Process'; setup = $null }
                 @{ inputStr = 'iex "get-pro'; expected = '"Get-Process"'; setup = $null }
                 @{ inputStr = '$variab'; expected = '$variableA'; setup = { $variableB = 2; $variableA = 1 } }
                 @{ inputStr = 'a -'; expected = '-keys'; setup = { function a {param($keys) $a} } }
@@ -878,7 +1169,7 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '[System.Management.Automation.Runspaces.runspacef'; expected = 'System.Management.Automation.Runspaces.RunspaceFactory'; setup = $null }
                 @{ inputStr = '[specialfol'; expected = 'System.Environment+SpecialFolder'; setup = $null }
                 ## tab completion for variable names in '{}'
-                @{ inputStr = '${PSDefault'; expected = '$PSDefaultParameterValues'; setup = $null }
+                @{ inputStr = '${PSDefault'; expected = '${PSDefaultParameterValues}'; setup = $null }
             )
         }
 
@@ -899,6 +1190,16 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
         }
+
+        It "Tab completion UNC path with forward slashes" -Skip:(!$IsWindows) {
+            $beforeTab = "//localhost/admin"
+            # it is expected that tab completion turns forward slashes into backslashes
+            $afterTab = "\\localhost\ADMIN$"
+            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches.Count | Should -BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $afterTab
+        }
+
 
         It "Tab completion for registry" -Skip:(!$IsWindows) {
             $beforeTab = 'registry::HKEY_l'
@@ -1010,6 +1311,12 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'DarkCyan'
         }
 
+        It "Tab completion for attribute type" {
+            $inputStr = '[validateset()]$var1'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn 2
+            $res.CompletionMatches.CompletionText | Should -Contain 'ValidateSet'
+        }
+
         It "Tab completion for ArgumentCompleter when AST is passed to CompleteInput" {
             $scriptBl = {
                 function Test-Completion {
@@ -1048,6 +1355,46 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches | Should -HaveCount 2
             $res.CompletionMatches[0].CompletionText | Should -BeExactly 'cat'
             $res.CompletionMatches[1].CompletionText | Should -BeExactly 'dog'
+        }
+
+        It "Tab completion for enum members after colon with <Space> space" -TestCases @(
+            @{ Space = 0 }
+            @{ Space = 1 }
+        ) {
+            param ($Space)
+            $inputStr = "Get-Command -Type:$(' ' * $Space)Al"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 2
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly 'Alias'
+            $res.CompletionMatches[1].CompletionText | Should -BeExactly 'All'
+        }
+
+        It "Tab completion for enum members between colon with <LeftSpace> space and <RightSpace> space with value" -TestCases @(
+            @{ LeftSpace = 0; RightSpace = 0 }
+            @{ LeftSpace = 0; RightSpace = 1 }
+            @{ LeftSpace = 1; RightSpace = 0 }
+            @{ LeftSpace = 1; RightSpace = 1 }
+        ) {
+            param ($LeftSpace, $RightSpace)
+            $inputStrEndsWithCursor = "Get-Command -Type:$(' ' * $LeftSpace)"
+            $inputStr = $inputStrEndsWithCursor + "$(' ' * $RightSpace)Alias"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStrEndsWithCursor.Length
+            $expectedArray = [enum]::GetNames([System.Management.Automation.CommandTypes]) | Sort-Object
+            $res.CompletionMatches.CompletionText | Should -Be $expectedArray
+        }
+
+        It "Tab completion for enum members between comma with <LeftSpace> space and <RightSpace> space with parameter" -TestCases @(
+            @{ LeftSpace = 0; RightSpace = 0 }
+            @{ LeftSpace = 0; RightSpace = 1 }
+            @{ LeftSpace = 1; RightSpace = 0 }
+            @{ LeftSpace = 1; RightSpace = 1 }
+        ) {
+            param ($LeftSpace, $RightSpace)
+            $inputStrEndsWithCursor = "Get-Command -Type Alias,$(' ' * $LeftSpace)"
+            $inputStr = $inputStrEndsWithCursor + "$(' ' * $RightSpace)-All"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStrEndsWithCursor.Length
+            $expectedArray = [enum]::GetNames([System.Management.Automation.CommandTypes]) | Sort-Object
+            $res.CompletionMatches.CompletionText | Should -Be $expectedArray
         }
 
         It "Tab completion for enum members after comma" {
@@ -1158,12 +1505,21 @@ Describe "TabCompletion" -Tags CI {
             $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Position"
             $entry.CompletionText | Should -BeExactly "Position"
         }
+
         It "Test Attribute member completion multiple members" {
             $inputStr = "function bar { [parameter(Position,]param() }"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn ($inputStr.IndexOf(',') + 1)
-            $res.CompletionMatches | Should -HaveCount 10
+            $res.CompletionMatches | Should -HaveCount 9
             $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Mandatory"
             $entry.CompletionText | Should -BeExactly "Mandatory"
+        }
+
+        It "Should complete member in attribute argument value" {
+            $inputStr = '[ValidateRange(1,[int]::Maxva^)]$a'
+            $CursorIndex = $inputStr.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $inputStr.Remove($CursorIndex, 1)
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly "MaxValue"
         }
 
         It "Test Attribute scriptblock completion" {
@@ -1172,6 +1528,38 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches | Should -HaveCount 1
             $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Get-ChildItem"
             $entry.CompletionText | Should -BeExactly "Get-ChildItem"
+        }
+
+        It '<Intent>' -TestCases @(
+            @{
+                Intent = 'Complete attribute members on empty line'
+                Expected = @('Position','ParameterSetName','Mandatory','ValueFromPipeline','ValueFromPipelineByPropertyName','ValueFromRemainingArguments','HelpMessage','HelpMessageBaseName','HelpMessageResourceId','DontShow')
+                TestString = @'
+function bar { [parameter(
+
+
+^
+
+        )]param() }
+'@
+            }
+            @{
+                Intent = 'Complete attribute members on empty line with preceding member'
+                Expected = @('Position','ParameterSetName','Mandatory','ValueFromPipeline','ValueFromPipelineByPropertyName','ValueFromRemainingArguments','HelpMessage','HelpMessageBaseName','HelpMessageResourceId','DontShow')
+                TestString = @'
+function bar { [parameter(
+Mandatory,
+
+^
+
+        )]param() }
+'@
+            }
+        ){
+            param($Expected, $TestString)
+            $CursorIndex = $TestString.IndexOf('^')
+            $res = TabExpansion2 -cursorColumn $CursorIndex -inputScript $TestString.Remove($CursorIndex, 1)
+            $res.CompletionMatches[0].CompletionText | Should -BeIn $Expected
         }
 
         It "Test completion with line continuation" {
@@ -1232,12 +1620,12 @@ dir -Recurse `
             $res.CompletionMatches | Should -HaveCount 2
             [string]::Join(',', ($res.CompletionMatches.completiontext | Sort-Object)) | Should -BeExactly "1.0,1.1"
         }
-        
+
         It 'Should complete Select-Object properties without duplicates' {
             $res = TabExpansion2 -inputScript '$PSVersionTable | Select-Object -Property Count,'
             $res.CompletionMatches.CompletionText | Should -Not -Contain "Count"
         }
-        
+
         It '<Intent>' -TestCases @(
             @{
                 Intent = 'Complete loop labels with no input'
@@ -1360,6 +1748,21 @@ dir -Recurse `
             $inputStr = "dir .\commaA.txt,"
             $expected = ".${separator}commaA.txt"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches | Should -HaveCount 1
+            $res.CompletionMatches[0].CompletionText | Should -BeExactly $expected
+        }
+
+        It "Tab completion for file array element between comma with <LeftSpace> space and <RightSpace> space with parameter" -TestCases @(
+            @{ LeftSpace = 0; RightSpace = 0 }
+            @{ LeftSpace = 0; RightSpace = 1 }
+            @{ LeftSpace = 1; RightSpace = 0 }
+            @{ LeftSpace = 1; RightSpace = 1 }
+        ) {
+            param ($LeftSpace, $RightSpace)
+            $inputStrEndsWithCursor = "dir .\commaA.txt,$(' ' * $LeftSpace)"
+            $inputStr = $inputStrEndsWithCursor + "$(' ' * $RightSpace)-File"
+            $expected = ".${separator}commaA.txt"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStrEndsWithCursor.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches[0].CompletionText | Should -BeExactly $expected
         }
@@ -1841,6 +2244,30 @@ function MyFunction ($param1, $param2)
     #>
     function MyFunction2 ($param3, $param4)
     {
+    }
+}
+'@
+            }
+            @{
+                Intent = 'Complete help keyword PARAMETER argument for function inside advanced function'
+                Expected = 'param1','param2'
+                TestString = @'
+function Verb-Noun
+{
+    Param
+    (
+        [Parameter()]
+        [string[]]
+        $ParamA
+    )
+    Begin
+    {
+        <#
+            .Parameter ^
+        #>
+        function MyFunction ($param1, $param2)
+        {
+        }
     }
 }
 '@

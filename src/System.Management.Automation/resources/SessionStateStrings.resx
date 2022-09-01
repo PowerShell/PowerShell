@@ -457,7 +457,7 @@
     <value>Cannot find alias because alias '{0}' does not exist.</value>
   </data>
   <data name="PathResolvedToMultiple" xml:space="preserve">
-    <value>Cannot set the location because path '{0}' resolved to multiple containers. You can only the set location to a single container at a time.</value>
+    <value>Cannot set the location because path '{0}' resolved to multiple containers. You can only set the location to a single container at a time.</value>
   </data>
   <data name="VariablePathResolvedToMultiple" xml:space="preserve">
     <value>Cannot process variable because variable path '{0}' resolved to multiple items. You can get or set the variable value only one item at a time.</value>

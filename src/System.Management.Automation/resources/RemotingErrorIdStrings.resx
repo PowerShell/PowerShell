@@ -1705,4 +1705,13 @@ SSH client process terminated before connection could be established.</value>
   <data name="InvalidPSSessionArgument" xml:space="preserve">
     <value>The Runspace argument to Create must be a non-null RemoteRunspace object.</value>
   </data>
+  <data name="DISCInvalidConfigKeyType" xml:space="preserve">
+    <value>The session configuration hash table contains an invalid key type. Keys should be string types.</value>
+  </data>
+  <data name="DISCUnsupportedConfigName" xml:space="preserve">
+    <value>The session configuration file contains an unsupported configuration option: {0}. This is a remoting endpoint configuration option, that does not apply to PowerShell session state.</value>
+  </data>
+  <data name="DISCUnknownConfigName" xml:space="preserve">
+    <value>The session configuration file contains an unknown configuration option: {0}.</value>
+  </data>
 </root>

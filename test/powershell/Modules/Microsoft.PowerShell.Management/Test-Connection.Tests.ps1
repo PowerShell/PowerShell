@@ -32,7 +32,8 @@ function GetExternalHostAddress([string]$HostName)
     }
 }
 
-# Adding RequireSudoOnUnix due to issue: https://github.com/dotnet/runtime/issues/66746
+# Adding RequireSudoOnUnix due to an intentional breaking change.
+# See https://github.com/dotnet/runtime/issues/66746
 Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
     BeforeAll {
         $hostName = [System.Net.Dns]::GetHostName()
@@ -97,15 +98,8 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
             { Test-Connection "fakeHost" -Count 1 -ErrorAction Stop } |
                 Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
-            $platform = Get-PlatformInfo
-            if ($platform.Platform -match "raspbian" -or ( $platform.Platform -match 'ubuntu' -and $platform.Version -eq '20.04')) {
-                $code = 11
-            } elseif (!$IsWindows) {
-                $code = -131073
-            } else {
-                $code = 11001
-            }
-            $error[0].Exception.InnerException.ErrorCode | Should -Be $code
+            # Error code = -131073 - Invalid address
+            $error[0].Exception.InnerException.ErrorCode | Should -BeIn 11, -131073, 11001
         }
 
         It "Force IPv4 with implicit PingOptions" {
@@ -261,10 +255,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
     }
 
     Context "MTUSizeDetect" {
-        # We skip the MtuSize detection tests when in containers, as the environments throw raw exceptions
-        # instead of returning a PacketTooBig response cleanly.
-        # Test disabled due to .NET runtime issue: https://github.com/dotnet/runtime/issues/55961
-        It "MTUSizeDetect works" -Pending:(($env:__INCONTAINER -eq 1) -or $IsMacOS) {
+        It "MTUSizeDetect works" {
             $result = Test-Connection $testAddress -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
@@ -273,8 +264,7 @@ Describe "Test-Connection" -tags "CI", "RequireSudoOnUnix" {
             $result.MtuSize | Should -BeGreaterThan 0
         }
 
-        # Test disabled due to .NET runtime issue: https://github.com/dotnet/runtime/issues/55961
-        It "Quiet works" -Pending:(($env:__INCONTAINER -eq 1) -or $IsMacOS) {
+        It "Quiet works" {
             $result = Test-Connection $gatewayAddress -MtuSize -Quiet
 
             $result | Should -BeOfType Int32

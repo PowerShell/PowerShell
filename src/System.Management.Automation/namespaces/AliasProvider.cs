@@ -194,11 +194,7 @@ namespace Microsoft.PowerShell.Commands
                 if (dynamicParametersSpecified)
                 {
                     item = (AliasInfo)GetSessionStateItem(name);
-
-                    if (item != null)
-                    {
-                        item.SetOptions(dynamicParameters.Options, Force);
-                    }
+                    item?.SetOptions(dynamicParameters.Options, Force);
                 }
                 else
                 {

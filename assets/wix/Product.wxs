@@ -87,7 +87,7 @@
     <SetProperty Id="EnableMU"
                  Before="EnableMU"
                  Sequence="execute"
-                 Value="&quot;[VersionFolder]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;$null=(New-Object -ComObject Microsoft.Update.ServiceManager).AddService2('7971f918-a847-4430-9279-4a52d1efe18d', 7, '')&quot;" />
+                 Value="&quot;[VersionFolder]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[VersionFolder]RegisterMicrosoftUpdate.ps1&quot;" />
     <CustomAction Id="EnableMU"
                   BinaryKey="WixCA"
                   DllEntry="CAQuietExec"

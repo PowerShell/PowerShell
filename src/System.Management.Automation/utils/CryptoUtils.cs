@@ -616,15 +616,8 @@ namespace System.Management.Automation.Internal
         {
             if (disposing)
             {
-                if (_rsa != null)
-                {
-                    _rsa.Dispose();
-                }
-
-                if (_aes != null)
-                {
-                    _aes.Dispose();
-                }
+                _rsa?.Dispose();
+                _aes?.Dispose();
             }
         }
 
@@ -851,11 +844,7 @@ namespace System.Management.Automation.Internal
         {
             if (disposing)
             {
-                if (_rsaCryptoProvider != null)
-                {
-                    _rsaCryptoProvider.Dispose();
-                }
-
+                _rsaCryptoProvider?.Dispose();
                 _rsaCryptoProvider = null;
 
                 _keyExchangeCompleted.Dispose();

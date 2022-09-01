@@ -4,11 +4,10 @@
 # no progress output during these tests
 $ProgressPreference = "SilentlyContinue"
 
-$RepositoryName = 'INTGallery'
-$SourceLocation = 'https://www.poshtestgallery.com'
-$RegisteredINTRepo = $false
-$ContosoServer = 'ContosoServer'
-$FabrikamServerScript = 'Fabrikam-ServerScript'
+$RepositoryName = 'PSGallery'
+$SourceLocation = 'https://www.powershellgallery.com'
+$TestModule = 'newTestModule'
+$TestScript = 'TestTestScript'
 $Initialized = $false
 
 #region Utility functions
@@ -93,11 +92,11 @@ function Initialize
     if($repo)
     {
         $script:RepositoryName = $repo.Name
+        Set-PackageSource -Name $repo.Name -Trusted
     }
     else
     {
         Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -InstallationPolicy Trusted
-        $script:RegisteredINTRepo = $true
     }
 }
 
@@ -105,18 +104,12 @@ function Initialize
 
 function Remove-InstalledModules
 {
-    Get-InstalledModule -Name $ContosoServer -AllVersions -ErrorAction SilentlyContinue | PowerShellGet\Uninstall-Module -Force
+    Get-InstalledModule -Name $TestModule -AllVersions -ErrorAction SilentlyContinue | PowerShellGet\Uninstall-Module -Force
 }
 
 Describe "PowerShellGet - Module tests" -tags "Feature" {
 
     BeforeAll {
-        # Setting all It block to pending as the test fail due to https://github.com/PowerShell/PowerShell/issues/17019
-        # These should be re-enabled when the issue is fixed
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:pending"] = $true
-        return
-
         if ($script:Initialized -eq $false) {
             Initialize
             $script:Initialized = $true
@@ -128,26 +121,25 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
     }
 
     It "Should find a module correctly" {
-        $psgetModuleInfo = Find-Module -Name $ContosoServer -Repository $RepositoryName
-        $psgetModuleInfo.Name | Should -Be $ContosoServer
+        $psgetModuleInfo = Find-Module -Name $TestModule -Repository $RepositoryName
+        $psgetModuleInfo.Name | Should -Be $TestModule
         $psgetModuleInfo.Repository | Should -Be $RepositoryName
     }
 
     It "Should install a module correctly to the required location with default CurrentUser scope" {
-        Install-Module -Name $ContosoServer -Repository $RepositoryName
-        $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
+        Install-Module -Name $TestModule -Repository $RepositoryName
+        $installedModuleInfo = Get-InstalledModule -Name $TestModule
 
         $installedModuleInfo | Should -Not -BeNullOrEmpty
-        $installedModuleInfo.Name | Should -Be $ContosoServer
+        $installedModuleInfo.Name | Should -Be $TestModule
         $installedModuleInfo.InstalledLocation.StartsWith($script:MyDocumentsModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
 
-        $module = Get-Module $ContosoServer -ListAvailable
-        $module.Name | Should -Be $ContosoServer
+        $module = Get-Module $TestModule -ListAvailable
+        $module.Name | Should -Be $TestModule
         $module.ModuleBase | Should -Be $installedModuleInfo.InstalledLocation
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         Remove-InstalledModules
     }
 }
@@ -155,12 +147,6 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
 Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
 
     BeforeAll {
-        # Setting all It block to pending as the test fail due to https://github.com/PowerShell/PowerShell/issues/17019
-        # These should be re-enabled when the issue is fixed
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:pending"] = $true
-        return
-
         if ($script:Initialized -eq $false) {
             Initialize
             $script:Initialized = $true
@@ -172,38 +158,31 @@ Describe "PowerShellGet - Module tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a module correctly to the required location with AllUsers scope" {
-        Install-Module -Name $ContosoServer -Repository $RepositoryName -Scope AllUsers
-        $installedModuleInfo = Get-InstalledModule -Name $ContosoServer
+        Install-Module -Name $TestModule -Repository $RepositoryName -Scope AllUsers
+        $installedModuleInfo = Get-InstalledModule -Name $TestModule
 
         $installedModuleInfo | Should -Not -BeNullOrEmpty
-        $installedModuleInfo.Name | Should -Be $ContosoServer
+        $installedModuleInfo.Name | Should -Be $TestModule
         $installedModuleInfo.InstalledLocation.StartsWith($script:programFilesModulesPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
 
-        $module = Get-Module $ContosoServer -ListAvailable
-        $module.Name | Should -Be $ContosoServer
+        $module = Get-Module $TestModule -ListAvailable
+        $module.Name | Should -Be $TestModule
         $module.ModuleBase | Should -Be $installedModuleInfo.InstalledLocation
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         Remove-InstalledModules
     }
 }
 
 function Remove-InstalledScripts
 {
-    Get-InstalledScript -Name $FabrikamServerScript -ErrorAction SilentlyContinue | Uninstall-Script -Force
+    Get-InstalledScript -Name $TestScript -ErrorAction SilentlyContinue | Uninstall-Script -Force
 }
 
 Describe "PowerShellGet - Script tests" -tags "Feature" {
 
     BeforeAll {
-        # Setting all It block to pending as the test fail due to https://github.com/PowerShell/PowerShell/issues/17019
-        # These should be re-enabled when the issue is fixed
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:pending"] = $true
-        return
-
         if ($script:Initialized -eq $false) {
             Initialize
             $script:Initialized = $true
@@ -215,22 +194,21 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
     }
 
     It "Should find a script correctly" {
-        $psgetScriptInfo = Find-Script -Name $FabrikamServerScript -Repository $RepositoryName
-        $psgetScriptInfo.Name | Should -Be $FabrikamServerScript
+        $psgetScriptInfo = Find-Script -Name $TestScript -Repository $RepositoryName
+        $psgetScriptInfo.Name | Should -Be $TestScript
         $psgetScriptInfo.Repository | Should -Be $RepositoryName
     }
 
     It "Should install a script correctly to the required location with default CurrentUser scope" {
-        Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate
-        $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
+        Install-Script -Name $TestScript -Repository $RepositoryName -NoPathUpdate
+        $installedScriptInfo = Get-InstalledScript -Name $TestScript
 
         $installedScriptInfo | Should -Not -BeNullOrEmpty
-        $installedScriptInfo.Name | Should -Be $FabrikamServerScript
+        $installedScriptInfo.Name | Should -Be $TestScript
         $installedScriptInfo.InstalledLocation.StartsWith($script:MyDocumentsScriptsPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         Remove-InstalledScripts
     }
 }
@@ -238,12 +216,6 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
 Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
 
     BeforeAll {
-        # Setting all It block to pending as the test fail due to https://github.com/PowerShell/PowerShell/issues/17019
-        # These should be re-enabled when the issue is fixed
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        $PSDefaultParameterValues["it:pending"] = $true
-        return
-
         if ($script:Initialized -eq $false) {
             Initialize
             $script:Initialized = $true
@@ -255,16 +227,15 @@ Describe "PowerShellGet - Script tests (Admin)" -Tags @('Feature', 'RequireAdmin
     }
 
     It "Should install a script correctly to the required location with AllUsers scope" {
-        Install-Script -Name $FabrikamServerScript -Repository $RepositoryName -NoPathUpdate -Scope AllUsers
-        $installedScriptInfo = Get-InstalledScript -Name $FabrikamServerScript
+        Install-Script -Name $TestScript -Repository $RepositoryName -NoPathUpdate -Scope AllUsers
+        $installedScriptInfo = Get-InstalledScript -Name $TestScript
 
         $installedScriptInfo | Should -Not -BeNullOrEmpty
-        $installedScriptInfo.Name | Should -Be $FabrikamServerScript
+        $installedScriptInfo.Name | Should -Be $TestScript
         $installedScriptInfo.InstalledLocation.StartsWith($script:ProgramFilesScriptsPath, [System.StringComparison]::OrdinalIgnoreCase) | Should -BeTrue
     }
 
     AfterAll {
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
         Remove-InstalledScripts
     }
 }
@@ -299,9 +270,4 @@ Describe 'PowerShellGet Type tests' -tags @('CI') {
             $_.Value | ForEach-Object { $Type.DeclaredMembers.Name -contains $_ | Should -BeTrue }
         }
     }
-}
-
-if($RegisteredINTRepo)
-{
-    Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue | Unregister-PSRepository
 }

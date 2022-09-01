@@ -16,6 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// This command converts an object to a Json string representation.
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
+    [OutputType(typeof(string))]
     public class ConvertToJsonCommand : PSCmdlet, IDisposable
     {
         /// <summary>
