@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell
             WriteToConsole(shouldEmulateForMultipleChoiceSelection
                 ? string.Join(Environment.NewLine, prompts)
                 : JoinWrappedToCurrentWindowWidth("  ", prompts),
-                transcribeResult:true);
+                transcribeResult: true);
 
             if (defaultChoiceKeys.Count > 0)
             {
@@ -327,18 +327,29 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    defaultPrompt = StringUtil.Format(ConsoleHostUserInterfaceStrings.DefaultChoicesForMultipleChoices,
+                    defaultPrompt = StringUtil.Format(
+                        ConsoleHostUserInterfaceStrings.DefaultChoicesForMultipleChoices,
                         defaultChoices);
                 }
 
-                WriteToConsole(PSStyle.Colorize(defaultPrompt, PSStyle.Instance.Prompt.Help),
+                WriteToConsole(
+                    PSStyle.Colorize(defaultPrompt, PSStyle.Instance.Prompt.Help),
                     transcribeResult: true);
             }
         }
 
         /// <summary>
-        /// Joins lines with separator, breaking into new line if longer than window width
+        /// Joins lines with separator, breaking into new line if longer than window width.
         /// </summary>
+        /// <param name="separator">
+        /// Separator used between strings fitting on the same line.
+        /// </param>
+        /// <param name="values">
+        /// Collection of strings, never broken unless cannot fit on one line by itself.
+        /// </param>
+        /// <returns>
+        /// Joined string.
+        /// </returns>
         private string JoinWrappedToCurrentWindowWidth(string separator, IEnumerable<string> values)
         {
             // Avoid recalculating every time, as skipping over escapes is nontrivial
@@ -376,13 +387,15 @@ namespace Microsoft.PowerShell
             if (!string.IsNullOrEmpty(caption))
             {
                 WriteLineToConsole();
-                WriteLineToConsole(PSStyle.Colorize(WrapToCurrentWindowWidth(caption),
+                WriteLineToConsole(PSStyle.Colorize(
+                    WrapToCurrentWindowWidth(caption),
                     PSStyle.Instance.Prompt.Caption));
             }
 
             if (!string.IsNullOrEmpty(message))
             {
-                WriteLineToConsole(PSStyle.Colorize(WrapToCurrentWindowWidth(message),
+                WriteLineToConsole(PSStyle.Colorize(
+                    WrapToCurrentWindowWidth(message),
                     PSStyle.Instance.Prompt.Message));
             }
         }

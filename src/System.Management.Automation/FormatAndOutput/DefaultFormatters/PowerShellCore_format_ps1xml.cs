@@ -2195,7 +2195,8 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_PSStylePromptFormat()
         {
-            yield return new FormatViewDefinition("System.Management.Automation.PSStyle+PromptFormat",
+            yield return new FormatViewDefinition(
+                "System.Management.Automation.PSStyle+PromptFormat",
                 ListControl.Create()
                     .StartEntry()
                         .AddItemScriptBlock(@"$_.AsEscapeSequence('Caption')", label: "Caption")

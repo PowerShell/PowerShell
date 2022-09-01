@@ -43,16 +43,22 @@ namespace System.Management.Automation
     public sealed class PSStyle
     {
         /// <summary>
-        /// Colorizes message by prepending given color escape, then resets if requested
+        /// Colorizes message by prepending given color escape, then resets if requested.
         /// </summary>
+        /// <param name="message">
+        /// String to colorize.
+        /// </param>
+        /// <param name="colorEscape">
+        /// ANSI color and/or font escape sequence.
+        /// </param>
+        /// <param name="reset">
+        /// If given, the color is reset to default (not necessarily previous) setting.
+        /// </param>
+        /// <returns>
+        /// Colorized string.
+        /// </returns>
         public static string Colorize(string message, string colorEscape, bool reset = true)
-        {
-            message = colorEscape + message;
-            if (reset) {
-                message += Instance.Reset;
-            }
-            return message;
-        }
+            => colorEscape + message + (reset ? Intance.Reset : string.Empty);
 
         /// <summary>
         /// Contains foreground colors.
@@ -593,7 +599,8 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets style for prompt caption.
             /// </summary>
-            public string Caption {
+            public string Caption
+            {
                 get => _caption;
                 set => _caption = ValidateNoContent(value);
             }
@@ -603,7 +610,8 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets style for prompt message.
             /// </summary>
-            public string Message {
+            public string Message
+            {
                 get => _message;
                 set => _message = ValidateNoContent(value);
             }
@@ -613,7 +621,8 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets style for any prompt help.
             /// </summary>
-            public string Help {
+            public string Help
+            {
                 get => _help;
                 set => _help = ValidateNoContent(value);
             }
@@ -623,7 +632,8 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets style for choices selected by default.
             /// </summary>
-            public string ChoiceDefault {
+            public string ChoiceDefault
+            {
                 get => _choiceDefault;
                 set => _choiceDefault = ValidateNoContent(value);
             }
@@ -633,7 +643,8 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets style for choices not selected by default.
             /// </summary>
-            public string ChoiceOther {
+            public string ChoiceOther
+            {
                 get => _choiceOther;
                 set => _choiceOther = ValidateNoContent(value);
             }
@@ -643,7 +654,8 @@ namespace System.Management.Automation
             /// <summary>
             /// Gets or sets style for choice displaying help.
             /// </summary>
-            public string ChoiceHelp {
+            public string ChoiceHelp
+            {
                 get => _choiceHelp;
                 set => _choiceHelp = ValidateNoContent(value);
             }
