@@ -58,7 +58,7 @@ namespace System.Management.Automation
         /// Colorized string.
         /// </returns>
         public static string Colorize(string message, string colorEscape, bool reset = true)
-            => colorEscape + message + (reset ? Intance.Reset : string.Empty);
+            => colorEscape + message + (reset ? Instance.Reset : string.Empty);
 
         /// <summary>
         /// Contains foreground colors.
