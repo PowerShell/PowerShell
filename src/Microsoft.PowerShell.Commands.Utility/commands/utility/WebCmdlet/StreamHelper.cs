@@ -318,7 +318,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (previousLength != output.Length)
                     {
-                        // Reset cancelation timer only if we get an information from network on the interation.
+                        // Reset cancelation timer while information continues to flow from network.
+                        // Cancelation timer applies only during no network connectivity.
                         previousLength = output.Length;
                         cts.CancelAfter(timeout);
                     }
