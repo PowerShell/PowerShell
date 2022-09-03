@@ -295,7 +295,7 @@ namespace Microsoft.PowerShell.Commands
             // - ReadAsync() read from network Socket.
             // - If network lost connectivity over 1 min the Socket lost connect to target service
             //   but OS never close the Socket (tested on Windows).
-            // - Then Socket never return an information, ReadAsync() will be infinitely blocked on the Socket
+            // - Then Socket never return anything, and thus ReadAsync() will be infinitely blocked on the Socket
             //   and CopyToAsync() task will be never completed.
             //
             // Since cancelation token in CopyToAsync() applies to whole CopyToAsync()
