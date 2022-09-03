@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
             // If the client loses network connectivity for over 1 minute, the task returned from 
             // 'CopyToAsync()' will never complete and therefore the loop below will be infinite.
             // Short explaination:
-            // - CopyToAsync() uses ReadAsync() in cycle until ReadAsync() read 0 bytes (it is EOF).
+            // - CopyToAsync() uses ReadAsync() in loop until ReadAsync() returns 0, indicating EOF.
             // - ReadAsync() read from network Socket.
             // - If network lost connectivity over 1 min the Socket lost connect to target service
             //   but OS never close the Socket (tested on Windows).
