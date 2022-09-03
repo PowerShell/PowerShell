@@ -4,12 +4,13 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Security;
-using Newtonsoft.Json.Linq;
-using NJsonSchema;
+using System.Text.Json.Nodes;
+using Json.Schema;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -85,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        _jschema = JsonSchema.FromJsonAsync(Schema).Result;
+                        _jschema = JsonSchema.FromText(Schema);
                     }
                     catch (AggregateException ae)
                     {
@@ -99,7 +100,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(SchemaFile);
-                        _jschema = JsonSchema.FromFileAsync(resolvedpath).Result;
+                        _jschema = JsonSchema.FromFile(resolvedpath);
                     }
                     catch (AggregateException ae)
                     {
@@ -140,21 +141,21 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                var parsedJson = JToken.Parse(Json);
+                var parsedJson = JsonNode.Parse(Json);
 
                 if (_jschema != null)
                 {
-                    var errorMessages = _jschema.Validate(parsedJson);
-                    if (errorMessages != null && errorMessages.Count != 0)
+                    var validationResults = _jschema.Validate(parsedJson, new ValidationOptions{OutputFormat = OutputFormat.Basic});
+                    result = validationResults.IsValid;
+                    if (validationResults.NestedResults.Count != 0)
                     {
-                        result = false;
-
                         Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
 
-                        foreach (var message in errorMessages)
+                        foreach (var nestedResult in validationResults.NestedResults.Where(x => x.Message != null))
                         {
                             ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
-                            errorRecord.ErrorDetails = new ErrorDetails(message.ToString());
+                            var message = $"{nestedResult.Message} at {nestedResult.InstanceLocation}";
+                            errorRecord.ErrorDetails = new ErrorDetails(message);
                             WriteError(errorRecord);
                         }
                     }
