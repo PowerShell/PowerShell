@@ -144,6 +144,10 @@ Describe "Get-Item" -Tags "CI" {
             $result = Get-Item $noAltStreamDirectory -Stream * -ErrorAction Stop
             $result | Should -BeExactly $null
         }
+        It "Shold return filename property correctly" -Skip:$skipNotWindows {
+            $result = (Get-Item -Path $altStreamPath -Stream $streamName).FileName
+            $result | Should -BeExactly $altStreamPath
+        }
     }
 
     Context "Registry Provider" {
