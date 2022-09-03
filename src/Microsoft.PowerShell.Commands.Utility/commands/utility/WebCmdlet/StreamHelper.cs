@@ -288,8 +288,8 @@ namespace Microsoft.PowerShell.Commands
                 WebCmdletStrings.WriteRequestProgressActivity,
                 WebCmdletStrings.WriteRequestProgressStatus);
 
-            // If the client lost target service on ~1 min due to a lost of network connectivity
-            // the CopyToAsync() task will be never completed and cycle below will be infinite.
+            // If the client loses network connectivity for over 1 minute, the task returned from 
+            // 'CopyToAsync()' will never complete and therefore the loop below will be infinite.
             // Short explaination:
             // - CopyToAsync() uses ReadAsync() in cycle until ReadAsync() read 0 bytes (it is EOF).
             // - ReadAsync() read from network Socket.
