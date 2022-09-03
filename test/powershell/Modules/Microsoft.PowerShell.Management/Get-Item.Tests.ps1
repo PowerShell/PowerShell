@@ -111,7 +111,7 @@ Describe "Get-Item" -Tags "CI" {
             {
                 return
             }
-            $altStreamPath = "$TESTDRIVE/altStream.txt"
+            $altStreamPath = "$TESTDRIVE\altStream.txt"
             $altStreamDirectory = "$TESTDRIVE/altstreamdir"
             $noAltStreamDirectory = "$TESTDRIVE/noaltstreamdir"
             $stringData = "test data"
