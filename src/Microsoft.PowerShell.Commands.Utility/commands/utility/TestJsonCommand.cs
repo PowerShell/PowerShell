@@ -4,10 +4,11 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
-using System.Net.Http;
+using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Security;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using Json.Schema;
 
@@ -52,37 +53,31 @@ namespace Microsoft.PowerShell.Commands
         private JsonSchema _jschema;
 
         /// <summary>
+        /// Process all exceptions in the AggregateException.
+        /// Unwrap TargetInvocationException if any and
+        /// rethrow inner exception without losing the stack trace.
+        /// </summary>
+        /// <param name="e">AggregateException to be unwrapped.</param>
+        /// <returns>Return value is unreachable since we always rethrow.</returns>
+        private static bool UnwrapException(Exception e)
+        {
+            if (e.InnerException != null && e is TargetInvocationException)
+            {
+                ExceptionDispatchInfo.Capture(e.InnerException).Throw();
+            }
+            else
+            {
+                ExceptionDispatchInfo.Capture(e).Throw();
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Prepare a JSON schema.
         /// </summary>
         protected override void BeginProcessing()
         {
-            SchemaRegistry.Global.Fetch = static uri =>
-            {
-                try
-                {
-                    string text;
-                    switch (uri.Scheme)
-                    {
-                        case "http":
-                        case "https":
-                            text = new HttpClient().GetStringAsync(uri).Result;
-                            break;
-                        case "file":
-                            var filename = Uri.UnescapeDataString(uri.AbsolutePath);
-                            text = File.ReadAllText(filename);
-                            break;
-                        default:
-                            throw new FormatException(string.Format(TestJsonCmdletStrings.InvalidUriScheme, uri.Scheme));
-                    }
-
-                    return JsonSerializer.Deserialize<JsonSchema>(text);
-                }
-                catch (Exception e)
-                {
-                    throw new JsonSchemaReferenceResolutionException(e);
-                }
-            };
-
             string resolvedpath = string.Empty;
 
             try
@@ -93,10 +88,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _jschema = JsonSchema.FromText(Schema);
                     }
-                    catch (JsonException e)
+                    catch (AggregateException ae)
                     {
-                        Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, e);
-                        WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, Schema));
+                        // Even if only one exception is thrown, it is still wrapped in an AggregateException exception
+                        // https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
+                        ae.Handle(UnwrapException);
                     }
                 }
                 else if (SchemaFile != null)
@@ -106,10 +102,9 @@ namespace Microsoft.PowerShell.Commands
                         resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(SchemaFile);
                         _jschema = JsonSchema.FromFile(resolvedpath);
                     }
-                    catch (JsonException e)
+                    catch (AggregateException ae)
                     {
-                        Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, e);
-                        WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, SchemaFile));
+                        ae.Handle(UnwrapException);
                     }
                 }
             }
@@ -150,42 +145,21 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_jschema != null)
                 {
-                        var validationResults = _jschema.Validate(parsedJson, new ValidationOptions { OutputFormat = OutputFormat.Basic });
-                        result = validationResults.IsValid;
-                        if (!result)
+                    var validationResults = _jschema.Validate(parsedJson, new ValidationOptions{OutputFormat = OutputFormat.Basic});
+                    result = validationResults.IsValid;
+                    if (validationResults.NestedResults.Count != 0)
+                    {
+                        Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
+
+                        foreach (var nestedResult in validationResults.NestedResults.Where(x => x.Message != null))
                         {
-                            Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
-
-                            if (validationResults.Message != null)
-                            {
-                                ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
-                                errorRecord.ErrorDetails = new ErrorDetails(typeof(TestJsonCommand).Assembly, "TestJsonCmdletStrings", "InvalidJsonAgainstSchema", validationResults.Message, validationResults.InstanceLocation);
-                                WriteError(errorRecord);
-                            }
-
-                            if (validationResults.HasNestedResults)
-                            {
-                                foreach (var nestedResult in validationResults.NestedResults)
-                                {
-                                    if (nestedResult.Message == null)
-                                    {
-                                        continue;
-                                    }
-
-                                    ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
-                                    errorRecord.ErrorDetails = new ErrorDetails(typeof(TestJsonCommand).Assembly, "TestJsonCmdletStrings", "InvalidJsonAgainstSchema", nestedResult.Message, nestedResult.InstanceLocation);
-                                    WriteError(errorRecord);
-                                }
-                            }
+                            ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
+                            var message = $"{nestedResult.Message} at {nestedResult.InstanceLocation}";
+                            errorRecord.ErrorDetails = new ErrorDetails(message);
+                            WriteError(errorRecord);
                         }
+                    }
                 }
-            }
-            catch (JsonSchemaReferenceResolutionException jsonExc)
-            {
-                result = false;
-
-                Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, jsonExc);
-                WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, _jschema));
             }
             catch (Exception exc)
             {
