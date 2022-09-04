@@ -1,9 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Management.Automation.Internal;
 using System.Text;
 
@@ -37,6 +39,41 @@ namespace System.Management.Automation.Help
         /// Supported culture.
         /// </summary>
         internal CultureInfo Culture { get; set; }
+
+        /// <summary>
+        /// Enumerates fallback chain (parents) of the culture, including itself.
+        /// </summary>
+        /// <example>
+        /// en-GB => { en-GB, en }
+        /// zh-Hans-CN => { zh-Hans-CN, zh-Hans, zh }
+        /// </example>
+        /// <returns>An enumerable list of cultures.</returns>
+        internal static IEnumerable<CultureInfo> GetCultureFallbackChain(CultureInfo culture)
+        {
+            while (culture != null)
+            {
+                if (string.IsNullOrEmpty(culture.Name))
+                {
+                    yield break;
+                }
+
+                yield return culture;
+
+                culture = culture.Parent;
+            }
+        }
+
+        /// <summary>
+        /// Checks if a culture is supported.
+        /// </summary>
+        /// <param name="other">Culture to check.</param>
+        /// <returns>True if supported, false if not.</returns>
+        internal bool IsCultureSupported(CultureInfo other)
+        {
+            Debug.Assert(other != null);
+            // Check by name, as cultures created from different sources can sometime not match
+            return GetCultureFallbackChain(Culture).Any(fallback => fallback.Name == other.Name);
+        }
     }
 
     /// <summary>
@@ -104,17 +141,7 @@ namespace System.Management.Automation.Help
         internal bool IsCultureSupported(CultureInfo culture)
         {
             Debug.Assert(culture != null);
-
-            foreach (CultureSpecificUpdatableHelp updatableHelpItem in UpdatableHelpItems)
-            {
-                if (string.Equals(updatableHelpItem.Culture.Name, culture.Name,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return UpdatableHelpItems.Any(item => item.IsCultureSupported(culture));
         }
 
         /// <summary>

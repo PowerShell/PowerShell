@@ -293,20 +293,10 @@ namespace System.Management.Automation.Help
         internal IEnumerable<string> GetCurrentUICulture()
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
-
-            while (culture != null)
+            foreach (var fallback in CultureSpecificUpdatableHelp.GetCultureFallbackChain(culture))
             {
-                if (string.IsNullOrEmpty(culture.Name))
-                {
-                    yield break;
-                }
-
-                yield return culture.Name;
-
-                culture = culture.Parent;
+                yield return fallback.Name;
             }
-
-            yield break;
         }
 
         #region Help Metadata Retrieval
@@ -591,13 +581,11 @@ namespace System.Management.Automation.Help
 
             if (!string.IsNullOrEmpty(currentCulture))
             {
-                IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(
-                    globPatterns: new[] { currentCulture },
-                    options: WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
-
+                // TODO: dkaszews: linq
+                // TOOD: dkaszews CultureInfo currentCulture
                 for (int i = 0; i < updatableHelpItem.Length; i++)
                 {
-                    if (SessionStateUtilities.MatchesAnyWildcardPattern(updatableHelpItem[i].Culture.Name, patternList, true))
+                    if (updatableHelpItem[i].IsCultureSupported(new CultureInfo(currentCulture)))
                     {
                         helpInfo.HelpContentUriCollection.Add(new UpdatableHelpUri(moduleName, moduleGuid, updatableHelpItem[i].Culture, uri));
                     }
