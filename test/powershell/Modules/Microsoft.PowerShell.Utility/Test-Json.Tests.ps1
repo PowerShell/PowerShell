@@ -9,62 +9,62 @@ Describe "Test-Json" -Tags "CI" {
 
         $missingSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath no_such_file.json
 
-        $validSchemaJson = @"
+        $validSchemaJson = @'
             {
-            'description': 'A person',
-            'type': 'object',
-            'properties': {
-                'name': {'type': 'string'},
-                'hobbies': {
-                'type': 'array',
-                'items': {'type': 'string'}
+            "description": "A person",
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "hobbies": {
+                "type": "array",
+                "items": {"type": "string"}
                 }
                 }
             }
-"@
+'@
 
-        $invalidSchemaJson = @"
+        $invalidSchemaJson = @'
             {
-            'description',
-            'type': 'object',
-            'properties': {
-                'name': {'type': 'string'},
-                'hobbies': {
-                'type': 'array',
-                'items': {'type': 'string'}
+            "description",
+            "type": "object",
+            "properties": {
+                "name": {"type": "string"},
+                "hobbies": {
+                "type": "array",
+                "items": {"type": "string"}
                 }
                 }
             }
-"@
+'@
 
-        $validJson = @"
+        $validJson = @'
             {
-                'name': 'James',
-                'hobbies': ['.NET', 'Blogging', 'Reading', 'Xbox', 'LOLCATS']
+                "name": "James",
+                "hobbies": [".NET", "Blogging", "Reading", "Xbox", "LOLCATS"]
             }
-"@
+'@
 
-        $invalidTypeInJson = @"
+        $invalidTypeInJson = @'
             {
-                'name': 123,
-                'hobbies': ['.NET', 'Blogging', 'Reading', 'Xbox', 'LOLCATS']
+                "name": 123,
+                "hobbies": [".NET", "Blogging", "Reading", "Xbox", "LOLCATS"]
             }
-"@
+'@
 
-        $invalidTypeInJson2 = @"
+        $invalidTypeInJson2 = @'
             {
-                'name': 123,
-                'hobbies': [456, 'Blogging', 'Reading', 'Xbox', 'LOLCATS']
+                "name": 123,
+                "hobbies": [456, "Blogging", "Reading", "Xbox", "LOLCATS"]
             }
-"@
+'@
 
-        $invalidNodeInJson = @"
+        $invalidNodeInJson = @'
             {
-                'name': 'James',
-                'hobbies': ['.NET', 'Blogging', 'Reading', 'Xbox', 'LOLCATS']
+                "name": "James",
+                "hobbies": [".NET", "Blogging", "Reading", "Xbox", "LOLCATS"]
                 errorNode
             }
-"@
+'@
     }
 
     It "Missing JSON schema file doesn't exist" {
