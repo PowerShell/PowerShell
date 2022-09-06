@@ -614,7 +614,7 @@ Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
     }
 }
 
-Describe 'Help allows partial matches' -Tags 'CI', 'dkaszews' {
+Describe 'Help allows partial matches' -Tags 'CI' {
     BeforeAll {
         function Test-UpdateHelpAux($UICulture, $Pass)
         {
