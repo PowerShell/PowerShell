@@ -614,18 +614,21 @@ Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
     }
 }
 
-Describe 'Help allows partial matches' -Tags 'CI' {
+Describe 'Update-Help allows partial culture matches' -Tags 'CI' {
     BeforeAll {
         function Test-UpdateHelpAux($UICulture, $Pass)
         {
             # If null (in system culture tests), omit entirely
             $CultureArg = $UICulture ? @{ UICulture = $UICulture } : @{}
-            $ModuleName = 'Microsoft.PowerShell.Core'
-            $HelpContentPath = Join-Path $PSScriptRoot 'assets'
-            $ErrorAction = $Pass ? 'Stop' : 'SilentlyContinue'
-            $ErrorVariable = $null
+            $Args = @{
+                Module = 'Microsoft.PowerShell.Core'
+                SourcePath = Join-Path $PSScriptRoot 'assets'
+                Force = $true
+                ErrorAction = $Pass ? 'Stop' : 'SilentlyContinue'
+                ErrorVariable = 'ErrorVariable'
+            }
 
-            Update-Help -Module $ModuleName -SourcePath $HelpContentPath -Force @CultureArg -ErrorAction $ErrorAction -ErrorVariable 'ErrorVariable'
+            Update-Help @Args @CultureArg
 
             if (-not $Pass) {
                 $ErrorVariable | Should -Match 'Failed to update Help for the module.*'
