@@ -43,9 +43,11 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Enumerates fallback chain (parents) of the culture, including itself.
         /// </summary>
+        /// <param name="culture">Culture to enumerate</param>
         /// <example>
+        /// Examples:
         /// en-GB => { en-GB, en }
-        /// zh-Hans-CN => { zh-Hans-CN, zh-Hans, zh }
+        /// zh-Hans-CN => { zh-Hans-CN, zh-Hans, zh }.
         /// </example>
         /// <returns>An enumerable list of culture names.</returns>
         internal static IEnumerable<string> GetCultureFallbackChain(CultureInfo culture)
@@ -72,7 +74,7 @@ namespace System.Management.Automation.Help
         /// <returns>True if supported, false if not.</returns>
         internal bool IsCultureSupported(string cultureName)
         {
-            Debug.Assert(cultureName != null);
+            Debug.Assert(cultureName != null, $"{nameof(cultureName)} may not be null");
             return GetCultureFallbackChain(Culture).Any(fallback => fallback == cultureName);
         }
     }
@@ -141,7 +143,7 @@ namespace System.Management.Automation.Help
         /// <returns>True if supported, false if not.</returns>
         internal bool IsCultureSupported(string cultureName)
         {
-            Debug.Assert(cultureName != null);
+            Debug.Assert(cultureName != null, $"{nameof(cultureName)} may not be null");
             return UpdatableHelpItems.Any(item => item.IsCultureSupported(cultureName));
         }
 
