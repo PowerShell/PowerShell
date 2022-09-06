@@ -208,7 +208,6 @@ Describe "Get-Item environment provider on Windows with accidental case-variant 
 
 Describe 'Formatting for FileInfo objects' -Tags 'CI' {
     BeforeAll {
-        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRenderingFileInfo')))
         $extensionTests = [System.Collections.Generic.List[HashTable]]::new()
         foreach ($extension in @('.zip', '.tgz', '.tar', '.gz', '.nupkg', '.cab', '.7z', '.ps1', '.psd1', '.psm1', '.ps1xml')) {
             $extensionTests.Add(@{extension = $extension})
@@ -250,14 +249,6 @@ Describe 'Formatting for FileInfo objects' -Tags 'CI' {
 }
 
 Describe 'Formatting for FileInfo requiring admin' -Tags 'CI','RequireAdminOnWindows' {
-    BeforeAll {
-        $PSDefaultParameterValues.Add('It:Skip', (-not $EnabledExperimentalFeatures.Contains('PSAnsiRenderingFileInfo')))
-    }
-
-    AfterAll {
-        $PSDefaultParameterValues.Remove('It:Skip')
-    }
-
     It 'Symlink should have correct color' {
         $linkPath = Join-Path -Path $TestDrive -ChildPath 'link'
         $link = New-Item -ItemType SymbolicLink -Name 'link' -Value $TestDrive -Path $TestDrive
