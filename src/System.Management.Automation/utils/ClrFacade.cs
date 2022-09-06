@@ -54,13 +54,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return assemblies from the default load context and the 'individual' load contexts.
-        /// The 'individual' load contexts are the ones holding assemblies loaded via 'Assembly.Load(byte[])' and 'Assembly.LoadFile'.
-        /// Assemblies loaded in any custom load contexts are not consider visible to PowerShell to avoid type identity issues.
+        /// Return the assemblies from the default load context and the assemblies loaded from byte streams through the 'Assembly.Load(byte[])' API.
+        /// Assemblies that were loaded by 'Assembly.LoadFile' or loaded in any custom load contexts are not consider visible to PowerShell to avoid
+        /// the type identity issues. We do not discover assemblies loaded by 'Assembly.LoadFile', because this API is usually used by modules built
+        /// against 'netstandard2.0' or 'net462' to address assembly loading conflicts when working in the PowerShell Core environment.
         /// </summary>
         private static IEnumerable<Assembly> GetPSVisibleAssemblies()
         {
-            const string IndividualAssemblyLoadContext = "System.Runtime.Loader.IndividualAssemblyLoadContext";
+            const string LoadContextFullTypeName = "System.Runtime.Loader.IndividualAssemblyLoadContext";
+            const string ByteStreamLoadContextName = "Assembly.Load(byte[], ...)";
 
             foreach (Assembly assembly in AssemblyLoadContext.Default.Assemblies)
             {
@@ -72,7 +74,8 @@ namespace System.Management.Automation
 
             foreach (AssemblyLoadContext context in AssemblyLoadContext.All)
             {
-                if (IndividualAssemblyLoadContext.Equals(context.GetType().FullName, StringComparison.Ordinal))
+                if (LoadContextFullTypeName.Equals(context.GetType().FullName, StringComparison.Ordinal)
+                    && ByteStreamLoadContextName.Equals(context.Name, StringComparison.Ordinal))
                 {
                     foreach (Assembly assembly in context.Assemblies)
                     {

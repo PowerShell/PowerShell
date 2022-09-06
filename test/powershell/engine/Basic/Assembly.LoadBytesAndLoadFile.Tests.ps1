@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "Assembly loaded in IndividualAssemblyLoadContext should be visible to PowerShell" -Tags "CI" {
+Describe "Discoverability of assemblies loaded by 'Assembly.Load(byte[])' and 'Assembly.LoadFile'" -Tags "CI" {
     BeforeAll {
         $code1 = @'
         namespace LoadBytes {
@@ -39,9 +39,13 @@ Describe "Assembly loaded in IndividualAssemblyLoadContext should be visible to 
         [LoadBytes.MyLoadBytesTest]::GetName() | Should -BeExactly "MyLoadBytesTest"
     }
 
-    It "Assembly loaded via 'Assembly.LoadFile' should be discoverable" {
-        [System.Reflection.Assembly]::LoadFile($loadFileFile) > $null
+    It "Assembly loaded via 'Assembly.LoadFile' should NOT be discoverable" {
+        ## Reflection should work fine.
+        $asm = [System.Reflection.Assembly]::LoadFile($loadFileFile)
+        $type = $asm.GetType('LoadFile.MyLoadFileTest')
+        $type::GetName() | Should -BeExactly "MyLoadFileTest"
 
-        [LoadFile.MyLoadFileTest]::GetName() | Should -BeExactly "MyLoadFileTest"
+        ## Type resolution should not work.
+        { [LoadFile.MyLoadFileTest] } | Should -Throw -ErrorId "TypeNotFound"
     }
 }
