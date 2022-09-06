@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_jschema != null)
                 {
-                    var validationResults = _jschema.Validate(parsedJson, new ValidationOptions{OutputFormat = OutputFormat.Basic});
+                    var validationResults = _jschema.Validate(parsedJson, new ValidationOptions { OutputFormat = OutputFormat.Basic } );
                     result = validationResults.IsValid;
                     if (validationResults.NestedResults.Count != 0)
                     {
