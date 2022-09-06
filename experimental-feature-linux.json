@@ -3,7 +3,6 @@
   "PSAnsiRenderingFileInfo",
   "PSCleanBlock",
   "PSCommandNotFoundSuggestion",
-  "PSExec",
   "PSLoadAssemblyFromNativeCode",
   "PSNativeCommandArgumentPassing",
   "PSNativeCommandErrorActionPreference",
