@@ -615,6 +615,28 @@ Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
 }
 
 Describe 'Help allows partial matches' -Tags 'CI', 'dkaszews' {
+    BeforeAll {
+        function Test-UpdateHelpAux($UICulture, $Pass)
+        {
+            # If null (in system culture tests), omit entirely
+            $CultureArg = $UICulture ? @{ UICulture = $UICulture } : @{}
+            $ModuleName = 'Microsoft.PowerShell.Core'
+            $HelpContentPath = Join-Path $PSScriptRoot 'assets'
+            $ErrorAction = $Pass ? 'Stop' : 'SilentlyContinue'
+            $ErrorVariable = $null
+
+            Update-Help -Module $ModuleName -SourcePath $HelpContentPath -Force @CultureArg -ErrorAction $ErrorAction -ErrorVariable 'ErrorVariable'
+
+            if (-not $Pass) {
+                $ErrorVariable | Should -Match 'Failed to update Help for the module.*'
+            }
+        }
+    }
+
+    AfterEach {
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('CurrentUICultre', $null)
+    }
+
     It 'Checks culture match against en-US: <UICulture>' -TestCases @(
         @{ UICulture = 'en-US' }
         @{ UICulture = 'en' }
@@ -623,15 +645,19 @@ Describe 'Help allows partial matches' -Tags 'CI', 'dkaszews' {
     ) {
         param($UICulture, $Pass = $true)
 
-        $ModuleName = 'Microsoft.PowerShell.Core'
-        $HelpContentPath = Join-Path $PSScriptRoot 'assets'
-        $ErrorAction = $Pass ? 'Stop' : 'SilentlyContinue'
-        $ErrorVariable = $null
+        Test-UpdateHelpAux $UICulture $Pass
+    }
 
-        Update-Help -Module $ModuleName -SourcePath $HelpContentPath -Force -UICulture $UICulture -ErrorAction $ErrorAction -ErrorVariable 'ErrorVariable'
+    # When using system culture, "en-GB" will use "en" as fallback, so passes
+    It 'Checks system culture match against en-US: <UICulture>' -TestCases @(
+        @{ UICulture = 'en-US' }
+        @{ UICulture = 'en' }
+        @{ UICulture = 'en-GB' }
+        @{ UICulture = 'de-DE'; Pass = $false }
+    ) {
+        param($UICulture, $Pass = $true)
 
-        if (-not $Pass) {
-            $ErrorVariable | Should -Match 'Failed to update Help for the module.*'
-        }
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('CurrentUICulture', [System.Globalization.CultureInfo]::new($UICulture))
+        Test-UpdateHelpAux $null $Pass
     }
 }

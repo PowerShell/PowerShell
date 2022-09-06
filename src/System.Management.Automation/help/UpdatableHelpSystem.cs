@@ -293,6 +293,13 @@ namespace System.Management.Automation.Help
         internal IEnumerable<string> GetCurrentUICulture()
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
+
+            // Allow tests to override system culture
+            if (InternalTestHooks.CurrentUICulture != null)
+            {
+                culture = InternalTestHooks.CurrentUICulture;
+            }
+
             return CultureSpecificUpdatableHelp.GetCultureFallbackChain(culture);
         }
 
