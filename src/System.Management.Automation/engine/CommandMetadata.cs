@@ -865,13 +865,10 @@ dynamicparam
             }
 
             string cleanBlock = string.Empty;
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSCleanBlockFeatureName))
-            {
-                cleanBlock = string.Format(CultureInfo.InvariantCulture, @"
+            cleanBlock = string.Format(CultureInfo.InvariantCulture, @"
 clean
 {{{0}}}
 ", GetCleanBlock());
-            }
 
             string result = string.Format(CultureInfo.InvariantCulture, @"{0}
 param({1})
