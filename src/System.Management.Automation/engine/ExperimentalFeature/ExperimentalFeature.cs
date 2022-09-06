@@ -26,7 +26,6 @@ namespace System.Management.Automation
         internal const string PSRemotingSSHTransportErrorHandling = "PSRemotingSSHTransportErrorHandling";
         internal const string PSCleanBlockFeatureName = "PSCleanBlock";
         internal const string PSAMSIMethodInvocationLogging = "PSAMSIMethodInvocationLogging";
-        internal const string PSExecFeatureName = "PSExec";
         internal const string PSStrictModeAssignment = "PSStrictModeAssignment";
 
         #endregion
@@ -137,9 +136,6 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSAMSIMethodInvocationLogging,
                     description: "Provides AMSI notification of .NET method invocations."),
-                new ExperimentalFeature(
-                    name: PSExecFeatureName,
-                    description: "Add 'exec' built-in command on Linux and macOS"),
                 new ExperimentalFeature(
                     name: PSStrictModeAssignment,
                     description: "Add support of setting Strict-Mode with Invoke-Command"),

@@ -4,7 +4,7 @@
 Describe 'Switch-Process tests for Unix' -Tags 'CI' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (-not [ExperimentalFeature]::IsEnabled('PSExec') -or $IsWindows)
+        if (-not $IsWindows)
         {
             $PSDefaultParameterValues['It:Skip'] = $true
             return
