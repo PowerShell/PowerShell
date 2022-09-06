@@ -30,7 +30,7 @@ function UpdateHelpFromLocalContentPath {
         throw "Unable to find help content at '$helpContentPath'"
     }
 
-    # Test files are 'en-US', set explicit culture so test does not help on non-US systems
+    # Test files are 'en-US', set explicit culture so test does not fail on non-US systems
     Update-Help -Module $ModuleName -SourcePath $helpContentPath -UICulture 'en-US' -Force -ErrorAction Stop -Scope $Scope
 }
 
@@ -611,5 +611,27 @@ Describe 'help renders when using a PAGER with a space in the path' -Tags 'CI' {
 
     It 'help renders when using a PAGER with a space in the path' {
         help Get-Command | Should -Be "R2V0LUNvbW1hbmQ="
+    }
+}
+
+Describe 'Help allows partial matches' -Tags 'CI', 'dkaszews' {
+    It 'Checks culture match against en-US: <UICulture>' -TestCases @(
+        @{ UICulture = 'en-US' }
+        @{ UICulture = 'en' }
+        @{ UICulture = 'en-GB'; Pass = $false }
+        @{ UICulture = 'de-DE'; Pass = $false }
+    ) {
+        param($UICulture, $Pass = $true)
+
+        $ModuleName = 'Microsoft.PowerShell.Core'
+        $HelpContentPath = Join-Path $PSScriptRoot 'assets'
+        $ErrorAction = $Pass ? 'Stop' : 'SilentlyContinue'
+        $ErrorVariable = $null
+
+        Update-Help -Module $ModuleName -SourcePath $HelpContentPath -Force -UICulture $UICulture -ErrorAction $ErrorAction -ErrorVariable 'ErrorVariable'
+
+        if (-not $Pass) {
+            $ErrorVariable | Should -Match 'Failed to update Help for the module.*'
+        }
     }
 }
