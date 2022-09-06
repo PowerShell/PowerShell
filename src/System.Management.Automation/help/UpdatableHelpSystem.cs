@@ -293,10 +293,7 @@ namespace System.Management.Automation.Help
         internal IEnumerable<string> GetCurrentUICulture()
         {
             CultureInfo culture = CultureInfo.CurrentUICulture;
-            foreach (var fallback in CultureSpecificUpdatableHelp.GetCultureFallbackChain(culture))
-            {
-                yield return fallback.Name;
-            }
+            return CultureSpecificUpdatableHelp.GetCultureFallbackChain(culture);
         }
 
         #region Help Metadata Retrieval
@@ -581,11 +578,9 @@ namespace System.Management.Automation.Help
 
             if (!string.IsNullOrEmpty(currentCulture))
             {
-                // TODO: dkaszews: linq
-                // TOOD: dkaszews CultureInfo currentCulture
                 for (int i = 0; i < updatableHelpItem.Length; i++)
                 {
-                    if (updatableHelpItem[i].IsCultureSupported(new CultureInfo(currentCulture)))
+                    if (updatableHelpItem[i].IsCultureSupported(currentCulture))
                     {
                         helpInfo.HelpContentUriCollection.Add(new UpdatableHelpUri(moduleName, moduleGuid, updatableHelpItem[i].Culture, uri));
                     }

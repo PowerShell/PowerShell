@@ -47,9 +47,11 @@ namespace System.Management.Automation.Help
         /// en-GB => { en-GB, en }
         /// zh-Hans-CN => { zh-Hans-CN, zh-Hans, zh }
         /// </example>
-        /// <returns>An enumerable list of cultures.</returns>
-        internal static IEnumerable<CultureInfo> GetCultureFallbackChain(CultureInfo culture)
+        /// <returns>An enumerable list of culture names.</returns>
+        internal static IEnumerable<string> GetCultureFallbackChain(CultureInfo culture)
         {
+            // We use just names instead because comparing two CultureInfo objects
+            // can fail if they are created using different means
             while (culture != null)
             {
                 if (string.IsNullOrEmpty(culture.Name))
@@ -57,7 +59,7 @@ namespace System.Management.Automation.Help
                     yield break;
                 }
 
-                yield return culture;
+                yield return culture.Name;
 
                 culture = culture.Parent;
             }
@@ -66,13 +68,12 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Checks if a culture is supported.
         /// </summary>
-        /// <param name="other">Culture to check.</param>
+        /// <param name="cultureName">Name of the culture to check.</param>
         /// <returns>True if supported, false if not.</returns>
-        internal bool IsCultureSupported(CultureInfo other)
+        internal bool IsCultureSupported(string cultureName)
         {
-            Debug.Assert(other != null);
-            // Check by name, as cultures created from different sources can sometime not match
-            return GetCultureFallbackChain(Culture).Any(fallback => fallback.Name == other.Name);
+            Debug.Assert(cultureName != null);
+            return GetCultureFallbackChain(Culture).Any(fallback => fallback == cultureName);
         }
     }
 
@@ -136,12 +137,12 @@ namespace System.Management.Automation.Help
         /// <summary>
         /// Checks if a culture is supported.
         /// </summary>
-        /// <param name="culture">Culture to check.</param>
+        /// <param name="cultureName">Name of the culture to check.</param>
         /// <returns>True if supported, false if not.</returns>
-        internal bool IsCultureSupported(CultureInfo culture)
+        internal bool IsCultureSupported(string cultureName)
         {
-            Debug.Assert(culture != null);
-            return UpdatableHelpItems.Any(item => item.IsCultureSupported(culture));
+            Debug.Assert(cultureName != null);
+            return UpdatableHelpItems.Any(item => item.IsCultureSupported(cultureName));
         }
 
         /// <summary>

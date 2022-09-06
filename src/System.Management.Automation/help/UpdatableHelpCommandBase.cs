@@ -665,7 +665,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Culture check
-            if (!newHelpInfo.IsCultureSupported(culture))
+            if (!newHelpInfo.IsCultureSupported(culture.Name))
             {
                 throw new UpdatableHelpSystemException("HelpCultureNotSupported",
                     StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupported,
