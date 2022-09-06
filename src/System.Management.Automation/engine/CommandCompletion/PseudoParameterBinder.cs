@@ -1233,6 +1233,7 @@ namespace System.Management.Automation.Language
                                 {
                                     value = parameter.Argument.Extent.Text;
                                 }
+
                                 paramToAdd = CommandParameterInternal.CreateParameterWithArgument(
                                     parameterAst: null,
                                     parameterName: parameter.ParameterName,
@@ -1241,6 +1242,7 @@ namespace System.Management.Automation.Language
                                     value: value,
                                     spaceAfterParameter:false);
                             }
+
                             commandProcessor.AddParameter(paramToAdd);
                         }
 
@@ -1272,6 +1274,7 @@ namespace System.Management.Automation.Language
                             {
                                 valueToAdd = expression.Extent.Text;
                             }
+
                             expressionToAdd = expression;
                         }
                         else
