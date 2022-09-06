@@ -21,7 +21,6 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
-        internal const string PSNativeCommandArgumentPassingFeatureName = "PSNativeCommandArgumentPassing";
         internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
         internal const string PSRemotingSSHTransportErrorHandling = "PSRemotingSSHTransportErrorHandling";
         internal const string PSCleanBlockFeatureName = "PSCleanBlock";
@@ -116,9 +115,6 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
-                new ExperimentalFeature(
-                    name: PSNativeCommandArgumentPassingFeatureName,
-                    description: "Use ArgumentList when invoking a native command"),
                 new ExperimentalFeature(
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),

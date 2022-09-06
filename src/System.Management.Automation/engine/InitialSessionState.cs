@@ -4161,13 +4161,7 @@ param(
         }
         else {
             $pagerCommand = 'less'
-            # PSNativeCommandArgumentPassing arguments should be constructed differently.
-            if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
-                $pagerArgs = '-s','-P','Page %db?B of %D:.\. Press h for help or q to quit\.'
-            }
-            else {
-                $pagerArgs = '-Ps""Page %db?B of %D:.\. Press h for help or q to quit\.$""'
-            }
+            $pagerArgs = '-s','-P','Page %db?B of %D:.\. Press h for help or q to quit\.'
         }
 
         # Respect PAGER environment variable which allows user to specify a custom pager.
@@ -4207,16 +4201,7 @@ param(
             $consoleWidth = [System.Math]::Max([System.Console]::WindowWidth, 20)
 
             if ($pagerArgs) {
-                # Start the pager arguments directly if the PSNativeCommandArgumentPassing feature is enabled.
-                # Otherwise, supply pager arguments to an application without any PowerShell parsing of the arguments.
-                # Leave environment variable to help user debug arguments supplied in $env:PAGER.
-                if ($EnabledExperimentalFeatures -contains 'PSNativeCommandArgumentPassing') {
-                    $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand $pagerArgs
-                }
-                else {
-                    $env:__PSPAGER_ARGS = $pagerArgs
-                    $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand --% %__PSPAGER_ARGS%
-                }
+                $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand $pagerArgs
             }
             else {
                 $help | Out-String -Stream -Width ($consoleWidth - 1) | & $pagerCommand
@@ -4492,16 +4477,13 @@ end {
                         new ArgumentTypeConverterAttribute(typeof(bool))));
             }
 
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSNativeCommandArgumentPassingFeatureName))
-            {
-                builtinVariables.Add(
-                    new SessionStateVariableEntry(
-                        SpecialVariables.NativeArgumentPassing,
-                        Platform.IsWindows ? NativeArgumentPassingStyle.Windows : NativeArgumentPassingStyle.Standard,
-                        RunspaceInit.NativeCommandArgumentPassingDescription,
-                        ScopedItemOptions.None,
-                        new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
-            }
+            builtinVariables.Add(
+                new SessionStateVariableEntry(
+                    SpecialVariables.NativeArgumentPassing,
+                    Platform.IsWindows ? NativeArgumentPassingStyle.Windows : NativeArgumentPassingStyle.Standard,
+                    RunspaceInit.NativeCommandArgumentPassingDescription,
+                    ScopedItemOptions.None,
+                    new ArgumentTypeConverterAttribute(typeof(NativeArgumentPassingStyle))));
 
             BuiltInVariables = builtinVariables.ToArray();
         }
