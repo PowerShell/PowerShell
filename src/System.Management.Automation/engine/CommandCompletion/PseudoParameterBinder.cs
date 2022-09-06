@@ -1240,7 +1240,7 @@ namespace System.Management.Automation.Language
                                     parameterText: parameter.Extent.Text,
                                     argumentAst: null,
                                     value: value,
-                                    spaceAfterParameter:false);
+                                    spaceAfterParameter: false);
                             }
 
                             commandProcessor.AddParameter(paramToAdd);
