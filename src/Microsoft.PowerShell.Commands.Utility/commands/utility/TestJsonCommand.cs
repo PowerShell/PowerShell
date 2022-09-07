@@ -6,9 +6,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Security;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Json.Schema;
 
@@ -78,6 +80,27 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            SchemaRegistry.Global.Fetch = uri =>
+            {
+                string text;
+                switch (uri.Scheme)
+                {
+                    case "http":
+                    case "https":
+                        text = new HttpClient().GetStringAsync(uri).Result;
+                        break;
+                    case "file":
+                        var filename = Uri.UnescapeDataString(uri.AbsolutePath);
+                        text = File.ReadAllText(filename);
+                        break;
+                    default:
+                        throw new FormatException(
+                            $"URI scheme '{uri.Scheme}' is not supported.  Only HTTP(S) and local file system URIs are allowed.");
+                }
+
+                return JsonSerializer.Deserialize<JsonSchema>(text);
+            };
+
             string resolvedpath = string.Empty;
 
             try
