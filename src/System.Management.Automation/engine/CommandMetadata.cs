@@ -864,12 +864,6 @@ dynamicparam
 ", GetDynamicParamBlock());
             }
 
-            string cleanBlock = string.Empty;
-            cleanBlock = string.Format(CultureInfo.InvariantCulture, @"
-clean
-{{{0}}}
-", GetCleanBlock());
-
             string result = string.Format(CultureInfo.InvariantCulture, @"{0}
 param({1})
 
@@ -881,7 +875,9 @@ process
 
 end
 {{{5}}}
-{6}
+
+clean
+{{{6}}}
 <#
 {7}
 #>
@@ -892,7 +888,7 @@ end
                 GetBeginBlock(),
                 GetProcessBlock(),
                 GetEndBlock(),
-                cleanBlock,
+                GetCleanBlock(),
                 CodeGeneration.EscapeBlockCommentContent(helpComment));
 
             return result;
