@@ -204,8 +204,6 @@ namespace System.Management.Automation
                     // The value is not convertable send back Legacy
                     return NativeArgumentPassingStyle.Legacy;
                 }
-
-                return NativeArgumentPassingStyle.Legacy;
             }
         }
 
