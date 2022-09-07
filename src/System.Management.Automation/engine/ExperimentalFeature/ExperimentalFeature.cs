@@ -114,9 +114,6 @@ namespace System.Management.Automation
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
                 new ExperimentalFeature(
-                    name: "PSSubsystemPluginModel",
-                    description: "A plugin model for registering and un-registering PowerShell subsystems"),
-                new ExperimentalFeature(
                     name: PSNativeCommandArgumentPassingFeatureName,
                     description: "Use ArgumentList when invoking a native command"),
                 new ExperimentalFeature(

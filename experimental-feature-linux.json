@@ -8,6 +8,5 @@
   "PSNativeCommandArgumentPassing",
   "PSNativeCommandErrorActionPreference",
   "PSRemotingSSHTransportErrorHandling",
-  "PSStrictModeAssignment",
-  "PSSubsystemPluginModel"
+  "PSStrictModeAssignment"
 ]

@@ -5335,11 +5335,7 @@ end {
                 { "Format-Default",                    new SessionStateCmdletEntry("Format-Default", typeof(FormatDefaultCommand), helpFile) },
             };
 
-            if (ExperimentalFeature.IsEnabled("PSSubsystemPluginModel"))
-            {
-                cmdlets.Add("Get-PSSubsystem", new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile));
-            }
-
+            cmdlets.Add("Get-PSSubsystem", new SessionStateCmdletEntry("Get-PSSubsystem", typeof(Subsystem.GetPSSubsystemCommand), helpFile));
 #if UNIX
             if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
             {
