@@ -1819,37 +1819,14 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     string error;
 
-                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSRemotingSSHTransportErrorHandling))
+                    // Blocking read from StdError stream
+                    error = reader.ReadLine();
+
+                    if (error == null)
                     {
-                        // Blocking read from StdError stream
-                        error = reader.ReadLine();
-
-                        if (error == null)
-                        {
-                            // Stream is closed unexpectedly.
-                            throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
-                        }
-
-                        if (error.Length == 0)
-                        {
-                            // Ignore
-                            continue;
-                        }
-
-                        try
-                        {
-                            // Messages in error stream from ssh are unreliable, and may just be warnings or
-                            // banner text.
-                            // So just report the messages but don't act on them.
-                            System.Console.WriteLine(error);
-                        }
-                        catch (IOException)
-                        { }
-
-                        continue;
+                        // Stream is closed unexpectedly.
+                        throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
                     }
-
-                    error = ReadError(reader);
 
                     if (error.Length == 0)
                     {
@@ -1857,12 +1834,17 @@ namespace System.Management.Automation.Remoting.Client
                         continue;
                     }
 
-                    // Any SSH client error results in a broken session.
-                    PSRemotingTransportException psrte = new PSRemotingTransportException(
-                        PSRemotingErrorId.IPCServerProcessReportedError,
-                        RemotingErrorIdStrings.IPCServerProcessReportedError,
-                        StringUtil.Format(RemotingErrorIdStrings.SSHClientEndWithErrorMessage, error));
-                    HandleSSHError(psrte);
+                    try
+                    {
+                        // Messages in error stream from ssh are unreliable, and may just be warnings or
+                        // banner text.
+                        // So just report the messages but don't act on them.
+                        System.Console.WriteLine(error);
+                    }
+                    catch (IOException)
+                    { }
+
+                    continue;
                 }
             }
             catch (ObjectDisposedException)
