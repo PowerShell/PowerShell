@@ -317,6 +317,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet",       "Get-PSSessionCapability",          "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Get-PSSessionConfiguration",       "",                                 $($FullCLR -or $CoreWindows              ),     "",                     "",                     "None"
 "Cmdlet",       "Get-PSSnapin",                     "",                                 $($FullCLR                               ),     "",                     "",                     ""
+"Cmdlet",       "Get-PSSubSystem",                  "",                                 $(             $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Random",                       "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-Runspace",                     "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
 "Cmdlet",       "Get-RunspaceDebug",                "",                                 $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     "None"
