@@ -1843,8 +1843,6 @@ namespace System.Management.Automation.Remoting.Client
                     }
                     catch (IOException)
                     { }
-
-                    continue;
                 }
             }
             catch (ObjectDisposedException)
@@ -1868,55 +1866,6 @@ namespace System.Management.Automation.Remoting.Client
         {
             RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
             CloseConnection();
-        }
-
-        private static string ReadError(StreamReader reader)
-        {
-            // Blocking read from StdError stream
-            string error = reader.ReadLine();
-
-            if (error == null)
-            {
-                // Stream is closed unexpectedly.
-                throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
-            }
-
-            if ((error.Length == 0) ||
-                error.Contains("WARNING:", StringComparison.OrdinalIgnoreCase))
-            {
-                // Handle as interactive warning message
-                Console.WriteLine(error);
-                return string.Empty;
-            }
-
-            // SSH may return a multi-line error message.
-            // The StdError pipe stream is open ended causing StreamReader read operations to block
-            // if there is no incoming data.  Since we don't know how many error message lines there
-            // will be we use an asynchronous read with timeout to prevent blocking indefinitely.
-            System.Text.StringBuilder sb = new Text.StringBuilder(error);
-            var running = true;
-            while (running)
-            {
-                try
-                {
-                    var task = reader.ReadLineAsync();
-                    if (task.Wait(1000) && (task.Result != null))
-                    {
-                        sb.Append(Environment.NewLine);
-                        sb.Append(task.Result);
-                    }
-                    else
-                    {
-                        running = false;
-                    }
-                }
-                catch (Exception)
-                {
-                    running = false;
-                }
-            }
-
-            return sb.ToString();
         }
 
         private void StartReaderThread(
