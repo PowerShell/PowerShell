@@ -4,7 +4,7 @@
 Describe 'Switch-Process tests for Unix' -Tags 'CI' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (-not $IsWindows)
+        if ($IsWindows)
         {
             $PSDefaultParameterValues['It:Skip'] = $true
             return
@@ -53,7 +53,7 @@ Describe 'Switch-Process tests for Unix' -Tags 'CI' {
 Describe 'Switch-Process for Windows' {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if (-not $IsWindows)
+        if (!$IsWindows)
         {
             $PSDefaultParameterValues['It:Skip'] = $true
             return
