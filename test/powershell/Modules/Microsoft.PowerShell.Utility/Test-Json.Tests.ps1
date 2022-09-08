@@ -172,7 +172,7 @@ Describe "Test-Json" -Tags "CI" {
         # Exactly one type should match
         $types = 'string', 'number', 'boolean', 'null', 'array', 'object'
         $types | Where-Object {
-            $schema = '{ "type": "$_" }'
+            $schema = "{ `"type`": `"$_`" }"
             Test-Json -Json $value -Schema $schema -ErrorAction SilentlyContinue
         } | Should -Be $expected
     }
