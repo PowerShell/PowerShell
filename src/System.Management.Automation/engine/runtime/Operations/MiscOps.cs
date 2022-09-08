@@ -3561,8 +3561,7 @@ namespace System.Management.Automation
                 return "PSObject{}";
             }
 
-            string value = baseObj.ToString();
-            return arg is PSObject ? $"PSObject{{{value}}}" : value;
+            return baseObj.ToString();
         }
 
         internal static void LogMemberInvocation(string targetName, string name, object[] args)
