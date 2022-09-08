@@ -170,16 +170,29 @@ namespace Microsoft.PowerShell.Commands
                 {
                     var validationResults = _jschema.Validate(parsedJson, new ValidationOptions { OutputFormat = OutputFormat.Basic });
                     result = validationResults.IsValid;
-                    if (validationResults.NestedResults.Count != 0)
+                    if (!result)
                     {
                         Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
 
-                        foreach (var nestedResult in validationResults.NestedResults.Where(x => x.Message != null))
+                        if (validationResults.Message != null)
                         {
-                            ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
-                            var message = $"{nestedResult.Message} at {nestedResult.InstanceLocation}";
+                            ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema",
+                                ErrorCategory.InvalidData, null);
+                            var message = $"{validationResults.Message} at {validationResults.InstanceLocation}";
                             errorRecord.ErrorDetails = new ErrorDetails(message);
                             WriteError(errorRecord);
+                        }
+
+                        if (validationResults.HasNestedResults)
+                        {
+                            foreach (var nestedResult in validationResults.NestedResults.Where(x => x.Message != null))
+                            {
+                                ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema",
+                                    ErrorCategory.InvalidData, null);
+                                var message = $"{nestedResult.Message} at {nestedResult.InstanceLocation}";
+                                errorRecord.ErrorDetails = new ErrorDetails(message);
+                                WriteError(errorRecord);
+                            }
                         }
                     }
                 }
