@@ -3545,25 +3545,6 @@ namespace System.Management.Automation
             }
         );
 
-        private static string StringifyArgument(object arg)
-        {
-            object baseObj = PSObject.Base(arg);
-
-            if (baseObj is null)
-            {
-                // The argument is null or AutomationNull.Value.
-                return "null";
-            }
-
-            if (baseObj is PSObject)
-            {
-                // The argument is a PSObject instance without a base object.
-                return "PSObject{}";
-            }
-
-            return baseObj.ToString();
-        }
-
         internal static void LogMemberInvocation(string targetName, string name, object[] args)
         {
             try
@@ -3573,7 +3554,16 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < args.Length; i++)
                 {
-                    string value = StringifyArgument(args[i]);
+                    object baseObj = PSObject.Base(args[i]);
+                    string value = baseObj switch
+                    {
+                        // The argument is null or AutomationNull.Value.
+                        null => "null",
+                        // The argument is a pure PSObject without a base object.
+                        PSObject => "PSObject{}",
+                        // Convert the base object to string.
+                        _ => baseObj.ToString()
+                    };
 
                     if (i > 0)
                     {
