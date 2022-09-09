@@ -13,6 +13,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -3545,6 +3546,29 @@ namespace System.Management.Automation
             }
         );
 
+        private static string ArgumentToString(object arg)
+        {
+            object baseObj = PSObject.Base(arg);
+            Type baseType = baseObj?.GetType();
+
+            switch (baseObj)
+            {
+                // The argument is null or AutomationNull.Value.
+                case null: return "null";
+
+                // The argument is a pure PSObject without a base object.
+                case PSObject: return "PSObject{}";
+
+                // The argument is not a PSObject, or is a PSObject with a base object.
+                case string:
+                case BigInteger:
+                case var _ when baseType.IsEnum || baseType.IsPrimitive:
+                    return baseObj.ToString();
+
+                default: return baseType.FullName;
+            }
+        }
+
         internal static void LogMemberInvocation(string targetName, string name, object[] args)
         {
             try
@@ -3554,16 +3578,7 @@ namespace System.Management.Automation
 
                 for (int i = 0; i < args.Length; i++)
                 {
-                    object baseObj = PSObject.Base(args[i]);
-                    string value = baseObj switch
-                    {
-                        // The argument is null or AutomationNull.Value.
-                        null => "null",
-                        // The argument is a pure PSObject without a base object.
-                        PSObject => "PSObject{}",
-                        // The argument is not a PSObject, or is a PSObject with a base object.
-                        _ => baseObj.ToString()
-                    };
+                    string value = ArgumentToString(args[i]);
 
                     if (i > 0)
                     {
