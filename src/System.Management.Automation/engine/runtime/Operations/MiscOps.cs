@@ -3561,7 +3561,7 @@ namespace System.Management.Automation
                         null => "null",
                         // The argument is a pure PSObject without a base object.
                         PSObject => "PSObject{}",
-                        // Convert the base object to string.
+                        // The argument is not a PSObject, or is a PSObject with a base object.
                         _ => baseObj.ToString()
                     };
 
