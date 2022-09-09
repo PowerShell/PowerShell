@@ -3549,29 +3549,33 @@ namespace System.Management.Automation
         private static string ArgumentToString(object arg)
         {
             object baseObj = PSObject.Base(arg);
-            Type baseType = baseObj?.GetType();
-
-            switch (baseObj)
+            if (baseObj is null)
             {
                 // The argument is null or AutomationNull.Value.
-                case null: return "null";
-
-                // The argument is a pure PSObject without a base object.
-                case PSObject: return "PSObject{}";
-
-                // The argument is not a PSObject, or is a PSObject with a base object.
-                case string:
-                case var _ when baseType.IsEnum || baseType.IsPrimitive:
-                case Guid:
-                case Uri:
-                case Version:
-                case SemanticVersion:
-                case BigInteger:
-                case decimal:
-                    return baseObj.ToString();
-
-                default: return baseType.FullName;
+                return "null";
             }
+
+            // The comparisons below are ordered by the likelihood of arguments being of those types.
+            if (baseObj is string str)
+            {
+                return str;
+            }
+
+            // Special case some types to call 'ToString' on the object. For the rest, we return its
+            // full type name to avoid calling a potentially expensive 'ToString' implementation.
+            Type baseType = baseObj.GetType();
+            if (baseType.IsEnum || baseType.IsPrimitive
+                || baseType == typeof(Guid)
+                || baseType == typeof(Uri)
+                || baseType == typeof(Version)
+                || baseType == typeof(SemanticVersion)
+                || baseType == typeof(BigInteger)
+                || baseType == typeof(decimal))
+            {
+                return baseObj.ToString();
+            }
+
+            return baseType.FullName;
         }
 
         internal static void LogMemberInvocation(string targetName, string name, object[] args)
