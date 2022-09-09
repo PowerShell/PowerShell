@@ -55,27 +55,6 @@ namespace Microsoft.PowerShell.Commands
         private JsonSchema _jschema;
 
         /// <summary>
-        /// Process all exceptions in the AggregateException.
-        /// Unwrap TargetInvocationException if any and
-        /// rethrow inner exception without losing the stack trace.
-        /// </summary>
-        /// <param name="e">AggregateException to be unwrapped.</param>
-        /// <returns>Return value is unreachable since we always rethrow.</returns>
-        private static bool UnwrapException(Exception e)
-        {
-            if (e.InnerException != null && e is TargetInvocationException)
-            {
-                ExceptionDispatchInfo.Capture(e.InnerException).Throw();
-            }
-            else
-            {
-                ExceptionDispatchInfo.Capture(e).Throw();
-            }
-
-            return true;
-        }
-
-        /// <summary>
         /// Prepare a JSON schema.
         /// </summary>
         protected override void BeginProcessing()
@@ -111,11 +90,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _jschema = JsonSchema.FromText(Schema);
                     }
-                    catch (AggregateException ae)
+                    catch (JsonException e)
                     {
-                        // Even if only one exception is thrown, it is still wrapped in an AggregateException exception
-                        // https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
-                        ae.Handle(UnwrapException);
+                        ExceptionDispatchInfo.Capture(e).Throw();
                     }
                 }
                 else if (SchemaFile != null)
@@ -125,9 +102,9 @@ namespace Microsoft.PowerShell.Commands
                         resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(SchemaFile);
                         _jschema = JsonSchema.FromFile(resolvedpath);
                     }
-                    catch (AggregateException ae)
+                    catch (JsonException e)
                     {
-                        ae.Handle(UnwrapException);
+                        ExceptionDispatchInfo.Capture(e).Throw();
                     }
                 }
             }
