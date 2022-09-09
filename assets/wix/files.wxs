@@ -3144,33 +3144,6 @@
       <Component Id="cmp42A739F2AAC24D729DDBCAA096B8C55A">
         <File Id="fil48314E2AC49B4E208C5667CEC50CA78C" KeyPath="yes" Source="$(var.ProductSourcePath)\RegisterMicrosoftUpdate.ps1" />
       </Component>
-      <Component Id="cmp76EB2749D0464D41AD1D2BA2C51CF4C9">
-        <File Id="filDC81A93ACA6045E4A22C108F59D69083" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.42610.dll" />
-      </Component>
-      <Component Id="cmp8AAE18271AD64A009017665757ED915B">
-        <File Id="filBD4DDF972FCA4F898D0ACABC42936DE6" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.SDK.pdb" />
-      </Component>
-      <Component Id="cmpB5AD8BDC2504469FADEFE3E6AA80BC27">
-        <File Id="fil6F9E70AACDD04A6587D0D7FB4C8D841E" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.Commands.Management.pdb" />
-      </Component>
-      <Component Id="cmpCCC817E4F2A04A73B4101A69417423A9">
-        <File Id="fil160973564B3C42FFA3C4AC9AF90F25CE" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Management.Automation.pdb" />
-      </Component>
-      <Component Id="cmp8FDBF26F5E6F4BEB86E0FE5ED91CA638">
-        <File Id="fil806014EEC0C34C7F91B99267819124B8" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.WSMan.Runtime.pdb" />
-      </Component>
-      <Component Id="cmp074B6F8EA20548DCA2FA446D9E27D3FE">
-        <File Id="fil98B28DD6CBD34D758381CE290DB71B18" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.Security.pdb" />
-      </Component>
-      <Component Id="cmp41A0A813CB2C476389F59D10C2E7D5B5">
-        <File Id="fil46C395C891C74DFDB5014DB89142FFC9" KeyPath="yes" Source="$(var.ProductSourcePath)\pwsh.pdb" />
-      </Component>
-      <Component Id="cmpE3D0DEFE9F454D7DA5296449DD21D484">
-        <File Id="filBA7D37A15BD847B49C638EA974AA78AF" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.ConsoleHost.pdb" />
-      </Component>
-      <Component Id="cmpB7F854623ED34DB5B1B2C38D443BE731">
-        <File Id="filCEB5776695264EFB8EA506FB8135BD8F" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.Management.Infrastructure.CimCmdlets.pdb" />
-      </Component>
       <Component Id="cmp5B1AAAB6B46D45EA8A430A766325B0D5">
         <File Id="filF4983633E7914A1AAD5D02BFDFA7DD63" KeyPath="yes" Source="$(var.ProductSourcePath)\JsonSchema.Net.dll" />
       </Component>
@@ -3180,23 +3153,8 @@
       <Component Id="cmpB51390A44A2E4D2EB27C891E4ED3A705">
         <File Id="fil69092C4DDAE14264A0D1E788993DB43D" KeyPath="yes" Source="$(var.ProductSourcePath)\Json.More.dll" />
       </Component>
-      <Component Id="cmp2B4FE7A639B749F3B2814F87794CC3D5">
-        <File Id="fil3EA283F5D6624A879E39A4D771FF6B8F" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.WSMan.Management.pdb" />
-      </Component>
       <Component Id="cmpB5F59B2105D54C0D896C8D7EB3EA82F3">
         <File Id="filB6F08AEE602D4982A38EB3532F62BCF3" KeyPath="yes" Source="$(var.ProductSourcePath)\JsonPointer.Net.dll" />
-      </Component>
-      <Component Id="cmp611C894288294AC1A7D34FB420A338C6">
-        <File Id="fil363C07CDE20A41EDB04E4BC7FE26EF58" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.Commands.Diagnostics.pdb" />
-      </Component>
-      <Component Id="cmp50CA3E6E9D0848CA86DF397DD6B4C0D6">
-        <File Id="filD12140D406C5430EBB539571275EA180" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.Commands.Utility.pdb" />
-      </Component>
-      <Component Id="cmp9D8D228F1E9A46899F26B3261EAF2341">
-        <File Id="fil74933B8CCE29493680DBEC33D943D343" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.GraphicalHost.pdb" />
-      </Component>
-      <Component Id="cmp8467336B8279428087236432B11906AE">
-        <File Id="fil2739CC683D7A4E438712DE280D4B439D" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.CoreCLR.Eventing.pdb" />
       </Component>
     </DirectoryRef>
   </Fragment>
