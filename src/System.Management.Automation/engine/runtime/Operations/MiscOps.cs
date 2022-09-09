@@ -3561,6 +3561,10 @@ namespace System.Management.Automation
 
                 // The argument is not a PSObject, or is a PSObject with a base object.
                 case string:
+                case Uri:
+                case Guid:
+                case Version:
+                case SemanticVersion:
                 case BigInteger:
                 case var _ when baseType.IsEnum || baseType.IsPrimitive:
                     return baseObj.ToString();
