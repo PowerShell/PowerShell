@@ -168,32 +168,46 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_jschema != null)
                 {
-                    var validationResults = _jschema.Validate(parsedJson, new ValidationOptions { OutputFormat = OutputFormat.Basic });
-                    result = validationResults.IsValid;
-                    if (!result)
+                    try
                     {
-                        Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
-
-                        if (validationResults.Message != null)
+                        var validationResults = _jschema.Validate(parsedJson, new ValidationOptions { OutputFormat = OutputFormat.Basic });
+                        result = validationResults.IsValid;
+                        if (!result)
                         {
-                            ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema",
-                                ErrorCategory.InvalidData, null);
-                            var message = $"{validationResults.Message} at {validationResults.InstanceLocation}";
-                            errorRecord.ErrorDetails = new ErrorDetails(message);
-                            WriteError(errorRecord);
-                        }
+                            Exception exception = new(TestJsonCmdletStrings.InvalidJsonAgainstSchema);
 
-                        if (validationResults.HasNestedResults)
-                        {
-                            foreach (var nestedResult in validationResults.NestedResults.Where(x => x.Message != null))
+                            if (validationResults.Message != null)
                             {
                                 ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema",
                                     ErrorCategory.InvalidData, null);
-                                var message = $"{nestedResult.Message} at {nestedResult.InstanceLocation}";
+                                var message = $"{validationResults.Message} at {validationResults.InstanceLocation}";
                                 errorRecord.ErrorDetails = new ErrorDetails(message);
                                 WriteError(errorRecord);
                             }
+
+                            if (validationResults.HasNestedResults)
+                            {
+                                foreach (var nestedResult in validationResults.NestedResults)
+                                {
+                                    if (nestedResult.Message == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
+                                    var message = $"{nestedResult.Message} at {nestedResult.InstanceLocation}";
+                                    errorRecord.ErrorDetails = new ErrorDetails(message);
+                                    WriteError(errorRecord);
+                                }
+                            }
                         }
+                    }
+                    catch (JsonException jsonExc)
+                    {
+                        result = false;
+
+                        Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, jsonExc);
+                        WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, Json));
                     }
                 }
             }
