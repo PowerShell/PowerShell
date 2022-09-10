@@ -304,14 +304,16 @@ namespace Microsoft.PowerShell.Commands
             // The workaround is to reset the cancelation timer
             // while the length of the output file is constantly increasing.
             long previousLength = 0;
-            var timeout = cmdlet.TimeoutSec == 0 ? Timeout.Infinite : cmdlet.TimeoutSec * 1000;
-            using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            cts.CancelAfter(timeout);
-            Task copyTask = input.CopyToAsync(output, cts.Token);
+            int timeout = cmdlet.TimeoutSec == 0 ? Timeout.Infinite : cmdlet.TimeoutSec * 1000;
+            using var timeoutCTS = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            timeoutCTS.CancelAfter(timeout);
+            Task copyTask = input.CopyToAsync(output, timeoutCTS.Token);
 
             try
             {
-                while (!copyTask.Wait(1000, cts.Token))
+                // The Wait(TimeSpan, CancellationToken) overload checks CTS cancellation first to avoid race condition.
+                TimeSpan waitTime = new TimeSpan(0, 0, seconds: 1);
+                while (!copyTask.Wait(waitTime, timeoutCTS.Token))
                 {
                     record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestProgressStatus, output.Position);
                     cmdlet.WriteProgress(record);
@@ -321,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
                         // Reset cancelation timer while information continues to flow from network.
                         // Cancelation timer applies only during no network connectivity.
                         previousLength = output.Length;
-                        cts.CancelAfter(timeout);
+                        timeoutCTS.CancelAfter(timeout);
                     }
                 }
 
@@ -331,11 +333,9 @@ namespace Microsoft.PowerShell.Commands
                     cmdlet.WriteProgress(record);
                 }
             }
-            catch (OperationCanceledException exc)
+            catch (OperationCanceledException exc) when (!cancellationToken.IsCancellationRequested && timeoutCTS.IsCancellationRequested)
             {
-                // We cannot distinct 'cancel` (user press Ctrl-C) and 'timeout' so we report the exception as-is
-                // to inform users that we did not download and save the whole file and the result is invalid.
-                ErrorRecord er = new(exc, "Operationwascancelled", ErrorCategory.InvalidResult, input);
+                ErrorRecord er = new(new TimeoutException(message: WebCmdletStrings.RequestTimeout, exc), "OperationTimeout", ErrorCategory.OperationTimeout, input);
                 cmdlet.WriteError(er);
             }
         }
