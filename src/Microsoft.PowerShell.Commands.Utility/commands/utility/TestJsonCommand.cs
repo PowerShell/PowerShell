@@ -4,10 +4,8 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Management.Automation;
 using System.Net.Http;
-using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Security;
 using System.Text.Json;
@@ -179,6 +177,9 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                     }
+                    // A JsonException that occurs during validation is the result of a failure to deserialize
+                    // a referenced schema (through $ref or $dynamicRef).  References are resolved at validation
+                    // time and deserialized on-demand.
                     catch (JsonException jsonExc)
                     {
                         result = false;
