@@ -97,7 +97,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (JsonException e)
                     {
-                        ExceptionDispatchInfo.Capture(e).Throw();
+                        Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, e);
+                        WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, Schema));
                     }
                 }
                 else if (SchemaFile != null)
@@ -109,7 +110,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (JsonException e)
                     {
-                        ExceptionDispatchInfo.Capture(e).Throw();
+                        Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, e);
+                        WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, SchemaFile));
                     }
                 }
             }
@@ -188,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
                 result = false;
 
                 Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, jsonExc);
-                WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, Json));
+                WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, _jschema));
             }
             catch (Exception exc)
             {
