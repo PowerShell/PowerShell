@@ -5,11 +5,14 @@ using System;
 
 namespace Microsoft.PowerShell.Commands;
 
+/// <summary>
+/// Thrown during evaluation of <see cref="TestJsonCommand"/> when an attempt
+/// to resolve a <code>$ref</code> or <code>$dynamicRef</code> fails.
+/// </summary>
 internal class JsonSchemaReferenceResolutionException : Exception
 {
     /// <summary>
-    /// Thrown during evaluation of <see cref="TestJsonCommand"/> when an attempt
-    /// to resolve a <code>$ref</code> or <code>$dynamicRef</code> fails.
+    /// Initializes a new instance of the <see cref="JsonSchemaReferenceResolutionException"/> class.
     /// </summary>
     /// <param name="innerException">
     /// The exception that is the cause of the current exception, or a null reference
