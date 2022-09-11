@@ -59,23 +59,30 @@ namespace Microsoft.PowerShell.Commands
         {
             SchemaRegistry.Global.Fetch = uri =>
             {
-                string text;
-                switch (uri.Scheme)
+                try
                 {
-                    case "http":
-                    case "https":
-                        text = new HttpClient().GetStringAsync(uri).Result;
-                        break;
-                    case "file":
-                        var filename = Uri.UnescapeDataString(uri.AbsolutePath);
-                        text = File.ReadAllText(filename);
-                        break;
-                    default:
-                        throw new FormatException(
-                            $"URI scheme '{uri.Scheme}' is not supported.  Only HTTP(S) and local file system URIs are allowed.");
-                }
+                    string text;
+                    switch (uri.Scheme)
+                    {
+                        case "http":
+                        case "https":
+                            text = new HttpClient().GetStringAsync(uri).Result;
+                            break;
+                        case "file":
+                            var filename = Uri.UnescapeDataString(uri.AbsolutePath);
+                            text = File.ReadAllText(filename);
+                            break;
+                        default:
+                            throw new FormatException(
+                                $"URI scheme '{uri.Scheme}' is not supported.  Only HTTP(S) and local file system URIs are allowed.");
+                    }
 
-                return JsonSerializer.Deserialize<JsonSchema>(text);
+                    return JsonSerializer.Deserialize<JsonSchema>(text);
+                }
+                catch (Exception e)
+                {
+                    throw new JsonSchemaReferenceResolutionException(e);
+                }
             };
 
             string resolvedpath = string.Empty;
@@ -143,8 +150,6 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_jschema != null)
                 {
-                    try
-                    {
                         var validationResults = _jschema.Validate(parsedJson, new ValidationOptions { OutputFormat = OutputFormat.Basic });
                         result = validationResults.IsValid;
                         if (!result)
@@ -176,18 +181,14 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
                         }
-                    }
-                    // A JsonException that occurs during validation is the result of a failure to deserialize
-                    // a referenced schema (through $ref or $dynamicRef).  References are resolved at validation
-                    // time and deserialized on-demand.
-                    catch (JsonException jsonExc)
-                    {
-                        result = false;
-
-                        Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, jsonExc);
-                        WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, Json));
-                    }
                 }
+            }
+            catch (JsonSchemaReferenceResolutionException jsonExc)
+            {
+                result = false;
+
+                Exception exception = new(TestJsonCmdletStrings.InvalidJsonSchema, jsonExc);
+                WriteError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, Json));
             }
             catch (Exception exc)
             {
