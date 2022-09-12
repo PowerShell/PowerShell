@@ -19,7 +19,7 @@ internal class JsonSchemaReferenceResolutionException : Exception
     /// (<code>Nothing</code> in Visual Basic) if no inner exception is specified.
     /// </param>
     public JsonSchemaReferenceResolutionException(Exception innerException)
-        : base("An error occurred attempting to resolve a schema reference", innerException)
+        : base(message: null, innerException)
     {
     }
 }
