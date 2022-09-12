@@ -597,6 +597,11 @@ ConstructorTestClass(int i, bool b)
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Directory'
     }
 
+    it 'Should complete dynamic parameters while providing values to non-string parameters' {
+        $res = TabExpansion2 -inputScript 'Get-Content -Path $HOME -Verbose:$false -'
+        $res.CompletionMatches.CompletionText | Should -Contain '-Raw'
+    }
+
     It 'Should enumerate types when completing member names for Select-Object' {
         $TestString = '"Hello","World" | select-object '
         $res = TabExpansion2 -inputScript $TestString
