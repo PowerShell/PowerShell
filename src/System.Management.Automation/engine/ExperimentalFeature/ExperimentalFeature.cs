@@ -22,7 +22,6 @@ namespace System.Management.Automation
 
         internal const string EngineSource = "PSEngine";
         internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
-        internal const string PSStrictModeAssignment = "PSStrictModeAssignment";
 
         #endregion
 
@@ -117,9 +116,6 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSNativeCommandErrorActionPreferenceFeatureName,
                     description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
-                new ExperimentalFeature(
-                    name: PSStrictModeAssignment,
-                    description: "Add support of setting Strict-Mode with Invoke-Command"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

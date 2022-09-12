@@ -2,6 +2,5 @@
   "PSCommandNotFoundSuggestion",
   "PSLoadAssemblyFromNativeCode",
   "PSNativeCommandErrorActionPreference",
-  "PSStrictModeAssignment",
   "PSSubsystemPluginModel"
 ]
