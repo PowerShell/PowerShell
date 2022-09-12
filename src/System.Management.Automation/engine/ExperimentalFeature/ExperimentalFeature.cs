@@ -21,9 +21,7 @@ namespace System.Management.Automation
         #region Const Members
 
         internal const string EngineSource = "PSEngine";
-        internal const string PSNativeCommandArgumentPassingFeatureName = "PSNativeCommandArgumentPassing";
         internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
-        internal const string PSAMSIMethodInvocationLogging = "PSAMSIMethodInvocationLogging";
 
         #endregion
 
@@ -113,9 +111,6 @@ namespace System.Management.Automation
                     name: "PSSubsystemPluginModel",
                     description: "A plugin model for registering and un-registering PowerShell subsystems"),
                 new ExperimentalFeature(
-                    name: PSNativeCommandArgumentPassingFeatureName,
-                    description: "Use ArgumentList when invoking a native command"),
-                new ExperimentalFeature(
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
                 new ExperimentalFeature(
@@ -124,9 +119,6 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSNativeCommandErrorActionPreferenceFeatureName,
                     description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
-                new ExperimentalFeature(
-                    name: PSAMSIMethodInvocationLogging,
-                    description: "Provides AMSI notification of .NET method invocations."),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

@@ -1,9 +1,7 @@
 [
-  "PSAMSIMethodInvocationLogging",
   "PSAnsiRenderingFileInfo",
   "PSCommandNotFoundSuggestion",
   "PSLoadAssemblyFromNativeCode",
-  "PSNativeCommandArgumentPassing",
   "PSNativeCommandErrorActionPreference",
   "PSSubsystemPluginModel"
 ]
