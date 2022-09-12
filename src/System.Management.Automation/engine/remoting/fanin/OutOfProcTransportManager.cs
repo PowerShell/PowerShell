@@ -1819,37 +1819,14 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     string error;
 
-                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSRemotingSSHTransportErrorHandling))
+                    // Blocking read from StdError stream
+                    error = reader.ReadLine();
+
+                    if (error == null)
                     {
-                        // Blocking read from StdError stream
-                        error = reader.ReadLine();
-
-                        if (error == null)
-                        {
-                            // Stream is closed unexpectedly.
-                            throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
-                        }
-
-                        if (error.Length == 0)
-                        {
-                            // Ignore
-                            continue;
-                        }
-
-                        try
-                        {
-                            // Messages in error stream from ssh are unreliable, and may just be warnings or
-                            // banner text.
-                            // So just report the messages but don't act on them.
-                            System.Console.WriteLine(error);
-                        }
-                        catch (IOException)
-                        { }
-
-                        continue;
+                        // Stream is closed unexpectedly.
+                        throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
                     }
-
-                    error = ReadError(reader);
 
                     if (error.Length == 0)
                     {
@@ -1857,12 +1834,15 @@ namespace System.Management.Automation.Remoting.Client
                         continue;
                     }
 
-                    // Any SSH client error results in a broken session.
-                    PSRemotingTransportException psrte = new PSRemotingTransportException(
-                        PSRemotingErrorId.IPCServerProcessReportedError,
-                        RemotingErrorIdStrings.IPCServerProcessReportedError,
-                        StringUtil.Format(RemotingErrorIdStrings.SSHClientEndWithErrorMessage, error));
-                    HandleSSHError(psrte);
+                    try
+                    {
+                        // Messages in error stream from ssh are unreliable, and may just be warnings or
+                        // banner text.
+                        // So just report the messages but don't act on them.
+                        System.Console.WriteLine(error);
+                    }
+                    catch (IOException)
+                    { }
                 }
             }
             catch (ObjectDisposedException)
@@ -1886,55 +1866,6 @@ namespace System.Management.Automation.Remoting.Client
         {
             RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
             CloseConnection();
-        }
-
-        private static string ReadError(StreamReader reader)
-        {
-            // Blocking read from StdError stream
-            string error = reader.ReadLine();
-
-            if (error == null)
-            {
-                // Stream is closed unexpectedly.
-                throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
-            }
-
-            if ((error.Length == 0) ||
-                error.Contains("WARNING:", StringComparison.OrdinalIgnoreCase))
-            {
-                // Handle as interactive warning message
-                Console.WriteLine(error);
-                return string.Empty;
-            }
-
-            // SSH may return a multi-line error message.
-            // The StdError pipe stream is open ended causing StreamReader read operations to block
-            // if there is no incoming data.  Since we don't know how many error message lines there
-            // will be we use an asynchronous read with timeout to prevent blocking indefinitely.
-            System.Text.StringBuilder sb = new Text.StringBuilder(error);
-            var running = true;
-            while (running)
-            {
-                try
-                {
-                    var task = reader.ReadLineAsync();
-                    if (task.Wait(1000) && (task.Result != null))
-                    {
-                        sb.Append(Environment.NewLine);
-                        sb.Append(task.Result);
-                    }
-                    else
-                    {
-                        running = false;
-                    }
-                }
-                catch (Exception)
-                {
-                    running = false;
-                }
-            }
-
-            return sb.ToString();
         }
 
         private void StartReaderThread(
