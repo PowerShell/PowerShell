@@ -228,7 +228,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-Microsoft.CodeAnalysis.Common 4.2.0 - MIT
+Microsoft.CodeAnalysis.Common 4.3.0 - MIT
 
 
 
@@ -246,7 +246,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---------------------------------------------------------
 
-Microsoft.CodeAnalysis.CSharp 4.2.0 - MIT
+Microsoft.CodeAnalysis.CSharp 4.3.0 - MIT
 
 
 
@@ -1199,7 +1199,7 @@ SOFTWARE.
 
 ---------------------------------------------------------
 
-System.Collections.Immutable 5.0.0 - MIT
+System.Collections.Immutable 6.0.0 - MIT
 
 
 (c) Microsoft Corporation.
@@ -1227,6 +1227,7 @@ Copyright (c) 2016-2017, Matthieu Darbois
 Copyright (c) .NET Foundation Contributors
 Copyright (c) The Internet Society (2003).
 Copyright (c) .NET Foundation and Contributors
+Copyright (c) 2019 Microsoft Corporation, Daan Leijen
 Copyright (c) 2011 Novell, Inc (http://www.novell.com)
 Copyright (c) 1995-2017 Jean-loup Gailly and Mark Adler
 Copyright (c) 2015 Xamarin, Inc (http://www.xamarin.com)
