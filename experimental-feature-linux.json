@@ -2,7 +2,6 @@
   "PSAnsiRenderingFileInfo",
   "PSCommandNotFoundSuggestion",
   "PSLoadAssemblyFromNativeCode",
-  "PSNativeCommandArgumentPassing",
   "PSNativeCommandErrorActionPreference",
   "PSStrictModeAssignment",
   "PSSubsystemPluginModel"
