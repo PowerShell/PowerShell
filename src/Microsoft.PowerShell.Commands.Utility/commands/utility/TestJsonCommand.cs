@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Net.Http;
-using System.Runtime.ExceptionServices;
 using System.Security;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -160,8 +159,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (validationResults.Message != null)
                             {
-                                ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema",
-                                    ErrorCategory.InvalidData, null);
+                                ErrorRecord errorRecord = new(exception, "InvalidJsonAgainstSchema", ErrorCategory.InvalidData, null);
                                 var message = $"{validationResults.Message} at {validationResults.InstanceLocation}";
                                 errorRecord.ErrorDetails = new ErrorDetails(message);
                                 WriteError(errorRecord);
