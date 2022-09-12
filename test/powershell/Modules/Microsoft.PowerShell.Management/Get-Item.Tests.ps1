@@ -214,10 +214,6 @@ Describe 'Formatting for FileInfo objects' -Tags 'CI' {
         }
     }
 
-    AfterAll {
-        $PSDefaultParameterValues.Remove('It:Skip')
-    }
-
     It 'File type <extension> should have correct color' -TestCases $extensionTests {
         param($extension)
 
