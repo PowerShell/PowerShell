@@ -115,9 +115,6 @@ namespace System.Management.Automation
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
                 new ExperimentalFeature(
-                    name: "PSAnsiRenderingFileInfo",
-                    description: "Enable coloring for FileInfo objects"),
-                new ExperimentalFeature(
                     name: PSNativeCommandErrorActionPreferenceFeatureName,
                     description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
                 new ExperimentalFeature(
