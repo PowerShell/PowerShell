@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            SchemaRegistry.Global.Fetch = uri =>
+            SchemaRegistry.Global.Fetch = static uri =>
             {
                 try
                 {
