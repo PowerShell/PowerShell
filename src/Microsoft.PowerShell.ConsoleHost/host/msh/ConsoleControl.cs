@@ -2575,7 +2575,6 @@ namespace Microsoft.PowerShell
             }
 
             outBuffer = output.Slice(cursor);
-            cursor = output.Length;
 
             if (newLine)
             {
