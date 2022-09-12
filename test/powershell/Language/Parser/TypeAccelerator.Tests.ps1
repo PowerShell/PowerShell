@@ -283,6 +283,10 @@ Describe "Type accelerators" -Tags "CI" {
                     Type        = [System.Management.Automation.ValidateNotNullOrEmptyAttribute]
                 }
                 @{
+                    Accelerator = 'ValidateNotNullOrWhiteSpace'
+                    Type        = [System.Management.Automation.ValidateNotNullOrWhiteSpaceAttribute]
+                }
+                @{
                     Accelerator = 'ValidatePattern'
                     Type        = [System.Management.Automation.ValidatePatternAttribute]
                 }
@@ -400,17 +404,21 @@ Describe "Type accelerators" -Tags "CI" {
                 }
                 @{
                     Accelerator = 'pspropertyexpression'
-                    Type = [Microsoft.PowerShell.Commands.PSPropertyExpression]
+                    Type        = [Microsoft.PowerShell.Commands.PSPropertyExpression]
+                }
+                @{
+                    Accelerator = 'ordered'
+                    Type        = [System.Collections.Specialized.OrderedDictionary]
                 }
             )
 
             if ( !$IsWindows )
             {
-                $totalAccelerators = 99
+                $totalAccelerators = 101
             }
             else
             {
-                $totalAccelerators = 104
+                $totalAccelerators = 106
 
                 $extraFullPSAcceleratorTestCases = @(
                     @{

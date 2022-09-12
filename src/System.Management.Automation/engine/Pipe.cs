@@ -110,6 +110,13 @@ namespace System.Management.Automation.Internal
         internal int OutBufferCount { get; set; } = 0;
 
         /// <summary>
+        /// Gets whether the out variable list should be ignored.
+        /// This is used for scenarios like the `clean` block, where writing to output stream is intentionally
+        /// disabled and thus out variables should also be ignored.
+        /// </summary>
+        internal bool IgnoreOutVariableList { get; set; }
+
+        /// <summary>
         /// If true, then all input added to this pipe will simply be discarded...
         /// </summary>
         internal bool NullPipe
@@ -226,34 +233,22 @@ namespace System.Management.Automation.Internal
             switch (kind)
             {
                 case VariableStreamKind.Error:
-                    if (_errorVariableList == null)
-                    {
-                        _errorVariableList = new List<IList>();
-                    }
+                    _errorVariableList ??= new List<IList>();
 
                     _errorVariableList.Add(list);
                     break;
                 case VariableStreamKind.Warning:
-                    if (_warningVariableList == null)
-                    {
-                        _warningVariableList = new List<IList>();
-                    }
+                    _warningVariableList ??= new List<IList>();
 
                     _warningVariableList.Add(list);
                     break;
                 case VariableStreamKind.Output:
-                    if (_outVariableList == null)
-                    {
-                        _outVariableList = new List<IList>();
-                    }
+                    _outVariableList ??= new List<IList>();
 
                     _outVariableList.Add(list);
                     break;
                 case VariableStreamKind.Information:
-                    if (_informationVariableList == null)
-                    {
-                        _informationVariableList = new List<IList>();
-                    }
+                    _informationVariableList ??= new List<IList>();
 
                     _informationVariableList.Add(list);
                     break;
@@ -552,15 +547,28 @@ namespace System.Management.Automation.Internal
             else if (_enumeratorToProcess != null)
             {
                 if (_enumeratorToProcessIsEmpty)
-                    return AutomationNull.Value;
-
-                if (!ParserOps.MoveNext(_context, null, _enumeratorToProcess))
                 {
-                    _enumeratorToProcessIsEmpty = true;
                     return AutomationNull.Value;
                 }
 
-                return ParserOps.Current(null, _enumeratorToProcess);
+                while (true)
+                {
+                    if (!ParserOps.MoveNext(_context, errorPosition: null, _enumeratorToProcess))
+                    {
+                        _enumeratorToProcessIsEmpty = true;
+                        return AutomationNull.Value;
+                    }
+
+                    object retValue = ParserOps.Current(errorPosition: null, _enumeratorToProcess);
+                    if (retValue == AutomationNull.Value)
+                    {
+                        // 'AutomationNull.Value' from the enumerator won't be sent to the pipeline.
+                        // We try to get the next value in this case.
+                        continue;
+                    }
+
+                    return retValue;
+                }
             }
             else if (ExternalReader != null)
             {
@@ -595,11 +603,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Removes all the objects from the Pipe.
         /// </summary>
-        internal void Clear()
-        {
-            if (ObjectQueue != null)
-                ObjectQueue.Clear();
-        }
+        internal void Clear() => ObjectQueue?.Clear();
 
         /// <summary>
         /// Returns the currently queued items in the pipe.  Note that this will

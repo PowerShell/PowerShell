@@ -392,10 +392,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!_hasProcessedFirstInputObject)
                 {
-                    if (Property == null)
-                    {
-                        Property = OrderByProperty.GetDefaultKeyPropertySet(InputObject);
-                    }
+                    Property ??= OrderByProperty.GetDefaultKeyPropertySet(InputObject);
 
                     _orderByProperty.ProcessExpressionParameter(this, Property);
 

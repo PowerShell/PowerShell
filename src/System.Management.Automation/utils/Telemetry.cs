@@ -3,13 +3,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Threading;
 
 using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights.Extensibility.Implementation;
 
 namespace Microsoft.PowerShell.Telemetry
 {
@@ -61,6 +64,26 @@ namespace Microsoft.PowerShell.Telemetry
     }
 
     /// <summary>
+    /// Set up the telemetry initializer to mask the platform specific names.
+    /// </summary>
+    internal class NameObscurerTelemetryInitializer : ITelemetryInitializer
+    {
+        // Report the platform name information as "na".
+        private const string _notavailable = "na";
+
+        /// <summary>
+        /// Initialize properties we are obscuring to "na".
+        /// </summary>
+        /// <param name="telemetry">The instance of our telemetry.</param>
+        public void Initialize(ITelemetry telemetry)
+        {
+            telemetry.Context.Cloud.RoleName = _notavailable;
+            telemetry.Context.GetInternalContext().NodeName = _notavailable;
+            telemetry.Context.Cloud.RoleInstance = _notavailable;
+        }
+    }
+
+    /// <summary>
     /// Send up telemetry for startup.
     /// </summary>
     public static class ApplicationInsightsTelemetry
@@ -72,8 +95,15 @@ namespace Microsoft.PowerShell.Telemetry
         // private const string _psCoreTelemetryKey = "ee4b2115-d347-47b0-adb6-b19c2c763808"; // Production
         private const string _psCoreTelemetryKey = "d26a5ef4-d608-452c-a6b8-a4a55935f70d"; // V7 Preview 3
 
+        // In the event there is a problem in creating the node identifier file, use the default identifier.
+        // This can happen if we are running in a system which has a read-only filesystem.
+        private static readonly Guid _defaultNodeIdentifier = new Guid("2f998828-3f4a-4741-bf50-d11c6be42f50");
+
         // Use "anonymous" as the string to return when you can't report a name
-        private const string _anonymous = "anonymous";
+        private const string Anonymous = "anonymous";
+
+        // Use '0.0' as the string for an anonymous module version
+        private const string AnonymousVersion = "0.0";
 
         // the telemetry failure string
         private const string _telemetryFailure = "TELEMETRY_FAILURE";
@@ -111,14 +141,17 @@ namespace Microsoft.PowerShell.Telemetry
             CanSendTelemetry = !GetEnvironmentVariableAsBool(name: _telemetryOptoutEnvVar, defaultValue: false);
             if (CanSendTelemetry)
             {
+                s_sessionId = Guid.NewGuid().ToString();
                 TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
-                configuration.InstrumentationKey = _psCoreTelemetryKey;
+                configuration.ConnectionString = "InstrumentationKey=" + _psCoreTelemetryKey;
 
                 // Set this to true to reduce latency during development
                 configuration.TelemetryChannel.DeveloperMode = false;
 
+                // Be sure to obscure any information about the client node name.
+                configuration.TelemetryInitializers.Add(new NameObscurerTelemetryInitializer());
+
                 s_telemetryClient = new TelemetryClient(configuration);
-                s_sessionId = Guid.NewGuid().ToString();
 
                 // use a hashset when looking for module names, it should be quicker than a string comparison
                 s_knownModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -215,6 +248,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "Az.StorageTable",
                         "Az.StreamAnalytics",
                         "Az.Subscription",
+                        "Az.Tools.Predictor",
                         "Az.TrafficManager",
                         "Az.Websites",
                         "Azs.Azurebridge.Admin",
@@ -318,6 +352,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "branchcache",
                         "CimCmdlets",
                         "clusterawareupdating",
+                        "CompatPowerShellGet",
                         "configci",
                         "ConfigurationManager",
                         "DataProtectionManager",
@@ -617,6 +652,28 @@ namespace Microsoft.PowerShell.Telemetry
         }
 
         /// <summary>
+        /// Send module load telemetry as a metric.
+        /// For modules we send the module name (if allowed), and the version.
+        /// Some modules (CIM) will continue use the string alternative method.
+        /// </summary>
+        /// <param name="telemetryType">The type of telemetry that we'll be sending.</param>
+        /// <param name="moduleName">The module name to report. If it is not allowed, then it is set to 'anonymous'.</param>
+        /// <param name="moduleVersion">The module version to report. The default value is the anonymous version '0.0.0.0'.</param>
+        internal static void SendModuleTelemetryMetric(TelemetryType telemetryType, string moduleName, string moduleVersion = AnonymousVersion)
+        {
+            try
+            {
+                string allowedModuleName = GetModuleName(moduleName);
+                string allowedModuleVersion = allowedModuleName == Anonymous ? AnonymousVersion : moduleVersion;
+                s_telemetryClient.GetMetric(telemetryType.ToString(), "uuid", "SessionId", "ModuleName", "Version").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, allowedModuleName, allowedModuleVersion);
+            }
+            catch
+            {
+                // Ignore errors.
+            }
+        }
+
+        /// <summary>
         /// Send telemetry as a metric.
         /// </summary>
         /// <param name="metricId">The type of telemetry that we'll be sending.</param>
@@ -628,7 +685,9 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
 
-            SendPSCoreStartupTelemetry("hosted");
+            // These should be handled by SendModuleTelemetryMetric.
+            Debug.Assert(metricId != TelemetryType.ModuleLoad, "ModuleLoad should be handled by SendModuleTelemetryMetric.");
+            Debug.Assert(metricId != TelemetryType.WinCompatModuleLoad, "WinCompatModuleLoad should be handled by SendModuleTelemetryMetric.");
 
             string metricName = metricId.ToString();
             try
@@ -644,11 +703,6 @@ namespace Microsoft.PowerShell.Telemetry
                     case TelemetryType.ExperimentalModuleFeatureActivation:
                         string experimentalFeatureName = GetExperimentalFeatureName(data);
                         s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, experimentalFeatureName);
-                        break;
-                    case TelemetryType.ModuleLoad:
-                    case TelemetryType.WinCompatModuleLoad:
-                        string moduleName = GetModuleName(data); // This will return anonymous if the modulename is not on the report list
-                        s_telemetryClient.GetMetric(metricName, "uuid", "SessionId", "Detail").TrackValue(metricValue: 1.0, s_uniqueUserIdentifier, s_sessionId, moduleName);
                         break;
                 }
             }
@@ -671,7 +725,7 @@ namespace Microsoft.PowerShell.Telemetry
                 return featureNameToValidate;
             }
 
-            return _anonymous;
+            return Anonymous;
         }
 
         // Get the module name. If we can report it, we'll return the name, otherwise, we'll return "anonymous"
@@ -682,7 +736,7 @@ namespace Microsoft.PowerShell.Telemetry
                 return moduleNameToValidate;
             }
 
-            return _anonymous;
+            return Anonymous;
         }
 
         /// <summary>
@@ -690,7 +744,8 @@ namespace Microsoft.PowerShell.Telemetry
         /// This is done only once during for the console host.
         /// </summary>
         /// <param name="mode">The "mode" of the startup.</param>
-        internal static void SendPSCoreStartupTelemetry(string mode)
+        /// <param name="parametersUsed">The parameter bitmap used when starting.</param>
+        internal static void SendPSCoreStartupTelemetry(string mode, double parametersUsed)
         {
             // Check if we already sent startup telemetry
             if (Interlocked.CompareExchange(ref s_startupEventSent, 1, 0) == 1)
@@ -703,22 +758,30 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
 
+            // This is the payload which reports the startup information of OS and shell details.
             var properties = new Dictionary<string, string>();
 
-            // The variable POWERSHELL_DISTRIBUTION_CHANNEL is set in our docker images.
-            // This allows us to track the actual docker OS as OSDescription provides only "linuxkit"
-            // which has limited usefulness
+            // This is the payload for the parameter data which is sent as a metric.
+            var parameters = new Dictionary<string, double>();
+
+            // The variable POWERSHELL_DISTRIBUTION_CHANNEL is set in our docker images and 
+            // by various other environments. This allows us to track the actual docker OS as
+            // OSDescription provides only "linuxkit" which has limited usefulness.
             var channel = Environment.GetEnvironmentVariable("POWERSHELL_DISTRIBUTION_CHANNEL");
 
+            // Construct the payload for the OS and shell details.
             properties.Add("SessionId", s_sessionId);
             properties.Add("UUID", s_uniqueUserIdentifier);
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
             properties.Add("OSDescription", RuntimeInformation.OSDescription);
             properties.Add("OSChannel", string.IsNullOrEmpty(channel) ? "unknown" : channel);
             properties.Add("StartMode", string.IsNullOrEmpty(mode) ? "unknown" : mode);
+
+            // Construct the payload for the parameters used.
+            parameters.Add("Param", parametersUsed);
             try
             {
-                s_telemetryClient.TrackEvent("ConsoleHostStartup", properties, null);
+                s_telemetryClient.TrackEvent("ConsoleHostStartup", properties, parameters);
             }
             catch
             {
@@ -772,50 +835,53 @@ namespace Microsoft.PowerShell.Telemetry
         /// Try to create a unique identifier and persist it to the telemetry.uuid file.
         /// </summary>
         /// <param name="telemetryFilePath">The path to the persisted telemetry.uuid file.</param>
-        /// <param name="id">The created identifier.</param>
         /// <returns>
-        /// The method returns a bool indicating success or failure of creating the id.
+        /// The method node id.
         /// </returns>
-        private static bool TryCreateUniqueIdentifierAndFile(string telemetryFilePath, out Guid id)
+        private static Guid CreateUniqueIdentifierAndFile(string telemetryFilePath)
         {
             // one last attempt to retrieve before creating incase we have a lot of simultaneous entry into the mutex.
-            id = Guid.Empty;
+            Guid id = Guid.Empty;
             if (TryGetIdentifier(telemetryFilePath, out id))
             {
-                return true;
+                return id;
             }
 
             // The directory may not exist, so attempt to create it
             // CreateDirectory will simply return the directory if exists
+            bool attemptFileCreation = true;
             try
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(telemetryFilePath));
             }
             catch
             {
-                // send a telemetry indicating a problem with the cache dir
-                // it's likely something is seriously wrong so we should at least report it.
-                // We don't want to provide reasons here, that's not the point, but we
-                // would like to know if we're having a generalized problem which we can trace statistically
-                CanSendTelemetry = false;
-                s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "cachedir");
-                return false;
+                // There was a problem in creating the directory for the file, do not attempt to create the file.
+                // We don't send telemetry here because there are valid reasons for the directory to not exist 
+                // and not be able to be created.
+                attemptFileCreation = false;
             }
 
-            // Create and save the new identifier, and if there's a problem, disable telemetry
-            try
+            // If we were able to create the directory, try to create the file,
+            // if this fails we will send telemetry to indicate this and then use the default identifier.
+            if (attemptFileCreation)
             {
-                id = Guid.NewGuid();
-                File.WriteAllBytes(telemetryFilePath, id.ToByteArray());
-                return true;
-            }
-            catch
-            {
-                // another bit of telemetry to notify us about a problem with saving the unique id.
-                s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "saveuuid");
+                try
+                {
+                    id = Guid.NewGuid();
+                    File.WriteAllBytes(telemetryFilePath, id.ToByteArray());
+                    return id;
+                }
+                catch
+                {
+                    // another bit of telemetry to notify us about a problem with saving the unique id.
+                    s_telemetryClient.GetMetric(_telemetryFailure, "Detail").TrackValue(1, "saveuuid");
+                }
             }
 
-            return false;
+            // all attempts to create an identifier have failed, so use the default node id.
+            id = _defaultNodeIdentifier;
+            return id;
         }
 
         /// <summary>
@@ -839,15 +905,12 @@ namespace Microsoft.PowerShell.Telemetry
             // simultaneous shell starts without the persisted file which attempt to create the file.
             try
             {
-                // TryCreateUniqueIdentifierAndFile shouldn't throw, but the mutex might
+                // CreateUniqueIdentifierAndFile shouldn't throw, but the mutex might
                 using var m = new Mutex(true, "CreateUniqueUserId");
                 m.WaitOne();
                 try
                 {
-                    if (TryCreateUniqueIdentifierAndFile(uuidPath, out id))
-                    {
-                        return id;
-                    }
+                    return CreateUniqueIdentifierAndFile(uuidPath);
                 }
                 finally
                 {

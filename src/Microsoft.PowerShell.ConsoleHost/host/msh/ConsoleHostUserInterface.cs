@@ -87,11 +87,11 @@ namespace Microsoft.PowerShell
 
             if (SupportsVirtualTerminal)
             {
-                SupportsVirtualTerminal = TryTurnOnVtMode();
+                SupportsVirtualTerminal = TryTurnOnVirtualTerminal();
             }
         }
 
-        internal bool TryTurnOnVtMode()
+        internal bool TryTurnOnVirtualTerminal()
         {
 #if UNIX
             return true;
@@ -99,16 +99,22 @@ namespace Microsoft.PowerShell
             try
             {
                 // Turn on virtual terminal if possible.
-
                 // This might throw - not sure how exactly (no console), but if it does, we shouldn't fail to start.
-                var handle = ConsoleControl.GetActiveScreenBufferHandle();
-                var m = ConsoleControl.GetMode(handle);
-                if (ConsoleControl.NativeMethods.SetConsoleMode(handle.DangerousGetHandle(), (uint)(m | ConsoleControl.ConsoleModes.VirtualTerminal)))
+                var outputHandle = ConsoleControl.GetActiveScreenBufferHandle();
+                var outputMode = ConsoleControl.GetMode(outputHandle);
+
+                if (outputMode.HasFlag(ConsoleControl.ConsoleModes.VirtualTerminal))
+                {
+                    return true;
+                }
+
+                outputMode |= ConsoleControl.ConsoleModes.VirtualTerminal;
+                if (ConsoleControl.NativeMethods.SetConsoleMode(outputHandle.DangerousGetHandle(), (uint)outputMode))
                 {
                     // We only know if vt100 is supported if the previous call actually set the new flag, older
                     // systems ignore the setting.
-                    m = ConsoleControl.GetMode(handle);
-                    return (m & ConsoleControl.ConsoleModes.VirtualTerminal) != 0;
+                    outputMode = ConsoleControl.GetMode(outputHandle);
+                    return outputMode.HasFlag(ConsoleControl.ConsoleModes.VirtualTerminal);
                 }
             }
             catch
@@ -201,9 +207,8 @@ namespace Microsoft.PowerShell
             HandleThrowOnReadAndPrompt();
 
             // call our internal version such that it does not end input on a tab
-            ReadLineResult unused;
 
-            return ReadLine(false, string.Empty, out unused, true, true);
+            return ReadLine(false, string.Empty, out _, true, true);
         }
 
         /// <summary>
@@ -729,7 +734,7 @@ namespace Microsoft.PowerShell
             }
 
             TextWriter writer = Console.IsOutputRedirected ? Console.Out : _parent.ConsoleTextWriter;
-            value = GetOutputString(value, SupportsVirtualTerminal, Console.IsOutputRedirected);
+            value = GetOutputString(value, SupportsVirtualTerminal);
 
             if (_parent.IsRunningAsync)
             {
@@ -1203,8 +1208,7 @@ namespace Microsoft.PowerShell
         public override void WriteDebugLine(string message)
         {
             // don't lock here as WriteLine is already protected.
-            bool unused;
-            message = HostUtilities.RemoveGuidFromMessage(message, out unused);
+            message = HostUtilities.RemoveGuidFromMessage(message, out _);
 
             // We should write debug to error stream only if debug is redirected.)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
@@ -1215,7 +1219,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal)
                 {
-                    WriteLine(GetFormatStyleString(FormatStyle.Debug, Console.IsOutputRedirected) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message) + PSStyle.Instance.Reset);
+                    WriteLine(GetFormatStyleString(FormatStyle.Debug) + StringUtil.Format(ConsoleHostUserInterfaceStrings.DebugFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1264,8 +1268,7 @@ namespace Microsoft.PowerShell
         public override void WriteVerboseLine(string message)
         {
             // don't lock here as WriteLine is already protected.
-            bool unused;
-            message = HostUtilities.RemoveGuidFromMessage(message, out unused);
+            message = HostUtilities.RemoveGuidFromMessage(message, out _);
 
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
@@ -1276,7 +1279,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal)
                 {
-                    WriteLine(GetFormatStyleString(FormatStyle.Verbose, Console.IsOutputRedirected) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message) + PSStyle.Instance.Reset);
+                    WriteLine(GetFormatStyleString(FormatStyle.Verbose) + StringUtil.Format(ConsoleHostUserInterfaceStrings.VerboseFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {
@@ -1308,8 +1311,7 @@ namespace Microsoft.PowerShell
         public override void WriteWarningLine(string message)
         {
             // don't lock here as WriteLine is already protected.
-            bool unused;
-            message = HostUtilities.RemoveGuidFromMessage(message, out unused);
+            message = HostUtilities.RemoveGuidFromMessage(message, out _);
 
             // NTRAID#Windows OS Bugs-1061752-2004/12/15-sburns should read a skin setting here...)
             if (_parent.ErrorFormat == Serialization.DataFormat.XML)
@@ -1320,7 +1322,7 @@ namespace Microsoft.PowerShell
             {
                 if (SupportsVirtualTerminal)
                 {
-                    WriteLine(GetFormatStyleString(FormatStyle.Warning, Console.IsOutputRedirected) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message) + PSStyle.Instance.Reset);
+                    WriteLine(GetFormatStyleString(FormatStyle.Warning) + StringUtil.Format(ConsoleHostUserInterfaceStrings.WarningFormatString, message) + PSStyle.Instance.Reset);
                 }
                 else
                 {

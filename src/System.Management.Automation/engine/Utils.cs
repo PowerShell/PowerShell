@@ -571,10 +571,7 @@ namespace System.Management.Automation
             catch (ObjectDisposedException) { }
             finally
             {
-                if (winPEKey != null)
-                {
-                    winPEKey.Dispose();
-                }
+                winPEKey?.Dispose();
             }
 #endif
             return false;
@@ -1064,10 +1061,7 @@ namespace System.Management.Automation
                     finally
                     {
                         context.AutoLoadingModuleInProgress.Remove(module);
-                        if (ps != null)
-                        {
-                            ps.Dispose();
-                        }
+                        ps?.Dispose();
                     }
                 }
             }
@@ -1124,10 +1118,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (ps != null)
-                {
-                    ps.Dispose();
-                }
+                ps?.Dispose();
             }
 
             return result;
@@ -1185,10 +1176,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (ps != null)
-                {
-                    ps.Dispose();
-                }
+                ps?.Dispose();
             }
 
             return result;
@@ -1278,7 +1266,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        internal static bool PathIsUnc(string path)
+        internal static bool PathIsUnc(string path, bool networkOnly = false)
         {
 #if UNIX
             return false;
@@ -1288,8 +1276,8 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // handle special cases like \\wsl$\ubuntu which isn't a UNC path, but we can say it is so the filesystemprovider can use it
-            if (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase))
+            // handle special cases like '\\wsl$\ubuntu', '\\?\', and '\\.\pipe\' which aren't a UNC path, but we can say it is so the filesystemprovider can use it
+            if (!networkOnly && (path.StartsWith(WslRootPath, StringComparison.OrdinalIgnoreCase) || path.StartsWith("\\\\?\\") || path.StartsWith("\\\\.\\")))
             {
                 return true;
             }
@@ -1585,8 +1573,8 @@ namespace System.Management.Automation.Internal
         internal static bool UseDebugAmsiImplementation;
         internal static bool BypassAppLockerPolicyCaching;
         internal static bool BypassOnlineHelpRetrieval;
+        internal static bool ThrowHelpCultureNotSupported;
         internal static bool ForcePromptForChoiceDefaultOption;
-        internal static bool BypassOutputRedirectionCheck;
         internal static bool NoPromptForPassword;
         internal static bool ForceFormatListFixedLabelWidth;
 
@@ -1604,6 +1592,8 @@ namespace System.Management.Automation.Internal
         internal static bool DisableGACLoading;
         internal static bool SetConsoleWidthToZero;
         internal static bool SetConsoleHeightToZero;
+
+        internal static bool SetDate;
 
         // A location to test PSEdition compatibility functionality for Windows PowerShell modules with
         // since we can't manipulate the System32 directory in a test
@@ -1628,10 +1618,7 @@ namespace System.Management.Automation.Internal
         public static void SetTestHook(string property, object value)
         {
             var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
-            if (fieldInfo != null)
-            {
-                fieldInfo.SetValue(null, value);
-            }
+            fieldInfo?.SetValue(null, value);
         }
 
         /// <summary>

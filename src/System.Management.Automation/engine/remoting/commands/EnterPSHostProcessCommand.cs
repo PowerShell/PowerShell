@@ -212,10 +212,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             RemoteRunspace connectingRunspace = _connectingRemoteRunspace;
-            if (connectingRunspace != null)
-            {
-                connectingRunspace.AbortOpen();
-            }
+            connectingRunspace?.AbortOpen();
         }
 
         #endregion
@@ -318,22 +315,19 @@ namespace Microsoft.PowerShell.Commands
 
         private Process GetProcessById(int procId)
         {
-            try
-            {
-                return Process.GetProcessById(procId);
-            }
-            catch (System.ArgumentException)
+            var process = PSHostProcessUtils.GetProcessById(procId);
+            if (process is null)
             {
                 ThrowTerminatingError(
-                        new ErrorRecord(
-                            new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessNoProcessFoundWithId, procId)),
-                            "EnterPSHostProcessNoProcessFoundWithId",
-                            ErrorCategory.InvalidArgument,
-                            this)
-                        );
-
-                return null;
+                    new ErrorRecord(
+                        new PSArgumentException(StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessNoProcessFoundWithId, procId)),
+                        "EnterPSHostProcessNoProcessFoundWithId",
+                        ErrorCategory.InvalidArgument,
+                        this)
+                    );
             }
+
+            return process;
         }
 
         private Process GetProcessByHostProcessInfo(PSHostProcessInfo hostProcessInfo)
@@ -403,7 +397,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ThrowTerminatingError(
                         new ErrorRecord(
-                            new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessNoPowerShell, Process.ProcessName)),
+                            new PSInvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessNoPowerShell, Process.Id)),
                             "EnterPSHostProcessNoPowerShell",
                             ErrorCategory.InvalidOperation,
                             this)
@@ -599,9 +593,22 @@ namespace Microsoft.PowerShell.Commands
                 WildcardPattern namePattern = WildcardPattern.Get(name, WildcardOptions.IgnoreCase);
                 foreach (var proc in processes)
                 {
-                    if (namePattern.IsMatch(proc.ProcessName))
+                    // Skip processes that have already terminated.
+                    if (proc.HasExited)
                     {
-                        returnIds.Add(proc.Id);
+                        continue;
+                    }
+
+                    try
+                    {
+                        if (namePattern.IsMatch(proc.ProcessName))
+                        {
+                            returnIds.Add(proc.Id);
+                        }
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // Ignore if process has exited in the mean time.
                     }
                 }
             }
@@ -681,10 +688,9 @@ namespace Microsoft.PowerShell.Commands
                                     string pName = namedPipe.Substring(pNameIndex + 1);
 
                                     Process process = null;
-
                                     try
                                     {
-                                        process = System.Diagnostics.Process.GetProcessById(id);
+                                        process = PSHostProcessUtils.GetProcessById(id);
                                     }
                                     catch (Exception)
                                     {
@@ -704,10 +710,20 @@ namespace Microsoft.PowerShell.Commands
                                             // best effort to cleanup
                                         }
                                     }
-                                    else if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
+                                    else
                                     {
-                                        // only add if the process name matches
-                                        procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName, namedPipe));
+                                        try
+                                        {
+                                            if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
+                                            {
+                                                // only add if the process name matches
+                                                procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName, namedPipe));
+                                            }
+                                        }
+                                        catch (InvalidOperationException)
+                                        {
+                                            // Ignore if process has exited in the mean time.
+                                        }
                                     }
                                 }
                             }
@@ -796,8 +812,8 @@ namespace Microsoft.PowerShell.Commands
             MainWindowTitle = string.Empty;
             try
             {
-                var proc = Process.GetProcessById(processId);
-                MainWindowTitle = proc.MainWindowTitle ?? string.Empty;
+                var process = PSHostProcessUtils.GetProcessById(processId);
+                MainWindowTitle = process?.MainWindowTitle ?? string.Empty;
             }
             catch (ArgumentException)
             {
@@ -828,6 +844,32 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
+    }
+
+    #endregion
+
+    #region PSHostProcessUtils
+
+    internal static class PSHostProcessUtils
+    {
+        /// <summary>
+        /// Return a System.Diagnostics.Process object by process Id,
+        /// or null if not found or process has exited.
+        /// </summary>
+        /// <param name="procId">Process of Id to find.</param>
+        /// <returns>Process object or null.</returns>
+        public static Process GetProcessById(int procId)
+        {
+            try
+            {
+                var process = Process.GetProcessById(procId);
+                return process.HasExited ? null : process;
+            }
+            catch (System.ArgumentException)
+            {
+                return null;
+            }
+        }
     }
 
     #endregion

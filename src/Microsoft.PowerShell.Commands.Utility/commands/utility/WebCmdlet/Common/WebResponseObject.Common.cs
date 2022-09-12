@@ -123,10 +123,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                if (_headers == null)
-                {
-                    _headers = WebResponseHelper.GetHeadersDictionary(BaseResponse);
-                }
+                _headers ??= WebResponseHelper.GetHeadersDictionary(BaseResponse);
 
                 return _headers;
             }

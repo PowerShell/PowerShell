@@ -474,10 +474,7 @@ namespace System.Management.Automation.Tracing
             }
 
             bool success = provider.WriteEvent(in ed, payload);
-            if (EventWritten != null)
-            {
-                EventWritten.Invoke(this, new EtwEventArgs(ed, success, payload));
-            }
+            EventWritten?.Invoke(this, new EtwEventArgs(ed, success, payload));
         }
 
         private EventProvider GetProvider()

@@ -561,8 +561,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="objValue">The value to analyze.</param>
         private void AnalyzeValue(string propertyName, object objValue)
         {
-            if (propertyName == null)
-                propertyName = thisObject;
+            propertyName ??= thisObject;
 
             Statistics stat = _statistics.EnsureEntry(propertyName);
 
@@ -792,9 +791,9 @@ namespace Microsoft.PowerShell.Commands
         {
             Diagnostics.Assert(Property != null, "no property and no InputObject should have been addressed");
             ErrorRecord errorRecord = new(
-                    PSTraceSource.NewArgumentException("Property"),
+                    PSTraceSource.NewArgumentException(propertyName),
                     errorId,
-                    ErrorCategory.InvalidArgument,
+                    ErrorCategory.ObjectNotFound,
                     null);
             errorRecord.ErrorDetails = new ErrorDetails(
                 this, "MeasureObjectStrings", "PropertyNotFound", propertyName);
@@ -820,9 +819,12 @@ namespace Microsoft.PowerShell.Commands
                 Statistics stat = _statistics[propertyName];
                 if (stat.count == 0 && Property != null)
                 {
-                    // Why are there two different ids for this error?
-                    string errorId = (IsMeasuringGeneric) ? "GenericMeasurePropertyNotFound" : "TextMeasurePropertyNotFound";
-                    WritePropertyNotFoundError(propertyName, errorId);
+                    if (Context.IsStrictVersion(2))
+                    {
+                        string errorId = (IsMeasuringGeneric) ? "GenericMeasurePropertyNotFound" : "TextMeasurePropertyNotFound";
+                        WritePropertyNotFoundError(propertyName, errorId);
+                    }
+                    
                     continue;
                 }
 

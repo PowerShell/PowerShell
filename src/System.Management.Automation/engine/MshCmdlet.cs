@@ -283,8 +283,7 @@ namespace System.Management.Automation
         /// </exception>
         public string ExpandString(string source)
         {
-            if (_cmdlet != null)
-                _cmdlet.ThrowIfStopping();
+            _cmdlet?.ThrowIfStopping();
             return _context.Engine.Expand(source);
         }
 
@@ -818,8 +817,7 @@ namespace System.Management.Automation
             IList input,
             params object[] args)
         {
-            if (_cmdlet != null)
-                _cmdlet.ThrowIfStopping();
+            _cmdlet?.ThrowIfStopping();
 
             Cmdlet cmdletToUse = null;
             ScriptBlock.ErrorHandlingBehavior errorHandlingBehavior = ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe;
@@ -910,8 +908,7 @@ namespace System.Management.Automation
         /// <exception cref="ParseException"></exception>
         public ScriptBlock NewScriptBlock(string scriptText)
         {
-            if (_commandRuntime != null)
-                _commandRuntime.ThrowIfStopping();
+            _commandRuntime?.ThrowIfStopping();
 
             ScriptBlock result = ScriptBlock.Create(_context, scriptText);
             return result;

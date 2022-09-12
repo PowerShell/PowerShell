@@ -66,7 +66,6 @@ namespace System.Management.Automation.Internal
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         private void Dispose(bool disposing)
@@ -214,10 +213,7 @@ namespace System.Management.Automation.Internal
             // Log the cmdlet invocation execution details if we didn't have an associated script line with it.
             if ((invocation == null) || string.IsNullOrEmpty(invocation.Line))
             {
-                if (hostInterface != null)
-                {
-                    hostInterface.TranscribeCommand(logElement, invocation);
-                }
+                hostInterface?.TranscribeCommand(logElement, invocation);
             }
 
             if (_needToLog && !string.IsNullOrEmpty(logElement))
@@ -267,9 +263,12 @@ namespace System.Management.Automation.Internal
 
         internal void AddRedirectionPipe(PipelineProcessor pipelineProcessor)
         {
-            if (pipelineProcessor == null) throw PSTraceSource.NewArgumentNullException(nameof(pipelineProcessor));
-            if (_redirectionPipes == null)
-                _redirectionPipes = new List<PipelineProcessor>();
+            if (pipelineProcessor is null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(pipelineProcessor));
+            }
+
+            _redirectionPipes ??= new List<PipelineProcessor>();
             _redirectionPipes.Add(pipelineProcessor);
         }
 
@@ -347,18 +346,15 @@ namespace System.Management.Automation.Internal
             }
             else
             {
-                CommandProcessorBase prevcommandProcessor = _commands[readFromCommand - 1] as CommandProcessorBase;
-                if (prevcommandProcessor == null || prevcommandProcessor.CommandRuntime == null)
-                {
-                    // "PipelineProcessor.AddCommand(): previous request object == null"
-                    throw PSTraceSource.NewInvalidOperationException();
-                }
+                var prevcommandProcessor = _commands[readFromCommand - 1] as CommandProcessorBase;
+                ValidateCommandProcessorNotNull(prevcommandProcessor, errorMessage: null);
 
-                Pipe UpstreamPipe = (readErrorQueue) ?
-                    prevcommandProcessor.CommandRuntime.ErrorOutputPipe : prevcommandProcessor.CommandRuntime.OutputPipe;
+                Pipe UpstreamPipe = (readErrorQueue)
+                    ? prevcommandProcessor.CommandRuntime.ErrorOutputPipe
+                    : prevcommandProcessor.CommandRuntime.OutputPipe;
+
                 if (UpstreamPipe == null)
                 {
-                    // "PipelineProcessor.AddCommand(): UpstreamPipe == null"
                     throw PSTraceSource.NewInvalidOperationException();
                 }
 
@@ -381,11 +377,8 @@ namespace System.Management.Automation.Internal
                     for (int i = 0; i < _commands.Count; i++)
                     {
                         prevcommandProcessor = _commands[i];
-                        if (prevcommandProcessor == null || prevcommandProcessor.CommandRuntime == null)
-                        {
-                            // "PipelineProcessor.AddCommand(): previous request object == null"
-                            throw PSTraceSource.NewInvalidOperationException();
-                        }
+                        ValidateCommandProcessorNotNull(prevcommandProcessor, errorMessage: null);
+
                         // check whether the error output is already claimed
                         if (prevcommandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet != null)
                             continue;
@@ -470,192 +463,303 @@ namespace System.Management.Automation.Internal
                 throw new PipelineStoppedException();
             }
 
-            ExceptionDispatchInfo toRethrowInfo;
+            bool pipelineSucceeded = false;
+            ExceptionDispatchInfo toRethrowInfo = null;
+            CommandProcessorBase commandRequestingUpstreamCommandsToStop = null;
+
             try
             {
-                CommandProcessorBase commandRequestingUpstreamCommandsToStop = null;
                 try
                 {
-                    // If the caller specified an input object array,
-                    // we run assuming there is an incoming "stream"
-                    // of objects. This will prevent the one default call
-                    // to ProcessRecord on the first command.
-                    Start(input != AutomationNull.Value);
-
-                    // Start has already validated firstcommandProcessor
-                    CommandProcessorBase firstCommandProcessor = _commands[0];
-
-                    // Add any input to the first command.
-                    if (ExternalInput != null)
+                    try
                     {
-                        firstCommandProcessor.CommandRuntime.InputPipe.ExternalReader
-                            = ExternalInput;
+                        // If the caller specified an input object array, we run assuming there is an incoming "stream"
+                        // of objects. This will prevent the one default call to ProcessRecord on the first command.
+                        Start(incomingStream: input != AutomationNull.Value);
+
+                        // Start has already validated firstcommandProcessor
+                        CommandProcessorBase firstCommandProcessor = _commands[0];
+
+                        // Add any input to the first command.
+                        if (ExternalInput is not null)
+                        {
+                            firstCommandProcessor.CommandRuntime.InputPipe.ExternalReader = ExternalInput;
+                        }
+
+                        Inject(input, enumerate: true);
+                    }
+                    catch (PipelineStoppedException)
+                    {
+                        if (_firstTerminatingError?.SourceException is StopUpstreamCommandsException exception)
+                        {
+                            _firstTerminatingError = null;
+                            commandRequestingUpstreamCommandsToStop = exception.RequestingCommandProcessor;
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
 
-                    Inject(input, enumerate: true);
+                    DoCompleteCore(commandRequestingUpstreamCommandsToStop);
+                    pipelineSucceeded = true;
                 }
-                catch (PipelineStoppedException)
+                finally
                 {
-                    StopUpstreamCommandsException stopUpstreamCommandsException =
-                        _firstTerminatingError != null
-                            ? _firstTerminatingError.SourceException as StopUpstreamCommandsException
-                            : null;
-                    if (stopUpstreamCommandsException == null)
-                    {
-                        throw;
-                    }
-                    else
-                    {
-                        _firstTerminatingError = null;
-                        commandRequestingUpstreamCommandsToStop = stopUpstreamCommandsException.RequestingCommandProcessor;
-                    }
+                    // Clean up resources for script commands, no matter the pipeline succeeded or not.
+                    // This method catches and handles all exceptions inside, so it will never throw.
+                    Clean();
                 }
 
-                DoCompleteCore(commandRequestingUpstreamCommandsToStop);
-
-                // By this point, we are sure all commandProcessors hosted by the current pipelineProcess are done execution,
-                // so if there are any redirection pipelineProcessors associated with any of those commandProcessors, we should
-                // call DoComplete on them.
-                if (_redirectionPipes != null)
+                if (pipelineSucceeded)
                 {
-                    foreach (PipelineProcessor redirectPipelineProcessor in _redirectionPipes)
+                    // Now, we are sure all 'commandProcessors' hosted by the current 'pipelineProcessor' are done execution,
+                    // so if there are any redirection 'pipelineProcessors' associated with any of those 'commandProcessors',
+                    // they must have successfully executed 'StartStepping' and 'Step', and thus we should call 'DoComplete'
+                    // on them for completeness.
+                    if (_redirectionPipes is not null)
                     {
-                        redirectPipelineProcessor.DoCompleteCore(null);
+                        foreach (PipelineProcessor redirectPipelineProcessor in _redirectionPipes)
+                        {
+                            // The 'Clean' block for each 'commandProcessor' might still write to a pipe that is associated
+                            // with the redirection 'pipelineProcessor' (e.g. a redirected error pipe), which would trigger
+                            // the call to 'pipelineProcessor.Step'.
+                            // It's possible (though very unlikely) that the call to 'pipelineProcessor.Step' failed with an
+                            // exception, and in such case, the 'pipelineProcessor' would have been disposed, and therefore
+                            // the call to 'DoComplete' will simply return, because '_commands' was already set to null.
+                            redirectPipelineProcessor.DoCompleteCore(null);
+                        }
                     }
-                }
 
-                return RetrieveResults();
+                    // The 'Clean' blocks write nothing to the output pipe, so the results won't be affected by them.
+                    return RetrieveResults();
+                }
             }
             catch (RuntimeException e)
             {
-                // The error we want to report is the first terminating error
-                // which occurred during pipeline execution, regardless
-                // of whether other errors occurred afterward.
-                toRethrowInfo = _firstTerminatingError ?? ExceptionDispatchInfo.Capture(e);
-                this.LogExecutionException(toRethrowInfo.SourceException);
-            }
-            // NTRAID#Windows Out Of Band Releases-929020-2006/03/14-JonN
-            catch (System.Runtime.InteropServices.InvalidComObjectException comException)
-            {
-                // The error we want to report is the first terminating error
-                // which occurred during pipeline execution, regardless
-                // of whether other errors occurred afterward.
-                if (_firstTerminatingError != null)
-                {
-                    toRethrowInfo = _firstTerminatingError;
-                }
-                else
-                {
-                    string message = StringUtil.Format(ParserStrings.InvalidComObjectException, comException.Message);
-                    var rte = new RuntimeException(message, comException);
-                    rte.SetErrorId("InvalidComObjectException");
-                    toRethrowInfo = ExceptionDispatchInfo.Capture(rte);
-                }
-
-                this.LogExecutionException(toRethrowInfo.SourceException);
+                toRethrowInfo = GetFirstError(e);
             }
             finally
             {
                 DisposeCommands();
             }
 
-            // By rethrowing the exception outside of the handler,
-            // we allow the CLR on X64/IA64 to free from the stack
-            // the exception records related to this exception.
+            // By rethrowing the exception outside of the handler, we allow the CLR on X64/IA64 to free from
+            // the stack the exception records related to this exception.
 
-            // The only reason we should get here is if
-            // an exception should be rethrown.
+            // The only reason we should get here is if an exception should be rethrown.
             Diagnostics.Assert(toRethrowInfo != null, "Alternate protocol path failure");
             toRethrowInfo.Throw();
-            return null; // UNREACHABLE
+
+            // UNREACHABLE
+            return null;
+        }
+
+        private ExceptionDispatchInfo GetFirstError(RuntimeException e)
+        {
+            // The error we want to report is the first terminating error which occurred during pipeline execution,
+            // regardless of whether other errors occurred afterward.
+            var firstError = _firstTerminatingError ?? ExceptionDispatchInfo.Capture(e);
+            LogExecutionException(firstError.SourceException);
+            return firstError;
+        }
+
+        private void ThrowFirstErrorIfExisting(bool logException)
+        {
+            if (_firstTerminatingError != null)
+            {
+                if (logException)
+                {
+                    LogExecutionException(_firstTerminatingError.SourceException);
+                }
+
+                _firstTerminatingError.Throw();
+            }
         }
 
         private void DoCompleteCore(CommandProcessorBase commandRequestingUpstreamCommandsToStop)
         {
-            // Call DoComplete() for all the commands. DoComplete() will internally call Complete()
+            if (_commands is null)
+            {
+                // This could happen to a redirection pipeline, either for an expression (e.g. 1 > a.txt)
+                // or for a command (e.g. command > a.txt).
+                // An exception may be thrown from the call to 'StartStepping' or 'Step' on the pipeline,
+                // which causes the pipeline commands to be disposed.
+                return;
+            }
+
+            // Call DoComplete() for all the commands, which will internally call Complete()
             MshCommandRuntime lastCommandRuntime = null;
 
-            if (_commands != null)
+            for (int i = 0; i < _commands.Count; i++)
             {
-                for (int i = 0; i < _commands.Count; i++)
+                CommandProcessorBase commandProcessor = _commands[i];
+
+                if (commandProcessor is null)
                 {
-                    CommandProcessorBase commandProcessor = _commands[i];
-
-                    if (commandProcessor == null)
-                    {
-                        // "null command " + i
-                        throw PSTraceSource.NewInvalidOperationException();
-                    }
-
-                    if (object.ReferenceEquals(commandRequestingUpstreamCommandsToStop, commandProcessor))
-                    {
-                        commandRequestingUpstreamCommandsToStop = null;
-                        continue; // do not call DoComplete/EndProcessing on the command that initiated stopping
-                    }
-
-                    if (commandRequestingUpstreamCommandsToStop != null)
-                    {
-                        continue; // do not call DoComplete/EndProcessing on commands that were stopped upstream
-                    }
-
-                    try
-                    {
-                        commandProcessor.DoComplete();
-                    }
-                    catch (PipelineStoppedException)
-                    {
-                        StopUpstreamCommandsException stopUpstreamCommandsException =
-                            _firstTerminatingError != null
-                                ? _firstTerminatingError.SourceException as StopUpstreamCommandsException
-                                : null;
-                        if (stopUpstreamCommandsException == null)
-                        {
-                            throw;
-                        }
-                        else
-                        {
-                            _firstTerminatingError = null;
-                            commandRequestingUpstreamCommandsToStop = stopUpstreamCommandsException.RequestingCommandProcessor;
-                        }
-                    }
-
-                    EtwActivity.SetActivityId(commandProcessor.PipelineActivityId);
-
-                    // Log a command stopped event
-                    MshLog.LogCommandLifecycleEvent(
-                        commandProcessor.Command.Context,
-                        CommandState.Stopped,
-                        commandProcessor.Command.MyInvocation);
-
-                    // Log the execution of a command (not script chunks, as they
-                    // are not commands in and of themselves)
-                    if (commandProcessor.CommandInfo.CommandType != CommandTypes.Script)
-                    {
-                        commandProcessor.CommandRuntime.PipelineProcessor.LogExecutionComplete(
-                            commandProcessor.Command.MyInvocation, commandProcessor.CommandInfo.Name);
-                    }
-
-                    lastCommandRuntime = commandProcessor.CommandRuntime;
+                    // An internal error that should not happen.
+                    throw PSTraceSource.NewInvalidOperationException();
                 }
+
+                if (object.ReferenceEquals(commandRequestingUpstreamCommandsToStop, commandProcessor))
+                {
+                    // Do not call DoComplete/EndProcessing on the command that initiated stopping.
+                    commandRequestingUpstreamCommandsToStop = null;
+                    continue;
+                }
+
+                if (commandRequestingUpstreamCommandsToStop is not null)
+                {
+                    // Do not call DoComplete/EndProcessing on commands that were stopped upstream.
+                    continue;
+                }
+
+                try
+                {
+                    commandProcessor.DoComplete();
+                }
+                catch (PipelineStoppedException)
+                {
+                    if (_firstTerminatingError?.SourceException is StopUpstreamCommandsException exception)
+                    {
+                        _firstTerminatingError = null;
+                        commandRequestingUpstreamCommandsToStop = exception.RequestingCommandProcessor;
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+
+                EtwActivity.SetActivityId(commandProcessor.PipelineActivityId);
+
+                // Log a command stopped event
+                MshLog.LogCommandLifecycleEvent(
+                    commandProcessor.Command.Context,
+                    CommandState.Stopped,
+                    commandProcessor.Command.MyInvocation);
+
+                // Log the execution of a command (not script chunks, as they are not commands in and of themselves).
+                if (commandProcessor.CommandInfo.CommandType != CommandTypes.Script)
+                {
+                    LogExecutionComplete(commandProcessor.Command.MyInvocation, commandProcessor.CommandInfo.Name);
+                }
+
+                lastCommandRuntime = commandProcessor.CommandRuntime;
             }
 
             // Log the pipeline completion.
-            if (lastCommandRuntime != null)
+            if (lastCommandRuntime is not null)
             {
                 // Only log the pipeline completion if this wasn't a nested pipeline, as
                 // pipeline state in transcription is associated with the toplevel pipeline
-                if ((this.LocalPipeline == null) || (!this.LocalPipeline.IsNested))
+                if (LocalPipeline is null || !LocalPipeline.IsNested)
                 {
                     lastCommandRuntime.PipelineProcessor.LogPipelineComplete();
                 }
             }
 
             // If a terminating error occurred, report it now.
-            if (_firstTerminatingError != null)
+            // This pipeline could have been stopped asynchronously, by 'Ctrl+c' manually or
+            // 'PowerShell.Stop' programatically. We need to check and see if that's the case.
+            // An example:
+            // - 'Start-Sleep' is running in this pipeline, and 'pipelineProcessor.Stop' gets
+            //   called on a different thread, which sets a 'PipelineStoppedException' object
+            //   to '_firstTerminatingError' and runs 'StopProcessing' on 'Start-Sleep'.
+            // - The 'StopProcessing' will cause 'Start-Sleep' to return from 'ProcessRecord'
+            //   call, and thus the pipeline execution will move forward to run 'DoComplete'
+            //   for the 'Start-Sleep' command and thus the code flow will reach here.
+            // For this given example, we need to check '_firstTerminatingError' and throw out
+            // the 'PipelineStoppedException' if the pipeline was indeed being stopped.
+            ThrowFirstErrorIfExisting(logException: true);
+        }
+
+        /// <summary>
+        /// Clean up resources for script commands in this pipeline processor.
+        /// </summary>
+        /// <remarks>
+        /// Exception from a 'Clean' block is not allowed to propagate up and terminate the pipeline
+        /// so that other 'Clean' blocks can run without being affected. Therefore, this method will
+        /// catch and handle all exceptions inside, and it will never throw.
+        /// </remarks>
+        private void Clean()
+        {
+            if (!_executionStarted || _commands is null)
             {
-                this.LogExecutionException(_firstTerminatingError.SourceException);
-                _firstTerminatingError.Throw();
+                // Simply return if the pipeline execution wasn't even started, or the commands of
+                // the pipeline have already been disposed.
+                return;
             }
+
+            // So far, if '_firstTerminatingError' is not null, then it must be a terminating error
+            // thrown from one of 'Begin/Process/End' blocks. There can be terminating error thrown
+            // from 'Clean' block as well, which needs to be handled in this method.
+            // In order to capture the subsequent first terminating error thrown from 'Clean', we
+            // need to forget the previous '_firstTerminatingError' value before calling 'DoClean'
+            // on each command processor, so we have to save the old value here and restore later.
+            ExceptionDispatchInfo oldFirstTerminatingError = _firstTerminatingError;
+
+            // Suspend a stopping pipeline by setting 'IsStopping' to false and restore it afterwards.
+            bool oldIsStopping = ExceptionHandlingOps.SuspendStoppingPipelineImpl(LocalPipeline);
+
+            try
+            {
+                foreach (CommandProcessorBase commandProcessor in _commands)
+                {
+                    if (commandProcessor is null || !commandProcessor.HasCleanBlock)
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        // Forget the terminating error we saw before, so a terminating error thrown
+                        // from the subsequent 'Clean' block can be recorded and handled properly.
+                        _firstTerminatingError = null;
+                        commandProcessor.DoCleanup();
+                    }
+                    catch (RuntimeException e)
+                    {
+                        // Retrieve and report the terminating error that was thrown in the 'Clean' block.
+                        ExceptionDispatchInfo firstError = GetFirstError(e);
+                        commandProcessor.ReportCleanupError(firstError.SourceException);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Theoretically, only 'RuntimeException' could be thrown out, but we catch
+                        // all and log them here just to be safe.
+                        // Skip special flow control exceptions and log others.
+                        if (ex is not FlowControlException && ex is not HaltCommandException)
+                        {
+                            MshLog.LogCommandHealthEvent(commandProcessor.Context, ex, Severity.Warning);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                _firstTerminatingError = oldFirstTerminatingError;
+                ExceptionHandlingOps.RestoreStoppingPipelineImpl(LocalPipeline, oldIsStopping);
+            }
+        }
+
+        /// <summary>
+        /// Clean up resources for the script commands of a steppable pipeline.
+        /// </summary>
+        /// <remarks>
+        /// The way we handle 'Clean' blocks in 'StartStepping', 'Step', and 'DoComplete' makes sure that:
+        ///  1. The 'Clean' blocks get to run if any exception is thrown from the pipeline execution.
+        ///  2. The 'Clean' blocks get to run if the pipeline runs to the end successfully.
+        /// However, this is not enough for a steppable pipeline, because the function, where the steppable
+        /// pipeline gets used, may fail (think about a proxy function). And that may lead to the situation
+        /// where "no exception was thrown from the steppable pipeline" but "the steppable pipeline didn't
+        /// run to the end". In that case, 'Clean' won't run unless it's triggered explicitly on the steppable
+        /// pipeline. This method is how we will expose this functionality to 'SteppablePipeline'.
+        /// </remarks>
+        internal void DoCleanup()
+        {
+            Clean();
+            DisposeCommands();
         }
 
         /// <summary>
@@ -665,98 +769,79 @@ namespace System.Management.Automation.Internal
         /// <returns>The results of the execution.</returns>
         internal Array DoComplete()
         {
-            if (Stopping)
-            {
-                throw new PipelineStoppedException();
-            }
-
             if (!_executionStarted)
             {
                 throw PSTraceSource.NewInvalidOperationException(
                     PipelineStrings.PipelineNotStarted);
             }
 
-            ExceptionDispatchInfo toRethrowInfo;
             try
             {
-                DoCompleteCore(null);
-
-                return RetrieveResults();
-            }
-            catch (RuntimeException e)
-            {
-                // The error we want to report is the first terminating error
-                // which occurred during pipeline execution, regardless
-                // of whether other errors occurred afterward.
-                toRethrowInfo = _firstTerminatingError ?? ExceptionDispatchInfo.Capture(e);
-                this.LogExecutionException(toRethrowInfo.SourceException);
-            }
-            // NTRAID#Windows Out Of Band Releases-929020-2006/03/14-JonN
-            catch (System.Runtime.InteropServices.InvalidComObjectException comException)
-            {
-                // The error we want to report is the first terminating error
-                // which occurred during pipeline execution, regardless
-                // of whether other errors occurred afterward.
-                if (_firstTerminatingError != null)
+                if (Stopping)
                 {
-                    toRethrowInfo = _firstTerminatingError;
-                }
-                else
-                {
-                    string message = StringUtil.Format(ParserStrings.InvalidComObjectException, comException.Message);
-                    var rte = new RuntimeException(message, comException);
-                    rte.SetErrorId("InvalidComObjectException");
-                    toRethrowInfo = ExceptionDispatchInfo.Capture(rte);
+                    throw new PipelineStoppedException();
                 }
 
-                this.LogExecutionException(toRethrowInfo.SourceException);
+                ExceptionDispatchInfo toRethrowInfo;
+                try
+                {
+                    DoCompleteCore(null);
+                    return RetrieveResults();
+                }
+                catch (RuntimeException e)
+                {
+                    toRethrowInfo = GetFirstError(e);
+                }
+
+                // By rethrowing the exception outside of the handler, we allow the CLR on X64/IA64 to free from the stack
+                // the exception records related to this exception.
+
+                // The only reason we should get here is an exception should be rethrown.
+                Diagnostics.Assert(toRethrowInfo != null, "Alternate protocol path failure");
+                toRethrowInfo.Throw();
+
+                // UNREACHABLE
+                return null;
             }
             finally
             {
+                Clean();
                 DisposeCommands();
             }
-
-            // By rethrowing the exception outside of the handler,
-            // we allow the CLR on X64/IA64 to free from the stack
-            // the exception records related to this exception.
-
-            // The only reason we should get here is if
-            // an exception should be rethrown.
-            Diagnostics.Assert(toRethrowInfo != null, "Alternate protocol path failure");
-            toRethrowInfo.Throw();
-            return null; // UNREACHABLE
         }
 
         /// <summary>
-        /// This routine starts the stepping process. It is optional to
-        /// call this but can be useful if you want the begin clauses
-        /// of the pipeline to be run even when there may not be any input
-        /// to process as is the case for I/O redirection into a file. We
-        /// still want the file opened, even if there was nothing to write to it.
+        /// This routine starts the stepping process. It is optional to call this but can be useful
+        /// if you want the begin clauses of the pipeline to be run even when there may not be any
+        /// input to process as is the case for I/O redirection into a file. We still want the file
+        /// opened, even if there was nothing to write to it.
         /// </summary>
         /// <param name="expectInput">True if you want to write to this pipeline.</param>
         internal void StartStepping(bool expectInput)
         {
+            bool startSucceeded = false;
             try
             {
                 Start(expectInput);
+                startSucceeded = true;
 
-                // If a terminating error occurred, report it now.
-                if (_firstTerminatingError != null)
-                {
-                    _firstTerminatingError.Throw();
-                }
+                // Check if this pipeline is being stopped asynchronously.
+                ThrowFirstErrorIfExisting(logException: false);
             }
-            catch (PipelineStoppedException)
+            catch (Exception e)
             {
+                Clean();
                 DisposeCommands();
 
-                // The error we want to report is the first terminating error
-                // which occurred during pipeline execution, regardless
-                // of whether other errors occurred afterward.
-                if (_firstTerminatingError != null)
+                if (!startSucceeded && e is PipelineStoppedException)
                 {
-                    _firstTerminatingError.Throw();
+                    // When a terminating error happens during command execution, PowerShell will first save it
+                    // to '_firstTerminatingError', and then throw a 'PipelineStoppedException' to tear down the
+                    // pipeline. So when the caught exception here is 'PipelineStoppedException', it may not be
+                    // the actual original terminating error.
+                    // In this case, we want to report the first terminating error which occurred during pipeline
+                    // execution, regardless of whether other errors occurred afterward.
+                    ThrowFirstErrorIfExisting(logException: false);
                 }
 
                 throw;
@@ -773,35 +858,35 @@ namespace System.Management.Automation.Internal
             // Only call StopProcessing if the pipeline is being stopped
             // for the first time
 
-            if (!RecordFailure(new PipelineStoppedException(), null))
+            if (!RecordFailure(new PipelineStoppedException(), command: null))
+            {
                 return;
+            }
 
             // Retain copy of _commands in case Dispose() is called
             List<CommandProcessorBase> commands = _commands;
-            if (commands == null)
+            if (commands is null)
+            {
                 return;
+            }
 
             // Call StopProcessing() for all the commands.
-            for (int i = 0; i < commands.Count; i++)
+            foreach (CommandProcessorBase commandProcessor in commands)
             {
-                CommandProcessorBase commandProcessor = commands[i];
-
                 if (commandProcessor == null)
                 {
                     throw PSTraceSource.NewInvalidOperationException();
                 }
-#pragma warning disable 56500
+
                 try
                 {
                     commandProcessor.Command.DoStopProcessing();
                 }
                 catch (Exception)
                 {
-                    // 2004/04/26-JonN We swallow exceptions
-                    // which occur during StopProcessing.
+                    // We swallow exceptions which occur during StopProcessing.
                     continue;
                 }
-#pragma warning restore 56500
             }
         }
 
@@ -844,41 +929,33 @@ namespace System.Management.Automation.Internal
         /// </exception>
         internal Array Step(object input)
         {
-            if (Stopping)
-            {
-                throw new PipelineStoppedException();
-            }
-
+            bool injectSucceeded = false;
             try
             {
                 Start(true);
                 Inject(input, enumerate: false);
+                injectSucceeded = true;
 
-                // If a terminating error occurred, report it now.
-                if (_firstTerminatingError != null)
-                {
-                    _firstTerminatingError.Throw();
-                }
-
+                // Check if this pipeline is being stopped asynchronously.
+                ThrowFirstErrorIfExisting(logException: false);
                 return RetrieveResults();
             }
-            catch (PipelineStoppedException)
+            catch (Exception e)
             {
+                Clean();
                 DisposeCommands();
 
-                // The error we want to report is the first terminating error
-                // which occurred during pipeline execution, regardless
-                // of whether other errors occurred afterward.
-                if (_firstTerminatingError != null)
+                if (!injectSucceeded && e is PipelineStoppedException)
                 {
-                    _firstTerminatingError.Throw();
+                    // When a terminating error happens during command execution, PowerShell will first save it
+                    // to '_firstTerminatingError', and then throw a 'PipelineStoppedException' to tear down the
+                    // pipeline. So when the caught exception here is 'PipelineStoppedException', it may not be
+                    // the actual original terminating error.
+                    // In this case, we want to report the first terminating error which occurred during pipeline
+                    // execution, regardless of whether other errors occurred afterward.
+                    ThrowFirstErrorIfExisting(logException: false);
                 }
 
-                throw;
-            }
-            catch (Exception)
-            {
-                DisposeCommands();
                 throw;
             }
         }
@@ -927,7 +1004,9 @@ namespace System.Management.Automation.Internal
             }
 
             if (_executionStarted)
+            {
                 return;
+            }
 
             if (_commands == null || _commands.Count == 0)
             {
@@ -936,32 +1015,18 @@ namespace System.Management.Automation.Internal
             }
 
             CommandProcessorBase firstcommandProcessor = _commands[0];
-            if (firstcommandProcessor == null
-                || firstcommandProcessor.CommandRuntime == null)
-            {
-                throw PSTraceSource.NewInvalidOperationException(
-                    PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
-            }
+            ValidateCommandProcessorNotNull(firstcommandProcessor, PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
 
             // Set the execution scope using the current scope
-            if (_executionScope == null)
-            {
-                _executionScope = firstcommandProcessor.Context.EngineSessionState.CurrentScope;
-            }
+            _executionScope ??= firstcommandProcessor.Context.EngineSessionState.CurrentScope;
 
             // add ExternalSuccessOutput to the last command
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
-            if (LastCommandProcessor == null
-                || LastCommandProcessor.CommandRuntime == null)
-            {
-                // "PipelineProcessor.Start(): LastCommandProcessor == null"
-                throw PSTraceSource.NewInvalidOperationException();
-            }
+            ValidateCommandProcessorNotNull(LastCommandProcessor, errorMessage: null);
 
             if (ExternalSuccessOutput != null)
             {
-                LastCommandProcessor.CommandRuntime.OutputPipe.ExternalWriter
-                    = ExternalSuccessOutput;
+                LastCommandProcessor.CommandRuntime.OutputPipe.ExternalWriter = ExternalSuccessOutput;
             }
 
             // add ExternalErrorOutput to all commands whose error
@@ -981,14 +1046,11 @@ namespace System.Management.Automation.Internal
 
             _executionStarted = true;
 
-            //
             // Allocate the pipeline iteration array; note that the pipeline position for
             // each command starts at 1 so we need to allocate _commands.Count + 1 items.
-            //
             int[] pipelineIterationInfo = new int[_commands.Count + 1];
 
-            // Prepare all commands from Engine's side,
-            // and make sure they are all valid
+            // Prepare all commands from Engine's side, and make sure they are all valid
             for (int i = 0; i < _commands.Count; i++)
             {
                 CommandProcessorBase commandProcessor = _commands[i];
@@ -1000,8 +1062,6 @@ namespace System.Management.Automation.Internal
 
                 // Generate new Activity Id for the thread
                 Guid pipelineActivityId = EtwActivity.CreateActivityId();
-
-                // commandProcess.PipelineActivityId = new Activity id
                 EtwActivity.SetActivityId(pipelineActivityId);
                 commandProcessor.PipelineActivityId = pipelineActivityId;
 
@@ -1011,20 +1071,14 @@ namespace System.Management.Automation.Internal
                     CommandState.Started,
                     commandProcessor.Command.MyInvocation);
 
-                // Telemetry here
-                // the type of command should be sent along
-                // commandProcessor.CommandInfo.CommandType
-                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ApplicationType, commandProcessor.Command.CommandInfo.CommandType.ToString());
 #if LEGACYTELEMETRY
                 Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.TraceExecutedCommand(commandProcessor.Command.CommandInfo, commandProcessor.Command.CommandOrigin);
 #endif
 
-                // Log the execution of a command (not script chunks, as they
-                // are not commands in and of themselves)
+                // Log the execution of a command (not script chunks, as they are not commands in and of themselves)
                 if (commandProcessor.CommandInfo.CommandType != CommandTypes.Script)
                 {
-                    commandProcessor.CommandRuntime.PipelineProcessor.LogExecutionInfo(
-                        commandProcessor.Command.MyInvocation, commandProcessor.CommandInfo.Name);
+                    LogExecutionInfo(commandProcessor.Command.MyInvocation, commandProcessor.CommandInfo.Name);
                 }
 
                 InvocationInfo myInfo = commandProcessor.Command.MyInvocation;
@@ -1057,8 +1111,7 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Add ExternalErrorOutput to all commands whose error
-        /// output is not yet claimed.
+        /// Add ExternalErrorOutput to all commands whose error output is not yet claimed.
         /// </summary>
         private void SetExternalErrorOutput()
         {
@@ -1067,14 +1120,12 @@ namespace System.Management.Automation.Internal
                 for (int i = 0; i < _commands.Count; i++)
                 {
                     CommandProcessorBase commandProcessor = _commands[i];
-                    Pipe UpstreamPipe =
-                        commandProcessor.CommandRuntime.ErrorOutputPipe;
+                    Pipe errorPipe = commandProcessor.CommandRuntime.ErrorOutputPipe;
 
                     // check whether a cmdlet is consuming the error pipe
-                    if (!UpstreamPipe.IsRedirected)
+                    if (!errorPipe.IsRedirected)
                     {
-                        UpstreamPipe.ExternalWriter =
-                            ExternalErrorOutput;
+                        errorPipe.ExternalWriter = ExternalErrorOutput;
                     }
                 }
             }
@@ -1085,20 +1136,25 @@ namespace System.Management.Automation.Internal
         /// </summary>
         private void SetupParameterVariables()
         {
-            for (int i = 0; i < _commands.Count; i++)
+            foreach (CommandProcessorBase commandProcessor in _commands)
             {
-                CommandProcessorBase commandProcessor = _commands[i];
-                if (commandProcessor == null || commandProcessor.CommandRuntime == null)
-                {
-                    // "null command " + i
-                    throw PSTraceSource.NewInvalidOperationException();
-                }
+                ValidateCommandProcessorNotNull(commandProcessor, errorMessage: null);
 
                 commandProcessor.CommandRuntime.SetupOutVariable();
                 commandProcessor.CommandRuntime.SetupErrorVariable();
                 commandProcessor.CommandRuntime.SetupWarningVariable();
                 commandProcessor.CommandRuntime.SetupPipelineVariable();
                 commandProcessor.CommandRuntime.SetupInformationVariable();
+            }
+        }
+
+        private static void ValidateCommandProcessorNotNull(CommandProcessorBase commandProcessor, string errorMessage)
+        {
+            if (commandProcessor?.CommandRuntime is null)
+            {
+                throw errorMessage is null
+                    ? PSTraceSource.NewInvalidOperationException()
+                    : PSTraceSource.NewInvalidOperationException(errorMessage, Array.Empty<object>());
             }
         }
 
@@ -1131,12 +1187,7 @@ namespace System.Management.Automation.Internal
         {
             // Add any input to the first command.
             CommandProcessorBase firstcommandProcessor = _commands[0];
-            if (firstcommandProcessor == null
-                || firstcommandProcessor.CommandRuntime == null)
-            {
-                throw PSTraceSource.NewInvalidOperationException(
-                    PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
-            }
+            ValidateCommandProcessorNotNull(firstcommandProcessor, PipelineStrings.PipelineExecuteRequiresAtLeastOneCommand);
 
             if (input != AutomationNull.Value)
             {
@@ -1174,27 +1225,26 @@ namespace System.Management.Automation.Internal
         /// </returns>
         private Array RetrieveResults()
         {
+            if (_commands is null)
+            {
+                // This could happen to an expression redirection pipeline (e.g. 1 > a.txt).
+                // An exception may be thrown from the call to 'StartStepping' or 'Step' on the pipeline,
+                // which causes the pipeline commands to be disposed.
+                return MshCommandRuntime.StaticEmptyArray;
+            }
+
             // If the error queue has been linked, it's up to the link to
             // deal with the output. Don't do anything here...
             if (!_linkedErrorOutput)
             {
-                // Retrieve any accumulated error objects from each of the pipes
-                // and add them to the error results hash table.
-                for (int i = 0; i < _commands.Count; i++)
+                foreach (CommandProcessorBase commandProcessor in _commands)
                 {
-                    CommandProcessorBase commandProcessor = _commands[i];
-                    if (commandProcessor == null
-                        || commandProcessor.CommandRuntime == null)
-                    {
-                        // "null command or request or ErrorOutputPipe " + i
-                        throw PSTraceSource.NewInvalidOperationException();
-                    }
+                    ValidateCommandProcessorNotNull(commandProcessor, errorMessage: null);
 
                     Pipe ErrorPipe = commandProcessor.CommandRuntime.ErrorOutputPipe;
                     if (ErrorPipe.DownstreamCmdlet == null && !ErrorPipe.Empty)
                     {
-                        // 2003/10/02-JonN
-                        // Do not return the same error results more than once
+                        // Clear the error pipe if it's not empty and will not be consumed.
                         ErrorPipe.Clear();
                     }
                 }
@@ -1203,26 +1253,18 @@ namespace System.Management.Automation.Internal
             // If the success queue has been linked, it's up to the link to
             // deal with the output. Don't do anything here...
             if (_linkedSuccessOutput)
-                return MshCommandRuntime.StaticEmptyArray;
-
-            CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
-            if (LastCommandProcessor == null
-                || LastCommandProcessor.CommandRuntime == null)
             {
-                // "PipelineProcessor.RetrieveResults(): LastCommandProcessor == null"
-                throw PSTraceSource.NewInvalidOperationException();
+                return MshCommandRuntime.StaticEmptyArray;
             }
 
-            Array results =
-                LastCommandProcessor.CommandRuntime.GetResultsAsArray();
+            CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
+            ValidateCommandProcessorNotNull(LastCommandProcessor, errorMessage: null);
 
-            // 2003/10/02-JonN
+            Array results = LastCommandProcessor.CommandRuntime.GetResultsAsArray();
+
             // Do not return the same results more than once
             LastCommandProcessor.CommandRuntime.OutputPipe.Clear();
-
-            if (results == null)
-                return MshCommandRuntime.StaticEmptyArray;
-            return results;
+            return results is null ? MshCommandRuntime.StaticEmptyArray : results;
         }
 
         /// <summary>
@@ -1236,12 +1278,7 @@ namespace System.Management.Automation.Internal
             Dbg.Assert(pipeToUse != null, "Caller should verify pipeToUse != null");
 
             CommandProcessorBase LastCommandProcessor = _commands[_commands.Count - 1];
-            if (LastCommandProcessor == null
-                || LastCommandProcessor.CommandRuntime == null)
-            {
-                // "PipelineProcessor.RetrieveResults(): LastCommandProcessor == null"
-                throw PSTraceSource.NewInvalidOperationException();
-            }
+            ValidateCommandProcessorNotNull(LastCommandProcessor, errorMessage: null);
 
             LastCommandProcessor.CommandRuntime.OutputPipe = pipeToUse;
             _linkedSuccessOutput = true;
@@ -1251,15 +1288,9 @@ namespace System.Management.Automation.Internal
         {
             Dbg.Assert(pipeToUse != null, "Caller should verify pipeToUse != null");
 
-            for (int i = 0; i < _commands.Count; i++)
+            foreach (CommandProcessorBase commandProcessor in _commands)
             {
-                CommandProcessorBase commandProcessor = _commands[i];
-                if (commandProcessor == null
-                    || commandProcessor.CommandRuntime == null)
-                {
-                    // "null command or request or ErrorOutputPipe " + i
-                    throw PSTraceSource.NewInvalidOperationException();
-                }
+                ValidateCommandProcessorNotNull(commandProcessor, errorMessage: null);
 
                 if (commandProcessor.CommandRuntime.ErrorOutputPipe.DownstreamCmdlet == null)
                 {
@@ -1280,62 +1311,65 @@ namespace System.Management.Automation.Internal
         private void DisposeCommands()
         {
             // Note that this is not in a lock.
-            // We do not make Dispose() wait until StopProcessing()
-            // has completed.
+            // We do not make Dispose() wait until StopProcessing() has completed.
             _stopping = true;
+
+            if (_commands is null && _redirectionPipes is null)
+            {
+                // Commands were already disposed.
+                return;
+            }
 
             LogToEventLog();
 
-            if (_commands != null)
+            if (_commands is not null)
             {
-                for (int i = 0; i < _commands.Count; i++)
+                foreach (CommandProcessorBase commandProcessor in _commands)
                 {
-                    CommandProcessorBase commandProcessor = _commands[i];
-                    if (commandProcessor != null)
+                    if (commandProcessor is null)
                     {
-#pragma warning disable 56500
-                        // If Dispose throws an exception, record it as a
-                        // pipeline failure and continue disposing cmdlets.
-                        try
+                        continue;
+                    }
+
+                    // If Dispose throws an exception, record it as a pipeline failure and continue disposing cmdlets.
+                    try
+                    {
+                        // Only cmdlets can have variables defined via the common parameters.
+                        // We handle the cleanup of those variables only if we need to.
+                        if (commandProcessor is CommandProcessor)
                         {
-                            commandProcessor.CommandRuntime.RemoveVariableListsInPipe();
-                            commandProcessor.Dispose();
-                        }
-                        // 2005/04/13-JonN: The only vaguely plausible reason
-                        // for a failure here is an exception in Command.Dispose.
-                        // As such, this should be covered by the overall
-                        // exemption.
-                        catch (Exception e) // Catch-all OK, 3rd party callout.
-                        {
-                            InvocationInfo myInvocation = null;
-                            if (commandProcessor.Command != null)
-                                myInvocation = commandProcessor.Command.MyInvocation;
-
-                            ProviderInvocationException pie =
-                                e as ProviderInvocationException;
-                            if (pie != null)
+                            if (commandProcessor.Command is not PSScriptCmdlet)
                             {
-                                e = new CmdletProviderInvocationException(
-                                    pie,
-                                    myInvocation);
-                            }
-                            else
-                            {
-                                e = new CmdletInvocationException(
-                                    e,
-                                    myInvocation);
-
-                                // Log a command health event
-
-                                MshLog.LogCommandHealthEvent(
-                                    commandProcessor.Command.Context,
-                                    e,
-                                    Severity.Warning);
+                                // For script cmdlets, the variable lists were already removed when exiting a scope.
+                                // So we only need to take care of binary cmdlets here.
+                                commandProcessor.CommandRuntime.RemoveVariableListsInPipe();
                             }
 
-                            RecordFailure(e, commandProcessor.Command);
+                            // Remove the pipeline variable if we need to.
+                            commandProcessor.CommandRuntime.RemovePipelineVariable();
                         }
-#pragma warning restore 56500
+
+                        commandProcessor.Dispose();
+                    }
+                    catch (Exception e)
+                    {
+                        // The only vaguely plausible reason for a failure here is an exception in 'Command.Dispose'.
+                        // As such, this should be covered by the overall exemption.
+                        InvocationInfo myInvocation = commandProcessor.Command?.MyInvocation;
+
+                        if (e is ProviderInvocationException pie)
+                        {
+                            e = new CmdletProviderInvocationException(pie, myInvocation);
+                        }
+                        else
+                        {
+                            e = new CmdletInvocationException(e, myInvocation);
+
+                            // Log a command health event
+                            MshLog.LogCommandHealthEvent(commandProcessor.Command.Context, e, Severity.Warning);
+                        }
+
+                        RecordFailure(e, commandProcessor.Command);
                     }
                 }
             }
@@ -1343,25 +1377,31 @@ namespace System.Management.Automation.Internal
             _commands = null;
 
             // Now dispose any pipes that were used for redirection...
-            if (_redirectionPipes != null)
+            if (_redirectionPipes is not null)
             {
                 foreach (PipelineProcessor redirPipe in _redirectionPipes)
                 {
-#pragma warning disable 56500
+                    if (redirPipe is null)
+                    {
+                        continue;
+                    }
+
+                    // Clean resources for script commands.
+                    // It is possible (though very unlikely) that the call to 'Step' on the redirection pipeline failed.
+                    // In such a case, 'Clean' would have run and the 'pipelineProcessor' would have been disposed.
+                    // Therefore, calling 'Clean' again will simply return, because '_commands' was already set to null.
+                    redirPipe.Clean();
+
                     // The complicated logic of disposing the commands is taken care
                     // of through recursion, this routine should not be getting any
                     // exceptions...
                     try
                     {
-                        if (redirPipe != null)
-                        {
-                            redirPipe.Dispose();
-                        }
+                        redirPipe.Dispose();
                     }
                     catch (Exception)
                     {
                     }
-#pragma warning restore 56500
                 }
             }
 
@@ -1385,11 +1425,9 @@ namespace System.Management.Automation.Internal
                 {
                     _firstTerminatingError = ExceptionDispatchInfo.Capture(e);
                 }
-                // 905900-2005/05/12
-                // Drop5: Error Architecture: Log/trace second and subsequent RecordFailure
-                // Note that the pipeline could have been stopped asynchronously
-                // before hitting the error, therefore we check whether
-                // firstTerminatingError is PipelineStoppedException.
+                // Error Architecture: Log/trace second and subsequent RecordFailure.
+                // Note that the pipeline could have been stopped asynchronously before hitting the error,
+                // therefore we check whether '_firstTerminatingError' is 'PipelineStoppedException'.
                 else if (_firstTerminatingError.SourceException is not PipelineStoppedException
                     && command?.Context != null)
                 {
@@ -1408,11 +1446,10 @@ namespace System.Management.Automation.Internal
                             ex.GetType().Name,
                             ex.StackTrace
                         );
-                        InvalidOperationException ioe
-                            = new InvalidOperationException(message, ex);
+
                         MshLog.LogCommandHealthEvent(
                             command.Context,
-                            ioe,
+                            new InvalidOperationException(message, ex),
                             Severity.Warning);
                     }
                 }

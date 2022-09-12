@@ -845,6 +845,25 @@ A Name                                  B
             $actual = $obj | Format-Table | Out-String
             ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
         }
+
+        It 'Table should format floats, doubles, and decimals with number of decimals from current culture' {
+            $o = [PSCustomObject]@{
+                double = [double]1234.56789
+                float = [float]9876.54321
+                decimal = [decimal]4567.123456789
+            }
+
+            $table = $o | Format-Table | Out-String
+
+            $line = foreach ($line in $table.split([System.Environment]::NewLine)) { if ($line -match '^1234') { $line } }
+            $line | Should -Not -BeNullOrEmpty
+            $expectedDecimals = (Get-Culture).NumberFormat.NumberDecimalDigits
+
+            foreach ($num in $line.split(' ', [System.StringSplitOptions]::RemoveEmptyEntries)) {
+                $numDecimals = $num.length - $num.indexOf((Get-Culture).NumberFormat.NumberDecimalSeparator) - 1
+                $numDecimals | Should -Be $expectedDecimals -Because $num
+            }
+        }
     }
 
 Describe 'Table color tests' {

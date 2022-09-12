@@ -35,6 +35,7 @@ FunctionsToExport = @(
         'Wait-FileToBePresent'
         'Wait-UntilTrue'
         'Get-PlatformInfo'
+        'Get-WSManSupport'
     )
 
 CmdletsToExport= @()

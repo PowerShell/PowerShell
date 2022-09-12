@@ -1304,7 +1304,8 @@ try {
                     "3" = "DMAProtection"
                     "4" = "SecureMemoryOverwrite"
                     "5" = "UEFICodeReadonly"
-                    "6" = "SMMSecurityMitigations1.0"
+                    "6" = "SMMSecurityMitigations"
+                    "7" = "ModeBasedExecutionControl"
                 }
                 $smartStatusValues = @{
                     "0" = "Off"

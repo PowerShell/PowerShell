@@ -317,8 +317,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (_providerMetadata != null)
-                _providerMetadata.Dispose();
+            _providerMetadata?.Dispose();
 
             base.EndProcessing();
         }

@@ -390,10 +390,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             // Looking for default parameter set
-            if (boundParameterSetName == null)
-            {
-                boundParameterSetName = defaultParameterSetName;
-            }
+            boundParameterSetName ??= defaultParameterSetName;
 
             // throw if still can not find the parameter set name
             if (boundParameterSetName == null)
@@ -473,10 +470,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return;
             }
 
-            if (this.parameterBinder != null)
-            {
-                this.parameterBinder.SetParameter(parameterName, this.AtBeginProcess);
-            }
+            this.parameterBinder?.SetParameter(parameterName, this.AtBeginProcess);
         }
         #endregion
 
@@ -579,10 +573,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected virtual void DisposeInternal()
         {
             // Dispose managed resources.
-            if (this.operation != null)
-            {
-                this.operation.Dispose();
-            }
+            this.operation?.Dispose();
         }
         #endregion
 

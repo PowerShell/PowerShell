@@ -65,7 +65,8 @@ if ($Build -or $PSCmdlet.ParameterSetName -eq 'packageSigned') {
         $semVersion = [System.Management.Automation.SemanticVersion] $version
 
         $metadata = Get-Content "$location/tools/metadata.json" -Raw | ConvertFrom-Json
-        $LTS = $metadata.LTSRelease
+
+        $LTS = $metadata.LTSRelease.Package
 
         Write-Verbose -Verbose -Message "LTS is set to: $LTS"
     }
@@ -104,15 +105,14 @@ try {
     }
 
     if ($Build) {
-        $runCrossgen = $Runtime -eq 'osx-x64'
         if ($Symbols) {
-            Start-PSBuild -Clean -Configuration 'Release' -Crossgen:$runCrossgen -NoPSModuleRestore @releaseTagParam -Runtime $Runtime
+            Start-PSBuild -Clean -Configuration 'Release' -NoPSModuleRestore @releaseTagParam -Runtime $Runtime
             $pspackageParams['Type']='zip'
             $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
             Write-Verbose "Starting powershell packaging(zip)..." -Verbose
             Start-PSPackage @pspackageParams @releaseTagParam
         } else {
-            Start-PSBuild -Configuration 'Release' -Crossgen:$runCrossgen -PSModuleRestore @releaseTagParam -Runtime $Runtime
+            Start-PSBuild -Configuration 'Release' -PSModuleRestore @releaseTagParam -Runtime $Runtime
             Start-PSPackage @pspackageParams @releaseTagParam
             switch ($ExtraPackage) {
                 "tar" { Start-PSPackage -Type tar @pspackageParams @releaseTagParam }

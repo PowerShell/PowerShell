@@ -169,10 +169,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void StopProcessing()
         {
-            if (_searchProcess != null)
-            {
-                _searchProcess.Dispose();
-            }
+            _searchProcess?.Dispose();
         }
         #endregion Overrides
 
@@ -227,10 +224,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (disposing)
             {
-                if (_searchProcess != null)
-                {
-                    _searchProcess.Dispose();
-                }
+                _searchProcess?.Dispose();
             }
         }
 

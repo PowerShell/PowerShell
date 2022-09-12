@@ -10,7 +10,7 @@ jobs:
   pool:
     name: PowerShell1ES
     demands:
-    - ImageOverride -equals MMS2019
+    - ImageOverride -equals PSMMS2019-Secure
   steps:
   - checkout: self
     clean: true
@@ -22,6 +22,7 @@ jobs:
       UseJson: no
 
   - task: AzurePowerShell@4
+    displayName: Check if blob exists and delete if specified
     inputs:
       azureSubscription: '$(AzureFileCopySubscription)'
       scriptType: inlineScript
@@ -47,4 +48,4 @@ jobs:
             }
         }
 
-
+  - template: /tools/releaseBuild/azureDevOps/templates/step/finalize.yml

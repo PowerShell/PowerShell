@@ -849,8 +849,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else if (sste.FileName != null)
                         {
-                            bool unused;
-                            Context.TypeTable.Update(sste.FileName, sste.FileName, errors, Context.AuthorizationManager, Context.InitialSessionState.Host, out unused);
+                            Context.TypeTable.Update(sste.FileName, sste.FileName, errors, Context.AuthorizationManager, Context.InitialSessionState.Host, out _);
                         }
                         else
                         {
@@ -1161,10 +1160,7 @@ namespace Microsoft.PowerShell.Commands
                     indicesToRemove.Sort();
                     for (int i = indicesToRemove.Count - 1; i >= 0; i--)
                     {
-                        if (Context.InitialSessionState != null)
-                        {
-                            Context.InitialSessionState.Types.RemoveItem(indicesToRemove[i]);
-                        }
+                        Context.InitialSessionState?.Types.RemoveItem(indicesToRemove[i]);
                     }
 
                     try

@@ -296,6 +296,9 @@ Possible matches are</value>
   <data name="CannotIndexWithByRefLikeReturnType" xml:space="preserve">
     <value>Unable to index into an object of type "{0}" with the ByRef-like return type "{1}". ByRef-like types are not supported in PowerShell.</value>
   </data>
+  <data name="ArrayHasTooManyDimensions" xml:space="preserve">
+    <value>The array has too many dimensions: {0}. The number of dimensions for an array must be less than or equal to 32.</value>
+  </data>
   <data name="ArrayAssignmentFailed" xml:space="preserve">
     <value>Array assignment to [{0}] failed: {1}.</value>
   </data>
@@ -497,7 +500,7 @@ The correct form is: foreach ($a in $b) {...}</value>
     <value>Script command clause '{0}' has already been defined.</value>
   </data>
   <data name="MissingNamedBlocks" xml:space="preserve">
-    <value>unexpected token '{0}', expected 'begin', 'process', 'end', or 'dynamicparam'.</value>
+    <value>unexpected token '{0}', expected 'begin', 'process', 'end', 'clean', or 'dynamicparam'.</value>
   </data>
   <data name="MissingEndCurlyBrace" xml:space="preserve">
     <value>Missing closing '}' in statement block or type definition.</value>
@@ -1126,6 +1129,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="ForEachTypeConversionFailed" xml:space="preserve">
     <value>Unable to convert input to the target type [{0}] passed to the ForEach() operator. Please check the specified type and try running your script again.</value>
   </data>
+  <data name="ForEachNotSupportCleanBlock" xml:space="preserve">
+    <value>Script block with a 'clean' block is not supported by the 'ForEach' method.</value>
+  </data>
   <data name="NumberToReturnMustBeGreaterThanZero" xml:space="preserve">
     <value>The 'numberToReturn' value provided to the third argument of the Where() operator must be greater than zero. Please correct the argument's value and try running your script again.</value>
   </data>
@@ -1478,5 +1484,8 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="BackgroundOperatorInPipelineChain" xml:space="preserve">
     <value>Background operators can only be used at the end of a pipeline chain.</value>
+  </data>
+  <data name="InvokingCleanBlockNotSupported" xml:space="preserve">
+    <value>Directly invoking the 'clean' block of a script block is not supported.</value>
   </data>
 </root>
