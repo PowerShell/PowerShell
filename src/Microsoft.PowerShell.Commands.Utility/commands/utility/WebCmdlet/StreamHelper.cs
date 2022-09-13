@@ -221,21 +221,21 @@ namespace Microsoft.PowerShell.Commands
             _isInitialized = true;
             try
             {
-                long totalLength = 0;
+                long totalRead = 0;
                 byte[] buffer = new byte[StreamHelper.ChunkSize];
                 ProgressRecord record = new(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
                 string totalDownloadSize = _contentLength is null ? "???" : Utils.DisplayHumanReadableFileSize((long)_contentLength);
-                for (int read = 1; read > 0; totalLength += read)
+                for (int read = 1; read > 0; totalRead += read)
                 {
                     if (_ownerCmdlet != null)
                     {
                         record.StatusDescription = StringUtil.Format(
                             WebCmdletStrings.ReadResponseProgressStatus,
-                            Utils.DisplayHumanReadableFileSize(totalLength),
+                            Utils.DisplayHumanReadableFileSize(totalRead),
                             totalDownloadSize);
                         if (_contentLength != null && _contentLength > 0)
                         {
-                            record.PercentComplete = Math.Min((int)(totalLength * 100 / (long)_contentLength), 100);
+                            record.PercentComplete = Math.Min((int)(totalRead * 100 / (long)_contentLength), 100);
                         }
 
                         _ownerCmdlet.WriteProgress(record);
@@ -256,13 +256,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_ownerCmdlet != null)
                 {
-                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseComplete, totalLength);
+                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseComplete, totalRead);
                     record.RecordType = ProgressRecordType.Completed;
                     _ownerCmdlet.WriteProgress(record);
                 }
 
                 // make sure the length is set appropriately
-                base.SetLength(totalLength);
+                base.SetLength(totalRead);
                 base.Seek(0, SeekOrigin.Begin);
             }
             catch (Exception)
