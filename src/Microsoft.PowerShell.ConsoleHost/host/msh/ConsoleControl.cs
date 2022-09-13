@@ -2565,39 +2565,29 @@ namespace Microsoft.PowerShell
             // We need to chop the output string if it is too long.
             int cursor = 0; // This records the chopping position in output string
             const int MaxBufferSize = 16383; // this is 64K/4 - 1 to account for possible width of each character.
+            ReadOnlySpan<char> outBuffer;
 
-            while (cursor < output.Length)
+            while (cursor + MaxBufferSize < output.Length)
             {
-                ReadOnlySpan<char> outBuffer;
+                outBuffer = output.Slice(cursor, MaxBufferSize);
+                cursor += MaxBufferSize;
+                WriteConsole(consoleHandle, outBuffer);
+            }
 
-                if (cursor + MaxBufferSize < output.Length)
-                {
-                    outBuffer = output.Slice(cursor, MaxBufferSize);
-                    cursor += MaxBufferSize;
+            outBuffer = output.Slice(cursor);
 
-                    WriteConsole(consoleHandle, outBuffer);
-                }
-                else
-                {
-                    outBuffer = output.Slice(cursor);
-                    cursor = output.Length;
-
-                    if (newLine)
-                    {
-                        var endOfLine = Environment.NewLine.AsSpan();
-                        var endOfLineLength = endOfLine.Length;
-#pragma warning disable CA2014
-                        Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
-#pragma warning restore CA2014
-                        outBuffer.CopyTo(outBufferLine);
-                        endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
-                        WriteConsole(consoleHandle, outBufferLine);
-                    }
-                    else
-                    {
-                        WriteConsole(consoleHandle, outBuffer);
-                    }
-                }
+            if (newLine)
+            {
+                var endOfLine = Environment.NewLine.AsSpan();
+                var endOfLineLength = endOfLine.Length;
+                Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
+                outBuffer.CopyTo(outBufferLine);
+                endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
+                WriteConsole(consoleHandle, outBufferLine);
+            }
+            else
+            {
+                WriteConsole(consoleHandle, outBuffer);
             }
         }
 
