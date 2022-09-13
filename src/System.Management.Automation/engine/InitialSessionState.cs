@@ -4678,10 +4678,7 @@ end {
                 };
 
 #if UNIX
-                if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
-                {
-                    builtInAliases.Add(new SessionStateAliasEntry("exec", "Switch-Process"));
-                }
+                builtInAliases.Add(new SessionStateAliasEntry("exec", "Switch-Process"));
 #endif
 
                 return builtInAliases.ToArray();
@@ -5323,10 +5320,7 @@ end {
             }
 
 #if UNIX
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSExecFeatureName))
-            {
-                cmdlets.Add("Switch-Process", new SessionStateCmdletEntry("Switch-Process", typeof(SwitchProcessCommand), helpFile));
-            }
+            cmdlets.Add("Switch-Process", new SessionStateCmdletEntry("Switch-Process", typeof(SwitchProcessCommand), helpFile));
 #endif
 
             foreach (var val in cmdlets.Values)

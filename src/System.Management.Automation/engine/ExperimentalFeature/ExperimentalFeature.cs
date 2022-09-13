@@ -24,7 +24,6 @@ namespace System.Management.Automation
         internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
         internal const string PSRemotingSSHTransportErrorHandling = "PSRemotingSSHTransportErrorHandling";
         internal const string PSAMSIMethodInvocationLogging = "PSAMSIMethodInvocationLogging";
-        internal const string PSExecFeatureName = "PSExec";
 
         #endregion
 
@@ -124,10 +123,7 @@ namespace System.Management.Automation
                     description: "Removes the SSH remoting transport stdErr stream message handling as terminating errors, and instead just writes error messages to console."),
                 new ExperimentalFeature(
                     name: PSAMSIMethodInvocationLogging,
-                    description: "Provides AMSI notification of .NET method invocations."),
-                new ExperimentalFeature(
-                    name: PSExecFeatureName,
-                    description: "Add 'exec' built-in command on Linux and macOS"),
+                    description: "Provides AMSI notification of .NET method invocations.")
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);

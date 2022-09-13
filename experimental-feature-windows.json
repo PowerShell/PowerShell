@@ -1,7 +1,6 @@
 [
   "PSAMSIMethodInvocationLogging",
   "PSCommandNotFoundSuggestion",
-  "PSExec",
   "PSLoadAssemblyFromNativeCode",
   "PSNativeCommandErrorActionPreference",
   "PSRemotingSSHTransportErrorHandling",
