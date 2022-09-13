@@ -7351,7 +7351,7 @@ namespace System.Management.Automation.Language
 
             foreach (object element in args)
             {
-                if (Adapter.GetObjectType(element, skipBasing: false) != typeof(T))
+                if (Adapter.GetObjectType(element, debase: true) != typeof(T))
                 {
                     return false;
                 }
@@ -7387,7 +7387,7 @@ namespace System.Management.Automation.Language
 
             for (int i = 1; i < args.Length; i++)
             {
-                if (Adapter.GetObjectType(args[i], skipBasing: false) != firstType)
+                if (Adapter.GetObjectType(args[i], debase: true) != firstType)
                 {
                     return true;
                 }

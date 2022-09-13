@@ -92,37 +92,36 @@ Describe "Scripting.Followup.Tests" -Tags "CI" {
     }
 
     It "'[NullString]::Value' should be treated as string type when resolving .NET method" {
-
         $testType = 'NullStringTest' -as [type]
         if (-not $testType) {
-            Add-Type -TypeDefinition @"
-    using System;
-    public class NullStringTest {
-        public static string Test(bool argument)
-        {
-            return "bool";
-        }
-
-        public static string Test(string argument)
-        {
-            return "string";
-        }
-
-        public static string Get<T>(T argument)
-        {
-            string ret = typeof(T).FullName;
-            if (argument is string[] array)
-            {
-                if (array[1] == null)
-                {
-                    return ret + "; 2nd element is NULL";
-                }
-            }
-
-            return ret;
-        }
+            Add-Type -TypeDefinition @'
+using System;
+public class NullStringTest {
+    public static string Test(bool argument)
+    {
+        return "bool";
     }
-"@
+
+    public static string Test(string argument)
+    {
+        return "string";
+    }
+
+    public static string Get<T>(T argument)
+    {
+        string ret = typeof(T).FullName;
+        if (argument is string[] array)
+        {
+            if (array[1] == null)
+            {
+                return ret + "; 2nd element is NULL";
+            }
+        }
+
+        return ret;
+    }
+}
+'@
         }
 
         [NullStringTest]::Test([NullString]::Value) | Should -BeExactly 'string'

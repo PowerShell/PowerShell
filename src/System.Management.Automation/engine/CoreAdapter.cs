@@ -833,7 +833,7 @@ namespace System.Management.Automation
                 return GetArgumentType(PSObject.Base(psref.Value), isByRefParameter: false);
             }
 
-            return GetObjectType(argument, skipBasing: true);
+            return GetObjectType(argument, debase: false);
         }
 
         internal static ConversionRank GetArgumentConversionRank(object argument, Type parameterType, bool isByRef, bool allowCastingToByRefLikeType)
@@ -1678,13 +1678,13 @@ namespace System.Management.Automation
 
             if (arg is object[] array && array.Length > 0)
             {
-                Type firstType = GetObjectType(array[0], skipBasing: false);
+                Type firstType = GetObjectType(array[0], debase: true);
                 if (firstType is not null)
                 {
                     bool allSameType = true;
                     for (int j = 1; j < array.Length; ++j)
                     {
-                        if (firstType != GetObjectType(array[j], skipBasing: false))
+                        if (firstType != GetObjectType(array[j], debase: true))
                         {
                             allSameType = false;
                             break;
@@ -1698,12 +1698,12 @@ namespace System.Management.Automation
                 }
             }
 
-            return GetObjectType(arg, skipBasing: true);
+            return GetObjectType(arg, debase: false);
         }
 
-        internal static Type GetObjectType(object obj, bool skipBasing)
+        internal static Type GetObjectType(object obj, bool debase)
         {
-            if (!skipBasing)
+            if (debase)
             {
                 obj = PSObject.Base(obj);
             }
