@@ -1,6 +1,5 @@
 [
   "PSAMSIMethodInvocationLogging",
-  "PSAnsiRenderingFileInfo",
   "PSCleanBlock",
   "PSCommandNotFoundSuggestion",
   "PSExec",
