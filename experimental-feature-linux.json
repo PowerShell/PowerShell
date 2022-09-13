@@ -1,6 +1,5 @@
 [
   "PSAMSIMethodInvocationLogging",
-  "PSCleanBlock",
   "PSCommandNotFoundSuggestion",
   "PSExec",
   "PSLoadAssemblyFromNativeCode",

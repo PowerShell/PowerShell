@@ -24,7 +24,6 @@ namespace System.Management.Automation
         internal const string PSNativeCommandArgumentPassingFeatureName = "PSNativeCommandArgumentPassing";
         internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
         internal const string PSRemotingSSHTransportErrorHandling = "PSRemotingSSHTransportErrorHandling";
-        internal const string PSCleanBlockFeatureName = "PSCleanBlock";
         internal const string PSAMSIMethodInvocationLogging = "PSAMSIMethodInvocationLogging";
         internal const string PSExecFeatureName = "PSExec";
 
@@ -127,9 +126,6 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSRemotingSSHTransportErrorHandling,
                     description: "Removes the SSH remoting transport stdErr stream message handling as terminating errors, and instead just writes error messages to console."),
-                new ExperimentalFeature(
-                    name: PSCleanBlockFeatureName,
-                    description: "Add support of a 'Clean' block to functions and script cmdlets for easy resource cleanup"),
                 new ExperimentalFeature(
                     name: PSAMSIMethodInvocationLogging,
                     description: "Provides AMSI notification of .NET method invocations."),
