@@ -10,7 +10,6 @@
 // On the use of DangerousGetHandle: If the handle has been invalidated, then the API we pass it to will return an error.  These
 // handles should not be exposed to recycling attacks (because they are not exposed at all), but if they were, the worse they
 // could do is diddle with the console buffer.
-#pragma warning disable 1634, 1691
 
 using System;
 using System.Text;
@@ -1479,9 +1478,7 @@ namespace Microsoft.PowerShell
                         bSize.X++;
                         SMALL_RECT wRegion = writeRegion;
                         wRegion.Right++;
-                        // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-                        // get the error code.
-#pragma warning disable 56523
+
                         result = NativeMethods.WriteConsoleOutput(
                             consoleHandle.DangerousGetHandle(),
                             characterBuffer,
@@ -1491,9 +1488,6 @@ namespace Microsoft.PowerShell
                     }
                     else
                     {
-                        // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-                        // get the error code.
-#pragma warning disable 56523
                         result = NativeMethods.WriteConsoleOutput(
                             consoleHandle.DangerousGetHandle(),
                             characterBuffer,
@@ -1796,9 +1790,7 @@ namespace Microsoft.PowerShell
             readRegion.Top = (short)origin.Y;
             readRegion.Right = (short)(origin.X + bufferSize.X - 1);
             readRegion.Bottom = (short)(origin.Y + bufferSize.Y - 1);
-            // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-            // get the error code.
-#pragma warning disable 56523
+
             bool result = NativeMethods.ReadConsoleOutput(
                                         consoleHandle.DangerousGetHandle(),
                                         characterBuffer,
@@ -2474,9 +2466,6 @@ namespace Microsoft.PowerShell
             DWORD result;
             StringBuilder consoleTitle = new StringBuilder((int)bufferSize);
 
-            // Suppress the PreFAST warning about not using Marshal.GetLastWin32Error() to
-            // get the error code.
-#pragma warning disable 56523
             result = NativeMethods.GetConsoleTitle(consoleTitle, bufferSize);
             // If the result is zero, it may mean and error but it may also mean
             // that the window title has been set to null. Since we can't tell the
@@ -2561,12 +2550,16 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            // Native WriteConsole doesn't support output buffer longer than 64K.
-            // We need to chop the output string if it is too long.
-            int cursor = 0; // This records the chopping position in output string
-            const int MaxBufferSize = 16383; // this is 64K/4 - 1 to account for possible width of each character.
+            // Native WriteConsole doesn't support output buffer longer than 64K, so we need to chop the output string if it is too long.
+            // This records the chopping position in output string.
+            int cursor = 0;
+            // This is 64K/4 - 1 to account for possible width of each character.
+            const int MaxBufferSize = 16383;
+            const int MaxStackAllocSize = 512;
             ReadOnlySpan<char> outBuffer;
 
+            // In case that a new line is required, we try to write out the last chunk and the new-line string together,
+            // to avoid one extra call to 'WriteConsole' just for a new line string.
             while (cursor + MaxBufferSize < output.Length)
             {
                 outBuffer = output.Slice(cursor, MaxBufferSize);
@@ -2575,19 +2568,29 @@ namespace Microsoft.PowerShell
             }
 
             outBuffer = output.Slice(cursor);
-
-            if (newLine)
+            if (!newLine)
             {
-                var endOfLine = Environment.NewLine.AsSpan();
-                var endOfLineLength = endOfLine.Length;
-                Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
-                outBuffer.CopyTo(outBufferLine);
-                endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
-                WriteConsole(consoleHandle, outBufferLine);
+                WriteConsole(consoleHandle, outBuffer);
+                return;
+            }
+
+            string lineEnding = Environment.NewLine;
+            int size = outBuffer.Length + lineEnding.Length;
+            if (size <= MaxStackAllocSize)
+            {
+                // We expect this code path to be hit more often, and thus optimize it with 'stackalloc'.
+                Span<char> buffer = stackalloc char[size];
+                outBuffer.CopyTo(buffer);
+                lineEnding.CopyTo(buffer.Slice(outBuffer.Length));
+                WriteConsole(consoleHandle, buffer);
             }
             else
             {
-                WriteConsole(consoleHandle, outBuffer);
+                // The size is 16K at most, so this array is a small object that will soon be collected.
+                var buffer = new char[size];
+                outBuffer.CopyTo(buffer);
+                lineEnding.CopyTo(sourceIndex: 0, buffer, outBuffer.Length, lineEnding.Length);
+                WriteConsole(consoleHandle, buffer);
             }
         }
 
