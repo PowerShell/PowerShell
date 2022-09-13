@@ -1,12 +1,10 @@
 [
   "PSAMSIMethodInvocationLogging",
-  "PSAnsiRenderingFileInfo",
   "PSCommandNotFoundSuggestion",
   "PSExec",
   "PSLoadAssemblyFromNativeCode",
   "PSNativeCommandArgumentPassing",
   "PSNativeCommandErrorActionPreference",
   "PSRemotingSSHTransportErrorHandling",
-  "PSStrictModeAssignment",
   "PSSubsystemPluginModel"
 ]

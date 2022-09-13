@@ -26,7 +26,6 @@ namespace System.Management.Automation
         internal const string PSRemotingSSHTransportErrorHandling = "PSRemotingSSHTransportErrorHandling";
         internal const string PSAMSIMethodInvocationLogging = "PSAMSIMethodInvocationLogging";
         internal const string PSExecFeatureName = "PSExec";
-        internal const string PSStrictModeAssignment = "PSStrictModeAssignment";
 
         #endregion
 
@@ -122,9 +121,6 @@ namespace System.Management.Automation
                     name: "PSLoadAssemblyFromNativeCode",
                     description: "Expose an API to allow assembly loading from native code"),
                 new ExperimentalFeature(
-                    name: "PSAnsiRenderingFileInfo",
-                    description: "Enable coloring for FileInfo objects"),
-                new ExperimentalFeature(
                     name: PSNativeCommandErrorActionPreferenceFeatureName,
                     description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
                 new ExperimentalFeature(
@@ -136,9 +132,6 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: PSExecFeatureName,
                     description: "Add 'exec' built-in command on Linux and macOS"),
-                new ExperimentalFeature(
-                    name: PSStrictModeAssignment,
-                    description: "Add support of setting Strict-Mode with Invoke-Command"),
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
