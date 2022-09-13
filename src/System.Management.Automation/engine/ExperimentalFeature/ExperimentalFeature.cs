@@ -23,7 +23,6 @@ namespace System.Management.Automation
         internal const string EngineSource = "PSEngine";
         internal const string PSNativeCommandErrorActionPreferenceFeatureName = "PSNativeCommandErrorActionPreference";
         internal const string PSRemotingSSHTransportErrorHandling = "PSRemotingSSHTransportErrorHandling";
-        internal const string PSAMSIMethodInvocationLogging = "PSAMSIMethodInvocationLogging";
 
         #endregion
 
@@ -120,10 +119,7 @@ namespace System.Management.Automation
                     description: "Native commands with non-zero exit codes issue errors according to $ErrorActionPreference when $PSNativeCommandUseErrorActionPreference is $true"),
                 new ExperimentalFeature(
                     name: PSRemotingSSHTransportErrorHandling,
-                    description: "Removes the SSH remoting transport stdErr stream message handling as terminating errors, and instead just writes error messages to console."),
-                new ExperimentalFeature(
-                    name: PSAMSIMethodInvocationLogging,
-                    description: "Provides AMSI notification of .NET method invocations.")
+                    description: "Removes the SSH remoting transport stdErr stream message handling as terminating errors, and instead just writes error messages to console.")
             };
 
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
