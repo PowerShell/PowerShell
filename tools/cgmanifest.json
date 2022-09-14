@@ -765,7 +765,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Configuration.ConfigurationManager",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
@@ -775,7 +775,7 @@
         "Type": "nuget",
         "Nuget": {
           "Name": "System.Data.Odbc",
-          "Version": "6.0.0"
+          "Version": "6.0.1"
         }
       },
       "DevelopmentDependency": false
