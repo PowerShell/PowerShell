@@ -891,7 +891,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void WriteTypes(Assembly assembly)
         {
-            WriteObject(assembly.GetTypes(), true);
+            WriteObject(assembly.ExportedTypes, true);
         }
 
         #endregion LoadAssembly
