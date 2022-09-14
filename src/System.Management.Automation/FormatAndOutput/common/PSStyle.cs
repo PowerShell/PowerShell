@@ -35,7 +35,7 @@ namespace System.Management.Automation
         /// <summary>Classic rendering of progress.</summary>
         Classic = 1,
     }
-    
+
     #region PSStyle
     /// <summary>
     /// Contains configuration for how PowerShell renders text.
@@ -53,19 +53,9 @@ namespace System.Management.Automation
             public string Black { get; } = "\x1b[30m";
 
             /// <summary>
-            /// Gets the color blue.
+            /// Gets the color red.
             /// </summary>
-            public string Blue { get; } = "\x1b[34m";
-
-            /// <summary>
-            /// Gets the color cyan.
-            /// </summary>
-            public string Cyan { get; } = "\x1b[36m";
-
-            /// <summary>
-            /// Gets the color dark gray.
-            /// </summary>
-            public string DarkGray { get; } = "\x1b[90m";
+            public string Red { get; } = "\x1b[31m";
 
             /// <summary>
             /// Gets the color green.
@@ -73,39 +63,14 @@ namespace System.Management.Automation
             public string Green { get; } = "\x1b[32m";
 
             /// <summary>
-            /// Gets the color light blue.
+            /// Gets the color yellow.
             /// </summary>
-            public string LightBlue { get; } = "\x1b[94m";
+            public string Yellow { get; } = "\x1b[33m";
 
             /// <summary>
-            /// Gets the color light cyan.
+            /// Gets the color blue.
             /// </summary>
-            public string LightCyan { get; } = "\x1b[96m";
-
-            /// <summary>
-            /// Gets the color light gray.
-            /// </summary>
-            public string LightGray { get; } = "\x1b[97m";
-
-            /// <summary>
-            /// Gets the color light green.
-            /// </summary>
-            public string LightGreen { get; } = "\x1b[92m";
-
-            /// <summary>
-            /// Gets the color light magenta.
-            /// </summary>
-            public string LightMagenta { get; } = "\x1b[95m";
-
-            /// <summary>
-            /// Gets the color light red.
-            /// </summary>
-            public string LightRed { get; } = "\x1b[91m";
-
-            /// <summary>
-            /// Gets the color light yellow.
-            /// </summary>
-            public string LightYellow { get; } = "\x1b[93m";
+            public string Blue { get; } = "\x1b[34m";
 
             /// <summary>
             /// Gets the color magenta.
@@ -113,9 +78,9 @@ namespace System.Management.Automation
             public string Magenta { get; } = "\x1b[35m";
 
             /// <summary>
-            /// Gets the color read.
+            /// Gets the color cyan.
             /// </summary>
-            public string Red { get; } = "\x1b[31m";
+            public string Cyan { get; } = "\x1b[36m";
 
             /// <summary>
             /// Gets the color white.
@@ -123,9 +88,44 @@ namespace System.Management.Automation
             public string White { get; } = "\x1b[37m";
 
             /// <summary>
-            /// Gets the color yellow.
+            /// Gets the color bright black.
             /// </summary>
-            public string Yellow { get; } = "\x1b[33m";
+            public string BrightBlack { get; } = "\x1b[90m";
+
+            /// <summary>
+            /// Gets the color bright red.
+            /// </summary>
+            public string BrightRed { get; } = "\x1b[91m";
+
+            /// <summary>
+            /// Gets the color bright green.
+            /// </summary>
+            public string BrightGreen { get; } = "\x1b[92m";
+
+            /// <summary>
+            /// Gets the color bright yellow.
+            /// </summary>
+            public string BrightYellow { get; } = "\x1b[93m";
+
+            /// <summary>
+            /// Gets the color bright blue.
+            /// </summary>
+            public string BrightBlue { get; } = "\x1b[94m";
+
+            /// <summary>
+            /// Gets the color bright magenta.
+            /// </summary>
+            public string BrightMagenta { get; } = "\x1b[95m";
+
+            /// <summary>
+            /// Gets the color bright cyan.
+            /// </summary>
+            public string BrightCyan { get; } = "\x1b[96m";
+
+            /// <summary>
+            /// Gets the color bright white.
+            /// </summary>
+            public string BrightWhite { get; } = "\x1b[97m";
 
             /// <summary>
             /// Set as RGB (Red, Green, Blue).
@@ -155,6 +155,16 @@ namespace System.Management.Automation
 
                 return FromRgb(red, green, blue);
             }
+
+            /// <summary>
+            /// Return the VT escape sequence for a foreground color.
+            /// </summary>
+            /// <param name="color">The foreground color to be mapped from.</param>
+            /// <returns>The VT escape sequence representing the foreground color.</returns>
+            public string FromConsoleColor(ConsoleColor color)
+            {
+                return MapForegroundColorToEscapeSequence(color);
+            }
         }
 
         /// <summary>
@@ -168,19 +178,9 @@ namespace System.Management.Automation
             public string Black { get; } = "\x1b[40m";
 
             /// <summary>
-            /// Gets the color blue.
+            /// Gets the color red.
             /// </summary>
-            public string Blue { get; } = "\x1b[44m";
-
-            /// <summary>
-            /// Gets the color cyan.
-            /// </summary>
-            public string Cyan { get; } = "\x1b[46m";
-
-            /// <summary>
-            /// Gets the color dark gray.
-            /// </summary>
-            public string DarkGray { get; } = "\x1b[100m";
+            public string Red { get; } = "\x1b[41m";
 
             /// <summary>
             /// Gets the color green.
@@ -188,39 +188,14 @@ namespace System.Management.Automation
             public string Green { get; } = "\x1b[42m";
 
             /// <summary>
-            /// Gets the color light blue.
+            /// Gets the color yellow.
             /// </summary>
-            public string LightBlue { get; } = "\x1b[104m";
+            public string Yellow { get; } = "\x1b[43m";
 
             /// <summary>
-            /// Gets the color light cyan.
+            /// Gets the color blue.
             /// </summary>
-            public string LightCyan { get; } = "\x1b[106m";
-
-            /// <summary>
-            /// Gets the color light gray.
-            /// </summary>
-            public string LightGray { get; } = "\x1b[107m";
-
-            /// <summary>
-            /// Gets the color light green.
-            /// </summary>
-            public string LightGreen { get; } = "\x1b[102m";
-
-            /// <summary>
-            /// Gets the color light magenta.
-            /// </summary>
-            public string LightMagenta { get; } = "\x1b[105m";
-
-            /// <summary>
-            /// Gets the color light red.
-            /// </summary>
-            public string LightRed { get; } = "\x1b[101m";
-
-            /// <summary>
-            /// Gets the color light yellow.
-            /// </summary>
-            public string LightYellow { get; } = "\x1b[103m";
+            public string Blue { get; } = "\x1b[44m";
 
             /// <summary>
             /// Gets the color magenta.
@@ -228,9 +203,9 @@ namespace System.Management.Automation
             public string Magenta { get; } = "\x1b[45m";
 
             /// <summary>
-            /// Gets the color read.
+            /// Gets the color cyan.
             /// </summary>
-            public string Red { get; } = "\x1b[41m";
+            public string Cyan { get; } = "\x1b[46m";
 
             /// <summary>
             /// Gets the color white.
@@ -238,9 +213,44 @@ namespace System.Management.Automation
             public string White { get; } = "\x1b[47m";
 
             /// <summary>
-            /// Gets the color yellow.
+            /// Gets the color bright black.
             /// </summary>
-            public string Yellow { get; } = "\x1b[43m";
+            public string BrightBlack { get; } = "\x1b[100m";
+
+            /// <summary>
+            /// Gets the color bright red.
+            /// </summary>
+            public string BrightRed { get; } = "\x1b[101m";
+
+            /// <summary>
+            /// Gets the color bright green.
+            /// </summary>
+            public string BrightGreen { get; } = "\x1b[102m";
+
+            /// <summary>
+            /// Gets the color bright yellow.
+            /// </summary>
+            public string BrightYellow { get; } = "\x1b[103m";
+
+            /// <summary>
+            /// Gets the color bright blue.
+            /// </summary>
+            public string BrightBlue { get; } = "\x1b[104m";
+
+            /// <summary>
+            /// Gets the color bright magenta.
+            /// </summary>
+            public string BrightMagenta { get; } = "\x1b[105m";
+
+            /// <summary>
+            /// Gets the color bright cyan.
+            /// </summary>
+            public string BrightCyan { get; } = "\x1b[106m";
+
+            /// <summary>
+            /// Gets the color bright white.
+            /// </summary>
+            public string BrightWhite { get; } = "\x1b[107m";
 
             /// <summary>
             /// The color set as RGB (Red, Green, Blue).
@@ -269,6 +279,16 @@ namespace System.Management.Automation
                 red = (byte)(rgb & 0xFF);
 
                 return FromRgb(red, green, blue);
+            }
+
+            /// <summary>
+            /// Return the VT escape sequence for a background color.
+            /// </summary>
+            /// <param name="color">The background color to be mapped from.</param>
+            /// <returns>The VT escape sequence representing the background color.</returns>
+            public string FromConsoleColor(ConsoleColor color)
+            {
+                return MapBackgroundColorToEscapeSequence(color);
             }
         }
 
@@ -365,7 +385,7 @@ namespace System.Management.Automation
                 get => _error;
                 set => _error = ValidateNoContent(value);
             }
-            
+
             private string _error = "\x1b[31;1m";
 
             /// <summary>
@@ -397,7 +417,7 @@ namespace System.Management.Automation
             {
                 get => _debug;
                 set => _debug = ValidateNoContent(value);
-            }   
+            }
 
             private string _debug = "\x1b[33;1m";
         }
@@ -465,6 +485,16 @@ namespace System.Management.Automation
                 public void Add(string extension, string decoration)
                 {
                     _extensionDictionary.Add(ValidateExtension(extension), ValidateNoContent(decoration));
+                }
+
+                /// <summary>
+                /// Add new extension and decoration to dictionary without validation.
+                /// </summary>
+                /// <param name="extension">Extension to add.</param>
+                /// <param name="decoration">ANSI string value to add.</param>
+                internal void AddWithoutValidation(string extension, string decoration)
+                {
+                    _extensionDictionary.Add(extension, decoration);
                 }
 
                 /// <summary>
@@ -543,19 +573,19 @@ namespace System.Management.Automation
                 Extension = new FileExtensionDictionary();
 
                 // archives
-                Extension.Add(".zip", "\x1b[31;1m");
-                Extension.Add(".tgz", "\x1b[31;1m");
-                Extension.Add(".gz", "\x1b[31;1m");
-                Extension.Add(".tar", "\x1b[31;1m");
-                Extension.Add(".nupkg", "\x1b[31;1m");
-                Extension.Add(".cab", "\x1b[31;1m");
-                Extension.Add(".7z", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".zip", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".tgz", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".gz", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".tar", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".nupkg", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".cab", "\x1b[31;1m");
+                Extension.AddWithoutValidation(".7z", "\x1b[31;1m");
 
                 // powershell
-                Extension.Add(".ps1", "\x1b[33;1m");
-                Extension.Add(".psd1", "\x1b[33;1m");
-                Extension.Add(".psm1", "\x1b[33;1m");
-                Extension.Add(".ps1xml", "\x1b[33;1m");
+                Extension.AddWithoutValidation(".ps1", "\x1b[33;1m");
+                Extension.AddWithoutValidation(".psd1", "\x1b[33;1m");
+                Extension.AddWithoutValidation(".psm1", "\x1b[33;1m");
+                Extension.AddWithoutValidation(".ps1xml", "\x1b[33;1m");
             }
         }
 
@@ -688,7 +718,12 @@ namespace System.Management.Automation
 
         private static string ValidateNoContent(string text)
         {
-            var decorartedString = new StringDecorated(text);
+            if (text is null)
+            {
+                throw new ArgumentNullException(nameof(text));
+            }
+
+            var decorartedString = new ValueStringDecorated(text);
             if (decorartedString.ContentLength > 0)
             {
                 throw new ArgumentException(string.Format(PSStyleStrings.TextContainsContent, decorartedString.ToString(OutputRendering.PlainText)));
@@ -707,6 +742,116 @@ namespace System.Management.Automation
                 return s_psstyle;
             }
         }
+
+        /// <summary>
+        /// The map of background console colors to escape sequences.
+        /// </summary>
+        private static readonly string[] BackgroundColorMap =
+            {
+                "\x1b[40m", // Black
+                "\x1b[44m", // DarkBlue
+                "\x1b[42m", // DarkGreen
+                "\x1b[46m", // DarkCyan
+                "\x1b[41m", // DarkRed
+                "\x1b[45m", // DarkMagenta
+                "\x1b[43m", // DarkYellow
+                "\x1b[47m", // Gray
+                "\x1b[100m", // DarkGray
+                "\x1b[104m", // Blue
+                "\x1b[102m", // Green
+                "\x1b[106m", // Cyan
+                "\x1b[101m", // Red
+                "\x1b[105m", // Magenta
+                "\x1b[103m", // Yellow
+                "\x1b[107m", // White
+            };
+
+        /// <summary>
+        /// The map of foreground console colors to escape sequences.
+        /// </summary>
+        private static readonly string[] ForegroundColorMap =
+            {
+                "\x1b[30m", // Black
+                "\x1b[34m", // DarkBlue
+                "\x1b[32m", // DarkGreen
+                "\x1b[36m", // DarkCyan
+                "\x1b[31m", // DarkRed
+                "\x1b[35m", // DarkMagenta
+                "\x1b[33m", // DarkYellow
+                "\x1b[37m", // Gray
+                "\x1b[90m", // DarkGray
+                "\x1b[94m", // Blue
+                "\x1b[92m", // Green
+                "\x1b[96m", // Cyan
+                "\x1b[91m", // Red
+                "\x1b[95m", // Magenta
+                "\x1b[93m", // Yellow
+                "\x1b[97m", // White
+            };
+
+        /// <summary>
+        /// Return the VT escape sequence for a ConsoleColor.
+        /// </summary>
+        /// <param name="color">The <see cref="ConsoleColor"/> to be mapped from.</param>
+        /// <param name="isBackground">Whether or not it's a background color.</param>
+        /// <returns>The VT escape sequence representing the color.</returns>
+        internal static string MapColorToEscapeSequence(ConsoleColor color, bool isBackground)
+        {
+            int index = (int)color;
+            if (index < 0 || index >= ForegroundColorMap.Length)
+            {
+                throw new ArgumentOutOfRangeException(paramName: nameof(color));
+            }
+
+            return (isBackground ? BackgroundColorMap : ForegroundColorMap)[index];
+        }
+
+        /// <summary>
+        /// Return the VT escape sequence for a foreground color.
+        /// </summary>
+        /// <param name="foregroundColor">The foreground color to be mapped from.</param>
+        /// <returns>The VT escape sequence representing the foreground color.</returns>
+        public static string MapForegroundColorToEscapeSequence(ConsoleColor foregroundColor)
+            => MapColorToEscapeSequence(foregroundColor, isBackground: false);
+
+        /// <summary>
+        /// Return the VT escape sequence for a background color.
+        /// </summary>
+        /// <param name="backgroundColor">The background color to be mapped from.</param>
+        /// <returns>The VT escape sequence representing the background color.</returns>
+        public static string MapBackgroundColorToEscapeSequence(ConsoleColor backgroundColor)
+            => MapColorToEscapeSequence(backgroundColor, isBackground: true);
+
+        /// <summary>
+        /// Return the VT escape sequence for a pair of foreground and background colors.
+        /// </summary>
+        /// <param name="foregroundColor">The foreground color of the color pair.</param>
+        /// <param name="backgroundColor">The background color of the color pair.</param>
+        /// <returns>The VT escape sequence representing the foreground and background color pair.</returns>
+        public static string MapColorPairToEscapeSequence(ConsoleColor foregroundColor, ConsoleColor backgroundColor)
+        {
+            int foreIndex = (int)foregroundColor;
+            int backIndex = (int)backgroundColor;
+
+            if (foreIndex < 0 || foreIndex >= ForegroundColorMap.Length)
+            {
+                throw new ArgumentOutOfRangeException(paramName: nameof(foregroundColor));
+            }
+
+            if (backIndex < 0 || backIndex >= ForegroundColorMap.Length)
+            {
+                throw new ArgumentOutOfRangeException(paramName: nameof(backgroundColor));
+            }
+
+            string foreground = ForegroundColorMap[foreIndex];
+            string background = BackgroundColorMap[backIndex];
+
+            return string.Concat(
+                foreground.AsSpan(start: 0, length: foreground.Length - 1),
+                ";".AsSpan(),
+                background.AsSpan(start: 2));
+        }
     }
+
     #endregion PSStyle
 }

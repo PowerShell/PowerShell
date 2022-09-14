@@ -1732,10 +1732,7 @@ namespace Microsoft.PowerShell
                 if (origin.X + (contentsRegion.Right - contentsRegion.Left) + 1 < bufferInfo.BufferSize.X &&
                     ShouldCheck(contentsRegion.Right, contents, contentsRegion))
                 {
-                    if (cellArray == null)
-                    {
-                        cellArray = new BufferCell[cellArrayRegion.Bottom + 1, 2];
-                    }
+                    cellArray ??= new BufferCell[cellArrayRegion.Bottom + 1, 2];
 
                     checkOrigin = new Coordinates(origin.X +
                         (contentsRegion.Right - contentsRegion.Left), origin.Y);
@@ -2270,14 +2267,13 @@ namespace Microsoft.PowerShell
             c.X = (short)origin.X;
             c.Y = (short)origin.Y;
 
-            DWORD unused = 0;
             bool result =
                 NativeMethods.FillConsoleOutputCharacter(
                     consoleHandle.DangerousGetHandle(),
                     character,
                     (DWORD)numberToWrite,
                     c,
-                    out unused);
+                    out _);
             if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
@@ -2324,14 +2320,13 @@ namespace Microsoft.PowerShell
             c.X = (short)origin.X;
             c.Y = (short)origin.Y;
 
-            DWORD unused = 0;
             bool result =
                 NativeMethods.FillConsoleOutputAttribute(
                     consoleHandle.DangerousGetHandle(),
                     attribute,
                     (DWORD)numberToWrite,
                     c,
-                    out unused);
+                    out _);
 
             if (!result)
             {
@@ -2494,6 +2489,8 @@ namespace Microsoft.PowerShell
             return consoleTitle.ToString();
         }
 
+        private static bool s_dontsetConsoleWindowTitle;
+
         /// <summary>
         /// Wraps Win32 SetConsoleTitle.
         /// </summary>
@@ -2505,11 +2502,26 @@ namespace Microsoft.PowerShell
         /// </exception>
         internal static void SetConsoleWindowTitle(string consoleTitle)
         {
+            if (s_dontsetConsoleWindowTitle)
+            {
+                return;
+            }
+
             bool result = NativeMethods.SetConsoleTitle(consoleTitle);
 
             if (!result)
             {
                 int err = Marshal.GetLastWin32Error();
+
+                // ERROR_GEN_FAILURE is returned if this api can't be used with the terminal
+                if (err == 0x1f)
+                {
+                    tracer.WriteLine("Call to SetConsoleTitle failed: {0}", err);
+                    s_dontsetConsoleWindowTitle = true;
+
+                    // We ignore this specific error as the console can still continue to operate
+                    return;
+                }
 
                 HostException e = CreateHostException(err, "SetConsoleWindowTitle",
                     ErrorCategory.ResourceUnavailable, ConsoleControlStrings.SetConsoleWindowTitleExceptionTemplate);
@@ -2553,39 +2565,29 @@ namespace Microsoft.PowerShell
             // We need to chop the output string if it is too long.
             int cursor = 0; // This records the chopping position in output string
             const int MaxBufferSize = 16383; // this is 64K/4 - 1 to account for possible width of each character.
+            ReadOnlySpan<char> outBuffer;
 
-            while (cursor < output.Length)
+            while (cursor + MaxBufferSize < output.Length)
             {
-                ReadOnlySpan<char> outBuffer;
+                outBuffer = output.Slice(cursor, MaxBufferSize);
+                cursor += MaxBufferSize;
+                WriteConsole(consoleHandle, outBuffer);
+            }
 
-                if (cursor + MaxBufferSize < output.Length)
-                {
-                    outBuffer = output.Slice(cursor, MaxBufferSize);
-                    cursor += MaxBufferSize;
+            outBuffer = output.Slice(cursor);
 
-                    WriteConsole(consoleHandle, outBuffer);
-                }
-                else
-                {
-                    outBuffer = output.Slice(cursor);
-                    cursor = output.Length;
-
-                    if (newLine)
-                    {
-                        var endOfLine = Environment.NewLine.AsSpan();
-                        var endOfLineLength = endOfLine.Length;
-#pragma warning disable CA2014
-                        Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
-#pragma warning restore CA2014
-                        outBuffer.CopyTo(outBufferLine);
-                        endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
-                        WriteConsole(consoleHandle, outBufferLine);
-                    }
-                    else
-                    {
-                        WriteConsole(consoleHandle, outBuffer);
-                    }
-                }
+            if (newLine)
+            {
+                var endOfLine = Environment.NewLine.AsSpan();
+                var endOfLineLength = endOfLine.Length;
+                Span<char> outBufferLine = stackalloc char[outBuffer.Length + endOfLineLength];
+                outBuffer.CopyTo(outBufferLine);
+                endOfLine.CopyTo(outBufferLine.Slice(outBufferLine.Length - endOfLineLength));
+                WriteConsole(consoleHandle, outBufferLine);
+            }
+            else
+            {
+                WriteConsole(consoleHandle, outBuffer);
             }
         }
 

@@ -119,10 +119,7 @@ namespace Microsoft.PowerShell
                     ProgressNode parentNode = FindNodeById(newNode.SourceId, newNode.ParentActivityId);
                     if (parentNode != null)
                     {
-                        if (parentNode.Children == null)
-                        {
-                            parentNode.Children = new ArrayList();
-                        }
+                        parentNode.Children ??= new ArrayList();
 
                         AddNode(parentNode.Children, newNode);
                         break;
@@ -936,8 +933,6 @@ namespace Microsoft.PowerShell
 
                 return nodesCompressed;
             }
-
-            Dbg.Assert(false, "with all nodes invisible, we should never reach this point.");
 
             return 0;
         }

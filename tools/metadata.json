@@ -1,9 +1,10 @@
 {
-  "StableReleaseTag": "v7.1.4",
-  "PreviewReleaseTag": "v7.2.0-preview.9",
-  "ServicingReleaseTag": "v7.0.7",
-  "ReleaseTag": "v7.1.4",
-  "LTSReleaseTag" : ["v7.0.7"],
-  "NextReleaseTag": "v7.2.0-preview.10",
-  "LTSRelease": false
+  "StableReleaseTag": "v7.2.6",
+  "PreviewReleaseTag": "v7.3.0-preview.7",
+  "ServicingReleaseTag": "v7.0.12",
+  "ReleaseTag": "v7.2.6",
+  "LTSReleaseTag" : ["v7.2.6", "v7.0.12"],
+  "NextReleaseTag": "v7.3.0-preview.8",
+  "LTSRelease": { "Latest": false, "Package": false },
+  "StableRelease":  { "Latest": false, "Package": false }
 }

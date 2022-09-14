@@ -87,7 +87,7 @@
     <SetProperty Id="EnableMU"
                  Before="EnableMU"
                  Sequence="execute"
-                 Value="&quot;[VersionFolder]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;$null=(New-Object -ComObject Microsoft.Update.ServiceManager).AddService2('7971f918-a847-4430-9279-4a52d1efe18d', 7, '')&quot;" />
+                 Value="&quot;[VersionFolder]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -File &quot;[VersionFolder]RegisterMicrosoftUpdate.ps1&quot;" />
     <CustomAction Id="EnableMU"
                   BinaryKey="WixCA"
                   DllEntry="CAQuietExec"
@@ -356,7 +356,7 @@
       <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" TabSkip="yes" />
       <Control Id="Description" Type="Text" X="25" Y="54" Width="280" Height="100" Transparent="yes" NoPrefix="yes" Text="Microsoft Update helps keep your computer secure and up to date for Windows and other Microsoft products, including PowerShell 7. Updates will be delivered based on your current update settings. You can review or change these settings from the Windows Update control panel." TabSkip="yes" />
       <!-- If the checkboxes are defined first, then they are first in the tab order and can be ticked and unticked using the spacebar -->
-      <Control Id="UseMuCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="27" Property="USE_MU" CheckBoxValue="1" Text="Enable updating PowerShell through Microsft Update or WSUS (recommended)"/>
+      <Control Id="UseMuCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="27" Property="USE_MU" CheckBoxValue="1" Text="Enable updating PowerShell through Microsoft Update or WSUS (recommended)"/>
       <Control Id="EnableMuCheckBox" Type="CheckBox" X="20" Y="130" Width="290" Height="17" Property="ENABLE_MU" CheckBoxValue="1" Text="Use Microsoft Update when I check for updates (recommended)">
       </Control>
       <Control Id="MuWarningText" Type="Text" X="20" Y="160" Width="290" Height="27" Text="Without Microsoft Update enabled, you will need to use another update solution like WSUS or SCCM in order to receive automatic updates.">
@@ -367,7 +367,7 @@
         <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-FAQ">See the Microsoft Update FAQ</a>]]></Text>
       </Control>
       <Control Id="PrivacyLink" Type="Hyperlink" X="20" Y="210" Width="290" Height="17">
-        <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-Privacy-Statement">Read the Microsoft Update Priacy Statement</a>]]></Text>
+        <Text><![CDATA[<a href="https://aka.ms/PowerShell-Microsoft-Update-Privacy-Statement">Read the Microsoft Update Privacy Statement</a>]]></Text>
       </Control>
       <!-- divider and bottom buttons -->
       <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" TabSkip="yes"/>

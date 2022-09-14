@@ -178,7 +178,7 @@ Describe "Debug-job test" -Tag "Feature" {
     }
 }
 
-Describe "Ampersand background test" -Tag "CI","Slow" {
+Describe "Ampersand background test" -Tag "CI", "Slow" {
     Context "Simple background job" {
         AfterEach {
             Get-Job | Remove-Job -Force
@@ -218,6 +218,16 @@ Describe "Ampersand background test" -Tag "CI","Slow" {
             $j = Get-Location | ForEach-Object -MemberName Path &
             Receive-Job -Wait $j | Should -Be ($PWD.Path)
         }
+        It "Make sure Set-Location is not used in the job's script block to set the working directory" {
+            $j = (Get-Variable -Value ExecutionContext).SessionState.PSVariable.Get("MyInvocation").Value.MyCommand.ScriptBlock & 
+            (Receive-Job -Wait $j).ToString() | Should -BeExactly "(Get-Variable -Value ExecutionContext).SessionState.PSVariable.Get(`"MyInvocation`").Value.MyCommand.ScriptBlock"
+        }
+        It "Test that changing working directory also changes background job's working directory" {
+            Set-Location ..
+            $WorkingDirectory = (Get-Location).ToString()
+            $BackgroundJob = (Get-Location &) 
+            (Receive-Job -Wait $BackgroundJob).ToString() | Should -BeExactly $WorkingDirectory
+        }
         It "Test that output redirection is done in the background job" {
             $j = Write-Output hello > $TESTDRIVE/hello.txt &
             Receive-Job -Wait $j | Should -BeNullOrEmpty
@@ -241,5 +251,18 @@ Describe "Ampersand background test" -Tag "CI","Slow" {
             $j = 1..10 | ForEach-Object -Begin {$s=0} -Process {$s += $_} -End {$s} &
             Receive-Job -Wait $j | Should -Be 55
         }
+    }
+}
+
+Describe "Start-Job with -PSVersion parameter" -Tag "CI" {
+
+    It "Verifies that -PSVersion is not supported except for version 5.1" {
+        { Start-Job -PSVersion 2.0 } | Should -Throw -ErrorId 'ParameterBindingFailed,Microsoft.PowerShell.Commands.StartJobCommand'
+    }
+
+    It "Verifies that -PSVersion 5.1 runs the job in a version 5.1 PowerShell session" -Skip:(-not $IsWindows) {
+        $version = Start-Job -PSVersion 5.1 -ScriptBlock { $PSVersionTable } | Receive-Job -Wait -AutoRemoveJob
+        $version.PSVersion.Major | Should -Be 5
+        $version.PSVersion.Minor | Should -Be 1
     }
 }

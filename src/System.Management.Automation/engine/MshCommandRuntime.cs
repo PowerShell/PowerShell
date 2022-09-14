@@ -928,7 +928,8 @@ namespace System.Management.Automation
         /// </summary>
         internal string PipelineVariable { get; set; }
 
-        private PSVariable _pipelineVarReference = null;
+        private PSVariable _pipelineVarReference;
+        private bool _shouldRemovePipelineVariable;
 
         internal void SetupOutVariable()
         {
@@ -941,13 +942,10 @@ namespace System.Management.Automation
 
             // Handle the creation of OutVariable in the case of Out-Default specially,
             // as it needs to handle much of its OutVariable support itself.
-            if (
-                (!string.IsNullOrEmpty(this.OutVariable)) &&
-                (!(this.OutVariable.StartsWith('+'))) &&
-                string.Equals("Out-Default", _thisCommand.CommandInfo.Name, StringComparison.OrdinalIgnoreCase))
+            if (!OutVariable.StartsWith('+') &&
+                string.Equals("Out-Default", _commandInfo.Name, StringComparison.OrdinalIgnoreCase))
             {
-                if (_state == null)
-                    _state = new SessionState(Context.EngineSessionState);
+                _state ??= new SessionState(Context.EngineSessionState);
 
                 IList oldValue = null;
                 oldValue = PSObject.Base(_state.PSVariable.GetValue(this.OutVariable)) as IList;
@@ -972,27 +970,47 @@ namespace System.Management.Automation
             // This can't use the common SetupVariable implementation, as this needs to persist for an entire
             // pipeline.
 
-            if (string.IsNullOrEmpty(this.PipelineVariable))
+            if (string.IsNullOrEmpty(PipelineVariable))
             {
                 return;
             }
 
             EnsureVariableParameterAllowed();
 
-            if (_state == null)
-                _state = new SessionState(Context.EngineSessionState);
+            _state ??= new SessionState(Context.EngineSessionState);
 
             // Create the pipeline variable
-            _pipelineVarReference = new PSVariable(this.PipelineVariable);
-            _state.PSVariable.Set(_pipelineVarReference);
+            _pipelineVarReference = new PSVariable(PipelineVariable);
+            object varToUse = _state.Internal.SetVariable(
+                _pipelineVarReference,
+                force: false,
+                CommandOrigin.Internal);
 
-            // Get the reference again in case we re-used one from the
-            // same scope.
-            _pipelineVarReference = _state.PSVariable.Get(this.PipelineVariable);
+            if (ReferenceEquals(_pipelineVarReference, varToUse))
+            {
+                // The returned variable is the exact same instance, which means we set a new variable.
+                // In this case, we will try removing the pipeline variable in the end.
+                _shouldRemovePipelineVariable = true;
+            }
+            else
+            {
+                // A variable with the same name already exists in the same scope and it was returned.
+                // In this case, we update the reference and don't remove the variable in the end.
+                _pipelineVarReference = (PSVariable)varToUse;
+            }
 
             if (_thisCommand is not PSScriptCmdlet)
             {
                 this.OutputPipe.SetPipelineVariable(_pipelineVarReference);
+            }
+        }
+
+        internal void RemovePipelineVariable()
+        {
+            if (_shouldRemovePipelineVariable)
+            {
+                // Remove pipeline variable when a pipeline is being torn down.
+                _state.PSVariable.Remove(PipelineVariable);
             }
         }
 
@@ -2377,10 +2395,7 @@ namespace System.Management.Automation
             if (e == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(e));
 
-            if (PipelineProcessor != null)
-            {
-                PipelineProcessor.RecordFailure(e, _thisCommand);
-            }
+            PipelineProcessor?.RecordFailure(e, _thisCommand);
 
             // 1021203-2005/05/09-JonN
             // HaltCommandException will cause the command
@@ -2404,7 +2419,6 @@ namespace System.Management.Automation
                 }
 
                 // Log a command health event
-
                 MshLog.LogCommandHealthEvent(
                     Context,
                     e,
@@ -2543,8 +2557,7 @@ namespace System.Management.Automation
 
             EnsureVariableParameterAllowed();
 
-            if (_state == null)
-                _state = new SessionState(Context.EngineSessionState);
+            _state ??= new SessionState(Context.EngineSessionState);
 
             if (variableName.StartsWith('+'))
             {
@@ -3743,8 +3756,10 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(_thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
 
-            if (_outVarList != null)
+            if (_outVarList != null && !OutputPipe.IgnoreOutVariableList)
             {
+                // A null pipe is used when executing the 'Clean' block of a PSScriptCmdlet.
+                // In such a case, we don't capture output to the out variable list.
                 this.OutputPipe.AddVariableList(VariableStreamKind.Output, _outVarList);
             }
 
@@ -3765,26 +3780,13 @@ namespace System.Management.Automation
 
             if (this.PipelineVariable != null)
             {
-                // _state can be null if the current script block is dynamicparam, etc.
-                if (_state != null)
-                {
-                    // Create the pipeline variable
-                    _state.PSVariable.Set(_pipelineVarReference);
-
-                    // Get the reference again in case we re-used one from the
-                    // same scope.
-                    _pipelineVarReference = _state.PSVariable.Get(this.PipelineVariable);
-                }
-
                 this.OutputPipe.SetPipelineVariable(_pipelineVarReference);
             }
         }
 
         internal void RemoveVariableListsInPipe()
         {
-            // Diagnostics.Assert(thisCommand is PSScriptCmdlet, "this is only done for script cmdlets");
-
-            if (_outVarList != null)
+            if (_outVarList != null && !OutputPipe.IgnoreOutVariableList)
             {
                 this.OutputPipe.RemoveVariableList(VariableStreamKind.Output, _outVarList);
             }
@@ -3807,9 +3809,6 @@ namespace System.Management.Automation
             if (this.PipelineVariable != null)
             {
                 this.OutputPipe.RemovePipelineVariable();
-                // '_state' could be null when a 'DynamicParam' block runs because the 'DynamicParam' block runs in 'DoPrepare',
-                // before 'PipelineProcessor.SetupParameterVariables' is called, where '_state' is initialized.
-                _state?.PSVariable.Remove(this.PipelineVariable);
             }
         }
     }

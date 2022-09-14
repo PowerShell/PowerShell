@@ -289,16 +289,14 @@ namespace Microsoft.PowerShell.Commands
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
                 WebCmdletStrings.WriteRequestProgressStatus);
+
             try
             {
-                do
+                while (!copyTask.Wait(1000, cancellationToken))
                 {
                     record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestProgressStatus, output.Position);
                     cmdlet.WriteProgress(record);
-
-                    Task.Delay(1000).Wait(cancellationToken);
                 }
-                while (!copyTask.IsCompleted && !cancellationToken.IsCancellationRequested);
 
                 if (copyTask.IsCompleted)
                 {
@@ -431,8 +429,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 do
                 {
-                    // check for a charset attribute on the meta element to override the default.
-                    Match match = s_metaexp.Match(content);
+                    // check for a charset attribute on the meta element to override the default
+                    // we only look within the first 1k characters as the meta tag is in the head
+                    // tag which is at the start of the document
+                    Match match = s_metaexp.Match(content.Substring(0, Math.Min(content.Length, 1024)));
                     if (match.Success)
                     {
                         Encoding localEncoding = null;
@@ -454,11 +454,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal static byte[] EncodeToBytes(string str, Encoding encoding)
         {
-            if (encoding == null)
-            {
-                // just use the default encoding if one wasn't provided
-                encoding = ContentHelper.GetDefaultEncoding();
-            }
+            // just use the default encoding if one wasn't provided
+            encoding ??= ContentHelper.GetDefaultEncoding();
 
             return encoding.GetBytes(str);
         }

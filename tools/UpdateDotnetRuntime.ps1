@@ -128,9 +128,15 @@ function Update-PackageVersion {
             foreach ($p in $pkgs.Values) {
                 # some packages are directly updated on nuget.org so need to check that too.
                 if ($p.Version -like "$versionPattern*" -or $p.Source -eq 'nuget.org') {
-                    if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
-                        $v.NewVersion = $p.Version
-                        break
+                    try {
+                        if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
+                            $v.NewVersion = $p.Version
+                            break
+                        }
+                    } catch {
+                        if ($_.FullyQualifiedErrorId -ne 'InvalidCastParseTargetInvocation') {
+                            throw $_
+                        }
                     }
                 }
             }
@@ -189,39 +195,43 @@ function Get-DotnetUpdate {
     try {
 
         try {
-            $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$quality/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
+            $URL = "http://aka.ms/dotnet/$channel/$quality/productVersion.txt"
+            $latestSDKVersionString = Invoke-RestMethod -Uri $URL -ErrorAction Stop | ForEach-Object { $_.Trim() }
             $selectedQuality = $quality
         } catch {
             if ($_.exception.Response.StatusCode -eq 'NotFound') {
-                Write-Verbose "Build not found for Channel: $Channel and Quality: $Quality" -Verbose
+                Write-Verbose -Verbose -Message "No build at '$URL' found!"
             } else {
                 throw $_
             }
         }
+        $latestSDKversion = $latestSDKVersionString -as "System.Management.Automation.SemanticVersion"
 
-        if (-not $latestSDKVersionString -or -not $latestSDKVersionString.StartsWith($sdkImageVersion)) {
+        if (-not $latestSDKVersion) {
             # we did not get a version number so fall back to daily
-            $latestSDKVersionString = Invoke-RestMethod -Uri "http://aka.ms/dotnet/$channel/$qualityFallback/sdk-productVersion.txt" -ErrorAction Stop | ForEach-Object { $_.Trim() }
+            $URL = "http://aka.ms/dotnet/$channel/$qualityFallback/productVersion.txt"
+            $latestSDKVersionString = Invoke-RestMethod -Uri $URL -ErrorAction Stop | ForEach-Object { $_.Trim() }
             $selectedQuality = $qualityFallback
 
-            if (-not $latestSDKVersionString.StartsWith($sdkImageVersion)) {
-                throw "No build found!"
+            $latestSDKversion = $latestSDKVersionString -as "System.Management.Automation.SemanticVersion"
+            if (-not $latestSDKVersion) {
+                throw "No build at '$URL' found!"
             }
         }
 
-        $latestSDKversion = [System.Management.Automation.SemanticVersion] $latestSDKVersionString
-
         $currentVersion = [System.Management.Automation.SemanticVersion] (( Get-Content -Path "$PSScriptRoot/../global.json" -Raw | ConvertFrom-Json).sdk.version)
 
-        if ($latestSDKversion -gt $currentVersion) {
+        if ($latestSDKversion -gt $currentVersion -and $null -ne $latestSDKversion.PreReleaseLabel) {
             $shouldUpdate = $true
             $newVersion = $latestSDKversion
         } else {
             $shouldUpdate = $false
-            $newVersion = $null
+            $newVersion = $latestSDKVersionString
+
+            $Message = $null -eq $currentVersion.PreReleaseLabel ? "$latestSDKversion is not preview, update manually." : "No update needed."
         }
     } catch {
-        Write-Verbose -Verbose "Error occured: $_.message"
+        Write-Verbose -Verbose "Error occurred: $_.message"
         $shouldUpdate = $false
         $newVersion = $null
         Write-Error "Error while checking .NET SDK update: $($_.message)"
@@ -243,6 +253,31 @@ function Update-DevContainer {
     $devContainerDocker = (Get-Content $dockerFilePath) -replace 'FROM mcr\.microsoft\.com/dotnet.*', "FROM mcr.microsoft.com/dotnet/nightly/sdk:$sdkImageVersion"
 
     $devContainerDocker | Out-File -FilePath $dockerFilePath -Force
+}
+
+<#
+ .DESCRIPTION Update the DotnetMetadata.json file with the latest version of the SDK
+ #>
+function Update-DotnetRuntimeMetadata {
+    param (
+        [string] $newSdk
+    )
+
+    # -replace uses regex so in order to split on `.`, we need to use `\.` to escape the dot character.
+    $sdkParts = $newSdk -split '\.'
+
+    # Transform SDK Version '7.0.100-preview.5.22263.22' -> '7.0.1xx-preview5'
+    $newChannel = $sdkParts[0] + "." + $sdkParts[1] + "." + ($sdkParts[2] -replace '0','x') + $sdkParts[3]
+    Write-Verbose -Verbose -Message "Updating DotnetRuntimeMetadata.json with channel $newChannel"
+
+    # Transform SDK Version '7.0.100-preview.5.22263.22' -> '7.0.100-preview.5'
+    $newPackageVersionPattern = $sdkParts[0] + "." + $sdkParts[1] + "." + '0-' + ($sdkParts[2] -split '-')[-1] + "." + $sdkParts[3]
+    Write-Verbose -Verbose -Message "Updating DotnetRuntimeMetadata.json with package filter $newPackageVersionPattern"
+
+    $metadata = Get-Content -Raw "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json
+    $metadata.sdk.channel = $newChannel
+    $metadata.sdk.packageVersionPattern = $newPackageVersionPattern
+    $metadata | ConvertTo-Json | Out-File -FilePath "$PSScriptRoot/../DotnetRuntimeMetadata.json" -Force
 }
 
 $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
@@ -325,6 +360,8 @@ if ($dotnetUpdate.ShouldUpdate) {
 
     Write-Verbose -Message "Updating global.json completed." -Verbose
 
+    Update-DotnetRuntimeMetadata -newSdk $latestSdkVersion
+
     Update-PackageVersion
 
     Write-Verbose -Message "Updating project files completed." -Verbose
@@ -337,7 +374,10 @@ if ($dotnetUpdate.ShouldUpdate) {
         Import-Module "$PSScriptRoot/../build.psm1" -Force
         Import-Module "$PSScriptRoot/packaging" -Force
         Start-PSBootstrap -Package
-        Start-PSBuild -Clean -Configuration Release -CrossGen -InteractiveAuth:$InteractiveAuth
+        Start-PSBuild -Clean -Configuration Release -InteractiveAuth:$InteractiveAuth
+
+        $publishPath = Split-Path (Get-PSOutput)
+        Remove-Item -Path "$publishPath\*.pdb"
 
         try {
             Start-PSPackage -Type msi -SkipReleaseChecks -InformationVariable wxsData
@@ -352,4 +392,7 @@ if ($dotnetUpdate.ShouldUpdate) {
     }
 
     Update-DevContainer
+}
+else {
+    Write-Verbose -Verbose -Message $dotnetUpdate.Message
 }

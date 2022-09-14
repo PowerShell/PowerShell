@@ -59,7 +59,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <remarks>
         /// This parameter tells the command to provide Programmer/Support type
-        /// messages to understand what is really occuring and give the user the
+        /// messages to understand what is really occurring and give the user the
         /// opportunity to stop or debug the situation.
         /// </remarks>
         [Parameter]

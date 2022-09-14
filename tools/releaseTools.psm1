@@ -33,15 +33,14 @@ class CommitNode {
 # These powershell team members don't use 'microsoft.com' for Github email or choose to not show their emails.
 # We have their names in this array so that we don't need to query GitHub to find out if they are powershell team members.
 $Script:powershell_team = @(
-    "Robert Holt"
     "Travis Plunk"
     "dependabot-preview[bot]"
     "dependabot[bot]"
-    "Joey Aiello"
-    "Tyler James Leonhardt"
+    "github-actions[bot]"
     "Anam Navied"
     "Andrew Schwartzmeyer"
     "Jason Helmick"
+    "Patrick Meinecke"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.

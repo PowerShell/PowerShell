@@ -166,22 +166,22 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Static constructor
         ///
-        /// NOTE: FWLinks for core PowerShell modules are needed since they get loaded as snapins in a Remoting Endpoint.
+        /// NOTE: HelpInfoUri for core PowerShell modules are needed since they get loaded as snapins in a Remoting Endpoint.
         /// When we moved to modules in V3, we were not able to make this change as it was a risky change to make at that time.
         /// </summary>
         static UpdatableHelpCommandBase()
         {
             s_metadataCache = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            // TODO: assign real TechNet addresses
+            // NOTE: The HelpInfoUri must be updated with each release.
 
-            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://aka.ms/powershell71-help");
-            s_metadataCache.Add("Microsoft.WSMan.Management", "https://aka.ms/powershell71-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://aka.ms/powershell73-help");
+            s_metadataCache.Add("Microsoft.WSMan.Management", "https://aka.ms/powershell73-help");
         }
 
         /// <summary>
@@ -509,6 +509,7 @@ namespace Microsoft.PowerShell.Commands
             // Win8: 572882 When the system locale is English and the UI is JPN,
             // running "update-help" still downs English help content.
             var cultures = _language ?? _helpSystem.GetCurrentUICulture();
+            UpdatableHelpSystemException implicitCultureNotSupported = null;
 
             foreach (string culture in cultures)
             {
@@ -558,6 +559,12 @@ namespace Microsoft.PowerShell.Commands
                             // Display the error message only if we are not using the fallback chain
                             ProcessException(module.ModuleName, culture, e);
                         }
+                        else
+                        {
+                            // Hold first exception, it will be displayed if fallback chain fails
+                            WriteVerbose(StringUtil.Format(HelpDisplayStrings.HelpCultureNotSupportedFallback, e.Message));
+                            implicitCultureNotSupported ??= e;
+                        }
                     }
                     else
                     {
@@ -581,12 +588,18 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                // If -Language is not specified, we only install
+                // If -UICulture is not specified, we only install
                 // one culture from the fallback chain
                 if (_language == null && installed)
                 {
-                    break;
+                    return;
                 }
+            }
+
+            // If the exception is not null and did not return early, then all of the fallback chain failed
+            if (implicitCultureNotSupported != null)
+            {
+                ProcessException(module.ModuleName, cultures.First(), implicitCultureNotSupported);
             }
         }
 

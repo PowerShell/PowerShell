@@ -187,6 +187,20 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $e.Exception | Should -BeOfType System.IO.IOException
         }
 
+        It 'Verify Move-Item fails for destination that is subdir of source with trailing: <trailingChar>' -TestCases @(
+            @{ trailingChar = [System.IO.Path]::DirectorySeparatorChar }
+            @{ trailingChar = [System.IO.Path]::AltDirectorySeparatorChar }
+            @{ trailingChar = '' }
+        ) {
+            param($trailingChar)
+
+            $dest = Join-Path -Path $TestDrive -ChildPath dest
+            $null = New-item -ItemType Directory -Path $dest -Force -ErrorAction Stop
+            $src = "$TestDrive$trailingChar"
+
+            { Move-Item -Path $src -Destination $dest -ErrorAction Stop } | Should -Throw -ErrorId 'MoveItemArgumentError,Microsoft.PowerShell.Commands.MoveItemCommand'
+        }
+
         It "Verify Move-Item throws correct error for non-existent source" {
             { Move-Item -Path /does/not/exist -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.MoveItemCommand'
         }
@@ -771,6 +785,42 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $childB.Count | Should -Be 1
             $childB.Count | Should -BeExactly $childA.Count
             $childB.Name | Should -BeExactly $childA.Name
+        }
+    }
+
+    Context "Show immediate target" {
+        BeforeAll {
+            $testDir = Join-Path $TestDrive "immediate-target"
+            New-Item -ItemType Directory $testDir > $null
+
+            $testFile = Join-Path $testDir "target"
+            Set-Content -Path $testFile -Value "Hello world"
+
+            Push-Location $testDir
+            New-Item -ItemType SymbolicLink -Path 'firstLink' -Value 'target' > $null
+            New-Item -ItemType SymbolicLink -Path 'secondLink' -Value 'firstLink' > $null
+            Pop-Location
+        }
+
+        AfterAll {
+            Remove-Item $testDir -Recurse -Force
+        }
+
+        It "Property 'Target' should show the immediate target" {
+            $firstLink = Get-Item (Join-Path $testDir 'firstLink')
+            $firstLink.Target | Should -BeExactly 'target'
+            $str = [Microsoft.PowerShell.Commands.FileSystemProvider]::NameString($firstLink)
+            [System.Management.Automation.Internal.StringDecorated]::new($str).ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'firstLink -> target'
+
+            $secondLink = Get-Item (Join-Path $testDir 'secondLink')
+            $secondLink.Target | Should -BeExactly 'firstLink'
+            $str = [Microsoft.PowerShell.Commands.FileSystemProvider]::NameString($secondLink)
+            [System.Management.Automation.Internal.StringDecorated]::new($str).ToString([System.Management.Automation.OutputRendering]::PlainText) | Should -BeExactly 'secondLink -> firstLink'
+        }
+
+        It "Get-Content should be able to resolve the final target" {
+            Get-Content (Join-Path $testDir 'firstLink') | Should -BeExactly "Hello world"
+            Get-Content (Join-Path $testDir 'secondLink') | Should -BeExactly "Hello world"
         }
     }
 }

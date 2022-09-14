@@ -36,7 +36,7 @@ namespace Engine
             yield return @"[System.IO.Path]::HasExtension('')";
 
             // Test on COM method invocation.
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (Platform.IsWindows)
             {
                 yield return @"$sh=New-Object -ComObject Shell.Application; $sh.Namespace('c:\')";
                 yield return @"$fs=New-Object -ComObject scripting.filesystemobject; $fs.Drives";
@@ -54,7 +54,7 @@ namespace Engine
             // believe that there is no need to run many ops in each interation. However, the subsequent runs
             // of this method is much faster than the first run, and this causes 'MinIterationTime' warnings
             // to our benchmarks and make the benchmark results not reliable.
-            // Calling this method once in 'GlobalSetup' is a workaround. 
+            // Calling this method once in 'GlobalSetup' is a workaround.
             // See https://github.com/dotnet/BenchmarkDotNet/issues/837#issuecomment-828600157
             scriptBlock.Invoke();
         }

@@ -23,6 +23,7 @@ namespace Microsoft.WSMan.Management
     /// service is running.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "WSMan", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097114")]
+    [OutputType(typeof(XmlElement))]
     public class TestWSManCommand : AuthenticatingWSManCommand, IDisposable
     {
         /// <summary>

@@ -84,10 +84,7 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (this.SyncRoot)
                 {
-                    if (_applicationPrivateData == null)
-                    {
-                        _applicationPrivateData = new PSPrimitiveDictionary();
-                    }
+                    _applicationPrivateData ??= new PSPrimitiveDictionary();
                 }
             }
 
@@ -363,7 +360,7 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-        private static readonly string s_debugPreferenceCachePath = Path.Combine(Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell"), "DebugPreference.clixml");
+        private static readonly string s_debugPreferenceCachePath = Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "WindowsPowerShell", "DebugPreference.clixml");
         private static readonly object s_debugPreferenceLockObject = new object();
 
         /// <summary>
@@ -768,10 +765,7 @@ namespace System.Management.Automation.Runspaces
         /// </remarks>
         internal PipelineThread GetPipelineThread()
         {
-            if (_pipelineThread == null)
-            {
-                _pipelineThread = new PipelineThread(this.ApartmentState);
-            }
+            _pipelineThread ??= new PipelineThread(this.ApartmentState);
 
             return _pipelineThread;
         }
@@ -840,18 +834,14 @@ namespace System.Management.Automation.Runspaces
                 if (executionContext != null)
                 {
                     PSHostUserInterface hostUI = executionContext.EngineHostInterface.UI;
-                    if (hostUI != null)
-                    {
-                        hostUI.StopAllTranscribing();
-                    }
+                    hostUI?.StopAllTranscribing();
                 }
 
                 AmsiUtils.Uninitialize();
             }
 
             // Generate the shutdown event
-            if (Events != null)
-                Events.GenerateEvent(PSEngineEvent.Exiting, null, Array.Empty<object>(), null, true, false);
+            Events?.GenerateEvent(PSEngineEvent.Exiting, null, Array.Empty<object>(), null, true, false);
 
             // Stop all running pipelines
             // Note:Do not perform the Cancel in lock. Reason is
@@ -884,7 +874,7 @@ namespace System.Management.Automation.Runspaces
                     return runspaces;
                 });
 
-            // Notify Engine components that that runspace is closing.
+            // Notify Engine components that runspace is closing.
             _engine.Context.RunspaceClosingNotification();
 
             // Log engine lifecycle event.
@@ -1242,8 +1232,6 @@ namespace System.Management.Automation.Runspaces
                         RunspaceOpening = null;
                     }
 
-                    Platform.RemoveTemporaryDirectory();
-
                     // Dispose the event manager
                     if (this.ExecutionContext != null && this.ExecutionContext.Events != null)
                     {
@@ -1274,10 +1262,7 @@ namespace System.Management.Automation.Runspaces
 
             base.Close(); // call base.Close() first to make it stop the pipeline
 
-            if (_pipelineThread != null)
-            {
-                _pipelineThread.Close();
-            }
+            _pipelineThread?.Close();
         }
 
         #endregion IDisposable Members

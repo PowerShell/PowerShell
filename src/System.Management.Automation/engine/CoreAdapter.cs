@@ -1377,6 +1377,27 @@ namespace System.Management.Automation
             return methodInfo;
         }
 
+        private static Type[] ResolveGenericTypeParameters(object[] genericTypeParameters)
+        {
+            if (genericTypeParameters is null || genericTypeParameters.Length == 0)
+            {
+                return null;
+            }
+
+            Type[] genericParamTypes = new Type[genericTypeParameters.Length];
+            for (int i = 0; i < genericTypeParameters.Length; i++)
+            {
+                genericParamTypes[i] = genericTypeParameters[i] switch
+                {
+                    Type paramType => paramType,
+                    ITypeName paramTypeName => TypeOps.ResolveTypeName(paramTypeName, paramTypeName.Extent),
+                    _ => throw new ArgumentException("Unexpected value"),
+                };
+            }
+
+            return genericParamTypes;
+        }
+
         private static MethodInformation FindBestMethodImpl(
             MethodInformation[] methods,
             PSMethodInvocationConstraints invocationConstraints,
@@ -1394,59 +1415,84 @@ namespace System.Management.Automation
             // be turned into an array.
             // We also skip the optimization if the number of arguments and parameters is different
             // so we let the loop deal with possible optional parameters.
-            if ((methods.Length == 1) &&
-                (!methods[0].hasVarArgs) &&
-                (!methods[0].isGeneric) &&
-                (methods[0].method == null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition)) &&
+            if (methods.Length == 1
+                && !methods[0].hasVarArgs
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
-                (methods[0].parameters.Length == arguments.Length))
+                && !methods[0].isGeneric
+                && (methods[0].method is null || !methods[0].method.DeclaringType.IsGenericTypeDefinition)
+                && methods[0].parameters.Length == arguments.Length)
             {
                 return methods[0];
             }
 
-            Type[] argumentTypes = arguments.Select(EffectiveArgumentType).ToArray();
-            List<OverloadCandidate> candidates = new List<OverloadCandidate>();
+            Type[] genericParamTypes = ResolveGenericTypeParameters(invocationConstraints?.GenericTypeParameters);
+            var candidates = new List<OverloadCandidate>();
+
             for (int i = 0; i < methods.Length; i++)
             {
-                MethodInformation method = methods[i];
+                MethodInformation methodInfo = methods[i];
 
-                if (method.method != null && method.method.DeclaringType.IsGenericTypeDefinition)
+                if (methodInfo.method?.DeclaringType.IsGenericTypeDefinition == true
+                    || (!methodInfo.isGeneric && genericParamTypes is not null))
                 {
-                    continue; // skip methods defined by an *open* generic type
+                    // If method is defined by an *open* generic type, or
+                    // if generic parameters were provided and this method isn't generic, skip it.
+                    continue;
                 }
 
-                if (method.isGeneric)
+                if (methodInfo.isGeneric)
                 {
-                    Type[] argumentTypesForTypeInference = new Type[argumentTypes.Length];
-                    Array.Copy(argumentTypes, argumentTypesForTypeInference, argumentTypes.Length);
-                    if (invocationConstraints != null && invocationConstraints.ParameterTypes != null)
+                    if (genericParamTypes is not null)
                     {
-                        int parameterIndex = 0;
-                        foreach (Type typeConstraintFromCallSite in invocationConstraints.ParameterTypes)
+                        try
                         {
-                            if (typeConstraintFromCallSite != null)
-                            {
-                                argumentTypesForTypeInference[parameterIndex] = typeConstraintFromCallSite;
-                            }
-
-                            parameterIndex++;
+                            // This cast is safe, because
+                            // 1. Only ConstructorInfo and MethodInfo derive from MethodBase
+                            // 2. ConstructorInfo.IsGenericMethod is always false
+                            var originalMethod = (MethodInfo)methodInfo.method;
+                            methodInfo = new MethodInformation(
+                                originalMethod.MakeGenericMethod(genericParamTypes),
+                                parametersToIgnore: 0);
+                        }
+                        catch (ArgumentException)
+                        {
+                            // Just skip this possibility if the generic type parameters can't be used to make
+                            // a valid generic method here.
+                            continue;
                         }
                     }
-
-                    method = TypeInference.Infer(method, argumentTypesForTypeInference);
-                    if (method == null)
+                    else
                     {
-                        // Skip generic methods for which we cannot infer type arguments
-                        continue;
+                        // Infer the generic method when generic parameter types are not specified.
+                        Type[] argumentTypes = arguments.Select(EffectiveArgumentType).ToArray();
+                        Type[] paramConstraintTypes = invocationConstraints?.ParameterTypes;
+
+                        if (paramConstraintTypes is not null)
+                        {
+                            for (int k = 0; k < paramConstraintTypes.Length; k++)
+                            {
+                                if (paramConstraintTypes[k] is not null)
+                                {
+                                    argumentTypes[k] = paramConstraintTypes[k];
+                                }
+                            }
+                        }
+
+                        methodInfo = TypeInference.Infer(methodInfo, argumentTypes);
+                        if (methodInfo is null)
+                        {
+                            // Skip generic methods for which we cannot infer type arguments
+                            continue;
+                        }
                     }
                 }
 
-                if (!IsInvocationTargetConstraintSatisfied(method, invocationConstraints))
+                if (!IsInvocationTargetConstraintSatisfied(methodInfo, invocationConstraints))
                 {
                     continue;
                 }
 
-                ParameterInformation[] parameters = method.parameters;
+                ParameterInformation[] parameters = methodInfo.parameters;
                 if (arguments.Length != parameters.Length)
                 {
                     // Skip methods w/ an incorrect # of arguments.
@@ -1454,7 +1500,7 @@ namespace System.Management.Automation
                     if (arguments.Length > parameters.Length)
                     {
                         // If too many args,it's only OK if the method is varargs.
-                        if (!method.hasVarArgs)
+                        if (!methodInfo.hasVarArgs)
                         {
                             continue;
                         }
@@ -1462,12 +1508,12 @@ namespace System.Management.Automation
                     else
                     {
                         // Too few args, OK if there are optionals, or varargs with the param array omitted
-                        if (!method.hasOptional && (!method.hasVarArgs || (arguments.Length + 1) != parameters.Length))
+                        if (!methodInfo.hasOptional && (!methodInfo.hasVarArgs || (arguments.Length + 1) != parameters.Length))
                         {
                             continue;
                         }
 
-                        if (method.hasOptional)
+                        if (methodInfo.hasOptional)
                         {
                             // Count optionals.  This code is rarely hit, mainly when calling code in the
                             // assembly Microsoft.VisualBasic.  If it were more frequent, the optional count
@@ -1490,7 +1536,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                OverloadCandidate candidate = new OverloadCandidate(method, arguments.Length);
+                OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length);
                 for (int j = 0; candidate != null && j < parameters.Length; j++)
                 {
                     ParameterInformation parameter = parameters[j];
@@ -1581,13 +1627,23 @@ namespace System.Management.Automation
 
             if (candidates.Count == 0)
             {
-                if ((methods.Length > 0) && (methods.All(static m => m.method != null && m.method.DeclaringType.IsGenericTypeDefinition && m.method.IsStatic)))
+                if (methods.Length > 0 && methods.All(static m => m.method != null && m.method.DeclaringType.IsGenericTypeDefinition && m.method.IsStatic))
                 {
                     errorId = "CannotInvokeStaticMethodOnUninstantiatedGenericType";
                     errorMsg = string.Format(
                         CultureInfo.InvariantCulture,
                         ExtendedTypeSystem.CannotInvokeStaticMethodOnUninstantiatedGenericType,
                         methods[0].method.DeclaringType.FullName);
+                    return null;
+                }
+                else if (genericParamTypes is not null)
+                {
+                    errorId = "MethodCountCouldNotFindBestGeneric";
+                    errorMsg = string.Format(
+                        ExtendedTypeSystem.MethodGenericArgumentCountException,
+                        methods[0].method.Name,
+                        genericParamTypes.Length,
+                        arguments.Length);
                     return null;
                 }
                 else
@@ -2202,10 +2258,7 @@ namespace System.Management.Automation
 
             if (!_useReflection)
             {
-                if (_methodInvoker == null)
-                {
-                    _methodInvoker = GetMethodInvoker(methodInfo);
-                }
+                _methodInvoker ??= GetMethodInvoker(methodInfo);
 
                 if (_methodInvoker != null)
                 {
@@ -2991,10 +3044,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    if (_isHidden == null)
-                    {
-                        _isHidden = member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
-                    }
+                    _isHidden ??= member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
 
                     return _isHidden.Value;
                 }
@@ -3809,6 +3859,33 @@ namespace System.Management.Automation
             return entry.isStatic;
         }
 
+        /// <summary>
+        /// Get the string representation of the default value of passed-in parameter.
+        /// </summary>
+        /// <param name="parameterInfo">ParameterInfo containing the parameter's default value.</param>
+        /// <returns>String representation of the parameter's default value.</returns>
+        private static string GetDefaultValueStringRepresentation(ParameterInfo parameterInfo)
+        {
+            var parameterType = parameterInfo.ParameterType;
+            var parameterDefaultValue = parameterInfo.DefaultValue;
+
+            if (parameterDefaultValue == null)
+            {
+                return (parameterType.IsValueType || parameterType.IsGenericMethodParameter)
+                    ? "default"
+                    : "null";
+            }
+
+            if (parameterType.IsEnum)
+            {
+                return string.Format(CultureInfo.InvariantCulture, "{0}.{1}", parameterType.ToString(), parameterDefaultValue.ToString());
+            }
+
+            return (parameterDefaultValue is string)
+                ? string.Format(CultureInfo.InvariantCulture, "\"{0}\"", parameterDefaultValue.ToString())
+                : parameterDefaultValue.ToString();
+        }
+
         #endregion auxiliary methods and classes
 
         #region virtual
@@ -4401,6 +4478,13 @@ namespace System.Management.Automation
                     builder.Append(ToStringCodeMethods.Type(parameterType));
                     builder.Append(' ');
                     builder.Append(parameter.Name);
+
+                    if (parameter.HasDefaultValue)
+                    {
+                        builder.Append(" = ");
+                        builder.Append(GetDefaultValueStringRepresentation(parameter));
+                    }
+
                     builder.Append(", ");
                 }
 
@@ -5884,7 +5968,7 @@ namespace System.Management.Automation
                 try
                 {
                     MethodInfo instantiatedMethod = genericMethod.MakeGenericMethod(inferredTypeParameters.ToArray());
-                    s_tracer.WriteLine("Inference succesful: {0}", instantiatedMethod);
+                    s_tracer.WriteLine("Inference successful: {0}", instantiatedMethod);
                     return instantiatedMethod;
                 }
                 catch (ArgumentException e)

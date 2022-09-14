@@ -5,6 +5,7 @@
 
 using System;
 using System.IO;
+using System.Management.Automation;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -89,7 +90,7 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            bool isLinux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+            bool isLinux = Platform.IsLinux;
 
             // The first byte (ASCII char) of the name of this process, used to detect '-' for login
             byte procNameFirstByte;
