@@ -1175,7 +1175,7 @@ namespace System.Management.Automation.Runspaces
 
                                         # if rendering line information, break up the message if it's wider than the console
                                         if ($myinv -and $myinv.ScriptName -or $err.CategoryInfo.Category -eq 'ParserError') {
-                                            $prefixLength = Get-RawStringLength -string $prefix
+                                            $prefixLength = [System.Management.Automation.Internal.StringDecorated]::new($prefix).ContentLength
                                             $prefixVtLength = $prefix.Length - $prefixLength
 
                                             # replace newlines in message so it lines up correct
