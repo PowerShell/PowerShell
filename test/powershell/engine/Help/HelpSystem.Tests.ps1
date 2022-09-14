@@ -637,7 +637,7 @@ Describe 'Update-Help allows partial culture matches' -Tags 'CI' {
     }
 
     AfterEach {
-        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('CurrentUICultre', $null)
+        [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('CurrentUICulture', $null)
     }
 
     It 'Checks culture match against en-US: <UICulture>' -TestCases @(
