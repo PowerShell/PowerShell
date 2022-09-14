@@ -1549,7 +1549,6 @@ namespace System.Management.Automation
         {
             return bytes switch
             {
-                _ => $"0 Bytes",
                 < 1024 and >= 0 => $"{bytes} Bytes",
                 < 1048576 and >= 1024 => $"{(bytes / 1024.0).ToString("0.0")} KB",
                 < 1073741824 and >= 1048576 => $"{(bytes / 1048576.0).ToString("0.0")} MB",
@@ -1557,6 +1556,7 @@ namespace System.Management.Automation
                 < 1125899906842624 and >= 1099511627776 => $"{(bytes / 1099511627776.0).ToString("0.00000")} TB",
                 < 1152921504606847000 and >= 1125899906842624 => $"{(bytes / 1125899906842624.0).ToString("0.0000000")} PB",
                 >= 1152921504606847000 => $"{(bytes / 1152921504606847000.0).ToString("0.000000000")} EB",
+                _ => $"0 Bytes",
             };
         }
     }
