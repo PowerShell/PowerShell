@@ -233,7 +233,8 @@ namespace Microsoft.PowerShell.Commands
                             WebCmdletStrings.ReadResponseProgressStatus,
                             Utils.DisplayHumanReadableFileSize(totalRead),
                             totalDownloadSize);
-                        if (_contentLength != null && _contentLength > 0)
+
+                        if (_contentLength > 0)
                         {
                             record.PercentComplete = Math.Min((int)(totalRead * 100 / (long)_contentLength), 100);
                         }
