@@ -12,6 +12,7 @@
 // could do is diddle with the console buffer.
 
 using System;
+using System.Buffers;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Management.Automation;
@@ -2574,23 +2575,31 @@ namespace Microsoft.PowerShell
                 return;
             }
 
+            char[] rentedArray = null;
             string lineEnding = Environment.NewLine;
             int size = outBuffer.Length + lineEnding.Length;
-            if (size <= MaxStackAllocSize)
+
+            // We expect the 'size' will often be small, and thus optimize that case with 'stackalloc'.
+            Span<char> buffer = size <= MaxStackAllocSize ? stackalloc char[size] : default;
+
+            try
             {
-                // We expect this code path to be hit more often, and thus optimize it with 'stackalloc'.
-                Span<char> buffer = stackalloc char[size];
+                if (buffer.IsEmpty)
+                {
+                    rentedArray = ArrayPool<char>.Shared.Rent(size);
+                    buffer = rentedArray.AsSpan().Slice(0, size);
+                }
+
                 outBuffer.CopyTo(buffer);
                 lineEnding.CopyTo(buffer.Slice(outBuffer.Length));
                 WriteConsole(consoleHandle, buffer);
             }
-            else
+            finally
             {
-                // The size is 16K at most, so this array is a small object that will soon be collected.
-                var buffer = new char[size];
-                outBuffer.CopyTo(buffer);
-                lineEnding.CopyTo(sourceIndex: 0, buffer, outBuffer.Length, lineEnding.Length);
-                WriteConsole(consoleHandle, buffer);
+                if (rentedArray is not null)
+                {
+                    ArrayPool<char>.Shared.Return(rentedArray);
+                }
             }
         }
 
