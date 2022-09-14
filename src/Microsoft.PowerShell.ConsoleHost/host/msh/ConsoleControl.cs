@@ -2580,7 +2580,9 @@ namespace Microsoft.PowerShell
             int size = outBuffer.Length + lineEnding.Length;
 
             // We expect the 'size' will often be small, and thus optimize that case with 'stackalloc'.
-            Span<char> buffer = size <= MaxStackAllocSize ? stackalloc char[size] : default;
+            Span<char> buffer = size <= MaxStackAllocSize
+                ? (stackalloc char[MaxStackAllocSize]).Slice(0, size)
+                : default;
 
             try
             {
