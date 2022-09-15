@@ -5,6 +5,8 @@ jobs:
         value : false
       - name: NugetSecurityAnalysisWarningLevel
         value: none
+      - name: ReleaseTagVar
+        value: fromBranch
       # Defines the variables APIScanClient, APIScanTenant and APIScanSecret
       - group: PS-PS-APIScan
 
@@ -17,6 +19,12 @@ jobs:
     timeoutInMinutes: 180
 
     steps:
+    - template: ../SetVersionVariables.yml
+      parameters:
+        ReleaseTagVar: $(ReleaseTagVar)
+        CreateJson: yes
+        UseJson: no
+
     - pwsh: |
         Import-Module .\build.psm1 -force
         Start-PSBootstrap
@@ -32,7 +40,7 @@ jobs:
       inputs:
         softwareFolder: '$(BinDir)'
         softwareName: PowerShell
-        softwareVersionNum: v7.3
+        softwareVersionNum: '$(ReleaseTagVar)'
         isLargeApp: false
         preserveTempFiles: true
       env:
