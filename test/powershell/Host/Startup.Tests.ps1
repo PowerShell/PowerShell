@@ -70,7 +70,6 @@ Describe "Validate start of console host" -Tag CI {
         else {
             $allowedAssemblies += @(
                 'System.Net.Sockets.dll'
-                'System.Reflection.Emit.dll'
             )
         }
 
