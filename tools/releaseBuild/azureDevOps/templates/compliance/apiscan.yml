@@ -49,6 +49,25 @@ jobs:
       env:
         AzureServicesAuthConnectionString: RunAs=App;AppId=$(APIScanClient);TenantId=$(APIScanTenant);AppKey=$(APIScanSecret)
 
-    - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
-      displayName: 'Publish Security Analysis Logs to Build Artifacts'
+    - task: securedevelopmentteam.vss-secure-development-tools.build-task-report.SdtReport@2
       continueOnError: true
+      displayName: 'Guardian Export'
+      inputs:
+        GdnExportVstsConsole: true
+        GdnExportSarifFile: true
+        GdnExportHtmlFile: true
+        GdnExportAllTools: false
+        GdnExportGdnToolApiScan: true
+        #this didn't do anything GdnExportCustomLogsFolder: '$(Build.ArtifactStagingDirectory)/Guardian'
+
+    - pwsh: |
+        Get-ChildItem -Path env:
+      displayName: Capture Environment
+      condition: succeededOrFailed()
+
+    - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@3
+      displayName: 'Publish Guardian Artifacts'
+      inputs:
+        AllTools: false
+        APIScan: true
+        ArtifactName: APIScan
