@@ -3252,8 +3252,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 {
                     foreach (var directory in Directory.EnumerateDirectories(dscResourcesPath))
                     {
-                        var schemaFiles = Directory.EnumerateFiles(directory, "*.schema.mof", SearchOption.TopDirectoryOnly);
-                        var tempSchemaFilepath = schemaFiles.FirstOrDefault();
+                        IEnumerable<string> schemaFiles = Directory.EnumerateFiles(directory, "*.schema.mof", SearchOption.TopDirectoryOnly);
+                        string tempSchemaFilepath = schemaFiles.FirstOrDefault();
 
                         Debug.Assert(schemaFiles.Count() == 1, "A valid DSCResource module can have only one schema mof file");
                         
