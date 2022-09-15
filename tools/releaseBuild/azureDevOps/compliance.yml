@@ -39,6 +39,13 @@ stages:
       - template: templates/compliance/compliance.yml
         parameters:
           parentJobs: []
+  - stage: APIScan
+    displayName: 'ApiScan'
+    dependsOn: []
+    jobs:
+      - template: templates/compliance/apiscan.yml
+        parameters:
+          parentJobs: []
   - stage: notice
     displayName: Generate Notice File
     dependsOn: []

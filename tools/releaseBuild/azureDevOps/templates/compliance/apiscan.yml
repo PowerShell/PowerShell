@@ -1,0 +1,39 @@
+jobs:
+  - job: APIScan
+    variables:
+      - name: runCodesignValidationInjection
+        value : false
+      - name: NugetSecurityAnalysisWarningLevel
+        value: none
+      # Defines the variables APIScanClient, APIScanTenant and APIScanSecret
+      - group: PS-PS-APIScan
+
+    pool:
+      name: PowerShell1ES
+      demands:
+        - ImageOverride -equals PSMMS2019-Secure
+
+    # APIScan can take a long time
+    timeoutInMinutes: 180
+
+    steps:
+    - pwsh: |
+        Import-Module .\build.psm1 -force
+        Start-PSBootstrap
+        Start-PSBuild -Configuration Release -PSModuleRestore -Clean
+
+        $OutputFolder = Split-Path (Get-PSOutput)
+        Write-Host "##vso[task.setvariable variable=BinDir]$OutputFolder"
+      workingDirectory: '$(Build.SourcesDirectory)'
+      displayName: 'Build PowerShell Source'
+
+    - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@2
+      displayName: 'Run APIScan'
+      inputs:
+        softwareFolder: '$(BinDir)'
+        softwareName: PowerShell
+        softwareVersionNum: v7.3
+        isLargeApp: false
+        preserveTempFiles: true
+      env:
+        AzureServicesAuthConnectionString: RunAs=App;AppId=$(APIScanClient);TenantId=$(APIScanTenant);AppKey=$(APIScanSecret)
