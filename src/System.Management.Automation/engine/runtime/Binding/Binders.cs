@@ -7349,11 +7349,15 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            return args.All(element =>
-                            {
-                                var obj = PSObject.Base(element);
-                                return obj != null && obj.GetType().Equals(typeof(T));
-                            });
+            foreach (object element in args)
+            {
+                if (Adapter.GetObjectType(element, debase: true) != typeof(T))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         internal static bool IsHeterogeneousArray(object[] args)
@@ -7381,11 +7385,15 @@ namespace System.Management.Automation.Language
                 return true;
             }
 
-            return args.Skip(1).Any(element =>
-                                    {
-                                        var obj = PSObject.Base(element);
-                                        return obj == null || !firstType.Equals(obj.GetType());
-                                    });
+            for (int i = 1; i < args.Length; i++)
+            {
+                if (Adapter.GetObjectType(args[i], debase: true) != firstType)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         internal static object InvokeAdaptedMember(object obj, string methodName, object[] args)
