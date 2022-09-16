@@ -137,9 +137,8 @@
 
     <TargetFramework>net7.0</TargetFramework>
     <LangVersion>10.0</LangVersion>
-    <!-- disable ReadyToRun due to issue: https://github.com/dotnet/runtime/issues/72550
     <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
-    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols-->
+    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
