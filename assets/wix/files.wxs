@@ -56,6 +56,9 @@
       <Component Id="cmp31176C5A3BDB4A9F95171A4780D7D4D2">
         <File Id="fil31176C5A3BDB4A9F95171A4780D7D4D2" KeyPath="yes" Source="$(var.ProductSourcePath)\System.ServiceModel.Syndication.dll" />
       </Component>
+      <Component Id="cmp3CC027D3F160412C9F0044EBED3115DD">
+        <File Id="filFD2EF6BC74AF459D1BB52CA1E8C6E33B" KeyPath="yes" Source="$(var.ProductSourcePath)\NJsonSchema.dll" />
+      </Component>
       <Component Id="cmp3B130879A26D2E954251BB81E8948069">
         <File Id="filAACDEEE28FEA076C73D082A0AD21B8E0" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.CSharp.dll" />
       </Component>
@@ -2918,6 +2921,9 @@
       <Component Id="cmp41E9A7E0470540228A69F13F8585089E">
         <File Id="fil4F7CB5570E86407C94595812662A4F42" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.VisualBasic.Core.dll" />
       </Component>
+      <Component Id="cmp8E8AE88416D44A4CA39F23E9C825A899">
+        <File Id="fil4954FEF58A894EA7B701DFCA7D11AF08" KeyPath="yes" Source="$(var.ProductSourcePath)\Namotion.Reflection.dll" />
+      </Component>
       <Component Id="cmpE5F62B056F174A3E8843DFE8B70E3AA9">
         <File Id="fil6B276B69CAC64F19A2A3E2A72086EF15" KeyPath="yes" Source="$(var.ProductSourcePath)\Markdig.Signed.dll" />
       </Component>
@@ -3178,6 +3184,7 @@
       <ComponentRef Id="cmp4477FC97930D452DA018C8F6A3D7D168" />
       <ComponentRef Id="cmp30C10EC477714A76B2A8D0A957D1D6F3" />
       <ComponentRef Id="cmp31176C5A3BDB4A9F95171A4780D7D4D2" />
+      <ComponentRef Id="cmp3CC027D3F160412C9F0044EBED3115DD" />
       <ComponentRef Id="cmp3B130879A26D2E954251BB81E8948069" />
       <ComponentRef Id="cmp02ABBE4A3EDBEBFD05DC17A009A2B79D" />
       <ComponentRef Id="cmpAA10498DF244C013CB5043C62E3AA83A" />
@@ -4049,6 +4056,7 @@
       <ComponentRef Id="cmpFF8643F8CC97462CAC20815F6071203B" />
       <ComponentRef Id="cmp0FC1F6198C66492495785315CDEE0B66" />
       <ComponentRef Id="cmp41E9A7E0470540228A69F13F8585089E" />
+      <ComponentRef Id="cmp8E8AE88416D44A4CA39F23E9C825A899" />
       <ComponentRef Id="cmpE5F62B056F174A3E8843DFE8B70E3AA9" />
       <ComponentRef Id="cmp30126C60BD784974B74EA45AE9B04032" />
       <ComponentRef Id="cmp9EC1507780D247E095EA92A7715B4BAC" />
