@@ -56,9 +56,6 @@
       <Component Id="cmp31176C5A3BDB4A9F95171A4780D7D4D2">
         <File Id="fil31176C5A3BDB4A9F95171A4780D7D4D2" KeyPath="yes" Source="$(var.ProductSourcePath)\System.ServiceModel.Syndication.dll" />
       </Component>
-      <Component Id="cmp3CC027D3F160412C9F0044EBED3115DD">
-        <File Id="filFD2EF6BC74AF459D1BB52CA1E8C6E33B" KeyPath="yes" Source="$(var.ProductSourcePath)\NJsonSchema.dll" />
-      </Component>
       <Component Id="cmp3B130879A26D2E954251BB81E8948069">
         <File Id="filAACDEEE28FEA076C73D082A0AD21B8E0" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.CSharp.dll" />
       </Component>
