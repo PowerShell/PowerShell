@@ -3150,6 +3150,9 @@
       <Component Id="cmp42A739F2AAC24D729DDBCAA096B8C55A">
         <File Id="fil48314E2AC49B4E208C5667CEC50CA78C" KeyPath="yes" Source="$(var.ProductSourcePath)\RegisterMicrosoftUpdate.ps1" />
       </Component>
+      <Component Id="cmp76EB2749D0464D41AD1D2BA2C51CF4C9">
+        <File Id="filDC81A93ACA6045E4A22C108F59D69083" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.42610.dll" />
+      </Component>
       <Component Id="cmp5B1AAAB6B46D45EA8A430A766325B0D5">
         <File Id="filF4983633E7914A1AAD5D02BFDFA7DD63" KeyPath="yes" Source="$(var.ProductSourcePath)\JsonSchema.Net.dll" />
       </Component>
@@ -3184,7 +3187,6 @@
       <ComponentRef Id="cmp4477FC97930D452DA018C8F6A3D7D168" />
       <ComponentRef Id="cmp30C10EC477714A76B2A8D0A957D1D6F3" />
       <ComponentRef Id="cmp31176C5A3BDB4A9F95171A4780D7D4D2" />
-      <ComponentRef Id="cmp3CC027D3F160412C9F0044EBED3115DD" />
       <ComponentRef Id="cmp3B130879A26D2E954251BB81E8948069" />
       <ComponentRef Id="cmp02ABBE4A3EDBEBFD05DC17A009A2B79D" />
       <ComponentRef Id="cmpAA10498DF244C013CB5043C62E3AA83A" />
@@ -4171,6 +4173,10 @@
       <ComponentRef Id="cmp0721DF55B34849B78C98AE00D863CBFF" />
       <ComponentRef Id="cmpF3EB02BB62A34F509B22CC370C430A20" />
       <ComponentRef Id="cmp42A739F2AAC24D729DDBCAA096B8C55A" />
+      <ComponentRef Id="cmp2BB1C07A912442B0BB6270D7EB3185F3" />
+      <ComponentRef Id="cmp76EB2749D0464D41AD1D2BA2C51CF4C9" />
+      <ComponentRef Id="cmpF5FD2E392BD94BCD957480F128A38E10" />
+      <ComponentRef Id="cmp28DEAACC47FD4B04A95521A375761643" />
       <ComponentRef Id="cmp5B1AAAB6B46D45EA8A430A766325B0D5" />
       <ComponentRef Id="cmp61D33FB49B2E4C7D8E9C5EFC3F3A04B2" />
       <ComponentRef Id="cmpB51390A44A2E4D2EB27C891E4ED3A705" />
