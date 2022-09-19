@@ -407,7 +407,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
                         else
                         {
-                            sb.Append(PSStyle.Instance.Formatting.CustomTableHeaderLabel);
+                            // columns always start with a leading whitespace, so we insert the decoration right after that
+                            if (value.Length > 0)
+                            {
+                                if (col == 0)
+                                {
+                                    value = value.Insert(0, PSStyle.Instance.Formatting.CustomTableHeaderLabel);
+                                }
+                                else
+                                {
+                                    // after the first column, each additional column starts with a whitespace for separation
+                                    value = value.Insert(1, PSStyle.Instance.Formatting.CustomTableHeaderLabel);
+                                }
+                            }
                         }
                     }
 
