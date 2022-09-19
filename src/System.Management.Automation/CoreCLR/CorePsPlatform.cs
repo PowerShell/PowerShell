@@ -901,15 +901,20 @@ namespace System.Management.Automation
                     string line;
                     while ((line = sr.ReadLine()) != null)
                     {
-                        Match ppidMatch = Regex.Match(
-                            line,
-                            @"^PPid:\s+(\d+)$",
-                            RegexOptions.CultureInvariant | RegexOptions.IgnoreCase,
-                            matchTimeout);
-
-                        if (ppidMatch.Success)
+                        if (!line.StartsWith("PPid:\t", StringComparison.OrdinalIgnoreCase))
                         {
-                            return int.Parse(ppidMatch.Groups[1].Value);
+                            continue;
+                        }
+
+                        string[] lineSplit = line.Split('\t', 2, StringSplitOptions.RemoveEmptyEntries);
+                        if (lineSplit.Length != 2)
+                        {
+                            continue;
+                        }
+
+                        if (int.TryParse(lineSplit[1].Trim(), out var ppid))
+                        {
+                            return ppid;
                         }
                     }
 
