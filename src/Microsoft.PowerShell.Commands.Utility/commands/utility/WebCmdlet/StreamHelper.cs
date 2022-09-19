@@ -24,6 +24,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Data
 
+        private readonly long? _contentLength;
         private readonly Stream _originalStreamToProxy;
         private bool _isInitialized = false;
         private readonly Cmdlet _ownerCmdlet;
@@ -37,9 +38,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="stream"></param>
         /// <param name="initialCapacity"></param>
         /// <param name="cmdlet">Owner cmdlet if any.</param>
-        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet)
+        /// <param name="contentLength">Expected download size in Bytes.</param>
+        internal WebResponseContentMemoryStream(Stream stream, int initialCapacity, Cmdlet cmdlet, long? contentLength)
             : base(initialCapacity)
         {
+            this._contentLength = contentLength;
             _originalStreamToProxy = stream;
             _ownerCmdlet = cmdlet;
         }
@@ -218,14 +221,24 @@ namespace Microsoft.PowerShell.Commands
             _isInitialized = true;
             try
             {
-                long totalLength = 0;
+                long totalRead = 0;
                 byte[] buffer = new byte[StreamHelper.ChunkSize];
                 ProgressRecord record = new(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
-                for (int read = 1; read > 0; totalLength += read)
+                string totalDownloadSize = _contentLength is null ? "???" : Utils.DisplayHumanReadableFileSize((long)_contentLength);
+                for (int read = 1; read > 0; totalRead += read)
                 {
                     if (_ownerCmdlet != null)
                     {
-                        record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus, totalLength);
+                        record.StatusDescription = StringUtil.Format(
+                            WebCmdletStrings.ReadResponseProgressStatus,
+                            Utils.DisplayHumanReadableFileSize(totalRead),
+                            totalDownloadSize);
+
+                        if (_contentLength > 0)
+                        {
+                            record.PercentComplete = Math.Min((int)(totalRead * 100 / (long)_contentLength), 100);
+                        }
+
                         _ownerCmdlet.WriteProgress(record);
 
                         if (_ownerCmdlet.IsStopping)
@@ -244,13 +257,13 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_ownerCmdlet != null)
                 {
-                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseComplete, totalLength);
+                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseComplete, totalRead);
                     record.RecordType = ProgressRecordType.Completed;
                     _ownerCmdlet.WriteProgress(record);
                 }
 
                 // make sure the length is set appropriately
-                base.SetLength(totalLength);
+                base.SetLength(totalRead);
                 base.Seek(0, SeekOrigin.Begin);
             }
             catch (Exception)
@@ -276,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Static Methods
 
-        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, CancellationToken cancellationToken)
+        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, long? contentLength, CancellationToken cancellationToken)
         {
             if (cmdlet == null)
             {
@@ -289,12 +302,22 @@ namespace Microsoft.PowerShell.Commands
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
                 WebCmdletStrings.WriteRequestProgressStatus);
+            string totalDownloadSize = contentLength is null ? "???" : Utils.DisplayHumanReadableFileSize((long)contentLength);
 
             try
             {
                 while (!copyTask.Wait(1000, cancellationToken))
                 {
-                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestProgressStatus, output.Position);
+                    record.StatusDescription = StringUtil.Format(
+                        WebCmdletStrings.WriteRequestProgressStatus,
+                        Utils.DisplayHumanReadableFileSize(output.Position),
+                        totalDownloadSize);
+
+                    if (contentLength != null && contentLength > 0)
+                    {
+                        record.PercentComplete = Math.Min((int)(output.Position * 100 / (long)contentLength), 100);
+                    }
+
                     cmdlet.WriteProgress(record);
                 }
 
@@ -316,13 +339,14 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="stream">Input stream.</param>
         /// <param name="filePath">Output file name.</param>
         /// <param name="cmdlet">Current cmdlet (Invoke-WebRequest or Invoke-RestMethod).</param>
+        /// <param name="contentLength">Expected download size in Bytes.</param>
         /// <param name="cancellationToken">CancellationToken to track the cmdlet cancellation.</param>
-        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, CancellationToken cancellationToken)
+        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, long? contentLength, CancellationToken cancellationToken)
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
             FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
             using FileStream output = new(filePath, fileMode, FileAccess.Write, FileShare.Read);
-            WriteToStream(stream, output, cmdlet, cancellationToken);
+            WriteToStream(stream, output, cmdlet, contentLength, cancellationToken);
         }
 
         private static string StreamToString(Stream stream, Encoding encoding)

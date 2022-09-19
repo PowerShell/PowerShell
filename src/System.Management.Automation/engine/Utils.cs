@@ -5,8 +5,6 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -17,7 +15,6 @@ using System.Management.Automation.Remoting;
 using System.Management.Automation.Security;
 using System.Numerics;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 #if !UNIX
@@ -1546,6 +1543,21 @@ namespace System.Management.Automation
             }
 
             return oldMode;
+        }
+                
+        internal static string DisplayHumanReadableFileSize(long bytes)
+        {
+            return bytes switch
+            {
+                < 1024 and >= 0 => $"{bytes} Bytes",
+                < 1048576 and >= 1024 => $"{(bytes / 1024.0).ToString("0.0")} KB",
+                < 1073741824 and >= 1048576 => $"{(bytes / 1048576.0).ToString("0.0")} MB",
+                < 1099511627776 and >= 1073741824 => $"{(bytes / 1073741824.0).ToString("0.000")} GB",
+                < 1125899906842624 and >= 1099511627776 => $"{(bytes / 1099511627776.0).ToString("0.00000")} TB",
+                < 1152921504606847000 and >= 1125899906842624 => $"{(bytes / 1125899906842624.0).ToString("0.0000000")} PB",
+                >= 1152921504606847000 => $"{(bytes / 1152921504606847000.0).ToString("0.000000000")} EB",
+                _ => $"0 Bytes",
+            };
         }
     }
 }
