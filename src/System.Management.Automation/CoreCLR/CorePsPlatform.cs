@@ -6,7 +6,6 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Internal;
-using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
 namespace System.Management.Automation
@@ -883,7 +882,6 @@ namespace System.Management.Automation
             public static int GetProcFSParentPid(int pid)
             {
                 const int invalidPid = -1;
-                TimeSpan matchTimeout = new(0, 0, 5);  // 5 Seconds
 
                 // read /proc/<pid>/status
                 // Row beginning with PPid: \d is the parent process id.
