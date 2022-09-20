@@ -148,10 +148,11 @@ Describe "Process Parent property" -Tags "CI" {
 while true; do sleep 1; done
 '@
 
-        Set-Content -Path testdrive:/$commandName -Value $script
-        chmod +x (Resolve-Path -Path testdrive:/$commandName -Relative)
+        # Can't use testdrive: as unelevated user doesn't have perms in test in CI
+        Set-Content -Path /tmp/$commandName -Value $script
+        chmod +x (Resolve-Path -Path /tmp/$commandName -Relative)
         try {
-            $p = Start-Process -FilePath testdrive:/$commandName -PassThru
+            $p = Start-Process -FilePath /tmp/$commandName -PassThru
             $p.Parent.Id | Should -Be $pid
         } finally {
             $p | Stop-Process
