@@ -310,8 +310,8 @@ namespace Microsoft.PowerShell
                         defaultStr = hotkeysAndPlainLabels[1, defaultChoice];
                     }
 
-                    defaultChoicesBuilder.Append(string.Format(CultureInfo.InvariantCulture,
-                        "{0}{1}", prepend, defaultStr));
+                    // Reset style after each in case it is decorated
+                    defaultChoicesBuilder.Append(prepend + defaultStr + PSStyle.Instance.Reset);
                     prepend = ",";
                 }
 
