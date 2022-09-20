@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public int alignment = TextAlignment.Left;
         public string label = null;
         public string propertyName = null;
-        internal bool HeaderMatchesProperty = true;
+        public bool HeaderMatchesProperty = true;
     }
 
     internal sealed class ListViewHeaderInfo : ShapeInfo

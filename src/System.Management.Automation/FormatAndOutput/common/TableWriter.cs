@@ -387,16 +387,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // for a given row, walk the columns
                 for (int col = 0; col < scArray.Length; col++)
                 {
-                    string value;
+                    string value = scArray[col][row];
 
                     // if the column is the last column with content, we need to trim trailing whitespace, unless there is only one row
                     if (col == lastColWithContent[row] && screenRows > 1)
                     {
-                        value = scArray[col][row].TrimEnd();
-                    }
-                    else
-                    {
-                        value = scArray[col][row];
+                        value = value.TrimEnd();
                     }
 
                     if (isHeader)
@@ -405,21 +401,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         {
                             sb.Append(PSStyle.Instance.Formatting.TableHeader);
                         }
-                        else
+                        else if (value.Length > 0)
                         {
-                            // columns always start with a leading whitespace, so we insert the decoration right after that
-                            if (value.Length > 0)
-                            {
-                                if (col == 0)
-                                {
-                                    value = value.Insert(0, PSStyle.Instance.Formatting.CustomTableHeaderLabel);
-                                }
-                                else
-                                {
-                                    // after the first column, each additional column starts with a whitespace for separation
-                                    value = value.Insert(1, PSStyle.Instance.Formatting.CustomTableHeaderLabel);
-                                }
-                            }
+                            // after the first column, each additional column starts with a whitespace for separation
+                            value = value.Insert(col == 0 ? 0 : 1, PSStyle.Instance.Formatting.CustomTableHeaderLabel);
                         }
                     }
 
