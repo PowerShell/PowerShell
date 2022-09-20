@@ -3156,6 +3156,9 @@
       <Component Id="cmpB5F59B2105D54C0D896C8D7EB3EA82F3">
         <File Id="filB6F08AEE602D4982A38EB3532F62BCF3" KeyPath="yes" Source="$(var.ProductSourcePath)\JsonPointer.Net.dll" />
       </Component>
+      <Component Id="cmp9ADAB04764E14F0DA83A54E4CE28319F">
+        <File Id="fil58C3F617C0DE48C0895D80C0FA26CCAB" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.42610.dll" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -4170,6 +4173,7 @@
       <ComponentRef Id="cmp61D33FB49B2E4C7D8E9C5EFC3F3A04B2" />
       <ComponentRef Id="cmpB51390A44A2E4D2EB27C891E4ED3A705" />
       <ComponentRef Id="cmpB5F59B2105D54C0D896C8D7EB3EA82F3" />
+      <ComponentRef Id="cmp9ADAB04764E14F0DA83A54E4CE28319F" />
     </ComponentGroup>
   </Fragment>
 </Wix>
