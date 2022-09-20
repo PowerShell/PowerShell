@@ -3135,9 +3135,6 @@
       <Component Id="cmp8A466581FE0540CEB2210C64DA5F970B">
         <File Id="filE75D9761159B495A8DF7A1035E36EF05" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Formats.Tar.dll" />
       </Component>
-      <Component Id="cmp9412841190084AEC978D2EB614E6AAE5">
-        <File Id="fil6B817BFD321945E780CA22E762DD9A9C" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.37506.dll" />
-      </Component>
       <Component Id="cmp41C949169E9341CC9297641456FEE2CC">
         <File Id="fil39EC96E6757D4C49B8AE32A532B205D5" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Runtime.InteropServices.JavaScript.dll" />
       </Component>
@@ -4161,7 +4158,6 @@
       <ComponentRef Id="cmp8A466581FE0540CEB2210C64DA5F970B" />
       <ComponentRef Id="cmp044F67223E6D490D8533691BF50B2B86" />
       <ComponentRef Id="cmp97D2E588E938462194C7549B3A0084FE" />
-      <ComponentRef Id="cmp9412841190084AEC978D2EB614E6AAE5" />
       <ComponentRef Id="cmp41C949169E9341CC9297641456FEE2CC" />
       <ComponentRef Id="cmp7C72179331DD48BCB12BF205F34B76AD" />
       <ComponentRef Id="cmpBB2921B987554B68B26862747C3BD398" />
