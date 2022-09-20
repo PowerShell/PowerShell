@@ -904,8 +904,8 @@ namespace System.Management.Automation
                             continue;
                         }
 
-                        string[] lineSplit = line.Split('\t', 2, StringSplitOptions.RemoveEmptyEntries);
-                        if (lineSplit.Length != 2)
+                        string[] lineSplit = line.Split('\t', 3, StringSplitOptions.RemoveEmptyEntries);
+                        if (lineSplit.Length != 3)
                         {
                             continue;
                         }
