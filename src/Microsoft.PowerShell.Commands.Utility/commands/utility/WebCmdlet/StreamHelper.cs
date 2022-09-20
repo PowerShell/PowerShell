@@ -326,17 +326,19 @@ namespace Microsoft.PowerShell.Commands
             catch (OperationCanceledException)
             {
             }
-
-            if (wroteProgress)
+            finally
             {
-                // Write out the completion progress record only if we did render the progress.
-                record.StatusDescription = StringUtil.Format(
-                    copyTask.IsCompleted
-                        ? WebCmdletStrings.WriteRequestComplete
-                        : WebCmdletStrings.WriteRequestCancelled,
-                    output.Position);
-                record.RecordType = ProgressRecordType.Completed;
-                cmdlet.WriteProgress(record);
+                if (wroteProgress)
+                {
+                    // Write out the completion progress record only if we did render the progress.
+                    record.StatusDescription = StringUtil.Format(
+                        copyTask.IsCompleted
+                            ? WebCmdletStrings.WriteRequestComplete
+                            : WebCmdletStrings.WriteRequestCancelled,
+                        output.Position);
+                    record.RecordType = ProgressRecordType.Completed;
+                    cmdlet.WriteProgress(record);
+                }
             }
         }
 
