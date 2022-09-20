@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell
                     // write the current prompt
                     string choiceMsg = StringUtil.Format(ConsoleHostUserInterfaceStrings.ChoiceMessage, choicesSelected);
                     WriteToConsole(
-                        PSStyle.Colorize(WrapToCurrentWindowWidth(choiceMsg), PSStyle.Instance.Prompt.ChoiceOther),
+                        PSStyle.Decorate(WrapToCurrentWindowWidth(choiceMsg), PSStyle.Instance.Prompt.ChoiceOther),
                         transcribeResult: true);
 
                     ReadLineResult rlResult;
@@ -287,10 +287,10 @@ namespace Microsoft.PowerShell
                         hotkeysAndPlainLabels[0, i],
                         hotkeysAndPlainLabels[1, i]);
 
-                prompts.Add(PSStyle.Colorize(choice, color));
+                prompts.Add(PSStyle.Decorate(choice, color));
             }
 
-            prompts.Add(PSStyle.Colorize(ConsoleHostUserInterfaceStrings.PromptForChoiceHelp,
+            prompts.Add(PSStyle.Decorate(ConsoleHostUserInterfaceStrings.PromptForChoiceHelp,
                 PSStyle.Instance.Prompt.ChoiceHelp) + " ");
 
             WriteToConsole(shouldEmulateForMultipleChoiceSelection
@@ -333,7 +333,7 @@ namespace Microsoft.PowerShell
                 }
 
                 WriteToConsole(
-                    PSStyle.Colorize(defaultPrompt, PSStyle.Instance.Prompt.Help) + " ",
+                    PSStyle.Decorate(defaultPrompt, PSStyle.Instance.Prompt.Help) + " ",
                     transcribeResult: true);
             }
         }
@@ -387,14 +387,14 @@ namespace Microsoft.PowerShell
             if (!string.IsNullOrEmpty(caption))
             {
                 WriteLineToConsole();
-                WriteLineToConsole(PSStyle.Colorize(
+                WriteLineToConsole(PSStyle.Decorate(
                     WrapToCurrentWindowWidth(caption),
                     PSStyle.Instance.Prompt.Caption));
             }
 
             if (!string.IsNullOrEmpty(message))
             {
-                WriteLineToConsole(PSStyle.Colorize(
+                WriteLineToConsole(PSStyle.Decorate(
                     WrapToCurrentWindowWidth(message),
                     PSStyle.Instance.Prompt.Message));
             }
@@ -427,8 +427,8 @@ namespace Microsoft.PowerShell
 
                 string message = choices[i].HelpMessage;
 
-                prompt = PSStyle.Colorize(prompt, PSStyle.Instance.Prompt.ChoiceOther);
-                message = PSStyle.Colorize(message, PSStyle.Instance.Prompt.Help);
+                prompt = PSStyle.Decorate(prompt, PSStyle.Instance.Prompt.ChoiceOther);
+                message = PSStyle.Decorate(message, PSStyle.Instance.Prompt.Help);
                 WriteLineToConsole(WrapToCurrentWindowWidth(prompt + message));
             }
         }

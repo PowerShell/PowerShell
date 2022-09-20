@@ -43,7 +43,7 @@ namespace System.Management.Automation
     public sealed class PSStyle
     {
         /// <summary>
-        /// Colorizes message by prepending given color escape, then resets if requested.
+        /// Decorates message by prepending given color escape, then resets if requested.
         /// </summary>
         /// <param name="message">
         /// String to colorize.
@@ -55,9 +55,9 @@ namespace System.Management.Automation
         /// If given, the color is reset to default (not necessarily previous) setting.
         /// </param>
         /// <returns>
-        /// Colorized string.
+        /// Decorated string.
         /// </returns>
-        public static string Colorize(string message, string colorEscape, bool reset = true)
+        public static string Decorate(string message, string colorEscape, bool reset = true)
             => colorEscape + message + (reset ? Instance.Reset : string.Empty);
 
         /// <summary>

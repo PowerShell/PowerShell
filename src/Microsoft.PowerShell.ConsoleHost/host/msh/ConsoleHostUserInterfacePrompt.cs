@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell
 
                 if (AtLeastOneHelpMessageIsPresent(descriptions))
                 {
-                    WriteLineToConsole(PSStyle.Colorize(
+                    WriteLineToConsole(PSStyle.Decorate(
                         WrapToCurrentWindowWidth(ConsoleHostUserInterfaceStrings.PromptHelp),
                         PSStyle.Instance.Prompt.Help));
                 }
