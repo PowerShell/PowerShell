@@ -410,8 +410,7 @@ Describe "Type accelerators" -Tags "CI" {
                     Accelerator = 'ordered'
                     Type        = [System.Collections.Specialized.OrderedDictionary]
                 }
-                @
-                {
+                @{
                     Accelerator = 'NoRunspaceAffinity'
                     Type        = [System.Management.Automation.Language.NoRunspaceAffinityAttribute]
                 }
