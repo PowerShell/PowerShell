@@ -2058,7 +2058,9 @@ namespace System.Management.Automation
             Encoding outputEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as Encoding;
 
             _streamWriter = new StreamWriter(process.StandardInput.BaseStream, outputEncoding ?? Encoding.Default)
-            { AutoFlush = true };
+            {
+                AutoFlush = true
+            };
 
             _inputFormat = inputFormat;
 
