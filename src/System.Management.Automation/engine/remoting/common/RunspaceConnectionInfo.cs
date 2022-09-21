@@ -2407,7 +2407,7 @@ namespace System.Management.Automation.Runspaces
                 Debug.Assert(stdinFd >= 0, "Invalid Fd");
                 standardInput = new StreamWriter(
                     OpenStream(stdinFd, FileAccess.Write),
-                    startInfo.StandardInputEncoding ?? Encoding.Default,
+                    Encoding.Default,
                     StreamBufferSize)
                 { AutoFlush = true };
             }
