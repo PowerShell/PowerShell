@@ -2054,14 +2054,11 @@ namespace System.Management.Automation
         {
             Dbg.Assert(process != null, "caller should validate the paramter");
 
-            // Get the encoding for writing to native command. Note we get the Encoding
-            // from the current scope so a script or function can use a different encoding
-            // than global value.
-            Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
-                                    Utils.utf8NoBom;
+            // Try to get a character encoding from the $OutputEncoding preference variable.
+            Encoding outputEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as Encoding;
 
-            _streamWriter = new StreamWriter(process.StandardInput.BaseStream, pipeEncoding);
-            _streamWriter.AutoFlush = true;
+            _streamWriter = new StreamWriter(process.StandardInput.BaseStream, outputEncoding ?? Encoding.Default)
+            { AutoFlush = true };
 
             _inputFormat = inputFormat;
 
