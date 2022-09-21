@@ -298,6 +298,7 @@ namespace Microsoft.PowerShell.Commands
 
             Task copyTask = input.CopyToAsync(output, cancellationToken);
 
+            bool wroteProgress = false;
             ProgressRecord record = new(
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
@@ -313,22 +314,31 @@ namespace Microsoft.PowerShell.Commands
                         Utils.DisplayHumanReadableFileSize(output.Position),
                         totalDownloadSize);
 
-                    if (contentLength != null && contentLength > 0)
+                    if (contentLength > 0)
                     {
                         record.PercentComplete = Math.Min((int)(output.Position * 100 / (long)contentLength), 100);
                     }
 
                     cmdlet.WriteProgress(record);
-                }
-
-                if (copyTask.IsCompleted)
-                {
-                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestComplete, output.Position);
-                    cmdlet.WriteProgress(record);
+                    wroteProgress = true;
                 }
             }
             catch (OperationCanceledException)
             {
+            }
+            finally
+            {
+                if (wroteProgress)
+                {
+                    // Write out the completion progress record only if we did render the progress.
+                    record.StatusDescription = StringUtil.Format(
+                        copyTask.IsCompleted
+                            ? WebCmdletStrings.WriteRequestComplete
+                            : WebCmdletStrings.WriteRequestCancelled,
+                        output.Position);
+                    record.RecordType = ProgressRecordType.Completed;
+                    cmdlet.WriteProgress(record);
+                }
             }
         }
 

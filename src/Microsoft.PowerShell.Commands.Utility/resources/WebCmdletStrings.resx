@@ -199,7 +199,7 @@
     <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or ProxyUseDefaultCredentials parameters, then retry.</value>
   </data>
   <data name="ReadResponseComplete" xml:space="preserve">
-    <value>Reading web response stream completed. Downloaded: {0}</value>
+    <value>Reading web response stream completed. Bytes downloaded: {0}</value>
   </data>
   <data name="ReadResponseProgressActivity" xml:space="preserve">
     <value>Reading web response stream</value>
@@ -218,6 +218,9 @@
   </data>
   <data name="WriteRequestComplete" xml:space="preserve">
     <value>Web request completed. (Number of bytes processed: {0})</value>
+  </data>
+  <data name="WriteRequestCancelled" xml:space="preserve">
+    <value>Web request cancelled. (Number of bytes processed: {0})</value>
   </data>
   <data name="WriteRequestProgressActivity" xml:space="preserve">
     <value>Web request status</value>
