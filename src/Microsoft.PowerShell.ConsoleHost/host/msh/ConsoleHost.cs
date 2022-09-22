@@ -2489,7 +2489,6 @@ namespace Microsoft.PowerShell
                             if (inBlockMode)
                             {
                                 // use a special prompt that denotes block mode
-
                                 prompt = ">> ";
                             }
                             else

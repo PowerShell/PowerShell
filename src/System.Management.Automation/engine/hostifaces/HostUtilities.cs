@@ -80,20 +80,6 @@ namespace System.Management.Automation
                 new Hashtable[]
                 {
                     NewSuggestion(
-                        id: 1,
-                        category: "Transactions",
-                        matchType: SuggestionMatchType.Command,
-                        rule: "^Start-Transaction",
-                        suggestion: SuggestionStrings.Suggestion_StartTransaction,
-                        enabled: true),
-                    NewSuggestion(
-                        id: 2,
-                        category: "Transactions",
-                        matchType: SuggestionMatchType.Command,
-                        rule: "^Use-Transaction",
-                        suggestion: SuggestionStrings.Suggestion_UseTransaction,
-                        enabled: true),
-                    NewSuggestion(
                         id: 3,
                         category: "General",
                         matchType: SuggestionMatchType.Dynamic,
@@ -562,30 +548,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Create suggestion with string rule and suggestion.
-        /// </summary>
-        /// <param name="id">Identifier for the suggestion.</param>
-        /// <param name="category">Category for the suggestion.</param>
-        /// <param name="matchType">Suggestion match type.</param>
-        /// <param name="rule">Rule to match.</param>
-        /// <param name="suggestion">Suggestion to return.</param>
-        /// <param name="enabled">True if the suggestion is enabled.</param>
-        /// <returns>Hashtable representing the suggestion.</returns>
-        private static Hashtable NewSuggestion(int id, string category, SuggestionMatchType matchType, string rule, string suggestion, bool enabled)
-        {
-            Hashtable result = new Hashtable(StringComparer.CurrentCultureIgnoreCase);
-
-            result["Id"] = id;
-            result["Category"] = category;
-            result["MatchType"] = matchType;
-            result["Rule"] = rule;
-            result["Suggestion"] = suggestion;
-            result["Enabled"] = enabled;
-
-            return result;
-        }
-
-        /// <summary>
         /// Create suggestion with string rule and scriptblock suggestion.
         /// </summary>
         /// <param name="id">Identifier for the suggestion.</param>
@@ -640,15 +602,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get suggestion text from suggestion scriptblock.
-        /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Need to keep this for legacy reflection based use")]
-        private static string GetSuggestionText(object suggestion, PSModuleInfo invocationModule)
-        {
-            return GetSuggestionText(suggestion, null, invocationModule);
-        }
-
-        /// <summary>
         /// Get suggestion text from suggestion scriptblock with arguments.
         /// </summary>
         private static string GetSuggestionText(object suggestion, object[] suggestionArgs, PSModuleInfo invocationModule)
@@ -700,43 +653,6 @@ namespace System.Management.Automation
             }
 
             return string.Format(CultureInfo.InvariantCulture, "[{0}]: {1}", runspace.ConnectionInfo.ComputerName, basePrompt);
-        }
-
-        internal static bool IsProcessInteractive(InvocationInfo invocationInfo)
-        {
-#if CORECLR
-            return false;
-#else
-            // CommandOrigin != Runspace means it is in a script
-            if (invocationInfo.CommandOrigin != CommandOrigin.Runspace)
-                return false;
-
-            // If we don't own the window handle, we've been invoked
-            // from another process that just calls "PowerShell -Command"
-            if (System.Diagnostics.Process.GetCurrentProcess().MainWindowHandle == IntPtr.Zero)
-                return false;
-
-            // If the window has been idle for less than two seconds,
-            // they're probably still calling "PowerShell -Command"
-            // but from Start-Process, or the StartProcess API
-            try
-            {
-                System.Diagnostics.Process currentProcess = System.Diagnostics.Process.GetCurrentProcess();
-                TimeSpan timeSinceStart = DateTime.Now - currentProcess.StartTime;
-                TimeSpan idleTime = timeSinceStart - currentProcess.TotalProcessorTime;
-
-                // Making it 2 seconds because of things like delayed prompt
-                if (idleTime.TotalSeconds > 2)
-                    return true;
-            }
-            catch (System.ComponentModel.Win32Exception)
-            {
-                // Don't have access to the properties
-                return false;
-            }
-
-            return false;
-#endif
         }
 
         /// <summary>
