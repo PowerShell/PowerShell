@@ -2300,8 +2300,13 @@ namespace System.Management.Automation
                 Diagnostics.Assert(t.Type != null, "TypeDefinitionAst.Type cannot be null");
                 if (t.IsClass)
                 {
-                    var helperType =
-                        t.Type.Assembly.GetType(t.Type.FullName + "_<staticHelpers>");
+                    if (t.Type.IsDefined(typeof(NoRunspaceAffinityAttribute), inherit: true))
+                    {
+                        // Skip the initialization for session state affinity.
+                        continue;
+                    }
+
+                    var helperType = t.Type.Assembly.GetType(t.Type.FullName + "_<staticHelpers>");
                     Diagnostics.Assert(helperType != null, "no corresponding " + t.Type.FullName + "_<staticHelpers> type found");
                     foreach (var p in helperType.GetFields(BindingFlags.Static | BindingFlags.NonPublic))
                     {
