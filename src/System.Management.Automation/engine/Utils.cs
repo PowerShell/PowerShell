@@ -1455,7 +1455,6 @@ namespace System.Management.Automation
         internal static class Separators
         {
             internal static readonly char[] Directory = new char[] { '\\', '/' };
-            internal static readonly char[] ColonOrBackslash = new char[] { '\\', ':' };
             internal static readonly char[] PathSeparator = new char[] { Path.PathSeparator };
 
             internal static readonly char[] QuoteChars = new char[] { '\'', '"' };
