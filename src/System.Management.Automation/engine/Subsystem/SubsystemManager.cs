@@ -10,6 +10,7 @@ using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Subsystem.DSC;
 using System.Management.Automation.Subsystem.Prediction;
+using System.Management.Automation.Subsystem.Suggestion;
 
 namespace System.Management.Automation.Subsystem
 {
@@ -35,6 +36,11 @@ namespace System.Management.Automation.Subsystem
                     SubsystemKind.CrossPlatformDsc,
                     allowUnregistration: true,
                     allowMultipleRegistration: false),
+
+                SubsystemInfo.Create<ISuggestionProvider>(
+                    SubsystemKind.SuggestionProvider,
+                    allowUnregistration: true,
+                    allowMultipleRegistration: true),
             };
 
             var subSystemTypeMap = new Dictionary<Type, SubsystemInfo>(subsystems.Length);
@@ -49,6 +55,12 @@ namespace System.Management.Automation.Subsystem
             s_subsystems = new ReadOnlyCollection<SubsystemInfo>(subsystems);
             s_subSystemTypeMap = new ReadOnlyDictionary<Type, SubsystemInfo>(subSystemTypeMap);
             s_subSystemKindMap = new ReadOnlyDictionary<SubsystemKind, SubsystemInfo>(subSystemKindMap);
+
+            // Register built-in suggestion providers.
+            RegisterSubsystem(SubsystemKind.SuggestionProvider, new GeneralCommandErrorSuggestion());
+#if UNIX
+            RegisterSubsystem(SubsystemKind.SuggestionProvider, new UnixCommandNotFoundSuggestion());
+#endif
         }
 
         #region internal - Retrieve subsystem proxy object

@@ -22,6 +22,11 @@ namespace System.Management.Automation.Subsystem
         /// Cross platform desired state configuration component.
         /// </summary>
         CrossPlatformDsc = 2,
+
+        /// <summary>
+        /// Component that provides suggestion when a command fails interactively.
+        /// </summary>
+        SuggestionProvider = 3,
     }
 
     /// <summary>

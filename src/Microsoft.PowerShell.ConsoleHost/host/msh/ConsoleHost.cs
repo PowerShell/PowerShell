@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#pragma warning disable 1634, 1691
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,6 +16,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
 using System.Management.Automation.Runspaces;
+using System.Management.Automation.Subsystem.Suggestion;
 using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Runtime;
@@ -2809,22 +2808,37 @@ namespace Microsoft.PowerShell
                 // Output any training suggestions
                 try
                 {
-                    List<string> suggestions = HostUtilities.GetSuggestion(_parent.Runspace);
-
-                    if (suggestions.Count > 0)
+                    List<SuggestionEntry> suggestions = SuggestionHub.GetSuggestions(_parent.Runspace);
+                    if (suggestions is null || suggestions.Count == 0)
                     {
-                        ui.WriteLine();
+                        return;
                     }
 
-                    bool first = true;
-                    foreach (string suggestion in suggestions)
+                    ui.WriteLine();
+                    foreach (SuggestionEntry entry in suggestions)
                     {
-                        if (!first)
-                            ui.WriteLine();
+                        string[] lines = entry.Text.Split(
+                            new string[] { "\r\n", "\r", "\n" },
+                            StringSplitOptions.None);
 
-                        ui.WriteLine(suggestion);
+                        string output;
+                        if (lines.Length > 1)
+                        {
+                            var sb = new StringBuilder();
+                            foreach (string line in lines)
+                            {
+                                sb.Append($"    {line}\n");
+                            }
 
-                        first = false;
+                            output = sb.ToString();
+                        }
+                        else
+                        {
+                            output = $"    {lines[0]}\n";
+                        }
+
+                        output = $"Suggestion [{PSStyle.Instance.Foreground.BrightGreen}{entry.Name}{PSStyle.Instance.Reset}]:\n{output}";
+                        ui.Write(output);
                     }
                 }
                 catch (TerminateException)
