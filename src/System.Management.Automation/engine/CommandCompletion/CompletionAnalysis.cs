@@ -1263,7 +1263,7 @@ namespace System.Management.Automation
             hasNewLine = false;
             if (!string.IsNullOrEmpty(stringToComplete))
             {
-                var index = stringToComplete.IndexOfAny(Utils.Separators.CrLf);
+                var index = stringToComplete.AsSpan().IndexOfAny('\r', '\n');
                 if (index >= 0)
                 {
                     stringToComplete = stringToComplete.Substring(0, index);

@@ -1457,7 +1457,6 @@ namespace System.Management.Automation
             internal static readonly char[] Directory = new char[] { '\\', '/' };
             internal static readonly char[] QuoteChars = new char[] { '\'', '"' };
             internal static readonly char[] QuotesSpaceOrTab = new char[] { ' ', '\t', '\'', '"' };
-            internal static readonly char[] CrLf = new char[] { '\r', '\n' };
 
             // (Copied from System.IO.Path so we can call TrimEnd in the same way that Directory.EnumerateFiles would on the search patterns).
             // Trim trailing white spaces, tabs etc but don't be aggressive in removing everything that has UnicodeCategory of trailing space.
