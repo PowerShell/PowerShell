@@ -2819,7 +2819,7 @@ namespace Microsoft.PowerShell
                     {
                         string[] lines = entry.Text.Split(
                             new string[] { "\r\n", "\r", "\n" },
-                            StringSplitOptions.None);
+                            StringSplitOptions.RemoveEmptyEntries);
 
                         string output;
                         if (lines.Length > 1)
