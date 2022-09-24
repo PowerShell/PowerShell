@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly List<string> _contentList = new();
 
-        private static readonly List<string> DetectedDelimiterEnvrionmentVariable = new List<string>{ "Path", "PATHEXT", "PSModulePath" };
+        private static readonly List<string> DetectedDelimiterEnvrionmentVariable = new List<string> { "Path", "PATHEXT", "PSModulePath" };
 
         /// <summary>
         /// This method implements the BeginProcessing method for Set-WinEnvironmentVariable command.
@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="environmentVariable">EnvironmentVariable has been trimmed.</param>
         /// <param name="separatorSymbol">EnvironmentVariable separator.</param>
-        /// <return> </return>
+        /// <return>Trim fixed string.</return>
         public string TrimEnvironmentVariable(string environmentVariable, char separatorSymbol)
         {
             Regex duplicateSymbol = new Regex(Delimiter + "{2,}");

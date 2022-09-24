@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true, ParameterSetName = "RawSet")]
         public SwitchParameter Raw { get; set; }
 
-        private static readonly List<string> DetectedDelimiterEnvrionmentVariable = new List<string>{ "Path", "PATHEXT", "PSModulePath" };
+        private static readonly List<string> DetectedDelimiterEnvrionmentVariable = new List<string> { "Path", "PATHEXT", "PSModulePath" };
 
         /// <summary>
         /// This method implements the ProcessRecord method for Get-WinEnvironmentVariable command.
