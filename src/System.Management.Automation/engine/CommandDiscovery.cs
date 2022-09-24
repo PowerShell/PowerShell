@@ -1150,7 +1150,7 @@ namespace System.Management.Automation
             string moduleName;
 
             // Now we check if there exists the second '\'
-            var secondBackslash = moduleCommandName.IndexOfAny(Utils.Separators.Backslash);
+            var secondBackslash = moduleCommandName.IndexOf('\\');
             if (secondBackslash == -1)
             {
                 moduleName = commandName.Substring(0, colonOrBackslash);

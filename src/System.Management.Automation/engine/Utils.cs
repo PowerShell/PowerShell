@@ -1430,7 +1430,7 @@ namespace System.Management.Automation
         /// <returns>Command name and as appropriate Module name in out parameter.</returns>
         internal static string ParseCommandName(string commandName, out string moduleName)
         {
-            var names = commandName.Split(Separators.Backslash, 2);
+            var names = commandName.Split('\\', 2);
             if (names.Length == 2)
             {
                 moduleName = names[0];
@@ -1454,7 +1454,6 @@ namespace System.Management.Automation
 
         internal static class Separators
         {
-            internal static readonly char[] Backslash = new char[] { '\\' };
             internal static readonly char[] Directory = new char[] { '\\', '/' };
             internal static readonly char[] DirectoryOrDrive = new char[] { '\\', '/', ':' };
 
@@ -1544,7 +1543,7 @@ namespace System.Management.Automation
 
             return oldMode;
         }
-                
+
         internal static string DisplayHumanReadableFileSize(long bytes)
         {
             return bytes switch

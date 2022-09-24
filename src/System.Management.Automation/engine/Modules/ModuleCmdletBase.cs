@@ -1014,7 +1014,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 bool containsWildCards = false;
 
-                string modulePath = mp.TrimEnd(Utils.Separators.Backslash);
+                string modulePath = mp.TrimEnd('\\');
 
                 // If the given path contains wildcards, we won't throw error if no match module path is found.
                 if (WildcardPattern.ContainsWildcardCharacters(modulePath))
