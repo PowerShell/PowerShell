@@ -326,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
                         // representation, then parse it into its components.
                         byte[] inputBytes = Convert.FromBase64String(remainingData);
                         string dataPackage = System.Text.Encoding.Unicode.GetString(inputBytes);
-                        string[] dataElements = dataPackage.Split(Utils.Separators.Pipe);
+                        string[] dataElements = dataPackage.Split('|');
 
                         if (dataElements.Length == 3)
                         {
