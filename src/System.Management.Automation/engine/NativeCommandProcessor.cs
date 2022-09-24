@@ -1572,7 +1572,7 @@ namespace System.Management.Automation
             }
             else
             {
-                extensionList = pathext.Split(Utils.Separators.Semicolon);
+                extensionList = pathext.Split(';');
             }
 
             foreach (string extension in extensionList)
