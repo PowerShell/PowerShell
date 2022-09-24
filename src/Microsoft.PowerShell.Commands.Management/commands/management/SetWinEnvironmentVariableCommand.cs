@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="environmentVariable">EnvironmentVariable has been trimmed.</param>
         /// <param name="separatorSymbol">EnvironmentVariable separator.</param>
-        /// <return>Trim fixed string.</return>
+        /// <returns>Trim fixed string.</returns>
         public string TrimEnvironmentVariable(string environmentVariable, char separatorSymbol)
         {
             Regex duplicateSymbol = new Regex(Delimiter + "{2,}");
