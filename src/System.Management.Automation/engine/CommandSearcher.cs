@@ -1473,7 +1473,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The command name to search for.
         /// </summary>
-        private string _commandName;
+        private readonly string _commandName;
 
         /// <summary>
         /// Determines which command types will be globbed.
@@ -1536,7 +1536,6 @@ namespace System.Management.Automation
                 if (_canDoPathLookupResult == CanDoPathLookupResult.Yes)
                 {
                     _canDoPathLookup = true;
-                    _commandName = _commandName.TrimEnd(Utils.Separators.PathSearchTrimEnd);
 
                     _pathSearcher =
                         new CommandPathSearch(
@@ -1561,7 +1560,6 @@ namespace System.Management.Automation
 
                     if (!string.IsNullOrEmpty(fileName))
                     {
-                        fileName = fileName.TrimEnd(Utils.Separators.PathSearchTrimEnd);
                         _pathSearcher =
                             new CommandPathSearch(
                                 fileName,
@@ -1601,7 +1599,6 @@ namespace System.Management.Automation
 
                         if (!string.IsNullOrEmpty(fileName))
                         {
-                            fileName = fileName.TrimEnd(Utils.Separators.PathSearchTrimEnd);
                             _pathSearcher =
                                 new CommandPathSearch(
                                     fileName,
