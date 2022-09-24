@@ -4,12 +4,12 @@
 #if !UNIX
 
 using System;
-using System.Security;
-using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Security;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.PowerShell.Commands
@@ -21,16 +21,15 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Set, "WinEnvironmentVariable", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.High)]
     public class SetWinEnvironmentVariableCommand : PSCmdlet
     {
-
         /// <summary>
-        /// Property that sets EnvironmentVariable value.
+        /// Gets or sets EnvironmentVariable value.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [AllowEmptyString]
         public string[] Value { get; set; }
 
         /// <summary>
-        /// Specifies the Name EnvironmentVariable.
+        /// Gets or sets specifies the Name EnvironmentVariable.
         /// </summary>
         [Parameter(Position = 1, Mandatory = true)]
         [ValidateNotNullOrEmpty]
@@ -48,23 +47,23 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
-        public Char? Delimiter { get; set; } = null;
+        public char? Delimiter { get; set; } = null;
 
         /// <summary>
-        /// Property that sets append parameter. This will allow to append EnvironmentVariable without remove it.
+        /// Gets or sets append parameter. This will allow to append EnvironmentVariable without remove it.
         /// </summary>
         [Parameter]
         public SwitchParameter Append { get; set; }
 
         /// <summary>
-        /// Property that sets force parameter. This will allow to remove or set the EnvironmentVariable.
+        /// Gets or sets force parameter. This will allow to remove or set the EnvironmentVariable.
         /// </summary>
         [Parameter]
-        public SwitchParameter Force{ get; set; } = false;
+        public SwitchParameter Force { get; set; } = false;
 
         private readonly List<string> _contentList = new();
 
-        private static readonly List<String> DetectedDelimiterEnvrionmentVariable = new List<String>{"Path", "PATHEXT", "PSModulePath"};
+        private static readonly List<string> DetectedDelimiterEnvrionmentVariable = new List<string>{ "Path", "PATHEXT", "PSModulePath" };
 
         /// <summary>
         /// This method implements the BeginProcessing method for Set-WinEnvironmentVariable command.
@@ -76,19 +75,21 @@ namespace Microsoft.PowerShell.Commands
             {
                 this.CommandInfo.CommandMetadata.ConfirmImpact = ConfirmImpact.Medium;
             }
-            if (DetectedDelimiterEnvrionmentVariable.Contains(Name)) {
+
+            if (DetectedDelimiterEnvrionmentVariable.Contains(Name))
+            {
                 Delimiter = Path.PathSeparator;
             }
+
             if (Append)
             {
                 var content = Environment.GetEnvironmentVariable(Name, Target);
 
-                if (!String.IsNullOrEmpty(content))
+                if (!string.IsNullOrEmpty(content))
                 {
                     _contentList.Insert(0, content);
                 }
             }
-
         }
 
         /// <summary>
@@ -103,13 +104,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This method removes all leading and trailing occurrences of a set of blank character
+        /// This method removes all leading and trailing occurrences of a set of blank character.
         /// </summary>
-        /// <param name="EnvironmentVariable">EnvironmentVariable has been trimmed.</param>
+        /// <param name="environmentVariable">EnvironmentVariable has been trimmed.</param>
         /// <param name="separatorSymbol">EnvironmentVariable separator.</param>
-        public String TrimEnvironmentVariable(String EnvironmentVariable, Char separatorSymbol)
+        /// <return> </return>
+        public string TrimEnvironmentVariable(string environmentVariable, char separatorSymbol)
         {
-
             Regex duplicateSymbol = new Regex(Delimiter + "{2,}");
             Regex headSymbol = new Regex("^" + Delimiter);
             Regex trailingSymbol = new Regex(Delimiter + "$");
@@ -119,54 +120,34 @@ namespace Microsoft.PowerShell.Commands
                 headSymbol.Replace(
                     trimSymbolSpace.Replace(
                         duplicateSymbol.Replace(
-                            EnvironmentVariable,
-                            separatorSymbol.ToString()
-                        ),
-                        separatorSymbol.ToString()
-                    ),
-                    String.Empty
-                ),
-                String.Empty
-            ).Trim();
+                            environmentVariable,
+                            separatorSymbol.ToString()),
+                        separatorSymbol.ToString()),
+                    string.Empty),
+                string.Empty).Trim();
         }
 
         /// <summary>
-        /// This method implements the EndProcessing method for Set-WinEnvironmentVariable command.
-        /// Set the EnvironmentVariable content.
+        /// This method Set the EnvironmentVariable content.
         /// </summary>
-        protected override void EndProcessing()
+        public void SetEnvironmentVariable()
         {
-
             string setWinEnvironmentVariableShouldProcessTarget;
 
-            if (_contentList.Count == 1 && String.IsNullOrEmpty(_contentList[0]) && !Append)
+            if (_contentList.Count == 1 && string.IsNullOrEmpty(_contentList[0]) && !Append)
             {
                 setWinEnvironmentVariableShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, WinEnvironmentVariableResources.WinEnvironmentVariableRemoved, Name);
                 if (Force || ShouldProcess(setWinEnvironmentVariableShouldProcessTarget, "Set-WinEnvironmentVariable"))
                 {
                     Environment.SetEnvironmentVariable(Name, null, Target);
                 }
+
                 return;
             }
 
-            if (String.IsNullOrEmpty(Delimiter.ToString()) && (Append || _contentList.Count > 1)) 
-            {
-                var message = StringUtil.Format(
-                    WinEnvironmentVariableResources.DelimterNotDetected);
+            string result = string.Join(Delimiter.ToString() ?? string.Empty, _contentList);
 
-                ArgumentException argumentException = new ArgumentException(message);
-                ErrorRecord errorRecord = new ErrorRecord(
-                    argumentException,
-                    "DelimiterNotDetected",
-                    ErrorCategory.ParserError,
-                    Name);
-                ThrowTerminatingError(errorRecord);
-                return;
-            }
-
-            string result = string.Join(Delimiter.ToString() ?? String.Empty, _contentList);
-
-            if (String.IsNullOrEmpty(Delimiter.ToString()))
+            if (string.IsNullOrEmpty(Delimiter.ToString()))
             {
                 setWinEnvironmentVariableShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, WinEnvironmentVariableResources.SetWinEnvironmentVariable, result, Name);
             }
@@ -175,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
                 result = TrimEnvironmentVariable(result, Delimiter.Value);
 
                 Regex symbol2newLine = new Regex(Delimiter.ToString());
-                String verboseString = symbol2newLine.Replace(result, Environment.NewLine) + Environment.NewLine;
+                string verboseString = symbol2newLine.Replace(result, Environment.NewLine) + Environment.NewLine;
                 setWinEnvironmentVariableShouldProcessTarget = string.Format(CultureInfo.InvariantCulture, WinEnvironmentVariableResources.SetMultipleEnvironmentVariable, Name, Delimiter, verboseString);
             }
 
@@ -215,6 +196,30 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(errorRecord);
                 }
             }
+        }
+
+        /// <summary>
+        /// This method implements the EndProcessing method for Set-WinEnvironmentVariable command.
+        /// Set the EnvironmentVariable content.
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            if (string.IsNullOrEmpty(Delimiter.ToString()) && (Append || _contentList.Count > 1)) 
+            {
+                var message = StringUtil.Format(
+                    WinEnvironmentVariableResources.DelimterNotDetected);
+
+                ArgumentException argumentException = new ArgumentException(message);
+                ErrorRecord errorRecord = new ErrorRecord(
+                    argumentException,
+                    "DelimiterNotDetected",
+                    ErrorCategory.ParserError,
+                    Name);
+                ThrowTerminatingError(errorRecord);
+                return;
+            }
+
+            SetEnvironmentVariable();
         }
     }
 }

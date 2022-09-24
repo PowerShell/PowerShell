@@ -4,9 +4,9 @@
 #if !UNIX
 
 using System;
-using System.IO;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 
@@ -17,17 +17,17 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet get the content from EnvironemtVariable.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "WinEnvironmentVariable", DefaultParameterSetName = "DefaultSet")]
-    [OutputType(typeof(PSObject), ParameterSetName = new[] {"DefaultSet"})]
-    [OutputType(typeof(string), ParameterSetName = new[] {"RawSet"})]
+    [OutputType(typeof(PSObject), ParameterSetName = new[] { "DefaultSet" })]
+    [OutputType(typeof(string), ParameterSetName = new[] { "RawSet" })]
     public class GetWinEnvironmentVariableCommand : PSCmdlet
     {
         /// <summary>
-        /// Specifies the EnvironmentVariable Name.
+        /// Gets or sets specifies the Name EnvironmentVariable.
         /// </summary>
         [Parameter(Position = 0, ParameterSetName = "DefaultSet", Mandatory = false, ValueFromPipelineByPropertyName = true)]
         [Parameter(Position = 0, ParameterSetName = "RawSet", Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public string Name { get; set; } = String.Empty;
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// Gets or sets the EnvironmentVariableTarget.
@@ -40,17 +40,17 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets property that sets delimiter.
         /// </summary>
-        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ParameterSetName ="DefaultSet")]
+        [Parameter(Mandatory = false, ValueFromPipelineByPropertyName = true, ParameterSetName = "DefaultSet")]
         [ValidateNotNullOrEmpty]
-        public Char? Delimiter { get; set; } = null;
+        public char? Delimiter { get; set; } = null;
 
         /// <summary>
-        /// Property that sets raw parameter. This will allow EnvironmentVariable return text or file list as one string.
+        /// Gets or sets raw parameter. This will allow EnvironmentVariable return text or file list as one string.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "RawSet")]
         public SwitchParameter Raw { get; set; }
 
-        private static readonly List<String> DetectedDelimiterEnvrionmentVariable = new List<String>{"Path", "PATHEXT", "PSModulePath"};
+        private static readonly List<string> DetectedDelimiterEnvrionmentVariable = new List<string>{ "Path", "PATHEXT", "PSModulePath" };
 
         /// <summary>
         /// This method implements the ProcessRecord method for Get-WinEnvironmentVariable command.
@@ -58,10 +58,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-
-            if (String.IsNullOrEmpty(Name))
+            if (string.IsNullOrEmpty(Name))
             {
-
                 Dictionary<string, string> abc = new Dictionary<string, string>();
 
                 foreach (DictionaryEntry kvp in Environment.GetEnvironmentVariables(Target))
@@ -77,13 +75,13 @@ namespace Microsoft.PowerShell.Commands
 
                 return;
             }
+
             var contentList = new List<string>();
 
             string textContent = Environment.GetEnvironmentVariable(Name, Target);
 
-            if (String.IsNullOrEmpty(textContent))
+            if (string.IsNullOrEmpty(textContent))
             {
-
                 var message = StringUtil.Format(
                     WinEnvironmentVariableResources.EnvironmentVariableNotFound, Name);
 
@@ -105,11 +103,12 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (DetectedDelimiterEnvrionmentVariable.Contains(Name)) {
+                if (DetectedDelimiterEnvrionmentVariable.Contains(Name))
+                {
                     Delimiter = Path.PathSeparator;
                 }
 
-                contentList.AddRange(textContent.Split(Delimiter.ToString() ?? String.Empty, StringSplitOptions.None));
+                contentList.AddRange(textContent.Split(Delimiter.ToString() ?? string.Empty, StringSplitOptions.None));
             }
 
             PSObject result = new PSObject();
@@ -121,7 +120,6 @@ namespace Microsoft.PowerShell.Commands
 
             this.WriteObject(result, true);
         }
-
     }
 }
 
