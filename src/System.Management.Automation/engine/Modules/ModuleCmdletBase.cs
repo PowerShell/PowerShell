@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
                 module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
                 if (!found)
                 {
-                    if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                    if (name.AsSpan().IndexOfAny('\\', '/') == -1)
                     {
                         qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
                     }
@@ -1110,7 +1110,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in ModuleIntrinsics.GetModulePath(false, Context))
             {
-                string uniquePath = path.TrimEnd(Utils.Separators.Directory);
+                string uniquePath = path.AsSpan().TrimEnd("\\/").ToString();
 
                 // Ignore repeated module path.
                 if (!modulePathSet.Add(uniquePath))
