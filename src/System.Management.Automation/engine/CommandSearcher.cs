@@ -140,7 +140,7 @@ namespace System.Management.Automation
 
                 // For security reasons, if the command is coming from outside the runspace and it looks like a path,
                 // we want to pre-check that path before doing any probing of the network or drives
-                if (_commandOrigin == CommandOrigin.Runspace && _commandName.IndexOfAny(Utils.Separators.DirectoryOrDrive) >= 0)
+                if (_commandOrigin == CommandOrigin.Runspace && _commandName.AsSpan().IndexOfAny('\\', '/', ':') >= 0)
                 {
                     bool allowed = false;
 

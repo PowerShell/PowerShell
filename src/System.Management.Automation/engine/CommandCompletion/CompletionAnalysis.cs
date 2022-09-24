@@ -2001,7 +2001,7 @@ namespace System.Management.Automation
                                     StringLiterals.PowerShellCmdletizationFileExtension
                                 };
                                 result = CompletionCompleters.CompleteFilename(completionContext, false, moduleExtensions).ToList();
-                                if (completionContext.WordToComplete.IndexOfAny(Utils.Separators.DirectoryOrDrive) != -1)
+                                if (completionContext.WordToComplete.AsSpan().IndexOfAny('\\', '/', ':') != -1)
                                 {
                                     // The partial input is a path, then we don't iterate modules under $ENV:PSModulePath
                                     return result;
