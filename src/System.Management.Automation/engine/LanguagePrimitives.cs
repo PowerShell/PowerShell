@@ -2146,7 +2146,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    sourceValueEntries = sourceValueString.Split(Utils.Separators.Comma);
+                    sourceValueEntries = sourceValueString.Split(',');
                     fromValuePatterns = new WildcardPattern[sourceValueEntries.Length];
                     for (int i = 0; i < sourceValueEntries.Length; i++)
                     {
