@@ -1456,7 +1456,6 @@ namespace System.Management.Automation
         {
             internal static readonly char[] Directory = new char[] { '\\', '/' };
             internal static readonly char[] QuoteChars = new char[] { '\'', '"' };
-            internal static readonly char[] Space = new char[] { ' ' };
             internal static readonly char[] QuotesSpaceOrTab = new char[] { ' ', '\t', '\'', '"' };
             internal static readonly char[] SpaceOrTab = new char[] { ' ', '\t' };
             internal static readonly char[] Newline = new char[] { '\n' };

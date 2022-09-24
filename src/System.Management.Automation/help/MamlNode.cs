@@ -1212,7 +1212,7 @@ namespace System.Management.Automation
             if (IsEmptyLine(line))
                 return 0;
 
-            string leftTrimedLine = line.TrimStart(Utils.Separators.Space);
+            string leftTrimedLine = line.TrimStart(' ');
 
             return line.Length - leftTrimedLine.Length;
         }
