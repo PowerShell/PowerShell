@@ -8592,7 +8592,7 @@ namespace System.Management.Automation.Internal
                     data.Stream = findStreamData.Name;
                     data.Length = findStreamData.Length;
                     data.FileName = path.Replace(data.Stream, string.Empty);
-                    data.FileName = data.FileName.Trim(Utils.Separators.Colon);
+                    data.FileName = data.FileName.Trim(':');
 
                     alternateStreams.Add(data);
                     findStreamData = new AlternateStreamNativeData();
