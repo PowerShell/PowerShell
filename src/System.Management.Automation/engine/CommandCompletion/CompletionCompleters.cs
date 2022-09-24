@@ -3623,15 +3623,16 @@ namespace System.Management.Automation
             foreach (dynamic variable in psObjects)
             {
                 var effectiveQuote = quote;
-                var completionText = variable.Name;
+                string completionText = Convert.ToString(variable.Name);
                 var listItemText = completionText;
 
-                // Handle special characters ? and * in variable names
-                if (completionText.IndexOfAny(Utils.Separators.StarOrQuestion) != -1)
+                // Handle special characters ? and * in variable names.
+                int originalLength = completionText.Length;
+                completionText = completionText.Replace("?", "`?");
+                completionText = completionText.Replace("*", "`*");
+                if (originalLength != completionText.Length)
                 {
                     effectiveQuote = "'";
-                    completionText = completionText.Replace("?", "`?");
-                    completionText = completionText.Replace("*", "`*");
                 }
 
                 if (!completionText.Equals("$", StringComparison.Ordinal) && CompletionRequiresQuotes(completionText, false))
@@ -4401,9 +4402,9 @@ namespace System.Management.Automation
                 var relativePaths = context.GetOption("RelativePaths", @default: defaultRelative);
                 var useLiteralPath = context.GetOption("LiteralPaths", @default: false);
 
-                if (useLiteralPath && LocationGlobber.StringContainsGlobCharacters(wordToComplete))
+                if (useLiteralPath)
                 {
-                    wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.StarOrQuestion);
+                    wordToComplete = WildcardPattern.Escape(wordToComplete, "[]");
                 }
 
                 if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]) && executionContext != null)
