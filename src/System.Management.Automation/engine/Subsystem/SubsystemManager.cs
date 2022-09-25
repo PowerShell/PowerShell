@@ -59,7 +59,7 @@ namespace System.Management.Automation.Subsystem
             // Register built-in suggestion providers.
             RegisterSubsystem(SubsystemKind.FeedbackProvider, new GeneralCommandErrorFeedback());
 #if UNIX
-            RegisterSubsystem(SubsystemKind.SuggestionProvider, new UnixCommandNotFound());
+            RegisterSubsystem(SubsystemKind.FeedbackProvider, new UnixCommandNotFound());
 #endif
         }
 
