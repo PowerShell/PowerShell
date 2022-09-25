@@ -10,7 +10,7 @@ using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Subsystem.DSC;
 using System.Management.Automation.Subsystem.Prediction;
-using System.Management.Automation.Subsystem.Suggestion;
+using System.Management.Automation.Subsystem.Feedback;
 
 namespace System.Management.Automation.Subsystem
 {
@@ -37,8 +37,8 @@ namespace System.Management.Automation.Subsystem
                     allowUnregistration: true,
                     allowMultipleRegistration: false),
 
-                SubsystemInfo.Create<ISuggestionProvider>(
-                    SubsystemKind.SuggestionProvider,
+                SubsystemInfo.Create<IFeedbackProvider>(
+                    SubsystemKind.FeedbackProvider,
                     allowUnregistration: true,
                     allowMultipleRegistration: true),
             };
@@ -57,9 +57,9 @@ namespace System.Management.Automation.Subsystem
             s_subSystemKindMap = new ReadOnlyDictionary<SubsystemKind, SubsystemInfo>(subSystemKindMap);
 
             // Register built-in suggestion providers.
-            RegisterSubsystem(SubsystemKind.SuggestionProvider, new GeneralCommandErrorSuggestion());
+            RegisterSubsystem(SubsystemKind.FeedbackProvider, new GeneralCommandErrorFeedback());
 #if UNIX
-            RegisterSubsystem(SubsystemKind.SuggestionProvider, new UnixCommandNotFoundSuggestion());
+            RegisterSubsystem(SubsystemKind.SuggestionProvider, new UnixCommandNotFound());
 #endif
         }
 

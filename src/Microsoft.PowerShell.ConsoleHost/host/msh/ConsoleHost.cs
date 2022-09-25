@@ -16,7 +16,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Server;
 using System.Management.Automation.Runspaces;
-using System.Management.Automation.Subsystem.Suggestion;
+using System.Management.Automation.Subsystem.Feedback;
 using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Runtime;
@@ -2808,14 +2808,14 @@ namespace Microsoft.PowerShell
                 // Output any training suggestions
                 try
                 {
-                    List<SuggestionEntry> suggestions = SuggestionHub.GetSuggestions(_parent.Runspace);
+                    List<FeedbackEntry> suggestions = FeedbackHub.GetFeedback(_parent.Runspace);
                     if (suggestions is null || suggestions.Count == 0)
                     {
                         return;
                     }
 
                     ui.WriteLine();
-                    foreach (SuggestionEntry entry in suggestions)
+                    foreach (FeedbackEntry entry in suggestions)
                     {
                         string[] lines = entry.Text.Split(
                             new string[] { "\r\n", "\r", "\n" },

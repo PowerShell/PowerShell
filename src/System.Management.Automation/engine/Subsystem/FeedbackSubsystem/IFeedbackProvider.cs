@@ -15,12 +15,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.PowerShell.Commands;
 
-namespace System.Management.Automation.Subsystem.Suggestion
+namespace System.Management.Automation.Subsystem.Feedback
 {
     /// <summary>
     /// 
     /// </summary>
-    public interface ISuggestionProvider : ISubsystem
+    public interface IFeedbackProvider : ISubsystem
     {
         /// <summary>
         /// Default implementation. No function is required for a predictor.
@@ -30,20 +30,20 @@ namespace System.Management.Automation.Subsystem.Suggestion
         /// <summary>
         /// Default implementation for `ISubsystem.Kind`.
         /// </summary>
-        SubsystemKind ISubsystem.Kind => SubsystemKind.SuggestionProvider;
+        SubsystemKind ISubsystem.Kind => SubsystemKind.FeedbackProvider;
 
         /// <summary>
-        /// Gets suggestion based on the given commandline and error record.
+        /// Gets feedback based on the given commandline and error record.
         /// </summary>
         /// <returns></returns>
-        string? GetSuggestion(string commandLine, ErrorRecord lastError, CancellationToken token);
+        string? GetFeedback(string commandLine, ErrorRecord lastError, CancellationToken token);
     }
 
-    internal class GeneralCommandErrorSuggestion : ISuggestionProvider
+    internal class GeneralCommandErrorFeedback : IFeedbackProvider
     {
         private readonly Guid _guid;
 
-        internal GeneralCommandErrorSuggestion()
+        internal GeneralCommandErrorFeedback()
         {
             _guid = new Guid("A3C6B07E-4A89-40C9-8BE6-2A9AAD2786A4");
         }
@@ -52,12 +52,12 @@ namespace System.Management.Automation.Subsystem.Suggestion
 
         public string Name => "General";
 
-        public string Description => "The built-in general suggestion source for command errors.";
+        public string Description => "The built-in general feedback source for command errors.";
 
         /// <summary>
         /// 
         /// </summary>
-        public string? GetSuggestion(string commandLine, ErrorRecord lastError, CancellationToken token)
+        public string? GetFeedback(string commandLine, ErrorRecord lastError, CancellationToken token)
         {
             var rsToUse = Runspace.DefaultRunspace;
             if (rsToUse is null)
@@ -104,33 +104,43 @@ namespace System.Management.Automation.Subsystem.Suggestion
         }
     }
 
-    internal class UnixCommandNotFoundSuggestion : ISuggestionProvider
+    internal class UnixCommandNotFound : IFeedbackProvider
     {
         private readonly Guid _guid;
 
-        internal UnixCommandNotFoundSuggestion()
+        internal UnixCommandNotFound()
         {
             _guid = new Guid("47013747-CB9D-4EBC-9F02-F32B8AB19D48");
         }
 
         public Guid Id => _guid;
 
-        public string Name => "UnixCommand";
+        public string Name => "cmd-not-found";
 
-        public string Description => "The built-in suggestion source for Unix command utility.";
+        public string Description => "The built-in feedback source for the Unix command utility.";
 
         /// <summary>
         /// 
         /// </summary>
-        public string? GetSuggestion(string commandLine, ErrorRecord lastError, CancellationToken token)
+        public string? GetFeedback(string commandLine, ErrorRecord lastError, CancellationToken token)
         {
             if (Platform.IsWindows || lastError.FullyQualifiedErrorId != "CommandNotFoundException")
             {
                 return null;
             }
 
-            const string cmd_not_found = "/usr/lib/command-not-found";
             var target = (string)lastError.TargetObject;
+            if (target is null)
+            {
+                return null;
+            }
+
+            if (target.EndsWith(".ps1", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            const string cmd_not_found = "/usr/lib/command-not-found";
             var file = new FileInfo(cmd_not_found);
             if (file.Exists && file.UnixFileMode.HasFlag(UnixFileMode.OtherExecute))
             {
@@ -139,8 +149,13 @@ namespace System.Management.Automation.Subsystem.Suggestion
                 startInfo.RedirectStandardError = true;
 
                 var process = Process.Start(startInfo);
-                var output = process?.StandardError.ReadToEnd();
-                return output;
+                var output = process?.StandardError.ReadToEnd().Trim();
+
+                // The feedback contains recommended actions only if the output has multiple lines of text.
+                if (output?.IndexOfAny(new char[] { '\r', '\n' }) > 0)
+                {
+                    return output;
+                }
             }
 
             return null;
@@ -150,20 +165,20 @@ namespace System.Management.Automation.Subsystem.Suggestion
     /// <summary>
     /// 
     /// </summary>
-    public static class SuggestionHub
+    public static class FeedbackHub
     {
         /// <summary>
         /// 
         /// </summary>
-        public static List<SuggestionEntry>? GetSuggestions(Runspace runspace)
+        public static List<FeedbackEntry>? GetFeedback(Runspace runspace)
         {
-            return GetSuggestions(runspace, millisecondsTimeout: 300);
+            return GetFeedback(runspace, millisecondsTimeout: 300);
         }
 
         /// <summary>
-        /// Collect the predictive suggestions from registered predictors using the specified timeout.
+        /// Collect the feedback from registered feedback providers using the specified timeout.
         /// </summary>
-        public static List<SuggestionEntry>? GetSuggestions(Runspace runspace, int millisecondsTimeout)
+        public static List<FeedbackEntry>? GetFeedback(Runspace runspace, int millisecondsTimeout)
         {
             Requires.Condition(millisecondsTimeout > 0, nameof(millisecondsTimeout));
 
@@ -207,27 +222,27 @@ namespace System.Management.Automation.Subsystem.Suggestion
                 return null;
             }
 
-            var providers = SubsystemManager.GetSubsystems<ISuggestionProvider>();
+            var providers = SubsystemManager.GetSubsystems<IFeedbackProvider>();
             if (providers.Count == 0)
             {
                 return null;
             }
 
             int length = providers.Count;
-            var tasks = new List<Task<SuggestionEntry?>>(length);
-            var resultList = new List<SuggestionEntry>(length);
+            var tasks = new List<Task<FeedbackEntry?>>(length);
+            var resultList = new List<FeedbackEntry>(length);
             using var cancellationSource = new CancellationTokenSource();
 
-            ISuggestionProvider? generalSuggestionSource = null;
-            Func<object?, SuggestionEntry?> callBack = GetCallBack(lastHistory.CommandLine, lastError, cancellationSource);
+            IFeedbackProvider? generalFeedback = null;
+            Func<object?, FeedbackEntry?> callBack = GetCallBack(lastHistory.CommandLine, lastError, cancellationSource);
 
             for (int i = 0; i < providers.Count; i++)
             {
-                ISuggestionProvider provider = providers[i];
-                if (provider is GeneralCommandErrorSuggestion)
+                IFeedbackProvider provider = providers[i];
+                if (provider is GeneralCommandErrorFeedback)
                 {
                     length--;
-                    generalSuggestionSource = provider;
+                    generalFeedback = provider;
                     continue;
                 }
 
@@ -243,7 +258,7 @@ namespace System.Management.Automation.Subsystem.Suggestion
                Task.WhenAll(tasks),
                Task.Delay(millisecondsTimeout, cancellationSource.Token));
 
-            if (generalSuggestionSource is not null)
+            if (generalFeedback is not null)
             {
                 bool changedDefault = false;
                 Runspace? oldDefault = Runspace.DefaultRunspace;
@@ -256,10 +271,10 @@ namespace System.Management.Automation.Subsystem.Suggestion
                         Runspace.DefaultRunspace = localRunspace;
                     }
 
-                    string? text = generalSuggestionSource.GetSuggestion(lastHistory.CommandLine, lastError, cancellationSource.Token);
+                    string? text = generalFeedback.GetFeedback(lastHistory.CommandLine, lastError, cancellationSource.Token);
                     if (text is not null)
                     {
-                        resultList.Add(new SuggestionEntry(generalSuggestionSource.Id, generalSuggestionSource.Name, text));
+                        resultList.Add(new FeedbackEntry(generalFeedback.Id, generalFeedback.Name, text));
                     }
                 }
                 finally
@@ -277,11 +292,11 @@ namespace System.Management.Automation.Subsystem.Suggestion
             waitTask.Wait();
             cancellationSource.Cancel();
 
-            foreach (Task<SuggestionEntry?> task in tasks)
+            foreach (Task<FeedbackEntry?> task in tasks)
             {
                 if (task.IsCompletedSuccessfully)
                 {
-                    SuggestionEntry? result = task.Result;
+                    FeedbackEntry? result = task.Result;
                     if (result != null)
                     {
                         resultList.Add(result);
@@ -293,16 +308,16 @@ namespace System.Management.Automation.Subsystem.Suggestion
 
             // A local helper function to avoid creating an instance of the generated delegate helper class
             // when no predictor is registered.
-            static Func<object?, SuggestionEntry?> GetCallBack(
+            static Func<object?, FeedbackEntry?> GetCallBack(
                 string commandLine,
                 ErrorRecord lastError,
                 CancellationTokenSource cancellationSource)
             {
                 return state =>
                 {
-                    var provider = (ISuggestionProvider)state!;
-                    var text = provider.GetSuggestion(commandLine, lastError, cancellationSource.Token);
-                    return text is null ? null : new SuggestionEntry(provider.Id, provider.Name, text);
+                    var provider = (IFeedbackProvider)state!;
+                    var text = provider.GetFeedback(commandLine, lastError, cancellationSource.Token);
+                    return text is null ? null : new FeedbackEntry(provider.Id, provider.Name, text);
                 };
             }
         }
@@ -311,7 +326,7 @@ namespace System.Management.Automation.Subsystem.Suggestion
     /// <summary>
     /// 
     /// </summary>
-    public class SuggestionEntry
+    public class FeedbackEntry
     {
         /// <summary>
         /// Gets the Id of the predictor.
@@ -328,7 +343,7 @@ namespace System.Management.Automation.Subsystem.Suggestion
         /// </summary>
         public string Text { get; }
 
-        internal SuggestionEntry(Guid id, string name, string text)
+        internal FeedbackEntry(Guid id, string name, string text)
         {
             Id = id;
             Name = name;

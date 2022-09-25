@@ -26,7 +26,7 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Component that provides suggestion when a command fails interactively.
         /// </summary>
-        SuggestionProvider = 3,
+        FeedbackProvider = 3,
     }
 
     /// <summary>
