@@ -199,7 +199,7 @@ namespace System.Management.Automation.Subsystem.Feedback
                     _candidates = new List<string>(lines.Length);
                     for (int i = 1; i < lines.Length; i++)
                     {
-                        _candidates.Add(lines[i]);
+                        _candidates.Add(lines[i].Trim());
                     }
                 }
             }
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Subsystem.Feedback
 
                 if (result is not null)
                 {
-                    return new SuggestionPackage();
+                    return new SuggestionPackage(result);
                 }
             }
 
