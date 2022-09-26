@@ -6,6 +6,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+#if UNIX
+using System.Management.Automation.Internal;
+#endif
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading;
