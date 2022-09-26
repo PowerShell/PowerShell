@@ -6,11 +6,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Subsystem.DSC;
 using System.Management.Automation.Subsystem.Prediction;
 using System.Management.Automation.Subsystem.Feedback;
+using System.Runtime.InteropServices;
 
 namespace System.Management.Automation.Subsystem
 {
@@ -58,9 +58,12 @@ namespace System.Management.Automation.Subsystem
 
             // Register built-in suggestion providers.
             RegisterSubsystem(SubsystemKind.FeedbackProvider, new GeneralCommandErrorFeedback());
-#if UNIX
-            RegisterSubsystem(SubsystemKind.FeedbackProvider, new UnixCommandNotFound());
-#endif
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                var instance = new UnixCommandNotFound();
+                RegisterSubsystem(SubsystemKind.FeedbackProvider, instance);
+                RegisterSubsystem(SubsystemKind.CommandPredictor, instance);
+            }
         }
 
         #region internal - Retrieve subsystem proxy object
@@ -194,7 +197,7 @@ namespace System.Management.Automation.Subsystem
         {
             Requires.NotNull(proxy, nameof(proxy));
 
-            if (kind != proxy.Kind)
+            if (!proxy.Kind.HasFlag(kind))
             {
                 throw new ArgumentException(
                     StringUtil.Format(

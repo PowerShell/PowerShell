@@ -78,6 +78,18 @@ namespace System.Management.Automation.Subsystem
 
         private protected SubsystemInfo(SubsystemKind kind, Type subsystemType)
         {
+            // Validate the specified enum value is not a composite value.
+            var value = (int)kind;
+            if ((value & (value - 1)) != 0)
+            {
+                // The value is a composite value because it's not power of 2.
+                throw new ArgumentException(
+                    StringUtil.Format(
+                        SubsystemStrings.CannotBeCompositeEnumValue,
+                        kind.ToString()),
+                    nameof(kind));
+            }
+
             _syncObj = new object();
             _cachedImplInfos = Utils.EmptyReadOnlyCollection<ImplementationInfo>();
 

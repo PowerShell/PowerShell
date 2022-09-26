@@ -39,7 +39,7 @@ namespace System.Management.Automation.Subsystem.Feedback
         string? GetFeedback(string commandLine, ErrorRecord lastError, CancellationToken token);
     }
 
-    internal class GeneralCommandErrorFeedback : IFeedbackProvider
+    internal sealed class GeneralCommandErrorFeedback : IFeedbackProvider
     {
         private readonly Guid _guid;
 
@@ -104,20 +104,28 @@ namespace System.Management.Automation.Subsystem.Feedback
         }
     }
 
-    internal class UnixCommandNotFound : IFeedbackProvider
+    internal sealed class UnixCommandNotFound : IFeedbackProvider, ICommandPredictor
     {
         private readonly Guid _guid;
+        private string? _notFoundFeedback;
+        private List<string>? _candidates;
 
         internal UnixCommandNotFound()
         {
             _guid = new Guid("47013747-CB9D-4EBC-9F02-F32B8AB19D48");
         }
 
+        Dictionary<string, string>? ISubsystem.FunctionsToDefine => null;
+
+        SubsystemKind ISubsystem.Kind => SubsystemKind.FeedbackProvider | SubsystemKind.CommandPredictor;
+
         public Guid Id => _guid;
 
         public string Name => "cmd-not-found";
 
-        public string Description => "The built-in feedback source for the Unix command utility.";
+        public string Description => "The built-in feedback/prediction source for the Unix command utility.";
+
+        #region IFeedbackProvider
 
         /// <summary>
         /// 
@@ -154,12 +162,85 @@ namespace System.Management.Automation.Subsystem.Feedback
                 // The feedback contains recommended actions only if the output has multiple lines of text.
                 if (output?.IndexOfAny(new char[] { '\r', '\n' }) > 0)
                 {
+                    _notFoundFeedback = output;
                     return output;
                 }
             }
 
             return null;
         }
+
+        #endregion
+
+        #region ICommandPredictor
+
+        public bool CanAcceptFeedback(PredictionClient client, PredictorFeedbackKind feedback)
+        {
+            return feedback switch
+            {
+                PredictorFeedbackKind.CommandLineAccepted => true,
+                _ => false,
+            };
+        }
+
+        public SuggestionPackage GetSuggestion(PredictionClient client, PredictionContext context, CancellationToken cancellationToken)
+        {
+            // TODO:
+            // 1. text matching which is not reliable, need to re-visit.
+            // 2. possible race condition???
+            if (_candidates is null && _notFoundFeedback is not null)
+            {
+                string[] lines = _notFoundFeedback.Split(
+                    new char[] { '\r', '\n' },
+                    StringSplitOptions.RemoveEmptyEntries);
+
+                if (lines[0].EndsWith("but can be installed with:", StringComparison.Ordinal))
+                {
+                    _candidates = new List<string>(lines.Length);
+                    for (int i = 1; i < lines.Length; i++)
+                    {
+                        _candidates.Add(lines[i]);
+                    }
+                }
+            }
+
+            if (_candidates is not null)
+            {
+                string input = context.InputAst.Extent.Text;
+                List<PredictiveSuggestion>? result = null;
+
+                foreach (string c in _candidates)
+                {
+                    if (c.StartsWith(input, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result ??= new List<PredictiveSuggestion>(_candidates.Count);
+                        result.Add(new PredictiveSuggestion(c));
+                    }
+                }
+
+                if (result is not null)
+                {
+                    return new SuggestionPackage();
+                }
+            }
+
+            return default;
+        }
+
+        public void OnCommandLineAccepted(PredictionClient client, IReadOnlyList<string> history)
+        {
+            // Reset the candidate state.
+            _notFoundFeedback = null;
+            _candidates = null;
+        }
+
+        public void OnSuggestionDisplayed(PredictionClient client, uint session, int countOrIndex) { }
+
+        public void OnSuggestionAccepted(PredictionClient client, uint session, string acceptedSuggestion) { }
+
+        public void OnCommandLineExecuted(PredictionClient client, string commandLine, bool success) { }
+
+        #endregion;
     }
 
     /// <summary>
