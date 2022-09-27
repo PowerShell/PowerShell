@@ -1336,7 +1336,7 @@ namespace System.Management.Automation
 
     internal static class AmsiUtils
     {
-        internal static int Init()
+        internal static Interop.HRESULT Init()
         {
             Diagnostics.Assert(s_amsiContext == IntPtr.Zero, "Init should be called just once");
 
@@ -1356,8 +1356,8 @@ namespace System.Management.Automation
 
                 AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
 
-                var hr = AmsiNativeMethods.AmsiInitialize(appName, ref s_amsiContext);
-                if (!Utils.Succeeded(hr))
+                Interop.HRESULT hr = AmsiNativeMethods.AmsiInitialize(appName, ref s_amsiContext);
+                if (hr.Failed)
                 {
                     s_amsiInitFailed = true;
                 }
@@ -1432,7 +1432,7 @@ namespace System.Management.Automation
                     AmsiNativeMethods.AMSI_RESULT result = AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_CLEAN;
 
                     // Run AMSI content scan
-                    int hr;
+                    Interop.HRESULT hr;
                     unsafe
                     {
                         fixed (char* buffer = content)
@@ -1448,7 +1448,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (!Utils.Succeeded(hr))
+                    if (hr.Failed)
                     {
                         // If we got a failure, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
                         return AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
@@ -1507,7 +1507,7 @@ namespace System.Management.Automation
                         return false;
                     }
 
-                    int hr;
+                    Interop.HRESULT hr;
                     AmsiNativeMethods.AMSI_RESULT result = AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_NOT_DETECTED;
                     unsafe
                     {
@@ -1523,7 +1523,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (Utils.Succeeded(hr))
+                    if (hr.Succeeded)
                     {
                         if (result == AmsiNativeMethods.AMSI_RESULT.AMSI_RESULT_DETECTED)
                         {
@@ -1555,9 +1555,9 @@ namespace System.Management.Automation
             // If we failed to initialize previously, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
             if (s_amsiContext == IntPtr.Zero)
             {
-                int hr = Init();
+                Interop.HRESULT hr = Init();
 
-                if (!Utils.Succeeded(hr))
+                if (hr.Failed)
                 {
                     s_amsiInitFailed = true;
                     return false;
@@ -1568,10 +1568,10 @@ namespace System.Management.Automation
             // If we failed to initialize previously, just return the neutral result ("AMSI_RESULT_NOT_DETECTED")
             if (s_amsiSession == IntPtr.Zero)
             {
-                int hr = AmsiNativeMethods.AmsiOpenSession(s_amsiContext, ref s_amsiSession);
+                Interop.HRESULT hr = AmsiNativeMethods.AmsiOpenSession(s_amsiContext, ref s_amsiSession);
                 AmsiInitialized = true;
 
-                if (!Utils.Succeeded(hr))
+                if (hr.Failed)
                 {
                     s_amsiInitFailed = true;
                     return false;
@@ -1688,7 +1688,7 @@ namespace System.Management.Automation
             ///amsiContext: HAMSICONTEXT*
             [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiInitialize", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int AmsiInitialize(
+            internal static extern Interop.HRESULT AmsiInitialize(
                 [InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string appName, ref System.IntPtr amsiContext);
 
             /// Return Type: void
@@ -1702,7 +1702,7 @@ namespace System.Management.Automation
             ///amsiSession: HAMSISESSION*
             [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiOpenSession", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int AmsiOpenSession(System.IntPtr amsiContext, ref System.IntPtr amsiSession);
+            internal static extern Interop.HRESULT AmsiOpenSession(System.IntPtr amsiContext, ref System.IntPtr amsiSession);
 
             /// Return Type: void
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
@@ -1720,7 +1720,7 @@ namespace System.Management.Automation
             ///result: AMSI_RESULT*
             [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiScanBuffer", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int AmsiScanBuffer(
+            internal static extern Interop.HRESULT AmsiScanBuffer(
             System.IntPtr amsiContext,
                 System.IntPtr buffer,
                 uint length,
@@ -1736,7 +1736,7 @@ namespace System.Management.Automation
             /// result: AMSI_RESULT*
             [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiNotifyOperation", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int AmsiNotifyOperation(
+            internal static extern Interop.HRESULT AmsiNotifyOperation(
                 System.IntPtr amsiContext,
                 System.IntPtr buffer,
                 uint length,
@@ -1751,7 +1751,7 @@ namespace System.Management.Automation
             ///result: AMSI_RESULT*
             [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiScanString", CallingConvention = CallingConvention.StdCall)]
-            internal static extern int AmsiScanString(
+            internal static extern Interop.HRESULT AmsiScanString(
                 System.IntPtr amsiContext, [InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string @string,
                 [InAttribute()][MarshalAsAttribute(UnmanagedType.LPWStr)] string contentName, System.IntPtr amsiSession, ref AMSI_RESULT result);
         }

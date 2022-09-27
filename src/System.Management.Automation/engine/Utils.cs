@@ -1369,11 +1369,6 @@ namespace System.Management.Automation
 
         internal delegate Mutex MutexInitializer();
 
-        internal static bool Succeeded(int hresult)
-        {
-            return hresult >= 0;
-        }
-
         // BigEndianUTF32 encoding is possible, but requires creation
         internal static readonly Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
         // [System.Text.Encoding]::GetEncodings() | Where-Object { $_.GetEncoding().GetPreamble() } |
