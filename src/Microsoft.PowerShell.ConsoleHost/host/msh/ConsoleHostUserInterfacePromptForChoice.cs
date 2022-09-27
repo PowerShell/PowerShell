@@ -311,7 +311,7 @@ namespace Microsoft.PowerShell
                     }
 
                     // Reset style after each in case it is decorated
-                    defaultChoicesBuilder.Append(prepend + defaultStr + PSStyle.Instance.Reset);
+                    defaultChoicesBuilder.Append(prepend + defaultStr + PSStyle.Instance.Reset + PSStyle.Instance.Prompt.Help);
                     prepend = ",";
                 }
 
