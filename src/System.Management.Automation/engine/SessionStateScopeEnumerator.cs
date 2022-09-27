@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System.Collections;
 using System.Collections.Generic;
 
@@ -99,6 +101,6 @@ namespace System.Management.Automation
         }
 
         private readonly SessionStateScope _initialScope;
-        private SessionStateScope _currentEnumeratedScope;
+        private SessionStateScope? _currentEnumeratedScope;
     }
 }
