@@ -359,7 +359,7 @@ namespace Microsoft.PowerShell
             var result = new StringBuilder();
             foreach (var value in values)
             {
-                int valueLength = RawUI.LengthInBufferCells(value);
+                int valueLength = new StringDecorated(value).ContentLength;
                 if (result.Length == 0)
                 {
                     result.Append(value);
