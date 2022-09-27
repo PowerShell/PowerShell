@@ -1380,9 +1380,6 @@ namespace System.Management.Automation
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
 
-        internal static readonly UTF8Encoding utf8NoBom =
-            new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-
 #if !UNIX
         /// <summary>
         /// Queues a CLR worker thread with impersonation of provided Windows identity.
