@@ -117,14 +117,14 @@ namespace System.Management.Automation.Security
                     string fileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
                     string auditMsg = $"PowerShell ExternalScriptInfo reading file: {fileName}";
 
-                    int hr = WldpNativeMethods.WldpCanExecuteFile(
+                    HRESULT hr = WldpNativeMethods.WldpCanExecuteFile(
                         host: PowerShellHost,
                         options: WLDP_EXECUTION_EVALUATION_OPTIONS.WLDP_EXECUTION_EVALUATION_OPTION_NONE,
                         fileHandle: fileHandle.DangerousGetHandle(),
                         auditInfo: auditMsg,
                         result: out WLDP_EXECUTION_POLICY canExecuteResult);
 
-                    if (hr >= 0)
+                    if (hr.Succeeded)
                     {
                         switch (canExecuteResult)
                         {
@@ -262,8 +262,8 @@ namespace System.Management.Automation.Security
                 }
 
                 uint pdwLockdownState = 0;
-                int result = WldpNativeMethods.WldpGetLockdownPolicy(ref hostInformation, ref pdwLockdownState, 0);
-                if (result >= 0)
+                HRESULT hr = WldpNativeMethods.WldpGetLockdownPolicy(ref hostInformation, ref pdwLockdownState, 0);
+                if (hr.Succeeded)
                 {
                     SystemEnforcementMode resultingLockdownPolicy = GetLockdownPolicyForResult(pdwLockdownState);
 
@@ -431,8 +431,8 @@ namespace System.Management.Automation.Security
             IntPtr pszPath = IntPtr.Zero;
             try
             {
-                int hr = WldpNativeMethods.SHGetKnownFolderPath(knownFolderId, 0, IntPtr.Zero, out pszPath);
-                if (hr >= 0)
+                HRESULT hr = WldpNativeMethods.SHGetKnownFolderPath(knownFolderId, 0, IntPtr.Zero, out pszPath);
+                if (hr.Succeeded)
                 {
                     return Marshal.PtrToStringAuto(pszPath);
                 }
@@ -513,9 +513,9 @@ namespace System.Management.Automation.Security
                 hostInformation.dwHostId = WLDP_HOST_ID.WLDP_HOST_ID_POWERSHELL;
 
                 int pIsApproved = 0;
-                int result = WldpNativeMethods.WldpIsClassInApprovedList(ref clsid, ref hostInformation, ref pIsApproved, 0);
+                HRESULT hr = WldpNativeMethods.WldpIsClassInApprovedList(ref clsid, ref hostInformation, ref pIsApproved, 0);
 
-                if (result >= 0)
+                if (hr.Succeeded)
                 {
                     if (pIsApproved == 1)
                     {
@@ -695,7 +695,7 @@ namespace System.Management.Automation.Security
             /// <returns>HResult value.</returns>
             [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpCanExecuteFile")]
-            internal static extern int WldpCanExecuteFile(
+            internal static extern HRESULT WldpCanExecuteFile(
                 Guid host,
                 WLDP_EXECUTION_EVALUATION_OPTIONS options,
                 IntPtr fileHandle,
@@ -709,7 +709,7 @@ namespace System.Management.Automation.Security
             /// dwFlags: DWORD->unsigned int
             [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpGetLockdownPolicy")]
-            internal static extern int WldpGetLockdownPolicy(
+            internal static extern HRESULT WldpGetLockdownPolicy(
                 ref WLDP_HOST_INFORMATION pHostInformation,
                 ref uint pdwLockdownState,
                 uint dwFlags);
@@ -721,14 +721,14 @@ namespace System.Management.Automation.Security
             /// dwFlags: DWORD->unsigned int
             [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpIsClassInApprovedList")]
-            internal static extern int WldpIsClassInApprovedList(
+            internal static extern HRESULT WldpIsClassInApprovedList(
                 ref Guid rclsid,
                 ref WLDP_HOST_INFORMATION pHostInformation,
                 ref int ptIsApproved,
                 uint dwFlags);
 
             [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-            internal static extern int SHGetKnownFolderPath(
+            internal static extern HRESULT SHGetKnownFolderPath(
                 [MarshalAs(UnmanagedType.LPStruct)]
                 Guid rfid,
                 int dwFlags,
