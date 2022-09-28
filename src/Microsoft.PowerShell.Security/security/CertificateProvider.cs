@@ -1568,7 +1568,7 @@ namespace Microsoft.PowerShell.Commands
 
                 string[] elts = GetPathElements(path);
 
-                path = string.Join("\\", elts);
+                path = string.Join('\\', elts);
             }
 
             return path;
