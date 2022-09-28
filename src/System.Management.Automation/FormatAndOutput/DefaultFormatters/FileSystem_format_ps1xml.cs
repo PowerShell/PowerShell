@@ -45,8 +45,8 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("childrenWithUnixStat",
                 TableControl.Create()
                     .GroupByProperty("PSParentPath", customControl: sharedControls[0])
-                    .AddHeader(Alignment.Left, label: "UnixMode", width: 12)
-                    .AddHeader(Alignment.Left, label: "User", width: 10)
+                    .AddHeader(Alignment.Left, label: "UnixMode", width: 10)
+                    .AddHeader(Alignment.Right, label: "User", width: 10)
                     .AddHeader(Alignment.Left, label: "Group", width: 10)
                     .AddHeader(Alignment.Right, label: "LastWriteTime", width: 18)
                     .AddHeader(Alignment.Right, label: "Size", width: 14)
