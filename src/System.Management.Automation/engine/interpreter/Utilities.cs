@@ -1096,59 +1096,5 @@ namespace System.Management.Automation.Interpreter
 
             return result;
         }
-
-        // We could probably improve the hashing here
-        internal static int ListHashCode<T>(this IEnumerable<T> list)
-        {
-            var cmp = EqualityComparer<T>.Default;
-            int h = 6551;
-            foreach (T t in list)
-            {
-                h ^= (h << 5) ^ cmp.GetHashCode(t);
-            }
-
-            return h;
-        }
-
-        internal static bool ListEquals<T>(this ICollection<T> first, ICollection<T> second)
-        {
-            if (first.Count != second.Count)
-            {
-                return false;
-            }
-
-            var cmp = EqualityComparer<T>.Default;
-            var f = first.GetEnumerator();
-            var s = second.GetEnumerator();
-            while (f.MoveNext())
-            {
-                s.MoveNext();
-
-                if (!cmp.Equals(f.Current, s.Current))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-    }
-
-    internal sealed class ListEqualityComparer<T> : EqualityComparer<ICollection<T>>
-    {
-        internal static readonly ListEqualityComparer<T> Instance = new ListEqualityComparer<T>();
-
-        private ListEqualityComparer() { }
-
-        // EqualityComparer<T> handles null and object identity for us
-        public override bool Equals(ICollection<T> x, ICollection<T> y)
-        {
-            return x.ListEquals(y);
-        }
-
-        public override int GetHashCode(ICollection<T> obj)
-        {
-            return obj.ListHashCode();
-        }
     }
 }
