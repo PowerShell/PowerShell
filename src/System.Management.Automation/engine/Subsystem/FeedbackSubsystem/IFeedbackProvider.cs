@@ -98,7 +98,7 @@ namespace System.Management.Automation.Subsystem.Feedback
 
                     if (results.Count > 0)
                     {
-                        StringUtil.Format(
+                        return StringUtil.Format(
                             SuggestionStrings.Suggestion_CommandNotFound,
                             results[0].ToString());
                     }
