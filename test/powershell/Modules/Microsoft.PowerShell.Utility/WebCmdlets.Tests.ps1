@@ -2254,7 +2254,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = Invoke-RestMethod -Uri $uri
 
         # Validate response content
-        # The content should be de-compressed, and otherwise previous 'Invoke-RestMethod' have throwed.
+        # The content should be de-compressed. Otherwise, the above 'Invoke-RestMethod' would have thrown because converting to JSON internally would fail.
         $result.Headers.Host | Should -BeExactly $uri.Authority
     }
 
