@@ -155,8 +155,12 @@ namespace System.Management.Automation.Subsystem.Feedback
                 var startInfo = new ProcessStartInfo(cmd_not_found);
                 startInfo.ArgumentList.Add(target);
                 startInfo.RedirectStandardError = true;
+                // The standard output stream may contain suggestions, for example, you run `python`, but you have `python3` installed,
+                // then the stdout will contains 'You also have python3 installed, you can run 'python3' instead'.
+                // But we are not using this information here.
+                startInfo.RedirectStandardOutput = true;
 
-                var process = Process.Start(startInfo);
+                using var process = Process.Start(startInfo);
                 var output = process?.StandardError.ReadToEnd().Trim();
 
                 // The feedback contains recommended actions only if the output has multiple lines of text.
