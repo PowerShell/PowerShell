@@ -1659,7 +1659,7 @@ namespace Microsoft.PowerShell.Commands
             foreach (PSWmiChildJob job in ChildJobs)
             {
                 location.Append(job.Location);
-                location.Append(",");
+                location.Append(',');
             }
 
             location.Remove(location.Length - 1, 1);
