@@ -91,12 +91,17 @@ namespace System.Management.Automation.Subsystem.Feedback
                 {
                     var results = invocation.InvokeScript(@$"
                         $cmdNames = Get-Command {target} -UseFuzzyMatch | Select-Object -First 10 -Unique -ExpandProperty Name
-                        [string]::Join(', ', $cmdNames)
+                        if ($cmdNames) {{
+                            [string]::Join(', ', $cmdNames)
+                        }}
                     ");
 
-                    return StringUtil.Format(
-                        SuggestionStrings.Suggestion_CommandNotFound,
-                        results[0].ToString());
+                    if (results.Count > 0)
+                    {
+                        StringUtil.Format(
+                            SuggestionStrings.Suggestion_CommandNotFound,
+                            results[0].ToString());
+                    }
                 }
             }
 
