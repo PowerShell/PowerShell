@@ -456,9 +456,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <param name="c">Current context, with Fs in it.</param>
         private void ProcessFormatEnd(FormatEndData fe, FormatMessagesContextManager.OutputContext c)
         {
-            // Console.WriteLine("ProcessFormatEnd");
-            // we just add an empty line to the display
-            this.LineOutput.WriteLine(string.Empty);
+            if (c is FormatOutputContext foContext
+                && foContext.Data.shapeInfo is ListViewHeaderInfo)
+            {
+                // Skip writing out a new line for List view, because we already wrote out
+                // an extra new line after displaying the last list entry.
+                return;
+            }
+
+            // We just add an empty line to the display.
+            LineOutput.WriteLine(string.Empty);
         }
 
         /// <summary>
