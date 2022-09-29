@@ -1896,7 +1896,7 @@ function Install-Dotnet {
 
             $bashArgs += @('-skipnonversionedfiles')
 
-            $bashArgs | Out-String | Write-Verbose -Verbose
+            $bashArgs -join ' ' | Write-Verbose -Verbose
 
         Start-NativeExecution {
             bash @bashArgs
