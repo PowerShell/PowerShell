@@ -1452,6 +1452,14 @@ namespace System.Management.Automation
                 new ReadOnlyCollection<T>(Array.Empty<T>());
         }
 
+        internal static class Separators
+        {
+            // (Copied from System.IO.Path so we can call TrimEnd in the same way that Directory.EnumerateFiles would on the search patterns).
+            // Trim trailing white spaces, tabs etc but don't be aggressive in removing everything that has UnicodeCategory of trailing space.
+            // String.WhitespaceChars will trim aggressively than what the underlying FS does (for ex, NTFS, FAT).
+            internal static readonly char[] PathSearchTrimEnd = { (char)0x9, (char)0xA, (char)0xB, (char)0xC, (char)0xD, (char)0x20, (char)0x85, (char)0xA0 };
+        }
+
         /// <summary>
         /// A COM object could be directly of the type 'System.__ComObject', or it could be a strongly typed RWC,
         /// whose specific type derives from 'System.__ComObject'.
