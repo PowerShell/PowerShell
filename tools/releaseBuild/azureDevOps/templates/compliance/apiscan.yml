@@ -88,7 +88,7 @@ jobs:
         softwareName: PowerShell
         softwareVersionNum: '$(ReleaseTagVar)'
         isLargeApp: false
-        preserveTempFiles: true
+        preserveTempFiles: false
         verbosityLevel: standard
         # write a status update every 5 minutes.  Default is 1 minute
         statusUpdateInterval: '00:05:00'
