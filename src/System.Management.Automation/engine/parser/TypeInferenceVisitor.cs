@@ -2276,6 +2276,7 @@ namespace System.Management.Automation
                     {
                         yield return member.PSTypeName;
                     }
+
                     continue;
                 }
 
