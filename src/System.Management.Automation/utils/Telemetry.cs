@@ -660,7 +660,6 @@ namespace Microsoft.PowerShell.Telemetry
             {
                 switch (metricId)
                 {
-                    case TelemetryType.ApplicationType:
                     case TelemetryType.PowerShellCreate:
                     case TelemetryType.RemoteSessionOpen:
                     case TelemetryType.ExperimentalEngineFeatureActivation:
