@@ -38,13 +38,6 @@ jobs:
     - pwsh: |
         Import-Module .\build.psm1 -force
         Find-DotNet
-        dotnet tool install --global dotnet-symbol
-      displayName: Install dotnet-symbol
-      retryCountOnTaskFailure: 2
-
-    - pwsh: |
-        Import-Module .\build.psm1 -force
-        Find-DotNet
         dotnet tool install dotnet-symbol --tool-path $(Agent.ToolsDirectory)\tools\dotnet-symbol
         $symbolToolPath = Get-ChildItem -Path $(Agent.ToolsDirectory)\tools\dotnet-symbol\dotnet-symbol.exe | Select-Object -First 1 -ExpandProperty FullName
         Write-Host "##vso[task.setvariable variable=symbolToolPath]$symbolToolPath"
