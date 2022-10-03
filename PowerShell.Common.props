@@ -184,7 +184,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' == 'true' ">
     <Optimize>true</Optimize>
     <!-- This is required to be full for compliance tools !-->
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <!-- Define non-windows, release configuration properties -->
