@@ -351,7 +351,7 @@ namespace System.Management.Automation.Runspaces
                     Monitor.Exit(SyncRoot);
                     try
                     {
-                        RunspaceOpening.Wait();
+                        _runspaceOpening.Wait();
                     }
                     finally
                     {
@@ -685,7 +685,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         // This is to notify once runspace has been opened (RunspaceState.Opened)
-        internal ManualResetEventSlim RunspaceOpening = new ManualResetEventSlim(false);
+        private readonly ManualResetEventSlim _runspaceOpening = new ManualResetEventSlim(false);
 
         /// <summary>
         /// Set the new runspace state.
@@ -733,6 +733,16 @@ namespace System.Management.Automation.Runspaces
         protected void SetRunspaceState(RunspaceState state)
         {
             this.SetRunspaceState(state, null);
+        }
+
+        /// <summary>
+        /// Set the current runspace state to <see cref="RunspaceState.Opened"/>
+        /// and signals <see cref="_runspaceOpening"/> - no error.
+        /// </summary>
+        protected void SetRunspaceStateOpened()
+        {
+            SetRunspaceState(RunspaceState.Opened);
+            _runspaceOpening.Set();
         }
 
         /// <summary>
@@ -1578,5 +1588,48 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion session state proxy
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// Set to true when object is disposed.
+        /// </summary>
+        private bool _disposed;
+
+        /// <summary>
+        /// Protected dispose which can be overridden by derived classes.
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                if (_disposed)
+                {
+                    return;
+                }
+
+                lock (SyncRoot)
+                {
+                    if (_disposed)
+                    {
+                        return;
+                    }
+
+                    _disposed = true;
+                }
+
+                if (disposing)
+                {
+                    _runspaceOpening.Dispose();
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
+        }
+
+        #endregion IDisposable Members
     }
 }

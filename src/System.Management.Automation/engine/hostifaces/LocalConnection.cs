@@ -684,8 +684,7 @@ namespace System.Management.Automation.Runspaces
                 throw;
             }
 
-            SetRunspaceState(RunspaceState.Opened);
-            RunspaceOpening.Set();
+            SetRunspaceStateOpened();
 
             // Raise the event
             RaiseRunspaceStateEvents();
@@ -1226,11 +1225,6 @@ namespace System.Management.Automation.Runspaces
                     _jobManager = null;
                     _jobRepository = null;
                     _runspaceRepository = null;
-                    if (RunspaceOpening != null)
-                    {
-                        RunspaceOpening.Dispose();
-                        RunspaceOpening = null;
-                    }
 
                     // Dispose the event manager
                     if (this.ExecutionContext != null && this.ExecutionContext.Events != null)
