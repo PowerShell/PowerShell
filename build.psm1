@@ -674,6 +674,8 @@ Fix steps:
         Restore-PSPester -Destination (Join-Path $publishPath "Modules")
     }
 
+    Clear-NativeDependencies -PublishFolder $publishPath
+
     if ($PSOptionsPath) {
         $resolvedPSOptionsPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($PSOptionsPath)
         $parent = Split-Path -Path $resolvedPSOptionsPath
@@ -3356,4 +3358,51 @@ function Find-AzCopy {
 
     $azCopy = Get-Command -Name azCopy -ErrorAction Stop | Select-Object -First 1
     return $azCopy.Path
+}
+
+function Clear-NativeDependencies
+{
+    param(
+        [Parameter(Mandatory=$true)] [string] $PublishFolder
+    )
+
+    $filesToDeleteCore = @('microsoft.diasymreader.native.amd64.dll')
+
+    $filesToDeleteWinDesktop = @('presentationnative_cor3.dll', 'penimc_cor3.dll')
+
+    $deps = Get-Content "$PublishFolder/pwsh.deps.json" -Raw | ConvertFrom-Json -Depth 20
+    $targetRuntime = ".NETCoreApp,Version=v7.0/$($script:Options.Runtime)"
+
+    $runtimePackNetCore = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.NETCore.App.Runtime*'
+    $runtimePackWinDesktop = $deps.targets.${targetRuntime}.PSObject.Properties.Name -like 'runtimepack.Microsoft.WindowsDesktop.App.Runtime*'
+
+    if ($runtimePackNetCore)
+    {
+        $filesToDeleteCore | ForEach-Object {
+            Write-Verbose "Removing $_ from pwsh.deps.json" -Verbose
+            $deps.targets.${targetRuntime}.${runtimePackNetCore}.native.PSObject.Properties.Remove($_)
+        }
+    }
+
+    if ($runtimePackWinDesktop)
+    {
+        $filesToDeleteWinDesktop | ForEach-Object {
+            Write-Verbose "Removing $_ from pwsh.deps.json" -Verbose
+            $deps.targets.${targetRuntime}.${runtimePackWinDesktop}.native.PSObject.Properties.Remove($_)
+        }
+    }
+
+    $deps | ConvertTo-Json -Depth 20 | Set-Content "$PublishFolder/pwsh.deps.json" -Force
+
+    $filesToDeleteWinDesktop | ForEach-Object {
+        if (Test-Path $PublishFolder/$_) {
+            Remove-Item -Path $PublishFolder/$_ -Force -Verbose
+        }
+    }
+
+    $filesToDeleteCore | ForEach-Object {
+        if (Test-Path $PublishFolder/$_) {
+            Remove-Item -Path $PublishFolder/$_ -Force -Verbose
+        }
+    }
 }
