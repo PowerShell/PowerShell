@@ -1197,7 +1197,7 @@ namespace System.Management.Automation.Runspaces
         /// Protected dispose which can be overridden by derived classes.
         /// </summary>
         /// <param name="disposing"></param>
-        [SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "pipelineThread", Justification = "pipelineThread is disposed in Close()")]
+        [SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_pipelineThread", Justification = "_pipelineThread is disposed in Close()")]
         protected override void Dispose(bool disposing)
         {
             try

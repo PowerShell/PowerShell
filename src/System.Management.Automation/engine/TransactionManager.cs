@@ -686,7 +686,7 @@ namespace System.Management.Automation.Internal
         /// Whether to actually dispose the object.
         /// </param>
         /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "baseTransaction", Justification = "baseTransaction should not be disposed since we do not own it - it belongs to the caller")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_baseTransaction", Justification = "_baseTransaction should not be disposed since we do not own it - it belongs to the caller")]
         public void Dispose(bool disposing)
         {
             if (disposing)
