@@ -12,6 +12,10 @@ jobs:
       # PAT permissions NOTE: Declare a SymbolServerPAT variable in this group with a 'microsoft' organizanization scoped PAT with 'Symbols' Read permission.
       # A PAT in the wrong org will give a single Error 203. No PAT will give a single Error 401, and individual pdbs may be missing even if permissions are correct.
       - group: symbols
+      - name: branchCounterKey
+        value: $[format('{0:yyyyMMdd}-{1}', pipeline.startTime,variables['Build.SourceBranch'])]
+      - name: branchCounter
+        value: $[counter(variables['branchCounterKey'], 1)]
 
     pool:
       name: PowerShell1ES
