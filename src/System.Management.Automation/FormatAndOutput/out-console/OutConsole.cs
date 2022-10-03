@@ -141,16 +141,10 @@ namespace Microsoft.PowerShell.Commands
             base.EndProcessing();
         }
 
-        /// <summary>
-        /// Revert transcription state on Dispose.
-        /// </summary>
-        protected override void InternalDispose()
+        /// <inheritdoc/>
+        protected override void Dispose(bool disposing)
         {
-            try
-            {
-                base.InternalDispose();
-            }
-            finally
+            if (disposing)
             {
                 if (_transcribeOnlyCookie != null)
                 {
@@ -158,6 +152,8 @@ namespace Microsoft.PowerShell.Commands
                     _transcribeOnlyCookie = null;
                 }
             }
+
+            base.Dispose(disposing);
         }
 
         private List<PSObject> _outVarResults = null;
