@@ -76,9 +76,6 @@ namespace System.Management.Automation
         // Static Constructor.
         static PSVersionInfo()
         {
-            var watch = new System.Diagnostics.Stopwatch();
-            watch.Start();
-
             s_psVersionTable = new PSVersionHashTable(StringComparer.OrdinalIgnoreCase);
 
             Assembly currentAssembly = typeof(PSVersionInfo).Assembly;
@@ -118,9 +115,6 @@ namespace System.Management.Automation
             s_psVersionTable[WSManStackVersionName] = GetWSManStackVersion();
             s_psVersionTable[PSPlatformName] = Environment.OSVersion.Platform.ToString();
             s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription;
-
-            watch.Stop();
-            Console.WriteLine(watch.Elapsed.TotalMilliseconds);
         }
 
         private static (int major, int minor, int patch, string preReleaseLabel) FastParsePSVersion(ReadOnlySpan<char> mainVersion)
