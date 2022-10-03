@@ -41,23 +41,17 @@ namespace Microsoft.PowerShell
             //   (we may load resources which can take some time)
             Task.Run(() =>
             {
-                WindowsIdentity identity = WindowsIdentity.GetCurrent();
-                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                var identity = WindowsIdentity.GetCurrent();
+                var principal = new WindowsPrincipal(identity);
                 if (principal.IsInRole(WindowsBuiltInRole.Administrator))
                 {
-                    string prefix = ConsoleHostRawUserInterfaceStrings.WindowTitleElevatedPrefix;
-
                     // check using Regex if the window already has Administrator: prefix
                     // (i.e. from the parent console process)
-                    string titlePattern = ConsoleHostRawUserInterfaceStrings.WindowTitleTemplate;
-                    titlePattern = Regex.Escape(titlePattern)
-                        .Replace(@"\{1}", ".*")
-                        .Replace(@"\{0}", Regex.Escape(prefix));
-                    if (!Regex.IsMatch(this.WindowTitle, titlePattern))
+                    string template = ConsoleHostRawUserInterfaceStrings.WindowTitleTemplate;
+                    string windowTitle = WindowTitle;
+                    if (!windowTitle.AsSpan().StartsWith(template.AsSpan(0, template.IndexOf('{'))))
                     {
-                        this.WindowTitle = StringUtil.Format(ConsoleHostRawUserInterfaceStrings.WindowTitleTemplate,
-                            prefix,
-                            this.WindowTitle);
+                        WindowTitle = StringUtil.Format(template, windowTitle);
                     }
                 }
             });

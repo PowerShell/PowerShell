@@ -53,20 +53,20 @@ namespace System.Management.Automation
         /// For each later release of PowerShell, this constant needs to
         /// be updated to reflect the right version.
         /// </remarks>
-        private static readonly Version s_psV1Version = new Version(1, 0);
-        private static readonly Version s_psV2Version = new Version(2, 0);
-        private static readonly Version s_psV3Version = new Version(3, 0);
-        private static readonly Version s_psV4Version = new Version(4, 0);
-        private static readonly Version s_psV5Version = new Version(5, 0);
-        private static readonly Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
-        private static readonly SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, preReleaseLabel: null, buildLabel: null);
-        private static readonly SemanticVersion s_psV61Version = new SemanticVersion(6, 1, 0, preReleaseLabel: null, buildLabel: null);
-        private static readonly SemanticVersion s_psV62Version = new SemanticVersion(6, 2, 0, preReleaseLabel: null, buildLabel: null);
-        private static readonly SemanticVersion s_psV7Version = new SemanticVersion(7, 0, 0, preReleaseLabel: null, buildLabel: null);
-        private static readonly SemanticVersion s_psV71Version = new SemanticVersion(7, 1, 0, preReleaseLabel: null, buildLabel: null);
-        private static readonly SemanticVersion s_psV72Version = new SemanticVersion(7, 2, 0, preReleaseLabel: null, buildLabel: null);
-        private static readonly SemanticVersion s_psSemVersion;
+        private static readonly Version s_psV1Version = new(1, 0);
+        private static readonly Version s_psV2Version = new(2, 0);
+        private static readonly Version s_psV3Version = new(3, 0);
+        private static readonly Version s_psV4Version = new(4, 0);
+        private static readonly Version s_psV5Version = new(5, 0);
+        private static readonly Version s_psV51Version = new(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
+        private static readonly Version s_psV6Version = new(6, 0, 0);
+        private static readonly Version s_psV61Version = new(6, 1, 0);
+        private static readonly Version s_psV62Version = new(6, 2, 0);
+        private static readonly Version s_psV7Version = new(7, 0, 0);
+        private static readonly Version s_psV71Version = new(7, 1, 0);
+        private static readonly Version s_psV72Version = new(7, 2, 0);
         private static readonly Version s_psVersion;
+        private static readonly SemanticVersion s_psSemVersion;
 
         /// <summary>
         /// A constant to track current PowerShell Edition.
@@ -76,6 +76,9 @@ namespace System.Management.Automation
         // Static Constructor.
         static PSVersionInfo()
         {
+            var watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
+
             s_psVersionTable = new PSVersionHashTable(StringComparer.OrdinalIgnoreCase);
 
             Assembly currentAssembly = typeof(PSVersionInfo).Assembly;
@@ -85,38 +88,61 @@ namespace System.Management.Automation
             //
             // The strings can be one of the following format examples:
             //    when powershell is built from a commit:
-            //      productVersion = '6.0.0-beta.7 Commits: 29 SHA: 52c6b...' convert to GitCommitId = 'v6.0.0-beta.7-29-g52c6b...'
-            //                                                                           PSVersion   = '6.0.0-beta.7'
+            //      productVersion = '7.3.0-preview.7 Commits: 29 SHA: 52c6b...' convert to GitCommitId = 'v7.3.0-preview.7-29-g52c6b...'
+            //                                                                           PSVersion   = '7.3.0-preview.7'
             //    when powershell is built from a release tag:
-            //      productVersion = '6.0.0-beta.7 SHA: f1ec9...'             convert to GitCommitId = 'v6.0.0-beta.7'
-            //                                                                           PSVersion   = '6.0.0-beta.7'
+            //      productVersion = '7.3.0-preview.7 SHA: f1ec9...'             convert to GitCommitId = 'v7.3.0-preview.7'
+            //                                                                           PSVersion   = '7.3.0-preview.7'
             //    when powershell is built from a release tag for RTM:
-            //      productVersion = '6.0.0 SHA: f1ec9...'                    convert to GitCommitId = 'v6.0.0'
-            //                                                                           PSVersion   = '6.0.0'
-            string rawGitCommitId;
-            string mainVersion = ProductVersion.Substring(0, ProductVersion.IndexOf(' '));
+            //      productVersion = '7.3.0 SHA: f1ec9...'                    convert to GitCommitId = 'v7.3.0'
+            //                                                                           PSVersion   = '7.3.0'
+            int index = ProductVersion.IndexOf(' ');
+            ReadOnlySpan<char> mainVersion = ProductVersion.AsSpan(0, index);
 
-            if (ProductVersion.Contains(" Commits: "))
-            {
-                rawGitCommitId = ProductVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
-            }
-            else
-            {
-                rawGitCommitId = mainVersion;
-            }
+            string rawGitCommitId = ProductVersion.AsSpan(index).StartsWith(" Commits: ")
+                ? "v" + ProductVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g")
+                : string.Concat("v".AsSpan(), mainVersion);
 
-            s_psSemVersion = new SemanticVersion(mainVersion);
+            var r = FastParsePSVersion(mainVersion);
+            s_psSemVersion = r.preReleaseLabel is null
+                ? new SemanticVersion(r.major, r.minor, r.patch)
+                : new SemanticVersion(r.major, r.minor, r.patch, r.preReleaseLabel, buildLabel: null);
+
             s_psVersion = (Version)s_psSemVersion;
-
-            s_psVersionTable[PSVersionInfo.PSVersionName] = s_psSemVersion;
-            s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
+            s_psVersionTable[PSVersionName] = s_psSemVersion;
+            s_psVersionTable[PSEditionName] = PSEditionValue;
             s_psVersionTable[PSGitCommitIdName] = rawGitCommitId;
             s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version, s_psV61Version, s_psV62Version, s_psV7Version, s_psV71Version, s_psV72Version, s_psVersion };
-            s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
-            s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
-            s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
+            s_psVersionTable[SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
+            s_psVersionTable[PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
+            s_psVersionTable[WSManStackVersionName] = GetWSManStackVersion();
             s_psVersionTable[PSPlatformName] = Environment.OSVersion.Platform.ToString();
             s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription;
+
+            watch.Stop();
+            Console.WriteLine(watch.Elapsed.TotalMilliseconds);
+        }
+
+        private static (int major, int minor, int patch, string preReleaseLabel) FastParsePSVersion(ReadOnlySpan<char> mainVersion)
+        {
+            // We only handle the pre-defined PSVersion format here, e.g. 7.x.x or 7.x.x-preview.x
+            int dashIndex = mainVersion.IndexOf('-');
+            bool hasLabel = dashIndex != -1;
+            string preReleaseLabel = hasLabel ? new string(mainVersion.Slice(dashIndex + 1)) : null;
+
+            if (hasLabel)
+            {
+                mainVersion = mainVersion.Slice(0, dashIndex);
+            }
+
+            int majorEnd = mainVersion.IndexOf('.');
+            int minorEnd = mainVersion.LastIndexOf('.');
+
+            int major = int.Parse(mainVersion.Slice(0, majorEnd), NumberStyles.Integer, CultureInfo.InvariantCulture);
+            int minor = int.Parse(mainVersion.Slice(majorEnd + 1, minorEnd - majorEnd - 1), NumberStyles.Integer, CultureInfo.InvariantCulture);
+            int patch = int.Parse(mainVersion.Slice(minorEnd + 1), NumberStyles.Integer, CultureInfo.InvariantCulture);
+
+            return (major, minor, patch, preReleaseLabel);
         }
 
         internal static PSVersionHashTable GetPSVersionTable()
@@ -330,12 +356,12 @@ namespace System.Management.Automation
             get { return s_psV51Version; }
         }
 
-        internal static SemanticVersion PSV6Version
+        internal static Version PSV6Version
         {
             get { return s_psV6Version; }
         }
 
-        internal static SemanticVersion PSV7Version
+        internal static Version PSV7Version
         {
             get { return s_psV7Version; }
         }
