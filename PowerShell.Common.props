@@ -172,19 +172,19 @@
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
     <Optimize>true</Optimize>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <!-- Define all OS, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'StaticAnalysis' ">
     <Optimize>true</Optimize>
+    <!-- This is required to be full for compliance tools !-->
     <DebugType>full</DebugType>
   </PropertyGroup>
 
   <!-- Define windows, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' == 'true' ">
     <Optimize>true</Optimize>
-    <!-- This is required to be full for compliance tools !-->
-    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <!-- Define non-windows, release configuration properties -->
@@ -193,15 +193,6 @@
          Debugging the issues resolves the problem
      -->
     <Optimize>false</Optimize>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <!-- Define all OS, CodeCoverage configuration properties -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <!-- This is required to be portable to Coverlet tool !-->
-    <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
-    <PublishReadyToRunEmitSymbols>true</PublishReadyToRunEmitSymbols>
-    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <PropertyGroup>
