@@ -45,13 +45,12 @@ namespace Microsoft.PowerShell
                 var principal = new WindowsPrincipal(identity);
                 if (principal.IsInRole(WindowsBuiltInRole.Administrator))
                 {
-                    // check using Regex if the window already has Administrator: prefix
-                    // (i.e. from the parent console process)
-                    string template = ConsoleHostRawUserInterfaceStrings.WindowTitleTemplate;
-                    string windowTitle = WindowTitle;
-                    if (!windowTitle.AsSpan().StartsWith(template.AsSpan(0, template.IndexOf('{'))))
+                    // Check if the window already has the "Administrator: " prefix (i.e. from the parent console process).
+                    ReadOnlySpan<char> prefix = ConsoleHostRawUserInterfaceStrings.WindowTitleElevatedPrefix;
+                    ReadOnlySpan<char> windowTitle = WindowTitle;
+                    if (!windowTitle.StartsWith(prefix))
                     {
-                        WindowTitle = StringUtil.Format(template, windowTitle);
+                        WindowTitle = string.Concat(prefix, windowTitle);
                     }
                 }
             });
