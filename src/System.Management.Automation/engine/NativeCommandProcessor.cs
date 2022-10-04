@@ -1171,9 +1171,9 @@ namespace System.Management.Automation
 
             try
             {
-                // on Unix, we need to kill the process (if not running in background) to ensure it terminates, as Dispose() merely
-                // closes the redirected streams and the process does not exit on macOS. However,
-                // on Windows, a winexe like notepad should continue running so we don't want to kill it.
+                // on Unix, we need to kill the process (if not running in background) to ensure it terminates,
+                // as Dispose() merely closes the redirected streams and the process does not exit.
+                // However, on Windows, a winexe like notepad should continue running so we don't want to kill it.
 #if UNIX
                 if (!_isRunningInBackground) {
                     try
@@ -1182,7 +1182,7 @@ namespace System.Management.Automation
                     }
                     catch
                     {
-                        // Ignore all exception since it is cleanup.
+                        // Ignore all exceptions since it is cleanup.
                     }
                 }
 #endif
