@@ -6,7 +6,7 @@ Describe "PSVersionTable" -Tags "CI" {
         $sma = Get-Item (Join-Path $PSHOME "System.Management.Automation.dll")
         $formattedVersion = $sma.VersionInfo.ProductVersion
 
-        $mainVersionPattern = "(\d+\.\d+\.\d+)(-.+)?"
+        $mainVersionPattern = "v(\d+\.\d+\.\d+)(-.+)?"
         $fullVersionPattern = "^v(\d+\.\d+\.\d+)(-.+)?-(\d+)-g(.+)$"
 
         $expectedPSVersion = ($formattedVersion -split " ")[0]
