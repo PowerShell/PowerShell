@@ -995,6 +995,7 @@ namespace Microsoft.PowerShell.Commands
             // By default the HttpClientHandler will automatically decompress GZip and Deflate content
             HttpClientHandler handler = new();
             handler.CookieContainer = WebSession.Cookies;
+            handler.AutomaticDecompression = DecompressionMethods.All;
 
             // set the credentials used by this request
             if (WebSession.UseDefaultCredentials)
