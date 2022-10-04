@@ -3144,6 +3144,9 @@
       <Component Id="cmp76EB2749D0464D41AD1D2BA2C51CF4C9">
         <File Id="filDC81A93ACA6045E4A22C108F59D69083" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_7.0.22.42610.dll" />
       </Component>
+      <Component Id="cmp6986F8B66C514347A25E03DD3096B5AE">
+        <File Id="fil9276D1BDBF8B4C91B90761633720A419" KeyPath="yes" Source="$(var.ProductSourcePath)\PresentationNative_cor3.dll" />
+      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -4154,6 +4157,7 @@
       <ComponentRef Id="cmp76EB2749D0464D41AD1D2BA2C51CF4C9" />
       <ComponentRef Id="cmpF5FD2E392BD94BCD957480F128A38E10" />
       <ComponentRef Id="cmp28DEAACC47FD4B04A95521A375761643" />
+      <ComponentRef Id="cmp6986F8B66C514347A25E03DD3096B5AE" />
     </ComponentGroup>
   </Fragment>
 </Wix>
