@@ -3,7 +3,6 @@
 
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net.Http;
@@ -502,21 +501,6 @@ namespace Microsoft.PowerShell.Commands
         internal static Stream GetResponseStream(HttpResponseMessage response)
         {
             Stream responseStream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
-            var contentEncoding = response.Content.Headers.ContentEncoding;
-
-            // HttpClient by default will automatically decompress GZip and Deflate content.
-            // We keep this decompression logic here just in case.
-            if (contentEncoding != null && contentEncoding.Count > 0)
-            {
-                if (contentEncoding.Contains("gzip"))
-                {
-                    responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
-                }
-                else if (contentEncoding.Contains("deflate"))
-                {
-                    responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
-                }
-            }
 
             return responseStream;
         }
