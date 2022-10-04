@@ -3405,6 +3405,9 @@ function Clear-NativeDependencies
         $filesToDeleteCore | ForEach-Object {
             Write-Verbose "Removing $_ from pwsh.deps.json" -Verbose
             $deps.targets.${targetRuntime}.${runtimePackNetCore}.native.PSObject.Properties.Remove($_)
+            if (Test-Path $PublishFolder/$_) {
+                Remove-Item -Path $PublishFolder/$_ -Force -Verbose
+            }
         }
     }
 
@@ -3413,20 +3416,11 @@ function Clear-NativeDependencies
         $filesToDeleteWinDesktop | ForEach-Object {
             Write-Verbose "Removing $_ from pwsh.deps.json" -Verbose
             $deps.targets.${targetRuntime}.${runtimePackWinDesktop}.native.PSObject.Properties.Remove($_)
+            if (Test-Path $PublishFolder/$_) {
+                Remove-Item -Path $PublishFolder/$_ -Force -Verbose
+            }
         }
     }
 
     $deps | ConvertTo-Json -Depth 20 | Set-Content "$PublishFolder/pwsh.deps.json" -Force
-
-    $filesToDeleteWinDesktop | ForEach-Object {
-        if (Test-Path $PublishFolder/$_) {
-            Remove-Item -Path $PublishFolder/$_ -Force -Verbose
-        }
-    }
-
-    $filesToDeleteCore | ForEach-Object {
-        if (Test-Path $PublishFolder/$_) {
-            Remove-Item -Path $PublishFolder/$_ -Force -Verbose
-        }
-    }
 }
