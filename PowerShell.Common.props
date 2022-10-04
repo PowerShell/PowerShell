@@ -175,8 +175,8 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
-  <!-- Define windows, release configuration properties -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' And '$(IsWindows)' == 'true' ">
+  <!-- Define all OS, release configuration properties -->
+  <PropertyGroup Condition=" '$(Configuration)' == 'StaticAnalysis' ">
     <Optimize>true</Optimize>
     <!-- This is required to be full for compliance tools !-->
     <DebugType>full</DebugType>
@@ -188,13 +188,6 @@
          Debugging the issues resolves the problem
      -->
     <Optimize>false</Optimize>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <!-- Define all OS, CodeCoverage configuration properties -->
-  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
-    <!-- This is required to be portable to Coverlet tool !-->
-    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <PropertyGroup>
