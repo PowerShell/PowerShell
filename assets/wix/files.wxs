@@ -2958,9 +2958,6 @@
       <Component Id="cmpF2634E50875D4698921081E3C6B1D5DC">
         <File Id="fil5A54754B01054DB590032470CE5F1EBD" KeyPath="yes" Source="$(var.ProductSourcePath)\PresentationCore.dll" />
       </Component>
-      <Component Id="cmpBFAC308E2D8645278D61C126C0FC2C61">
-        <File Id="fil2954DD50127543F991A9F0A539E80FA4" KeyPath="yes" Source="$(var.ProductSourcePath)\PenImc_cor3.dll" />
-      </Component>
       <Component Id="cmp8F0E2CF1B76B4D5185CB6A8DB9236F93">
         <File Id="fil91831C8BEFBB49AE8A4FDE50300CA3E8" KeyPath="yes" Source="$(var.ProductSourcePath)\PresentationFramework-SystemXml.dll" />
       </Component>
@@ -3044,9 +3041,6 @@
       </Component>
       <Component Id="cmp930F2D2320B94F6397ECD91862AF7A90">
         <File Id="fil0B2E8182CDEC485F8364AB82F5EA2D35" KeyPath="yes" Source="$(var.ProductSourcePath)\PresentationFramework.Luna.dll" />
-      </Component>
-      <Component Id="cmp5C8827EF42BE4C098EF08EBD4011DA47">
-        <File Id="fil15D3E880E8AD4F9A970422D79FADDBAF" KeyPath="yes" Source="$(var.ProductSourcePath)\PresentationNative_cor3.dll" />
       </Component>
       <Component Id="cmp6C0567CC32E4457A8F2D03C6E7F5897E">
         <File Id="filB46C0C9BDA404C51ACB0F93E5ADACDE5" KeyPath="yes" Source="$(var.ProductSourcePath)\WindowsFormsIntegration.dll" />
@@ -3156,6 +3150,9 @@
       </Component>
       <Component Id="cmp67BD9092B046498294EB7689F85B33E8">
         <File Id="fil12B01FBAC62A402883168CE835231417" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_6.0.1623.17311.dll" />
+      </Component>
+      <Component Id="cmp6986F8B66C514347A25E03DD3096B5AE">
+        <File Id="fil9276D1BDBF8B4C91B90761633720A419" KeyPath="yes" Source="$(var.ProductSourcePath)\PresentationNative_cor3.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4072,7 +4069,6 @@
       <ComponentRef Id="cmp30126C60BD784974B74EA45AE9B04032" />
       <ComponentRef Id="cmp9EC1507780D247E095EA92A7715B4BAC" />
       <ComponentRef Id="cmpF2634E50875D4698921081E3C6B1D5DC" />
-      <ComponentRef Id="cmpBFAC308E2D8645278D61C126C0FC2C61" />
       <ComponentRef Id="cmp8F0E2CF1B76B4D5185CB6A8DB9236F93" />
       <ComponentRef Id="cmp14EA1CB2EC4E4B1DB7F7968B5B3D8E16" />
       <ComponentRef Id="cmpF543DDEF59CB4ACB85CBC9A106BD853D" />
@@ -4101,7 +4097,6 @@
       <ComponentRef Id="cmpDEE7C0BADEA14B9A9AFFD4C9BF4E7702" />
       <ComponentRef Id="cmp10ABC7FB464B42FCA1EDEC7015AFEDCF" />
       <ComponentRef Id="cmp930F2D2320B94F6397ECD91862AF7A90" />
-      <ComponentRef Id="cmp5C8827EF42BE4C098EF08EBD4011DA47" />
       <ComponentRef Id="cmp6C0567CC32E4457A8F2D03C6E7F5897E" />
       <ComponentRef Id="cmp18A181D71C894FBE96F4A3563213DC57" />
       <ComponentRef Id="cmp1C666476BE6044B4B8C74450F1F32E67" />

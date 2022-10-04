@@ -172,6 +172,7 @@
   <!-- Define all OS, release configuration properties -->
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <Optimize>true</Optimize>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
 
   <!-- Define windows, release configuration properties -->
