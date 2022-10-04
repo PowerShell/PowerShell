@@ -1175,7 +1175,8 @@ namespace System.Management.Automation
                 // as Dispose() merely closes the redirected streams and the process does not exit.
                 // However, on Windows, a winexe like notepad should continue running so we don't want to kill it.
 #if UNIX
-                if (!_isRunningInBackground) {
+                if (!_isRunningInBackground)
+                {
                     try
                     {
                         _nativeProcess?.Kill();
