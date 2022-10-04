@@ -3366,7 +3366,31 @@ function Clear-NativeDependencies
         [Parameter(Mandatory=$true)] [string] $PublishFolder
     )
 
-    $filesToDeleteCore = @('microsoft.diasymreader.native.amd64.dll')
+    $diasymFileNamePattern = 'microsoft.diasymreader.native.{0}.dll'
+
+    switch -regex ($($script:Options.Runtime)) {
+        '.*-x64' {
+            $diasymFileName = $diasymFileNamePattern -f 'amd64'
+        }
+        '.*-x86' {
+            $diasymFileName = $diasymFileNamePattern -f 'x86'
+        }
+        '.*-arm' {
+            $diasymFileName = $diasymFileNamePattern -f 'arm'
+        }
+        '.*-arm64' {
+            $diasymFileName = $diasymFileNamePattern -f 'arm64'
+        }
+        'fxdependent.*' {
+            Write-Verbose -Message "$($script:Options.Runtime) is a fxdependent runtime, skipping diasymreader removal" -Verbose
+            $diasymFileName = $null
+        }
+        Default {
+            throw "Unknown runtime $($script:Options.Runtime)"
+        }
+    }
+
+    $filesToDeleteCore = @($diasymFileName)
 
     $filesToDeleteWinDesktop = @('presentationnative_cor3.dll', 'penimc_cor3.dll')
 
