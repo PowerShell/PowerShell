@@ -97,8 +97,8 @@ namespace System.Management.Automation
             ReadOnlySpan<char> mainVersion = ProductVersion.AsSpan(0, index);
 
             string rawGitCommitId = ProductVersion.AsSpan(index).StartsWith(" Commits: ")
-                ? "v" + ProductVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g")
-                : string.Concat("v".AsSpan(), mainVersion);
+                ? ProductVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g")
+                : new string(mainVersion);
 
             var r = FastParsePSVersion(mainVersion);
             s_psSemVersion = r.preReleaseLabel is null
