@@ -1171,17 +1171,19 @@ namespace System.Management.Automation
 
             try
             {
-                // on Unix, we need to kill the process to ensure it terminates as Dispose() merely
+                // on Unix, we need to kill the process (if not running in background) to ensure it terminates as Dispose() merely
                 // closes the redirected streams and the processs does not exit on macOS.  However,
                 // on Windows, a winexe like notepad should continue running so we don't want to kill it.
 #if UNIX
-                try
-                {
-                    _nativeProcess?.Kill();
-                }
-                catch
-                {
-                    // Ignore all exception since it is cleanup.
+                if (!_isRunningInBackground) {
+                    try
+                    {
+                        _nativeProcess?.Kill();
+                    }
+                    catch
+                    {
+                        // Ignore all exception since it is cleanup.
+                    }
                 }
 #endif
                 _nativeProcess?.Dispose();
