@@ -36,25 +36,7 @@ namespace PSTests.Parallel
         [InlineData("*?[]", "*?[]")]
         public void TestEscape_String_NotEscape(string source, string expected)
         {
-            Assert.Equal(WildcardPattern.Escape(source, string.Empty), expected);
-        }
-
-        [Theory]
-        [InlineData("a", "a")]
-        [InlineData("a*", "a`*")]
-        [InlineData("*?[]", "`*?[]")]
-        public void TestEscape_String_Escape_Star(string source, string expected)
-        {
-            Assert.Equal(WildcardPattern.Escape(source, "*"), expected);
-        }
-
-        [Theory]
-        [InlineData("a", "a")]
-        [InlineData("a*", "a*")]
-        [InlineData("*?[]", "*?`[`]")]
-        public void TestEscape_String_Escape_Brackets(string source, string expected)
-        {
-            Assert.Equal(WildcardPattern.Escape(source, "[]"), expected);
+            Assert.Equal(WildcardPattern.Escape(source, new[] { '*', '?', '[', ']' }), expected);
         }
 
         [Fact]

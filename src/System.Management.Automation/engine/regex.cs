@@ -206,21 +206,26 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Escape special chars, specified in <paramref name="charsToEscape"/>, in a string by replacing them with their escape codes.
+        /// Escape special chars, except for those specified in <paramref name="charsNotToEscape"/>, in a string by replacing them with their escape codes.
         /// </summary>
         /// <param name="pattern">The input string containing the text to convert.</param>
-        /// <param name="charsToEscape">Chars to escape.</param>
+        /// <param name="charsNotToEscape">Array of characters that not to escape.</param>
         /// <returns>
-        /// A string of characters with any metacharacters, specified in <paramref name="charsToEscape"/>, converted to their escaped form.
+        /// A string of characters with any metacharacters, except for those specified in <paramref name="charsNotToEscape"/>, converted to their escaped form.
         /// </returns>
-        internal static string Escape(string pattern, ReadOnlySpan<char> charsToEscape)
+        internal static string Escape(string pattern, char[] charsNotToEscape)
         {
             if (pattern == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(pattern));
             }
 
-            if (pattern == string.Empty || charsToEscape.IsEmpty || pattern.AsSpan().IndexOfAny(charsToEscape) < 0)
+            if (charsNotToEscape == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(charsNotToEscape));
+            }
+
+            if (pattern == string.Empty)
             {
                 return pattern;
             }
@@ -232,7 +237,10 @@ namespace System.Management.Automation
             {
                 char ch = pattern[i];
 
-                if (charsToEscape.Contains(ch))
+                //
+                // if it is a wildcard char, escape it
+                //
+                if (IsWildcardChar(ch) && !charsNotToEscape.Contains(ch))
                 {
                     temp[tempIndex++] = escapeChar;
                 }
@@ -240,7 +248,18 @@ namespace System.Management.Automation
                 temp[tempIndex++] = ch;
             }
 
-            return new string(temp.Slice(0, tempIndex));
+            string s = null;
+
+            if (tempIndex == pattern.Length)
+            {
+                s = pattern;
+            }
+            else
+            {
+                s = new string(temp.Slice(0, tempIndex));
+            }
+
+            return s;
         }
 
         /// <summary>
@@ -252,7 +271,7 @@ namespace System.Management.Automation
         /// </returns>
         public static string Escape(string pattern)
         {
-            return Escape(pattern, "*?[]");
+            return Escape(pattern, Array.Empty<char>());
         }
 
         /// <summary>
