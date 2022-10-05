@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter PassThru { get; set; }
 
         /// <summary>
-        /// Use OSC52 escape sequence to set the clipboard of host instead of target.
+        /// Gets or sets whether to use OSC52 escape sequence to set the clipboard of host instead of target.
         /// </summary>
         [Parameter]
         [Alias("Remote")]
