@@ -1161,6 +1161,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Aggressively clean everything up...
         /// </summary>
+        /// <param name="killBackgroundProcess">If set, also terminate background process.</param>
         private void CleanUp(bool killBackgroundProcess)
         {
             // We need to call 'NotifyEndApplication' as appropriate during cleanup
