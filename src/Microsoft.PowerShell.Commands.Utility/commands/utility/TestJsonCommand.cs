@@ -72,8 +72,7 @@ namespace Microsoft.PowerShell.Commands
                             text = File.ReadAllText(filename);
                             break;
                         default:
-                            throw new FormatException(
-                                $"URI scheme '{uri.Scheme}' is not supported.  Only HTTP(S) and local file system URIs are allowed.");
+                            throw new FormatException(string.Format(TestJsonCmdletStrings.InvalidUriScheme, uri.Scheme));
                     }
 
                     return JsonSerializer.Deserialize<JsonSchema>(text);
