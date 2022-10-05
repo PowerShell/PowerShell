@@ -91,7 +91,7 @@ namespace System.Management.Automation
 
             List<CompletionResult> commandResults = null;
 
-            if (commandName.AsSpan().IndexOfAny('\\', '/', ':') == -1)
+            if (commandName.IndexOfAny(Utils.Separators.DirectoryOrDrive) == -1)
             {
                 // The name to complete is neither module qualified nor is it a relative/rooted file path.
 
@@ -3307,7 +3307,7 @@ namespace System.Management.Automation
                         result.AddRange(moduleFilesResults);
 
                     var assemblyOrModuleName = context.WordToComplete;
-                    if (assemblyOrModuleName.AsSpan().IndexOfAny('\\', '/', ':') != -1)
+                    if (assemblyOrModuleName.IndexOfAny(Utils.Separators.DirectoryOrDrive) != -1)
                     {
                         // The partial input is a path, then we don't iterate modules under $ENV:PSModulePath
                         return;
