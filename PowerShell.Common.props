@@ -73,16 +73,6 @@
       <PSCoreFormattedVersion Condition = "'$(ReleaseTag)' != '' or '$(PSCoreAdditionalCommits)' == '0'">$(PSCoreBuildVersion) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
       <PSCoreFormattedVersion Condition = "'$(PSCoreFormattedVersion)' == ''">$(PSCoreBuildVersion) Commits: $(PSCoreAdditionalCommits) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
 
-      <!-- Extract the major, minor and patch version numbers, as well as the preview label.
-           They are currently not used anywhere, so we comment them out for now.
-        <RegexSymVer>^((\d+).(\d+).(\d+))(?:-(.+))?</RegexSymVer>
-        <PSCorePrefixVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[1].Value)</PSCorePrefixVersion>
-        <PSCoreMajorVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[2].Value)</PSCoreMajorVersion>
-        <PSCoreMinorVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[3].Value)</PSCoreMinorVersion>
-        <PSCorePatchVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[4].Value)</PSCorePatchVersion>
-        <PSCoreLabelVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[5].Value)</PSCoreLabelVersion>
-      -->
-
       <!--
             Here we define explicitly 'Version' to set 'FileVersion' and 'AssemblyVersion' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
             Here we define explicitly 'InformationalVersion' because by default it is defined as 'Version' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
@@ -104,14 +94,6 @@
 
     </PropertyGroup>
 
-    <ItemGroup>
-      <!-- These properties are used by Source Code Generators. -->
-      <CompilerVisibleProperty Include="ProductVersion" />
-      <CompilerVisibleProperty Include="PowerShellVersion" />
-      <CompilerVisibleProperty Include="PSCoreBuildVersion" />
-      <CompilerVisibleProperty Include="ReleaseTag" />
-    </ItemGroup>                                          
-
     <!-- Output For Debugging
       <WriteLinesToFile File="targetfile1.txt"
         Lines="ReleaseTag=$(ReleaseTag);
@@ -122,10 +104,6 @@
                ReleaseTagSemVersionPart = $(ReleaseTagSemVersionPart);
                PSCoreAdditionalCommits = $(PSCoreAdditionalCommits);
                PSCoreCommitSHA = $(PSCoreCommitSHA);
-               PSCoreMajorVersion = $(PSCoreMajorVersion);
-               PSCoreMinorVersion = $(PSCoreMinorVersion);
-               PSCorePatchVersion = $(PSCorePatchVersion);
-               PSCoreLabelVersion = $(PSCoreLabelVersion);
                RegexGitVersion = $(RegexGitVersion);
                PSCoreFormattedVersion = $(PSCoreFormattedVersion);
                ProductVersion = $(ProductVersion);

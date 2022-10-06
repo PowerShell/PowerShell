@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's System.Management.Automation project</Description>
@@ -6,15 +6,29 @@
     <AssemblyName>System.Management.Automation</AssemblyName>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- we persist source generator files under 'gen' folder so that they are visible to IDEs -->
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>gen\SourceGenerated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- these properties are declared in 'PowerShell.Common.props' and used by source generator -->
+    <CompilerVisibleProperty Include="ProductVersion" />
+    <CompilerVisibleProperty Include="PSCoreBuildVersion" />
+    <CompilerVisibleProperty Include="PowerShellVersion" />
+    <CompilerVisibleProperty Include="ReleaseTag" />
+
+    <ProjectReference Include="SourceGenerators\PSVersionInfoGenerator\PSVersionInfoGenerator.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
   <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-   <ProjectReference Include="..\SourceGenerators\PSVersionInfoGenerator\PSVersionInfoGenerator.csproj"
-                      OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false" />
-
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <!-- the Application Insights package -->
@@ -38,23 +52,13 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <!--
-        Source Code Generators use following lines to write the generated files to disk.
-        We change the output path from obj/ to gen/ so that Visual Studio Code IntelliSense can find these files.
-    -->
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>gen\SourceGeneratedFiles</CompilerGeneratedFilesOutputPath> 
-  </PropertyGroup>
-
-  <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <!--
-        These files are included in the compilation by Source Code Generators
-        so remove them here to avoid "already contains" errors.
-    -->
+    <!-- exclude code of source generators from compilation and IDEs (e.g. vscode and visual studio) -->
+    <Compile Remove="SourceGenerators\**\*.cs" />
+    <!-- exclude the generated source files because compiler already includes the in-memory source generator output -->
     <Compile Remove="$(CompilerGeneratedFilesOutputPath)\**\*.cs" />
 
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
