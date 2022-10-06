@@ -92,7 +92,7 @@ namespace System.Management.Automation
                 gitCommitId = gitCommitId.Substring(1);
             }
 
-            var result = FastParsePSVersion(mainVersion);
+            var result = ParsePSVersion(mainVersion);
 
             return string.Format(
                 CultureInfo.InvariantCulture,
@@ -105,7 +105,7 @@ namespace System.Management.Automation
                 result.preReleaseLabel);
         }
 
-        private static (int major, int minor, int patch, string preReleaseLabel) FastParsePSVersion(string mainVersion)
+        private static (int major, int minor, int patch, string preReleaseLabel) ParsePSVersion(string mainVersion)
         {
             // We only handle the pre-defined PSVersion format here, e.g. 7.x.x or 7.x.x-preview.x
             int dashIndex = mainVersion.IndexOf('-');
