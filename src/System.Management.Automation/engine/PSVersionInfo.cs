@@ -58,7 +58,7 @@ namespace System.Management.Automation
         private static readonly Version s_psV3Version = new(3, 0);
         private static readonly Version s_psV4Version = new(4, 0);
         private static readonly Version s_psV5Version = new(5, 0);
-        private static readonly Version s_psV51Version = new(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
+        private static readonly Version s_psV51Version = new(5, 1);
         private static readonly Version s_psV6Version = new(6, 0, 0);
         private static readonly Version s_psV61Version = new(6, 1, 0);
         private static readonly Version s_psV62Version = new(6, 2, 0);
@@ -193,45 +193,11 @@ namespace System.Management.Automation
             }
         }
 
-        internal static Version[] PSCompatibleVersions
-        {
-            get
-            {
-                return (Version[])s_psVersionTable[PSCompatibleVersionsName];
-            }
-        }
-
-        /// <summary>
-        /// Gets the edition of PowerShell.
-        /// </summary>
-        public static string PSEdition
-        {
-            get
-            {
-                return (string)s_psVersionTable[PSVersionInfo.PSEditionName];
-            }
-        }
-
         internal static Version SerializationVersion
         {
             get
             {
                 return (Version)s_psVersionTable[SerializationVersionName];
-            }
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <remarks>
-        /// For 2.0 PowerShell, we still use "1" as the registry version key.
-        /// For >=3.0 PowerShell, we still use "1" as the registry version key for
-        /// Snapin and Custom shell lookup/discovery.
-        /// </remarks>
-        internal static string RegistryVersion1Key
-        {
-            get
-            {
-                return "1";
             }
         }
 
@@ -270,74 +236,30 @@ namespace System.Management.Automation
             return null;
         }
 
-        internal static string FeatureVersionString
-        {
-            get
-            {
-                return string.Format(System.Globalization.CultureInfo.InvariantCulture, "{0}.{1}", PSVersionInfo.PSVersion.Major, PSVersionInfo.PSVersion.Minor);
-            }
-        }
-
         internal static bool IsValidPSVersion(Version version)
         {
-            if (version.Major == s_psSemVersion.Major)
+            if (version is null)
             {
-                return version.Minor == s_psSemVersion.Minor;
+                return false;
             }
 
-            if (version.Major == s_psV6Version.Major)
+            int minor = version.Minor;
+            switch (version.Major)
             {
-                return version.Minor == s_psV6Version.Minor;
-            }
-
-            if (version.Major == s_psV5Version.Major)
-            {
-                return (version.Minor == s_psV5Version.Minor || version.Minor == s_psV51Version.Minor);
-            }
-
-            if (version.Major == s_psV4Version.Major)
-            {
-                return (version.Minor == s_psV4Version.Minor);
-            }
-            else if (version.Major == s_psV3Version.Major)
-            {
-                return version.Minor == s_psV3Version.Minor;
-            }
-            else if (version.Major == s_psV2Version.Major)
-            {
-                return version.Minor == s_psV2Version.Minor;
-            }
-            else if (version.Major == s_psV1Version.Major)
-            {
-                return version.Minor == s_psV1Version.Minor;
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    return minor == 0;
+                case 5:
+                    return minor == 0 || minor == 1;
+                case 6:
+                    return minor >= 0 && minor <= 2;
+                case 7:
+                    return minor >= 0 && minor <= s_psVersion.Minor;
             }
 
             return false;
-        }
-
-        internal static Version PSV4Version
-        {
-            get { return s_psV4Version; }
-        }
-
-        internal static Version PSV5Version
-        {
-            get { return s_psV5Version; }
-        }
-
-        internal static Version PSV51Version
-        {
-            get { return s_psV51Version; }
-        }
-
-        internal static Version PSV6Version
-        {
-            get { return s_psV6Version; }
-        }
-
-        internal static Version PSV7Version
-        {
-            get { return s_psV7Version; }
         }
 
         internal static SemanticVersion PSCurrentVersion
