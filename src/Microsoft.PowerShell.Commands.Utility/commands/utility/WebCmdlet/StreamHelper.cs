@@ -3,7 +3,6 @@
 
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net.Http;
@@ -298,6 +297,7 @@ namespace Microsoft.PowerShell.Commands
 
             Task copyTask = input.CopyToAsync(output, cancellationToken);
 
+            bool wroteProgress = false;
             ProgressRecord record = new(
                 ActivityId,
                 WebCmdletStrings.WriteRequestProgressActivity,
@@ -313,22 +313,31 @@ namespace Microsoft.PowerShell.Commands
                         Utils.DisplayHumanReadableFileSize(output.Position),
                         totalDownloadSize);
 
-                    if (contentLength != null && contentLength > 0)
+                    if (contentLength > 0)
                     {
                         record.PercentComplete = Math.Min((int)(output.Position * 100 / (long)contentLength), 100);
                     }
 
                     cmdlet.WriteProgress(record);
-                }
-
-                if (copyTask.IsCompleted)
-                {
-                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestComplete, output.Position);
-                    cmdlet.WriteProgress(record);
+                    wroteProgress = true;
                 }
             }
             catch (OperationCanceledException)
             {
+            }
+            finally
+            {
+                if (wroteProgress)
+                {
+                    // Write out the completion progress record only if we did render the progress.
+                    record.StatusDescription = StringUtil.Format(
+                        copyTask.IsCompleted
+                            ? WebCmdletStrings.WriteRequestComplete
+                            : WebCmdletStrings.WriteRequestCancelled,
+                        output.Position);
+                    record.RecordType = ProgressRecordType.Completed;
+                    cmdlet.WriteProgress(record);
+                }
             }
         }
 
@@ -492,21 +501,6 @@ namespace Microsoft.PowerShell.Commands
         internal static Stream GetResponseStream(HttpResponseMessage response)
         {
             Stream responseStream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
-            var contentEncoding = response.Content.Headers.ContentEncoding;
-
-            // HttpClient by default will automatically decompress GZip and Deflate content.
-            // We keep this decompression logic here just in case.
-            if (contentEncoding != null && contentEncoding.Count > 0)
-            {
-                if (contentEncoding.Contains("gzip"))
-                {
-                    responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
-                }
-                else if (contentEncoding.Contains("deflate"))
-                {
-                    responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
-                }
-            }
 
             return responseStream;
         }

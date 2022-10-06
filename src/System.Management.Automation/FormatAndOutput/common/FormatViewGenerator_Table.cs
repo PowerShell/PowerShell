@@ -172,7 +172,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     ci.width = colHeader.width;
                     ci.alignment = colHeader.alignment;
                     if (colHeader.label != null)
+                    {
+                        ci.HeaderMatchesProperty = so.Properties[colHeader.label.text] is not null || !ExperimentalFeature.IsEnabled(ExperimentalFeature.PSCustomTableHeaderLabelDecoration);
+
                         ci.label = this.dataBaseInfo.db.displayResourceManagerCache.GetTextTokenString(colHeader.label);
+                    }
                 }
 
                 if (ci.alignment == TextAlignment.Undefined)

@@ -454,7 +454,7 @@ namespace System.Management.Automation
                 //
                 if (isRequiresPSEditionSpecified && !isCurrentEditionListed)
                 {
-                    var specifiedEditionsString = string.Join(",", scriptInfo.RequiresPSEditions);
+                    var specifiedEditionsString = string.Join(',', scriptInfo.RequiresPSEditions);
                     var message = StringUtil.Format(DiscoveryExceptions.RequiresPSEditionNotCompatible,
                         scriptInfo.Name,
                         specifiedEditionsString,

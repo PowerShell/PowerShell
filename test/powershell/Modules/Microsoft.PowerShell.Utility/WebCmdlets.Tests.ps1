@@ -587,8 +587,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity")
     # Note: These are the supported options, but we do not have a web service to test them all.
     It "Invoke-WebRequest supports request that returns <DataEncoding>-encoded data." -TestCases @(
-        @{ DataEncoding = "gzip"}
-        @{ DataEncoding = "deflate"}
+        @{ DataEncoding = "gzip" }
+        @{ DataEncoding = "deflate" }
     ) {
         param($dataEncoding)
         $uri = Get-WebListenerUrl -Test 'Compression' -TestValue $dataEncoding
@@ -598,7 +598,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         ValidateResponse -response $result
 
         # Validate response content
-        $result.Output.Headers.'Content-Encoding'[0] | Should -BeExactly $dataEncoding
+        # The content should be de-compressed, and otherwise converting from JSON will fail.
         $jsonContent = $result.Output.Content | ConvertFrom-Json
         $jsonContent.Headers.Host | Should -BeExactly $uri.Authority
     }
@@ -2246,15 +2246,15 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity")
     # Note: These are the supported options, but we do not have a web service to test them all.
     It "Invoke-RestMethod supports request that returns <DataEncoding>-encoded data." -TestCases @(
-        @{ DataEncoding = "gzip"}
-        @{ DataEncoding = "deflate"}
+        @{ DataEncoding = "gzip" }
+        @{ DataEncoding = "deflate" }
     ) {
         param($dataEncoding)
         $uri = Get-WebListenerUrl -Test 'Compression' -TestValue $dataEncoding
-        $result = Invoke-RestMethod -Uri $uri -ResponseHeadersVariable 'headers'
+        $result = Invoke-RestMethod -Uri $uri
 
         # Validate response content
-        $headers.'Content-Encoding'[0] | Should -BeExactly $dataEncoding
+        # The content should be de-compressed. Otherwise, the above 'Invoke-RestMethod' would have thrown because converting to JSON internally would fail.
         $result.Headers.Host | Should -BeExactly $uri.Authority
     }
 

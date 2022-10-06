@@ -37,7 +37,7 @@ Describe "Format-List" -Tags "CI" {
     }
 
     It "Should produce the expected output" {
-        $expected = "${nl}testName : testValue${nl}${nl}${nl}"
+        $expected = "${nl}testName : testValue${nl}${nl}"
         $in = New-Object PSObject
         Add-Member -InputObject $in -MemberType NoteProperty -Name testName -Value testValue
 
@@ -201,7 +201,6 @@ dbda : KM
 消息 : 千
 
 
-
 "@
         $expected = $expected -replace "`r`n", "`n"
 
@@ -222,7 +221,6 @@ dbda : KM
 double  : 1234.56789
 float   : 9876.543
 decimal : 4567.123456789
-
 
 
 "@
