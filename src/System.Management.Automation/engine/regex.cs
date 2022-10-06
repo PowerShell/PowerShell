@@ -7,7 +7,6 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Management.Automation.Internal;
@@ -206,25 +205,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Escape special chars, except for those specified in <paramref name="charsNotToEscape"/>, in a string by replacing them with their escape codes.
+        /// Escape wildcard characters in a string by replacing them with their escape codes.
         /// </summary>
         /// <param name="pattern">The input string containing the text to convert.</param>
-        /// <param name="charsNotToEscape">Array of characters that not to escape.</param>
+        /// <param name="escapeOnlyBrackets">Escape all wildcard characters if false. Escape only brackets if true.</param>
         /// <returns>
-        /// A string of characters with any metacharacters, except for those specified in <paramref name="charsNotToEscape"/>, converted to their escaped form.
+        /// A string of characters with any wildcard characters converted to their escaped form.
         /// </returns>
-        internal static string Escape(string pattern, char[] charsNotToEscape)
+        internal static string Escape(string pattern, bool escapeOnlyBrackets)
         {
-            if (pattern == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
-            }
-
-            if (charsNotToEscape == null)
-            {
-                throw PSTraceSource.NewArgumentNullException(nameof(charsNotToEscape));
-            }
-
             if (pattern == string.Empty)
             {
                 return pattern;
@@ -233,33 +222,34 @@ namespace System.Management.Automation
             Span<char> temp = pattern.Length < StackAllocThreshold ? stackalloc char[pattern.Length * 2 + 1] : new char[pattern.Length * 2 + 1];
             int tempIndex = 0;
 
-            for (int i = 0; i < pattern.Length; i++)
+            if (escapeOnlyBrackets)
             {
-                char ch = pattern[i];
-
-                //
-                // if it is a wildcard char, escape it
-                //
-                if (IsWildcardChar(ch) && !charsNotToEscape.Contains(ch))
+                for (int i = 0; i < pattern.Length; i++)
                 {
-                    temp[tempIndex++] = escapeChar;
+                    char ch = pattern[i];
+                    if (ch == '[' || ch == ']')
+                    {
+                        temp[tempIndex++] = escapeChar;
+                    }
+
+                    temp[tempIndex++] = ch;
                 }
-
-                temp[tempIndex++] = ch;
-            }
-
-            string s = null;
-
-            if (tempIndex == pattern.Length)
-            {
-                s = pattern;
             }
             else
             {
-                s = new string(temp.Slice(0, tempIndex));
+                for (int i = 0; i < pattern.Length; i++)
+                {
+                    char ch = pattern[i];
+                    if (IsWildcardChar(ch))
+                    {
+                        temp[tempIndex++] = escapeChar;
+                    }
+
+                    temp[tempIndex++] = ch;
+                }
             }
 
-            return s;
+            return tempIndex == pattern.Length ? pattern : new string(temp.Slice(0, tempIndex));
         }
 
         /// <summary>
@@ -271,7 +261,7 @@ namespace System.Management.Automation
         /// </returns>
         public static string Escape(string pattern)
         {
-            return Escape(pattern, Array.Empty<char>());
+            return Escape(pattern, escapeOnlyBrackets: false);
         }
 
         /// <summary>

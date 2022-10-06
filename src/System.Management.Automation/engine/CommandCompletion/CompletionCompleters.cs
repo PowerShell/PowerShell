@@ -4401,9 +4401,9 @@ namespace System.Management.Automation
                 var relativePaths = context.GetOption("RelativePaths", @default: defaultRelative);
                 var useLiteralPath = context.GetOption("LiteralPaths", @default: false);
 
-                if (useLiteralPath && LocationGlobber.StringContainsGlobCharacters(wordToComplete))
+                if (useLiteralPath)
                 {
-                    wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.StarOrQuestion);
+                    wordToComplete = WildcardPattern.Escape(wordToComplete, escapeOnlyBrackets: true);
                 }
 
                 if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]) && executionContext != null)
@@ -6137,7 +6137,7 @@ namespace System.Management.Automation
             string memberName,
             Func<object, bool> filter,
             bool isStatic,
-            HashSet<string> excludedMembers = null, 
+            HashSet<string> excludedMembers = null,
             bool addMethodParenthesis = true)
         {
             bool extensionMethodsAdded = false;
