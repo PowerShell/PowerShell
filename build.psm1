@@ -3332,8 +3332,8 @@ function Clear-NativeDependencies
             $diasymFileName = $diasymFileNamePattern -f 'arm64'
         }
         'fxdependent.*' {
-            Write-Verbose -Message "$($script:Options.Runtime) is a fxdependent runtime, skipping diasymreader removal" -Verbose
-            $diasymFileName = $null
+            Write-Verbose -Message "$($script:Options.Runtime) is a fxdependent runtime, no cleanup needed in pwsh.deps.json" -Verbose
+            return
         }
         Default {
             throw "Unknown runtime $($script:Options.Runtime)"
