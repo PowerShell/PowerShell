@@ -85,27 +85,29 @@ namespace System.Management.Automation
             //
             // The strings can be one of the following format examples:
             //    when powershell is built from a commit:
-            //      productVersion = '7.3.0-preview.7 Commits: 29 SHA: 52c6b...' convert to GitCommitId = 'v7.3.0-preview.7-29-g52c6b...'
-            //                                                                           PSVersion   = '7.3.0-preview.7'
+            //      productVersion = '6.0.0-beta.7 Commits: 29 SHA: 52c6b...' convert to GitCommitId = 'v6.0.0-beta.7-29-g52c6b...'
+            //                                                                           PSVersion   = '6.0.0-beta.7'
             //    when powershell is built from a release tag:
-            //      productVersion = '7.3.0-preview.7 SHA: f1ec9...'             convert to GitCommitId = 'v7.3.0-preview.7'
-            //                                                                           PSVersion   = '7.3.0-preview.7'
+            //      productVersion = '6.0.0-beta.7 SHA: f1ec9...'             convert to GitCommitId = 'v6.0.0-beta.7'
+            //                                                                           PSVersion   = '6.0.0-beta.7'
             //    when powershell is built from a release tag for RTM:
-            //      productVersion = '7.3.0 SHA: f1ec9...'                    convert to GitCommitId = 'v7.3.0'
-            //                                                                           PSVersion   = '7.3.0'
-            int index = ProductVersion.IndexOf(' ');
-            ReadOnlySpan<char> mainVersion = ProductVersion.AsSpan(0, index);
+            //      productVersion = '6.0.0 SHA: f1ec9...'                    convert to GitCommitId = 'v6.0.0'
+            //                                                                           PSVersion   = '6.0.0'
+            string rawGitCommitId;
+            string mainVersion = ProductVersion.Substring(0, ProductVersion.IndexOf(' '));
 
-            string rawGitCommitId = ProductVersion.AsSpan(index).StartsWith(" Commits: ")
-                ? ProductVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g")
-                : new string(mainVersion);
+            if (ProductVersion.Contains(" Commits: "))
+            {
+                rawGitCommitId = ProductVersion.Replace(" Commits: ", "-").Replace(" SHA: ", "-g");
+            }
+            else
+            {
+                rawGitCommitId = mainVersion;
+            }
 
-            var r = FastParsePSVersion(mainVersion);
-            s_psSemVersion = r.preReleaseLabel is null
-                ? new SemanticVersion(r.major, r.minor, r.patch)
-                : new SemanticVersion(r.major, r.minor, r.patch, r.preReleaseLabel, buildLabel: null);
-
+            s_psSemVersion = new SemanticVersion(mainVersion);
             s_psVersion = (Version)s_psSemVersion;
+
             s_psVersionTable[PSVersionName] = s_psSemVersion;
             s_psVersionTable[PSEditionName] = PSEditionValue;
             s_psVersionTable[PSGitCommitIdName] = rawGitCommitId;
@@ -115,28 +117,6 @@ namespace System.Management.Automation
             s_psVersionTable[WSManStackVersionName] = GetWSManStackVersion();
             s_psVersionTable[PSPlatformName] = Environment.OSVersion.Platform.ToString();
             s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription;
-        }
-
-        private static (int major, int minor, int patch, string preReleaseLabel) FastParsePSVersion(ReadOnlySpan<char> mainVersion)
-        {
-            // We only handle the pre-defined PSVersion format here, e.g. 7.x.x or 7.x.x-preview.x
-            int dashIndex = mainVersion.IndexOf('-');
-            bool hasLabel = dashIndex != -1;
-            string preReleaseLabel = hasLabel ? new string(mainVersion.Slice(dashIndex + 1)) : null;
-
-            if (hasLabel)
-            {
-                mainVersion = mainVersion.Slice(0, dashIndex);
-            }
-
-            int majorEnd = mainVersion.IndexOf('.');
-            int minorEnd = mainVersion.LastIndexOf('.');
-
-            int major = int.Parse(mainVersion.Slice(0, majorEnd), NumberStyles.Integer, CultureInfo.InvariantCulture);
-            int minor = int.Parse(mainVersion.Slice(majorEnd + 1, minorEnd - majorEnd - 1), NumberStyles.Integer, CultureInfo.InvariantCulture);
-            int patch = int.Parse(mainVersion.Slice(minorEnd + 1), NumberStyles.Integer, CultureInfo.InvariantCulture);
-
-            return (major, minor, patch, preReleaseLabel);
         }
 
         internal static PSVersionHashTable GetPSVersionTable()
