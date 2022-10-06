@@ -214,6 +214,11 @@ namespace System.Management.Automation
         /// </returns>
         internal static string Escape(string pattern, bool escapeOnlyBrackets)
         {
+            if (pattern == null)
+            {
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
+            }
+
             if (pattern == string.Empty)
             {
                 return pattern;
