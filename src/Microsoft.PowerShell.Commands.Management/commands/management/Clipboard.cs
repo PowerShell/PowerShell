@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                tool = "xclip";
+                tool = "wl-clipboard";
                 args = "-selection clipboard -out";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
