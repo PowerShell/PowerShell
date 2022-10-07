@@ -2471,6 +2471,7 @@ namespace Microsoft.PowerShell
                 Dbg.Assert(ui != null, "Host.UI should return an instance.");
 
                 bool inBlockMode = false;
+                // Use nullable so that we don't evaluate suggestions at startup.
                 bool? previousResponseWasEmpty = null;
                 var inputBlock = new StringBuilder();
 
