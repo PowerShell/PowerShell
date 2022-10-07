@@ -14,6 +14,7 @@ using System.Management.Automation.Subsystem.Prediction;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.PowerShell.Commands;
+using static System.Net.WebRequestMethods;
 
 namespace System.Management.Automation.Subsystem.Feedback
 {
@@ -23,7 +24,7 @@ namespace System.Management.Automation.Subsystem.Feedback
     public interface IFeedbackProvider : ISubsystem
     {
         /// <summary>
-        /// Default implementation. No function is required for a predictor.
+        /// Default implementation. No function is required for a feedback provider.
         /// </summary>
         Dictionary<string, string>? ISubsystem.FunctionsToDefine => null;
 
@@ -54,9 +55,6 @@ namespace System.Management.Automation.Subsystem.Feedback
 
         public string Description => "The built-in general feedback source for command errors.";
 
-        /// <summary>
-        /// 
-        /// </summary>
         public string? GetFeedback(string commandLine, ErrorRecord lastError, CancellationToken token)
         {
             var rsToUse = Runspace.DefaultRunspace;
@@ -71,22 +69,21 @@ namespace System.Management.Automation.Subsystem.Feedback
                 var target = (string)lastError.TargetObject;
                 CommandInvocationIntrinsics invocation = context.SessionState.InvokeCommand;
 
-                // First, see if target is actually an executable file in current directory.
-                {
-                    var localTarget = Path.Combine(".", target);
-                    var command = invocation.GetCommand(
-                        localTarget,
-                        CommandTypes.Application | CommandTypes.ExternalScript);
+                // See if target is actually an executable file in current directory.
+                var localTarget = Path.Combine(".", target);
+                var command = invocation.GetCommand(
+                    localTarget,
+                    CommandTypes.Application | CommandTypes.ExternalScript);
 
-                    if (command is not null)
-                    {
-                        return StringUtil.Format(
-                            SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory,
-                            target,
-                            localTarget);
-                    }
+                if (command is not null)
+                {
+                    return StringUtil.Format(
+                        SuggestionStrings.Suggestion_CommandExistsInCurrentDirectory,
+                        target,
+                        localTarget);
                 }
 
+                // Check fuzzy matching command names.
                 if (ExperimentalFeature.IsEnabled("PSCommandNotFoundSuggestion"))
                 {
                     var results = invocation.InvokeScript(@$"
@@ -132,8 +129,28 @@ namespace System.Management.Automation.Subsystem.Feedback
 
         #region IFeedbackProvider
 
+        private static string? GetUtilityPath()
+        {
+            string cmd_not_found = "/usr/lib/command-not-found";
+            bool exist = IsFileExecutable(cmd_not_found);
+
+            if (!exist)
+            {
+                cmd_not_found = "/usr/share/command-not-found/command-not-found";
+                exist = IsFileExecutable(cmd_not_found);
+            }
+
+            return exist ? cmd_not_found : null;
+
+            static bool IsFileExecutable(string path)
+            {
+                var file = new FileInfo(path);
+                return file.Exists && file.UnixFileMode.HasFlag(UnixFileMode.OtherExecute);
+            }
+        }
+
         /// <summary>
-        /// 
+        /// Gets feedback based on the given commandline and error record.
         /// </summary>
         public string? GetFeedback(string commandLine, ErrorRecord lastError, CancellationToken token)
         {
@@ -153,9 +170,8 @@ namespace System.Management.Automation.Subsystem.Feedback
                 return null;
             }
 
-            const string cmd_not_found = "/usr/lib/command-not-found";
-            var file = new FileInfo(cmd_not_found);
-            if (file.Exists && file.UnixFileMode.HasFlag(UnixFileMode.OtherExecute))
+            string? cmd_not_found = GetUtilityPath();
+            if (cmd_not_found is not null)
             {
                 var startInfo = new ProcessStartInfo(cmd_not_found);
                 startInfo.ArgumentList.Add(target);
@@ -169,7 +185,7 @@ namespace System.Management.Automation.Subsystem.Feedback
                 var output = process?.StandardError.ReadToEnd().Trim();
 
                 // The feedback contains recommended actions only if the output has multiple lines of text.
-                if (output?.IndexOfAny(new char[] { '\r', '\n' }) > 0)
+                if (output?.AsSpan().IndexOfAny('\r', '\n') > 0)
                 {
                     _notFoundFeedback = output;
                     return output;
@@ -397,7 +413,7 @@ namespace System.Management.Automation.Subsystem.Feedback
             return resultList;
 
             // A local helper function to avoid creating an instance of the generated delegate helper class
-            // when no predictor is registered.
+            // when no feedback provider is registered.
             static Func<object?, FeedbackEntry?> GetCallBack(
                 string commandLine,
                 ErrorRecord lastError,
@@ -419,12 +435,12 @@ namespace System.Management.Automation.Subsystem.Feedback
     public class FeedbackEntry
     {
         /// <summary>
-        /// Gets the Id of the predictor.
+        /// Gets the Id of the feedback provider.
         /// </summary>
         public Guid Id { get; }
 
         /// <summary>
-        /// Gets the name of the predictor.
+        /// Gets the name of the feedback provider.
         /// </summary>
         public string Name { get; }
 
