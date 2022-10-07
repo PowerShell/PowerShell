@@ -88,12 +88,36 @@ internal sealed class FileBytePipe : BytePipe
 
     internal static FileBytePipe Create(string fileName, bool append)
     {
-        return new FileBytePipe(
-            new FileStream(
+        FileStream fileStream;
+        try
+        {
+            PathUtils.MasterStreamOpen(
                 fileName,
-                append ? FileMode.Append : FileMode.OpenOrCreate,
-                FileAccess.Write,
-                FileShare.ReadWrite | FileShare.Delete));
+                null,
+                false,
+                append,
+                true,
+                false,
+                out fileStream,
+                out _,
+                out _,
+                true);
+        }
+        catch (Exception e) when (e.Data.Contains(typeof(ErrorRecord)))
+        {
+            // The error record is attached to the exception when thrown to preserve
+            // the call stack.
+            ErrorRecord? errorRecord = e.Data[typeof(ErrorRecord)] as ErrorRecord;
+            if (errorRecord is null)
+            {
+                throw;
+            }
+
+            e.Data.Remove(typeof(ErrorRecord));
+            throw new RuntimeException(null, e, errorRecord);
+        }
+
+        return new FileBytePipe(fileStream);
     }
 
     public override Stream GetStream() => _stream;
