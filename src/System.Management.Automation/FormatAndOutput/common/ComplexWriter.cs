@@ -813,7 +813,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return string.Empty;
             }
 
-            int lineBreak = s.IndexOfAny(s_lineBreakChars);
+            int lineBreak = s.AsSpan().IndexOfAny('\n', '\r');
 
             if (lineBreak < 0)
             {
@@ -827,8 +827,5 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             return StringUtil.Padding(count) + val;
         }
-
-        private static readonly char[] s_newLineChar = new char[] { '\n' };
-        private static readonly char[] s_lineBreakChars = new char[] { '\n', '\r' };
     }
 }
