@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 
@@ -916,6 +917,16 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary> Traces the formatted output when <see cref="PSTraceSourceOptions.WriteLine"/> is enabled.</summary>
+        /// <param name="handler">The interpolated string handler.</param>
+        internal void WriteLine([InterpolatedStringHandlerArgument("")] WriteLineIfInterpolatedStringHandler handler)
+        {
+            if ((_flags & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            {
+                this.TraceSource.TraceInformation(handler.ToStringAndClear());
+            }
+        }
+
         internal void WriteLine(string format, bool arg1)
         {
             WriteLine(format, (object)arg1.ToString());
@@ -1134,6 +1145,45 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Add trace prefix to the interpolated string handler buffer.
+        /// </summary>
+        /// <param name="handler">Buffer to add the prefix to.</param>
+        /// <param name="traceOptionName">Name of <see cref="PSTraceSourceOptions"/> flag that traced.</param>
+        /// <param name="classPrefix">This is the trace class prefix. For instance, TraceError has a prefix like "ERROR: ".</param>
+        internal void AppendFormatOutputLinePrefix(
+            ref DefaultInterpolatedStringHandler handler,
+            string traceOptionName,
+            string classPrefix)
+        {
+            try
+            {
+                if (ShowHeaders)
+                {
+                    handler.AppendFormatted(traceOptionName, -11);
+                }
+
+                // Add the spaces for the indent.
+                // The Trace.IndentSize does not change at all
+                // through the running of the process so there
+                // are no thread issues here.
+                int indentSize = Trace.IndentSize;
+                int threadIndentLevel = ThreadIndentLevel;
+
+                handler.AppendLiteral(System.Management.Automation.Internal.StringUtil.Padding(indentSize * threadIndentLevel));
+
+                handler.AppendLiteral(classPrefix);
+            }
+            catch
+            {
+                // Eat all exceptions
+                //
+                // Do not assert here because exceptions can be
+                // raised while a thread is shutting down during
+                // normal operation.
+            }
+        }
+
         #endregion PSTraceSourceOptions.Error methods/helpers
 
         #region Class helper methods and properties
@@ -1208,7 +1258,7 @@ namespace System.Management.Automation
             "Verbose: ";
 
         // The default formatter for WriteLine
-        private const string writeLineFormatter =
+        internal const string writeLineFormatter =
             "";
 
         // The default formatter for TraceConstructor
@@ -1863,4 +1913,104 @@ namespace System.Management.Automation
         }
     }
     #endregion MonadTraceSource
+
+#nullable enable
+
+    [InterpolatedStringHandler]
+    internal ref struct WriteLineIfInterpolatedStringHandler
+    {
+        /// <summary>The handler we use to perform the conditional formatting in <see cref="PSTraceSource.WriteLine(WriteLineIfInterpolatedStringHandler)"/>.</summary>
+        private DefaultInterpolatedStringHandler _handler;
+
+        /// <summary>Creates an instance of the handler.</summary>
+        /// <param name="literalLength">The number of constant characters outside of interpolation expressions in the interpolated string.</param>
+        /// <param name="formattedCount">The number of interpolation expressions in the interpolated string.</param>
+        /// <param name="trace">Instance of current <see cref="PSTraceSource"/>.</param>
+        /// <param name="shouldAppend">A value indicating whether formatting should proceed.</param>
+        /// <remarks>This is intended to be called only by compiler-generated code. Arguments are not validated as they'd otherwise be for members intended to be used directly.</remarks>
+        public WriteLineIfInterpolatedStringHandler(int literalLength, int formattedCount, PSTraceSource trace, out bool shouldAppend)
+        {
+            if ((trace.Options & PSTraceSourceOptions.WriteLine) != PSTraceSourceOptions.None)
+            {
+                _handler = new DefaultInterpolatedStringHandler(literalLength, formattedCount, CultureInfo.CurrentCulture);
+
+                shouldAppend = true;
+
+                trace.AppendFormatOutputLinePrefix(
+                    ref _handler,
+                    nameof(PSTraceSourceOptions.WriteLine),
+                    PSTraceSource.writeLineFormatter);
+
+            }
+            else
+            {
+                shouldAppend = false;
+                _handler = default;
+            }
+        }
+
+        /// <summary>Extracts the built string from the handler.</summary>
+        internal string ToStringAndClear()
+        {
+            string result = _handler.ToStringAndClear();
+
+            // defensive clear
+            this = default;
+            return result;
+        }
+
+        /// <summary>Writes the specified string to the handler.</summary>
+        /// <param name="value">The string to write.</param>
+        public void AppendLiteral(string value) => _handler.AppendLiteral(value);
+
+        /// <summary>Writes the specified value to the handler.</summary>
+        /// <param name="value">The value to write.</param>
+        /// <typeparam name="T">The type of the value to write.</typeparam>
+        public void AppendFormatted<T>(T value) => _handler.AppendFormatted(value);
+
+        /// <summary>Writes the specified value to the handler.</summary>
+        /// <param name="value">The value to write.</param>
+        /// <param name="format">The format string.</param>
+        /// <typeparam name="T">The type of the value to write.</typeparam>
+        public void AppendFormatted<T>(T value, string? format) => _handler.AppendFormatted(value, format);
+
+        /// <summary>Writes the specified value to the handler.</summary>
+        /// <param name="value">The value to write.</param>
+        /// <param name="alignment">Minimum number of characters that should be written for this value. If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
+        /// <typeparam name="T">The type of the value to write.</typeparam>
+        public void AppendFormatted<T>(T value, int alignment) => _handler.AppendFormatted(value, alignment);
+
+        /// <summary>Writes the specified value to the handler.</summary>
+        /// <param name="value">The value to write.</param>
+        /// <param name="format">The format string.</param>
+        /// <param name="alignment">Minimum number of characters that should be written for this value. If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
+        /// <typeparam name="T">The type of the value to write.</typeparam>
+        public void AppendFormatted<T>(T value, int alignment, string? format) => _handler.AppendFormatted(value, alignment, format);
+
+        /// <summary>Writes the specified character span to the handler.</summary>
+        /// <param name="value">The span to write.</param>
+        public void AppendFormatted(ReadOnlySpan<char> value) => _handler.AppendFormatted(value);
+
+        /// <summary>Writes the specified string of chars to the handler.</summary>
+        /// <param name="value">The span to write.</param>
+        /// <param name="alignment">Minimum number of characters that should be written for this value. If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
+        /// <param name="format">The format string.</param>
+        public void AppendFormatted(ReadOnlySpan<char> value, int alignment = 0, string? format = null) => _handler.AppendFormatted(value, alignment, format);
+
+        /// <summary>Writes the specified value to the handler.</summary>
+        /// <param name="value">The value to write.</param>
+        public void AppendFormatted(string? value) => _handler.AppendFormatted(value);
+
+        /// <summary>Writes the specified value to the handler.</summary>
+        /// <param name="value">The value to write.</param>
+        /// <param name="alignment">Minimum number of characters that should be written for this value. If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
+        /// <param name="format">The format string.</param>
+        public void AppendFormatted(string? value, int alignment = 0, string? format = null) => _handler.AppendFormatted(value, alignment, format);
+
+        /// <summary>Writes the specified value to the handler.</summary>
+        /// <param name="value">The value to write.</param>
+        /// <param name="alignment">Minimum number of characters that should be written for this value. If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
+        /// <param name="format">The format string.</param>
+        public void AppendFormatted(object? value, int alignment = 0, string? format = null) => _handler.AppendFormatted(value, alignment, format);
+    }
 }
