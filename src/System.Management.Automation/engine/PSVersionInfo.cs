@@ -193,6 +193,17 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Gets the edition of PowerShell.
+        /// </summary>
+        public static string PSEdition
+        {
+            get
+            {
+                return PSEditionValue;
+            }
+        }
+
         internal static Version SerializationVersion
         {
             get
