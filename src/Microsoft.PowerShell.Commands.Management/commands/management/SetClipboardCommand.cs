@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [Alias("Remote")]
-        public SwitchParameter UsingOSC52 { get; set; }
+        public SwitchParameter AsOSC52 { get; set; }
 
         /// <summary>
         /// This method implements the BeginProcessing method for Set-Clipboard command.
@@ -146,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="content">The content to store into the clipboard.</param>
         private void SetClipboardContent(string content)
         {
-            if (!UsingOSC52)
+            if (!AsOSC52)
             {
                 Clipboard.SetText(content);
                 return;
