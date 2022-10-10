@@ -97,7 +97,7 @@ namespace System.Management.Automation.Subsystem.Feedback
                     _args[0] = target;
                     var result = _fuzzySb.InvokeReturnAsIs(_args);
 
-                    if (result is not null)
+                    if (result is not null && result != AutomationNull.Value)
                     {
                         return StringUtil.Format(
                             SuggestionStrings.Suggestion_CommandNotFound,
@@ -191,7 +191,7 @@ namespace System.Management.Automation.Subsystem.Feedback
                     _notFoundFeedback = stderr;
 
                     var stdout = process?.StandardOutput.ReadToEnd().Trim();
-                    return stdout == string.Empty ? stderr : $"{stderr}\n\n{stdout}";
+                    return stdout == string.Empty ? stderr : $"{stderr}\n{stdout}";
                 }
             }
 

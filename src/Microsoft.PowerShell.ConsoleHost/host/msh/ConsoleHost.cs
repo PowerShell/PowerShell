@@ -2818,16 +2818,23 @@ namespace Microsoft.PowerShell
                     ui.WriteLine();
 
                     const string Indentation = "  ";
+                    int count = 0;
+                    var output = new StringBuilder();
+
                     foreach (FeedbackEntry entry in feedbacks)
                     {
-                        var output = new StringBuilder()
-                            .Append("Suggestion [")
+                        if (count > 0)
+                        {
+                            output.AppendLine();
+                        }
+
+                        output.Append("Suggestion [")
                             .Append(PSStyle.Instance.Foreground.BrightGreen)
                             .Append(entry.Name)
                             .Append(PSStyle.Instance.Reset)
                             .AppendLine("]:");
 
-                        string[] lines = entry.Text.Split('\n');
+                        string[] lines = entry.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
                         foreach (string line in lines)
                         {
                             output.Append(Indentation)
@@ -2836,6 +2843,8 @@ namespace Microsoft.PowerShell
                         }
 
                         ui.Write(output.ToString());
+                        count++;
+                        output.Clear();
                     }
 
                     // Feedback section ends with a new line.
