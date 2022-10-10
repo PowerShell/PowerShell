@@ -191,7 +191,7 @@ namespace System.Management.Automation.Subsystem.Feedback
                     _notFoundFeedback = stderr;
 
                     var stdout = process?.StandardOutput.ReadToEnd().Trim();
-                    return stdout == string.Empty ? stderr : $"{stderr}\n{stdout}";
+                    return string.IsNullOrEmpty(stdout) ? stderr : $"{stderr}\n{stdout}";
                 }
             }
 
