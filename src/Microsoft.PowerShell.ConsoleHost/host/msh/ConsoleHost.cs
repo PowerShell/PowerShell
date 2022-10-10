@@ -2500,7 +2500,7 @@ namespace Microsoft.PowerShell
                                 // Evaluate any suggestions
                                 if (previousResponseWasEmpty == false)
                                 {
-                                    EvaluateSuggestions(ui);
+                                    EvaluateFeedbacks(ui);
                                 }
 
                                 // Then output the prompt
@@ -2803,48 +2803,43 @@ namespace Microsoft.PowerShell
                 return remoteException.ErrorRecord.CategoryInfo.Reason == nameof(IncompleteParseException);
             }
 
-            private void EvaluateSuggestions(ConsoleHostUserInterface ui)
+            private void EvaluateFeedbacks(ConsoleHostUserInterface ui)
             {
                 // Output any training suggestions
                 try
                 {
-                    List<FeedbackEntry> suggestions = FeedbackHub.GetFeedback(_parent.Runspace);
-                    if (suggestions is null || suggestions.Count == 0)
+                    List<FeedbackEntry> feedbacks = FeedbackHub.GetFeedback(_parent.Runspace);
+                    if (feedbacks is null || feedbacks.Count == 0)
                     {
                         return;
                     }
 
+                    // Feedback section starts with a new line.
                     ui.WriteLine();
-                    foreach (FeedbackEntry entry in suggestions)
+
+                    const string Indentation = "  ";
+                    foreach (FeedbackEntry entry in feedbacks)
                     {
-                        string[] lines = entry.Text.Split(
-                            new string[] { "\r\n", "\r", "\n" },
-                            StringSplitOptions.RemoveEmptyEntries);
+                        var output = new StringBuilder()
+                            .Append("Suggestion [")
+                            .Append(PSStyle.Instance.Foreground.BrightGreen)
+                            .Append(entry.Name)
+                            .Append(PSStyle.Instance.Reset)
+                            .AppendLine("]:");
 
-                        string output;
-                        if (lines.Length > 1)
+                        string[] lines = entry.Text.Split('\n');
+                        foreach (string line in lines)
                         {
-                            var sb = new StringBuilder();
-                            foreach (string line in lines)
-                            {
-                                sb.Append($"    {line}\n");
-                            }
-
-                            output = sb.ToString();
-                        }
-                        else
-                        {
-                            output = $"    {lines[0]}\n";
+                            output.Append(Indentation)
+                                .Append(line.AsSpan().TrimEnd())
+                                .AppendLine();
                         }
 
-                        output = $"Suggestion [{PSStyle.Instance.Foreground.BrightGreen}{entry.Name}{PSStyle.Instance.Reset}]:\n{output}";
-                        ui.Write(output);
+                        ui.Write(output.ToString());
                     }
-                }
-                catch (TerminateException)
-                {
-                    // A variable breakpoint may be hit by HostUtilities.GetSuggestion. The debugger throws TerminateExceptions to stop the execution
-                    // of the current statement; we do not want to treat these exceptions as errors.
+
+                    // Feedback section ends with a new line.
+                    ui.WriteLine();
                 }
                 catch (Exception e)
                 {

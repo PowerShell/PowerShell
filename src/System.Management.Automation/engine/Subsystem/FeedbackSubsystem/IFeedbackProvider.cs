@@ -4,7 +4,6 @@
 #nullable enable
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,14 +11,11 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Subsystem.Prediction;
 using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.PowerShell.Commands;
-using static System.Net.WebRequestMethods;
 
 namespace System.Management.Automation.Subsystem.Feedback
 {
     /// <summary>
-    /// 
+    /// Interface for implementing a feedback provider on command failures.
     /// </summary>
     public interface IFeedbackProvider : ISubsystem
     {
@@ -43,10 +39,13 @@ namespace System.Management.Automation.Subsystem.Feedback
     internal sealed class GeneralCommandErrorFeedback : IFeedbackProvider
     {
         private readonly Guid _guid;
+        private readonly object[] _args;
+        private ScriptBlock? _fuzzySb;
 
         internal GeneralCommandErrorFeedback()
         {
             _guid = new Guid("A3C6B07E-4A89-40C9-8BE6-2A9AAD2786A4");
+            _args = new object[1];
         }
 
         public Guid Id => _guid;
@@ -63,9 +62,10 @@ namespace System.Management.Automation.Subsystem.Feedback
                 return null;
             }
 
-            EngineIntrinsics context = rsToUse.ExecutionContext.EngineIntrinsics;
             if (lastError.FullyQualifiedErrorId == "CommandNotFoundException")
             {
+                EngineIntrinsics context = rsToUse.ExecutionContext.EngineIntrinsics;
+
                 var target = (string)lastError.TargetObject;
                 CommandInvocationIntrinsics invocation = context.SessionState.InvokeCommand;
 
@@ -86,18 +86,22 @@ namespace System.Management.Automation.Subsystem.Feedback
                 // Check fuzzy matching command names.
                 if (ExperimentalFeature.IsEnabled("PSCommandNotFoundSuggestion"))
                 {
-                    var results = invocation.InvokeScript(@$"
-                        $cmdNames = Get-Command {target} -UseFuzzyMatch | Select-Object -First 10 -Unique -ExpandProperty Name
+                    _fuzzySb ??= ScriptBlock.CreateDelayParsedScriptBlock(@$"
+                        param([string] $target)
+                        $cmdNames = Get-Command $target -UseFuzzyMatch | Select-Object -First 10 -ExpandProperty Name
                         if ($cmdNames) {{
                             [string]::Join(', ', $cmdNames)
                         }}
-                    ");
+                    ", isProductCode: true);
 
-                    if (results.Count > 0)
+                    _args[0] = target;
+                    var result = _fuzzySb.InvokeReturnAsIs(_args);
+
+                    if (result is not null)
                     {
                         return StringUtil.Format(
                             SuggestionStrings.Suggestion_CommandNotFound,
-                            results[0].ToString());
+                            result.ToString());
                     }
                 }
             }
@@ -176,19 +180,18 @@ namespace System.Management.Automation.Subsystem.Feedback
                 var startInfo = new ProcessStartInfo(cmd_not_found);
                 startInfo.ArgumentList.Add(target);
                 startInfo.RedirectStandardError = true;
-                // The standard output stream may contain suggestions, for example, you run `python`, but you have `python3` installed,
-                // then the stdout will contains 'You also have python3 installed, you can run 'python3' instead'.
-                // But we are not using this information here.
                 startInfo.RedirectStandardOutput = true;
 
                 using var process = Process.Start(startInfo);
-                var output = process?.StandardError.ReadToEnd().Trim();
+                var stderr = process?.StandardError.ReadToEnd().Trim();
 
                 // The feedback contains recommended actions only if the output has multiple lines of text.
-                if (output?.AsSpan().IndexOfAny('\r', '\n') > 0)
+                if (stderr?.IndexOf('\n') > 0)
                 {
-                    _notFoundFeedback = output;
-                    return output;
+                    _notFoundFeedback = stderr;
+
+                    var stdout = process?.StandardOutput.ReadToEnd().Trim();
+                    return stdout is null ? stderr : $"{stderr}\n\n{stdout}";
                 }
             }
 
@@ -210,22 +213,34 @@ namespace System.Management.Automation.Subsystem.Feedback
 
         public SuggestionPackage GetSuggestion(PredictionClient client, PredictionContext context, CancellationToken cancellationToken)
         {
-            // TODO:
-            // 1. text matching which is not reliable, need to re-visit.
-            // 2. possible race condition???
             if (_candidates is null && _notFoundFeedback is not null)
             {
-                string[] lines = _notFoundFeedback.Split(
-                    new char[] { '\r', '\n' },
-                    StringSplitOptions.RemoveEmptyEntries);
+                var text = _notFoundFeedback.AsSpan();
+                // Set to null to avoid potential race condition.
+                _notFoundFeedback = null;
 
-                if (lines[0].EndsWith("but can be installed with:", StringComparison.Ordinal))
+                // This loop searches for candidate results with almost no allocation.
+                while (true)
                 {
-                    _candidates = new List<string>(lines.Length);
-                    for (int i = 1; i < lines.Length; i++)
+                    // The line is a candidate if it starts with "sudo ", such as "sudo apt install python3".
+                    // 'sudo' is a command name that remains the same, so this check should work for all locales.
+                    bool isCandidate = text.StartsWith("sudo ");
+                    int index = text.IndexOf('\n');
+                    if (isCandidate)
                     {
-                        _candidates.Add(lines[i].Trim());
+                        var line = index != -1 ? text.Slice(0, index) : text;
+                        _candidates ??= new List<string>();
+                        _candidates.Add(new string(line.TrimEnd()));
                     }
+
+                    // Break out the loop if we are done with the last line.
+                    if (index == -1 || index == text.Length - 1)
+                    {
+                        break;
+                    }
+
+                    // Point to the rest of feedback text.
+                    text = text.Slice(index + 1);
                 }
             }
 
@@ -266,194 +281,5 @@ namespace System.Management.Automation.Subsystem.Feedback
         public void OnCommandLineExecuted(PredictionClient client, string commandLine, bool success) { }
 
         #endregion;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public static class FeedbackHub
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        public static List<FeedbackEntry>? GetFeedback(Runspace runspace)
-        {
-            return GetFeedback(runspace, millisecondsTimeout: 300);
-        }
-
-        /// <summary>
-        /// Collect the feedback from registered feedback providers using the specified timeout.
-        /// </summary>
-        public static List<FeedbackEntry>? GetFeedback(Runspace runspace, int millisecondsTimeout)
-        {
-            Requires.Condition(millisecondsTimeout > 0, nameof(millisecondsTimeout));
-
-            var localRunspace = runspace as LocalRunspace;
-            if (localRunspace is null)
-            {
-                return null;
-            }
-
-            // Get the last value of $?
-            bool questionMarkValue = localRunspace.ExecutionContext.QuestionMarkVariableValue;
-            if (questionMarkValue)
-            {
-                return null;
-            }
-
-            // Get the last history item
-            HistoryInfo[] histories = localRunspace.History.GetEntries(id: 0, count: 1, newest: true);
-            if (histories.Length == 0)
-            {
-                return null;
-            }
-
-            HistoryInfo lastHistory = histories[0];
-
-            // Get the last error
-            ArrayList errorList = (ArrayList)localRunspace.ExecutionContext.DollarErrorVariable;
-            if (errorList.Count == 0)
-            {
-                return null;
-            }
-
-            var lastError = errorList[0] as ErrorRecord;
-            if (lastError is null && errorList[0] is RuntimeException rtEx)
-            {
-                lastError = rtEx.ErrorRecord;
-            }
-
-            if (lastError?.InvocationInfo is null || lastError.InvocationInfo.HistoryId != lastHistory.Id)
-            {
-                return null;
-            }
-
-            var providers = SubsystemManager.GetSubsystems<IFeedbackProvider>();
-            if (providers.Count == 0)
-            {
-                return null;
-            }
-
-            int length = providers.Count;
-            var tasks = new List<Task<FeedbackEntry?>>(length);
-            var resultList = new List<FeedbackEntry>(length);
-            using var cancellationSource = new CancellationTokenSource();
-
-            IFeedbackProvider? generalFeedback = null;
-            Func<object?, FeedbackEntry?> callBack = GetCallBack(lastHistory.CommandLine, lastError, cancellationSource);
-
-            for (int i = 0; i < providers.Count; i++)
-            {
-                IFeedbackProvider provider = providers[i];
-                if (provider is GeneralCommandErrorFeedback)
-                {
-                    length--;
-                    generalFeedback = provider;
-                    continue;
-                }
-
-                tasks.Add(Task.Factory.StartNew(
-                    callBack,
-                    provider,
-                    cancellationSource.Token,
-                    TaskCreationOptions.DenyChildAttach,
-                    TaskScheduler.Default));
-            }
-
-            var waitTask = Task.WhenAny(
-               Task.WhenAll(tasks),
-               Task.Delay(millisecondsTimeout, cancellationSource.Token));
-
-            if (generalFeedback is not null)
-            {
-                bool changedDefault = false;
-                Runspace? oldDefault = Runspace.DefaultRunspace;
-
-                try
-                {
-                    if (oldDefault != localRunspace)
-                    {
-                        changedDefault = true;
-                        Runspace.DefaultRunspace = localRunspace;
-                    }
-
-                    string? text = generalFeedback.GetFeedback(lastHistory.CommandLine, lastError, cancellationSource.Token);
-                    if (text is not null)
-                    {
-                        resultList.Add(new FeedbackEntry(generalFeedback.Id, generalFeedback.Name, text));
-                    }
-                }
-                finally
-                {
-                    if (changedDefault)
-                    {
-                        Runspace.DefaultRunspace = oldDefault;
-                    }
-
-                    // Restore $?
-                    localRunspace.ExecutionContext.QuestionMarkVariableValue = questionMarkValue;
-                }
-            }
-
-            waitTask.Wait();
-            cancellationSource.Cancel();
-
-            foreach (Task<FeedbackEntry?> task in tasks)
-            {
-                if (task.IsCompletedSuccessfully)
-                {
-                    FeedbackEntry? result = task.Result;
-                    if (result != null)
-                    {
-                        resultList.Add(result);
-                    }
-                }
-            }
-
-            return resultList;
-
-            // A local helper function to avoid creating an instance of the generated delegate helper class
-            // when no feedback provider is registered.
-            static Func<object?, FeedbackEntry?> GetCallBack(
-                string commandLine,
-                ErrorRecord lastError,
-                CancellationTokenSource cancellationSource)
-            {
-                return state =>
-                {
-                    var provider = (IFeedbackProvider)state!;
-                    var text = provider.GetFeedback(commandLine, lastError, cancellationSource.Token);
-                    return text is null ? null : new FeedbackEntry(provider.Id, provider.Name, text);
-                };
-            }
-        }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public class FeedbackEntry
-    {
-        /// <summary>
-        /// Gets the Id of the feedback provider.
-        /// </summary>
-        public Guid Id { get; }
-
-        /// <summary>
-        /// Gets the name of the feedback provider.
-        /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public string Text { get; }
-
-        internal FeedbackEntry(Guid id, string name, string text)
-        {
-            Id = id;
-            Name = name;
-            Text = text;
-        }
     }
 }
