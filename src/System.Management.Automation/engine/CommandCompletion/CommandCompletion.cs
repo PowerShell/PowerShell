@@ -692,7 +692,6 @@ namespace System.Management.Automation
         private static class PSv2CompletionCompleter
         {
             private static readonly Regex s_cmdletTabRegex = new Regex(@"^[\w\*\?]+-[\w\*\?]*");
-            private static readonly char[] s_charsRequiringQuotedString = "`&@'#{}()$,;|<> \t".ToCharArray();
 
             #region "Handle Command"
 
@@ -939,7 +938,9 @@ namespace System.Management.Automation
 
             private static string AddQuoteIfNecessary(string completionText, string quote, bool completingAtStartOfLine)
             {
-                if (completionText.IndexOfAny(s_charsRequiringQuotedString) != -1)
+                const string CharsRequiringQuotedString = "`&@'#{}()$,;|<> \t";
+
+                if (completionText.AsSpan().IndexOfAny(CharsRequiringQuotedString) >= 0)
                 {
                     bool needAmpersand = quote.Length == 0 && completingAtStartOfLine;
                     string quoteInUse = quote.Length == 0 ? "'" : quote;
