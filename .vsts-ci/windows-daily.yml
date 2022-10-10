@@ -48,8 +48,6 @@ stages:
 
 - stage: TestWin
   displayName: Test for Windows
-  variables:
-  - group: CLR-CAP
   jobs:
   - job: win_test
     pool:
