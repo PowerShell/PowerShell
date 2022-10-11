@@ -104,6 +104,9 @@
 
     </PropertyGroup>
 
+    <!-- Remove existing generated files by source generators because new source code will soon be generated when the build starts -->
+    <RemoveDir Directories="gen\SourceGenerated" Condition="Exists('gen\SourceGenerated')" />
+
     <!-- Output For Debugging
       <WriteLinesToFile File="targetfile1.txt"
         Lines="ReleaseTag=$(ReleaseTag);
