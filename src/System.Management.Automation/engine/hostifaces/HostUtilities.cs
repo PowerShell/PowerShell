@@ -45,25 +45,30 @@ namespace System.Management.Automation
         private static readonly string s_checkForCommandInCurrentDirectoryScript = @"
             [System.Diagnostics.DebuggerHidden()]
             param()
+
             $foundSuggestion = $false
+
             if($lastError -and
                 ($lastError.Exception -is ""System.Management.Automation.CommandNotFoundException""))
             {
                 $escapedCommand = [System.Management.Automation.WildcardPattern]::Escape($lastError.TargetObject)
                 $foundSuggestion = @(Get-Command ($ExecutionContext.SessionState.Path.Combine(""."", $escapedCommand)) -ErrorAction Ignore).Count -gt 0
             }
+
             $foundSuggestion
         ";
 
         private static readonly string s_createCommandExistsInCurrentDirectoryScript = @"
             [System.Diagnostics.DebuggerHidden()]
             param([string] $formatString)
+
             $formatString -f $lastError.TargetObject,"".\$($lastError.TargetObject)""
         ";
 
         private static readonly string s_getFuzzyMatchedCommands = @"
             [System.Diagnostics.DebuggerHidden()]
             param([string] $formatString)
+
             $formatString -f [string]::Join(', ', (Get-Command $lastError.TargetObject -UseFuzzyMatch | Select-Object -First 10 -Unique -ExpandProperty Name))
         ";
 
@@ -280,8 +285,7 @@ namespace System.Management.Automation
 
         internal static List<string> GetSuggestion(Runspace runspace)
         {
-            if (!(runspace is LocalRunspace localRunspace))
-            { return new List<string>(); }
+            if (!(runspace is LocalRunspace localRunspace)) { return new List<string>(); }
 
             // Get the last value of $?
             bool questionMarkVariableValue = localRunspace.ExecutionContext.QuestionMarkVariableValue;
