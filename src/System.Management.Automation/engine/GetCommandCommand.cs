@@ -507,7 +507,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (UseFuzzyMatching)
             {
-                results = _commandScores.Where(x => x.Score <= FuzzyMinimumDistance).OrderBy(static x => x.Score).Select(static x => x.Command).ToList();
+                _commandScores = _commandScores
+                    .Where(x => x.Score <= FuzzyMinimumDistance)
+                    .OrderBy(static x => x.Score)
+                    .ToList();
+                results = _commandScores.Select(static x => x.Command);
             }
 
             int count = 0;
