@@ -507,17 +507,16 @@ namespace Microsoft.PowerShell.Commands
 
             if (UseFuzzyMatching)
             {
-                _commandScores = _commandScores
+                results = _commandScores
                     .Where(x => x.Score <= FuzzyMinimumDistance)
                     .OrderBy(static x => x.Score)
+                    .Select(static x => x.Command)
                     .ToList();
-                results = _commandScores.Select(static x => x.Command);
             }
 
             int count = 0;
             foreach (CommandInfo result in results)
             {
-                count += 1;
                 // Only write the command if it is visible to the requestor
                 if (SessionState.IsVisible(origin, result))
                 {
@@ -545,7 +544,7 @@ namespace Microsoft.PowerShell.Commands
                             if (UseFuzzyMatching)
                             {
                                 PSObject obj = new PSObject(result);
-                                obj.Properties.Add(new PSNoteProperty("Score", _commandScores[count].Score);
+                                obj.Properties.Add(new PSNoteProperty("Score", _commandScores[count].Score));
                                 WriteObject(obj);
                             }
                             else
@@ -555,6 +554,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+                count += 1;
             }
 
 #if LEGACYTELEMETRY
