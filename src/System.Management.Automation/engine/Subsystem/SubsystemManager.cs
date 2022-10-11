@@ -8,9 +8,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Subsystem.DSC;
-using System.Management.Automation.Subsystem.Prediction;
 using System.Management.Automation.Subsystem.Feedback;
-using System.Runtime.InteropServices;
+using System.Management.Automation.Subsystem.Prediction;
 
 namespace System.Management.Automation.Subsystem
 {

@@ -5,10 +5,9 @@ using System;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Subsystem;
 using System.Management.Automation.Subsystem.DSC;
-using System.Management.Automation.Subsystem.Prediction;
 using System.Management.Automation.Subsystem.Feedback;
+using System.Management.Automation.Subsystem.Prediction;
 using System.Threading;
-using System.Runtime.InteropServices;
 using Xunit;
 
 namespace PSTests.Sequential
