@@ -2780,8 +2780,8 @@ namespace System.Management.Automation
             {
                 throw new PSInvalidOperationException(
                     // The remote session to which you are connected does not support remote debugging.
-                    // You must connect to a remote computer that is running PowerShell {0} or greater.
-                    StringUtil.Format(RemotingErrorIdStrings.RemoteDebuggingEndpointVersionError, PSVersionInfo.PSV4Version),
+                    // You must connect to a remote computer that is running PowerShell 4.0 or greater.
+                    RemotingErrorIdStrings.RemoteDebuggingEndpointVersionError,
                     null,
                     "RemoteDebugger:RemoteDebuggingNotSupported",
                     ErrorCategory.NotImplemented,

@@ -3732,7 +3732,7 @@ namespace System.Management.Automation.Runspaces
             // implementation and should be refactored.
             PSSnapInInfo newPSSnapIn = PSSnapInReader.Read("2", name);
 
-            if (!Utils.IsPSVersionSupported(newPSSnapIn.PSVersion.ToString()))
+            if (!PSVersionInfo.IsValidPSVersion(newPSSnapIn.PSVersion))
             {
                 s_PSSnapInTracer.TraceError("MshSnapin {0} and current monad engine's versions don't match.", name);
 
