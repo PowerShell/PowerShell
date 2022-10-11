@@ -545,7 +545,7 @@ namespace Microsoft.PowerShell.Commands
                             if (UseFuzzyMatching)
                             {
                                 PSObject obj = new PSObject(result);
-                                obj.Properties.Add(new PSNoteProperty("Score", _commandScores.First(x => x.Command == result).Score));
+                                obj.Properties.Add(new PSNoteProperty("Score", _commandScores[count].Score);
                                 WriteObject(obj);
                             }
                             else
