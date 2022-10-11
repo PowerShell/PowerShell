@@ -118,7 +118,7 @@ jobs:
           **\*.exe
         useMinimatch: true
         shouldSign: $(SHOULD_SIGN)
-        displayName: Sign Linux Framework Dependent
+        displayName: Sign Linux Mariner x64
         OutputMode: NeverCopy
 
   - ${{ if eq(variables.build,'rpm') }} :
