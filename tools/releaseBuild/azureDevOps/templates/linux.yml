@@ -75,6 +75,25 @@ jobs:
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
     workingDirectory: $(PowerShellRoot)
 
+  - template: shouldSign.yml
+
+  - template: EsrpSign.yml@ComplianceRepo
+    parameters:
+      buildOutputPath: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+      signOutputPath: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
+      certificateId: "CP-230012"
+      pattern: |
+        **\*.dll
+        **\*.psd1
+        **\*.psm1
+        **\*.ps1xml
+        **\*.ps1
+        **\*.exe
+      useMinimatch: true
+      shouldSign: $(SHOULD_SIGN)
+      displayName: Sign Linux build
+      OutputMode: NeverCopy
+
   - template: Sbom.yml@ComplianceRepo
     parameters:
       BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuild'
@@ -83,6 +102,24 @@ jobs:
       PackageName: PowerShell Linux
       PackageVersion: $(Version)
       sourceScanPath: '$(PowerShellRoot)/tools'
+
+  - ${{ if eq(variables.build,'rpm') }} :
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+        buildOutputPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+        signOutputPath: '$(System.ArtifactsDirectory)/pwshMarinerBuildAmd64'
+        certificateId: "CP-230012"
+        pattern: |
+          **\*.dll
+          **\*.psd1
+          **\*.psm1
+          **\*.ps1xml
+          **\*.ps1
+          **\*.exe
+        useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
+        displayName: Sign Linux Framework Dependent
+        OutputMode: NeverCopy
 
   - ${{ if eq(variables.build,'rpm') }} :
     - template: Sbom.yml@ComplianceRepo
@@ -95,6 +132,24 @@ jobs:
         sourceScanPath: '$(PowerShellRoot)/tools'
 
   - ${{ if eq(variables.build,'deb') }} :
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+        buildOutputPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+        signOutputPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
+        certificateId: "CP-230012"
+        pattern: |
+          **\*.dll
+          **\*.psd1
+          **\*.psm1
+          **\*.ps1xml
+          **\*.ps1
+          **\*.exe
+        useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
+        displayName: Sign Linux Minimum Size
+        OutputMode: NeverCopy
+
+  - ${{ if eq(variables.build,'deb') }} :
     - template: Sbom.yml@ComplianceRepo
       parameters:
         BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildMinSize'
@@ -105,6 +160,24 @@ jobs:
         sourceScanPath: '$(PowerShellRoot)/tools'
 
   - ${{ if eq(variables.build,'deb') }} :
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+        buildOutputPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+        signOutputPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
+        certificateId: "CP-230012"
+        pattern: |
+          **\*.dll
+          **\*.psd1
+          **\*.psm1
+          **\*.ps1xml
+          **\*.ps1
+          **\*.exe
+        useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
+        displayName: Sign Linux Arm32
+        OutputMode: NeverCopy
+
+  - ${{ if eq(variables.build,'deb') }} :
     - template: Sbom.yml@ComplianceRepo
       parameters:
         BuildDropPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm32'
@@ -113,6 +186,24 @@ jobs:
         PackageName: PowerShell Linux Arm32
         PackageVersion: $(Version)
         sourceScanPath: '$(PowerShellRoot)/tools'
+
+  - ${{ if eq(variables.build,'deb') }} :
+    - template: EsrpSign.yml@ComplianceRepo
+      parameters:
+        buildOutputPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+        signOutputPath: '$(System.ArtifactsDirectory)/pwshLinuxBuildArm64'
+        certificateId: "CP-230012"
+        pattern: |
+          **\*.dll
+          **\*.psd1
+          **\*.psm1
+          **\*.ps1xml
+          **\*.ps1
+          **\*.exe
+        useMinimatch: true
+        shouldSign: $(SHOULD_SIGN)
+        displayName: Sign Linux Arm64
+        OutputMode: NeverCopy
 
   - ${{ if eq(variables.build,'deb') }} :
     - template: Sbom.yml@ComplianceRepo
