@@ -128,12 +128,6 @@ namespace PSTests.Sequential
         [Fact]
         public static void RegisterSubsystem()
         {
-            while (!System.Diagnostics.Debugger.IsAttached)
-            {
-                System.Threading.Thread.Sleep(200);
-            }
-            System.Diagnostics.Debugger.Break();
-
             // Unregister existing predictors, to make it easier to test.
             var existingPredictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
             foreach (ICommandPredictor p in existingPredictors)
