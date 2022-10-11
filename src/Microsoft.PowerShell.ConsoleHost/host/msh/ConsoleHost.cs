@@ -2465,14 +2465,15 @@ namespace Microsoft.PowerShell
             /// </summary>
             internal void Run(bool inputLoopIsNested)
             {
-                System.Management.Automation.Host.PSHostUserInterface c = _parent.UI;
+                PSHostUserInterface c = _parent.UI;
                 ConsoleHostUserInterface ui = c as ConsoleHostUserInterface;
 
                 Dbg.Assert(ui != null, "Host.UI should return an instance.");
 
                 bool inBlockMode = false;
-                bool previousResponseWasEmpty = false;
-                StringBuilder inputBlock = new StringBuilder();
+                // Use nullable so that we don't evaluate suggestions at startup.
+                bool? previousResponseWasEmpty = null;
+                var inputBlock = new StringBuilder();
 
                 while (!_parent.ShouldEndSession && !_shouldExit)
                 {
@@ -2499,7 +2500,7 @@ namespace Microsoft.PowerShell
                                     ui.WriteLine();
 
                                 // Evaluate any suggestions
-                                if (!previousResponseWasEmpty)
+                                if (previousResponseWasEmpty == false)
                                 {
                                     EvaluateSuggestions(ui);
                                 }

@@ -43,14 +43,14 @@ namespace System.Management.Automation.Remoting
             }
 
             // Commands added in v5
-            if (PSVersion.Major >= PSVersionInfo.PSV5Version.Major)
+            if (PSVersion.Major >= 5)
             {
                 _supportedCommands.Add(RemoteDebuggingCommands.SetDebuggerStepMode);
                 _supportedCommands.Add(RemoteDebuggingCommands.SetUnhandledBreakpointMode);
             }
 
             // Commands added in v7
-            if (PSVersion.Major >= PSVersionInfo.PSV7Version.Major)
+            if (PSVersion.Major >= 7)
             {
                 _supportedCommands.Add(RemoteDebuggingCommands.GetBreakpoint);
                 _supportedCommands.Add(RemoteDebuggingCommands.SetBreakpoint);
