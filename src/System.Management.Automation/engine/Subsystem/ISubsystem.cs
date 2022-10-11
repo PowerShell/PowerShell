@@ -13,7 +13,7 @@ namespace System.Management.Automation.Subsystem
     /// Allow composite enum values to enable one subsystem implementation to serve as multiple subystems.
     /// </summary>
     [Flags]
-    public enum SubsystemKind
+    public enum SubsystemKind : uint
     {
         /// <summary>
         /// Component that provides predictive suggestions to commandline input.

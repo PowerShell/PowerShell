@@ -158,6 +158,8 @@ namespace System.Management.Automation.Subsystem
         /// <returns>The <see cref="SubsystemInfo"/> object that represents the concrete subsystem.</returns>
         public static SubsystemInfo GetSubsystemInfo(SubsystemKind kind)
         {
+            Requires.OneSpecificSubsystemKind(kind);
+
             if (s_subSystemKindMap.TryGetValue(kind, out SubsystemInfo? subsystemInfo))
             {
                 return subsystemInfo;
@@ -196,6 +198,7 @@ namespace System.Management.Automation.Subsystem
         public static void RegisterSubsystem(SubsystemKind kind, ISubsystem proxy)
         {
             Requires.NotNull(proxy, nameof(proxy));
+            Requires.OneSpecificSubsystemKind(kind);
 
             if (!proxy.Kind.HasFlag(kind))
             {
@@ -282,6 +285,8 @@ namespace System.Management.Automation.Subsystem
         /// <param name="id">The Id of the implementation to be unregistered.</param>
         public static void UnregisterSubsystem(SubsystemKind kind, Guid id)
         {
+            Requires.OneSpecificSubsystemKind(kind);
+
             UnregisterSubsystem(GetSubsystemInfo(kind), id);
         }
 

@@ -1788,5 +1788,19 @@ namespace System.Management.Automation.Internal
                 throw new ArgumentException(paramName);
             }
         }
+
+        internal static void OneSpecificSubsystemKind(Subsystem.SubsystemKind kind)
+        {
+            uint value = (uint)kind;
+            if (value == 0 || (value & (value - 1)) != 0)
+            {
+                // The value is either invalid or a composite value because it's not power of 2.
+                throw new ArgumentException(
+                    StringUtil.Format(
+                        SubsystemStrings.RequireOneSpecificSubsystemKind,
+                        kind.ToString()),
+                    nameof(kind));
+            }
+        }
     }
 }
