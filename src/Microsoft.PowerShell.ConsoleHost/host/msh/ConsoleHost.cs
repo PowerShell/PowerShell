@@ -2500,7 +2500,14 @@ namespace Microsoft.PowerShell
                                 // Evaluate any suggestions
                                 if (previousResponseWasEmpty == false)
                                 {
-                                    EvaluateFeedbacks(ui);
+                                    if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSFeedbackProvider))
+                                    {
+                                        EvaluateFeedbacks(ui);
+                                    }
+                                    else
+                                    {
+                                        EvaluateSuggestions(ui);
+                                    }
                                 }
 
                                 // Then output the prompt
@@ -2849,6 +2856,44 @@ namespace Microsoft.PowerShell
 
                     // Feedback section ends with a new line.
                     ui.WriteLine();
+                }
+                catch (Exception e)
+                {
+                    // Catch-all OK. This is a third-party call-out.
+                    ui.WriteErrorLine(e.Message);
+
+                    LocalRunspace localRunspace = (LocalRunspace)_parent.Runspace;
+                    localRunspace.GetExecutionContext.AppendDollarError(e);
+                }
+            }
+
+            private void EvaluateSuggestions(ConsoleHostUserInterface ui)
+            {
+                // Output any training suggestions
+                try
+                {
+                    List<string> suggestions = HostUtilities.GetSuggestion(_parent.Runspace);
+
+                    if (suggestions.Count > 0)
+                    {
+                        ui.WriteLine();
+                    }
+
+                    bool first = true;
+                    foreach (string suggestion in suggestions)
+                    {
+                        if (!first)
+                            ui.WriteLine();
+
+                        ui.WriteLine(suggestion);
+
+                        first = false;
+                    }
+                }
+                catch (TerminateException)
+                {
+                    // A variable breakpoint may be hit by HostUtilities.GetSuggestion. The debugger throws TerminateExceptions to stop the execution
+                    // of the current statement; we do not want to treat these exceptions as errors.
                 }
                 catch (Exception e)
                 {

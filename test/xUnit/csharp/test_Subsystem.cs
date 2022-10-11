@@ -60,14 +60,20 @@ namespace PSTests.Sequential
             SubsystemInfo predictorInfo = SubsystemManager.GetSubsystemInfo(typeof(ICommandPredictor));
             SubsystemInfo predictorInfo2 = SubsystemManager.GetSubsystemInfo(SubsystemKind.CommandPredictor);
             Assert.Same(predictorInfo2, predictorInfo);
+
             VerifyCommandPredictorMetadata(predictorInfo);
+            Assert.False(predictorInfo.IsRegistered);
+            Assert.Empty(predictorInfo.Implementations);
             #endregion
 
             #region Feedback
             SubsystemInfo feedbackProviderInfo = SubsystemManager.GetSubsystemInfo(typeof(IFeedbackProvider));
             SubsystemInfo feedback2 = SubsystemManager.GetSubsystemInfo(SubsystemKind.FeedbackProvider);
             Assert.Same(feedback2, feedbackProviderInfo);
+
             VerifyFeedbackProviderMetadata(feedbackProviderInfo);
+            Assert.True(feedbackProviderInfo.IsRegistered);
+            Assert.Single(feedbackProviderInfo.Implementations);
             #endregion
 
             #region DSC
@@ -86,38 +92,13 @@ namespace PSTests.Sequential
             Assert.Same(ssInfos[1], crossPlatformDscInfo);
             Assert.Same(ssInfos[2], feedbackProviderInfo);
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                Assert.True(predictorInfo.IsRegistered);
-                Assert.Single(predictorInfo.Implementations);
+            ICommandPredictor predictorImpl = SubsystemManager.GetSubsystem<ICommandPredictor>();
+            Assert.Null(predictorImpl);
+            ReadOnlyCollection<ICommandPredictor> predictorImpls = SubsystemManager.GetSubsystems<ICommandPredictor>();
+            Assert.Empty(predictorImpls);
 
-                Assert.True(feedbackProviderInfo.IsRegistered);
-                Assert.Equal(2, feedbackProviderInfo.Implementations.Count);
-
-                ICommandPredictor predictorImpl = SubsystemManager.GetSubsystem<ICommandPredictor>();
-                Assert.NotNull(predictorImpl);
-                ReadOnlyCollection<ICommandPredictor> predictorImpls = SubsystemManager.GetSubsystems<ICommandPredictor>();
-                Assert.Single(predictorImpls);
-
-                ReadOnlyCollection<IFeedbackProvider> feedbackImpls = SubsystemManager.GetSubsystems<IFeedbackProvider>();
-                Assert.Equal(2, feedbackImpls.Count);
-            }
-            else
-            {
-                Assert.False(predictorInfo.IsRegistered);
-                Assert.Empty(predictorInfo.Implementations);
-
-                Assert.True(feedbackProviderInfo.IsRegistered);
-                Assert.Single(feedbackProviderInfo.Implementations);
-
-                ICommandPredictor predictorImpl = SubsystemManager.GetSubsystem<ICommandPredictor>();
-                Assert.Null(predictorImpl);
-                ReadOnlyCollection<ICommandPredictor> predictorImpls = SubsystemManager.GetSubsystems<ICommandPredictor>();
-                Assert.Empty(predictorImpls);
-
-                ReadOnlyCollection<IFeedbackProvider> feedbackImpls = SubsystemManager.GetSubsystems<IFeedbackProvider>();
-                Assert.Single(feedbackImpls);
-            }
+            ReadOnlyCollection<IFeedbackProvider> feedbackImpls = SubsystemManager.GetSubsystems<IFeedbackProvider>();
+            Assert.Single(feedbackImpls);
 
             ICrossPlatformDsc crossPlatformDscImpl = SubsystemManager.GetSubsystem<ICrossPlatformDsc>();
             Assert.Null(crossPlatformDscImpl);
@@ -128,13 +109,6 @@ namespace PSTests.Sequential
         [Fact]
         public static void RegisterSubsystem()
         {
-            // Unregister existing predictors, to make it easier to test.
-            var existingPredictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
-            foreach (ICommandPredictor p in existingPredictors)
-            {
-                SubsystemManager.UnregisterSubsystem(SubsystemKind.CommandPredictor, p.Id);
-            }
-
             try
             {
                 Assert.Throws<ArgumentNullException>(
@@ -219,79 +193,55 @@ namespace PSTests.Sequential
             {
                 SubsystemManager.UnregisterSubsystem<ICommandPredictor>(predictor1.Id);
                 SubsystemManager.UnregisterSubsystem(SubsystemKind.CommandPredictor, predictor2.Id);
-
-                // Re-register the pre-existing predictors.
-                foreach (ICommandPredictor p in existingPredictors)
-                {
-                    SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, p);
-                }
             }
         }
 
         [Fact]
         public static void UnregisterSubsystem()
         {
-            // Unregister existing predictors, to make it easier to test.
-            var existingPredictors = SubsystemManager.GetSubsystems<ICommandPredictor>();
-            foreach (ICommandPredictor p in existingPredictors)
-            {
-                SubsystemManager.UnregisterSubsystem(SubsystemKind.CommandPredictor, p.Id);
-            }
+            // Exception expected when no implementation is registered
+            Assert.Throws<InvalidOperationException>(() => SubsystemManager.UnregisterSubsystem<ICommandPredictor>(predictor1.Id));
 
-            try
-            {
-                // Exception expected when no implementation is registered
-                Assert.Throws<InvalidOperationException>(() => SubsystemManager.UnregisterSubsystem<ICommandPredictor>(predictor1.Id));
+            SubsystemManager.RegisterSubsystem<ICommandPredictor, MyPredictor>(predictor1);
+            SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, predictor2);
 
-                SubsystemManager.RegisterSubsystem<ICommandPredictor, MyPredictor>(predictor1);
-                SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, predictor2);
+            // Exception is expected when specified id cannot be found
+            Assert.Throws<InvalidOperationException>(() => SubsystemManager.UnregisterSubsystem<ICommandPredictor>(Guid.NewGuid()));
 
-                // Exception is expected when specified id cannot be found
-                Assert.Throws<InvalidOperationException>(() => SubsystemManager.UnregisterSubsystem<ICommandPredictor>(Guid.NewGuid()));
+            // Unregister 'predictor1'
+            SubsystemManager.UnregisterSubsystem<ICommandPredictor>(predictor1.Id);
 
-                // Unregister 'predictor1'
-                SubsystemManager.UnregisterSubsystem<ICommandPredictor>(predictor1.Id);
+            SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(SubsystemKind.CommandPredictor);
+            VerifyCommandPredictorMetadata(ssInfo);
+            Assert.True(ssInfo.IsRegistered);
+            Assert.Single(ssInfo.Implementations);
 
-                SubsystemInfo ssInfo = SubsystemManager.GetSubsystemInfo(SubsystemKind.CommandPredictor);
-                VerifyCommandPredictorMetadata(ssInfo);
-                Assert.True(ssInfo.IsRegistered);
-                Assert.Single(ssInfo.Implementations);
+            var implInfo = ssInfo.Implementations[0];
+            Assert.Equal(predictor2.Id, implInfo.Id);
+            Assert.Equal(predictor2.Name, implInfo.Name);
+            Assert.Equal(predictor2.Description, implInfo.Description);
+            Assert.Equal(SubsystemKind.CommandPredictor, implInfo.Kind);
+            Assert.Same(typeof(MyPredictor), implInfo.ImplementationType);
 
-                var implInfo = ssInfo.Implementations[0];
-                Assert.Equal(predictor2.Id, implInfo.Id);
-                Assert.Equal(predictor2.Name, implInfo.Name);
-                Assert.Equal(predictor2.Description, implInfo.Description);
-                Assert.Equal(SubsystemKind.CommandPredictor, implInfo.Kind);
-                Assert.Same(typeof(MyPredictor), implInfo.ImplementationType);
+            ICommandPredictor impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
+            Assert.Same(impl, predictor2);
 
-                ICommandPredictor impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
-                Assert.Same(impl, predictor2);
+            ReadOnlyCollection<ICommandPredictor> impls = SubsystemManager.GetSubsystems<ICommandPredictor>();
+            Assert.Single(impls);
+            Assert.Same(predictor2, impls[0]);
 
-                ReadOnlyCollection<ICommandPredictor> impls = SubsystemManager.GetSubsystems<ICommandPredictor>();
-                Assert.Single(impls);
-                Assert.Same(predictor2, impls[0]);
+            // Unregister 'predictor2'
+            SubsystemManager.UnregisterSubsystem(SubsystemKind.CommandPredictor, predictor2.Id);
 
-                // Unregister 'predictor2'
-                SubsystemManager.UnregisterSubsystem(SubsystemKind.CommandPredictor, predictor2.Id);
+            VerifyCommandPredictorMetadata(ssInfo);
+            Assert.False(ssInfo.IsRegistered);
+            Assert.Empty(ssInfo.Implementations);
 
-                VerifyCommandPredictorMetadata(ssInfo);
-                Assert.False(ssInfo.IsRegistered);
-                Assert.Empty(ssInfo.Implementations);
+            impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
+            Assert.Null(impl);
 
-                impl = SubsystemManager.GetSubsystem<ICommandPredictor>();
-                Assert.Null(impl);
-
-                impls = SubsystemManager.GetSubsystems<ICommandPredictor>();
-                Assert.Empty(impls);
-            }
-            finally
-            {
-                // Re-register the pre-existing predictors.
-                foreach (ICommandPredictor p in existingPredictors)
-                {
-                    SubsystemManager.RegisterSubsystem(SubsystemKind.CommandPredictor, p);
-                }
-            }
+            impls = SubsystemManager.GetSubsystems<ICommandPredictor>();
+            Assert.Empty(impls);
         }
     }
 }

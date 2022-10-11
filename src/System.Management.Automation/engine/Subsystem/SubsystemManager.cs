@@ -57,12 +57,9 @@ namespace System.Management.Automation.Subsystem
             s_subSystemKindMap = new ReadOnlyDictionary<SubsystemKind, SubsystemInfo>(subSystemKindMap);
 
             // Register built-in suggestion providers.
-            RegisterSubsystem(SubsystemKind.FeedbackProvider, new GeneralCommandErrorFeedback());
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSFeedbackProvider))
             {
-                var instance = new UnixCommandNotFound();
-                RegisterSubsystem(SubsystemKind.FeedbackProvider, instance);
-                RegisterSubsystem(SubsystemKind.CommandPredictor, instance);
+                RegisterSubsystem(SubsystemKind.FeedbackProvider, new GeneralCommandErrorFeedback());
             }
         }
 
