@@ -339,6 +339,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "AllCommandSet")]
         public SwitchParameter UseFuzzyMatching { get; set; }
 
+        /// <summary>
+        /// Gets or sets the minimum fuzzy matching distance.
+        /// </summary>
+        [Parameter(ParameterSetName = "AllCommandSet")]
+        public uint FuzzyMinimumDistance { get; set; } = 5;
+
         private readonly List<CommandScore> _commandScores = new List<CommandScore>();
 
         /// <summary>
@@ -501,7 +507,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (UseFuzzyMatching)
             {
-                results = _commandScores.OrderBy(static x => x.Score).Select(static x => x.Command).ToList();
+                results = _commandScores.Where(x => x.Score <= FuzzyMinimumDistance).OrderBy(static x => x.Score).Select(static x => x.Command).ToList();
             }
 
             int count = 0;
@@ -532,8 +538,16 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            // Write output as normal command info object.
-                            WriteObject(result);
+                            if (UseFuzzyMatching)
+                            {
+                                PSObject obj = new PSObject(result);
+                                obj.Properties.Add(new PSNoteProperty("Score", _commandScores.First(x => x.Command == result).Score));
+                                WriteObject(obj);
+                            }
+                            else
+                            {
+                                WriteObject(result);
+                            }
                         }
                     }
                 }
