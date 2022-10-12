@@ -39,13 +39,6 @@ namespace Microsoft.PowerShell.Commands
             return GetEncodingOrDefault((string)null);
         }
 
-        internal static Encoding GetEncoding(HttpResponseMessage response)
-        {
-            // ContentType may not exist in response header.
-            string charSet = response.Content.Headers.ContentType?.CharSet;
-            return GetEncodingOrDefault(charSet);
-        }
-
         internal static Encoding GetEncodingOrDefault(string characterSet)
         {
             // get the name of the codepage to use for response content
