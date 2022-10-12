@@ -56,10 +56,7 @@ namespace System.Management.Automation.Subsystem
             s_subSystemKindMap = new ReadOnlyDictionary<SubsystemKind, SubsystemInfo>(subSystemKindMap);
 
             // Register built-in suggestion providers.
-            if (ExperimentalFeature.IsEnabled(ExperimentalFeature.PSFeedbackProvider))
-            {
-                RegisterSubsystem(SubsystemKind.FeedbackProvider, new GeneralCommandErrorFeedback());
-            }
+            RegisterSubsystem(SubsystemKind.FeedbackProvider, new GeneralCommandErrorFeedback());
         }
 
         #region internal - Retrieve subsystem proxy object
