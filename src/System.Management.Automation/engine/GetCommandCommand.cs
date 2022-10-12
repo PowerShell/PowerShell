@@ -345,7 +345,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "AllCommandSet")]
         public uint FuzzyMinimumDistance { get; set; } = 5;
 
-        private readonly List<CommandScore> _commandScores = new List<CommandScore>();
+        private List<CommandScore> _commandScores = new List<CommandScore>();
 
         /// <summary>
         /// Gets or sets the parameter that determines if return cmdlets based on abbreviation expansion.
@@ -507,11 +507,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (UseFuzzyMatching)
             {
-                results = _commandScores
+                _commandScores = _commandScores
                     .Where(x => x.Score <= FuzzyMinimumDistance)
                     .OrderBy(static x => x.Score)
-                    .Select(static x => x.Command)
                     .ToList();
+                results = _commandScores.Select(static x => x.Command);
             }
 
             int count = 0;
