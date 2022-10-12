@@ -554,6 +554,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
+
                 count += 1;
             }
 
