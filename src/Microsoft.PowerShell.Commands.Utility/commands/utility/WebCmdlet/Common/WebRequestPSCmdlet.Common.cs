@@ -1701,7 +1701,7 @@ namespace Microsoft.PowerShell.Commands
             if (content == null)
                 return 0;
 
-            Encoding encoding = Encoding.UTF8;
+            Encoding encoding = null;
             if (ContentType != null)
             {
                 // If Content-Type contains the encoding format (as CharSet), use this encoding format
