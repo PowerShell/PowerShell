@@ -15,8 +15,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Constants
 
-        // default codepage encoding for web content.  See RFC 2616.
-        private const string _defaultCodePage = "ISO-8859-1";
+        private const string _defaultCodePage = "utf-8";
 
         #endregion Constants
 
