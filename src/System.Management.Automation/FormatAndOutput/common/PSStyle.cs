@@ -4,6 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Management.Automation.Internal;
+using System.Security.Policy;
 
 namespace System.Management.Automation
 {
@@ -431,6 +432,28 @@ namespace System.Management.Automation
             }
 
             private string _debug = "\x1b[33;1m";
+
+            /// <summary>
+            /// Gets or sets the style for rendering feedback provider names.
+            /// </summary>
+            public string FeedbackProvider
+            {
+                get => _feedbackProvider;
+                set => _feedbackProvider = ValidateNoContent(value);
+            }
+
+            private string _feedbackProvider = "\x1b[33m";
+
+            /// <summary>
+            /// Gets or sets the style for rendering feedback text.
+            /// </summary>
+            public string FeedbackText
+            {
+                get => _feedbackText;
+                set => _feedbackText = ValidateNoContent(value);
+            }
+
+            private string _feedbackText = "\x1b[96m";
         }
 
         /// <summary>

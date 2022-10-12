@@ -2825,6 +2825,10 @@ namespace Microsoft.PowerShell
                     ui.WriteLine();
 
                     const string Indentation = "  ";
+                    string nameStyle = PSStyle.Instance.Formatting.FeedbackProvider;
+                    string textStyle = PSStyle.Instance.Formatting.FeedbackText;
+                    string ansiReset = PSStyle.Instance.Reset;
+
                     int count = 0;
                     var output = new StringBuilder();
 
@@ -2836,10 +2840,11 @@ namespace Microsoft.PowerShell
                         }
 
                         output.Append("Suggestion [")
-                            .Append(PSStyle.Instance.Foreground.BrightGreen)
+                            .Append(nameStyle)
                             .Append(entry.Name)
-                            .Append(PSStyle.Instance.Reset)
-                            .AppendLine("]:");
+                            .Append(ansiReset)
+                            .AppendLine("]:")
+                            .Append(textStyle);
 
                         string[] lines = entry.Text.Split('\n', StringSplitOptions.RemoveEmptyEntries);
                         foreach (string line in lines)
@@ -2849,7 +2854,9 @@ namespace Microsoft.PowerShell
                                 .AppendLine();
                         }
 
+                        output.Append(ansiReset);
                         ui.Write(output.ToString());
+
                         count++;
                         output.Clear();
                     }
