@@ -400,7 +400,7 @@ namespace Microsoft.PowerShell.Commands
                     RestReturnType returnType = CheckReturnType(response);
 
                     // Try to get the response encoding from the ContentType header.
-                    Encoding encoding = Encoding.UTF8;
+                    Encoding encoding = null;
                     string charSet = response.Content.Headers.ContentType?.CharSet;
                     if (!string.IsNullOrEmpty(charSet))
                     {
