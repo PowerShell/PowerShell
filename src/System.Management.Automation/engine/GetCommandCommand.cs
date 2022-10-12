@@ -339,7 +339,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "AllCommandSet")]
         public SwitchParameter UseFuzzyMatching { get; set; }
 
-        private readonly List<CommandScore> _commandScores = new List<CommandScore>();
+        /// <summary>
+        /// Gets or sets the minimum fuzzy matching distance.
+        /// </summary>
+        [Parameter(ParameterSetName = "AllCommandSet")]
+        public uint FuzzyMinimumDistance { get; set; } = 5;
+
+        private List<CommandScore> _commandScores = new List<CommandScore>();
 
         /// <summary>
         /// Gets or sets the parameter that determines if return cmdlets based on abbreviation expansion.
@@ -501,13 +507,16 @@ namespace Microsoft.PowerShell.Commands
 
             if (UseFuzzyMatching)
             {
-                results = _commandScores.OrderBy(static x => x.Score).Select(static x => x.Command).ToList();
+                _commandScores = _commandScores
+                    .Where(x => x.Score <= FuzzyMinimumDistance)
+                    .OrderBy(static x => x.Score)
+                    .ToList();
+                results = _commandScores.Select(static x => x.Command);
             }
 
             int count = 0;
             foreach (CommandInfo result in results)
             {
-                count += 1;
                 // Only write the command if it is visible to the requestor
                 if (SessionState.IsVisible(origin, result))
                 {
@@ -532,11 +541,21 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            // Write output as normal command info object.
-                            WriteObject(result);
+                            if (UseFuzzyMatching)
+                            {
+                                PSObject obj = new PSObject(result);
+                                obj.Properties.Add(new PSNoteProperty("Score", _commandScores[count].Score));
+                                WriteObject(obj);
+                            }
+                            else
+                            {
+                                WriteObject(result);
+                            }
                         }
                     }
                 }
+
+                count += 1;
             }
 
 #if LEGACYTELEMETRY
