@@ -5,14 +5,12 @@ trigger:
   branches:
     include:
     - master
-    - release*
     - feature*
 
 pr:
   branches:
     include:
     - master
-    - release*
     - feature*
 
 resources:
