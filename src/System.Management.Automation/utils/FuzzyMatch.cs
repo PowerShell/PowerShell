@@ -8,31 +8,31 @@ namespace System.Management.Automation
 {
     internal class FuzzyMatcher
     {
-        private readonly uint _minimumDistance;
-        internal readonly Dictionary<string, int> ScoreMap;
+        internal readonly uint MinimumDistance;
 
         internal FuzzyMatcher(uint minimumDistance = 5)
         {
-            _minimumDistance = minimumDistance;
-            ScoreMap = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+            MinimumDistance = minimumDistance;
         }
 
         /// <summary>
         /// Determine if the two strings are considered similar.
         /// </summary>
+        internal bool IsFuzzyMatch(string candidate, string pattern)
+        {
+            return IsFuzzyMatch(candidate, pattern, out _);
+        }
+
+        /// <summary>
+        /// Determine if the two strings are considered similar, and return the similarity score.
+        /// </summary>
         /// <param name="candidate">The candidate string to be compared.</param>
         /// <param name="pattern">The pattern string to be compared with.</param>
         /// <returns>True if the two strings have a distance <= MinimumDistance.</returns>
-        internal bool IsFuzzyMatch(string candidate, string pattern)
+        internal bool IsFuzzyMatch(string candidate, string pattern, out int score)
         {
-            int score = GetDamerauLevenshteinDistance(candidate, pattern);
-            if (score <= _minimumDistance)
-            {
-                // There could be duplicate command names during the search.
-                return ScoreMap.TryAdd(candidate, score);
-            }
-
-            return false;
+            score = GetDamerauLevenshteinDistance(candidate, pattern);
+            return score <= MinimumDistance;
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace System.Management.Automation
         /// <param name="string1">The first string to compare.</param>
         /// <param name="string2">The second string to compare.</param>
         /// <returns>The distance value where the lower the value the shorter the distance between the two strings representing a closer match.</returns>
-        private static int GetDamerauLevenshteinDistance(string string1, string string2)
+        internal static int GetDamerauLevenshteinDistance(string string1, string string2)
         {
             string1 = string1.ToUpper(CultureInfo.CurrentCulture);
             string2 = string2.ToUpper(CultureInfo.CurrentCulture);

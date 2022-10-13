@@ -380,6 +380,27 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
+        /// Gets a list of fuzzy matching commands and their scores.
+        /// </summary>
+        /// <param name="pattern">Command pattern.</param>
+        /// <param name="context">Execution context.</param>
+        /// <param name="commandOrigin">Command origin.</param>
+        /// <param name="fuzzyMatcher">Fuzzy matcher to use.</param>
+        /// <param name="rediscoverImportedModules">If true, rediscovers imported modules.</param>
+        /// <param name="moduleVersionRequired">Specific module version to be required.</param>
+        /// <returns>IEnumerable tuple containing the CommandInfo and the match score.</returns>
+        internal static IEnumerable<CommandScore> GetFuzzyMatchingCommands(string pattern, ExecutionContext context, CommandOrigin commandOrigin, FuzzyMatcher fuzzyMatcher, bool rediscoverImportedModules = false, bool moduleVersionRequired = false)
+        {
+            foreach (CommandInfo command in GetMatchingCommands(pattern, context, commandOrigin, rediscoverImportedModules, moduleVersionRequired, fuzzyMatcher: fuzzyMatcher))
+            {
+                if (fuzzyMatcher.IsFuzzyMatch(command.Name, pattern, out int score))
+                {
+                    yield return new CommandScore(command, score);
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets a list of matching commands.
         /// </summary>
         /// <param name="pattern">Command pattern.</param>
